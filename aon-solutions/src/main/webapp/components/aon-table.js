@@ -1,6 +1,6 @@
 import {AonElement} from './AonElement.js';
 import '../../components/aon-checkbox.js';
-import '../../components/aon-dialog.js';
+import '../../components/aon-dialog-menu.js';
 
 export class AonTable extends AonElement {
 
@@ -30,7 +30,7 @@ export class AonTable extends AonElement {
 
 		connectedCallback () {
 			this.innerHTML = `
-				<aon-dialog id="${this.getId() + 'aonDialogAddOption'}" type="menu"></aon-dialog>
+				<aon-dialog-menu id="${this.getId() + 'aonDialogAddOption'}" ></aon-dialog-menu>
 				<table class="aonTable">
 					<thead>
 						<tr id="${this.getId() + 'TableHeader'}" >

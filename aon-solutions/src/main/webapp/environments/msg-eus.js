@@ -32,6 +32,9 @@ export const AON_MSG_ADD_FILE = 'Fitxategia Erantsi';
 export const AON_MSG_SHOW_FILE = 'Fitxategia Erakutsi';
 export const AON_MSG_ADD_COMMENT = 'Iruzkina Gehitu';
 
+export const AON_MSG_COMMENT = 'Iruzkina';
+export const AON_MSG_COMMENTS = 'Iruzkinak';
+
 export const AON_MSG_DATE = 'Data';
 export const AON_MSG_AMOUNT = 'Zenbatekoa';
 export const AON_MSG_HOLDER = 'Titularra';
@@ -68,3 +71,6 @@ export const AON_MSG_QUANTITY = 'Kantitatea';
 export const AON_MSG_PRICE = 'Prezioa';
 export const AON_MSG_IRPF = 'PFEZ';
 export const AON_MSG_VAT = 'BEZ';
+
+export const AON_MSG_CANCEL = 'Ezeztatu';
+export const AON_MSG_ACCEPT = 'Onartu';

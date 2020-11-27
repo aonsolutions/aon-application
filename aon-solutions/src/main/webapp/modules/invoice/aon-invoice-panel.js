@@ -30,7 +30,7 @@ export class AonInvoicePanel extends AonElement {
 	connectedCallback () {
 		this.innerHTML = `
 			<aon-application id="aonInvoice" title="${MSG.AON_MSG_INVOICES}" drag_and_drop="true"></aon-application>
-			<aon-dialog id="aonDialogAddOption" type="menu" > </aon-dialog>
+			<aon-dialog-menu id="aonDialogAddOption"> </aon-dialog-menu>
 			<input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
 		`;
 		this.build();

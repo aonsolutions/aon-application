@@ -85,7 +85,7 @@ export class AonMarketplace extends AonElement {
 		this.appendChild(ul);
 		for (let key in apps){
 			let li = document.createElement('li');
-			li.className = 'list-group-item';
+			li.className = 'list-group-item aonAppLi';
 			let span = document.createElement('span');
 			span.style.margin = '20px';
 

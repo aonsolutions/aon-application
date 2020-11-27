@@ -13,7 +13,11 @@ ul {
   margin: 0;
 }
 
-li:hover {
+.aonAppLi {
+
+}
+
+.aonAppLi:hover {
   background-color: #f1f1f1;
 }
 

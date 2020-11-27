@@ -15,6 +15,7 @@ import '../../components/aon-input.js';
 import '../../components/aon-checkbox.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-dialog.js';
+import '../../components/aon-dialog-menu.js';
 import '../../components/aon-viewer.js';
 
 import * as CONSTANT from "../../environments/constants.js";
@@ -75,6 +76,7 @@ export class AonInvoice extends AonElement {
 
 			<div style="display:flex;">
 				<div id="aonInvoiceData" class="aonSubContent" style="width:100%">
+					<aon-card id="aonInvoiceItemCommentsCard" title="${MSG.AON_MSG_COMMENTS}" style="display:none;"> </aon-card>
 					<div id="aonInvoiceDiv" style="display:flex;">
 						<aon-card id="aonInvoiceItemDataCard" title="${MSG.AON_MSG_INVOICE_DATA}" style="width:50%"> </aon-card>
 						<aon-card id="aonInvoiceItemTaxesCard" title="${MSG.AON_MSG_TAXES_DETAIL}" style="width:50%"> </aon-card>
@@ -85,8 +87,8 @@ export class AonInvoice extends AonElement {
 				<div id="aonInvoiceFile" class="aonSubContent">
 				</div>
 			</div>
-			<aon-dialog id="aonDialogInvoiceOption" type="menu" > </aon-dialog>
-			<aon-dialog id="aonDialogInvoiceDevelopment" width="400px"> </aon-dialog>
+			<aon-dialog-menu id="aonDialogInvoiceOption"> </aon-dialog-menu>
+			<aon-dialog id="aonDialogInvoice" width="400px"> </aon-dialog>
 		`;
 
 		getUserAppRole().then(roles => {
@@ -105,6 +107,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	build() {
+		this.buildComments();
 		this.buildData();
 		if(!this.isTicket()){
 			this.buildTaxes();
@@ -147,9 +150,9 @@ export class AonInvoice extends AonElement {
 				const left = button.getBoundingClientRect().left;
 				let d = document.getElementById('aonDialogInvoiceOption');
 				let rectify = InvoiceAction.RECTIFY;
-				rectify.fn = () => this.development();
+				rectify.fn = () => this.rectifyInvoice();
 				let duplicate = InvoiceAction.DUPLICATE;
-				duplicate.fn = () => this.development();
+				duplicate.fn = () => this.duplicateInvoice();
 				d.setMenuOptions([rectify, duplicate], top, left);
 				d.open();
 			});
@@ -159,7 +162,7 @@ export class AonInvoice extends AonElement {
 		}
 
 		if(this._invoice.isInbox() && (this._roles.includes('ADMIN') || this._roles.includes('INVOICE_MANAGER'))) {
-			invoiceToolbar.addButton2(InvoiceAction.ACCOUNTING, () => this.development());
+			invoiceToolbar.addButton2(InvoiceAction.RECORD, () => this.recordInvoice());
 			invoiceToolbar.addButton2(InvoiceAction.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		}
@@ -209,7 +212,6 @@ export class AonInvoice extends AonElement {
 				}
 			});
 		}
-
 	}
 
 	preview() {
@@ -253,12 +255,6 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
-	development() {
-		let d = document.getElementById('aonDialogInvoiceDevelopment');
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.open();
-	}
-
 	back() {
 		let aip = document.querySelector('aon-invoice-panel');
 		aip.aonInvoiceList();
@@ -281,9 +277,32 @@ export class AonInvoice extends AonElement {
 	}
 
 	rejectInvoice() {
-		this._invoice.status = CONSTANT.REFUSED;
-		this.save();
-		this.buildInvoiceToolbar();
+		let d = document.getElementById('aonDialogInvoice');
+		d.clear();
+		d.setTitle(MSG.AON_MSG_REJECT_INVOICE);
+		d.setContentHTML('<textarea id="commentTextArea"> </textarea>');
+		d.addAcceptAction(() => {
+			let ta = this.getElement('commentTextArea');
+			if(!ta.value.isEmpty()){
+				let comment = {
+					date: new Date(),
+					user: '',
+					comment: ta.value
+				};
+				this._invoice.comments.push(comment);
+				this.save();
+				this.buildComments();
+			}
+			this._invoice.status = CONSTANT.REFUSED;
+			this.save();
+			this.buildInvoiceToolbar();
+		});
+
+		let ta = this.getElement('commentTextArea');
+		ta.style.outline = 'none';
+		ta.style.width = '350px';
+		ta.style.height = '100px';
+		d.open();
 	}
 
 	trashInvoice() {
@@ -300,10 +319,12 @@ export class AonInvoice extends AonElement {
 
 	removeInvoice() {
 		deleteInvoices([this._invoice.id]).then(() => {
-			let d = document.getElementById('aonDialogInvoiceDevelopment');
+			let d = document.getElementById('aonDialogInvoice');
+			d.clear();
+			d.setTitle(MSG.AON_MSG_DELETE_FOREVER);
 			d.setContentHTML(MSG.AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION);
+			d.addAcceptAction(() => this.back());
 			d.open();
-			this.back();
 		});
 	}
 
@@ -313,7 +334,21 @@ export class AonInvoice extends AonElement {
 	}
 
 	rectifyInvoice() {
+		let d = document.getElementById('aonDialogInvoice');
+		d.clear();
+		d.setTitle(MSG.AON_MSG_RECTIFY_INVOICE);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
+	}
 
+	duplicateInvoice() {
+		let d = document.getElementById('aonDialogInvoice');
+		d.clear();
+		d.setTitle(MSG.AON_MSG_DUPLICATE_INVOICE);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
 	}
 
 	printInvoice() {
@@ -327,11 +362,54 @@ export class AonInvoice extends AonElement {
 	}
 
 	addInvoiceComment() {
-		this.development();
+		let d = document.getElementById('aonDialogInvoice');
+		d.clear();
+		d.setTitle(MSG.AON_MSG_ADD_COMMENT);
+		d.setContentHTML('<textarea id="commentTextArea"> </textarea>');
+		d.addAcceptAction(() => {
+			let ta = this.getElement('commentTextArea');
+			let comment = {
+				date: new Date(),
+				user: '',
+				comment: ta.value
+			};
+			this._invoice.comments.push(comment);
+			this.save();
+			this.buildComments();
+		});
+
+		let ta = this.getElement('commentTextArea');
+		ta.style.outline = 'none';
+		ta.style.width = '350px';
+		ta.style.height = '100px';
+		d.open();
 	}
 
 	recordInvoice() {
-		this.development();
+		let d = document.getElementById('aonDialogInvoice');
+		d.clear();
+		d.setTitle(MSG.AON_MSG_RECORD_INVOICE);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
+	}
+
+	buildComments(){
+		let card = document.getElementById('aonInvoiceItemCommentsCard');
+		card.setContentHTML('');
+		card.setBackground('#ffc');
+		if(this._invoice.comments && this._invoice.comments.length > 0) {
+			card.style.display = 'block';
+			let ul = document.createElement('ul');
+			ul.style.width = '100%';
+			card.setContent(ul);
+			this._invoice.comments.forEach((item, i) => {
+				let li = this.createElement('li');
+				li.style.backgrounColor = 'transparent !important';
+				li.innerHTML = item.comment;
+				ul.appendChild(li);
+			});
+		}
 	}
 
 	buildData(){

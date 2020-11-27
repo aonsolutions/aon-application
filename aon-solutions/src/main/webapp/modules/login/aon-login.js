@@ -4,6 +4,8 @@ import {rootPanel} from '../../services/gwtLoader.js';
 import '../../components/aon-input.js';
 import '../company/aon-parent.js';
 
+import * as MSG from "../../environments/msg.js";
+
 export class AonLogin extends AonElement {
 
 	constructor () {
@@ -92,25 +94,18 @@ export class AonLogin extends AonElement {
 				</div>
 			</div>
 
-			<aon-dialog id="aonDialogLogin" width="400px">
-
-			</aon-dialog>
+			<aon-dialog id="aonDialogLogin" width="400px"></aon-dialog>
 			`;
 
 			this.buildLogo();
 
 			let dialog = document.getElementById('aonDialogLogin');
+			dialog.setTitle(MSG.AON_MSG_RECOVER_PASSWORD);
 			dialog.setContentHTML(`
-				<h4> Recuperar Contraseña</h4>
-				<div>
-					<form action="#">
-						<aon-input id="aonLoginRememberEmail" description="Email"></aon-input>
-					</form>
-				</div>
-				<div>
-					<button class="aonButton" id="aonLoginRememberSend" type="button">Enviar</button>
-				</div>
-			`);
+				<form action="#">
+					<aon-input id="aonLoginRememberEmail" description="Email"></aon-input>
+				</form>`);
+			dialog.addAcceptAction(() =>rememberPassword(this.getElement('aonLoginRememberEmail').value));
 
 			let aonManifest = document.getElementById('aonManifest');
 			getManifest().then(manifest => aonManifest.innerHTML = 'Version: ' + manifest.build_date);
@@ -127,12 +122,6 @@ export class AonLogin extends AonElement {
 			aonLoginRemember.addEventListener('click', () => {
       	dialog.open();
     	});
-
-			let aonLoginRememberSend = document.getElementById('aonLoginRememberSend');
-			aonLoginRememberSend.addEventListener('click', () => {
-	     	dialog.close();
-				rememberPassword(document.getElementById('aonLoginRememberEmail').value);
-			});
 	}
 
 	buildLogo() {

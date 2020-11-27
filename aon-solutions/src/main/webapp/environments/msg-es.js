@@ -33,6 +33,9 @@ export const AON_MSG_ADD_FILE = 'Adjuntar Fichero';
 export const AON_MSG_SHOW_FILE = 'Mostrar Fichero';
 export const AON_MSG_ADD_COMMENT = 'Añadir Comentario';
 
+export const AON_MSG_COMMENT = 'Comentario';
+export const AON_MSG_COMMENTS = 'Comentarios';
+
 export const AON_MSG_DATE = 'Fecha';
 export const AON_MSG_AMOUNT = 'Importe';
 export const AON_MSG_HOLDER = 'Titular';
@@ -70,3 +73,6 @@ export const AON_MSG_QUANTITY = 'Cantidad';
 export const AON_MSG_PRICE = 'Precio';
 export const AON_MSG_IRPF = 'IRPF';
 export const AON_MSG_VAT = 'IVA';
+
+export const AON_MSG_CANCEL = 'Cancelar';
+export const AON_MSG_ACCEPT = 'Aceptar';

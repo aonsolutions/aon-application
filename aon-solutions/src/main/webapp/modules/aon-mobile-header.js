@@ -3,6 +3,7 @@ import {closeSession, getSigninStatus, updateSigninStatus} from  '../services/se
 import {rootPanel} from '../services/gwtLoader.js';
 
 import '../components/aon-icon-button.js';
+import '../components/aon-dialog-menu.js';
 
 
 import './configuration/aon-configuration.js';
@@ -44,7 +45,7 @@ export class AonMobileHeader extends AonElement {
 				</span>
 			</div>
 
-			<aon-dialog id="aonHeaderDialogUserOption" type="menu" > </aon-dialog>
+			<aon-dialog-menu id="aonHeaderDialogUserOption" > </aon-dialog-menu>
 			`;
 
 			this.build();

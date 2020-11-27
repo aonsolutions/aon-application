@@ -31,6 +31,9 @@ export const AON_MSG_ADD_FILE = 'Add File';
 export const AON_MSG_SHOW_FILE = 'Show File';
 export const AON_MSG_ADD_COMMENT = 'Add Comment';
 
+export const AON_MSG_COMMENT = 'Comment';
+export const AON_MSG_COMMENTS = 'Comments';
+
 export const AON_MSG_DATE = 'Date';
 export const AON_MSG_AMOUNT = 'Amount';
 export const AON_MSG_HOLDER = 'Holder';
@@ -68,3 +71,6 @@ export const AON_MSG_QUANTITY = 'Quantity';
 export const AON_MSG_PRICE = 'Price';
 export const AON_MSG_IRPF = 'IRPF';
 export const AON_MSG_VAT = 'VAT';
+
+export const AON_MSG_CANCEL = 'Cancel';
+export const AON_MSG_ACCEPT = 'Accept';

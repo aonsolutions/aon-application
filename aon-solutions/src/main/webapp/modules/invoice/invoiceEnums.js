@@ -52,7 +52,7 @@ export const InvoiceAction = {
     name: MSG.AON_MSG_REJECT_INVOICE,
     icon: 'report'
   },
-  ACCOUNTING: {
+  RECORD: {
     id: 'Accounting',
     name: MSG.AON_MSG_RECORD_INVOICE,
     icon: MATERIAL_ICONS.ADD_TASK

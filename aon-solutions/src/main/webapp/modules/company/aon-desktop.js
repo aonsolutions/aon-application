@@ -211,7 +211,7 @@ export class AonDesktop extends AonElement {
 		for (let key in Apps){
 			if(r.includes(Apps[key].app)) {
 				let li = document.createElement('li');
-				li.className = 'list-group-item';
+				li.className = 'list-group-item aonAppLi';
 				li.style.borderRight = '0px';
 				li.style.borderLeft = '0px';
 				li.style.cursor = 'pointer';
@@ -310,7 +310,7 @@ export class AonDesktop extends AonElement {
 
 	buildListElement(ul, apps, key, r){
 		let li = document.createElement('li');
-		li.className = 'list-group-item';
+		li.className = 'list-group-item aonAppLi';
 		ul.appendChild(li);
 		let span = document.createElement('span');
 		span.style.margin = '20px';

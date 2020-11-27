@@ -1,6 +1,16 @@
 import {AonElement} from './AonElement.js';
 
+import * as MSG from "../../environments/msg.js";
+
 export class AonDialog extends AonElement {
+
+	DIALOG;
+	MAIN;
+	TITLE;
+	CONTENT;
+	ACTION;
+	CANCEL;
+	ACCEPT;
 
 	get id() {
 		return this.getAttribute('id');
@@ -36,41 +46,53 @@ export class AonDialog extends AonElement {
 
 	constructor () {
 		super();
+		this.DIALOG = this.id + 'Dialog';
+		this.MAIN = this.DIALOG + 'Main';
+		this.TITLE = this.DIALOG + 'Title';
+		this.CONTENT = this.DIALOG + 'Content';
+		this.ACTION = this.DIALOG + 'Action';
+		this.CANCEL = this.ACTION + 'Cancel';
+		this.ACCEPT = this.ACTION + 'Accept';
 	}
 
 	connectedCallback () {
 
 		this.innerHTML = `
-		<div id="${this.getAttribute('id') + 'Dialog'}" class="aonDialog">
-		<!-- Modal content -->
-			<div id="${this.getAttribute('id') + 'DialogContent'}" class="aonDialogContent">
-
+		<div id="${this.DIALOG}" class="aonDialog">
+			<div id="${this.MAIN}" class="aonDialogContent">
+				<h4 id="${this.TITLE}"></h4>
+				<div id="${this.CONTENT}"></div>
+				<div id="${this.ACTION}"></div>
 			</div>
-			<!-- <div id="${this.getAttribute('id') + 'DialogAction'}">
 
-
-			</div> -->
 		</div>
 		`;
 		this.build();
   }
 
+	clear() {
+		this.getElement(this.TITLE).innerHTML = '';
+		this.getElement(this.CONTENT).innerHTML = '';
+		this.getElement(this.ACTION).innerHTML = '';
+	}
 
 	build() {
-		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog');
-		let content = document.getElementById(this.getAttribute('id') + 'DialogContent');
+		let dialog = this.getElement(this.DIALOG);
+		let main = this.getElement(this.MAIN);
+		let content = this.getElement(this.CONTENT);
+		content.style.marginBottom = '20px';
 
 		if(this.hasAttribute('width')) {
-			content.style.width = this.getAttribute('width');
+			main.style.width = this.getAttribute('width');
 		}
 
 		if(this.isTypeMenu()){
 			dialog.style.backgroundColor = 'transparent';
 			dialog.style.paddingTop = '0px';
 
-			content.style.position = 'absolute';
-			content.style.width = '200px';
-			content.style.padding = '0px';
+			main.style.position = 'absolute';
+			main.style.width = '200px';
+			main.style.padding = '0px';
 		}
 
 		dialog.onclick = (event) => {
@@ -99,7 +121,7 @@ export class AonDialog extends AonElement {
 		return document.getElementById(this.getAttribute('id') + 'DialogContent');
 	}
 
-	setContent(widget) {
+	setContent(widget, title) {
 		let content = document.getElementById(this.getAttribute('id') + 'DialogContent');
 		content.innerHTML = '';
 		content.appendChild(widget);
@@ -142,16 +164,33 @@ export class AonDialog extends AonElement {
 		});
 	}
 
+	setTitle(title) {
+		this.getElement(this.TITLE).innerHTML = title;
+	}
 
-	// addCancelAction(fn) {
-	// 	let cancel = document.getElementById(this.getAttribute('id') + 'ActionsCancelButton');
-	// 	cancel.addEventListener('click', fn);
-	// }
-	//
-	// addAcceptAction(fn) {
-	// 	let accept = document.getElementById(this.getAttribute('id') + 'ActionsAcceptButton');
-	// 	accept.addEventListener('click', fn);
-	// }
+	addCancelAction(fn) {
+		let cancel = this.createElement('button');
+		cancel.id = this.CANCEL;
+		cancel.className = 'aonButton';
+		cancel.innerHTML = MSG.AON_MSG_CANCEL;
+		cancel.addEventListener('click', () => {
+			fn();
+			this.close();
+		});
+		this.getElement(this.ACTION).appendChild(cancel);
+	}
+
+	addAcceptAction(fn) {
+		let accept = this.createElement('button');
+		accept.id = this.ACCEPT;
+		accept.className = 'aonButton';
+		accept.innerHTML = MSG.AON_MSG_ACCEPT;
+		accept.addEventListener('click', () => {
+			fn();
+			this.close();
+		});
+		this.getElement(this.ACTION).appendChild(accept);
+	}
 }
 
 window.customElements.define('aon-dialog', AonDialog);

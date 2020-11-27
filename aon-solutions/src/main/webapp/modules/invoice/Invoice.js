@@ -17,6 +17,7 @@ export class Invoice {
   status;
   irpf;
   suplidos;
+  comments;
 
   constructor(type) {
     this.type = type || 'emitida';
@@ -58,12 +59,11 @@ export class Invoice {
       total: 0
     };
     this.status = 'inbox';
+    this.comments = [];
   }
-
 
   createInvoice(invoice) {
     if(invoice) {
-
       this.id = invoice.id || undefined;
       this.series = invoice.series || '';
       this.number = invoice.number || 0;
@@ -107,6 +107,7 @@ export class Invoice {
         total: 0
       };
       this.file = invoice.file || undefined;
+      this.comments = invoice.comments || [];
     }
   }
 

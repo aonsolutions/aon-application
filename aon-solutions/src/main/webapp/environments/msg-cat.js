@@ -32,6 +32,9 @@ export const AON_MSG_ADD_FILE = 'Adjuntar Fitxer';
 export const AON_MSG_SHOW_FILE = 'Mostrar Fitxer';
 export const AON_MSG_ADD_COMMENT = 'Afegir Comentari';
 
+export const AON_MSG_COMMENT = 'Comentari';
+export const AON_MSG_COMMENTS = 'Comentaris';
+
 export const AON_MSG_DATE = 'Data';
 export const AON_MSG_AMOUNT = 'Import';
 export const AON_MSG_HOLDER = 'Titular';
@@ -68,3 +71,6 @@ export const AON_MSG_QUANTITY = 'Quantitat';
 export const AON_MSG_PRICE = 'Preu';
 export const AON_MSG_IRPF = 'IRPF';
 export const AON_MSG_VAT = 'IVA';
+
+export const AON_MSG_CANCEL = 'Cancel·lar';
+export const AON_MSG_ACCEPT = 'Acceptar';

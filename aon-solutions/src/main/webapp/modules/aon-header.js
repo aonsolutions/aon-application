@@ -2,6 +2,7 @@ import {AonElement} from '../components/AonElement.js';
 import {closeSession, getSigninStatus, updateSigninStatus} from  '../services/service.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
+import '../components/aon-dialog-menu.js';
 import '../components/aon-icon-button.js';
 import '../components/aon-search-box.js';
 
@@ -64,8 +65,8 @@ export class AonHeader extends AonElement {
 					<span id="aonHeaderCompanyName"> </span>
 				</span>
 			</div>
-			<aon-dialog id="aonHeaderDialogHelpOption" type="menu" > </aon-dialog>
-			<aon-dialog id="aonHeaderDialogUserOption" type="menu" > </aon-dialog>
+			<aon-dialog-menu id="aonHeaderDialogHelpOption" > </aon-dialog-menu>
+			<aon-dialog-menu id="aonHeaderDialogUserOption" > </aon-dialog-menu>
 			`;
 
 			this.build();

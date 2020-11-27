@@ -2,6 +2,7 @@ import {AonElement} from './AonElement.js';
 
 export class AonCard extends AonElement {
 
+ 	CARD;
 	TITLE;
 	CONTENT;
 
@@ -45,6 +46,7 @@ export class AonCard extends AonElement {
 
 	constructor () {
 		super();
+		this.CARD = this.id + 'Card';
 		this.TITLE = this.id + 'Title';
 		this.CONTENT = this.id + 'Content';
 	}
@@ -55,6 +57,7 @@ export class AonCard extends AonElement {
 
 	build() {
 		let div = this.createElement('div');
+		div.id = this.CARD;
 		div.className = 'aonCard';
 		this.appendChild(div);
 
@@ -79,6 +82,10 @@ export class AonCard extends AonElement {
 
 	setVisible(visible) {
 		this.setAttribute('visible', visible);
+	}
+
+	setBackground(color) {
+		this.getElement(this.CARD).style.backgroundColor = color;
 	}
 }
 window.customElements.define('aon-card',  AonCard);

@@ -1,9 +1,10 @@
 import {AonElement} from '../../components/AonElement.js';
 import './aon-movements-list.js';
 import './aon-alta-directa.js';
+
 export class AonMovements extends AonElement {
 
-    get id() {
+  get id() {
 		return this.getAttribute('id');
 	}
 
@@ -18,7 +19,7 @@ export class AonMovements extends AonElement {
 
     connectedCallback () {
         this.innerHTML = `
-            <aon-dialog id="aonDialogAddOption" type="menu" > </aon-dialog>
+            <aon-dialog-menu id="aonDialogAddOption" > </aon-dialog-menu>
         `;
 
         this.build();

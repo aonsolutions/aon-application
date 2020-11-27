@@ -30,7 +30,10 @@ export const AON_MSG_TO_TRASH = 'Enviar ao Papeleira';
 export const AON_MSG_DELETE_FOREVER = 'Borrar Definitivamente';
 export const AON_MSG_ADD_FILE = 'Achegar Arquivo';
 export const AON_MSG_SHOW_FILE = 'Ensinar Arquivo';
-export const AON_MSG_ADD_COMMENT = 'Engadir Comentari';
+export const AON_MSG_ADD_COMMENT = 'Engadir Comentario';
+
+export const AON_MSG_COMMENT = 'Comentario';
+export const AON_MSG_COMMENTS = 'Comentarios';
 
 export const AON_MSG_DATE = 'Data';
 export const AON_MSG_AMOUNT = 'Importe';
@@ -68,3 +71,6 @@ export const AON_MSG_QUANTITY = 'Cantidade';
 export const AON_MSG_PRICE = 'Prezo';
 export const AON_MSG_IRPF = 'IRPF';
 export const AON_MSG_VAT = 'IVE';
+
+export const AON_MSG_CANCEL = 'Cancelar';
+export const AON_MSG_ACCEPT = 'Aceptar';

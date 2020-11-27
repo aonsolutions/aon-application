@@ -65,7 +65,7 @@ export class AonInvoiceMobile extends AonElement {
 			<aon-card id="aonInvoiceItemDetailCard" title="Conceptos Factura"> </aon-card>
 			<aon-card id="aonInvoiceItemFinanceCard" title="Vencimientos"> </aon-card>
 
-			<aon-dialog id="aonDialogInvoiceOption" type="menu" > </aon-dialog>
+			<aon-dialog-menu id="aonDialogInvoiceOption"> </aon-dialog-menu>
 			<aon-dialog id="aonDialogInvoiceDetail" > </aon-dialog>
 			<aon-dialog id="aonDialogInvoiceFinance" > </aon-dialog>
 		`;
