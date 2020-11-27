@@ -1,5 +1,5 @@
-import { CARPETA_A_CONTABILIZAR, CARPETA_CONTABILIZADOS, CARPETA_FISCAL, bidoq } from "./aon-documental.js";
-import { AVAILABLE_OPTIONS, MULTIPLE_DOWNLOAD_OPTION, ADD_NOTE_OPTION, MULTIPLE_DELETE_OPTION } from './toolbar_options.js';
+import { CARPETA_CONTABILIZADOS, CARPETA_FISCAL, bidoq } from "./aon-documental.js";
+import { AVAILABLE_OPTIONS, getAllowedOptions } from './toolbar_options.js';
 import { getFileExtensionsConfig } from './upload.js';
 
 const TYPES = {
@@ -36,18 +36,18 @@ export function selectedFolderHasSubfolders() {
     return hasSubfolders;
 }
 
-export function formatDocumentData(document, foldersByID, subfolders) {
+export function formatDocumentData(document) {
     return {
         "id"                : document.id,
         "url"               : document.image,
         "date"              : document.date,
         "file_name"         : document.name,
         "stored_file_name"  : document.stored_file_name,
-        "category"          : (typeof foldersByID[document.service] !== 'undefined') ? {
+        "category"          : (typeof window.foldersByID[document.service] !== 'undefined') ? {
             "id": document.service,
-            "name": foldersByID[document.service].carpeta
+            "name": window.foldersByID[document.service].carpeta
         } : null,
-        "subfolder"         : (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
+        "subfolder"         : (document.subcarpeta !== null && typeof window.subfolders[document.subcarpeta] !== 'undefined') ? window.subfolders[document.subcarpeta] : '',
         "model"             : document.model,
         "year"              : document.year,
         "period"            : document.period,
@@ -62,9 +62,9 @@ export function getDocumentsTableDOM(list) {
     let documentsTableDOM = '';
 
     $.each(list, function(i, document) {
-        const allowedOptions = getAllowedOptions(document);
+        const allowedOptions = getAllowedOptions(document, true);
 
-        documentsTableDOM+= '<tr class="show_doc_container" data-allowed_options="' +  allowedOptions.join(',')+ '" data-id="' + document.id + '" data-type="' + document.type + '" data-file_name="' + document.file_name + '" data-tags="' + document.tags.map((tag) => tag.id).join(',') + '">';
+        documentsTableDOM+= '<tr class="show_doc_container" data-allowed_options="' +  allowedOptions.join(',')+ '" data-id="' + document.id + '" data-type="' + document.type + '" data-category="' + document.category.id + '" data-file_name="' + document.file_name + '" data-tags="' + document.tags.map((tag) => tag.id).join(',') + '">';
 
             // Columna para seleccionar documentos
             documentsTableDOM+= `<td>
@@ -367,7 +367,7 @@ export const getList = async ({page = 1, loading = false} = {}) => {
                         const page_total        = page_this_real + documents.length;
                         const page_this_element = !documents.length ? documents.length : page_this_real;
 
-                        const list = documents.map((document) => formatDocumentData(document, window.foldersByID, window.subfolders));
+                        const list = documents.map((document) => formatDocumentData(document));
 
                         const paginationList = {
                             list,
@@ -602,23 +602,6 @@ function getPaginationDOM(page, page_total){
     paginate+= '</ul>';
 
     return paginate;
-}
-
-function getAllowedOptions(document) {
-    // Por defecto permitimos solo la opción de descargar
-    const allowedOptions = [MULTIPLE_DOWNLOAD_OPTION];
-
-    // Si el usuario ha enviado el documento, permitimos opciones adicionales
-    if (document.type === 'sent') {
-        allowedOptions.push(ADD_NOTE_OPTION);
-
-        // Solo puede eliminar los documentos de la carpeta "A contabilizar" enviados por él mismo
-        if (parseInt(document.category.id) === CARPETA_A_CONTABILIZAR) {
-            allowedOptions.push(MULTIPLE_DELETE_OPTION);
-        }
-    }
-
-    return allowedOptions;
 }
 
 function getFormattedDate(milliseconds) {
