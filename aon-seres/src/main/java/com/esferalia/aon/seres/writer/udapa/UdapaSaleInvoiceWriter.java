@@ -71,8 +71,11 @@ public class UdapaSaleInvoiceWriter {
 		List<Finance> financeList = getFinances(invoice);
 
 		SINCC sincc = new SINCC();
-		sincc.setTipoFactura_325_380_381_383_385_(SINCC.F1001T.FACTURA_COMERCIA_380
-				.getValue());
+		
+		sincc.setTipoFactura_325_380_381_383_385_(
+			invoice.getTotal() < 0 
+				? SINCC.F1001T.NOTA_DE_ABON_381.getValue()
+				: SINCC.F1001T.FACTURA_COMERCIA_380.getValue());
 		sincc.setNumeroDeFactura(invoice.getReferenceCode());
 		sincc.setCodigoVendedor_aQuienSePide__SU_(companyEdiCode);
 		sincc.setCodigoComprador_QuienPide__BY_(customerEdiMainCode);
@@ -213,8 +216,11 @@ public class UdapaSaleInvoiceWriter {
 	private SINCT createSINCTRecord(Invoice invoice, String companyEdiCode,
 			String customerEdiMainCode) {
 		SINCT sinct = new SINCT();
-		sinct.setTipoFactura_325_380_381_383_385_(SINCC.F1001T.FACTURA_COMERCIA_380
-				.getValue());
+		
+		sinct.setTipoFactura_325_380_381_383_385_(
+				invoice.getTotal() < 0 
+					? SINCC.F1001T.NOTA_DE_ABON_381.getValue()
+					: SINCC.F1001T.FACTURA_COMERCIA_380.getValue());
 		sinct.setCalificadorDelTemaDelTexto(F4451C.INFORMACION_GENERA_AAI
 				.getValue());
 		sinct.setCodigoComprador_BY_(customerEdiMainCode);
@@ -235,6 +241,11 @@ public class UdapaSaleInvoiceWriter {
 		SINCV sincv = new SINCV();
 		sincv.setTipoFactura_325_380_381_383_385_(SINCC.F1001T.FACTURA_COMERCIA_380
 				.getValue());
+		
+		sincv.setTipoFactura_325_380_381_383_385_(
+				finance.getInvoice().getTotal() < 0 
+					? SINCC.F1001T.NOTA_DE_ABON_381.getValue()
+					: SINCC.F1001T.FACTURA_COMERCIA_380.getValue());
 		sincv.setNumeroDeFactura(finance.getInvoice().getReferenceCode());
 		sincv.setCodigoVendedor_SU_(companyEdiCode);
 		sincv.setCodigoComprador_BY_(customerEdiMainCode);
@@ -253,8 +264,11 @@ public class UdapaSaleInvoiceWriter {
 	private SINCL createSINCLRecord(InvoiceDetail detail, int lineNumber,
 			String companyEdiCode, String customerEdiMainCode) {
 		SINCL sincl = new SINCL();
-		sincl.setTipoFactura_325_380_381_383_385_(SINCC.F1001T.FACTURA_COMERCIA_380
-				.getValue());
+	
+		sincl.setTipoFactura_325_380_381_383_385_(
+				detail.getInvoice().getTotal() < 0 
+					? SINCC.F1001T.NOTA_DE_ABON_381.getValue()
+					: SINCC.F1001T.FACTURA_COMERCIA_380.getValue());
 		sincl.setNumeroDeFactura(detail.getInvoice().getReferenceCode());
 		sincl.setCodigoVendedor_SU_(companyEdiCode);
 		sincl.setCodigoComprador_BY_(customerEdiMainCode);
@@ -314,8 +328,11 @@ public class UdapaSaleInvoiceWriter {
 	private SINCI createSINCIRecord(TaxBreakDown tax, int lineNumber,
 			Invoice invoice, String companyEdiCode, String customerEdiMainCode) {
 		SINCI sinci = new SINCI();
-		sinci.setTipoFactura_325_380_381_383_385_(SINCC.F1001T.FACTURA_COMERCIA_380
-				.getValue());
+		
+		sinci.setTipoFactura_325_380_381_383_385_(
+				invoice.getTotal() < 0 
+					? SINCC.F1001T.NOTA_DE_ABON_381.getValue()
+					: SINCC.F1001T.FACTURA_COMERCIA_380.getValue());
 		sinci.setNumeroDeFactura(invoice.getReferenceCode());
 		sinci.setCodigoVendedor_SU_(companyEdiCode);
 		sinci.setCodigoComprador_BY_(customerEdiMainCode);
