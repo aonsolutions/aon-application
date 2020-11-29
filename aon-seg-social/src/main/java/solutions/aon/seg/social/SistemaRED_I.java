@@ -862,6 +862,13 @@ public class SistemaRED_I {
 			return value;
 		}
 		
+		public static Regime fromValue(String value) {
+			for (Regime regime : Regime.values()) {
+				if ( regime.getValue().equals(value))
+					return regime;
+			}
+			return Regime.GENERAL;
+		}
 	}
 	
 	
@@ -954,7 +961,7 @@ public class SistemaRED_I {
 	}
 	
 	//RETURNS A COLLECTION OF HASHMAPS CONTAINING EACH WORKER'S CALCULATION QUERY (WORKERS' NSS AS KEY)
-	public static Collection<Map<String, WorkerLiquidation>> workersCalculationQueryByCCC(final InputStream certificateInputStream,
+	public static Map<String,Map<String, WorkerLiquidation>> workersCalculationQueryByCCC(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String ccc,
 			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
 			final LiquidationOrigin liqOrigin) throws SegSocialException{
@@ -1000,7 +1007,7 @@ public class SistemaRED_I {
 				try {
 					checkLiquidationExceptions(htmlPage);
 				}catch(NullPointerException | ElementNotFoundException e) {
-					Collection<Map<String, WorkerLiquidation>> ret= new ArrayList<Map<String, WorkerLiquidation>>();
+					Map<String,Map<String, WorkerLiquidation>> ret= new HashMap<String,Map<String, WorkerLiquidation>>();
 					HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
 					DomNodeList<DomNode> liqList=formDatos.querySelectorAll("input[type='radio']");
 					for (int h=0;h<liqList.size();h++) {
@@ -1010,6 +1017,8 @@ public class SistemaRED_I {
 						htmlPage=formDatos.getInputByValue("Continuar").click();
 						htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
 						formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
+						DomNode liqNode=htmlPage.querySelector("abbr[title='Tipo de liquidación ']").getNextSibling();
+						String liq=Toolkit.removeWeirdCharacters(liqNode.getVisibleText());
 						List<HtmlRadioButtonInput> listRadiosWorkers=formDatos.getRadioButtonsByName("NAF");
 						HashMap<String, WorkerLiquidation> map=new HashMap<String, WorkerLiquidation>();
 						for (int i=0;i<listRadiosWorkers.size();i++) {
@@ -1035,7 +1044,7 @@ public class SistemaRED_I {
 							formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
 							listRadiosWorkers=formDatos.getRadioButtonsByName("NAF");
 						}
-						ret.add(map);
+						ret.put(liq,map);
 						htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
 						formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
 						liqList=formDatos.querySelectorAll("input[type='radio']");
@@ -1129,7 +1138,7 @@ public class SistemaRED_I {
 				
 				DomNodeList<DomNode> liquidationNodes=htmlPage.querySelectorAll("tbody>tr:not(.cabecera)");
 				
-				for (int i=0;i<liquidationNodes.getLength();i++) {
+				for (int i=0;i<liquidationNodes.size();i++) {
 					
 					
 					HtmlTableRow rwLiq=(HtmlTableRow)liquidationNodes.get(i);

@@ -50,6 +50,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedSet;
@@ -158,8 +159,10 @@ import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
@@ -187,6 +190,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLAgreementSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.sql.AbstractSQL.SalaryData;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
@@ -244,7 +248,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
+import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
+import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
+import solutions.aon.seg.social.objects.WorkerLiquidation;
 
 /**
  * The server side implementation of the RPC service.
@@ -776,6 +784,82 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			reportManager.setCollectionProvider(getSalariesProvider(
 					domain,
+					cost,
+					salaryTypes,
+					false));
+
+			Map<Object, Object> parameters = new HashMap<Object, Object>(
+					JR_HTML_EXPORTER_PARAMS);
+
+			// Really I hate this spaghetti piece of code.
+			// For pass 'month' & 'year' to a report, we
+			// must put it in a controller ?????.
+			//SalaryExpenseController controller = (SalaryExpenseController) AonUtil
+			//		.getRegisteredBean(IPayrollConstants.SALARY_EXPENSE_CONTROLLER_NAME);
+			//controller.setShowSalaryExpenseWindow(false);
+			//controller.setYear(cost.getYear());
+			//Month month = Month.getMonthByValue(cost.getMonth());
+			//controller.setMonth(month);
+			parameters.put("#{salaryExpense.getYear}", cost.getYear());
+			parameters.put("#{salaryExpense.getMonth}", cost.getMonth());
+			
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			
+
+			parameters
+					.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /*
+																			 * not
+																			 * round
+																			 * to
+																			 * int
+																			 */);
+			Map<Object, Object> images = new HashMap<Object, Object>();
+			parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images);
+
+			String imagesUri = String.format(
+					"jasper_image/salary/%d/%d/%d/%d/", cost.getMonth(),
+					cost.getYear(), cost.getWorkplaceId(),
+					cost.getEnterpriseId());
+
+			parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
+
+			reportManager.execute(out, IPayrollConstants.COST_REPORT,
+					parameters);
+
+			for (Entry<Object, Object> image : images.entrySet()) {
+				String name = String.format("%s%s", imagesUri, image.getKey());
+				JasperImageServlet.saveImage(name, (byte[]) image.getValue());
+			}
+
+			return out.toString();
+
+		} catch (ReportException e) {
+			throw new IllegalArgumentException(e);
+		} catch (ManagerBeanException e) {
+			throw new IllegalArgumentException(e);
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String getSLDCalcReceiptHTML(String domain, String user, Cost cost, Salary.Type types[], int zoom)
+			throws IllegalArgumentException {
+		try {
+			ReportManager reportManager = new StatelessReportManager();
+			reportManager.setOutputFormat(OutputFormat.HTML);
+
+			SalaryType salaryTypes[] = new SalaryType[types.length];
+			for (int i = 0; i < types.length; i++)
+				salaryTypes[i] = SalaryType.values()[types[i].ordinal()];
+			
+			//AON.getCertificate(domain, domainId, login, userId);
+			//SistemaRED.getCosts(certificateData, certificatePassword, certificateType, regimen, ccc, startDate, endDate);
+
+			reportManager.setCollectionProvider(getSLDSalariesProvider(
+					domain,
+					user, 
 					cost,
 					salaryTypes,
 					false));
@@ -2312,6 +2396,101 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return getSalariesProvider(domain, cost, types, filter, calc);
 	}
 
+	private ICollectionProvider getSLDSalariesProvider(String domainName, String userLogin, Cost cost,
+			SalaryType types[], boolean calc) throws ManagerBeanException {
+		try ( Connection connection = AonServletUtils.getConnection(domainName)){
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
+			
+			Calendar calendar = getDate(cost);
+			Date startDate = calendar.getTime();
+			calendar.set(Calendar.DAY_OF_MONTH,
+					calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+			Date endDate = calendar.getTime();
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Map<String, Map<String,Map<String, WorkerLiquidation>>> cccSldCosts = 
+			new HashMap<String, Map<String,Map<String,WorkerLiquidation>>>();
+			PAYROLL.getCCCStream(domainName, domainId, userLogin)
+			.forEach(ccc -> {
+				try {
+					Map<String,Map<String, WorkerLiquidation>> cccSldCost = SistemaRED.getCosts(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), ccc.getCccRegimeCode(), ccc.getCcc(), startDate, endDate);
+					cccSldCosts.put(ccc.getCcc(), cccSldCost);
+					
+				} catch ( DataDoesNotExist e  ) {
+					
+				}
+				catch (SegSocialException e) {
+					throw new IllegalArgumentException(e);
+				}
+			})
+			;
+			
+			if ( cccSldCosts.isEmpty() ) 
+				throw new IllegalArgumentException( new DataDoesNotExist());
+			
+			ICollectionProvider salariesProvider =  
+					getSalariesProvider(domainName, cost, types, calc);
+			Collection<?> salaries = salariesProvider.getCollection(true);
+			
+			List<com.esferalia.aon.payroll.Salary> sldSalaries = 
+					new ArrayList<com.esferalia.aon.payroll.Salary>();
+			
+			
+			for (Object object : salaries) {
+				com.esferalia.aon.payroll.Salary salary = ( com.esferalia.aon.payroll.Salary) object;
+				
+				WorkerLiquidation liquidation = 
+				cccSldCosts.getOrDefault(salary.getCcc(), Collections.emptyMap())
+				.getOrDefault(getLiquidacion(salary.getType()), Collections.emptyMap())
+				.get(salary.getSocialSecurityNumber());
+				if ( liquidation == null )
+					continue;
+							
+				com.esferalia.aon.payroll.SalaryData totalEnterprise = 
+				new com.esferalia.aon.payroll.SalaryData();
+				totalEnterprise.setName("TOTAL_ENTERPRISE");
+				totalEnterprise.setExpression(Double.toString(Math.round(salary.getTotalEnterprise()*100.00)/100.00));
+				salary.getSalaryDatas().add( totalEnterprise );
+				salary.setTotalEnterprise(Optional.ofNullable(liquidation.getTotalLiquid_businessFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+
+				com.esferalia.aon.payroll.SalaryData socialSecurityContributions = 
+				new com.esferalia.aon.payroll.SalaryData();
+				socialSecurityContributions.setName("SOCIAL_SECURITY_CONTRIBUTIONS");
+				socialSecurityContributions.setExpression(Double.toString(Math.round(salary.getSocialSecurityContributions()*100.00)/100.00));
+				salary.getSalaryDatas().add( socialSecurityContributions );
+				salary.setSocialSecurityContributions(Optional.ofNullable(liquidation.getTotalLiquid_workerFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+					
+				sldSalaries.add(salary);
+				
+			}
+			
+			
+			
+			return new ICollectionProvider() {
+				
+				@Override
+				public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+					return sldSalaries;
+				}
+				
+				@Override
+				public Collection getCollection() {
+					return sldSalaries;
+				}
+			};
+			
+		} catch ( SQLException e ) {
+			throw new ManagerBeanException(e);
+		} catch ( IllegalArgumentException e ) {
+			throw new ManagerBeanException(e.getCause());
+		}
+				
+		//throw new IllegalArgumentException( new DataDoesNotExist());
+		
+	}
+
 	protected static ICollectionProvider getSalariesProvider(String domain, Cost cost,
 			SalaryType types[], SalaryFilter filter, boolean calc)
 			throws ManagerBeanException {
@@ -2319,18 +2498,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Condition condition = null;
 		Criteria sqlCriteria = new Criteria();
 
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, cost.getYear());
-		calendar.set(Calendar.MONTH, cost.getMonth());
-		calendar.set(Calendar.DAY_OF_MONTH, 1); // The first day of the month
-												// has value 1.
-		calendar.set(Calendar.HOUR, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-
+		Calendar calendar = getDate(cost);
 		Date startDate = calendar.getTime();
-
 		calendar.set(Calendar.DAY_OF_MONTH,
 				calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		Date endDate = calendar.getTime();
@@ -2385,6 +2554,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				new PayrollServletUtils.SalaryProvider(domain, condition, filter, sortFields))
 				: new PayrollServletUtils.SalaryProvider(domain, condition, filter, sortFields);
 
+	}
+
+	private static Calendar getDate(Cost cost) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, cost.getYear());
+		calendar.set(Calendar.MONTH, cost.getMonth());
+		calendar.set(Calendar.DAY_OF_MONTH, 1); // The first day of the month
+												// has value 1.
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		
+		return calendar;
 	}
 
 	private static List<Salary> getSalaries(Connection connection,
@@ -5241,6 +5424,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				salaryDraft.getEnterpriseCCC(), 
 				salaryDraft.getEmployeeSS())
 		;
+	}
+	
+	private static String getLiquidacion(SalaryType salaryType) {
+		switch (salaryType) {
+		case DELAY:
+			return "L90";
+		case SETTLE:
+		case NOT_ENJOYED_VACATIONS:
+			return "L13";
+		default:
+			return "L00";
+		}
 	}
 
 

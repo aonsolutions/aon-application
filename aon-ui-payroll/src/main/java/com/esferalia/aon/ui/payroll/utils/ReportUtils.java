@@ -52,6 +52,7 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalaryItem;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 import com.ibm.icu.text.RuleBasedNumberFormat;
 
@@ -589,6 +590,54 @@ public class ReportUtils {
 		return SS_REGIMES.getOrDefault(getCCCType(salary), SSRegimeType.GENERAL).getCode() + (salary.getCcc() != null ? salary.getCcc() : "" );
 	}
 	
+	
+	public  static String getTotalSSForecolor(Salary salary) {
+		return getTotalEmployeeAndEnterpriseForecolor(salary);
+	}
+
+	public  static String getTotalLiquidForecolor(Salary salary) {
+		return getTotalEmployeeAndEnterpriseForecolor(salary);
+	}
+
+	public  static String getTotalSSEnterpriseForecolor(Salary salary) {
+		return getTotalEnterpriseForecolor(salary);
+	}
+
+	public  static String getTotalSSEmployeeForecolor(Salary salary) {
+		return getSocialSecurityContributionsForecolor(salary);
+	}
+	
+	private  static String getTotalEnterpriseForecolor(Salary salary) {
+		try {
+			Double totalEnterprise = Double.parseDouble(salary.getSalaryData("TOTAL_ENTERPRISE"));			
+			return AonUtils.equals(totalEnterprise, salary.getTotalEnterprise()) ? "#0000FF" : "#FF0000";
+		} catch ( Exception  e) {
+			return "";
+		}
+	}
+	
+	private  static String getSocialSecurityContributionsForecolor(Salary salary) {
+		try {
+			Double socialSecurityContributions = Double.parseDouble(salary.getSalaryData("SOCIAL_SECURITY_CONTRIBUTIONS"));
+			return AonUtils.equals(socialSecurityContributions, salary.getSocialSecurityContributions()) ? "#0000FF" : "#FF0000";
+		} catch ( Exception  e) {
+			return "";
+		}
+	}
+
+	private  static String getTotalEmployeeAndEnterpriseForecolor(Salary salary) {
+		try {
+			double totalEnterprise = Double.parseDouble(salary.getSalaryData("TOTAL_ENTERPRISE"));
+			if ( totalEnterprise != salary.getTotalEnterprise() )
+				return "#FF0000";
+			
+			double socialSecurityContributions = Double.parseDouble(salary.getSalaryData("SOCIAL_SECURITY_CONTRIBUTIONS"));
+			return socialSecurityContributions == (double) salary.getSocialSecurityContributions() ? "#0000FF" : "#FF0000";
+		} catch ( Exception  e) {
+			return "";
+		}
+	}
+
 	private static class ChainedComparator<T> implements Comparator<T> {
 
 		private Comparator<T> simpleComparators[];

@@ -15,7 +15,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -31,6 +30,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Cost extends ResizeComposite {
@@ -109,6 +110,12 @@ public class Cost extends ResizeComposite {
 
 	@UiField
 	HTML container;
+	@UiField
+	HTML sldcontainer;
+	@UiField
+	ScrollPanel sldScrollPanel;
+	@UiField
+	SplitLayoutPanel containerSplitLayoutPanel;
 
 	@UiField
 	Button excelButton;
@@ -306,6 +313,7 @@ public class Cost extends ResizeComposite {
 				container.setHTML(html);
 				syncTypeCheckBoxes();
 				syncTypeMenuItems();
+				getSLDAsHTML();
 			}
 
 			@Override
@@ -313,7 +321,24 @@ public class Cost extends ResizeComposite {
 				// TODO Auto-generated method stub
 				container.setHTML(caught.getLocalizedMessage());
 			}
-		});
+		});				
+	}
+
+	private void getSLDAsHTML() {
+		costDocuments.getSLDAsHTML(zoom, new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String html) {
+				sldcontainer.setHTML(html);
+				int heigth = containerSplitLayoutPanel.getElement().getClientHeight();
+				containerSplitLayoutPanel.setWidgetSize(sldScrollPanel, heigth / 2 );
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				sldcontainer.setHTML(caught.getLocalizedMessage());
+				containerSplitLayoutPanel.setWidgetSize(sldScrollPanel, 0 );
+			}
+		});				
 	}
 
 	private void onCostDocumentsChanged() {

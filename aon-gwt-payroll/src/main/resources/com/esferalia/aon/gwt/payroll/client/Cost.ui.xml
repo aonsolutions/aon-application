@@ -95,11 +95,22 @@
 
 		</g:north>
 		<g:center>
-			<g:ScrollPanel styleName="{style.editor}">
-				<g:VerticalPanel styleName="{style.document}">
-					<g:HTML styleName="reset" ui:field='container' wordWrap='true' />
-				</g:VerticalPanel>
-			</g:ScrollPanel>
+			<g:SplitLayoutPanel ui:field="containerSplitLayoutPanel">
+				<g:center>
+					<g:ScrollPanel styleName="{style.editor}">
+						<g:VerticalPanel styleName="{style.document}">
+							<g:HTML styleName="reset" ui:field='container' wordWrap='true' />
+						</g:VerticalPanel>
+					</g:ScrollPanel>
+				</g:center>
+				<g:south size="0">
+					<g:ScrollPanel styleName="{style.editor}" ui:field="sldScrollPanel" >
+						<g:VerticalPanel styleName="{style.document}">
+							<g:HTML styleName="reset" ui:field='sldcontainer' wordWrap='true' />
+						</g:VerticalPanel>
+					</g:ScrollPanel>
+				</g:south>
+			</g:SplitLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 

@@ -75,6 +75,8 @@ import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
+import solutions.aon.seg.social.objects.WorkerLiquidation;
+
 public class PayrollServletUtils extends AonServletUtils {
 
 	protected static class RAttach {
@@ -660,6 +662,7 @@ public class PayrollServletUtils extends AonServletUtils {
 		return epoch.getTime();
 	}
 
+
 	public static Collection<Salary> getSalary(Connection connection, Condition where, SortField<?> ...sortFields)
 			throws ManagerBeanException {
 		
@@ -684,32 +687,7 @@ public class PayrollServletUtils extends AonServletUtils {
 			WorkplaceRecord workplaceRecord = record.into(com.esferalia.aon.jooq.tables.Workplace.WORKPLACE);
 			EnterpriseRecord enterpriseRecord = record.into(com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE);
 
-			Salary salary = new Salary() {
-				@Override
-				public Collection<SalaryCost> getCosts() throws SalaryException {
-					return getSalaryCosts();
-				}
-				@Override
-				public Collection<SalaryCost> getCostS() throws SalaryException {
-					return getSalaryCosts();
-				}
-				@Override
-				public Collection<SalaryBonus> getBonus() throws SalaryException {
-					return getSalaryBonus();
-				}
-				@Override
-				public Collection<SalaryPayment> getPaymentS() throws SalaryException {
-					return getSalaryPayments();
-				}
-				@Override
-				public Collection<SalaryDeduction> getDeductionS() throws SalaryException {
-					return getSalaryDeductions();
-				}
-				
-				public Collection<SalaryEmbargo> getEmbargoS() throws SalaryException {
-					return getSalaryEmbargos();
-				}
-			};
+			Salary salary = newSalary();
 			salary.setId(salaryRecord.getId());
 			salary.setDomain(salaryRecord.getDomain());
 
@@ -941,6 +919,36 @@ public class PayrollServletUtils extends AonServletUtils {
 		.collect(Collectors.toList())
 		;
 		
+	}
+
+	protected static Salary newSalary() {
+		Salary salary = new Salary() {
+			@Override
+			public Collection<SalaryCost> getCosts() throws SalaryException {
+				return getSalaryCosts();
+			}
+			@Override
+			public Collection<SalaryCost> getCostS() throws SalaryException {
+				return getSalaryCosts();
+			}
+			@Override
+			public Collection<SalaryBonus> getBonus() throws SalaryException {
+				return getSalaryBonus();
+			}
+			@Override
+			public Collection<SalaryPayment> getPaymentS() throws SalaryException {
+				return getSalaryPayments();
+			}
+			@Override
+			public Collection<SalaryDeduction> getDeductionS() throws SalaryException {
+				return getSalaryDeductions();
+			}
+			
+			public Collection<SalaryEmbargo> getEmbargoS() throws SalaryException {
+				return getSalaryEmbargos();
+			}
+		};
+		return salary;
 	}
 
 	public static Collection<IrpfResult> getIrpfResult(Connection connection, Condition where){

@@ -67,6 +67,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	String getCostReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException;
 
+	String getSLDCalcReceiptHTML(String domain, String user, Cost cost, Salary.Type types[], int zoom)
+			throws IllegalArgumentException;
+
 	String getIrpfReceiptHTML(String domain, Irpf irpf, int zoom)
 			throws IllegalArgumentException;
 

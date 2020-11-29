@@ -188,6 +188,13 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
+	public void getSLDCalcReceiptHTML(String domain, String user, Cost cost, Salary.Type types[], int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getSLDCalcReceiptHTML(domain, user, cost, types, zoom,
+				new AsyncCallbackWrapper<String>(callback));
+	}
+
 	public void getSalaryReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();

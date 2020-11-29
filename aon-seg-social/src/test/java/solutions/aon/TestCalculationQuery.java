@@ -233,8 +233,8 @@ public class TestCalculationQuery {
 	public void testWorkersCalculationQueryOk() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
-			Collection<Map<String,WorkerLiquidation>> liq=SistemaRED_I.workersCalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
-			for (Map<String, WorkerLiquidation> map : liq) {
+			Map<String,Map<String,WorkerLiquidation>> liq=SistemaRED_I.workersCalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+			for (Map<String, WorkerLiquidation> map : liq.values()) {
 				Iterator<String> it=map.keySet().iterator();
 				while(it.hasNext()) {
 					System.out.println(map.get(it.next()));

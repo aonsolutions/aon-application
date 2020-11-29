@@ -72,6 +72,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getCostReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
+	void getSLDCalcReceiptHTML(String domain, String user, Cost cost, Salary.Type types[], int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException;
+
 	void getIrpfReceiptHTML(String domain, Irpf irpf, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 

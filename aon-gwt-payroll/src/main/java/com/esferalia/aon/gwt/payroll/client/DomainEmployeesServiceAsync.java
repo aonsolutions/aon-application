@@ -213,6 +213,11 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getCostReceiptHTML(getCurrentDomainName(), cost, types, zoom, callback);
 	}
 
+	public void getSLDCalcReceiptHTML(Cost cost, Type[] types, int zoom, AsyncCallback<String> callback)
+			throws IllegalArgumentException {
+		employeesServiceAsync.getSLDCalcReceiptHTML(getCurrentDomainName(), getCurrentUser(), cost, types, zoom, callback);
+	}
+
 	public void getIrpfReceiptHTML(Irpf irpf, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException {
 		employeesServiceAsync.getIrpfReceiptHTML(getCurrentDomainName(),  irpf, zoom, callback);

@@ -185,6 +185,13 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
+	public void getSLDCalcReceiptHTML(String domain, String user,Cost cost, Type[] types, int zoom, AsyncCallback<String> callback)
+			throws IllegalArgumentException {
+		failure(callback);
+
+	}
+
+	@Override
 	public void getIrpfReceiptHTML(String domain, Irpf irpf, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException {
 		failure(callback);

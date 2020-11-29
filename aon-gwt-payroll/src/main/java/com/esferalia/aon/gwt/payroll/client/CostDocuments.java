@@ -69,6 +69,12 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements
 				getSalaryTypes(), zoom, callback);
 	}
 
+	public void getSLDAsHTML(int zoom, AsyncCallback<String> callback) {
+		Cost cost = costs.get(getCurrentIndex());
+		employeesService.getSLDCalcReceiptHTML(cost,
+				getSalaryTypes(), zoom, callback);
+	}
+
 	@Override
 	public String[] getSupportedFormats() {
 		return new String[] { "xls" };

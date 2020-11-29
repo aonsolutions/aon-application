@@ -66,6 +66,20 @@ public class SistemaRED {
 		return SistemaRED_Employee.getEmployee(certificateInputStream, certificatePassword, certificateType,regimen,  ccc, nss);
 	}
 	
+	public static Map<String,Map<String, WorkerLiquidation>> getCosts(final byte certificateData [], final String certificatePassword,
+			final String certificateType, String regimen, String ccc, Date startDate, Date endDate) throws SegSocialException {
+		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {		
+			return getCosts(certificateInputStream, certificatePassword, certificateType, regimen, ccc, startDate, endDate);
+		} catch ( IOException e ) {
+			throw new SegSocialException(e);
+		}
+	}	
+
+	public static Map<String,Map<String, WorkerLiquidation>>  getCosts(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regimen, String ccc, Date startDate, Date endDate) throws SegSocialException {	
+		return SistemaRED_I.workersCalculationQueryByCCC(certificateInputStream, certificatePassword, certificateType, ccc, Regime.fromValue(regimen), startDate, endDate, LiquidationType.TODAS, LiquidationOrigin.TODAS);
+	}
+		
 	
 	public static byte[] getTA(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
@@ -132,13 +146,13 @@ public class SistemaRED {
 		}
 	}
 	
-	public static Collection<Map<String, WorkerLiquidation>> getWorkersLiquidationsByCCC(final InputStream certificateInputStream, final String certificatePassword,
+	public static Map<String,Map<String, WorkerLiquidation>> getWorkersLiquidationsByCCC(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String ccc, final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
 			final LiquidationOrigin liqOrigin) throws SegSocialException{
 		return SistemaRED_I.workersCalculationQueryByCCC(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
 	}
 	
-	public static Collection<Map<String, WorkerLiquidation>> getWorkersLiquidationsByCCC(final byte[] certificateData, final String certificatePassword,
+	public static Map<String,Map<String, WorkerLiquidation>> getWorkersLiquidationsByCCC(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, final String ccc, final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
 			final LiquidationOrigin liqOrigin) throws SegSocialException{
 		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {		
