@@ -425,7 +425,7 @@ function renderTable(list, fullRender = false) {
         tbody += getDocumentsTableDOM(list);
     } else {
         tbody+= '' +
-            '<tr>'+
+            '<tr class="document-list-empty">'+
                 '<td colspan="' + window.numberOfColumns + '">'+
                     '<div class="row">'+
                         '<div class="col-12 text-center">'+
@@ -450,7 +450,7 @@ function renderCards(list, fullRender = false) {
     if (list.length) {
         cards = getDocumentsCardsDOM(list);
     } else {
-        cards = '<div class="text-center">No existen datos para mostrar</div>';
+        cards = '<div class="text-center document-list-empty">No existen datos para mostrar</div>';
     }
 
     if (window.intersectionObserverIsSupported && !fullRender) {

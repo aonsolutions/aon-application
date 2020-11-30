@@ -451,7 +451,7 @@ export function UploadDocumentos(){
                                     erroresPHP(recorrido, documentResponse.message);
                                 } else if (window.intersectionObserverIsSupported) {
                                     // Formateamos los datos del documento y lo añadimos a la lista de elementos
-                                    const formattedDocumentData = formatDocumentData(documentResponse.datos, window.foldersByID, window.subfolders);
+                                    const formattedDocumentData = formatDocumentData(documentResponse.datos);
 
                                     list.push(formattedDocumentData);
                                 }
@@ -462,8 +462,19 @@ export function UploadDocumentos(){
                                 const documentsTable = getDocumentsTableDOM(list);
                                 const documentsCards = getDocumentsCardsDOM(list);
 
-                                $('#tabla_documentos tbody').prepend(documentsTable);
-                                $('#doc_cards_list').prepend(documentsCards);
+                                if (list.length) {
+                                    // Comprobamos si se ha introducido algún filtro de búsqueda
+                                    if ($('.aonSearchBox').val().length) {
+                                        // Si es así, borramos el filtro de búsqueda y forzamos la recarga del listado
+                                        $('.aonSearchBox').val('').trigger('keyup');
+                                    } else {
+                                        // Si no, simplemente añadimos los documentos subidos al listado
+                                        $('#tabla_documentos tbody').prepend(documentsTable);
+                                        $('#doc_cards_list').prepend(documentsCards);
+    
+                                        $('.document-list-empty').remove();
+                                    }
+                                }
                             }
 
                             if (!uploadError) {
