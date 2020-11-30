@@ -119,10 +119,8 @@
                                         <form method="post" id="formulario_tramite" enctype="multipart/form-data">
                                             <div class="row">
                                                 <div class="col-12 col-md-6">
-                                                    <select class="atp_input" id="tipo_tramite" name="tipo_solicitud">
+                                                    <select class="atp_input" id="tipo_tramite" name="tipo_tramite">
                                                         <option value="0">Elija el tipo de trámite</option>
-                                                        <option value="1">Solicitud de impuestos</option>
-                                                        <option value="2">Alta empleado</option>
                                                     </select>
                                                     <label class="d-none errores error-tipo-solicitud text-ayudat font-weight-bold">Debe seleccionar el tipo de trámite</label>
                                                 </div>
@@ -220,6 +218,24 @@
                                 name : "Administración"
                             }
                         },
+                        tramites : {
+                            0 : {
+                                id : "impuestos",
+                                name : "Solicitud de impuestos"
+                            },
+                            1 : {
+                                id : "alta_empleado",
+                                name : "Alta empleado"
+                            },
+                            2 : {
+                                id : "baja_empleado",
+                                name : "Baja empleado"
+                            },
+                            3 : {
+                                id : "solicita_vacaciones",
+                                name : "Solicitar vacaciones"
+                            }
+                        },
                         user : {
                             ccaa : "desconocida",
                             name : "Pepito",
@@ -238,6 +254,13 @@
                         let posting = nuevoTicket.postings[prop];
                         // Agregamos el valor
                         $('#postings').append("<option value='"+posting.id+"'>"+posting.name+"</option>");
+                    }
+                    
+                    // Rellenamos los trámites posibles
+                    for(const t in nuevoTicket.tramites){
+                        let tramite = nuevoTicket.tramites[t];
+                        // Agregamos el valor
+                        $('#tipo_tramite').append("<option value='"+tramite.id+"'>"+tramite.name+"</option>");
                     }
                     
                     if(nuevoTicket.user.almaModule){
@@ -583,6 +606,99 @@
                     return 0;
                 }
                 
+                var datos = camposTramites(tramite);
+                
+                generaFormularioTramite(datos);
+            });
+            
+            function generaFormularioTramite(jsonTramiteForm){
+                var postings = ["Programación", "Calidad", "Administración"];
+                
+                if(!$.isEmptyObject(jsonTramiteForm)){
+                    var select = postings[jsonTramiteForm.postings];
+                    
+                    $('#postings_tramite').attr('value', select);
+                    $('.labelPostingsTramite').removeClass('d-none');
+                    
+                    $("#headerCardTramite").html(jsonTramiteForm.header);
+                    
+                    var formTramite = "";
+                    for(const i in jsonTramiteForm.inputs){
+                        var input = jsonTramiteForm.inputs[i];
+                        
+                        switch(input.type){
+                            case "input":
+                                formTramite += "<div class='col-12 col-md-6 mt-2'>";
+                                    formTramite += "<label class='d-block atp_inputs' for='"+input.name+"'>";
+                                        formTramite += "<input type='text' id='"+input.name+"' name='"+input.name+"' class='setAttributeInput' value='"+input.value+"'/>";
+                                        formTramite += "<span>"+input.placeholder+"</span>";
+                                    formTramite += "</label>";
+                                formTramite += "</div>";
+                                break;
+                                
+                            case "date":
+                                formTramite += "<div class='col-12 col-md-6 mt-2'>";
+                                    formTramite += "<label class='d-block atp_inputs' for='"+input.name+"'>";
+                                        formTramite += "<input type='date' id='"+input.name+"' name='"+input.name+"' value=''/>";
+                                        formTramite += "<span>"+input.placeholder+"</span>";
+                                    formTramite += "</label>";
+                                formTramite += "</div>";
+                                break;
+                                
+                            case "number":
+                                formTramite += "<div class='col-12 col-md-6 mt-2'>";
+                                    formTramite += "<label class='d-block atp_inputs' for='"+input.name+"'>";
+                                        formTramite += "<input type='number' id='"+input.name+"' name='"+input.name+"' class='setAttributeInput' value='"+input.value+"'/>";
+                                        formTramite += "<span>"+input.placeholder+"</span>";
+                                    formTramite += "</label>";
+                                formTramite += "</div>";
+                                break;
+
+                            case "select":
+                                formTramite += "<div class='col-12 col-md-6 mt-2'>";
+                                    formTramite += "<select class='d-block atp_input' id='"+input.name+"' name='"+input.name+"'>";
+                                        formTramite += "<option>"+input.placeholder+"</option>";
+                                        for(const j in input.options){
+                                            var optionSelect = input.options[j];
+                                            
+                                            formTramite += "<option value='"+optionSelect.value+"'>"+optionSelect.name+"</option>";
+                                        }
+                                    formTramite += "</select>";
+                                formTramite += "</div>";
+                                break;
+
+                            case "textarea":
+                                formTramite += "<div class='col-12 mt-2'>";
+                                    formTramite += "<label class='d-block atp_inputs' for='"+input.name+"'>";
+                                        formTramite += "<textarea id='"+input.name+"' name='"+input.name+"' rows='3' placeholder=' '></textarea>";
+                                        formTramite += "<span>"+input.placeholder+"</span>";
+                                    formTramite += "</label>";
+                                formTramite += "</div>";
+                                break;
+                                
+                            default:
+                                break;
+                        }
+                    }
+                    
+                    var buttons = "";
+                    for(const j in jsonTramiteForm.buttons){
+                        var button = jsonTramiteForm.buttons[j];
+                        
+                        buttons += "<button type='button' class='btn btn-"+button.type+" mr-2 buttonTramiteAction' data-action='"+button.action+"'>"+button.value+"</button>";
+                    }
+                    
+                    $(".div_tramite_campos").html(formTramite);
+                    $('.buttonsTramite').html(buttons);
+                    $('.cardTramiteCampos').removeClass('d-none');
+                } else {
+                    $(".div_tramite_campos").empty();
+                    $('.buttonsTramite').empty();
+                    $("#postings_tramite").empty();
+                }
+            }
+            
+            function camposTramites(tramite){
                 var campos = {
                     impuestos : {
                         header : "Modelo 303",
@@ -611,7 +727,7 @@
                     },
                     alta_empleado : {
                         header : "Datos de empleado",
-                        postings : 1,
+                        postings : 2,
                         inputs : {
                             0 : {
                                 type : "input",
@@ -644,8 +760,97 @@
                         },
                         buttons : {
                             0 : {
-                                action : "enviar_tramite",
-                                value : "Enviar trámite",
+                                action : "solicita_alta",
+                                value : "Solicitar alta",
+                                type : 'success'
+                            }
+                        }
+                    },
+                    baja_empleado : {
+                        header : "Datos de empleado",
+                        postings : 2,
+                        inputs : {
+                            0 : {
+                                type : "input",
+                                name : "name",
+                                placeholder : "Nombre",
+                                value : '',
+                                readonly : false
+                            },
+                            1 : {
+                                type : "input",
+                                name : "apellido",
+                                placeholder : "Apellidos",
+                                value : '',
+                                readonly : false
+                            },
+                            2 : {
+                                type : "input",
+                                name : "cif",
+                                placeholder : "CIF",
+                                value : '',
+                                readonly : false
+                            },
+                            3 : {
+                                type : "date",
+                                name : "fecha_baja",
+                                placeholder : "Fecha de la baja",
+                                value : '',
+                                readonly : false
+                            },
+                            4 : {
+                                type : "number",
+                                name : "vacaciones_baja",
+                                placeholder : "Días de vacaciones no disfrutados",
+                                value : '',
+                                readonly : false
+                            },
+                            5 : {
+                                type : "number",
+                                name : "importe_baja",
+                                placeholder : "Importe de indemnización pactada",
+                                value : '',
+                                readonly : false
+                            },
+                            6 : {
+                                type : "textarea",
+                                name : "motivo_baja",
+                                placeholder : "Motivo de la baja",
+                                value : '',
+                                readonly : false
+                            }
+                        },
+                        buttons : {
+                            0 : {
+                                action : "solicita_baja",
+                                value : "Solicitar baja",
+                                type : 'success'
+                            }
+                        }
+                    },
+                    solicita_vacaciones : {
+                        header : "Solicitud de vacaciones",
+                        postings : 2,
+                        inputs : {
+                            0 : {
+                                type : "date",
+                                name : "desde",
+                                placeholder : "Fecha inicio",
+                                value : '',
+                                readonly : false
+                            },
+                            1 : {
+                                type : "date",
+                                name : "hasta",
+                                placeholder : "Fecha hasta",
+                                value : '',
+                                readonly : false
+                            }
+                        },
+                        buttons : {
+                            0 : {
+                                action : "solicita_vacaciones",
+                                value : "Solicitar vacaciones",
                                 type : 'success'
                             }
                         }
@@ -654,74 +859,21 @@
                 
                 var datos = {};
                 switch(tramite){
-                    case "1":
+                    case "impuestos":
                         datos = campos.impuestos;
                         break;
-                    case "2":
+                    case "alta_empleado":
                         datos = campos.alta_empleado;
+                        break;
+                    case "baja_empleado":
+                        datos = campos.baja_empleado;
+                        break;
+                    case "solicita_vacaciones":
+                        datos = campos.solicita_vacaciones;
                         break;
                 }
                 
-                generaFormularioTramite(datos);
-            });
-            
-            function generaFormularioTramite(jsonTramiteForm){
-                var postings = ["Programación", "Calidad", "Administración"];
-                
-                if(!$.isEmptyObject(jsonTramiteForm)){
-                    var select = postings[jsonTramiteForm.postings];
-                    
-                    $('#postings_tramite').attr('value', select);
-                    $('.labelPostingsTramite').removeClass('d-none');
-                    
-                    $("#headerCardTramite").html(jsonTramiteForm.header);
-                    
-                    var formTramite = "";
-                    for(const i in jsonTramiteForm.inputs){
-                        var input = jsonTramiteForm.inputs[i];
-                        
-                        switch(input.type){
-                            case "input":
-                                formTramite += "<div class='col-12 col-md-6 mt-2'>";
-                                    formTramite += "<label class='d-block atp_inputs'>";
-                                        formTramite += "<input type='text' id='subject' name='"+input.name+"' class='setAttributeInput' value='"+input.value+"'/>";
-                                        formTramite += "<span>"+input.placeholder+"</span>";
-                                    formTramite += "</label>";
-                                formTramite += "</div>";
-                                break;
-                                
-                            case "date":
-                                break;
-                                
-                            case "number":
-                                break;
-
-                            case "select":
-                                break;
-
-                            case "textarea":
-                                break;
-                                
-                            default:
-                                break;
-                        }
-                    }
-                    
-                    var buttons = "";
-                    for(const j in jsonTramiteForm.buttons){
-                        var button = jsonTramiteForm.buttons[j];
-                        
-                        buttons += "<button type='button' class='btn btn-"+button.type+" mr-2 buttonTramiteAction' data-action='"+button.action+"'>"+button.value+"</button>";
-                    }
-                    
-                    $(".div_tramite_campos").html(formTramite);
-                    $('.buttonsTramite').html(buttons);
-                    $('.cardTramiteCampos').removeClass('d-none');
-                } else {
-                    $(".div_tramite_campos").empty();
-                    $('.buttonsTramite').empty();
-                    $("#postings_tramite").empty();
-                }
+                return datos;
             }
             
             $(document).on('change', '.setAttributeInput', function(){
