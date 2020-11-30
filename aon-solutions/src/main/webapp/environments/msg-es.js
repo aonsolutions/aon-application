@@ -15,7 +15,7 @@ export const AON_MSG_DUPLICATE_INVOICE = 'Duplicar Factura';
 export const AON_MSG_RECORD_INVOICE = 'Contabilizar Factura';
 export const AON_MSG_PENDING_INVOICES = 'Facturas Pendientes';
 export const AON_MSG_REJECTED_INVOICES = 'Facturas Rechazados';
-
+export const AON_MSG_ADD_INVOICE = 'Añadir Factura';
 
 export const AON_MSG_TICKET = 'Ticket';
 export const AON_MSG_TICKETS = 'Tickets';

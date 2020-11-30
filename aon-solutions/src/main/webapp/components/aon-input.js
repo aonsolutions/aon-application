@@ -101,7 +101,7 @@ export class AonInput extends AonElement {
 	set options(options) {
 		this.setAttribute('options', options);
   }
-  
+
   get pattern(){
     return this.getAttribute('pattern');
   }
@@ -122,11 +122,12 @@ export class AonInput extends AonElement {
           }
         });
       } else if(this.isTypeAddress()) {
-        let value = this.hasAttribute('value') ? JSON.parse(this.getAttribute('value')) : {
+        let value = (this.value && this.value != 'undefined') ? JSON.parse(this.value) : {
 					country: 'ES',
 					address: '',
 					zip: '',
 					city: '',
+
 					province: ''
 				};
 				let val = `${value.address}, ${value.zip} ${value.city}, ${value.province}, ${value.country}`;
@@ -145,7 +146,7 @@ export class AonInput extends AonElement {
       if(el){
         if(newValue == "false"){
           el.removeAttribute('disabled');
-        } else 
+        } else
           el.setAttribute('disabled', this.isDisabled());
       }
     }
@@ -229,7 +230,7 @@ export class AonInput extends AonElement {
       this.value = input.value;
 	    this.dispatchEvent(new Event('keyup'));
     });
-    
+
 
     input.addEventListener('blur', (e) => {
 	    this.dispatchEvent(new Event('blur'));
@@ -401,7 +402,7 @@ export class AonInput extends AonElement {
 
   buildAddressValue(val){
     this.value = val;
-    let value = this.hasAttribute('value') ? JSON.parse(this.getAttribute('value')) : {
+    let value = (this.value && this.value != 'undefined') ? JSON.parse(this.getAttribute('value')) : {
       country: 'ES',
       address: '',
       zip: '',
@@ -543,7 +544,7 @@ export class AonInput extends AonElement {
       load_i.classList.add("aonLoader");
       div_load.appendChild(load_i);
       label.appendChild(div_load);
-    } else if(!valor) 
+    } else if(!valor)
       div_load.remove();
   }
 

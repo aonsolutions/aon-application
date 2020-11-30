@@ -134,4 +134,16 @@ export class Invoice {
   isDraft() {
     return this.status === 'trash' || this.status === 'draft';
   }
+
+  getDate() {
+    return new Date(this.date);
+  }
+
+  getDateStr() {
+    let date = new Date(this.date);
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    return day + '/' + month + '/' + year;
+  }
 }

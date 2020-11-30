@@ -716,3 +716,10 @@ form {
   width: 1px;
   border: 0px;
 }
+
+.aonListText {
+  width: 80%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

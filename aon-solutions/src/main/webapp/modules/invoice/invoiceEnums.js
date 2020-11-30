@@ -86,5 +86,11 @@ export const InvoiceAction = {
     id: 'AddFile',
     name: MSG.AON_MSG_ADD_FILE,
     icon: 'attach_file'
+  },
+  ADD_INVOICE: {
+    id: 'AddInvoice',
+    name: MSG.AON_MSG_ADD_INVOICE,
+    icon: 'add'
   }
+
 }

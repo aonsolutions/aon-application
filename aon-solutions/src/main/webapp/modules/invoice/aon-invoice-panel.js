@@ -1,8 +1,9 @@
 import {AonElement} from '../../components/AonElement.js';
 import {insertInvoice, deleteInvoices} from '../../services/service.js';
 import {Invoice} from './Invoice.js';
+import {InvoiceAction} from './invoiceEnums.js';
 import './aon-invoice.js';
-import './aon-invoice-mobile.js';
+import './aon-mobile-invoice.js';
 import './aon-invoice-list.js';
 import './aon-mobile-invoice-list.js';
 
@@ -50,8 +51,12 @@ export class AonInvoicePanel extends AonElement {
 			}
 		});
 
-		aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
-		aonInvoice.addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
+		if(this.isMobile()) {
+			aonInvoice.addFloatOption(InvoiceAction.ADD_INVOICE,() => this.addInvoice());
+		} else {
+			aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
+			aonInvoice.addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
+		}
 
 		this.appendChild(input);
 
@@ -139,10 +144,18 @@ export class AonInvoicePanel extends AonElement {
 	addInvoice() {
 		let aonInvoice = this.getElement('aonInvoice');
 		let aonInvoiceToolbar = this.getElement(aonInvoice.TOOLBAR);
-		let button = this.getElement(aonInvoiceToolbar.TOOL_SECTION + 'AddButton');
+		let button = this.isMobile()
+			?	this.getElement('aonInvoiceAddInvoiceButton')
+			: this.getElement(aonInvoiceToolbar.TOOL_SECTION + 'AddButton');
 
-		const top  = button.getBoundingClientRect().top;
+		let height = window.innerHeight;
+		let top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
+
+		if((height - top) < (height / 2)) {
+				top = top - 135;
+		}
+
 		let d = document.getElementById('aonDialogAddOption');
 
 		let options = [{
@@ -202,8 +215,8 @@ export class AonInvoicePanel extends AonElement {
 		let aonInvoice = document.getElementById('aonInvoice');
 		if(this.isMobile()) {
 			aonInvoice.setContentHTML(invoice
-				? `<aon-invoice-mobile invoice='${JSON.stringify(invoice)}'> </aon-invoice-mobile>`
-				: `<aon-invoice-mobile type="${type}"> </maon-invoice-mobile>`);
+				? `<aon-mobile-invoice invoice='${JSON.stringify(invoice)}'> </aon-mobile-invoice>`
+				: `<aon-mobile-invoice type="${type}"> </aon-mobile-invoice>`);
 		} else {
 			aonInvoice.setContentHTML(invoice
 				? `<aon-invoice invoice='${JSON.stringify(invoice)}'> </aon-invoice>`

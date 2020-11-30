@@ -100,15 +100,17 @@ export class AonMobileInvoiceList extends AonElement {
     let receiver = inv.receiver && inv.receiver.name && !inv.receiver.name.isEmpty() ? inv.receiver.name.toUpperCase() : 'ACCREEDORES VARIOS';
     let sender =  inv.sender && inv.sender.name && !inv.sender.name.isEmpty() ? inv.sender.name.toUpperCase() : 'PROVEEDORES VARIOS';
 
-    let span2 = document.createElement('span');
-    span2.innerHTML = inv.isEmitida() ?  receiver : sender;
+    let div = document.createElement('div');
+    div.className = 'aonListText';
+    div.innerHTML = inv.isEmitida() ?  receiver : sender;
 
     let span3 = document.createElement('span');
     span3.className = 'aonLiSpanSubtitle';
-    span3.innerHTML = inv.total + ' €';
+
+    span3.innerHTML = inv.getDateStr() + ' - ' + inv.total + ' €';
 
     span.appendChild(i);
-    span.appendChild(span2);
+    span.appendChild(div);
     span.appendChild(span3);
     li.appendChild(span);
 

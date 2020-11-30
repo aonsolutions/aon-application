@@ -315,6 +315,17 @@ export class AonApplication extends AonElement {
 		this.getElement(this.CONTENT).appendChild(element);
   }
 
+	addFloatOption(action, fn) {
+		let span = this.getElement(this.id + 'FloatSpan') || this.createElement('span');
+		span.id = this.id + 'FloatSpan';
+		span.style.position = 'fixed';
+		span.style.right = '20px';
+		span.style.bottom = '70px';
+		span.innerHTML = `<aon-icon-button id="${this.id + action.id + 'Button'}" icon="${action.icon}" title="${action.name}" background="#f1f1f1"></aon-icon-button>`;
+		this.appendChild(span);
+		this.getElement(this.id + action.id + 'Button').addEventListener('click', fn);
+	}
+
   setContentHTML(html){
 		this.getElement(this.CONTENT).innerHTML = html;
   }

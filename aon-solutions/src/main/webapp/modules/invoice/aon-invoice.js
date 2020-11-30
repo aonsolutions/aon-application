@@ -122,7 +122,8 @@ export class AonInvoice extends AonElement {
 			document.getElementById('aonInvoiceItemFinanceCard').style.display = 'none';
 		}
 
-		this.buildInvoiceToolbar();
+		if(!this.isMobile())
+			this.buildInvoiceToolbar();
 
 		if(!this._invoice.file) {
 			let input = document.createElement('input');
@@ -290,17 +291,17 @@ export class AonInvoice extends AonElement {
 					comment: ta.value
 				};
 				this._invoice.comments.push(comment);
-				this.save();
 				this.buildComments();
 			}
 			this._invoice.status = CONSTANT.REFUSED;
 			this.save();
-			this.buildInvoiceToolbar();
+			if(!this.isMobile())
+				this.buildInvoiceToolbar();
 		});
 
 		let ta = this.getElement('commentTextArea');
 		ta.style.outline = 'none';
-		ta.style.width = '350px';
+		ta.style.width = '100%';
 		ta.style.height = '100px';
 		d.open();
 	}
@@ -308,13 +309,15 @@ export class AonInvoice extends AonElement {
 	trashInvoice() {
 		this._invoice.status = CONSTANT.TRASH;
 		this.save();
-		this.buildInvoiceToolbar();
+		if(!this.isMobile())
+			this.buildInvoiceToolbar();
 	}
 
 	restoreInvoice() {
 		this._invoice.status = CONSTANT.INBOX;
 		this.save();
-		this.buildInvoiceToolbar();
+		if(!this.isMobile())
+			this.buildInvoiceToolbar();
 	}
 
 	removeInvoice() {
@@ -380,7 +383,7 @@ export class AonInvoice extends AonElement {
 
 		let ta = this.getElement('commentTextArea');
 		ta.style.outline = 'none';
-		ta.style.width = '350px';
+		ta.style.width = '100%';
 		ta.style.height = '100px';
 		d.open();
 	}
