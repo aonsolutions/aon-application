@@ -135,13 +135,21 @@
         <script type="module">
             import { bidoq } from './aon-documental.js';
             import { getFileExtensionsConfig } from './upload.js'
-            import { AVAILABLE_OPTIONS, SINGLE_DOWNLOAD_OPTION, EDIT_OPTION, SINGLE_DELETE_OPTION, VIEW_NOTE_OPTION } from './toolbar_options.js';
-
-            const DOC_SENT_OPTIONS      = [SINGLE_DOWNLOAD_OPTION, EDIT_OPTION, SINGLE_DELETE_OPTION, VIEW_NOTE_OPTION];
-            const DOC_RECEIVED_OPTIONS  = [SINGLE_DOWNLOAD_OPTION, EDIT_OPTION];
+            import { AVAILABLE_OPTIONS, getAllowedOptions } from './toolbar_options.js';
+            import { getFoldersByID } from './table.js';
 
             $(document).ready(async function() {
-                const aonDocumentalContainer = window.parent.document.querySelector('aon-documental');
+                // Obtenemos el componente aon-application
+                window.aonDocumental = window.parent.document.getElementById('aonDocumental');
+                // Obtenemos el componente aon-documental
+                window.aonDocumentalContainer = window.parent.document.querySelector('aon-documental');
+
+                // Obtenemos las carpetas del cliente
+                window.folders = $(window.aonDocumental).data('folders');
+
+                // Obtenemos las carpetas y subcarpetas por ID
+                const foldersAndSubfolders = getFoldersByID(window.folders);
+                window.foldersByID = foldersAndSubfolders.foldersByID;
 
                 // ID del documento
                 const id   = new URLSearchParams(window.location.search).get('id');
@@ -161,6 +169,11 @@
                         const doc = response.datos;
                         const storedFileNameSplitted = doc.stored_file_name.split('.');
                         const extension = storedFileNameSplitted[storedFileNameSplitted.length - 1].toLowerCase();
+                        // Categoría del documento
+                        const category = (typeof window.foldersByID[doc.folder] !== 'undefined') ? {
+                            "id": doc.folder,
+                            "name": window.foldersByID[doc.folder].carpeta
+                        } : null;
 
                         //
                         // Marcar el documento como leído
@@ -171,9 +184,8 @@
                             }
 
                         // Almacenamos en una variable global la información del documento que estamos viendo actualmente
-                        window.currentFile = {id, type, ...doc};
+                        window.currentFile = {id, type, category, ...doc};
 
-                        window.aonDocumental = window.parent.document.getElementById('aonDocumental');
                         // Obtenemos las etiquetas del despacho del cliente
                         window.tags = $(window.aonDocumental).data('tags');
 
@@ -227,11 +239,12 @@
                         // Eliminamos todas las opciones de la barra de herramientas
                         window.aonDocumental.removeToolbarOptions();
 
-                        // Filtramos de todas las opciones disponibles las opciones que necesitamos en esta vista
-                        AVAILABLE_OPTIONS.filter((option) => {
-                            const optionsAllowed = (type === 'sent') ? DOC_SENT_OPTIONS : DOC_RECEIVED_OPTIONS;
+                        // Obtenemos las opciones permitidas sobre el documento
+                        const allowedOptions = getAllowedOptions(window.currentFile, false);
 
-                            return optionsAllowed.includes(option.name);
+                        // Filtramos de todas las opciones disponibles las opciones que permitimos
+                        AVAILABLE_OPTIONS.filter((option) => {
+                            return allowedOptions.includes(option.name);
                         }).map((option) => {
                             // Añadimos la opción a la barra de herramientas
                             window.aonDocumental.addToolbarOption(option.name, option.icon, option.fn, option.title);
@@ -360,10 +373,9 @@
 
                 // Filtrar por tag
                 $(document).on('click', '.documentTags', function () {
-                    const aonDocumentalContainer = window.parent.document.querySelector('aon-documental');
                     const tagID = $(this).data('tag');
 
-                    aonDocumentalContainer.loadIndex({tag: tagID});
+                    window.aonDocumentalContainer.loadIndex({tag: tagID});
                 });
 
             //

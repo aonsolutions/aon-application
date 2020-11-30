@@ -1,13 +1,11 @@
-import { CARPETA_A_CONTABILIZAR, CARPETA_CONTABILIZADOS, CARPETA_FISCAL, bidoq } from "./aon-documental.js";
-import { AVAILABLE_OPTIONS, MULTIPLE_DOWNLOAD_OPTION, ADD_NOTE_OPTION, MULTIPLE_DELETE_OPTION } from './toolbar_options.js';
+import { CARPETA_CONTABILIZADOS, CARPETA_FISCAL, bidoq } from "./aon-documental.js";
+import { AVAILABLE_OPTIONS, getAllowedOptions } from './toolbar_options.js';
 import { getFileExtensionsConfig } from './upload.js';
 
-const ITEMS_PER_PAGE = 50;
 const TYPES = {
     'sent': 'Enviado',
     'received': 'Recibido'
 };
-const intersectionObserverIsSupported = "IntersectionObserver" in window;
 
 export function getNumberOfColumns() {
     // Número de columnas base para la tabla, dependiendo de la carpeta seleccionada, etc. puede tener más o menos columnas
@@ -38,18 +36,18 @@ export function selectedFolderHasSubfolders() {
     return hasSubfolders;
 }
 
-export function formatDocumentData(document, foldersByID, subfolders) {
+export function formatDocumentData(document) {
     return {
         "id"                : document.id,
         "url"               : document.image,
         "date"              : document.date,
         "file_name"         : document.name,
         "stored_file_name"  : document.stored_file_name,
-        "category"          : (typeof foldersByID[document.service] !== 'undefined') ? {
+        "category"          : (typeof window.foldersByID[document.service] !== 'undefined') ? {
             "id": document.service,
-            "name": foldersByID[document.service].carpeta
+            "name": window.foldersByID[document.service].carpeta
         } : null,
-        "subfolder"         : (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
+        "subfolder"         : (document.subcarpeta !== null && typeof window.subfolders[document.subcarpeta] !== 'undefined') ? window.subfolders[document.subcarpeta] : '',
         "model"             : document.model,
         "year"              : document.year,
         "period"            : document.period,
@@ -64,9 +62,9 @@ export function getDocumentsTableDOM(list) {
     let documentsTableDOM = '';
 
     $.each(list, function(i, document) {
-        const allowedOptions = getAllowedOptions(document);
+        const allowedOptions = getAllowedOptions(document, true);
 
-        documentsTableDOM+= '<tr class="show_doc_container" data-allowed_options="' +  allowedOptions.join(',')+ '" data-id="' + document.id + '" data-type="' + document.type + '" data-file_name="' + document.file_name + '" data-tags="' + document.tags.map((tag) => tag.id).join(',') + '">';
+        documentsTableDOM+= '<tr class="show_doc_container" data-allowed_options="' +  allowedOptions.join(',')+ '" data-id="' + document.id + '" data-type="' + document.type + '" data-category="' + document.category.id + '" data-file_name="' + document.file_name + '" data-tags="' + document.tags.map((tag) => tag.id).join(',') + '">';
 
             // Columna para seleccionar documentos
             documentsTableDOM+= `<td>
@@ -99,6 +97,12 @@ export function getDocumentsTableDOM(list) {
                         const formattedDate = getFormattedDate(val);
                         documentsTableDOM+= `<td class="show_doc pointer">
                                     <span>${formattedDate}</span>
+                                </td>`;
+                        break;
+                    case 'uploaded_by':
+                        const truncatedUploadedBy = truncateString(val);
+                        documentsTableDOM+= `<td class="show_doc pointer" title="${val}">
+                                    <span>${truncatedUploadedBy}</span>
                                 </td>`;
                         break;
                     case 'file_name':
@@ -234,12 +238,37 @@ export function getFoldersByID(folders) {
     return {foldersByID, subfolders}
 }
 
-export const getList = async (page_this = 1) => {
-    const folder        = new URLSearchParams(window.location.search).get('folder');
-    const tagID         = new URLSearchParams(window.location.search).get('tag');
-    const uploadButton  = window.parent.document.getElementById('aonDocumentalToolbarSubirButton');
+export const getList = async ({page = 1, loading = false} = {}) => {
+    const ITEMS_PER_PAGE = (window.intersectionObserverIsSupported) ? 50 : 10;
+    const folder = new URLSearchParams(window.location.search).get('folder');
+    const tagID = new URLSearchParams(window.location.search).get('tag');
+    const uploadButton = window.parent.document.getElementById('aonDocumentalToolbarSubirButton');
 
-    if (intersectionObserverIsSupported) {
+    if (loading) {
+        $('table tbody').html(`
+            <tr id="tabla_documentos_loader">
+                <td colspan="8">
+                    <center class="pt-5">
+                        <div class="lds-ripple">
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </center>
+                </td>
+            </tr>
+        `);
+
+        $('#doc_cards_list').html(`
+            <center class="pt-5">
+                <div class="lds-ripple">
+                    <div></div>
+                    <div></div>
+                </div>
+            </center>
+        `);
+    }
+
+    if (window.intersectionObserverIsSupported) {
         $('#loader').removeClass('d-none');
     }
 
@@ -305,16 +334,22 @@ export const getList = async (page_this = 1) => {
     if (typeof window.folders !== 'undefined') {
         try {
             // Hacemos una petición a bidoq para obtener los documentos de la carpeta seleccionada
-            const defaultRequestData = {
+            let defaultRequestData = {
                 "method"    : "list_docs",
                 "carpeta"   : folder,
-                "pagina"    : page_this - 1,
+                "pagina"    : page - 1,
                 "limit"     : ITEMS_PER_PAGE
             };
 
-            const data = (tagID !== null)
-                ? await bidoq({...defaultRequestData, tagID})
-                : await bidoq(defaultRequestData);
+            if (tagID !== null) {
+                defaultRequestData['tagID'] = tagID;
+            }
+
+            if (window.aonDocumentalContainer.search !== null) {
+                defaultRequestData['busca'] = window.aonDocumentalContainer.search;
+            }
+
+            const data = await bidoq(defaultRequestData);
 
             const jsonData = JSON.parse(data).datos;
 
@@ -323,16 +358,16 @@ export const getList = async (page_this = 1) => {
                     const documents = jsonData.documentos;
 
                     if (typeof documents !== 'undefined') {
-                        page_this = jsonData.pagina_actual + 1;
+                        page = jsonData.pagina_actual + 1;
 
                         // Actualizamos el número de página actual almacenado en el elemento aon-documental
-                        window.aonDocumentalContainer.page = page_this;
+                        window.aonDocumentalContainer.page = page;
 
-                        const page_this_real    = page_this == 1 ? page_this : ((page_this - 1) * ITEMS_PER_PAGE) + 1;
+                        const page_this_real    = page == 1 ? page : ((page - 1) * ITEMS_PER_PAGE) + 1;
                         const page_total        = page_this_real + documents.length;
                         const page_this_element = !documents.length ? documents.length : page_this_real;
 
-                        const list = documents.map((document) => formatDocumentData(document, window.foldersByID, window.subfolders));
+                        const list = documents.map((document) => formatDocumentData(document));
 
                         const paginationList = {
                             list,
@@ -361,16 +396,16 @@ export const getList = async (page_this = 1) => {
 //
 // Renderizamos el listado a partir de los datos obtenidos
 //
-export const renderList = (data) => {
+export const renderList = (data, fullRender = false) => {
     const list = data.list;
 
     // Renderizamos la tabla para el modo de escritorio
-    renderTable(list);
+    renderTable(list, fullRender);
 
     // Renderizamos las tarjetas para el modo responsive
-    renderCards(list);
+    renderCards(list, fullRender);
 
-    if (intersectionObserverIsSupported) {
+    if (window.intersectionObserverIsSupported) {
         $('#loader').addClass('d-none');
 
         // Comprobamos que el observer no haya sido ya inicializado y que además el listado obtenido tenga más de una página
@@ -382,7 +417,7 @@ export const renderList = (data) => {
     }
 }
 
-function renderTable(list) {
+function renderTable(list, fullRender = false) {
     // Recorremos los datos a mostrar
     let tbody = '';
 
@@ -401,7 +436,7 @@ function renderTable(list) {
             '</tr>';
     }
 
-    if (intersectionObserverIsSupported) {
+    if (window.intersectionObserverIsSupported && !fullRender) {
         $('.table tbody').append(tbody);
     } else {
         // Agregamos el cuerpo de la tabla
@@ -409,7 +444,7 @@ function renderTable(list) {
     }
 }
 
-function renderCards(list) {
+function renderCards(list, fullRender = false) {
     let cards = '';
 
     if (list.length) {
@@ -418,7 +453,7 @@ function renderCards(list) {
         cards = '<div class="text-center">No existen datos para mostrar</div>';
     }
 
-    if (intersectionObserverIsSupported) {
+    if (window.intersectionObserverIsSupported && !fullRender) {
         $('#doc_cards_list').append(cards);
     } else {
         $('#doc_cards_list').html(cards);
@@ -476,7 +511,7 @@ async function getMoreDocsToScroll([entry], observer) {
         window.aonDocumentalContainer.page += 1;
 
         // Obtenemos los documentos de la siguiente página
-        const list = await getList(window.aonDocumentalContainer.page);
+        const list = await getList({page: window.aonDocumentalContainer.page});
 
         // Añadimos los nuevos elementos a la lista
         renderList(list);
@@ -567,23 +602,6 @@ function getPaginationDOM(page, page_total){
     paginate+= '</ul>';
 
     return paginate;
-}
-
-function getAllowedOptions(document) {
-    // Por defecto permitimos solo la opción de descargar
-    const allowedOptions = [MULTIPLE_DOWNLOAD_OPTION];
-
-    // Si el usuario ha enviado el documento, permitimos opciones adicionales
-    if (document.type === 'sent') {
-        allowedOptions.push(ADD_NOTE_OPTION);
-
-        // Solo puede eliminar los documentos de la carpeta "A contabilizar" enviados por él mismo
-        if (parseInt(document.category.id) === CARPETA_A_CONTABILIZAR) {
-            allowedOptions.push(MULTIPLE_DELETE_OPTION);
-        }
-    }
-
-    return allowedOptions;
 }
 
 function getFormattedDate(milliseconds) {

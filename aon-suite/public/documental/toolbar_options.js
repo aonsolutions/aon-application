@@ -1,7 +1,5 @@
-import { bidoq } from './aon-documental.js';
+import { bidoq, CARPETA_A_CONTABILIZAR } from './aon-documental.js';
 import { getList, renderList } from './table.js';
-
-const intersectionObserverIsSupported = "IntersectionObserver" in window;
 
 export const SINGLE_DOWNLOAD_OPTION = 'singleDownload';
 export const MULTIPLE_DOWNLOAD_OPTION = 'multipleDownload';
@@ -54,6 +52,36 @@ export const AVAILABLE_OPTIONS = [
         fn: multipleDeleteOption
     }
 ];
+
+export function getAllowedOptions(document, multiple) {
+    const download_option = (multiple) ? MULTIPLE_DOWNLOAD_OPTION : SINGLE_DOWNLOAD_OPTION;
+
+    // Por defecto permitimos solo la opción de descargar
+    const allowedOptions = [download_option];
+
+    // Si estamos viendo solo un documento, permitimos la opción de editar
+    if (!multiple) {
+        allowedOptions.push(EDIT_OPTION);
+    }
+
+    // Si el usuario ha enviado el documento, permitimos opciones adicionales
+    if (document.type === 'sent') {
+        const note_option = (multiple) ? ADD_NOTE_OPTION : VIEW_NOTE_OPTION;
+
+        allowedOptions.push(note_option);
+
+        // Solo puede eliminar los documentos de la carpeta "A contabilizar" enviados por él mismo
+        if (document.category !== null) {
+            if (parseInt(document.category.id) === CARPETA_A_CONTABILIZAR) {
+                const delete_option = (multiple) ? MULTIPLE_DELETE_OPTION : SINGLE_DELETE_OPTION;
+
+                allowedOptions.push(delete_option);
+            }
+        }
+    }
+
+    return allowedOptions;
+}
 
 function singleDownloadOption() {
     alert('Descargar documento');
@@ -114,13 +142,12 @@ async function singleDeleteOption() {
 
         type = (type === 'sent') ? 2 : 1;
 
-        const docs = [{id, type}];
+        const docs = [{id, type, service}];
 
         try {
             // Hacemos una petición a bidoq para eliminar el documento
             const data = await bidoq({
                 "method": "delete_docs",
-                service,
                 "docs": JSON.stringify(docs)
             });
 
@@ -150,35 +177,44 @@ async function singleDeleteOption() {
 }
 
 async function multipleDeleteOption() {
-    const confirmed = confirm('¿Estás seguro de que deseas eliminar los documentos de tipo "Enviado" seleccionados?');
+    const service = new URLSearchParams(window.location.search).get('folder');
+    let confirmText = '';
+
+    if (parseInt(service) === CARPETA_A_CONTABILIZAR) {
+        confirmText = '¿Estás seguro de que deseas eliminar los documentos de tipo "Enviado" seleccionados?';
+    } else {
+        confirmText = '¿Estás seguro de que deseas eliminar los documentos seleccionados de tipo "Enviado" que pertenezcan a la categoría "A contabilizar"?';
+    }
+
+    const confirmed = confirm(confirmText);
 
     if (confirmed) {
         // Filtramos los documentos seleccionados quitando aquellos que no tengan la opción de eliminar
-        const docs = $('.select_doc:checked').filter(function() {
+        const elementsToDelete = $('.select_doc:checked').filter(function() {
             const row = $(this).closest('tr');
             const allowedOptions = row.data('allowed_options').split(',');
 
             return ($.inArray(MULTIPLE_DELETE_OPTION, allowedOptions) !== -1);
-        }).map(function() {
+        });
+        const docsToDelete = elementsToDelete.map(function() {
             // Mapeamos el listado de objetos jQuery ya filtrado en un nuevo listado de objetos con las propiedades id y type
             const row = $(this).closest('tr');
             const id = row.data('id');
             const type = (row.data('type') === 'sent') ? 2 : 1;
+            const category = row.data('category');
 
             return {
                 id,
-                type
+                type,
+                "service": category
             };
         }).toArray(); // Obtenemos el listado de objetos jQuery como un array JS
 
         try {
-            const service = new URLSearchParams(window.location.search).get('folder');
-
             // Hacemos una petición a bidoq para eliminar los documentos seleccionados
             const data = await bidoq({
                 "method": "delete_docs",
-                service,
-                "docs": JSON.stringify(docs)
+                "docs": JSON.stringify(docsToDelete)
             });
 
             const response = JSON.parse(data);
@@ -187,7 +223,11 @@ async function multipleDeleteOption() {
                 let failedToDeleteIDs = [];
 
                 if (typeof response.code !== 'undefined' && response.code === 0) {
-                    avisoFlotante('Los documentos de tipo "Enviado" seleccionados han sido eliminados con éxito');
+                    if (parseInt(service) === CARPETA_A_CONTABILIZAR) {
+                        avisoFlotante('Los documentos de tipo "Enviado" seleccionados han sido eliminados con éxito');
+                    } else {
+                        avisoFlotante('Los documentos seleccionados de tipo "Enviado" que pertenecen a la categoría "A contabilizar" han sido eliminados con éxito');
+                    }
                 } else {
                     if (typeof response['1047'] !== 'undefined') {
                         response['1047'].forEach((document) => {
@@ -211,9 +251,9 @@ async function multipleDeleteOption() {
                 }
 
                 try {
-                    if (intersectionObserverIsSupported) {
-                        // Recorremos los documentos seleccionados
-                        $('.select_doc:checked').each(function() {
+                    if (window.intersectionObserverIsSupported) {
+                        // Recorremos los elementos que vamos a eliminar
+                        elementsToDelete.each(function() {
                             // Obtenemos el ID del documento
                             const documentContainer = $(this).closest('.show_doc_container');
                             const id = documentContainer.data('id');
@@ -223,8 +263,17 @@ async function multipleDeleteOption() {
                                 $(`.show_doc_container[data-id="${id}"]`).remove();
                             }
                         });
+
+                        // Comprobamos si tras borrar los documentos del DOM, queda algún documento seleccionado
+                        if ($('.select_doc:checked').length) {
+                            // Si hay algún documento seleccionado, forzamos un cambio en el checkbox de estos, de manera que se actualicen las opciones de la barra de herramientas
+                            $('.select_doc:checked').trigger('change');
+                        } else {
+                            // Si no hay ningún documento seleccionado, borramos todas las opciones de la barra de herramientas
+                            window.aonDocumental.removeToolbarOptions();
+                        }
                     } else {
-                        const list = await getList(window.aonDocumentalContainer.page);
+                        const list = await getList({page: window.aonDocumentalContainer.page});
 
                         renderList(list);
                     }
