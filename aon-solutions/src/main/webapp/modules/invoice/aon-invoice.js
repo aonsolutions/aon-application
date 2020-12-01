@@ -482,7 +482,7 @@ export class AonInvoice extends AonElement {
 
 		// TOTAL
 		let tdTotal = document.createElement('td');
-		tdTotal.innerHTML = `<aon-input id="total" description="${MSG.AON_MSG_TOTAL}"></aon-input>`;
+		tdTotal.innerHTML = `<aon-number id="total" description="${MSG.AON_MSG_TOTAL}" format="true"></aon-number>`;
 		tr.appendChild(tdTotal);
 		let total = document.getElementById('total');
 		total.value = this._invoice.total;
@@ -617,7 +617,7 @@ export class AonInvoice extends AonElement {
 
 		let tdTotalSuplidos = document.createElement('td');
 		tdTotalSuplidos.setAttribute('colspan', '1');
-		tdTotalSuplidos.innerHTML = `<aon-input id="totalSuplidos" description="${MSG.AON_MSG_TOTAL_SUPPLIED}"></aon-input>`;
+		tdTotalSuplidos.innerHTML = `<aon-number id="totalSuplidos" description="${MSG.AON_MSG_TOTAL_SUPPLIED}" format="true"></aon-number>`;
 		trSuplidos.appendChild(tdTotalSuplidos);
 		let totalSuplidos = this.getElement('totalSuplidos');
 		totalSuplidos.value = this._invoice.suplidos.total;
@@ -714,6 +714,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	updateTotal(value) {
+		alert(value);
 		this._invoice.total = Number(value);
 		if(!this.isTicket()) this.createTaxeFromTotal();
 		this.save();
@@ -769,7 +770,7 @@ export class AonInvoice extends AonElement {
 
 		// DETAIL QUANTITY
 		let tdDetailQuantity = document.createElement('td');
-		tdDetailQuantity.innerHTML = `<aon-input id="detailQuantity${i}" description="${MSG.AON_MSG_QUANTITY}"></aon-input>`;
+		tdDetailQuantity.innerHTML = `<aon-number id="detailQuantity${i}" description="${MSG.AON_MSG_QUANTITY}" format="true"></aon-number>`;
 		tr.appendChild(tdDetailQuantity);
 		let detailQuantity = document.getElementById('detailQuantity' + i);
 		detailQuantity.value = detail.quantity;
@@ -777,7 +778,7 @@ export class AonInvoice extends AonElement {
 
 		// DETAIL PRICE
 		let tdDetailPrice = document.createElement('td');
-		tdDetailPrice.innerHTML = `<aon-input id="detailPrice${i}" description="${MSG.AON_MSG_PRICE}"></aon-input>`;
+		tdDetailPrice.innerHTML = `<aon-number id="detailPrice${i}" description="${MSG.AON_MSG_PRICE}" format="true"></aon-number>`;
 		tr.appendChild(tdDetailPrice);
 		let detailPrice = document.getElementById('detailPrice' + i);
 		detailPrice.value = detail.price;
@@ -785,7 +786,7 @@ export class AonInvoice extends AonElement {
 
 		// DETAIL DISCOUNT
 		let tdDetailDiscount = document.createElement('td');
-		tdDetailDiscount.innerHTML = `<aon-input id="detailDiscount${i}" description="%Dto"></aon-input>`;
+		tdDetailDiscount.innerHTML = `<aon-number id="detailDiscount${i}" description="%Dto" format="true"></aon-number>`;
 		tr.appendChild(tdDetailDiscount);
 		let detailDiscount = document.getElementById('detailDiscount' + i);
 		detailDiscount.value = detail.discount;
@@ -793,7 +794,7 @@ export class AonInvoice extends AonElement {
 
 		// DETAIL AMOUNT
 		let tdDetailAmount = document.createElement('td');
-		tdDetailAmount.innerHTML = `<aon-input id="detailAmount${i}" description="${MSG.AON_MSG_AMOUNT}"></aon-input>`;
+		tdDetailAmount.innerHTML = `<aon-number id="detailAmount${i}" description="${MSG.AON_MSG_AMOUNT}" format="true"></aon-number>`;
 		tr.appendChild(tdDetailAmount);
 		let detailAmount = document.getElementById('detailAmount' + i);
 		detailAmount.readonly = 'readonly';
@@ -937,7 +938,7 @@ export class AonInvoice extends AonElement {
 
 		// TAXBASE
 		let tdTaxBase = document.createElement('td');
-		tdTaxBase.innerHTML = `<aon-input id="taxBase${i}" description="Base"></aon-input>`;
+		tdTaxBase.innerHTML = `<aon-number id="taxBase${i}" description="Base" format="true"></aon-number>`;
 		tr.appendChild(tdTaxBase);
 		let taxBase = document.getElementById('taxBase' + i);
 		taxBase.value = tax.base;
@@ -945,7 +946,7 @@ export class AonInvoice extends AonElement {
 
 		// TAXQUOTA
 		let tdTaxQuota = document.createElement('td');
-		tdTaxQuota.innerHTML = `<aon-input id="taxQuota${i}" description="Cuota"></aon-input>`;
+		tdTaxQuota.innerHTML = `<aon-number id="taxQuota${i}" description="Cuota" format="true"></aon-number>`;
 		tr.appendChild(tdTaxQuota);
 		let taxQuota = document.getElementById('taxQuota' + i);
 		taxQuota.addEventListener('change', () => this.updateTaxQuota(i));
@@ -1155,7 +1156,7 @@ export class AonInvoice extends AonElement {
 
 		// FINANCE AMOUNT
 		let tdFinanceAmount = document.createElement('td');
-		tdFinanceAmount.innerHTML = `<aon-input id="financeAmount${i}" description="${MSG.AON_MSG_AMOUNT}"></aon-input>`;
+		tdFinanceAmount.innerHTML = `<aon-number id="financeAmount${i}" description="${MSG.AON_MSG_AMOUNT}" format="true"></aon-number>`;
 		tr.appendChild(tdFinanceAmount);
 		let financeAmount = document.getElementById('financeAmount' + i);
 		financeAmount.value = finance.amount;

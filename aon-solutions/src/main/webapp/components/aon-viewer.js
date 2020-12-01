@@ -2,6 +2,8 @@ import {AonElement} from './AonElement.js';
 
 export class AonViewer extends AonElement {
 
+	_scale;
+
 	get id() {
 		return this.getAttribute('id');
 	}
@@ -36,9 +38,15 @@ export class AonViewer extends AonElement {
 
 	constructor () {
 		super();
+		this._scale = 1;
 	}
 
 	connectedCallback () {
+		let divCanvas = this.createElement('div');
+		divCanvas.id = 'aonViewerCanvasDiv';
+		divCanvas.style.width = '100%';
+		this.appendChild(divCanvas);
+
 		if(this.type && this.type.includes('pdf')){
 			this.printPdf();
 		} else if(this.type && this.type.includes('image')){
@@ -102,6 +110,13 @@ export class AonViewer extends AonElement {
 		ajustar.style.bottom = '120px';
 		ajustar.innerHTML = `<aon-icon-button id="aonViewerButtonsDivAjustar" icon="zoom_out_map" background="#f1f1f1"></aon-icon-button>`;
 		div.appendChild(ajustar);
+		this.getElement('aonViewerButtonsDivAjustar').addEventListener('click', () => {
+			document.querySelectorAll('canvas').forEach((item, i) => {
+				item.remove();
+			});
+			this._scale = 1;
+			this.printPdf(this._scale);
+		});
 
 		let zoomPlus = this.createElement('span');
 		zoomPlus.style.position = 'fixed';
@@ -109,6 +124,13 @@ export class AonViewer extends AonElement {
 		zoomPlus.style.bottom = '70px';
 		zoomPlus.innerHTML = `<aon-icon-button id="aonViewerButtonsDivZoomPlus" icon="zoom_in" background="#f1f1f1"></aon-icon-button>`;
 		div.appendChild(zoomPlus);
+		this.getElement('aonViewerButtonsDivZoomPlus').addEventListener('click', () => {
+			document.querySelectorAll('canvas').forEach((item, i) => {
+				item.remove();
+			});
+			this._scale = this._scale - 0.25;
+			this.printPdf(this._scale);
+		});
 
 		let zoomMinus = this.createElement('span')
 		zoomMinus.style.position = 'fixed';
@@ -116,6 +138,13 @@ export class AonViewer extends AonElement {
 		zoomMinus.style.bottom = '20px';
 		zoomMinus.innerHTML = `<aon-icon-button id="aonViewerButtonsDivZoomMinus" icon="zoom_out" background="#f1f1f1"></aon-icon-button>`;
 		div.appendChild(zoomMinus);
+		this.getElement('aonViewerButtonsDivZoomMinus').addEventListener('click', () => {
+			document.querySelectorAll('canvas').forEach((item, i) => {
+				item.remove();
+			});
+			this._scale = this._scale + 0.25;
+			this.printPdf(this._scale);
+		});
 	}
 
 	printImage() {
@@ -126,8 +155,8 @@ export class AonViewer extends AonElement {
 		this.appendChild(img);
 	}
 
-	printPdf() {
-		let me = this;
+	printPdf(scalation) {
+		let div = this.getElement('aonViewerCanvasDiv');
 		let width = this.getAttribute('width');
 		// this.innerHTML = `<script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>`;
 		// let canvas = document.createElement('canvas');
@@ -158,12 +187,12 @@ export class AonViewer extends AonElement {
 			for(let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++){
 				let canvas = document.createElement('canvas');
 				canvas.id = 'canvas' + pageNumber;
-				me.appendChild(canvas);
+				div.appendChild(canvas);
 
   			pdf.getPage(pageNumber).then(function(page) {
     			console.log('Page loaded');
 
-					let scale = 1;
+					let scale = scalation || 1;
     			let viewport = page.getViewport({scale});
 					if(width) {
 						scale = width / viewport.width;

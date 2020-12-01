@@ -172,7 +172,7 @@ export class AonMobileInvoice extends AonInvoice {
 
     // TOTAL
     let tdTotal = document.createElement('td');
-    tdTotal.innerHTML = `<aon-input id="total" description="Total"></aon-input>`;
+    tdTotal.innerHTML = `<aon-number id="total" description="Total" format="true"></aon-number>`;
     tr1.appendChild(tdTotal);
     let total = document.getElementById('total');
     total.value = this._invoice.total;
@@ -305,7 +305,7 @@ export class AonMobileInvoice extends AonInvoice {
 
     let tdTotalSuplidos = document.createElement('td');
     tdTotalSuplidos.setAttribute('colspan', '1');
-    tdTotalSuplidos.innerHTML = `<aon-input id="totalSuplidos" description="${MSG.AON_MSG_TOTAL_SUPPLIED}"></aon-input>`;
+    tdTotalSuplidos.innerHTML = `<aon-number id="totalSuplidos" description="${MSG.AON_MSG_TOTAL_SUPPLIED}" format="true"></aon-number>`;
     trSuplidos.appendChild(tdTotalSuplidos);
     let totalSuplidos = this.getElement('totalSuplidos');
     totalSuplidos.value = this._invoice.suplidos.total;
@@ -357,7 +357,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// DETAIL AMOUNT
 		let tdDetailAmount = document.createElement('td');
-		tdDetailAmount.innerHTML = `<aon-input id="detailAmount${i}" description="Importe"></aon-input>`;
+		tdDetailAmount.innerHTML = `<aon-number id="detailAmount${i}" description="Importe" format="true"></aon-number>`;
 		tr.appendChild(tdDetailAmount);
 		let detailAmount = document.getElementById('detailAmount' + i);
 		detailAmount.readonly = 'readonly';
@@ -410,7 +410,7 @@ export class AonMobileInvoice extends AonInvoice {
     // DETAIL QUANTITY
     let tdDetailQuantity = document.createElement('td');
     tdDetailQuantity.setAttribute('colspan','1');
-    tdDetailQuantity.innerHTML = `<aon-input id="dialogDetailQuantity${i}" description="Cantidad"></aon-input>`;
+    tdDetailQuantity.innerHTML = `<aon-number id="dialogDetailQuantity${i}" description="Cantidad" format="true"></aon-number>`;
     tr2.appendChild(tdDetailQuantity);
     let detailQuantity = document.getElementById('dialogDetailQuantity' + i);
     detailQuantity.value = detail.quantity;
@@ -419,7 +419,7 @@ export class AonMobileInvoice extends AonInvoice {
     // DETAIL PRICE
     let tdDetailPrice = document.createElement('td');
     tdDetailPrice.setAttribute('colspan','1');
-    tdDetailPrice.innerHTML = `<aon-input id="dialogDetailPrice${i}" description="Precio"></aon-input>`;
+    tdDetailPrice.innerHTML = `<aon-number id="dialogDetailPrice${i}" description="Precio" format="true"></aon-number>`;
     tr2.appendChild(tdDetailPrice);
     let detailPrice = document.getElementById('dialogDetailPrice' + i);
     detailPrice.value = detail.price;
@@ -431,7 +431,7 @@ export class AonMobileInvoice extends AonInvoice {
     // DETAIL DISCOUNT
     let tdDetailDiscount = document.createElement('td');
     tdDetailDiscount.setAttribute('colspan','1');
-    tdDetailDiscount.innerHTML = `<aon-input id="dialogDetailDiscount${i}" description="%Dto"></aon-input>`;
+    tdDetailDiscount.innerHTML = `<aon-number id="dialogDetailDiscount${i}" description="%Dto" format="true"></aon-number>`;
     tr3.appendChild(tdDetailDiscount);
     let detailDiscount = document.getElementById('dialogDetailDiscount' + i);
     detailDiscount.value = detail.discount;
@@ -498,7 +498,7 @@ export class AonMobileInvoice extends AonInvoice {
 		// FINANCE AMOUNT
 		let tdFinanceAmount = document.createElement('td');
 		tdFinanceAmount.setAttribute('colspan','2');
-		tdFinanceAmount.innerHTML = `<aon-input id="dialogFinanceAmount${i}" description="Importe"></aon-input>`;
+		tdFinanceAmount.innerHTML = `<aon-number id="dialogFinanceAmount${i}" description="Importe" format="true"></aon-number>`;
 		tr3.appendChild(tdFinanceAmount);
 		let financeAmount = document.getElementById('dialogFinanceAmount' + i);
 		financeAmount.value = finance.amount;
@@ -536,7 +536,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// FINANCE AMOUNT
 		let tdFinanceAmount = document.createElement('td');
-		tdFinanceAmount.innerHTML = `<aon-input id="financeAmount${i}" description="Importe"></aon-input>`;
+		tdFinanceAmount.innerHTML = `<aon-number id="financeAmount${i}" description="Importe" format="true"></aon-number>`;
 		tr.appendChild(tdFinanceAmount);
 		let financeAmount = document.getElementById('financeAmount' + i);
 		financeAmount.value = finance.amount;

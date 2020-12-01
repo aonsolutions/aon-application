@@ -179,7 +179,7 @@ export class AonNumber extends AonElement {
             if(reg.test(keyChar)) ev.preventDefault();
             this.dispatchEvent(new Event('keypress'));
         });
-  
+
         input.addEventListener('focus', ({target}) => {
             let value = target.value;
             if(value) input.value = this.onFocus(value);
@@ -196,6 +196,13 @@ export class AonNumber extends AonElement {
             this.dispatchEvent(new Event('blur'));
         });
 
+        input.addEventListener('change', ({target}) => {
+          let value = target.value;
+          if(value) {
+              let newValue = this.onBlur(value);
+              this.value = this.onFocus(newValue);
+          }
+        });
 
         label.appendChild(input);
 
@@ -242,8 +249,8 @@ export class AonNumber extends AonElement {
         let newValue = value;
         let decimals = this.decimals || 0;
         if(this.format){
-            newValue = new Intl.NumberFormat(this.LOCALE,  { minimumFractionDigits: decimals }).format(value.replace(",",".")); 
-        } 
+            newValue = new Intl.NumberFormat(this.LOCALE,  { minimumFractionDigits: decimals }).format(value.replace(",","."));
+        }
         return newValue;
     }
 
