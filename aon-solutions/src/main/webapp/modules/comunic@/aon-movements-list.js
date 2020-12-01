@@ -108,7 +108,7 @@ export class AonMovementsList extends AonElement {
 			let toast = this.getElement(`divToast`);
 			try {
 				await postDeleteMov(data);
-				toast.start({message:`${data.situation == "AL" ? "Alta" : "Baja"} eliminada!`, type: 'success'});
+				toast.start({message:`${data.situation == "AL" ? "Alta" : "Baja"} eliminada!`});
 				el.remove(); //delete td
 			} catch (error) { 
 				toast.start({message:error, type: 'error'});

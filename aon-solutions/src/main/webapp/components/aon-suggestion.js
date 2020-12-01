@@ -1,4 +1,4 @@
-import {AonElement} from './AonElement.js';
+import { AonElement } from './AonElement.js';
 
 import './aon-input.js';
 export class AonSuggestion extends AonElement {
@@ -10,13 +10,13 @@ export class AonSuggestion extends AonElement {
     return ['value', 'readonly', 'title'];
   }
 
-	get id() {
-		return this.getAttribute('id');
-	}
+  get id() {
+    return this.getAttribute('id');
+  }
 
-	set id(id) {
-		this.setAttribute('id', id);
-	}
+  set id(id) {
+    this.setAttribute('id', id);
+  }
 
   get name() {
     return this.getAttribute('name');
@@ -52,37 +52,37 @@ export class AonSuggestion extends AonElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     //console.log(`attribute ${name} change!! ${newValue}`);
-    if('value' === name  && this.getElement(this.INPUT)) {
+    if ('value' === name && this.getElement(this.INPUT)) {
       this.getElement(this.INPUT).value = newValue;
     }
 
-    if('readonly' === name && this.getElement(this.INPUT)){
+    if ('readonly' === name && this.getElement(this.INPUT)) {
       this.getElement(this.INPUT).readonly = newValue;
     }
 
-    if('title' === name && this.getElement(this.INPUT)){
+    if ('title' === name && this.getElement(this.INPUT)) {
       this.getElement(this.INPUT).description = newValue;
     }
   }
 
-	constructor () {
-		super();
+  constructor() {
+    super();
     this.INPUT = this.id + 'Input';
     this.OPTIONS = this.id + 'Options'
   }
 
-	connectedCallback () {
-		this.innerHTML = `
+  connectedCallback() {
+    this.innerHTML = `
       <aon-input id="${this.INPUT}"  description="${this.title}" name="${this.name}"></aon-input>
 		`;
     this.build();
-	}
+  }
 
   build() {
     let input = this.getElement(this.INPUT);
     input.addEventListener('keyup', () => {
-			this.value = input.value;
-	    this.dispatchEvent(new Event('keyup'));
+      this.value = input.value;
+      this.dispatchEvent(new Event('keyup'));
     });
 
     let div = this.getElement(input.DIV);
@@ -101,12 +101,12 @@ export class AonSuggestion extends AonElement {
     let div = this.getElement(this.OPTIONS);
     div.classList.add('is-visible');
 
-    if(options.length === 0) return div;
+    if (options.length === 0) return div;
 
     let ul = this.createElement('ul');
     ul.className = 'aonInputListOptionsUl';
     ul.setAttribute('for', this.getAttribute('id') + 'Icon');
-    for(let i = 0; i < options.length; i++) {
+    for (let i = 0; i < options.length; i++) {
       let li = this.createElement('li');
       li.className = 'aonInputListOptionsItem'
       li.innerHTML = options[i].name;
@@ -115,16 +115,16 @@ export class AonSuggestion extends AonElement {
         this.value = options[i].value;
         let input = this.getElement(this.INPUT);
         input.value = options[i].name;
-        this.dispatchEvent(new CustomEvent('select', {detail: options[i]}));
+        this.dispatchEvent(new CustomEvent('select', { detail: options[i] }));
       });
       ul.appendChild(li);
     }
     div.appendChild(ul)
 
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
       let isClickInside = div.contains(event.target);
-      if(!isClickInside){
-        if(div.classList.contains('is-visible')){
+      if (!isClickInside) {
+        if (div.classList.contains('is-visible')) {
           div.classList.remove('is-visible');
         }
       }
@@ -135,6 +135,10 @@ export class AonSuggestion extends AonElement {
     this.getElement(this.INPUT).addIcon(icon, color);
   }
 
+  removeIcon() {
+    this.getElement(this.INPUT).removeIcon();
+  }
+
   addIconButton(icon, fn) {
     this.getElement(this.INPUT).addIconButton(icon, fn);
   }
@@ -142,14 +146,14 @@ export class AonSuggestion extends AonElement {
   loading(start) {
     this.getElement(this.INPUT).loading(start);
   }
- 
+
 
   closeOptions() {
     let div = this.getElement(this.OPTIONS);
-    if(div.classList.contains('is-visible')){
+    if (div.classList.contains('is-visible')) {
       div.classList.remove('is-visible');
     }
   }
 }
 
-window.customElements.define('aon-suggestion',  AonSuggestion);
+window.customElements.define('aon-suggestion', AonSuggestion);

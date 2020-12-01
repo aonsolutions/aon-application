@@ -1,4 +1,4 @@
-import {AonElement} from './AonElement.js';
+import { AonElement } from './AonElement.js';
 
 export class AonToast extends AonElement {
 
@@ -11,11 +11,11 @@ export class AonToast extends AonElement {
 		this.setAttribute('id', id);
 	}
 
-	constructor () {
+	constructor() {
 		super();
 	}
 
-	connectedCallback () {
+	connectedCallback() {
 		this.innerHTML = `
 			<div id="aonToast" class="aonToast"></div>
 		`;
@@ -23,23 +23,21 @@ export class AonToast extends AonElement {
 
 	start(options) {
 		let toast = this.getElement('aonToast');
-		let {message, delay, type} = options;
+		let { message, delay, type } = options;
 		let color = '#333';
-		
-		if(!delay) delay = 3000;
-        if(type === 'error') color = '#f44336';
-        else if(type === 'success') color = '#4caf50';
-		else if(type === 'primary') color = '#2196f3';
-		
-        toast.className = "show";
-        toast.innerHTML = message; 
+
+		if (!delay) delay = 3000;
+		if (type === 'error') color = '#f44336';
+		else if (type === 'success') color = '#4CAF6E';
+		else if (type === 'primary') color = '#2196f3';
+
+		toast.className = "show";
+		toast.innerHTML = message;
 		toast.style.background = color;
-		
-		setTimeout(()=> 
-			toast.className = toast.className.replace("show", "")
-		, delay);
+
+		setTimeout(() => toast.className = toast.className.replace("show", ""), delay);
 	}
 
 }
 
-window.customElements.define('aon-toast',  AonToast);
+window.customElements.define('aon-toast', AonToast);

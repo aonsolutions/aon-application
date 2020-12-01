@@ -1,6 +1,5 @@
 package solutions.aon.seg.social;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -12,7 +11,6 @@ import java.util.GregorianCalendar;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
@@ -34,7 +32,7 @@ import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
-import solutions.aon.seg.social.toolkit.Toolkit;
+//import solutions.aon.seg.social.toolkit.Toolkit;
 
 
 public class SistemaREDMov {
@@ -342,8 +340,13 @@ public class SistemaREDMov {
 		  
 		  formDatos.getInputByName("ipf6NumeroDocumento").setValueAttribute(ipf);
 		  formDatos.getInputByName("primerApellido").setValueAttribute(apellido1);
-		  if(apellido2 == null) formDatos.getInputByName("checkApellido2").setChecked(true);
-		  else formDatos.getInputByName("segundoApellido").setValueAttribute(apellido2);
+		  if( apellido2 !=null && !apellido2.trim().isEmpty()) {
+			  formDatos.getInputByName("segundoApellido").setValueAttribute(apellido2);
+		  } 
+		  else {
+			  formDatos.getInputByName("checkApellido2").setChecked(true);
+		  }
+		  
     	  htmlPage = formDatos.getInputByName("SPM.ACC.Continuar").click();
     	  handleSegSocialExceptions(htmlPage);
    

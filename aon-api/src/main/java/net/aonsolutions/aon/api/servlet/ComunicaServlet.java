@@ -119,6 +119,7 @@ public class ComunicaServlet extends HttpServlet{
 		catch (Exception e) {
             e.printStackTrace(); 
 			resp.setStatus(500);
+	
 			content = gjson.toJson(e.getMessage()).getBytes();
 		}
 		resp.setContentType("text/html");

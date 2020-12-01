@@ -85,8 +85,8 @@ export class AonAltaDirecta extends AonElement {
         aonTrabajadorCard.setContentHTML(`
             <div class="aonCol-sm-12 aonCol-md-4">
                 <aon-switch id="switchDni" title="Buscar por DNI"></aon-switch>
-                <div id= "${this.ID}Reiniciar" hidden>
-                    Reiniciar <aon-icon-button id="${this.ID}IConSearch" icon="refresh"> </aon-icon-button>
+                <div id="${this.ID}Reiniciar" hidden>
+                    Reiniciar <aon-icon-button id="${this.ID}IConSearch" icon="cached"> </aon-icon-button>
                 </div>
             </div>
             <div class="aonCol-sm-12 aonCol-md-4">
@@ -94,9 +94,6 @@ export class AonAltaDirecta extends AonElement {
             </div>
             <div class="aonCol-sm-12 aonCol-md-4">
                 <div id="${this.ID}DivDni"></div>
-            </div>
-            <div class="aonCol-sm-12">
-                <aon-input name="nombre" id="nombre" description="Nombre" type="text" disabled="true"></aon-input>
             </div>
             <div id="div_apellidos" hidden>
                 <div class="aonCol-sm-12 aonCol-md-6">
@@ -108,6 +105,9 @@ export class AonAltaDirecta extends AonElement {
                 <div class="aonCol-sm-1 aonCol-md-1">
                     <aon-icon-button id="iconSegSocial" icon="search"> </aon-icon-button>
                 </div>
+            </div>  
+            <div class="aonCol-sm-12">
+                <aon-input name="nombre" id="nombre" description="Nombre" type="text" disabled="true"></aon-input>
             </div>
         `);
 
@@ -139,7 +139,7 @@ export class AonAltaDirecta extends AonElement {
                     <aon-number name="coefparcial" id="coefparcial" description="Coeficiente Parcial"></aon-number>
                 </div>
             </div>
-            <aon-input name="situation" id="situation" description="Situacion" value="AL" visible="false"></aon-input>
+            <aon-input name="situation" id="situation" description="situation" value="AL" visible="false"></aon-input>
         `);
 
         let aonAltaDirectaSubmit = this.getElement(`${this.ID}Submit`);
@@ -155,12 +155,12 @@ export class AonAltaDirecta extends AonElement {
 
 
         let aonAltaDirectaDni = this.getElement(`${this.ID}DivDni`);
-        aonAltaDirectaDni.innerHTML = `<aon-suggestion id="${this.ID}Dni" title="DNI/NIE" name="ipf"></aon-suggestion>`;
-        aonAltaDirectaDni.setAttribute('disabled',true);
-        
+        aonAltaDirectaDni.innerHTML = `<aon-suggestion id="${this.ID}Dni" title="DNI/NE" name="ipf"></aon-suggestion>`;
+        aonAltaDirectaDni.setAttribute('disabled', true);
+
         let aonAltaDirectaNss = this.getElement(`${this.ID}DivNss`);
         aonAltaDirectaNss.innerHTML = `<aon-suggestion id="${this.ID}Nss" title="NSS/NAF" name="nss"></aon-suggestion>`;
-     
+
         this.getElement(`${this.ID}NssInput`).addEventListener('blur', (e) => {
             this.comprobarNss(e);
         });
@@ -177,14 +177,18 @@ export class AonAltaDirecta extends AonElement {
         });
 
         let switchDni = this.getElement('switchDni');
-        switchDni.addEventListener('change', ({target}) => {
+        switchDni.addEventListener('change', ({ target }) => {
             let div_apellidos = this.getElement('div_apellidos');
-            this.getElement(`${this.ID}DniInput`).disabled = !target.checked;
-            this.getElement(`${this.ID}NssInput`).disabled = target.checked;
+            let nssInput = this.getElement(`${this.ID}NssInput`);
+            let dniInput = this.getElement(`${this.ID}DniInput`);
+            nssInput.disabled = target.checked;
+            dniInput.disabled = !target.checked;
+            dniInput.value = nssInput.value = "";
             div_apellidos.hidden = target.checked;
             div_apellidos.hidden = !target.checked;
+            nssInput.removeIcon();
         });
-        
+
         this.getElement('coefparcial').addEventListener('blur', (e) => this.calculoHoras());
 
         this.getElement('iconSegSocial').addEventListener('click', (e) => this.getNaf());
@@ -275,10 +279,10 @@ export class AonAltaDirecta extends AonElement {
         } catch (error) { }
     }
 
-    async listCuentaCotizacion(e) {
-        let { detail: { ccc: cccs } } = e;
-        let ctaCti = this.getElement('ctaCti');
+    listCuentaCotizacion(e) {
         try {
+            let { detail: { ccc: cccs } } = e;
+            let ctaCti = this.getElement('ctaCti');
             ctaCti.options = JSON.stringify(
                 cccs.map(r => {
                     return {
@@ -400,36 +404,36 @@ export class AonAltaDirecta extends AonElement {
             let nombre = this.getElement('nombre');
             let dni = this.getElement('aonAltaDirectaDni');
             dni.value = nombre.value = "";
-
             if (mod < 10) mod = '0' + mod;
             if (value.length > 11 && mod == last_nss) {
+                nss_sugges.removeIcon();
                 nss_sugges.loading(true);
                 await this.getIpf(ev);
                 nss_sugges.loading(false);
-            } else { 
-               nss_sugges.addIcon("error", "#B42000"); //incorrect
+            } else {
+                nss_sugges.addIcon("error", "#B42000"); //incorrect
             }
         }
     }
 
-    async getIpf({target}) {
-        
+    async getIpf({ target }) {
+
         let nombre = this.getElement('nombre');
         let dni = this.getElement('aonAltaDirectaDni');
-        const resp = await getIpfxnaf({ nss:target.value }).then(r => r.length ? r[0] : null).catch(e => null);
+        const resp = await getIpfxnaf({ nss: target.value }).then(r => r.length ? r[0] : null).catch(e => null);
         if (resp) {
             nombre.value = resp.name;
             dni.value = resp.ipf.toString().substring(1);
             this.getElement('aonAltaDirectaNss').value = resp.nss;
             this.disabledCardTrabajor(true);
-        } 
+        }
     }
 
 
     async formSubmit() {
-        let aonAltaDirectaForm = this.getElement(`${this.ID}Form`);
-        let formJson = serializeForm(aonAltaDirectaForm);
-        let toast = this.getElement(`${this.ID}Toast`);
+        const aonAltaDirectaForm = this.getElement(`${this.ID}Form`);
+        const formJson = serializeForm(aonAltaDirectaForm);
+        const toast = this.getElement(`${this.ID}Toast`);
         try {
             await postAltaDirecta(formJson);
             toast.start({ message: 'Alta procesada!', type: 'success', delay: 3000 });
@@ -439,14 +443,15 @@ export class AonAltaDirecta extends AonElement {
     }
 
     async getNaf() {
-        let ipf = this.getElement('aonAltaDirectaDni');
-        let apellido1 = this.getElement('apellido1');
-        let apellido2 = this.getElement('apellido2');
-        const nss_sugges = this.getElement(`${this.ID}Nss`); //SUGGESTION
+        const aonAltaDirectaForm = this.getElement(`${this.ID}Form`);
+        const ipf = aonAltaDirectaForm.querySelector(`#${this.ID}Dni`);
+        const apellido1 = aonAltaDirectaForm.querySelector('#apellido1');
+        const nss_sugges = aonAltaDirectaForm.querySelector(`#${this.ID}Nss`); //SUGGESTION
         if (ipf && ipf.value && apellido1) {
             nss_sugges.loading(true);
             try {
-                const resp = await getNafxipf({ ipf: ipf.value, apellido1: apellido1.value, apellido2: apellido2.value });
+                const formJson = serializeForm(aonAltaDirectaForm);
+                const resp = await getNafxipf(formJson);
                 if (resp) {
                     nss_sugges.value = resp.nss;
                     this.getElement('nombre').value = resp.name;
@@ -457,17 +462,21 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
-    disabledCardTrabajor(vl){
-        let fields = document.querySelectorAll(`#${this.ID}TrabajadorCard aon-input:not(#nombre)`);
+    disabledCardTrabajor(vl) {
+        let fields = document.querySelectorAll(`#${this.ID}TrabajadorCard aon-input`);
         let switchDni = this.getElement('switchDni');
         fields.forEach(el => {
             el.disabled = vl;
-            if(!vl) el.value = '';
+            if (!vl) el.value = '';
         });
         switchDni.hidden = vl;
         switchDni.checked = false;
-        this.getElement('div_apellidos').hidden = true;
         this.getElement(`${this.ID}Reiniciar`).hidden = !vl;
+        this.getElement('div_apellidos').hidden = true;
+        if (!vl) {
+            this.getElement(`${this.ID}DniInput`).disabled = true;
+            this.getElement(`nombre`).disabled = true;
+        }
     }
 
     testFieldValues() {
