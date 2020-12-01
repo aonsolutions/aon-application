@@ -611,9 +611,9 @@
                 generaFormularioTramite(datos);
             });
             
+            var postings = ["Programación", "Calidad", "Administración"];
+            
             function generaFormularioTramite(jsonTramiteForm){
-                var postings = ["Programación", "Calidad", "Administración"];
-                
                 if(!$.isEmptyObject(jsonTramiteForm)){
                     var select = postings[jsonTramiteForm.postings];
                     
@@ -685,7 +685,7 @@
                     for(const j in jsonTramiteForm.buttons){
                         var button = jsonTramiteForm.buttons[j];
                         
-                        buttons += "<button type='button' class='btn btn-"+button.type+" mr-2 buttonTramiteAction' data-action='"+button.action+"'>"+button.value+"</button>";
+                        buttons += "<button type='button' class='btn btn-"+button.type+" mr-2 buttonTramiteAction' data-action='"+button.action+"' data-posting='"+select+"'>"+button.value+"</button>";
                     }
                     
                     $(".div_tramite_campos").html(formTramite);
@@ -751,9 +751,206 @@
                                 readonly : false
                             },
                             3 : {
+                                type : "input",
+                                name : "naf",
+                                placeholder : "NAF",
+                                value : '',
+                                readonly : false
+                            },
+                            4 : {
                                 type : "date",
                                 name : "fecha_nacimiento",
                                 placeholder : "Fecha de nacimiento",
+                                value : '',
+                                readonly : false
+                            },
+                            5 : {
+                                type : "input",
+                                name : "nacionalidad",
+                                placeholder : "Nacionalidad",
+                                value : '',
+                                readonly : false
+                            },
+                            6 : {
+                                type : "input",
+                                name : "domicilio",
+                                placeholder : "Domicilio",
+                                value : '',
+                                readonly : false
+                            },
+                            7 : {
+                                type : "input",
+                                name : "cp",
+                                placeholder : "Código Postal",
+                                value : '',
+                                readonly : false
+                            },
+                            8 : {
+                                type : "select",
+                                name : "estudios",
+                                placeholder : "Nivel de estudios",
+                                value : '',
+                                options : {
+                                    0 : {
+                                        value : 0,
+                                        name : "Educación primaria o equivalente"
+                                    },
+                                    1 : {
+                                        value : 1,
+                                        name : "Educación secundaria o equivalente"
+                                    },
+                                    2 : {
+                                        value : 2,
+                                        name : "Bachillerato o equivalente"
+                                    },
+                                    3 : {
+                                        value : 3,
+                                        name : "FP medio o equivalente"
+                                    },
+                                    4 : {
+                                        value : 4,
+                                        name : "FP superior o equivalente"
+                                    },
+                                    5 : {
+                                        value : 5,
+                                        name : "Diplomado, Ingenierias técnicas o 1er ciclo universidad"
+                                    },
+                                    6 : {
+                                        value : 6,
+                                        name : "Grados universitarios"
+                                    },
+                                    7 : {
+                                        value : 7,
+                                        name : "Licenciado, Ingenieros o 2º Ciclo universidad"
+                                    },
+                                    8 : {
+                                        value : 8,
+                                        name : "Máster"
+                                    },
+                                    9 : {
+                                        value : 9,
+                                        name : "Doctorado"
+                                    }
+                                },
+                                readonly : false
+                            },
+                            9 : {
+                                type : "select",
+                                name : "contrato",
+                                placeholder : "Tipo de contrato",
+                                value : '',
+                                options : {
+                                    0 : {
+                                        value : 0,
+                                        name : "Indefinido ordinario (sin bonificaciones)"
+                                    },
+                                    1 : {
+                                        value : 1,
+                                        name : "Indefinido bonificado (consultar al asesor)"
+                                    },
+                                    2 : {
+                                        value : 2,
+                                        name : "Temporal. Eventual*"
+                                    },
+                                    3 : {
+                                        value : 3,
+                                        name : "Temporal. Obra y servicio*"
+                                    },
+                                    4 : {
+                                        value : 4,
+                                        name : "Contrato en prácticas (consultar al asesor)"
+                                    },
+                                    5 : {
+                                        value : 5,
+                                        name : "Contrato de formación (consultar al asesor)"
+                                    },
+                                    6 : {
+                                        value : 6,
+                                        name : "Otros*"
+                                    }
+                                },
+                                readonly : false
+                            },
+                            10 : {
+                                type : "select",
+                                name : "duracion_jornada",
+                                placeholder : "Duración de la jornada",
+                                value : '',
+                                options : {
+                                    0 : {
+                                        value : 0,
+                                        name : "Jornada parcial"
+                                    },
+                                    1 : {
+                                        value : 1,
+                                        name : "Jornada completa"
+                                    }
+                                },
+                                readonly : false
+                            },
+                            11 : {
+                                type : "input",
+                                name : "dist_jornada",
+                                placeholder : "Distribución de la jornada (Ej.: Lunes a Jueves 09.00-14.00 y 16.00-19.00 y Viernes 09.00-14.00)",
+                                value : '',
+                                readonly : false
+                            },
+                            12 : {
+                                type : "select",
+                                name : "pagas_extra",
+                                placeholder : "Pagas extraordinarias",
+                                value : '',
+                                options : {
+                                    0 : {
+                                        value : 0,
+                                        name : "Prorrateadas mes a mes"
+                                    },
+                                    1 : {
+                                        value : 1,
+                                        name : "Al vencimiento (si lo permite el convenio)"
+                                    }
+                                },
+                                readonly : false
+                            },
+                            13 : {
+                                type : "input",
+                                name : "grupo_profesional",
+                                placeholder : "Grupo profesional o puesto de trabajo",
+                                value : '',
+                                readonly : false
+                            },
+                            14 : {
+                                type : "input",
+                                name : "centro_trabajo",
+                                placeholder : "Centro de trabajo (Si hay más de uno)",
+                                value : '',
+                                readonly : false
+                            },
+                            15 : {
+                                type : "date",
+                                name : "fecha_inicio_contrato",
+                                placeholder : "Fecha de inicio del contrato",
+                                value : '',
+                                readonly : false
+                            },
+                            16 : {
+                                type : "date",
+                                name : "fecha_fin_contrato",
+                                placeholder : "Fecha de fin de contrato",
+                                value : '',
+                                readonly : false
+                            },
+                            17 : {
+                                type : "textarea",
+                                name : "clausulas_adicionales",
+                                placeholder : "Clausulas adicionales a incluir en el contrato",
+                                value : '',
+                                readonly : false
+                            },
+                            18 : {
+                                type : "textarea",
+                                name : "sugerencias",
+                                placeholder : "Sugerencias",
                                 value : '',
                                 readonly : false
                             }
@@ -792,31 +989,83 @@
                                 readonly : false
                             },
                             3 : {
+                                type : "input",
+                                name : "naf",
+                                placeholder : "NAF",
+                                value : '',
+                                readonly : false
+                            },
+                            4 : {
                                 type : "date",
                                 name : "fecha_baja",
                                 placeholder : "Fecha de la baja",
                                 value : '',
                                 readonly : false
                             },
-                            4 : {
+                            5 : {
                                 type : "number",
                                 name : "vacaciones_baja",
                                 placeholder : "Días de vacaciones no disfrutados",
                                 value : '',
                                 readonly : false
                             },
-                            5 : {
+                            6 : {
+                                type : "input",
+                                name : "dias_baja_aclaracion",
+                                placeholder : "Aclaración días de vacaciones no disfrutados",
+                                value : '',
+                                readonly : false
+                            },
+                            7 : {
                                 type : "number",
                                 name : "importe_baja",
                                 placeholder : "Importe de indemnización pactada",
                                 value : '',
                                 readonly : false
                             },
-                            6 : {
-                                type : "textarea",
+                            8 : {
+                                type : "select",
                                 name : "motivo_baja",
                                 placeholder : "Motivo de la baja",
                                 value : '',
+                                options : {
+                                    0 : {
+                                        value : 0,
+                                        name : "Baja voluntaria"
+                                    },
+                                    1 : {
+                                        value : 1,
+                                        name : "Baja en periodo de prueba a instancia del trabajador"
+                                    },
+                                    2 : {
+                                        value : 2,
+                                        name : "Baja en periodo de prueba a instancia del empresario"
+                                    },
+                                    3 : {
+                                        value : 3,
+                                        name : "Fin de obra y servicio"
+                                    },
+                                    4 : {
+                                        value : 4,
+                                        name : "Fin del contrato"
+                                    },
+                                    5 : {
+                                        value : 5,
+                                        name : "Despido disciplinario"
+                                    },
+                                    6 : {
+                                        value : 6,
+                                        name : "Despido por causas objetivas*"
+                                    },
+                                    7 : {
+                                        value : 7,
+                                        name : "Otras (consultar al asesor)"
+                                    },
+                                    8 : {
+                                        value : 8,
+                                        name : "Fin de contrato temporal a instancia del trabajador (rechazo de prórroga)"
+                                    }
+                                },
                                 readonly : false
                             }
                         },
@@ -843,6 +1092,13 @@
                                 type : "date",
                                 name : "hasta",
                                 placeholder : "Fecha hasta",
+                                value : '',
+                                readonly : false
+                            },
+                            2 : {
+                                type : "textarea",
+                                name : "nota_vacaciones",
+                                placeholder : "Nota",
                                 value : '',
                                 readonly : false
                             }
@@ -882,8 +1138,31 @@
             
             $(document).on('click', '.buttonTramiteAction', function(){
                 var action = $(this).data('action');
+                var value = $(this).text();
+                var posting = $(this).data('posting');
                 
-                alert(action);
+                
+                
+                //
+                // Almacenamos en el Storage
+                //
+                var tramite = {
+                    type : value,
+                    createDate : Today(),
+                    from : NameRandom(),
+                    to : posting,
+                    status : 1
+                };
+                
+                // No tenemos datos
+                let dataCreate = {
+                    name : 'messenger-tramite', // tramites
+                    json : tramite
+                };
+                let data = createJsonApi(dataCreate);
+                
+                // Volvemos al index de trámites
+                document.location.href = "index_tramites.html";
             });
         </script>
         <!-- FIN Scripts -->
