@@ -22,7 +22,7 @@ class AonMessenger extends HTMLElement {
             {
                 name: 'Trámites',
                 icon: 'inbox',
-                fn: () => this.loadIndex()
+                fn: () => this.loadIndexTramites()
             },
             {
                 name: 'Nueva solicitud',
@@ -37,6 +37,11 @@ class AonMessenger extends HTMLElement {
     loadIndex() {
         let aonMessenger = document.getElementById('aonMessenger');
         aonMessenger.setContentHTML('<iframe src="./index.html" style="width:100%;height:100%;border:none;"></iframe>');
+    }
+    
+    loadIndexTramites() {
+        let aonMessenger = document.getElementById('aonMessenger');
+        aonMessenger.setContentHTML('<iframe src="./index_tramites.html" style="width:100%;height:100%;border:none;"></iframe>');
     }
 
     loadCreate() {
