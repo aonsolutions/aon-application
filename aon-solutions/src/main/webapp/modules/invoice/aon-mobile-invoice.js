@@ -19,6 +19,8 @@ export class AonMobileInvoice extends AonInvoice {
 
   connectedCallback () {
     this.innerHTML = `
+      <aon-card id="aonInvoiceItemFileCard" title="${MSG.AON_MSG_FILE}" style="display:none;"> </aon-card>
+
       <aon-card id="aonInvoiceItemCommentsCard" title="${MSG.AON_MSG_COMMENTS}" style="display:none;"> </aon-card>
 
 			<aon-card id="aonInvoiceItemDataCard" title="Datos Factura"> </aon-card>
@@ -33,7 +35,34 @@ export class AonMobileInvoice extends AonInvoice {
       this.buildOptions();
 	    this.build();
 		});
+
+    if(this._invoice.file || this._invoice.isEmitida()) {
+      let fileCard = this.getElement('aonInvoiceItemFileCard');
+      fileCard.style.display = 'block';
+      this.getElement(fileCard.TITLE).style.marginBottom = '0px';
+      fileCard.addTitleButton('visibility', () => this.openFileCard());
+    }
   }
+
+  openFileCard() {
+    let fileCard = this.getElement('aonInvoiceItemFileCard');
+    let w = this.getElement(fileCard.CONTENT).offsetWidth;
+    if(!this._invoice.file && this._invoice.isEmitida()){
+      let json = btoa(JSON.stringify(this._invoice));
+      let url = '/ms/api/download_invoice_pdf?json=' + json;
+      fileCard.setContentHTML(`<aon-viewer type="application/pdf" file="${url}" width="${w}"><aon-viewer>`);
+    } else {
+      fileCard.setContentHTML(`<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}" width="${w}"><aon-viewer>`);
+    }
+    fileCard.addTitleButton('visibility_off', () => this.closeFileCard());
+  }
+
+  closeFileCard() {
+    let fileCard = this.getElement('aonInvoiceItemFileCard');
+    fileCard.setContentHTML('');
+    fileCard.addTitleButton('visibility', () => this.openFileCard());
+  }
+
 
   buildOptions() {
     let aonInvoice = this.getElement('aonInvoice');

@@ -75,3 +75,5 @@ export const AON_MSG_VAT = 'VAT';
 
 export const AON_MSG_CANCEL = 'Cancel';
 export const AON_MSG_ACCEPT = 'Accept';
+
+export const AON_MSG_FILE = 'File';

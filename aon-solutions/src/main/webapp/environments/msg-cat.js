@@ -75,3 +75,5 @@ export const AON_MSG_VAT = 'IVA';
 
 export const AON_MSG_CANCEL = 'Cancel·lar';
 export const AON_MSG_ACCEPT = 'Acceptar';
+
+export const AON_MSG_FILE = 'Fitxer';

@@ -57,7 +57,9 @@ export class AonViewer extends AonElement {
 		this.addEventListener('mouseleave', () => {
 			div.style.display = 'none';
 		});
-		this.buildButtons();
+
+		if(!this.isMobile())
+			this.buildButtons();
 	}
 
 	removeButtons() {

@@ -100,3 +100,5 @@ export const AON_MSG_VAT = MSG.AON_MSG_VAT;
 
 export const AON_MSG_CANCEL = MSG.AON_MSG_CANCEL;
 export const AON_MSG_ACCEPT = MSG.AON_MSG_ACCEPT;
+
+export const AON_MSG_FILE = MSG.AON_MSG_FILE;

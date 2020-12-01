@@ -76,3 +76,5 @@ export const AON_MSG_VAT = 'IVA';
 
 export const AON_MSG_CANCEL = 'Cancelar';
 export const AON_MSG_ACCEPT = 'Aceptar';
+
+export const AON_MSG_FILE = 'Fichero';

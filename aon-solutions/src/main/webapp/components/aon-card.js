@@ -72,6 +72,16 @@ export class AonCard extends AonElement {
 		div.appendChild(content);
 	}
 
+  addTitleButton(icon, fn) {
+    let title = this.getElement(this.TITLE);
+    title.innerHTML = `${this.title} <aon-icon-button id="${this.TITLE + 'Button'}" icon="${icon}"> </aon-icon-button>`;
+    let button = this.getElement(this.TITLE + 'Button');
+    button.style.position = 'absolute';
+    button.style.right = '20px';
+    button.style.top = '17px';
+    button.addEventListener('click', fn);
+  }
+
 	setContent(el) {
 		this.getElement(this.CONTENT).appendChild(el);
 	}

@@ -75,3 +75,5 @@ export const AON_MSG_VAT = 'IVE';
 
 export const AON_MSG_CANCEL = 'Cancelar';
 export const AON_MSG_ACCEPT = 'Aceptar';
+
+export const AON_MSG_FILE = 'Arquivo';

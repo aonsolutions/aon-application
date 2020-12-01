@@ -75,3 +75,5 @@ export const AON_MSG_VAT = 'BEZ';
 
 export const AON_MSG_CANCEL = 'Ezeztatu';
 export const AON_MSG_ACCEPT = 'Onartu';
+
+export const AON_MSG_FILE = 'Fitxategia';
