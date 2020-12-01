@@ -9,6 +9,8 @@ export class AonApplication extends AonElement {
 	TOOLBAR;
 	LOADER;
 	CONTENT;
+	OPTION_DIALOG;
+	DIALOG;
 
 	selected;
 
@@ -61,6 +63,8 @@ export class AonApplication extends AonElement {
 		this.TOOLBAR = this.id + 'Toolbar';
 		this.LOADER = this.id + 'Loader';
 		this.CONTENT = this.id + 'Content';
+		this.OPTION_DIALOG = this.id + 'OptionDialog';
+		this.DIALOG = this.id + 'Dialog';
 	}
 
 	connectedCallback () {
@@ -76,10 +80,13 @@ export class AonApplication extends AonElement {
 			<aon-loader id="${this.LOADER}"> </aon-loader>
 
 			<!-- AON APPLICATION MENU (SIDENAV) -->
-			<div id="${this.SIDENAV}" class="sidenav"></div>
+			<div id="${this.SIDENAV}" class="${this.isMobile() ? 'aonMobileSidenav' : 'sidenav'}"></div>
 
 			<!-- AON APPLICATION CONTENT -->
 			<div id="${this.CONTENT}"></div>
+
+			<aon-dialog-menu id="${this.OPTION_DIALOG}"> </aon-dialog-menu>
+			<aon-dialog id="${this.DIALOG}"> </aon-dialog>
 		`;
 
     let toolbar = this.getElement(this.TOOLBAR);

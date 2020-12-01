@@ -13,7 +13,7 @@ export class AonHome extends AonElement {
 		this.innerHTML = this.isMobile()
 		?  `
 			<aon-mobile-header id="aonHeader"></aon-mobile-header>
-			<div id="rootPanel" class="rootPanel"></div>
+			<div id="rootPanel" class="aonMobileRootPanel"></div>
 			<aon-mobile-menu id="aonMobileMenu"></aon-mobile-menu>
 		`
 		: `
@@ -40,8 +40,6 @@ export class AonHome extends AonElement {
 					});
 				}
 			});
-		} else {
-				document.getElementById('aonMobileMenu').open();
 		}
   }
 }

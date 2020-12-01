@@ -12,6 +12,10 @@ export class AonDialog extends AonElement {
 	CANCEL;
 	ACCEPT;
 
+	static get observedAttributes() {
+    return ['width'];
+  }
+
 	get id() {
 		return this.getAttribute('id');
 	}
@@ -43,6 +47,13 @@ export class AonDialog extends AonElement {
 	set width(width) {
 		this.setAttribute('width', width);
 	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		if('width' === name) {
+			let main = this.getElement(this.MAIN);
+			if(main) main.style.width = newValue;
+		}
+  }
 
 	constructor () {
 		super();

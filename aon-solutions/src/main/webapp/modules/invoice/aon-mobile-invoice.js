@@ -26,8 +26,6 @@ export class AonMobileInvoice extends AonInvoice {
 			<aon-card id="aonInvoiceItemDetailCard" title="Conceptos Factura"> </aon-card>
 			<aon-card id="aonInvoiceItemFinanceCard" title="Vencimientos"> </aon-card>
 
-			<aon-dialog-menu id="aonDialogInvoiceOption"> </aon-dialog-menu>
-			<aon-dialog id="aonDialogInvoice"> </aon-dialog>
 		`;
 
     getUserAppRole().then(roles => {
@@ -40,12 +38,13 @@ export class AonMobileInvoice extends AonInvoice {
   buildOptions() {
     let aonInvoice = this.getElement('aonInvoice');
     let aonInvoiceToolbar = this.getElement(aonInvoice.TOOLBAR);
+    aonInvoiceToolbar.removeButtons();
     aonInvoice.addToolbarOption('Options', 'more_vert', () => {
       let button = this.getElement(aonInvoiceToolbar.TOOL_SECTION + 'OptionsButton');
       const top  = button.getBoundingClientRect().top;
       const left = button.getBoundingClientRect().left;
 
-      let d = document.getElementById('aonDialogInvoiceOption');
+      let d = document.getElementById(aonInvoice.OPTION_DIALOG);
 
       let record = InvoiceAction.RECORD;
       record.fn = () => this.recordInvoice();
@@ -356,7 +355,8 @@ export class AonMobileInvoice extends AonInvoice {
 	}
 
   dialogDetail(detail, i) {
-    let d = document.getElementById('aonDialogInvoice');
+    let aonInvoice = this.getElement('aonInvoice');
+    let d = document.getElementById(aonInvoice.DIALOG);
     d.clear();
     d.setTitle(MSG.AON_MSG_INVOICE_CONCEPTS);
 
@@ -423,7 +423,8 @@ export class AonMobileInvoice extends AonInvoice {
   }
 
   dialogFinance(finance, i) {
-		let d = document.getElementById('aonDialogInvoice');
+    let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
     d.clear();
 		let t = document.createElement('table');
 		t.style.width = '100%';

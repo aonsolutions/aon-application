@@ -9,21 +9,15 @@ import {getReader} from '../services/utils.js'
 import { uploadFile } from '../services/fileService.js'
 
 export class AonMobileMenu extends AonElement {
+
 	CAMERA_INPUT;
+
 	get id() {
 		return this.getAttribute('id');
 	}
 
 	set id(id) {
 		this.setAttribute('id', id);
-	}
-
-	get opened() {
-		return this.getAttribute('opened');
-	}
-
-	set opened(opened) {
-		this.setAttribute('opened', opened);
 	}
 
 	get company() {
@@ -44,7 +38,7 @@ export class AonMobileMenu extends AonElement {
 
 	constructor () {
 		super();
-		this.CAMERA_INPUT =  this.getAttribute('id') + 'CameraInput';
+		this.CAMERA_INPUT =  this.id + 'CameraInput';
 	}
 
 	connectedCallback () {
@@ -53,7 +47,7 @@ export class AonMobileMenu extends AonElement {
 
 	build() {
 		this.innerHTML = `
-			<div id="aonMobileMenuSidenav" class="aonMobileMenuSidenav">
+			<div id="aonMobileMenuSidenav" class="aonMobileMenu">
 
 				<span id="aonMobileMenuDocumental"  style="top: 10px; position: relative;">
 					<aon-icon-button id="aonMobileMenuDocumentalButton" icon="snippet_folder"></aon-icon-button>
@@ -86,15 +80,6 @@ export class AonMobileMenu extends AonElement {
 		let rp = this.getElement('rootPanel');
 		let aonMenuSidenav = this.getElement('aonMobileMenuSidenav');
 
-		if(this.getAttribute('opened')) {
-			rp.className = 'rootMobilePanel';
-			aonMenuSidenav.style.height = '60px';
-			rp.style.marginBottom = '60px';
-		} else {
-			rp.className = 'rootPanel';
-			aonMenuSidenav.style.height = '0px';
-			rp.style.marginBottom = '0px';
-		}
 		let n = ((window.innerWidth / 5) - 40) / 2;
 
 		let aonMobileMenuDocumental = this.getElement('aonMobileMenuDocumental');
@@ -134,27 +119,6 @@ export class AonMobileMenu extends AonElement {
 
 		this.getElement(this.CAMERA_INPUT).addEventListener('change', (ev)=> this.sendImage(ev) );
 	}
-
-
-	open() {
-		let aonMenuSidenav = this.getElement('aonMobileMenuSidenav');
-		let rootPanel = this.getElement('rootPanel');
-		rootPanel.className = 'rootMobilePanel';
-		aonMenuSidenav.style.height = '60px';
-		rootPanel.style.marginBottom = '60px';
-		this.setAttribute('opened', true);
-	}
-
-	close() {
-		let aonMenuSidenav = this.getElement('aonMobileMenuSidenav');
-		let rootPanel = this.getElement('rootPanel');
-		rootPanel.className = 'rootPanel';
-		aonMenuSidenav.style.height = '0px';
-		rootPanel.style.marginBottom = '0px';
-
-		this.removeAttribute('opened');
-	}
-
 
 	openCamera(){
 		if("undefined" === typeof webkit) {

@@ -87,8 +87,6 @@ export class AonInvoice extends AonElement {
 				<div id="aonInvoiceFile" class="aonSubContent">
 				</div>
 			</div>
-			<aon-dialog-menu id="aonDialogInvoiceOption"> </aon-dialog-menu>
-			<aon-dialog id="aonDialogInvoice" width="400px"> </aon-dialog>
 		`;
 
 		getUserAppRole().then(roles => {
@@ -136,6 +134,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	buildInvoiceToolbar() {
+		let aonInvoice = this.getElement('aonInvoice');
 		let invoiceToolbar = this.getElement(this.TOOLBAR);
 		invoiceToolbar.removeButtons();
 
@@ -149,7 +148,7 @@ export class AonInvoice extends AonElement {
 				let button = this.getElement(invoiceToolbar.TOOL_SECTION + 'OptionsButton');
 				const top  = button.getBoundingClientRect().top;
 				const left = button.getBoundingClientRect().left;
-				let d = document.getElementById('aonDialogInvoiceOption');
+				let d = document.getElementById(aonInvoice.OPTION_DIALOG);
 				let rectify = InvoiceAction.RECTIFY;
 				rectify.fn = () => this.rectifyInvoice();
 				let duplicate = InvoiceAction.DUPLICATE;
@@ -278,8 +277,10 @@ export class AonInvoice extends AonElement {
 	}
 
 	rejectInvoice() {
-		let d = document.getElementById('aonDialogInvoice');
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
+		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.AON_MSG_REJECT_INVOICE);
 		d.setContentHTML('<textarea id="commentTextArea"> </textarea>');
 		d.addAcceptAction(() => {
@@ -321,9 +322,11 @@ export class AonInvoice extends AonElement {
 	}
 
 	removeInvoice() {
+		let aonInvoice = this.getElement('aonInvoice');
 		deleteInvoices([this._invoice.id]).then(() => {
-			let d = document.getElementById('aonDialogInvoice');
+			let d = document.getElementById(aonInvoice.DIALOG);
 			d.clear();
+			if(!this.isMobile()) d.width = '400px';
 			d.setTitle(MSG.AON_MSG_DELETE_FOREVER);
 			d.setContentHTML(MSG.AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION);
 			d.addAcceptAction(() => this.back());
@@ -337,8 +340,10 @@ export class AonInvoice extends AonElement {
 	}
 
 	rectifyInvoice() {
-		let d = document.getElementById('aonDialogInvoice');
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
+		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.AON_MSG_RECTIFY_INVOICE);
 		d.setContentHTML('Esta opción está en desarrollo...');
 		d.addAcceptAction(() => {});
@@ -346,8 +351,10 @@ export class AonInvoice extends AonElement {
 	}
 
 	duplicateInvoice() {
-		let d = document.getElementById('aonDialogInvoice');
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
+		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.AON_MSG_DUPLICATE_INVOICE);
 		d.setContentHTML('Esta opción está en desarrollo...');
 		d.addAcceptAction(() => {});
@@ -365,8 +372,10 @@ export class AonInvoice extends AonElement {
 	}
 
 	addInvoiceComment() {
-		let d = document.getElementById('aonDialogInvoice');
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
+		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.AON_MSG_ADD_COMMENT);
 		d.setContentHTML('<textarea id="commentTextArea"> </textarea>');
 		d.addAcceptAction(() => {
@@ -389,8 +398,10 @@ export class AonInvoice extends AonElement {
 	}
 
 	recordInvoice() {
-		let d = document.getElementById('aonDialogInvoice');
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
+		if(!this.isMobile())d.width = '400px';
 		d.setTitle(MSG.AON_MSG_RECORD_INVOICE);
 		d.setContentHTML('Esta opción está en desarrollo...');
 		d.addAcceptAction(() => {});

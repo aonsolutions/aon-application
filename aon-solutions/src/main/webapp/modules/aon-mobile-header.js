@@ -36,11 +36,11 @@ export class AonMobileHeader extends AonElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<div id="aonHeaderWeb" class="aonHeader" >
+			<div id="aonHeaderWeb" class="aonMobileHeader" >
 				<span>
 					<img id="aonMobileLogo" class="aonLogo" width="230px" />
 				</span>
-				<span id="aonHeaderUser" class="aonRight20 aonHeaderButton">
+				<span id="aonHeaderUser" class="aonRight20 aonMobileHeaderButton">
 					<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
 				</span>
 			</div>

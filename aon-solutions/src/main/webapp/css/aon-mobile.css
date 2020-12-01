@@ -1,0 +1,68 @@
+
+.aonMobileHeader {
+  position: fixed;
+  height: 60px;
+}
+
+.aonMobileLogo {
+  position: absolute;
+  margin-left: 15%;
+  top: 15px;
+  cursor: pointer;
+}
+
+.aonMobileHeaderButton {
+  position: fixed;
+  top: 10px;
+}
+
+.aonMobileRootPanel {
+  position: fixed;
+  top: 60px;
+  bottom: 60px;
+  width: 100%;
+  border-top: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+.aonMobileToolbar {
+  position: fixed;
+  width: 100%;
+  display: flex;
+  height: 40px;
+  padding-left: 16px;
+  border-top: 0px none;
+  border-bottom: 1px solid rgb(221, 221, 221);
+  font-size: 16px;
+}
+
+.aonMobileSidenav {
+  width: 0px;
+  position: fixed;
+  z-index: 1;
+  top: 101px;
+  bottom: 59px;
+  left: 0;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  transition-duration: 500ms;
+  overflow-x: hidden;
+}
+
+.aonMobileContent {
+  position: fixed;
+  top: 102px;
+  bottom: 59px;
+  width: 100%;
+  display: block;
+  transition: 0.5s;
+  overflow-y: auto;
+}
+
+.aonMobileMenu {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  height: 60px;
+  border-top: 1px solid #ddd;
+}
