@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import com.esferalia.aon.gwt.template.shared.Error;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -19,6 +20,7 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Account;
@@ -26,19 +28,24 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
-import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class RegistryImport {
@@ -47,8 +54,11 @@ public class RegistryImport {
 		private Registry registry;
 		private Account account;
 		private String iban;
+		private String bic;
 		private String type;
 		private Integer line;
+		private LinkedList<RegistryMedia> rmediaList;
+		private PayMethodType paymethod;
 
 		public RegistryImportClass() {
 			this.registry = new Registry()
@@ -80,6 +90,14 @@ public class RegistryImport {
 			this.iban = iban;
 		}
 
+		public String getBic() {
+			return bic;
+		}
+
+		public void setBic(String bic) {
+			this.bic = bic;
+		}
+
 		public String getType() {
 			return type;
 		}
@@ -94,6 +112,25 @@ public class RegistryImport {
 
 		public void setLine(Integer line) {
 			this.line = line;
+		}
+
+		public LinkedList<RegistryMedia> getRmediaList() {
+			if(rmediaList == null) {
+				this.rmediaList = new LinkedList<RegistryMedia>();
+			}
+			return rmediaList;
+		}
+
+		public void setRmediaList(LinkedList<RegistryMedia> rmediaList) {
+			this.rmediaList = rmediaList;
+		}
+
+		public PayMethodType getPaymethod() {
+			return paymethod;
+		}
+
+		public void setPaymethod(PayMethodType paymethod) {
+			this.paymethod = paymethod;
 		}
 
 		public Boolean isCustomer() {
@@ -283,6 +320,18 @@ public class RegistryImport {
 				|| IConstants.DIRECCION.equalsIgnoreCase(title)
 				|| IConstants.DIRECCIÓN.equalsIgnoreCase(title)) {
 			reg.getRegistry().getAddress().setAddress(o.toString());
+			
+			if(AonStringUtils.isBlank(reg.getRegistry().getAddress().getZip())) {
+				reg.getRegistry().getAddress().setZip(getZip(o.toString()));
+			}
+			
+			if(reg.getRegistry().getAddress().getGeozone() == null) {
+				GeoZone gz = getGeoZone(aonCtx, o.toString());
+				reg.getRegistry().getAddress().setGeozone(gz.getId());
+				reg.getRegistry().getAddress().setGeozoneCode(gz.getCode());
+				reg.getRegistry().getAddress().setGeozoneName(gz.getName());
+			}
+			
 			return;
 		}
 
@@ -318,12 +367,60 @@ public class RegistryImport {
 		}
 
 		if(IConstants.IBAN.equalsIgnoreCase(title)) {
-			reg.setIban(o.toString());
+			reg.setIban(o.toString().trim().replace(".", ""));
+			return;
+		}
+		
+		if(IConstants.BIC.equalsIgnoreCase(title) || IConstants.BIC_SWIFT.equalsIgnoreCase(title)) {
+			reg.setBic(o.toString().trim());
 			return;
 		}
 
 		if(IConstants.PAÍS.equalsIgnoreCase(title) || IConstants.PAIS.equalsIgnoreCase(title)) {
 			reg.getRegistry().setNationality(Country.safeValueOf(o.toString()));
+			return;
+		}
+		
+		if(IConstants.MAIL.equalsIgnoreCase(title) || IConstants.EMAIL.equalsIgnoreCase(title)
+				|| IConstants.CORREO_ELECTRONICO.equalsIgnoreCase(title) || IConstants.CORREO_ELECTRÓNICO.equalsIgnoreCase(title)) {
+			String[] mails = o.toString().split(",");
+			for(int i = 0; i < mails.length; i++) {
+				if(!AonStringUtils.isBlank(mails[i])) {
+					RegistryMedia rm = new RegistryMedia()
+							.setMedia(MediaType.EMAIL.value())
+							.setDomain(domain.getId())
+							.setValue(mails[i])
+							.setAdministrative((byte) 0)
+							.setComment("")
+							.setCommercial((byte) 0)
+							.setTechnical((byte) 0);
+					reg.getRmediaList().add(rm);
+				}
+			}
+			return;
+		}
+		if(IConstants.TELEFONO.equalsIgnoreCase(title) || IConstants.TELÉFONO.equalsIgnoreCase(title)
+				|| IConstants.MOVIL.equalsIgnoreCase(title) || IConstants.MÓVIL.equalsIgnoreCase(title)) {
+			String[] phones = o.toString().split(",");
+			for(int i = 0; i < phones.length; i++) {
+				if(!AonStringUtils.isBlank(phones[i])) {
+					String p = phones[i].trim().replace("-", "");
+					RegistryMedia rm =  new RegistryMedia()
+						.setMedia(p.charAt(0) == '6' || p.charAt(0) == '7' ? MediaType.CELLULAR.value() : MediaType.FIXED_PHONE.value())
+						.setDomain(domain.getId())
+						.setValue(p)
+						.setAdministrative((byte) 0)
+						.setComment("")
+						.setCommercial((byte) 0)
+						.setTechnical((byte) 0);
+					reg.getRmediaList().add(rm);
+				}
+			}
+			return;
+		}
+		
+		if(IConstants.FORMA_DE_PAGO.equalsIgnoreCase(title)) {
+			reg.setPaymethod(PayMethodType.safeValueOf(o.toString()));
 			return;
 		}
 	}
@@ -357,6 +454,21 @@ public class RegistryImport {
 					.setDomain(domain.getId())
 					.setRegistry(reg.getId());
 				AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry().getAddress());
+				
+				for(RegistryMedia rm : r.getRmediaList()) {
+					rm.setRegistry(reg);
+					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
+				}
+				
+				if(!AonStringUtils.isBlank(r.getIban())) {
+					RegistryBank rbank = new RegistryBank()
+							.setDomain(domain.getId())
+							.setRegistry(reg.getId())
+							.setActive(true)
+							.setBankAccount(new BankAccount(r.getIban()))
+							.setBic(r.getBic());
+					AON.insertRBank(domain.getName(), domain.getId(), user.getLogin(), rbank);
+				}
 			}
 			if(r.getAccountPrefix() != null && (r.getAccount().getCode() == null || r.getAccount().getCode().isBlank())) {
 				String code = ACCOUNTING.getAccountNextCode(domain.getName(), domain.getId(), user.getLogin(), r.getAccountPrefix());
@@ -438,5 +550,41 @@ public class RegistryImport {
 			return DocumentType.NIF;
 		} else return DocumentType.OTHER;
 	}
-
+	
+	private static String getZip(String address) {
+		String cp = null;
+		try {
+			Pattern p = Pattern.compile("0[1-9][0-9]{3}|[1-4][0-9]{4}|5[0-2][0-9]{3}");
+			Matcher zip = p.matcher(address);
+			zip.find();
+			cp = zip.group();
+		} catch (Exception e) {}
+		return cp;
+	}
+	
+	private static GeoZone getGeoZone(AonConfiguration aonCtx, String address) {
+		Provinces pr = null;
+		String zip = getZip(address);
+		if(zip != null) {
+			pr = Provinces.getProvinceById(zip.substring(0,2));
+		} else {
+			for (Provinces p : Provinces.values()) {
+				if(AonStringUtils.containsIgnoreCase(address, p.getName())) {
+					pr = p;
+				}
+			}
+		}
+		GeoZone geoZone = new GeoZone();
+		for(GeoZone gz : aonCtx.getGeozones()) {
+			if(pr != null && pr.getId() != null && gz.getCode().equals(pr.getId())) {
+				geoZone = gz;
+			}
+		}
+		
+		return geoZone;
+	}
+	
+	public static void main(String[] args) {
+		
+	}
 }
