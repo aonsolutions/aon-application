@@ -95,8 +95,13 @@ public class JooqActivity {
 				.where(CNAE2009.ID.eq(cnae2009Id))
 				.fetchOne();
 		
-		String cnae2009Code = enterpriseActivityCNAE2009.get(CNAE2009.CODE);
-		String cnae2009Title = enterpriseActivityCNAE2009.get(CNAE2009.TITLE);
+		String cnae2009Code = "";
+		String cnae2009Title = "";
+		
+		if(null != enterpriseActivityCNAE2009) {
+			cnae2009Code = enterpriseActivityCNAE2009.get(CNAE2009.CODE);
+			cnae2009Title = enterpriseActivityCNAE2009.get(CNAE2009.TITLE);
+		}
 		
 		//SET ACTIVITY INFO
 		activityInfo.setId(activityId);
