@@ -166,12 +166,9 @@ public class ConnectSaleInvoiceWriter {
 			String customerEdiMainCode) {
 		List<Finance> financeList = getFinances(invoice);
 		SINCC sincc = new SINCC();
-		if(invoice.getRectificationInvoice()!=null && invoice.getRectificationInvoice().getId()!=null)
-			sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.NOTA_E_ABONO_381
-					.getValue());
-		else
-			sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.FACTURA_COMERCIAL_380
-					.getValue());
+		if((invoice.getRectificationInvoice()!=null && invoice.getRectificationInvoice().getId()!=null) || invoice.getTotal() < 0)
+			sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.NOTA_E_ABONO_381.getValue());
+		else sincc.setTipoDeFactura_325_380_381_383_385_(SINCC.SINCC_2.FACTURA_COMERCIAL_380.getValue());
 		sincc.setNumeroDeFactura(invoice.getReferenceCode());
 		sincc.setFuncionDelMensaje_7_31_5_(null);
 		sincc.setFechaDeFactura(Integer.valueOf(SeresUtils.dateFormat().format(invoice
