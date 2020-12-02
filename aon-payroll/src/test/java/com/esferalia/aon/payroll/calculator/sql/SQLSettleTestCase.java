@@ -2223,11 +2223,16 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		int decemberExtramonths = get(getToday(), Calendar.MONTH );
 		int days = Math.min(30, get(getToday(), Calendar.DAY_OF_MONTH ));
 		int julyExtraMonths = (decemberExtramonths < 7 ? decemberExtramonths : decemberExtramonths -7);
+		//decemberExtramonths = decemberExtramonths == 11 ? 0 : decemberExtramonths;
 		
-		double decemberExtra = ( 1750.00 * 1.10 ) * ((decemberExtramonths * 30) + days ) / 360;
+		double decemberExtra = decemberExtramonths == Calendar.DECEMBER ? 0.00 : ( 1750.00 * 1.10 ) * ((decemberExtramonths * 30) + days ) / 360;
 		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360;
 		
-
+		
+		for (SalaryPayment payment : settle.getSalaryPayments()) {
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() + ", " );
+		}
+		
 		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), 0.05);
 
 	}
