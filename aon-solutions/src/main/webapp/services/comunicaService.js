@@ -334,3 +334,6 @@ export const getConvenios = () =>  new Promise((resolve) => {
         {id:"1", name:"- Sin convenio definido", value:"60888888888888"}, 
     ] );
 });
+
+
+export const getEmployee = (data) =>  get(`${API_URL}/comunica/get-employee`, data);

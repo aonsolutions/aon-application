@@ -7,7 +7,7 @@ export class AonSuggestion extends AonElement {
   OPTIONS;
 
   static get observedAttributes() {
-    return ['value', 'readonly', 'title'];
+    return ['value', 'readonly', 'title', 'disabled'];
   }
 
   get id() {
@@ -50,6 +50,14 @@ export class AonSuggestion extends AonElement {
     this.setAttribute('readonly', readonly);
   }
 
+  get disabled() {
+    return this.getAttribute('disabled');
+  }
+
+  set disabled(disabled) {
+    this.setAttribute('disabled', disabled);
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     //console.log(`attribute ${name} change!! ${newValue}`);
     if ('value' === name && this.getElement(this.INPUT)) {
@@ -62,6 +70,10 @@ export class AonSuggestion extends AonElement {
 
     if ('title' === name && this.getElement(this.INPUT)) {
       this.getElement(this.INPUT).description = newValue;
+    }
+    if ('disabled' === name) {
+      let el = this.getElement(`${this.INPUT}`);
+      el.setAttribute('disabled', newValue);
     }
   }
 

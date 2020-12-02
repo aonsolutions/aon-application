@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import { getDayMonth, addDays } from '../../services/utils.js';
-import {getMovements, getIDC, getTA, postDeleteMov} from '../../services/service.js';
+import {getMovements, getIDC, getTA, postDeleteMov, getEmployee} from '../../services/service.js';
 import '../../components/aon-table.js';
 import '../../components/aon-toast.js';
 
@@ -41,12 +41,14 @@ export class AonMovementsList extends AonElement {
 
 	async getTable() {
 		let aonMovementTable = this.getElement('aonMovementTable');
+		let divLoader = this.getElement('aonComunica');
 		aonMovementTable.addColumn('Apellidos y nombre', 'string', 'nombres');
 		aonMovementTable.addColumn('DNI/NIE', 'string', 'dni');
 		aonMovementTable.addColumn('Movimiento', 'string', 'status');
 		aonMovementTable.addColumn('Fecha', 'date', 'fecha');
 		aonMovementTable.addColumn('Opción', 'fn', 'option');
 		if(aonMovementTable) {
+			divLoader.startLoader();
 			try {
 				let resp = await getMovements(this.getFilter());
 				aonMovementTable.removeRows();
@@ -95,15 +97,24 @@ export class AonMovementsList extends AonElement {
 			} catch(e){
 				console.log(e);
 			}
+			divLoader.stopLoader();
 		}
 	}
 
-	aonMovement({target:el}, data) {
-		console.log(data);
+	async aonMovement({target:el}, data) {
+		let aonComunica = this.getElement('aonComunica');
+		aonComunica.setContentHTML(`<aon-alta-directa id="aonAltaDirecta"></aon-alta-directa>`);
+		try {
+			const resp = await getEmployee(data);
+			if(resp){
+				let aonAltaDirecta = this.getElement('aonAltaDirecta');
+				if(aonAltaDirecta) aonAltaDirecta.parseData(resp);
+			}
+
+		} catch(error){}
 	}
 
 	async deleteMov(data, el){
-		console.log(data);
 		if (confirm(`Estas seguro de anular el movimiento de ${data.name} ?`)) {
 			let toast = this.getElement(`divToast`);
 			try {

@@ -44,10 +44,7 @@ export const decimalAdjust = (type, value, exp) => {
 export const serializeForm = (form) => {
   let inputs = [
     ...form.querySelectorAll(`
-      aon-input, 
-      aon-date, 
-      aon-select, 
-      aon-number
+      aon-input, aon-date, aon-select, aon-number
     `)
   ];
   let obj = {}

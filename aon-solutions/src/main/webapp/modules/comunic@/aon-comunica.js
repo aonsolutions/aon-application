@@ -23,11 +23,6 @@ export class AonComunica extends AonElement {
 		let aonComunica = this.getElement(this.AON_COMUNICA);
 
 		let options = [
-			// {
-			// 	name: 'Empleados',
-			// 	icon: 'people',
-			// 	fn: () => alert('Empleados!!')
-			// },
 			{
 				name: 'Contratos',
 				aonIcon: {
@@ -76,9 +71,9 @@ export class AonComunica extends AonElement {
 
 		//if(this.isMobile()){
 		 this.getElement(aonComunica.TOOLBAR).setAttribute('option', 'Movimientos');
-		//  aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
+		  aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
 		//}
-		aonComunica.setContentHTML(`<aon-alta-directa></aon-alta-directa>`);
+		//aonComunica.setContentHTML(`<aon-alta-directa></aon-alta-directa>`);
 
 	}
 }

@@ -1,6 +1,8 @@
 import {AonElement} from './AonElement.js';
 
 import './aon-input.js';
+import {setDate} from '../services/utils.js';
+
 export class AonDate extends AonElement {
 
   date;
@@ -17,7 +19,7 @@ export class AonDate extends AonElement {
   DATEPICKER_DAYS;
 
   static get observedAttributes() {
-    return [];
+    return ['value'];
   }
 
 	get id() {
@@ -53,7 +55,12 @@ export class AonDate extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-
+    if('value' === name) {
+      let input = this.getElement(this.INPUT);
+      if(newValue && input) 
+        input.value = setDate(newValue);
+      else if(input && newValue === '') input.value = '';
+   }
   }
 	constructor () {
 		super();

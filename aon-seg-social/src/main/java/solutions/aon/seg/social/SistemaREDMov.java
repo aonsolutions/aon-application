@@ -32,7 +32,7 @@ import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
-//import solutions.aon.seg.social.toolkit.Toolkit;
+import solutions.aon.seg.social.toolkit.Toolkit;
 
 
 public class SistemaREDMov {
@@ -137,12 +137,9 @@ public class SistemaREDMov {
 	) throws SegSocialException, IOException, InterruptedException  {
 	    	String situation = "01";
 	    	Integer mov = 0;
-			String dni =  padCharacter("0", 10, employee.getIpf());
 			String ident = identity(employee.getIpf());
-
-
+			String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
  			String[] fra = formatDate(employee.getFra());
-			
 	    	HtmlPage htmlPage = first_page_alta_baja(
 					certificateInputStream,certificatePassword, certificateType,
 					mov,  employee.getNss(), employee.getCtaCti().get(),
@@ -164,7 +161,7 @@ public class SistemaREDMov {
 				if(!employee.getCoef().isEmpty()) jacadaForm1.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(employee.getCoef().get().toString()); 
 				if (employee.getOcup()!=null) jacadaForm1.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup()); 
 			}
-			
+
 			HtmlInput btnSubmit1 = htmlPage.querySelector("#Sub2207401004");
 			htmlPage = btnSubmit1.click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
@@ -182,7 +179,7 @@ public class SistemaREDMov {
 				htmlPage = btnSubmit3.click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}			
-
+	
 			return employee;
 	}
 
@@ -192,9 +189,8 @@ public class SistemaREDMov {
 	) throws SegSocialException, IOException, InterruptedException  {
     	String situation = "63";
     	Integer mov = 1;
-		String dni =  padCharacter("0", 10, employee.getIpf());
 		String ident = identity(employee.getIpf());
-
+		String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
 		
 		String[] fra = formatDate(employee.getFra()); //fecha real de baja [dia,mes,año]
 		
@@ -370,12 +366,8 @@ public class SistemaREDMov {
 		} catch (NullPointerException e) {}
 	}
 	
-	private static String padCharacter(String c, int num, String str){
-	    for(int i=0;i<num-str.length()+1;i++){str = c+str;}
-	     return str;
-	}
-	
 	private static String identity(String ipf) {
+		ipf = Toolkit.removeExtraZeros(ipf);
 		Pattern nif  = Pattern.compile(
 				//  -------- LEGAL_PERSON_NIF PATTERN  
 				// -------- (1) --> X00000000

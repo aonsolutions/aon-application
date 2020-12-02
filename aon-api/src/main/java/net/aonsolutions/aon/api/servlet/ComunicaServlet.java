@@ -113,6 +113,22 @@ public class ComunicaServlet extends HttpServlet{
 					}
 					catch (SegSocialException e) {resp.setStatus(500);content = gjson.toJson(e.getCause().getMessage()).getBytes();}
 				}
+				 else if("get-employee".equalsIgnoreCase(pathInfo[1])) {
+					try {
+						LOGGER.info("GET-EMPLOYEE SERVLET - POST METHOD");
+						final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
+					    String certificatePassword = "jg@FNMT";
+					    String certificateType = "pkcs12";
+					    content = gjson.toJson(getEmployee(certificateInputStream, certificatePassword, certificateType,
+							req.getParameter("regime"), 
+							req.getParameter("ctaCti"), 
+							req.getParameter("nss")
+					    )).getBytes();
+					} catch (SegSocialException e) {
+						e.printStackTrace();
+						resp.setStatus(500);content = gjson.toJson(e.getCause().getMessage()).getBytes();
+					}
+				}
 			}
 
 		} 
@@ -149,8 +165,8 @@ public class ComunicaServlet extends HttpServlet{
 			Utils.addCorsHeader(resp);
 			resp.setStatus(HttpServletResponse.SC_OK);
 			
-			//User user = AON_SOLUTIONS.getUser(domain, token);
-			//LOGGER.info("CERTIFICATE");
+			User user = AON_SOLUTIONS.getUser(domain, token);
+			LOGGER.info("CERTIFICATE");
 			//Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 			//System.out.println(certificate);
 			if(pathInfo != null) {
@@ -235,7 +251,8 @@ public class ComunicaServlet extends HttpServlet{
 		String ipf = json.optString("ipf");
 		
 		//second screen
-		Date fecha = Toolkit.parseDate(json.optString("fecha"), "dd-MM-yyyy");
+		Date fecha = Toolkit.parseDate(json.optString("fecha"), "yyyy-MM-dd");
+
 		String grup_ctz = json.optString("grup_ctz");
 		String type_cto = json.optString("type_cto");	
 		String ocupacion = json.has("ocupacion")  && !json.isNull("ocupacion") ? json.optString("ocupacion") : null;
@@ -258,8 +275,8 @@ public class ComunicaServlet extends HttpServlet{
 		.setContract(type_cto)
 		.setMdctz(md_ctz)
 		.build();
-		 
-		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
+		return employee;
+//		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	
 	private void movDelete(final InputStream certificateInputStream, final String certificatePassword,
@@ -287,6 +304,11 @@ public class ComunicaServlet extends HttpServlet{
 		return SistemaRED.nafxipf(certificateInputStream, certificatePassword, certificateType, ipf, apellido1,  apellido2);
 	}
 	
+	private Employee getEmployee(final InputStream certificateInputStream, final String certificatePassword,
+			  final String certificateType , String regimen, String ccc, String nss) throws SegSocialException{
+		return SistemaRED.getEmployee(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss);
+	}
+	
 	private void validateSendMov(JSONObject json) throws Exception {
 		if(json.isNull("ctaCti")) {
 			throw new Exception("Cuenta de cotizaciòn requerido");
@@ -312,5 +334,6 @@ public class ComunicaServlet extends HttpServlet{
 			}
 		};
 	}
+
 
 }
