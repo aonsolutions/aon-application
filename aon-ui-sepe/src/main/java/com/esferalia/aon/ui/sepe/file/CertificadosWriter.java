@@ -413,11 +413,12 @@ public class CertificadosWriter implements Serializable {
 			calendar.set(Calendar.HOUR_OF_DAY,0);
 			calendar.set(Calendar.MINUTE,0);
 			calendar.set(Calendar.SECOND,0);
-			calendar.set(Calendar.MONTH,Calendar.JUNE);
-			calendar.set(Calendar.DAY_OF_MONTH,30);
-			Date _30062020 = calendar.getTime();
+			calendar.set(Calendar.MONTH,Calendar.JANUARY);
+			calendar.set(Calendar.DAY_OF_MONTH,31);
+			calendar.set(Calendar.YEAR,2021);
+			Date _31012021 = calendar.getTime();
 			
-			o.setFechaFinSuspension(createFechaSimpleType(Period.min(_30062020, ereFactor.getEndDate())));
+			o.setFechaFinSuspension(createFechaSimpleType(Period.min(_31012021, ereFactor.getEndDate())));
 		}else {
 			o.setERE(null);
 			o.setFechaFinSuspension(null);
