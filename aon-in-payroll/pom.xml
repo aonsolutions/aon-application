@@ -128,12 +128,12 @@
 		<version>4.13-beta-1</version>
 		<scope>test</scope>
 	</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>solutions.aon</groupId>
 			<artifactId>aon.seg.social</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency> -->
 
 	</dependencies>
 </project>
