@@ -24,6 +24,7 @@ public class PortalInfo implements Serializable {
 	private final static Logger LOGGER = LoggerFactory.getLogger(PortalAccessController.class);
 
 	private int value;
+	private boolean alpha;
 	
 	private boolean showAccountingInfo;
 	private boolean showFiscalInfo;
@@ -33,6 +34,7 @@ public class PortalInfo implements Serializable {
 	
 	public PortalInfo() {
 		this.value = AppParamUtil.getValueAsInt(AppParam.AON_PORTAL);
+		this.alpha = AppParamUtil.getValueAsBoolean(AppParam.AON_ALPHA_ENABLED);
 	}
 
 	public static boolean isPortalActive( int value ) {
@@ -85,6 +87,10 @@ public class PortalInfo implements Serializable {
 	public void update() {
 		setPortalValue(!isActive(), IAdminConstants.INACTIVE_PORTAL);
 		AppParamUtil.insertParameter(AppParam.AON_PORTAL, value);
+	}
+	
+	public boolean isAlpha() {
+		return alpha;
 	}
 	
 	public boolean isShowAccountingInfo() {

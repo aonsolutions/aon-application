@@ -48,7 +48,7 @@ public class CustomizeBean implements Serializable {
 	
 	private static final String TOOLBAR_LOGO_DEFAULT = "/images/aon-icon/aon-icon-logo.png";	
 
-	private static final String LOGIN_LOGO_DEFAULT = "/com/code/aon/ui/resources/facelet/login/css/images/login/aon-solutions.gif";	
+	private static final String LOGIN_LOGO_DEFAULT = "/com/code/aon/ui/resources/facelet/login/css/images/login/aon-solutions.png";	
 	
 	private String toolbarLogo;
 
@@ -292,13 +292,7 @@ public class CustomizeBean implements Serializable {
 	}
 
 	public String getBuildNumber() {
-		//#ifndef env.GPS
-		//#echo Compiling for AON
 		return buildNumber; 
-		//#else
-		//#echo Compiling for GPS
-		return buildNumber == null ? "GPS" : (buildNumber + " GPS"); 
-		//#endif
 	}
 
 	public String getBuildDate() {

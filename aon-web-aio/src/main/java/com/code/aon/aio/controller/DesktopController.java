@@ -52,6 +52,7 @@ public class DesktopController implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String HOMEPAGE_DESKTOP = "/homepage.xhtml";
+	private static final String PORTAL_TEMPLATE = "/facelet/homepage/portal.xhtml";
 	private static final String DESKTOP_TEMPLATE = "/facelet/homepage/desktop.xhtml";
 	private static final String ADMIN_TEMPLATE = "/com/code/aon/ui/admin/facelet/domains/list.xhtml";
 	private static final String INIT_ACTION_TEMPLATE = "/facelet/homepage/initAction.xhtml";
@@ -119,11 +120,17 @@ public class DesktopController implements Serializable {
 		return getHomepage();
 	}
 	
+	public boolean isPortalActive() {
+		return  getState() != null && getState().isPortalActive();
+	}
+	
 	public String getTemplate() {
 		if ( getState().getInitOption()!=null && getState().isPatchInitAction() ) {
 			return INIT_ACTION_TEMPLATE;
 		} else if ( getState().isAdminDomain() ) {
 			return ADMIN_TEMPLATE;
+		} else if ( getState().isPortalActive() ) {
+			return PORTAL_TEMPLATE;
 		}
 		return DESKTOP_TEMPLATE;
 	}

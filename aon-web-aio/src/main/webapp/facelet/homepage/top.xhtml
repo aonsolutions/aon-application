@@ -6,22 +6,13 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:div id="aonHeader" styleClass="aon-header">
+	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 1px solid #ddd;" >
 		<aon:panelGrid columns="3" width="100%" 
-			columnClasses="aon-header-name aon-vertical-align-bottom,aon-header-options aon-width-300">
+			columnClasses="aon-header-name aon-vertical-align-middle,aon-header-options aon-width-300" style="height:60px;" >
 			
 			<aon:panelGroup>
-				<aon:outputConnectionStatus id="aonStatus" layout="block"
-					startStyle="#{customize.statusStartStyle}"
-					startStyleClass="aon-outputConnectionStatus-start"
-					stopStyle="#{customize.statusStopStyle}"
-					stopStyleClass="aon-outputConnectionStatus-stop"
-					onstart="resetStatusError();" />
-				<aon:div id="status_error"
-					style="#{customize.statusFailedStyle} display: none;"
-					styleClass="aon-outputConnectionStatus-failed" />
 				<aon:div style="margin-bottom:2px;">
-					<aon:graphicImage style="margin-left: 150px; height: 30px; vertical-align: middle;"
+					<aon:graphicImage style="height: 30px; vertical-align: middle;"
 						value="#{customize.headerLogo}" />
 					<aon:if test="#{customize.separator != null}">					
 						<aon:outputText value="#{customize.separator}"
@@ -61,11 +52,20 @@
 							<aon:outputText value="|" style="#{customize.fontStyle}" />
 						</aon:panelGroup>
 					</aon:if>
-					<aon:panelGroup>
+					<aon:panelGroup style="display:inline;">
+						<aon:commandLink id="home" action="index"
+							rendered="#{!aonConfiguration.properties.hideMenuHome}"
+							title="#{bundle.aon_home}"
+							styleClass="aon-header-home"
+							value="&#160;" 
+							reRender="aonContent" />
+						<aon:commandLink id="help" action="home"
+							title="#{bundle.aon_help}"
+							styleClass="aon-header-help"
+							value="&#160;" />
 						<aon:commandLink id="logout"
 							style="#{customize.fontStyle}" styleClass="aon-header-logout"
 							title="#{bundle.aon_login_user_logout}"
-							value="#{bundle.aon_login_user_logout}"
 							action="logout"
 							actionListener="#{aonConfiguration.logout}" >
 						</aon:commandLink>
@@ -74,25 +74,6 @@
 			</aon:div>
 		</aon:panelGrid>
 
-		<aon:div styleClass="aon-header-additionalInfo">
-			<aon:if test="#{!aonConfiguration.properties.hideHeaderLinks}">
-				<aon:div styleClass="aon-float-right">
-					<aon:div styleClass="aon-header-menu-item aon-nowrap">
-						<aon:if test="#{loggedUser.logged}">		
-							<aon:outputText value="#{loggedUser.loggedUserName} &#183; #{loggedUser.companyName}" />
-						</aon:if>		
-					</aon:div>
-				</aon:div>
-			</aon:if>
-			<aon:if test="#{!aonConfiguration.properties.hideApplicationVersion}">
-				<aon:outputFormat value="#{bundle.aon_version}"
-					styleClass="aon-version-label"
-					rendered="#{customize.applicationVersion != null}" >
-					<f:param value="#{customize.applicationVersion}" />
-				</aon:outputFormat>
-			</aon:if>				
-			<ui:include src="#{userUtils.loggedUser.toolbar.template}" />
-		</aon:div>
 	</aon:div>
 	<aon:if test="#{desktop.logEnabled}">
 		<a4j:log hotkey="Z" level="ALL" popup="true" />

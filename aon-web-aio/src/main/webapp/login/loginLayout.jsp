@@ -109,20 +109,12 @@ try {
 						<form id="login" method="post" action="j_security_check"
 							onsubmit="document.getElementById('login_btn').disabled = 'disabled';">
 							<div class="aon-login-title">
-								<img class="aon-graphicImage"
+								<img class="aon-login-logo"
 									src="<%=customize.getLoginLogo()%>" />
-								<c:if test="${not empty customize.applicationTitle}">
-									<c:if test="${not empty customize.loginSeparator}">
-										<span style="<%=customize.getFontStyle()%>" class="aon-outputText"> <%=customize.getLoginSeparator()%> <%=customize.getApplicationTitle()%></span>
-									</c:if>
-									<c:if test="${empty customize.loginSeparator}">
-										<span style="<%=customize.getFontStyle()%>" class="aon-outputText"> / <%=customize.getApplicationTitle()%></span>
-									</c:if>
-								</c:if>
 							</div>
 
 							<div class="aon-login-box">
-								<span class="aon-login-help"><%=commonBundle.getString("aon_login_label")%></span>
+								
 <%
 	if (showError) {
 %>								
@@ -137,30 +129,22 @@ try {
 %>								
 								<table class="aon-width-all">
 									<tr>
-										<td class="aon-login-box-left">
-											<label for="username" class="aon-login-label">
-												<%=commonBundle.getString("aon_login_user")%>
-											</label>
-										</td>
-										<td class="aon-login-box-right">
-											<input type="text" id="j_username" name="j_username" class="aon-login-input" size="20" maxlength="64" />
+										<td class="aon-login-box-center">
+											<span class="aon-login-help"><%=commonBundle.getString("aon_login_label")%></span>
 										</td>
 									</tr>
 									<tr>
-										<td class="aon-login-box-left">
-											<label for="j_password" class="aon-login-label">
-												<%=commonBundle.getString("aon_login_passwd")%>
-											</label>
-										</td>
-										<td class="aon-login-box-right">
-											<input type="password" id="j_password" name="j_password" class="aon-login-input" size="20" maxlength="16" />
+										<td class="aon-login-box-center">
+											<input type="text" id="j_username" name="j_username" class="aon-login-input" size="20" maxlength="64" placeholder="<%=commonBundle.getString("aon_login_user")%>" />
 										</td>
 									</tr>
 									<tr>
-										<td class="aon-login-box-left">
-											&#160;
+										<td class="aon-login-box-center">
+											<input type="password" id="j_password" name="j_password" class="aon-login-input" size="20" maxlength="16" placeholder="<%=commonBundle.getString("aon_login_passwd")%>" />
 										</td>
-										<td class="aon-login-box-right">
+									</tr>
+									<tr>
+										<td class="aon-login-box-center">
 											<input id="login_btn" name="login_btn" type="submit" 
 													value="<%=commonBundle.getString("aon_login_validate")%>" 
 													class="aon-login-button"
@@ -168,12 +152,7 @@ try {
 										</td>
 									</tr>
 									<tr>
-										<td class="aon-login-box-left">
-											<label for="google-signin" class="aon-login-label">
-												<%=commonBundle.getString("aon_login_with")%>
-											</label>
-										</td>
-										<td class="aon-login-box-right">
+										<td class="aon-login-box-center">
 											<c:url value="/oauth2" var="google_oauth2_url">
 											</c:url>
 											<a id="google-oauth2" href="${google_oauth2_url}" target="_blank" onClick="self.name='<%=domainName%>';window.open(this.href, this.target, 'width=600,height=800,scrollbars=yes'); return false;" >
@@ -204,24 +183,6 @@ try {
 									</tr>
 								</table>
 
-								<div class="aon-login-info">
-									<div class="aon-login-info-title">
-										<%=commonBundle.getString("aon_support_title")%>
-									</div>
-		
-									<div class="aon-bold">
-										<%=customize.getSupportTelephone()%>
-									</div>
-									
-									<div>
-										<a target="_blank"
-											href="mailto:<%=customize.getSupportEmail()%>">
-											<span style="<%=customize.getFontStyle()%>" class="aon-outputText">
-												<%=customize.getSupportEmail()%>
-											</span>
-										</a>
-									</div>									
-								</div>							
 								<c:if test="${!(customize.hideTrademark and customize.hideVersion)}">
 									<div class="aon-login-info2">	
 										<c:if test="${!customize.hideTrademark}">

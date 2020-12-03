@@ -1,0 +1,128 @@
+html, body {
+    height: 100%;
+}
+
+
+#aonContent {
+	display: block;
+    height: 100%;
+}
+
+.aon-menuBar{
+	display: none;	
+}
+
+
+.aon-menu-icon {
+    text-align: left;
+	cursor: pointer;
+    display: block;
+    padding: 2px 6px 1px 25px;
+}
+.aon-disabled tr td {
+	cursor: auto !important;
+}
+
+.aon-select-row tr td {
+	cursor: pointer;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-top: 1px solid #ddd;
+}
+
+.aon-select-row tr:hover {
+	background-color: #eee;
+}
+
+.aon-icon-invoice{
+	background: transparent url(images/aon-icon/aon-icon-app.png) scroll left center no-repeat;
+}
+
+.aon-icon-invoice:hover{
+	background: transparent url(images/aon-icon/aon-icon-invoice.png) scroll left center no-repeat;
+}
+
+.aon-icon-new{
+	height : 32px;
+	width : 32px;
+	display:inline-block;
+	padding:0px !important;
+	background: transparent url(images/aon-icon/aon-icon-new.png) scroll center center no-repeat;
+}
+
+.aon-header-logout {
+	padding: 14px 20px;
+	border-radius: 50%;
+	background: transparent url(images/aon-icon/aon-icon-logout.png) no-repeat scroll center center;
+}
+
+.aon-header-home {
+	padding: 14px 20px;
+	border-radius: 50%;
+	background: transparent url(images/aon-icon/aon-icon-home.png) no-repeat scroll center center;
+}
+
+.aon-header-help {
+	padding: 14px 20px;
+	border-radius: 50%;
+	background: transparent url(images/aon-icon/aon-icon-help.png) no-repeat scroll center center;
+}
+
+.aon-icon-portlet{
+	border-radius: 50%;
+}
+
+.aon-icon-portlet:hover,
+.aon-header-home:hover,
+.aon-header-logout:hover
+ {
+	background-color: #eee;
+}
+
+.aon-portlets-column1 {
+	width: 250px;
+	padding-top: 10px;
+	padding-right: 0px;
+    border-right: 1px solid #ddd;
+}
+
+.aon-portlets-column1 img {
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+}
+
+.aon-portlet-title {
+    border: #fff 1px solid;
+	text-transform: uppercase;
+}
+
+.aon-portlet-body {
+    border: #fff 1px solid;
+}
+
+.aon-table-portlet-column {
+    border-bottom: #fff 1px dotted !important;
+}
+
+.aon-portlet-title-buttons{
+	width : auto;
+}
+
+
+.aon-portlet-title-text {
+    color: gray;
+ 	font-size: 12px;
+ 	font-weight: normal;
+}  
+
+.aon-portlet-title-text.aon-icon {
+	padding-left: 0px;
+	background-image: none;
+}
+
+.aon-portlet-title-text.aon-bold {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+ 

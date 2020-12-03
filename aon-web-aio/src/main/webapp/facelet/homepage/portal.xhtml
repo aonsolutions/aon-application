@@ -1,0 +1,199 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<a4j:region>
+		<h:form>
+			<a4j:poll status="aonStatus" interval="300000"
+				actionListener="#{desktop.onRefresh}" reRender="desktopDiv1" />
+		</h:form>
+	</a4j:region>
+	
+	<ui:include	src="/facelet/shared/array.prototype.js.xhtml" />
+
+	<aon:form id="mainForm">
+
+		<aon:div styleClass="aon-height-all">
+
+			<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting aon-height-all"
+				columnClasses="aon-portlets-column1,aon-portlets-column2">
+
+				<aon:div>
+					<ui:include src="/facelet/homepage/portlet/externalApplicationsChildPortlet.xhtml" />
+					<ui:include src="/facelet/homepage/portlet/externalApplicationsParentPortlet.xhtml" />
+					<aon:if test="#{desktop.showGraphicsPortlet}">
+						<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
+					</aon:if>		
+					<aon:div  style="border-top: 1px solid #ddd; height:10px" />	
+					<aon:div>
+						<aon:div styleClass="aon-portlet">
+							<aon:div styleClass="aon-portlet-title">								
+								<aon:outputText value="APLICACIONES CONTRATADAS"
+								style="padding-bottom: 1px;padding-top: 1px;"
+								styleClass="aon-portlet-title-text"/>
+							</aon:div>
+							<aon:div styleClass="aon-portlet-body">
+							<aon:commandLink id="invoice" action="invoice"
+								title="Facturas"
+								styleClass="aon-menu-icon aon-icon-invoice"
+								value="Facturas" />
+														
+							</aon:div>							
+						</aon:div>
+					</aon:div>
+					<aon:div  style="border-top: 1px solid #ddd; height:10px" />	
+					<aon:div>
+						<aon:div styleClass="aon-portlet">
+							<aon:div styleClass="aon-portlet-title">								
+								<aon:outputText value="VISTA CLÁSICA"
+								style="padding-bottom: 1px;padding-top: 1px;"
+								styleClass="aon-portlet-title-text"/>
+							</aon:div>
+							<aon:div styleClass="aon-portlet-body">
+							</aon:div>							
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				<aon:div styleClass="on-text-center" style="margin-left: 100px; margin-right: 100px;">
+					<!--ui:include src="/facelet/homepage/portlet/parentDomainInfoPortlet.xhtml" /-->
+						
+					<aon:if test="#{desktop.showGraphicsPortlet}">
+
+						<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal or desktop.state.accountingInfoVisibleForPortal}">
+							<ui:include	src="/facelet/homepage/portlet/fiscalPortalDashboardPortlet.xhtml" />
+						</aon:if>
+						
+						<!-- payroll portal -->
+						<aon:if test="#{desktop.state.payrollInfoVisibleForPortal}">
+							<ui:include	src="/facelet/homepage/portlet/payrollPortalDashboardPortlet.xhtml" />
+						</aon:if>
+
+						<!-- docs -->
+ 							
+					</aon:if>
+
+					<aon:if test="#{!desktop.showGraphicsPortlet}">
+						<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
+					</aon:if>
+					<aon:div>
+						<aon:div styleClass="aon-portlet">
+							<aon:div styleClass="aon-portlet-title">								
+								<aon:outputText value="CONTRATADAS"
+								style="padding-bottom: 1px;padding-top: 1px;"
+								styleClass="aon-portlet-title-text aon-bold"/>
+							</aon:div>
+							<aon:div styleClass="aon-portlet-body">
+								<aon:panelGrid columns="3" width="100%" 
+									styleClass="aon-select-row"
+									style="border-bottom: 1px solid #ddd;"
+									columnClasses="aon-width-50 aon-text-center ,aon-text-left ,aon-width-50 aon-text-center" >
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Facturas"
+									url="#{aonResource.resolve['/images/aon-invoice.png']}" />								
+								
+									<aon:outputText value="Facturas"
+									style="padding-bottom: 1px;padding-top: 1px;"
+									styleClass="aon-portlet-title-text aon-bold"/>
+
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Facturas"
+									url="#{aonResource.resolve['/images/aon-right-arrow.png']}" />								
+								</aon:panelGrid>
+							</aon:div>							
+							<aon:div styleClass="aon-portlet-title">								
+								<aon:outputText value="PROXIMAMENTE"
+								style="padding-bottom: 1px;padding-top: 1px;"
+								styleClass="aon-portlet-title-text aon-bold"/>
+							</aon:div>
+							<aon:div styleClass="aon-portlet-body">
+								<aon:panelGrid columns="4" width="100%" 
+									style=" border-collapse: collapse; border: 1px solid #ddd;"
+									styleClass="aon-disabled aon-select-row"
+									columnClasses="aon-width-50 aon-text-center ,aon-text-left ,aon-width-100 aon-text-center, aon-width-50 aon-text-center" >
+									
+									<!-- Horario -->									
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Horario"
+									url="#{aonResource.resolve['/images/aon-disabled.png']}" />								
+								
+									<aon:outputText value="Horario"
+									style="padding-bottom: 1px;padding-top: 1px;"
+									styleClass="aon-portlet-title-text aon-bold"/>
+
+									<aon:outputText value="Más Info"
+									style="padding-bottom: 1px;padding-top: 1px;"
+									styleClass="aon-portlet-title-text aon-bold"/>
+
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Convenios"
+									url="" />								
+
+
+									<!-- Documental -->									
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Documental"
+									url="#{aonResource.resolve['/images/aon-disabled.png']}" />								
+								
+									<aon:outputText value="Documental"
+									style="padding-bottom: 1px;padding-top: 1px;"
+									styleClass="aon-portlet-title-text aon-bold"/>
+
+									<aon:outputText value="Más Info"
+									style="padding-bottom: 1px;padding-top: 1px;"
+									styleClass="aon-portlet-title-text aon-bold"/>
+
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Convenios"
+									url="" />								
+									
+									<!-- Comunic@ -->
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title=" Comunic@"
+									url="#{aonResource.resolve['/images/aon-disabled.png']}" />								
+								
+									<aon:outputText value=" Comunic@ "
+									style="padding-bottom: 1px;padding-top: 1px;"
+									styleClass="aon-portlet-title-text aon-bold"/>
+
+									<aon:outputText value="Más Info"
+									style="padding-bottom: 1px;padding-top: 1px;"
+									styleClass="aon-portlet-title-text aon-bold"/>
+
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Convenios"
+									url="" />								
+
+									<!-- Convenios -->
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Convenios"
+									url="#{aonResource.resolve['/images/aon-disabled.png']}" />								
+								
+									<aon:outputText value="Convenios"
+									style="padding-bottom: 1px;padding-top: 1px;"
+									styleClass="aon-portlet-title-text aon-bold"/>
+
+									<aon:outputText value="Más Info"
+									style="padding-bottom: 1px;padding-top: 1px;"
+									styleClass="aon-portlet-title-text aon-bold"/>
+
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Convenios"
+									url="" />								
+								</aon:panelGrid>
+							</aon:div>							
+						</aon:div>
+					</aon:div>
+				</aon:div>
+
+			</aon:panelGrid>
+
+		</aon:div>
+	</aon:form>
+	
+</ui:composition>
+

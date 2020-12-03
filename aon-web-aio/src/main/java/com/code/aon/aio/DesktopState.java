@@ -290,6 +290,10 @@ public class DesktopState implements Serializable {
 		return false;
 	}
 	
+	public boolean isPortalActive() {
+		return this.portalInfo != null && this.portalInfo.isActive() && portalInfo.isAlpha();
+	}
+	
 	private boolean calculatePortalActive( User user, DomainSwitcher ds ) {
 		this.portalInfo = new PortalInfo();
 		if ( ds.isChildDomain() && (ds.getDomainId()==user.getDomain()) ) {
