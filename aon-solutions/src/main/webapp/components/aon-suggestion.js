@@ -97,6 +97,11 @@ export class AonSuggestion extends AonElement {
       this.dispatchEvent(new Event('keyup'));
     });
 
+    input.addEventListener('change', () => {
+      this.value = input.value;
+      this.dispatchEvent(new Event('change'));
+    });
+
     let div = this.getElement(input.DIV);
     let span = this.createElement('span');
     span.id = input.SPAN;

@@ -13,3 +13,6 @@ export const REJECTED = 'rejected';
 export const TRASH = 'trash';
 export const DRAFT = 'draft';
 export const INBOX = 'inbox';
+
+
+export const INPUTS_ALL = 'aon-input, aon-date, aon-select, aon-number';

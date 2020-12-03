@@ -41,14 +41,14 @@ export class AonMovementsList extends AonElement {
 
 	async getTable() {
 		let aonMovementTable = this.getElement('aonMovementTable');
-		let divLoader = this.getElement('aonComunica');
+		let aonComunica = this.getElement('aonComunica');
 		aonMovementTable.addColumn('Apellidos y nombre', 'string', 'nombres');
 		aonMovementTable.addColumn('DNI/NIE', 'string', 'dni');
 		aonMovementTable.addColumn('Movimiento', 'string', 'status');
 		aonMovementTable.addColumn('Fecha', 'date', 'fecha');
 		aonMovementTable.addColumn('Opción', 'fn', 'option');
 		if(aonMovementTable) {
-			divLoader.startLoader();
+			aonComunica.startLoader();
 			try {
 				let resp = await getMovements(this.getFilter());
 				aonMovementTable.removeRows();
@@ -97,21 +97,30 @@ export class AonMovementsList extends AonElement {
 			} catch(e){
 				console.log(e);
 			}
-			divLoader.stopLoader();
+			aonComunica.stopLoader();
 		}
 	}
 
 	async aonMovement({target:el}, data) {
 		let aonComunica = this.getElement('aonComunica');
-		aonComunica.setContentHTML(`<aon-alta-directa id="aonAltaDirecta"></aon-alta-directa>`);
+		let id = 'aonAltaDirecta';
+		aonComunica.startLoader();
+		aonComunica.setContentHTML(`<aon-alta-directa id="${id}"></aon-alta-directa>`);
 		try {
 			const resp = await getEmployee(data);
 			if(resp){
-				let aonAltaDirecta = this.getElement('aonAltaDirecta');
-				if(aonAltaDirecta) aonAltaDirecta.parseData(resp);
+				let aonAltaDirecta = this.getElement(id);
+				if(aonAltaDirecta){
+					//DISABLED FORMS
+					aonAltaDirecta.disabledForm(`${id}EmpresaCard`);
+					aonAltaDirecta.disabledForm(`${id}TrabajadorCard`, 'aon-switch');
+					
+					//parseData
+					aonAltaDirecta.data = resp;
+				} 
 			}
-
 		} catch(error){}
+		aonComunica.stopLoader();
 	}
 
 	async deleteMov(data, el){

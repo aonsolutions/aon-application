@@ -9,7 +9,7 @@ export class AonSelect extends AonElement {
   _selected;
 
   static get observedAttributes() {
-    return ['value', 'options'];
+    return ['value', 'options', 'disabled'];
   }
 
 	get id() {
@@ -60,15 +60,29 @@ export class AonSelect extends AonElement {
     this.setAttribute('autocomplete', autocomplete);
   }
 
+
+  get disabled() {
+    return this.getAttribute('disabled')
+  }
+
+  set disabled(disabled) {
+    this.setAttribute("disabled", disabled);
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     if('value' === name) {
       let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
+      let detail = {};
       options.forEach((item, i) => {
         if(item.value == newValue) {
           this.getElement(this.INPUT).value = item.name;
         }
       });
-      this.dispatchEvent(new Event('change'));
+      
+      if(options.length > 0)
+        detail =  options.find(v=>  v.value == newValue);
+        
+      this.dispatchEvent(new CustomEvent('change',{detail}));
     }
   }
 
@@ -100,7 +114,7 @@ export class AonSelect extends AonElement {
     });
 
     input.addEventListener('click', () => {
-      let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
+      let options = this.hasAttribute('options') && !this.getDisabled() ? JSON.parse(this.getAttribute('options')) : [];
       this.buildOptions(options);
     });
 
@@ -173,6 +187,10 @@ export class AonSelect extends AonElement {
       });
     }
     this.setAttribute('options', JSON.stringify(opts));
+  }
+
+  getDisabled(){
+    return this.disabled == "true";
   }
 }
 

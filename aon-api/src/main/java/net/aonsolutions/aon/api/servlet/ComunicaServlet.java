@@ -165,7 +165,7 @@ public class ComunicaServlet extends HttpServlet{
 			Utils.addCorsHeader(resp);
 			resp.setStatus(HttpServletResponse.SC_OK);
 			
-			User user = AON_SOLUTIONS.getUser(domain, token);
+			//User user = AON_SOLUTIONS.getUser(domain, token);
 			LOGGER.info("CERTIFICATE");
 			//Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 			//System.out.println(certificate);
@@ -275,8 +275,8 @@ public class ComunicaServlet extends HttpServlet{
 		.setContract(type_cto)
 		.setMdctz(md_ctz)
 		.build();
-		return employee;
-//		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
+//		return employee;
+		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	
 	private void movDelete(final InputStream certificateInputStream, final String certificatePassword,

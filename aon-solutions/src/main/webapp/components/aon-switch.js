@@ -7,7 +7,7 @@ export class AonSwitch extends AonElement {
 	TITLE;
 
   static get observedAttributes() {
-    return [CONSTANT.VALUE, CONSTANT.CHECKED, CONSTANT.TITLE];
+    return [CONSTANT.VALUE, CONSTANT.CHECKED, CONSTANT.TITLE, 'disabled'];
   }
 
 	get id() {
@@ -42,6 +42,14 @@ export class AonSwitch extends AonElement {
     this.setAttribute(CONSTANT.CHECKED, checked);
   }
 
+  get disabled() {
+    return this.getAttribute(CONSTANT.disabled)
+  }
+
+  set disabled(disabled) {
+    this.setAttribute("disabled", disabled);
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     if(CONSTANT.VALUE === name) {
       this.getElement(this.INPUT).value = newValue;
@@ -54,7 +62,17 @@ export class AonSwitch extends AonElement {
 			if(title)
 				title.innerHTML = this.hasAttribute(CONSTANT.TITLE)
 					? this.getAttribute(CONSTANT.TITLE) : CONSTANT.EMPTY;
-		}
+    }
+
+    if ('disabled' === name) {
+      let el = this.getElement(this.INPUT);
+      if (el) {
+        if (newValue == "false") 
+          el.removeAttribute('disabled');
+        else
+          el.setAttribute('disabled', newValue);
+      }
+    }
   }
 
 	constructor () {

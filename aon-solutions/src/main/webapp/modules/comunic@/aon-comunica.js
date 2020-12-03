@@ -1,6 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {startModule} from '../../services/gwtLoader.js';
 import './aon-movements.js';
+import '../../components/aon-toast.js';
 export class AonComunica extends AonElement {
 
 	AON_COMUNICA;
@@ -14,6 +15,7 @@ export class AonComunica extends AonElement {
 
 	connectedCallback () {
 		this.innerHTML = `
+			<aon-toast id="${this.AON_COMUNICA}Toast"></aon-toast>
 			<aon-application id="${this.AON_COMUNICA}" title="COMUNIC@"></aon-application>
 		`;
     this.build();
@@ -71,7 +73,7 @@ export class AonComunica extends AonElement {
 
 		//if(this.isMobile()){
 		 this.getElement(aonComunica.TOOLBAR).setAttribute('option', 'Movimientos');
-		  aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
+		   aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
 		//}
 		//aonComunica.setContentHTML(`<aon-alta-directa></aon-alta-directa>`);
 

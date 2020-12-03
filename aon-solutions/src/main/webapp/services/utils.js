@@ -1,3 +1,5 @@
+import {INPUTS_ALL} from '../environments/constants.js';
+
 export const getReader = (file) => {
   return new Promise((resolve, reject) => {
     const READER = new FileReader();
@@ -43,13 +45,17 @@ export const decimalAdjust = (type, value, exp) => {
 
 export const serializeForm = (form) => {
   let inputs = [
-    ...form.querySelectorAll(`
-      aon-input, aon-date, aon-select, aon-number
-    `)
+    ...form.querySelectorAll(INPUTS_ALL)
   ];
   let obj = {}
   inputs.filter(el => el.value).map(({ name, value }) => obj[name] = value);
   return obj;
+}
+
+export const setValueName = (name, value) => {
+  let el = document.querySelector(`[name="${name}"]`);
+  if(el && value) el.value = value;
+  return el;
 }
 
 const formatDate = (d) => {
