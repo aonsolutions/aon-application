@@ -26,6 +26,16 @@ public class Employee {
 	private Float total;
 	private Integer cotDays;
 
+	public String getSituation() {return situation;}
+	public String getNss() {return nss;}
+	public String getName() {return name;}
+	public String getIpf() {return ipf;}
+	public String getCtaCti() {return ctaCti;}
+	public String getRegime() {return regime;}
+	public Float getAt() {return at;}
+	public Float getIms() {return ims;}
+	public Float getTotal() {return total;}
+	public Integer getCotDays() {return cotDays;}
 
 	private Employee() {}
 	
@@ -84,17 +94,17 @@ public class Employee {
 			@Override
 			public void visitTc(String tc) {stringBuffer.append(String.format(" tc : \"%s\" \n", tc));}
 			@Override
-			public void visitCtp(float ctp) {stringBuffer.append(String.format(" ctp : \"%s\" \n", ctp));	}
+			public void visitCtp(Float ctp) {stringBuffer.append(String.format(" ctp : \"%s\" \n", ctp));	}
 			@Override
 			public void visitEp(String ep) {stringBuffer.append(String.format(" ep : \"%s\" \n", ep));	}
 			@Override
-			public void visitAt(float at) {stringBuffer.append(String.format(" at : \"%s\" \n", at));	}
+			public void visitAt(Float at) {stringBuffer.append(String.format(" at : \"%s\" \n", at));	}
 			@Override
-			public void visitIms(float ims) {stringBuffer.append(String.format(" ims : \"%s\" \n", ims));	}
+			public void visitIms(Float ims) {stringBuffer.append(String.format(" ims : \"%s\" \n", ims));	}
 			@Override
-			public void visitTotal(float total) {stringBuffer.append(String.format(" total : \"%s\" \n", total));	}
+			public void visitTotal(Float total) {stringBuffer.append(String.format(" total : \"%s\" \n", total));	}
 			@Override
-			public void visitCotDays(int cotDays) {stringBuffer.append(String.format(" cotDays : \"%s\" \n", cotDays));	}
+			public void visitCotDays(Integer cotDays) {stringBuffer.append(String.format(" cotDays : \"%s\" \n", cotDays));	}
 		});
 		stringBuffer.append('}');
 		return stringBuffer.toString();
@@ -115,12 +125,12 @@ public class Employee {
 		private Date frb;
 		private Date feb;
 		private String tc;
-		private float ctp;
+		private Float ctp;
 		private String ep;
-		private float at;
-		private float ims;
-		private float total;
-		private int cotDays;
+		private Float at;
+		private Float ims;
+		private Float total;
+		private Integer cotDays;
 
 		public EmployeeBuilder(){}		
 		
@@ -204,7 +214,7 @@ public class Employee {
 			return this;
 		}
 
-		public EmployeeBuilder setCtp(float ctp) {
+		public EmployeeBuilder setCtp(Float ctp) {
 			this.ctp = ctp;
 			return this;
 		}
@@ -214,22 +224,22 @@ public class Employee {
 			return this;
 		}
 
-		public EmployeeBuilder setAt(float at) {
+		public EmployeeBuilder setAt(Float at) {
 			this.at = at;
 			return this;
 		}
 
-		public EmployeeBuilder setIms(float ims) {
+		public EmployeeBuilder setIms(Float ims) {
 			this.ims = ims;
 			return this;
 		}
 
-		public EmployeeBuilder setTotal(float total) {
+		public EmployeeBuilder setTotal(Float total) {
 			this.total = total;
 			return this;
 		}
 
-		public EmployeeBuilder setCotDays(int cotDays) {
+		public EmployeeBuilder setCotDays(Integer cotDays) {
 			this.cotDays = cotDays;
 			return this;
 		}
@@ -276,12 +286,12 @@ public class Employee {
 		void visitFrb(Date frb);
 		void visitFeb(Date feb);
 		void visitTc(String tc);
-		void visitCtp(float ctp);
+		void visitCtp(Float ctp);
 		void visitEp(String ep);
-		void visitAt(float at);
-		void visitIms(float ims);
-		void visitTotal(float total);
-		void visitCotDays(int cotDays);
+		void visitAt(Float at);
+		void visitIms(Float ims);
+		void visitTotal(Float total);
+		void visitCotDays(Integer cotDays);
 	}
 	
 	public static  abstract class AbstractVisitor implements Visitor {
@@ -313,17 +323,17 @@ public class Employee {
 		@Override
 		public void visitTc(String tc) {}
 		@Override
-		public void visitCtp(float ctp) {}
+		public void visitCtp(Float ctp) {}
 		@Override
 		public void visitEp(String ep) {}
 		@Override
-		public void visitAt(float at) {}
+		public void visitAt(Float at) {}
 		@Override
-		public void visitIms(float ims) {}
+		public void visitIms(Float ims) {}
 		@Override
-		public void visitTotal(float total) {}
+		public void visitTotal(Float total) {}
 		@Override
-		public void visitCotDays(int cotDays) {}
+		public void visitCotDays(Integer cotDays) {}
 	}
 	
 }

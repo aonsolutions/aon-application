@@ -58,7 +58,7 @@ public class CCCVidaLaboral {
 		Date periodStart = 			parseDate(city_cp_period.group("periodStart"), "dd MM yyyy");
 		Date periodEnd = 			parseDate(city_cp_period.group("periodEnd"), "dd MM yyyy");
 
-		builder.setCtaCti(province+ccc).setRegime(regime);
+		builder.setCtaCti(province + ccc).setRegime(regime);
 		ArrayList<Employee> employees = new ArrayList<>();
 		try{
 			while(true){
@@ -69,6 +69,11 @@ public class CCCVidaLaboral {
 				builder.setNss(nss).setIpf(ipf).setName(name);
 
 				Optional<Matcher> data = attempt(br, GENERAL_INFO);
+				builder.setFra(null)
+						.setFea(null)
+						.setFrb(null)
+						.setFeb(null);
+
 				while(data.isPresent()) {
 					employeeData = data.get();
 
@@ -102,11 +107,8 @@ public class CCCVidaLaboral {
 					int cotDays = 			Integer.parseInt(employeeData.group("cotDays"));
 
 					if(ctp != null) 			builder.setCtp(ctp);
-
-					/*	TO_DO				parser
-						--------------------------
-					 	[FIX] fra, frb, fea, feb
-					 */
+					if(type.equalsIgnoreCase("ALTA")) builder.setFra(startDate).setFea(effectDate);
+					if(type.equalsIgnoreCase("BAJA")) builder.setFrb(startDate).setFeb(effectDate);
 
 					builder.setSituation(type)
 							.setGc(gc)
