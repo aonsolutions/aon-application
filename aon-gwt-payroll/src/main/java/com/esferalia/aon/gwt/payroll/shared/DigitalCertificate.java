@@ -26,7 +26,7 @@ public class DigitalCertificate implements Serializable {
 	}
 
 	public Boolean getConfidential() {
-		return confidential;
+		return null == confidential ? false : confidential;
 	}
 
 	public void setConfidential(Boolean confidential) {

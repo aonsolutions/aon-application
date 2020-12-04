@@ -326,7 +326,10 @@ public class MainDigitalCertificates extends MainEntryPoint{
             	extension.setValue(fileExt);
             	fileName.setValue(filename);
             	fileNameTB.setValue(filename);
-            	formPanel.submit();
+            	mainDigitalCertificatesObject.setDigitalCertificates(s -> {
+            		formPanel.submit();
+        		}, f -> {});
+//            	formPanel.submit();
             }
 		});
 		
