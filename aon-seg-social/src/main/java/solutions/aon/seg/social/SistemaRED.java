@@ -192,6 +192,27 @@ public class SistemaRED {
 		return SistemaREDMov.nafxipf(certificateInputStream, certificatePassword, certificateType, ipf, apellido1, apellido2);
 	}
 	
+	public static void cambioGrupCtz(final InputStream certificateInputStream, 
+			final String certificatePassword, final String certificateType, 
+			String ipf, String regimen, String ctaCti, String nss, String grup_ctz, Date fecha) throws SegSocialException {
+		
+		SistemaREDMov.cambioGrupCtz(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, grup_ctz, fecha);
+	}
+	
+	public static void cambioOcupacion(final InputStream certificateInputStream, 
+			final String certificatePassword, final String certificateType, 
+			String ipf, String regimen, String ctaCti, String nss, String ocup, Date fecha) throws SegSocialException {
+		
+		SistemaREDMov.cambioOcupacion(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, ocup, fecha);
+	}
+	
+	public static void cambioCatProf(final InputStream certificateInputStream, 
+			final String certificatePassword, final String certificateType, 
+			String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha) throws SegSocialException {
+		
+		SistemaREDMov.cambioCatProf(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, cat, fecha);
+	}
+	
 	public static void main(String[] args)
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 

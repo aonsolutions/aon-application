@@ -12,8 +12,6 @@ import '../../components/aon-switch.js';
 import '../../components/aon-icon-button.js';
 import { setValueName, serializeForm } from '../../services/utils.js';
 
-
-
 export class AonAltaDirecta extends AonElement {
     ID;
     _contrato;
@@ -42,17 +40,15 @@ export class AonAltaDirecta extends AonElement {
         super();
         this.ID = this.id || 'aonAltaDirecta';
         this.TOOLBAR = this.id + 'Toolbar';
-        this._contrato = {};
+        this.aonComunicaToolbar = this.getElement('aonComunicaToolbar');
+        this.aonComunicaToolbar.setAttribute('option', 'Comunicar alta');
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        if("data" == name && newValue){
+        if ("data" == name && newValue) {
+            this.aonComunicaToolbar.setAttribute('option', 'Modificar alta');
             this.parseData(this.data);
         }
-    }
-
-    setContrato(name, value) {
-        this._contrato[name] = value;
     }
 
     getContrato() {
@@ -66,26 +62,35 @@ export class AonAltaDirecta extends AonElement {
             regimen: data.regime,
             nombre: data.name,
             fecha: data.fra,
-            grup_ctz: data.gc
+            grup_ctz: data.gc,
         }
-        if (data.ocup) obj['ocupacion'] = data.ocup.toString().toLowerCase();
-        if (data.contract) obj['type_cto'] = data.contract;
+        if(data.ocup) obj['ocupacion'] = data.ocup.toString().toLowerCase();
+        if(data.contract) obj['type_cto'] = data.contract;
+        if(data.coef) {
+            obj['tipo_jornada'] =  "semanal";
+            obj['coefparcial'] = parseInt(data.coef.toString().replace(',',''));
+        }
         for (const property in obj) setValueName(property, obj[property]);
 
         let ctaCti = this.getElement('ctaCtiInput');
         if (ctaCti) ctaCti.value = obj.regimen + ' - ' + obj.ctaCti;
 
         let type_cto = document.querySelector('#type_cto > aon-input');
-        if(obj.type_cto && type_cto && !type_cto.value) 
+        if (obj.type_cto && type_cto && !type_cto.value)
             type_cto.value = obj.type_cto;
 
-        //hidden test 
+        //calculo horas
+        this.calculoHoras();
+
+        //hidden toolbar 
         let toolb = document.querySelector(`#${this.TOOLBAR}`);
-        if(toolb) toolb.style.display = "none";
+        if (toolb) toolb.style.display = "none";
+
 
     }
 
     connectedCallback() {
+        const toolbarMobile = !this.isMobile() ? `<aon-toolbar id="${this.TOOLBAR}" type="secondary" title="Alta directa"> </aon-toolbar>` : '';
         this.innerHTML = `
             <style>
               .aonCard{
@@ -104,9 +109,15 @@ export class AonAltaDirecta extends AonElement {
               #searchDniTitle{
                 font-size: 12px;
               }
+              .coefParcilD{
+                position: absolute;
+                top: 50%;
+                z-index: 9;
+              }
             </style>
 
-            <aon-toolbar id="${this.TOOLBAR}" type="secondary" title="Alta directa"> </aon-toolbar>
+            ${toolbarMobile} 
+           
             <form id="${this.ID}Form" action="#" onsubmit="return false;">
                 <div id="${this.ID}Div">
                     <div class="aonRow">
@@ -193,10 +204,10 @@ export class AonAltaDirecta extends AonElement {
             </div>
             <div class="aonCol-sm-12 aonCol-md-12" id="div_parcial" hidden>
                 <div class="aonCol-sm-3">
-                    <aon-select id="tipo_jornada" title="Tipo de jornada"></aon-select>
+                    <aon-select id="tipo_jornada" name="tipo_jornada" title="Tipo de jornada"></aon-select>
                 </div>
                 <div class="aonCol-sm-3">
-                    <aon-number id="horas_convenio" description="Horas convenio" format="true" decimals="2"></aon-number>
+                    <aon-number id="horas_convenio" name="horas_convenio"  description="Horas convenio" format="true" decimals="2"></aon-number>
                 </div>
                 <div class="aonCol-sm-3">
                     <aon-number id="horas" description="Horas" format="true" decimals="2"></aon-number>
@@ -228,7 +239,7 @@ export class AonAltaDirecta extends AonElement {
         let aonAltaDirectaNss = this.getElement(`${this.ID}DivNss`);
         aonAltaDirectaNss.innerHTML = `<aon-suggestion id="${this.ID}Nss" title="NSS/NAF" name="nss"></aon-suggestion>`;
 
-        this.getElement(`${this.ID}Nss`).addEventListener('change', ({target}) => {
+        this.getElement(`${this.ID}Nss`).addEventListener('change', ({ target }) => {
             this.comprobarNss(target.value);
         });
 
@@ -239,9 +250,7 @@ export class AonAltaDirecta extends AonElement {
         this.getElement('horas_convenio').addEventListener('change', () => this.calculoCoef());
 
         let horas = this.getElement('horas');
-        horas.addEventListener('change', () => {
-            this.calculoCoef();
-        });
+        horas.addEventListener('change', () => this.calculoCoef());
 
         let switchDni = this.getElement('switchDni');
         switchDni.addEventListener('change', ({ target }) => {
@@ -256,7 +265,8 @@ export class AonAltaDirecta extends AonElement {
             nss.removeIcon();
         });
 
-        this.getElement('coefparcial').addEventListener('change', (e) => this.calculoHoras());
+        let coefparcial = this.getElement('coefparcial');
+        coefparcial.addEventListener('change', (e) => this.calculoHoras());
 
         this.getElement('iconSegSocial').addEventListener('click', (e) => this.getNaf());
 
@@ -264,12 +274,6 @@ export class AonAltaDirecta extends AonElement {
         this.getElement(`${this.ID}IConSearch`).addEventListener('click', (e) => this.disabledCardTrabajor(false));
 
         this.getElement(`${this.ID}Dni`).disabled = true;
-
-        let formChangeField = [...this.getElement(`${this.ID}Form`).querySelectorAll(INPUTS_ALL)];
-        formChangeField.map(el => {
-            el.addEventListener('change', ({ target }) => this.setContrato(target.name, target.value));
-            el.addEventListener('keyup', ({ target }) => this.setContrato(target.name, target.value));
-        })
 
         // start list functions
         this.startListFunctions();
@@ -280,8 +284,10 @@ export class AonAltaDirecta extends AonElement {
                 .innerHTML = `<button class="aonButton" type="button" id="${this.ID}Submit">Comunicar</button>`;
         }
 
+        this.addSpanDecimal();
+
     }
-    
+
 
     buildToolbar() {
         let toolbar = this.getElement(this.TOOLBAR);
@@ -296,10 +302,16 @@ export class AonAltaDirecta extends AonElement {
         toolbar.addButton2({
             id: 'Previous',
             name: 'Back',
-            icon: 'keyboard_arrow_left'
+            icon: 'arrow_back'
         }, () => this.back());
+    }
 
-        toolbar.addSeparator();
+    addSpanDecimal() {
+        let coefparcialInput = this.getElement('coefparcialInput')
+        let span = document.createElement('span');
+        span.innerHTML = '0,';
+        span.classList = 'coefParcilD';
+        coefparcialInput.parentNode.insertBefore(span, coefparcialInput);
     }
 
     startListFunctions() {
@@ -482,8 +494,8 @@ export class AonAltaDirecta extends AonElement {
         let horas = this.getElement('horas').value;
         let coef = '';
         if (horas_convenio > 0 && horas > 0) {
-            let calc = Math.round(parseFloat((parseFloat(horas) / parseFloat(horas_convenio)) * 100));
-            if (calc > 0 && calc <= 99.99) coef = calc.toString().padStart(3, "0");
+            let calc = Math.round(parseFloat((parseFloat(horas) / parseFloat(horas_convenio)) * 1000));
+            if (calc > 0 && calc <= 999) coef = calc;
         }
         this.getElement('coefparcial').value = coef;
     }
@@ -492,9 +504,8 @@ export class AonAltaDirecta extends AonElement {
         let horas_convenio = this.getElement('horas_convenio').value;
         let coef = this.getElement('coefparcial').value;
         let horas = this.getElement('horas');
-
-        if (horas_convenio > 0 && coef > 0 && coef <= 99.99) {
-            horas.value = (parseInt(coef) / 100) * horas_convenio;
+        if (horas_convenio > 0 && coef > 0 && coef <= 999) {
+            horas.value = parseFloat(coef / 1000) * horas_convenio;
         }
     }
 
@@ -533,7 +544,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             await postAltaDirecta(this.getContrato());
             toast.start({ message: 'Alta procesada!', type: 'success', delay: 3000 });
-            this.back();
+            // this.back();
         } catch (error) {
             toast.start({ message: error, type: 'error' });
         }
@@ -615,4 +626,5 @@ export class AonAltaDirecta extends AonElement {
     }
 
 }
+
 window.customElements.define('aon-alta-directa', AonAltaDirecta);

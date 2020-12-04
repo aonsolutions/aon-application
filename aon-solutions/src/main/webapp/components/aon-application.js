@@ -332,6 +332,10 @@ export class AonApplication extends AonElement {
 		this.appendChild(span);
 		this.getElement(this.id + action.id + 'Button').addEventListener('click', fn);
 	}
+	removeFloatOption() {
+		let el = this.getElement(this.id + 'FloatSpan');
+		if(el) el.remove();
+	}
 
   setContentHTML(html){
 		this.getElement(this.CONTENT).innerHTML = html;

@@ -275,8 +275,9 @@ public class ComunicaServlet extends HttpServlet{
 		.setContract(type_cto)
 		.setMdctz(md_ctz)
 		.build();
-//		return employee;
-		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
+		System.out.println(coefparcial);
+		return employee;
+//		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	
 	private void movDelete(final InputStream certificateInputStream, final String certificatePassword,

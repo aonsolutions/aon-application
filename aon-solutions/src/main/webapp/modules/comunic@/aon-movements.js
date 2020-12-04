@@ -1,23 +1,23 @@
-import {AonElement} from '../../components/AonElement.js';
+import { AonElement } from '../../components/AonElement.js';
 import './aon-movements-list.js';
-import './aon-alta-directa.js';
+import'./aon-alta-directa.js';
 
 export class AonMovements extends AonElement {
 
     get id() {
-		return this.getAttribute('id');
-	}
+        return this.getAttribute('id');
+    }
 
-	set id(id) {
-		this.setAttribute('id', id);
-	}
+    set id(id) {
+        this.setAttribute('id', id);
+    }
 
-    constructor () {
+    constructor() {
         super();
     }
 
 
-    connectedCallback () {
+    connectedCallback() {
         this.innerHTML = `
             <aon-dialog-menu id="aonDialogAddOption" > </aon-dialog-menu>
         `;
@@ -25,16 +25,31 @@ export class AonMovements extends AonElement {
         this.build();
     }
 
-    build(){
-        let aonMovements = this.getElement('aonComunica');
-        aonMovements.removeToolbarOptions();
-        aonMovements.addToolbarOption('Add', 'add', () => this.aonAltaDirecta());
+    build() {
+        let aonComunica = this.getElement('aonComunica');
+        aonComunica.removeToolbarOptions();
+
+        if (this.isMobile()) {
+            let floatButton = this.getElement('aonComunicaFloatSpan');
+            if (!floatButton) {
+                aonComunica.addFloatOption({
+                    id: 'AddAlta',
+                    name: 'addalta',
+                    icon: 'add'
+                }, () =>  this.aonAltaDirecta());
+            }
+
+        } else {
+            aonComunica.addToolbarOption('Add', 'add', () => this.aonAltaDirecta());
+        }
+
         this.aonList();
     }
 
-    async aonList(filter){
+    async aonList(filter) {
         let aonComunica = this.getElement('aonComunica');
-        if(filter) aonComunica.setFilter(filter);
+        this.getElement(aonComunica.TOOLBAR).setAttribute('option', 'Movimientos');
+        if (filter) aonComunica.setFilter(filter);
         else {
             aonComunica.setContentHTML(`<aon-movements-list />`);
         }

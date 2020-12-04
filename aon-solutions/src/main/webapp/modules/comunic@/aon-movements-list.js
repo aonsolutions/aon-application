@@ -34,6 +34,10 @@ export class AonMovementsList extends AonElement {
 		this.build();
 	}
 
+	disconnectedCallback(){
+		let aonComunica = this.getElement('aonComunica');
+		if(aonComunica) aonComunica.removeFloatOption();
+	}
 
  	build() {
 		this.getTable();
@@ -126,6 +130,8 @@ export class AonMovementsList extends AonElement {
 	async deleteMov(data, el){
 		if (confirm(`Estas seguro de anular el movimiento de ${data.name} ?`)) {
 			let toast = this.getElement(`divToast`);
+			let aonComunica = this.getElement('aonComunica');
+			aonComunica.startLoader();
 			try {
 				await postDeleteMov(data);
 				toast.start({message:`${data.situation == "AL" ? "Alta" : "Baja"} eliminada!`});
@@ -133,6 +139,7 @@ export class AonMovementsList extends AonElement {
 			} catch (error) {
 				toast.start({message:error, type: 'error'});
 			}
+			aonComunica.stopLoader();
 		}
 	}
 
