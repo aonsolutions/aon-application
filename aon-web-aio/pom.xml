@@ -46,6 +46,21 @@
               <buildRevision>${buildNumber}</buildRevision>
             </manifestEntries>
           </archive>
+
+          <webResources>
+            <resource>
+              <!-- this is relative to the pom.xml directory -->
+              <directory>../aon-solutions/src/main/webapp</directory>
+              <!-- the list has a default value of ** -->
+              <includes>
+                <include>**/*.js</include>
+                <include>**/*.css</include>
+                <include>**/*.jpg</include>
+                <include>**/*.png</include>
+              </includes>
+            </resource>
+          </webResources>
+ 
         </configuration>
         <executions>
           <execution>
@@ -61,6 +76,12 @@
     </plugins>
   </build>
   <dependencies>
+	<dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.api</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
     <!-- INTERNAL LIBRARIES -->
     <dependency>
       <groupId>com.code.aon</groupId>

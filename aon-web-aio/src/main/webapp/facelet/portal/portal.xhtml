@@ -39,7 +39,7 @@
 								styleClass="aon-portlet-title-text"/>
 							</aon:div>
 							<aon:div styleClass="aon-portlet-body">
-							<aon:commandLink id="invoice" action="invoice"
+							<aon:commandLink id="left-invoice" action="portal_invoice"
 								title="Facturas"
 								styleClass="aon-menu-icon aon-icon-invoice"
 								value="Facturas" />
@@ -135,9 +135,11 @@
 									title="Facturas"
 									url="#{aonResource.resolve['/images/aon-invoice.png']}" />								
 								
-									<aon:outputText value="Facturas"
-									style="padding-bottom: 1px;padding-top: 1px;"
-									styleClass="aon-portlet-title-text aon-bold"/>
+									<aon:commandLink id="center-invoice" action="portal_invoice"
+										title="Facturas"
+										style="padding-bottom: 1px;padding-top: 1px; display: inline-block;"
+										styleClass="aon-portlet-title-text aon-bold aon-width-all"
+										value="Facturas" />
 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
 									title="Facturas"

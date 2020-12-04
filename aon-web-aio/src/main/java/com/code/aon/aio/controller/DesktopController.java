@@ -52,7 +52,7 @@ public class DesktopController implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final String HOMEPAGE_DESKTOP = "/homepage.xhtml";
-	private static final String PORTAL_TEMPLATE = "/facelet/homepage/portal.xhtml";
+	private static final String PORTAL_TEMPLATE = "/facelet/portal/portal.xhtml";
 	private static final String DESKTOP_TEMPLATE = "/facelet/homepage/desktop.xhtml";
 	private static final String ADMIN_TEMPLATE = "/com/code/aon/ui/admin/facelet/domains/list.xhtml";
 	private static final String INIT_ACTION_TEMPLATE = "/facelet/homepage/initAction.xhtml";

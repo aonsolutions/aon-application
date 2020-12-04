@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<meta name="gwt:property" content="locale=es_ES" />
+
+
+	<style>
+	body {
+		margin: 0;
+	}
+	</style>
+
+
+	<ui:include
+		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
+
+	<ui:include src="/facelet/homepage/menu.xhtml" />
+
+
+	<script type="text/javascript">
+        //<![CDATA[
+        
+        function getCurrentUser() {
+        	return '#{domainSwitcher.currentUser}';
+        }
+
+        function getCurrentDomainNameURL() {
+        	return '#{domainSwitcher.currentDomainNameURL}';
+        }
+        
+        function loadInvoicePanel(el) {
+			el.innerHTML='<aon-invoice-panel></aon-invoice-panel>';
+       	} 
+       	
+       	function loadStylesSheet( stylesheet ) {
+			var link = document.createElement( "link" );
+			link.type = "text/css";
+			link.rel = "stylesheet";
+			link.media = "screen,print";
+			link.href = stylesheet;
+
+			document.getElementsByTagName( "head" )[0].appendChild( link );
+       	}
+       	
+       	loadStylesSheet('https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css');
+       	loadStylesSheet('https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined');
+       	loadStylesSheet('https://code.getmdl.io/1.3.0/material.indigo-pink.min.css');
+
+       	loadStylesSheet('css/aon.css');
+       	loadStylesSheet('css/aon-toast.css');
+       	loadStylesSheet('css/aon-grid.css');
+       	loadStylesSheet('css/aon-input.css');
+       	loadStylesSheet('css/aon-switch.css');
+       	loadStylesSheet('css/aon-input-loading.css');
+       	loadStylesSheet('css/aon-input-loading.css');
+       	
+       	
+
+        //]]>
+    </script>
+    
+    
+
+	<script type="module" src="modules/invoice/aon-invoice-panel.js"></script>
+
+	<!--script type="text/javascript"
+		src="aon_gwt_payroll/aon_gwt_payroll.nocache.js?entryPoint=#{entryPoint}&amp;horribleFix=#{employeeTree.nextInt}" /-->
+
+	<div id="rootPanel"
+		style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;" >
+		
+	</div>
+
+
+
+
+	<script type="text/javascript">
+		//<![CDATA[ 
+		loadInvoicePanel(document.getElementById('rootPanel'));
+		//]]>
+	</script>
+	
+
+
+</ui:composition>

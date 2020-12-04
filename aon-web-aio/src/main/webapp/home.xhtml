@@ -10,7 +10,7 @@
 	<ui:define name="mainHeader">
 	  <aon:if test="#{desktop.portalActive}">
 		<a4j:loadStyle src="/css/portal.css"/>
-		<ui:include src="/facelet/homepage/top.xhtml" />
+		<ui:include src="/facelet/portal/header.xhtml" />
 	  </aon:if>
 	  <aon:if test="#{!desktop.portalActive}">
 		<ui:include src="/facelet/homepage/header.xhtml" />
