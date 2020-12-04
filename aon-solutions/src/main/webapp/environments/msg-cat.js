@@ -77,3 +77,11 @@ export const AON_MSG_CANCEL = 'Cancel·lar';
 export const AON_MSG_ACCEPT = 'Acceptar';
 
 export const AON_MSG_FILE = 'Fitxer';
+
+export const AON_MSG_USER = 'Usuari';
+export const AON_MSG_USERS = 'Usuaris';
+export const AON_MSG_USER_DATA = `Dades de l'Usuari`;
+export const AON_MSG_USER_MANAGEMENT = `Gestió d'Usuaris`;
+
+export const AON_MSG_NAME = 'Nom';
+export const AON_MSG_SURNAME = 'Cognoms';

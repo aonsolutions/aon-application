@@ -128,7 +128,7 @@ export class AonUser extends AonElement {
 				<aon-input class="aonWidth50" id="aonConfigurationUserCardPhone" description="Teléfono Móvil" value=""></aon-input>
 			</form>
 		`);
-
+		
 		let name = document.getElementById('aonConfigurationUserCardName');
 		name.setVisible(!this.isNew());
 		name.onChange(() => {
@@ -187,6 +187,11 @@ export class AonUser extends AonElement {
 		table.setAttribute('id', 'aonUserRoleTable')
 		table.style.width = '100%';
 		card2.setContent(table);
+
+		if(this.isMobile()) {
+			card.style.width = '100%'
+			card2.style.width = '100%';
+		}
 	}
 
 

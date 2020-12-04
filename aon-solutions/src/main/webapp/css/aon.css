@@ -354,8 +354,67 @@ form {
   border: 0px;
 }
 
-.aonTableTh {
-  text-align: center !important;
+.aonTable thead {
+  display: block;
+  width: 100%
+}
+
+
+.aonTable thead tr {
+  display: table;
+  width: 100%;
+}
+
+.aonTable th {
+  position: relative;
+  vertical-align: bottom;
+  text-overflow: ellipsis;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0;
+  height: 48px;
+  font-size: 12px;
+  color: rgb(95, 99, 104);
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+  padding-left: 8px;
+}
+
+.aonTable tbody {
+  display: block;
+  height: calc(100vh - 151px);
+  width: 100%;
+  overflow-y: auto;
+}
+
+.aonTable tbody::-webkit-scrollbar {
+  display: none;
+}
+
+.aonTable tbody tr {
+  cursor: pointer;
+  display: table;
+  width: 100%;
+
+  position: relative;
+  height: 48px;
+  font-size: 12px;
+  transition-duration: 0.18s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-property: background-color;
+}
+
+.aonTable tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.aonTable tbody tr:active {
+  background-color: #bbb;
+}
+
+.aonTable td {
+  padding-left: 8px;
+  border-bottom: 1px solid #ddd;
 }
 
 .aonMenuSidenav {
@@ -523,49 +582,6 @@ form {
   width: 8px;
   height: 8px;
   border-radius: 10px;
-}
-
-.aonTable {
-  width: 100%;
-  border: 0px;
-  border-bottom: 1px solid #ddd;
-}
-
-.aonTable th {
-  position: relative;
-  vertical-align: bottom;
-  text-overflow: ellipsis;
-  font-weight: 500;
-  line-height: 24px;
-  letter-spacing: 0;
-  height: 48px;
-  font-size: 12px;
-  color: rgb(95, 99, 104);
-  padding-bottom: 8px;
-  border-bottom: 1px solid #ddd;
-  padding-left: 8px;
-}
-
-.aonTable tbody tr {
-  position: relative;
-  height: 48px;
-  font-size: 12px;
-  transition-duration: 0.18s;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-property: background-color;
-}
-
-.aonTable tbody tr:hover {
-  background-color: #f1f1f1;
-}
-
-.aonTable tbody tr:active {
-  background-color: #bbb;
-}
-
-.aonTable td {
-  padding-left: 8px;
-  border-bottom: 1px solid #ddd;
 }
 
 .aonCard {

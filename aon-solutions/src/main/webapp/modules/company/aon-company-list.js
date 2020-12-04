@@ -36,8 +36,8 @@ export class AonCompanyList extends AonElement {
 
 	build() {
 	 let aonTable = this.getElement(this.AON_COMPANY_TABLE);
-	 aonTable.addColumn('Razón Social', 'string', 'name');
-	 aonTable.addColumn('CIF', 'string', 'document');
+	 aonTable.addColumn('Razón Social', 'string', 'name', '80%');
+	 aonTable.addColumn('CIF', 'string', 'document', '20%');
 
 	 // INFO
 	 // aonInvoiceTable.addColumn('', '', '');

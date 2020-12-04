@@ -77,3 +77,11 @@ export const AON_MSG_CANCEL = 'Ezeztatu';
 export const AON_MSG_ACCEPT = 'Onartu';
 
 export const AON_MSG_FILE = 'Fitxategia';
+
+export const AON_MSG_USER = 'Erabiltzailea';
+export const AON_MSG_USERS = 'Erabiltzaileak';
+export const AON_MSG_USER_DATA = 'Erabiltzailearen Datuak';
+export const AON_MSG_USER_MANAGEMENT = 'Erabiltzaileen Kudeaketa';
+
+export const AON_MSG_NAME = 'Izena';
+export const AON_MSG_SURNAME = 'Abizenak';

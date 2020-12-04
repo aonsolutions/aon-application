@@ -27,6 +27,11 @@ export class AonInvoicePanel extends AonElement {
 	constructor () {
 		super();
 		this.INPUTFILE = 'aonInvoiceInputFile';
+		this._filter = {
+			status: 'inbox',
+			page: 0,
+			per_page: 50
+		}
 	}
 
 	connectedCallback () {
@@ -52,7 +57,7 @@ export class AonInvoicePanel extends AonElement {
 		});
 
 		if(this.isMobile()) {
-			aonInvoice.addFloatOption(InvoiceAction.ADD_INVOICE,() => this.addInvoice());
+			aonInvoice.addFloatOption(InvoiceAction.ADD_INVOICE, () => this.addInvoice());
 		} else {
 			aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
 			aonInvoice.addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
@@ -83,17 +88,17 @@ export class AonInvoicePanel extends AonElement {
 			{
 				name: MSG.AON_MSG_ISSUEDS,
 				icon: 'unarchive',
-				fn: () => {}
+				fn: () => this.aonInvoiceList({status:'accounting', type:'sales', page:1, per_page: 50})
 			},
 			{
 				name: MSG.AON_MSG_RECEIVEDS,
 				icon: 'archive',
-				fn: () => {}
+				fn: () => this.aonInvoiceList({status:'accounting', type:'purchase,expenses', page:1, per_page: 50})
 			},
 			{
 				name: MSG.AON_MSG_TICKETS,
 				icon: 'receipt',
-				fn: () => {}
+				fn: () => this.aonInvoiceList({status:'accounting', type:'ticket', page:1, per_page: 50})
 			}
 		];
 		aonInvoice.addSidenavOptions(MSG.AON_MSG_ACCOUNTEDS.toUpperCase(), accountingOptions);
@@ -127,6 +132,7 @@ export class AonInvoicePanel extends AonElement {
 		let invoiceList = document.getElementById('aonInvoiceList');
 		if(invoiceList) {
 			invoiceList.setFilter(filter);
+			invoiceList.init();
 		} else {
 			let aonInvoice = document.getElementById('aonInvoice');
 			if(this.isMobile()) {
@@ -223,6 +229,7 @@ export class AonInvoicePanel extends AonElement {
 				: `<aon-invoice type="${type}"> </aon-invoice>`);
 		}
 	}
+
 }
 
 window.customElements.define('aon-invoice-panel', AonInvoicePanel);

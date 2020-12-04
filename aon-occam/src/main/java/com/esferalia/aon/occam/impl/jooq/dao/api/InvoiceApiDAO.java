@@ -1,15 +1,12 @@
 package com.esferalia.aon.occam.impl.jooq.dao.api;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
+import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
-import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
-import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
-import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
-import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -21,13 +18,11 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
-import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.registry.Seller;
-import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -40,7 +35,6 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DataResponseDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DataResponsePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;;
@@ -59,11 +53,15 @@ public class InvoiceApiDAO {
 	}
 	
 	public static Stream<Invoice> getInvoices(AONContext ctx, InvoiceFilter filter) {
-		return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
-				.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
-				.leftOuterJoin(RADDRESS).on(RADDRESS.ID.equal(INVOICE.RADDRESS))
-				.leftOuterJoin(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID)), filter)
-				.fetch().stream().map(new InvoiceApiFiller(ctx));	
+		Integer page = INVOICE_PROPERTIES.getPage(filter);
+		Integer perPage = INVOICE_PROPERTIES.getPerPage(filter);
+		
+		return ctx.getDslContext().select()
+				.from(INVOICE).where(INVOICE_PROPERTIES.getConditions(filter))
+			.orderBy(INVOICE.ISSUE_DATE.desc())
+			.limit(perPage)
+			.offset(perPage * (page -1))
+			.fetch().stream().map(new InvoiceApiFiller(ctx));
 	}
 	
 	public static Invoice insertInvoice(AONContext ctx, Invoice invoice) {
@@ -142,12 +140,12 @@ public class InvoiceApiDAO {
 				.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 				.setRegistryName(record.getValue(INVOICE.RNAME))
 				
-				.setAddressProvinceCode(record.getValue(GEOZONE.CODE))
-				.setAddressProvince(record.getValue(GEOZONE.NAME))
-				.setAddressTown(record.getValue(RADDRESS.CITY))
-				.setAddressZIP(record.getValue(RADDRESS.ZIP))
+//				.setAddressProvinceCode(record.getValue(GEOZONE.CODE))
+//				.setAddressProvince(record.getValue(GEOZONE.NAME))
+//				.setAddressTown(record.getValue(RADDRESS.CITY))
+//				.setAddressZIP(record.getValue(RADDRESS.ZIP))
 				
-				.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
+//				.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
 				.setActivity(record.getValue(INVOICE.ACTIVITY))	
 				.setInvestAsset(record.getValue(INVOICE.INVEST_ASSET))
 				.setProject(record.getValue(INVOICE.PROJECT))

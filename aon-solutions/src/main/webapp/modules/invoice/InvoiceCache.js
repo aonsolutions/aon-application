@@ -10,6 +10,14 @@ export const setInvoices = (data) => {
   invoices = data;
 }
 
+export const addInvoices = (data) => {
+  if(invoices) {
+    data.forEach((item, i) => {
+      invoices.push(item);
+    });
+  } else invoices = data;
+}
+
 export const getInvoice = (data) => {
   return invoices[data];
 }

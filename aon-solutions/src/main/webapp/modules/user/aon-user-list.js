@@ -35,10 +35,10 @@ export class AonUserList extends AonElement {
 
 	build() {
 		let table = this.getElement('aonUserTable');
-		table.addColumn('Nombre', 'string', 'name');
-		table.addColumn('Apellidos', 'string', 'surname');
-		table.addColumn('Email', 'string', 'email');
-		table.addColumn('DNI/NIE', 'number', 'document');
+		table.addColumn('Nombre', 'string', 'name', '25%');
+		table.addColumn('Apellidos', 'string', 'surname', '25%');
+		table.addColumn('Email', 'string', 'email', '25%');
+		table.addColumn('DNI/NIE', 'number', 'document', '25%');
 		// INFO
 		// aonInvoiceTable.addColumn('', '', '');
 

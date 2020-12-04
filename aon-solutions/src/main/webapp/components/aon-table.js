@@ -6,6 +6,9 @@ export class AonTable extends AonElement {
 
 		columns;
 
+		THEADER;
+		TBODY;
+
 		get id() {
 			return this.getAttribute('id');
 		}
@@ -25,6 +28,8 @@ export class AonTable extends AonElement {
 		constructor () {
 			super();
 			this.columns = [];
+			this.THEADER = this.id + 'TableHeader';
+			this.TBODY = this.id + 'TableBody';
 		}
 
 
@@ -33,11 +38,11 @@ export class AonTable extends AonElement {
 				<aon-dialog-menu id="${this.getId() + 'aonDialogAddOption'}" ></aon-dialog-menu>
 				<table class="aonTable">
 					<thead>
-						<tr id="${this.getId() + 'TableHeader'}" >
+						<tr id="${this.THEADER}" >
 
 						</tr>
 					</thead>
-					<tbody id="${this.getId() + 'TableBody'}">
+					<tbody id="${this.TBODY}">
 
 					</tbody>
 				</table>
@@ -46,6 +51,7 @@ export class AonTable extends AonElement {
 			if(this.hasAttribute('selectable')) {
 				let header = this.getElement(this.getId() + 'TableHeader');
 				let th = document.createElement('th');
+				th.style.width = '5%';
 				th.innerHTML = '<aon-checkbox id="aonTableAllSelection"> </aon-checkbox>';
 				header.appendChild(th);
 				let ch = this.getElement('aonTableAllSelection');
@@ -54,15 +60,27 @@ export class AonTable extends AonElement {
 						item.value = ch.value;
 					});
 				});
-
 			}
+
+			let tbody = this.getElement(this.TBODY);
+
+			tbody.addEventListener('scroll', () => {
+				let scrollTop = tbody.scrollTop;
+				let offsetHeight = tbody.offsetHeight;
+				let physicalSize = tbody.scrollHeight;
+				let maxScrollPosition = physicalSize - offsetHeight;
+				if(scrollTop >= maxScrollPosition) {
+					this.dispatchEvent(new CustomEvent('more'));
+				}
+			});
 		}
 
-		addColumn(name, type, id) {
+		addColumn(name, type, id, width) {
 			let header = this.getElement(this.getId() + 'TableHeader');
 			let th = document.createElement('th');
 			th.innerHTML = name;
-			this.columns.push({name, type, id});
+			th.style.width = width;
+			this.columns.push({name, type, id, width});
 			header.appendChild(th);
 		}
 
@@ -75,12 +93,14 @@ export class AonTable extends AonElement {
 
 			if(this.hasAttribute('selectable')) {
 				let tdCheckBox = document.createElement('td');
+				tdCheckBox.style.width = '5%';
 				tdCheckBox.innerHTML = `<aon-checkbox id="aaa${body.children.length}"> </aon-checkbox>`;
 				tr.appendChild(tdCheckBox);
 			}
 
 			this.columns.forEach((item, i) => {
 				let td = document.createElement('td');
+				td.style.width = item.width;
 				let id = item.id;
 				if('option' === id){
 					td.innerHTML = `<aon-icon-button id="${this.getId()}IconOption" icon="more_vert"></aon-icon-button>`;

@@ -9,6 +9,10 @@ import '../user/aon-user-list.js';
 import '../user/aon-user.js';
 import '../company/aon-company-list.js';
 
+import * as CONSTANT from "../../environments/constants.js";
+import * as MSG from "../../environments/msg.js";
+import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+
 export class AonConfiguration extends AonElement {
 	AON_CONFIGURATION;
 	COMPANY;
@@ -66,7 +70,7 @@ export class AonConfiguration extends AonElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<aon-application id="${this.AON_CONFIGURATION}" title="CONFIGURACIÓN"></aon-application>
+			<aon-application id="${this.AON_CONFIGURATION}" title="${MSG.AON_MSG_SETTING}"></aon-application>
 		`;
 		this.build();
   }
@@ -75,38 +79,40 @@ export class AonConfiguration extends AonElement {
 		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
 
 		let userOptions = [{
-			name: 'Datos Usuario',
+			name: MSG.AON_MSG_USER_DATA,
 			icon: 'person',
 			fn: () => this.buildPersonal()
 		}];
-		aonConfiguration.addSidenavOptions('USUARIO', userOptions);
+		aonConfiguration.addSidenavOptions(MSG.AON_MSG_USER.toUpperCase(), userOptions);
 
-		let companyOptions = [{
-			name: 'Información General',
-			icon: 'business',
-			hidden: this.hiddenGeneral(),
-			fn: () => this.buildGeneral()
-		},{
-			name: 'Gestión de Usuarios',
-			icon: 'people',
-			hidden: this.hiddenUser(),
-			fn: () => this.buildUser()
-		},{
-			name: 'Gestión de Empresas',
-			icon: 'business',
-			hidden: this.hiddenCompany(),
-			fn: () => this.buildCompany()
-		},{
-			name: 'Contratación',
-			icon: 'store_mall_directory',
-			hidden: this.hiddenStore(),
-			fn: () => this.buildStore()
-		}];
+		if(localStorage.getItem('aon_domain_id') && localStorage.getItem('company')){
+			let company = JSON.parse(localStorage.getItem('company'));
+			let companyOptions = [];
+			companyOptions.push({
+				name: 'Información General',
+				icon: 'business',
+				fn: () => this.buildGeneral()
+			});
+			companyOptions.push({
+				name: MSG.AON_MSG_USER_MANAGEMENT,
+				icon: 'people',
+				fn: () => this.buildUser()
+			});
+			if(!company.parentId) {
+				companyOptions.push({
+					name: 'Gestión de Empresas',
+					icon: 'business',
+					fn: () => this.buildCompany()
+				});
+			}
+			companyOptions.push({
+				name: 'Contratación',
+				icon: 'store_mall_directory',
+				fn: () => this.buildStore()
+			});
 
-		aonConfiguration.addSidenavOptions('EMPRESA', companyOptions);
-
-		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+			aonConfiguration.addSidenavOptions('EMPRESA', companyOptions);
+		}
 
 		this.buildPersonal()
 	}
@@ -117,7 +123,7 @@ export class AonConfiguration extends AonElement {
 			aonConfiguration.removeToolbarOptions();
 			aonConfiguration.setContentHTML('<aon-user id="aonUserPersonal" ><aon-user>');
 			let aonUser = this.getElement('aonUserPersonal');
-			aonUser.style.display = "flex";
+			aonUser.style.display = this.isMobile() ? 'block' : 'flex';
 			aonUser.style.width = "100%";
 			aonUser.setAttribute('user', JSON.stringify(user));
 		});

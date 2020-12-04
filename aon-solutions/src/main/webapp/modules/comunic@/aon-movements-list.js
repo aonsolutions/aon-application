@@ -33,7 +33,7 @@ export class AonMovementsList extends AonElement {
 		`;
 		this.build();
 	}
-	 
+
 
  	build() {
 		this.getTable();
@@ -42,11 +42,11 @@ export class AonMovementsList extends AonElement {
 	async getTable() {
 		let aonMovementTable = this.getElement('aonMovementTable');
 		let aonComunica = this.getElement('aonComunica');
-		aonMovementTable.addColumn('Apellidos y nombre', 'string', 'nombres');
-		aonMovementTable.addColumn('DNI/NIE', 'string', 'dni');
-		aonMovementTable.addColumn('Movimiento', 'string', 'status');
-		aonMovementTable.addColumn('Fecha', 'date', 'fecha');
-		aonMovementTable.addColumn('Opción', 'fn', 'option');
+		aonMovementTable.addColumn('Apellidos y nombre', 'string', 'nombres', '40%');
+		aonMovementTable.addColumn('DNI/NIE', 'string', 'dni', '15%');
+		aonMovementTable.addColumn('Movimiento', 'string', 'status', '20%');
+		aonMovementTable.addColumn('Fecha', 'date', 'fecha', '15%');
+		aonMovementTable.addColumn('Opción', 'fn', 'option', '15%');
 		if(aonMovementTable) {
 			aonComunica.startLoader();
 			try {
@@ -59,7 +59,7 @@ export class AonMovementsList extends AonElement {
 					let date_now = new Date();
 					let date_prev = addDays(date_now, -2);
 					let prev = new Date(fra).getTime() > date_now.getTime();
-					let status = prev ? 
+					let status = prev ?
 					`<span style="font-weight: 700;">${situation==="AL" ? "Alta" : "Baja"} Previa</span> ` :
 					`<span style="font-weight: 700;color: #B32000;">${situation==="AL" ? "Alta" : "Baja"} Consolidada</span>`;
 					let dni = ipf.toString().substring(1);
@@ -92,7 +92,7 @@ export class AonMovementsList extends AonElement {
 						option
 					};
 
-					aonMovementTable.addRow(res, (el) => this.aonMovement(el, res));	
+					aonMovementTable.addRow(res, (el) => this.aonMovement(el, res));
 				})
 			} catch(e){
 				console.log(e);
@@ -114,10 +114,10 @@ export class AonMovementsList extends AonElement {
 					//DISABLED FORMS
 					aonAltaDirecta.disabledForm(`${id}EmpresaCard`);
 					aonAltaDirecta.disabledForm(`${id}TrabajadorCard`, 'aon-switch');
-					
+
 					//parseData
 					aonAltaDirecta.data = resp;
-				} 
+				}
 			}
 		} catch(error){}
 		aonComunica.stopLoader();
@@ -130,10 +130,10 @@ export class AonMovementsList extends AonElement {
 				await postDeleteMov(data);
 				toast.start({message:`${data.situation == "AL" ? "Alta" : "Baja"} eliminada!`});
 				el.remove(); //delete td
-			} catch (error) { 
+			} catch (error) {
 				toast.start({message:error, type: 'error'});
 			}
-		}	
+		}
 	}
 
 	getTa(data, el){
@@ -145,7 +145,7 @@ export class AonMovementsList extends AonElement {
 	}
 
 	getFilter = () => JSON.parse(this.getAttribute('filter'));
-	
+
 	setFilter = (filter) => this.setAttribute('filter', JSON.stringify(filter));
 }
 window.customElements.define('aon-movements-list', AonMovementsList);

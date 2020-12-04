@@ -18,10 +18,10 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -37,7 +37,6 @@ import com.google.api.services.drive.model.File;
 
 import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.api.ewok.IConstants;
-import net.aonsolutions.aon.api.json.AonInvoiceJSON;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
@@ -46,6 +45,14 @@ import net.aonsolutions.aon.tedi.TediException;
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
 public class InvoiceServlet extends HttpServlet{
 		
+	private class InvoiceFilter {
+		InvoiceStatus status;
+		
+		public InvoiceFilter() {
+			// TODO Auto-generated constructor stub
+		}
+	}
+	
 	private static final Logger LOGGER  = Logger.getLogger(InvoiceServlet.class.getName());
 	
 	@Override
@@ -59,10 +66,15 @@ public class InvoiceServlet extends HttpServlet{
 		String status = req.getParameter(IConstants.STATUS);
 		String[] types = req.getParameter(IConstants.TYPE) != null ? req.getParameter(IConstants.TYPE).split(","): null;
 		
+		Integer page = AonNumberUtils.toInteger(req.getParameter("page"));
+		Integer perPage = AonNumberUtils.toInteger(req.getParameter("per_page"));
+		
 		System.out.println(status);
 		System.out.println(types);
+		System.out.println(page);
+		System.out.println(perPage);
 		
-		JSONArray jsArray = getInvoices(domain, "api", status, types);
+		JSONArray jsArray = getInvoices(domain, "api", status, types, page, perPage);
 		
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, jsArray, new JSONObject());	
@@ -112,7 +124,7 @@ public class InvoiceServlet extends HttpServlet{
 	    return list;
 	}
 	
-	public static Filter invoiceFilter(InvoiceProperties f, Integer domainId, String status, String[] types) {
+	public static Filter invoiceFilter(InvoiceProperties f, Integer domainId, String status, String[] types, Integer page, Integer perPage) {
     	Filter filter =  f.getDomainProperty().eq(domainId);
     	
     	InvoiceStatus st = getInvoiceStatus(status);
@@ -128,15 +140,24 @@ public class InvoiceServlet extends HttpServlet{
     		filter = filter.and(filter2); 
     	}
     	
+    	if(page != null) {
+    		filter.page(page);
+    	} 
+    	
+    	if(perPage != null) {
+    		filter.perPage(perPage);
+    	}
+    	
 		return filter;
     }
 
-	private static JSONArray getInvoices(Domain domain, String login, String status, String[] types) {
+	private static JSONArray getInvoices(Domain domain, String login, String status, String[] types, Integer page, Integer perPage) {
 		JSONArray jsArray = new JSONArray();
 		if(isContabilizada(status)) {
-			Company company = AON.getCompany(domain.getName(), domain.getId(), "api", f -> f.getDomainProperty().eq(domain.getId()));
-			AON_SOLUTIONS.getInvoices(domain.getName(), domain.getId(), "api", f -> invoiceFilter(f, domain.getId(), status, types))
-				.forEach(invoice -> jsArray.put(AonInvoiceJSON.toJSON(invoice, company)));
+			//Company company = AON.getCompany(domain.getName(), domain.getId(), "api", f -> f.getDomainProperty().eq(domain.getId()));
+			AON_SOLUTIONS.getInvoices(domain.getName(), domain.getId(), "api", f -> invoiceFilter(f, domain.getId(), status, types, page, perPage))
+				.forEach(invoice -> jsArray.put(invoiceList2JSON(invoice)));
+		
 		} else {
 			RawdocStatus rs = getRawdocStatus(status);
 
@@ -163,6 +184,15 @@ public class InvoiceServlet extends HttpServlet{
 			});
 		}
 		return jsArray;
+	}
+	
+	private static JSONObject invoiceList2JSON(Invoice invoice) {
+		JSONObject json = new JSONObject();
+		json.put("date", invoice.getIssueDate());
+		json.put("reference", invoice.getReferenceCode());
+		json.put("name", invoice.getRegistryName());
+		json.put("total", invoice.getTotal());
+		return json;
 	}
 	
 	private void deleteInvoices(Domain domain, String login, LinkedList<Integer> ids) {

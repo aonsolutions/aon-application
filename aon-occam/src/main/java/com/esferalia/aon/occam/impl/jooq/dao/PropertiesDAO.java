@@ -176,6 +176,16 @@ public class PropertiesDAO {
 	public static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 	public static class InvoicePropertiesDAO implements InvoiceProperties {
 		
+		public Integer getPage(InvoiceFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.getPage();
+		}
+		
+		public Integer getPerPage(InvoiceFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.getPerPage();
+		}
+		
 		public Select<Record> build(SelectJoinStep<Record> select, InvoiceFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.build(select);

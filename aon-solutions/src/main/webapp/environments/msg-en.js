@@ -77,3 +77,11 @@ export const AON_MSG_CANCEL = 'Cancel';
 export const AON_MSG_ACCEPT = 'Accept';
 
 export const AON_MSG_FILE = 'File';
+
+export const AON_MSG_USER = 'User';
+export const AON_MSG_USERS = 'Users';
+export const AON_MSG_USER_DATA = 'User Data';
+export const AON_MSG_USER_MANAGEMENT = 'User Management';
+
+export const AON_MSG_NAME = 'Name';
+export const AON_MSG_SURNAME = 'Surname';
