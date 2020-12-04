@@ -1,3 +1,3 @@
 
 
-export const API_URL = "/ms/api";
+export const API_URL = "ms/api";
