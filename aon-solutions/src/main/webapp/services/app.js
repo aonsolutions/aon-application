@@ -1,4 +1,4 @@
-import * as MSG from "../../environments/msg.js";
+import * as MSG from "../environments/msg.js";
 
 export const MenuApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'invoice', 'timecontrol', 'management', 'tools'];
 

@@ -1,6 +1,6 @@
 import {AonElement} from './AonElement.js';
-import '../../components/aon-checkbox.js';
-import '../../components/aon-dialog-menu.js';
+import './aon-checkbox.js';
+import './aon-dialog-menu.js';
 
 export class AonTable extends AonElement {
 

@@ -1,6 +1,6 @@
 import {AonElement} from './AonElement.js';
 
-import * as MSG from "../../environments/msg.js";
+import * as MSG from "../environments/msg.js";
 
 export class AonDialog extends AonElement {
 
