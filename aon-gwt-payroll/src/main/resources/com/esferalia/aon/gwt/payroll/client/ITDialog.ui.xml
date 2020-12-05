@@ -179,6 +179,14 @@
 			width: 232px;
 		}
 		
+		.w97Pct{
+			width: 97% !important;
+		}
+		
+		.w95Pct{
+			width: 95% !important;
+		}
+		
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
@@ -333,17 +341,31 @@
 														        <td></td>
 														    </tr>
 														    <tr>
-														    	<td  style="background-color: #eaeaea; width: 125px;">
+														    	<td  style="background-color: #eaeaea; width: 110px;">
 														    		<g:Label  styleName='{style.firstColumnTextStyle}'>Tipo de solicitante</g:Label>
 														    	</td>
 														    	<td style="width: 160px;">
 														    		<g:ListBox ui:field="applicantTypeList" styleName='aon-selectOneMenu  {style.w160}'></g:ListBox>
 														    	</td>
-														    	<td  style="background-color: #eaeaea; width: 80px;">
+														    	<td  style="background-color: #eaeaea; width: 95px;">
 														    		<g:Label  styleName='{style.firstColumnTextStyle}'>Motivo</g:Label>
 														    	</td>
 														    	<td style="width: 190px;">
 														    		<g:ListBox ui:field="applicantReasonList" styleName='aon-selectOneMenu  {style.w190}'></g:ListBox>
+														    	</td>
+														    </tr>
+														    <tr>
+														    	<td  style="background-color: #eaeaea; width: 110px;">
+														    		<g:Label  styleName='{style.firstColumnTextStyle}'>Base reguladora</g:Label>
+														    	</td>
+														    	<td style="width: 160px;">
+														    		<c:DoubleBox ui:field="baseRDBx" styleName='aon-inputText  {style.w95Pct}'></c:DoubleBox>
+														    	</td>
+														    	<td  style="background-color: #eaeaea; width: 95px;">
+														    		<g:Label  styleName='{style.firstColumnTextStyle}'>C. Parcialidad</g:Label>
+														    	</td>
+														    	<td style="width: 190px;">
+														    		<c:DoubleBox ui:field="partialityCoefDBx" styleName='aon-inputText  {style.w97Pct}'></c:DoubleBox>
 														    	</td>
 														    </tr>
 														</tbody>

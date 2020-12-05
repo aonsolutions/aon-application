@@ -26,6 +26,8 @@ public class IT implements Serializable {
 	private Boolean isParent;
 	private Byte maternityType;
 	private Byte maternityReason;
+	private Double baseReg;
+	private Double partialityCoef;
 	
 	private String fullName;
 	
@@ -178,6 +180,22 @@ public class IT implements Serializable {
 		this.maternityType = maternityType;
 	}
 
+	public void setRegulationBase(Double baseReg) {
+		this.baseReg = baseReg;
+	}
+	
+	public Double getRegulationBase() {
+		return this.baseReg;
+	}
+	
+	public void setPartialityCoef(Double partialityCoef) {
+		this.partialityCoef = partialityCoef;
+	}
+	
+	public Double getPartialityCoef() {
+		return this.partialityCoef;
+	}
+	
 	public Byte getMaternityReason() {
 		return maternityReason;
 	}

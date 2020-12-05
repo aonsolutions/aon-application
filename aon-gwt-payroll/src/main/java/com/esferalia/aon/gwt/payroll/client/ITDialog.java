@@ -9,6 +9,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
@@ -142,6 +143,12 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	@UiField
 	ListBox applicantReasonList;
+	
+	@UiField
+	DoubleBox baseRDBx;
+	
+	@UiField
+	DoubleBox partialityCoefDBx;
 	
 	@UiField(provided = true)
 	DataGrid<IT> itDataGrid;
@@ -578,6 +585,16 @@ public abstract class ITDialog extends AonCustomDialog {
 	public void onApplicantReasonListChange(ChangeEvent event) {
 		this.it.setMaternityReason(Byte.parseByte(applicantReasonList.getSelectedValue()));
 	}
+	
+	@UiHandler("baseRDBx")
+	public void onBaseRDBxChange(ValueChangeEvent<Double> event) {
+		this.it.setRegulationBase(event.getValue());
+	}
+	
+	@UiHandler("partialityCoefDBx")
+	public void onPartialityCoefDBxChange(ValueChangeEvent<Double> event) {
+		this.it.setPartialityCoef(event.getValue());
+	}
 
 	private void createApplicantReasonList() {
 		Integer selectedIdx = applicantTypeList.getSelectedIndex();
@@ -712,6 +729,8 @@ public abstract class ITDialog extends AonCustomDialog {
 			setSelectedValueLB(applicantTypeList, null == it.getMaternityType() ? "-1" : it.getMaternityType().toString());
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), applicantTypeList);
 			setSelectedValueLB(applicantReasonList, null == it.getMaternityReason() ? "-1" : it.getMaternityReason().toString());
+			this.baseRDBx.setValue(it.getRegulationBase());
+			this.partialityCoefDBx.setValue(it.getPartialityCoef());
 		}
 		
 		if(showAll) {

@@ -128,16 +128,27 @@ public class JooqIT {
 					// Matenity
 					if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {
 						Result<Record> contractDataMaternityRecords = dslContext.select().from(CONTRACT_DATA)
-							.where(CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT").or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT")))
-							.and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+							.where(
+									CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT")
+								.or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT"))
+								.or(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+								.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PATERNIDAD"))
+								.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_MATERNIDAD"))
+							).and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
 							.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
 							.fetch();
 						
 						for(Record record : contractDataMaternityRecords) {
 							if(record.get(CONTRACT_DATA.NAME) == "TIPO_SOLICITANTE_MAT_PAT" || record.get(CONTRACT_DATA.NAME).equals("TIPO_SOLICITANTE_MAT_PAT"))
 								it.setMaternityType(Byte.parseByte(record.get(CONTRACT_DATA.EXPRESSION)));
-							if(record.get(CONTRACT_DATA.NAME) == "MOTIVO_MAT_PAT" || record.get(CONTRACT_DATA.NAME).equals("MOTIVO_MAT_PAT"))
+							else if(record.get(CONTRACT_DATA.NAME) == "MOTIVO_MAT_PAT" || record.get(CONTRACT_DATA.NAME).equals("MOTIVO_MAT_PAT"))
 								it.setMaternityReason(Byte.parseByte(record.get(CONTRACT_DATA.EXPRESSION)));
+							else if(record.get(CONTRACT_DATA.NAME) == "BASE_REGULADORA" || record.get(CONTRACT_DATA.NAME).equals("BASE_REGULADORA"))
+								it.setRegulationBase(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+							else if(record.get(CONTRACT_DATA.NAME) == "COEFICIENTE_PATERNIDAD" || record.get(CONTRACT_DATA.NAME).equals("COEFICIENTE_PATERNIDAD"))
+								it.setPartialityCoef(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+							else if(record.get(CONTRACT_DATA.NAME) == "COEFICIENTE_MATERNIDAD" || record.get(CONTRACT_DATA.NAME).equals("COEFICIENTE_MATERNIDAD"))
+								it.setPartialityCoef(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
 						}
 							
 					}
@@ -245,16 +256,27 @@ public class JooqIT {
 					// Matenity
 					if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {
 						Result<Record> contractDataMaternityRecords = dslContext.select().from(CONTRACT_DATA)
-							.where(CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT").or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT")))
-							.and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+							.where(
+									CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT")
+								.or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT"))
+								.or(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+								.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PATERNIDAD"))
+								.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_MATERNIDAD"))
+							).and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
 							.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
 							.fetch();
 						
 						for(Record record : contractDataMaternityRecords) {
 							if(record.get(CONTRACT_DATA.NAME) == "TIPO_SOLICITANTE_MAT_PAT" || record.get(CONTRACT_DATA.NAME).equals("TIPO_SOLICITANTE_MAT_PAT"))
 								it.setMaternityType(Byte.parseByte(record.get(CONTRACT_DATA.EXPRESSION)));
-							if(record.get(CONTRACT_DATA.NAME) == "MOTIVO_MAT_PAT" || record.get(CONTRACT_DATA.NAME).equals("MOTIVO_MAT_PAT"))
+							else if(record.get(CONTRACT_DATA.NAME) == "MOTIVO_MAT_PAT" || record.get(CONTRACT_DATA.NAME).equals("MOTIVO_MAT_PAT"))
 								it.setMaternityReason(Byte.parseByte(record.get(CONTRACT_DATA.EXPRESSION)));
+							else if(record.get(CONTRACT_DATA.NAME) == "BASE_REGULADORA" || record.get(CONTRACT_DATA.NAME).equals("BASE_REGULADORA"))
+								it.setRegulationBase(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+							else if(record.get(CONTRACT_DATA.NAME) == "COEFICIENTE_PATERNIDAD" || record.get(CONTRACT_DATA.NAME).equals("COEFICIENTE_PATERNIDAD"))
+								it.setPartialityCoef(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+							else if(record.get(CONTRACT_DATA.NAME) == "COEFICIENTE_MATERNIDAD" || record.get(CONTRACT_DATA.NAME).equals("COEFICIENTE_MATERNIDAD"))
+								it.setPartialityCoef(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
 						}
 							
 					}
@@ -514,6 +536,7 @@ public class JooqIT {
 						.set(CONTRACT_DATA.CONTRACT, contractId)
 						.set(CONTRACT_DATA.EXPRESSION, it.getMaternityType().toString())
 						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
 						.execute();
 					
 					dslContext.insertInto(CONTRACT_DATA)
@@ -522,7 +545,43 @@ public class JooqIT {
 						.set(CONTRACT_DATA.CONTRACT, contractId)
 						.set(CONTRACT_DATA.EXPRESSION, it.getMaternityReason().toString())
 						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
 						.execute();
+					
+					Double baseReg = it.getRegulationBase();
+					if(null != baseReg && 0.00 != baseReg) {
+						dslContext.insertInto(CONTRACT_DATA)
+						.set(CONTRACT_DATA.DOMAIN, domainId)
+							.set(CONTRACT_DATA.NAME, "BASE_REGULADORA")
+							.set(CONTRACT_DATA.CONTRACT, contractId)
+							.set(CONTRACT_DATA.EXPRESSION, baseReg.toString())
+							.set(CONTRACT_DATA.START_DATE, startDate)
+							.set(CONTRACT_DATA.END_DATE, endDate)
+							.execute();
+					}
+					
+					Double partialityCoef = it.getPartialityCoef();
+					if(null != partialityCoef && 0.00 != partialityCoef) {
+						if(it.getTypeLowPart() == (byte)2) {
+							dslContext.insertInto(CONTRACT_DATA)
+							.set(CONTRACT_DATA.DOMAIN, domainId)
+								.set(CONTRACT_DATA.NAME, "COEFICIENTE_MATERNIDAD")
+								.set(CONTRACT_DATA.CONTRACT, contractId)
+								.set(CONTRACT_DATA.EXPRESSION, partialityCoef.toString())
+								.set(CONTRACT_DATA.START_DATE, startDate)
+								.set(CONTRACT_DATA.END_DATE, endDate)
+								.execute();
+						} else if(it.getTypeLowPart() == (byte)3) {
+							dslContext.insertInto(CONTRACT_DATA)
+							.set(CONTRACT_DATA.DOMAIN, domainId)
+								.set(CONTRACT_DATA.NAME, "COEFICIENTE_PATERNIDAD")
+								.set(CONTRACT_DATA.CONTRACT, contractId)
+								.set(CONTRACT_DATA.EXPRESSION, partialityCoef.toString())
+								.set(CONTRACT_DATA.START_DATE, startDate)
+								.set(CONTRACT_DATA.END_DATE, endDate)
+								.execute();
+						}
+					}
 				}
 				
 				anythingAdded = true;
@@ -571,8 +630,13 @@ public class JooqIT {
 				// Remove if is all ready exists
 				dslContext.delete(CONTRACT_DATA)
 					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-					.and(CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT").or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT")))
-					.and(CONTRACT_DATA.START_DATE.eq(startDate))
+					.and(
+							CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT")
+						.or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT"))
+						.or(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+						.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_MATERNIDAD"))
+						.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PATERNIDAD"))
+					).and(CONTRACT_DATA.START_DATE.eq(startDate))
 					.execute();
 				
 				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {	// MATERNIDAD || PATERNIDAD
@@ -584,6 +648,7 @@ public class JooqIT {
 							.set(CONTRACT_DATA.CONTRACT, contractId)
 							.set(CONTRACT_DATA.EXPRESSION, it.getMaternityType().toString())
 							.set(CONTRACT_DATA.START_DATE, startDate)
+							.set(CONTRACT_DATA.END_DATE, endDate)
 							.execute();
 					
 					if(null != it.getMaternityReason())
@@ -593,7 +658,43 @@ public class JooqIT {
 						.set(CONTRACT_DATA.CONTRACT, contractId)
 						.set(CONTRACT_DATA.EXPRESSION, it.getMaternityReason().toString())
 						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
 						.execute();
+					
+					Double baseReg = it.getRegulationBase();
+					if(null != baseReg && 0.00 != baseReg) {
+						dslContext.insertInto(CONTRACT_DATA)
+						.set(CONTRACT_DATA.DOMAIN, domainId)
+							.set(CONTRACT_DATA.NAME, "BASE_REGULADORA")
+							.set(CONTRACT_DATA.CONTRACT, contractId)
+							.set(CONTRACT_DATA.EXPRESSION, baseReg.toString())
+							.set(CONTRACT_DATA.START_DATE, startDate)
+							.set(CONTRACT_DATA.END_DATE, endDate)
+							.execute();
+					}
+					
+					Double partialityCoef = it.getPartialityCoef();
+					if(null != partialityCoef && 0.00 != partialityCoef) {
+						if(it.getTypeLowPart() == (byte)2) {
+							dslContext.insertInto(CONTRACT_DATA)
+							.set(CONTRACT_DATA.DOMAIN, domainId)
+								.set(CONTRACT_DATA.NAME, "COEFICIENTE_MATERNIDAD")
+								.set(CONTRACT_DATA.CONTRACT, contractId)
+								.set(CONTRACT_DATA.EXPRESSION, partialityCoef.toString())
+								.set(CONTRACT_DATA.START_DATE, startDate)
+								.set(CONTRACT_DATA.END_DATE, endDate)
+								.execute();
+						} else if(it.getTypeLowPart() == (byte)3) {
+							dslContext.insertInto(CONTRACT_DATA)
+							.set(CONTRACT_DATA.DOMAIN, domainId)
+								.set(CONTRACT_DATA.NAME, "COEFICIENTE_PATERNIDAD")
+								.set(CONTRACT_DATA.CONTRACT, contractId)
+								.set(CONTRACT_DATA.EXPRESSION, partialityCoef.toString())
+								.set(CONTRACT_DATA.START_DATE, startDate)
+								.set(CONTRACT_DATA.END_DATE, endDate)
+								.execute();
+						}
+					}
 				}
 				
 			}
@@ -616,8 +717,13 @@ public class JooqIT {
 			Integer contractId = contractLeaveRecord.get(CONTRACT_LEAVE.CONTRACT);
 			dslContext.delete(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT").or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT")))
-				.and(CONTRACT_DATA.START_DATE.eq(startDate))
+				.and(
+						CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT")
+					.or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT"))
+					.or(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+					.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_MATERNIDAD"))
+					.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PATERNIDAD"))
+				).and(CONTRACT_DATA.START_DATE.eq(startDate))
 				.execute();
 		}
 		
