@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div id="desktopDiv1">
+		<aon:div styleClass="aon-portlet">
+			<aon:div styleClass="aon-portlet-title">								
+				<aon:commandLink id="menu_refresh"
+					title="#{bundle.aon_refresh}"
+					reRender="desktopDiv1" immediate="true"
+					actionListener="#{desktop.onRefresh}">
+					<aon:outputText value="#{bundle.aon_refresh}"
+						style="padding-bottom: 1px;padding-top: 1px;"
+						styleClass="aon-portlet-title-text aon-icon aon-icon-refresh"/>
+				</aon:commandLink>
+			</aon:div>
+		</aon:div>
+		<aon:if test="#{domainSwitcher.parentDomain or desktop.groupwareEnabled}">
+			<ui:include src="/facelet/homepage/portlet/taskPortlet.xhtml" />
+		</aon:if>
+		<ui:include src="/facelet/homepage/portlet/noticePortlet.xhtml" />
+	</aon:div>
+					
+</ui:composition>

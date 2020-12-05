@@ -2,6 +2,7 @@ import {AonElement} from '../../components/AonElement.js';
 import {startModule} from '../../services/gwtLoader.js';
 import './aon-movements.js';
 import '../../components/aon-toast.js';
+import '../../components/aon-application.js';
 export class AonComunica extends AonElement {
 
 	AON_COMUNICA;

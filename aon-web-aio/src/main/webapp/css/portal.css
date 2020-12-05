@@ -5,7 +5,7 @@ html, body {
 
 #aonContent {
 	display: block;
-    height: 100%;
+    height: calc(100% - (61px));
 }
 
 .aon-menuBar{
@@ -34,8 +34,13 @@ html, body {
 	background-color: #eee;
 }
 
-.aon-icon-invoice{
+.aon-icon-invoice,
+.aon-icon-comunica{
 	background: transparent url(images/aon-icon/aon-icon-app.png) scroll left center no-repeat;
+}
+
+.aon-icon-comunica:hover{
+	background: transparent url(images/aon-icon/aon-icon-comunica.png) scroll left center no-repeat;
 }
 
 .aon-icon-invoice:hover{

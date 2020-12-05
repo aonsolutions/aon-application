@@ -28,7 +28,7 @@
 					<ui:include src="/facelet/homepage/portlet/externalApplicationsChildPortlet.xhtml" />
 					<ui:include src="/facelet/homepage/portlet/externalApplicationsParentPortlet.xhtml" />
 					<aon:if test="#{desktop.showGraphicsPortlet}">
-						<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
+						<ui:include src="/facelet/portal/portlet/infoGroupPortlet.xhtml" />
 					</aon:if>		
 					<aon:div  style="border-top: 1px solid #ddd; height:10px" />	
 					<aon:div>
@@ -38,12 +38,19 @@
 								style="padding-bottom: 1px;padding-top: 1px;"
 								styleClass="aon-portlet-title-text"/>
 							</aon:div>
+							
 							<aon:div styleClass="aon-portlet-body">
+							
 							<aon:commandLink id="left-invoice" action="portal_invoice"
 								title="Facturas"
 								styleClass="aon-menu-icon aon-icon-invoice"
 								value="Facturas" />
-														
+							<aon:div styleClass="aon-padding-top" />						
+							<aon:commandLink id="left-comunica" action="portal_comunica"
+								title="Comunic@"
+								styleClass="aon-menu-icon aon-icon-comunica"
+								value="Comunic@" />
+
 							</aon:div>							
 						</aon:div>
 					</aon:div>
@@ -131,6 +138,7 @@
 									styleClass="aon-select-row"
 									style="border-bottom: 1px solid #ddd;"
 									columnClasses="aon-width-50 aon-text-center ,aon-text-left ,aon-width-50 aon-text-center" >
+									
 									<h:graphicImage styleClass="aon-vertical-align-middle"
 									title="Facturas"
 									url="#{aonResource.resolve['/images/aon-invoice.png']}" />								
@@ -143,7 +151,23 @@
 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
 									title="Facturas"
-									url="#{aonResource.resolve['/images/aon-right-arrow.png']}" />								
+									url="#{aonResource.resolve['/images/aon-right-arrow.png']}" />		
+									
+									<!-- Comunic@ -->
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Comunic@"
+									url="#{aonResource.resolve['/images/aon-comunica.png']}" />								
+								
+									<aon:commandLink id="center-comunica" action="portal_comunica"
+										title="Comunic@"
+										style="padding-bottom: 1px;padding-top: 1px; display: inline-block;"
+										styleClass="aon-portlet-title-text aon-bold aon-width-all"
+										value="Comunic@" />
+
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Comunic@"
+									url="#{aonResource.resolve['/images/aon-right-arrow.png']}" />		
+						
 								</aon:panelGrid>
 							</aon:div>							
 							<aon:div styleClass="aon-portlet-title">								
@@ -192,7 +216,7 @@
 									title="Convenios"
 									url="" />								
 									
-									<!-- Comunic@ -->
+									<!-- Comunic@ 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
 									title=" Comunic@"
 									url="#{aonResource.resolve['/images/aon-disabled.png']}" />								
@@ -208,6 +232,7 @@
 									<h:graphicImage styleClass="aon-vertical-align-middle"
 									title="Convenios"
 									url="" />								
+									-->
 
 									<!-- Convenios -->
 									<h:graphicImage styleClass="aon-vertical-align-middle"
