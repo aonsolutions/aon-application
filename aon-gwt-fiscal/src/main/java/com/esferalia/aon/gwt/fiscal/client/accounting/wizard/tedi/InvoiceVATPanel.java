@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.AccountBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
@@ -33,36 +33,34 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandlers<InvoiceVAT>, HasSelectionHandlers<Account>, Focusable {
 	
-	private FlowPanel container;
-	private FlexTable tab;
+	private FlowPanel tab;
 	private IEditableInvoicePanelCallback callback;
 	private LinkedList<InvoicePanelRow> rows;
 	private LinkedList<Account> suggestedAccounts;
 	
-	private Label vatPercentLabel;
-	private Label vatQuotaLabel;
-	private Label reLabel;
-	private Label reQuotaLabel;
-	private Label investAssetLabel;
-	private Label dedPercentLabel;
-	private Label dedQuotaLabel;
-	private Label adjAccountLabel;
-	private Label inputVatLabel;
-	private Label outputVatLabel;
-	private Label withholdingLabel;
-	private Label prepaymentLabel;
+	private FlowPanel vatPercentLabelCell;
+	private FlowPanel vatQuotaLabelCell;
+	private FlowPanel reLabelCell;
+	private FlowPanel reQuotaLabelCell;
+	private FlowPanel investAssetLabelCell;
+	private FlowPanel dedPercentLabelCell;
+	private FlowPanel dedQuotaLabelCell;
+	private FlowPanel adjAccountLabelCell;
+	private FlowPanel inputVatLabelCell;
+	private FlowPanel outputVatLabelCell;
+	private FlowPanel withholdingLabelCell;
+	private FlowPanel prepaymentLabelCell;
 	
 	private AonTableButton addButton;
-//	private AonTableButton saveButton;
 	
 	private class InvestAssetListBox extends ListBox {
 		private InvestAssetListBox() {
@@ -95,12 +93,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	
 	public InvoiceVATPanel(IEditableInvoicePanelCallback callback) {
 		setStyleName(AON.CSS.aonWidthAll());
-		getElement().getStyle().setBackgroundColor(EditableInvoicePanel.INNER_BACKGROUND_COLOR);
 		setSuggestedAccounts(callback.getInvoice().getSuggestedAccounts());
-		
 		setCallback(callback);
-		container = new FlowPanel();
-		add(container);
 		paint();
 	}
 	
@@ -117,118 +111,74 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	}
 
 	void paint() {
-		container.clear();
-		tab = new FlexTable();
-		tab.setStyleName(AON.CSS.aonWidthAll());
-		container.add(tab);
+		this.clear();
+		tab = new FlowPanel();
+		tab.setStyleName(AON.CSS.aonDisplayGrid());
+		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab.addStyleName(AON.CSS.aonMarginTopSep());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		tab.getElement().getStyle().setBackgroundColor(EditableInvoicePanel.INNER_BACKGROUND_COLOR);
+		this.setWidget(tab);
 		paintHeader();
 		paintRows();
 		paintButtons();
 	}
 
 	private void paintHeader() {
-		int row = 0;
-		int col = 0;
-		
-		Label label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "1%");
-		++col;
-		
-		label = new Label(AON.MSG.taxableBaseAbr());
-		label.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "1%");
-		++col;
-		
-		vatPercentLabel = new Label("% IVA");
-		vatPercentLabel.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, vatPercentLabel);
-		decorateHeader(row, col, "1%");
-		++col;
-		
-		vatQuotaLabel = new Label(AON.MSG.vatQuota());
-		vatQuotaLabel.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, vatQuotaLabel);
-		decorateHeader(row, col, "1%");
-		++col;
-		reLabel = new Label("% RE");
-		reLabel.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, reLabel);
-		decorateHeader(row, col, "1%");
-		++col;
-		reQuotaLabel = new Label(AON.MSG.surchargeQuota());
-		reQuotaLabel.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, reQuotaLabel);
-		decorateHeader(row, col, "1%");
-		++col;
-		
-		investAssetLabel = new Label(AON.MSG.actInvestAsset());
-		investAssetLabel.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, investAssetLabel);
-		decorateHeader(row, col, "1%");
-		++col;
-		dedPercentLabel = new Label(AON.MSG.dedPercent());
-		dedPercentLabel.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, dedPercentLabel);
-		decorateHeader(row, col, "1%");
-		++col;
-		dedQuotaLabel = new Label(AON.MSG.dedQuota());
-		dedQuotaLabel.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, dedQuotaLabel);
-		decorateHeader(row, col, "1%");
-		++col;
-		adjAccountLabel = new Label(AON.MSG.adjAccount());
-		adjAccountLabel.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, adjAccountLabel);
-		decorateHeader(row, col, "1%");
-		++col;
-		inputVatLabel = new Label(AON.MSG.inputVatAccount());
-		inputVatLabel.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, inputVatLabel);
-		decorateHeader(row, col, "1%");
-		++col;
-		outputVatLabel = new Label(AON.MSG.outputVatAccount());
-		outputVatLabel.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, outputVatLabel);
-		decorateHeader(row, col, "1%");
-		++col;
-		withholdingLabel = new Label("IRPF");
-		withholdingLabel.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, withholdingLabel);
-		decorateHeader(row, col, "1%");
-		++col;
-		
-		prepaymentLabel = new Label("Supl.");
-		prepaymentLabel.setStyleName(AON.CSS.aonInnerLabel());
-		tab.setWidget(row, col, prepaymentLabel);
-		decorateHeader(row, col, "1%");
-		++col;
+		FlowPanel headerRow = new FlowPanel();
+		headerRow.setStyleName(AON.CSS.aonDisplayGridHeaderRow());
+		tab.add(headerRow);
 
-		label = new Label("");
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "1%");
-		++col;
+		
+		headerRow.add(getHeaderCell(new Label(AON.MSG.accountAbr())));
+		headerRow.add(getHeaderCell(new Label(AON.MSG.taxableBaseAbr())));
+		vatPercentLabelCell = getHeaderCell(new Label("% IVA")); 
+		headerRow.add(vatPercentLabelCell);
+		vatQuotaLabelCell = getHeaderCell(new Label(AON.MSG.vatQuota()));
+		headerRow.add(vatQuotaLabelCell);
+		reLabelCell = getHeaderCell(new Label("% RE"));
+		headerRow.add(reLabelCell);
+		reQuotaLabelCell = getHeaderCell(new Label(AON.MSG.surchargeQuota()));
+		headerRow.add(reQuotaLabelCell);
+		investAssetLabelCell = getHeaderCell(new Label(AON.MSG.actInvestAsset()));
+		headerRow.add(investAssetLabelCell);
+		dedPercentLabelCell = getHeaderCell(new Label(AON.MSG.dedPercent()));
+		headerRow.add(dedPercentLabelCell);
+		dedQuotaLabelCell = getHeaderCell(new Label(AON.MSG.dedQuota()));
+		headerRow.add(dedQuotaLabelCell);
+		adjAccountLabelCell = getHeaderCell(new Label(AON.MSG.adjAccount()));
+		headerRow.add(adjAccountLabelCell);
+		inputVatLabelCell = getHeaderCell(new Label(AON.MSG.inputVatAccount()));
+		headerRow.add(inputVatLabelCell);
+		outputVatLabelCell = getHeaderCell(new Label(AON.MSG.outputVatAccount()));
+		headerRow.add(outputVatLabelCell);
+		withholdingLabelCell = getHeaderCell(new Label("IRPF"));
+		headerRow.add(withholdingLabelCell);
+		prepaymentLabelCell = getHeaderCell(new Label("Supl."));
+		headerRow.add(prepaymentLabelCell);
+		headerRow.add(getHeaderCell(new Label("")));
 
-		label = new Label();
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "auto");
-		++col;
+		Label l = new Label("");
+		FlowPanel cell = new FlowPanel();
+		cell.setStyleName(AON.CSS.aonDisplayTableCell());
+		cell.addStyleName(AON.CSS.aonWidthAll());
+		cell.add(l);
+		headerRow.add(cell);
 	}
 	
-	private void decorateHeader(int row, int col, String width) {
-		tab.getColumnFormatter().setWidth(col, width);
-		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonTableLabel());
-//		tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonFontMedium());
-//		tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonNowrap());
-//		tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBold());
-//		tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonTextUnderline());
+	private FlowPanel getHeaderCell(Widget widget) {
+		FlowPanel cell = new FlowPanel();
+		cell.setStyleName(AON.CSS.aonDisplayGridHeaderCell());
+		cell.addStyleName(AON.CSS.aonNowrap());
+		cell.add(widget);
+		return cell;
 	}
 
 	private void paintButtons() {
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.CSS.aonPaddingTop());
+		
+		FlowPanel buttonsRow = new FlowPanel();
+		buttonsRow.setStyleName(AON.CSS.aonDisplayGridFooterRow());
+		tab.add(buttonsRow);
 		
 		addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		addButton.setAccessKey( 'L' );
@@ -257,8 +207,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				addRow(vat, true);
 			}
 		});
-		panel.add(addButton);
-		container.add(panel);
+		buttonsRow.add( addButton );
+		tab.add(buttonsRow);
 	}
 	
 	private void paintRows() {
@@ -277,7 +227,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			vat.setExpAccountCode(a.getCode());
 			vat.setExpAccountDescription(a.getDescription());
 		}
-		InvoicePanelRow invoiceRow = new InvoicePanelRow(vat, tab, focus);
+		InvoicePanelRow invoiceRow = new InvoicePanelRow(vat, focus);
+		tab.add(invoiceRow);
 		rows.add(invoiceRow);
 		if (rows.size() > 1) {
 			callback.enableInvoiceTotal( false );
@@ -285,30 +236,47 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	}
 
 
-	private class InvoicePanelRow implements Focusable {
-		private final AccountBox expAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
+	private class InvoicePanelRow extends FlowPanel implements Focusable {
+		
+		private final FlowPanel expAccountCell = new FlowPanel();
+		private final FlowPanel taxableBaseCell = new FlowPanel();
+		private final FlowPanel vatPercentCell = new FlowPanel();
+		private final FlowPanel vatQuotaCell = new FlowPanel();
+		private final FlowPanel surchargePercentCell = new FlowPanel();
+		private final FlowPanel surchargeQuotaCell = new FlowPanel();
+		private final FlowPanel inputVatAccountCell = new FlowPanel();
+		private final FlowPanel outputVatAccountCell = new FlowPanel();
+		private final FlowPanel withholdingCell = new FlowPanel();
+		private final FlowPanel prepaymentCell = new FlowPanel();
+		private final FlowPanel removeButtonCell = new FlowPanel();
+		private final FlowPanel investAssetCell = new FlowPanel(); 
+		private final FlowPanel dedPercentCell = new FlowPanel();
+		private final FlowPanel dedQuotaCell = new FlowPanel();
+		private final FlowPanel adjAccountCell = new FlowPanel();
+
+		private final AonAccountBox expAccount = new AonAccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
 		private final AonDoubleBox taxableBase = new AonDoubleBox(12,4);
 		private final AonDoubleBox vatPercent = new AonDoubleBox(6);
 		private final AonDoubleBox vatQuota = new AonDoubleBox(8);
 		private final AonDoubleBox surchargePercent = new AonDoubleBox(6);
 		private final AonDoubleBox surchargeQuota = new AonDoubleBox(8);
-		private final AccountBox inputVatAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
-		private final AccountBox outputVatAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
+		private final AonAccountBox inputVatAccount = new AonAccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
+		private final AonAccountBox outputVatAccount = new AonAccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
 		private final CheckBox withholding  = new CheckBox();
 		private final CheckBox prepayment  = new CheckBox();
 		private final AonTableButton removeButton = new AonTableButton( AON.MSG.deleteAction(),AON.CSS.aonIconDelete() );
 		private final InvestAssetListBox investAsset = new InvestAssetListBox(); 
 		private final AonDoubleBox dedPercent = new AonDoubleBox(6);
 		private final AonDoubleBox dedQuota = new AonDoubleBox(8);
-		private final AccountBox adjAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
+		private final AonAccountBox adjAccount = new AonAccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
 		
-		private InvoicePanelRow(final InvoiceVAT vat, FlexTable tab, boolean focus) {
+		private InvoicePanelRow(final InvoiceVAT vat, boolean focus) {
+			setStyleName(AON.CSS.aonDisplayGridRow());
+			
 			inputVatAccount.setRequired(false);
 			outputVatAccount.setRequired(false);
 			adjAccount.setRequired(false);
-			int currentRow = tab.getRowCount();
-			final boolean otherLineWithInvestAssests = callback.isInvestAssetsAvailable() && isOtherLineWithInvestAssests(currentRow);
-			int col = 0;
+			final boolean otherLineWithInvestAssests = callback.isInvestAssetsAvailable() && isOtherLineWithInvestAssests( this );
 			expAccount.setValue(vat.getExpAccountId(),vat.getExpAccountCode(),vat.getExpAccountDescription(),
 					(callback.getInvoice().getRegistry() != null && callback.getInvoice().getRegistry().getId() != null));
 			expAccount.addSelectionHandler( new SelectionHandler<Account>() {
@@ -327,11 +295,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					SelectionEvent.<Account>fire(InvoiceVATPanel.this, a);
 				}
 			});
-			tab.setWidget(currentRow, col, expAccount);
-			++col;
+			add( getCell(expAccountCell,expAccount) );
 			
-			taxableBase.setStyleName(AON.CSS.aonInputText());
-			taxableBase.addStyleName(AON.CSS.aonTextRight());
 			taxableBase.setValue(vat.getBase());
 			taxableBase.addKeyUpHandler( new KeyUpHandler() {
 				public void onKeyUp(KeyUpEvent event) {
@@ -342,7 +307,6 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					}
 				}
 			});
-
 			taxableBase.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
@@ -351,15 +315,13 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					checkCalculate(vat, vatPercent);
 				}
 			});
-			tab.setWidget(currentRow, col, taxableBase);
-			++col;
+			add(getCell(taxableBaseCell,taxableBase));
 
-			vatPercent.setStyleName(AON.CSS.aonInputText());
-			vatPercent.addStyleName(AON.CSS.aonTextRight());
 			vatPercent.getElement().getStyle().setWidth(40, Unit.PX);
-			vatPercentLabel.setVisible(!callback.getInvoice().isUndeductible());
-			vatPercent.setVisible( isVatEnabled(callback,vat));
+			vatPercentLabelCell.setVisible(!callback.getInvoice().isUndeductible());
+			vatPercentCell.setVisible( isVatEnabledForCell(callback,vat));
 			vatPercent.setValue(vat.getPercentage());
+			vatPercentCell.setVisible( isVatEnabledForData(callback,vat));
 			vatPercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
@@ -369,15 +331,12 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
-			tab.setWidget(currentRow, col, vatPercent);
-			++col;
+			add(getCell(vatPercentCell,vatPercent));
 			
-			vatQuotaLabel.setVisible(!callback.getInvoice().isUndeductible());
-			vatQuota.setStyleName(AON.CSS.aonInputText());
-			vatQuota.addStyleName(AON.CSS.aonTextRight());
-			vatQuota.addStyleName(AON.CSS.aonPaddingLeft());
-			vatQuota.setVisible(isVatEnabled(callback,vat));
+			vatQuotaLabelCell.setVisible(!callback.getInvoice().isUndeductible());
+			vatQuotaCell.setVisible(isVatEnabledForCell(callback,vat));
 			vatQuota.setValue(vat.getQuota());
+			vatQuota.setVisible(isVatEnabledForData(callback,vat));
 			vatQuota.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
@@ -401,14 +360,11 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				}
 			});
 			decorateVatQuota(vat);
-			tab.setWidget(currentRow, col, vatQuota);
-			++col;
+			add(getCell(vatQuotaCell,vatQuota));
 			
-			surchargePercent.setStyleName(AON.CSS.aonInputText());
-			surchargePercent.addStyleName(AON.CSS.aonTextRight());
 			surchargePercent.setValue(vat.getSurcharge());
-			surchargePercent.setVisible( isSurchargeEnabled(callback, vat) );
-			reLabel.setVisible(callback.getInvoice().isSurcharge());
+			surchargePercentCell.setVisible( isSurchargeEnabled(callback, vat) );
+			reLabelCell.setVisible(callback.getInvoice().isSurcharge());
 			surchargePercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
@@ -418,15 +374,11 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
-			tab.setWidget(currentRow, col, surchargePercent);
-			++col;
+			add(getCell(surchargePercentCell,surchargePercent));
 
-			surchargeQuota.setStyleName(AON.CSS.aonInputText());
-			surchargeQuota.addStyleName(AON.CSS.aonTextRight());
-			surchargeQuota.addStyleName(AON.CSS.aonPaddingLeft());
 			surchargeQuota.setValue(vat.getSurchargeQuota());
-			surchargeQuota.setVisible( isSurchargeEnabled(callback,vat) );
-			reQuotaLabel.setVisible(callback.getInvoice().isSurcharge());
+			surchargeQuotaCell.setVisible( isSurchargeEnabled(callback,vat) );
+			reQuotaLabelCell.setVisible(callback.getInvoice().isSurcharge());
 			surchargeQuota.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
@@ -450,12 +402,11 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				}
 			});
 			decorateSurchargeQuota(vat);
-			tab.setWidget(currentRow, col, surchargeQuota);
-			++col;
+			add(getCell(surchargeQuotaCell,surchargeQuota));
 			
 			investAsset.setValue(vat.getInvestAsset());
-			investAsset.setVisible(isInvestAssetsEnabled(callback,vat));
-			investAssetLabel.setVisible(callback.isInvestAssetsAvailable());
+			investAssetCell.setVisible(isInvestAssetsEnabled(callback,vat));
+			investAssetLabelCell.setVisible(callback.isInvestAssetsAvailable());
 			investAsset.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
@@ -468,27 +419,24 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					}
 					dedPercent.setValue(vat.getDeductiblePercent(),false);
 					
-					dedPercent.setVisible(investAsset.getValue() != null);
-					dedQuota.setVisible(investAsset.getValue() != null);
-					adjAccount.setVisible(investAsset.getValue() != null);
-					dedPercentLabel.setVisible(investAsset.getValue() != null || otherLineWithInvestAssests);
-					dedQuotaLabel.setVisible(investAsset.getValue() != null || otherLineWithInvestAssests);
-					adjAccountLabel.setVisible(investAsset.getValue() != null || otherLineWithInvestAssests);
+					dedPercentCell.setVisible(investAsset.getValue() != null);
+					dedQuotaCell.setVisible(investAsset.getValue() != null);
+					adjAccountCell.setVisible(investAsset.getValue() != null);
+					dedPercentLabelCell.setVisible(investAsset.getValue() != null || otherLineWithInvestAssests);
+					dedQuotaLabelCell.setVisible(investAsset.getValue() != null || otherLineWithInvestAssests);
+					adjAccountLabelCell.setVisible(investAsset.getValue() != null || otherLineWithInvestAssests);
 					
 					checkCalculate(vat,dedPercent);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 
 			});
-			tab.setWidget(currentRow, col, investAsset);
-			++col;
+			add(getCell(investAssetCell,investAsset));
 
-			dedPercent.setStyleName(AON.CSS.aonInputText());
-			dedPercent.addStyleName(AON.CSS.aonTextRight());
 			dedPercent.getElement().getStyle().setWidth(50, Unit.PX);
 			dedPercent.setValue(vat.getDeductiblePercent());
-			dedPercent.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null);
-			dedPercentLabel.setVisible(isInvestAssetsEnabled(callback,vat)  && otherLineWithInvestAssests);
+			dedPercentCell.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null);
+			dedPercentLabelCell.setVisible(isInvestAssetsEnabled(callback,vat)  && otherLineWithInvestAssests);
 			dedPercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
@@ -501,15 +449,11 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
-			tab.setWidget(currentRow, col, dedPercent);
-			++col;
+			add(getCell(dedPercentCell,dedPercent));
 			
-			dedQuota.setStyleName(AON.CSS.aonInputText());
-			dedQuota.addStyleName(AON.CSS.aonTextRight());
-			dedQuota.addStyleName(AON.CSS.aonPaddingLeft());
 			dedQuota.setValue(vat.getDeductibleQuota());
-			dedQuota.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null);
-			dedQuotaLabel.setVisible(isInvestAssetsEnabled(callback,vat) && otherLineWithInvestAssests);
+			dedQuotaCell.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null);
+			dedQuotaLabelCell.setVisible(isInvestAssetsEnabled(callback,vat) && otherLineWithInvestAssests);
 			dedQuota.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
@@ -533,13 +477,12 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				}
 			});
 			decorateDeductibleQuota(vat);
-			tab.setWidget(currentRow, col, dedQuota);
-			++col;
+			add(getCell(dedQuotaCell,dedQuota));
 
 			adjAccount.setValue(vat.getAdjAccountId(),vat.getAdjAccountCode()
 					,vat.getAdjAccountDescription(),true);
-			adjAccount.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null && vat.getDeductiblePercent() != 100);
-			adjAccountLabel.setVisible(isInvestAssetsEnabled(callback,vat) && otherLineWithInvestAssests);
+			adjAccountCell.setVisible(isInvestAssetsEnabled(callback,vat) && vat.getInvestAsset() != null && vat.getDeductiblePercent() != 100);
+			adjAccountLabelCell.setVisible(isInvestAssetsEnabled(callback,vat) && otherLineWithInvestAssests);
 			adjAccount.addSelectionHandler( new SelectionHandler<Account>() {
 				
 				@Override
@@ -557,15 +500,13 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					SelectionEvent.<Account>fire(InvoiceVATPanel.this, a);
 				}
 			});
-			tab.setWidget(currentRow, col, adjAccount);
-			++col;
-
-
+			add(getCell(adjAccountCell,adjAccount));
 
 			inputVatAccount.setValue(vat.getInputAccountId(),vat.getInputAccountCode()
 					,vat.getInputAccountDescription(),true);
-			inputVatAccount.setVisible(isInputVatEnabled(callback,vat) );
-			inputVatLabel.setVisible(callback.getInvoice().isInputVatEnabled());
+			inputVatAccountCell.setVisible(isInputVatEnabledForCell(callback,vat) );
+			inputVatLabelCell.setVisible(isInputVatEnabledForCell(callback,vat));
+			inputVatAccount.setVisible(isInputVatEnabledForData(callback,vat));
 			inputVatAccount.addSelectionHandler( new SelectionHandler<Account>() {
 				
 				@Override
@@ -577,13 +518,13 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
-			tab.setWidget(currentRow, col, inputVatAccount);
-			++col;
+			add(getCell(inputVatAccountCell,inputVatAccount));
 
 			outputVatAccount.setValue(vat.getOutputAccountId(),vat.getOutputAccountCode()
 					,vat.getOutputAccountDescription(),true);
-			outputVatAccount.setVisible(isOutputVatEnabled(callback,vat) );
-			outputVatLabel.setVisible(callback.getInvoice().isOutputVatEnabled());
+			outputVatAccountCell.setVisible(isOutputVatEnabledForCell(callback,vat) );
+			outputVatLabelCell.setVisible(isOutputVatEnabledForCell(callback,vat) );
+			outputVatAccount.setVisible(isOutputVatEnabledForData(callback,vat) );
 			outputVatAccount.addSelectionHandler( new SelectionHandler<Account>() {
 				
 				@Override
@@ -601,12 +542,11 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
-			tab.setWidget(currentRow, col, outputVatAccount);
-			++col;
+			add(getCell(outputVatAccountCell,outputVatAccount));
 			
 			withholding.setValue(vat.isWithholding());
-			withholding.setVisible(callback.getInvoice().isWithholding() && !vat.isPrepayment());
-			withholdingLabel.setVisible(callback.getInvoice().isWithholding());
+			withholdingCell.setVisible(callback.getInvoice().isWithholding() && !vat.isPrepayment());
+			withholdingLabelCell.setVisible(callback.getInvoice().isWithholding());
 			withholding.addClickHandler( new ClickHandler() {
 				
 				@Override
@@ -616,26 +556,24 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
-			tab.setWidget(currentRow, col, withholding);
-			tab.getCellFormatter().setStyleName(currentRow, col, AON.CSS.aonTextCenter());
-			++col;
+			withholdingCell.addStyleName(AON.CSS.aonTextCenter());
+			add(getCell(withholdingCell,withholding));
 			
 			prepayment.setValue(vat.isPrepayment());
-			prepayment.setVisible(callback.getInvoice().hasPrepayments());
-			prepaymentLabel.setVisible(callback.getInvoice().hasPrepayments());
+			prepaymentCell.setVisible(callback.getInvoice().hasPrepayments());
+			prepaymentLabelCell.setVisible(callback.getInvoice().hasPrepayments());
 			prepayment.addClickHandler( new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
 					vat.setPrepayment(prepayment.getValue());
-					enableRowElements(currentRow - 1);
+					enableRowElements( InvoicePanelRow.this );
 					checkCalculate(vat,null);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
-			tab.getCellFormatter().setStyleName(currentRow, col, AON.CSS.aonTextCenter());
-			tab.setWidget(currentRow, col, prepayment);
-			++col;
+			prepaymentCell.addStyleName(AON.CSS.aonTextCenter());
+			add(getCell(prepaymentCell,prepayment));
 
 			removeButton.setTabIndex(Integer.MAX_VALUE);
 			removeButton.addClickHandler(new ClickHandler() {
@@ -651,9 +589,9 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 							
 							@Override
 							public void onAccept() {
-								tab.removeRow(currentRow);
-								rows.remove(currentRow-1);
-								callback.getInvoice().getVats().remove(currentRow-1);
+								rows.remove( InvoicePanelRow.this );
+								InvoicePanelRow.this.removeFromParent();
+								callback.getInvoice().getVats().remove( vat );
 								paint();
 								ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 							}
@@ -664,18 +602,25 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					
 				}
 			});
-			tab.setWidget(currentRow, col,removeButton);
-			++col;
-
-			tab.setWidget(currentRow, col, new Label());
-			tab.getCellFormatter().setWidth(currentRow, col, "auto");
-			++col;
+			add(getCell(removeButtonCell,removeButton));
 			
+			Label l = new Label("");
+			FlowPanel cell = new FlowPanel();
+			cell.setStyleName(AON.CSS.aonDisplayTableCell());
+			cell.addStyleName(AON.CSS.aonWidthAll());
+			cell.add(l);
+			add(cell);
+
 			if (focus) {
 				expAccount.setFocus(true);
 			}
 		}
 		
+		private Widget getCell(FlowPanel cell,Widget widget) {
+			cell.addStyleName(AON.CSS.aonDisplayGridCell());
+			cell.add(widget);
+			return cell;
+		}
 		private void decorateDeductibleQuota(InvoiceVAT vat) {
 			double quota = InvoiceCalculator.getDeductibleQuota(vat);
 			double gap = InvoiceCalculator.getDeductibleQuotaGap(vat, dedQuota.getValue());
@@ -709,56 +654,64 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			}
 		}
 
-		private boolean isOtherLineWithInvestAssests(int i) {
-			int x = 0;
-			for (InvoicePanelRow row : rows) {
-				if (i!=x && row.investAsset.getValue() != null) return true;
-				++x;
+		private boolean isOtherLineWithInvestAssests(InvoicePanelRow row) {
+			for (InvoicePanelRow roww : rows) {
+				if (roww!=row && roww.investAsset.getValue() != null) return true;
 			}
 			return false;
 		}
 
-		private void enableSurcharge(boolean enabled) {
-			surchargePercent.setVisible(!isUndeductible() && !prepayment.getValue() && enabled);
-			reLabel.setVisible(!isUndeductible() && enabled);
-			surchargeQuota.setVisible(!isUndeductible() && !prepayment.getValue() && enabled);
-			reQuotaLabel.setVisible(!isUndeductible() && enabled);
-		}
-		
-		private void enableInvestAsset(int row ) {
-			final boolean otherLineWithInvestAssests = callback.isInvestAssetsAvailable() && isOtherLineWithInvestAssests(row);
-			
-			investAssetLabel.setVisible(!isUndeductible() && callback.isInvestAssetsAvailable());
-			dedPercentLabel.setVisible(!isUndeductible() && otherLineWithInvestAssests);
-			dedQuotaLabel.setVisible(!isUndeductible() && otherLineWithInvestAssests);
-			adjAccountLabel.setVisible(!isUndeductible() && otherLineWithInvestAssests);
-			
-			investAsset.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable());
-			dedPercent.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable() && investAsset.getValue() != null);
-			dedQuota.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable() && investAsset.getValue() != null);
-			adjAccount.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable() && investAsset.getValue() != null);
-		}
-		
 		private void enableVat( boolean undeductible ) {
+			vatPercentCell.setVisible(!undeductible);
 			vatPercent.setVisible(!undeductible && !prepayment.getValue());
+			vatQuotaCell.setVisible(!undeductible);
 			vatQuota.setVisible(!undeductible && !prepayment.getValue());
 		}
-		
+
 		private void enableInputVat(boolean enabled) {
+			inputVatLabelCell.setVisible(!isUndeductible() && enabled);
+			inputVatAccount.setVisible(!isUndeductible() && enabled);
 			inputVatAccount.setVisible(!isUndeductible() && !prepayment.getValue() && enabled);
-			inputVatLabel.setVisible(!isUndeductible() && enabled);
 		}
+		
 		private void enableOutputVat(boolean enabled) {
+			outputVatLabelCell.setVisible(!isUndeductible() && enabled);
+			outputVatAccountCell.setVisible(!isUndeductible() && enabled);
 			outputVatAccount.setVisible(!isUndeductible() && !prepayment.getValue() && enabled);
-			outputVatLabel.setVisible(!isUndeductible() && enabled);
 		}
+
+		private void enableSurcharge(boolean enabled) {
+			reLabelCell.setVisible(!isUndeductible() && enabled);
+			surchargePercentCell.setVisible(!isUndeductible() && enabled);
+			surchargePercent.setVisible(!isUndeductible() && !prepayment.getValue() && enabled);
+			reQuotaLabelCell.setVisible(!isUndeductible() && enabled);
+			surchargeQuotaCell.setVisible(!isUndeductible() && enabled);
+			surchargeQuota.setVisible(!isUndeductible() && !prepayment.getValue() && enabled);
+		}
+		
 		private void enableWithholding(boolean enabled) {
+			withholdingLabelCell.setVisible(!isUndeductible() && enabled);
+			withholdingCell.setVisible(!isUndeductible() && enabled);
 			withholding.setVisible(!isUndeductible() && !prepayment.getValue() && enabled);
-			withholdingLabel.setVisible(!isUndeductible() && enabled);
 		}
+		
+		private void enableInvestAsset(InvoicePanelRow row) {
+			final boolean otherLineWithInvestAssests = callback.isInvestAssetsAvailable() && isOtherLineWithInvestAssests(row);
+			
+			investAssetLabelCell.setVisible(!isUndeductible() && callback.isInvestAssetsAvailable());
+			dedPercentLabelCell.setVisible(!isUndeductible() && otherLineWithInvestAssests);
+			dedQuotaLabelCell.setVisible(!isUndeductible() && otherLineWithInvestAssests);
+			adjAccountLabelCell.setVisible(!isUndeductible() && otherLineWithInvestAssests);
+			
+			investAssetCell.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable());
+			dedPercentCell.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable() && investAsset.getValue() != null);
+			dedQuotaCell.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable() && investAsset.getValue() != null);
+			adjAccountCell.setVisible(!isUndeductible() && !prepayment.getValue() && callback.isInvestAssetsAvailable() && investAsset.getValue() != null);
+		}
+		
 		private void enablePrepayment(boolean enabled) {
-			prepayment.setVisible(!isUndeductible() && enabled);
-			prepaymentLabel.setVisible(!isUndeductible() && enabled);
+			prepaymentCell.setVisible(!isUndeductible() && enabled);
+			prepaymentLabelCell.setVisible(!isUndeductible() && enabled);
 		}
 		
 		private void checkCalculate(final InvoiceVAT vat, AonDoubleBox toFocus) {
@@ -846,20 +799,9 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	}
 	
 	public void headerInfoChanged() {
-		for (int i = 0; i < rows.size(); i++) {
-			enableRowElements(i);
+		for (InvoicePanelRow row :  rows) {
+			enableRowElements( row );
 		}
-	}
-
-	private void enableRowElements(int i) {
-		InvoicePanelRow row = rows.get(i);
-		row.enablePrepayment(callback.getInvoice().hasPrepayments());
-		row.enableWithholding(callback.getInvoice().isWithholding());
-		row.enableInputVat(callback.getInvoice().isInputVatEnabled());
-		row.enableOutputVat(callback.getInvoice().isOutputVatEnabled());
-		row.enableSurcharge(callback.getInvoice().isSurcharge());
-		row.enableVat(callback.getInvoice().isUndeductible());
-		row.enableInvestAsset(i);
 	}
 
 	@Override
@@ -869,7 +811,6 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 
 	public void enableElements(boolean canRemove, boolean canEdit) {
 		if (addButton != null) addButton.setVisible(canEdit);
-//		if (saveButton != null) saveButton.setVisible(canEdit);
 	}
 
 	@Override
@@ -895,28 +836,50 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 
 	public void hideButtons(boolean enabled) {
 		addButton.setVisible(enabled);
-//		saveButton.setVisible(enabled);
 	}
-
-	private boolean isVatEnabled(IEditableInvoicePanelCallback callback, InvoiceVAT vat) {
-		return  !callback.getInvoice().isUndeductible() && !vat.isPrepayment();	
+	public void withholdingChanged(Boolean value) {
+		for (InvoicePanelRow vat : rows) {
+			vat.withholding.setValue(value && !vat.prepayment.getValue(),false);
+		}
+	}
+	public void prepaymentChanged(Boolean value) {
+		for (InvoicePanelRow vat : rows) {
+			vat.prepayment.setValue(value,false);
+		}
+	}
+	private boolean isVatEnabledForCell(IEditableInvoicePanelCallback callback, InvoiceVAT vat) {
+		return  !callback.getInvoice().isUndeductible();	
+	}
+	private boolean isVatEnabledForData(IEditableInvoicePanelCallback callback, InvoiceVAT vat) {
+		return  isVatEnabledForCell(callback, vat) && !vat.isPrepayment();	
 	}
 	private boolean isSurchargeEnabled(IEditableInvoicePanelCallback callback, InvoiceVAT vat) {
-		return isVatEnabled(callback,vat) && callback.getInvoice().isSurcharge();
+		return isVatEnabledForData(callback,vat) && callback.getInvoice().isSurcharge();
+	}
+	private boolean isInputVatEnabledForCell(IEditableInvoicePanelCallback callback, InvoiceVAT vat) {
+		return isVatEnabledForCell(callback,vat) && callback.getInvoice().isInputVatEnabled(); 	
+	}
+	private boolean isInputVatEnabledForData(IEditableInvoicePanelCallback callback, InvoiceVAT vat) {
+		return isVatEnabledForData(callback,vat) && callback.getInvoice().isInputVatEnabled(); 	
+	}
+	private boolean isOutputVatEnabledForCell(IEditableInvoicePanelCallback callback, InvoiceVAT vat) {
+		return isVatEnabledForCell(callback,vat) & callback.getInvoice().isOutputVatEnabled(); 	
+	}
+	private boolean isOutputVatEnabledForData(IEditableInvoicePanelCallback callback, InvoiceVAT vat) {
+		return isVatEnabledForData(callback,vat) && callback.getInvoice().isOutputVatEnabled(); 	
+	}
+
+	// **** TODO *** //
+	private void enableRowElements(InvoicePanelRow row) {
+		row.enablePrepayment(callback.getInvoice().hasPrepayments());
+		row.enableWithholding(callback.getInvoice().isWithholding());
+		row.enableInputVat(callback.getInvoice().isInputVatEnabled());
+		row.enableOutputVat(callback.getInvoice().isOutputVatEnabled());
+		row.enableSurcharge(callback.getInvoice().isSurcharge());
+		row.enableVat(callback.getInvoice().isUndeductible());
+		row.enableInvestAsset(row);
 	}
 	private boolean isInvestAssetsEnabled(IEditableInvoicePanelCallback callback, InvoiceVAT vat) {
 		return callback.isInvestAssetsAvailable() && !vat.isPrepayment();
-	}
-	private boolean isInputVatEnabled(IEditableInvoicePanelCallback callback, InvoiceVAT vat) {
-		return isVatEnabled(callback,vat) && callback.getInvoice().isInputVatEnabled(); 	
-	}
-	private boolean isOutputVatEnabled(IEditableInvoicePanelCallback callback, InvoiceVAT vat) {
-		return isVatEnabled(callback,vat) && callback.getInvoice().isOutputVatEnabled(); 	
-	}
-
-	public void withholdingChanged(Boolean value) {
-		for (InvoicePanelRow vat : rows) {
-			vat.withholding.setValue(value,false);
-		}
 	}
 }

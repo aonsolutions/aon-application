@@ -49,6 +49,7 @@ public class AonConfirmDialog extends AonCustomDialog {
     	panel.add(label);
     	FlowPanel buttons = new FlowPanel();
     	buttons.setStyleName(AON.CSS.aonTextCenter());
+    	buttons.addStyleName(AON.CSS.aonMarginBottom());
     	
     	final Button okButton = new Button();
     	okButton.setStyleName(AON.CSS.aonOkButton());

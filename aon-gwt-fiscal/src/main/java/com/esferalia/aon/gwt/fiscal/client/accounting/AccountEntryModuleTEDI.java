@@ -9,11 +9,12 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeHandler;
@@ -218,7 +219,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 
 	private FlowPanel entryHeader;
 	private AccountPeriodBox period;
-	private DateBoxEx entryDate;
+	private AonDateBox entryDate;
 	private ListBox entryType;
 	private InlineLabel journal;
 	private InlineLabel id;
@@ -263,6 +264,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
+		dockLayoutPanel.setStyleName(AON.CSS.aonSelector());
 		toolbar = getToolbarPanel();
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		splitLayoutPanel = new SplitLayoutPanel();
@@ -448,7 +450,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		} else {
 			if (periodErrorShown) {
 				periodErrorShown = false;
-				toolbar.hideMesages();
+				hideErrors();
 			}
 		}
 	}
@@ -578,7 +580,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			}
 		}
 		
-		toolbar.hideMesages();
+		hideErrors();
 		
 		if (!canEdit && wizardContent.isStatusMsgEnabled() ) {
 			if (!wizardContent.getMainEntry().isPeriodActive()) {
@@ -1119,6 +1121,10 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		toolbar.showErrorMessage(msg);
 	}
 	
+	private void hideErrors() {
+		toolbar.hideMessages();
+	}
+	
 	public static AccountEntryWrapper[] getWrapperArray(LinkedList<AccountEntry> entries ) {
 		LinkedList<AccountEntryWrapper> list = new LinkedList<AccountEntryWrapper>();
 		for (AccountEntry entry : entries) {
@@ -1200,7 +1206,11 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		showError(msg);
 	}
 
-	public DateBoxEx getEntryDateBox() {
+	public void onHideMessages() {
+		hideErrors();
+	}
+
+	public AonDateBox getEntryDateBox() {
 		return entryDate;
 	}
 	public Date getEntryDate() {
@@ -1274,7 +1284,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 
 		table.setWidget(row,0,new InlineLabel(AON.MSG.accountEntryDate()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-		final DateBoxEx issueDate = new DateBoxEx();
+		final AonDateBox issueDate = new AonDateBox();
 		issueDate.setValue(orig.getEntryDate());
 		table.setWidget(row,1,issueDate);
 		row++;
@@ -1476,9 +1486,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	}
 	
 	private AonToolbar getToolbarPanel() {
-		
 		AonToolbar toolbar = new AonToolbar(AON.MSG.accountEntries());
-		
 		if (getOptions().isBackButtonVisible()) {
 			back = new AonToolbarButton( AON.MSG.backAction(), AON.CSS.aonIconBack() );
 			back.addClickHandler(new ClickHandler() {
@@ -1501,8 +1509,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			toolbar.add(search);
 		}
 
-		reset = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
-		reset.setAccessKey('N');
+		reset = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() ,AonButton.AON_ACCESSKEY_RESET); 
 		reset.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -1511,8 +1518,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		});
 		toolbar.add(reset);
 
-		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		accept.setAccessKey('G');
+		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() ,AonButton.AON_ACCESSKEY_SAVE);
 		accept.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -1521,8 +1527,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		});
 		toolbar.add(accept);
 
-		remove = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
-		remove.setAccessKey('B');
+		remove = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete(),AonButton.AON_ACCESSKEY_DELETE);
 		remove.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -1555,26 +1560,16 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	
 	private Widget getEntryHeader() {
 		entryHeader = new FlowPanel();
-		entryHeader.setStyleName(AON.CSS.aonScrollArea());
+		entryHeader.setStyleName(AON.CSS.aonFlexBlock());
+		entryHeader.addStyleName(AON.CSS.aonScrollArea());
 		
-		FlexTable tab = new FlexTable();
-		tab.setStyleName(AON.CSS.aonTable());
-		tab.addStyleName(AON.CSS.aonWidthAll());
-		tab.getColumnFormatter().setWidth(0, "65px");
-		tab.getColumnFormatter().setWidth(1, "65px");
-		tab.getColumnFormatter().setWidth(2, "65px");
-		tab.getColumnFormatter().setWidth(3, "90px");
-		tab.getColumnFormatter().setWidth(4, "65px");
-		tab.getColumnFormatter().setWidth(5, "auto");
-		tab.getColumnFormatter().setWidth(6, "200px");
-		tab.getColumnFormatter().setWidth(7, "100px");
-		tab.getColumnFormatter().setWidth(8, "100px");
-		tab.getColumnFormatter().setWidth(9, "30px");
+		InlineLabel fiscalYear = new InlineLabel(AON.MSG.fiscalYear());
+		fiscalYear.setStyleName(AON.CSS.aonFlexLabel());				
+		entryHeader.add( fiscalYear );
 		
-		tab.setWidget(0, 0, new InlineLabel(AON.MSG.fiscalYear()));
-		tab.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
 		
 		period = new AccountPeriodBox();
+		period.setStyleName(AON.CSS.aonMarginRight());
 		period.setTabIndex(1);
 		period.addChangeHandler( new ChangeHandler() {
 			@Override
@@ -1582,12 +1577,14 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 				onChangeAccountPeriod(event);
 			}
 		});
-		tab.setWidget(0, 1, period);
+		entryHeader.add( period );
+
+		InlineLabel dateLabel = new InlineLabel(AON.MSG.date());
+		dateLabel.setStyleName(AON.CSS.aonFlexLabel());				
+		entryHeader.add( dateLabel );
 		
-		tab.setWidget(0, 2, new InlineLabel(AON.MSG.date()));
-		tab.getCellFormatter().setStyleName(0, 2, AON.CSS.aonTableLabel());
-		
-		entryDate = new DateBoxEx();
+		entryDate = new AonDateBox();
+		entryDate.addStyleName(AON.CSS.aonMarginRight());
 		entryDate.setTabIndex(2);
 		entryDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
@@ -1596,13 +1593,15 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 				onChangeEntryDate(event);
 			}
 		});
+		entryHeader.add( entryDate );
 
-		tab.setWidget(0, 3, entryDate);
+		InlineLabel typeLabel = new InlineLabel(AON.MSG.type());
+		typeLabel.setStyleName(AON.CSS.aonFlexLabel());				
+		entryHeader.add( typeLabel );
 		
-		tab.setWidget(0, 4, new InlineLabel(AON.MSG.type()));
-		tab.getCellFormatter().setStyleName(0, 4, AON.CSS.aonTableLabel());
-		
+
 		entryType = new ListBox();
+		entryType.setStyleName(AON.CSS.aonMarginRight());
 		entryType.setTabIndex(3);
 		entryType.addChangeHandler(new ChangeHandler() {
 			
@@ -1611,22 +1610,22 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 				onTypeChanged(event);
 			}
 		});
-		tab.setWidget(0, 5, entryType);
+		entryHeader.add( entryType );
 		
 		FlowPanel idsContainer = new FlowPanel();
+		idsContainer.setStyleName(AON.CSS.aonFlexGrow1());
+		idsContainer.addStyleName(AON.CSS.aonTextCenter());
 		journal = new InlineLabel();
-		journal.setStyleName(AON.CSS.aonNowrap());
+		journal.setStyleName(AON.CSS.aonFlexLabel());
 		id = new InlineLabel();
-		id.setStyleName(AON.CSS.aonNowrap());
-		id.addStyleName(AON.CSS.aonMarginLeft());
+		id.setStyleName(AON.CSS.aonFlexLabel());
 		idsContainer.add( journal );
 		idsContainer.add( id );
-		tab.setWidget(0, 6, idsContainer);		
-		tab.getCellFormatter().setStyleName(0, 6, AON.CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(0, 6, AON.CSS.aonNowrap());
-		tab.getCellFormatter().addStyleName(0, 6, AON.CSS.aonTableLabel());
-		
+		entryHeader.add( idsContainer );
+
 		activity = new ListBox();
+		activity.setWidth("120px");
+		activity.setVisible(false);
 		activity.addChangeHandler( new ChangeHandler() {
 			
 			@Override
@@ -1634,12 +1633,12 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 				onChangeActivity(event);
 			}
 		});
-		
-		activity.setWidth("120px");
-		activity.setVisible(false);
-		tab.setWidget(0, 7, activity);
+		entryHeader.add( activity );
 		
 		confidential = new CheckBox( AON.MSG.confidential());
+		confidential.setStyleName(AON.CSS.aonNowrap());
+		confidential.addStyleName(AON.CSS.aonMarginRight());
+		confidential.addStyleName(AON.CSS.aonMarginLeft());
 		confidential.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -1647,8 +1646,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 				onChangeConfidential(event);
 			}
 		});
-		tab.setWidget(0, 8, confidential);
-		tab.getCellFormatter().addStyleName(0, 8, AON.CSS.aonNowrap());
+		entryHeader.add( confidential );
 		
 		commentsButton = new AonTableButton(AON.MSG.comments(), AON.CSS.aonIconComments() );
 		commentsButton.addClickHandler(new ClickHandler() {
@@ -1658,11 +1656,121 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 				onComments(event);
 			}
 		});
-		tab.setWidget(0, 9, commentsButton);
-		
-		entryHeader.add(tab);
+		entryHeader.add( commentsButton );
 		
 		return entryHeader;
 	}
 	
 }
+/*		
+	entryHeader = new FlowPanel();
+	
+	
+	entryHeader.setStyleName(AON.CSS.aonScrollArea());
+	
+	FlexTable tab = new FlexTable();
+	tab.setStyleName(AON.CSS.aonTable());
+	tab.addStyleName(AON.CSS.aonWidthAll());
+	tab.getColumnFormatter().setWidth(0, "65px");
+	tab.getColumnFormatter().setWidth(1, "65px");
+	tab.getColumnFormatter().setWidth(2, "65px");
+	tab.getColumnFormatter().setWidth(3, "90px");
+	tab.getColumnFormatter().setWidth(4, "65px");
+	tab.getColumnFormatter().setWidth(5, "auto");
+	tab.getColumnFormatter().setWidth(6, "200px");
+	tab.getColumnFormatter().setWidth(7, "100px");
+	tab.getColumnFormatter().setWidth(8, "100px");
+	tab.getColumnFormatter().setWidth(9, "30px");
+	
+	tab.setWidget(0, 0, new InlineLabel(AON.MSG.fiscalYear()));
+	tab.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
+	
+	period = new AccountPeriodBox();
+	period.setTabIndex(1);
+	period.addChangeHandler( new ChangeHandler() {
+		@Override
+		public void onChange(ChangeEvent event) {
+			onChangeAccountPeriod(event);
+		}
+	});
+	tab.setWidget(0, 1, period);
+	
+	tab.setWidget(0, 2, new InlineLabel(AON.MSG.date()));
+	tab.getCellFormatter().setStyleName(0, 2, AON.CSS.aonTableLabel());
+	
+	entryDate = new AonDateBox();
+	entryDate.setTabIndex(2);
+	entryDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+		
+		@Override
+		public void onValueChange(ValueChangeEvent<Date> event) {
+			onChangeEntryDate(event);
+		}
+	});
+	
+	tab.setWidget(0, 3, entryDate);
+	
+	tab.setWidget(0, 4, new InlineLabel(AON.MSG.type()));
+	tab.getCellFormatter().setStyleName(0, 4, AON.CSS.aonTableLabel());
+	
+	entryType = new ListBox();
+	entryType.setTabIndex(3);
+	entryType.addChangeHandler(new ChangeHandler() {
+		
+		@Override
+		public void onChange(ChangeEvent event) {
+			onTypeChanged(event);
+		}
+	});
+	tab.setWidget(0, 5, entryType);
+	
+	FlowPanel idsContainer = new FlowPanel();
+	journal = new InlineLabel();
+	journal.setStyleName(AON.CSS.aonNowrap());
+	id = new InlineLabel();
+	id.setStyleName(AON.CSS.aonNowrap());
+	id.addStyleName(AON.CSS.aonMarginLeft());
+	idsContainer.add( journal );
+	idsContainer.add( id );
+	tab.setWidget(0, 6, idsContainer);		
+	tab.getCellFormatter().setStyleName(0, 6, AON.CSS.aonTextCenter());
+	tab.getCellFormatter().addStyleName(0, 6, AON.CSS.aonNowrap());
+	tab.getCellFormatter().addStyleName(0, 6, AON.CSS.aonTableLabel());
+	
+	activity = new ListBox();
+	activity.addChangeHandler( new ChangeHandler() {
+		
+		@Override
+		public void onChange(ChangeEvent event) {
+			onChangeActivity(event);
+		}
+	});
+	
+	activity.setWidth("120px");
+	activity.setVisible(false);
+	tab.setWidget(0, 7, activity);
+	
+	confidential = new CheckBox( AON.MSG.confidential());
+	confidential.addClickHandler(new ClickHandler() {
+		
+		@Override
+		public void onClick(ClickEvent event) {
+			onChangeConfidential(event);
+		}
+	});
+	tab.setWidget(0, 8, confidential);
+	tab.getCellFormatter().addStyleName(0, 8, AON.CSS.aonNowrap());
+	
+	commentsButton = new AonTableButton(AON.MSG.comments(), AON.CSS.aonIconComments() );
+	commentsButton.addClickHandler(new ClickHandler() {
+		
+		@Override
+		public void onClick(ClickEvent event) {
+			onComments(event);
+		}
+	});
+	tab.setWidget(0, 9, commentsButton);
+	
+	entryHeader.add(tab);
+	return entryHeader;
+ */		

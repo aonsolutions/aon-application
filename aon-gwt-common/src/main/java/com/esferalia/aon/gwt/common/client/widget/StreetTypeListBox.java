@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.ListBox;
 public class StreetTypeListBox extends ListBox {
 
 	public StreetTypeListBox() {
-		setWidth("120px");
+		setWidth("80px");
 		this.addItem( "-", "" );
 		for (StreetType p : StreetType.values()) {
 			this.addItem( p.getDescription(), p.getIneCode());	

@@ -14,4 +14,9 @@ public class AonTableButton extends AonButton {
 		addStyleName(AON.CSS.aonTableButton());
 	}
 
+	public AonTableButton(String toolTip, String iconStyle, char accessKey) {
+		super(toolTip,iconStyle,accessKey);
+		addStyleName(AON.CSS.aonTableButton());
+	}
+
 }

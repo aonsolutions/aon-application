@@ -17,18 +17,18 @@ public class OCRDAO {
 	
 	private static final Logger LOGGER = Logger.getLogger(OCRDAO.class.getName());
 	
-	private static final int COMMON_DOMAIN = 0;
-	private static final String COMMON_DOMAIN_NAME = "console.aonsolutions.org";
+	private static final int GLOBAL_DOMAIN = 0;
+	private static final String GLOBAL_DOMAIN_NAME = "global.aonsolutions.net";
 	private static final String OCR_REF_PATTERN = "OCR_REF_PATTERN";
 	private static final String REGISTRY_ALIAS_MARK = "OCR AUTOML";
  
 	public static String[] getReferencePatterns( String user, String document ) {
-		try ( AONContext ctx =  AONContext.getAONContext(COMMON_DOMAIN_NAME, COMMON_DOMAIN, user) ) {
+		try ( AONContext ctx =  AONContext.getAONContext(GLOBAL_DOMAIN_NAME, GLOBAL_DOMAIN, user) ) {
 			return ctx.getDslContext()
 				.select( RADDINFO.VALUE )
 				.from(RADDINFO)
 				.innerJoin(REGISTRY).on(REGISTRY.ID.eq(RADDINFO.REGISTRY))
-				.where(REGISTRY.DOMAIN.eq(COMMON_DOMAIN))
+				.where(REGISTRY.DOMAIN.eq(GLOBAL_DOMAIN))
 				.and(REGISTRY.DOCUMENT.eq( document))
 				.and(RADDINFO.ATTRIBUTE.eq( OCR_REF_PATTERN ))
 				.orderBy(RADDINFO.VALUE_DATE.desc())
@@ -46,12 +46,12 @@ public class OCRDAO {
 		teachReferenceCode(user, document, reference, new Date());
 	}
 	public static void teachReferenceCode(String user, String document, String reference, Date date) {
-		try ( AONContext ctx =  AONContext.getAONContext(COMMON_DOMAIN_NAME, COMMON_DOMAIN, user) ) {
+		try ( AONContext ctx =  AONContext.getAONContext(GLOBAL_DOMAIN_NAME, GLOBAL_DOMAIN, user) ) {
 			Integer registry = ensureRegistry(ctx, document );
 			LinkedList<Raddinfo> patterns = ctx.getDslContext()
 				.select(RADDINFO.fields())
 				.from(RADDINFO)
-				.where(RADDINFO.DOMAIN.eq(COMMON_DOMAIN))
+				.where(RADDINFO.DOMAIN.eq(GLOBAL_DOMAIN))
 				.and(RADDINFO.REGISTRY.eq(registry))
 				.and(RADDINFO.ATTRIBUTE.eq(OCR_REF_PATTERN))
 				.orderBy(RADDINFO.REGISTRY,RADDINFO.VALUE_DATE.desc())
@@ -69,7 +69,7 @@ public class OCRDAO {
 				String pattern = generalize( reference );
 				ctx.log().info("[OCR] No Pattern found! creating: ["+pattern+"]");
 				ctx.getDslContext().insertInto(RADDINFO)
-					.set(RADDINFO.DOMAIN, COMMON_DOMAIN)	
+					.set(RADDINFO.DOMAIN, GLOBAL_DOMAIN)	
 					.set(RADDINFO.REGISTRY, registry)
 					.set(RADDINFO.ATTRIBUTE, OCR_REF_PATTERN)
 					.set(RADDINFO.VALUE, pattern)
@@ -94,7 +94,7 @@ public class OCRDAO {
 				}
 				if (!matches) {
 					ctx.getDslContext().insertInto(RADDINFO)
-						.set(RADDINFO.DOMAIN, COMMON_DOMAIN)	
+						.set(RADDINFO.DOMAIN, GLOBAL_DOMAIN)	
 						.set(RADDINFO.REGISTRY, registry)
 						.set(RADDINFO.ATTRIBUTE, OCR_REF_PATTERN)
 						.set(RADDINFO.VALUE, generalize( reference ))
@@ -110,7 +110,7 @@ public class OCRDAO {
 	private static Integer ensureRegistry(AONContext ctx, String document) {
 		Integer registry = ctx.getDslContext().select(REGISTRY.ID)
 				.from(REGISTRY)
-				.where(REGISTRY.DOMAIN.eq( COMMON_DOMAIN ))
+				.where(REGISTRY.DOMAIN.eq( GLOBAL_DOMAIN ))
 				.and(REGISTRY.DOCUMENT.eq( document ))
 				.fetch()
 				.stream()
@@ -119,7 +119,7 @@ public class OCRDAO {
 				.orElse(null);
 		if (registry == null) {
 			registry  = ctx.getDslContext().insertInto(REGISTRY)
-					.set(REGISTRY.DOMAIN, COMMON_DOMAIN)	
+					.set(REGISTRY.DOMAIN, GLOBAL_DOMAIN)	
 					.set(REGISTRY.DOCUMENT, document)
 					.set(REGISTRY.ALIAS, REGISTRY_ALIAS_MARK)
 					.returning(REGISTRY.ID)

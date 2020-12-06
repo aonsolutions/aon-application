@@ -3,10 +3,10 @@ package com.esferalia.aon.gwt.fiscal.client.finance;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinancePayPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinancePayPanel.FinancePayPanelCallback;
@@ -75,7 +75,7 @@ public class FinanceActionsPanel extends FlowPanel {
 		AonTableButton payButton = null;
 		if (finance.isFullPending() && finance.getId() != null) {
 			payButton = new AonTableButton(AON.MSG.toPay(), AON.CSS.aonIconFinancePay() );
-			final CustomDialog dialog = new CustomDialog();
+			final AonCustomDialog dialog = new AonCustomDialog();
 			String suffix = ( finance.isPayment()?" PAGO":" COBRO");
 			dialog.setCaption(AON.MSG.payFinance() + suffix );
 			payButton.addClickHandler(new ClickHandler() {
@@ -104,7 +104,7 @@ public class FinanceActionsPanel extends FlowPanel {
 
 												@Override
 												public void onFailure(Throwable caught) {
-													MessageDialog.error("Se ha producido un error al pagar el vencimiento. ["+caught.getMessage()+"]");
+													AonMessageDialog.error("Se ha producido un error al pagar el vencimiento. ["+caught.getMessage()+"]");
 												}
 
 												@Override
@@ -133,8 +133,8 @@ public class FinanceActionsPanel extends FlowPanel {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					ConfirmDialog cd = new ConfirmDialog();
-					cd.confirm(AON.MSG.settleFinanceAction(), new ConfirmDialogCallback(){
+					AonConfirmDialog cd = new AonConfirmDialog();
+					cd.confirm(AON.MSG.settleFinanceAction(), new AonConfirmDialogCallback(){
 
 						@Override
 						public void onAccept() {
@@ -145,7 +145,7 @@ public class FinanceActionsPanel extends FlowPanel {
 
 								@Override
 								public void onFailure(Throwable caught) {
-									MessageDialog.error("Se ha producido un error al saldar el vencimiento. ["+caught.getMessage()+"]");
+									AonMessageDialog.error("Se ha producido un error al saldar el vencimiento. ["+caught.getMessage()+"]");
 								}
 
 								@Override
@@ -177,8 +177,8 @@ public class FinanceActionsPanel extends FlowPanel {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					ConfirmDialog cd = new ConfirmDialog();
-					cd.confirm(AON.MSG.undoFinanceAction(), new ConfirmDialogCallback(){
+					AonConfirmDialog cd = new AonConfirmDialog();
+					cd.confirm(AON.MSG.undoFinanceAction(), new AonConfirmDialogCallback(){
 
 						@Override
 						public void onAccept() {
@@ -189,7 +189,7 @@ public class FinanceActionsPanel extends FlowPanel {
 
 								@Override
 								public void onFailure(Throwable caught) {
-									MessageDialog.error("Se ha producido un error al marcar el vencimiento como pendiente. ["+caught.getMessage()+"]"); 
+									AonMessageDialog.error("Se ha producido un error al marcar el vencimiento como pendiente. ["+caught.getMessage()+"]"); 
 								}
 
 								@Override
@@ -215,7 +215,7 @@ public class FinanceActionsPanel extends FlowPanel {
 		AonTableButton returnButton = null;
 		if (finance.isPaid() && finance.getId() != null) {
 			returnButton = new AonTableButton(AON.MSG.toReturn(), AON.CSS.aonIconFinanceReturn() );
-			final CustomDialog dialog = new CustomDialog();
+			final AonCustomDialog dialog = new AonCustomDialog();
 			dialog.setCaption(AON.MSG.returnFinance());
 			returnButton.addClickHandler(new ClickHandler() {
 				
@@ -242,7 +242,7 @@ public class FinanceActionsPanel extends FlowPanel {
 
 												@Override
 												public void onFailure(Throwable caught) {
-													MessageDialog.error("Se ha producido un devolver el pagar del vencimiento. ["+caught.getMessage()+"]");
+													AonMessageDialog.error("Se ha producido un devolver el pagar del vencimiento. ["+caught.getMessage()+"]");
 												}
 
 												@Override
@@ -271,7 +271,7 @@ public class FinanceActionsPanel extends FlowPanel {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					MessageDialog.show("No se puede deshacer.","El vencimiento pertence a una agrupaci\u00F3n de vencimientos");
+					AonMessageDialog.show("No se puede deshacer.","El vencimiento pertence a una agrupaci\u00F3n de vencimientos");
 				}
 			});
 		}

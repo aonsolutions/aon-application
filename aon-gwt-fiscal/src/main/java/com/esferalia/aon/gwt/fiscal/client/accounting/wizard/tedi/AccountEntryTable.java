@@ -3,9 +3,9 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.AccountBox;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.IWizardContent;
@@ -163,8 +163,8 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 
 	private void paintHeader() {
 		for ( COLS col : COLS.values()) {
-			getColumnFormatter().setWidth(col.ordinal(), col.getColWidth());	
 			setWidget(0, col.ordinal(), new Label( col.getHeaderLabel() ));
+			getFlexCellFormatter().setWidth(0, col.ordinal(), col.getColWidth());
 			getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
 			if ( col.getCellStyleClass() != null) {
 				getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
@@ -284,7 +284,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	private void paintActiveRow(int row, final AccountEntryDetail aed) {
 		setWidget(row, COLS.NUM.ordinal(), new Label()  );
 		
-		final AccountBox detailAccountBox = new AccountBox(getDomainName(),getDomainId(),getUser());
+		final AonAccountBox detailAccountBox = new AonAccountBox(getDomainName(),getDomainId(),getUser());
 		detailAccountBox.setValue(aed.getAccount(), aed.getAccountCode(),aed.getAccountDescription());
 
 		setWidget(row, COLS.ACC.ordinal(), detailAccountBox );
@@ -307,7 +307,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		setWidget(row, COLS.CRE.ordinal(), creditBox );
 		getFlexCellFormatter().addStyleName(row, COLS.CRE.ordinal(),AON.CSS.aonTextRight());
 		
-		final AccountBox balancingAccountBox = new AccountBox(getDomainName(),getDomainId(),getUser(), false);
+		final AonAccountBox balancingAccountBox = new AonAccountBox(getDomainName(),getDomainId(),getUser(), false);
 		balancingAccountBox.setValue(aed.getBalancingAccount(), aed.getBalancingAccountCode(),
 				aed.getBalancingAccountDescription());
 		balancingAccountBox.setRequired(false);
@@ -360,8 +360,8 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 			public void onValueChange(final ValueChangeEvent<String> event) {
 				aed.setConcept(event.getValue());
 				if (getRowCount() > 3 &&  isConfirmConceptChange()) {
-					ConfirmDialog cd = new ConfirmDialog();
-					cd.confirm(AON.MSG.changeConcept(),new ConfirmDialogCallback() {
+					AonConfirmDialog cd = new AonConfirmDialog();
+					cd.confirm(AON.MSG.changeConcept(),new AonConfirmDialogCallback() {
 						
 						@Override
 						public void onCancel() {
@@ -526,8 +526,8 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 			public void onValueChange(final ValueChangeEvent<String> event) {
 				aed.setDocumentNumber(documentBox.getValue());
 				if (getRowCount() > 3 && isConfirmDocumentChange()) {
-					ConfirmDialog cd = new ConfirmDialog();
-					cd.confirm(AON.MSG.changeDocument(),new ConfirmDialogCallback() {
+					AonConfirmDialog cd = new AonConfirmDialog();
+					cd.confirm(AON.MSG.changeDocument(),new AonConfirmDialogCallback() {
 						
 						@Override
 						public void onCancel() {
@@ -675,7 +675,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	@Override
 	public void setFocus(boolean focused) {
 		if (wizardContent.isUpdatable()) {
-			AccountBox ab = (AccountBox) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
+			AonAccountBox ab = (AonAccountBox) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
 			ab.setFocus(true);
 		}
 	}

@@ -1,9 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.AccountBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.WithholdingTypeListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
@@ -11,9 +11,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
@@ -23,53 +22,87 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChangeHandlers<InvoiceWithholding>, HasSelectionHandlers<Account>, Focusable {
 	
-	private FlexTable withholdingTable;
 	private ListBox withholdingTaxs;
-	private DoubleBox withholdingBase;
-	private DoubleBox withholdingPercent;
-	private DoubleBox withholdingQuota;
+	private AonDoubleBox withholdingBase;
+	private AonDoubleBox withholdingPercent;
+	private AonDoubleBox withholdingQuota;
 	private WithholdingTypeListBox withholdingType;
-	private AccountBox withholdingAccount;
+	private AonAccountBox withholdingAccount;
 	
 	public InvoiceWithholdingPanel(IInvoicePanelCallback callback) {
 		AccountingInvoice ai = callback.getInvoice();
 		
-		withholdingTable = new FlexTable();
-		withholdingTable.getColumnFormatter().setWidth(0, "40px");
-		withholdingTable.getColumnFormatter().setWidth(1, "auto");
+		setStyleName(AON.CSS.aonDisplayTable());
+		addStyleName(AON.CSS.aonWidthAll());
+		addStyleName(AON.CSS.aonMarginTopSep());
+		getElement().getStyle().setBackgroundColor(EditableInvoicePanel.INNER_BACKGROUND_COLOR);
+
+		FlowPanel withholdingTableRowDiv = new FlowPanel();
+		withholdingTableRowDiv.setStyleName(AON.CSS.aonDisplayTableRow());
+		add(withholdingTableRowDiv);
 		
-		withholdingTable.setStyleName(AON.AON_CSS.aonAccountTable());
-		withholdingTable.addStyleName(AON.AON_CSS.aonSimpleBorder());
-		withholdingTable.addStyleName(AON.AON_CSS.aonMarginTop5());
-		withholdingTable.getElement().getStyle().setBackgroundColor(EditableInvoicePanel.INNER_BACKGROUND_COLOR);
+		FlowPanel withholdingTableCellDiv0 = new FlowPanel();
+		withholdingTableCellDiv0.setStyleName(AON.CSS.aonDisplayTableCell());
+		withholdingTableCellDiv0.addStyleName(AON.CSS.aonTextVerticalContainer());
+		withholdingTableCellDiv0.getElement().getStyle().setWidth(40, Unit.PX);
+		withholdingTableCellDiv0.getElement().getStyle().setBackgroundColor(EditableInvoicePanel.LABEL_BACKGROUND_COLOR);
+		withholdingTableCellDiv0.getElement().getStyle().setBorderColor("DarkGray");
+		withholdingTableCellDiv0.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		withholdingTableCellDiv0.getElement().getStyle().setBorderWidth(1, Unit.PX);
+		withholdingTableCellDiv0.getElement().getStyle().setProperty("border-radius", 10, Unit.PCT);
+		withholdingTableRowDiv.add(withholdingTableCellDiv0);
 		
-		setWidget(withholdingTable);
+		Label withholdingDescription = new Label("IRPF");
+		withholdingDescription.setStyleName(AON.CSS.aonTextCenter());
+		withholdingDescription.addStyleName(AON.CSS.aonBold());
+		withholdingTableCellDiv0.add(withholdingDescription);
 		
-		int row = 0;
-		int col = 0;
+		FlowPanel withholdingPanel = new FlowPanel();
+		withholdingPanel.setStyleName(AON.CSS.aonDisplayTableCell());
+		withholdingTableRowDiv.add(withholdingPanel);
 		
-		Label vtoLabel = new Label("IRPF");
-		vtoLabel.setStyleName(AON.AON_CSS.aonTextVertical());
-		vtoLabel.addStyleName(AON.AON_CSS.aonBold());
-		withholdingTable.setWidget(row, col, vtoLabel);
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonSimpleBorder());
-		withholdingTable.getCellFormatter().getElement(row, col).getStyle().setBackgroundColor(EditableInvoicePanel.LABEL_BACKGROUND_COLOR);
-		withholdingTable.getCellFormatter().getElement(row, col).getStyle().setHeight(40.0, Unit.PX);
-		col++;
+		FlowPanel dataTable = new FlowPanel();
+		dataTable.setStyleName(AON.CSS.aonDisplayGrid());
+		dataTable.addStyleName(AON.CSS.aonWidthAlmostAll());
+		dataTable.addStyleName(AON.CSS.aonMarginTopSep());
+		dataTable.addStyleName(AON.CSS.aonBlockCenter());
+		withholdingPanel.add(dataTable);
+		
+		FlowPanel headerRow = new FlowPanel();
+		headerRow.setStyleName(AON.CSS.aonDisplayGridHeaderRow());
+		dataTable.add(headerRow);
+		
+		headerRow.add(getHeaderCell(new Label()));
+		headerRow.add(getHeaderCell(new Label(AON.MSG.taxableBaseAbr())));
+		headerRow.add(getHeaderCell(new InlineLabel(AonStringUtils.PERCENT)));
+		headerRow.add(getHeaderCell(new InlineLabel(AON.MSG.quota())));
+		headerRow.add(getHeaderCell(new InlineLabel(AON.MSG.accountAbr())));
+		headerRow.add(getHeaderCell(new InlineLabel(AON.MSG.type())));
+		Label l = new Label("");
+		FlowPanel cell = new FlowPanel();
+		cell.setStyleName(AON.CSS.aonDisplayTableCell());
+		cell.addStyleName(AON.CSS.aonWidthAll());
+		cell.add(l);
+		headerRow.add(cell);
+		
+		FlowPanel dataRow = new FlowPanel();
+		dataRow.setStyleName(AON.CSS.aonDisplayGridRow());
+		dataTable.add(dataRow);
 		
 		if (callback.getConfiguration().getWithholdingTaxes() != null 
 			&& callback.getConfiguration().getWithholdingTaxes().size() > 0) {
 			withholdingTaxs = new ListBox();
-			withholdingTaxs.addStyleName(AON.AON_CSS.aonMarginLeft5());
+			withholdingTaxs.addStyleName(AON.CSS.aonMarginLeftSep());
 			withholdingTaxs.setWidth("100px");
 			withholdingTaxs.addItem("--------","-1");
 			for (Tax tax : callback.getConfiguration().getWithholdingTaxes()) {
@@ -107,36 +140,16 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 					}
 				}
 			});
-			withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
-			withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-			withholdingTable.setWidget(row, col, withholdingTaxs);
-			col++;
+			dataRow.add(getCell(withholdingTaxs));
+		} else {
+			dataRow.add(getCell(new Label()));
 		}
-		
-		InlineLabel lbl1 = new InlineLabel(AON.MSG.taxableBaseAbr());
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBold());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, lbl1);
-		col++;
-		
-		withholdingBase = new DoubleBox(8,4);
+
+		withholdingBase = new AonDoubleBox(8,4);
 		withholdingBase.setEnabled(false);
-		withholdingTable.setWidget(row, col, withholdingBase);
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		col++;
+		dataRow.add(getCell(withholdingBase));
 		
-		InlineLabel lbl2 = new InlineLabel(AonStringUtils.PERCENT);
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBold());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, lbl2);
-		col++;
-		
-		withholdingPercent = new DoubleBox(6,2);
+		withholdingPercent = new AonDoubleBox(6,2);
 		withholdingPercent.setVisibleLength(3);
 		withholdingPercent.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		withholdingPercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
@@ -148,36 +161,14 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 				ValueChangeEvent.fire(InvoiceWithholdingPanel.this, ai.getWithholdingData() );
 			}
 		});
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, withholdingPercent);
-		col++;
-
-		InlineLabel lbl3 = new InlineLabel(AON.MSG.quota());
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBold());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, lbl3);
-		col++;
+		dataRow.add(getCell(withholdingPercent));
 		
-		withholdingQuota = new DoubleBox(8,2);
+		withholdingQuota = new AonDoubleBox(8,2);
 		withholdingQuota.setEnabled(false);
 		withholdingQuota.setVisibleLength(5);
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, withholdingQuota);
-		col++;
+		dataRow.add(getCell(withholdingQuota));
 		
-		InlineLabel lbl4 = new InlineLabel(AON.MSG.accountAbr());
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBold());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, lbl4);
-		col++;
-		
-		withholdingAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
+		withholdingAccount = new AonAccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
 		withholdingAccount.addSelectionHandler(new SelectionHandler<Account>() {
 			
 			@Override
@@ -186,18 +177,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 				SelectionEvent.<Account>fire(InvoiceWithholdingPanel.this, event.getSelectedItem());
 			}
 		});
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, withholdingAccount);
-		col++;
-
-		InlineLabel lbl5 = new InlineLabel(AON.MSG.type());
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBold());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, lbl5);
-		col++;
+		dataRow.add(getCell(withholdingAccount));
 		
 		withholdingType = new WithholdingTypeListBox();
 		withholdingType.addStyleName(AON.AON_CSS.aonMarginLeft5());
@@ -209,18 +189,15 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 				ValueChangeEvent.fire(InvoiceWithholdingPanel.this, ai.getWithholdingData() );
 			}
 		});
-		withholdingType.addBlurHandler(new BlurHandler() {
-			
-			@Override
-			public void onBlur(BlurEvent event) {
-//				callback.setFocusOnPayDate();
-			}
-		});
+		dataRow.add(getCell(withholdingType));
 		
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonWidthAuto());
-		withholdingTable.setWidget(row, col, withholdingType);
-		col++;
+		Label l0 = new Label("");
+		FlowPanel cell0 = new FlowPanel();
+		cell0.setStyleName(AON.CSS.aonDisplayTableCell());
+		cell0.addStyleName(AON.CSS.aonWidthAll());
+		cell0.add(l0);
+		dataRow.add(cell0);
+		
 	}
 	
 	@Override
@@ -259,5 +236,20 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 	public void setTabIndex(int index) {
 		withholdingTaxs.setTabIndex(index);
 	}
+
+	private FlowPanel getHeaderCell(Widget widget) {
+		FlowPanel cell = new FlowPanel();
+		cell.setStyleName(AON.CSS.aonDisplayGridHeaderCell());
+		cell.addStyleName(AON.CSS.aonNowrap());
+		cell.add(widget);
+		return cell;
+	}
+	private Widget getCell(Widget widget) {
+		FlowPanel cell = new FlowPanel();
+		cell.addStyleName(AON.CSS.aonDisplayGridCell());
+		cell.add(widget);
+		return cell;
+	}
 	
+
 }

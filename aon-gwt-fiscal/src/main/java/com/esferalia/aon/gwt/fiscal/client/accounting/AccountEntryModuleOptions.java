@@ -1,24 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
-import java.io.Serializable;
-
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.ModuleOptions;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
-import com.google.gwt.user.client.ui.HasWidgets;
 
-public class AccountEntryModuleOptions implements Serializable {
+public class AccountEntryModuleOptions extends  ModuleOptions<AccountEntryModuleOptions> {
 
 	private static final long serialVersionUID = 8565229219550096670L;
 
-	private String domainName;
-	private int domain;
-	private String user;
-
 	private Integer accountEntryId;
-	private HasWidgets parentWidget;
-	private AonConfiguration configuration;
 	private AccountingInvoice accountingInvoice;
 	private TediResult tediResult;
 	private ModuleCallback externalCallback;
@@ -34,57 +25,12 @@ public class AccountEntryModuleOptions implements Serializable {
 	private boolean journalTabVisible = true;
 	private boolean extraInfoTabVisible = true;
 
-	public String getDomainName() {
-		return domainName;
-	}
-
-	public AccountEntryModuleOptions setDomainName(String domainName) {
-		this.domainName = domainName;
-		return this;
-	}
-
-	public int getDomain() {
-		return domain;
-	}
-
-	public AccountEntryModuleOptions setDomain(int domain) {
-		this.domain = domain;
-		return this;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public AccountEntryModuleOptions setUser(String user) {
-		this.user = user;
-		return this;
-	}
-
 	public Integer getAccountEntryId() {
 		return accountEntryId;
 	}
 
 	public AccountEntryModuleOptions setAccountEntryId(Integer accountEntryId) {
 		this.accountEntryId = accountEntryId;
-		return this;
-	}
-
-	public HasWidgets getParentWidget() {
-		return parentWidget;
-	}
-
-	public AccountEntryModuleOptions setParentWidget(HasWidgets parentWidget) {
-		this.parentWidget = parentWidget;
-		return this;
-	}
-
-	public AonConfiguration getConfiguration() {
-		return configuration;
-	}
-
-	public AccountEntryModuleOptions setConfiguration(AonConfiguration configuration) {
-		this.configuration = configuration;
 		return this;
 	}
 

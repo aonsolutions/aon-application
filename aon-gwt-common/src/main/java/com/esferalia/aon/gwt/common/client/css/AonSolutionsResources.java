@@ -54,6 +54,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconRefresh();
 
+	@Source("icons/aon-icon-edit.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconEdit();
+
 	@Source("icons/aon-icon-clear.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconClear();
@@ -230,5 +234,56 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconAddTask();
 
+	@Source("icons/aon-icon-customer.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCustomer();
+
+	@Source("icons/aon-icon-creditor.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCreditor();
+
+	@Source("icons/aon-icon-supplier.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconSupplier();
+	
+	@Source("icons/aon-icon-valid.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconValid();
+	
+	@Source("icons/aon-icon-invalid.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconInvalid();
+
+	@Source("icons/aon-icon-unknown.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconUnknown();
+
+	@Source("icons/aon-icon-europe.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconEurope();
+	
+	@Source("icons/aon-icon-level-this.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLevelThis();
+	
+	@Source("icons/aon-icon-level-top.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLevelTop();
+	
+	@Source("icons/aon-icon-home.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconHome();
+	
+	@Source("icons/aon-icon-employee.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconEmployee();
+	
+	@Source("icons/aon-icon-more-horizontal.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconMoreHorizontal();
+	
+	@Source("icons/aon-icon-more-vertical.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconMoreVertical();
 }
 

@@ -1,13 +1,13 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
+package com.esferalia.aon.gwt.fiscal.client.finance;
 
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonBankAccountBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.widget.BankAccountBox;
 import com.esferalia.aon.gwt.fiscal.client.widget.RegistryBankListBox;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -18,6 +18,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -51,7 +52,7 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 	private InlineLabel registryBankIcon = new InlineLabel();
 	private RegistryBankListBox registryBankListBox;
 	private Label bankAccountLabel = new Label();
-	private BankAccountBox bankAccountBox;
+	private AonBankAccountBox bankAccountBox;
 	private ListBox payMethodBox;
 	private Finance financeData;	
 	
@@ -86,7 +87,7 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 		this.user = user;
 		this.config = config;
 		this.registryBankListBox = new RegistryBankListBox();
-		this.bankAccountBox = new BankAccountBox( financeData.getBankAccount() );
+		this.bankAccountBox = new AonBankAccountBox( financeData.getBankAccount() );
 		this.payMethodBox = new ListBox();
 		
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
@@ -95,7 +96,7 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 		FlowPanel rootPanel = new FlowPanel();
 		
 		FlowPanel tablePanel = new FlowPanel();
-		tablePanel.setStyleName(AON.AON_CSS.aonScrollArea());
+		tablePanel.setStyleName(AON.CSS.aonScrollArea());
 		
 		KeyUpHandler keyUpHandler = new KeyUpHandler() {
 			@Override
@@ -111,12 +112,12 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 		table.getColumnFormatter().setWidth(0, "50px");
 		table.getColumnFormatter().setWidth(1, "auto");
 		
-		table.setStyleName(AON.AON_CSS.aonPanelGrid());
-		table.addStyleName(AON.AON_CSS.aonWidthAll());
+		table.setStyleName(AON.CSS.aonTable());
+		table.addStyleName(AON.CSS.aonWidthAll());
 		int row = 0;
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.payMethod()));
-		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		payMethodBox.addKeyUpHandler(keyUpHandler);
 		payMethodBox.addItem(" ---- ", "");
 		for (PayMethod pm : config.getPayMethods()) {
@@ -145,22 +146,24 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 			}
 		});
 		table.setWidget(row,1,payMethodBox);
-		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 		
 		table.setWidget(row,0,bankAccountLabel);
-		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		
 		FlowPanel banksPanel = new FlowPanel();
-		InlineLabel banksLabel = new InlineLabel("Bancos:");
-		banksLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-		banksLabel.addStyleName(AON.AON_CSS.aonWidth50());
-		banksPanel.add(banksLabel); 
 		
-		banksPanel.add(registryBankListBox);
-		registryBankIcon.setStyleName(AON.AON_CSS.aonPaddingLeft20());
-		registryBankIcon.addStyleName(AON.AON_CSS.aonMarginLeft());
-		banksPanel.add(registryBankIcon);
+		FlowPanel row1= new FlowPanel();
+		row1.setStyleName(AON.CSS.aonDisplayGridCellInner());
+		banksPanel.add(row1);
+		InlineLabel banksLabel = new InlineLabel("Bancos:");
+		banksLabel.setStyleName(AON.CSS.aonInnerLabel());
+		banksLabel.getElement().getStyle().setWidth(50, Unit.PX);
+		row1.add(banksLabel); 
+		
+		row1.add(registryBankListBox);
+		registryBankIcon.setStyleName(AON.CSS.aonTabIcon());
+		row1.add(registryBankIcon);
 		registryBankListBox.addKeyUpHandler(keyUpHandler);
 		registryBankListBox.addChangeHandler( new ChangeHandler() {
 			
@@ -177,9 +180,9 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 			}
 		});
 		bankAccountBox.addKeyUpHandler(keyUpHandler);
+		bankAccountBox.addStyleName(AON.CSS.aonMarginTopSep());
 		banksPanel.add(bankAccountBox);
 		table.setWidget(row,1,banksPanel);
-		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 		
 		refreshBankAccountPanel( this.financeData.getPayMethodType() );
@@ -188,10 +191,10 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 		rootPanel.add( tablePanel );
 		
 		FlowPanel buttons = new FlowPanel();
-    	buttons.setStyleName(AON.AON_CSS.aonTextCenter());
+    	buttons.setStyleName(AON.CSS.aonTextCenter());
     	
-    	final Button okButton = new Button();
-    	okButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
+    	final Button okButton = new Button(AON.MSG.accept());
+    	okButton.setStyleName( AON.CSS.aonOkButton() );
     	okButton.setText( AON.MSG.accept());
     	okButton.addKeyUpHandler( keyUpHandler);
     	okButton.addClickHandler(new ClickHandler() {
@@ -199,7 +202,7 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (FinanceBankPanel.this.financeData.getPayMethod() == null) { 
-					MessageDialog.error("No se ha indicado forma de pago.");
+					AonMessageDialog.error("No se ha indicado forma de pago.");
 					payMethodBox.setFocus(true);
 				} else {
 					okButton.setEnabled(false);
@@ -210,9 +213,9 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
     	
     	buttons.add(okButton);
     	
-    	final Button cancelButton = new Button();
-    	cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
-    	cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+    	final Button cancelButton = new Button(AON.MSG.cancelAction());
+    	cancelButton.setStyleName( AON.CSS.aonOkButton() );
+    	cancelButton.addStyleName( AON.CSS.aonMarginLeft() );
     	cancelButton.setText( AON.MSG.cancelAction());
     	cancelButton.addKeyUpHandler( keyUpHandler);
     	cancelButton.addClickHandler(new ClickHandler() {
@@ -246,8 +249,8 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 			}
 
 			if (mustShowRegistryBanks) {
-				registryBankIcon.removeStyleName(AON.AON_CSS.aonIconCompany());
-				registryBankIcon.addStyleName(AON.AON_CSS.aonIconEmployee());
+				registryBankIcon.removeStyleName(AON.CSS.aonIconHome());
+				registryBankIcon.addStyleName(AON.CSS.aonIconEmployee());
 				registryBankIcon.setTitle("Bancos definidos de \"" + this.financeData.getRegistryName() + "\"");
 				FINANCE_SERVICE.getRegistryBanks(domainName, domain, user, this.financeData.getRegistry().getId(), new AsyncCallback<LinkedList<RegistryBank>>() {
 					
@@ -259,13 +262,13 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						MessageDialog.error("No se han podido recuperar los bancos del titular del vencimiento. [" + caught.getMessage() + "]");								
+						AonMessageDialog.error("No se han podido recuperar los bancos del titular del vencimiento. [" + caught.getMessage() + "]");								
 					}
 				});
 			} else {
-				registryBankIcon.addStyleName(AON.AON_CSS.aonIconCompany());
+				registryBankIcon.addStyleName(AON.CSS.aonIconHome());
 				registryBankIcon.setTitle("Bancos definidos de \"" + config.getCompany().getName() + "\"");
-				registryBankIcon.removeStyleName(AON.AON_CSS.aonIconEmployee());
+				registryBankIcon.removeStyleName(AON.CSS.aonIconEmployee());
 				FINANCE_SERVICE.getCompanyBanks(domainName, domain, user, new AsyncCallback<LinkedList<RegistryBank>>() {
 					
 					@Override
@@ -276,7 +279,7 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						MessageDialog.error("No se han podido recuperar los bancos de la empresa. [" + caught.getMessage() + "]");
+						AonMessageDialog.error("No se han podido recuperar los bancos de la empresa. [" + caught.getMessage() + "]");
 					}
 				});
 			}

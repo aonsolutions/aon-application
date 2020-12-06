@@ -553,7 +553,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Concepto")
 	String concept();
 	
-	@DefaultMessage("Compl. Concepto")
+	@DefaultMessage("Complemento para el concepto del asiento")
 	String conceptComplement();
 
 	@DefaultMessage("Cuenta bancaria")
@@ -666,6 +666,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("N\u00FAmero")
 	String number();
+
+	@DefaultMessage("N\u00BA")
+	String numberAbbrv();
 
 	@DefaultMessage("Documento")
 	String document();
@@ -3915,6 +3918,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Todos.")
 	String all();
+
+	@DefaultMessage("Ocultar / Mostrar caracter\u00EDsticas de la factura")
+	String invoiceParams();
 
 
 }

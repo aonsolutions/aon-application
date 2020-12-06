@@ -31,7 +31,7 @@ public class AonMessageDialog extends AonCustomDialog {
 		addStyleName(AON.CSS.aonConfirmDialog());
 		root = new SimpleLayoutPanel();
 		root.setWidth("500px");
-		root.setHeight("90px");
+		root.setHeight("150px");
 		root.setStyleName(AON.CSS.aonPadding());
 		this.setWidget(root);
 	}
@@ -47,6 +47,7 @@ public class AonMessageDialog extends AonCustomDialog {
     	panel.add(label);
     	FlowPanel buttons = new FlowPanel();
     	buttons.setStyleName(AON.CSS.aonTextCenter());
+    	buttons.addStyleName(AON.CSS.aonMarginBottom());
     	
     	final Button okButton = new Button();
     	okButton.setStyleName(AON.CSS.aonOkButton());
@@ -88,6 +89,21 @@ public class AonMessageDialog extends AonCustomDialog {
 	        	okButton.setFocus(true);        	
 	        }
 	    });
+    }
+
+	public static void show(String header,String msg) {
+		_show(header,msg,null);
+	}
+	public static void error(String msg) {
+		_show(AON.MSG.error(),msg,null);
+	}
+	public static void warning (final String msg) {
+		_show(AON.MSG.warning(),msg,null);
+	}
+	
+	public static void _show(String header,String msg, final AonMessageDialogCallback callback) {
+		AonMessageDialog dialog = new AonMessageDialog();
+		dialog.show(header, msg, callback);
     }
 	
 }

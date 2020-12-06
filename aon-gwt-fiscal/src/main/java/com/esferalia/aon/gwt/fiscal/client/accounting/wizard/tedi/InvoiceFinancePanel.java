@@ -4,30 +4,27 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.AccountBox;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceBankPanel;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceBankPanel.FinanceBankPanelCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinancePayPanel;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinancePayPanel.FinancePayPanelCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceReturnPanel;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceReturnPanel.FinanceReturnPanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.finance.FinanceActionsPanel;
+import com.esferalia.aon.gwt.fiscal.client.finance.FinanceBankPanel;
+import com.esferalia.aon.gwt.fiscal.client.finance.FinanceBankPanel.FinanceBankPanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModuleCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceStatusVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -35,7 +32,6 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -50,38 +46,36 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHandlers<Finance>,HasAccountEntrySelectionHandlers {
 	
 	private static FinanceServiceAsync FINANCE_SERVICE;
 	
 	private FlowPanel container;
-	private FlexTable tab;
+	private FlowPanel tab;
 	private LinkedList<InvoiceFinancePanelRow> rows;
 	
-	private DoubleBox firstAmount = new DoubleBox(12,4);
+	private AonDoubleBox firstAmount = null;
 	private CheckBox authFinanceCalculation;
-	private AccountBox payAccount;
-	private Button addButton;
-	private InlineLabel errorLabel;
+	private AonAccountBox payAccount;
+	private AonTableButton addButton;
 
 	public InvoiceFinancePanel(IInvoicePanelCallback callback) {
-		setStyleName(AON.AON_CSS.aonWidthAll());
+		setStyleName(AON.CSS.aonWidthAll());
 		getElement().getStyle().setBackgroundColor(EditableInvoicePanel.INNER_BACKGROUND_COLOR);
 		
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
 		FINANCE_SERVICE = new FinanceServiceAsyncDecorator(financeServiceRaw);
-
 		container = new FlowPanel();
+		container.setStyleName(AON.CSS.aonWidthAll());
 		add(container);
 		paint(callback);
 	}
@@ -95,15 +89,43 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 		AccountEntrySelectionEvent.fire( InvoiceFinancePanel.this, callback.getInvoice().getAccountEntry(), null);		
 	}
 
+	private FlowPanel getRow() {
+		FlowPanel row = new FlowPanel();
+		row.setStyleName(AON.CSS.aonDisplayTableRow());
+		row.addStyleName(AON.CSS.aonNowrap());
+		return row;
+	}
+	
+	private FlowPanel getHeaderCell(Widget widget) {
+		FlowPanel cell = new FlowPanel();
+		cell.setStyleName(AON.CSS.aonDisplayGridHeaderCell());
+		cell.addStyleName(AON.CSS.aonNowrap());
+		cell.add(widget);
+		return cell;
+	}
+
+	private FlowPanel getCell(Widget widget) {
+		FlowPanel cell = new FlowPanel();
+		cell.setStyleName(AON.CSS.aonDisplayTableCell());
+		cell.addStyleName(AON.CSS.aonNowrap());
+		cell.add(widget);
+		return cell;
+	}
+
 	private void paint(IInvoicePanelCallback callback){
 		container.clear();
-		
+		firstAmount = null;
 		
 		if (callback.getInvoice().getAccountEntry().getId() == null) {
-			FlexTable payOptionsPanel = new FlexTable();
+			FlowPanel financeOptionsPanel = new FlowPanel();
+			container.add(financeOptionsPanel);
+
+			FlowPanel financeOptionsPanelRow = getRow();
+			financeOptionsPanel.add(financeOptionsPanelRow);
+			
 			authFinanceCalculation = new CheckBox("Calcular vtos. autom\u00E1ticamente");
 			authFinanceCalculation.setTabIndex(-1);
-			authFinanceCalculation.setStyleName(AON.AON_CSS.aonMarginRight());
+			authFinanceCalculation.setStyleName(AON.CSS.aonMarginRight());
 			authFinanceCalculation.setValue(callback.getInvoice().isAuthFinanceCalculation());
 			authFinanceCalculation.addClickHandler(new ClickHandler() {
 				
@@ -115,14 +137,13 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 					}
 				}
 			});
-			payOptionsPanel.setWidget(0, 0, authFinanceCalculation);
+			financeOptionsPanelRow.add(getCell(authFinanceCalculation));
 			
 			InlineLabel accountBoxLabel = new InlineLabel("Contabilizar los pagos contra la cuenta:");
-			accountBoxLabel.setStyleName(AON.AON_CSS.aonMarginRight());
-			payOptionsPanel.setWidget(0, 1, accountBoxLabel);
-			payOptionsPanel.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPadding2Top()); 
+			accountBoxLabel.setStyleName(AON.CSS.aonMarginRight());
+			financeOptionsPanelRow.add(getCell(accountBoxLabel));
 
-			payAccount = new AccountBox(callback.getCurrentDomainName(),callback.getCurrentDomainId(), callback.getCurrentUser());
+			payAccount = new AonAccountBox(callback.getCurrentDomainName(),callback.getCurrentDomainId(), callback.getCurrentUser());
 			payAccount.setValue(callback.getInvoice().getPayAccountId()
 					, callback.getInvoice().getPayAccountCode()
 					, callback.getInvoice().getPayAccountDescription(), false);
@@ -155,27 +176,23 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 						callback.getModule().refreshIdLabel();
 					}
 			});
-			payOptionsPanel.setWidget(0, 2, payAccount);
-			
-			container.add(payOptionsPanel);
+			financeOptionsPanelRow.add(getCell(payAccount));
 		}
 		
-		
-		tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
+		tab = new FlowPanel();
+		tab.setStyleName(AON.CSS.aonDisplayGrid());
+		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab.addStyleName(AON.CSS.aonMarginTopSep());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		tab.getElement().getStyle().setBackgroundColor(EditableInvoicePanel.INNER_BACKGROUND_COLOR);
 		container.add(tab);
 		paintHeader();
 		paintRows(callback);
 		
-		
-		FlowPanel lastLinePanel = new FlowPanel();
-		lastLinePanel.setStyleName(AON.AON_CSS.aonPadding2Top());
-		addButton = new Button();
-		addButton.setAccessKey( 'L' );
-		addButton.setStyleName(AON.AON_CSS.aonIconReset());
-		addButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-		addButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		FlowPanel buttonsRow = new FlowPanel();
+		buttonsRow.setStyleName(AON.CSS.aonDisplayGridFooterRow());
+		tab.add(buttonsRow);
+		addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd(), 'w' );
 		addButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -228,18 +245,7 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 				}
 			}
 		});
-		lastLinePanel.add(addButton);
-		
-		errorLabel = new InlineLabel();
-		errorLabel.setWidth("350px");
-		errorLabel.setStyleName(AON.AON_CSS.aonBold());
-		errorLabel.addStyleName(AON.AON_CSS.aonColorRed());
-		errorLabel.addStyleName(AON.AON_CSS.aonTextRight());
-		errorLabel.getElement().getStyle().setMarginLeft(100, Unit.PX);
-		lastLinePanel.add(errorLabel);
-		
-		container.add(lastLinePanel);
-		
+		buttonsRow.add(getCell(addButton));
 		checkAmounts( callback );
 	}
 
@@ -247,100 +253,40 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 		double total = callback.getInvoice().getTotalInvoice();
 		if (callback.getInvoice().getInvoice().hasFinances()) {
 			double sum = 0;
-//			boolean negAmount = false;
 			for (Finance f : callback.getInvoice().getInvoice().getFinances() ) {
 				if (!f.isRemoved()) {
 					sum = AonMathUtils.round( sum + f.getAmount());
-//					if (!AonMathUtils.isGreatherThanZero(f.getAmount() )) {
-//						negAmount = true;						
-//					}
 				}
 			}
-//			if (negAmount) {
-//				errorLabel.setText(AON.MSG.invoiceFinancesNegativeAmount());
-//				errorLabel.setVisible(true);
-//			} else 
 			if (!AonMathUtils.equals(sum, total)) {
-				errorLabel.setText(AON.MSG.invoiceFinancesAmountNotFit());
-				errorLabel.setVisible(true);
+				callback.getModule().onError(AON.MSG.invoiceFinancesAmountNotFit());
 			} else {
-				errorLabel.setText("");
-				errorLabel.setVisible(false);
+				callback.getModule().onHideMessages();
 			}
 		} else {
-			errorLabel.setText(AON.MSG.invoiceFinancesEmpty());
-			errorLabel.setVisible(true);
+			callback.getModule().onError(AON.MSG.invoiceFinancesEmpty());
 		}
 	}
 
 	private void paintHeader() {
-		int row = 0;
-		int col = 0;
+		FlowPanel headerRow = new FlowPanel();
+		headerRow.setStyleName(AON.CSS.aonDisplayGridHeaderRow());
+		tab.add(headerRow);
 		
-		Label label = new Label();
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "1%");
-		++col;
-
-		label = new Label(AON.MSG.dueDate());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "1%");
-		++col;
-		
-		label = new Label(AON.MSG.payMethod());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "1%");
-		++col;
-		
-		label = new Label(AON.MSG.bankAccount());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "1%");
-		++col;
-		
-		label = new Label(AON.MSG.amount());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "1%");
-		++col;
-
-		label = new Label(AON.MSG.status());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "1%");
-		++col;
-		
-		label = new Label();
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "1%");
-		++col;
-
-		label = new Label();
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "1%");
-		++col;
-
-		label = new Label(AON.MSG.actions());
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "1%");
-		++col;
-
-		label = new Label();
-		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "auto");
-		++col;
-	}
-	
-	private void decorateHeader(int row, int col, String width) {
-		tab.getCellFormatter().setWidth(row, col, width);
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontMedium());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextUnderline());
+		headerRow.add(getHeaderCell(new Label()));
+		headerRow.add(getHeaderCell(new Label(AON.MSG.dueDate())));
+		headerRow.add(getHeaderCell(new Label(AON.MSG.payMethod())));
+		headerRow.add(getHeaderCell(new Label(AON.MSG.bankAccount())));
+		headerRow.add(getHeaderCell(new Label(AON.MSG.amount())));
+		headerRow.add(getHeaderCell(new Label(AON.MSG.status())));
+		headerRow.add(getHeaderCell(new Label()));
+		headerRow.add(getHeaderCell(new Label(AON.MSG.actions())));
+		Label l = new Label("");
+		FlowPanel cell = new FlowPanel();
+		cell.setStyleName(AON.CSS.aonDisplayTableCell());
+		cell.addStyleName(AON.CSS.aonWidthAll());
+		cell.add(l);
+		headerRow.add(cell);
 	}
 
 	private void paintRows(IInvoicePanelCallback callback) {
@@ -353,12 +299,13 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 	}
 
 	private void addRow(IInvoicePanelCallback callback, Finance finance, boolean focus) {
-		InvoiceFinancePanelRow invoiceFinanceRow = new InvoiceFinancePanelRow(callback, finance, tab, focus);
+		InvoiceFinancePanelRow invoiceFinanceRow = new InvoiceFinancePanelRow(callback, finance, focus);
+		tab.add(invoiceFinanceRow);
 		rows.add(invoiceFinanceRow);
 	}
 
 
-	private class InvoiceFinancePanelRow  {
+	private class InvoiceFinancePanelRow  extends FlowPanel {
 		
 		private void decorateDirty(Label dirty, Finance finance ) {
 			dirty.setText( finance.isDirty()?"*":"" );
@@ -375,22 +322,15 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			}
 		}
 		
-		private InvoiceFinancePanelRow(IInvoicePanelCallback callback, final Finance finance, FlexTable tab, boolean focus) {
-			int currentRow = tab.getRowCount();
-			int col = 0;
+		private InvoiceFinancePanelRow(IInvoicePanelCallback callback, final Finance finance, boolean focus) {
+			setStyleName(AON.CSS.aonDisplayGridRow());
 			
 			Label dirty = new Label();
-			DateBoxEx dueDate = new DateBoxEx();
-			ListBox payMethod = new ListBox();
-			TextBox bankAccount = new TextBox();
-			DoubleBox amount = currentRow==1?firstAmount:new DoubleBox(12,4);
-			Label status = new Label();
-			
-			dirty.setStyleName(AON.AON_CSS.aonColoRoyalblue());
+			dirty.setStyleName(AON.CSS.aonColorBlue());
 			decorateDirty(dirty, finance );
-			tab.setWidget(currentRow, col, dirty);
-			++col;
+			add(getCell(dirty));
 			
+			AonDateBox dueDate = new AonDateBox();
 			dueDate.setValue(finance.getDueDate());
 			dueDate.setEnabled(finance.isFullPending());
 			if (finance.isFullPending()) {
@@ -403,9 +343,9 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 					}
 				});
 			}
-			tab.setWidget(currentRow, col, dueDate);
-			++col;
+			add(getCell(dueDate));
 
+			ListBox payMethod = new ListBox();
 			payMethod.setWidth("120px");
 			payMethod.addItem(" ---- ");
 			if (callback.getConfiguration().getPayMethods() != null) {
@@ -438,29 +378,26 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 					}
 				});
 			}
-			tab.setWidget(currentRow, col, payMethod);
-			++col;
+			add(getCell(payMethod));
 
 			FlowPanel bankAccountPanel = new FlowPanel();
-			bankAccountPanel.setStyleName(AON.AON_CSS.aonNowrap());
-			bankAccount.setStyleName(AON.AON_CSS.aonInputText());
+			bankAccountPanel.setStyleName(AON.CSS.aonDisplayGridCellInner());
+			bankAccountPanel.addStyleName(AON.CSS.aonNowrap());
+			
+			TextBox bankAccount = new TextBox();
+			bankAccount.setStyleName(AON.CSS.aonInputText());
 			bankAccount.setVisibleLength(25);
 			bankAccount.setMaxLength(34);
 			bankAccount.setValue(finance.getBankAccountSafeValue());
 			bankAccount.setReadOnly(true);
 			bankAccountPanel.add(bankAccount);
 			if (finance.isFullPending()) {
-				Button editBank = new Button();
-				editBank.setTitle("Editar banco");
-				editBank.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-				editBank.addStyleName(AON.AON_CSS.aonIconEdit());
-				editBank.addStyleName(AON.AON_CSS.aonClickable());
-				editBank.addStyleName(AON.AON_CSS.aonBorderNoneImportant());
+				AonTableButton editBank = new AonTableButton("Editar banco", AON.CSS.aonIconEdit());
 				editBank.addClickHandler(new ClickHandler() {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						final CustomDialog dialog = new CustomDialog();
+						final AonCustomDialog dialog = new AonCustomDialog();
 						dialog.setCaption(AON.MSG.bankAccount());
 						FinanceBankPanel bankPanel = new FinanceBankPanel();
 						bankPanel.show(callback.getCurrentDomainName(), callback.getCurrentDomainId(),
@@ -503,12 +440,12 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 				});
 				bankAccountPanel.add(editBank);
 			}
+			add(getCell(bankAccountPanel));
 			
-			tab.setWidget(currentRow, col, bankAccountPanel);
-			++col;
-
-			amount.setStyleName(AON.AON_CSS.aonInputText());
-			amount.addStyleName(AON.AON_CSS.aonTextRight());
+			AonDoubleBox amount = new AonDoubleBox(12,4);
+			if (firstAmount == null) {
+				firstAmount = amount;
+			}
 			amount.setValue(finance.getAmount());
 			amount.setEnabled(finance.isFullPending());
 			if (finance.isFullPending()) {
@@ -518,15 +455,14 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 							double total = callback.getInvoice().getTotalInvoice();
 							for (int i = 0; i < callback.getInvoice().getInvoice().getFinances().size() ; i++) {
 								Finance f = callback.getInvoice().getInvoice().getFinances().get(i);
-								if (i != (currentRow-1) && !f.isRemoved()) {
-									total = AonMathUtils.round(total - f.getAmount());
-								}
+								// TODO [ERROR]
+								total = AonMathUtils.round(total - f.getAmount());
 							}
 							if ((total > 0 && callback.getInvoice().getTotalInvoice() > 0) 
 							  || (total < 0 && callback.getInvoice().getTotalInvoice() < 0)) {
 								amount.setValue(total,true,true);
 							} else {
-								MessageDialog.error("No se puede cuadrar la suma de importes de los "
+								AonMessageDialog.error("No se puede cuadrar la suma de importes de los "
 									+"vencimientos con el total factura porque para hacerlo, el "
 									+"importe del vencimiento resultante ser\u00EDa negativo o cero");
 							}
@@ -543,53 +479,68 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 					}
 				});
 			}
-			tab.setWidget(currentRow, col, amount);
-			++col;
+			add(getCell(amount));
 
+			Label status = new Label();
 			status.setText(finance.getFinanceStatus() == null?"":finance.getFinanceStatus().getDescription());
-			tab.setWidget(currentRow, col, status);
-			tab.getCellFormatter().setStyleName(currentRow, col, AON.AON_CSS.aonPadding2Left());
-			tab.getCellFormatter().addStyleName(currentRow, col, AON.AON_CSS.aonPadding2Right());
-			tab.getCellFormatter().addStyleName(currentRow, col, AON.AON_CSS.aonSimpleBorder());
+			
 			finance.getFinanceStatus().visit( new IFinanceStatusVisitor() {
 				@Override
 				public void visitSettled() {
-					status.setStyleName(AON.AON_CSS.aonColoRoyalblue());
+					status.setStyleName(AON.CSS.aonColorBlue());
 				}
 				
 				@Override
 				public void visitReturned() {
-					status.setStyleName(AON.AON_CSS.aonColorRed());
-					status.addStyleName(AON.AON_CSS.aonBold());
+					status.setStyleName(AON.CSS.aonColorRed());
+					status.addStyleName(AON.CSS.aonBold());
 				}
 				
 				@Override
 				public void visitPending() {
-					status.setStyleName(AON.AON_CSS.aonColorRed());
+					status.setStyleName(AON.CSS.aonColorRed());
 				}
 				
 				@Override
 				public void visitPaid() {
-					status.setStyleName(AON.AON_CSS.aonColorGreen());
+					status.setStyleName(AON.CSS.aonColorGreen());
 				}
 				
 				@Override
 				public void visitBatched() {
-					status.setStyleName(AON.AON_CSS.aonColorGreen());
+					status.setStyleName(AON.CSS.aonColorGreen());
 				}
 			});
-			++col;
-
-			// **************************************************
-			// Botón de borrado de un vencimiento en estado nuevo
-			// **************************************************
-			Button trackingButton = new Button();
-			Button payButton = new Button();
-			Button settleButton = new Button();
-			Button undoButton = new Button();
-			Button returnButton = new Button();
+			add(getCell(status));
 			
-			if (finance.isPending() && currentRow > 1) {
+			// ------------------ INSERT HERE
+			FinanceActionsPanel actionsPanel0 = null;
+			if (finance.getId() != null) {
+				actionsPanel0 = new FinanceActionsPanel(finance, new FinanceModuleCallback() {
+					@Override
+					public void updateAndRefresh(Finance finance) {
+						InvoiceFinancePanel.this.updateAndRefresh(callback,finance);
+					}
+					
+					@Override
+					public ModuleOptions<?> getOptions() {
+						return callback.getModuleOptions();
+					}
+					
+					@Override
+					public FinanceServiceAsync getFinanceService() {
+						return FINANCE_SERVICE;
+					}
+					
+					@Override
+					public void addExtraInfo(Widget widget) {
+						callback.getModule().addExtraInfo(widget);					
+					}
+				});
+			}			
+			final FinanceActionsPanel actionsPanel = actionsPanel0;
+			
+			if (finance.isPending() && amount != firstAmount) {
 				
 				// *************************************************************************
 				// *******															 *******
@@ -597,41 +548,33 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 				// *******															 *******
 				// *************************************************************************
 				FlowPanel buttonsPanel = new FlowPanel();
-				Button restoreButton = new Button();
-				Button removeButton = new Button();
+				buttonsPanel.setStyleName(AON.CSS.aonDisplayTableCell());
+				buttonsPanel.addStyleName(AON.CSS.aonNowrap());
+				AonTableButton restoreButton = new AonTableButton( AON.MSG.restoreAction(), AON.CSS.aonIconRestoreDeleted() );
+				AonTableButton removeButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
 				buttonsPanel.add(restoreButton);
 				buttonsPanel.add(removeButton);
-				tab.setWidget(currentRow, col, buttonsPanel);
-				++col;
+				add(buttonsPanel);
 				
 				restoreButton.setVisible(finance.isRemoved());
 				removeButton.setVisible(!finance.isRemoved());
-
-				restoreButton.setTitle( AON.MSG.restoreAction() );
-				restoreButton.setStyleName(AON.AON_CSS.aonIconUndo());
-				restoreButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-				restoreButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
 				restoreButton.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
 						restoreButton.setVisible(false);
 						removeButton.setVisible(true);		
 						finance.setRemoved(false);
-						dueDate.removeStyleName(AON.AON_CSS.aonTextLineThrough());
+						dueDate.removeStyleName(AON.CSS.aonTextLineThrough());
 						dueDate.setEnabled(true);
-						payMethod.removeStyleName(AON.AON_CSS.aonTextLineThrough());
+						payMethod.removeStyleName(AON.CSS.aonTextLineThrough());
 						payMethod.setEnabled(true);
-						bankAccount.removeStyleName(AON.AON_CSS.aonTextLineThrough());
-						amount.removeStyleName(AON.AON_CSS.aonTextLineThrough());
+						bankAccount.removeStyleName(AON.CSS.aonTextLineThrough());
+						amount.removeStyleName(AON.CSS.aonTextLineThrough());
 						amount.setEnabled(true);
-						status.removeStyleName(AON.AON_CSS.aonTextLineThrough());
-
-						trackingButton.setVisible(!finance.isPending() && finance.getId() != null);
-						payButton.setVisible(finance.isFullPending() && finance.getId() != null);
-						settleButton.setVisible(finance.isFullPending() && finance.getId() != null);
-						undoButton.setVisible(finance.isFullPending() && finance.getId() != null);
-						returnButton.setVisible(finance.isPaid() && finance.getId() != null);
-
+						status.removeStyleName(AON.CSS.aonTextLineThrough());
+						if ( actionsPanel != null) {
+							actionsPanel.setVisible(!finance.isPending() && finance.getId() != null);
+						}
 						checkAmounts(callback);
 					}
 				});
@@ -641,308 +584,44 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 				// ******* 					DELETE BUTTON							 *******
 				// *******															 *******
 				// *************************************************************************
-				removeButton.setTitle( AON.MSG.deleteAction() );
-				removeButton.setStyleName(AON.AON_CSS.aonIconDelete());
-				removeButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-				removeButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
 				removeButton.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
 						restoreButton.setVisible(true);
 						removeButton.setVisible(false);		
 						finance.setRemoved(true);
-						dueDate.addStyleName(AON.AON_CSS.aonTextLineThrough());
+						dueDate.addStyleName(AON.CSS.aonTextLineThrough());
 						dueDate.setEnabled(false);
-						payMethod.addStyleName(AON.AON_CSS.aonTextLineThrough());
+						payMethod.addStyleName(AON.CSS.aonTextLineThrough());
 						payMethod.setEnabled(false);
-						bankAccount.addStyleName(AON.AON_CSS.aonTextLineThrough());
-						amount.addStyleName(AON.AON_CSS.aonTextLineThrough());
+						bankAccount.addStyleName(AON.CSS.aonTextLineThrough());
+						amount.addStyleName(AON.CSS.aonTextLineThrough());
 						amount.setEnabled(false);
-						status.addStyleName(AON.AON_CSS.aonTextLineThrough());
-						trackingButton.setVisible(false);
-						payButton.setVisible(false);
-						settleButton.setVisible(false);
-						undoButton.setVisible(false);
-						returnButton.setVisible(false);
+						status.addStyleName(AON.CSS.aonTextLineThrough());
+						if ( actionsPanel != null) {
+							actionsPanel.setVisible(false);
+						}
 						checkAmounts(callback);
 					}
 				});
 			} else {
-				tab.setWidget(currentRow, col, new Label());
-				++col;
+				add(getCell(new Label()));
 			}
-		
-			// *************************************************************************
-			// *******															 *******
-			// *******				TRACKING INFO BUTTON		 				 *******
-			// *******															 *******
-			// *************************************************************************
+
 			if (finance.getId() != null) {
-				tab.setWidget(currentRow, col, trackingButton);
-				++col;
-				
-				trackingButton.setTitle( AON.MSG.tracking() );
-				trackingButton.setStyleName(AON.AON_CSS.aonIconInfo());
-				trackingButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-				trackingButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
-				trackingButton.addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						FINANCE_SERVICE.getFinanceTracking(callback.getCurrentDomainName()
-								,callback.getCurrentDomainId()
-								,callback.getCurrentUser(), finance.getId()
-								,new AsyncCallback<LinkedList<FinanceTracking>>() {
-
-									@Override
-									public void onFailure(Throwable caught) {
-										Label label = new Label("Se ha producido un error al recuperar el historial del vencimiento. ["+caught.getMessage()+"]"); 
-										callback.getModule().addExtraInfo(label);
-									}
-
-									@Override
-									public void onSuccess(LinkedList<FinanceTracking> list) {
-										if (list == null || list.size() == 0) {
-											Label label = new Label("No existen movimientos registrados del vencimiento.");
-											label.setStyleName(AON.AON_CSS.aonInfoMessageBlock());
-											callback.getModule().addExtraInfo(label);
-										} else {
-											InvoiceFinanceTrackingPanel trackingPanel = new InvoiceFinanceTrackingPanel(list);
-											trackingPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
-												@Override
-												public void onSelection(AccountEntrySelectionEvent event) {
-													AccountEntrySelectionEvent.fire( InvoiceFinancePanel.this, event.getSelectedItem(), null);
-												}
-											});
-											callback.getModule().addExtraInfo(trackingPanel);
-										}
-									}
-							
-						});						
-					}
-				});
+				add(getCell(actionsPanel));
 			} else {
-				tab.setWidget(currentRow, col, new Label());
-				++col;
+				add(getCell(new Label()));
 			}
-			// *************************************************************************
-			// *******															 *******
-			// *******				PAY BUTTON		 				 			 *******
-			// *******															 *******
-			// *************************************************************************
-			FlowPanel actionsPanel = new FlowPanel();
-			if (finance.isFullPending() && finance.getId() != null) {
-				actionsPanel.add(payButton);
-				payButton.setText(AON.MSG.toPay());
-				payButton.setStyleName(AON.AON_CSS.aonActionButton());
-				final CustomDialog dialog = new CustomDialog();
-				String suffix = ( finance.isPayment()?" [PAGO":" [COBRO");
-				if (callback.getInvoice().isSales()) suffix += "DE UN CLIENTE]";
-				if (callback.getInvoice().isPurchase()) suffix += " A UN PROVEEDOR]";
-				if (callback.getInvoice().isExpenses() || callback.getInvoice().isUndeductible()) suffix += " A UN ACREEDOR]";
-				dialog.setCaption(AON.MSG.payFinance() + suffix );
-				payButton.addClickHandler(new ClickHandler() {
 
-					@Override
-					public void onClick(ClickEvent event) {
-						FinancePayPanel payPanel = new FinancePayPanel();
-						payPanel.show(callback.getCurrentDomainName(), callback.getCurrentDomainId(),
-								callback.getCurrentUser(), callback.getConfiguration(), finance,
-								new FinancePayPanelCallback() {
-
-									@Override
-									public void onCancel() {
-										dialog.hide();
-									}
-
-									@Override
-									public void onAccept(FinanceTracking tracking) {
-										dialog.hide();
-										FINANCE_SERVICE.payFinance(callback.getCurrentDomainName()
-												,callback.getCurrentDomainId()
-												,callback.getCurrentUser()
-												, tracking
-												,new AsyncCallback<FinanceTracking>() {
-
-													@Override
-													public void onFailure(Throwable caught) {
-														MessageDialog.error("Se ha producido un error al pagar el vencimiento. ["+caught.getMessage()+"]");
-													}
-
-													@Override
-													public void onSuccess(FinanceTracking tracking) {
-														updateAndRefresh( callback , tracking.getFinance() );
-													}
-												});
-									}
-								});
-						dialog.setWidget(payPanel);
-						dialog.center();
-						dialog.show();
-					}
-				});
-			}
 			
-			// *************************************************************************
-			// *******															 *******
-			// *******				SETTLE BUTTON		 				 			 *******
-			// *******															 *******
-			// *************************************************************************
-			if (finance.isFullPending() && finance.getId() != null) {
-				actionsPanel.add(settleButton);
-				settleButton.setText( AON.MSG.toSettle() );
-				settleButton.setStyleName(AON.AON_CSS.aonActionButton());
-				settleButton.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						ConfirmDialog cd = new ConfirmDialog();
-						cd.confirm(AON.MSG.settleFinanceAction(), new ConfirmDialogCallback(){
-
-							@Override
-							public void onAccept() {
-								FINANCE_SERVICE.settleFinance(callback.getCurrentDomainName()
-										,callback.getCurrentDomainId()
-										,callback.getCurrentUser()
-										, finance.getId()
-										,new AsyncCallback<Finance>() {
-
-									@Override
-									public void onFailure(Throwable caught) {
-										MessageDialog.error("Se ha producido un error al saldar el vencimiento. ["+caught.getMessage()+"]");
-									}
-
-									@Override
-									public void onSuccess(Finance fin) {
-										updateAndRefresh( callback ,fin );
-									}
-								});						
-							}
-
-							@Override
-							public void onCancel() {
-							}
-						});
-					}
-				});
-			}
-			
-			// *************************************************************************
-			// *******															 *******
-			// *******				UNSETTLE BUTTON		 				 		 *******
-			// *******															 *******
-			// *************************************************************************
-			boolean canUndo = (finance.isSettled() && finance.getFinanceGroup() == null) || finance.isPaid() || finance.isReturned(); 
-			if (canUndo && finance.getId() != null) {
-				actionsPanel.add(undoButton);
-				undoButton.setText( AON.MSG.undo() );
-				undoButton.setStyleName(AON.AON_CSS.aonActionButton());
-				undoButton.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						ConfirmDialog cd = new ConfirmDialog();
-						cd.confirm(AON.MSG.undoFinanceAction(), new ConfirmDialogCallback(){
-
-							@Override
-							public void onAccept() {
-								FINANCE_SERVICE.undoFinance(callback.getCurrentDomainName()
-										,callback.getCurrentDomainId()
-										,callback.getCurrentUser()
-										, finance.getId()
-										,new AsyncCallback<Finance>() {
-
-									@Override
-									public void onFailure(Throwable caught) {
-										MessageDialog.error("Se ha producido un error al marcar el vencimiento como pendiente. ["+caught.getMessage()+"]"); 
-									}
-
-									@Override
-									public void onSuccess(Finance fin) {
-										updateAndRefresh( callback ,fin );
-									}
-								});						
-							}
-
-							@Override
-							public void onCancel() {
-							}
-						});
-					}
-				});
-			}
-			if (finance.isSettled() && finance.getFinanceGroup() != null) {
-				Button groupedButton = new Button();
-				groupedButton.setTitle( AON.MSG.financeGrouped() );
-				groupedButton.setStyleName(AON.AON_CSS.aonIconRoot());
-				groupedButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-				groupedButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
-				groupedButton.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						MessageDialog.show("No se puede deshacer.","El vencimiento pertence a una agrupaci\u00F3n de vencimientos");
-					}
-				});
-				actionsPanel.add(groupedButton);
-			}
-
-			// *************************************************************************
-			// *******															 *******
-			// *******				RETURN BUTTON		 				 			 *******
-			// *******															 *******
-			// *************************************************************************
-			if (finance.isPaid() && finance.getId() != null) {
-				actionsPanel.add(returnButton);
-				returnButton.setText( AON.MSG.toReturn() );
-				returnButton.setStyleName(AON.AON_CSS.aonActionButton());
-				final CustomDialog dialog = new CustomDialog();
-				dialog.setCaption(AON.MSG.returnFinance());
-				returnButton.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						FinanceReturnPanel returnPanel = new FinanceReturnPanel();
-						returnPanel.show(callback.getCurrentDomainName(), callback.getCurrentDomainId(),
-								callback.getCurrentUser(), callback.getConfiguration(), finance,
-								new FinanceReturnPanelCallback() {
-
-									@Override
-									public void onCancel() {
-										dialog.hide();
-									}
-
-									@Override
-									public void onAccept(FinanceTracking tracking) {
-										dialog.hide();
-										FINANCE_SERVICE.returnFinance(callback.getCurrentDomainName()
-												,callback.getCurrentDomainId()
-												,callback.getCurrentUser()
-												, tracking
-												,new AsyncCallback<FinanceTracking>() {
-
-													@Override
-													public void onFailure(Throwable caught) {
-														MessageDialog.error("Se ha producido un devolver el pagar del vencimiento. ["+caught.getMessage()+"]");
-													}
-
-													@Override
-													public void onSuccess(FinanceTracking tracking) {
-														updateAndRefresh( callback ,tracking.getFinance() );
-													}
-												});
-									}
-								});
-						dialog.setWidget(returnPanel);
-						dialog.center();
-						dialog.show();
-					}
-				});
-			}
-
-			tab.setWidget(currentRow, col, actionsPanel);
-			tab.getCellFormatter().setWidth(currentRow, col, "auto");
-			tab.getCellFormatter().setStyleName(currentRow, col, AON.AON_CSS.aonNowrap());
-			++col;
+			Label l = new Label("");
+			FlowPanel cell = new FlowPanel();
+			cell.setStyleName(AON.CSS.aonDisplayTableCell());
+			cell.addStyleName(AON.CSS.aonWidthAll());
+			cell.add(l);
+			add(cell);
+			// ------------------ SO FAR
 			
 			if (focus) {
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
@@ -1002,3 +681,346 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 				});			
 	}
 }
+
+
+
+/*
+
+			// **************************************************
+			// Botón de borrado de un vencimiento en estado nuevo
+			// **************************************************
+			AonTableButton trackingButton = new AonTableButton(AON.MSG.tracking(), AON.CSS.aonIconHistory() );
+			AonTableButton payButton = new AonTableButton(AON.MSG.toPay(), AON.CSS.aonIconFinancePay() );
+			AonTableButton settleButton = new AonTableButton(AON.MSG.toSettle(), AON.CSS.aonIconFinanceSettle() );
+			AonTableButton undoButton = new AonTableButton(AON.MSG.undoFinanceLastTracking(), AON.CSS.aonIconFinanceUndo() );
+			AonTableButton returnButton = new AonTableButton(AON.MSG.toReturn(), AON.CSS.aonIconFinanceReturn() );
+			
+			if (finance.isPending() && currentRow > 1) {
+				
+				// *************************************************************************
+				// *******															 *******
+				// ******* 					RESTORE BUTTON							 *******
+				// *******															 *******
+				// *************************************************************************
+				FlowPanel buttonsPanel = new FlowPanel();
+				AonTableButton restoreButton = new AonTableButton( AON.MSG.restoreAction(), AON.CSS.aonIconRestoreDeleted() );
+				AonTableButton removeButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
+				buttonsPanel.add(restoreButton);
+				buttonsPanel.add(removeButton);
+				tab.setWidget(currentRow, col, buttonsPanel);
+				++col;
+				
+				restoreButton.setVisible(finance.isRemoved());
+				removeButton.setVisible(!finance.isRemoved());
+				restoreButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						restoreButton.setVisible(false);
+						removeButton.setVisible(true);		
+						finance.setRemoved(false);
+						dueDate.removeStyleName(AON.CSS.aonTextLineThrough());
+						dueDate.setEnabled(true);
+						payMethod.removeStyleName(AON.CSS.aonTextLineThrough());
+						payMethod.setEnabled(true);
+						bankAccount.removeStyleName(AON.CSS.aonTextLineThrough());
+						amount.removeStyleName(AON.CSS.aonTextLineThrough());
+						amount.setEnabled(true);
+						status.removeStyleName(AON.CSS.aonTextLineThrough());
+
+						trackingButton.setVisible(!finance.isPending() && finance.getId() != null);
+						payButton.setVisible(finance.isFullPending() && finance.getId() != null);
+						settleButton.setVisible(finance.isFullPending() && finance.getId() != null);
+						undoButton.setVisible(finance.isFullPending() && finance.getId() != null);
+						returnButton.setVisible(finance.isPaid() && finance.getId() != null);
+
+						checkAmounts(callback);
+					}
+				});
+
+				// *************************************************************************
+				// *******															 *******
+				// ******* 					DELETE BUTTON							 *******
+				// *******															 *******
+				// *************************************************************************
+				removeButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						restoreButton.setVisible(true);
+						removeButton.setVisible(false);		
+						finance.setRemoved(true);
+						dueDate.addStyleName(AON.CSS.aonTextLineThrough());
+						dueDate.setEnabled(false);
+						payMethod.addStyleName(AON.CSS.aonTextLineThrough());
+						payMethod.setEnabled(false);
+						bankAccount.addStyleName(AON.CSS.aonTextLineThrough());
+						amount.addStyleName(AON.CSS.aonTextLineThrough());
+						amount.setEnabled(false);
+						status.addStyleName(AON.CSS.aonTextLineThrough());
+						trackingButton.setVisible(false);
+						payButton.setVisible(false);
+						settleButton.setVisible(false);
+						undoButton.setVisible(false);
+						returnButton.setVisible(false);
+						checkAmounts(callback);
+					}
+				});
+			} else {
+				tab.setWidget(currentRow, col, new Label());
+				++col;
+			}
+		
+			// *************************************************************************
+			// *******															 *******
+			// *******				TRACKING INFO BUTTON		 				 *******
+			// *******															 *******
+			// *************************************************************************
+			if (finance.getId() != null) {
+				tab.setWidget(currentRow, col, trackingButton);
+				++col;
+				trackingButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						FINANCE_SERVICE.getFinanceTracking(callback.getCurrentDomainName()
+								,callback.getCurrentDomainId()
+								,callback.getCurrentUser(), finance.getId()
+								,new AsyncCallback<LinkedList<FinanceTracking>>() {
+
+									@Override
+									public void onFailure(Throwable caught) {
+										Label label = new Label("Se ha producido un error al recuperar el historial del vencimiento. ["+caught.getMessage()+"]"); 
+										callback.getModule().addExtraInfo(label);
+									}
+
+									@Override
+									public void onSuccess(LinkedList<FinanceTracking> list) {
+										if (list == null || list.size() == 0) {
+											Label label = new Label("No existen movimientos registrados del vencimiento.");
+											label.setStyleName(AON.CSS.aonBlockInfoMessage());
+											callback.getModule().addExtraInfo(label);
+										} else {
+											InvoiceFinanceTrackingPanel trackingPanel = new InvoiceFinanceTrackingPanel(list);
+											trackingPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
+												@Override
+												public void onSelection(AccountEntrySelectionEvent event) {
+													AccountEntrySelectionEvent.fire( InvoiceFinancePanel.this, event.getSelectedItem(), null);
+												}
+											});
+											callback.getModule().addExtraInfo(trackingPanel);
+										}
+									}
+							
+						});						
+					}
+				});
+			} else {
+				tab.setWidget(currentRow, col, new Label());
+				++col;
+			}
+			// *************************************************************************
+			// *******															 *******
+			// *******				PAY BUTTON		 				 			 *******
+			// *******															 *******
+			// *************************************************************************
+			FlowPanel actionsPanel = new FlowPanel();
+			if (finance.isFullPending() && finance.getId() != null) {
+				actionsPanel.add(payButton);
+				final AonCustomDialog dialog = new AonCustomDialog();
+				String suffix = ( finance.isPayment()?" [PAGO":" [COBRO");
+				if (callback.getInvoice().isSales()) suffix += "DE UN CLIENTE]";
+				if (callback.getInvoice().isPurchase()) suffix += " A UN PROVEEDOR]";
+				if (callback.getInvoice().isExpenses() || callback.getInvoice().isUndeductible()) suffix += " A UN ACREEDOR]";
+				dialog.setCaption(AON.MSG.payFinance() + suffix );
+				payButton.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						FinancePayPanel payPanel = new FinancePayPanel();
+						payPanel.show(callback.getCurrentDomainName(), callback.getCurrentDomainId(),
+								callback.getCurrentUser(), callback.getConfiguration(), finance,
+								new FinancePayPanelCallback() {
+
+									@Override
+									public void onCancel() {
+										dialog.hide();
+									}
+
+									@Override
+									public void onAccept(FinanceTracking tracking) {
+										dialog.hide();
+										FINANCE_SERVICE.payFinance(callback.getCurrentDomainName()
+												,callback.getCurrentDomainId()
+												,callback.getCurrentUser()
+												, tracking
+												,new AsyncCallback<FinanceTracking>() {
+
+													@Override
+													public void onFailure(Throwable caught) {
+														AonMessageDialog.error("Se ha producido un error al pagar el vencimiento. ["+caught.getMessage()+"]");
+													}
+
+													@Override
+													public void onSuccess(FinanceTracking tracking) {
+														updateAndRefresh( callback , tracking.getFinance() );
+													}
+												});
+									}
+								});
+						dialog.setWidget(payPanel);
+						dialog.center();
+						dialog.show();
+					}
+				});
+			}
+			
+			// *************************************************************************
+			// *******															 *******
+			// *******				SETTLE BUTTON		 				 			 *******
+			// *******															 *******
+			// *************************************************************************
+			if (finance.isFullPending() && finance.getId() != null) {
+				actionsPanel.add(settleButton);
+				settleButton.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						AonConfirmDialog cd = new AonConfirmDialog();
+						cd.confirm(AON.MSG.settleFinanceAction(), new AonConfirmDialogCallback(){
+
+							@Override
+							public void onAccept() {
+								FINANCE_SERVICE.settleFinance(callback.getCurrentDomainName()
+										,callback.getCurrentDomainId()
+										,callback.getCurrentUser()
+										, finance.getId()
+										,new AsyncCallback<Finance>() {
+
+									@Override
+									public void onFailure(Throwable caught) {
+										AonMessageDialog.error("Se ha producido un error al saldar el vencimiento. ["+caught.getMessage()+"]");
+									}
+
+									@Override
+									public void onSuccess(Finance fin) {
+										updateAndRefresh( callback ,fin );
+									}
+								});						
+							}
+
+							@Override
+							public void onCancel() {
+							}
+						});
+					}
+				});
+			}
+			
+			// *************************************************************************
+			// *******															 *******
+			// *******				UNSETTLE BUTTON		 				 		 *******
+			// *******															 *******
+			// *************************************************************************
+			boolean canUndo = (finance.isSettled() && finance.getFinanceGroup() == null) || finance.isPaid() || finance.isReturned(); 
+			if (canUndo && finance.getId() != null) {
+				actionsPanel.add(undoButton);
+				undoButton.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						AonConfirmDialog cd = new AonConfirmDialog();
+						cd.confirm(AON.MSG.undoFinanceAction(), new AonConfirmDialogCallback(){
+
+							@Override
+							public void onAccept() {
+								FINANCE_SERVICE.undoFinance(callback.getCurrentDomainName()
+										,callback.getCurrentDomainId()
+										,callback.getCurrentUser()
+										, finance.getId()
+										,new AsyncCallback<Finance>() {
+
+									@Override
+									public void onFailure(Throwable caught) {
+										AonMessageDialog.error("Se ha producido un error al marcar el vencimiento como pendiente. ["+caught.getMessage()+"]"); 
+									}
+
+									@Override
+									public void onSuccess(Finance fin) {
+										updateAndRefresh( callback ,fin );
+									}
+								});						
+							}
+
+							@Override
+							public void onCancel() {
+							}
+						});
+					}
+				});
+			}
+			if (finance.isSettled() && finance.getFinanceGroup() != null) {
+				AonTableButton groupedButton = new AonTableButton(AON.MSG.financeGrouped(), AON.CSS.aonIconFinanceGroup() );
+				groupedButton.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						AonMessageDialog.show("No se puede deshacer.","El vencimiento pertence a una agrupaci\u00F3n de vencimientos");
+					}
+				});
+				actionsPanel.add(groupedButton);
+			}
+
+			// *************************************************************************
+			// *******															 *******
+			// *******				RETURN BUTTON		 				 			 *******
+			// *******															 *******
+			// *************************************************************************
+			if (finance.isPaid() && finance.getId() != null) {
+				actionsPanel.add(returnButton);
+				final AonCustomDialog dialog = new AonCustomDialog();
+				dialog.setCaption(AON.MSG.returnFinance());
+				returnButton.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						FinanceReturnPanel returnPanel = new FinanceReturnPanel();
+						returnPanel.show(callback.getCurrentDomainName(), callback.getCurrentDomainId(),
+								callback.getCurrentUser(), callback.getConfiguration(), finance,
+								new FinanceReturnPanelCallback() {
+
+									@Override
+									public void onCancel() {
+										dialog.hide();
+									}
+
+									@Override
+									public void onAccept(FinanceTracking tracking) {
+										dialog.hide();
+										FINANCE_SERVICE.returnFinance(callback.getCurrentDomainName()
+												,callback.getCurrentDomainId()
+												,callback.getCurrentUser()
+												, tracking
+												,new AsyncCallback<FinanceTracking>() {
+
+													@Override
+													public void onFailure(Throwable caught) {
+														AonMessageDialog.error("Se ha producido un devolver el pagar del vencimiento. ["+caught.getMessage()+"]");
+													}
+
+													@Override
+													public void onSuccess(FinanceTracking tracking) {
+														updateAndRefresh( callback ,tracking.getFinance() );
+													}
+												});
+									}
+								});
+						dialog.setWidget(returnPanel);
+						dialog.center();
+						dialog.show();
+					}
+				});
+			}
+
+			tab.setWidget(currentRow, col, actionsPanel);
+			tab.getCellFormatter().setWidth(currentRow, col, "auto");
+			tab.getCellFormatter().setStyleName(currentRow, col, AON.CSS.aonNowrap());
+			++col;
+*/

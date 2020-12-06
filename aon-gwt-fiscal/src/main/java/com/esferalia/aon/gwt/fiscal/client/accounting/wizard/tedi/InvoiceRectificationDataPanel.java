@@ -67,7 +67,7 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 		rootPanel.add(errorPanel);
 		
 		FlowPanel tablePanel = new FlowPanel();
-		tablePanel.setStyleName(AON.AON_CSS.aonScrollArea());
+		tablePanel.setStyleName(AON.CSS.aonScrollArea());
 		
 		KeyUpHandler keyUpHandler = new KeyUpHandler() {
 			@Override
@@ -80,12 +80,11 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 
 		
 		FlexTable table = new FlexTable();
-		table.setStyleName(AON.AON_CSS.aonPanelGrid());
-		table.addStyleName(AON.AON_CSS.aonWidthAll());
+		table.setStyleName(AON.CSS.aonTable());
 		int row = 0;
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.rectifyInvoiceDate()));
-		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		issueDate = new DateBoxEx();
 		issueDate.setValue(data.getIssueDate());
 		issueDate.getTextBox().addKeyUpHandler( keyUpHandler);
@@ -98,12 +97,11 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 		});
 		
 		table.setWidget(row,1,issueDate);
-		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 
 		if (data.isSales()) {
 			table.setWidget(row,0,new InlineLabel(AON.MSG.series()));
-			table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 			
 			FlowPanel panel = new FlowPanel();
 			final ListBox seriesBox = new ListBox();
@@ -171,8 +169,8 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 			}
 			panel.add(seriesBox);
 			
-			number.setStyleName(AON.AON_CSS.aonMarginLeft5());
-			number.addStyleName(AON.AON_CSS.aonInputText());
+			number.setStyleName(AON.CSS.aonMarginLeftSep());
+			number.addStyleName(AON.CSS.aonInputText());
 			number.addKeyUpHandler(keyUpHandler);
 			number.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 				
@@ -186,13 +184,12 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 			panel.add(number);
 
 			table.setWidget(row,1,panel);
-			table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 			row++;
 		} else {
 			table.setWidget(row,0,new InlineLabel(AON.MSG.number()));
-			table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 			TextBox referenceCode = new TextBox();
-			referenceCode.setStyleName(AON.AON_CSS.aonInputText());
+			referenceCode.setStyleName(AON.CSS.aonInputText());
 			referenceCode.addKeyUpHandler(keyUpHandler);
 			referenceCode.addValueChangeHandler(new ValueChangeHandler<String>() {
 				@Override
@@ -203,16 +200,15 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 			referenceCode.setVisibleLength(15); 
 			referenceCode.setMaxLength(32);
 			table.setWidget(row,1,referenceCode);
-			table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 			row++;
 		}
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.reason()));
-		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		final TextArea commentsBox = new TextArea();		
 		commentsBox.setValue(data.getCause());
 		commentsBox.setCharacterWidth(25);
-		commentsBox.setStyleName(AON.AON_CSS.aonInputText());
+		commentsBox.setStyleName(AON.CSS.aonInputText());
 		commentsBox.addKeyUpHandler( keyUpHandler);
 		commentsBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
@@ -222,11 +218,10 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 			}
 		});
 		table.setWidget(row,1,commentsBox);
-		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 
 		table.setWidget(row,0,new InlineLabel());
-		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		final CheckBox settleFinance = new CheckBox(AON.MSG.settleFinances());		
 		settleFinance.setValue(data.isSettleFinances());
 		settleFinance.addKeyUpHandler( keyUpHandler);
@@ -238,17 +233,16 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
 			}
 		});
 		table.setWidget(row,1,settleFinance);
-		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 
 		tablePanel.add( table );
 		rootPanel.add( tablePanel );
 		
 		FlowPanel buttons = new FlowPanel();
-    	buttons.setStyleName(AON.AON_CSS.aonTextCenter());
+    	buttons.setStyleName(AON.CSS.aonTextCenter());
     	
     	final Button okButton = new Button();
-    	okButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
+    	okButton.setStyleName(AON.CSS.aonOkButton());
     	okButton.setText( AON.MSG.accept());
     	okButton.addKeyUpHandler( keyUpHandler);
     	okButton.addClickHandler(new ClickHandler() {
@@ -263,8 +257,8 @@ public class InvoiceRectificationDataPanel extends SimplePanel implements Focusa
     	buttons.add(okButton);
     	
     	final Button cancelButton = new Button();
-    	cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
-    	cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
+    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
     	cancelButton.addKeyUpHandler( keyUpHandler);
     	cancelButton.addClickHandler(new ClickHandler() {

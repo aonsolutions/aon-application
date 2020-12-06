@@ -13,9 +13,9 @@ public class AonToolbarButton extends AonButton {
 		super(toolTip,iconStyle);
 		addStyleName(AON.CSS.aonToolbarButton());
 	}
-// AON.CSS contiene los estilos de aon-solutions.css	
-/*
- * Mostar un mensaje de ERROR
- */
 	
+	public AonToolbarButton(String toolTip, String iconStyle, char accesskey) {
+		super(toolTip,iconStyle,accesskey);
+		addStyleName(AON.CSS.aonToolbarButton());
+	}
 }

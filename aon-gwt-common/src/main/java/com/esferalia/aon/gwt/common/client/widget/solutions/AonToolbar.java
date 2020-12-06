@@ -50,7 +50,7 @@ public class AonToolbar extends FlowPanel {
 	}
 	
 	public void showInfoMessage( String msg ) {
-		hideMesages();
+		hideMessages();
 		InlineLabel infoMsg = new InlineLabel( msg );
 		infoMsg.setStyleName(AON.CSS.aonToolbarMessage());
 		infoMsg.addStyleName(AON.CSS.aonToolbarInfoMessage());
@@ -58,14 +58,14 @@ public class AonToolbar extends FlowPanel {
 	}
 	
 	public void showErrorMessage( String msg ) {
-		hideMesages();
+		hideMessages();
 		InlineLabel errorMsg = new InlineLabel( msg );
 		errorMsg.setStyleName(AON.CSS.aonToolbarMessage());
 		errorMsg.addStyleName(AON.CSS.aonToolbarErrorMessage());
 		messagePanel.add(errorMsg);
 	}
 
-	public void hideMesages( ) {
+	public void hideMessages( ) {
 		messagePanel.clear();		
 	}
 	

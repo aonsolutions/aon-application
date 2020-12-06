@@ -5,15 +5,14 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.FullDocument;
-import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
-import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonFullDocument;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
@@ -51,6 +50,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -98,22 +98,53 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	protected static final String INNER_BACKGROUND_COLOR = "WhiteSmoke";
+	protected static final String INNER_BACKGROUND_COLOR = "inherit";
 	protected static final String LABEL_BACKGROUND_COLOR = "#DDD";
-	protected static final String DUA_BACKGROUND_COLOR = "HoneyDew";
+	
+	protected static final String SERVICE_BACKGROUND_COLOR = "#DDD";
+	protected static final String SERVICE_FOREGROUND_COLOR = "Black";
+	
+	protected static final String WITHHOLDING_BACKGROUND_COLOR = "#DDD";
+	protected static final String WITHHOLDING_FOREGROUND_COLOR = "white";
+	
+	protected static final String RECTIFIER_BACKGROUND_COLOR = "#DDD";
+	protected static final String RECTIFIER_FOREGROUND_COLOR = "Black";
+
+	protected static final String SURCHARGE_BACKGROUND_COLOR = "#DDD";
+	protected static final String SURCHARGE_FOREGROUND_COLOR = "Black";
+
+	protected static final String INVESTMENT_BACKGROUND_COLOR = "#DDD";
+	protected static final String INVESTMENT_FOREGROUND_COLOR = "Black";
+
+	protected static final String VAT_ACCRUAL_PAYMENT_BACKGROUND_COLOR = "#DDD";
+	protected static final String VAT_ACCRUAL_PAYMENT_FOREGROUND_COLOR = "Black";
+
+	protected static final String WITHHOLDING_FARMER_BACKGROUND_COLOR = "#DDD";
+	protected static final String WITHHOLDING_FARMER_FOREGROUND_COLOR = "Black";
+	
+	protected static final String PREPAYMENT_BACKGROUND_COLOR = "#DDD";
+	protected static final String PREPAYMENT_FOREGROUND_COLOR = "Black";
+	
+	protected static final String DUA_BACKGROUND_COLOR = "#DDD";
+	protected static final String DUA_FOREGROUND_COLOR = "Black";
 	
 	private static FinanceServiceAsync FINANCE_SERVICE;
 	private static AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
 	
 	private SimplePanel invoicePanelContainer;
-	private AccountingRegistryBox registryBox;
+	private AonAccountingRegistryBox registryBox;
 	private CheckBox undeductible;
 	private InlineLabel invoiceTypeLabel;
+	private AonTableButton moreData; 
 	private FocusPanel dropPanel; 	
 	private ListBox series;
 	private TextBox referenceCode;
 	private AonDoubleBox invoiceTotal;
-	private DateBoxEx taxDate;
+	private AonDateBox taxDate;
+	
+	private FlowPanel checksLabel;
+	private FlowPanel checksTable;
+	private boolean checkTableVisible = true;
 	private CheckLabel service;
 	private CheckLabel rectifier;
 	private CheckLabel prepayment;
@@ -123,6 +154,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private CheckLabel vatAccrualPayment;
 	private CheckLabel withholdingFarmer;
 	private CheckLabel duaLinked;
+	
 	private InvoiceVATPanel vatPanel;
 	private FlowPanel duaPanelContainer;
 	private InvoiceDUAPanel duaPanel;
@@ -193,20 +225,18 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 	}
 	
-	public static class CheckLabel extends InlineLabel {
+	private static class CheckLabel extends InlineLabel {
 
-		private double width;
-		
-		public CheckLabel(String text, double width) {
+		public CheckLabel(String text) {
 			super(text);
-			this.width = width;
 		}
 
 		public void paint( boolean checked) {
 			this.setStyleName(AON.CSS.aonTabIcon());
 			this.addStyleName(AON.CSS.aonClickable());
+			this.addStyleName(AON.CSS.aonFlexLabelInner());
+			this.addStyleName(AON.CSS.aonDisplayTableCell());
 			this.addStyleName(checked?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());		
-			this.getElement().getStyle().setWidth(width, Unit.PX);
 		}
 
 	}
@@ -243,7 +273,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		undeductible.setVisible(false);
 		undeductible.setValue(false);
 		
-		registryBox = new AccountingRegistryBox(
+		registryBox = new AonAccountingRegistryBox(
 				invoiceCallback.getCurrentDomainName()
 				,invoiceCallback.getCurrentDomainId()
 				,invoiceCallback.getCurrentUser()
@@ -287,11 +317,15 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				registryChanged(invoiceCallback, ar );
 			}
 		});
+		undeductible.setStyleName(AON.CSS.aonNowrap());
+		undeductible.addStyleName(AON.CSS.aonMarginLeft());
 		regTable.add(undeductible);
 		
 		
 		FlowPanel labelsPanel = new FlowPanel();
 		labelsPanel.setStyleName(AON.CSS.aonFlexBlock());
+		labelsPanel.addStyleName(AON.CSS.aonAlignItemsBaseline());
+		
 		if (invoiceCallback.getInvoice().getInvoice() != null 
 			&& invoiceCallback.getInvoice().getInvoice().isDUALinkAllowed() 
 			&& invoiceCallback.getInvoice().getDuaNationalInvoice() != null ) {
@@ -366,11 +400,14 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		invoiceTypeLabel = new InlineLabel();
 		labelsPanel.add(invoiceTypeLabel);
-		invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
-		invoiceTypeLabel.setStyleName(AON.CSS.aonFlexLabel());
+		invoiceTypeLabel.setStyleName(AON.CSS.aonInlineBlock());
+		invoiceTypeLabel.addStyleName(AON.CSS.aonBold());
 		invoiceTypeLabel.addStyleName(AON.CSS.aonFontMedium());
 		invoiceTypeLabel.addStyleName(AON.CSS.aonMarginLeftDouble());
 		invoiceTypeLabel.addStyleName(AON.CSS.aonMarginRightDouble());
+		invoiceTypeLabel.addStyleName(AON.CSS.aonTextRight());
+		
+		decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
 		
 		if (invoiceCallback.getInvoice().getInvoice() != null && invoiceCallback.getInvoice().getInvoice().getId() != null) {
 			
@@ -426,7 +463,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 								data.setType(invoiceCallback.getInvoice().getInvoice().getType());
 								data.setRectificationtype(RectificationType.NORMAL_RECTIFIER);
 								data.setSettleFinances(true);
-								final CustomDialog dialog = new CustomDialog();
+								final AonCustomDialog dialog = new AonCustomDialog();
 								dialog.setCaption(AON.MSG.rectifyInvoice());
 								
 								final InvoiceRectificationDataPanel rectPanel = new InvoiceRectificationDataPanel();
@@ -730,7 +767,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoiceCallback.getModule().refreshIdLabel();
 	}
 
-	private String getInvoiceLabel(AccountingInvoice ai) {
+	private void decorateInvoiceTypeLabel( AccountingInvoice ai ) {
+		
 		InvoiceType invoiceType = null;
 		RectificationType rt = null;
 		if (ai != null && ai.getInvoice() != null) {
@@ -752,7 +790,95 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		else l = "Nueva factura"; 
 		l = l + (ai.isInvestment()?". (Inv)":"");
 		l = l + (ai.isVatAccrualPayment()?". (Crit.Caja)":"");
-		return l;
+		invoiceTypeLabel.setText(l);
+		
+		if (checksLabel != null) {
+			checksLabel.clear();
+			if (rt != null && rt != RectificationType.NONE) {
+				InlineLabel l3 = new InlineLabel(rt.getDescription());
+				l3.setStyleName(AON.CSS.aonTagItem());
+				l3.getElement().getStyle().setColor(RECTIFIER_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(RECTIFIER_BACKGROUND_COLOR);
+				checksLabel.add(l3);
+			}
+			
+			if (ai.isService()) {
+				InlineLabel l3 = new InlineLabel("Servicio");
+				l3.setStyleName(AON.CSS.aonTagItem());
+				l3.getElement().getStyle().setColor(SERVICE_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(SERVICE_BACKGROUND_COLOR);
+				checksLabel.add(l3);
+			}
+	
+			if (ai.isInvestment()) {
+				InlineLabel l3 = new InlineLabel("Inversi\u00F3n");
+				l3.setStyleName(AON.CSS.aonTagItem());
+				l3.getElement().getStyle().setColor(INVESTMENT_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(INVESTMENT_BACKGROUND_COLOR);
+				checksLabel.add(l3);
+			}
+			
+			if (ai.isWithholding()) {
+				InlineLabel l3 = new InlineLabel("IRPF");
+				l3.setStyleName(AON.CSS.aonTagItem());
+				l3.getElement().getStyle().setColor(WITHHOLDING_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(WITHHOLDING_BACKGROUND_COLOR);
+				checksLabel.add(l3);
+			}
+			
+			if (ai.isSurcharge()) {
+				InlineLabel l3 = new InlineLabel("R.E.");
+				l3.setStyleName(AON.CSS.aonTagItem());
+				l3.getElement().getStyle().setColor(SURCHARGE_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(SURCHARGE_BACKGROUND_COLOR);
+				checksLabel.add(l3);
+			}
+	
+			if (ai.isWithholdingFarmer()) {
+				InlineLabel l3 = new InlineLabel("Reg. Agr.");
+				l3.setStyleName(AON.CSS.aonTagItem());
+				l3.getElement().getStyle().setColor(WITHHOLDING_FARMER_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(WITHHOLDING_FARMER_BACKGROUND_COLOR);
+				checksLabel.add(l3);
+			}
+	
+			if (ai.isVatAccrualPayment()) {
+				InlineLabel l3 = new InlineLabel("Crit.Caja");
+				l3.setStyleName(AON.CSS.aonTagItem());
+				l3.getElement().getStyle().setColor(VAT_ACCRUAL_PAYMENT_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(VAT_ACCRUAL_PAYMENT_BACKGROUND_COLOR);
+				checksLabel.add(l3);
+			}
+	
+			if (ai.isDuaLinked()) {
+				InlineLabel l3 = new InlineLabel("DUA");
+				l3.setStyleName(AON.CSS.aonTagItem());
+				l3.getElement().getStyle().setColor(DUA_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(DUA_BACKGROUND_COLOR);
+				checksLabel.add(l3);
+			}
+			
+			if (ai.hasPrepayments()) {
+				InlineLabel l3 = new InlineLabel("Suplidos");
+				l3.setStyleName(AON.CSS.aonTagItem());
+				l3.getElement().getStyle().setColor(PREPAYMENT_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(PREPAYMENT_BACKGROUND_COLOR);
+				checksLabel.add(l3);
+			}
+			
+			moreData = new AonTableButton(AON.MSG.invoiceParams(),AON.CSS.aonIconMoreVertical());
+			moreData.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					checksTable.setVisible( !checksTable.isVisible() );
+					checkTableVisible = checksTable.isVisible(); 
+				}
+			});
+			checksLabel.add(moreData);	
+		}
+			
+
 	}
 
 	private void repeatLastInvoice(InvoicePanelCallback invoiceCallback, final ISelectionCallback cbk) {
@@ -796,20 +922,23 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		undeductible.setVisible((inv.isUndeductible() || inv.isExpenses()) && inv.getInvoice().getId() == null);
 		
-		FullDocument fullDocument = new FullDocument();
+		AonFullDocument fullDocument = new AonFullDocument();
 		TextBox rName = new TextBox();
-		taxDate = new DateBoxEx();
+		taxDate = new AonDateBox();
 		InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox();
-		IntegerBox number = new IntegerBox();
-		service = new CheckLabel(AON.MSG.service() , 80);
-		rectifier = new CheckLabel(AON.MSG.rectifiedInvoice() ,120);
-		prepayment = new CheckLabel(AON.MSG.hasPrepayments(),150);
-		investment = new CheckLabel(AON.MSG.investAsset(),120);
-		withholding = new CheckLabel(AON.MSG.withholding(),110);
-		surcharge = new CheckLabel(AON.MSG.surcharge() ,130);
-		vatAccrualPayment = new CheckLabel(AON.MSG.vatAccrualPaymentAbbr(),100);
-		withholdingFarmer = new CheckLabel(AON.MSG.withholdingFarmerAbbr(),150);
-		duaLinked = new CheckLabel("DUA",80);
+		AonIntegerBox number = new AonIntegerBox();
+		
+		checksTable = new FlowPanel();
+		checksLabel = new FlowPanel();
+		service = new CheckLabel(AON.MSG.service());
+		rectifier = new CheckLabel(AON.MSG.rectifiedInvoice());
+		prepayment = new CheckLabel(AON.MSG.hasPrepayments());
+		investment = new CheckLabel(AON.MSG.investAsset());
+		withholding = new CheckLabel(AON.MSG.withholding());
+		surcharge = new CheckLabel(AON.MSG.surcharge());
+		vatAccrualPayment = new CheckLabel(AON.MSG.vatAccrualPaymentAbbr());
+		withholdingFarmer = new CheckLabel(AON.MSG.withholdingFarmerAbbr());
+		duaLinked = new CheckLabel("DUA");
 		
 		TextBox manualConcept = new TextBox();
 		
@@ -902,35 +1031,55 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// *************************************************************************
 		// ** PANEL ( Datos de la factura) *****************************************
 		// *************************************************************************
-		FlexTable invoiceDataTable = new FlexTable();
-		invoiceDataTable.getColumnFormatter().setWidth(0, "40px");
-		invoiceDataTable.getColumnFormatter().setWidth(1, "auto");
-		
-		invoiceDataTable.setStyleName(AON.CSS.aonTable());
-		invoiceDataTable.addStyleName(AON.CSS.aonMarginTop());
-		invoiceDataTable.addStyleName(AON.CSS.aonWidthAll());
-		// invoiceDataTable.addStyleName(AON.CSS.aonSimpleBorder());
-		invoiceDataTable.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
+		FlowPanel invoiceDataTableDiv = new FlowPanel();
+		invoiceDataTableDiv.setStyleName(AON.CSS.aonDisplayTable());
+		invoiceDataTableDiv.addStyleName(AON.CSS.aonWidthAll());
+		invoiceDataTableDiv.addStyleName(AON.CSS.aonMarginTopSep());
+		invoiceDataTableDiv.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
 
+		FlowPanel invoiceDataTableRowDiv = new FlowPanel();
+		invoiceDataTableRowDiv.setStyleName(AON.CSS.aonDisplayTableRow());
+		invoiceDataTableDiv.add(invoiceDataTableRowDiv);
 		
 		// *************************************************************************
 		// ***************** PANEL ( documento y nombre del titular ) **************
 		// *************************************************************************
 		
+		FlowPanel invoiceDataTableCellDiv0 = new FlowPanel();
+		invoiceDataTableCellDiv0.setStyleName(AON.CSS.aonDisplayTableCell());
+		invoiceDataTableCellDiv0.addStyleName(AON.CSS.aonTextVerticalContainer());
+		invoiceDataTableCellDiv0.getElement().getStyle().setWidth(40, Unit.PX);
+		invoiceDataTableCellDiv0.getElement().getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
+		invoiceDataTableCellDiv0.getElement().getStyle().setBorderColor("DarkGray");
+		invoiceDataTableCellDiv0.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		invoiceDataTableCellDiv0.getElement().getStyle().setBorderWidth(1, Unit.PX);
+		invoiceDataTableCellDiv0.getElement().getStyle().setProperty("border-radius", 10, Unit.PCT);
+		invoiceDataTableRowDiv.add(invoiceDataTableCellDiv0);
+
 		Label description = new Label("Datos");
 		description.setStyleName(AON.CSS.aonTextVertical());
 		description.addStyleName(AON.CSS.aonBold());
-		invoiceDataTable.setWidget(0, 0, description);
-		invoiceDataTable.getFlexCellFormatter().setRowSpan(0, 0, 4);
-		invoiceDataTable.getCellFormatter().getElement(0, 0).getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
+		invoiceDataTableCellDiv0.add(description);
 		
-		FlowPanel headerPanel1 = new  FlowPanel();
-		invoiceDataTable.setWidget(0, 1, headerPanel1);
-		headerPanel1.setStyleName(AON.CSS.aonAccountingInvoicePanel());
+		FlowPanel invoiceDataTableCellDiv1 = new FlowPanel();
+		invoiceDataTableCellDiv1.setStyleName(AON.CSS.aonDisplayTableCell());
+		invoiceDataTableRowDiv.add(invoiceDataTableCellDiv1);
+		
+		FlowPanel invoiceDataInnerTableDiv= new FlowPanel();
+		invoiceDataInnerTableDiv.setStyleName(AON.CSS.aonDisplayTable());
+		invoiceDataInnerTableDiv.addStyleName(AON.CSS.aonWidthAll());
+		invoiceDataTableCellDiv1.add(invoiceDataInnerTableDiv);
+		
+		FlowPanel invoiceDataInnerTableRowDiv1 = new FlowPanel();
+		invoiceDataInnerTableRowDiv1.setStyleName(AON.CSS.aonDisplayTableRow());
+		invoiceDataInnerTableDiv.add(invoiceDataInnerTableRowDiv1);
+
+		FlowPanel headerPanel1 = new FlowPanel();
+		headerPanel1.setStyleName(AON.CSS.aonDisplayTableCell());
+		invoiceDataInnerTableRowDiv1.add(headerPanel1);
 		
 		InlineLabel documentLabel = new InlineLabel(AON.MSG.document());
-		documentLabel.setStyleName(AON.CSS.aonInnerLabel());
-		documentLabel.getElement().getStyle().setWidth(80, Unit.PX);
+		documentLabel.setStyleName(AON.CSS.aonFlexLabel());
 		headerPanel1.add(documentLabel);
 		
 		
@@ -953,8 +1102,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			}
 		});
 		headerPanel1.add(fullDocument);
+		
 		InlineLabel nameLabel = new InlineLabel(AON.MSG.name());
-		nameLabel.setStyleName(AON.CSS.aonInnerLabel());
+		nameLabel.setStyleName(AON.CSS.aonFlexLabel());
 		headerPanel1.add(nameLabel);
 		
 		rName.setStyleName(AON.CSS.aonInputText());
@@ -978,18 +1128,19 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// ***************** PANEL ( Fecha IVA, set de checks 1) *******************
 		// *************************************************************************
 
-		FlowPanel headerPanel2 = new  FlowPanel();
-		invoiceDataTable.setWidget(1, 0, headerPanel2);
-		headerPanel2.setStyleName(AON.CSS.aonAccountingInvoicePanel());
+		FlowPanel invoiceDataInnerTableRowDiv2 = new FlowPanel();
+		invoiceDataInnerTableRowDiv2.setStyleName(AON.CSS.aonDisplayTableRow());
+		invoiceDataInnerTableDiv.add(invoiceDataInnerTableRowDiv2);
+
+		FlowPanel headerPanel2 = new FlowPanel();
+		headerPanel2.setStyleName(AON.CSS.aonDisplayTableCell());
+		invoiceDataInnerTableRowDiv2.add(headerPanel2);
 		
 		InlineLabel taxDateLabel = new InlineLabel(AON.MSG.taxDate());
-		taxDateLabel.setStyleName(AON.CSS.aonInnerLabel());
+		taxDateLabel.setStyleName(AON.CSS.aonFlexLabel());
 		taxDateLabel.getElement().getStyle().setWidth(80, Unit.PX);
 		taxDateLabel.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(taxDateLabel);
-		
-		FlowPanel taxDateContainer = new FlowPanel();
-		taxDateContainer.getElement().getStyle().setWidth(100, Unit.PX);
 		
 		taxDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
@@ -1000,21 +1151,16 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			}
 		});
 		taxDate.setVisible(!invoiceCallback.getInvoice().isUndeductible());
-		taxDateContainer.add(taxDate);
-		headerPanel2.add(taxDateContainer);
+		headerPanel2.add(taxDate);
 		
 		// -------------------------------
 		// --------- TRANSACTION ---------
 		// -------------------------------
 		InlineLabel transactionLabel = new InlineLabel(AON.MSG.transaction());
-		transactionLabel.setStyleName(AON.CSS.aonInnerLabel());
-		transactionLabel.getElement().getStyle().setWidth(80, Unit.PX);
+		transactionLabel.setStyleName(AON.CSS.aonFlexLabel());
 		transactionLabel.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(transactionLabel);
 		
-		FlowPanel transactionContainer = new FlowPanel();
-		transactionContainer.getElement().getStyle().setWidth(150, Unit.PX);
-
 		transactionBox.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -1025,10 +1171,32 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				headerDataChanged(invoiceCallback);
 			}
 		});
-		transactionContainer.add(transactionBox);
 		transactionBox.setVisible(!invoiceCallback.getInvoice().isUndeductible());
-		headerPanel2.add(transactionContainer);
+		headerPanel2.add(transactionBox);
+		
+		headerPanel2.add(checksLabel);
 
+		// *************************************************************************
+		// ***************** PANEL ( set de checks 1) *****************
+		// *************************************************************************
+		FlowPanel invoiceDataInnerTableRowDiv3 = new FlowPanel();
+		invoiceDataInnerTableRowDiv3.setStyleName(AON.CSS.aonDisplayTableRow());
+		invoiceDataInnerTableDiv.add(invoiceDataInnerTableRowDiv3);
+
+		FlowPanel headerPanel3 = new FlowPanel();
+		headerPanel3.setStyleName(AON.CSS.aonDisplayTableCell());
+		headerPanel3.getElement().getStyle().setPaddingLeft(50, Unit.PX); 
+		invoiceDataInnerTableRowDiv3.add(headerPanel3);
+		
+		checksTable.setVisible( checkTableVisible );
+		checksTable.setStyleName(AON.CSS.aonDisplayTable());
+		checksTable.addStyleName(AON.CSS.aonMarginLeft());
+		headerPanel3.add(checksTable);
+ 
+		FlowPanel checksTableRow0 = new FlowPanel();
+		checksTableRow0.setStyleName(AON.CSS.aonDisplayTableRow());
+		checksTable.add(checksTableRow0);
+		
 		// ---------------------------
 		// --------- SERVICE ---------
 		// ---------------------------
@@ -1041,64 +1209,14 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				public void onClick(ClickEvent event) {
 					invoiceCallback.getInvoice().getInvoice().setService( !invoiceCallback.getInvoice().isService() );
 					service.paint(invoiceCallback.getInvoice().isService());
+					decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
 					InvoiceCalculator.calculate(invoiceCallback.getInvoice());
 					headerDataChanged(invoiceCallback);
 				}
 			});
 		}
-		headerPanel2.add(service);
-
-		// -------------------------------------
-		// --------- Fra. Rectificativa --------
-		// -------------------------------------
-		rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
-		rectifier.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				invoiceCallback.getInvoice().getInvoice().setNormalRectifier(!invoiceCallback.getInvoice().getInvoice().isRectifier());
-				invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
-				rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
-				headerDataChanged(invoiceCallback);
-			}
-		});
-		headerPanel2.add(rectifier);
-
-		// -------------------------------------
-		// --------- CONTIENE SUPLIDOS ---------
-		// -------------------------------------
-		prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
-		prepayment.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if ( !invoiceCallback.getInvoice().isDuaLinked() ) {
-					invoiceCallback.getInvoice().setPrepayments(!invoiceCallback.getInvoice().hasPrepayments());
-					prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
-					headerDataChanged(invoiceCallback);
-				} else {
-					MessageDialog.error("No se puede modificar si la factura est\u00E1 vinculada a un DUA");
-				}
-			}
-		});
-		headerPanel2.add(prepayment);
-
-		// *************************************************************************
-		// ***************** PANEL ( set de checks 1) *****************
-		// *************************************************************************
-		FlowPanel headerPanel3 = new  FlowPanel();
-		invoiceDataTable.setWidget(2, 0, headerPanel3);
-		headerPanel3.setStyleName(AON.CSS.aonAccountingInvoicePanel());
-		headerPanel3.addStyleName(AON.CSS.aonPaddingTop());
-		
-		// ----------------------------------
-		// --------- EMPTY LABEL ------------
-		// ----------------------------------
-		InlineLabel emptyLabel1 = new InlineLabel();
-		emptyLabel1.setStyleName(AON.CSS.aonInnerLabel());
-		emptyLabel1.getElement().getStyle().setWidth(20, Unit.PX);
-		emptyLabel1.setVisible(!invoiceCallback.getInvoice().isUndeductible());
-		headerPanel3.add(emptyLabel1);
+		service.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow0.add(service);
 
 		// -------------------------------------
 		// --------- Aplicar retencion ---------
@@ -1110,6 +1228,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			public void onClick(ClickEvent event) {
 				invoiceCallback.getInvoice().getInvoice().setWithholding(!invoiceCallback.getInvoice().getInvoice().isWithholding());
 				withholding.paint(invoiceCallback.getInvoice().getInvoice().isWithholding());
+				decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
 				vatPanel.withholdingChanged( invoiceCallback.getInvoice().getInvoice().isWithholding() );
 				for (InvoiceVAT vat : invoiceCallback.getInvoice().getVats()) {
 					vat.setWithholding(invoiceCallback.getInvoice().getInvoice().isWithholding());
@@ -1118,8 +1237,25 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				headerDataChanged(invoiceCallback);
 			}
 		});
-		headerPanel3.add(withholding);
-
+		withholding.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow0.add(withholding);
+		
+		// ---------------------------------------
+		// --------- BIENES DE INVERSION ---------
+		// ---------------------------------------
+		investment.paint(invoiceCallback.getInvoice().isInvestment());
+		investment.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				invoiceCallback.getInvoice().getInvoice().setInvestment( !invoiceCallback.getInvoice().isInvestment() );
+				decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
+				investment.paint(invoiceCallback.getInvoice().isInvestment());
+			}
+		});
+		investment.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow0.add(investment);
+		
 		// -------------------------------------------
 		// --------- RECARGO DE EQUIVALENCIA ---------
 		// -------------------------------------------
@@ -1130,11 +1266,25 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			public void onClick(ClickEvent event) {
 				invoiceCallback.getInvoice().getInvoice().setSurcharge(!invoiceCallback.getInvoice().getInvoice().isSurcharge());
 				surcharge.paint(invoiceCallback.getInvoice().getInvoice().isSurcharge());
+				decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
 				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
 				headerDataChanged(invoiceCallback);
 			}
 		});
-		headerPanel3.add(surcharge);
+		surcharge.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow0.add(surcharge);
+
+		Label fillLabel = new Label();
+		fillLabel.getElement().getStyle().setWidth(120, Unit.PX);
+		checksTableRow0.add(fillLabel);
+		
+		// *************************************************************************
+		// ***************** PANEL ( set de checks 2) *****************
+		// *************************************************************************
+		
+		FlowPanel checksTableRow1 = new FlowPanel();
+		checksTableRow1.setStyleName(AON.CSS.aonDisplayTableRow());
+		checksTable.add(checksTableRow1);
 		
 		// -------------------------------------------
 		// --------- Reg. agric, gan y pesca ---------
@@ -1146,11 +1296,13 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			public void onClick(ClickEvent event) {
 				invoiceCallback.getInvoice().getInvoice().setWithholdingFarmer(!invoiceCallback.getInvoice().getInvoice().isWithholdingFarmer());
 				withholdingFarmer.paint(invoiceCallback.getInvoice().getInvoice().isWithholdingFarmer());
+				decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
 				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
 				headerDataChanged(invoiceCallback);
 			}
 		});
-		headerPanel3.add(withholdingFarmer);
+		withholdingFarmer.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow1.add(withholdingFarmer);
 
 		// --------------------------------------------
 		// --------- Regimne criterio de caja ---------
@@ -1161,11 +1313,29 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			@Override
 			public void onClick(ClickEvent event) {
 				invoiceCallback.getInvoice().getInvoice().setVatAccrualPayment(!invoiceCallback.getInvoice().getInvoice().isVatAccrualPayment());
-				invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
+				decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
 				vatAccrualPayment.paint(invoiceCallback.getInvoice().getInvoice().isVatAccrualPayment());
 			}
 		});
-		headerPanel3.add(vatAccrualPayment);
+		vatAccrualPayment.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow1.add(vatAccrualPayment);
+		
+		// -------------------------------------
+		// --------- Fra. Rectificativa --------
+		// -------------------------------------
+		rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
+		rectifier.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				invoiceCallback.getInvoice().getInvoice().setNormalRectifier(!invoiceCallback.getInvoice().getInvoice().isRectifier());
+				decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
+				rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
+				headerDataChanged(invoiceCallback);
+			}
+		});
+		rectifier.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow1.add(rectifier);
 
 		// ------------------------
 		// --------- DUA ----------
@@ -1177,6 +1347,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			public void onClick(ClickEvent event) {
 				invoiceCallback.getInvoice().setDuaLinked(!invoiceCallback.getInvoice().isDuaLinked());
 				duaLinked.paint(invoiceCallback.getInvoice().isDuaLinked());
+				decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
 				enableChecks(invoiceCallback);
 				if (invoiceCallback.getInvoice().isDuaLinked()) {
 					duaPanel = new InvoiceDUAPanel( invoiceCallback );
@@ -1195,53 +1366,64 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				}
 			}
 		});
-		headerPanel3.add(duaLinked);
+		duaLinked.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow1.add(duaLinked);
+
+		// -------------------------------------
+		// --------- CONTIENE SUPLIDOS ---------
+		// -------------------------------------
+		prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
+		prepayment.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if ( !invoiceCallback.getInvoice().isDuaLinked() ) {
+					invoiceCallback.getInvoice().setPrepayments(!invoiceCallback.getInvoice().hasPrepayments());
+					prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
+					decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
+					if (!invoiceCallback.getInvoice().hasPrepayments()) {
+						vatPanel.prepaymentChanged( invoiceCallback.getInvoice().hasPrepayments() );
+						for (InvoiceVAT vat : invoiceCallback.getInvoice().getVats()) {
+							vat.setPrepayment( false );
+						}
+						InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+					}
+					headerDataChanged(invoiceCallback);
+				} else {
+					AonMessageDialog.error("No se puede modificar si la factura est\u00E1 vinculada a un DUA");
+				}
+			}
+		});
+		prepayment.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow1.add(prepayment);
+		
 
 		// *************************************************************************
 		// ***************** PANEL ( Número Factura, total factura ) ******
 		// *************************************************************************
-		FlowPanel headerPanel4 = new  FlowPanel();
-		invoiceDataTable.setWidget(3, 0, headerPanel4);
-		headerPanel4.setStyleName(AON.CSS.aonAccountingInvoicePanel());
-		headerPanel4.addStyleName(AON.CSS.aonPaddingTop());
-		
-		// ---------------------------------------
-		// --------- BIENES DE INVERSION ---------
-		// ---------------------------------------
-		investment.paint(invoiceCallback.getInvoice().isInvestment());
-		investment.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				invoiceCallback.getInvoice().getInvoice().setInvestment( !invoiceCallback.getInvoice().isInvestment() );
-				invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
-				investment.paint(invoiceCallback.getInvoice().isInvestment());
-			}
-		});
-		headerPanel4.add(investment);
-		
-		// ----------------------------------
-		// --------- EMPTY LABEL ------------
-		// ----------------------------------
-		InlineLabel emptyLabel2 = new InlineLabel();
-		emptyLabel2.setStyleName(AON.CSS.aonInnerLabel());
-		emptyLabel2.getElement().getStyle().setWidth(30, Unit.PX);
-		emptyLabel2.setVisible(!invoiceCallback.getInvoice().isUndeductible());
-		headerPanel4.add(emptyLabel2);
+		FlowPanel invoiceDataInnerTableRowDiv4 = new FlowPanel();
+		invoiceDataInnerTableRowDiv4.setStyleName(AON.CSS.aonDisplayTableRow());
+		invoiceDataInnerTableDiv.add(invoiceDataInnerTableRowDiv4);
+
+		FlowPanel headerPanel4 = new FlowPanel();
+		headerPanel4.setStyleName(AON.CSS.aonDisplayTableCell());
+		invoiceDataInnerTableRowDiv4.add(headerPanel4);
 
 		// ----------------------------------
 		// --------- NUMERO FACTURA ---------
 		// ----------------------------------
 		InlineLabel invoiceNumberLabel = new InlineLabel(AON.MSG.invoiceNumber());
-		invoiceNumberLabel.setStyleName(AON.CSS.aonInnerLabel());
-		invoiceNumberLabel.addStyleName(AON.CSS.aonBold());
+		invoiceNumberLabel.setStyleName(AON.CSS.aonFlexLabel());
 		invoiceNumberLabel.getElement().getStyle().setWidth(80,Unit.PX);
 		headerPanel4.add(invoiceNumberLabel);
 		
-			// -------------------------
-			// --------- SERIE ---------
-			// -------------------------
+		// -------------------------
+		// --------- SERIE ---------
+		// -------------------------
 		FlowPanel numberPanel = new FlowPanel();
+		numberPanel.setStyleName(AON.CSS.aonNowrap());
+		numberPanel.addStyleName(AON.CSS.aonFlexBlockInline());
+
 		series.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -1316,9 +1498,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// --------- INVOICE TOTAL ----------
 		// ----------------------------------
 		InlineLabel label0 = new InlineLabel(AON.MSG.invoiceTotal());
-		label0.setStyleName(AON.CSS.aonInnerLabel());
-		label0.addStyleName(AON.CSS.aonMarginLeft());
-		label0.addStyleName(AON.CSS.aonBold());
+		label0.setStyleName(AON.CSS.aonFlexLabel());
+		label0.getElement().getStyle().setMarginLeft(50, Unit.PX);
 		headerPanel4.add(label0);
 
 		invoiceTotal.addKeyUpHandler( new KeyUpHandler() {
@@ -1328,7 +1509,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 
 						@Override
 						public void onSuccess() {
-//							fastSave.setFocus(true);
 						}
 
 						@Override
@@ -1368,12 +1548,43 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		});
 		invoiceTotal.setVisibleLength(12);
 		headerPanel4.add(invoiceTotal);
+		invoicePanel.add(invoiceDataTableDiv);
 		
-		invoicePanel.add(invoiceDataTable);
 		// *************************************************************************
 		// ** PANEL ( Bases Imponibles) ********************************************
 		// *************************************************************************
 
+		FlowPanel vatDataTableDiv = new FlowPanel();
+		vatDataTableDiv.setStyleName(AON.CSS.aonDisplayTable());
+		vatDataTableDiv.addStyleName(AON.CSS.aonWidthAll());
+		vatDataTableDiv.addStyleName(AON.CSS.aonMarginTopSep());
+		vatDataTableDiv.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
+
+		FlowPanel vatDataTableRowDiv = new FlowPanel();
+		vatDataTableRowDiv.setStyleName(AON.CSS.aonDisplayTableRow());
+		vatDataTableDiv.add(vatDataTableRowDiv);
+		
+		FlowPanel vatDataTableCellDiv0 = new FlowPanel();
+		vatDataTableCellDiv0.setStyleName(AON.CSS.aonDisplayTableCell());
+		vatDataTableCellDiv0.addStyleName(AON.CSS.aonTextVerticalContainer());
+		vatDataTableCellDiv0.getElement().getStyle().setWidth(40, Unit.PX);
+		vatDataTableCellDiv0.getElement().getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
+		vatDataTableCellDiv0.getElement().getStyle().setBorderColor("DarkGray");
+		vatDataTableCellDiv0.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		vatDataTableCellDiv0.getElement().getStyle().setBorderWidth(1, Unit.PX);
+		vatDataTableCellDiv0.getElement().getStyle().setProperty("border-radius", 10, Unit.PCT);
+		vatDataTableRowDiv.add(vatDataTableCellDiv0);
+		
+		Label baseDescription = new Label("Bases");
+		baseDescription.setStyleName(AON.CSS.aonTextVertical());
+		baseDescription.addStyleName(AON.CSS.aonBold());
+		vatDataTableCellDiv0.add(baseDescription);
+		
+		FlowPanel vatDataTableCellDiv1 = new FlowPanel();
+		vatDataTableCellDiv1.setStyleName(AON.CSS.aonDisplayTableCell());
+		vatDataTableRowDiv.add(vatPanel);
+		invoicePanel.add(vatDataTableDiv);
+		
 		vatPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceVAT>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<InvoiceVAT> event) {
@@ -1395,27 +1606,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				invoiceCallback.getModule().refreshIdLabel();
 			}
 		});
-
-		FlexTable vatTable = new FlexTable();
-		vatTable.getColumnFormatter().setWidth(0, "40px");
-		vatTable.getColumnFormatter().setWidth(1, "auto");
 		
-		vatTable.setStyleName(AON.CSS.aonTable());
-		vatTable.addStyleName(AON.CSS.aonWidthAll());
-		vatTable.addStyleName(AON.CSS.aonMarginTop());
-		vatTable.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
 		
-		Label baseDescription = new Label("Bases");
-		baseDescription.setStyleName(AON.CSS.aonTextVertical());
-		baseDescription.addStyleName(AON.CSS.aonBold());
-		vatTable.setWidget(0, 0, baseDescription);
-		vatTable.getCellFormatter().getElement(0, 0).getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
-		//vatTable.getCellFormatter().getElement(0, 0).getStyle().setHeight(80.0, Unit.PX);
-		vatTable.setWidget(0, 1, vatPanel);
-		invoicePanel.add(vatTable);
-
 		// *************************************************************************
-		// ** PANEL ( IRPF) ********************************************************
+		// ** DUA PANEL ********************************************************
 		// *************************************************************************
 		duaPanelContainer = new FlowPanel();
 		invoicePanel.add( duaPanelContainer );
@@ -1452,64 +1646,77 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// *************************************************************************
 		// ** PANEL ( FINANCES) ****************************************************
 		// *************************************************************************
-		FlexTable financesTable = new FlexTable();
-		financesTable.getColumnFormatter().setWidth(0, "40px");
-		financesTable.getColumnFormatter().setWidth(1, "auto");
-		
-		financesTable.setStyleName(AON.CSS.aonTable());
-		financesTable.addStyleName(AON.CSS.aonWidthAll());
-		financesTable.addStyleName(AON.CSS.aonMarginTop());
-		financesTable.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
-		
-		Label financesDescription = new Label("VTOS");
-		financesDescription.setStyleName(AON.CSS.aonTextVertical());
-		financesDescription.addStyleName(AON.CSS.aonBold());
-		financesTable.setWidget(0, 0, financesDescription);
-		financesTable.getCellFormatter().getElement(0, 0).getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
-		financesTable.setWidget(0, 1, financePanel);
-		invoicePanel.add(financesTable);
+		FlowPanel financeDataTableDiv = new FlowPanel();
+		financeDataTableDiv.setStyleName(AON.CSS.aonDisplayTable());
+		financeDataTableDiv.addStyleName(AON.CSS.aonWidthAll());
+		financeDataTableDiv.addStyleName(AON.CSS.aonMarginTopSep());
+		financeDataTableDiv.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
 
+		FlowPanel financeDataTableRowDiv = new FlowPanel();
+		financeDataTableRowDiv.setStyleName(AON.CSS.aonDisplayTableRow());
+		financeDataTableDiv.add(financeDataTableRowDiv);
 		
-		invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
-		invoicePanel.setVisible(true);
+		FlowPanel financeDataTableCellDiv0 = new FlowPanel();
+		financeDataTableCellDiv0.setStyleName(AON.CSS.aonDisplayTableCell());
+		financeDataTableCellDiv0.addStyleName(AON.CSS.aonTextVerticalContainer());
+		financeDataTableCellDiv0.getElement().getStyle().setWidth(40, Unit.PX);
+		financeDataTableCellDiv0.getElement().getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
+		financeDataTableCellDiv0.getElement().getStyle().setBorderColor("DarkGray");
+		financeDataTableCellDiv0.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		financeDataTableCellDiv0.getElement().getStyle().setBorderWidth(1, Unit.PX);
+		financeDataTableCellDiv0.getElement().getStyle().setProperty("border-radius", 10, Unit.PCT);
+		financeDataTableRowDiv.add(financeDataTableCellDiv0);
 		
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			public void execute() {
-				if (invoiceCallback.getInvoice().isSales()) {
-					series.setFocus(true);
-				} else {
-					referenceCode.setFocus(true);
-				}
-		}});
-
+		Label financeDescription = new Label("Vtos.");
+		financeDescription.setStyleName(AON.CSS.aonTextVertical());
+		financeDescription.addStyleName(AON.CSS.aonBold());
+		financeDataTableCellDiv0.add(financeDescription);
+		
+		FlowPanel financeDataTableCellDiv1 = new FlowPanel();
+		financeDataTableCellDiv1.setStyleName(AON.CSS.aonDisplayTableCell());
+		financeDataTableRowDiv.add(financePanel);
+		invoicePanel.add(financeDataTableDiv);
+		
 		// *************************************************************************
 		// ***************** PANEL ( OTROS DATOS, concepto ... ) *******************
 		// *************************************************************************
 		
-		FlexTable othersTable = new FlexTable();
-		othersTable.getColumnFormatter().setWidth(0, "40px");
-		othersTable.getColumnFormatter().setWidth(1, "auto");
+		FlowPanel otherDataTableDiv = new FlowPanel();
+		otherDataTableDiv.setStyleName(AON.CSS.aonDisplayTable());
+		otherDataTableDiv.addStyleName(AON.CSS.aonWidthAll());
+		otherDataTableDiv.addStyleName(AON.CSS.aonMarginTopSep());
+		otherDataTableDiv.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
+
+		FlowPanel otherDataTableRowDiv = new FlowPanel();
+		otherDataTableRowDiv.setStyleName(AON.CSS.aonDisplayTableRow());
+		otherDataTableDiv.add(otherDataTableRowDiv);
 		
-		othersTable.setStyleName(AON.CSS.aonTable());
-		othersTable.addStyleName(AON.CSS.aonWidthAll());
-		othersTable.addStyleName(AON.CSS.aonMarginTop());
-		othersTable.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
+		FlowPanel otherDataTableCellDiv0 = new FlowPanel();
+		otherDataTableCellDiv0.setStyleName(AON.CSS.aonDisplayTableCell());
+		otherDataTableCellDiv0.addStyleName(AON.CSS.aonTextVerticalContainer());
+		otherDataTableCellDiv0.getElement().getStyle().setWidth(40, Unit.PX);
+		otherDataTableCellDiv0.getElement().getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
+		otherDataTableCellDiv0.getElement().getStyle().setBorderColor("DarkGray");
+		otherDataTableCellDiv0.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		otherDataTableCellDiv0.getElement().getStyle().setBorderWidth(1, Unit.PX);
+		otherDataTableCellDiv0.getElement().getStyle().setProperty("border-radius", 10, Unit.PCT);
+		otherDataTableRowDiv.add(otherDataTableCellDiv0);
 		
-		Label othersDescription = new Label("");
-		othersDescription.setStyleName(AON.CSS.aonTextVertical());
-		othersDescription.addStyleName(AON.CSS.aonBold());
-		othersTable.setWidget(0, 0, othersDescription);
-		othersTable.getCellFormatter().getElement(0, 0).getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
-		FlowPanel conceptPanel1 = new  FlowPanel();
-		conceptPanel1.setStyleName(AON.CSS.aonAccountingInvoicePanel());
+		Label otherDescription = new Label("");
+		otherDescription.setStyleName(AON.CSS.aonTextVertical());
+		otherDescription.addStyleName(AON.CSS.aonBold());
+		otherDataTableCellDiv0.add(otherDescription);
+		
+		FlowPanel otherDataTableCellDiv1 = new FlowPanel();
+		otherDataTableCellDiv1.setStyleName(AON.CSS.aonDisplayTableCell());
 		
 		FlowPanel manualConceptPanel = new FlowPanel();
 		manualConceptPanel.setStyleName(AON.CSS.aonPaddingLeft());
-		manualConceptPanel.getElement().getStyle().setProperty("flex-grow", "1");
+		manualConceptPanel.addStyleName(AON.CSS.aonFlexGrow1());
 		
-		InlineLabel label1 = new InlineLabel(AON.MSG.conceptComplement());
-		label1.setStyleName(AON.CSS.aonInnerLabel());
-		manualConceptPanel.add(label1);
+		InlineLabel conceptLabel = new InlineLabel(AON.MSG.conceptComplement());
+		conceptLabel.setStyleName(AON.CSS.aonFlexLabel());
+		manualConceptPanel.add(conceptLabel);
 
 		manualConcept.setStyleName(AON.CSS.aonInputText());
 		manualConcept.setTabIndex(-1);
@@ -1524,11 +1731,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			}
 		});
 		manualConceptPanel.add(manualConcept);
-		conceptPanel1.add(manualConceptPanel);
-		othersTable.setWidget(0, 1, conceptPanel1);
-		invoicePanel.add(othersTable);
+		otherDataTableCellDiv1.add(manualConceptPanel);
+		otherDataTableRowDiv.add(otherDataTableCellDiv1);
+		invoicePanel.add(otherDataTableDiv);
 		
-		invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
+		
+		decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
 		enableChecks(invoiceCallback);
 		invoicePanel.setVisible(true);
 		
@@ -1551,8 +1759,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					duaInvoiceChanged( event.getSelectedItem() );
 				}
 			});
-			// duaPanel.initialize( invoiceCallback, null );
-			// duaInvoiceChanged( invoiceCallback);
 		} else {
 			duaPanelContainer.clear();
 		}

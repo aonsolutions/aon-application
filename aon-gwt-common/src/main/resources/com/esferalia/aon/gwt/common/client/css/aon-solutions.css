@@ -2,17 +2,6 @@
    declare classes that shouldn't be obfuscated. */
 @external .*;
 
-input:focus, select:focus, textarea:focus{
-	background-color: #FBEDB6;
-	border: solid black 1px;
-}
-input[type="checkbox"]:focus + label {
-	background-color: #FBEDB6;
-}
-[type="checkbox"]{
-    vertical-align:middle;
-}
-
 /* ICONS */
 @url iconAdd aonIconAdd;
 .aon_icon_add { background-image: iconAdd;}
@@ -24,6 +13,8 @@ input[type="checkbox"]:focus + label {
 .aon_icon_search { background-image: iconSearch;}
 @url iconBack aonIconBack;
 .aon_icon_back { background-image: iconBack;}
+@url iconEdit aonIconEdit;
+.aon_icon_edit { background-image: iconEdit;}
 @url iconRefresh aonIconRefresh;
 .aon_icon_refresh { background-image: iconRefresh;}
 @url iconClear aonIconClear;
@@ -124,6 +115,32 @@ input[type="checkbox"]:focus + label {
 .aon_icon_tgss_fie { background-image: iconTgssFie;}
 @url iconAddTask aonIconAddTask;
 .aon_icon_add_task { background-image: iconAddTask;}
+@url iconCustomer aonIconCustomer;
+.aon_icon_customer { background-image: iconCustomer;}
+@url iconCreditor aonIconCreditor;
+.aon_icon_creditor { background-image: iconCreditor;}
+@url iconSupplier aonIconSupplier;
+.aon_icon_supplier { background-image: iconSupplier;}
+@url iconValid aonIconValid;
+.aon_icon_valid { background-image: iconValid;}
+@url iconInvalid aonIconInvalid;
+.aon_icon_invalid { background-image: iconInvalid;}
+@url iconUnknown aonIconUnknown;
+.aon_icon_unknown { background-image: iconUnknown;}
+@url iconEurope aonIconEurope;
+.aon_icon_europe { background-image: iconEurope;}
+@url iconLevelThis aonIconLevelThis;
+.aon_icon_level_this { background-image: iconLevelThis;}
+@url iconLevelTop aonIconLevelTop;
+.aon_icon_level_top { background-image: iconLevelTop;}
+@url iconHome aonIconHome;
+.aon_icon_home { background-image: iconHome;}
+@url iconEmployee aonIconEmployee;
+.aon_icon_employee { background-image: iconEmployee;}
+@url iconMoreHorizontal aonIconMoreHorizontal;
+.aon_icon_more_horizontal { background-image: iconMoreHorizontal;}
+@url iconMoreVertical aonIconMoreVertical;
+.aon_icon_more_vertical { background-image: iconMoreVertical;}
 
 /* BASICS */
 .aon_selector {
@@ -131,11 +148,84 @@ input[type="checkbox"]:focus + label {
 	color: #4B4B4B;
 	font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 }
-.aon_scroll_area {
-	padding: 8px 1.5em 1.5em 1.5em;
+.aon_selector input:focus, .aon_selector select:focus, .aon_selector textarea:focus{
+	background-color: #FBEDB6;
+	border: solid black 1px;
+}
+.aon_selector input[type="checkbox"]:focus + label {
+	background-color: #FBEDB6;	
+}
+.aon_selector [type="checkbox"]{
+    vertical-align:middle;
+}
+.aon_selector select {
+	border: 1px solid #808080;
 }
 .aon_input_text {
 	border: 1px solid #808080;
+}
+.aon_scroll_area {
+	padding: 8px 1.5em 1.5em 1.5em;
+}
+.aon_inline {
+	display: inline;
+}
+.aon_inline_block {
+	display: inline-block;
+}
+
+.aon_display_table {
+	display: table;
+}
+
+.aon_display_table_row {
+	display: table-row;
+}
+
+.aon_display_table_cell {
+	display:table-cell;
+	padding: 2px;
+	vertical-align: middle;
+}
+
+.aon_display_grid {
+	display: table;
+	border-collapse: collapse; 
+}
+
+.aon_display_grid_row {
+	display: table-row;
+}
+
+.aon_display_grid_header_row {
+	display:table-header-group;
+	border-bottom: solid 1px #CCC;	
+}
+
+.aon_display_grid_header_cell {
+	display:table-cell;
+	padding: 2px;
+	font-weight: bold;
+	text-align: center;
+	vertical-align: middle;	
+}
+
+.aon_display_grid_cell {
+	display:table-cell;
+	vertical-align: middle;
+	padding: 2px;	
+}
+.aon_display_grid_cell_inner {
+	display: flex;
+	align-items: self-end;
+}
+
+.aon_display_grid_footer_row {
+	display:table-footer-group;
+	border-top: solid 1px #CCC;	
+}
+.aon_input_text_error {
+	border: 1px solid red !important;	
 }
 .aon_number_box {
 	text-align: right;
@@ -153,6 +243,9 @@ input[type="checkbox"]:focus + label {
 .aon_height_all {
 	height: 100%;
 }
+.aon_width_almost_all {
+	width: 98%;
+}
 .aon_fixed_font {
 	font-family: Fixed, monospace;
 }
@@ -165,11 +258,20 @@ input[type="checkbox"]:focus + label {
 .aon_font_medium{
 	font-size: medium;
 }
+.aon_font_medium_important{
+	font-size: medium !important;
+}
 .aon_font_small{
 	font-size: small;
 }
+.aon_font_small_important{
+	font-size: small !important;
+}
 .aon_font_smaller{
 	font-size: smaller;
+}
+.aon_font_smaller_important{
+	font-size: smaller !important;
 }
 .aon_block_center {
 	margin-left: auto;
@@ -226,11 +328,17 @@ input[type="checkbox"]:focus + label {
 .aon_margin_top {
 	margin-top: 1em;
 }
+.aon_margin_top_sep {
+	margin-top: 5px;
+}
 .aon_margin_bottom {
 	margin-bottom: 1em;
 }
 .aon_margin_left {
 	margin-left: 1em;
+}
+.aon_margin_left_sep {
+	margin-left: 5px;
 }
 .aon_margin_right {
 	margin-right: 1em;
@@ -240,6 +348,15 @@ input[type="checkbox"]:focus + label {
 }
 .aon_margin_right_double {
 	margin-right: 2em;
+}
+.aon_tag_item {
+	display: inline-block;
+	margin: 5px;
+	border: solid 1px lightGray;
+	padding: 2px;
+	font-family: monospace;
+	font-size: 0.9em;
+	white-space: nowrap;
 }
 
 .aon_color_red {
@@ -271,10 +388,15 @@ input[type="checkbox"]:focus + label {
 	border-bottom: #c4c4c4 1px solid;
 }
 
+.aon_text_vertical_container {
+	position: relative;
+}
 .aon_text_vertical {
-	transform: rotate(-90deg);
-	text-indent: 0em;
-	font-size: 1.1em !important;	
+	transform: translateX(-50%) translateY(-50%) rotate(-90deg);
+    font-size: 1.1em !important;
+    position: absolute;
+    top: 50%;
+    left: 50%;
 }
 
 .aon_inner_label {
@@ -332,7 +454,7 @@ input[type="checkbox"]:focus + label {
 	height: 20px;
 	background-size: 100% auto;
 }
-.aon_search_panel_button:hover {
+.aon_search_panel_button:hover, .aon_search_panel_button:focus {
 	background-color: white !important; 
 }
 
@@ -358,9 +480,22 @@ input[type="checkbox"]:focus + label {
 	padding: 5px 1em;
 	height: 18px;
 	font-weight: bold;
-	font-size: 0.8em;
+	font-size: smaller;
 	text-transform: uppercase;
 	background-image: linear-gradient(#EEE, #DDD);
+}
+.aon_align_items_baseline {
+	align-items: baseline;
+}
+.aon_flex_block_inline {
+    align-items: center;
+    box-sizing: border-box;
+    display: inline-flex;
+}
+.aon_flex_block {
+	display: flex;
+	align-items: baseline;
+	box-sizing: border-box;
 }
 
 .aon_flex_block {
@@ -368,11 +503,16 @@ input[type="checkbox"]:focus + label {
 	align-items: center;
 	box-sizing: border-box;
 }
-.aon_flox_grow_1 {
+.aon_flex_grow_1 {
 	flex-grow: 1;
 }
 .aon_flex_label {
 	font-weight: bold;
+	white-space: nowrap;
+	margin-right: 10px;
+	margin-left: 5px;
+}
+.aon_flex_label_inner {
 	white-space: nowrap;
 	margin-right: 10px;
 	margin-left: 5px;
@@ -466,7 +606,7 @@ input[type="checkbox"]:focus + label {
 	padding-left: 10px;
 }
 
-.aon_button:hover {
+.aon_button:hover, .aon_button:focus{
  	background-color: #EEE;
 }
 .aon_button:disabled {
@@ -536,18 +676,19 @@ input[type="checkbox"]:focus + label {
 	background-position: 2px;
 	margin-right: 5px;	
 }
-.aon_tab_button:hover {
+.aon_tab_button:hover, .aon_tab_button:focus{
  	background-color: #EEE;
 }
 
 .aon_tab_icon {
+	white-space: nowrap;
 	padding: 0 0 0 22px;
 	min-width: 20px;
 	height: 20px;
 	overflow: visible;
 	background-repeat: no-repeat;
 	background-size: 20px auto;
-    display: flex;
+    display: inline-flex;
     align-items: center;
 }
 
@@ -863,12 +1004,24 @@ input[type="checkbox"]:focus + label {
 	background-repeat: no-repeat;
 	background-size: auto auto;
 	padding: 0px 20px 0px 40px;
-	height: 28px;
-	line-height: 28px;
+	min-height: 28px;
 	font-weight: bold;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
 }
 .aon_block_info_message{
 	background-image: iconInfo;
+	background-color: #ECECEC;
+	border: solid black 1px;
+}
+.aon_block_error_message{
+	background-image: iconError;
+	background-color: #ffd0d0;
+	border: solid black 1px;
+}
+.aon_block_warning_message{
+	background-image: iconWarning;
 	background-color: #ECECEC;
 	border: solid black 1px;
 }
@@ -892,3 +1045,21 @@ input[type="checkbox"]:focus + label {
 	background-size: 20px 20px;		
 }
 
+/* SUGGEST POPUP */
+.aon_suggest_box_popup  {
+	border: 1px solid #bbb;
+	border-radius: 5px;
+  	background: white;
+    height: 200px;
+    overflow-y: auto !important;
+    text-align: left;
+}
+.aon_suggest_box_popup .item {
+	padding: 2px 6px;
+	color: #000;
+	cursor: default;
+}
+.aon_suggest_box_popup .item-selected {
+	background: #D5E2FF;
+	cursor: pointer;
+}
