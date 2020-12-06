@@ -99,11 +99,23 @@ public class UserServlet extends HttpServlet{
 		User user = new User();
 		if(userId != null) {
 			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(userId));
-		} else user = AON.getUser(domain.getName(), domain.getId(), "", f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))).and(f.getAuthProperty().eq(aonToken.getAuth())));
+		} else user = AON.getUser(domain.getName(), domain.getId(), "", f -> 
+				(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+				.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
 		
 		return getUserRoles(domain, user);
 	}
 	
+	private JSONArray __getDomainUser(Domain domain, String token, Integer userId) {
+		AonToken aonToken = SECURITY.getAonToken(token);
+		User user = new User();
+		if(userId != null) {
+			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(userId));
+		} else user = AON.getUser(domain.getName(), domain.getId(), "", f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))).and(f.getAuthProperty().eq(aonToken.getAuth())));
+		
+		return getUserRoles(domain, user);
+	}
+
 	private JSONArray getUserRoles(Domain domain, User user) {
 		LinkedList<UserAppRole> roles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> f.getUserIdProperty().eq(user.getId())).collect(Collectors.toCollection(LinkedList::new));
 		JSONArray userAppRoles = new JSONArray();
@@ -183,7 +195,11 @@ public class UserServlet extends HttpServlet{
 				.setDomain(domain.getId())
 				.setRole(role)
 				.setUser(user.getId());
-			uar = AON_SOLUTIONS.insertUserAppRole(domain.getName(), domain.getId(), "", uar);
+			try {
+				uar = AON_SOLUTIONS.insertUserAppRole(domain.getName(), domain.getId(), "", uar);
+			} catch ( Exception e ) {
+				
+			}
 		} else {
 			uar.setRole(role);
 			AON_SOLUTIONS.updateUserAppRole(domain.getName(), domain.getId(), "", uar);

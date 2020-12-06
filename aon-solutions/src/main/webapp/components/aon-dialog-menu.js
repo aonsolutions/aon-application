@@ -62,8 +62,9 @@ export class AonDialogMenu extends AonElement {
 		let dialog = this.getElement(this.DIALOG);
 		let content = this.getElement(this.CONTENT);
 
-  	content.style.top = top || '90px';
-		content.style.left = left > (dialog.offsetWidth/2) ? left - 180 : left;
+  		content.style.top = top + 'px' || '90px';
+		content.style.left = (left > (dialog.offsetWidth/2) ? left - 180 : left)+'px' ;
+		
 		content.innerHTML = '';
 		let ul = document.createElement('ul');
 		content.appendChild(ul);

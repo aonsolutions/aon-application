@@ -19,9 +19,7 @@
 							style="#{customize.fontStyle}"
 							styleClass="aon-nowrap aon-header-domain-title"/>
 					</aon:if>
-					<aon:outputText value="#{domainSwitcher.domainName}"
-						style="#{customize.fontStyle}; vertical-align: middle;"
-						styleClass="aon-nowrap aon-header-domain-title"/>
+
 				</aon:div>
 			</aon:panelGroup>
 			
@@ -53,6 +51,9 @@
 						</aon:panelGroup>
 					</aon:if>
 					<aon:panelGroup style="display:inline;">
+						<aon:outputText value="#{domainSwitcher.domainName}"
+							style="vertical-align: middle; "
+							styleClass="aon-nowrap aon-header-domain-title"/>
 						<aon:commandLink id="home" action="index"
 							rendered="#{!aonConfiguration.properties.hideMenuHome}"
 							title="#{bundle.aon_home}"
