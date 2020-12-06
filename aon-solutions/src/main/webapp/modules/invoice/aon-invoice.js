@@ -534,7 +534,7 @@ export class AonInvoice extends AonElement {
 		// CATEGORY
 		let tdCategory = document.createElement('td');
 		tdCategory.setAttribute('colspan', '2');
-		tdCategory.innerHTML = `<aon-select id="category" title="Categoría"></aon-select>`;
+		tdCategory.innerHTML = `<aon-select id="category" title="${MSG.AON_MSG_CATEGORY}"></aon-select>`;
 		tr4.appendChild(tdCategory);
 		let category = document.getElementById('category');
 		category.options = JSON.stringify(getInvoiceCategories(this._invoice.type));

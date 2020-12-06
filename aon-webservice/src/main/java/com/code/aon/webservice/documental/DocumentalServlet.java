@@ -31,7 +31,8 @@ import com.esferalia.aon.occam.api.model.type.CategoryType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "DocumentalServlet", urlPatterns = { "/aon_gwt_aio/ms/attachment/*",
+@WebServlet(name = "DocumentalServlet", urlPatterns = { "/ms/api/attachment/*",
+														"/aon_gwt_aio/ms/attachment/*",
 														"/aon_gwt_fiscal/ms/attachment/*"})
 public class DocumentalServlet extends HttpServlet{
 	
@@ -45,7 +46,7 @@ public class DocumentalServlet extends HttpServlet{
 		String userName = pathInfo[2];
 
 		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
-		String accessToken = req.getParameter(MSG.ACCESS_TOKEN);
+
 		Domain domain = AON.getDomain(domainName, domainId, userName);
 				
 		Object object = new Object();

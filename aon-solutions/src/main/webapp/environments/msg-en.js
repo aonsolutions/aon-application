@@ -46,6 +46,8 @@ export const AON_MSG_PREVIOUS = 'Previous';
 export const AON_MSG_PENDING = 'Pending';
 export const AON_MSG_PENDINGS = 'Pendings';
 
+export const AON_MSG_RECENTS = 'Recents';
+
 export const AON_MSG_ACCOUNTED = 'Accounted';
 export const AON_MSG_ACCOUNTEDS = 'Accounted';
 
@@ -76,7 +78,14 @@ export const AON_MSG_VAT = 'VAT';
 export const AON_MSG_CANCEL = 'Cancel';
 export const AON_MSG_ACCEPT = 'Accept';
 
+export const AON_MSG_SYSTEM_MESSAGES = 'System Messages';
+
 export const AON_MSG_FILE = 'File';
+export const AON_MSG_FILE_DATA = 'File Data';
+export const AON_MSG_UPLOAD_FILE = 'Upload File';
+export const AON_MSG_SEND_FILE = 'Send File';
+export const AON_MSG_DELETE_FILE = 'Delete File';
+export const AON_MSG_DOWNLOAD_FILE = 'Download File';
 
 export const AON_MSG_USER = 'User';
 export const AON_MSG_USERS = 'Users';
@@ -85,3 +94,25 @@ export const AON_MSG_USER_MANAGEMENT = 'User Management';
 
 export const AON_MSG_NAME = 'Name';
 export const AON_MSG_SURNAME = 'Surname';
+
+export const AON_MSG_DOCUMENTARY = 'Documentary';
+
+export const AON_MSG_DOCUMENT = 'Document';
+export const AON_MSG_DOCUMENTS = 'Documents';
+
+export const AON_MSG_CATEGORY = 'Category';
+export const AON_MSG_CATEGORIES = 'Categories';
+export const AON_MSG_ADD_CATEGORY = 'Add Category';
+export const AON_MSG_EDIT_CATEGORY = 'Edit Category';
+export const AON_MSG_DELETE_CATEGORY = 'Delete Category';
+
+export const AON_MSG_TAG = 'Tag';
+export const AON_MSG_TAGS = 'Tags';
+export const AON_MSG_ADD_TAG = 'Add Tag';
+export const AON_MSG_EDIT_TAG = 'Edit Tag';
+export const AON_MSG_DELETE_TAG = 'Delete Tag';
+
+export const AON_MSG_SIZE = 'Size';
+
+export const AON_MSG_CONFIDENTIAL = 'Confidential';
+export const AON_MSG_SCOPE = 'Scope';

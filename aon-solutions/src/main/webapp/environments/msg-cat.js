@@ -47,6 +47,8 @@ export const AON_MSG_PREVIOUS = 'Anterior';
 export const AON_MSG_PENDING = 'Pendent';
 export const AON_MSG_PENDINGS = 'Pendents';
 
+export const AON_MSG_RECENTS = 'Recents';
+
 export const AON_MSG_ACCOUNTED = 'comptabilitzada';
 export const AON_MSG_ACCOUNTEDS = 'Comptabilitzades';
 
@@ -76,7 +78,14 @@ export const AON_MSG_VAT = 'IVA';
 export const AON_MSG_CANCEL = 'Cancel·lar';
 export const AON_MSG_ACCEPT = 'Acceptar';
 
+export const AON_MSG_SYSTEM_MESSAGES = 'Missatges de Sistema';
+
 export const AON_MSG_FILE = 'Fitxer';
+export const AON_MSG_FILE_DATA = `Dades de l'Fitxer`;
+export const AON_MSG_UPLOAD_FILE = 'Pujar Fitxer';
+export const AON_MSG_SEND_FILE = 'Enviar Fitxer';
+export const AON_MSG_DELETE_FILE = 'Esborrar Fitxer';
+export const AON_MSG_DOWNLOAD_FILE = 'Descarregar Fitxer';
 
 export const AON_MSG_USER = 'Usuari';
 export const AON_MSG_USERS = 'Usuaris';
@@ -85,3 +94,25 @@ export const AON_MSG_USER_MANAGEMENT = `Gestió d'Usuaris`;
 
 export const AON_MSG_NAME = 'Nom';
 export const AON_MSG_SURNAME = 'Cognoms';
+
+export const AON_MSG_DOCUMENTARY = 'Documental';
+
+export const AON_MSG_DOCUMENT = 'Document';
+export const AON_MSG_DOCUMENTS = 'Documents';
+
+export const AON_MSG_CATEGORY = 'Categoria';
+export const AON_MSG_CATEGORIES = 'Categories';
+export const AON_MSG_ADD_CATEGORY = 'Afegir Categoria';
+export const AON_MSG_EDIT_CATEGORY = 'Editar Categoria';
+export const AON_MSG_DELETE_CATEGORY = 'Esborrar Categoria';
+
+export const AON_MSG_TAG = 'Etiqueta';
+export const AON_MSG_TAGS = 'Etiquetes';
+export const AON_MSG_ADD_TAG = 'Afegir Etiqueta';
+export const AON_MSG_EDIT_TAG = 'Editar Etiqueta';
+export const AON_MSG_DELETE_TAG = 'Esborrar Etiqueta';
+
+export const AON_MSG_SIZE = 'Mida';
+
+export const AON_MSG_CONFIDENTIAL = 'Confidencial';
+export const AON_MSG_SCOPE = 'Àmbit';

@@ -4,6 +4,8 @@ export * from './authService.js';
 
 export * from './invoiceService.js';
 
+export * from './documentalService.js';
+
 export * from './companyService.js';
 
 export * from './userService.js';

@@ -29,8 +29,8 @@ export const AON_MSG_REJECTEDS = 'Rexeitadas';
 export const AON_MSG_TRASH = 'Papeleira';
 export const AON_MSG_TO_TRASH = 'Enviar ao Papeleira';
 export const AON_MSG_DELETE_FOREVER = 'Borrar Definitivamente';
-export const AON_MSG_ADD_FILE = 'Achegar Arquivo';
-export const AON_MSG_SHOW_FILE = 'Ensinar Arquivo';
+export const AON_MSG_ADD_FILE = 'Achegar Ficheiro';
+export const AON_MSG_SHOW_FILE = 'Ensinar Ficheiro';
 export const AON_MSG_ADD_COMMENT = 'Engadir Comentario';
 
 export const AON_MSG_COMMENT = 'Comentario';
@@ -46,6 +46,8 @@ export const AON_MSG_PREVIOUS = 'Anterior';
 
 export const AON_MSG_PENDING = 'Pendente';
 export const AON_MSG_PENDINGS = 'Pendentes';
+
+export const AON_MSG_RECENTS = 'Recentes';
 
 export const AON_MSG_ACCOUNTED = 'contabilizada';
 export const AON_MSG_ACCOUNTEDS = 'Contabilizadas';
@@ -76,7 +78,14 @@ export const AON_MSG_VAT = 'IVE';
 export const AON_MSG_CANCEL = 'Cancelar';
 export const AON_MSG_ACCEPT = 'Aceptar';
 
-export const AON_MSG_FILE = 'Arquivo';
+export const AON_MSG_SYSTEM_MESSAGES = 'Mesaxes do Sistema';
+
+export const AON_MSG_FILE = 'Ficheiro';
+export const AON_MSG_FILE_DATA = 'Datos do Ficheiro';
+export const AON_MSG_UPLOAD_FILE = 'Subir Ficheiro';
+export const AON_MSG_SEND_FILE = 'Enviar Ficheiro';
+export const AON_MSG_DELETE_FILE = 'Borrar Ficheiro';
+export const AON_MSG_DOWNLOAD_FILE = 'Descargar Ficheiro';
 
 export const AON_MSG_USER = 'Usuario';
 export const AON_MSG_USERS = 'Usuarios';
@@ -85,3 +94,25 @@ export const AON_MSG_USER_MANAGEMENT = 'Xestión de Usuarios';
 
 export const AON_MSG_NAME = 'Nome';
 export const AON_MSG_SURNAME = 'Apelidos';
+
+export const AON_MSG_DOCUMENTARY = 'Documental';
+
+export const AON_MSG_DOCUMENT = 'Documento';
+export const AON_MSG_DOCUMENTS = 'Documentos';
+
+export const AON_MSG_CATEGORY = 'Categoría';
+export const AON_MSG_CATEGORIES = 'Categorías';
+export const AON_MSG_ADD_CATEGORY = 'Engadir Categoría';
+export const AON_MSG_EDIT_CATEGORY = 'Editar Categoría';
+export const AON_MSG_DELETE_CATEGORY = 'Borrar Categoría';
+
+export const AON_MSG_TAG = 'Etiqueta';
+export const AON_MSG_TAGS = 'Etiquetas';
+export const AON_MSG_ADD_TAG = 'Engadir Etiqueta';
+export const AON_MSG_EDIT_TAG = 'Editar Etiqueta';
+export const AON_MSG_DELETE_TAG = 'Borrar Etiqueta';
+
+export const AON_MSG_SIZE = 'Tamaño';
+
+export const AON_MSG_CONFIDENTIAL = 'Confidencial';
+export const AON_MSG_SCOPE = 'Ámbito';

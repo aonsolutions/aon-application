@@ -1,168 +1,315 @@
-import { requestBidoq } from  '../../services/request.js';
+import {AonElement} from '../../components/AonElement.js';
+import {DocumentalAction, DocumentalSidenav} from './DocumentalEnums.js';
+import {getCategories, getTags, createTag, createCategory, editCategory,
+   deleteCategory, editTag, deleteTag, uploadFileDocumental} from '../../services/service.js';
 
-const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
+import './aon-documental-list.js';
+import './aon-document.js';
+import './aon-mobile-document.js';
 
-// Local
-// const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
-// const BIDOQ_SESSION_ID = 'b3RJRmU5SHBYelpVUi1sMw==';
+import * as MSG from "../../environments/msg.js";
 
-// DEV
-const BIDOQ_URL = 'https://dev.mispapeles.es/api/v2/index.php';
-const BIDOQ_SESSION_ID = 'c2d3Y3lRUzExdFBxckxlTQ==';
 
-export const CARPETA_A_CONTABILIZAR = 5;
-export const CARPETA_CONTABILIZADOS = 14;
-export const CARPETA_FISCAL = 8;
+export class AonDocumental extends AonElement {
 
-export const bidoq = async (additionalData) => {
-    // Unimos en un objeto los datos genéricos necesarios en todas las peticiones con los datos específicos de esta petición
-    const data = {
-        "device_info": "phone",
-        "app_code": "1",
-        "operating_system_version": "4.2",
-        "clienteID":BIDOQ_CLIENTE_ID,
-        "sessionID":BIDOQ_SESSION_ID,
-        "app_version": "1.0",
-        ...additionalData
-    };
+    _filter;
 
-    // Codificamos el objeto a una query string de URL
-    const sendData = new URLSearchParams(data).toString();
+    DOCUMENTAL;
+  	INPUTFILE;
 
-    return new Promise( (resolve, reject) => {
-        requestBidoq('POST', BIDOQ_URL, sendData, (result, error) => {
-            if(error) {
-                reject(error);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-};
-
-class AonDocumental extends HTMLElement {
-
-    page = null;
-
-    constructor () {
-        super();
+  	constructor () {
+  		super();
+      this.DOCUMENTAL = 'aonDocumental';
+      this.INPUTFILE = this.DOCUMENTAL + 'InputFile';
+      this._filter = {
+        page:1,
+        per_page:30,
+        domain: localStorage.getItem('aon_domain_id')
+      };
     }
 
     connectedCallback () {
-        this.innerHTML = `
-            <aon-application id="aonDocumental" title="DOCUMENTAL"></aon-application>
-        `;
-        this.build();
+      this.innerHTML = `
+        <aon-application id="${this.DOCUMENTAL}" title="${MSG.AON_MSG_DOCUMENTARY}" drag_and_drop="true"></aon-application>
+        <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
+      `;
+      this.build();
     }
 
-    async build() {
-        const aonDocumental = document.getElementById('aonDocumental');
+    build(){
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      let input = this.getElement(this.INPUTFILE);
 
-        const folders = await this.getFolders();
-        aonDocumental.dataset['folders'] = JSON.stringify(folders);
+      input.addEventListener('change', () => this.upload(input.files));
 
-        const tags = await this.getTags();
-        aonDocumental.dataset['tags'] = JSON.stringify(tags);
+  		aonDocumental.addEventListener('drop', (event) => {
+  			if(event && event.dataTransfer && event.dataTransfer.files){
+  				this.upload(event.dataTransfer.files);
+  			}
+  		});
 
-        this.addDocumentOptions(aonDocumental);
+      if(this.isMobile()) {
+        aonDocumental.addFloatOption(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
+      } else {
+        aonDocumental.addToolbarOption2(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
+      }
 
-        this.addCategoryOptions(aonDocumental, folders);
+      this.addDocumentOptions();
+      this.addCategoryOptions();
+      this.addTagOptions();
 
-        this.loadIndex();
+  		this.aonDocumentalList();
     }
 
-    loadIndex({folder = 'pendientes', tag = null} = {}) {
-        // Por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
-        folder = (folder === 'pendientes') ? CARPETA_A_CONTABILIZAR : folder;
-
-        const aonDocumental = document.getElementById('aonDocumental');
-        const contentIframe = document.querySelector('iframe');
-        const tagParameter = (tag === null) ? '' : `&tag=${tag}`;
-        const indexURL = `../../aon-suite/public/documental/index.html?folder=${folder}${tagParameter}`;
-
-        if (contentIframe === null) {
-            aonDocumental.setContentHTML(`<iframe src="${indexURL}" style="width:100%;height:100%;border:none;"></iframe>`);
-        } else {
-            contentIframe.src = indexURL;
-        }
+    addDocumentOptions() {
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      let documentOptions = [{
+          name: MSG.AON_MSG_PENDINGS,
+          icon: 'inbox',
+          fn: () => {}
+        },{
+          name: MSG.AON_MSG_RECENTS,
+          icon: 'access_time',
+          fn: () => {}
+        },{
+          name: MSG.AON_MSG_SYSTEM_MESSAGES,
+          icon: 'settings',
+          fn: () => {}
+        }];
+      aonDocumental.addSidenavOptions2(DocumentalSidenav.DOCUMENTS, documentOptions);
     }
 
-    loadShow(id, type) {
-        const contentIframe = document.querySelector('iframe');
-
-        contentIframe.src = `../../aon-suite/public/documental/show.html?id=${id}&type=${type}`;
+    addCategoryOptions() {
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      aonDocumental.addSidenavOptions2(DocumentalSidenav.CATEGORIES, [], () => this.createCategory());
+      this.loadCategories();
     }
 
-    async getFolders() {
-        try {
-            const data = await bidoq({
-                "method": "carpetas"
-            });
-            const folders = JSON.parse(data).datos;
-
-            return new Promise((resolve, reject) => {
-                if (typeof folders !== 'undefined') {
-                    resolve(folders);
-                } else {
-                    reject('Ocurrió un error al intentar obtener las carpetas');
-                }
-            });
-        } catch (error) {
-            console.error('Ocurrió un error: ' + error.message);
-        }
-    }
-
-    async getTags() {
-        try {
-            const data = await bidoq({
-                "method": "tags"
-            });
-            const tags = JSON.parse(data).datos;
-
-            return new Promise((resolve, reject) => {
-                if (typeof tags !== 'undefined') {
-                    resolve(tags);
-                } else {
-                    reject('Ocurrió un error al intentar obtener los tags');
-                }
-            });
-        } catch (error) {
-            console.error('Ocurrió un error: ' + error.message);
-        }
-    }
-
-    addDocumentOptions(aonDocumental) {
-        let documentOptions = [
-            {
-                name: 'Pendientes',
-                icon: 'inbox',
-                fn: () => this.loadIndex({folder: 'pendientes'}),
-                default: true
-            },
-            {
-                name: 'Recientes',
-                icon: 'access_time',
-                fn: () => this.loadIndex({folder: 'recientes'})
-            }
-        ];
-
-        aonDocumental.addSidenavOptions('DOCUMENTOS', documentOptions);
-    }
-
-    addCategoryOptions(aonDocumental, folders) {
-        const categoryOptions = folders.map((folder) => {
-            const option = {
-                name: folder.carpeta,
-                icon: 'folder',
-                fn: () => this.loadIndex({folder: folder.carpetaID})
-            };
-
-            return option;
+    loadCategories() {
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      getCategories({domain: localStorage.getItem('aon_domain_id')}).then( categories => {
+        this.clearElement(aonDocumental.SIDENAV + DocumentalSidenav.CATEGORIES.id + 'List');
+        categories.forEach((item, i) => {
+          let option = {
+            name: item.name,
+            icon: 'label',
+            fn: () => {},
+            actions: [{
+                id: 'Delete',
+                icon: 'delete',
+                action: () => this.deleteCategory(item)
+              },{
+                id: 'Edit',
+                icon: 'edit',
+                action: () => this.editCategory(item)
+              }
+            ]
+          };
+          aonDocumental.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
         });
-
-        aonDocumental.addSidenavOptions('CATEGORIAS', categoryOptions);
+      });
     }
 
-}
+    createCategory() {
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      let d = document.getElementById(aonDocumental.DIALOG);
+      d.clear();
+      if(!this.isMobile()) d.width = '400px';
+      d.setTitle(MSG.AON_MSG_ADD_CATEGORY);
+      d.setContentHTML(`<aon-input id="aonDocumentalAddCategory" description="${MSG.AON_MSG_CATEGORY}"> </aon-input>`);
+      d.addAcceptAction(() => {
+        let input = this.getElement('aonDocumentalAddCategory');
+        if(!input.value.isEmpty()){
+          createCategory({name: input.value}).then(() => {
+            this.loadCategories();
+          });
+        }
+      });
+      d.open();
+    }
 
+    editCategory(category) {
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      let d = document.getElementById(aonDocumental.DIALOG);
+      d.clear();
+  		if(!this.isMobile()) d.width = '400px';
+  		d.setTitle(MSG.AON_MSG_EDIT_CATEGORY);
+  		d.setContentHTML(`<aon-input id="aonDocumentalAddCategory" description="${MSG.AON_MSG_CATEGORY}"> </aon-input>`);
+  		d.addAcceptAction(() => {
+        let input = this.getElement('aonDocumentalAddCategory');
+        if(!input.value.isEmpty()){
+          category.name = input.value;
+          editCategory(category).then(() => {
+            this.loadCategories();
+          });
+        }
+      });
+  		d.open();
+    }
+
+    deleteCategory(category) {
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      let d = document.getElementById(aonDocumental.DIALOG);
+      d.clear();
+  		if(!this.isMobile()) d.width = '400px';
+  		d.setTitle(MSG.AON_MSG_DELETE_CATEGORY);
+      d.setContentHTML(`Estás seguro de eliminar la Categoría ${category.name}`);
+  		d.addAcceptAction(() => {
+        deleteCategory(category).then(() => {
+          this.loadCategories();
+        });
+      });
+  		d.open();
+    }
+
+    addTagOptions() {
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      aonDocumental.addSidenavOptions2(DocumentalSidenav.TAGS, [], () => this.createTag());
+      this.loadTags();
+    }
+
+    loadTags() {
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      getTags({domain: localStorage.getItem('aon_domain_id')}).then( tags => {
+        this.clearElement(aonDocumental.SIDENAV + DocumentalSidenav.TAGS.id + 'List');
+        tags.forEach((item, i) => {
+          let option = {
+            name: item.name,
+            icon: 'label',
+            fn: () => {},
+            actions: [{
+                id: 'Delete',
+                icon: 'delete',
+                action: () => this.deleteTag(item)
+              },{
+                id: 'Edit',
+                icon: 'edit',
+                action: () => this.editTag(item)
+              }
+            ]
+          };
+          aonDocumental.addSidenavOptionsListValue(DocumentalSidenav.TAGS, option);
+        });
+      });
+    }
+
+    createTag() {
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      let d = document.getElementById(aonDocumental.DIALOG);
+      d.clear();
+      if(!this.isMobile()) d.width = '400px';
+      d.setTitle(MSG.AON_MSG_ADD_TAG);
+      d.setContentHTML(`<aon-input id="aonDocumentalAddTag" description="${MSG.AON_MSG_TAG}"> </aon-input>`);
+      d.addAcceptAction(() => {
+        let input = this.getElement('aonDocumentalAddTag');
+        if(!input.value.isEmpty()){
+          createTag({name: input.value}).then(() => {
+            this.loadTags();
+          });
+        }
+      });
+      d.open();
+    }
+
+    editTag(tag) {
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      let d = document.getElementById(aonDocumental.DIALOG);
+      d.clear();
+      if(!this.isMobile()) d.width = '400px';
+      d.setTitle(MSG.AON_MSG_EDIT_TAG);
+      d.setContentHTML(`<aon-input id="aonDocumentalAddTag" description="${MSG.AON_MSG_TAG}"> </aon-input>`);
+      d.addAcceptAction(() => {
+        let input = this.getElement('aonDocumentalAddTag');
+        if(!input.value.isEmpty()){
+          tag.name = input.value;
+          editTag(tag).then(() => {
+            this.loadTags();
+          });
+        }
+      });
+      d.open();
+    }
+
+    deleteTag(tag) {
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      let d = document.getElementById(aonDocumental.DIALOG);
+      d.clear();
+      if(!this.isMobile()) d.width = '400px';
+      d.setTitle(MSG.AON_MSG_DELETE_TAG);
+      d.setContentHTML(`Estás seguro de eliminar la Etiqueta ${tag.name}`);
+      d.addAcceptAction(() => {
+        deleteTag(tag).then(() => {
+          this.loadTags();
+        });
+      });
+      d.open();
+    }
+
+  	aonDocumentalList(filter) {
+  		filter = filter || this._filter;
+  		this._filter = filter;
+  		let documentalList = this.getElement('aonDocumentalList');
+  		if(documentalList) {
+  			documentalList.setFilter(filter);
+  			documentalList.init();
+  		} else {
+  			let aonDocumental = this.getElement(this.DOCUMENTAL);
+  			if(this.isMobile()) {
+  				// aonDocumental.setContentHTML(filter
+  				// 	? `<aon-mobile-documental-list id="aonDocumentalList" filter='${JSON.stringify(filter)}'></aon-mobile-documental-list>`
+  				// 	: `<aon-mobile-documental-list id="aonDocumentalList"></aon-mobile-documental-list>`);
+  			}  else {
+  				aonDocumental.setContentHTML(filter
+  					? `<aon-documental-list id="aonDocumentalList" filter='${JSON.stringify(filter)}'></aon-documental-list>`
+  					: `<aon-documental-list id="aonDocumentalList"></aon-documental-list>`);
+  			}
+  		}
+  	}
+
+    aonDocument(doc) {
+      let aonDocumental = document.getElementById('aonDocumental');
+      if(this.isMobile()) {
+        aonDocumental.setContentHTML(`<aon-mobile-document document='${JSON.stringify(doc)}'> </aon-mobile-invoice>`);
+      } else {
+        aonDocumental.setContentHTML(`<aon-document document='${JSON.stringify(doc)}'> </aon-document>`);
+      }
+    }
+
+    addDocumentalFile() {
+      let el = this.getElement(this.INPUTFILE);
+      el.click();
+    }
+
+    upload(files) {
+      alert('aaaa');
+      for(let i = 0; i < files.length; i++) {
+        const READER = new FileReader();
+        READER.readAsDataURL(files[i]);
+        READER.onload = (_event) => {
+          this.attach(READER.result, files[i]);
+        };
+      }
+    }
+
+    attach(fileDataUri,  file){
+      if (fileDataUri.length > 0) {
+        const base64File = fileDataUri.split(',')[1];
+        const data = {
+          content: base64File,
+          contentType: file.type,
+          contentEncoding: 'base64',
+          contentName: file.name,
+          contentSize: file.size
+        };
+        let aonDocumental = this.getElement(this.DOCUMENTAL);
+        aonDocumental.startLoader();
+        uploadFileDocumental(data).then((r) => {
+          alert('aaa');
+          aonDocumental.stopLoader();
+          this.aonDocumentalList()
+          //this.getInvoice().id = r.id;
+        });
+      }
+    }
+}
 window.customElements.define('aon-documental', AonDocumental);

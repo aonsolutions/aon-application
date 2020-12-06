@@ -1,5 +1,7 @@
 package com.code.aon.webservice.util;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 
 import org.json.JSONArray;
@@ -73,6 +75,14 @@ public class ToJSON {
 			attach.getTagList().stream().forEach(r -> {
 				tagArray.put(ToJSON.tagToJSON(r));
 			});
+		
+		JSONObject f = new JSONObject();
+	    String str = "domain="+ attach.getDomain().getId() + "&id=" + attach.getId() + "&attach_type=registry";
+	    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+	    String url =  "ms/download_attachment/"  + attach.getDomain().getName() + "/" + attach.getCreationUser() + "/" +  result;
+	    f.put("url", url);
+	    f.put("type", attach.getMimeType().getName());
+			
 		return new JSONObject()
 			.put("id", attach.getId())
 			.put("domain", attach.getDomain().getId())
@@ -83,7 +93,8 @@ public class ToJSON {
 			.put("size", AonFileUtils.byteCountToDisplaySize( attach.getDparentId() != null ? Long.parseLong( attach.getDparentId()): 0))
 			.put("title", attach.getDescription())
 			.put("icon", icon)
-			.put("tags", tagArray);
+			.put("tags", tagArray)
+			.put("file", f);
 	}
 	
 	public static JSONObject categoryToJSON(Category category){	

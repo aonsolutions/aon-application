@@ -479,6 +479,7 @@ form {
   border-right: 1px solid #ddd;
   transition-duration: 500ms;
   overflow-x: hidden;
+  height: calc(100vh - 102px);
 }
 
 .sidenav::-webkit-scrollbar {

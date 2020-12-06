@@ -15,6 +15,7 @@ export class AonInvoicePanel extends AonElement {
 	selected;
 	_filter;
 
+	INVOICE;
 	INPUTFILE;
 
 	get status() {
@@ -27,7 +28,8 @@ export class AonInvoicePanel extends AonElement {
 
 	constructor () {
 		super();
-		this.INPUTFILE = 'aonInvoiceInputFile';
+		this.INVOICE = 'aonInvoice';
+		this.INPUTFILE = this.INVOICE + 'InputFile';
 		this._filter = {
 			status: 'inbox',
 			page: 0,
@@ -37,7 +39,7 @@ export class AonInvoicePanel extends AonElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<aon-application id="aonInvoice" title="${MSG.AON_MSG_INVOICES}" drag_and_drop="true"></aon-application>
+			<aon-application id="${this.INVOICE}" title="${MSG.AON_MSG_INVOICES}" drag_and_drop="true"></aon-application>
 			<aon-dialog-menu id="aonDialogAddOption"> </aon-dialog-menu>
 			<input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
 		`;
@@ -45,8 +47,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
   build(){
-		let aonInvoice = document.getElementById('aonInvoice');
-
+		let aonInvoice = this.getElement(this.INVOICE);
 		let input = this.getElement(this.INPUTFILE);
 
 		input.addEventListener('change', () => this.preview(input.files));

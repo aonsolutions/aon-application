@@ -47,6 +47,8 @@ export const AON_MSG_PREVIOUS = 'Anterior';
 export const AON_MSG_PENDING = 'Pendiente';
 export const AON_MSG_PENDINGS = 'Pendientes';
 
+export const AON_MSG_RECENTS = 'Recientes';
+
 export const AON_MSG_ACCOUNTED = 'Contabilizada';
 export const AON_MSG_ACCOUNTEDS = 'Contabilizadas';
 
@@ -77,7 +79,14 @@ export const AON_MSG_VAT = 'IVA';
 export const AON_MSG_CANCEL = 'Cancelar';
 export const AON_MSG_ACCEPT = 'Aceptar';
 
+export const AON_MSG_SYSTEM_MESSAGES = 'Mensajes del Sistema';
+
 export const AON_MSG_FILE = 'Fichero';
+export const AON_MSG_FILE_DATA = 'Datos del Fichero';
+export const AON_MSG_UPLOAD_FILE = 'Subir Fichero';
+export const AON_MSG_SEND_FILE = 'Enviar Fichero';
+export const AON_MSG_DELETE_FILE = 'Borrar Fichero';
+export const AON_MSG_DOWNLOAD_FILE = 'Descargar Fichero';
 
 export const AON_MSG_USER = 'Usuario';
 export const AON_MSG_USERS = 'Usuarios';
@@ -86,3 +95,25 @@ export const AON_MSG_USER_MANAGEMENT = 'Gestión de Usuarios';
 
 export const AON_MSG_NAME = 'Nombre';
 export const AON_MSG_SURNAME = 'Apellidos';
+
+export const AON_MSG_DOCUMENTARY = 'Documental';
+
+export const AON_MSG_DOCUMENT = 'Documento';
+export const AON_MSG_DOCUMENTS = 'Documentos';
+
+export const AON_MSG_CATEGORY = 'Categoría';
+export const AON_MSG_CATEGORIES = 'Categorías';
+export const AON_MSG_ADD_CATEGORY = 'Añadir Categoría';
+export const AON_MSG_EDIT_CATEGORY = 'Editar Categoría';
+export const AON_MSG_DELETE_CATEGORY = 'Borrar Categoría';
+
+export const AON_MSG_TAG = 'Etiqueta';
+export const AON_MSG_TAGS = 'Etiquetas';
+export const AON_MSG_ADD_TAG = 'Añadir Etiqueta';
+export const AON_MSG_EDIT_TAG = 'Editar Etiqueta';
+export const AON_MSG_DELETE_TAG = 'Borrar Etiqueta';
+
+export const AON_MSG_SIZE = 'Tamaño';
+
+export const AON_MSG_CONFIDENTIAL = 'Confidencial';
+export const AON_MSG_SCOPE = 'Ámbito';

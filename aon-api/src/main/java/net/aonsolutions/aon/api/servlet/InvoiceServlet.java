@@ -177,7 +177,6 @@ public class InvoiceServlet extends HttpServlet{
 				    f.put("url", url);
 				    f.put("type", r.getMimeType().getName());
 				    json.put("file", f);
-				    json.put("file", f);	
 				}
 
 				jsArray.put(json);

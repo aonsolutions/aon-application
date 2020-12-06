@@ -3,6 +3,8 @@ import {AonElement} from './AonElement.js';
 export class AonIconButton extends AonElement {
 
 	BUTTON;
+	ICON;
+	IMAGE;
 
 	static get observedAttributes() {
 		return ['disabled', 'visible', 'icon', 'color'];
@@ -104,12 +106,12 @@ export class AonIconButton extends AonElement {
 		}
 
 		if('icon' === name){
-			let icon = document.getElementById(this.getAttribute('id') + 'Icon');
+			let icon = this.getElement(this.ICON);
 			if(icon) icon.innerHTML = this.getAttribute('icon');
 		}
 
 		if('image' === name){
-			let image = document.getElementById(this.getAttribute('id') + 'Image');
+			let image = this.getElement(this.IMAGE);
 			if(image) image.src = this.getAttribute('image');
 		}
 
@@ -122,7 +124,10 @@ export class AonIconButton extends AonElement {
 	constructor () {
 		super();
 		this.BUTTON = this.id + 'IconButton';
+		this.ICON = this.id + 'Icon';
+		this.IMAGE = this.id + 'Image';
 	}
+
 
 	connectedCallback () {
 		this.appendChild(this.build());
@@ -166,13 +171,13 @@ export class AonIconButton extends AonElement {
 
 		if(this.hasAttribute('icon')){
 			let icon = document.createElement('i');
-			icon.setAttribute('id', this.getAttribute('id') + 'Icon');
+			icon.id = this.ICON;
 			icon.className = this.getAttribute('outlined') ? 'material-icons-outlined' : 'material-icons';
 			icon.innerHTML = this.getAttribute('icon');
 			button.appendChild(icon);
 		} else if(this.hasAttribute('image')) {
 			let image = document.createElement('img');
-			image.setAttribute('id', this.getAttribute('id') + 'Image');
+			image.id = this.IMAGE;
 			image.style.width = '24px';
 			image.style.height = '24px';
 			image.src = this.getAttribute('image');

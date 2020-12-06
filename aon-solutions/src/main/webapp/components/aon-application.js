@@ -213,93 +213,165 @@ export class AonApplication extends AonElement {
 		div.appendChild(content);
 	}
 
-	addSidenavOptions(title, options) {
-		if(options && options.length > 0) {
-    	let sidenav = this.getElement(this.SIDENAV);
 
-			let div = this.createElement('div');
-			div.style.paddingBottom = '25px';
-			div.style.borderBottom = '1px solid #ebebeb';
-    	sidenav.appendChild(div);
+	addSidenavOptionsTitle(data, newButton) {
+		let sidenav = this.getElement(this.SIDENAV);
+		let div = this.createElement('div');
+		div.id = this.SIDENAV + data.id;
+		div.style.paddingBottom = '25px';
+		div.style.borderBottom = '1px solid #ebebeb';
+		sidenav.appendChild(div);
 
-    	let sidenavTitle =  this.createElement('div');
-    	sidenavTitle.className = 'aonSidenavTitle';
-    	sidenavTitle.innerHTML = title;
-			div.appendChild(sidenavTitle);
+		if(newButton) {
+			let addButton = this.createElement('div');
+			addButton.style.marginTop = '-15px';
+			addButton.style.right = '0px';
+			addButton.style.position = 'absolute';
+			addButton.innerHTML = `
+				<aon-icon-button id="${div.id + 'NewButton'}" icon='add'> </aon-icon-button
+			`;
+			div.appendChild(addButton);
+			this.getElement(div.id + 'NewButton').addEventListener('click', newButton);
+		}
 
-    	let ul =  this.createElement('ul');
-    	ul.className = 'aonClip';
-    	div.appendChild(ul);
-    	options.forEach((option, i) => {
-				if(!option.hidden){
-      		let id = sidenav.id + option.name;
-      		let li =  this.createElement('li');
-      		li.id = id;
-      		li.className = 'aonAppMenuSidenavList aonOpacity';
-					ul.appendChild(li);
+		let sidenavTitle =  this.createElement('div');
+		sidenavTitle.className = 'aonSidenavTitle';
+		sidenavTitle.innerHTML = data.name;
+		div.appendChild(sidenavTitle);
 
-					let span =  this.createElement('span');
-					span.className = 'aonMenuItemSpan';
-					if(option.count && option.count > 0) {
-						span.innerHTML = option.name + ' (' + option.count + ')';
-						span.style.fontWeight = 'bold';
-					} else span.innerHTML = option.name;
+		return div;
+	}
 
-      		if(option.icon) {
-        		let i =  this.createElement('i');
-        		i.className = 'material-icons aonVerticalMiddle';
-        		i.innerHTML = option.icon;
-        		li.appendChild(i);
-      		} else if(option.aonIcon) {
-        		li.innerHTML = `<aon-icon id="${id + 'AonIcon' }" icon="${option.aonIcon.icon}" size="18px"></aon-icon>`;
+	addSidenavOptionsList(data, options) {
+		let div = this.getElement(this.SIDENAV + data.id);
+		let ul =  this.createElement('ul');
+		ul.id = div.id + 'List';
+		ul.className = 'aonClip';
+		div.appendChild(ul);
+		options.forEach((option, i) => {
+			this.addSidenavOptionsListValue(data, option);
+		});
+		return ul;
+	}
 
-						li.addEventListener('mouseover', () => {
-							this.getElement(id + 'AonIcon').color = option.aonIcon.color;
-						});
+	addSidenavOptionsListValue(data, option) {
+		let ul = this.getElement(this.SIDENAV + data.id + 'List');
+		if(!option.hidden){
+			let id = this.SIDENAV + option.name;
+			let li =  this.createElement('li');
+			li.id = id;
+			li.className = 'aonAppMenuSidenavList aonOpacity';
+			ul.appendChild(li);
 
-						li.addEventListener('mouseleave', () => {
-							this.getElement(id + 'AonIcon').color = '#5f6368';
-						});
-      		} else if(option.img) {
-        		let img =  this.createElement('img');
-        		img.style.width = '18px';
-        		img.src = option.img;
-        		li.appendChild(img);
-      		} else {
-						span.style.marginLeft = '28px';
-					}
-      		li.appendChild(span);
+			let span =  this.createElement('span');
+			span.className = 'aonMenuItemSpan';
+			if(option.count && option.count > 0) {
+				span.innerHTML = option.name + ' (' + option.count + ')';
+				span.style.fontWeight = 'bold';
+			} else span.innerHTML = option.name;
 
-      		li.addEventListener('mouseover', () => {
-        		if(!this.selected || this.selected !== id)
-          		li.style.backgroundColor = '#f1f1f1';
-      		});
+			if(option.icon) {
+				let i =  this.createElement('i');
+				i.className = 'material-icons aonVerticalMiddle';
+				i.innerHTML = option.icon;
+				li.appendChild(i);
+			} else if(option.aonIcon) {
+				li.innerHTML = `<aon-icon id="${id + 'AonIcon' }" icon="${option.aonIcon.icon}" size="18px"></aon-icon>`;
 
-      		li.addEventListener('mouseleave', () => {
-        		if(!this.selected || this.selected !== id)
-          		li.style.backgroundColor = 'white';
-      		});
+				li.addEventListener('mouseover', () => {
+					this.getElement(id + 'AonIcon').color = option.aonIcon.color;
+				});
 
-      		li.addEventListener('click', () => {
-      			document.querySelectorAll(`[id^='${sidenav.id}']`).forEach((el, i) => {
-							if(el.id !== sidenav.id)
-          			el.style.backgroundColor = 'transparent';
-        		});
-        		this.selected = id;
-        		li.style.backgroundColor = '#ddd';
-						if(!this.isMobile()){
-			    		let toolbar = this.getElement(this.TOOLBAR);
-							toolbar.setAttribute('option', option.name);
-						}
-						option.fn();
-						if(this.isMobile()) {
-							this.closeSidenav();
-						}
-      		});
+				li.addEventListener('mouseleave', () => {
+					this.getElement(id + 'AonIcon').color = '#5f6368';
+				});
+			} else if(option.img) {
+				let img =  this.createElement('img');
+				img.style.width = '18px';
+				img.src = option.img;
+				li.appendChild(img);
+			} else {
+				span.style.marginLeft = '28px';
+			}
+			li.appendChild(span);
+
+			li.addEventListener('mouseover', () => {
+				if(!this.selected || this.selected !== id)
+					li.style.backgroundColor = '#f1f1f1';
+			});
+
+			li.addEventListener('mouseleave', () => {
+				if(!this.selected || this.selected !== id)
+					li.style.backgroundColor = 'white';
+			});
+
+			if(option.actions) {
+				let actionDiv = this.createElement('span');
+				actionDiv.style.display = 'none';
+				li.appendChild(actionDiv);
+				li.addEventListener('mouseover', () => {
+					actionDiv.style.display = 'contents';
+				});
+
+				li.addEventListener('mouseleave', () => {
+					actionDiv.style.display = 'none';
+				});
+
+				option.actions.forEach((item, i) => {
+					let button = this.createElement('span');
+					button.style.right = (i * 30) + 'px';
+					button.style.position = 'absolute';
+					button.innerHTML = `
+						<aon-icon-button id="${li.id + item.id}" icon='${item.icon}'> </aon-icon-button
+					`;
+					actionDiv.appendChild(button);
+					let aib = this.getElement(li.id + item.id);
+					let b = this.getElement(aib.BUTTON);
+					b.style.height = '30px';
+					b.style.minWidth = '30px';
+					b.style.width = '30px';
+					let ic = this.getElement(aib.ICON);
+					ic.style.fontSize = '1.3rem';
+					aib.addEventListener('click', item.action);
+				});
+			}
+
+			li.addEventListener('click', () => {
+				document.querySelectorAll(`[id^='${this.SIDENAV}']`).forEach((el, i) => {
+					if(el.id !== this.SIDENAV)
+						el.style.backgroundColor = 'transparent';
+				});
+				this.selected = id;
+				li.style.backgroundColor = '#ddd';
+				if(!this.isMobile()){
+					let toolbar = this.getElement(this.TOOLBAR);
+					toolbar.setAttribute('option', option.name);
 				}
-    	});
+				option.fn();
+				if(this.isMobile()) {
+					this.closeSidenav();
+				}
+			});
+		}
+	}
+
+	addSidenavOptions(title, options, newButton) {
+		if(options && options.length > 0) {
+			this.addSidenavOptionsTitle({
+				id: title,
+				name: title
+			}, newButton);
+			this.addSidenavOptionsList({
+				id: title,
+				name: title
+			}, options);
 		}
   }
+
+	addSidenavOptions2(data, options, newButton) {
+		this.addSidenavOptionsTitle(data, newButton);
+		this.addSidenavOptionsList(data, options);
+	}
 
   addOption(name, icon, fn) {
     this.addToolbarOption(name, icon, fn);
@@ -307,6 +379,10 @@ export class AonApplication extends AonElement {
 
   addToolbarOption(name, icon, fn) {
 		this.getElement(this.TOOLBAR).addButton(name, icon, fn);
+  }
+
+	addToolbarOption2(option, fn) {
+		this.getElement(this.TOOLBAR).addButton2(option, fn);
   }
 
 	removeToolbarOption(name) {

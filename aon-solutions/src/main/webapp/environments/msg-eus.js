@@ -47,6 +47,8 @@ export const AON_MSG_PREVIOUS = 'Aurrekoa';
 export const AON_MSG_PENDING = 'Zain';
 export const AON_MSG_PENDINGS = 'Zain Daudenak';
 
+export const AON_MSG_RECENTS = 'Berriak';
+
 export const AON_MSG_ACCOUNTED = 'Kontabilizatuta';
 export const AON_MSG_ACCOUNTEDS = 'Kontabilizatutak';
 
@@ -76,7 +78,14 @@ export const AON_MSG_VAT = 'BEZ';
 export const AON_MSG_CANCEL = 'Ezeztatu';
 export const AON_MSG_ACCEPT = 'Onartu';
 
+export const AON_MSG_SYSTEM_MESSAGES = 'Sistemaren Mezuak';
+
 export const AON_MSG_FILE = 'Fitxategia';
+export const AON_MSG_FILE_DATA = 'Fitxategiaren Datuak';
+export const AON_MSG_UPLOAD_FILE = 'Fitxategia Igo';
+export const AON_MSG_SEND_FILE = 'Fitxategia Bidali';
+export const AON_MSG_DELETE_FILE = 'Fitxategia Ezabatu';
+export const AON_MSG_DOWNLOAD_FILE = 'Fitxategia Deskargatu';
 
 export const AON_MSG_USER = 'Erabiltzailea';
 export const AON_MSG_USERS = 'Erabiltzaileak';
@@ -85,3 +94,25 @@ export const AON_MSG_USER_MANAGEMENT = 'Erabiltzaileen Kudeaketa';
 
 export const AON_MSG_NAME = 'Izena';
 export const AON_MSG_SURNAME = 'Abizenak';
+
+export const AON_MSG_DOCUMENTARY = 'Dokumentala';
+
+export const AON_MSG_DOCUMENT = 'Dokumentua';
+export const AON_MSG_DOCUMENTS = 'Dokumentuak';
+
+export const AON_MSG_CATEGORY = 'Kategoria';
+export const AON_MSG_CATEGORIES = 'Kategoriak';
+export const AON_MSG_ADD_CATEGORY = 'Kategoria Gehitu';
+export const AON_MSG_EDIT_CATEGORY = 'Kategoria Aldatu';
+export const AON_MSG_DELETE_CATEGORY = 'Kategoria Ezabatu';
+
+export const AON_MSG_TAG = 'Etiketa';
+export const AON_MSG_TAGS = 'Etiketak';
+export const AON_MSG_ADD_TAG = 'Etiketa Gehitu';
+export const AON_MSG_EDIT_TAG = 'Etiketa Aldatu';
+export const AON_MSG_DELETE_TAG = 'Etiketa Ezabatu';
+
+export const AON_MSG_SIZE = 'Neurria';
+
+export const AON_MSG_CONFIDENTIAL = 'Konfidentziala';
+export const AON_MSG_SCOPE = 'Esparrua';
