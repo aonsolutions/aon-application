@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ToolbarType} from '../../models/enums.js';
 import {DocumentalAction} from './DocumentalEnums.js';
-import {deleteFile} from '../../services/service.js';
+import {deleteFile, getCategories, getScopes, getTags, updateFile} from '../../services/service.js';
 import '../../components/aon-viewer.js';
 
 import * as CONSTANT from "../../environments/constants.js";
@@ -9,6 +9,9 @@ import * as MSG from "../../environments/msg.js";
 import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 
 export class AonDocument extends AonElement {
+
+  doc;
+  _tags;
 
   TOOLBAR;
   DATA;
@@ -29,7 +32,9 @@ export class AonDocument extends AonElement {
     this.TOOLBAR = this.id + 'Toolbar';
     this.DATA = this.id + 'Data';
     this.DATA_CARD = this.DATA + 'Card';
-    this.File = this.id + 'File';
+    this.FILE = this.id + 'File';
+    this.doc = this.document;
+    this._tags = [];
   }
 
   connectedCallback () {
@@ -49,6 +54,7 @@ export class AonDocument extends AonElement {
   }
 
   build() {
+    this.doc = this.document;
     let fileDiv = this.getElement(this.FILE);
     fileDiv.style.display = 'block';
     fileDiv.style.width = '50%';
@@ -84,6 +90,9 @@ export class AonDocument extends AonElement {
     tdConfidential.setAttribute('colspan', '1');
     tdConfidential.innerHTML = `<aon-switch id="confidential" title="${MSG.AON_MSG_CONFIDENTIAL}"></aon-switch>`;
     tr.appendChild(tdConfidential);
+    let confidential = this.getElement('confidential');
+    confidential.checked = this.document.confidential;
+    confidential.addEventListener('change', () => this.updateConfidential(confidential.checked));
 
     let tr2 = document.createElement('tr');
     table.appendChild(tr2);
@@ -94,6 +103,7 @@ export class AonDocument extends AonElement {
 		tr2.appendChild(tdName);
 		let name = this.getElement('name');
     name.value = this.document.title;
+		name.addEventListener('change', () => this.updateName(name.value));
 
     let tr3 = document.createElement('tr');
     table.appendChild(tr3);
@@ -103,16 +113,111 @@ export class AonDocument extends AonElement {
     tdCategory.setAttribute('colspan', '1');
     tdCategory.innerHTML = `<aon-select id="category" title="${MSG.AON_MSG_CATEGORY}"></aon-select>`;
     tr3.appendChild(tdCategory);
-    // let category = document.getElementById('category');
-    // category.options = JSON.stringify(getInvoiceCategories(this._invoice.type));
-    // category.value = this._invoice.category;
-    // category.addEventListener('select', () => this.update('category'));
+    getCategories({domain: localStorage.getItem('aon_domain_id')}).then( categories => {
+      let category = document.getElementById('category')
+      let cat = categories.map(c => {
+        return {
+          value: c.id,
+          name: c.name
+        }
+      });
+      category.options = JSON.stringify(cat);
+      if(this.document.scope)
+        category.value = this.document.category.id;
+      category.addEventListener('select', () => this.updateCategory(category.value));
+    });
 
-    // CATEGORY
+    // SCOPE
     let tdScope = document.createElement('td');
     tdScope.setAttribute('colspan', '1');
     tdScope.innerHTML = `<aon-select id="scope" title="${MSG.AON_MSG_SCOPE}"></aon-select>`;
     tr3.appendChild(tdScope);
+    getScopes({domain: localStorage.getItem('aon_domain_id')}).then( scopes => {
+      let scope = document.getElementById('scope');
+      let scp = scopes.map(s => {
+        return {
+          value: s.id,
+          name: s.name
+        }
+      });
+      scope.options = JSON.stringify(scp);
+      if(this.document.scope)
+        scope.value = this.document.scope.id;
+      scope.addEventListener('select', () => this.updateScope(scope.value));
+    });
+
+    let tr4 = document.createElement('tr');
+    table.appendChild(tr4);
+
+    // TAG
+    let tdTag = document.createElement('td');
+    tdTag.setAttribute('colspan', '2');
+    tdTag.innerHTML = `<aon-select id="tag" title="${MSG.AON_MSG_TAG}"></aon-select>`;
+    tr4.appendChild(tdTag);
+    getTags({domain: localStorage.getItem('aon_domain_id')}).then( tags => {
+      let tag = document.getElementById('tag')
+      let t = tags.map(c => {
+        return {
+          value: c.id,
+          name: c.name
+        }
+      });
+      tag.options = JSON.stringify(t);
+      tag.addEventListener('select', (event) => {
+        this.addTag(event.detail);
+        tag.value = '';
+      });
+    });
+
+    let tr5 = document.createElement('tr');
+    table.appendChild(tr5);
+
+    let tdTags = document.createElement('td');
+    tdTags.setAttribute('colspan', '2');
+    tdTags.innerHTML = `<table>
+      <tr id='tags'>
+
+      </tr>
+    </table>`;
+    tr5.appendChild(tdTags);
+    this.document.tags.forEach((item, i) => {
+      this.addTag(item);
+    });
+  }
+
+  addTag(tag){
+    let t = {
+      id: tag.id || tag.value,
+      name: tag.name
+    }
+    let bool = true;
+    this._tags.forEach((item, i) => {
+      if(t.id === item.id || t.id === item.value) {
+        bool = false;
+      }
+    });
+
+    if(bool) {
+      this._tags.push(tag);
+      let td = this.createElement('td');
+      td.id = 'tag' + t.id;
+      td.innerHTML = `
+        <span style="background-color: #eee;padding:3px;"> ${tag.name}</span>
+        <i id='closeTag${t.id}'class="material-icons" style="font-size:1rem;cursor: pointer;">close</i>
+      `;
+      this.getElement('tags').appendChild(td);
+      this.getElement('closeTag' + t.id).addEventListener('click', () => {
+        this._tags.forEach((item, i) => {
+          if(t.id === item.id || t.id === item.value) {
+        		this._tags.splice(i, 1);
+            this.getElement('tag' + t.id).remove();
+            this.save();
+          }
+        });
+      });
+      this.save();
+    }
+
   }
 
   buildDocumentToolbar() {
@@ -193,6 +298,41 @@ export class AonDocument extends AonElement {
     open(this.document.file.url);
   }
 
+  updateCategory(category) {
+    if(!this.doc.category)
+      this.doc.category = {};
+    this.doc.category.id = category;
+    this.save();
+  }
+
+  updateScope(scope) {
+    if(!this.doc.scope)
+      this.doc.scope = {};
+    this.doc.scope.id = category;
+    this.save();
+  }
+
+  updateConfidential(confidential) {
+    this.doc.confidential = confidential;
+    this.save();
+  }
+
+  updateName(name) {
+    this.doc.title = name;
+    this.save();
+  }
+
+  save() {
+    let d = {
+      id: this.doc.id,
+      name: this.doc.title,
+      confidential: this.doc.confidential,
+      category: this.doc.category ? this.doc.category.id : undefined,
+      scope: this.doc.scope ? this.doc.scope.id : undefined,
+      tags: this._tags.map(t => t.id || t.value)
+    }
+    updateFile(d);
+  }
 
 }
 

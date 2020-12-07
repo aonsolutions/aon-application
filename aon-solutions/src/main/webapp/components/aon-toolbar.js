@@ -159,6 +159,38 @@ export class AonToolbar extends AonElement {
 		b.addEventListener('click', fn);
 	}
 
+	addSearchButton() {
+		const buttonId = this.TOOL_SECTION + 'SearchButton';
+		const inputId = this.TOOL_SECTION + 'SearchInput';
+		let span = document.createElement('span');
+		span.style.display = 'contents';
+		span.innerHTML= `
+			<aon-icon-button id="${buttonId}" icon="search" title="Búsqueda"> </aon-icon-button>
+			<form><input id='${inputId}' title="Búsqueda" placeholder="Búsqueda" style="display:none"></input></form>
+		`;
+
+		let toolSection = this.getElement(this.TOOL_SECTION);
+		toolSection.style.paddingRight = this.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
+		if(toolSection.children.length > 0) {
+			toolSection.insertBefore(span, toolSection.children[0]);
+		} else toolSection.appendChild(span);
+
+		let input = this.getElement(inputId);
+		input.style.border = '0px';
+		input.style.borderBottom = '1px solid #999';
+		input.style.outline = 'none';
+		input.style.fontSize = '14px';
+		input.addEventListener('keyup', () => {
+			this.dispatchEvent(new CustomEvent('search',{detail: input.value}));
+		});
+
+		let b = document.getElementById(buttonId);
+		b.addEventListener('click', () => {
+			input.style.display = 'block';
+			input.focus();
+		});
+	}
+
 	addButton2(action, fn) {
 		const id = this.TOOL_SECTION + action.id + 'Button';
 		let span = document.createElement('span');

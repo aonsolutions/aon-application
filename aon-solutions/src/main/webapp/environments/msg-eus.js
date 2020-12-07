@@ -80,6 +80,7 @@ export const AON_MSG_ACCEPT = 'Onartu';
 
 export const AON_MSG_SYSTEM_MESSAGES = 'Sistemaren Mezuak';
 
+export const AON_MSG_ALL_FILES = 'Fitxategi Guztiak';
 export const AON_MSG_FILE = 'Fitxategia';
 export const AON_MSG_FILE_DATA = 'Fitxategiaren Datuak';
 export const AON_MSG_UPLOAD_FILE = 'Fitxategia Igo';

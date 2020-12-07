@@ -81,6 +81,7 @@ export const AON_MSG_ACCEPT = 'Aceptar';
 
 export const AON_MSG_SYSTEM_MESSAGES = 'Mensajes del Sistema';
 
+export const AON_MSG_ALL_FILES = 'Todos los Ficheros';
 export const AON_MSG_FILE = 'Fichero';
 export const AON_MSG_FILE_DATA = 'Datos del Fichero';
 export const AON_MSG_UPLOAD_FILE = 'Subir Fichero';

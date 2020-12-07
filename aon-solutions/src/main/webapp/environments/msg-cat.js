@@ -80,6 +80,7 @@ export const AON_MSG_ACCEPT = 'Acceptar';
 
 export const AON_MSG_SYSTEM_MESSAGES = 'Missatges de Sistema';
 
+export const AON_MSG_ALL_FILES = 'Tots els Fitxers';
 export const AON_MSG_FILE = 'Fitxer';
 export const AON_MSG_FILE_DATA = `Dades de l'Fitxer`;
 export const AON_MSG_UPLOAD_FILE = 'Pujar Fitxer';

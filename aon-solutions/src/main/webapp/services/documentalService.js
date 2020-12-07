@@ -34,6 +34,12 @@ export const deleteCategory = (data) => {
 };
 
 
+export const getScopes = (data) => {
+  let domainName = localStorage.getItem("aon_domain_name");
+  let user = 'aon';
+  return get(`${API_URL}/attachment/${domainName}/${user}/scope`, data);
+}
+
 export const getTags = (data) => {
   let domainName = localStorage.getItem("aon_domain_name");
   let user = 'aon';
@@ -62,6 +68,12 @@ export const uploadFileDocumental = (data) => {
   let domainName = localStorage.getItem("aon_domain_name");
   let user = 'aon';
   return post(`${API_URL}/attachment_upload/${domainName}/${user}`, data);
+}
+
+export const updateFile = (data) => {
+  let domainName = localStorage.getItem("aon_domain_name");
+  let user = 'aon';
+  return post(`${API_URL}/attachment/${domainName}/${user}/file/${data.id}`, data);
 }
 
 export const deleteFile = (data) => {

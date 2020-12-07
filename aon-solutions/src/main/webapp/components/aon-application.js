@@ -381,6 +381,14 @@ export class AonApplication extends AonElement {
 		this.getElement(this.TOOLBAR).addButton(name, icon, fn);
   }
 
+	addSearchOption() {
+		let toolbar = this.getElement(this.TOOLBAR);
+		toolbar.addSearchButton();
+		toolbar.addEventListener('search', (event) => {
+			this.dispatchEvent(new CustomEvent('search', {detail: event.detail}));
+		});
+	}
+
 	addToolbarOption2(option, fn) {
 		this.getElement(this.TOOLBAR).addButton2(option, fn);
   }

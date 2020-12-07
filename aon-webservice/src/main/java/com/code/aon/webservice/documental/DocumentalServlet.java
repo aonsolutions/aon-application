@@ -165,32 +165,55 @@ public class DocumentalServlet extends HttpServlet{
 	private JSONObject updateAttachJSON(Domain domain, String login, Integer id, JSONObject json) {
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id), AttachType.REGISTRY, true);
 		attach.setDescription(json.getString("name"));
-		attach.setConfidential(Boolean.toString(true).equals(json.getString("confidential")));
+		try {
+			attach.setConfidential(json.optBoolean("confidential"));
+		}catch (Exception e) {
+			attach.setConfidential(Boolean.toString(true).equals(json.getString("confidential")));
+		}
 		
 		if(json.opt("category") != null) { 
-			String categoryStr = json.getString("category");
-			Integer category = !"".equals(categoryStr) ?  Integer.parseInt(categoryStr) : null;
+			Integer category;
+			try {
+				category = json.getInt("category");
+			}catch (Exception e) {
+				String categoryStr = json.getString("category");
+				category = !"".equals(categoryStr) ?  Integer.parseInt(categoryStr) : null;
+			}
 			attach.setCategory(category);
 		}
 		if(json.opt("scope") != null) {
-			String scopeStr = json.getString("scope");
-			Integer scope = !"".equals(scopeStr) ?  Integer.parseInt(scopeStr) : null;
+			Integer scope;
+			try {
+				scope = json.getInt("scope");
+			}catch (Exception e) {
+				String scopeStr = json.getString("scope");
+				scope = !"".equals(scopeStr) ?  Integer.parseInt(scopeStr) : null;
+			}
 			attach.setScope(scope);
 		}
-		if(json.opt("tag") != null) {
-			String tagStr = json.getString("tag");
-			String[] tags = tagStr.split(",");
-			AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId());
-			for(Integer i = 0; i< tags.length; i++) {
-				if(!"".equals(tags[i])) {
-					Integer tagId = Integer.parseInt(tags[i]);
+		if(json.opt("tag") != null || json.opt("tags") != null) {
+			try {
+				JSONArray arr = json.optJSONArray("tags");
+				for (Integer index = 0; index < arr.length(); index++) {
+					Integer tagId =	arr.getInt(index);
 					AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId(), tagId);
 				}
+			} catch (Exception e) {
+				String tagStr = json.getString("tag");
+				String[] tags = tagStr.split(",");
+				AON.deleteRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId());
+				for(Integer i = 0; i< tags.length; i++) {
+					if(!"".equals(tags[i])) {
+						Integer tagId = Integer.parseInt(tags[i]);
+						AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attach.getId(), tagId);
+					}
+				}
 			}
+
 		}
 		AON.updateAttach(domain.getName(), domain.getId(), login, attach);
 		User user = AON.getUser(domain.getName(), domain.getId(), login);
-		SendNotification.sendGmail(domain, user, attach, false);
+		//SendNotification.sendGmail(domain, user, attach, false);
 		return ToJSON.attachToJSON(attach);
 	}
 	

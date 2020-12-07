@@ -1,97 +1,74 @@
-import {AonElement} from '../../components/AonElement.js';
-import {ToolbarType} from '../../models/enums.js';
+import {AonDocument} from './aon-document.js';
+import {DocumentalAction} from './DocumentalEnums.js';
 
 import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";
 import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 
-export class AonMobileDocument extends AonElement {
+export class AonMobileDocument extends AonDocument {
 
-  TOOLBAR;
-  DATA;
-  DATA_CARD;
-  FILE;
+  FILE_CARD;
 
   constructor () {
     super();
-    this.id = this.id || 'aonDocumentalSheet';
-    this.TOOLBAR = this.id + 'Toolbar';
-    this.DATA = this.id + 'Data';
-    this.DATA_CARD = this.DATA + 'Card';
-    this.File = this.id + 'File';
+    this.FILE_CARD = this.FILE + 'Card';
   }
 
   connectedCallback () {
-    let document = {name: 'aaa'};
-
     this.innerHTML = `
-      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${document.name}"> </aon-toolbar>
-      <div style="display:flex;">
-        <div id="${this.DATA}" class="aonSubContent" style="width:100%">
-          <aon-card id="${this.DATA_CARD}" title="${MSG.AON_MSG_FILE_DATA}"> </aon-card>
-        </div>
-        <div id="${this.FILE}" class="aonSubContent">
-
-        </div>
-      </div>
+      <aon-card id="${this.FILE_CARD}" title="${MSG.AON_MSG_FILE}" style="display:none;"> </aon-card>
+      <aon-card id="${this.DATA_CARD}" title="${MSG.AON_MSG_FILE_DATA}"> </aon-card>
     `;
 
-    this.build();
-  }
-
-  build() {
+    this.buildOptions();
     this.buildData();
 
-    if(!this.isMobile())
-      this.buildDocumentToolbar();
+    if(this.document.file.type.includes('pdf') || this.document.file.type.includes('image')) {
+      let fileCard = this.getElement(this.FILE_CARD);
+      fileCard.style.display = 'block';
+      this.getElement(fileCard.TITLE).style.marginBottom = '0px';
+      fileCard.addTitleButton('visibility', () => this.openFileCard());
+    }
   }
 
-  buildData() {
-
-  }
-
-  buildDocumentToolbar() {
+  buildOptions() {
     let aonDocumental = this.getElement('aonDocumental');
-    let documentToolbar = this.getElement(this.TOOLBAR);
-    documentToolbar.removeButtons();
+    let aonDocumentalToolbar = this.getElement(aonDocumental.TOOLBAR);
+    aonDocumentalToolbar.removeButtons();
+    aonDocumental.addToolbarOption('Options', 'more_vert', () => {
+      let button = this.getElement(aonDocumentalToolbar.TOOL_SECTION + 'OptionsButton');
+      const top  = button.getBoundingClientRect().top;
+      const left = button.getBoundingClientRect().left;
 
-    documentToolbar.addButton2(DocumentalAction.NEXT, () => this.next());
-    documentToolbar.addButton2(DocumentalAction.PREVIOUS, () => this.previous());
+      let d = document.getElementById(aonDocumental.OPTION_DIALOG);
 
-    documentToolbar.addSeparator();
+      let send = DocumentalAction.SEND;
+      send.fn = () => this.send();
 
-    documentToolbar.addButton2(DocumentalAction.DELETE, () => this.remove());
-//  documentToolbar.addButton2(DocumentalAction.SEND, () => this.send());
-    documentToolbar.addButton2(DocumentalAction.DOWNLOAD, () => this.download());
-    documentToolbar.addButton2(DocumentalAction.BACK, () => this.back());
+      let download = DocumentalAction.DOWNLOAD;
+      download.fn = () => this.download();
+
+      let remove = DocumentalAction.DELETE;
+      remove.fn = () => this.remove();
+
+      let actions = [send, download, remove];
+      d.setMenuOptions(actions, top, left);
+      d.open();
+    });
   }
 
-
-  back() {
-
+  openFileCard() {
+    let fileCard = this.getElement(this.FILE_CARD);
+    let w = this.getElement(fileCard.CONTENT).offsetWidth;
+    fileCard.setContentHTML(`<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${w}"><aon-viewer>`);
+    fileCard.addTitleButton('visibility_off', () => this.closeFileCard());
   }
 
-  next() {
-
+  closeFileCard() {
+    let fileCard = this.getElement(this.FILE_CARD);
+    fileCard.setContentHTML('');
+    fileCard.addTitleButton('visibility', () => this.openFileCard());
   }
-
-  previous() {
-
-  }
-
-  send() {
-
-  }
-
-  remove() {
-
-  }
-
-  download() {
-
-  }
-
-
 }
 
 window.customElements.define('aon-mobile-document',  AonMobileDocument);

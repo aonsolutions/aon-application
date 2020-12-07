@@ -5,7 +5,10 @@ import {getCategories, getTags, createTag, createCategory, editCategory,
 
 import './aon-documental-list.js';
 import './aon-document.js';
+
+import './aon-mobile-documental-list.js';
 import './aon-mobile-document.js';
+
 
 import * as MSG from "../../environments/msg.js";
 
@@ -22,6 +25,7 @@ export class AonDocumental extends AonElement {
       this.DOCUMENTAL = 'aonDocumental';
       this.INPUTFILE = this.DOCUMENTAL + 'InputFile';
       this._filter = {
+        type: 'all',
         page:1,
         per_page:30,
         domain: localStorage.getItem('aon_domain_id')
@@ -52,6 +56,8 @@ export class AonDocumental extends AonElement {
         aonDocumental.addFloatOption(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
       } else {
         aonDocumental.addToolbarOption2(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
+        aonDocumental.addSearchOption();
+        aonDocumental.addEventListener('search', (event) => this.search(event.detail));
       }
 
       this.addDocumentOptions();
@@ -64,17 +70,23 @@ export class AonDocumental extends AonElement {
     addDocumentOptions() {
       let aonDocumental = this.getElement(this.DOCUMENTAL);
       let documentOptions = [{
-          name: MSG.AON_MSG_PENDINGS,
-          icon: 'inbox',
-          fn: () => {}
-        },{
-          name: MSG.AON_MSG_RECENTS,
-          icon: 'access_time',
-          fn: () => {}
+          name: MSG.AON_MSG_ALL_FILES,
+          icon: 'insert_drive_file',
+          fn: () => {
+            this._filter.category = undefined;
+            this._filter.tag = undefined;
+            this._filter.type = 'all';
+            this.aonDocumentalList();
+          }
         },{
           name: MSG.AON_MSG_SYSTEM_MESSAGES,
           icon: 'settings',
-          fn: () => {}
+          fn: () => {
+            this._filter.category = undefined;
+            this._filter.tag = undefined;
+            this._filter.type = 'system';
+            this.aonDocumentalList();
+          }
         }];
       aonDocumental.addSidenavOptions2(DocumentalSidenav.DOCUMENTS, documentOptions);
     }
@@ -93,7 +105,11 @@ export class AonDocumental extends AonElement {
           let option = {
             name: item.name,
             icon: 'label',
-            fn: () => {},
+            fn: () => {
+              this._filter.tag = undefined;
+              this._filter.category = item.id;
+              this.aonDocumentalList();
+            },
             actions: [{
                 id: 'Delete',
                 icon: 'delete',
@@ -176,7 +192,11 @@ export class AonDocumental extends AonElement {
           let option = {
             name: item.name,
             icon: 'label',
-            fn: () => {},
+            fn: () => {
+              this._filter.category = undefined;
+              this._filter.tag = item.id;
+              this.aonDocumentalList();
+            },
             actions: [{
                 id: 'Delete',
                 icon: 'delete',
@@ -245,6 +265,11 @@ export class AonDocumental extends AonElement {
       d.open();
     }
 
+    search(value) {
+      this._filter.description = value;
+      this.aonDocumentalList();
+    }
+
   	aonDocumentalList(filter) {
   		filter = filter || this._filter;
   		this._filter = filter;
@@ -255,9 +280,9 @@ export class AonDocumental extends AonElement {
   		} else {
   			let aonDocumental = this.getElement(this.DOCUMENTAL);
   			if(this.isMobile()) {
-  				// aonDocumental.setContentHTML(filter
-  				// 	? `<aon-mobile-documental-list id="aonDocumentalList" filter='${JSON.stringify(filter)}'></aon-mobile-documental-list>`
-  				// 	: `<aon-mobile-documental-list id="aonDocumentalList"></aon-mobile-documental-list>`);
+          aonDocumental.setContentHTML(filter
+  					? `<aon-mobile-documental-list id="aonDocumentalList" filter='${JSON.stringify(filter)}'></aon-mobile-documental-list>`
+  					: `<aon-mobile-documental-list id="aonDocumentalList"></aon-mobile-documental-list>`);
   			}  else {
   				aonDocumental.setContentHTML(filter
   					? `<aon-documental-list id="aonDocumentalList" filter='${JSON.stringify(filter)}'></aon-documental-list>`
@@ -281,7 +306,6 @@ export class AonDocumental extends AonElement {
     }
 
     upload(files) {
-      alert('aaaa');
       for(let i = 0; i < files.length; i++) {
         const READER = new FileReader();
         READER.readAsDataURL(files[i]);
@@ -304,7 +328,6 @@ export class AonDocumental extends AonElement {
         let aonDocumental = this.getElement(this.DOCUMENTAL);
         aonDocumental.startLoader();
         uploadFileDocumental(data).then((r) => {
-          alert('aaa');
           aonDocumental.stopLoader();
           this.aonDocumentalList()
           //this.getInvoice().id = r.id;

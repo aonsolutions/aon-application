@@ -80,6 +80,7 @@ export const AON_MSG_ACCEPT = 'Accept';
 
 export const AON_MSG_SYSTEM_MESSAGES = 'System Messages';
 
+export const AON_MSG_ALL_FILES = 'All Files';
 export const AON_MSG_FILE = 'File';
 export const AON_MSG_FILE_DATA = 'File Data';
 export const AON_MSG_UPLOAD_FILE = 'Upload File';
