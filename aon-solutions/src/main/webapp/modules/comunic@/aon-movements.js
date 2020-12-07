@@ -4,16 +4,17 @@ import'./aon-alta-directa.js';
 
 export class AonMovements extends AonElement {
 
-    get id() {
-        return this.getAttribute('id');
-    }
-
     set id(id) {
         this.setAttribute('id', id);
     }
 
+    get id() {
+        return this.getAttribute('id');
+    }
+    
     constructor() {
         super();
+        this.id = this.id || 'aonComunicaMovements';
     }
 
 
@@ -51,7 +52,7 @@ export class AonMovements extends AonElement {
         this.getElement(aonComunica.TOOLBAR).setAttribute('option', 'Movimientos');
         if (filter) aonComunica.setFilter(filter);
         else {
-            aonComunica.setContentHTML(`<aon-movements-list />`);
+            aonComunica.setContentHTML(`<aon-movements-list id="${this.id}List" />`);
         }
     }
 

@@ -60,8 +60,8 @@ export const getIpfxnaf = (data) => get(`${API_URL}/comunica/ipfxnaf`, data);
 
 export const getNafxipf = (data) => get(`${API_URL}/comunica/nafxipf`, data);
 
-export const getPersonas = (dni) =>  new Promise((resolve) => {
-    let jsonValues= [
+export const getPersonas = (dni) => new Promise((resolve) => {
+    let jsonValues = [
         {
             id: 1,
             nombre: 'NOMBRE1',
@@ -118,14 +118,14 @@ export const getPersonas = (dni) =>  new Promise((resolve) => {
             fecha: '25-01-2020'
         },
     ];
-    let filters =  jsonValues.filter(f=>f.dni.indexOf(dni) >= 0).map(m=> {
-        return {...m, value:m.dni, name:m.dni};
+    let filters = jsonValues.filter(f => f.dni.indexOf(dni) >= 0).map(m => {
+        return { ...m, value: m.dni, name: m.dni };
     });
     resolve(filters);
 
 });
 
-export const getTipoContrato = () =>  new Promise((resolve) => {
+export const getTipoContrato = () => new Promise((resolve) => {
     resolve([
         {
             "id": "1",
@@ -151,7 +151,7 @@ export const getTipoContrato = () =>  new Promise((resolve) => {
     ]);
 });
 
-export const getTipoJornada = () =>  new Promise((resolve) => {
+export const getTipoJornada = () => new Promise((resolve) => {
     resolve([
         {
             "id": "1",
@@ -165,48 +165,48 @@ export const getTipoJornada = () =>  new Promise((resolve) => {
     ]);
 });
 
-export const getCuentaCotizacion = () =>  new Promise((resolve) => {
+export const getCuentaCotizacion = () => new Promise((resolve) => {
     resolve([
-        {value:1, name: '1111111111'},
-        {value:2, name: '222222222'}
+        { value: 1, name: '1111111111' },
+        { value: 2, name: '222222222' }
     ]);
 });
 
-export const getCentroTrabajo = () =>  new Promise((resolve) => {
+export const getCentroTrabajo = () => new Promise((resolve) => {
     resolve([
-        {value:1, name: 'PRINCIPAL'},
-        {value:2, name: 'SECUNDARIO'}
+        { value: 1, name: 'PRINCIPAL' },
+        { value: 2, name: 'SECUNDARIO' }
     ]);
 });
 
-export const getGrupoCotizacion = () =>  new Promise((resolve) => {
+export const getGrupoCotizacion = () => new Promise((resolve) => {
     resolve([
         {
-            value:'01',
+            value: '01',
             name: 'Alta Dirección'
         },
         {
-            value:'02',
+            value: '02',
             name: 'Ingenieros y peritos'
         },
         {
-            value:'03',
+            value: '03',
             name: 'Jefes admon. y taller'
         },
         {
-            value:'04',
+            value: '04',
             name: 'Ayudante no titulados'
         },
         {
-            value:'05',
+            value: '05',
             name: 'Oficial Administrativo'
         },
         {
-            value:'06',
+            value: '06',
             name: 'Subalternos'
         },
         {
-            value:'07',
+            value: '07',
             name: 'Aux. Administrativo'
         },
         {
@@ -228,19 +228,19 @@ export const getGrupoCotizacion = () =>  new Promise((resolve) => {
     ]);
 });
 
-export const getOcupacion = () =>  new Promise((resolve) => {
+export const getOcupacion = () => new Promise((resolve) => {
     resolve([
-        {id:"1", name:"", value:""},
-        {id:"2", name:"Trabajos de oficina", value:"a"},
-        {id:"3", name:"Representantes comercio", value:"b"},
-        {id:"4", name:"Trabajos construcción", value:"d"},
-        {id:"5", name:"Conductores pasajeros y carga", value:"e"},
-        {id:"6", name:"Conductores de carga > 3,5 Tm", value:"f"},
-        {id:"7", name:"Personal de limpieza", value:"g"},
-        {id:"8", name:"Personal de seguridad", value:"h"},
-        {id:"9", name:"Personal de vuelo", value:"i"},
-        {id:"10", name:"Dependientes. cajeros", value:"z"},
-    ] );
+        { id: "1", name: "", value: "" },
+        { id: "2", name: "Trabajos de oficina", value: "a" },
+        { id: "3", name: "Representantes comercio", value: "b" },
+        { id: "4", name: "Trabajos construcción", value: "d" },
+        { id: "5", name: "Conductores pasajeros y carga", value: "e" },
+        { id: "6", name: "Conductores de carga > 3,5 Tm", value: "f" },
+        { id: "7", name: "Personal de limpieza", value: "g" },
+        { id: "8", name: "Personal de seguridad", value: "h" },
+        { id: "9", name: "Personal de vuelo", value: "i" },
+        { id: "10", name: "Dependientes. cajeros", value: "z" },
+    ]);
 });
 
 export const getTA = (data) => openPDF(`${API_URL}/comunica/pdf/get-ta`, data);
@@ -329,11 +329,27 @@ export const getIDC = (data) => openPDF(`${API_URL}/comunica/pdf/get-idc`, data)
 export const postAltaDirecta = (data) => post(`${API_URL}/comunica/alta-directa`, data); //ALTA DIRECTA
 export const postDeleteMov = (data) => post(`${API_URL}/comunica/delete-mov`, data);  //DELETE MOV
 
-export const getConvenios = () =>  new Promise((resolve) => {
+export const getConvenios = () => new Promise((resolve) => {
     resolve([
-        {id:"1", name:"- Sin convenio definido", value:"60888888888888"}, 
-    ] );
+        { id: "1", name: "- Sin convenio definido", value: "60888888888888" },
+    ]);
 });
 
+export const getEmployee = (data) => get(`${API_URL}/comunica/get-employee`, data);
 
-export const getEmployee = (data) =>  get(`${API_URL}/comunica/get-employee`, data);
+
+export const getTipoCtz = (data) => new Promise((resolve) => {
+    let json =
+        [
+            { id: 1, name: "Principal", value: 1 },
+            { id: 2, name: "Formación y aprendizaje", value: 2 },
+            { id: 3, name: "Aprendizaje", value: 3 },
+            { id: 4, name: "Asimilados R.General", value: 4 },
+            { id: 5, name: "Becarios", value: 5 },
+            { id: 6, name: "Emplead@s del hogar", value: 1 },
+            { id: 7, name: "Trabajadores cuenta ajena agrarios", value: 7 },
+            { id: 8, name: "Artistas", value: 8 },
+        ];
+
+    resolve(json.find(r => r.value == data));
+});

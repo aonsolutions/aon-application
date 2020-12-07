@@ -1,4 +1,4 @@
-import {AonElement} from './AonElement.js';
+import { AonElement } from './AonElement.js';
 
 import * as MSG from "../environments/msg.js";
 
@@ -13,8 +13,8 @@ export class AonDialog extends AonElement {
 	ACCEPT;
 
 	static get observedAttributes() {
-    return ['width'];
-  }
+		return ['width'];
+	}
 
 	get id() {
 		return this.getAttribute('id');
@@ -49,13 +49,13 @@ export class AonDialog extends AonElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if('width' === name) {
+		if ('width' === name) {
 			let main = this.getElement(this.MAIN);
-			if(main) main.style.width = newValue;
+			if (main) main.style.width = newValue;
 		}
-  }
+	}
 
-	constructor () {
+	constructor() {
 		super();
 		this.DIALOG = this.id + 'Dialog';
 		this.MAIN = this.DIALOG + 'Main';
@@ -66,7 +66,7 @@ export class AonDialog extends AonElement {
 		this.ACCEPT = this.ACTION + 'Accept';
 	}
 
-	connectedCallback () {
+	connectedCallback() {
 
 		this.innerHTML = `
 		<div id="${this.DIALOG}" class="aonDialog">
@@ -79,7 +79,7 @@ export class AonDialog extends AonElement {
 		</div>
 		`;
 		this.build();
-  }
+	}
 
 	clear() {
 		this.getElement(this.TITLE).innerHTML = '';
@@ -93,11 +93,14 @@ export class AonDialog extends AonElement {
 		let content = this.getElement(this.CONTENT);
 		content.style.marginBottom = '20px';
 
-		if(this.hasAttribute('width')) {
+		let divAction = this.getElement(this.ACTION);
+		divAction.style.textAlign = 'right';
+
+		if (this.hasAttribute('width')) {
 			main.style.width = this.getAttribute('width');
 		}
 
-		if(this.isTypeMenu()){
+		if (this.isTypeMenu()) {
 			dialog.style.backgroundColor = 'transparent';
 			dialog.style.paddingTop = '0px';
 
@@ -109,7 +112,7 @@ export class AonDialog extends AonElement {
 		dialog.onclick = (event) => {
 			if (event.target === dialog) {
 				this.close();
-  		}
+			}
 		}
 
 	}
@@ -118,7 +121,7 @@ export class AonDialog extends AonElement {
 		return this.hasAttribute('type') && 'menu' === this.getAttribute('type');
 	}
 
-	open(){
+	open() {
 		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog');
 		dialog.style.display = 'block';
 	}
@@ -148,7 +151,7 @@ export class AonDialog extends AonElement {
 
 		let content = document.getElementById(this.getAttribute('id') + 'DialogContent');
 		content.style.top = top || '90px';
-		content.style.left = left > (dialog.offsetWidth/2) ? left - 180 : left;
+		content.style.left = left > (dialog.offsetWidth / 2) ? left - 180 : left;
 		content.innerHTML = '';
 		let ul = document.createElement('ul');
 		content.appendChild(ul);

@@ -1,5 +1,7 @@
-import {AonElement} from '../../components/AonElement.js';
-import {startModule} from '../../services/gwtLoader.js';
+import { AonElement } from '../../components/AonElement.js';
+import { startModule } from '../../services/gwtLoader.js';
+import { getIDC, getTA, postDeleteMov } from '../../services/service.js';
+import { addDays } from '../../services/utils.js';
 import './aon-movements.js';
 import '../../components/aon-toast.js';
 import '../../components/aon-application.js';
@@ -8,23 +10,23 @@ export class AonComunica extends AonElement {
 	AON_COMUNICA;
 	MOVEMENTS;
 
-	constructor () {
+	constructor() {
 		super();
 		this.AON_COMUNICA = 'aonComunica';
 		this.MOVEMENTS = this.AON_COMUNICA + 'Movements';
 	}
 
-	connectedCallback () {
+	connectedCallback() {
 		this.innerHTML = `
 			<aon-toast id="${this.AON_COMUNICA}Toast"></aon-toast>
 			<aon-application id="${this.AON_COMUNICA}" title="COMUNIC@"></aon-application>
 		`;
-    this.build();
- 	}
+		this.aonComunica = this.getElement(this.AON_COMUNICA);
 
- 	build() {
-		let aonComunica = this.getElement(this.AON_COMUNICA);
+		this.build()
+	}
 
+	build() {
 		let options = [
 			{
 				name: 'Contratos',
@@ -33,24 +35,24 @@ export class AonComunica extends AonElement {
 					color: 'black'
 				},
 				fn: () => {
-					aonComunica.removeToolbarOptions();
-					startModule('aon_gwt_payroll', 'MainContrata', aonComunica.CONTENT);
+					this.aonComunica.removeToolbarOptions();
+					startModule('aon_gwt_payroll', 'MainContrata', this.aonComunica.CONTENT);
 				}
 			},
 			{
 				name: 'Partes IT',
 				icon: 'local_hospital',
 				fn: () => {
-					aonComunica.removeToolbarOptions();
-					startModule('aon_gwt_payroll', 'MainIT', aonComunica.CONTENT);
+					this.aonComunica.removeToolbarOptions();
+					startModule('aon_gwt_payroll', 'MainIT', this.aonComunica.CONTENT);
 				}
 			},
 			{
 				name: 'CCC',
 				icon: 'account_balance',
 				fn: () => {
-					aonComunica.removeToolbarOptions();
-					startModule('aon_gwt_payroll', 'MainCCC', aonComunica.CONTENT);
+					this.aonComunica.removeToolbarOptions();
+					startModule('aon_gwt_payroll', 'MainCCC', this.aonComunica.CONTENT);
 				}
 			},
 			{
@@ -60,24 +62,55 @@ export class AonComunica extends AonElement {
 					color: 'black'
 				},
 				fn: () => {
-					aonComunica.removeToolbarOptions();
-					startModule('aon_gwt_payroll', 'MainDigitalCertificates', aonComunica.CONTENT);
+					this.aonComunica.removeToolbarOptions();
+					startModule('aon_gwt_payroll', 'MainDigitalCertificates', this.aonComunica.CONTENT);
 				}
 			},
 			{
 				name: 'Movimientos',
 				icon: 'repeat',
-				fn: () => aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`)
+				fn: () => this.aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`)
 			}
 		];
-		aonComunica.addSidenavOptions('OPCIONES', options);
+		this.aonComunica.addSidenavOptions('OPCIONES', options);
 
 		//if(this.isMobile()){
-		 this.getElement(aonComunica.TOOLBAR).setAttribute('option', 'Movimientos');
-		   aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
+		this.getElement(this.aonComunica.TOOLBAR).setAttribute('option', 'Movimientos');
+		this.aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
 		//}
-		//aonComunica.setContentHTML(`<aon-alta-directa></aon-alta-directa>`);
+		//this.aonComunica.setContentHTML(`<aon-alta-directa></aon-alta-directa>`);
+	}
 
+	async deleteMov(data, el) {
+		if (confirm(`Estas seguro de anular el movimiento de ${data.name} ?`)) {
+			let toast = this.getElement(`divToast`);
+			this.aonComunica.startLoader();
+			try {
+				await postDeleteMov(data);
+				toast.start({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
+				if (el) el.remove(); //delete td
+			} catch (error) {
+				toast.start({ message: error, type: 'error' });
+			}
+			this.aonComunica.stopLoader();
+		}
+	}
+
+	getTa(data, el) {
+		const { regime, ctaCti, nss, fra } = data;
+		getTA({ regime, ctaCti, nss, fra }); // open pdf
+	}
+
+	getIdc(data, el) {
+		const { regime, ctaCti, nss, fra } = data;
+		getIDC({ regime, ctaCti, nss, fra }); // open pdf
+	}
+
+	anularCondition(situation, fra) {
+		const date_prev = addDays(new Date(), -2);
+		const sit = ["AL", "BJ", "BAJA", "ALTA"];
+		return (situation.indexOf(sit) > -1) && (date_prev.getTime() <= new Date(fra).getTime());
 	}
 }
 window.customElements.define('aon-comunica', AonComunica);
+// aonComunicaMovementsList

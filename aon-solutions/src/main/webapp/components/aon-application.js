@@ -1,4 +1,4 @@
-import {AonElement} from './AonElement.js';
+import { AonElement } from './AonElement.js';
 
 import './aon-toolbar.js';
 import './aon-loader.js';
@@ -14,50 +14,50 @@ export class AonApplication extends AonElement {
 
 	selected;
 
-  static get observedAttributes() {
-    return ['title'];
-  }
+	static get observedAttributes() {
+		return ['title'];
+	}
 
-  get id() {
-    return this.getAttribute('id');
-  }
+	get id() {
+		return this.getAttribute('id');
+	}
 
-  set id(id) {
-    this.setAttribute('id', id);
-  }
+	set id(id) {
+		this.setAttribute('id', id);
+	}
 
-  get title() {
-    return this.getAttribute('title');
-  }
+	get title() {
+		return this.getAttribute('title');
+	}
 
-  set title(title) {
-    this.setAttribute('title', title);
-  }
+	set title(title) {
+		this.setAttribute('title', title);
+	}
 
 	get main() {
-    return this.getAttribute('main');
-  }
+		return this.getAttribute('main');
+	}
 
-  set main(main) {
-    this.setAttribute('main', main);
-  }
+	set main(main) {
+		this.setAttribute('main', main);
+	}
 
 	get drag_and_drop() {
-    return this.getAttribute('drag_and_drop');
-  }
+		return this.getAttribute('drag_and_drop');
+	}
 
-  set drag_and_drop(drag_and_drop) {
-    this.setAttribute('drag_and_drop', drag_and_drop);
-  }
+	set drag_and_drop(drag_and_drop) {
+		this.setAttribute('drag_and_drop', drag_and_drop);
+	}
 
-  attributeChangedCallback(name, oldValue, newValue) {
-		if('title' === name) {
+	attributeChangedCallback(name, oldValue, newValue) {
+		if ('title' === name) {
 			let toolbar = this.getElement(this.TOOLBAR);
-			if(toolbar) toolbar.setAttribute('title', newValue);
+			if (toolbar) toolbar.setAttribute('title', newValue);
 		}
-  }
+	}
 
-	constructor () {
+	constructor() {
 		super();
 		this.SIDENAV = this.id + 'Sidenav';
 		this.TOOLBAR = this.id + 'Toolbar';
@@ -67,11 +67,11 @@ export class AonApplication extends AonElement {
 		this.DIALOG = this.id + 'Dialog';
 	}
 
-	connectedCallback () {
+	connectedCallback() {
 		this.build();
 	}
 
- 	build() {
+	build() {
 		this.innerHTML = `
 			<!-- AON APPLICATION TOOLBAR -->
 			<aon-toolbar id="${this.TOOLBAR}" title="${this.getTitle()}"></aon-toolbar>
@@ -89,17 +89,17 @@ export class AonApplication extends AonElement {
 			<aon-dialog id="${this.DIALOG}"> </aon-dialog>
 		`;
 
-    let toolbar = this.getElement(this.TOOLBAR);
-    toolbar.toogleSidenav(() => this.toogleSidenav());
+		let toolbar = this.getElement(this.TOOLBAR);
+		toolbar.toogleSidenav(() => this.toogleSidenav());
 
-    let sidenav = this.getElement(this.SIDENAV);
-    sidenav.style.width = this.isMobile() ? '0px' : '250px';
+		let sidenav = this.getElement(this.SIDENAV);
+		sidenav.style.width = this.isMobile() ? '0px' : '250px';
 
-    let content = this.getElement(this.CONTENT);
+		let content = this.getElement(this.CONTENT);
 		content.className = this.isMobile() ? 'aonMobileContent' : 'aonContent';
 		content.style.marginLeft = this.isMobile() ? '0px' : "250px";
 
-		if(this.hasAttribute('drag_and_drop')) {
+		if (this.hasAttribute('drag_and_drop')) {
 			content.addEventListener('dragover', (event) => {
 				event.preventDefault();
 				console.log('dragover');
@@ -124,7 +124,7 @@ export class AonApplication extends AonElement {
 			document.addEventListener('dragleave', (event) => {
 				event.preventDefault();
 				let isClickInside = content.contains(event.target);
-				if(!isClickInside){
+				if (!isClickInside) {
 					content.style.border = '0px';
 					content.style.opacity = '1';
 				}
@@ -139,7 +139,7 @@ export class AonApplication extends AonElement {
 			});
 		}
 
-		if(this.hasAttribute('main')) {
+		if (this.hasAttribute('main')) {
 			toolbar.style.display = 'none';
 			sidenav.style.top = '60px';
 			sidenav.style.height = 'calc(100vh - 61px)';
@@ -156,17 +156,17 @@ export class AonApplication extends AonElement {
 		this.getElement(this.LOADER).stop();
 	}
 
-  toogleSidenav() {
-    let sidenav = this.getElement(this.SIDENAV);
-    let content = this.getElement(this.CONTENT);
-    if(sidenav.style.width === "250px"){
+	toogleSidenav() {
+		let sidenav = this.getElement(this.SIDENAV);
+		let content = this.getElement(this.CONTENT);
+		if (sidenav.style.width === "250px") {
 			sidenav.style.width = "0px";
 			content.style.marginLeft = "0px";
 		} else {
 			sidenav.style.width = "250px";
 			content.style.marginLeft = this.isMobile() ? '0px' : '250px';
 		}
-  }
+	}
 
 	closeSidenav() {
 		let sidenav = this.getElement(this.SIDENAV);
@@ -183,7 +183,7 @@ export class AonApplication extends AonElement {
 		div.style.borderBottom = '1px solid #ebebeb';
 		sidenav.appendChild(div);
 
-		let sidenavTitle =  this.createElement('div');
+		let sidenavTitle = this.createElement('div');
 		sidenavTitle.className = 'aonSidenavTitle';
 		sidenavTitle.innerHTML = title;
 		div.appendChild(sidenavTitle);
@@ -202,7 +202,7 @@ export class AonApplication extends AonElement {
 		div.style.borderBottom = '1px solid #ebebeb';
 		sidenav.appendChild(div);
 
-		let sidenavTitle =  this.createElement('div');
+		let sidenavTitle = this.createElement('div');
 		sidenavTitle.className = 'aonSidenavTitle';
 		sidenavTitle.innerHTML = title;
 		div.appendChild(sidenavTitle);
@@ -222,7 +222,7 @@ export class AonApplication extends AonElement {
 		div.style.borderBottom = '1px solid #ebebeb';
 		sidenav.appendChild(div);
 
-		if(newButton) {
+		if (newButton) {
 			let addButton = this.createElement('div');
 			addButton.style.marginTop = '-15px';
 			addButton.style.right = '0px';
@@ -234,7 +234,7 @@ export class AonApplication extends AonElement {
 			this.getElement(div.id + 'NewButton').addEventListener('click', newButton);
 		}
 
-		let sidenavTitle =  this.createElement('div');
+		let sidenavTitle = this.createElement('div');
 		sidenavTitle.className = 'aonSidenavTitle';
 		sidenavTitle.innerHTML = data.name;
 		div.appendChild(sidenavTitle);
@@ -244,7 +244,7 @@ export class AonApplication extends AonElement {
 
 	addSidenavOptionsList(data, options) {
 		let div = this.getElement(this.SIDENAV + data.id);
-		let ul =  this.createElement('ul');
+		let ul = this.createElement('ul');
 		ul.id = div.id + 'List';
 		ul.className = 'aonClip';
 		div.appendChild(ul);
@@ -256,27 +256,27 @@ export class AonApplication extends AonElement {
 
 	addSidenavOptionsListValue(data, option) {
 		let ul = this.getElement(this.SIDENAV + data.id + 'List');
-		if(!option.hidden){
+		if (!option.hidden) {
 			let id = this.SIDENAV + option.name;
-			let li =  this.createElement('li');
+			let li = this.createElement('li');
 			li.id = id;
 			li.className = 'aonAppMenuSidenavList aonOpacity';
 			ul.appendChild(li);
 
-			let span =  this.createElement('span');
+			let span = this.createElement('span');
 			span.className = 'aonMenuItemSpan';
-			if(option.count && option.count > 0) {
+			if (option.count && option.count > 0) {
 				span.innerHTML = option.name + ' (' + option.count + ')';
 				span.style.fontWeight = 'bold';
 			} else span.innerHTML = option.name;
 
-			if(option.icon) {
-				let i =  this.createElement('i');
+			if (option.icon) {
+				let i = this.createElement('i');
 				i.className = 'material-icons aonVerticalMiddle';
 				i.innerHTML = option.icon;
 				li.appendChild(i);
-			} else if(option.aonIcon) {
-				li.innerHTML = `<aon-icon id="${id + 'AonIcon' }" icon="${option.aonIcon.icon}" size="18px"></aon-icon>`;
+			} else if (option.aonIcon) {
+				li.innerHTML = `<aon-icon id="${id + 'AonIcon'}" icon="${option.aonIcon.icon}" size="18px"></aon-icon>`;
 
 				li.addEventListener('mouseover', () => {
 					this.getElement(id + 'AonIcon').color = option.aonIcon.color;
@@ -285,8 +285,8 @@ export class AonApplication extends AonElement {
 				li.addEventListener('mouseleave', () => {
 					this.getElement(id + 'AonIcon').color = '#5f6368';
 				});
-			} else if(option.img) {
-				let img =  this.createElement('img');
+			} else if (option.img) {
+				let img = this.createElement('img');
 				img.style.width = '18px';
 				img.src = option.img;
 				li.appendChild(img);
@@ -296,16 +296,16 @@ export class AonApplication extends AonElement {
 			li.appendChild(span);
 
 			li.addEventListener('mouseover', () => {
-				if(!this.selected || this.selected !== id)
+				if (!this.selected || this.selected !== id)
 					li.style.backgroundColor = '#f1f1f1';
 			});
 
 			li.addEventListener('mouseleave', () => {
-				if(!this.selected || this.selected !== id)
+				if (!this.selected || this.selected !== id)
 					li.style.backgroundColor = 'white';
 			});
 
-			if(option.actions) {
+			if (option.actions) {
 				let actionDiv = this.createElement('span');
 				actionDiv.style.display = 'none';
 				li.appendChild(actionDiv);
@@ -338,17 +338,17 @@ export class AonApplication extends AonElement {
 
 			li.addEventListener('click', () => {
 				document.querySelectorAll(`[id^='${this.SIDENAV}']`).forEach((el, i) => {
-					if(el.id !== this.SIDENAV)
+					if (el.id !== this.SIDENAV)
 						el.style.backgroundColor = 'transparent';
 				});
 				this.selected = id;
 				li.style.backgroundColor = '#ddd';
-				if(!this.isMobile()){
+				if (!this.isMobile()) {
 					let toolbar = this.getElement(this.TOOLBAR);
 					toolbar.setAttribute('option', option.name);
 				}
 				option.fn();
-				if(this.isMobile()) {
+				if (this.isMobile()) {
 					this.closeSidenav();
 				}
 			});
@@ -356,7 +356,7 @@ export class AonApplication extends AonElement {
 	}
 
 	addSidenavOptions(title, options, newButton) {
-		if(options && options.length > 0) {
+		if (options && options.length > 0) {
 			this.addSidenavOptionsTitle({
 				id: title,
 				name: title
@@ -366,32 +366,32 @@ export class AonApplication extends AonElement {
 				name: title
 			}, options);
 		}
-  }
+	}
 
 	addSidenavOptions2(data, options, newButton) {
 		this.addSidenavOptionsTitle(data, newButton);
 		this.addSidenavOptionsList(data, options);
 	}
 
-  addOption(name, icon, fn) {
-    this.addToolbarOption(name, icon, fn);
-  }
+	addOption(name, icon, fn) {
+		this.addToolbarOption(name, icon, fn);
+	}
 
-  addToolbarOption(name, icon, fn) {
+	addToolbarOption(name, icon, fn) {
 		this.getElement(this.TOOLBAR).addButton(name, icon, fn);
-  }
+	}
 
 	addSearchOption() {
 		let toolbar = this.getElement(this.TOOLBAR);
 		toolbar.addSearchButton();
 		toolbar.addEventListener('search', (event) => {
-			this.dispatchEvent(new CustomEvent('search', {detail: event.detail}));
+			this.dispatchEvent(new CustomEvent('search', { detail: event.detail }));
 		});
 	}
 
 	addToolbarOption2(option, fn) {
 		this.getElement(this.TOOLBAR).addButton2(option, fn);
-  }
+	}
 
 	removeToolbarOption(name) {
 		this.getElement(this.TOOLBAR).removeButton(name);
@@ -401,10 +401,10 @@ export class AonApplication extends AonElement {
 		this.getElement(this.TOOLBAR).removeButtons();
 	}
 
-  setContent(element){
+	setContent(element) {
 		this.clearElement(this.CONTENT);
 		this.getElement(this.CONTENT).appendChild(element);
-  }
+	}
 
 	addFloatOption(action, fn) {
 		let span = this.getElement(this.id + 'FloatSpan') || this.createElement('span');
@@ -418,19 +418,23 @@ export class AonApplication extends AonElement {
 	}
 	removeFloatOption() {
 		let el = this.getElement(this.id + 'FloatSpan');
-		if(el) el.remove();
+		if (el) el.remove();
 	}
 
-  setContentHTML(html){
+	setContentHTML(html) {
 		this.getElement(this.CONTENT).innerHTML = html;
-  }
+	}
 
-  getId() {
-    return this.getAttribute('id');
-  }
+	getId() {
+		return this.getAttribute('id');
+	}
 
-  getTitle() {
-    return this.getAttribute('title');
-  }
+	getTitle() {
+		return this.getAttribute('title');
+	}
+
+	getParent() {
+		return this.parentNode;
+	}
 }
 window.customElements.define('aon-application', AonApplication);
