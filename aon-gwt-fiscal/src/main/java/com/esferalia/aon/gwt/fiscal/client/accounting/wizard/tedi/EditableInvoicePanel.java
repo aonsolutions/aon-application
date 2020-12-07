@@ -101,32 +101,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	protected static final String INNER_BACKGROUND_COLOR = "inherit";
 	protected static final String LABEL_BACKGROUND_COLOR = "#DDD";
 	
-	protected static final String SERVICE_BACKGROUND_COLOR = "#DDD";
-	protected static final String SERVICE_FOREGROUND_COLOR = "Black";
+	protected static final String TAG_ITEM_BACKGROUND_COLOR = "#DDD";
+	protected static final String TAG_ITEM_FOREGROUND_COLOR = "Black";
 	
-	protected static final String WITHHOLDING_BACKGROUND_COLOR = "#DDD";
-	protected static final String WITHHOLDING_FOREGROUND_COLOR = "white";
-	
-	protected static final String RECTIFIER_BACKGROUND_COLOR = "#DDD";
-	protected static final String RECTIFIER_FOREGROUND_COLOR = "Black";
-
-	protected static final String SURCHARGE_BACKGROUND_COLOR = "#DDD";
-	protected static final String SURCHARGE_FOREGROUND_COLOR = "Black";
-
-	protected static final String INVESTMENT_BACKGROUND_COLOR = "#DDD";
-	protected static final String INVESTMENT_FOREGROUND_COLOR = "Black";
-
-	protected static final String VAT_ACCRUAL_PAYMENT_BACKGROUND_COLOR = "#DDD";
-	protected static final String VAT_ACCRUAL_PAYMENT_FOREGROUND_COLOR = "Black";
-
-	protected static final String WITHHOLDING_FARMER_BACKGROUND_COLOR = "#DDD";
-	protected static final String WITHHOLDING_FARMER_FOREGROUND_COLOR = "Black";
-	
-	protected static final String PREPAYMENT_BACKGROUND_COLOR = "#DDD";
-	protected static final String PREPAYMENT_FOREGROUND_COLOR = "Black";
-	
-	protected static final String DUA_BACKGROUND_COLOR = "#DDD";
-	protected static final String DUA_FOREGROUND_COLOR = "Black";
+	protected static final String DUA_BACKGROUND_COLOR = "HoneyDew";
 	
 	private static FinanceServiceAsync FINANCE_SERVICE;
 	private static AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
@@ -797,72 +775,72 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			if (rt != null && rt != RectificationType.NONE) {
 				InlineLabel l3 = new InlineLabel(rt.getDescription());
 				l3.setStyleName(AON.CSS.aonTagItem());
-				l3.getElement().getStyle().setColor(RECTIFIER_FOREGROUND_COLOR);
-				l3.getElement().getStyle().setBackgroundColor(RECTIFIER_BACKGROUND_COLOR);
+				l3.getElement().getStyle().setColor(TAG_ITEM_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(TAG_ITEM_BACKGROUND_COLOR);
 				checksLabel.add(l3);
 			}
 			
 			if (ai.isService()) {
 				InlineLabel l3 = new InlineLabel("Servicio");
 				l3.setStyleName(AON.CSS.aonTagItem());
-				l3.getElement().getStyle().setColor(SERVICE_FOREGROUND_COLOR);
-				l3.getElement().getStyle().setBackgroundColor(SERVICE_BACKGROUND_COLOR);
+				l3.getElement().getStyle().setColor(TAG_ITEM_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(TAG_ITEM_BACKGROUND_COLOR);
 				checksLabel.add(l3);
 			}
 	
 			if (ai.isInvestment()) {
 				InlineLabel l3 = new InlineLabel("Inversi\u00F3n");
 				l3.setStyleName(AON.CSS.aonTagItem());
-				l3.getElement().getStyle().setColor(INVESTMENT_FOREGROUND_COLOR);
-				l3.getElement().getStyle().setBackgroundColor(INVESTMENT_BACKGROUND_COLOR);
+				l3.getElement().getStyle().setColor(TAG_ITEM_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(TAG_ITEM_BACKGROUND_COLOR);
 				checksLabel.add(l3);
 			}
 			
 			if (ai.isWithholding()) {
 				InlineLabel l3 = new InlineLabel("IRPF");
 				l3.setStyleName(AON.CSS.aonTagItem());
-				l3.getElement().getStyle().setColor(WITHHOLDING_FOREGROUND_COLOR);
-				l3.getElement().getStyle().setBackgroundColor(WITHHOLDING_BACKGROUND_COLOR);
+				l3.getElement().getStyle().setColor(TAG_ITEM_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(TAG_ITEM_BACKGROUND_COLOR);
 				checksLabel.add(l3);
 			}
 			
 			if (ai.isSurcharge()) {
 				InlineLabel l3 = new InlineLabel("R.E.");
 				l3.setStyleName(AON.CSS.aonTagItem());
-				l3.getElement().getStyle().setColor(SURCHARGE_FOREGROUND_COLOR);
-				l3.getElement().getStyle().setBackgroundColor(SURCHARGE_BACKGROUND_COLOR);
+				l3.getElement().getStyle().setColor(TAG_ITEM_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(TAG_ITEM_BACKGROUND_COLOR);
 				checksLabel.add(l3);
 			}
 	
 			if (ai.isWithholdingFarmer()) {
 				InlineLabel l3 = new InlineLabel("Reg. Agr.");
 				l3.setStyleName(AON.CSS.aonTagItem());
-				l3.getElement().getStyle().setColor(WITHHOLDING_FARMER_FOREGROUND_COLOR);
-				l3.getElement().getStyle().setBackgroundColor(WITHHOLDING_FARMER_BACKGROUND_COLOR);
+				l3.getElement().getStyle().setColor(TAG_ITEM_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(TAG_ITEM_BACKGROUND_COLOR);
 				checksLabel.add(l3);
 			}
 	
 			if (ai.isVatAccrualPayment()) {
 				InlineLabel l3 = new InlineLabel("Crit.Caja");
 				l3.setStyleName(AON.CSS.aonTagItem());
-				l3.getElement().getStyle().setColor(VAT_ACCRUAL_PAYMENT_FOREGROUND_COLOR);
-				l3.getElement().getStyle().setBackgroundColor(VAT_ACCRUAL_PAYMENT_BACKGROUND_COLOR);
+				l3.getElement().getStyle().setColor(TAG_ITEM_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(TAG_ITEM_BACKGROUND_COLOR);
 				checksLabel.add(l3);
 			}
 	
 			if (ai.isDuaLinked()) {
 				InlineLabel l3 = new InlineLabel("DUA");
 				l3.setStyleName(AON.CSS.aonTagItem());
-				l3.getElement().getStyle().setColor(DUA_FOREGROUND_COLOR);
-				l3.getElement().getStyle().setBackgroundColor(DUA_BACKGROUND_COLOR);
+				l3.getElement().getStyle().setColor(TAG_ITEM_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(TAG_ITEM_BACKGROUND_COLOR);
 				checksLabel.add(l3);
 			}
 			
 			if (ai.hasPrepayments()) {
 				InlineLabel l3 = new InlineLabel("Suplidos");
 				l3.setStyleName(AON.CSS.aonTagItem());
-				l3.getElement().getStyle().setColor(PREPAYMENT_FOREGROUND_COLOR);
-				l3.getElement().getStyle().setBackgroundColor(PREPAYMENT_BACKGROUND_COLOR);
+				l3.getElement().getStyle().setColor(TAG_ITEM_FOREGROUND_COLOR);
+				l3.getElement().getStyle().setBackgroundColor(TAG_ITEM_BACKGROUND_COLOR);
 				checksLabel.add(l3);
 			}
 			
@@ -1174,6 +1152,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		transactionBox.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(transactionBox);
 		
+		checksLabel.setStyleName(AON.CSS.aonFlexBlockInline());
 		headerPanel2.add(checksLabel);
 
 		// *************************************************************************
@@ -1185,7 +1164,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 
 		FlowPanel headerPanel3 = new FlowPanel();
 		headerPanel3.setStyleName(AON.CSS.aonDisplayTableCell());
-		headerPanel3.getElement().getStyle().setPaddingLeft(50, Unit.PX); 
+		headerPanel3.getElement().getStyle().setPaddingLeft(30, Unit.PX); 
 		invoiceDataInnerTableRowDiv3.add(headerPanel3);
 		
 		checksTable.setVisible( checkTableVisible );
@@ -1195,6 +1174,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
  
 		FlowPanel checksTableRow0 = new FlowPanel();
 		checksTableRow0.setStyleName(AON.CSS.aonDisplayTableRow());
+		checksTableRow0.addStyleName(AON.CSS.aonNowrap());
 		checksTable.add(checksTableRow0);
 		
 		// ---------------------------
@@ -1284,6 +1264,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		FlowPanel checksTableRow1 = new FlowPanel();
 		checksTableRow1.setStyleName(AON.CSS.aonDisplayTableRow());
+		checksTableRow1.addStyleName(AON.CSS.aonNowrap());
 		checksTable.add(checksTableRow1);
 		
 		// -------------------------------------------
@@ -1337,6 +1318,34 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		rectifier.getElement().getStyle().setWidth(120, Unit.PX); 
 		checksTableRow1.add(rectifier);
 
+		// -------------------------------------
+		// --------- CONTIENE SUPLIDOS ---------
+		// -------------------------------------
+		prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
+		prepayment.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if ( !invoiceCallback.getInvoice().isDuaLinked() ) {
+					invoiceCallback.getInvoice().setPrepayments(!invoiceCallback.getInvoice().hasPrepayments());
+					prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
+					decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
+					if (!invoiceCallback.getInvoice().hasPrepayments()) {
+						vatPanel.prepaymentChanged( invoiceCallback.getInvoice().hasPrepayments() );
+						for (InvoiceVAT vat : invoiceCallback.getInvoice().getVats()) {
+							vat.setPrepayment( false );
+						}
+						InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+					}
+					headerDataChanged(invoiceCallback);
+				} else {
+					AonMessageDialog.error("No se puede modificar si la factura est\u00E1 vinculada a un DUA");
+				}
+			}
+		});
+		prepayment.getElement().getStyle().setWidth(120, Unit.PX); 
+		checksTableRow1.add(prepayment);
+		
 		// ------------------------
 		// --------- DUA ----------
 		// ------------------------
@@ -1368,35 +1377,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		});
 		duaLinked.getElement().getStyle().setWidth(120, Unit.PX); 
 		checksTableRow1.add(duaLinked);
-
-		// -------------------------------------
-		// --------- CONTIENE SUPLIDOS ---------
-		// -------------------------------------
-		prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
-		prepayment.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if ( !invoiceCallback.getInvoice().isDuaLinked() ) {
-					invoiceCallback.getInvoice().setPrepayments(!invoiceCallback.getInvoice().hasPrepayments());
-					prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
-					decorateInvoiceTypeLabel( invoiceCallback.getInvoice());
-					if (!invoiceCallback.getInvoice().hasPrepayments()) {
-						vatPanel.prepaymentChanged( invoiceCallback.getInvoice().hasPrepayments() );
-						for (InvoiceVAT vat : invoiceCallback.getInvoice().getVats()) {
-							vat.setPrepayment( false );
-						}
-						InvoiceCalculator.calculate(invoiceCallback.getInvoice());
-					}
-					headerDataChanged(invoiceCallback);
-				} else {
-					AonMessageDialog.error("No se puede modificar si la factura est\u00E1 vinculada a un DUA");
-				}
-			}
-		});
-		prepayment.getElement().getStyle().setWidth(120, Unit.PX); 
-		checksTableRow1.add(prepayment);
-		
 
 		// *************************************************************************
 		// ***************** PANEL ( Número Factura, total factura ) ******
