@@ -735,7 +735,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	, Pattern.CASE_INSENSITIVE);
 	//CONCEPTO BASE TIPO APORTACIÓN EMPRESARIAL
 	private static final Pattern APPORT_HEADER_BOTTOM =
-	Pattern.compile("\\s*CONCEPTO\\s*BASE\\s*TIPO\s*APORTACIÓN\\s*EMPRESARIAL\\s*"
+	Pattern.compile("\\s*CONCEPTO\\s*BASE\\s*TIPO\\s*APORTACIÓN\\s*EMPRESARIAL\\s*"
 	, Pattern.CASE_INSENSITIVE);
 	//1. Contingencias comunes.................................................... .. .. ..    1.260,31          23,60           297,43          
 	//AT y EP................................. .. .. ..    1.260,31           1,50            18,90           
@@ -766,7 +766,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	, Pattern.CASE_INSENSITIVE);
 	
 	private static final Pattern APPORT_FOGASA =
-	Pattern.compile("\s*Fondo\\s*Garantía\\s*Salarial[\\s\\.]*(?<base>\\d[\\d\\.,]+)?\\s*(?<type>\\d[\\d\\.,]+)?\\s*(?<apport>\\d[\\d\\.,]+)?\\s*"
+	Pattern.compile("\\s*Fondo\\s*Garantía\\s*Salarial[\\s\\.]*(?<base>\\d[\\d\\.,]+)?\\s*(?<type>\\d[\\d\\.,]+)?\\s*(?<apport>\\d[\\d\\.,]+)?\\s*"
 	, Pattern.CASE_INSENSITIVE);
 	
 	private static final Pattern APPORT_EXTRA_H =
