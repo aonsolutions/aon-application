@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.net.IDN;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +32,8 @@ import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -56,6 +59,7 @@ import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class DomainSwitcher extends AbstractDomainSwitcher implements
@@ -525,6 +529,16 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return null;
 	}
 
+	public String getSchema() {
+		try {
+			AuthPrincipal principal = AonUtil.getAuthPrincipal();
+			return principal!=null?principal.getDatabaseName():null;
+		} catch  (Throwable e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public boolean isShowInactive() {
 		return showInactive;
 	}
@@ -558,5 +572,19 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	public void setPage(int page) {
 		this.page = page;
 	}
+	
+	public String getToken() {
+		Algorithm algorithm = Algorithm.HMAC256("aonsecret");
+		String token =   JWT.create()
+				.withIssuer("auth0")
+				.withIssuedAt(new Date())
+				//.withExpiresAt(AonDateUtils.addDays(new Date(), 1))
+				.withSubject(String.format("{'schema':'%s', 'schema_first_domain':'%s', 'uuid':'%s'}", getSchema(), getDomainNameURL(), getCurrentUser()))
+				.sign(algorithm);
+		System.out.println(token);
+		return token;
+	}
+	
+
 	
 }
