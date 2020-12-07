@@ -45,6 +45,7 @@ public class PdfTest {
 	
 	
 	@Test
+	@Ignore
 	public void testA3() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("a3.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
