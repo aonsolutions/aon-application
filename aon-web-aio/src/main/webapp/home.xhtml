@@ -13,7 +13,12 @@
 		<ui:include src="/facelet/portal/header.xhtml" />
 	  </aon:if>
 	  <aon:if test="#{!desktop.portalActive}">
-		<ui:include src="/facelet/homepage/header.xhtml" />
+	  	<aon:if test="#{!userUtils.newAONTheme}">				
+			<ui:include src="/facelet/homepage/header.xhtml" />
+		</aon:if>
+	  	<aon:if test="#{userUtils.newAONTheme}">				
+			<ui:include src="/facelet/new/header.xhtml" />
+		</aon:if>
 	  </aon:if>
 	</ui:define>
 	

@@ -1,0 +1,92 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<style>
+	.aon-header-logout {
+		padding: 14px 20px;
+		border-radius: 50%;
+		background: transparent url(css/images/aon-icon/aon-icon-logout.png) no-repeat scroll center center;
+	}
+	.aon-header-domain {
+		padding: 14px 20px;
+		border-radius: 50%;
+		background: transparent url(css/images/aon-icon/aon-icon-domain.png) no-repeat scroll center center;
+	}
+	</style>
+		
+	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 1px solid #ddd;" >
+		<aon:panelGrid columns="3" width="100%" 
+			columnClasses="aon-header-name aon-vertical-align-middle,aon-header-options aon-width-300" style="height:60px;" >
+			
+			<aon:panelGroup>
+
+				<aon:outputConnectionStatus id="aonStatus" layout="block"
+					style=""
+					startStyle="#{customize.statusStartStyle}; margin-top: 5px;"
+					startStyleClass="aon-outputConnectionStatus-start"
+					stopStyle="#{customize.statusStopStyle}; margin-top: 5px;"
+					stopStyleClass="aon-outputConnectionStatus-stop"
+					onstart="resetStatusError();" />
+				<aon:div id="status_error"
+					style="#{customize.statusFailedStyle} display: none; margin-top: 5px;"
+					styleClass="aon-outputConnectionStatus-failed" />
+
+				<aon:div style="margin-bottom:2px;">
+					<aon:commandLink id="index" action="index" title="#{bundle.aon_home}" >
+					<aon:graphicImage style="margin-left: 150px; height: 30px; vertical-align: middle;"
+						value="#{customize.headerLogo}" />
+					</aon:commandLink>
+					<aon:if test="#{customize.separator != null}">					
+						<aon:outputText value="#{customize.separator}"
+							style="#{customize.fontStyle}"
+							styleClass="aon-nowrap aon-header-domain-title"/>
+					</aon:if>
+
+				</aon:div>
+			</aon:panelGroup>
+			
+			<aon:div styleClass="aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
+				style="color:#999;">
+				<aon:form id="headerOptionsForm">
+					<aon:panelGroup style="display:inline;">
+						<aon:outputText value="#{domainSwitcher.domainName}"
+							style="vertical-align: middle; color: #5f6368;"
+							styleClass="aon-nowrap aon-header-domain-title aon-margin-right"/>
+						<aon:if test="#{(!domainSwitcher.childDomain) and (!domainSwitcher.adminDomain) and (domainSwitcher.domainCount > 0)}">
+							<aon:panelGroup >
+			 					<h:outputLink id="DomainSwitch" 
+									title="#{bundle.aon_module_enterprise}"
+									styleClass="aon-header-domain"
+									style="#{customize.fontStyle}" >
+								</h:outputLink>
+							</aon:panelGroup>
+						</aon:if>
+						<aon:if test="#{domainSwitcher.enabledGoToParent}">
+			 				<h:commandLink id="DomainSwitch" 
+								title="#{bundle.aon_module_enterprise}"
+								styleClass="aon-header-domain"
+								style="#{customize.fontStyle}"
+								actionListener="#{domainSwitcher.onUpperDomain}"					
+								action="start" />
+						</aon:if>
+						<aon:commandLink id="logout"
+							style="#{customize.fontStyle}" styleClass="aon-header-logout"
+							title="#{bundle.aon_login_user_logout}"
+							action="logout"
+							actionListener="#{aonConfiguration.logout}" >
+						</aon:commandLink>
+					</aon:panelGroup> 
+				</aon:form>
+			</aon:div>
+		</aon:panelGrid>
+	</aon:div>
+	<aon:if test="#{desktop.logEnabled}">
+		<a4j:log hotkey="Z" level="ALL" popup="true" />
+	</aon:if>
+
+</ui:composition>

@@ -51,6 +51,11 @@ public class UserUtils implements Serializable {
 		this.userScopeIds = Collections.emptyList();
 	}
 
+
+	public boolean isNewAONTheme() {
+		return getLoggedUser().getToolbar() == Toolbar.AON_SOLUTIONS;
+	}
+
 	public boolean isPasswordExpired() {
 		if (passwordExpired == null) {
 			passwordExpired = Boolean.FALSE;
