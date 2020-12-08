@@ -27,8 +27,8 @@
 	<script type="text/javascript">
         //<![CDATA[
         
- 		delete Array.prototype.toJSON;
-        
+      	delete Array.prototype.toJSON;
+         
         function getCurrentUser() {
         	return '#{domainSwitcher.currentUser}';
         }
@@ -37,8 +37,8 @@
         	return '#{domainSwitcher.currentDomainNameURL}';
         }
         
-        function loadInvoicePanel(el) {
-			el.innerHTML='<aon-invoice-panel></aon-invoice-panel>';
+        function loadDocumentalPanel(el) {
+			el.innerHTML='<aon-documental></aon-documental>';
        	} 
        	
        	function loadStylesSheet( stylesheet ) {
@@ -65,18 +65,15 @@
        	
 		localStorage.setItem('aon_domain_id', #{domainSwitcher.domainId});
 		localStorage.setItem('aon_domain_name', '#{domainSwitcher.currentDomainNameURL}');
-		localStorage.setItem('aon_session_id', '#{domainSwitcher.token}');
        	
 
         //]]>
     </script>
     
     
+	<script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
 
-	<script type="module" src="modules/invoice/aon-invoice-panel.js"></script>
-
-	<!--script type="text/javascript"
-		src="aon_gwt_payroll/aon_gwt_payroll.nocache.js?entryPoint=#{entryPoint}&amp;horribleFix=#{employeeTree.nextInt}" /-->
+	<script type="module" src="modules/documental/aon-documental.js"></script>
 
 	<div id="rootPanel"
 		style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;" >
@@ -88,7 +85,7 @@
 
 	<script type="text/javascript">
 		//<![CDATA[ 
-		loadInvoicePanel(document.getElementById('rootPanel'));
+		loadDocumentalPanel(document.getElementById('rootPanel'));
 		//]]>
 	</script>
 	

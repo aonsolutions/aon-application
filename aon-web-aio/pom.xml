@@ -82,6 +82,15 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.webservice</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    
+        
     <!-- INTERNAL LIBRARIES -->
     <dependency>
       <groupId>com.code.aon</groupId>

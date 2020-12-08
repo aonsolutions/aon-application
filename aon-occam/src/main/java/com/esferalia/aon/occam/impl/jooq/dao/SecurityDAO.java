@@ -154,7 +154,7 @@ public class SecurityDAO {
 	}
 
 	public static byte[] unHexUuid(AONContext ctx, String uuid) {
-		return ctx.getDslContext().select(DSLExtensions.unhex(uuid)).stream().map(r -> r.value1()).findFirst().get();
+		return ctx.getDslContext().select(DSLExtensions.unhex(uuid)).stream().map(r -> r.value1()).findFirst().orElse(new byte[]{});
 	}
 	
 	public static Auth insertAuth(AONContext ctx, Auth auth) {

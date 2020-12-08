@@ -9,6 +9,8 @@ import './aon-document.js';
 import './aon-mobile-documental-list.js';
 import './aon-mobile-document.js';
 
+import '../../components/aon-application.js';
+
 
 import * as MSG from "../../environments/msg.js";
 

@@ -2,7 +2,9 @@ import {AonElement} from '../../components/AonElement.js';
 import {ToolbarType} from '../../models/enums.js';
 import {DocumentalAction} from './DocumentalEnums.js';
 import {deleteFile, getCategories, getScopes, getTags, updateFile} from '../../services/service.js';
+import '../../components/aon-date.js';
 import '../../components/aon-viewer.js';
+import '../../components/aon-card.js';
 
 import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";

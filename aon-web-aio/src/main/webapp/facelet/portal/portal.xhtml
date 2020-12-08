@@ -50,6 +50,11 @@
 								title="Comunic@"
 								styleClass="aon-menu-icon aon-icon-comunica"
 								value="Comunic@" />
+							<aon:div styleClass="aon-padding-top" />						
+							<aon:commandLink id="left-documental" action="portal_documental"
+								title="Documental"
+								styleClass="aon-menu-icon aon-icon-documental"
+								value="Documental" />
 
 							</aon:div>							
 						</aon:div>
@@ -87,6 +92,12 @@
 								<!--aon:div styleClass="text">Caption Two</aon:div-->
 							</aon:div>
 						<!--/aon:if-->
+
+						<!--aon:if test="#{desktop.state.fiscalEnabled and !desktop.state.fiscalInfoVisibleForPortal}">
+							<aon:div styleClass="mySlides fade">
+								<ui:include	src="/facelet/portal/portlet/fiscalPortalDashboardPortletY.xhtml" />
+							</aon:div>
+						</aon:if-->
 						
 						<!--
 						<aon:div styleClass="mySlides fade">
@@ -168,6 +179,21 @@
 									title="Comunic@"
 									url="#{aonResource.resolve['/images/aon-right-arrow.png']}" />		
 						
+									<!-- Documental	-->							
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Documental"
+									url="#{aonResource.resolve['/images/aon-doc.png']}" />								
+								
+									<aon:commandLink id="center-document" action="portal_documental"
+										title="Documental"
+										style="padding-bottom: 1px;padding-top: 1px; display: inline-block;"
+										styleClass="aon-portlet-title-text aon-bold aon-width-all"
+										value="Documental" />
+
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Documental"
+									url="#{aonResource.resolve['/images/aon-right-arrow.png']}" />	
+
 								</aon:panelGrid>
 							</aon:div>							
 							<aon:div styleClass="aon-portlet-title">								
@@ -195,11 +221,10 @@
 									styleClass="aon-portlet-title-text aon-bold"/>
 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
-									title="Convenios"
-									url="" />								
+									url="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />								
 
 
-									<!-- Documental -->									
+									<!-- Documental									
 									<h:graphicImage styleClass="aon-vertical-align-middle"
 									title="Documental"
 									url="#{aonResource.resolve['/images/aon-disabled.png']}" />								
@@ -213,9 +238,9 @@
 									styleClass="aon-portlet-title-text aon-bold"/>
 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
-									title="Convenios"
-									url="" />								
-									
+									url="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />								
+									-->
+
 									<!-- Comunic@ 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
 									title=" Comunic@"
@@ -230,10 +255,9 @@
 									styleClass="aon-portlet-title-text aon-bold"/>
 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
-									title="Convenios"
-									url="" />								
+									url="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />								
 									-->
-
+									
 									<!-- Convenios -->
 									<h:graphicImage styleClass="aon-vertical-align-middle"
 									title="Convenios"
@@ -248,8 +272,7 @@
 									styleClass="aon-portlet-title-text aon-bold"/>
 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
-									title="Convenios"
-									url="" />								
+									url="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />								
 								</aon:panelGrid>
 							</aon:div>							
 						</aon:div>

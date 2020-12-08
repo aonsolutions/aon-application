@@ -187,6 +187,10 @@
 			<from-outcome>portal_comunica</from-outcome>
 			<to-view-id>/facelet/portal/comunica.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>portal_documental</from-outcome>
+			<to-view-id>/facelet/portal/documental.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 
    	<!-- ************************************************** -->

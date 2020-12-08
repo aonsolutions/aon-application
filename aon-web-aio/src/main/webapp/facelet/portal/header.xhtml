@@ -5,15 +5,18 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-
+	
 	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 1px solid #ddd;" >
+		<aon:form id="headerOptionsForm">
 		<aon:panelGrid columns="3" width="100%" 
 			columnClasses="aon-header-name aon-vertical-align-middle,aon-header-options aon-width-300" style="height:60px;" >
 			
 			<aon:panelGroup>
 				<aon:div style="margin-bottom:2px;">
+					<aon:commandLink id="index" action="index" title="#{bundle.aon_home}" >
 					<aon:graphicImage style="height: 30px; vertical-align: middle;"
 						value="#{customize.headerLogo}" />
+					</aon:commandLink>
 					<aon:if test="#{customize.separator != null}">					
 						<aon:outputText value="#{customize.separator}"
 							style="#{customize.fontStyle}"
@@ -25,7 +28,6 @@
 			
 			<aon:div styleClass="aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
 				style="color:#999;">
-				<aon:form id="headerOptionsForm">
 					<aon:if test="#{(!domainSwitcher.childDomain) and (!domainSwitcher.adminDomain) and (domainSwitcher.domainCount > 0)}">
 						<aon:panelGroup styleClass="aon-margin-right">
 			 				<h:outputLink id="DomainSwitch" 
@@ -71,10 +73,9 @@
 							actionListener="#{aonConfiguration.logout}" >
 						</aon:commandLink>
 					</aon:panelGroup> 
-				</aon:form>
 			</aon:div>
 		</aon:panelGrid>
-
+		</aon:form>
 	</aon:div>
 	<aon:if test="#{desktop.logEnabled}">
 		<a4j:log hotkey="Z" level="ALL" popup="true" />

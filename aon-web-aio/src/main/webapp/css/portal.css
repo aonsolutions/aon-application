@@ -35,10 +35,15 @@ html, body {
 }
 
 .aon-icon-invoice,
-.aon-icon-comunica{
+.aon-icon-comunica,
+.aon-icon-documental
+{
 	background: transparent url(images/aon-icon/aon-icon-app.png) scroll left center no-repeat;
 }
 
+.aon-icon-documental:hover{
+	background: transparent url(images/aon-icon/aon-icon-comunica.png) scroll left center no-repeat;
+}
 .aon-icon-comunica:hover{
 	background: transparent url(images/aon-icon/aon-icon-comunica.png) scroll left center no-repeat;
 }
