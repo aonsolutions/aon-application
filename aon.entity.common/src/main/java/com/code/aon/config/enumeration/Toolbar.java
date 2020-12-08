@@ -40,7 +40,14 @@ public enum Toolbar implements IResourceable {
 	/**
      * ACENS 
      */
-	ACENS;   
+	ACENS,
+
+	/**
+     * AON SOLUTIONS
+     */
+	AON_SOLUTIONS
+
+	;   
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_toolbar_";
