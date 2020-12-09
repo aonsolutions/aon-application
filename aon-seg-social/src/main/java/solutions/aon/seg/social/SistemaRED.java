@@ -213,6 +213,58 @@ public class SistemaRED {
 		SistemaREDMov.cambioCatProf(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, cat, fecha);
 	}
 	
+	public static boolean recordCertificate(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String contributionAccount,final String docType, final String docNum,
+			final String applicantType, final String reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP, final int days) throws SegSocialException{
+		return Paternity.grabarCertificado(certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
+	}
+	
+	public static boolean recordCertificate(final byte[] certificateData,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String contributionAccount,final String docType, final String docNum,
+			final String applicantType, final String reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP, final int days) throws SegSocialException{	
+		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {		
+			return Paternity.grabarCertificado(certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
+	public static void voidPaternity(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate) throws SegSocialException{
+		Paternity.voidPaternity(certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, dateFrom, dateTo, startDate);
+	}
+	
+	public static void voidPaternity(final byte[] certificateData,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate) throws SegSocialException{
+		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {		
+			Paternity.voidPaternity(certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, dateFrom, dateTo, startDate);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
+	public static byte[] getCertificatePdf(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate) throws SegSocialException{
+		return Paternity.getCertificatePdf(certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, dateFrom, dateTo, startDate);
+	}
+	
+	public static byte[] getCertificatePdf(final byte[] certificateData,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate) throws SegSocialException{
+		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {		
+			return Paternity.getCertificatePdf(certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, dateFrom, dateTo, startDate);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+		
+	}
+	
+	
 	public static void main(String[] args)
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 

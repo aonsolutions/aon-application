@@ -69,7 +69,6 @@ public class SistemaRED_ITParts {
 		return its;
 	}
 	
-
 	//HANDLE GETFULLITPARTS EXCEPTIONS
 	public static Collection<ITPart> getFullItParts(final InputStream certificateInputStream, final String certificatePassword,
 	final String certificateType, String regime, String ccc, Date from, Date to) throws SegSocialException{
