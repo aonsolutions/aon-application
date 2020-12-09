@@ -78,10 +78,7 @@ export class AonMobileDocumentalList extends AonElement {
 
     let span = document.createElement('span');
     span.className = 'aonLiSpan';
-
-    let i = document.createElement('i');
-    i.className = 'material-icons aonAvatar';
-    i.innerHTML = this.getTypeIcon(doc.file.type);
+    span.innerHTML = this.getTypeIcon(doc.file.type);
 
     let div = document.createElement('div');
     div.className = 'aonListText';
@@ -91,7 +88,6 @@ export class AonMobileDocumentalList extends AonElement {
     span3.className = 'aonLiSpanSubtitle';
     span3.innerHTML = doc.date + ' - ' + doc.size;
 
-    span.appendChild(i);
     span.appendChild(div);
     span.appendChild(span3);
     li.appendChild(span);
@@ -100,7 +96,19 @@ export class AonMobileDocumentalList extends AonElement {
   }
 
   getTypeIcon(type) {
-    return 'insert_drive_file';
+    if(type.includes('pdf')) {
+      return `<aon-icon class="aonAvatar" icon="aon_pdf" size="24"></aon-icon>`;
+    } else if(type.includes('powerpoint') || type.includes('presentation')){
+      return `<aon-icon class="aonAvatar" icon="aon_powerpoint" size="24"></aon-icon>`
+    } else if(type.includes('excel') || type.includes('spreadsheet')){
+      return `<aon-icon class="aonAvatar" icon="aon_excel" size="24"></aon-icon>`
+    } else if(type.includes('word') || type.includes('text')){
+      return `<aon-icon class="aonAvatar" icon="aon_word" size="24"></aon-icon>`
+    } else if(type.includes('image')) {
+      return `<aon-icon class="aonAvatar" icon="aon_image" size="24"></aon-icon>`
+    } else {
+      return `<aon-icon class="aonAvatar" icon="aon_file" size="24"></aon-icon>`
+    }
   }
 
   aonDocument(doc, i) {

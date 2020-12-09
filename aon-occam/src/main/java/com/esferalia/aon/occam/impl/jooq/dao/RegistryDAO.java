@@ -256,7 +256,8 @@ public class RegistryDAO {
 		ctx.getDslContext()
 			.update(RATTACH)
 		.set(RATTACH.CATEGORY, nullvalue)
-		.where(RATTACH.CATEGORY.eq(categoryId));
+		.where(RATTACH.CATEGORY.eq(categoryId))
+		.execute();
 
 		ctx.getDslContext().delete(CATEGORY)
 			.where(CATEGORY.ID.eq(categoryId))

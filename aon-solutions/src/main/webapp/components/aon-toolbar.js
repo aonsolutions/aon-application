@@ -186,8 +186,14 @@ export class AonToolbar extends AonElement {
 
 		let b = document.getElementById(buttonId);
 		b.addEventListener('click', () => {
-			input.style.display = 'block';
-			input.focus();
+			if(input.style.display === 'none'){
+				input.style.display = 'block';
+				input.focus();
+			} else {
+				input.value = '';
+				this.dispatchEvent(new CustomEvent('search',{detail: input.value}));
+				input.style.display = 'none';
+			}
 		});
 	}
 

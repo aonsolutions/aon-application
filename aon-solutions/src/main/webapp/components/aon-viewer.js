@@ -51,6 +51,8 @@ export class AonViewer extends AonElement {
 			this.printPdf();
 		} else if(this.type && this.type.includes('image')){
 			this.printImage();
+		} else if(this.type) {
+			this.notSupport(this.type);
 		}
 
 		let div = this.createElement('div');
@@ -104,47 +106,50 @@ export class AonViewer extends AonElement {
 		let downloadButton = this.getElement('aonViewerButtonsDivDownload');
 		downloadButton.addEventListener('click', () => open(this.file));
 
-		let ajustar = this.createElement('span');
-		ajustar.style.position = 'fixed';
-		ajustar.style.right = '20px';
-		ajustar.style.bottom = '120px';
-		ajustar.innerHTML = `<aon-icon-button id="aonViewerButtonsDivAjustar" icon="zoom_out_map" background="#f1f1f1"></aon-icon-button>`;
-		div.appendChild(ajustar);
-		this.getElement('aonViewerButtonsDivAjustar').addEventListener('click', () => {
-			document.querySelectorAll('canvas').forEach((item, i) => {
-				item.remove();
-			});
-			this._scale = 1;
-			this.printPdf(this._scale);
-		});
 
-		let zoomPlus = this.createElement('span');
-		zoomPlus.style.position = 'fixed';
-		zoomPlus.style.right = '20px';
-		zoomPlus.style.bottom = '70px';
-		zoomPlus.innerHTML = `<aon-icon-button id="aonViewerButtonsDivZoomPlus" icon="zoom_in" background="#f1f1f1"></aon-icon-button>`;
-		div.appendChild(zoomPlus);
-		this.getElement('aonViewerButtonsDivZoomPlus').addEventListener('click', () => {
-			document.querySelectorAll('canvas').forEach((item, i) => {
-				item.remove();
+		if(this.type.includes('pdf')) {
+			let ajustar = this.createElement('span');
+			ajustar.style.position = 'fixed';
+			ajustar.style.right = '20px';
+			ajustar.style.bottom = '120px';
+			ajustar.innerHTML = `<aon-icon-button id="aonViewerButtonsDivAjustar" icon="zoom_out_map" background="#f1f1f1"></aon-icon-button>`;
+			div.appendChild(ajustar);
+			this.getElement('aonViewerButtonsDivAjustar').addEventListener('click', () => {
+				document.querySelectorAll('canvas').forEach((item, i) => {
+					item.remove();
+				});
+				this._scale = 1;
+				this.printPdf(this._scale);
 			});
-			this._scale = this._scale - 0.25;
-			this.printPdf(this._scale);
-		});
 
-		let zoomMinus = this.createElement('span')
-		zoomMinus.style.position = 'fixed';
-		zoomMinus.style.right = '20px';
-		zoomMinus.style.bottom = '20px';
-		zoomMinus.innerHTML = `<aon-icon-button id="aonViewerButtonsDivZoomMinus" icon="zoom_out" background="#f1f1f1"></aon-icon-button>`;
-		div.appendChild(zoomMinus);
-		this.getElement('aonViewerButtonsDivZoomMinus').addEventListener('click', () => {
-			document.querySelectorAll('canvas').forEach((item, i) => {
-				item.remove();
+			let zoomPlus = this.createElement('span');
+			zoomPlus.style.position = 'fixed';
+			zoomPlus.style.right = '20px';
+			zoomPlus.style.bottom = '70px';
+			zoomPlus.innerHTML = `<aon-icon-button id="aonViewerButtonsDivZoomPlus" icon="zoom_in" background="#f1f1f1"></aon-icon-button>`;
+			div.appendChild(zoomPlus);
+			this.getElement('aonViewerButtonsDivZoomPlus').addEventListener('click', () => {
+				document.querySelectorAll('canvas').forEach((item, i) => {
+					item.remove();
+				});
+				this._scale = this._scale - 0.25;
+				this.printPdf(this._scale);
 			});
-			this._scale = this._scale + 0.25;
-			this.printPdf(this._scale);
-		});
+
+			let zoomMinus = this.createElement('span')
+			zoomMinus.style.position = 'fixed';
+			zoomMinus.style.right = '20px';
+			zoomMinus.style.bottom = '20px';
+			zoomMinus.innerHTML = `<aon-icon-button id="aonViewerButtonsDivZoomMinus" icon="zoom_out" background="#f1f1f1"></aon-icon-button>`;
+			div.appendChild(zoomMinus);
+			this.getElement('aonViewerButtonsDivZoomMinus').addEventListener('click', () => {
+				document.querySelectorAll('canvas').forEach((item, i) => {
+					item.remove();
+				});
+				this._scale = this._scale + 0.25;
+				this.printPdf(this._scale);
+			});
+		}
 	}
 
 	printImage() {
@@ -153,6 +158,39 @@ export class AonViewer extends AonElement {
 		img.src = this.file;
 
 		this.appendChild(img);
+	}
+
+	notSupport(type) {
+		let div = this.createElement('div');
+		div.style.backgroundColor = 'gray';
+		div.style.height = '100%';
+		div.style.opacity = '0.1';
+		this.appendChild(div);
+
+		let div2 = this.createElement('div');
+		div2.style.position = 'absolute';
+		div2.style.top = '30%';
+		div2.style.left = '35%';
+		div2.innerHTML = this.getTypeIcon(type);
+
+		let div3 = this.createElement('div');
+		div3.innerHTML = 'Vista previa no disponible';
+		div2.appendChild(div3);
+		this.appendChild(div2);
+	}
+
+	getTypeIcon(type) {
+		if(type.includes('pdf')) {
+			return `<aon-icon icon="aon_pdf" size="160"></aon-icon>`;
+		} else if(type.includes('powerpoint') || type.includes('presentation')){
+			return `<aon-icon icon="aon_powerpoint" size="160" color="orange"></aon-icon>`
+		} else if(type.includes('excel') || type.includes('spreadsheet')){
+			return `<aon-icon icon="aon_excel" size="160" color="green"></aon-icon>`
+		} else if(type.includes('word') || type.includes('text')){
+			return `<aon-icon icon="aon_word" size="160" color="cornflowerblue"></aon-icon>`
+ 		} else {
+			return `<aon-icon icon="aon_file" size="160"></aon-icon>`
+		}
 	}
 
 	printPdf(scalation) {
