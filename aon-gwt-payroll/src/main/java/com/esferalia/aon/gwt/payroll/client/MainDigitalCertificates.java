@@ -310,6 +310,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		Hidden certificateType = new Hidden("certificatetype", certificateTypeStr);
 		Hidden userLogin = new Hidden("currentUser", Wnd.getCurrentUser());
 		Hidden currentDomain = new Hidden("currentDomain", Wnd.getCurrentDomainNameURL());
+		Hidden token = new Hidden("token", Wnd.getToken());
 		
 		FileUpload fileU = new FileUpload();
 		fileU.setName("uploader");
@@ -359,6 +360,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		flowPanel.add(certificateType);
 		flowPanel.add(userLogin);
 		flowPanel.add(currentDomain);
+		flowPanel.add(token);
 		flowPanel.add(fileButton);
 		flowPanel.add(fileU);
 		

@@ -12,7 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificate; 
+import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificate;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.watson.util.AonStringUtils; 
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -40,6 +44,13 @@ public class CertificatesServlet extends HttpServlet {
 		
 		// Get currentUser
 		String domainName = req.getParameter("currentDomain");
+		
+
+		if(AonStringUtils.isEmpty(currentUser)) {
+			String token = req.getParameter("token");
+			Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
+			currentUser = AON_SOLUTIONS.getUser(domain, token).getLogin();
+		}
 		
 		// Get FilePart
 		Part filePart = req.getPart("uploader");

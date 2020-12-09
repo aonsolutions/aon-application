@@ -130,8 +130,8 @@ public interface EnterprisesServiceAsync {
 	void getContractSpecificData(String currentDomainName, Integer contractId, AsyncCallback<ContractSpecificData> asyncCallback);
 	void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback);
 	void getCNOs(String currentDomainName, AsyncCallback<Map<String, CNO>> asyncCallback);
-	void getDigitalCertificates(String currentDomainName, String currentUser, AsyncCallback<List<DigitalCertificate>> asyncCallback);
-	void setDigitalCertificates(String currentDomainName, String currentUser, List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> asyncCallback);
+	void getDigitalCertificates(String currentDomainName, String currentUser, String token, AsyncCallback<List<DigitalCertificate>> asyncCallback);
+	void setDigitalCertificates(String currentDomainName, String currentUser, String token, List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> asyncCallback);
 	void getMainCCCInfoDataBase(String currentDomainName, String currentUser, AsyncCallback<MainCCCInfo> asyncCallback);
 	void setMainCCCInfoDataBase(String currentDomainName, String currentUser, MainCCCInfo mainCCCInfo, AsyncCallback<Void> asyncCallback);
 	void getContractBonus(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback);

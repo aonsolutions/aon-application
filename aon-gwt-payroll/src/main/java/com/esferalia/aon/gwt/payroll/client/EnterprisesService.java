@@ -204,9 +204,9 @@ public interface EnterprisesService extends RemoteService {
 	
 	Map<String, CNO> getCNOs(String currentDomainName);
 
-	List<DigitalCertificate> getDigitalCertificates(String currentDomainName, String currentUser);
+	List<DigitalCertificate> getDigitalCertificates(String currentDomainName, String currentUser, String token);
 
-	void setDigitalCertificates(String currentDomainName, String currentUser, List<DigitalCertificate> digitalCertificateList);
+	void setDigitalCertificates(String currentDomainName, String currentUser, String token, List<DigitalCertificate> digitalCertificateList);
 
 	MainCCCInfo getMainCCCInfoDataBase(String currentDomainName, String currentUser);
 

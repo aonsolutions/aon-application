@@ -83,10 +83,15 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
@@ -110,6 +115,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.payroll.tgss.cra.Cra;
 import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
@@ -2378,28 +2384,53 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	@Override
-	public List<DigitalCertificate> getDigitalCertificates(String domainName, String userLogin) {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
-			return JooqDigitalCertificate.getDigitalCertificates(connection, domainId, userId);
+	
+	public List<DigitalCertificate> getDigitalCertificatesToken(String domainName, String token) {
+		Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
+		User user = AON_SOLUTIONS.getUser(domain, token);
+		try(Connection connection = AonServletUtils.getConnection(domain.getName())) {
+			return JooqDigitalCertificate.getDigitalCertificates(connection, domain.getId(), user.getId());
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	@Override
-	public void setDigitalCertificates(String domainName, String userLogin, List<DigitalCertificate> digitalCertificateList) {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
-			JooqDigitalCertificate.setDigitalCertificates(connection, domainId, userId, digitalCertificateList);
+	public List<DigitalCertificate> getDigitalCertificates(String domainName, String userLogin, String token) {
+		if(AonStringUtils.isEmpty(token)) {
+			try(Connection connection = AonServletUtils.getConnection(domainName)) {
+				Integer domainId = AonServletUtils.getDomainID(domainName);
+				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+				return JooqDigitalCertificate.getDigitalCertificates(connection, domainId, userId);
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		} else return getDigitalCertificatesToken(domainName, token);
+	}	
+
+	public void setDigitalCertificatesToken(String domainName, String token, List<DigitalCertificate> digitalCertificateList) {
+		Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
+		User user = AON_SOLUTIONS.getUser(domain, token);
+		try(Connection connection = AonServletUtils.getConnection(domain.getName())) {
+			JooqDigitalCertificate.setDigitalCertificates(connection, domain.getId(), user.getId(), digitalCertificateList);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	@Override
+	public void setDigitalCertificates(String domainName, String userLogin, String token, List<DigitalCertificate> digitalCertificateList) {
+		if(AonStringUtils.isEmpty(token)) {
+			try(Connection connection = AonServletUtils.getConnection(domainName)) {
+				Integer domainId = AonServletUtils.getDomainID(domainName);
+				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+				JooqDigitalCertificate.setDigitalCertificates(connection, domainId, userId, digitalCertificateList);
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		} else setDigitalCertificatesToken(domainName, token, digitalCertificateList);
 	}
 	
 	@Override

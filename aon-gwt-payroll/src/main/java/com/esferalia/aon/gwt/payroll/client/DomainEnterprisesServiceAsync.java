@@ -366,11 +366,11 @@ public class DomainEnterprisesServiceAsync {
 	}
 	
 	public void getDigitalCertificates(AsyncCallback<List<DigitalCertificate>> asyncCallback) {
-		enterprisesServiceAsync.getDigitalCertificates(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+		enterprisesServiceAsync.getDigitalCertificates(getCurrentDomainName(), getCurrentUser(), getToken(), asyncCallback);
 	}
-	
+
 	public void setDigitalCertificates(List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.setDigitalCertificates(getCurrentDomainName(), getCurrentUser(), digitalCertificateList, asyncCallback);
+		enterprisesServiceAsync.setDigitalCertificates(getCurrentDomainName(), getCurrentUser(), getToken(), digitalCertificateList, asyncCallback);
 	}
 	
 	public void deleteDigitalCertificate(Byte type, AsyncCallback<Void> asyncCallback) {
@@ -390,6 +390,10 @@ public class DomainEnterprisesServiceAsync {
 	}
 	
 	// ----------------------------------------------------------------- static
+	
+	private static String getToken() {
+		return Wnd.getToken();
+	}
 	
 	private static String getCurrentUser() {
 		return Wnd.getCurrentUser();

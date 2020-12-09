@@ -573,15 +573,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getDigitalCertificates(String currentDomainName, String currentUser, AsyncCallback<List<DigitalCertificate>> callback) {
+	public void getDigitalCertificates(String currentDomainName, String currentUser, String token, AsyncCallback<List<DigitalCertificate>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getDigitalCertificates(currentDomainName, currentUser, new AsyncCallbackWrapper<List<DigitalCertificate>>(callback));
+		enterprisesServiceAsync.getDigitalCertificates(currentDomainName, currentUser, token, new AsyncCallbackWrapper<List<DigitalCertificate>>(callback));
 	}
 
 	@Override
-	public void setDigitalCertificates(String currentDomainName, String currentUser, List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> callback) {
+	public void setDigitalCertificates(String currentDomainName, String currentUser, String token, List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.setDigitalCertificates(currentDomainName, currentUser, digitalCertificateList, new AsyncCallbackWrapper<Void>(callback));
+		enterprisesServiceAsync.setDigitalCertificates(currentDomainName, currentUser, token, digitalCertificateList, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
