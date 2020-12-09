@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -279,5 +280,18 @@ public class TestEmployee {
 		
 	}
 
+	@Test
+	public void getCccLaboralLifeTest() {
+		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
+			SistemaRED_Employee.getCccLaboralLife(certificateInputStream,"jg@FNMT","pkcs12","0111","01105360062",new Date(),new Date());
+		}
+		catch (WrongRegimeException | StatusCodeException ignored) {}
+		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
+		catch (SegSocialException e) {fail("unexpected SegSocialException");}
+		catch (FileNotFoundException e) {fail("File not found");}
+		catch (IOException e) {fail("IOException");}
+		catch (Exception e) {fail("unknown exception: " + e);}
+
+	}
 	
 }

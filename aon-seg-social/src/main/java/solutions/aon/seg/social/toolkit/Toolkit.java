@@ -86,7 +86,7 @@ public class Toolkit {
 	}
 	
 	//SPLITS AN ARRAY MULTIPLE TIMES AND RETURNS AN ARRAY
-	public static ArrayList<String> splitString_m(String str, int[] indexes) throws InvalidDataException {
+	public static ArrayList<String> splitString_m(String str, int... indexes ) throws InvalidDataException {
 		try {
 			ArrayList<String> result = new ArrayList<>();
 			int ant = 0;

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
-import java.util.Optional;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
@@ -16,6 +15,7 @@ import solutions.aon.seg.social.SistemaRED_I.LiquidationOrigin;
 import solutions.aon.seg.social.SistemaRED_I.LiquidationType;
 import solutions.aon.seg.social.SistemaRED_I.Regime;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.objects.WorkerLiquidation;
@@ -36,7 +36,12 @@ public class SistemaRED {
 			return SistemaRED_Employee.getEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
 		} catch ( IOException e ) {throw new SegSocialException(e);}
 	}
-	
+
+	public static byte[] getCccLaboralLife(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc, Date from, Date to) throws SegSocialException {
+		try {return SistemaRED_Employee.getCccLaboralLife(certificateInputStream,certificatePassword,certificateType,regime,ccc,from,to);}
+		catch (IOException e) {throw new InvalidCertificateException();}
+	}
+
 	public static Collection<Employee> getPrevEmployees(final byte certificateData [], final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException 
 	{

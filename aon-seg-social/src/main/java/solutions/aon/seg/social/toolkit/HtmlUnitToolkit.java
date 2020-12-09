@@ -82,6 +82,7 @@ public class HtmlUnitToolkit {
 	public static void manageStatusCode(HtmlPage htmlPage) throws SegSocialException {
 		Integer code = getSSCode(htmlPage);
 		String msg = getSSmessage(htmlPage);
+		System.out.println(code);
 		InvalidDataException.checkCode(code,msg);
 	}
 
@@ -99,12 +100,12 @@ public class HtmlUnitToolkit {
 	}
 
 	//SHOW HTML ELEMENTS AS XML
-	public static void showAsXML(HtmlElement[] elements) {
+	public static void showAsXML(HtmlElement ...elements) {
 		for (HtmlElement e : elements) { if(e != null) System.out.println(e.asXml());}
 	}
 	
 	//SHOW HTML ELEMENTS AS TEXT
-	public static void showAsText(HtmlElement[] elements) {
+	public static void showAsText(HtmlElement ...elements) {
 		for (HtmlElement e : elements) { if(e != null) System.out.println(e.asText());}
 	}
 
