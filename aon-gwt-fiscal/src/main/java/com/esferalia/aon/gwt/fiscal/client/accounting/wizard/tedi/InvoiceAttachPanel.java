@@ -16,7 +16,9 @@ import net.aonsolutions.gwt.pdfjs.client.FullViewer.ViewerDefaultScale;
 public class InvoiceAttachPanel extends SimpleLayoutPanel {
 
 	public InvoiceAttachPanel( IInvoicePanelCallback callback ) {
-		setStyleName(AON.AON_CSS.aonTextCenter());
+		setWidth("100%");
+		setHeight("100%");
+		setStyleName(AON.CSS.aonTextCenter());
 		
 		AccountingInvoice ai = callback.getInvoice();
 		if (ai != null && ai.isDocumentAttached() ) {
@@ -42,16 +44,16 @@ public class InvoiceAttachPanel extends SimpleLayoutPanel {
 				this.setWidget(imagePanel);
 			} else {
 				Label unknown = new Label("No se ha podido determinar un visor para este tipo de documento.");
-				unknown.setStyleName(AON.AON_CSS.aonBlockCenter());
-				unknown.addStyleName(AON.AON_CSS.aonMarginTop());
-				unknown.addStyleName(AON.AON_CSS.aonBold());
+				unknown.setStyleName(AON.CSS.aonBlockCenter());
+				unknown.addStyleName(AON.CSS.aonMarginTop());
+				unknown.addStyleName(AON.CSS.aonBold());
 				this.setWidget(unknown);
 			}
 		} else {
 			Label unknown = new Label("La factura no tiene documentos adjuntos.");
-			unknown.setStyleName(AON.AON_CSS.aonBlockCenter());
-			unknown.addStyleName(AON.AON_CSS.aonMarginTop());
-			unknown.addStyleName(AON.AON_CSS.aonBold());
+			unknown.setStyleName(AON.CSS.aonBlockCenter());
+			unknown.addStyleName(AON.CSS.aonMarginTop());
+			unknown.addStyleName(AON.CSS.aonBold());
 			this.setWidget(unknown);
 		}
 	}

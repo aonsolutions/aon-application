@@ -141,6 +141,14 @@
 .aon_icon_more_horizontal { background-image: iconMoreHorizontal;}
 @url iconMoreVertical aonIconMoreVertical;
 .aon_icon_more_vertical { background-image: iconMoreVertical;}
+@url iconUp aonIconUp;
+.aon_icon_up { background-image: iconUp;}
+@url iconRight aonIconRight;
+.aon_icon_right { background-image: iconRight;}
+@url iconDown aonIconDown;
+.aon_icon_down { background-image: iconDown;}
+@url iconLeft aonIconLeft;
+.aon_icon_left { background-image: iconLeft;}
 
 /* BASICS */
 .aon_selector {
@@ -372,6 +380,9 @@
 .aon_background_orange {
 	background-color: #ffa54f;
 }
+.aon_background_yellow {
+	background-color: #FFFF00;
+}
 
 .aon_pointer_events_none {
 	pointer-events: none;
@@ -381,6 +392,9 @@
 	pointer-events: auto;
 }
 
+.aon_border {
+	border: #c4c4c4 1px solid;
+}
 .aon_border_top {
 	border-top: #c4c4c4 1px solid;
 }

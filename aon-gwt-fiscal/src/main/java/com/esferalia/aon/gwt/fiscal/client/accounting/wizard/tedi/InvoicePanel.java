@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog.AonMessageDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
@@ -48,8 +49,6 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -57,6 +56,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 import net.aonsolutions.gwt.pdfjs.client.FullViewer.ViewerDefaultScale;
@@ -72,7 +72,13 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	private SplitLayoutPanel rootPanel;
 	private SimpleLayoutPanel centerContainer;
-	private SimpleLayoutPanel attachPanel;
+	private FlowPanel attachPanelTable;
+	private FlowPanel attachPanelTableRow;
+	private FlowPanel attachPanelTableCell1;
+	private VerticalPanel buttons;
+	private FlowPanel attachPanelTableCell2;
+	private AonTableButton attachCloseButton;
+	private AonTableButton attachOpenButton;
 	private AccountingInvoice invoice;
 	private AccountingRegistry lastRegistry;
 	
@@ -81,10 +87,34 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		TEDI_SERVICE = new TediServiceAsyncDecorator(serviceRaw);
 		
 		setCallback(callback);
-		rootPanel = new SplitLayoutPanel();
+		rootPanel = new SplitLayoutPanel(4);
+		
 		centerContainer = new SimpleLayoutPanel();
-		attachPanel = new SimpleLayoutPanel();
-		rootPanel.addEast(attachPanel,0);
+		
+		attachPanelTable = new FlowPanel();
+		attachPanelTable.setStyleName(AON.CSS.aonDisplayTable());
+		attachPanelTable.addStyleName(AON.CSS.aonWidthAll());
+		attachPanelTable.setHeight("100%");
+		
+		attachPanelTableRow = new FlowPanel();
+		attachPanelTableRow.addStyleName(AON.CSS.aonWidthAll());
+		attachPanelTableRow.setHeight("100%");
+		attachPanelTableRow.setStyleName(AON.CSS.aonDisplayTableRow());
+		attachPanelTable.add(attachPanelTableRow);
+		
+		attachPanelTableCell1 = new FlowPanel();
+		attachPanelTableCell1.setHeight("100%");
+		attachPanelTableCell1.setStyleName(AON.CSS.aonDisplayTableCell());
+		attachPanelTableRow.add(attachPanelTableCell1);
+		
+		attachPanelTableCell2= new FlowPanel();
+		attachPanelTableCell2.setStyleName(AON.CSS.aonDisplayTableCell());
+		attachPanelTableCell2.setHeight("100%");
+		attachPanelTableRow.add(attachPanelTableCell2);
+
+		rootPanel.addEast(attachPanelTable,0);
+		rootPanel.setWidgetToggleDisplayAllowed(attachPanelTable, true);
+				
 		rootPanel.add(centerContainer);
 		initWidget(rootPanel);
 	}
@@ -391,54 +421,78 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	protected void paintAttach( boolean openWidget ) {
 		LOGGER.info("paintAttach ..: " + (getWrapper().isDocumentAttached()?"DOCUMENT PRESENT":"NO DOCUMENT"));
 		if (getWrapper().isDocumentAttached()) {
-			FlexTable hp = new FlexTable();
-			hp.setHeight("100%");
-			
-			Button attachButton = new Button();
-			attachButton.setTitle("Ver documento adjunto");
-			attachButton.setStyleName(AON.AON_CSS.aonIconAttach());
-			attachButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-			attachButton.addClickHandler( new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					if (rootPanel.getWidgetSize(attachPanel) <= 30) {
-						rootPanel.setWidgetSize(attachPanel, Window.getClientWidth() - 900);
-					}
-					InvoicePanelCallback invoicePanelCallback = new InvoicePanelCallback();
-					InvoiceAttachPanel invoiceAttachPanel = new InvoiceAttachPanel(invoicePanelCallback);
-					attachPanel.setWidget(invoiceAttachPanel);
-				}
-			});
-			
-			hp.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonVerticalAlignMiddle());
-			hp.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBackgroundHighlightedYellow());
-			hp.setWidget(0, 0, attachButton);
-			attachPanel.setWidget(hp);
+			paintButtons();
+			buttons.addStyleName(AON.CSS.aonBackgroundYellow());
 			if (openWidget) {
-//				attachButton.click();
-				if (rootPanel.getWidgetSize(attachPanel) <= 30) {
-					rootPanel.setWidgetSize(attachPanel, Window.getClientWidth() / 3);
-				}
-				InvoicePanelCallback invoicePanelCallback = new InvoicePanelCallback();
-				InvoiceAttachPanel invoiceAttachPanel = new InvoiceAttachPanel(invoicePanelCallback);
-				attachPanel.setWidget(invoiceAttachPanel);
+				openAttach();
 			} else {
-				rootPanel.setWidgetSize(attachPanel,20);
+				rootPanel.setWidgetSize(attachPanelTable,20);
 			}
 			new Timer() {
 				@Override
 				public void run() {
-					hp.getCellFormatter().removeStyleName(0, 0, AON.AON_CSS.aonBackgroundHighlightedYellow());
+					buttons.removeStyleName(AON.CSS.aonBackgroundYellow());
 				}
 			}.schedule(2000);
 		} else {
-			attachPanel.clear();
-			rootPanel.setWidgetSize(attachPanel,0);
+			attachPanelTableCell1.setWidth("1px");
+			attachPanelTableCell1.clear();
+			attachPanelTableCell2.clear();
+			rootPanel.setWidgetSize(attachPanelTable,0);
+		}
+	}
+	
+	private void paintButtons() {
+		attachPanelTableCell1.setWidth("20px");
+		buttons = new VerticalPanel();
+		buttons.setHeight("100%");
+		buttons.setStyleName(AON.CSS.aonFlexBlock());
+		attachPanelTableCell1.add(buttons);
+		
+		attachCloseButton = new AonTableButton("Cerrar documento adjunto",AON.CSS.aonIconRight());
+		buttons.add(attachCloseButton);
+
+		attachOpenButton = new AonTableButton("Ver documento adjunto",AON.CSS.aonIconLeft());
+		buttons.add(attachOpenButton);
+		
+		attachCloseButton.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				closeAttach();
+			}
+		});
+		
+		attachOpenButton.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				openAttach();
+			}
+		});
+	}
+
+	protected void openAttach() {
+		double from = rootPanel.getWidgetSize(attachPanelTable) == null? 0 : rootPanel.getWidgetSize(attachPanelTable);
+		int to = Window.getClientWidth() - 900;
+		if (from < to) {
+			rootPanel.setWidgetSize(attachPanelTable, to);
+		}
+		viewAttach();
+	}
+
+	protected void closeAttach() {
+		rootPanel.setWidgetSize(attachPanelTable, 20);
+	}
+
+	protected void viewAttach() {
+		if (attachPanelTableCell2.getWidgetCount() == 0) {
+			InvoicePanelCallback invoicePanelCallback = new InvoicePanelCallback();
+			InvoiceAttachPanel invoiceAttachPanel = new InvoiceAttachPanel(invoicePanelCallback);
+			attachPanelTableCell2.add(invoiceAttachPanel);
 		}
 	}
 
 	private void setDocument(InvoicePanelCallback invoiceCallback,final String doc, final String name, String type) {
-		attachPanel.clear();
+		attachPanelTableCell2.clear();
 		MimeType mimeType = MimeType.safeValueFromContenType(type);
 		if (mimeType == null) {
 			mimeType = MimeType.guessFromFileName(name);	
@@ -454,21 +508,19 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 						viewer.open(doc);
 					}
 				});
-				attachPanel.setWidget(viewer);
-				if (rootPanel.getWidgetSize(attachPanel) <= 30) {
-					rootPanel.setWidgetSize(attachPanel, Window.getClientWidth() - 900);
-				}
+				attachPanelTableCell2.add(viewer);
+				paintButtons();
+				openAttach();
 			} if (mimeType.isImage()) {
 				ScrollPanel scrollpanel = new ScrollPanel();
-				scrollpanel.setStyleName(AON.AON_CSS.aonScrollArea());
-				scrollpanel.addStyleName(AON.AON_CSS.aonTextCenter());
+				scrollpanel.setStyleName(AON.CSS.aonScrollArea());
+				scrollpanel.addStyleName(AON.CSS.aonTextCenter());
 				Image image = new Image( doc );
 				image.setWidth("100%");
 				scrollpanel.setWidget(image);
-				attachPanel.setWidget(scrollpanel);
-				if (rootPanel.getWidgetSize(attachPanel) <= 30) {
-					rootPanel.setWidgetSize(attachPanel, Window.getClientWidth() - 900);
-				}
+				attachPanelTableCell2.add(scrollpanel);
+				paintButtons();
+				openAttach();
 			}
 			
 			if ( invoiceCallback.getConfiguration().isOCRActive() ) {
@@ -529,38 +581,38 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	private void paintProblemsWidget(SimpleLayoutPanel contentPanel, TediResult result) {
 		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
+		scrollPanel.setStyleName(AON.CSS.aonScrollArea());
 		FlowPanel mainPanel = new FlowPanel();
 		scrollPanel.setWidget(mainPanel);
 		if (result.getMessages() != null && result.getMessages().size() > 0) {
-			mainPanel.setStyleName(AON.AON_CSS.aonMarginTop5());
-			mainPanel.addStyleName(AON.AON_CSS.aonMarginLeft());
-			mainPanel.addStyleName(AON.AON_CSS.aonSimpleBorder());
-			mainPanel.addStyleName(AON.AON_CSS.aonFixedFont());
+			mainPanel.setStyleName(AON.CSS.aonMarginTopSep());
+			mainPanel.addStyleName(AON.CSS.aonMarginLeft());
+			mainPanel.addStyleName(AON.CSS.aonBorder());
+			mainPanel.addStyleName(AON.CSS.aonFixedFont());
 			for (TediError error : result.getMessages()) {
 				FlowPanel flowPanel = new FlowPanel();
 				InlineLabel colorLabel = new InlineLabel("");
-				colorLabel.setStyleName(AON.AON_CSS.aonPaddingLeft());
-				colorLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
+				colorLabel.setStyleName(AON.CSS.aonPaddingLeft());
+				colorLabel.addStyleName(AON.CSS.aonPaddingRight());
 				colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(error.getLevel()));
 				flowPanel.add(colorLabel);
 
 				InlineLabel errLabel = new InlineLabel(error.getLevel().getLabel());
-				errLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
-				errLabel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-				errLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
-				errLabel.addStyleName(AON.AON_CSS.aonBold());
+				errLabel.setStyleName(AON.CSS.aonClickable());
+				errLabel.addStyleName(AON.CSS.aonPaddingLeft());
+				errLabel.addStyleName(AON.CSS.aonPaddingRight());
+				errLabel.addStyleName(AON.CSS.aonBold());
 				flowPanel.add(errLabel);
 
 				InlineLabel msgLabel = new InlineLabel(error.getMessage());
-				msgLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
-				msgLabel.addStyleName(AON.AON_CSS.aonBorderBottomImportant());
+				msgLabel.setStyleName(AON.CSS.aonMarginLeft());
+				msgLabel.addStyleName(AON.CSS.aonBorderBottom());
 				flowPanel.add(msgLabel);
 
 				if (error.canBeFixed()) {
 					SimplePanel container = new SimplePanel();
-					container.setStyleName(AON.AON_CSS.aonMarginTop());
-					container.addStyleName(AON.AON_CSS.aonMarginBottom());
+					container.setStyleName(AON.CSS.aonMarginTop());
+					container.addStyleName(AON.CSS.aonMarginBottom());
 					flowPanel.add(container);
 					TediContextVisitor tediContextVisitor = new TediContextVisitor(getCallback().getCurrentDomainName(),
 							getCallback().getCurrentDomainId(),getCallback().getCurrentUser(), getCallback().getConfiguration(), container);

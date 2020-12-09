@@ -213,6 +213,18 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_more_vertical")
 	String aonIconMoreVertical();
 
+	@ClassName("aon_icon_up")
+	String aonIconUp();
+
+	@ClassName("aon_icon_right")
+	String aonIconRight();
+
+	@ClassName("aon_icon_down")
+	String aonIconDown();
+
+	@ClassName("aon_icon_left")
+	String aonIconLeft();
+
 	/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();
@@ -382,6 +394,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_margin_right_double")
 	String aonMarginRightDouble();
 
+	@ClassName("aon_border")
+	String aonBorder();
+
 	@ClassName("aon_border_top")
 	String aonBorderTop();
 
@@ -402,6 +417,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_background_orange")
 	String aonBackgroundOrange();
+	
+	@ClassName("aon_background_yellow")
+	String aonBackgroundYellow();
 
 	@ClassName("aon_pointer_events_none")
 	String aonPointerEventsNone();

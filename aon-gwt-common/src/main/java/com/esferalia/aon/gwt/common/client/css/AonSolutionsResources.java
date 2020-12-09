@@ -262,11 +262,11 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconEurope();
 	
-	@Source("icons/aon-icon-level-this.svg")
+	@Source("icons/aon-icon-arrow-right.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconLevelThis();
 	
-	@Source("icons/aon-icon-level-top.svg")
+	@Source("icons/aon-icon-arrow-up.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconLevelTop();
 	
@@ -285,5 +285,22 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-more-vertical.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconMoreVertical();
+	
+	@Source("icons/aon-icon-arrow-up.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconUp();
+	
+	@Source("icons/aon-icon-arrow-right.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconRight();
+
+	@Source("icons/aon-icon-arrow-down.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconDown();
+
+	@Source("icons/aon-icon-arrow-left.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLeft();
+
 }
 
