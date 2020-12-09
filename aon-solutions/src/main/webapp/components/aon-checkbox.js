@@ -49,8 +49,8 @@ export class AonCheckbox extends AonElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if('value' === name){
 			let input = document.getElementById(this.getAttribute('id') + 'Input');
-			if(this.getValue()) {
-				input.setAttribute('checked', this.getValue());
+			if(this.hasAttribute('value') && "true" === this.getAttribute('value')){
+				input.setAttribute('checked', 'checked');
 			} else input.removeAttribute('checked');
 		}
 	}
@@ -83,7 +83,8 @@ export class AonCheckbox extends AonElement {
 		});
 
 		let label = document.createElement('label');
-		label.setAttribute('for', input.getAttribute('id'));
+		label.className = 'aonCheckbox';
+		label.style.marginBottom = '0px';
 
 		let span = document.createElement('span');
 		span.innerHTML = this.getAttribute('description');

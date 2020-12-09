@@ -85,9 +85,10 @@ export class AonDocument extends AonElement {
 		tdDate.innerHTML = `<aon-date id="date" title="${MSG.AON_MSG_DATE}"></aon-date>`;
 		tr.appendChild(tdDate);
 		let date = document.getElementById('date');
-    let d = this.document.date.split('/');
-    date.setDate(new Date(d[2], d[1] - 1, d[0]));
-
+    if(this.document.date) {
+      let d = this.document.date.split('/');
+      date.setDate(new Date(d[2], d[1] - 1, d[0]));
+    }   
     let tdConfidential = document.createElement('td');
     tdConfidential.setAttribute('colspan', '1');
     tdConfidential.innerHTML = `<aon-switch id="confidential" title="${MSG.AON_MSG_CONFIDENTIAL}"></aon-switch>`;

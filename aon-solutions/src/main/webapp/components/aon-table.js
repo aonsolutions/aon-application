@@ -57,7 +57,10 @@ export class AonTable extends AonElement {
 				let ch = this.getElement('aonTableAllSelection');
 				ch.addEventListener('change',() => {
 					document.querySelectorAll('aon-checkbox').forEach((item, i) => {
-						item.value = ch.value;
+						if(item.value != ch.value){
+							let it = this.getElement(item.id + 'Input');
+							it.click();
+						}
 					});
 				});
 			}

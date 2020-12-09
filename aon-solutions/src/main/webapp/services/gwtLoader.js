@@ -52,7 +52,6 @@
 
 	export const startModule = (module, entrypoint, rootPanel) => {
 		let panel = rootPanel || 'rootPanel';
-		localStorage.setItem('rootPanel', panel);
 		removeRootPanel(panel);
 		preStartModule(module);
 		if (window.document.createElement && window.document.getElementsByTagName) {

@@ -1,113 +1,68 @@
-import {AonElement} from '../../components/AonElement.js';
+import {AonMobileList} from '../../components/aon-mobile-list.js';
 import {getDocuments} from '../../services/service.js';
 
 import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";
 
-export class AonMobileDocumentalList extends AonElement {
-  static get observedAttributes() {
-    return [CONSTANT.FILTER];
-  }
+export class AonMobileDocumentalList extends AonMobileList {
 
-  get filter() {
-    return this.getAttribute(CONSTANT.FILTER);
-  }
-
-  set filter(filter) {
-    this.setAttribute(CONSTANT.FILTER, filter);
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if(CONSTANT.FILTER === name) {
-      if(this.getElement('documentalMobileListUL'))
-        this.init();
-    }
-  }
+  more;
 
   constructor () {
     super();
+    this.more = true;
   }
 
   connectedCallback () {
-
-    this.build();
-  }
-
-
-  build() {
     this.init();
+    this.addEventListener('more', () => {
+			if(this.more)
+				this.loadMore()
+		});
   }
-
 
   loadMore() {
     let filter = this.getFilter();
-
     if(filter.page) {
       filter.page = filter.page + 1;
       this.setFilter(filter);
       getDocuments(filter).then(documents => {
         if(documents.length == 0)
           this.more = false;
-
-        let ul = this.getElement('documentalMobileListUL');
-        documents.forEach((doc, i) => {
-          ul.appendChild(this.buildLi(doc, i));
-        });
+        documents.forEach((doc, i) => this.addRow(doc, i));
       });
     }
   }
 
   init() {
+    this.build();
     getDocuments(this.getFilter()).then(documents => {
-      this.innerHTML = '';
-      let ul = this.createElement('ul');
-      ul.id = 'documentalMobileListUL'
-      ul.className = 'list-group';
-      this.appendChild(ul);
-      documents.forEach((doc, i) => {
-        ul.appendChild(this.buildLi(doc, i));
-      });
+      documents.forEach((doc, i) => this.addRow(doc, i));
     });
   }
 
-  buildLi(doc, index) {
-    let li = document.createElement('li');
-    li.className = 'aonLi aonAppLi';
-
-    li.addEventListener('click',  () => this.aonDocument(doc, i));
-
-    let span = document.createElement('span');
-    span.className = 'aonLiSpan';
-    span.innerHTML = this.getTypeIcon(doc.file.type);
-
-    let div = document.createElement('div');
-    div.className = 'aonListText';
-    div.innerHTML = doc.title;
-
-    let span3 = document.createElement('span');
-    span3.className = 'aonLiSpanSubtitle';
-    span3.innerHTML = doc.date + ' - ' + doc.size;
-
-    span.appendChild(div);
-    span.appendChild(span3);
-    li.appendChild(span);
-
-    return li;
+  addRow(doc, i) {
+    let liValue = {
+      aonIcon: this.getTypeIcon(doc.file.type),
+      title: doc.title,
+      subtitle:  doc.date + ' - ' + doc.size
+    }
+    this.addLi(liValue, i, () => this.aonDocument(doc, i));
   }
 
   getTypeIcon(type) {
     if(type.includes('pdf')) {
-      return `<aon-icon class="aonAvatar" icon="aon_pdf" size="24"></aon-icon>`;
+      return 'aon_pdf';
     } else if(type.includes('powerpoint') || type.includes('presentation')){
-      return `<aon-icon class="aonAvatar" icon="aon_powerpoint" size="24"></aon-icon>`
+      return 'aon_powerpoint'
     } else if(type.includes('excel') || type.includes('spreadsheet')){
-      return `<aon-icon class="aonAvatar" icon="aon_excel" size="24"></aon-icon>`
+      return 'aon_excel'
     } else if(type.includes('word') || type.includes('text')){
-      return `<aon-icon class="aonAvatar" icon="aon_word" size="24"></aon-icon>`
+      return 'aon_word'
     } else if(type.includes('image')) {
-      return `<aon-icon class="aonAvatar" icon="aon_image" size="24"></aon-icon>`
+      return 'aon_image'
     } else {
-      return `<aon-icon class="aonAvatar" icon="aon_file" size="24"></aon-icon>`
+      return 'aon_file'
     }
   }
 
@@ -115,16 +70,6 @@ export class AonMobileDocumentalList extends AonElement {
 		let ad = document.querySelector('aon-documental');
 		ad.aonDocument(doc);
 	}
-
-  getFilter() {
-    return this.hasAttribute('filter')
-      ? JSON.parse(this.getAttribute('filter'))
-      : {status: 'inbox'};
-  }
-
-  setFilter(filter) {
-    return this.setAttribute('filter', JSON.stringify(filter));
-  }
 
 }
 window.customElements.define('aon-mobile-documental-list', AonMobileDocumentalList);
