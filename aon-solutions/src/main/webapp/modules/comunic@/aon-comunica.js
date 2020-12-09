@@ -83,7 +83,7 @@ export class AonComunica extends AonElement {
 
 	async deleteMov(data, el) {
 		if (confirm(`Estas seguro de anular el movimiento de ${data.name} ?`)) {
-			let toast = this.getElement(`divToast`);
+			const toast = this.getElement(`${this.AON_COMUNICA}Toast`);
 			this.aonComunica.startLoader();
 			try {
 				await postDeleteMov(data);
@@ -108,8 +108,9 @@ export class AonComunica extends AonElement {
 
 	anularCondition(situation, fra) {
 		const date_prev = addDays(new Date(), -2);
-		const sit = ["AL", "BJ", "BAJA", "ALTA"];
-		return (situation.indexOf(sit) > -1) && (date_prev.getTime() <= new Date(fra).getTime());
+		// const sit = ["AL", "BJ", "BAJA", "ALTA"];
+		// (situation.indexOf(sit) > -1) &&
+		return (date_prev.getTime() <= new Date(fra).getTime());
 	}
 }
 window.customElements.define('aon-comunica', AonComunica);

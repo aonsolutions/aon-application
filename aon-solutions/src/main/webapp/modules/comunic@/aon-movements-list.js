@@ -2,7 +2,6 @@ import {AonElement} from '../../components/AonElement.js';
 import { getDayMonth } from '../../services/utils.js';
 import {getMovements, getEmployee} from '../../services/service.js';
 import '../../components/aon-table.js';
-import '../../components/aon-toast.js';
 
 export class AonMovementsList extends AonElement {
 
@@ -35,7 +34,6 @@ export class AonMovementsList extends AonElement {
 
 	paintView(){
 		this.innerHTML = `
-			<aon-toast id="divToast"></aon-toast>
 			<aon-table id='aonMovementTable'></aon-table>
 		`;
 	}
@@ -50,11 +48,10 @@ export class AonMovementsList extends AonElement {
 
 	async getTable() {
 		let aonMovementTable = this.getElement('aonMovementTable');
-		aonMovementTable.addColumn('Apellidos y nombre', 'string', 'nombres', '40%');
+		aonMovementTable.addColumn('Apellidos y nombre', 'string', 'nombres', '45%');
 		aonMovementTable.addColumn('DNI/NIE', 'string', 'dni', '15%');
-		aonMovementTable.addColumn('Movimiento', 'string', 'status', '20%');
+		aonMovementTable.addColumn('Movimiento', 'string', 'status', '25%');
 		aonMovementTable.addColumn('Fecha', 'date', 'fecha', '15%');
-		aonMovementTable.addColumn('Opción', 'fn', 'option', '15%');
 		if(aonMovementTable) {
 			this.aonComunica.startLoader();
 			try {
@@ -63,59 +60,54 @@ export class AonMovementsList extends AonElement {
 				resp = resp.sort((a,b)=> new Date(b.fra) - new Date(a.fra));
 				resp.map( res => {
 					let {name:nombres, ipf, fra, situation} = res;
-					let fecha = getDayMonth(fra);
-					let date_now = new Date();
-					let prev = new Date(fra).getTime() > date_now.getTime();
-					let status = prev ?
-					`<span style="font-weight: 700;">${situation==="AL" ? "Alta" : "Baja"} Previa</span> ` :
-					`<span style="font-weight: 700;color: #B32000;">${situation==="AL" ? "Alta" : "Baja"} Consolidada</span>`;
-					let dni = ipf.toString().substring(1);
-					let option = [
-						{
-							name:'Obtener TA',
-							icon:'print',
-							fn: (el) => this.aonComunicaEl.getTa(res, el)
-						},
-						{
-							name:'Obtener IDC',
-							icon:'print',
-							fn: (el) => this.aonComunicaEl.getIdc(res, el)
-						}
-					];
-					if( this.aonComunicaEl.anularCondition(situation, fra)  ) {
-						option.push({
-							name:'Anular',
-							icon:'delete_forever',
-							fn: (el) => this.aonComunicaEl.deleteMov(res, el)
-						});
-					}
+					const fecha = getDayMonth(fra);
+					const date_now = new Date();
+					const prev = new Date(fra).getTime() > date_now.getTime();
+					let color = "#000";
+					let tipo_mov = situation === "AL" ? "Alta" : "Baja";
+					if(prev) {
+						color = "#488601";
+						tipo_mov =`${tipo_mov} previa`;
+					} else if(this.aonComunicaEl.anularCondition(situation, fra)){
+						color = "#CB8D00";
+						tipo_mov =`${tipo_mov} Consolidada`;
+					} else 
+						tipo_mov = `${tipo_mov} Consolidada`;
+					
+					const status = `<span style="font-weight: 700;color: ${color};">${tipo_mov}</span>`;
+					const dni = ipf.toString().substring(1);
+
 					res = {
 						...res,
 						nombres,
 						dni,
 						fecha,
 						status,
-						prev,
-						option
+						prev
 					};
 
 					aonMovementTable.addRow(res, (el) => this.aonMovement(el, res));
 				})
 			} catch(e){
-				console.log(e);
+				const toast = this.getElement(`aonComunicaToast`);
+				if("invalidCertificate" === e){
+					if(toast) toast.start({ message: e, type: 'error' });
+					this.getElement('aonComunicaSidenavCertificados').click()
+				}
 			}
 			this.aonComunica.stopLoader();
 		}
 	}
 
-	async aonMovement({target:el}, data) {
+	async aonMovement({target:el}, {regime, ctaCti, nss, prev, situation}) {
 		let id = 'aonAltaDirecta';
 		this.aonComunica.startLoader();
 		this.aonComunica.setContentHTML(`<aon-alta-directa id="${id}"></aon-alta-directa>`);
 		try {
-			const resp = await getEmployee(data);
+			let resp = await getEmployee({regime, ctaCti, nss});
 			if(resp){
-				let aonAltaDirecta = this.getElement(id);
+				resp = {...resp, prev, situation};
+				const aonAltaDirecta = this.getElement(id);
 				if(aonAltaDirecta){
 					//DISABLED FORMS
 					aonAltaDirecta.disabledForm(`${id}EmpresaCard`);

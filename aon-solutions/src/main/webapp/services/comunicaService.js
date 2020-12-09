@@ -2,56 +2,6 @@
 import { post, get, openPDF } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
-// export const getMovements = () =>  new Promise((resolve) => {
-//     resolve([
-//         {
-//             id: 1,
-//             nombre: 'NOMBRE1',
-//             last_name: 'APELLIDOS',
-//             dni: '0Y777777X',
-//             mov: 'Alta',
-//             tipo_contrato: 'Jornada Parcial',
-//             fecha: '21-01-2020'
-//         },
-//         {
-//             id: 2,
-//             nombre: 'NOMBRE2',
-//             last_name: 'APELLIDOS',
-//             dni: '0Y777777X',
-//             mov: 'Alta',
-//             tipo_contrato: 'Jornada completa',
-//             fecha: '22-01-2020'
-//         },
-//         {
-//             id: 3,
-//             nombre: 'NOMBRE3',
-//             last_name: 'APELLIDOS',
-//             dni: '0Y777777X',
-//             mov: 'Alta',
-//             tipo_contrato: 'Jornada Parcial',
-//             fecha: '23-01-2020'
-//         },
-//         {
-//             id: 4,
-//             nombre: 'NOMBRE4',
-//             last_name: 'APELLIDOS',
-//             dni: '0Y777777X',
-//             mov: 'Alta',
-//             tipo_contrato: 'Jornada completa',
-//             fecha: '25-01-2020'
-//         },
-//         {
-//             id: 5,
-//             nombre: 'NOMBRE5',
-//             last_name: 'APELLIDOS',
-//             dni: '0Y777777X',
-//             mov: 'Alta',
-//             tipo_contrato: 'Jornada completa',
-//             fecha: '25-01-2020'
-//         },
-//     ]);
-// });
-
 export const getWorkplaceCCCs = () => get(`${API_URL}/workplace_ccc`);
 
 export const getMovements = () => get(`${API_URL}/comunica/movements`);
@@ -247,86 +197,8 @@ export const getTA = (data) => openPDF(`${API_URL}/comunica/pdf/get-ta`, data);
 
 export const getIDC = (data) => openPDF(`${API_URL}/comunica/pdf/get-idc`, data);
 
-// export const getHorasConvenio = (tipo_jornada) =>  new Promise((resolve) => {
-//     let jsonValues = [
-//         {
-//             "id": "1",
-//             "name": "40",
-//             "value": "40",
-//             "tipo_jornada": "semanal"
-//         },
-//         {
-//             "id": "2",
-//             "name": "39",
-//             "value": "39",
-//             "tipo_jornada": "semanal"
-//         },
-//         {
-//             "id": "3",
-//             "name": "38",
-//             "value": "38",
-//             "tipo_jornada": "semanal"
-//         },
-//         {
-//             "id": "4",
-//             "name": "37",
-//             "value": "37",
-//             "tipo_jornada": "semanal"
-//         },
-//         {
-//             "id": "5",
-//             "name": "36",
-//             "value": "36",
-//             "tipo_jornada": "semanal"
-//         },
-//         {
-//             "id": "6",
-//             "name": "35",
-//             "value": "35",
-//             "tipo_jornada": "semanal"
-//         },
-//         {
-//             "id": "7",
-//             "name": "8.0",
-//             "value": "8.0",
-//             "tipo_jornada": "diaria"
-//         },
-//         {
-//             "id": "8",
-//             "name": "7.9",
-//             "value": "7.9",
-//             "tipo_jornada": "diaria"
-//         },
-//         {
-//             "id": "9",
-//             "name": "7.8",
-//             "value": "7.8",
-//             "tipo_jornada": "diaria"
-//         },
-//         {
-//             "id": "10",
-//             "name": "7.7",
-//             "value": "7.7",
-//             "tipo_jornada": "diaria"
-//         },
-//         {
-//             "id": "11",
-//             "name": "7.6",
-//             "value": "7.6",
-//             "tipo_jornada": "diaria"
-//         },
-//         {
-//             "id": "12",
-//             "name": "7.5",
-//             "value": "7.5",
-//             "tipo_jornada": "diaria"
-//         }
-//     ];
-//     let filters =  jsonValues.filter(f=>f.tipo_jornada.indexOf(tipo_jornada) >= 0);
-//     resolve(filters);
-// });
-
 export const postAltaDirecta = (data) => post(`${API_URL}/comunica/alta-directa`, data); //ALTA DIRECTA
+export const postUpdateCto = (data) => post(`${API_URL}/comunica/update-contrato`, data); //ALTA DIRECTA
 export const postDeleteMov = (data) => post(`${API_URL}/comunica/delete-mov`, data);  //DELETE MOV
 
 export const getConvenios = () => new Promise((resolve) => {

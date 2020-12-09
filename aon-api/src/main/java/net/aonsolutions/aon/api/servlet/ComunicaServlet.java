@@ -5,13 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Base64;
-//import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +41,7 @@ import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaREDMov;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
-import java.util.Optional;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "ComunicaServlet", urlPatterns = {"/ms/api/comunica/*"})
 public class ComunicaServlet extends HttpServlet{
@@ -49,95 +51,36 @@ public class ComunicaServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("AON EXAMPLE SERVLET - GET METHOD");
+		JSONObject json;
 		OutputStream os = resp.getOutputStream();
 		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		byte content [] = gjson.toJson(null).getBytes();
 		
 		try {
-			String param = req.getParameter("json");
-			JSONObject json = new JSONObject();
-			if(param!=null) {
-				param = new String(Base64.getDecoder().decode(param));
-				json = new JSONObject(param);
-			}
-				
 			String token = req.getHeader("session_id");
 			String domainName = req.getHeader("domain_name");
-			
 			Integer domainId = !"null".equalsIgnoreCase(req.getHeader("domain_id")) && AonNumberUtils.toInteger(req.getHeader("domain_id")) != null 
 					? AonNumberUtils.toInteger(req.getHeader("domain_id")) : 0;
-	
 			Domain domain = AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
-			
 
 			String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-			
 			Utils.addCorsHeader(resp);
 			
 			resp.setStatus(HttpServletResponse.SC_OK);
 			
-		
-			if(pathInfo  != null) {
-				if("movements".equalsIgnoreCase(pathInfo[1])) {// mov de empleados prev de empleados
-					try {
-						LOGGER.info("MOVEMENTS SERVLET - GET METHOD");
-						final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
-					    String certificatePassword = "jg@FNMT";
-					    String certificateType = "pkcs12";
-						content = gjson.toJson(this.getMovements(domain, "", certificateInputStream, certificatePassword, certificateType, json)).getBytes();
-					}
-					catch (SegSocialException e) {resp.setStatus(500);content = gjson.toJson(e.getCause().getMessage()).getBytes();}
-				} 
-				else if("ipfxnaf".equalsIgnoreCase(pathInfo[1])) {// mov de empleados prev de empleados
-					try {
-						LOGGER.info("IPFXNAF SERVLET - GET METHOD");
-						final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
-					    String certificatePassword = "jg@FNMT";
-					    String certificateType = "pkcs12";
-						content = gjson.toJson(this.ipfxnaf(certificateInputStream, certificatePassword, certificateType, req.getParameter("nss"))).getBytes();
-					}
-					catch (SegSocialException e) {resp.setStatus(500);content = gjson.toJson(e.getCause().getMessage()).getBytes();}
-				} 
-				else if("nafxipf".equalsIgnoreCase(pathInfo[1])) {// mov de empleados prev de empleados
-					try {
-						LOGGER.info("NAFXIPF SERVLET - GET METHOD");
-						final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
-					    String certificatePassword = "jg@FNMT";
-					    String certificateType = "pkcs12";
-						content = gjson.toJson(
-							this.nafxipf(certificateInputStream, certificatePassword, certificateType, 
-							req.getParameter("ipf"), 
-							req.getParameter("apellido1"), 
-							req.getParameter("apellido2")
-						) ).getBytes();
-					}
-					catch (SegSocialException e) {resp.setStatus(500);content = gjson.toJson(e.getCause().getMessage()).getBytes();}
-				}
-				 else if("get-employee".equalsIgnoreCase(pathInfo[1])) {
-					try {
-						LOGGER.info("GET-EMPLOYEE SERVLET - POST METHOD");
-						final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
-					    String certificatePassword = "jg@FNMT";
-					    String certificateType = "pkcs12";
-					    content = gjson.toJson(getEmployee(certificateInputStream, certificatePassword, certificateType,
-							req.getParameter("regime"), 
-							req.getParameter("ctaCti"), 
-							req.getParameter("nss")
-					    )).getBytes();
-					} catch (SegSocialException e) {
-						e.printStackTrace();
-						resp.setStatus(500);content = gjson.toJson(e.getCause().getMessage()).getBytes();
-					}
-				}
-			}
-
-		} 
-		catch (Exception e) {
-            e.printStackTrace(); 
+			json = requestParamsToJSON(req);
+			content = this.routerSegSocial(pathInfo[1], domain, token,  json);
+			
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+	    	resp.setStatus(500);
+	    	content = e.getCause().getMessage().getBytes();
+	    } catch (Exception e) {
+			e.printStackTrace();
 			resp.setStatus(500);
-	
-			content = gjson.toJson(e.getMessage()).getBytes();
+			content = e.getMessage().getBytes();
 		}
+		
 		resp.setContentType("text/html");
 		resp.setContentLength(content.length);
 		os.write(content);
@@ -152,8 +95,6 @@ public class ComunicaServlet extends HttpServlet{
 		
 		try {
 
-			JSONObject json = Utils.getRequestJSON(req);
-			
 			String token = req.getHeader("session_id");
 			String domainName = req.getHeader("domain_name");
 			
@@ -165,40 +106,17 @@ public class ComunicaServlet extends HttpServlet{
 			Utils.addCorsHeader(resp);
 			resp.setStatus(HttpServletResponse.SC_OK);
 			
-			//User user = AON_SOLUTIONS.getUser(domain, token);
-			LOGGER.info("CERTIFICATE");
-			//Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
-			//System.out.println(certificate);
-			if(pathInfo != null) {
-				if("alta-directa".equalsIgnoreCase(pathInfo[1])) {
-					try {
-						LOGGER.info("ALTA-DIRECTA SERVLET - POST METHOD");
-						final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
-					    String certificatePassword = "jg@FNMT";
-					    String certificateType = "pkcs12";
-					    content = gjson.toJson(sendAlta(certificateInputStream, certificatePassword, certificateType, json)).getBytes();
-					} catch (SegSocialException e) {
-						e.printStackTrace();
-				    	resp.setStatus(500);content = gjson.toJson(e.getCause().getMessage()).getBytes();
-				    }
-				} else if("delete-mov".equalsIgnoreCase(pathInfo[1])) {
-					try {
-						LOGGER.info("DELETE-MOV SERVLET - POST METHOD");
-						final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
-					    String certificatePassword = "jg@FNMT";
-					    String certificateType = "pkcs12";
-					    movDelete(certificateInputStream, certificatePassword, certificateType, json);
-					    content = gjson.toJson("true").getBytes();
-					} catch (SegSocialException e) {
-						e.printStackTrace();
-						resp.setStatus(500);content = gjson.toJson(e.getCause().getMessage()).getBytes();
-					}
-				}
-			}
-		} catch (Exception e) {
+			JSONObject json = Utils.getRequestJSON(req);
+			content = this.routerSegSocial(pathInfo[1], domain, token,  json);
+
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+	    	resp.setStatus(500);
+	    	content = e.getCause().getMessage().getBytes();
+	    } catch (Exception e) {
 			e.printStackTrace();
 			resp.setStatus(500);
-			content = gjson.toJson(e.getMessage()).getBytes();
+			content = e.getMessage().getBytes();
 		}
 		
 		resp.setContentType("text/html");
@@ -206,31 +124,76 @@ public class ComunicaServlet extends HttpServlet{
 		os.write(content);
 	}
 	
+	//router
+	private byte[] routerSegSocial(String route, Domain domain, String token, JSONObject json) throws SegSocialException, Exception {
+	    Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+	    byte content [] = gjson.toJson(null).getBytes();
+		User user = AON_SOLUTIONS.getUser(domain, token);
+		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+		final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
+		switch (route) {
+			case "movements":
+				LOGGER.info("MOVEMENTS SERVLET - GET METHOD");
+				content = gjson.toJson(this.getMovements(domain, "",  certificateInputStream, certificate.getPassword(), certificate.getType(), json)).getBytes();
+				break;
+			case "ipfxnaf":
+				LOGGER.info("IPFXNAF SERVLET - GET METHOD");
+				content = gjson.toJson(this.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), json)).getBytes();
+				break;
+			case "nafxipf":
+				LOGGER.info("NAFXIPF SERVLET - GET METHOD");
+				content = gjson.toJson(this.nafxipf(certificateInputStream, certificate.getPassword(), certificate.getType(), json)).getBytes();
+				break;
+			case "get-employee":
+				LOGGER.info("GET-EMPLOYEE SERVLET - POST METHOD");
+				content = gjson.toJson(this.getEmployee(certificateInputStream, certificate.getPassword(), certificate.getType(), json)).getBytes();
+				break;
+			case "alta-directa":
+				LOGGER.info("ALTA-DIRECTA SERVLET - POST METHOD");
+				content = gjson.toJson(sendAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), json)).getBytes();
+				break;
+			case "delete-mov":
+				LOGGER.info("DELETE-MOV SERVLET - POST METHOD");
+				content = gjson.toJson(movDelete(certificateInputStream, certificate.getPassword(), certificate.getType(), json)).getBytes();
+				break;
+			case "update-contrato":
+				LOGGER.info("UPDATE-CONTRATO SERVLET - POST METHOD");
+				content = gjson.toJson(updateContrato(certificateInputStream, certificate.getPassword(), certificate.getType(), json)).getBytes();
+				break;
+			default:
+				break;
+		}
+		return content;
+	}
 	
 	private Collection<Employee> getMovements(Domain domain, String login, final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType, JSONObject json) throws SegSocialException {
+			  final String certificateType, JSONObject json) throws SegSocialException, Exception {
 		ArrayList<Employee> employees = new ArrayList<>();
-		try {
-			byte[] cert = certificateInputStream.readAllBytes();
-            PAYROLL.getCCCStream(domain.getName(), domain.getId(), login).forEach(ccc -> {
-                String cti = ccc.getCccAccount();
-                String regimen = ccc.getCccRegimeCode();
-                try{
-                    employees.addAll(SistemaRED.getTotalEmployees(new ByteArrayInputStream(cert), certificatePassword, certificateType, regimen, cti));
-                } catch(Exception e) {
-//                	 e.printStackTrace();
-                }
-            });	
-		} catch (IOException e) {
-			e.printStackTrace();
-            throw new InvalidCertificateException();
-		}
+	
+		byte[] cert = certificateInputStream.readAllBytes();
+		List<String> errors = new ArrayList<String>();
+        PAYROLL.getCCCStream(domain.getName(), domain.getId(), login).forEach(ccc -> {
+            String cti = ccc.getCccAccount();
+            String regimen = ccc.getCccRegimeCode();
+            try{
+                employees.addAll(SistemaRED.getTotalEmployees(new ByteArrayInputStream(cert), certificatePassword, certificateType, regimen, cti));
+            }catch(InvalidCertificateException e) {
+                e.printStackTrace();
+                errors.add("invalidCertificate");
+            }catch(Exception e) {
+                e.printStackTrace();
+            }
+        });	
+        
+        if(errors.size() > 0) throw new Exception(errors.get(0));
+        
 		return employees;
 	}
 	
 	
 	private Collection<Employee> ipfxnaf(final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType, String nss) throws Exception {
+			  final String certificateType, JSONObject json) throws SegSocialException, Exception {
+			String nss = json.optString("nss");
 			if(nss.isEmpty()) {
 				throw new Exception("nss requerido");
 			};
@@ -241,7 +204,7 @@ public class ComunicaServlet extends HttpServlet{
 	}
 	
 	private Employee sendAlta(final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType , JSONObject json) throws SegSocialException, Exception{
+			  final String certificateType, JSONObject json) throws SegSocialException, Exception{
 		validateSendMov(json);
 		//first screen
 		String regimen = json.optString("regimen");
@@ -275,13 +238,12 @@ public class ComunicaServlet extends HttpServlet{
 		.setContract(type_cto)
 		.setMdctz(md_ctz)
 		.build();
-		System.out.println(coefparcial);
-		return employee;
-//		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
+		//return employee;
+		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	
-	private void movDelete(final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType , JSONObject json) throws SegSocialException{
+	private Boolean movDelete(final InputStream certificateInputStream, final String certificatePassword,
+			  final String certificateType , JSONObject json) throws SegSocialException, Exception {
 
 		//first screen
 		String situation = json.getString("situation");
@@ -298,21 +260,70 @@ public class ComunicaServlet extends HttpServlet{
 		} else {
 			SistemaRED.altaConsolidadaDelete(certificateInputStream, certificatePassword, certificateType, situation, regimen, ctaCti, nss);
 		}
+		return true;
 	}
 	
 	private Employee nafxipf(final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType , String ipf, String apellido1, String apellido2) throws SegSocialException{
+			  final String certificateType , JSONObject json) throws SegSocialException, Exception{
+		String ipf = json.optString("ipf");
+		String apellido1 =  json.optString("apellido1");
+		String apellido2 =  json.optString("apellido2");
 		return SistemaRED.nafxipf(certificateInputStream, certificatePassword, certificateType, ipf, apellido1,  apellido2);
 	}
 	
 	private Employee getEmployee(final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType , String regimen, String ccc, String nss) throws SegSocialException{
+			  final String certificateType , JSONObject json) throws SegSocialException, Exception{
+		String regimen = json.optString("regime");
+		String ccc =  json.optString("ctaCti");
+		String nss =  json.optString("nss");
 		return SistemaRED.getEmployee(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss);
+	}
+	
+	private Map<String, Object> updateContrato(final InputStream certificateInputStream, final String certificatePassword,
+			  final String certificateType, JSONObject json) throws SegSocialException, Exception {
+		Map<String, Object> map = new HashMap<>();
+		List<String> errors = new ArrayList<String>();
+		map.put("grup_ctz_edit", false);
+		map.put("ocupacion_edit", false);
+		
+		if(json.isNull("fecha")) {
+			throw new Exception("Cuenta de cotizaciï¿½nuerido");
+		};
+		String regimen = json.optString("regimen");
+		String ctaCti = json.optString("ctaCti");
+		String nss = json.optString("nss");
+		String ipf = json.optString("ipf");
+		Date fecha = Toolkit.parseDate(json.optString("fecha"), "yyyy-MM-dd");
+		
+		String ocup = json.optString("ocupacion");
+		if(!ocup.isEmpty() && !json.optString("ocupacion_edit").isEmpty() && json.getBoolean("ocupacion_edit")) {
+            try{
+            	map.put("ocupacion_edit", true);
+            	SistemaRED.cambioOcupacion(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, ocup, fecha);
+            } catch(Exception e) {
+            	e.printStackTrace();
+            	errors.add(e.getMessage());
+            }	
+		}
+		
+		String grup_ctz = json.optString("grup_ctz");
+		if(!grup_ctz.isEmpty() && !json.optString("grup_ctz_edit").isEmpty() && json.getBoolean("grup_ctz_edit")) {
+			 try{
+				 map.put("grup_ctz_edit", true);
+				 SistemaRED.cambioGrupCtz(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, grup_ctz, fecha);
+			} catch(Exception e) {
+				e.printStackTrace();
+				errors.add(e.getMessage());
+			}	
+		}
+		if(errors.size() > 0) map.put("errors",errors);
+		
+		return map;
 	}
 	
 	private void validateSendMov(JSONObject json) throws Exception {
 		if(json.isNull("ctaCti")) {
-			throw new Exception("Cuenta de cotizaciòn requerido");
+			throw new Exception("Cuenta de cotización requerida");
 		};
 		if(json.isNull("nss")) {
 			throw new Exception("Número de afiliación requerido");
@@ -321,10 +332,10 @@ public class ComunicaServlet extends HttpServlet{
 			throw new Exception("DNI/NIE requerido");
 		};
 		if(json.isNull("fecha")) {
-			throw new Exception("Fecha requerido");
+			throw new Exception("Fecha requerida");
 		};
 		if(json.isNull("grup_ctz")) {
-			throw new Exception("Grupo de cotizaciòn requerido");
+			throw new Exception("Grupo de cotización requerido");
 		};
 		if(json.isNull("type_cto")) {
 			throw new Exception("Tipo de contrato requerido");
@@ -335,6 +346,16 @@ public class ComunicaServlet extends HttpServlet{
 			}
 		};
 	}
-
-
+	
+	private JSONObject requestParamsToJSON(ServletRequest req) {
+	    JSONObject jsonObj = new JSONObject();
+	    @SuppressWarnings("unchecked")
+		Map<String,String[]> params = req.getParameterMap();
+	    for (Map.Entry<String,String[]> entry : params.entrySet()) {
+	      String v[] = entry.getValue();
+	      Object o = (v.length == 1) ? v[0] : v;
+	      jsonObj.put(entry.getKey(), o);
+	    }
+	    return jsonObj;
+	}
 }

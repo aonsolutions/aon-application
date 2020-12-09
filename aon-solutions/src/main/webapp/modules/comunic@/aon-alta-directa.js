@@ -1,7 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { INPUTS_ALL } from '../../environments/constants.js';
 import { setValueName, serializeForm } from '../../services/utils.js';
-import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz } from '../../services/service.js'
+import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../services/service.js'
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
 import '../../components/aon-number.js';
@@ -315,6 +315,7 @@ export class AonAltaDirecta extends AonElement {
             obj['coefparcial'] = parseInt(data.coef.toString().replace(',', ''));
         }
         for (const property in obj) setValueName(property, obj[property]);
+        this._contrato = obj; //contrato
 
         //seleccionar workplace;
         const centro_trabajo = this.getElement('centro_trabajo');
@@ -623,13 +624,22 @@ export class AonAltaDirecta extends AonElement {
         dialog.setTitle("Comunicar");
 
         dialog.addAcceptAction(() => {
-            if (this.ACTION.includes("CREATE")) this.save();
-            else if (this.ACTION.includes("UPDATE")) this.update();
+            switch (this.ACTION) {
+                case "CREATE":
+                    this.save();
+                    break;
+                case "UPDATE":
+                    this.update();
+                    break;
+                default:
+                    break;
+            }
         });
         dialog.open();
     }
 
     async save() {
+        this.aonComunica.startLoader();
         const toast = this.getElement(`aonComunicaToast`);
         try {
             await postAltaDirecta(this.getContrato());
@@ -638,18 +648,27 @@ export class AonAltaDirecta extends AonElement {
         } catch (error) {
             toast.start({ message: error, type: 'error' });
         }
+        this.aonComunica.stopLoader();
     }
 
     async update() {
+        this.aonComunica.startLoader();
         const toast = this.getElement(`aonComunicaToast`);
-        toast.start({ message: 'En desarrollo...!', type: 'primary', delay: 3000 });
-        // try {
-        //     await postAltaDirecta(this.getContrato());
-        //     toast.start({ message: 'Contrato modificado !', type: 'primary', delay: 3000 });
-        //     this.back();
-        // } catch (error) {
-        //     toast.start({ message: error, type: 'error' });
-        // }
+        let cto_new = this.getContrato();
+        const cto_old = this._contrato;
+        for(const property in cto_new){
+            if(cto_new[property] && (cto_old[property] != cto_new[property]) ){
+                cto_new[`${property}_edit`] = true;
+            }
+        }
+        try {
+            await postUpdateCto(cto_new);
+            toast.start({ message: 'Contrato modificado!', type: 'primary', delay: 3000 });
+            this.back();
+        } catch (error) {
+            toast.start({ message: error, type: 'error' });
+        }
+        this.aonComunica.stopLoader();
     }
 
     back() {
@@ -698,34 +717,6 @@ export class AonAltaDirecta extends AonElement {
         [...this.getElement(form).querySelectorAll(elems_disabled)].map(el => {
             el.disabled = true;
         })
-    }
-
-
-    testFieldValues() {
-        let regimen = "0111";
-        this.getElement('regimen').setAttribute('value', regimen);
-
-        let ctaCti = "01105360062";
-        this.getElement('ctaCti').setAttribute('value', ctaCti);
-
-        let nss = "010022757387";
-        this.getElement('aonAltaDirectaNss').setAttribute('value', nss);
-
-        let ipf = "016262835H";
-        this.getElement('aonAltaDirectaDni').setAttribute('value', ipf);
-
-        //second screen
-        let fecha = "2020-12-28";
-        this.getElement('fecha').setAttribute('value', fecha);
-
-        let convenio = "60888888888888";
-        this.getElement('convenio').setAttribute('value', convenio);
-
-        let grup_ctz = "03";
-        this.getElement('grup_ctz').setAttribute('value', grup_ctz);
-
-        let type_cto = "402";
-        this.getElement('type_cto').setAttribute('value', type_cto);
     }
 }
 
