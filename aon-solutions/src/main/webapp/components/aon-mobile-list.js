@@ -1,7 +1,7 @@
-import {AonElement} from '../../components/AonElement.js';
+import {AonElement} from './AonElement.js';
 
-import * as CONSTANT from "../../environments/constants.js";
-import * as MSG from "../../environments/msg.js";
+import * as CONSTANT from "../environments/constants.js";
+import * as MSG from "../environments/msg.js";
 
 export class AonMobileList extends AonElement {
 
