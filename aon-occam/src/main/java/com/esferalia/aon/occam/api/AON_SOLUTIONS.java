@@ -186,7 +186,8 @@ public class AON_SOLUTIONS {
 	public static User getUser(Domain domain, String token) {
 		AonToken aonToken = SECURITY.getAonToken(token);
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "")){		
-			return getSecurity().getUser(ctx, f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))).and(f.getAuthProperty().eq(aonToken.getAuth())));
+			return getSecurity().getUser(ctx, f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+					.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
 		}
 	}
 	
