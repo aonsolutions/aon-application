@@ -63,6 +63,9 @@ export class AonInvoicePanel extends AonElement {
 		} else {
 			aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
 			aonInvoice.addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
+
+			aonInvoice.addSearchOption();
+			aonInvoice.addEventListener('search', (event) => {});
 		}
 
 		this.appendChild(input);

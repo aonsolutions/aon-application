@@ -1,9 +1,12 @@
 export const AON_MSG_INVOICE = 'Invoice';
 export const AON_MSG_INVOICES = 'Invoices';
 export const AON_MSG_RESTORE_INVOICE = 'Restore Invoice';
+export const AON_MSG_RESTORE_INVOICES = 'Restore Invoices';
 export const AON_MSG_REJECT_INVOICE = 'Reject Invoice';
+export const AON_MSG_REJECT_INVOICES = 'Reject Invoices';
 export const AON_MSG_PRINT_INVOICE = 'Print Invoice';
 export const AON_MSG_SEND_INVOICE = 'Send Invoice';
+export const AON_MSG_SEND_INVOICES = 'Send Invoices';
 export const AON_MSG_RECTIFY_INVOICE = 'Rectify Invoice';
 export const AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION = 'The Invoice has been definitively deleted.';
 export const AON_MSG_INVOICE_DATA = 'Invoice Data';
@@ -16,6 +19,9 @@ export const AON_MSG_RECORD_INVOICE = 'Record Invoice';
 export const AON_MSG_PENDING_INVOICES = 'Pending Invoices';
 export const AON_MSG_REJECTED_INVOICES = 'Rejected Invoices';
 export const AON_MSG_ADD_INVOICE = 'Add Invoice';
+export const AON_MSG_DOWNLOAD_INVOICE = 'Download Invoice';
+export const AON_MSG_DOWNLOAD_INVOICES = 'Download Invoices';
+
 
 export const AON_MSG_TICKET = 'Ticket';
 export const AON_MSG_TICKETS = 'Tickets';
@@ -85,8 +91,12 @@ export const AON_MSG_FILE = 'File';
 export const AON_MSG_FILE_DATA = 'File Data';
 export const AON_MSG_UPLOAD_FILE = 'Upload File';
 export const AON_MSG_SEND_FILE = 'Send File';
+export const AON_MSG_SEND_FILES = 'Send Files';
 export const AON_MSG_DELETE_FILE = 'Delete File';
 export const AON_MSG_DOWNLOAD_FILE = 'Download File';
+export const AON_MSG_DOWNLOAD_FILES = 'Download Files';
+export const AON_MSG_EDIT_FILE = 'Edit File';
+export const AON_MSG_EDIT_FILES = 'Edit Files';
 
 export const AON_MSG_USER = 'User';
 export const AON_MSG_USERS = 'Users';

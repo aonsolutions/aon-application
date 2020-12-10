@@ -1,9 +1,12 @@
 export const AON_MSG_INVOICE = 'Faktura';
 export const AON_MSG_INVOICES = 'Fakturak';
-export const AON_MSG_RESTORE_INVOICE = 'Fakturak Berreskuratu';
+export const AON_MSG_RESTORE_INVOICE = 'Faktura Berreskuratu';
+export const AON_MSG_RESTORE_INVOICES = 'Fakturak Berreskuratu';
 export const AON_MSG_REJECT_INVOICE = 'Faktura Baztertu';
+export const AON_MSG_REJECT_INVOICES = 'Fakturak Baztertu';
 export const AON_MSG_PRINT_INVOICE = 'Faktura Inprimatu';
 export const AON_MSG_SEND_INVOICE = 'Faktura Bidali';
+export const AON_MSG_SEND_INVOICES = 'Fakturak Bidali';
 export const AON_MSG_RECTIFY_INVOICE = 'Faktura Zuzendu';
 export const AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION = 'Faktura betirako ezabatu da.';
 export const AON_MSG_INVOICE_DATA = 'Fakturaren Datuak';
@@ -16,6 +19,8 @@ export const AON_MSG_RECORD_INVOICE = 'Faktura Kontabilizatu';
 export const AON_MSG_PENDING_INVOICES = 'Zain Dauden Fakturak';
 export const AON_MSG_REJECTED_INVOICES = 'Baztertu Diren Fakturak';
 export const AON_MSG_ADD_INVOICE = 'Faktura Gehitu';
+export const AON_MSG_DOWNLOAD_INVOICE = 'Faktura Deskargatu';
+export const AON_MSG_DOWNLOAD_INVOICES = 'Fakturak Deskargatu';
 
 export const AON_MSG_TICKET = 'Tiket';
 export const AON_MSG_TICKETS = 'Tiketak';
@@ -85,8 +90,12 @@ export const AON_MSG_FILE = 'Fitxategia';
 export const AON_MSG_FILE_DATA = 'Fitxategiaren Datuak';
 export const AON_MSG_UPLOAD_FILE = 'Fitxategia Igo';
 export const AON_MSG_SEND_FILE = 'Fitxategia Bidali';
+export const AON_MSG_SEND_FILES = 'Fitxategiak Bidali';
 export const AON_MSG_DELETE_FILE = 'Fitxategia Ezabatu';
 export const AON_MSG_DOWNLOAD_FILE = 'Fitxategia Deskargatu';
+export const AON_MSG_DOWNLOAD_FILES = 'Fitxategiak Deskargatu';
+export const AON_MSG_EDIT_FILE = 'Fitxategia Editatu';
+export const AON_MSG_EDIT_FILES = 'Fitxategiak Editatu';
 
 export const AON_MSG_USER = 'Erabiltzailea';
 export const AON_MSG_USERS = 'Erabiltzaileak';

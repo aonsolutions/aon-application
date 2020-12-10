@@ -1,9 +1,12 @@
 export const AON_MSG_INVOICE = 'Factura';
 export const AON_MSG_INVOICES = 'Factures';
 export const AON_MSG_RESTORE_INVOICE = 'Restaurar Factura';
+export const AON_MSG_RESTORE_INVOICES = 'Restaurar Factures';
 export const AON_MSG_REJECT_INVOICE = 'Rebutjar Factura';
+export const AON_MSG_REJECT_INVOICES = 'Rebutjar Factures';
 export const AON_MSG_PRINT_INVOICE = 'Imprimir Factura';
 export const AON_MSG_SEND_INVOICE = 'Enviar Factura';
+export const AON_MSG_SEND_INVOICES = 'Enviar Factures';
 export const AON_MSG_RECTIFY_INVOICE = 'Rectificar Factura';
 export const AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION = `La factura s'ha esborrat definitivament.`;
 export const AON_MSG_INVOICE_DATA = 'Dades Factura';
@@ -16,6 +19,8 @@ export const AON_MSG_RECORD_INVOICE = 'Comptabilitzar';
 export const AON_MSG_PENDING_INVOICES = 'Factures Pendents';
 export const AON_MSG_REJECTED_INVOICES = 'Factures Rebutjades';
 export const AON_MSG_ADD_INVOICE = 'Afegir Factura';
+export const AON_MSG_DOWNLOAD_INVOICE = 'Descarregar Factura';
+export const AON_MSG_DOWNLOAD_INVOICES = 'Descarregar Factures';
 
 export const AON_MSG_TICKET = 'Tiquet';
 export const AON_MSG_TICKETS = 'Tiquets';
@@ -85,8 +90,12 @@ export const AON_MSG_FILE = 'Fitxer';
 export const AON_MSG_FILE_DATA = `Dades de l'Fitxer`;
 export const AON_MSG_UPLOAD_FILE = 'Pujar Fitxer';
 export const AON_MSG_SEND_FILE = 'Enviar Fitxer';
+export const AON_MSG_SEND_FILES = 'Enviar Fitxers';
 export const AON_MSG_DELETE_FILE = 'Esborrar Fitxer';
 export const AON_MSG_DOWNLOAD_FILE = 'Descarregar Fitxer';
+export const AON_MSG_DOWNLOAD_FILES = 'Descarregar Fitxers';
+export const AON_MSG_EDIT_FILE = 'Editar Fitxer';
+export const AON_MSG_EDIT_FILES = 'Editar Fitxers';
 
 export const AON_MSG_USER = 'Usuari';
 export const AON_MSG_USERS = 'Usuaris';

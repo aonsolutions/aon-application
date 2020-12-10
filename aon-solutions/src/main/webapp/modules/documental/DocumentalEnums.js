@@ -37,6 +37,11 @@ export const DocumentalAction = {
     id: 'DownloadDocument',
     name: MSG.AON_MSG_DOWNLOAD_FILE,
     icon: 'file_download'
+  },
+  EDIT: {
+    id: 'EditDocument',
+    name: MSG.AON_MSG_EDIT_DOCUMENT,
+    icon: 'edit'
   }
 }
 

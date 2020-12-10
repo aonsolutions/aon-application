@@ -91,6 +91,15 @@ export const InvoiceAction = {
     id: 'AddInvoice',
     name: MSG.AON_MSG_ADD_INVOICE,
     icon: 'add'
+  },
+  DOWNLOAD: {
+    id: 'DownloadInvoice',
+    name: MSG.AON_MSG_DOWNLOAD_INVOICE,
+    icon: 'file_download'
+  },
+  SEND: {
+    id: 'SendInvoice',
+    name: MSG.AON_MSG_SEND_INVOICE,
+    icon: 'mail'
   }
-
 }

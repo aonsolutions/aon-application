@@ -1,9 +1,12 @@
 export const AON_MSG_INVOICE = 'Factura';
 export const AON_MSG_INVOICES = 'Facturas';
 export const AON_MSG_RESTORE_INVOICE = 'Restaurar Factura';
+export const AON_MSG_RESTORE_INVOICES = 'Restaurar Facturas';
 export const AON_MSG_REJECT_INVOICE = 'Rechazar Factura';
+export const AON_MSG_REJECT_INVOICES = 'Rechazar Facturas';
 export const AON_MSG_PRINT_INVOICE = 'Imprimir Factura';
 export const AON_MSG_SEND_INVOICE = 'Enviar Factura';
+export const AON_MSG_SEND_INVOICES = 'Enviar Facturas';
 export const AON_MSG_RECTIFY_INVOICE = 'Rectificar Factura';
 export const AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION = 'La Factura se ha borrado Definitivamente.';
 export const AON_MSG_INVOICE_DATA = 'Datos Factura';
@@ -16,6 +19,8 @@ export const AON_MSG_RECORD_INVOICE = 'Contabilizar Factura';
 export const AON_MSG_PENDING_INVOICES = 'Facturas Pendientes';
 export const AON_MSG_REJECTED_INVOICES = 'Facturas Rechazados';
 export const AON_MSG_ADD_INVOICE = 'Añadir Factura';
+export const AON_MSG_DOWNLOAD_INVOICE = 'Descargar Factura';
+export const AON_MSG_DOWNLOAD_INVOICES = 'Descargar Facturas';
 
 export const AON_MSG_TICKET = 'Ticket';
 export const AON_MSG_TICKETS = 'Tickets';
@@ -86,8 +91,12 @@ export const AON_MSG_FILE = 'Fichero';
 export const AON_MSG_FILE_DATA = 'Datos del Fichero';
 export const AON_MSG_UPLOAD_FILE = 'Subir Fichero';
 export const AON_MSG_SEND_FILE = 'Enviar Fichero';
+export const AON_MSG_SEND_FILES = 'Enviar Ficheros';
 export const AON_MSG_DELETE_FILE = 'Borrar Fichero';
 export const AON_MSG_DOWNLOAD_FILE = 'Descargar Fichero';
+export const AON_MSG_DOWNLOAD_FILES = 'Descargar Ficheros';
+export const AON_MSG_EDIT_FILE = 'Editar Fichero';
+export const AON_MSG_EDIT_FILES = 'Editar Ficheros';
 
 export const AON_MSG_USER = 'Usuario';
 export const AON_MSG_USERS = 'Usuarios';

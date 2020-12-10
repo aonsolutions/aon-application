@@ -131,6 +131,13 @@ export class AonToolbar extends AonElement {
 		return header;
 	}
 
+
+	removeSeparators() {
+		this.querySelectorAll('hr').forEach((item, i) => {
+				item.remove();
+		});
+	}
+
 	addSeparator() {
 		let span = document.createElement('span');
 		let hr = this.createElement('hr');
@@ -228,7 +235,8 @@ export class AonToolbar extends AonElement {
 	}
 
 	removeButton(name) {
-		this.getElement(this.TOOL_SECTION + name + 'Button').remove();
+		let button = this.getElement(this.TOOL_SECTION + name + 'Button');
+		if(button) button.remove();
 	}
 
 	removeButtons() {

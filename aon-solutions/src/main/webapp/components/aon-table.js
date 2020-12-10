@@ -5,6 +5,7 @@ import './aon-dialog-menu.js';
 export class AonTable extends AonElement {
 
 		columns;
+		selected;
 
 		THEADER;
 		TBODY;
@@ -30,6 +31,7 @@ export class AonTable extends AonElement {
 			this.columns = [];
 			this.THEADER = this.id + 'TableHeader';
 			this.TBODY = this.id + 'TableBody';
+			this.selected = [];
 		}
 
 
@@ -61,6 +63,7 @@ export class AonTable extends AonElement {
 							let it = this.getElement(item.id + 'Input');
 							it.click();
 						}
+
 					});
 				});
 			}
@@ -92,13 +95,26 @@ export class AonTable extends AonElement {
 			if(!body) return true;
 			let tr = document.createElement('tr');
 			tr.style.cursor = 'pointer';
-
+			body.appendChild(tr);
 
 			if(this.hasAttribute('selectable')) {
 				let tdCheckBox = document.createElement('td');
 				tdCheckBox.style.width = '5%';
 				tdCheckBox.innerHTML = `<aon-checkbox id="aaa${body.children.length}"> </aon-checkbox>`;
 				tr.appendChild(tdCheckBox);
+				let checkbox = this.getElement(`aaa${body.children.length}`);
+				checkbox.addEventListener('change', () => {
+					if(checkbox.getValue()) {
+						this.selected.push(value);
+					} else {
+						this.selected.forEach((item, i) => {
+							if(item == value) {
+								this.selected.splice(i, 1);
+							}
+						});
+					}
+					this.dispatchEvent(new CustomEvent('select'));
+				});
 			}
 
 			this.columns.forEach((item, i) => {
@@ -115,7 +131,6 @@ export class AonTable extends AonElement {
 				tr.appendChild(td);
 			});
 
-			body.appendChild(tr);
 			return tr;
 		}
 

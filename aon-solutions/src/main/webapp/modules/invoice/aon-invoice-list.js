@@ -1,6 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Paymethods} from '../../services/paymethod.js';
 import {getInvoices} from '../../services/service.js';
+import {InvoiceAction} from './invoiceEnums.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 
@@ -57,6 +58,14 @@ export class AonInvoiceList extends AonElement {
 			if(this.more)
 				this.loadMore()
 		});
+
+		aonInvoiceTable.addEventListener('select', () => {
+			if(aonInvoiceTable.selected.length === 1) {
+				this.addInvoiceActions();
+			} else if(aonInvoiceTable.selected.length === 0){
+				this.removeInvoiceActions();
+			}
+		});
 	}
 
 	loadMore() {
@@ -96,6 +105,8 @@ export class AonInvoiceList extends AonElement {
 			getInvoices(this.getFilter()).then(invoices => {
 				setInvoices(invoices);
 				aonInvoiceTable.removeRows();
+				aonInvoiceTable.selected = [];
+				this.removeInvoiceActions();
 				invoices.forEach((invoice, i) => {
 					if(!invoice.name){
 						invoice.name = invoice.type === 'emitida'
@@ -113,6 +124,107 @@ export class AonInvoiceList extends AonElement {
 				});
 			});
 		}
+	}
+
+	addInvoiceActions() {
+		this.removeInvoiceActions();
+		let aonInvoice = this.getElement('aonInvoice');
+		let toolbar = this.getElement(aonInvoice.TOOLBAR);
+		toolbar.addSeparator();
+		if(this.getFilter().status === 'inbox') {
+			aonInvoice.addToolbarOption2(InvoiceAction.DELETE, () => this.deleteInvoices());
+			aonInvoice.addToolbarOption2(InvoiceAction.REJECT, () => this.rejectInvoices());
+			toolbar.addSeparator();
+			aonInvoice.addToolbarOption2(InvoiceAction.DOWNLOAD, () => this.downloadInvoices());
+			aonInvoice.addToolbarOption2(InvoiceAction.SEND, () => this.sendInvoices());
+		} else if(this.getFilter().status === 'refused' || this.getFilter().status === 'rejected'){
+			aonInvoice.addToolbarOption2(InvoiceAction.DELETE, () => this.deleteInvoices());
+			aonInvoice.addToolbarOption2(InvoiceAction.RESTORE, () => this.restoreInvoices());
+		} else if(this.getFilter().status === 'trash' || this.getFilter().status === 'draft'){
+			aonInvoice.addToolbarOption2(InvoiceAction.DELETE_FOREVER, () => this.deleteForeverInvoices());
+			aonInvoice.addToolbarOption2(InvoiceAction.RESTORE, () => this.restoreInvoices());
+		} else if(this.getFilter().status === 'accounting'){
+			aonInvoice.addToolbarOption2(InvoiceAction.DOWNLOAD, () => this.downloadInvoices());
+			aonInvoice.addToolbarOption2(InvoiceAction.SEND, () => this.sendInvoices());
+		}
+	}
+
+	deleteInvoices() {
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.AON_MSG_TO_TRASH);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
+	}
+
+	deleteForeverInvoices() {
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.AON_MSG_DELETE_FOREVER);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
+	}
+
+	rejectInvoices() {
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.AON_MSG_REJECT_INVOICES);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
+	}
+
+	downloadInvoices() {
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.AON_MSG_DOWNLOAD_INVOICES);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
+	}
+
+	sendInvoices() {
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.AON_MSG_SEND_INVOICES);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
+	}
+
+	restoreInvoices() {
+		let aonInvoice = this.getElement('aonInvoice');
+		let d = document.getElementById(aonInvoice.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.AON_MSG_RESTORE_INVOICES);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
+	}
+
+	removeInvoiceActions() {
+		let aonInvoice = this.getElement('aonInvoice');
+		let toolbar = this.getElement(aonInvoice.TOOLBAR);
+		toolbar.removeSeparators();
+		aonInvoice.removeToolbarOption(InvoiceAction.DELETE);
+		aonInvoice.removeToolbarOption(InvoiceAction.REJECT);
+		aonInvoice.removeToolbarOption(InvoiceAction.RESTORE);
+		aonInvoice.removeToolbarOption(InvoiceAction.DELETE_FOREVER);
+		aonInvoice.removeToolbarOption(InvoiceAction.DOWNLOAD);
+		aonInvoice.removeToolbarOption(InvoiceAction.SEND);
 	}
 
 	getPaymethod(paymethod) {
