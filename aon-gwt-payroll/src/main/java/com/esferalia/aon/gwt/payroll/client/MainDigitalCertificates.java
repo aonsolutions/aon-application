@@ -4,16 +4,20 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
+import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -61,6 +65,15 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	@UiField
 	Grid digitalCertificatesDataTable;
 	
+	@UiField
+	Grid secondaryUserDataTableHeader;
+	
+	@UiField
+	ScrollPanel secondaryUserScrollPanel;
+	
+	@UiField
+	Grid secondaryUserDataTable;
+	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
 	private MainDigitalCertificatesObject mainDigitalCertificatesObject;
@@ -68,6 +81,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton accept;
+	private AonToolbarButton addSecondaryUser;
 	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
@@ -93,6 +107,10 @@ public class MainDigitalCertificates extends MainEntryPoint{
 					initPreview();
 					insertRows();
 					fillCertificatesRows(s);
+					
+					mainDigitalCertificatesObject.getSecondaryUsers(t -> {
+						insertSecondaryUsersRows();
+					}, e -> {});
 				}, f -> {});
 	}
 
@@ -104,7 +122,15 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		digitalCertificatesDataTableHeader.resizeColumns(5);
 		digitalCertificatesDataTable.resizeColumns(5);
 		
+		secondaryUserDataTableHeader.clear();
+		secondaryUserDataTableHeader.resize(0, 0);
+		secondaryUserDataTable.clear();
+		secondaryUserDataTable.resize(0, 0);
+		secondaryUserDataTableHeader.resizeColumns(5);
+		secondaryUserDataTable.resizeColumns(5);
+		
 		paintHeader();
+		paintHeaderSecondaryUser();
 		calculateScrollPanelHeight();
 		setColumnWidth();
 	}
@@ -130,9 +156,31 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		digitalCertificatesDataTableHeader.setWidget(row, 4, date);
 	}
 	
+	private void paintHeaderSecondaryUser() {
+		int row = secondaryUserDataTableHeader.insertRow(secondaryUserDataTableHeader.getRowCount());
+		Label name = new Label("NOMBRE");
+		Label naf = new Label("NAF");
+		Label status = new Label("ESTADO");
+		Label date = new Label("FECHA ESTADO");
+		Label action = new Label("");
+		
+		name.addStyleName(style.headerStyle());
+		naf.addStyleName(style.headerStyle());
+		status.addStyleName(style.headerStyle());
+		date.addStyleName(style.headerStyle());
+		action.addStyleName(style.headerStyle());
+		
+		secondaryUserDataTableHeader.setWidget(row, 0, name);
+		secondaryUserDataTableHeader.setWidget(row, 1, naf);
+		secondaryUserDataTableHeader.setWidget(row, 2, status);
+		secondaryUserDataTableHeader.setWidget(row, 3, date);
+		secondaryUserDataTableHeader.setWidget(row, 4, action);
+	}
+	
 	private void calculateScrollPanelHeight() {
 		Integer clientHeight = Window.getClientHeight();
 		scrollPanel.setHeight((clientHeight - 900) + "px");
+		secondaryUserScrollPanel.setHeight((clientHeight - 900) + "px");
 	}
 	
 	private void setColumnWidth() {
@@ -149,6 +197,18 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		digitalCertificatesDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(175, Unit.PX);
 		digitalCertificatesDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(375, Unit.PX);
 		digitalCertificatesDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(150, Unit.PX);
+		
+		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(350, Unit.PX);
+		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(200, Unit.PX);
+		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(200, Unit.PX);
+		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(150, Unit.PX);
+		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setWidth(50, Unit.PX);
+		
+		secondaryUserDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(350, Unit.PX);
+		secondaryUserDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(200, Unit.PX);
+		secondaryUserDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(200, Unit.PX);
+		secondaryUserDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(150, Unit.PX);
+		secondaryUserDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
 	}
 	
 	private void insertRows() {
@@ -185,7 +245,8 @@ public class MainDigitalCertificates extends MainEntryPoint{
 				passwordTB.getElement().setAttribute("type", "password");
 		});
 		hPanel.add(passwordTB);
-		hPanel.add(showPassBtn);
+		if(!mainDigitalCertificatesObject.hasData(Byte.parseByte("0")))
+			hPanel.add(showPassBtn);
 		showPassBtn.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		showPassBtn.getElement().getStyle().setMarginTop(4, Unit.PX);
 		
@@ -248,7 +309,8 @@ public class MainDigitalCertificates extends MainEntryPoint{
 				passwordTB.getElement().setAttribute("type", "password");
 		});
 		hPanel.add(passwordTB);
-		hPanel.add(showPassBtn);
+		if(!mainDigitalCertificatesObject.hasData(Byte.parseByte("0")))
+			hPanel.add(showPassBtn);
 		showPassBtn.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		showPassBtn.getElement().getStyle().setMarginTop(4, Unit.PX);
 		
@@ -367,7 +429,9 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		formPanel.add(flowPanel);
 			
 		mainFlowPanel.add(fileNameTB);
-		mainFlowPanel.add(formPanel);
+		if(!mainDigitalCertificatesObject.hasData(Byte.parseByte(certificateTypeStr)))
+			mainFlowPanel.add(formPanel);
+		
 		return mainFlowPanel;
 	}
 
@@ -392,6 +456,70 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		((Label) digitalCertificatesDataTable.getWidget(1, 4)).setText(formatFullDate.format(digitalCertificate.getCreationDate()));
 	}
 	
+	private void insertSecondaryUsersRows() {
+		secondaryUserDataTable.clear();
+		secondaryUserDataTable.resize(0, 0);
+		secondaryUserDataTable.resizeColumns(5);
+		setColumnWidth();
+		
+		for(SecondaryUserCertificate secondaryUser : mainDigitalCertificatesObject.getSecondaryUsers()) {
+			fillSecondaryUserRow(secondaryUser);
+		}
+	}
+	
+	private void fillSecondaryUserRow(SecondaryUserCertificate secondaryUser) {
+		// Insert new row
+		int row = secondaryUserDataTable.insertRow(secondaryUserDataTable.getRowCount());
+		
+		// Name Label
+		Label nameL = new Label(secondaryUser.getName());
+		
+		// NAF Label
+		Label nafL = new Label(secondaryUser.getNaf());
+		
+		// NAF Label
+		Label statusL = new Label(secondaryUser.getSituation());
+		
+		// NAF Label
+		Label dateL = new Label(formatFullDate.format(secondaryUser.getSituation_date()));
+		
+		// Delete Button
+		Button deleteUserBtn = new Button();
+		deleteUserBtn.setStyleName("aon-editDataTable-button aon-icon-delete");
+		deleteUserBtn.addClickHandler(e -> {
+			// Delete User Dialog Confirm
+			AonConfirmDialog confirmDialog = new AonConfirmDialog();
+			confirmDialog.confirm(
+					"BORRADO", 
+					String.valueOf("\u00BF") + "Realmente desea eliminar a este usuario?",
+					new AonConfirmDialogCallback() {
+
+						@Override
+						public void onAccept() {
+							mainDigitalCertificatesObject.deleteSecondaryUser(secondaryUser, s -> {
+								AonConfirmDialog dialog = new AonConfirmDialog();
+								dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+								
+								mainDigitalCertificatesObject.getSecondaryUsers(t -> {
+									insertSecondaryUsersRows();
+								}, e -> {});
+							}, f -> {});
+						}
+
+						@Override
+						public void onCancel() {
+							// TODO Auto-generated method stub
+						}});
+		});
+		
+		//Add to table
+		secondaryUserDataTable.setWidget(row, 0, nameL);
+		secondaryUserDataTable.setWidget(row, 1, nafL);
+		secondaryUserDataTable.setWidget(row, 2, statusL);
+		secondaryUserDataTable.setWidget(row, 3, dateL);
+		secondaryUserDataTable.setWidget(row, 4, deleteUserBtn);
+	}
+
 	private String getFileName(String filename) {
 		String[] splits = filename.split("\\\\");
 		return splits[splits.length-1].contains("\\.") ? splits[splits.length-1].split("\\.")[0] : splits[splits.length-1];
@@ -405,6 +533,16 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	private AonToolbar getToolbarPanel() {
 		
 		AonToolbar toolbar = new AonToolbar("Certificados digitales");
+		
+		addSecondaryUser = new AonToolbarButton( "Nuevo usuario secundario", AON.CSS.aonIconAdd() );
+		addSecondaryUser.setAccessKey('A');
+		addSecondaryUser.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onAddSecondaryUser(event);
+			}
+		});
+		toolbar.add(addSecondaryUser);
 
 		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		accept.setAccessKey('G');
@@ -429,6 +567,24 @@ public class MainDigitalCertificates extends MainEntryPoint{
 						fillCertificatesRows(t);
 					}, f -> {});
 		}, f -> {});
+	}
+	
+	private void onAddSecondaryUser(ClickEvent event) {
+		SecondaryUserDialog dialog = new SecondaryUserDialog() {
+			
+			@Override
+			protected void onAccept() {
+				AonConfirmDialog dialog = new AonConfirmDialog();
+				dialog.info("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
+				
+				mainDigitalCertificatesObject.getSecondaryUsers(t -> {
+					insertSecondaryUsersRows();
+				}, e -> {});
+			}
+		};
+		
+		dialog.center();
+		dialog.show();
 	}
 
 }

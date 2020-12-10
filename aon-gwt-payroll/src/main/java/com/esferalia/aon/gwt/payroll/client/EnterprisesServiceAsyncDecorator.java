@@ -27,6 +27,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
@@ -36,6 +37,7 @@ import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
+import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -618,6 +620,36 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void deleteDigitalCertificate(String currentDomainName, String currentUser, Byte type, AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.deleteDigitalCertificate(currentDomainName, currentUser, type, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getSecondaryUsers(currentDomainName, currentUser, new AsyncCallbackWrapper<List<SecondaryUserCertificate>>(callback));
+	}
+
+	@Override
+	public void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteSecondaryUser(currentDomainName, currentUser, ipfType, ipf, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.createSecondaryUser(currentDomainName, currentUser, ipfType, ipf, naf, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getIpfxNaf(String currentDomainName, String currentUser, ArrayList<String> nssList, AsyncCallback<EmployeeSegSocial> callback) {
+		AON.start();
+		enterprisesServiceAsync.getIpfxNaf(currentDomainName, currentUser, nssList, new AsyncCallbackWrapper<EmployeeSegSocial>(callback));
+	}
+
+	@Override
+	public void getNafxIpf(String currentDomainName, String currentUser, String ipf, String apellido1, String apellido2, AsyncCallback<EmployeeSegSocial> callback) {
+		AON.start();
+		enterprisesServiceAsync.getNafxIpf(currentDomainName, currentUser, ipf, apellido1, apellido2, new AsyncCallbackWrapper<EmployeeSegSocial>(callback));
 	}
 
 }

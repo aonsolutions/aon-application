@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
@@ -32,6 +33,7 @@ import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
+import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -387,6 +389,26 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void getPayMethods(AsyncCallback<Map<String, String>> asyncCallback) {
 		enterprisesServiceAsync.getPayMethods(getCurrentDomainName(), asyncCallback);
+	}
+	
+	public void getSecondaryUsers(AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) {
+		enterprisesServiceAsync.getSecondaryUsers(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+	
+	public void deleteSecondaryUser(String ipfType, String ipf, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.deleteSecondaryUser(getCurrentDomainName(), getCurrentUser(), ipfType, ipf, asyncCallback);
+	}
+	
+	public void createSecondaryUser(String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.createSecondaryUser(getCurrentDomainName(), getCurrentUser(), ipfType, ipf, naf, asyncCallback);
+	}
+	
+	public void getIpfxNaf(ArrayList<String> nssList, AsyncCallback<EmployeeSegSocial> asyncCallback) {
+		enterprisesServiceAsync.getIpfxNaf(getCurrentDomainName(), getCurrentUser(), nssList, asyncCallback);
+	}
+	
+	public void getNafxIpf(String ipf, String apellido1, String apellido2, AsyncCallback<EmployeeSegSocial> asyncCallback) {
+		enterprisesServiceAsync.getNafxIpf(getCurrentDomainName(), getCurrentUser(), ipf, apellido1, apellido2, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

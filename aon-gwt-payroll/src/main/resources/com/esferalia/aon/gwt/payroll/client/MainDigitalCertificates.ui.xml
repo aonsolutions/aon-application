@@ -26,7 +26,7 @@
 			font-size: 12px;
 			margin-left: 10px;
 			position: relative;
-			width: 120px;
+			width: 100px;
 			background-color: white;
 			padding: 5px;
 		}
@@ -76,20 +76,39 @@
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
 			<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.center}" debugId="activityHTMLPanel">
-	    		<g:VerticalPanel styleName="{style.styleBorder}">
-		    	<g:Label styleName='{style.tittle}'>Certificados Digitales</g:Label>
-			    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} " debugId="paymetDialogHTMLPanel">
-			    		<g:VerticalPanel>
-			    			<g:Grid ui:field="digitalCertificatesDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
-			    			<g:HTMLPanel>
-			    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
-			    			</g:HTMLPanel>
-				    		<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollStyle}">
-				    			<g:Grid ui:field="digitalCertificatesDataTable"></g:Grid>
-				    		</g:ScrollPanel>
-			    		</g:VerticalPanel>
-			    	</g:HTMLPanel>
-			    </g:VerticalPanel>
+	    		
+	    		<g:VerticalPanel>
+	    			<g:VerticalPanel styleName="{style.styleBorder}">
+			    		<g:Label styleName='{style.tittle}'>Cert. Digitales</g:Label>
+				    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} " debugId="paymetDialogHTMLPanel">
+				    		<g:VerticalPanel>
+				    			<g:Grid ui:field="digitalCertificatesDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
+				    			<g:HTMLPanel>
+				    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
+				    			</g:HTMLPanel>
+					    		<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollStyle}">
+					    			<g:Grid ui:field="digitalCertificatesDataTable"></g:Grid>
+					    		</g:ScrollPanel>
+				    		</g:VerticalPanel>
+				    	</g:HTMLPanel>
+				    </g:VerticalPanel>
+				    
+				    <g:VerticalPanel styleName="{style.styleBorder}">
+			    		<g:Label styleName='{style.tittle}'>Usr. Secundarios</g:Label>
+				    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} " debugId="paymetDialogHTMLPanel">
+				    		<g:VerticalPanel>
+				    			<g:Grid ui:field="secondaryUserDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
+				    			<g:HTMLPanel>
+				    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
+				    			</g:HTMLPanel>
+					    		<g:ScrollPanel ui:field="secondaryUserScrollPanel" styleName="{style.scrollStyle}">
+					    			<g:Grid ui:field="secondaryUserDataTable"></g:Grid>
+					    		</g:ScrollPanel>
+				    		</g:VerticalPanel>
+				    	</g:HTMLPanel>
+				    </g:VerticalPanel>
+	    		</g:VerticalPanel>
+	    		
 	    	</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>

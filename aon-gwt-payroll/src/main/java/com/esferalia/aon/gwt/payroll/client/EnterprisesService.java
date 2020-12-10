@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
@@ -32,6 +33,7 @@ import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
+import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -219,5 +221,16 @@ public interface EnterprisesService extends RemoteService {
 	Map<String, String> getPayMethods(String currentDomainName);
 
 	void deleteDigitalCertificate(String currentDomainName, String currentUser, Byte type);
+
+	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser);
+
+	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf);
+
+	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf);
+
+	EmployeeSegSocial getIpfxNaf(String currentDomainName, String currentUser, ArrayList<String> nssList);
+
+	EmployeeSegSocial getNafxIpf(String currentDomainName, String currentUser, String ipf, String apellido1,
+			String apellido2);
 	
 }

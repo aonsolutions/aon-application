@@ -1,16 +1,14 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
+import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainDigitalCertificatesObject {
@@ -19,10 +17,12 @@ public class MainDigitalCertificatesObject {
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	
 	private List<DigitalCertificate> digitalCertificateList;
+	private List<SecondaryUserCertificate> secondaryUsers;
 	
 	public MainDigitalCertificatesObject() {
 		super();
 		this.digitalCertificateList = new ArrayList<DigitalCertificate>();
+		this.secondaryUsers = new ArrayList<SecondaryUserCertificate>();
 	}
 	
 	public void getDigitalCertificates(Consumer<List<DigitalCertificate>> success, Consumer<Throwable> failure){
@@ -69,6 +69,54 @@ public class MainDigitalCertificatesObject {
 
 			@Override
 			public void onFailure(Throwable caught) { }
+		});
+		
+	}
+	
+	public void getSecondaryUsers(Consumer<List<SecondaryUserCertificate>> success, Consumer<Throwable> failure){
+		
+		impl.getSecondaryUsers(new AsyncCallback<List<SecondaryUserCertificate>>() {
+			
+			@Override
+			public void onSuccess(List<SecondaryUserCertificate> result) {
+				secondaryUsers = result;
+				success.accept(result);	
+			}
+
+			@Override
+			public void onFailure(Throwable caught) { }
+		});
+		
+	}
+	
+	public void deleteSecondaryUser(SecondaryUserCertificate secondaryUserCertificate, Consumer<Void> success, Consumer<Throwable> failure){
+		String naf = secondaryUserCertificate.getNaf();
+		ArrayList<String> nssList = new ArrayList<String>();
+		nssList.add(naf);
+		
+		impl.getIpfxNaf(nssList, new AsyncCallback<EmployeeSegSocial>() {
+			
+			@Override
+			public void onSuccess(EmployeeSegSocial result) {
+				String ipf = result.getIpf();
+				String ipfType = checkIPFType(ipf);
+				
+				impl.deleteSecondaryUser(ipfType, ipf, new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						success.accept(result);	
+					}
+
+					@Override
+					public void onFailure(Throwable caught) { }
+				});
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
 		});
 		
 	}
@@ -125,5 +173,18 @@ public class MainDigitalCertificatesObject {
 	
 	public List<DigitalCertificate> getDigitalCertificateList(){
 		return digitalCertificateList;
+	}
+	
+	public List<SecondaryUserCertificate> getSecondaryUsers(){
+		return secondaryUsers;
+	}
+	
+	public String checkIPFType(String ipf) {
+		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
+
+		if (dniPattern.test(ipf.toUpperCase()))
+			return "1";
+		else
+			return "2";
 	}
 }

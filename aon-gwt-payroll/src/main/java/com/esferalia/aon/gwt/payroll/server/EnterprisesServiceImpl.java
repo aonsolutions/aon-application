@@ -5,6 +5,8 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -66,6 +68,7 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
@@ -79,6 +82,7 @@ import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
@@ -118,8 +122,10 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.SistemaRED_Secondary_User;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
+import solutions.aon.seg.social.objects.SecondaryUser;
 
 /**
  * The server side implementation of the RPC service.
@@ -2508,5 +2514,132 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				contract.getSsRegime().getCode(), 
 				contract.getEnterpriseCCC(), 
 				contract.getPersonSsNumber()) );
+	}
+
+	@Override
+	public List<SecondaryUserCertificate> getSecondaryUsers(String domainName, String userLogin) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED_Secondary_User.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
+			
+			List<SecondaryUser> secondaryUsers = new ArrayList<SecondaryUser>(secondaryUsersCollection);
+			List<SecondaryUserCertificate> secondaryUsersCertificate = new ArrayList<SecondaryUserCertificate>();
+			
+			for(SecondaryUser secondaryUser : secondaryUsers) {
+				secondaryUsersCertificate.add(new SecondaryUserCertificate(
+						secondaryUser.getAuthoritation(),
+						secondaryUser.getAuthoritation_entity(),
+						secondaryUser.getMain_user_name(),
+						secondaryUser.getMain_user_ipf(),
+						secondaryUser.getMain_user_naf(),
+						secondaryUser.getName(),
+						secondaryUser.getProvince(),
+						secondaryUser.getIpf(),
+						secondaryUser.getNaf(),
+						secondaryUser.getSituation(),
+						secondaryUser.getSituation_date(),
+						secondaryUser.getTelephone(),
+						secondaryUser.getFax(),
+						secondaryUser.getMobile(),
+						secondaryUser.getMail()
+				));
+			}
+			
+			return secondaryUsersCertificate;
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public void deleteSecondaryUser(String domainName, String userLogin, String ipfType, String ipf) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			SistemaRED_Secondary_User.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public void createSecondaryUser(String domainName, String userLogin, String ipfType, String ipf, String naf) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			SistemaRED_Secondary_User.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public EmployeeSegSocial getIpfxNaf(String domainName, String userLogin, ArrayList<String> nssList) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			
+			Collection<solutions.aon.seg.social.objects.Employee> employeeCollection = SistemaRED.ipfxnaf(is, certificate.getPassword(), certificate.getType(), nssList);
+			solutions.aon.seg.social.objects.Employee employee = (solutions.aon.seg.social.objects.Employee) employeeCollection.toArray()[0];
+			
+			EmployeeSegSocial employeeSegSocial = new EmployeeSegSocial(
+					employee.getNss(), 
+					employee.getName().orElse(null), 
+					employee.getBirthDate().orElse(null), 
+					employee.getIpf());
+			
+			return employeeSegSocial;
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public EmployeeSegSocial getNafxIpf(String domainName, String userLogin, String ipf, String apellido1, String apellido2) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			
+			solutions.aon.seg.social.objects.Employee employee = SistemaRED.nafxipf(is, certificate.getPassword(), certificate.getType(), ipf, apellido1, apellido2);
+			
+			EmployeeSegSocial employeeSegSocial = new EmployeeSegSocial(
+					employee.getNss(), 
+					employee.getName().orElse(null), 
+					employee.getBirthDate().orElse(null), 
+					employee.getIpf());
+			
+			return employeeSegSocial;
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
