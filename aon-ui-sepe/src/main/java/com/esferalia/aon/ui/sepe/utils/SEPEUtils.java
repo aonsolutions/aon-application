@@ -281,7 +281,11 @@ public class SEPEUtils {
 	public List<Salary> getSalaryList(Contract contract, Date startDate, Date endDate) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
+		
+		//criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID), contract.getPerson().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID), contract.getWorkPlace().getEnterprise().getId());
+
 		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE),endDate);
 		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), startDate);
 		return bean.getList(criteria).stream().map(to ->  (Salary) to ).collect( Collectors.toList());		
