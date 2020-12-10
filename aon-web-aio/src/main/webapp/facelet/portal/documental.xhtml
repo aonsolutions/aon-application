@@ -18,6 +18,11 @@
 		margin: 0px;
 	}
 	
+	a:hover {
+  		color: black !important;
+  		text-decoration: none !important;
+  	}
+	
 	.aonContent > div {
 		position: initial !important;
 	}
@@ -55,11 +60,20 @@
 			link.type = "text/css";
 			link.rel = "stylesheet";
 			link.media = "screen,print";
-			link.href = stylesheet;
+			link.href = stylesheet; 
 
 			document.getElementsByTagName( "head" )[0].appendChild( link );
        	}
        	
+       	function unLoadStylesSheet( stylesheet ) {
+			var links = document.getElementsByTagName( "link" );
+			for (var i = links.length; i>=0; i--)  {  //search backwards within nodelist for matching elements to remov
+				var link = links[i];
+				if (link && link.href && link.href == stylesheet )
+					link.parentNode.removeChild(link);
+			}       
+		}
+
        	loadStylesSheet('https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css');
        	loadStylesSheet('https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined');
        	loadStylesSheet('https://code.getmdl.io/1.3.0/material.indigo-pink.min.css');

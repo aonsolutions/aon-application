@@ -146,6 +146,10 @@
 				inmediate="true"
 				styleClass="aon-menu-icon aon-icon-helpdesk" />
 		</aon:if>
+	</ui:define>
+	
+	<ui:define name="beforeRightMenuContentEx">
+		<aon:outputText value="#{loggedUser.loggedUserName} &#183; #{loggedUser.companyName}" />
 	</ui:define>	
 	
 	<ui:define name="beforeWebMapMenuContent">

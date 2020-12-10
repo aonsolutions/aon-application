@@ -121,7 +121,7 @@ public class DesktopController implements Serializable {
 	}
 	
 	public boolean isPortalActive() {
-		return  getState() != null && getState().isPortalActive();
+		return  getState() != null && getState().isPortalActive() && UserUtils.getInstance().isNewAONTheme();
 	}
 	
 	public String getTemplate() {
@@ -129,7 +129,7 @@ public class DesktopController implements Serializable {
 			return INIT_ACTION_TEMPLATE;
 		} else if ( getState().isAdminDomain() ) {
 			return ADMIN_TEMPLATE;
-		} else if ( getState().isPortalActive() ) {
+		} else if ( isPortalActive() ) {
 			return PORTAL_TEMPLATE;
 		}
 		return DESKTOP_TEMPLATE;
