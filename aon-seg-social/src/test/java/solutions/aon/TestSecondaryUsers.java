@@ -1,12 +1,12 @@
 package solutions.aon;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import solutions.aon.seg.social.SistemaRED_Secondary_User;
@@ -107,7 +107,7 @@ public class TestSecondaryUsers {
 	public void registerSecondaryUsersCertificateTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			SistemaRED_Secondary_User.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT_", "pkcs12","x","x");
+			SistemaRED_Secondary_User.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT_", "pkcs12","1","x","x");
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidCertificateException e) {}
@@ -121,7 +121,7 @@ public class TestSecondaryUsers {
 	public void registerSecondaryUsersNieTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			SistemaRED_Secondary_User.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","x","x");
+			SistemaRED_Secondary_User.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","1","x","x");
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidDataException e) {}
@@ -135,7 +135,7 @@ public class TestSecondaryUsers {
 	public void registerSecondaryUsersNieEmptyTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			SistemaRED_Secondary_User.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","","x");
+			SistemaRED_Secondary_User.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","1","","x");
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidDataException e) {}
@@ -149,7 +149,7 @@ public class TestSecondaryUsers {
 	public void registerSecondaryUsersNafEmptyTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			SistemaRED_Secondary_User.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","x","");
+			SistemaRED_Secondary_User.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","1","x","");
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidDataException e) {}

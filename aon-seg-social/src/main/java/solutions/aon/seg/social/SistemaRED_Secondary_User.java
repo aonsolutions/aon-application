@@ -60,7 +60,6 @@ public class SistemaRED_Secondary_User {
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
 			return getSecondaryUserInfo(htmlPage);
-
 		}
 	}
 	
@@ -150,15 +149,15 @@ public class SistemaRED_Secondary_User {
 	
 	//HANDLE EXCEPTIONS OF registerSecondaryUserImpl()
 	public static void registerSecondaryUserByNie(final InputStream certificateInputStream, final String certificatePassword,
-												  final String certificateType, final String nie, String naf) throws SegSocialException {
+												  final String certificateType, final String typeIpf, final String nie, String naf) throws SegSocialException {
 			try {
-				registerSecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,nie,naf);
+				registerSecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,typeIpf,nie,naf);
 			} catch (FailingHttpStatusCodeException | IOException e) {throw new SegSocialException(e);}
 	}
 	
 	//REGISTER SECONDARY USER 
 	public static void registerSecondaryUserImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String ipf, String naf) throws FailingHttpStatusCodeException, IOException, SegSocialException {
+			final String certificateType, final String typeIpf, final String ipf, String naf) throws FailingHttpStatusCodeException, IOException, SegSocialException {
 		
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 		
@@ -167,7 +166,7 @@ public class SistemaRED_Secondary_User {
 			HtmlCheckBoxInput ch1 = htmlPage.querySelector("#chkgrupo1_1");
 			htmlPage = ch1.click();
 			
-			HtmlOption opt1 = htmlPage.querySelector("#inputgrupo1_1_1 option:nth-child(2)");
+			HtmlOption opt1 = htmlPage.querySelector("#inputgrupo1_1_1 option:nth-child("+typeIpf+")");
 			htmlPage = opt1.click();
 			
 			HtmlInput ipf_txt = htmlPage.querySelector("#inputgrupo1_1_2");
@@ -191,9 +190,9 @@ public class SistemaRED_Secondary_User {
 		
 	//HANDLE EXCEPTIONS OF deleteSecondaryUser
 	public static void deleteSecondaryUser(final InputStream certificateInputStream, final String certificatePassword,
-										   final String certificateType, final String nie) throws SegSocialException {
+										   final String certificateType, final String ipfType, final String ipf) throws SegSocialException {
 		try {
-			deleteSecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,nie);
+			deleteSecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,ipfType,ipf);
 		}
 		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}	
 		catch(RuntimeException e) {throw new NotRespondingException();} 
@@ -203,7 +202,7 @@ public class SistemaRED_Secondary_User {
 	
 	//DELETE SECONDARY USER
 	public static void deleteSecondaryUserImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String ipf) throws IOException, SegSocialException, InterruptedException {
+			final String certificateType, final String ipfType, final String ipf) throws IOException, SegSocialException, InterruptedException {
 		
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			
@@ -213,7 +212,7 @@ public class SistemaRED_Secondary_User {
 			HtmlCheckBoxInput ch1 = htmlPage.querySelector("#chkgrupo1_2");
 			htmlPage = ch1.click();
 			
-			HtmlOption opt1 = htmlPage.querySelector("#inputgrupo1_2_1 option:nth-child(1)");
+			HtmlOption opt1 = htmlPage.querySelector("#inputgrupo1_2_1 option:nth-child("+ipfType+")");
 			htmlPage = opt1.click();
 			
 			HtmlInput ipf_txt = htmlPage.querySelector("#inputgrupo1_2_2");

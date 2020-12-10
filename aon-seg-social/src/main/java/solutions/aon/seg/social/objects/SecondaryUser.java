@@ -4,7 +4,7 @@ import java.util.Date;
 
 import solutions.aon.seg.social.objects.SecondaryUser.SecondaryUserBuilder.Visitor;
 
-public class SecondaryUser {
+public class SecondaryUser{
 
 	private String authoritation;
 	private String authoritation_entity;
@@ -40,6 +40,22 @@ public class SecondaryUser {
 	public void setFax(String fax) {this.fax = fax;}
 	public void setMobile(String mobile) {this.mobile = mobile;}
 	public void setMail(String mail) {this.mail = mail;}
+	
+	public String getAuthoritation() {return this.authoritation;}
+	public String getAuthoritation_entity() {return this.authoritation_entity;}
+	public String getMain_user_name() {return this.main_user_name;}
+	public String getMain_user_ipf() {return this.main_user_ipf;}
+	public String getMain_user_naf() {return this.main_user_naf;}
+	public String getName() {return this.name;}
+	public String getProvince() {return this.province;}
+	public String getIpf() {return this.ipf;}
+	public String getNaf() {return this.naf;}
+	public String getSituation() {return this.situation;}
+	public Date getSituation_date() {return this.situation_date;}
+	public String getTelephone() {return this.telephone;}
+	public String getFax() {return this.fax;}
+	public String getMobile() {return this.mobile;}
+	public String getMail() {return this.mail;}
 		
 	
 	public void accept(Visitor visitor) {
