@@ -23,6 +23,8 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.USER;
 import static com.esferalia.aon.payroll.sql.SQLConstants.USER_SCOPE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
+import static com.esferalia.aon.watson.server.AonDateUtils.addMonths;
+import static com.esferalia.aon.watson.server.AonDateUtils.getMonthFirstDay;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 
 import java.io.ByteArrayInputStream;
@@ -619,7 +621,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			conn = AonServletUtils.getConnection(domain);
 			return notAtEnterpriseSite() ? getSiteWorkplaceCosts(conn,
-					workplaceId) : getWorkplaceCosts(conn, workplaceId);
+					workplaceId) : getSLDWorkplaceCosts(conn, workplaceId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -2412,6 +2414,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			Map<String, Map<String,Map<String, WorkerLiquidation>>> cccSldCosts = 
 			new HashMap<String, Map<String,Map<String,WorkerLiquidation>>>();
+			
 			PAYROLL.getCCCStream(domainName, domainId, userLogin)
 			.forEach(ccc -> {
 				try {
@@ -2428,7 +2431,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			;
 			
 			if ( cccSldCosts.isEmpty() ) 
-				throw new IllegalArgumentException( new DataDoesNotExist());
+				throw new IllegalArgumentException( new DataDoesNotExist("NO EXISTEN DATOS PARA LA FECHA INTRODUCIDA"));
 			
 			ICollectionProvider salariesProvider =  
 					getSalariesProvider(domainName, cost, types, calc);
@@ -2445,6 +2448,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				cccSldCosts.getOrDefault(salary.getCcc(), Collections.emptyMap())
 				.getOrDefault(getLiquidacion(salary.getType()), Collections.emptyMap())
 				.get(salary.getSocialSecurityNumber());
+				
 				if ( liquidation == null )
 					continue;
 							
@@ -2464,9 +2468,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					
 				sldSalaries.add(salary);
 				
+				cccSldCosts.getOrDefault(salary.getCcc(), Collections.emptyMap())
+				.getOrDefault(getLiquidacion(salary.getType()), Collections.emptyMap())
+				.remove(salary.getSocialSecurityNumber());				
+				
 			}
 			
+			Map<String,com.esferalia.aon.occam.api.model.Person> personsMap = 
+			AON.getPersonStream(domainName, domainId, userLogin, p -> p.getDomainProperty().eq(domainId))
+			.collect(Collectors.toMap(p ->  p.getSocialSecurityNum(), p -> p));
 			
+			cccSldCosts.forEach((ccc,l_map) -> l_map.forEach((l, naf_map) -> naf_map.forEach((naf,w) -> sldSalaries.add(newSalary(l, ccc, w, Optional.ofNullable(personsMap.get(w.getNss())))))));
 			
 			return new ICollectionProvider() {
 				
@@ -2889,6 +2901,45 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	private static List<Cost> getSLDWorkplaceCosts(Connection connection,
+			Integer workplaceId) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+
+		try {
+			String startCol = "START";
+			String endCol = "END";
+
+			String sql = "SELECT" 
+					+ " MIN(" + CONTRACT + "."+ ContractColumns.START_DATE + ") " + startCol  
+					+ ", MAX(IFNULL(" + CONTRACT + "."+ ContractColumns.END_DATE + ",CURDATE())) " + endCol  
+					+ " FROM " + WORKPLACE 
+					+ ", " + CONTRACT 
+					+ " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE
+					+ " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
+					;
+
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, workplaceId);
+			rs = stmt.executeQuery();
+			
+			if ( rs.next() ) {
+				return getWorkplaceCosts(workplaceId, rs.getDate(startCol), rs.getDate(endCol));
+			}
+
+			return Collections.emptyList();
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
+	}
+
+
 	private static List<Cost> getSiteWorkplaceCosts(Connection connection,
 			Integer workplaceId) throws SQLException {
 
@@ -3004,6 +3055,26 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			cost.setYear(year);
 			cost.setMonth(month - 1);
+			cost.setWorkplaceId(workplaceId);
+
+			costs.add(cost);
+		}
+
+		return costs;
+
+	}
+
+	private static List<Cost> getWorkplaceCosts(
+			Integer workplaceId, Date startDate, Date endDate)
+			throws SQLException {
+		List<Cost> costs = new LinkedList<Cost>();
+		
+		for (Date date = getMonthFirstDay(startDate); date.before(getMonthFirstDay(endDate)); date = addMonths(date, 1)) {
+
+
+			Cost cost = new Cost();
+			cost.setYear(AonDateUtils.getYear(date));
+			cost.setMonth(AonDateUtils.getMonth(date));
 			cost.setWorkplaceId(workplaceId);
 
 			costs.add(cost);
@@ -5437,6 +5508,39 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return "L00";
 		}
 	}
+	
+	private static SalaryType getLiquidacion(String type) {
+		switch (type) {
+		case "L90":
+			return SalaryType.DELAY;
+		case "L13":
+			return SalaryType.NOT_ENJOYED_VACATIONS;
+		default:
+			return SalaryType.SALARY;
+		}
+	}
+
+	private static com.esferalia.aon.payroll.Salary newSalary(String type, String ccc, WorkerLiquidation liquidation, Optional<com.esferalia.aon.occam.api.model.Person> person) {
+		com.esferalia.aon.payroll.Salary salary = new com.esferalia.aon.payroll.Salary();
+		salary.setType(getLiquidacion(type));
+
+		salary.setCcc(ccc);
+
+		salary.setSocialSecurityNumber(liquidation.getNss());
+		salary.setEmployeeName(person.map(p->p.getName()).orElse(liquidation.getCaf()));
+		
+		salary.setRemuneration(Optional.ofNullable(liquidation.getCc_base()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+		salary.setTotalPayment(Optional.ofNullable(liquidation.getCc_base()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+
+		salary.setTotalEnterprise(Optional.ofNullable(liquidation.getTotalLiquid_businessFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+		salary.setSocialSecurityContributions(Optional.ofNullable(liquidation.getTotalLiquid_workerFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+		
+		salary.setTotalDeduction(Optional.ofNullable(liquidation.getCc_totalFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+		salary.setTotalLiquid(Optional.ofNullable(liquidation.getTotalLiquid_totalFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+
+		return salary;
+	}
+	
 
 
 }

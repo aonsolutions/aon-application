@@ -2122,6 +2122,25 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		showResultsPanel();
 
 	}
+	
+	@Override
+	public void onStartSLD() {
+		progressPanel = new ProgressPanel();
+
+		progressPanel.addAttachHandler(e -> {
+			// Synchronize cret@ messages.
+			Task syncTask = new Task();
+			syncTask.setDescription("Consultando C\u00e1lculos del SISTEMA RED ( Remesas SLD, Sistema de Liquidaci\u00f3n Directa )");
+			progressPanel.showTask(syncTask);
+		});
+		showProgressPanel();
+		
+	}
+	
+	@Override
+	public void onFinishSLD() {
+		hideProgressPanel();
+	}
 
 	// ------------------------------------------------- Salary.Listener methods
 
@@ -2526,6 +2545,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		footTabPanel.add(progressPanel, tab);
 		footTabPanel.selectTab(progressPanel);
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+	}
+
+	private void hideProgressPanel() {
+		closeFootPanel();
+		footTabPanel.remove(progressPanel);
 	}
 
 	private ITEditor getIt() {

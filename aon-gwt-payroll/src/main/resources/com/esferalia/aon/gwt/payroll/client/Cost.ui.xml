@@ -97,7 +97,7 @@
 		<g:center>
 			<g:SplitLayoutPanel ui:field="containerSplitLayoutPanel">
 				<g:center>
-					<g:ScrollPanel styleName="{style.editor}">
+					<g:ScrollPanel styleName="{style.editor}" ui:field="scrollPanel">
 						<g:VerticalPanel styleName="{style.document}">
 							<g:HTML styleName="reset" ui:field='container' wordWrap='true' />
 						</g:VerticalPanel>

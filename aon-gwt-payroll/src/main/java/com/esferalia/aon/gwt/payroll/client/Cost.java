@@ -8,6 +8,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -17,10 +18,12 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -49,7 +52,10 @@ public class Cost extends ResizeComposite {
 	}
 	
 	static interface Listener {
+		void onStartSLD();
+		void onFinishSLD();
 		void onPublish(CostDocuments documents, String type);
+		
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
@@ -112,6 +118,8 @@ public class Cost extends ResizeComposite {
 	HTML container;
 	@UiField
 	HTML sldcontainer;
+	@UiField
+	ScrollPanel scrollPanel;
 	@UiField
 	ScrollPanel sldScrollPanel;
 	@UiField
@@ -301,6 +309,16 @@ public class Cost extends ResizeComposite {
 	}
 	
 	
+	void onStartSLD() {
+		for (Listener listener : listeners)
+			listener.onStartSLD();
+	}
+
+	void onFinishSLD() {
+		for (Listener listener : listeners)
+			listener.onFinishSLD();
+	}
+
 	void onPublish(CostDocuments documents, String type) {
 		for (Listener listener : listeners)
 			listener.onPublish(documents, type);
@@ -325,18 +343,30 @@ public class Cost extends ResizeComposite {
 	}
 
 	private void getSLDAsHTML() {
+		onStartSLD();
 		costDocuments.getSLDAsHTML(zoom, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String html) {
+				onFinishSLD();
 				sldcontainer.setHTML(html);
 				int heigth = containerSplitLayoutPanel.getElement().getClientHeight();
-				containerSplitLayoutPanel.setWidgetSize(sldScrollPanel, heigth / 2 );
+				containerSplitLayoutPanel.setWidgetSize(sldScrollPanel, heigth / (isContainerBlank() ? 1 : 2 ) );
+				
+				Scheduler.get().scheduleDeferred(() -> {
+					int clientHeight = containerSplitLayoutPanel.getElement().getClientHeight();
+					containerSplitLayoutPanel.setWidgetSize(sldScrollPanel, clientHeight / (isContainerBlank() ? 1 : 2 ) );
+				}); 
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
+				onFinishSLD();
 				sldcontainer.setHTML(caught.getLocalizedMessage());
 				containerSplitLayoutPanel.setWidgetSize(sldScrollPanel, 0 );
+			}
+			
+			private boolean isContainerBlank() {
+				return container.getOffsetHeight() < 100;
 			}
 		});				
 	}
