@@ -623,6 +623,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return notAtEnterpriseSite() ? getSiteWorkplaceCosts(conn,
 					workplaceId) : getSLDWorkplaceCosts(conn, workplaceId);
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		} finally {
 			if (conn != null) {
@@ -5521,7 +5522,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static com.esferalia.aon.payroll.Salary newSalary(String type, String ccc, WorkerLiquidation liquidation, Optional<com.esferalia.aon.occam.api.model.Person> person) {
-		com.esferalia.aon.payroll.Salary salary = new com.esferalia.aon.payroll.Salary();
+		com.esferalia.aon.payroll.Salary salary = PayrollServletUtils.newSalary();
 		salary.setType(getLiquidacion(type));
 
 		salary.setCcc(ccc);
@@ -5537,7 +5538,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		
 		salary.setTotalDeduction(Optional.ofNullable(liquidation.getCc_totalFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
 		salary.setTotalLiquid(Optional.ofNullable(liquidation.getTotalLiquid_totalFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+		
+		// Buff !!!!.
+		Payments payments = new Payments();
+		try {salary.setPayments(payments);} catch (SalaryException e) {}		
 
+		Deductions deductions = new Deductions();
+		deductions.setTotal(salary.getTotalDeduction());
+		deductions.setSocialSecurityContributions(salary.getSocialSecurityContributions());
+		try {salary.setDeductions(deductions);} catch (SalaryException e) {}
+		
+		Costs costs = new Costs();
+		try {salary.setEnterpriseCosts(costs);} catch (SalaryException e) {}
+		
+		Bonuses bonuses = new Bonuses();
+		try {salary.setBonuses(bonuses);} catch (SalaryException e) {}
+		
 		return salary;
 	}
 	
