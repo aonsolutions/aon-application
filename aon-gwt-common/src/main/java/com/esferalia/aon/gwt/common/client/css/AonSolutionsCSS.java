@@ -171,6 +171,15 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_tgss_fie")
 	String aonIconTgssFie();
 	
+	@ClassName("aon_icon_paste")
+	String aonIconPaste();
+	
+	@ClassName("aon_icon_upgrade")
+	String aonIconUpgrade();
+	
+	@ClassName("aon_icon_send")
+	String aonIconSend();
+	
 	@ClassName("aon_icon_add_task")
 	String aonIconAddTask();
 
@@ -538,6 +547,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_cancel_button_small")
 	String aonCancelButtonSmall();
+	
+	@ClassName("aon_send_button_small")
+	String aonSendButtonSmall();
 	
 	@Deprecated
 	@ClassName("aon_accounting_invoice_panel")
