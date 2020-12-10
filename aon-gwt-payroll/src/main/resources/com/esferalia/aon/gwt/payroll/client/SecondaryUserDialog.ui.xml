@@ -1,0 +1,89 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+    <ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+    
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.SecondaryUserDialog.MyStyle">
+	
+		.form {
+			padding: 10px;
+		}
+		
+		.toolbar{
+			padding: 0 10px;
+		}
+		
+		.flex{
+			display: flex;
+			justify-content: space-between;
+		}
+		
+		.tb100{
+			width: 100px;
+		}
+		
+		.tb160{
+			width: 160px;
+		}
+		
+		.tb335{
+			width: 335px;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+			margin-top: 15px;
+		}
+		
+	</ui:style>
+
+	<g:HTMLPanel >
+	
+		<g:HTMLPanel ui:field="toolBarPanel"></g:HTMLPanel>
+		
+		<g:HTMLPanel styleName="{style.form}">
+	
+			<table ui:field="secondaryUserTable">
+		        <tbody>
+		            <tr>
+		            	<td>
+		                    <g:Label>Buscar por DNI</g:Label>
+		                </td>
+		                <td>
+		                    <g:Button ui:field="dniBtn"></g:Button>
+		                </td>
+		                <td>
+		                    <g:TextBox ui:field="nss" styleName="{style.tb100}"></g:TextBox>
+		                </td>
+		                <td>
+		                    <g:TextBox ui:field="nie" styleName="{style.tb100}"></g:TextBox>
+		                </td>
+		            </tr>
+		             <tr>
+		                <td colspan="4">
+		                	<g:HTMLPanel styleName="{style.flex}">
+		                		<g:TextBox ui:field="surname" styleName="{style.tb160}"></g:TextBox>
+		                		<g:TextBox ui:field="secondSurname" styleName="{style.tb160}"></g:TextBox>
+		                	</g:HTMLPanel>  
+		                </td>
+		            </tr>
+		            <tr>
+		            	<td colspan="4">
+		                    <g:TextBox ui:field="name" enabled="false" styleName="{style.tb335}"></g:TextBox>
+		                </td>
+		                
+		            </tr>
+		        </tbody>
+		    </table>
+			
+			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
+		
+		</g:HTMLPanel>
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>
