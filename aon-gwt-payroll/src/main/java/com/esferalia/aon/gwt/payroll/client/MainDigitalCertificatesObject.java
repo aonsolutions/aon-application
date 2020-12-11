@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -120,6 +122,40 @@ public class MainDigitalCertificatesObject {
 		});
 		
 	}
+	
+	public void createSecondaryUser(SecondaryUserCertificate secondaryUserCertificate, Consumer<Void> success, Consumer<Throwable> failure){
+		String naf = secondaryUserCertificate.getNaf();
+		ArrayList<String> nssList = new ArrayList<String>();
+		nssList.add(naf);
+		
+		impl.getIpfxNaf(nssList, new AsyncCallback<EmployeeSegSocial>() {
+			
+			@Override
+			public void onSuccess(EmployeeSegSocial result) {
+				String ipf = result.getIpf();
+				String ipfType = checkIPFType(ipf);
+				
+				impl.createSecondaryUser(ipfType, ipf, naf, new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						success.accept(result);;
+					}
+	
+					@Override
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
+				});
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+		});
+		
+	}
 
 	public void setConfidential(byte certificateType, boolean isConfidential) {
 		checkAndCreateCertificateType(certificateType);
@@ -175,8 +211,19 @@ public class MainDigitalCertificatesObject {
 		return digitalCertificateList;
 	}
 	
-	public List<SecondaryUserCertificate> getSecondaryUsers(){
-		return secondaryUsers;
+	public List<SecondaryUserCertificate> getSecondaryUsers(boolean showInactives){
+		List<SecondaryUserCertificate> activeUsers = new ArrayList<SecondaryUserCertificate>();
+		
+		if(!showInactives) {
+			for(SecondaryUserCertificate secondaryUserCertificate : this.secondaryUsers) {
+				if(!AonStringUtils.equalsIgnoreCase(secondaryUserCertificate.getSituation(), "Baja"))
+					activeUsers.add(secondaryUserCertificate);
+			}
+			
+			return activeUsers;
+		} else
+			return secondaryUsers;
+		
 	}
 	
 	public String checkIPFType(String ipf) {

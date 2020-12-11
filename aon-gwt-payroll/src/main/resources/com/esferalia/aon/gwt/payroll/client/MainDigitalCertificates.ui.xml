@@ -71,6 +71,17 @@
 			height: 100%;
 		}
 		
+		.message{
+			width: 100%;
+			text-align: center;
+		}
+		
+		.secondaryUserToolbar{
+			padding: 10px;
+			display: flex;
+		    align-items: center;
+		}
+		
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
@@ -79,7 +90,7 @@
 	    		
 	    		<g:VerticalPanel>
 	    			<g:VerticalPanel styleName="{style.styleBorder}">
-			    		<g:Label styleName='{style.tittle}'>Cert. Digitales</g:Label>
+			    		<g:Label styleName='{style.tittle}'>Cert. del Usuario</g:Label>
 				    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} " debugId="paymetDialogHTMLPanel">
 				    		<g:VerticalPanel>
 				    			<g:Grid ui:field="digitalCertificatesDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
@@ -102,8 +113,13 @@
 				    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
 				    			</g:HTMLPanel>
 					    		<g:ScrollPanel ui:field="secondaryUserScrollPanel" styleName="{style.scrollStyle}">
-					    			<g:Grid ui:field="secondaryUserDataTable"></g:Grid>
+					    			<g:DeckPanel ui:field="secondaryUserDeckPanel">
+					    				<g:Label styleName="{style.message}">Accediendo al sistema RED para consultar los usuarios secundarios...</g:Label>
+					    				<g:Label styleName="{style.message}">No eisten usuarios secundarios</g:Label>
+					    				<g:Grid ui:field="secondaryUserDataTable"></g:Grid>
+					    			</g:DeckPanel>
 					    		</g:ScrollPanel>
+					    		<g:HTMLPanel styleName="{style.secondaryUserToolbar}" ui:field="secondaryUserToolbar"></g:HTMLPanel>
 				    		</g:VerticalPanel>
 				    	</g:HTMLPanel>
 				    </g:VerticalPanel>

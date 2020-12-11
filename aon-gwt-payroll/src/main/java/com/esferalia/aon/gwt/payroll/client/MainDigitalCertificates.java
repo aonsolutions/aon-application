@@ -5,30 +5,33 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -72,7 +75,13 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	ScrollPanel secondaryUserScrollPanel;
 	
 	@UiField
+	DeckPanel secondaryUserDeckPanel;
+	
+	@UiField
 	Grid secondaryUserDataTable;
+	
+	@UiField
+	HTMLPanel secondaryUserToolbar;
 	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
@@ -81,7 +90,8 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton accept;
-	private AonToolbarButton addSecondaryUser;
+	
+	private boolean showInactives = false;
 	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
@@ -93,7 +103,10 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
 		toolbar = getToolbarPanel();
+		toolbar.getElement().getStyle().setHeight(50, Unit.PX);
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		
+		secondaryUserDeckPanel.showWidget(0);
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
@@ -104,6 +117,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		this.mainDigitalCertificatesObject = mainDigitalCertificatesObject;
 		this.mainDigitalCertificatesObject.getDigitalCertificates(
 				s -> {
+					this.accept.setVisible(false);
 					initPreview();
 					insertRows();
 					fillCertificatesRows(s);
@@ -138,8 +152,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	private void paintHeader() {
 		int row = digitalCertificatesDataTableHeader.insertRow(digitalCertificatesDataTableHeader.getRowCount());
 		Label type = new Label("TIPO");
-		Label confidential = new Label();
-		confidential.setStyleName("aon-editDataTable-button aon-icon-confidential");
+		AonTableButton confidential = new AonTableButton("Confidencial", AON.CSS.aonIconAudit());
 		Label password = new Label("CONTRASE" + String.valueOf("\u00D1") + "A");
 		Label certificate = new Label("CERTIFICADO");
 		Label date = new Label("F. ACTUALIZACI" + String.valueOf("\u00D3") + "N");
@@ -227,50 +240,61 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		CheckBox confidentialCB = new CheckBox();
 		confidentialCB.addValueChangeHandler((e) -> {
 			mainDigitalCertificatesObject.setConfidential((byte)0, e.getValue());
+			this.accept.setVisible(true);
 		});
 		
 		// Password TextBox
 		HorizontalPanel hPanel = new HorizontalPanel();
+		
 		PasswordTextBox passwordTB = new PasswordTextBox();
 		passwordTB.addValueChangeHandler(e -> {
 			mainDigitalCertificatesObject.setPassword((byte)0, e.getValue());
-		});
-		Button showPassBtn = new Button();
-		showPassBtn.setStyleName("aon-editDataTable-button aon-icon-audit");
-		showPassBtn.addClickHandler(e -> {
-			String type = passwordTB.getElement().getAttribute("type");
-			if(StringUtils.isBlank(type) || (type != "text" || !type.equals("text")))
-				passwordTB.getElement().setAttribute("type", "text");
-			else
-				passwordTB.getElement().setAttribute("type", "password");
+			this.accept.setVisible(true);
 		});
 		hPanel.add(passwordTB);
-		if(!mainDigitalCertificatesObject.hasData(Byte.parseByte("0")))
+		
+		if(!mainDigitalCertificatesObject.hasData(Byte.parseByte("0"))) {
+			AonTableButton showPassBtn = new AonTableButton("Mostrar", AON.CSS.aonIconShowPass());
+			showPassBtn.addClickHandler(e -> {
+				String type = passwordTB.getElement().getAttribute("type");
+				if(StringUtils.isBlank(type) || (type != "text" || !type.equals("text")))
+					passwordTB.getElement().setAttribute("type", "text");
+				else
+					passwordTB.getElement().setAttribute("type", "password");
+			});
+			
+			showPassBtn.getElement().getStyle().setMarginLeft(5, Unit.PX);
+			showPassBtn.getElement().getStyle().setMarginTop(4, Unit.PX);
 			hPanel.add(showPassBtn);
-		showPassBtn.getElement().getStyle().setMarginLeft(5, Unit.PX);
-		showPassBtn.getElement().getStyle().setMarginTop(4, Unit.PX);
+		}
+		
+		// Upload & Download FormPanel
+		HorizontalPanel hFormPanel = new HorizontalPanel();
+		
+		Widget formPanel = createFormPanel("0");
+		hFormPanel.add(formPanel);
+		
+		if(mainDigitalCertificatesObject.hasData(Byte.parseByte("0"))) {
+			AonTableButton deleteCertificate = new AonTableButton("Eliminar Cert", AON.CSS.aonIconDelete());
+			deleteCertificate.getElement().getStyle().setMarginTop(5, Unit.PX);
+			deleteCertificate.addClickHandler(e -> {
+				mainDigitalCertificatesObject.deleteDigitalCertificate("0",
+	    				s -> {
+	    					this.accept.setVisible(false);
+	    					initPreview();
+	    					insertRows();
+	    					fillCertificatesRows(mainDigitalCertificatesObject.getDigitalCertificateList());
+	    				}, f -> {});
+			});
+			
+			
+			hFormPanel.add(deleteCertificate);
+		}
+		
 		
 		// Attach DateBoxEx
 		Label dateL = new Label();
 		dateL.getElement().getStyle().setPaddingLeft(5, Unit.PX);
-		
-		// Upload & Download FormPanel
-		HorizontalPanel hFormPanel = new HorizontalPanel();
-		Widget formPanel = createFormPanel("0");
-		Button deleteCertificate = new Button();
-		deleteCertificate.setStyleName("aon-editDataTable-button aon-icon-refresh");
-		deleteCertificate.getElement().getStyle().setMarginTop(5, Unit.PX);
-		deleteCertificate.addClickHandler(e -> {
-			mainDigitalCertificatesObject.deleteDigitalCertificate("0",
-    				s -> {
-    					initPreview();
-    					insertRows();
-    					fillCertificatesRows(mainDigitalCertificatesObject.getDigitalCertificateList());
-    				}, f -> {});
-		});
-		hFormPanel.add(formPanel);
-		if(mainDigitalCertificatesObject.hasData(Byte.parseByte("0")))
-			hFormPanel.add(deleteCertificate);
 		
 		//Add to table
 		digitalCertificatesDataTable.setWidget(row, 0, typeL);
@@ -291,50 +315,65 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		CheckBox confidentialCB = new CheckBox();
 		confidentialCB.addValueChangeHandler((e) -> {
 			mainDigitalCertificatesObject.setConfidential((byte)1, e.getValue());
+			this.accept.setVisible(true);
 		});
 		
 		// Password TextBox
 		HorizontalPanel hPanel = new HorizontalPanel();
+		
 		PasswordTextBox passwordTB = new PasswordTextBox();
 		passwordTB.addValueChangeHandler(e -> {
 			mainDigitalCertificatesObject.setPassword((byte)1, e.getValue());
-		});
-		Button showPassBtn = new Button();
-		showPassBtn.setStyleName("aon-editDataTable-button aon-icon-audit");
-		showPassBtn.addClickHandler(e -> {
-			String type = passwordTB.getElement().getAttribute("type");
-			if(StringUtils.isBlank(type) || (type != "text" || !type.equals("text")))
-				passwordTB.getElement().setAttribute("type", "text");
-			else
-				passwordTB.getElement().setAttribute("type", "password");
+			this.accept.setVisible(true);
 		});
 		hPanel.add(passwordTB);
-		if(!mainDigitalCertificatesObject.hasData(Byte.parseByte("0")))
-			hPanel.add(showPassBtn);
-		showPassBtn.getElement().getStyle().setMarginLeft(5, Unit.PX);
-		showPassBtn.getElement().getStyle().setMarginTop(4, Unit.PX);
 		
-		// Attach DateBoxEx
-		Label dateL = new Label();
-		dateL.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		if(!mainDigitalCertificatesObject.hasData(Byte.parseByte("1"))) {
+			AonTableButton showPassBtn = new AonTableButton("Mostrar", AON.CSS.aonIconShowPass());
+			showPassBtn.addClickHandler(e -> {
+				String type = passwordTB.getElement().getAttribute("type");
+				if(StringUtils.isBlank(type) || (type != "text" || !type.equals("text")))
+					passwordTB.getElement().setAttribute("type", "text");
+				else
+					passwordTB.getElement().setAttribute("type", "password");
+			});
+			
+			showPassBtn.getElement().getStyle().setMarginLeft(5, Unit.PX);
+			showPassBtn.getElement().getStyle().setMarginTop(4, Unit.PX);
+			
+			hPanel.add(showPassBtn);
+		}
 		
 		// Upload & Download FormPanel
 		HorizontalPanel hFormPanel = new HorizontalPanel();
 		Widget formPanel = createFormPanel("1");
-		Button deleteCertificate = new Button();
-		deleteCertificate.setStyleName("aon-editDataTable-button aon-icon-refresh");
-		deleteCertificate.getElement().getStyle().setMarginTop(5, Unit.PX);
-		deleteCertificate.addClickHandler(e -> {
-			mainDigitalCertificatesObject.deleteDigitalCertificate("1",
-    				s -> {
-    					initPreview();
-    					insertRows();
-    					fillCertificatesRows(mainDigitalCertificatesObject.getDigitalCertificateList());
-    				}, f -> {});
-		});
 		hFormPanel.add(formPanel);
-		if(mainDigitalCertificatesObject.hasData(Byte.parseByte("1")))
+		
+		if(mainDigitalCertificatesObject.hasData(Byte.parseByte("1"))) {
+			AonTableButton deleteCertificate = new AonTableButton("Eliminar Cert", AON.CSS.aonIconDelete());
+			deleteCertificate.getElement().getStyle().setMarginTop(5, Unit.PX);
+			deleteCertificate.addClickHandler(e -> {
+				mainDigitalCertificatesObject.deleteDigitalCertificate("1",
+	    				s -> {
+	    					this.accept.setVisible(false);
+	    					secondaryUserDeckPanel.showWidget(0);
+	    					initPreview();
+	    					insertRows();
+	    					fillCertificatesRows(mainDigitalCertificatesObject.getDigitalCertificateList());
+	    					
+	    					mainDigitalCertificatesObject.getSecondaryUsers(t -> {
+	    						insertSecondaryUsersRows();
+	    					}, a -> {});
+	    				}, f -> {});
+			});
+			
+			
 			hFormPanel.add(deleteCertificate);
+		}
+		
+		// Attach DateBoxEx
+		Label dateL = new Label();
+		dateL.getElement().getStyle().setPaddingLeft(5, Unit.PX);
 		
 		//Add to table
 		digitalCertificatesDataTable.setWidget(row, 0, typeL);
@@ -357,6 +396,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		
 		fileNameTB.addValueChangeHandler(e -> {
 			mainDigitalCertificatesObject.setDescription(Byte.parseByte(certificateTypeStr), e.getValue());
+			this.accept.setVisible(true);
 		});
 		
 		//Create formPanel to UploadFiles
@@ -392,7 +432,6 @@ public class MainDigitalCertificates extends MainEntryPoint{
             	mainDigitalCertificatesObject.setDigitalCertificates(s -> {
             		formPanel.submit();
         		}, f -> {});
-//            	formPanel.submit();
             }
 		});
 		
@@ -400,18 +439,22 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	        if(e.getResults().length() == 0) {
                 Window.alert("Something went wrong - Try again");
             } else {
-            	// TODO : refresh table
             	mainDigitalCertificatesObject.getDigitalCertificates(
         				s -> {
+        					this.accept.setVisible(false);
+        					secondaryUserDeckPanel.showWidget(0);
         					initPreview();
         					insertRows();
         					fillCertificatesRows(s);
+        					
+        					mainDigitalCertificatesObject.getSecondaryUsers(t -> {
+        						insertSecondaryUsersRows();
+        					}, a -> {});
         				}, f -> {});
             }
 	    });
 		
-		Button fileButton = new Button();
-		fileButton.setStyleName("aon-editDataTable-button aon-icon-attach-file");
+		AonTableButton fileButton = new AonTableButton("Subir Cert", AON.CSS.aonIconAttach());
 		fileButton.addClickHandler(e -> {
 			fileU.click();
 		});
@@ -429,6 +472,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		formPanel.add(flowPanel);
 			
 		mainFlowPanel.add(fileNameTB);
+		
 		if(!mainDigitalCertificatesObject.hasData(Byte.parseByte(certificateTypeStr)))
 			mainFlowPanel.add(formPanel);
 		
@@ -461,9 +505,15 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		secondaryUserDataTable.resize(0, 0);
 		secondaryUserDataTable.resizeColumns(5);
 		setColumnWidth();
+		initSeconaryUserToolBar();
 		
-		for(SecondaryUserCertificate secondaryUser : mainDigitalCertificatesObject.getSecondaryUsers()) {
-			fillSecondaryUserRow(secondaryUser);
+		if(mainDigitalCertificatesObject.getSecondaryUsers(showInactives).isEmpty())
+			secondaryUserDeckPanel.showWidget(1);
+		else {
+			secondaryUserDeckPanel.showWidget(2);
+			for(SecondaryUserCertificate secondaryUser : mainDigitalCertificatesObject.getSecondaryUsers(showInactives)) {
+				fillSecondaryUserRow(secondaryUser);
+			}
 		}
 	}
 	
@@ -484,32 +534,48 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		Label dateL = new Label(formatFullDate.format(secondaryUser.getSituation_date()));
 		
 		// Delete Button
-		Button deleteUserBtn = new Button();
-		deleteUserBtn.setStyleName("aon-editDataTable-button aon-icon-delete");
-		deleteUserBtn.addClickHandler(e -> {
-			// Delete User Dialog Confirm
-			AonConfirmDialog confirmDialog = new AonConfirmDialog();
-			confirmDialog.confirm(
-					"BORRADO", 
-					String.valueOf("\u00BF") + "Realmente desea eliminar a este usuario?",
-					new AonConfirmDialogCallback() {
+		AonTableButton comunicateBtn;
+		if(AonStringUtils.equalsIgnoreCase(secondaryUser.getSituation(), "Baja"))
+			comunicateBtn =  new AonTableButton("Dar alta", AON.CSS.aonIconSend());
+		else
+			comunicateBtn =  new AonTableButton("Dar alta", AON.CSS.aonIconSendCancel());
+		
+		comunicateBtn.addClickHandler(e -> {
+			if(AonStringUtils.equalsIgnoreCase(secondaryUser.getSituation(), "Baja")) {
+				mainDigitalCertificatesObject.createSecondaryUser(secondaryUser, s -> {
+					AonConfirmDialog dialog = new AonConfirmDialog();
+					dialog.info("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
+					
+					mainDigitalCertificatesObject.getSecondaryUsers(t -> {
+						insertSecondaryUsersRows();
+					}, a -> {});
+				}, f -> {});
+			} else {
+				// Delete User Dialog Confirm
+				AonConfirmDialog confirmDialog = new AonConfirmDialog();
+				confirmDialog.confirm(
+						"BORRADO", 
+						String.valueOf("\u00BF") + "Realmente desea eliminar a este usuario?",
+						new AonConfirmDialogCallback() {
 
-						@Override
-						public void onAccept() {
-							mainDigitalCertificatesObject.deleteSecondaryUser(secondaryUser, s -> {
-								AonConfirmDialog dialog = new AonConfirmDialog();
-								dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
-								
-								mainDigitalCertificatesObject.getSecondaryUsers(t -> {
-									insertSecondaryUsersRows();
-								}, e -> {});
-							}, f -> {});
-						}
+							@Override
+							public void onAccept() {
+								mainDigitalCertificatesObject.deleteSecondaryUser(secondaryUser, s -> {
+									AonConfirmDialog dialog = new AonConfirmDialog();
+									dialog.info("AVISO: Borrado", "El usuario secundario ha sido borrado correctamente.");
+									
+									mainDigitalCertificatesObject.getSecondaryUsers(t -> {
+										insertSecondaryUsersRows();
+									}, e -> {});
+								}, f -> {});
+							}
 
-						@Override
-						public void onCancel() {
-							// TODO Auto-generated method stub
-						}});
+							@Override
+							public void onCancel() {
+								// TODO Auto-generated method stub
+							}});
+			}
+			
 		});
 		
 		//Add to table
@@ -517,7 +583,36 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		secondaryUserDataTable.setWidget(row, 1, nafL);
 		secondaryUserDataTable.setWidget(row, 2, statusL);
 		secondaryUserDataTable.setWidget(row, 3, dateL);
-		secondaryUserDataTable.setWidget(row, 4, deleteUserBtn);
+		secondaryUserDataTable.setWidget(row, 4, comunicateBtn);
+	}
+	
+	private void initSeconaryUserToolBar() {
+		secondaryUserToolbar.clear();
+		
+		AonTableButton addSecondaryUser = new AonTableButton("Nuevo Usuario Secundario",  AON.CSS.aonIconAdd());
+		addSecondaryUser.addClickHandler(e -> {
+			onAddSecondaryUser(e);
+		});
+		
+		Button showInactiveUserBtn = getEnableDisableButton();
+		showInactiveUserBtn.addClickHandler(e -> {
+			showInactives = !showInactives;
+			insertSecondaryUsersRows();
+		});
+		
+		Label inactiveL = new Label("Ver inactivos");
+		
+		secondaryUserToolbar.add(addSecondaryUser);
+		secondaryUserToolbar.add(showInactiveUserBtn);
+		secondaryUserToolbar.add(inactiveL);
+	}
+
+	private Button getEnableDisableButton() {
+		Button showInactiveUserBtn = new Button();
+		showInactiveUserBtn.setStyleName(!showInactives ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		showInactiveUserBtn.setStyleName(AON.AON_NO_MARGIN, true);
+		showInactiveUserBtn.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		return showInactiveUserBtn;
 	}
 
 	private String getFileName(String filename) {
@@ -532,18 +627,8 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	
 	private AonToolbar getToolbarPanel() {
 		
-		AonToolbar toolbar = new AonToolbar("Certificados digitales");
+		AonToolbar toolbar = new AonToolbar("Gesti" + String.valueOf("\u00F3") + "n de Autorizados");
 		
-		addSecondaryUser = new AonToolbarButton( "Nuevo usuario secundario", AON.CSS.aonIconAdd() );
-		addSecondaryUser.setAccessKey('A');
-		addSecondaryUser.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAddSecondaryUser(event);
-			}
-		});
-		toolbar.add(addSecondaryUser);
-
 		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		accept.setAccessKey('G');
 		accept.addClickHandler(new ClickHandler() {
@@ -562,9 +647,15 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		mainDigitalCertificatesObject.setDigitalCertificates(s -> {
 			mainDigitalCertificatesObject.getDigitalCertificates(
 					t -> {
+						this.accept.setVisible(false);
+						secondaryUserDeckPanel.showWidget(0);
 						initPreview();
 						insertRows();
 						fillCertificatesRows(t);
+						
+						mainDigitalCertificatesObject.getSecondaryUsers(b -> {
+							insertSecondaryUsersRows();
+						}, e -> {});
 					}, f -> {});
 		}, f -> {});
 	}
