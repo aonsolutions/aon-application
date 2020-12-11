@@ -69,7 +69,7 @@ export class AonLogin extends AonElement {
 							</div>
 
 							<div style="padding-bottom: 20px;">
-								Si olvidaste tus datos de acceso haz <a id="aonLoginRemember" class="aonColorSecondary">click aquí</a>
+								Si olvidaste tus datos de acceso haz <a id="aonLoginRemember" class="aonLink aonColorSecondary">click aquí</a>
 							</div>
 
 							<div style="position:relative;">

@@ -1,9 +1,11 @@
 import {AonElement} from './AonElement.js';
+import './aon-icon.js';
 
 export class AonIconButton extends AonElement {
 
 	BUTTON;
 	ICON;
+	AON_ICON;
 	IMAGE;
 
 	static get observedAttributes() {
@@ -24,6 +26,14 @@ export class AonIconButton extends AonElement {
 
 	set icon(icon) {
 		this.setAttribute('icon', icon);
+	}
+
+	get aonIcon() {
+		return this.getAttribute('aonIcon');
+	}
+
+	set aonIcon(aonIcon) {
+		this.setAttribute('aonIcon', aonIcon);
 	}
 
 	get image() {
@@ -125,6 +135,7 @@ export class AonIconButton extends AonElement {
 		super();
 		this.BUTTON = this.id + 'IconButton';
 		this.ICON = this.id + 'Icon';
+		this.AON_ICON = this.id + 'AonIcon';
 		this.IMAGE = this.id + 'Image';
 	}
 
@@ -181,7 +192,9 @@ export class AonIconButton extends AonElement {
 			image.style.width = '24px';
 			image.style.height = '24px';
 			image.src = this.getAttribute('image');
-			button.appendChild(image);
+		 	button.appendChild(image);
+		} if(this.hasAttribute('aonIcon')){
+			button.innerHTML = `<aon-icon id="${this.AON_ICON}" icon="${this.aonIcon}"></aon-icon>`;
 		}
 		return button;
 	}

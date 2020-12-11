@@ -97,6 +97,7 @@ export class AonApplication extends AonElement {
 
 		let content = this.getElement(this.CONTENT);
 		content.className = this.isMobile() ? 'aonMobileContent' : 'aonContent';
+
 		content.style.marginLeft = this.isMobile() ? '0px' : "250px";
 
 		if (this.hasAttribute('drag_and_drop')) {
@@ -146,6 +147,11 @@ export class AonApplication extends AonElement {
 			content.style.height = 'calc(100vh - 61px)';
 		}
 
+		let offset2 = sidenav.getBoundingClientRect();
+		sidenav.style.height = `calc(100vh - ${offset2.top + 1}px)`;
+
+		let offset = content.getBoundingClientRect();
+		content.style.height = `calc(100vh - ${offset.top + 1}px)`;
 	}
 
 	startLoader() {

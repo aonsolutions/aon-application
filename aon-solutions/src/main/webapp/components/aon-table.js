@@ -68,7 +68,11 @@ export class AonTable extends AonElement {
 				});
 			}
 
+
 			let tbody = this.getElement(this.TBODY);
+
+			let offset = tbody.getBoundingClientRect();
+			tbody.style.height = `calc(100vh - ${offset.top + 2}px)`;
 
 			tbody.addEventListener('scroll', () => {
 				let scrollTop = tbody.scrollTop;

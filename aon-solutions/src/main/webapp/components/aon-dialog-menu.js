@@ -1,4 +1,5 @@
 import {AonElement} from './AonElement.js';
+import './aon-icon.js';
 
 export class AonDialogMenu extends AonElement {
 
@@ -64,7 +65,7 @@ export class AonDialogMenu extends AonElement {
 
   		content.style.top = top + 'px' || '90px';
 		content.style.left = (left > (dialog.offsetWidth/2) ? left - 180 : left)+'px' ;
-		
+
 		content.innerHTML = '';
 		let ul = document.createElement('ul');
 		content.appendChild(ul);
@@ -75,11 +76,18 @@ export class AonDialogMenu extends AonElement {
 			li.style.cursor = 'pointer';
 			ul.appendChild(li);
 
-			let ic = document.createElement('i');
-			ic.className = 'material-icons';
-			ic.style.verticalAlign = 'middle';
-			ic.innerHTML = item.icon;
-			li.appendChild(ic);
+			if(item.aonIcon) {
+				let ai = document.createElement('span');
+				ai.style.verticalAlign = 'middle';
+				ai.innerHTML = `<aon-icon icon="${item.aonIcon}"></aon-icon>`;
+				li.appendChild(ai);
+			} else {
+				let ic = document.createElement('i');
+				ic.className = 'material-icons';
+				ic.style.verticalAlign = 'middle';
+				ic.innerHTML = item.icon;
+				li.appendChild(ic);
+			}
 
 			let span = document.createElement('span');
 			span.style.marginLeft = '5px';

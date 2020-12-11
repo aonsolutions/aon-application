@@ -2,8 +2,12 @@ import {AonElement} from '../../components/AonElement.js';
 import {ToolbarType} from '../../models/enums.js';
 import {DocumentalAction} from './DocumentalEnums.js';
 import {deleteFile, getCategories, getScopes, getTags, updateFile} from '../../services/service.js';
+
 import '../../components/aon-date.js';
+import '../../components/aon-input.js';
+import '../../components/aon-select.js';
 import '../../components/aon-viewer.js';
+import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 
 import * as CONSTANT from "../../environments/constants.js";
@@ -61,8 +65,13 @@ export class AonDocument extends AonElement {
     fileDiv.style.display = 'block';
     fileDiv.style.width = '50%';
 		fileDiv.innerHTML = `<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
+    let offset1 = fileDiv.getBoundingClientRect();
+		fileDiv.style.height = `calc(100vh - ${offset1.top + 2}px)`;
+
     let dataDiv = this.getElement(this.DATA);
     dataDiv.style.width = '50%';
+    let offset2 = dataDiv.getBoundingClientRect();
+		dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
 
     this.buildData();
 
@@ -88,7 +97,7 @@ export class AonDocument extends AonElement {
     if(this.document.date) {
       let d = this.document.date.split('/');
       date.setDate(new Date(d[2], d[1] - 1, d[0]));
-    }   
+    }
     let tdConfidential = document.createElement('td');
     tdConfidential.setAttribute('colspan', '1');
     tdConfidential.innerHTML = `<aon-switch id="confidential" title="${MSG.AON_MSG_CONFIDENTIAL}"></aon-switch>`;

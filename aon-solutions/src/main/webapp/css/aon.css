@@ -22,11 +22,15 @@ ul {
 }
 
 a {
+  color: #000;
+}
+
+.aonLink {
   color: #12ccd1;
   cursor: pointer;
 }
 
-a:hover {
+.aonLink:hover {
   color: #12ccd1;
   text-decoration: underline;
 }
@@ -352,6 +356,7 @@ form {
 .aonTable {
   width: 100%;
   border: 0px;
+  border-collapse: collapse;
 }
 
 .aonTable thead {
@@ -378,6 +383,8 @@ form {
   padding-bottom: 8px;
   border-bottom: 1px solid #ddd;
   padding-left: 8px;
+  text-align: inherit;
+  box-sizing: border-box;
 }
 
 .aonTable tbody {
