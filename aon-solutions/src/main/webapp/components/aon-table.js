@@ -149,11 +149,13 @@ export class AonTable extends AonElement {
 
 
 		getOptions(tr, td, options) {
+			console.log(options);
 			const top  = td.getBoundingClientRect().top;
 			const left = td.getBoundingClientRect().left;
 			let d = this.getElement(this.getId() + 'aonDialogAddOption');
-			options = options.map( ({icon, name, fn}) => {
+			options = options.map( ({icon, aonIcon, name, fn}) => {
 				return {
+					aonIcon,
 					icon,
 					name,
 					fn: () => fn(tr)

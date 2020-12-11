@@ -156,16 +156,24 @@ export class AonDialog extends AonElement {
 		let ul = document.createElement('ul');
 		content.appendChild(ul);
 		options.forEach((item, i) => {
+			console.log(item);
 			let li = document.createElement('li');
 			li.style.padding = '10px';
 			li.style.cursor = 'pointer';
 			ul.appendChild(li);
-
-			let ic = document.createElement('i');
-			ic.className = 'material-icons';
-			ic.style.verticalAlign = 'middle';
-			ic.innerHTML = item.icon;
-			li.appendChild(ic);
+			
+			if(item.aonIcon) {
+				let ai = document.createElement('span');
+				ai.style.verticalAlign = 'middle';
+				ai.innerHTML = `<aon-icon icon="${item.aonIcon}"></aon-icon>`;
+				li.appendChild(ai);
+			} else {
+				let ic = document.createElement('i');
+				ic.className = 'material-icons';
+				ic.style.verticalAlign = 'middle';
+				ic.innerHTML = item.icon;
+				li.appendChild(ic);
+			}
 
 			let span = document.createElement('span');
 			span.style.marginLeft = '5px';

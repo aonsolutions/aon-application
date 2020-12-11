@@ -74,11 +74,11 @@ public class ComunicaServlet extends HttpServlet{
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 	    	resp.setStatus(500);
-	    	content = e.getCause().getMessage().getBytes();
+	    	content = e.getCause().getMessage()!=null ? e.getCause().getMessage().getBytes() : "".getBytes();
 	    } catch (Exception e) {
 			e.printStackTrace();
 			resp.setStatus(500);
-			content = e.getMessage().getBytes();
+			content = e.getMessage()!=null ? e.getMessage().getBytes() : "".getBytes();
 		}
 		
 		resp.setContentType("text/html");

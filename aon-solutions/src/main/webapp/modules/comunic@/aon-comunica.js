@@ -5,28 +5,39 @@ import { addDays } from '../../services/utils.js';
 import './aon-movements.js';
 import '../../components/aon-toast.js';
 import '../../components/aon-application.js';
+import './ccc/aon-ccc.js';
+
 export class AonComunica extends AonElement {
 
 	AON_COMUNICA;
 	MOVEMENTS;
-
+	CCC;
 	constructor() {
 		super();
 		this.AON_COMUNICA = 'aonComunica';
 		this.MOVEMENTS = this.AON_COMUNICA + 'Movements';
+		this.CCC = this.AON_COMUNICA + 'CccContent';
 	}
 
 	connectedCallback() {
+		this.paintView();
+		this.build()
+	}
+	paintView() {
 		this.innerHTML = `
 			<aon-toast id="${this.AON_COMUNICA}Toast"></aon-toast>
 			<aon-application id="${this.AON_COMUNICA}" title="COMUNIC@"></aon-application>
 		`;
-		this.aonComunica = this.getElement(this.AON_COMUNICA);
+	}
+	build() {
+		this.aonComunicaEl = this.getElement(this.AON_COMUNICA);
 
-		this.build()
+		this.buildToolbar();
+		this.getElement(this.aonComunicaEl.TOOLBAR).setAttribute('option', 'Movimientos');
+		this.aonComunicaEl.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
 	}
 
-	build() {
+	buildToolbar(){
 		let options = [
 			{
 				name: 'Contratos',
@@ -35,24 +46,25 @@ export class AonComunica extends AonElement {
 					color: 'black'
 				},
 				fn: () => {
-					this.aonComunica.removeToolbarOptions();
-					startModule('aon_gwt_payroll', 'MainContrata', this.aonComunica.CONTENT);
+					this.aonComunicaEl.removeToolbarOptions();
+					startModule('aon_gwt_payroll', 'MainContrata', this.aonComunicaEl.CONTENT);
 				}
 			},
 			{
 				name: 'Partes IT',
 				icon: 'local_hospital',
 				fn: () => {
-					this.aonComunica.removeToolbarOptions();
-					startModule('aon_gwt_payroll', 'MainIT', this.aonComunica.CONTENT);
+					this.aonComunicaEl.removeToolbarOptions();
+					startModule('aon_gwt_payroll', 'MainIT', this.aonComunicaEl.CONTENT);
 				}
 			},
 			{
-				name: 'CCC',
+				name: 'Cuenta de Ctz',
 				icon: 'account_balance',
 				fn: () => {
-					this.aonComunica.removeToolbarOptions();
-					startModule('aon_gwt_payroll', 'MainCCC', this.aonComunica.CONTENT);
+					this.aonComunicaEl.removeToolbarOptions();
+					startModule('aon_gwt_payroll', 'MainCCC', this.aonComunicaEl.CONTENT);
+					// this.aonComunicaEl.setContentHTML(`<aon-ccc id="${this.CCC}" ></aon-ccc>`)
 				}
 			},
 			{
@@ -62,29 +74,23 @@ export class AonComunica extends AonElement {
 					color: 'black'
 				},
 				fn: () => {
-					this.aonComunica.removeToolbarOptions();
-					startModule('aon_gwt_payroll', 'MainDigitalCertificates', this.aonComunica.CONTENT);
+					this.aonComunicaEl.removeToolbarOptions();
+					startModule('aon_gwt_payroll', 'MainDigitalCertificates', this.aonComunicaEl.CONTENT);
 				}
 			},
 			{
 				name: 'Movimientos',
 				icon: 'repeat',
-				fn: () => this.aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`)
+				fn: () => this.aonComunicaEl.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`)
 			}
 		];
-		this.aonComunica.addSidenavOptions('OPCIONES', options);
-
-		//if(this.isMobile()){
-		this.getElement(this.aonComunica.TOOLBAR).setAttribute('option', 'Movimientos');
-		this.aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
-		//}
-		//this.aonComunica.setContentHTML(`<aon-alta-directa></aon-alta-directa>`);
+		this.aonComunicaEl.addSidenavOptions('OPCIONES', options);
 	}
 
 	async deleteMov(data, el) {
 		if (confirm(`Estas seguro de anular el movimiento de ${data.name} ?`)) {
 			const toast = this.getElement(`${this.AON_COMUNICA}Toast`);
-			this.aonComunica.startLoader();
+			this.aonComunicaEl.startLoader();
 			try {
 				await postDeleteMov(data);
 				toast.start({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
@@ -92,7 +98,7 @@ export class AonComunica extends AonElement {
 			} catch (error) {
 				toast.start({ message: error, type: 'error' });
 			}
-			this.aonComunica.stopLoader();
+			this.aonComunicaEl.stopLoader();
 		}
 	}
 
@@ -111,6 +117,32 @@ export class AonComunica extends AonElement {
 		// const sit = ["AL", "BJ", "BAJA", "ALTA"];
 		// (situation.indexOf(sit) > -1) &&
 		return (date_prev.getTime() <= new Date(fra).getTime());
+	}
+
+	getOptions(res) {
+		let option = [
+			{
+				id: 'Ta',
+				name: 'Obtener TA',
+				aonIcon: 'aon_ta',
+				fn: (el) => this.getTa(res, el)
+			},
+			{
+				id: 'Idc',
+				name: 'Obtener IDC',
+				aonIcon: 'aon_idc',
+				fn: (el) => this.getIdc(res, el)
+			}
+		];
+		if (this.anularCondition(res.situation, res.fra)) {
+			option.push({
+				id: 'Delete',
+				name: 'Anular',
+				icon: 'delete_forever',
+				fn: (el) => this.deleteMov(res, el)
+			});
+		}
+		return option;
 	}
 }
 window.customElements.define('aon-comunica', AonComunica);

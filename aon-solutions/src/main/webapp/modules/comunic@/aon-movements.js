@@ -15,6 +15,7 @@ export class AonMovements extends AonElement {
     constructor() {
         super();
         this.id = this.id || 'aonComunicaMovements';
+        this.aonComunicaEl =  this.getElement('aonComunica');
     }
 
 
@@ -24,10 +25,11 @@ export class AonMovements extends AonElement {
         `;
 
         this.build();
+        this.aonList();
     }
 
     build() {
-        let aonComunica = this.getElement('aonComunica');
+        let aonComunica = this.aonComunicaEl;
         aonComunica.removeToolbarOptions();
 
         if (this.isMobile()) {
@@ -43,12 +45,10 @@ export class AonMovements extends AonElement {
         } else {
             aonComunica.addToolbarOption('Add', 'add', () => this.aonAltaDirecta());
         }
-
-        this.aonList();
     }
 
     async aonList(filter) {
-        let aonComunica = this.getElement('aonComunica');
+        let aonComunica = this.aonComunicaEl;
         this.getElement(aonComunica.TOOLBAR).setAttribute('option', 'Movimientos');
         if (filter) aonComunica.setFilter(filter);
         else {
@@ -57,8 +57,7 @@ export class AonMovements extends AonElement {
     }
 
     aonAltaDirecta() {
-        let aonComunica = this.getElement('aonComunica');
-        aonComunica.setContentHTML(`<aon-alta-directa />`);
+        this.aonComunicaEl.setContentHTML(`<aon-alta-directa />`);
     }
 
 }

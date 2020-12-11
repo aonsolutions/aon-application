@@ -1,4 +1,4 @@
-import {AonElement} from './AonElement.js';
+import { AonElement } from './AonElement.js';
 
 import * as CONSTANT from "../environments/constants.js";
 import * as MSG from "../environments/msg.js";
@@ -31,13 +31,13 @@ export class AonMobileList extends AonElement {
 
   }
 
-  constructor () {
+  constructor() {
     super();
-    this.id = this.is || 'aonMobileList';
+    this.id = this.id || 'aonMobileList';
     this.UL = this.id + 'UL';
   }
 
-  connectedCallback () {
+  connectedCallback() {
     this.build();
   }
 
@@ -50,12 +50,12 @@ export class AonMobileList extends AonElement {
     this.appendChild(ul);
 
     let content = this.getElement('aonDocumentalContent');
-    content.addEventListener('scroll', () => {
+    if(content) content.addEventListener('scroll', () => {
       let scrollTop = content.scrollTop;
       let offsetHeight = content.offsetHeight;
       let physicalSize = content.scrollHeight;
       let maxScrollPosition = physicalSize - offsetHeight;
-      if(scrollTop >= maxScrollPosition) {
+      if (scrollTop >= maxScrollPosition) {
         this.dispatchEvent(new CustomEvent('more'));
       }
     });
@@ -65,7 +65,7 @@ export class AonMobileList extends AonElement {
     let li = document.createElement('li');
     li.className = 'aonLi aonAppLi';
 
-    li.addEventListener('click',  fn);
+    li.addEventListener('click', fn);
 
     let span = document.createElement('span');
     span.className = 'aonLiSpan';
@@ -85,8 +85,51 @@ export class AonMobileList extends AonElement {
     span.appendChild(span3);
     li.appendChild(span);
 
+    ///OPTIONS 
+    if (data.option) {
+      let span4 = document.createElement('span');
+      span4.className = 'aonListMoreVert';
+      span4.innerHTML = `<aon-icon-button id="${this.id}IconOption" icon="more_vert"></aon-icon-button>`;
+      span4.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.getOptions(span4, data.option);
+      });
+      li.appendChild(span4);
+    }
+
+
     this.getElement(this.UL).appendChild(li);
   }
+
+  removeAllLi() {
+    let url = this.getElement(this.id + 'UL');
+    if (url) url.innerHTML = '';
+  }
+
+  createAonDialog() {
+    const id = this.id + 'aonDialogAddOption';
+    let div = document.createElement('div');
+    div.innerHTML = `<aon-dialog-menu id="${id}" ></aon-dialog-menu>`;
+    if (this) this.appendChild(div);
+  }
+
+  getOptions(el, options) {
+    const top = el.getBoundingClientRect().top;
+    const left = el.getBoundingClientRect().left;
+    let d = this.getElement(this.id + 'aonDialogAddOption');
+    options = options.map(({ aonIcon, icon, name, fn }) => {
+      return {
+        aonIcon,
+        icon,
+        name,
+        fn: () => fn(el)
+      };
+    })
+
+    d.setMenuOptions(options, top, left);
+    d.open();
+  }
+
 
   getFilter() {
     return this.hasAttribute('filter')

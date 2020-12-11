@@ -55,7 +55,7 @@ export class AonAltaDirecta extends AonElement {
 
     connectedCallback() {
         this.paintView();
-        this.init();
+        this.build();
         this.eventListener();
     }
 
@@ -132,7 +132,7 @@ export class AonAltaDirecta extends AonElement {
             <div class="aonCol-sm-12 aonCol-md-4">
                 <aon-switch id="switchDni" title="Buscar por DNI"></aon-switch>
                 <div id="${this.id}Reiniciar" hidden>
-                    Reiniciar <aon-icon-button id="${this.id}IConSearch" icon="cached"> </aon-icon-button>
+                    Reiniciar <aon-icon-button id="${this.id}IconReset" icon="cached"> </aon-icon-button>
                 </div>
             </div>
             <div class="aonCol-sm-12 aonCol-md-4">
@@ -145,11 +145,11 @@ export class AonAltaDirecta extends AonElement {
                 <div class="aonCol-sm-12 aonCol-md-6">
                     <aon-input name="apellido1" id="apellido1" description="1er Apellido" type="text"></aon-input>
                 </div>
-                <div class="aonCol-sm-11 aonCol-md-5">
+                <div class="aonCol-sm-10 aonCol-md-5">
                     <aon-input name="apellido2" id="apellido2" description="2do Apellido" type="text"></aon-input>
                 </div>
-                <div class="aonCol-sm-1 aonCol-md-1">
-                    <aon-icon-button id="iconSegSocial" icon="search"> </aon-icon-button>
+                <div class="aonCol-sm-2 aonCol-md-1">
+                    <aon-icon-button id="iconSegSocial" aonIcon="aon_seg_social"> </aon-icon-button>
                 </div>
             </div>  
             <div class="aonCol-sm-12">
@@ -163,7 +163,7 @@ export class AonAltaDirecta extends AonElement {
                 <aon-select name="type_cto" id="type_cto" title="Tipo de contrato"></aon-select>
             </div>
             <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-date name="fecha" id="fecha" title="Fecha inicio"></aon-date>
+                <aon-date name="fecha" id="fecha" title="Fecha inicio" value="${new Date()}"></aon-date>
             </div>
             <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-select name="grup_ctz" id="grup_ctz" title="Grupo de cotización"></aon-select>
@@ -189,7 +189,7 @@ export class AonAltaDirecta extends AonElement {
         `);
 
         let aonAltaDirectaDni = this.getElement(`${this.id}DniDiv`);
-        aonAltaDirectaDni.innerHTML = `<aon-suggestion id="${this.id}Dni" title="DNI/NE" name="ipf"></aon-suggestion>`;
+        aonAltaDirectaDni.innerHTML = `<aon-suggestion id="${this.id}Dni" title="DNI/NIE" name="ipf"></aon-suggestion>`;
         aonAltaDirectaDni.setAttribute('disabled', true);
 
         let aonAltaDirectaNss = this.getElement(`${this.id}NssDiv`);
@@ -204,7 +204,7 @@ export class AonAltaDirecta extends AonElement {
         this.addSpanDecimal();
     }
 
-    init() {
+    build() {
         this.getElement(`${this.id}Dni`).disabled = true;
         this.initLists();
     }
@@ -247,23 +247,23 @@ export class AonAltaDirecta extends AonElement {
 
         this.getElement('iconSegSocial').addEventListener('click', (e) => this.getNaf());
 
-        this.getElement(`${this.id}IConSearch`).addEventListener('click', (e) => this.disabledCardTrabajor(false));
+        this.getElement(`${this.id}IconReset`).addEventListener('click', (e) => this.disabledCardTrabajor(false));
     }
 
     buildToolbar() {
-        let toolbar = this.getElement(this.TOOLBAR);
+        const toolbar = this.getElement(this.TOOLBAR);
         toolbar.removeButtons();
 
         toolbar.addButton2({
             id: 'Idc',
             name: 'Obtener IDC',
-            icon: 'print',
+            aonIcon: 'aon_idc',
         }, () => this.aonComunicaEl.getIdc(this.data));
 
         toolbar.addButton2({
             id: 'Ta',
             name: 'Obtener TA',
-            icon: 'print',
+            aonIcon: 'aon_ta',
         }, () => this.aonComunicaEl.getTa(this.data));
 
         toolbar.addButton2({
@@ -288,10 +288,13 @@ export class AonAltaDirecta extends AonElement {
     }
 
     hiddenButtonToolbar(buttonToolbar) {
-        const toolbarSection = this.getElement(this.TOOLBAR).TOOL_SECTION;
-        for (const button in buttonToolbar) {
-            const deleteToolbar = this.getElement(toolbarSection + button + 'Button');
-            if (deleteToolbar) deleteToolbar.hidden = buttonToolbar[button];
+        let toolbarSection = this.getElement(this.TOOLBAR);
+        if (toolbarSection) {
+            toolbarSection = toolbarSection.TOOL_SECTION
+            for (const button in buttonToolbar) {
+                const deleteToolbar = this.getElement(toolbarSection + button + 'Button');
+                if (deleteToolbar) deleteToolbar.hidden = buttonToolbar[button];
+            }
         }
     }
 
@@ -352,8 +355,6 @@ export class AonAltaDirecta extends AonElement {
             }
         }
 
-
-
         //calculo horas
         this.calculoHoras();
 
@@ -386,8 +387,8 @@ export class AonAltaDirecta extends AonElement {
     }
 
     initLists() {
-        this.listCentroTrabajo();
         this.suggestionDni();
+        this.listCentroTrabajo();
         this.listTipoContrato();
         this.listTipoJornada();
         this.listGrupoCotizacion();
@@ -397,7 +398,7 @@ export class AonAltaDirecta extends AonElement {
 
     selectTipojornada({ detail }) {
         if (detail) {
-            let { value } = detail;
+            const { value } = detail;
             let hr = 0;
             if ("semanal" == value) hr = 40;
             else if ("diaria" == value) hr = 8;
@@ -432,9 +433,9 @@ export class AonAltaDirecta extends AonElement {
     }
 
     suggestionDni() {
-        let searchSuggestion = this.getElement(`${this.id}Dni`);
+        const searchSuggestion = this.getElement(`${this.id}Dni`);
         searchSuggestion.addEventListener('keyup', async ({ target: { value } }) => {
-            let dni = value.toString().toUpperCase();
+            const dni = value.toString().toUpperCase();
             if (dni.length > 2) {
                 const resp = await getPersonas(dni);
                 searchSuggestion.buildOptions(resp);
@@ -442,12 +443,12 @@ export class AonAltaDirecta extends AonElement {
                 searchSuggestion.closeOptions();
             }
         });
-        searchSuggestion.addEventListener('change', ({ detail }) => {
+        searchSuggestion.addEventListener('select', ({ detail }) => {
             if (detail) {
-                this.getElement('nss').setAttribute('value', detail.nss);
-                this.getElement('nombre').setAttribute('value', detail.nombre);
-                this.getElement('apellido1').setAttribute('value', detail.last_name1);
-                this.getElement('apellido2').setAttribute('value', detail.last_name2);
+                setValueName('nss', detail.nss);
+                setValueName('nombre', detail.nombre);
+                setValueName('apellido1', detail.last_name1);
+                setValueName('apellido2', detail.last_name2);
             }
         });
     }
@@ -656,8 +657,8 @@ export class AonAltaDirecta extends AonElement {
         const toast = this.getElement(`aonComunicaToast`);
         let cto_new = this.getContrato();
         const cto_old = this._contrato;
-        for(const property in cto_new){
-            if(cto_new[property] && (cto_old[property] != cto_new[property]) ){
+        for (const property in cto_new) {
+            if (cto_new[property] && (cto_old[property] != cto_new[property])) {
                 cto_new[`${property}_edit`] = true;
             }
         }

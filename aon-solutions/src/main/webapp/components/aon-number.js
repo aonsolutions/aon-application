@@ -103,11 +103,11 @@ export class AonNumber extends AonElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        if('value' === name) {
+        if ('value' === name) {
             let input = this.getElement(this.INPUT);
-            if(newValue && 'undefined' !== newValue && input && !isNaN(newValue)) input.value = this.onBlur(newValue);
-            if(input && newValue === '') input.value = '';
-         }
+            if (newValue && 'undefined' !== newValue && input && !isNaN(newValue)) input.value = this.onBlur(newValue);
+            if (input && newValue === '') input.value = '';
+        }
         if ('disabled' === name) {
             this.getElement(this.getAttribute('id') + 'Input').setAttribute('disabled', this.isDisabled());
         }
@@ -164,7 +164,7 @@ export class AonNumber extends AonElement {
         input.name = this.getAttribute('name');
         input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
         input.type = 'text';
-        input.autocomplete="off"
+        input.autocomplete = "off"
         input.style.textAlign = 'right'
         if ('date' === this.getAttribute('type')) {
             this.style.minWidth = '150px';
@@ -175,33 +175,33 @@ export class AonNumber extends AonElement {
         input.addEventListener('keypress', (ev) => {
             let keyChar = String.fromCharCode(ev.which || ev.keyCode);
             let reg = new RegExp(/[^0-9]/g);
-            if(this.format) reg = new RegExp(/[^0-9\.,]/g);
-            if(reg.test(keyChar)) ev.preventDefault();
+            if (this.format) reg = new RegExp(/[^0-9\.,]/g);
+            if (reg.test(keyChar)) ev.preventDefault();
             this.dispatchEvent(new Event('keypress'));
         });
 
-        input.addEventListener('focus', ({target}) => {
+        input.addEventListener('focus', ({ target }) => {
             let value = target.value;
-            if(value) input.value = this.onFocus(value);
+            if (value) input.value = this.onFocus(value);
             input.select();
             this.dispatchEvent(new Event('focus'));
         });
 
-        input.addEventListener('blur', ({target}) => {
+        input.addEventListener('blur', ({ target }) => {
             let value = target.value;
-            if(value) {
+            if (value) {
                 let newValue = this.onBlur(value);
                 this.value = this.onFocus(newValue);
             }
             this.dispatchEvent(new Event('blur'));
         });
 
-        input.addEventListener('change', ({target}) => {
-          let value = target.value;
-          if(value) {
-              let newValue = this.onBlur(value);
-              this.value = this.onFocus(newValue);
-          }
+        input.addEventListener('change', ({ target }) => {
+            let value = target.value;
+            if (value) {
+                let newValue = this.onBlur(value);
+                this.value = this.onFocus(newValue);
+            }
         });
 
         label.appendChild(input);
@@ -232,11 +232,10 @@ export class AonNumber extends AonElement {
 
     addIconButton(icon, fn) {
         this.addIcon(icon);
-        this.getElement(this.ICON_LABEL)
-            .addEventListener('click', (event) => {
-                event.preventDefault();
-                fn();
-            });
+        this.getElement(this.ICON_LABEL).addEventListener('click', (event) => {
+            event.preventDefault();
+            fn();
+        });
     }
 
 
@@ -245,16 +244,16 @@ export class AonNumber extends AonElement {
         input.addEventListener('change', fn);
     }
 
-    onBlur(value){
+    onBlur(value) {
         let newValue = value;
         let decimals = this.decimals || 0;
-        if(this.format){
-            newValue = new Intl.NumberFormat(this.LOCALE,  { minimumFractionDigits: decimals }).format(value.replace(",","."));
+        if (this.format) {
+            newValue = new Intl.NumberFormat(this.LOCALE, { minimumFractionDigits: decimals }).format(value.replace(",", "."));
         }
         return newValue;
     }
 
-    onFocus(value){
+    onFocus(value) {
         return value.replace(/\./g, "").replace(/\,/g, ".");
     }
 

@@ -19,7 +19,7 @@ export const getPersonas = (dni) => new Promise((resolve) => {
             last_name2: 'APELLIDO2',
             dni: 'Y11111X',
             mov: 'Alta',
-            naf: '123123131',
+            nss: '123123131',
             tipo_contrato: 'Jornada Parcial',
             fecha: '21-01-2020'
         },
@@ -30,7 +30,7 @@ export const getPersonas = (dni) => new Promise((resolve) => {
             last_name2: 'APELLIDO2',
             dni: 'Y2222X',
             mov: 'Alta',
-            naf: '123123131',
+            nss: '123123131',
             tipo_contrato: 'Jornada completa',
             fecha: '22-01-2020'
         },
@@ -41,7 +41,7 @@ export const getPersonas = (dni) => new Promise((resolve) => {
             last_name2: 'APELLIDO2',
             dni: 'Y3333X',
             mov: 'Alta',
-            naf: '123123131',
+            nss: '123123131',
             tipo_contrato: 'Jornada Parcial',
             fecha: '23-01-2020'
         },
@@ -52,7 +52,7 @@ export const getPersonas = (dni) => new Promise((resolve) => {
             last_name2: 'APELLIDO2',
             dni: 'Y5555X',
             mov: 'Alta',
-            naf: '123123131',
+            nss: '123123131',
             tipo_contrato: 'Jornada completa',
             fecha: '25-01-2020'
         },
@@ -63,7 +63,7 @@ export const getPersonas = (dni) => new Promise((resolve) => {
             last_name2: 'APELLIDO2',
             dni: 'Y6666X',
             mov: 'Alta',
-            naf: '123123131',
+            nss: '123123131',
             tipo_contrato: 'Jornada completa',
             fecha: '25-01-2020'
         },
@@ -209,19 +209,63 @@ export const getConvenios = () => new Promise((resolve) => {
 
 export const getEmployee = (data) => get(`${API_URL}/comunica/get-employee`, data);
 
-
-export const getTipoCtz = (data) => new Promise((resolve) => {
-    let json =
+export const getAllTipoCtz = () => new Promise((resolve) => {
+    const json =
         [
-            { id: 1, name: "Principal", value: 1 },
-            { id: 2, name: "Formación y aprendizaje", value: 2 },
-            { id: 3, name: "Aprendizaje", value: 3 },
-            { id: 4, name: "Asimilados R.General", value: 4 },
-            { id: 5, name: "Becarios", value: 5 },
-            { id: 6, name: "Emplead@s del hogar", value: 1 },
-            { id: 7, name: "Trabajadores cuenta ajena agrarios", value: 7 },
-            { id: 8, name: "Artistas", value: 8 },
+            { 
+                id: 1, 
+                name: "Principal", 
+                value: 1, 
+                regimen: "0111" 
+            },
+            { 
+                id: 2, 
+                name: "Formación y aprendizaje", 
+                value: 2,
+                regimen: "0111" 
+            },
+            { 
+                id: 3, 
+                name: "Aprendizaje", 
+                value: 3,
+                regimen: "0111" 
+            },
+            { 
+                id: 4, 
+                name: "Asimilados R.General",
+                value: 4,
+                regimen: "0111" 
+            },
+            { 
+                id: 5, 
+                name: "Becarios", 
+                value: 5,
+                regimen: "0111" 
+            },
+            { 
+                id: 6, name: "Emplead@s del hogar", 
+                value: 1,
+                regimen: "0138" 
+            },
+            { 
+                id: 7, 
+                name: "Trabajadores cuenta ajena agrarios", 
+                value: 7,
+                regimen: "0163" 
+            },
+            { 
+                id: 8, 
+                name: "Artistas", 
+                value: 8,
+                regimen: "0112" 
+            },
         ];
 
+    resolve(json);
+});
+
+
+export const getTipoCtz =  (data) => new Promise(async(resolve) => {
+    const json = await getAllTipoCtz();
     resolve(json.find(r => r.value == data));
 });
