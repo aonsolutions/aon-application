@@ -296,7 +296,7 @@ public class Paternity {
 							//REGISTRIES
 							DomNodeList<DomNode> trRegistryList=htmlAux.querySelectorAll("table[class='margenSup12 ancho60 clearL']>tbody>tr");
 							ArrayList<String[]> registries=new ArrayList<String[]>();
-							for(int j=1;j<trRegistryList.getLength();j++) {
+							for(int j=1;j<trRegistryList.size();j++) {
 								HtmlTableRow trElement=(HtmlTableRow) trRegistryList.get(j);
 								Iterable<DomElement> tdElements=trElement.getChildElements();
 								String[] registry=new String[5];
