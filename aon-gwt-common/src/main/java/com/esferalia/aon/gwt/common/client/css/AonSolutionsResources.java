@@ -42,6 +42,18 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconSend();
 	
+	@Source("icons/aon-icon-send-cancel.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconSendCancel();
+	
+	@Source("icons/aon-icon-attach.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAttach();
+	
+	@Source("icons/aon-icon-show-pass.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconShowPass();
+	
 	@Source("icons/aon-icon-add.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconAdd();

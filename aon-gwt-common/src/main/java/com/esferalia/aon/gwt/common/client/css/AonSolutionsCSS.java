@@ -180,6 +180,15 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_send")
 	String aonIconSend();
 	
+	@ClassName("aon_icon_send_cancel")
+	String aonIconSendCancel();
+	
+	@ClassName("aon_icon_attach")
+	String aonIconAttach();
+	
+	@ClassName("aon_icon_show_pass")
+	String aonIconShowPass();
+	
 	@ClassName("aon_icon_add_task")
 	String aonIconAddTask();
 
