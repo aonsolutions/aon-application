@@ -20,6 +20,49 @@
 		border-radius: 50%;
 		background: transparent url(css/images/aon-icon/aon-icon-domain.png) no-repeat scroll center center;
 	}
+	.aon-header-home {
+		padding: 14px 20px;
+		border-radius: 50%;
+		background: transparent url(css/images/aon-icon/aon-icon-home.png) no-repeat scroll center center;
+	}	
+	.aon-direct-access-panel {
+		height:16px;
+    	border-bottom: 1px solid #ccc;
+    	background-color: #f7f7f7 !important;
+		border-top-right-radius: 50px 50px;
+    	border-bottom-right-radius: 50px 50px;
+	}	
+	.aon-direct-access-list-element {
+    	background: none;
+    	padding: 5px 0 8px 12px;
+    	border-bottom: none;
+	}	
+	.aon-direct-access-list-element:hover {
+    	background-color: #f6f6f6 !important;
+		border-top-right-radius: 50px 50px;
+    	border-bottom-right-radius: 50px 50px;
+	}	
+	
+	.aon-finding-title {
+    	background: none;
+	}
+	.aon-finding-toolbar{
+    	background: none;
+	}
+
+	.aon-finding-title-toolbar {
+		padding: 2px 0px;
+   		background: none;
+    	border: #ddd 1px solid;
+    	background-color: #f6f6f6;
+    	border-top: none;
+		border-bottom: 1px #ddd solid;
+    	/*background: #d7d7d6 url(#{aonResource.resolve['/images/aon-header/aon-menuBar.png']}) scroll left top repeat-x !important;*/
+	}	
+	
+	.aon-finding-toolbar-item {
+    	border-right: #ddd 1px solid;
+	}
 	</style>
 		
 	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 1px solid #ddd;" >
@@ -60,6 +103,12 @@
 						<aon:outputText value="#{domainSwitcher.domainName}"
 							style="vertical-align: middle; color: #5f6368;"
 							styleClass="aon-nowrap aon-header-domain-title aon-margin-right"/>
+						<aon:commandLink id="home" action="index"
+							rendered="#{!aonConfiguration.properties.hideMenuHome}"
+							title="#{bundle.aon_home}"
+							styleClass="aon-header-home"
+							value="&#160;" 
+							reRender="aonContent" />
 						<aon:if test="#{(!domainSwitcher.childDomain) and (!domainSwitcher.adminDomain) and (domainSwitcher.domainCount > 0)}">
 							<aon:panelGroup >
 			 					<h:outputLink id="DomainSwitch" 
