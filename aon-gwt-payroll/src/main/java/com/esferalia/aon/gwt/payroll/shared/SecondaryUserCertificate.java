@@ -72,7 +72,7 @@ public class SecondaryUserCertificate implements Serializable {
 		return ipf;
 	}
 	public String getNaf() {
-		return naf;
+		return (null != naf && naf.length() == 9) ? '0'+naf : naf;
 	}
 	public String getSituation() {
 		return situation;

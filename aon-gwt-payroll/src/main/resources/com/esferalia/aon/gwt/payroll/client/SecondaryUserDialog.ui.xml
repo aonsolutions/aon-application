@@ -25,26 +25,29 @@
 			width: 100px;
 		}
 		
-		.tb160{
-			width: 160px;
+		.tb187{
+			width: 187px;
 		}
 		
-		.tb335{
-			width: 335px;
+		.tb386{
+			width: 386px;
 		}
 		
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
 			margin-top: 15px;
+			align-items: center;
+		}
+		
+		.pr20{
+			padding-right: 20px;
 		}
 		
 	</ui:style>
 
 	<g:HTMLPanel >
 	
-		<g:HTMLPanel ui:field="toolBarPanel"></g:HTMLPanel>
-		
 		<g:HTMLPanel styleName="{style.form}">
 	
 			<table ui:field="secondaryUserTable">
@@ -57,23 +60,23 @@
 		                    <g:Button ui:field="dniBtn"></g:Button>
 		                </td>
 		                <td>
-		                    <g:TextBox ui:field="nss" styleName="{style.tb100}"></g:TextBox>
+		                    <g:TextBox ui:field="nss"></g:TextBox>
 		                </td>
 		                <td>
-		                    <g:TextBox ui:field="nie" styleName="{style.tb100}"></g:TextBox>
+		                    <g:TextBox ui:field="nie"></g:TextBox>
 		                </td>
 		            </tr>
-		             <tr>
+		            <tr>
 		                <td colspan="4">
 		                	<g:HTMLPanel styleName="{style.flex}">
-		                		<g:TextBox ui:field="surname" styleName="{style.tb160}"></g:TextBox>
-		                		<g:TextBox ui:field="secondSurname" styleName="{style.tb160}"></g:TextBox>
+		                		<g:TextBox ui:field="surname" styleName="{style.tb187}"></g:TextBox>
+		                		<g:TextBox ui:field="secondSurname" styleName="{style.tb187}"></g:TextBox>
 		                	</g:HTMLPanel>  
 		                </td>
 		            </tr>
 		            <tr>
 		            	<td colspan="4">
-		                    <g:TextBox ui:field="name" enabled="false" styleName="{style.tb335}"></g:TextBox>
+		                    <g:TextBox ui:field="name" enabled="false" styleName="{style.tb386}"></g:TextBox>
 		                </td>
 		                
 		            </tr>
