@@ -125,6 +125,8 @@
 .aon_icon_attach { background-image: iconAttach;}
 @url iconShowPass aonIconShowPass;
 .aon_icon_show_pass { background-image: iconShowPass;}
+@url iconLock aonIconLock;
+.aon_icon_lock { background-image: iconLock;}
 @url iconAddTask aonIconAddTask;
 .aon_icon_add_task { background-image: iconAddTask;}
 @url iconCustomer aonIconCustomer;

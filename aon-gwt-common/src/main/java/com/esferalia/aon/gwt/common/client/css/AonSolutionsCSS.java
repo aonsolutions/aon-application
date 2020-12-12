@@ -189,6 +189,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_show_pass")
 	String aonIconShowPass();
 	
+	@ClassName("aon_icon_lock")
+	String aonIconLock();
+	
 	@ClassName("aon_icon_add_task")
 	String aonIconAddTask();
 
