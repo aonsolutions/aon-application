@@ -211,6 +211,12 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
+	public PayMethod insertPayMethod(AONContext ctx, PayMethod paymethod) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> PayMethodDAO.insertPayMethod(ctx, paymethod));
+	}
+
+	@Override
 	public Invoice insertInvoice(AONContext ctx, Invoice invoice) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			InvoiceDAO.insert(ctx, invoice));		

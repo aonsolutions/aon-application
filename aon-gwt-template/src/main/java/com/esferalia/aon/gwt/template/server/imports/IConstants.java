@@ -45,6 +45,9 @@ public interface IConstants {
 	String FACTURA = "FACTURA";
 	String FECHA = "FECHA";
 	String FORMA_DE_PAGO = "FORMA DE PAGO";
+	String FORMA_PAGO = "FORMA DE PAGO";
+	String TIPO_DE_PAGO = "TIPO DE PAGO";
+	String TIPO_PAGO = "TIPO PAGO";
 	String HABER = "HABER";
 	String IBAN = "IBAN";
 	String N_ASIENTO = "Nº ASIENTO";

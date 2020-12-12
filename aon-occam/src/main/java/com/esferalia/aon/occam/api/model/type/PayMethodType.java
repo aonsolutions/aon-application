@@ -40,14 +40,21 @@ public enum PayMethodType implements Serializable {
 	}
 	
 	public static PayMethodType safeValueOf( String i ) {
-		if (AonStringUtils.isBlank(i)) return null;
-		PayMethodType p = null; 
-		for (PayMethodType pmt : values()) {
-			if(i.equalsIgnoreCase(pmt.getDescription()) || i.equalsIgnoreCase(pmt.name())) {
-				p = pmt;
-			}
+		if (AonStringUtils.isBlank(i)) return OTHER;
+		if(CASH_BASIS.getDescription().equalsIgnoreCase(i) || CASH_BASIS.name().equalsIgnoreCase(i) || "METALICO".equalsIgnoreCase(i)) {
+			return CASH_BASIS;
+		} else if(NEGOTIABLE_DOCUMENT.getDescription().equalsIgnoreCase(i) || NEGOTIABLE_DOCUMENT.name().equalsIgnoreCase(i)) {
+			return NEGOTIABLE_DOCUMENT;
+		} else if(DEBIT_CARD.getDescription().equalsIgnoreCase(i) || DEBIT_CARD.name().equalsIgnoreCase(i) || "TARJETA DEBITO".equalsIgnoreCase(i)) {
+			return DEBIT_CARD;
+		} else if(CREDIT_CARD.getDescription().equalsIgnoreCase(i) || CREDIT_CARD.name().equalsIgnoreCase(i) || "TARJETA CREDITO".equalsIgnoreCase(i)) {
+			return CREDIT_CARD;
+		} else if(CHEQUE.getDescription().equalsIgnoreCase(i) || CHEQUE.name().equalsIgnoreCase(i)) {
+			return CHEQUE;
+		} else if(BANK_TRANSFER.getDescription().equalsIgnoreCase(i) || BANK_TRANSFER.name().equalsIgnoreCase(i)) {
+			return BANK_TRANSFER;
 		}
-		return p;
+		return OTHER;
 	}
 
 }

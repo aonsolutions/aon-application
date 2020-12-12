@@ -78,6 +78,15 @@ public class PayMethodDAO {
 				.map( new FullPayMethodFiller())
 				.findFirst().orElse(new PayMethod());
 	}
+	
+	public static PayMethod insertPayMethod(AONContext ctx, PayMethod paymethod) {
+		Integer id = ctx.getDslContext().insertInto(PAY_METHOD)
+				.set(PAY_METHOD.DOMAIN, paymethod.getDomain())
+				.set(PAY_METHOD.NAME, paymethod.getName())
+				.set(PAY_METHOD.TYPE, paymethod.getType().value())
+				.execute();
+		return paymethod.setId(id);
+	}
 
 	// -------------------------------------------------------------
 	// ---------------------------- MAP ----------------------------

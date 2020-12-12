@@ -5584,6 +5584,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static PayMethod insertPayMethod(String domainName, Integer domain, String login, PayMethod paymethod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, login);
+			return getFinance().insertPayMethod(ctx, paymethod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	// ------------------------------------- COMMISSION
 

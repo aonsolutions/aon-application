@@ -29,12 +29,14 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -58,12 +60,14 @@ public class RegistryImport {
 		private String type;
 		private Integer line;
 		private LinkedList<RegistryMedia> rmediaList;
-		private PayMethodType paymethod;
+		private PayMethod paymethod;
 
+		
 		public RegistryImportClass() {
 			this.registry = new Registry()
 				.setAddress(new RAddress());
 			this.account = new Account();
+			this.paymethod = new PayMethod();
 		}
 
 		public Registry getRegistry() {
@@ -125,11 +129,11 @@ public class RegistryImport {
 			this.rmediaList = rmediaList;
 		}
 
-		public PayMethodType getPaymethod() {
+		public PayMethod getPaymethod() {
 			return paymethod;
 		}
 
-		public void setPaymethod(PayMethodType paymethod) {
+		public void setPaymethod(PayMethod paymethod) {
 			this.paymethod = paymethod;
 		}
 
@@ -419,10 +423,17 @@ public class RegistryImport {
 			return;
 		}
 		
-		if(IConstants.FORMA_DE_PAGO.equalsIgnoreCase(title)) {
-			reg.setPaymethod(PayMethodType.safeValueOf(o.toString()));
+		if(IConstants.FORMA_DE_PAGO.equalsIgnoreCase(title) || IConstants.FORMA_PAGO.equalsIgnoreCase(title)) {
+			reg.getPaymethod().setName(o.toString());
 			return;
 		}
+		
+		if(IConstants.TIPO_DE_PAGO.equalsIgnoreCase(title) || IConstants.TIPO_PAGO.equalsIgnoreCase(title)) {
+			reg.getPaymethod().setType(PayMethodType.safeValueOf(o.toString()));
+			return;
+		}
+		
+		
 	}
 
 	public static Error insertRegistries(Domain domain, User user, Integer index, LinkedList<RegistryImportClass> rvs) {
@@ -460,14 +471,40 @@ public class RegistryImport {
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
 				}
 				
+				RegistryBank rbank = new RegistryBank();
 				if(!AonStringUtils.isBlank(r.getIban())) {
-					RegistryBank rbank = new RegistryBank()
+					rbank = new RegistryBank()
 							.setDomain(domain.getId())
 							.setRegistry(reg.getId())
 							.setActive(true)
 							.setBankAccount(new BankAccount(r.getIban()))
 							.setBic(r.getBic());
-					AON.insertRBank(domain.getName(), domain.getId(), user.getLogin(), rbank);
+					rbank = AON.insertRBank(domain.getName(), domain.getId(), user.getLogin(), rbank);
+				}
+				
+				if(r.getPaymethod().getName() != null || r.getPaymethod().getType() != null) {
+					PayMethod p = new PayMethod();
+					if(!AonStringUtils.isEmpty(r.getPaymethod().getName())) {
+						p = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod().getName());
+						if(p == null || p.getId() == null) {
+							r.getPaymethod().setDomain(domain.getId());
+							if(r.getPaymethod().getType() == null) r.getPaymethod().setType(PayMethodType.OTHER);
+							p =AON.insertPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod());
+						}
+					} else if(r.getPaymethod().getType() != null) {
+						p = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod().getType().getDescription().toUpperCase());
+						if(p == null || p.getId() == null) {
+							r.getPaymethod().setDomain(domain.getId());
+							r.getPaymethod().setName(r.getPaymethod().getType().getDescription().toUpperCase());
+							p = AON.insertPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod());
+						}
+					}	
+					RegistryPayMethod rpaymethod = new RegistryPayMethod()
+							.setDomain(domain.getId())
+							.setRegistry(reg.getId())
+							.setPayMethod(p.getId())
+							.setRbank(rbank.getId());
+					AON.insertRPayMethod(domain.getName(), domain.getId(), user.getLogin(), rpaymethod);
 				}
 			}
 			if(r.getAccountPrefix() != null && (r.getAccount().getCode() == null || r.getAccount().getCode().isBlank())) {

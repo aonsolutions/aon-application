@@ -94,6 +94,7 @@ public interface IFinance {
 	public Stream<Product> getInvoiceProducts(AONContext ctx, ProductFilter filter);
 	
 	public PayMethod getPayMethod(AONContext ctx, String name);
+	public PayMethod insertPayMethod(AONContext ctx, PayMethod paymethod);
 
 	public Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId);
 	
