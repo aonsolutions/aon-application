@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -54,6 +55,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 
 	interface MyStyle extends CssResource {
 		String headerStyle();
+		String loadingPanel();
 	}
 	
 	@UiField
@@ -78,10 +80,19 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	DeckPanel secondaryUserDeckPanel;
 	
 	@UiField
+	HTMLPanel loadingPanel;
+	
+	@UiField
 	Grid secondaryUserDataTable;
 	
 	@UiField
 	HTMLPanel secondaryUserToolbar;
+	
+	@UiField
+	HTMLPanel addSecondaryUserToolbar;
+	
+	@UiField
+	HTMLPanel showSecondaryUserToolbar;
 	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
@@ -105,6 +116,15 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		toolbar = getToolbarPanel();
 		toolbar.getElement().getStyle().setHeight(50, Unit.PX);
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		
+		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRefresh());
+		loadingBtn.addStyleName(style.loadingPanel());
+		
+		Label loadingL = new Label("Accediendo al sistema RED para consultar los usuarios secundarios...");
+		loadingL.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		
+		loadingPanel.add(loadingBtn);
+		loadingPanel.add(loadingL);
 		
 		secondaryUserDeckPanel.showWidget(0);
 	}
@@ -152,7 +172,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	private void paintHeader() {
 		int row = digitalCertificatesDataTableHeader.insertRow(digitalCertificatesDataTableHeader.getRowCount());
 		Label type = new Label("TIPO");
-		AonTableButton confidential = new AonTableButton("Confidencial", AON.CSS.aonIconAudit());
+		AonTableButton confidential = new AonTableButton("Confidencial", AON.CSS.aonIconLock());
 		Label password = new Label("CONTRASE" + String.valueOf("\u00D1") + "A");
 		Label certificate = new Label("CERTIFICADO");
 		Label date = new Label("F. ACTUALIZACI" + String.valueOf("\u00D3") + "N");
@@ -200,16 +220,17 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		//MaxWidth 950px
 		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(200, Unit.PX);
 		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(50, Unit.PX);
-		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setPaddingLeft(10, Unit.PX);
 		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(175, Unit.PX);
 		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(375, Unit.PX);
 		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setWidth(150, Unit.PX);
+		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setTextAlign(TextAlign.CENTER);
 		
 		digitalCertificatesDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(200, Unit.PX);
 		digitalCertificatesDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(50, Unit.PX);
 		digitalCertificatesDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(175, Unit.PX);
 		digitalCertificatesDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(375, Unit.PX);
 		digitalCertificatesDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(150, Unit.PX);
+		digitalCertificatesDataTable.getColumnFormatter().getElement(4).getStyle().setTextAlign(TextAlign.CENTER);
 		
 		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(350, Unit.PX);
 		secondaryUserDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(200, Unit.PX);
@@ -294,7 +315,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		
 		// Attach DateBoxEx
 		Label dateL = new Label();
-		dateL.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		dateL.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
 		//Add to table
 		digitalCertificatesDataTable.setWidget(row, 0, typeL);
@@ -373,7 +394,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		
 		// Attach DateBoxEx
 		Label dateL = new Label();
-		dateL.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		dateL.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
 		//Add to table
 		digitalCertificatesDataTable.setWidget(row, 0, typeL);
@@ -536,20 +557,26 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		// Delete Button
 		AonTableButton comunicateBtn;
 		if(AonStringUtils.equalsIgnoreCase(secondaryUser.getSituation(), "Baja"))
-			comunicateBtn =  new AonTableButton("Dar alta", AON.CSS.aonIconSend());
+			comunicateBtn =  new AonTableButton("Activar Certificado", AON.CSS.aonIconSend());
 		else
-			comunicateBtn =  new AonTableButton("Dar alta", AON.CSS.aonIconSendCancel());
+			comunicateBtn =  new AonTableButton("Anular Certificado", AON.CSS.aonIconSendCancel());
 		
 		comunicateBtn.addClickHandler(e -> {
 			if(AonStringUtils.equalsIgnoreCase(secondaryUser.getSituation(), "Baja")) {
-				mainDigitalCertificatesObject.createSecondaryUser(secondaryUser, s -> {
-					AonConfirmDialog dialog = new AonConfirmDialog();
-					dialog.info("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
+				SecondaryUserDialog dialog = new SecondaryUserDialog(secondaryUser.getNaf()) {
 					
-					mainDigitalCertificatesObject.getSecondaryUsers(t -> {
-						insertSecondaryUsersRows();
-					}, a -> {});
-				}, f -> {});
+					@Override
+					protected void onAccept() {
+						AonConfirmDialog dialog = new AonConfirmDialog();
+						dialog.info("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
+						
+						mainDigitalCertificatesObject.getSecondaryUsers(t -> {
+							insertSecondaryUsersRows();
+						}, e -> {});
+					}
+				};
+				dialog.center();
+				dialog.show();
 			} else {
 				// Delete User Dialog Confirm
 				AonConfirmDialog confirmDialog = new AonConfirmDialog();
@@ -584,15 +611,22 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		secondaryUserDataTable.setWidget(row, 2, statusL);
 		secondaryUserDataTable.setWidget(row, 3, dateL);
 		secondaryUserDataTable.setWidget(row, 4, comunicateBtn);
+		secondaryUserDataTable.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
 	}
 	
 	private void initSeconaryUserToolBar() {
-		secondaryUserToolbar.clear();
+		addSecondaryUserToolbar.clear();
+		showSecondaryUserToolbar.clear();
 		
 		AonTableButton addSecondaryUser = new AonTableButton("Nuevo Usuario Secundario",  AON.CSS.aonIconAdd());
 		addSecondaryUser.addClickHandler(e -> {
 			onAddSecondaryUser(e);
 		});
+		
+		Label addSecondaryUserL = new Label("A" + String.valueOf("\u00F1") + "adir Autorizado");
+		
+		addSecondaryUserToolbar.add(addSecondaryUser);
+		addSecondaryUserToolbar.add(addSecondaryUserL);
 		
 		Button showInactiveUserBtn = getEnableDisableButton();
 		showInactiveUserBtn.addClickHandler(e -> {
@@ -602,9 +636,8 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		
 		Label inactiveL = new Label("Ver inactivos");
 		
-		secondaryUserToolbar.add(addSecondaryUser);
-		secondaryUserToolbar.add(showInactiveUserBtn);
-		secondaryUserToolbar.add(inactiveL);
+		showSecondaryUserToolbar.add(inactiveL);
+		showSecondaryUserToolbar.add(showInactiveUserBtn);	
 	}
 
 	private Button getEnableDisableButton() {

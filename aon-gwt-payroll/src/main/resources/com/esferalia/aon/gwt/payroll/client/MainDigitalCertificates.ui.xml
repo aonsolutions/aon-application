@@ -17,8 +17,7 @@
 			border-style: solid; 
 			width: 975px; 
 			border-width: 1px; 
-			margin-top: 60px; 
-			margin-left: 10px;
+			margin: 60px 10px 0 10px;
 		}
 		
 		.tittle{
@@ -26,9 +25,10 @@
 			font-size: 12px;
 			margin-left: 10px;
 			position: relative;
-			width: 100px;
+			width: 150px;
 			background-color: white;
 			padding: 5px;
+			text-align: center;
 		}
 		
 		.footerStyle{
@@ -72,14 +72,46 @@
 		}
 		
 		.message{
+			display: flex;
 			width: 100%;
-			text-align: center;
+			justify-content: center;
+			align-items: center;
 		}
 		
 		.secondaryUserToolbar{
 			padding: 10px;
 			display: flex;
 		    align-items: center;
+		    justify-content: space-between;
+		}
+		
+		.addSecondaryUserToolbar{
+			display: flex;
+		    align-items: center;
+		}
+		
+		.showSecondaryUserToolbar{
+			display: flex;
+		    align-items: center;
+		    justify-content: flex-end;
+		}
+		
+		.loadingPanel{
+			display: flex;
+			align-items: center;
+			animation-name: spin;
+			animation-duration: 2500ms;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+		
+		@keyframes spin {
+		    from {
+		        transform:rotate(0deg);
+		    }
+		    to {
+		        transform:rotate(360deg);
+		    }
 		}
 		
 	</ui:style>
@@ -114,12 +146,15 @@
 				    			</g:HTMLPanel>
 					    		<g:ScrollPanel ui:field="secondaryUserScrollPanel" styleName="{style.scrollStyle}">
 					    			<g:DeckPanel ui:field="secondaryUserDeckPanel">
-					    				<g:Label styleName="{style.message}">Accediendo al sistema RED para consultar los usuarios secundarios...</g:Label>
+					    				<g:HTMLPanel ui:field="loadingPanel" styleName="{style.message}"></g:HTMLPanel>
 					    				<g:Label styleName="{style.message}">No eisten usuarios secundarios</g:Label>
 					    				<g:Grid ui:field="secondaryUserDataTable"></g:Grid>
 					    			</g:DeckPanel>
 					    		</g:ScrollPanel>
-					    		<g:HTMLPanel styleName="{style.secondaryUserToolbar}" ui:field="secondaryUserToolbar"></g:HTMLPanel>
+					    		<g:HTMLPanel styleName="{style.secondaryUserToolbar}" ui:field="secondaryUserToolbar">
+					    			<g:HTMLPanel styleName="{style.addSecondaryUserToolbar}" ui:field="addSecondaryUserToolbar"></g:HTMLPanel>
+					    			<g:HTMLPanel styleName="{style.showSecondaryUserToolbar}" ui:field="showSecondaryUserToolbar"></g:HTMLPanel>
+					    		</g:HTMLPanel>
 				    		</g:VerticalPanel>
 				    	</g:HTMLPanel>
 				    </g:VerticalPanel>

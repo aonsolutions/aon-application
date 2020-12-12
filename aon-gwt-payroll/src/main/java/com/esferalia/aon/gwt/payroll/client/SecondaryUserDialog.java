@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -22,7 +23,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -65,11 +65,16 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 	TextBox name; 
 	
 	@UiField
+	HTMLPanel mainButtonsPanel;
+	
+	@UiField
+	HTMLPanel loadingPanel;
+	
+	@UiField
 	HTMLPanel buttonsPanel;
 	
 	private boolean isDNI = false;
 	
-	private Label loadingL;
 	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
 
@@ -84,8 +89,22 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 		
 		getButtonsPanel();
 		this.secondaryUserTable.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		loadingPanel.setVisible(false);
 		initTableStyles();
 		initView();
+	}
+	
+	public SecondaryUserDialog(String naf) {
+		setCaption("Alta usuario secundario");
+		
+		setWidget(binder.createAndBindUi(this));
+		
+		getButtonsPanel();
+		this.secondaryUserTable.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		loadingPanel.setVisible(false);
+		initTableStyles();
+		initView();
+		nss.setValue(naf, true);
 	}
 	
 	private void initTableStyles() {
@@ -112,16 +131,14 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 			ArrayList<String> nssList = new ArrayList<String>();
 			nssList.add(event.getValue());
 			this.acceptBtnDialog.setEnabled(false);
-//			Animation animation = loadingAnimation();
-			loadingL.setVisible(true);
+			loadingPanel.setVisible(true);
 			impl.getIpfxNaf(nssList, new AsyncCallback<EmployeeSegSocial>() {
 				
 				@Override
 				public void onSuccess(EmployeeSegSocial result) {
 					initEmployeeSegSocial(result);
 					acceptBtnDialog.setEnabled(false);
-//					animation.cancel();
-					loadingL.setVisible(false);
+					loadingPanel.setVisible(false);
 				}
 
 				@Override
@@ -156,8 +173,7 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 			AonStringUtils.isNotBlank(surnameStr) &&
 			AonStringUtils.isNotBlank(secondSurnameStr)) {
 			
-//			Animation animation = loadingAnimation();
-			loadingL.setVisible(true);
+			loadingPanel.setVisible(true);
 			
 			this.acceptBtnDialog.setEnabled(false);
 			impl.getNafxIpf(nieStr, surnameStr, secondSurnameStr, new AsyncCallback<EmployeeSegSocial>() {
@@ -166,8 +182,7 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 				public void onSuccess(EmployeeSegSocial result) {
 					initEmployeeSegSocial(result);
 					acceptBtnDialog.setEnabled(true);
-//					animation.cancel();
-					loadingL.setVisible(false);
+					loadingPanel.setVisible(false);
 				}
 
 				@Override
@@ -177,28 +192,6 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 			});
 		}
 	}
-	
-//	private Animation loadingAnimation() {
-//		loadingBtn.setVisible(true);
-//		final Element e = loadingBtn.getElement();
-//		
-//		Animation animation = new Animation() {
-//
-//	        @Override
-//	        protected void onUpdate( double progress ) {
-//	        	e.getStyle().setProperty("transform", "rotate("+ (progress*3) +"deg)");
-//	        }
-//
-//	        @Override
-//	        protected void onComplete() {
-//	        	e.getStyle().setProperty("transform", "rotate(0deg)");
-//	        }
-//	    };
-//	    
-//	    animation.run(1000000);
-//	    
-//	    return animation;
-//	}
 
 	private void initEmployeeSegSocial(EmployeeSegSocial employeeSegSocial) {
 		this.nss.setText(employeeSegSocial.getNss());
@@ -232,10 +225,8 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 	}
 
 	private void getButtonsPanel() {
-		loadingL = new Label("Accediendo al Sistema RED...");
-		loadingL.addStyleName(style.pr20());
-		buttonsPanel.add(loadingL);
-		loadingL.setVisible(false);
+		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRefresh());
+		loadingPanel.add(loadingBtn);
 		
 		closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
