@@ -147,11 +147,17 @@ export class AonApplication extends AonElement {
 			content.style.height = 'calc(100vh - 61px)';
 		}
 
-		let offset2 = sidenav.getBoundingClientRect();
-		sidenav.style.height = `calc(100vh - ${offset2.top + 1}px)`;
-
-		let offset = content.getBoundingClientRect();
-		content.style.height = `calc(100vh - ${offset.top + 1}px)`;
+		if(!localStorage.getItem('aon_solutions')) {
+			let top = sidenav.getBoundingClientRect().top;
+			if(top === 82 || top === 110) {
+				top = top + 20;
+			} else if( top === 124) {
+				top = top + 14;
+			} else top = top + 1;
+			localStorage.setItem('aon_application_top', top);
+			sidenav.style.height = `calc(100vh - ${top}px)`;
+			content.style.height = `calc(100vh - ${top}px)`;
+		}
 	}
 
 	startLoader() {

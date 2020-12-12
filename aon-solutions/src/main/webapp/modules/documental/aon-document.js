@@ -65,13 +65,17 @@ export class AonDocument extends AonElement {
     fileDiv.style.display = 'block';
     fileDiv.style.width = '50%';
 		fileDiv.innerHTML = `<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
-    let offset1 = fileDiv.getBoundingClientRect();
-		fileDiv.style.height = `calc(100vh - ${offset1.top + 2}px)`;
 
     let dataDiv = this.getElement(this.DATA);
     dataDiv.style.width = '50%';
-    let offset2 = dataDiv.getBoundingClientRect();
-		dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
+
+		if(localStorage.getItem('aon_solutions') === undefined || localStorage.getItem('aon_solutions') === null) {
+      let offset1 = fileDiv.getBoundingClientRect();
+      fileDiv.style.height = `calc(100vh - ${offset1.top + 2}px)`;
+
+      let offset2 = dataDiv.getBoundingClientRect();
+  		dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
+    }
 
     this.buildData();
 

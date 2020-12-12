@@ -70,12 +70,19 @@ export class AonTable extends AonElement {
 
 
 			let tbody = this.getElement(this.TBODY);
-
-			let offset = tbody.getBoundingClientRect();
-			tbody.style.height = `calc(100vh - ${offset.top + 2}px)`;
+			if(localStorage.getItem('aon_solutions') === undefined || localStorage.getItem('aon_solutions') === null) {
+				if(localStorage.getItem('aon_application_top') == 138){
+					tbody.style.height = `calc(100vh - 186px)`;
+				} else if(localStorage.getItem('aon_application_top') == 102) {
+					tbody.style.height = `calc(100vh - 150px)`;
+				} else if(localStorage.getItem('aon_application_top') == 130){
+					tbody.style.height = `calc(100vh - 178px)`;
+				}
+			}
 
 			tbody.addEventListener('scroll', () => {
 				let scrollTop = tbody.scrollTop;
+
 				let offsetHeight = tbody.offsetHeight;
 				let physicalSize = tbody.scrollHeight;
 				let maxScrollPosition = physicalSize - offsetHeight;
