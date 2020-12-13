@@ -1028,6 +1028,37 @@ public class EmployeeDraft extends Composite {
 		
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 	
+	public void setEndDate(Date endDate) {
+		employee.end_date.setValue(endDate, true);
+	}
+	
+	public void setStartDate(Date endDate) {
+		employee.start_date.setValue(endDate, true);
+	}
+
+	public void setOcupation(String occupation) {
+		switch (occupation) {
+		case "a":
+			employee.occupation.setSelectedIndex(1);
+		case "b":
+			employee.occupation.setSelectedIndex(2);
+		case "d":
+			employee.occupation.setSelectedIndex(3);
+		case "e":
+			employee.occupation.setSelectedIndex(4);
+		case "f":
+			employee.occupation.setSelectedIndex(5);
+		case "g":
+			employee.occupation.setSelectedIndex(6);
+		case "h":
+			employee.occupation.setSelectedIndex(7);
+		default:
+			employee.occupation.setSelectedIndex(0);
+		}
+		employee.onContractOccupationChange();
+		
+	}
+	
 	public void setTaVisible(boolean visible ) {
 		taButton.setVisible(visible);
 	}
@@ -1053,7 +1084,6 @@ public class EmployeeDraft extends Composite {
 
 		
 	}
-	
 	
 	private void initializeUndoRedo() {
 		undoButton.setEnabled(employeeDraftObject.canUndo());

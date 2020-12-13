@@ -82,18 +82,20 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		SafeHtml treeItem(SafeStyles style, String message);
 		
 		@Template("<span style=\"{0}\">"
-				+ "Fecha de baja no encontrada."
-				+ " Pulse <a style=\"{1}\" onclick='javascript:unRegister();'  >aqu\u00ed</a> para registar la baja en el SISTEMA RED.</span>")
+				+ "Fecha de baja no encontrada en el SISTEMA RED."
+				+ " Pulse <a style=\"{1}\" onclick='javascript:cleanEndDate();'  >aqu\u00ed</a> para eliminar la fecha de baja en AON.</span>"
+				)
 		SafeHtml endDateNotFound(SafeStyles mainStyle, SafeStyles anchorStyle);
 
 		@Template("<span style=\"{0}\">"
-				+ "Alta de trabajador no encontrada."
-				+ " Pulse <a style=\"{1}\" onclick='javascript:register();'  >aqu\u00ed</a> para registar el alta en el SISTEMA RED.</span>")
+				+ "Alta de trabajador no encontrada en el SISTEMA RED."
+				//+ " Pulse <a style=\"{1}\" onclick='javascript:register();'  >aqu\u00ed</a> para registar el alta en el SISTEMA RED.</span>"
+				)
 		SafeHtml employeeNotFound(SafeStyles mainStyle, SafeStyles anchorStyle);
 
 		@Template("<span style=\"{0}\">"
 				+ "Alta de trabajador en un fecha diferente {2}."
-				+ " Pulse <a style=\"{1}\" onclick='javascript:updateStartDate();'  >aqu\u00ed</a> para modificar el alta en el SISTEMA RED.</span>")
+				+ " Pulse <a style=\"{1}\" onclick='javascript:updateStartDate();'  >aqu\u00ed</a> para actualizar la fecha en AON.</span>")
 		SafeHtml startDateMismatched(SafeStyles mainStyle, SafeStyles anchorStyle, String date);
 
 		@Template("<span style=\"{0}\">"
@@ -108,32 +110,33 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 
 		@Template("<span style=\"{0}\">"
 				+ "Alta de trabajador en una Cuenta de cotizac\u00f3in diferente {2}."
-				+ " Pulse <a style=\"{1}\" onclick='javascript:updateCCC();'  >aqu\u00ed</a> para modificar el alta en el SISTEMA RED.</span>")
+				+ " Pulse <a style=\"{1}\" onclick='javascript:updateCCC();'  >aqu\u00ed</a> para actualizar la Cuenta de cotizac\u00f3in en AON.</span>"
+				)
 		SafeHtml cccMismatchedTreeItem(SafeStyles mainStyle, SafeStyles anchorStyle, String ccc);
 
 		@Template("<span style=\"{0}\">"
 				+ "Trabajador con un Grupo de Cotizaci\u00f3n diferente {2}."
-				+ " Pulse <a style=\"{1}\" onclick='javascript:updateContractType();'  >aqu\u00ed</a> para cambiar el Grupo de Cotizaci\u00f3n en el SISTEMA RED.</span>")
+				+ " Pulse <a style=\"{1}\" onclick='javascript:updateQuoteGroup();'  >aqu\u00ed</a> para actualizar el Grupo de Cotizaci\u00f3n en AON.</span>")
 		SafeHtml quoteGroupMismatchedTreeItem(SafeStyles mainStyle, SafeStyles anchorStyle, String type);
 
 		@Template("<span style=\"{0}\">"
 				+ "Trabajador con un Tipo de Contrato diferente {2}."
-				+ " Pulse <a style=\"{1}\" onclick='javascript:updateContractType();'  >aqu\u00ed</a> para cambiar el Tipo de Contrato en el SISTEMA RED.</span>")
+				+ " Pulse <a style=\"{1}\" onclick='javascript:updateContractType();'  >aqu\u00ed</a> para actualizar el Tipo de Contrato en AON.</span>")
 		SafeHtml contractTypeMismatchedTreeItem(SafeStyles mainStyle, SafeStyles anchorStyle, String type);
 
 		@Template("<span style=\"{0}\">"
 				+ "Trabajador con un Coeficiente de Parcialidad diferente {2}."
-				+ " Pulse <a style=\"{1}\" onclick='javascript:updatePartialFactor();'  >aqu\u00ed</a> para cambiar el Coeficiente de Parcialidad en el SISTEMA RED.</span>")
+				+ " Pulse <a style=\"{1}\" onclick='javascript:updatePartialFactor();'  >aqu\u00ed</a> para actualizar el Coeficiente de Parcialidad en AON.</span>")
 		SafeHtml partialFactorMismatchedTreeItem(SafeStyles mainStyle, SafeStyles anchorStyle, String type);
 
 		@Template("<span style=\"{0}\">"
 				+ "Trabajador sin Ocupaci\u00F3n de A.T."
-				+ " Pulse <a style=\"{1}\" onclick='javascript:updatePartialFactor();'  >aqu\u00ed</a> para registar la Ocupaci\u00f3n de A.T  en el SISTEMA RED.</span>")
+				+ " Pulse <a style=\"{1}\" onclick='javascript:cleanOcupation();'  >aqu\u00ed</a> para eliminar la Ocupaci\u00f3n de A.T  en AON.</span>")
 		SafeHtml occupationNotFoundTreeItem(SafeStyles mainStyle, SafeStyles anchorStyle);
 
 		@Template("<span style=\"{0}\">"
 				+ "Trabajador con una Ocupaci\u00F3n de A.T diferente {2}."
-				+ " Pulse <a style=\"{1}\" onclick='javascript:updatePartialFactor();'  >aqu\u00ed</a> para cambiar la Ocupaci\u00f3n de A.T  en el SISTEMA RED.</span>")
+				+ " Pulse <a style=\"{1}\" onclick='javascript:updateOcupation();'  >aqu\u00ed</a> para actualizar la Ocupaci\u00f3n de A.T  en AON.</span>")
 		SafeHtml occupationMismatchedTreeItem(SafeStyles mainStyle, SafeStyles anchorStyle, String type);
 
 	}
@@ -369,14 +372,30 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		
 	@Override
 	public void mismatchedStartDate(MismatchedStartDate status) {
-		addError(new SaltraEvent() {
-			
-			@Override
-			public void append(SafeHtmlBuilder builder) {
-				builder.append(TEMPLATE.startDateMismatched(getMainStyle(), getAnchorStyle(), DateTimeFormat.getFormat("dd/MM/YYYY").format(status.getSsStartDate())));
-			}
-		});
 		
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(
+		new Label(
+			"Alta de trabajador en un fecha diferente "
+			+"'" + DateTimeFormat.getFormat("dd-MM-yyy").format(status.getSsStartDate()) +"'."
+			+" Pulse "
+			)
+		);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		Anchor anchor = new Anchor("aqu\u00ed");
+		anchor.addClickHandler(e -> updateStartDate(status));		
+		anchor.getElement().getStyle().setColor("blue");
+		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+		
+		horizontalPanel.add(anchor);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(new Label("para actualizar la fecha en AON."));
+		
+		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
+		
+		addError(horizontalPanel).setUserObject(status);
+
 		syncErrors();
 	}
 
@@ -511,7 +530,12 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	
 	// ------------------------------------------------------------------------
 	
+	protected void cleanEndDate() {
+	}
 	
+	protected void cleanOcupation() {
+	}
+		
 	protected void saltraCredentialsFound() {
 		
 	}
@@ -527,6 +551,10 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	protected void newAffiliated(JsArray<JsSistemaREDResults> jsSaltraResults, int total) {
 		
 	}
+
+	protected void updateStartDate(MismatchedStartDate mismatchedStartDate) {
+	}
+		
 
 	// ------------------------------------------------------------------------
 	
@@ -546,7 +574,7 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	protected void importCertificate() {
 		certificateFileUpload.click(); 
 	}
-	
+
 	protected void newEmployee(AffiliatedNotFound affiliatedNotFound) {
 		
 		cccHidden.setValue(affiliatedNotFound.getCcc());
@@ -669,6 +697,13 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		notFoundItem.setState(notFoundItem.getChildCount() > 0);
 	}
 
+	protected TreeItem addError(Widget  widget) {
+		TreeItem treeItem = new TreeItem(
+				imageItemWidget(images._error(), widget));
+		errorsItem.addItem(treeItem);
+		return treeItem;
+	}
+	
 	protected TreeItem addError(SaltraEvent error) {
 		TreeItem treeItem = new TreeItem(
 				imageItemHTML(images._error(), error));
@@ -902,6 +937,12 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	}
 
 	private static native void export2JS(SistemaREDResults saltraResults) /*-{
+		$wnd.cleanEndDate = $entry(function() {
+			saltraResults.@com.esferalia.aon.gwt.payroll.client.SistemaREDResults::cleanEndDate()();
+		});		
+		$wnd.cleanOcupation = $entry(function() {
+			saltraResults.@com.esferalia.aon.gwt.payroll.client.SistemaREDResults::cleanOcupation()();
+		});		
 		$wnd.importCertificate = $entry(function() {
 			saltraResults.@com.esferalia.aon.gwt.payroll.client.SistemaREDResults::importCertificate()();
 		});		

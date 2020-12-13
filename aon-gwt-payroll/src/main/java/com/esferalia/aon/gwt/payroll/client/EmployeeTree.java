@@ -2832,9 +2832,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					});
 				}
 				
+				@Override
+				protected void cleanEndDate() {
+					getEmployeeDraft().setEndDate(null);
+				}
 				
-				
-				
+				@Override
+				protected void cleanOcupation() {
+					getEmployeeDraft().setOcupation(null);
+				}
+
 				@Override
 				protected void saltraCredentialsFound() {
 					employeeDraftObject.checkStatus(employeeStatus -> {
@@ -2861,6 +2868,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						getEmployeeDraft().setIdcVisible(false);
 					});
 				}
+				
+				protected void updateStartDate(MismatchedStartDate mismatchedStartDate) {
+					getEmployeeDraft().setStartDate(mismatchedStartDate.getSsStartDate());
+				}
+
+				
 			};
 
 			employeeStatus.visit(sistemaREDResults);
