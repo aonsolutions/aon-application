@@ -32,9 +32,12 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.junit.Test;
 
+import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
 import com.mchange.util.AssertException;
 
+import junit.framework.Assert;
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Liquidacion;
@@ -503,6 +506,44 @@ public class IdcTest {
 				
 			}
 			
+		}
+	}
+	
+	@Test
+	public void testIdcContractData() throws IOException, UnknownPDFException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idc.pdf") ){
+			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "100");
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "08");			
+		}
+	}
+
+	@Test
+	public void testIdcContractDataI() throws IOException, UnknownPDFException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcI.pdf") ){
+			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "189");
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "10");			
+		}
+	}
+
+	@Test
+	public void testIdcContractDataII() throws IOException, UnknownPDFException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcII.pdf") ){
+			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "100");
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "01");			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.OCCUPATION), "a");			
+		}
+	}
+
+	@Test
+	public void testIdcContractDataIII() throws IOException, UnknownPDFException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcIII.pdf") ){
+			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "289");
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "07");			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.PARTIAL_FACTOR), 0.750 );			
 		}
 	}
 
