@@ -162,7 +162,7 @@
 					        <td></td>
 					    </tr>
 					    <tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.firstColumnTextStyle}'>Documento</g:Label>
 							</td>
 							<td ui:field="documentTypeCell" debugId="documentTypeCell">
@@ -194,7 +194,7 @@
 							</td>
 						</tr>
 					    <tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Nombre</g:Label>
 							</td>
 							<td colspan="2">
@@ -215,7 +215,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de cotización</g:Label>
 							</td>
 							<td colspan="6">
@@ -223,7 +223,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Actividad - Cuenta de cotización</g:Label>
 							</td>
 							<td colspan="6">
@@ -231,7 +231,7 @@
 							</td>
 						</tr>
 						<tr>
-						    <td style="background-color: #eaeaea; width: 200px;">
+						    <td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Centro de trabajo</g:Label>
 							</td>
 							<td colspan="6">
@@ -239,7 +239,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de contrato</g:Label>
 							</td>
 							<td colspan="6" ui:field="contractTypeNode" debugId="contractTypeNode">
@@ -253,7 +253,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Modalidad</g:Label>
 							</td>
 							<td colspan="6">
@@ -261,7 +261,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Periodo contratación</g:Label>
 							</td>
 							<td>
@@ -288,7 +288,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td rowspan="2" style="background-color: #eaeaea; width: 200px;">
+							<td rowspan="2" style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Categoría/Nivel retributario</g:Label>
 							</td>
 							<td>
@@ -313,7 +313,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Grupo de cotización</g:Label>
 							</td>
 							<td colspan="6">
@@ -321,7 +321,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Ocupación</g:Label>
 							</td>
 							<td colspan="6">
@@ -329,7 +329,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Tipo de jornada</g:Label>
 							</td>
 							<td colspan="6">
@@ -337,7 +337,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Duración de lo jornada</g:Label>
 							</td>
 							<td colspan="6">
@@ -366,7 +366,7 @@
 					        <td></td>
 					    </tr>
 						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Fecha de nacimiento</g:Label>
 							</td>
 							<td colspan="2">
@@ -389,7 +389,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td rowspan="2" style="background-color: #eaeaea; width: 200px;">
+							<td rowspan="2" style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.firstColumnTextStyle}'>Dirección</g:Label>
 							</td>
 							<td>
@@ -431,7 +431,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Contacto</g:Label>
 							</td>
 							<td>
@@ -454,7 +454,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="background-color: #eaeaea; width: 200px;">
+							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Forma de pago</g:Label>
 							</td>
 							<td colspan="2">

@@ -8,6 +8,13 @@
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style>
+	
+		.center {
+			margin-top: 5px;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 15px;
+		}	
 
 		.paddingTop{
 			padding-top: 5px !important;
@@ -87,7 +94,9 @@
 		</g:north>
 		<g:center>
 			<g:ScrollPanel>
-				<e:Enterprise ui:field="enterprise"/>
+				<g:VerticalPanel styleName="{style.center}" >
+					<e:Enterprise ui:field="enterprise"/>
+				</g:VerticalPanel>
 			</g:ScrollPanel>
 		</g:center>
 	</g:DockLayoutPanel>

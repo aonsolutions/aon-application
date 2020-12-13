@@ -8,6 +8,13 @@
 
 	<ui:style>
 
+		.center {
+			margin-top: 5px;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 15px;
+		}
+		
 		.paddingTop{
 			padding-top: 5px !important;
 		}
@@ -84,7 +91,11 @@
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
-			<e:Workplace ui:field="workplace"/>
+			<g:ScrollPanel>
+				<g:VerticalPanel styleName="{style.center}" >
+					<e:Workplace ui:field="workplace" />
+				</g:VerticalPanel>
+			</g:ScrollPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 
