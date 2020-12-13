@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -582,7 +583,7 @@ public class SistemaRED_I {
 	// CERTIFICATES
 	public static Collection<Idc> getIDCDates(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
-			final String regime, final String contributionAccount) throws SegSocialException, InterruptedException {
+			final String regime, final String contributionAccount) throws SegSocialException {
 		Object[] arr_fields= {affiliationNumber, regime, contributionAccount};
 		Toolkit.verifyData(arr_fields);
 		InvalidCertificateException.checkCertificate(certificateInputStream);
@@ -662,7 +663,7 @@ public class SistemaRED_I {
 		}catch (StringIndexOutOfBoundsException e) {
 			throw new UnfilledMandatory();
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	public static Collection<Date> getDischargeDates(final InputStream certificateInputStream,

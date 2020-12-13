@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
@@ -102,8 +103,10 @@ import com.esferalia.aon.watson.util.AonUtils;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.Employee;
+import solutions.aon.seg.social.objects.Idc;
 
 public class EmployeesServiceHelper {
 
@@ -133,12 +136,17 @@ public class EmployeesServiceHelper {
 		PAYROLL.
 		getContract(domainName, domainId, userLogin, p -> p.getIdProperty().eq(contractId))
 		.orElseThrow(() -> new IOException() );
-		Date date = contract.getStartDate();
 		String ccc = contract.getEnterpriseCCC();
 		String naf = contract.getPersonSsNumber();
 		String regime = contract.getSsRegime().getCode();	
 		
+		
+		
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+		
+		Date date = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf)
+		.stream().map( idc -> idc.getFecha() ).sorted( (d1,d2) -> d2.compareTo(d1 )).findFirst().orElseThrow(DataDoesNotExist::new) ;		
+		
 		byte data [] =  SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
 	}

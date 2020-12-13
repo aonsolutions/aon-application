@@ -999,8 +999,6 @@ public class TestSisetemaRED_I {
 			  assertTrue(true);
 		} catch (IOException e1) {
 			fail("Error with the certificate input");
-		} catch (InterruptedException e) {
-			fail("Interrupted");
 		}
 	}
 	
@@ -1019,8 +1017,6 @@ public class TestSisetemaRED_I {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (InterruptedException e) {
-			fail("Interrupted exception");
 		}
 	}
 	
@@ -1037,8 +1033,6 @@ public class TestSisetemaRED_I {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (InterruptedException e) {
-			fail("Interrupted exception");
 		}
 	}
 	
@@ -1057,8 +1051,6 @@ public class TestSisetemaRED_I {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (InterruptedException e) {
-			fail("Interrupted exception");
 		}
 	}
 	
@@ -1076,8 +1068,6 @@ public class TestSisetemaRED_I {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (InterruptedException e) {
-			fail("Interrupted exception");
 		}
 	}
 
@@ -1097,8 +1087,6 @@ public class TestSisetemaRED_I {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (InterruptedException e) {
-			fail("Interrupted exception");
 		}
 	}
 	
@@ -1117,8 +1105,6 @@ public class TestSisetemaRED_I {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (InterruptedException e) {
-			fail("Interrupted exception");
 		}
 	}
 	
@@ -1136,8 +1122,6 @@ public class TestSisetemaRED_I {
 			fail("Error with the certificate input");
 		} catch (FailingHttpStatusCodeException e) {
 			  assertTrue(true);
-		} catch (InterruptedException e) {
-			fail("Interrupted exception");
 		}
 	}
 	
