@@ -5,12 +5,8 @@ import {rootPanel} from '../services/gwtLoader.js';
 import '../components/aon-icon-button.js';
 import '../components/aon-dialog-menu.js';
 
-
 import './configuration/aon-configuration.js';
-import './invoice/aon-invoice-panel.js';
-import './invoice/aon-invoice.js';
 import './company/aon-mobile-desktop.js';
-import './user/aon-user.js';
 
 export class AonMobileHeader extends AonElement {
 

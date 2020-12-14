@@ -1,5 +1,7 @@
 import { AonElement } from './AonElement.js';
 
+import './aon-icon.js';
+
 import * as MSG from "../environments/msg.js";
 
 export class AonDialog extends AonElement {
@@ -161,7 +163,7 @@ export class AonDialog extends AonElement {
 			li.style.padding = '10px';
 			li.style.cursor = 'pointer';
 			ul.appendChild(li);
-			
+
 			if(item.aonIcon) {
 				let ai = document.createElement('span');
 				ai.style.verticalAlign = 'middle';

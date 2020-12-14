@@ -3,10 +3,14 @@ import {AonApplication} from '../../components/aon-application.js';
 import {insertInvoice, deleteInvoices} from '../../services/service.js';
 import {Invoice} from './Invoice.js';
 import {InvoiceAction} from './invoiceEnums.js';
+
 import './aon-invoice.js';
 import './aon-mobile-invoice.js';
 import './aon-invoice-list.js';
 import './aon-mobile-invoice-list.js';
+
+import '../../components/aon-application.js';
+import '../../components/aon-dialog-menu.js';
 
 import * as MSG from "../../environments/msg.js";
 

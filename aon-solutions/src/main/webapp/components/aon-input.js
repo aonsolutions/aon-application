@@ -1,6 +1,8 @@
 import { AonElement } from './AonElement.js';
 import { Countries } from '../services/country.js';
 
+import './aon-icon-button.js';
+
 export class AonInput extends AonElement {
 
   SPAN;

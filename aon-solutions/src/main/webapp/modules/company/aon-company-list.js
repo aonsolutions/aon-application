@@ -1,6 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getCompanies} from '../../services/service.js';
 
+import '../../components/aon-table.js';
+
 export class AonCompanyList extends AonElement {
 
 	AON_COMPANY_TABLE;

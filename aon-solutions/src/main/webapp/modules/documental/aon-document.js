@@ -3,6 +3,7 @@ import {ToolbarType} from '../../models/enums.js';
 import {DocumentalAction} from './DocumentalEnums.js';
 import {deleteFile, getCategories, getScopes, getTags, updateFile} from '../../services/service.js';
 
+import '../../components/aon-toolbar.js';
 import '../../components/aon-date.js';
 import '../../components/aon-input.js';
 import '../../components/aon-select.js';
@@ -64,7 +65,7 @@ export class AonDocument extends AonElement {
     let fileDiv = this.getElement(this.FILE);
     fileDiv.style.display = 'block';
     fileDiv.style.width = '50%';
-		fileDiv.innerHTML = `<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
+		fileDiv.innerHTML = `<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
 
     let dataDiv = this.getElement(this.DATA);
     dataDiv.style.width = '50%';

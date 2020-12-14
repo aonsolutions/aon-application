@@ -1,4 +1,7 @@
-class AonFiscal extends HTMLElement {
+import {AonElement} from '../../components/AonElement.js';
+import '../../components/aon-application.js';
+
+class AonFiscal extends AonElement {
 
 	year = 2020;
 	quarter = 3;

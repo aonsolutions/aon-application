@@ -1,6 +1,7 @@
 import { AonElement } from './AonElement.js';
 
 import './aon-input.js';
+
 export class AonSuggestion extends AonElement {
 
   INPUT;

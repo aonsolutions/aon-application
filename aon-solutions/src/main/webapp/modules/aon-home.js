@@ -1,4 +1,6 @@
 import {AonElement} from '../components/AonElement.js';
+
+import '../components/aon-icon-button.js';
 import './aon-header.js';
 import './aon-menu.js';
 import './aon-mobile-header.js';

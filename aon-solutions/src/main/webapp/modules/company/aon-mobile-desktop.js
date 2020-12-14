@@ -5,7 +5,9 @@ import {rootPanel} from '../../services/gwtLoader.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
 import '../../components/aon-suggestion.js';
-import '../marketplace/aon-marketplace.js';
+
+import '../signin/aon-sign.js';
+import '../invoice/aon-invoice-panel.js';
 
 import * as MSG from "../../environments/msg.js";
 

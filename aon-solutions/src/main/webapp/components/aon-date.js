@@ -1,6 +1,8 @@
 import {AonElement} from './AonElement.js';
 
 import './aon-input.js';
+import './aon-icon-button.js';
+
 import {setDate} from '../services/utils.js';
 
 export class AonDate extends AonElement {
@@ -57,7 +59,7 @@ export class AonDate extends AonElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if('value' === name) {
       let input = this.getElement(this.INPUT);
-      if(newValue && input) 
+      if(newValue && input)
         input.value = setDate(newValue);
       else if(input && newValue === '') input.value = '';
    }

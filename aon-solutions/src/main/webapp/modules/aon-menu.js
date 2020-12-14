@@ -2,7 +2,10 @@ import {AonElement} from '../components/AonElement.js';
 import {startModule, rootPanel} from '../services/gwtLoader.js';
 import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu} from  '../services/app.js';
 import {getDomainApps, getUserAppRole} from  '../services/service.js';
+
 import '../components/aon-icon.js';
+import '../components/aon-icon-button.js';
+
 import './comunic@/aon-comunica.js';
 import './messenger/aon-messenger.js';
 import './signin/aon-signin.js';

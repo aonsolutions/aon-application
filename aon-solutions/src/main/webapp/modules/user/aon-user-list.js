@@ -1,6 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
-import './aon-user.js'
 import {getUsers} from  '../../services/service.js';
+
+import './aon-user.js'
+import '../../components/aon-table.js';
 
 export class AonUserList extends AonElement {
 

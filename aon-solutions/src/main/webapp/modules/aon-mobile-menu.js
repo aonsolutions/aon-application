@@ -1,8 +1,11 @@
 import {AonElement} from '../components/AonElement.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
-import '../components/aon-icon.js'
-import './documental/aon-documental.js'
+import '../components/aon-icon-button.js';
+import './comunic@/aon-comunica.js';
+import './documental/aon-documental.js';
+import './messenger/aon-messenger.js';
+import './invoice/aon-invoice-panel.js';
 
 import {getReader} from '../services/utils.js'
 

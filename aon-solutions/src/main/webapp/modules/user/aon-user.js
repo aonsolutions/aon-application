@@ -3,6 +3,9 @@ import {getDomainApps, getUserAppRole, setUserAppRole, setUser} from  '../../ser
 import {getApp} from  '../../services/app.js';
 
 import '../../components/aon-card.js';
+import '../../components/aon-icon.js';
+import '../../components/aon-input.js';
+import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 
 export class AonUser extends AonElement {
@@ -128,7 +131,7 @@ export class AonUser extends AonElement {
 				<aon-input class="aonWidth50" id="aonConfigurationUserCardPhone" description="Teléfono Móvil" value=""></aon-input>
 			</form>
 		`);
-		
+
 		let name = document.getElementById('aonConfigurationUserCardName');
 		name.setVisible(!this.isNew());
 		name.onChange(() => {

@@ -1,4 +1,5 @@
 import {AonElement} from './AonElement.js';
+
 import './aon-icon.js';
 
 export class AonDialogMenu extends AonElement {

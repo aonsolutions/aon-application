@@ -1,5 +1,7 @@
 import {AonElement} from './AonElement.js';
 
+import './aon-icon-button.js';
+
 export class AonCard extends AonElement {
 
  	CARD;

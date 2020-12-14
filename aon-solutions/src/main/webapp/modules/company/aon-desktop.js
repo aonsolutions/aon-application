@@ -9,6 +9,13 @@ import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
 
 import '../marketplace/aon-marketplace.js';
+import '../invoice/aon-invoice-panel.js';
+import '../documental/aon-documental.js';
+import '../contable/aon-contable.js';
+import '../fiscal/aon-fiscal.js';
+import '../laboral/aon-laboral.js';
+import '../comunic@/aon-comunica.js';
+import '../signin/aon-signin.js';
 
 export class AonDesktop extends AonElement {
 

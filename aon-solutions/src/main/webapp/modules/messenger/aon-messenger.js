@@ -1,4 +1,7 @@
-class AonMessenger extends HTMLElement {
+import {AonElement} from '../../components/AonElement.js';
+import '../../components/aon-application.js';
+
+class AonMessenger extends AonElement {
     constructor () {
         super();
     }

@@ -1,8 +1,12 @@
 import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getUserAppRole, getCompanies, getUserNotice} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
-import './aon-desktop.js';
+
+import '../../components/aon-application.js';
+
 import '../signin/aon-sign.js';
+
+import './aon-desktop.js';
 
 import * as MSG from "../../environments/msg.js";
 

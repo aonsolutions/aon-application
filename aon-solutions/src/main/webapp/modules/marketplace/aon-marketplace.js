@@ -1,7 +1,10 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Apps, ClassicApps, Services, OtherServices} from  '../../services/app.js';
 import {getDomainApps, setDomainApp} from  '../../services/service.js';
+
+import '../../components/aon-card.js';
 import '../../components/aon-icon.js';
+import '../../components/aon-icon-button.js';
 
 export class AonMarketplace extends AonElement {
 

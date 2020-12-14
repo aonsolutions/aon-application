@@ -8,6 +8,8 @@ import {isNumber, round} from '../../services/utils.js';
 import {Invoice} from './Invoice.js';
 import {getNextInvoice, getPreviousInvoice} from './InvoiceCache.js';
 import {ToolbarType} from '../../models/enums.js';
+
+import '../../components/aon-toolbar.js';
 import '../../components/aon-card.js';
 import '../../components/aon-date.js';
 import '../../components/aon-select.js';
@@ -207,9 +209,9 @@ export class AonInvoice extends AonElement {
 					if(!this._invoice.file && this._invoice.isEmitida()){
 						let json = btoa(JSON.stringify(this._invoice));
 						let url = '/ms/api/download_invoice_pdf?json=' + json;
-						fileDiv.innerHTML = `<aon-viewer type="application/pdf" file="${url}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
+						fileDiv.innerHTML = `<aon-viewer type="application/pdf" file="${url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
 					} else {
-						fileDiv.innerHTML = `<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
+						fileDiv.innerHTML = `<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
 					}
 				}
 			});
@@ -232,7 +234,7 @@ export class AonInvoice extends AonElement {
 			document.getElementById('aonInvoiceDiv').style.display = 'block';
 			document.getElementById('aonInvoiceItemTaxesCard').style.width = '100%';
 			this.attach(READER.result, file.type);
-			fileDiv.innerHTML = `<aon-viewer type="${file.type}" file="${READER.result}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
+			fileDiv.innerHTML = `<aon-viewer type="${file.type}" file="${READER.result}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
 		};
 	}
 

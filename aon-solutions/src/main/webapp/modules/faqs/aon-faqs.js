@@ -1,4 +1,7 @@
-class AonFaqs extends HTMLElement {
+import {AonElement} from '../../components/AonElement.js';
+import '../../components/aon-application.js';
+
+class AonFaqs extends AonElement {
 
 	constructor () {
 		super();

@@ -9,8 +9,11 @@ import '../components/aon-search-box.js';
 import './configuration/aon-configuration.js';
 import './invoice/aon-invoice-panel.js';
 import './invoice/aon-invoice.js';
+import './company/aon-desktop.js';
 import './company/aon-mobile-desktop.js';
+import './company/aon-parent.js';
 import './user/aon-user.js';
+import './messenger/aon-messenger.js';
 
 export class AonHeader extends AonElement {
 

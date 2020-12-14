@@ -10,6 +10,7 @@ import './aon-mobile-documental-list.js';
 import './aon-mobile-document.js';
 
 import '../../components/aon-application.js';
+import '../../components/aon-input.js';
 
 
 import * as MSG from "../../environments/msg.js";

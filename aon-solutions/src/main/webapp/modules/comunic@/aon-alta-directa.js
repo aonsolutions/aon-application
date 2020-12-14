@@ -2,6 +2,8 @@ import { AonElement } from '../../components/AonElement.js';
 import { INPUTS_ALL } from '../../environments/constants.js';
 import { setValueName, serializeForm } from '../../services/utils.js';
 import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../services/service.js'
+
+import '../../components/aon-toolbar.js';
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
 import '../../components/aon-number.js';
@@ -10,6 +12,8 @@ import '../../components/aon-suggestion.js';
 import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-icon-button.js';
+
+import './aon-movements.js';
 
 export class AonAltaDirecta extends AonElement {
     _contrato;
@@ -86,9 +90,9 @@ export class AonAltaDirecta extends AonElement {
               }
             </style>
 
-            ${toolbarMobile} 
+            ${toolbarMobile}
 
-   
+
         `;
 
         const form = `
@@ -151,7 +155,7 @@ export class AonAltaDirecta extends AonElement {
                 <div class="aonCol-sm-2 aonCol-md-1">
                     <aon-icon-button id="iconSegSocial" aonIcon="aon_seg_social"> </aon-icon-button>
                 </div>
-            </div>  
+            </div>
             <div class="aonCol-sm-12">
                 <aon-input name="nombre" id="nombre" description="Nombre" type="text" disabled="true"></aon-input>
             </div>

@@ -4,7 +4,6 @@ import {rootPanel} from '../services/gwtLoader.js';
 import './login/aon-login.js';
 import './aon-home.js';
 import './company/aon-parent.js';
-import './company/aon-desktop.js';
 import './company/aon-mobile-desktop.js';
 
 export class AonModule extends AonElement {

@@ -1,4 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
+
+import '../../components/aon-dialog-menu.js';
+
 import './aon-movements-list.js';
 import'./aon-alta-directa.js';
 
@@ -11,7 +14,7 @@ export class AonMovements extends AonElement {
     get id() {
         return this.getAttribute('id');
     }
-    
+
     constructor() {
         super();
         this.id = this.id || 'aonComunicaMovements';

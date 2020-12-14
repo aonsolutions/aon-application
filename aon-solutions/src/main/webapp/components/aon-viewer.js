@@ -1,5 +1,8 @@
 import {AonElement} from './AonElement.js';
 
+import './aon-icon.js';
+import './aon-icon-button.js';
+
 export class AonViewer extends AonElement {
 
 	_scale;

@@ -1,6 +1,9 @@
 import {AonDocument} from './aon-document.js';
 import {DocumentalAction} from './DocumentalEnums.js';
 
+import '../../components/aon-card.js';
+import '../../components/aon-viewer.js';
+
 import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";
 import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
@@ -60,7 +63,7 @@ export class AonMobileDocument extends AonDocument {
   openFileCard() {
     let fileCard = this.getElement(this.FILE_CARD);
     let w = this.getElement(fileCard.CONTENT).offsetWidth;
-    fileCard.setContentHTML(`<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${w}"><aon-viewer>`);
+    fileCard.setContentHTML(`<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${w}"></aon-viewer>`);
     fileCard.addTitleButton('visibility_off', () => this.closeFileCard());
   }
 

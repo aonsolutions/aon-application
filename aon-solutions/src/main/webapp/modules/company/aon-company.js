@@ -1,5 +1,9 @@
 import {AonElement} from '../../components/AonElement.js';
 
+import '../../components/aon-card.js';
+import '../../components/aon-input.js';
+
+
 export class AonCompany extends AonElement {
 
 	static get observedAttributes() {

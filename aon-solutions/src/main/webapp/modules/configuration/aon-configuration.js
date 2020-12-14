@@ -8,6 +8,7 @@ import '../marketplace/aon-marketplace.js';
 import '../user/aon-user-list.js';
 import '../user/aon-user.js';
 import '../company/aon-company-list.js';
+import '../company/aon-company.js';
 
 import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";

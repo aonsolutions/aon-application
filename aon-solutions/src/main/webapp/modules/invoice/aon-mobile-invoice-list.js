@@ -5,8 +5,6 @@ import {Invoice} from './Invoice.js';
 
 import {setInvoices, setIndex} from './InvoiceCache.js';
 
-import '../../components/aon-table.js';
-
 import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";
 

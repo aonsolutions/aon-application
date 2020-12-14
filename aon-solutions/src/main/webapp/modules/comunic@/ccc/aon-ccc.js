@@ -1,5 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
 
+import '../../../components/aon-dialog-menu.js';
 
 export class AonCcc extends AonElement {
     ACTION;

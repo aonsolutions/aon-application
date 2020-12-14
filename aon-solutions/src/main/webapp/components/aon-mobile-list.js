@@ -1,5 +1,9 @@
 import { AonElement } from './AonElement.js';
 
+import './aon-icon.js';
+import './aon-icon-button.js';
+import './aon-dialog-menu.js';
+
 import * as CONSTANT from "../environments/constants.js";
 import * as MSG from "../environments/msg.js";
 
@@ -85,7 +89,7 @@ export class AonMobileList extends AonElement {
     span.appendChild(span3);
     li.appendChild(span);
 
-    ///OPTIONS 
+    ///OPTIONS
     if (data.option) {
       let span4 = document.createElement('span');
       span4.className = 'aonListMoreVert';

@@ -1,5 +1,6 @@
 import {AonElement} from './AonElement.js';
 import {ToolbarType} from '../models/enums.js';
+
 import './aon-icon-button.js';
 
 export class AonToolbar extends AonElement {

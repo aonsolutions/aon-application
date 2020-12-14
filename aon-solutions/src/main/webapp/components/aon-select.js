@@ -1,6 +1,7 @@
 import {AonElement} from './AonElement.js';
 
 import './aon-input.js';
+
 export class AonSelect extends AonElement {
 
   INPUT;
@@ -78,10 +79,10 @@ export class AonSelect extends AonElement {
           this.getElement(this.INPUT).value = item.name;
         }
       });
-      
+
       if(options.length > 0)
         detail =  options.find(v=>  v.value == newValue);
-        
+
       this.dispatchEvent(new CustomEvent('change',{detail}));
     }
   }

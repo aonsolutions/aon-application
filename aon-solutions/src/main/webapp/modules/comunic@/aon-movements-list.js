@@ -1,8 +1,11 @@
 import { AonElement } from '../../components/AonElement.js';
 import { setDate } from '../../services/utils.js';
 import { getMovements, getEmployee } from '../../services/service.js';
+
 import '../../components/aon-table.js';
 import '../../components/aon-mobile-list.js';
+
+import './aon-alta-directa.js';
 
 export class AonMovementsList extends AonElement {
 	ID;

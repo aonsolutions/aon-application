@@ -3,6 +3,9 @@ import { AonElement } from './AonElement.js';
 import './aon-toolbar.js';
 import './aon-loader.js';
 import './aon-icon.js';
+import './aon-icon-button.js';
+import './aon-dialog.js';
+import './aon-dialog-menu.js';
 
 export class AonApplication extends AonElement {
 	SIDENAV;
