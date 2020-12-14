@@ -20,6 +20,7 @@
 
         <link href="../css/app.css" rel="stylesheet" id="linkcss">
         <link href="../css/upload.css" rel="stylesheet" id="linkcss">
+        <link href="../css/fullCalendar/main.min.css" rel="stylesheet">
     </head>
     <body>
         <!-- start contenido centro -->
@@ -159,6 +160,8 @@
         <script src="../js/app.js"></script>
         <script src="../js/crud.js"></script>
         <script src="../js/upload.js"></script>
+        <script src="../js/fullCalendar/main.min.js"></script>
+        <script src="../js/fullCalendar/es.js"></script>
         <script>
             //
             // Cargamos el CKEditor
@@ -622,15 +625,22 @@
                     
                     $("#headerCardTramite").html(jsonTramiteForm.header);
                     
+                    var calendario = false;
+                    
                     var formTramite = "";
                     for(const i in jsonTramiteForm.inputs){
                         var input = jsonTramiteForm.inputs[i];
+                        
+                        var readonly = "";
+                        if(input.readonly){
+                            var readonly = "readonly";
+                        }
                         
                         switch(input.type){
                             case "input":
                                 formTramite += "<div class='col-12 col-md-6 mt-2'>";
                                     formTramite += "<label class='d-block atp_inputs' for='"+input.name+"'>";
-                                        formTramite += "<input type='text' id='"+input.name+"' name='"+input.name+"' class='setAttributeInput' value='"+input.value+"'/>";
+                                        formTramite += "<input type='text' id='"+input.name+"' name='"+input.name+"' class='setAttributeInput' value='"+input.value+"' "+readonly+"/>";
                                         formTramite += "<span>"+input.placeholder+"</span>";
                                     formTramite += "</label>";
                                 formTramite += "</div>";
@@ -639,7 +649,7 @@
                             case "date":
                                 formTramite += "<div class='col-12 col-md-6 mt-2'>";
                                     formTramite += "<label class='d-block atp_inputs' for='"+input.name+"'>";
-                                        formTramite += "<input type='date' id='"+input.name+"' name='"+input.name+"' value=''/>";
+                                        formTramite += "<input type='date' id='"+input.name+"' name='"+input.name+"' value='' "+readonly+"/>";
                                         formTramite += "<span>"+input.placeholder+"</span>";
                                     formTramite += "</label>";
                                 formTramite += "</div>";
@@ -648,7 +658,7 @@
                             case "number":
                                 formTramite += "<div class='col-12 col-md-6 mt-2'>";
                                     formTramite += "<label class='d-block atp_inputs' for='"+input.name+"'>";
-                                        formTramite += "<input type='number' id='"+input.name+"' name='"+input.name+"' class='setAttributeInput' value='"+input.value+"'/>";
+                                        formTramite += "<input type='number' id='"+input.name+"' name='"+input.name+"' class='setAttributeInput' value='"+input.value+"' "+readonly+"/>";
                                         formTramite += "<span>"+input.placeholder+"</span>";
                                     formTramite += "</label>";
                                 formTramite += "</div>";
@@ -656,7 +666,7 @@
 
                             case "select":
                                 formTramite += "<div class='col-12 col-md-6 mt-2'>";
-                                    formTramite += "<select class='d-block atp_input' id='"+input.name+"' name='"+input.name+"'>";
+                                    formTramite += "<select class='d-block atp_input' id='"+input.name+"' name='"+input.name+"' "+readonly+">";
                                         formTramite += "<option>"+input.placeholder+"</option>";
                                         for(const j in input.options){
                                             var optionSelect = input.options[j];
@@ -670,10 +680,18 @@
                             case "textarea":
                                 formTramite += "<div class='col-12 mt-2'>";
                                     formTramite += "<label class='d-block atp_inputs' for='"+input.name+"'>";
-                                        formTramite += "<textarea id='"+input.name+"' name='"+input.name+"' rows='3' placeholder=' '></textarea>";
+                                        formTramite += "<textarea id='"+input.name+"' name='"+input.name+"' rows='3' placeholder=' ' "+readonly+"></textarea>";
                                         formTramite += "<span>"+input.placeholder+"</span>";
                                     formTramite += "</label>";
                                 formTramite += "</div>";
+                                break;
+                                
+                            case "calendar":
+                                formTramite += "<div class='col-12 mt-2 mb-2'>";
+                                    formTramite += "<div class='alert alert-info' role='alert'>Seleccione y arrastre todos los días que desea seleccionar para sus vacaciones.</div>"; 
+                                    formTramite += "<div id='calendar'></div>"; 
+                                formTramite += "</div>";
+                                calendario = true;
                                 break;
                                 
                             default:
@@ -691,6 +709,57 @@
                     $(".div_tramite_campos").html(formTramite);
                     $('.buttonsTramite').html(buttons);
                     $('.cardTramiteCampos').removeClass('d-none');
+                    
+                    if(calendario){
+                        var calendarEl = document.getElementById('calendar');
+                        var calendar = new FullCalendar.Calendar(calendarEl, {
+                            locale : 'es',
+                            selectable: true,
+                            select: function(info) {
+                                // Fecha de inicio
+                                var fechaInicio = new Date(info.startStr);
+                                
+                                var diaNuevo = fechaInicio.getDate();
+                                var mesNuevo = fechaInicio.getMonth() + 1;
+                                var anioNuevo = fechaInicio.getFullYear();
+
+                                if(diaNuevo < 10){
+                                    diaNuevo = '0'+diaNuevo;
+                                }
+
+                                if(mesNuevo < 10){
+                                    mesNuevo = '0'+mesNuevo;
+                                }
+
+                                var fecha = anioNuevo + '-' + mesNuevo + '-' + diaNuevo;
+                                
+                                $('#desde').val(fecha);
+                                
+                                // Fecha de fin
+                                var fechaFin = new Date(info.endStr);
+
+                                fechaFin.setDate(fechaFin.getDate() - 1);
+                                
+                                var diaNuevo = fechaFin.getDate();
+                                var mesNuevo = fechaFin.getMonth() + 1;
+                                var anioNuevo = fechaFin.getFullYear();
+
+                                if(diaNuevo < 10){
+                                    diaNuevo = '0'+diaNuevo;
+                                }
+
+                                if(mesNuevo < 10){
+                                    mesNuevo = '0'+mesNuevo;
+                                }
+
+                                var fecha = anioNuevo + '-' + mesNuevo + '-' + diaNuevo;
+                                
+                                $('#hasta').val(fecha);
+                            }
+                        });
+                        
+                        calendar.render();
+                    }
                 } else {
                     $(".div_tramite_campos").empty();
                     $('.buttonsTramite').empty();
@@ -1082,20 +1151,27 @@
                         postings : 2,
                         inputs : {
                             0 : {
-                                type : "date",
-                                name : "desde",
-                                placeholder : "Fecha inicio",
-                                value : '',
+                                type : "calendar",
+                                name : "calendario_vacaciones",
+                                placeholder : "",
+                                value : "",
                                 readonly : false
                             },
                             1 : {
                                 type : "date",
+                                name : "desde",
+                                placeholder : "Fecha inicio",
+                                value : '',
+                                readonly : true
+                            },
+                            2 : {
+                                type : "date",
                                 name : "hasta",
                                 placeholder : "Fecha hasta",
                                 value : '',
-                                readonly : false
+                                readonly : true
                             },
-                            2 : {
+                            3 : {
                                 type : "textarea",
                                 name : "nota_vacaciones",
                                 placeholder : "Nota",
@@ -1140,8 +1216,6 @@
                 var action = $(this).data('action');
                 var value = $(this).text();
                 var posting = $(this).data('posting');
-                
-                
                 
                 //
                 // Almacenamos en el Storage
