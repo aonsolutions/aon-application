@@ -298,11 +298,13 @@ export class AonInput extends AonElement {
       div.appendChild(iconLabel);
       this.buildAddress();
       iconLabel.addEventListener('click', () => {
-        let divEdit = document.getElementById(this.getAttribute('id') + 'Edit');
-        if (divEdit.style.display === 'block') {
-          divEdit.style.display = 'none';
-        } else {
-          divEdit.style.display = 'block';
+        if(!this.hasAttribute('readonly')) {
+          let divEdit = document.getElementById(this.getAttribute('id') + 'Edit');
+          if (divEdit.style.display === 'block') {
+            divEdit.style.display = 'none';
+          } else {
+            divEdit.style.display = 'block';
+          }
         }
       });
     }

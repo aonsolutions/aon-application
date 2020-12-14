@@ -112,27 +112,31 @@ export class Invoice {
   }
 
   isEmitida() {
-    return this.type === 'emitida';
+    return this.type.toLowerCase() === 'emitida';
   }
 
   isRecibida() {
-    return this.type === 'recibida';
+    return this.type.toLowerCase() === 'recibida';
   }
 
   isTicket() {
-    return this.type === 'ticket';
+    return this.type.toLowerCase() === 'ticket';
   }
 
   isInbox() {
-    return this.status === 'inbox';
+    return this.status.toLowerCase() === 'inbox';
   }
 
   isRejected() {
-    return this.status === 'refused' || this.status  === 'rejected';
+    return this.status.toLowerCase() === 'refused' || this.status.toLowerCase()  === 'rejected';
   }
 
   isDraft() {
-    return this.status === 'trash' || this.status === 'draft';
+    return this.status.toLowerCase() === 'trash' || this.status.toLowerCase() === 'draft';
+  }
+
+  isAccounting() {
+    return this.status.toLowerCase() === 'scored' || this.status.toLowerCase() === 'accounting';
   }
 
   getDate() {

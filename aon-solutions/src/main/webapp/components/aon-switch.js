@@ -50,6 +50,15 @@ export class AonSwitch extends AonElement {
     this.setAttribute("disabled", disabled);
   }
 
+	get readonly() {
+		return this.getAttribute('readonly');
+	}
+
+	set readonly(readonly) {
+		this.setAttribute('readonly', readonly);
+	}
+
+
   attributeChangedCallback(name, oldValue, newValue) {
     if(CONSTANT.VALUE === name) {
       this.getElement(this.INPUT).value = newValue;
@@ -67,10 +76,17 @@ export class AonSwitch extends AonElement {
     if ('disabled' === name) {
       let el = this.getElement(this.INPUT);
       if (el) {
-        if (newValue == "false") 
+        if (newValue == "false")
           el.removeAttribute('disabled');
         else
           el.setAttribute('disabled', newValue);
+      }
+    }
+
+		if ('readonly' === name) {
+      let el = this.getElement(this.INPUT);
+      if (el) {
+        el.setAttribute('readonly', newValue);
       }
     }
   }
@@ -95,6 +111,9 @@ export class AonSwitch extends AonElement {
       this.value = input.value;
       this.checked = input.checked;
     });
+		if(this.hasAttribute('readonly')) {
+			input.setAttribute('readonly', 'readonly');
+		}
 
     let title = this.getElement(this.TITLE);
 		title.innerHTML = this.hasAttribute(CONSTANT.TITLE)

@@ -35,11 +35,14 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
+import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.api.ewok.IConstants;
+import net.aonsolutions.aon.tedi.AonParser;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
+import net.aonsolutions.aon.tedi.TediParser;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
@@ -62,22 +65,21 @@ public class InvoiceServlet extends HttpServlet{
 		Integer domainId = AonNumberUtils.toInteger(req.getHeader("domain_id"));
 		String domainName = req.getHeader("domain_name");
 		Domain domain = AON.getDomain(domainName, domainId, "");
+		Object object = new JSONObject();
+		if(req.getParameter(IConstants.ID) != null) {
+			Integer id = AonNumberUtils.toInteger(req.getParameter(IConstants.ID));
+			object = getInvoice(domain, "api", id);
+		} else {
+			String status = req.getParameter(IConstants.STATUS);
+			String[] types = req.getParameter(IConstants.TYPE) != null ? req.getParameter(IConstants.TYPE).split(","): null;
 		
-		String status = req.getParameter(IConstants.STATUS);
-		String[] types = req.getParameter(IConstants.TYPE) != null ? req.getParameter(IConstants.TYPE).split(","): null;
+			Integer page = AonNumberUtils.toInteger(req.getParameter("page"));
+			Integer perPage = AonNumberUtils.toInteger(req.getParameter("per_page"));
 		
-		Integer page = AonNumberUtils.toInteger(req.getParameter("page"));
-		Integer perPage = AonNumberUtils.toInteger(req.getParameter("per_page"));
-		
-		System.out.println(status);
-		System.out.println(types);
-		System.out.println(page);
-		System.out.println(perPage);
-		
-		JSONArray jsArray = getInvoices(domain, "api", status, types, page, perPage);
-		
+			object = getInvoices(domain, "api", status, types, page, perPage);
+		}
 		Utils.addCorsHeader(resp);
-		Utils.giveBack(req, resp, jsArray, new JSONObject());	
+		Utils.giveBack(req, resp, object, new JSONObject());	
 	}
 
 	@Override
@@ -151,6 +153,12 @@ public class InvoiceServlet extends HttpServlet{
 		return filter;
     }
 
+	private static JSONObject getInvoice(Domain domain, String login, Integer id) {
+		AonParser parser = new AonParser();
+		TediInvoice invoice = parser.aon2Tedi(domain, login, id);
+		return TediInvoiceJSON.toJSON(invoice);
+	}
+	
 	private static JSONArray getInvoices(Domain domain, String login, String status, String[] types, Integer page, Integer perPage) {
 		JSONArray jsArray = new JSONArray();
 		if(isContabilizada(status)) {
@@ -187,6 +195,7 @@ public class InvoiceServlet extends HttpServlet{
 	
 	private static JSONObject invoiceList2JSON(Invoice invoice) {
 		JSONObject json = new JSONObject();
+		json.put("id", invoice.getId());
 		json.put("date", invoice.getIssueDate());
 		json.put("reference", invoice.getReferenceCode());
 		json.put("name", invoice.getRegistryName());

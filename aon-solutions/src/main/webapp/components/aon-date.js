@@ -56,6 +56,14 @@ export class AonDate extends AonElement {
     this.setAttribute('title', title);
   }
 
+  get readonly() {
+    return this.getAttribute('readonly');
+  }
+
+  set readonly(readonly) {
+    this.setAttribute('readonly', readonly);
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     if('value' === name) {
       let input = this.getElement(this.INPUT);
@@ -282,7 +290,9 @@ export class AonDate extends AonElement {
   }
 
   openDatepicker() {
-    this.getElement(this.DATEPICKER).classList.add('is-visible');
+    if(!this.hasAttribute('readonly')) {
+      this.getElement(this.DATEPICKER).classList.add('is-visible');
+    }
   }
 
   closeDatepicker() {

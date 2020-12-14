@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Paymethods} from '../../services/paymethod.js';
-import {getInvoices} from '../../services/service.js';
+import {getInvoices, getInvoice} from '../../services/service.js';
 import {InvoiceAction} from './invoiceEnums.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
@@ -241,6 +241,12 @@ export class AonInvoiceList extends AonElement {
 			setIndex(i);
 			let aip = document.querySelector('aon-invoice-panel');
 			aip.aonInvoice(invoice.type, invoice);
+		} else {
+			getInvoice(invoice.id).then((inv) => {
+				setIndex(i);
+				let aip = document.querySelector('aon-invoice-panel');
+				aip.aonInvoice(invoice.type, inv);
+			});
 		}
 	}
 

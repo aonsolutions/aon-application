@@ -139,6 +139,9 @@ export class AonMobileInvoice extends AonInvoice {
       tr.appendChild(tdSeries);
       let series = document.getElementById('series');
       series.value = this._invoice.series;
+      if(this.isAccounting()) {
+        series.readonly = 'readonly';
+      }
       series.addEventListener('change', () => this.update('series'));
 
       // NUMBER
@@ -147,6 +150,9 @@ export class AonMobileInvoice extends AonInvoice {
       tr.appendChild(tdNumber);
       let number = document.getElementById('number');
       number.value = this._invoice.number;
+      if(this.isAccounting()) {
+        number.readonly = 'readonly';
+      }
       number.addEventListener('change', () => this.update('number'));
     } else {
       // REFERENCE CODE
@@ -156,6 +162,9 @@ export class AonMobileInvoice extends AonInvoice {
       tr.appendChild(tdReference);
       let reference = document.getElementById('reference');
       reference.value = this._invoice.reference;
+      if(this.isAccounting()) {
+        reference.readonly = 'readonly';
+      }
       reference.addEventListener('change', () => this.update('reference'));
     }
 
@@ -168,6 +177,9 @@ export class AonMobileInvoice extends AonInvoice {
     tr1.appendChild(tdDate);
     let date = document.getElementById('date');
     date.setDate(this._invoice.date);
+    if(this.isAccounting()) {
+      date.readonly = 'readonly';
+    }
     date.addEventListener('change', () => this.update('date'));
 
     // TOTAL
@@ -176,7 +188,7 @@ export class AonMobileInvoice extends AonInvoice {
     tr1.appendChild(tdTotal);
     let total = document.getElementById('total');
     total.value = this._invoice.total;
-    if(this._invoice.taxes.length > 1) {
+    if(this.isAccounting() || this._invoice.taxes.length > 1) {
       total.readonly = 'readonly';
     }
     total.addEventListener('change', () => this.updateTotal(total.value));
@@ -192,6 +204,9 @@ export class AonMobileInvoice extends AonInvoice {
     nif.value = this.isEmitida()
       ? (this._invoice.receiver ? this._invoice.receiver.document : '')
       : (this._invoice.sender ? this._invoice.sender.document : '');
+    if(this.isAccounting()) {
+      nif.readonly = 'readonly';
+    }
     nif.addEventListener('change', () => this.updateRegistry());
 
     // NAME
@@ -202,6 +217,9 @@ export class AonMobileInvoice extends AonInvoice {
     name.value = this.isEmitida()
       ? (this._invoice.receiver ? this._invoice.receiver.name : '')
       : (this._invoice.sender ? this._invoice.sender.name : '');
+    if(this.isAccounting()) {
+      name.readonly = 'readonly';
+    }
     name.addEventListener('change', () => this.updateRegistry());
 
     let tr3 = document.createElement('tr');
@@ -216,6 +234,9 @@ export class AonMobileInvoice extends AonInvoice {
     address.buildAddressValue(this.isEmitida()
       ? JSON.stringify(this._invoice.receiver ? this._invoice.receiver.address : {})
       : JSON.stringify(this._invoice.sender ? this._invoice.sender.address : {}));
+    if(this.isAccounting()) {
+      address.readonly = 'readonly';
+    }
     address.addEventListener('change', () => this.updateRegistry());
 
     let tr4 = document.createElement('tr');
@@ -228,6 +249,9 @@ export class AonMobileInvoice extends AonInvoice {
     let category = document.getElementById('category');
     category.options = JSON.stringify(getInvoiceCategories(this._invoice.type));
     category.value = this._invoice.category;
+    if(this.isAccounting()) {
+      category.readonly = 'readonly';
+    }
     category.addEventListener('select', () => this.update('category'));
 
     // PAYMETHOD
@@ -238,6 +262,9 @@ export class AonMobileInvoice extends AonInvoice {
     paymethod.options = JSON.stringify(Paymethods);
     if(this._invoice.finances.length === 1) {
       paymethod.value = this._invoice.finances[0].paymethod;
+    }
+    if(this.isAccounting()) {
+      paymethod.readonly = 'readonly';
     }
     paymethod.addEventListener('select', () =>  {
       if(this._invoice.finances.length < 1)
@@ -267,6 +294,9 @@ export class AonMobileInvoice extends AonInvoice {
     let transaction = document.getElementById('transaction');
     transaction.options = JSON.stringify(Transactions);
     transaction.value = this._invoice.transaction;
+    if(this.isAccounting()) {
+			transaction.readonly = 'readonly';
+		}
     transaction.addEventListener('select', () => this.update('transaction'));
 
     let tr2 = document.createElement('tr');
@@ -276,6 +306,10 @@ export class AonMobileInvoice extends AonInvoice {
     tdCriterioCaja.setAttribute('colspan', '1');
     tdCriterioCaja.innerHTML = `<aon-switch id="criterioCaja" title="${MSG.AON_MSG_BOX_CRITERION}"></aon-switch>`;
     tr2.appendChild(tdCriterioCaja);
+    let criterioCaja = this.getElement('criterioCaja');
+    if(this.isAccounting()) {
+      criterioCaja.disabled = 'true';
+    }
 
     let tdSuplidos= document.createElement('td');
     tdSuplidos.setAttribute('colspan', '1');
@@ -283,6 +317,9 @@ export class AonMobileInvoice extends AonInvoice {
     tr2.appendChild(tdSuplidos);
     let suplidos = this.getElement('suplidos');
     suplidos.checked = this._invoice.suplidos.active;
+    if(this.isAccounting()) {
+			suplidos.disabled = 'true';
+		}
     suplidos.addEventListener('change', () => this.updateSuplidos());
 
     let tableSuplidos = document.createElement('table');
@@ -301,6 +338,9 @@ export class AonMobileInvoice extends AonInvoice {
     trSuplidos.appendChild(tdConceptoSuplidos);
     let conceptoSuplidos = this.getElement('conceptoSuplidos');
     conceptoSuplidos.value = this._invoice.suplidos.description;
+    if(this.isAccounting()) {
+			conceptoSuplidos.readonly = 'readonly';
+		}
     conceptoSuplidos.addEventListener('change', () => this.updateSuplidos());
 
     let tdTotalSuplidos = document.createElement('td');
@@ -309,6 +349,9 @@ export class AonMobileInvoice extends AonInvoice {
     trSuplidos.appendChild(tdTotalSuplidos);
     let totalSuplidos = this.getElement('totalSuplidos');
     totalSuplidos.value = this._invoice.suplidos.total;
+    if(this.isAccounting()) {
+			totalSuplidos.readonly = 'readonly';
+		}
     totalSuplidos.addEventListener('change', () => this.updateSuplidos());
 
     let taxesTable = document.createElement('table');
@@ -330,10 +373,17 @@ export class AonMobileInvoice extends AonInvoice {
       `;
 
     let addButton = document.getElementById('aonInvoiceItemTaxesCardAddButton');
-    addButton.addEventListener('click', () => this.addTax());
+    addButton.addEventListener('click', () => {
+      if(!this.isAccounting()) {
+        this.addTax()
+      }
+    });
 
     let irpf = document.getElementById('irpf');
     irpf.checked = this._invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
+    if(this.isAccounting()) {
+      irpf.disabled = 'true';
+    }
     irpf.addEventListener('change', () => this.changeIRPF());
   }
 
@@ -353,6 +403,9 @@ export class AonMobileInvoice extends AonInvoice {
 		tr.appendChild(tdDetailDescription);
 		let detailDescription = document.getElementById('detailDescription' + i);
 		detailDescription.value = detail.description;
+    if(this.isAccounting()) {
+			detailDescription.readonly = 'readonly';
+		}
 		detailDescription.addEventListener('change', () => this.changeDescription(i));
 
 		// DETAIL AMOUNT
@@ -375,7 +428,11 @@ export class AonMobileInvoice extends AonInvoice {
 		tdRemoveButton.innerHTML = `<aon-icon-button id="detailRemove${i}" icon="remove_circle" ></aon-icon-button>`;
 		tr.appendChild(tdRemoveButton);
 		let removeButton = document.getElementById('detailRemove' + i);
-		removeButton.addEventListener('click', () => this.removeDetail(i));
+    removeButton.addEventListener('click', () => {
+      if(!this.isAccounting()) {
+        this.removeDetail(i)
+      }
+    });
 	}
 
 	editDetail(i) {
@@ -402,6 +459,9 @@ export class AonMobileInvoice extends AonInvoice {
     tr1.appendChild(tdDetailDescription);
     let detailDescription = document.getElementById('dialogDetailDescription' + i);
     detailDescription.value = detail.description;
+    if(this.isAccounting()) {
+			detailDescription.readonly = 'readonly';
+		}
     detailDescription.addEventListener('change', () => this.changeDescription(i, detailDescription.value));
 
     let tr2 = document.createElement('tr');
@@ -414,6 +474,9 @@ export class AonMobileInvoice extends AonInvoice {
     tr2.appendChild(tdDetailQuantity);
     let detailQuantity = document.getElementById('dialogDetailQuantity' + i);
     detailQuantity.value = detail.quantity;
+    if(this.isAccounting()) {
+			detailQuantity.readonly = 'readonly';
+		}
     detailQuantity.addEventListener('change', () => this.changeQuantity(i, detailQuantity.value));
 
     // DETAIL PRICE
@@ -423,6 +486,9 @@ export class AonMobileInvoice extends AonInvoice {
     tr2.appendChild(tdDetailPrice);
     let detailPrice = document.getElementById('dialogDetailPrice' + i);
     detailPrice.value = detail.price;
+    if(this.isAccounting()) {
+			detailPrice.readonly = 'readonly';
+		}
     detailPrice.addEventListener('change', () => this.changePrice(i, detailPrice.value));
 
     let tr3 = document.createElement('tr');
@@ -435,6 +501,9 @@ export class AonMobileInvoice extends AonInvoice {
     tr3.appendChild(tdDetailDiscount);
     let detailDiscount = document.getElementById('dialogDetailDiscount' + i);
     detailDiscount.value = detail.discount;
+    if(this.isAccounting()) {
+			detailDiscount.readonly = 'readonly';
+		}
     detailDiscount.addEventListener('change', () => this.changeDiscount(i, detailDiscount.value));
 
     // DETAIL VAT
@@ -445,6 +514,9 @@ export class AonMobileInvoice extends AonInvoice {
     let detailVat = document.getElementById('dialogDetailVat' + i);
     detailVat.options = JSON.stringify(TaxIVAPercentage);
     detailVat.value = detail.vat;
+    if(this.isAccounting()) {
+			detailVat.readonly = 'readonly';
+		}
     detailVat.addEventListener('select', () => this.changeVat(i, detailVat.value));
 
     d.addAcceptAction(() => {});
@@ -477,6 +549,9 @@ export class AonMobileInvoice extends AonInvoice {
 		tr1.appendChild(tdFinanceDueDate);
 		let financeDueDate = document.getElementById('dialogFinanceDueDate' + i);
 		financeDueDate.setDate(finance.due_date);
+    if(this.isAccounting()) {
+      financeDueDate.readonly = 'readonly';
+    }
 		financeDueDate.addEventListener('change', () => this.updateFinanceDate(i, financeDueDate.value));
 
 		let tr2 = document.createElement('tr');
@@ -490,6 +565,9 @@ export class AonMobileInvoice extends AonInvoice {
 		let financePaymethod = document.getElementById('dialogFinancePaymethod' + i);
 		financePaymethod.options = JSON.stringify(Paymethods);
 		financePaymethod.value = finance.paymethod;
+    if(this.isAccounting()) {
+			financePaymethod.readonly = 'readonly';
+		}
 		financePaymethod.addEventListener('select', () => this.updateFinancePaymethod(i, financePaymethod.value));
 
 		let tr3 = document.createElement('tr');
@@ -502,6 +580,9 @@ export class AonMobileInvoice extends AonInvoice {
 		tr3.appendChild(tdFinanceAmount);
 		let financeAmount = document.getElementById('dialogFinanceAmount' + i);
 		financeAmount.value = finance.amount;
+    if(this.isAccounting()) {
+			financeAmount.readonly = 'readonly';
+		}
 		financeAmount.addEventListener('change', () => this.updateFinanceAmount(i, financeAmount.value));
 
 		let tr4 = document.createElement('tr');
@@ -514,6 +595,9 @@ export class AonMobileInvoice extends AonInvoice {
 		tr4.appendChild(tdFinanceIban);
 		let financeIban = document.getElementById('dialogFinanceIban' + i);
 		financeIban.value = finance.iban;
+    if(this.isAccounting()) {
+      financeIban.readonly = 'readonly';
+    }
 		financeIban.addEventListener('change', () => this.updateFinanceIban(i, financeIban.value));
 
     d.addAcceptAction(() => {});
@@ -532,6 +616,9 @@ export class AonMobileInvoice extends AonInvoice {
 		tr.appendChild(tdFinanceDueDate);
 		let financeDueDate = document.getElementById('financeDueDate' + i);
 		financeDueDate.setDate(finance.due_date);
+    if(this.isAccounting()) {
+      financeDueDate.readonly = 'readonly';
+    }
 		financeDueDate.addEventListener('change', () => this.updateFinanceDate(i));
 
 		// FINANCE AMOUNT
@@ -540,6 +627,9 @@ export class AonMobileInvoice extends AonInvoice {
 		tr.appendChild(tdFinanceAmount);
 		let financeAmount = document.getElementById('financeAmount' + i);
 		financeAmount.value = finance.amount;
+    if(this.isAccounting()) {
+      financeAmount.readonly = 'readonly';
+    }
 		financeAmount.addEventListener('change', () => this.updateFinanceAmount(i));
 
 		// REMOVER DETAIL
@@ -554,8 +644,12 @@ export class AonMobileInvoice extends AonInvoice {
 		tdRemoveButton.innerHTML = `<aon-icon-button id="financeRemove${i}" icon="remove_circle" ></aon-icon-button>`;
 		tr.appendChild(tdRemoveButton);
 		let removeButton = document.getElementById('financeRemove' + i);
-		removeButton.addEventListener('click', () => this.removeFinance(i));
-	}
+    removeButton.addEventListener('click', () => {
+      if(!this.isAccounting()) {
+        this.removeFinance(i);
+      }
+    });
+  }
 
 	editFinance(i) {
 		let finance = this._invoice.finances[i];
