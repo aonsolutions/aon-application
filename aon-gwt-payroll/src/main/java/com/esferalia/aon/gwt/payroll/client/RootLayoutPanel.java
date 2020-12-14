@@ -13,13 +13,13 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 public class RootLayoutPanel extends LayoutPanel {
 
-	public static native String getToken()
+	public static native String getAonSolutions()
 	/*-{
-		return $wnd.localStorage.getItem("aon_session_id");
+		return $wnd.localStorage.getItem("aon_solutions");
 	}-*/;
 	
-	Boolean newAon = getToken() != null;
-	
+	Boolean newAon = getAonSolutions() != null;
+	 
 	public static RootLayoutPanel get(String id) {
 		
 		RootLayoutPanel rootLayoutPanel = new RootLayoutPanel();
