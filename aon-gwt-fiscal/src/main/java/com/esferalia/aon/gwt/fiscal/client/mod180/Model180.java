@@ -170,8 +170,10 @@ public class Model180 extends MainEntryPoint {
 
 	private void select(Mod180 selected, Integer selectedIndex) {
 		cleanErrorPanel();
-		if ( selected.isAEAT() ) {
+		if ( selected.isAEAT() && selected.getYear() < 2020 ) {
 			declarationContainer.setWidget( new Model1802017AEAT(selected,new Model180Callback(),selectedIndex));
+		} else if ( selected.isAEAT() && selected.getYear() >= 2020 ) {
+			declarationContainer.setWidget( new Model1802020AEAT(selected,new Model180Callback(),selectedIndex));
 		} else if ( selected.isAraba() ) {
 			declarationContainer.setWidget( new Model1802017ARABA(selected,new Model180Callback(),selectedIndex));			
 		} else if ( selected.isBizkaia() ) {
@@ -187,7 +189,7 @@ public class Model180 extends MainEntryPoint {
 
 	private void newModel() {
 		cleanErrorPanel();
-		SERVICE.initializeMod180(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(), 2019,
+		SERVICE.initializeMod180(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(), 2020,
 				new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 m180) {

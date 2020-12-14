@@ -961,8 +961,12 @@ abstract class Model180Base extends DockLayoutPanel {
 	}
 
 	protected void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {
-		// Evaluar lo diferentes paneles por administraciuon y/o ejercicio. 
-		detailManager = new Model180Detail2017( getCallback() , selectedIndex );
+		// Evaluar lo diferentes paneles por administraciuon y/o ejercicio.
+		if ( getCallback().getMod180().getYear() < 2020 ) {
+			detailManager = new Model180Detail2017( getCallback() , selectedIndex );
+		} else {
+			detailManager = new Model180Detail2020( getCallback() , selectedIndex );
+		}
 		tabPanel.add( (Widget) detailManager,  TAB_TEMPLATE.render(AON.MSG.receiverList(), AON.AON_CSS.aonIconInvoice()) );
 		
 	}

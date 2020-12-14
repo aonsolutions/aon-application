@@ -91,6 +91,16 @@ public interface CommonMessages extends Messages {
 			})
 	String buildingLocationValue(@PluralCount int location);
 
+	@DefaultMessage("{0}")
+	@AlternateMessage({
+	 		 "=0", "-------------------"
+	 		,"=1", "Territorio espa\u00F1ol, excepto Pais Vasco y Navarra"
+			,"=2", "Inmueble con referencia catastral situado en el Pa\u00EDs Vasco"
+			,"=3", "Inmueble con referencia catastral situado en Navarra"
+			,"=4", "Sin referencia catastral"
+			})
+	String buildingLocationValue2020(@PluralCount int location);
+
 	@DefaultMessage("----------")
 	@AlternateMessage(
 			{"NIF"				,"NIF"
