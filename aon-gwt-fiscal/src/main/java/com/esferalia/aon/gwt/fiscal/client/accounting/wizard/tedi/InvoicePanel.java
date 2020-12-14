@@ -252,6 +252,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				}
 			}
 		}
+		LOGGER.info("isAccountSource() ? -> " + sourceAccount);
 		return sourceAccount;
 	}
 	

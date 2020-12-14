@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
@@ -33,6 +34,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -49,6 +51,11 @@ import es.translogia.tedi.ewok.TediInvoiceType;
 import es.translogia.tedi.ewok.TediRegistry;
 
 public class TediContextVisitor implements ITediContextVisitor {
+
+	private static final Logger LOGGER = Logger.getLogger(EditableInvoicePanel.class.getName());
+	static {
+		LOGGER.addHandler( new ConsoleLogHandler() );
+	}
 
 	private static AccountEntryServiceAsync SERVICE;
 	private String currentDomainName;
@@ -188,6 +195,9 @@ public class TediContextVisitor implements ITediContextVisitor {
 				@Override
 				public void onAccept(AccountingRegistry registry) {
 					final AccountingRegistry ar = registry;
+					if (ar != null) {
+						LOGGER.info( ar.getId() + " " + ar.getAccountCode() + " " + ar.getName());
+					}
 					SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), ar, null,
 							callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
 						
@@ -509,7 +519,8 @@ public class TediContextVisitor implements ITediContextVisitor {
 		if (callback.getCallback().getResult().getPosibleRegistries() != null) {
 			int index = 0;
 			for (AccountingRegistry ar : callback.getCallback().getResult().getPosibleRegistries() ) {
-				registryBox.addItem("[" + ar.getType().getDescription().substring(0, 3)+"] " + ar.getDocument()  + " - " + ar.getName() + " (" + ar.getAccountCode() + ")", AonNumberUtils.toString(index));		
+				registryBox.addItem("[" + ar.getType().getDescription().substring(0, 3)+"] " + ar.getDocument()  + " - " + ar.getName() + " (" + ar.getAccountCode() + ")", AonNumberUtils.toString(index));
+				index++;
 			}
 		}
 				
@@ -518,7 +529,8 @@ public class TediContextVisitor implements ITediContextVisitor {
 			@Override
 			public void onChange(ChangeEvent event) {
 				Integer index = AonNumberUtils.toInteger( registryBox.getSelectedValue() );
-				callback.onAccept(callback.getCallback().getResult().getPosibleRegistries().get(index));
+				AccountingRegistry selected = callback.getCallback().getResult().getPosibleRegistries().get(index);
+				callback.onAccept(selected);
 			}
 		});
 		BasicDialog dialog = new BasicDialog();

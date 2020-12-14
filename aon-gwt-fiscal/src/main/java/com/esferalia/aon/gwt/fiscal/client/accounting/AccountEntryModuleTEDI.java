@@ -541,6 +541,9 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		
 	}
 
+	public boolean isManual() {
+		return wizardContent != null && wizardContent.getMainEntry() != null && wizardContent.getMainEntry().getEntryType() == AccountEntryType.MANUAL;
+	}
 	public boolean isNew() {
 		return wizardContent != null && (wizardContent.getMainEntry() == null || wizardContent.getMainEntry().getId() == null);
 	}
@@ -606,7 +609,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		if (getOptions().isJournalTabVisible()) {
 			search.setVisible(!getOptions().hasExternalCallback());
 		}
-		duplicate.setVisible(!guest && !isNew());
+		duplicate.setVisible(!guest && !isNew() && isManual());
 		
 		period.setEnabled(canEdit);
 		entryDate.setEnabled(canEdit);
