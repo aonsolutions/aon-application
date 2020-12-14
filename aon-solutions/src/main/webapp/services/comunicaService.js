@@ -195,6 +195,8 @@ export const getOcupacion = () => new Promise((resolve) => {
 
 export const getTA = (data) => openPDF(`${API_URL}/comunica/pdf/get-ta`, data);
 
+export const getCertCorriente = (data) => openPDF(`${API_URL}/comunica/pdf/cert-corriente`, data);
+
 export const getIDC = (data) => openPDF(`${API_URL}/comunica/pdf/get-idc`, data);
 
 export const postAltaDirecta = (data) => post(`${API_URL}/comunica/alta-directa`, data); //ALTA DIRECTA
@@ -212,6 +214,12 @@ export const getEmployee = (data) => get(`${API_URL}/comunica/get-employee`, dat
 export const getAllTipoCtz = () => new Promise((resolve) => {
     const json =
         [
+            { 
+                id: 0, 
+                name: "Principal", 
+                value: 0, 
+                regimen: "0111" 
+            },
             { 
                 id: 1, 
                 name: "Principal", 
@@ -243,8 +251,9 @@ export const getAllTipoCtz = () => new Promise((resolve) => {
                 regimen: "0111" 
             },
             { 
-                id: 6, name: "Emplead@s del hogar", 
-                value: 1,
+                id: 6, 
+                name: "Emplead@s del hogar", 
+                value: 6,
                 regimen: "0138" 
             },
             { 

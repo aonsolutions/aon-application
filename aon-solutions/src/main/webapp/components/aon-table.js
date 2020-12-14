@@ -1,9 +1,7 @@
 import {AonElement} from './AonElement.js';
-
 import './aon-checkbox.js';
 import './aon-dialog-menu.js';
 import './aon-icon-button.js';
-
 export class AonTable extends AonElement {
 
 		columns;
@@ -158,7 +156,6 @@ export class AonTable extends AonElement {
 
 
 		getOptions(tr, td, options) {
-			console.log(options);
 			const top  = td.getBoundingClientRect().top;
 			const left = td.getBoundingClientRect().left;
 			let d = this.getElement(this.getId() + 'aonDialogAddOption');

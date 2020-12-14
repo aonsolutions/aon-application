@@ -5,18 +5,16 @@ import { addDays } from '../../services/utils.js';
 import './aon-movements.js';
 import '../../components/aon-toast.js';
 import '../../components/aon-application.js';
-import './ccc/aon-ccc.js';
+import './cta/aon-cta-list.js';
 
 export class AonComunica extends AonElement {
 
 	AON_COMUNICA;
 	MOVEMENTS;
-	CCC;
 	constructor() {
 		super();
 		this.AON_COMUNICA = 'aonComunica';
 		this.MOVEMENTS = this.AON_COMUNICA + 'Movements';
-		this.CCC = this.AON_COMUNICA + 'CccContent';
 	}
 
 	connectedCallback() {
@@ -62,9 +60,8 @@ export class AonComunica extends AonElement {
 				name: 'Cuenta de Ctz',
 				icon: 'account_balance',
 				fn: () => {
-					this.aonComunicaEl.removeToolbarOptions();
-					startModule('aon_gwt_payroll', 'MainCCC', this.aonComunicaEl.CONTENT);
-					// this.aonComunicaEl.setContentHTML(`<aon-ccc id="${this.CCC}" ></aon-ccc>`)
+					this.getElement(this.aonComunicaEl.TOOLBAR).setAttribute('option', 'Cuentas de cotización');
+					this.aonComunicaEl.setContentHTML(`<aon-cta-list id="aonCtaList" ></aon-cta-list>`)
 				}
 			},
 			{

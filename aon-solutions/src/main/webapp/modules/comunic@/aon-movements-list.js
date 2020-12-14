@@ -1,11 +1,8 @@
 import { AonElement } from '../../components/AonElement.js';
 import { setDate } from '../../services/utils.js';
 import { getMovements, getEmployee } from '../../services/service.js';
-
 import '../../components/aon-table.js';
 import '../../components/aon-mobile-list.js';
-
-import './aon-alta-directa.js';
 
 export class AonMovementsList extends AonElement {
 	ID;
@@ -92,7 +89,7 @@ export class AonMovementsList extends AonElement {
 					aonMovementTable.addLi({
 						aonIcon:'aon_seg_social',
 						title: `${res.name}`,
-						subtitle: `${res.status} (${res.dni}) ${res.fecha}`,
+						subtitle: `${res.status} ${res.fecha}`,
 						option: this.aonComunicaEl.getOptions(res)
 					}, idx, (el) => this.aonMovement(el, res));
 				})

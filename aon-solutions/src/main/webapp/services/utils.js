@@ -64,7 +64,7 @@ const formatDate = (d) => {
   let month = d.getMonth() + 1;
   if (month <= 9) month = '0' + month;
   let year = d.getFullYear();
-  return day + '-' + month + '-' + year;
+  return day + '/' + month + '/' + year;
 }
 
 export const setDate = (date) => formatDate(new Date(date));

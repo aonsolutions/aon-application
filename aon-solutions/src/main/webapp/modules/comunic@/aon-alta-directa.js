@@ -1,9 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { INPUTS_ALL } from '../../environments/constants.js';
-import { setValueName, serializeForm } from '../../services/utils.js';
+import { setValueName, serializeForm, setDate } from '../../services/utils.js';
 import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../services/service.js'
-
-import '../../components/aon-toolbar.js';
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
 import '../../components/aon-number.js';
@@ -12,8 +10,6 @@ import '../../components/aon-suggestion.js';
 import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-icon-button.js';
-
-import './aon-movements.js';
 
 export class AonAltaDirecta extends AonElement {
     _contrato;
@@ -51,7 +47,6 @@ export class AonAltaDirecta extends AonElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         if ("data" == name && newValue) {
-            this.ACTION = "UPDATE";
             this.aonComunicaToolbar.setAttribute('option', 'Modificar contrato');
             this.edit(this.data);
         }
@@ -90,25 +85,22 @@ export class AonAltaDirecta extends AonElement {
               }
             </style>
 
-            ${toolbarMobile}
+            ${toolbarMobile} 
 
-
+   
         `;
 
         const form = `
         <form id="${this.id}Form" action="#" onsubmit="return false;">
             <div id="${this.id}Div">
-                <div class="aonRow">
-                    <div class="aonCol-sm-12">
-                        <aon-card id="${this.id}EmpresaCard" title="Datos de la empresa"></aon-card>
-                    </div>
-                    <div class="aonCol-sm-12 aonCol-md-6">
-                        <aon-card id="${this.id}TrabajadorCard" title="Datos del trabajador"></aon-card>
-                    </div>
-                    <div class="aonCol-sm-12 aonCol-md-6">
-                        <aon-card id="${this.id}ContratoCard" title="Datos del contrato"></aon-card>
-                    </div>
-                    <div class="aonCol-sm-12 offset-5"  id="${this.id}DivSubmit"></div>
+                <div class="aonCol-sm-12">
+                    <aon-card id="${this.id}EmpresaCard" title="Datos de la empresa"></aon-card>
+                </div>
+                <div class="aonCol-sm-12 aonCol-md-6">
+                    <aon-card id="${this.id}TrabajadorCard" title="Datos del trabajador"></aon-card>
+                </div>
+                <div class="aonCol-sm-12 aonCol-md-6">
+                    <aon-card id="${this.id}ContratoCard" title="Datos del contrato"></aon-card>
                 </div>
             </div>
         </form>`;
@@ -155,19 +147,20 @@ export class AonAltaDirecta extends AonElement {
                 <div class="aonCol-sm-2 aonCol-md-1">
                     <aon-icon-button id="iconSegSocial" aonIcon="aon_seg_social"> </aon-icon-button>
                 </div>
-            </div>
+            </div>  
             <div class="aonCol-sm-12">
                 <aon-input name="nombre" id="nombre" description="Nombre" type="text" disabled="true"></aon-input>
             </div>
         `);
-
+        const buttonSubmit = this.isMobile() ? `<div class="aonCol-sm-12 aonCol-md-12"><br/> <div class="offset-4" id="${this.id}DivSubmit"> 
+        </div>` : '';
         let aonContratoCard = this.getElement(`${this.id}ContratoCard`);
         aonContratoCard.setContentHTML(`
             <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-select name="type_cto" id="type_cto" title="Tipo de contrato"></aon-select>
             </div>
             <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-date name="fecha" id="fecha" title="Fecha inicio" value="${new Date()}"></aon-date>
+                <aon-date name="fecha" id="fecha" title="Fecha inicio"></aon-date>
             </div>
             <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-select name="grup_ctz" id="grup_ctz" title="Grupo de cotización"></aon-select>
@@ -190,6 +183,8 @@ export class AonAltaDirecta extends AonElement {
                 </div>
             </div>
             <aon-input name="situation" id="situation" description="situation" value="AL" visible="false"></aon-input>
+            ${buttonSubmit}
+        </div>
         `);
 
         let aonAltaDirectaDni = this.getElement(`${this.id}DniDiv`);
@@ -210,6 +205,7 @@ export class AonAltaDirecta extends AonElement {
 
     build() {
         this.getElement(`${this.id}Dni`).disabled = true;
+        this.getElement('fecha').value = new Date();
         this.initLists();
     }
 
@@ -308,6 +304,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     edit(data) {
+        this.ACTION = "UPDATE";
         let obj = {
             ...data,
             regimen: data.regime,
