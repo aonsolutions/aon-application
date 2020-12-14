@@ -15,6 +15,8 @@ public class NamespaceFilterHandler implements ContentHandler {
 			//put("http://www.seg-social.es/creta/esquemas/V110/Respuesta", "http://www.seg-social.es/creta/esquemas/V120/Respuesta");
 			put("http://www.seg-social.es/creta/esquemas/V110/Respuesta", "http://www.seg-social.es/creta/esquemas/V130/Respuesta");
 			put("http://www.seg-social.es/creta/esquemas/V120/Respuesta", "http://www.seg-social.es/creta/esquemas/V130/Respuesta");
+
+			put("http://www.seg-social.es/creta/esquemas/V100/TrabajadoresTramos", "http://www.seg-social.es/creta/esquemas/V110/TrabajadoresTramos");
 		}
 	};
 	
