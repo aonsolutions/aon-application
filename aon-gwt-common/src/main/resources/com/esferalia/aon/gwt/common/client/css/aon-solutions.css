@@ -647,6 +647,10 @@
 	clip: unset !important;
 	border-radius: 4px;
 }
+.aon_custom_dialog_panel {
+	margin: 0px;
+	padding: 0px;
+}
 .aon_custom_dialog_glass {
     background-color: #000;
     opacity: 0.2;

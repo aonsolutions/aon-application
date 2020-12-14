@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -58,7 +59,6 @@ import es.translogia.tedi.ewok.TediNif;
 import es.translogia.tedi.ewok.TediPayMethod;
 import es.translogia.tedi.ewok.TediRegistry;
 import es.translogia.tedi.ewok.TediTaxType;
-import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.tedi.visitors.InvoiceTypeVisitor;
 
 public class TediParser {
@@ -403,14 +403,28 @@ public class TediParser {
 					result.getAccountingInvoice().getInvoice().addFinance(fin);
 					TediFinanceTransfer.toAon(aonCtx,result,tfin,fin);
 				}
-			} else if (result.getTedi().isTicket()) {
+			}
+			if (result.getTedi().isTicket()) {
 				TediFinance tfin = new TediFinance()
-					.setDueDate(result.getInvoice().getIssueDate())
-					.setAmount( result.getInvoice().getTotal())
-					.setPayMethod(TediPayMethod.CASH);
-				Finance fin = new Finance();
-				result.getAccountingInvoice().getInvoice().addFinance(fin);
-				TediFinanceTransfer.toAon(aonCtx,result,tfin,fin);
+						.setDueDate(result.getInvoice().getIssueDate())
+						.setAmount( result.getInvoice().getTotal())
+						.setPayMethod(TediPayMethod.CASH);
+					Finance fin = new Finance();
+					result.getAccountingInvoice().getInvoice().addFinance(fin);
+					TediFinanceTransfer.toAon(aonCtx,result,tfin,fin);
+			} else {
+				AccountingInvoice ai = result.getAccountingInvoice();
+				if (ai.getInvoice().getFinances() == null || ai.getInvoice().getFinances().size() == 0) {
+					ai.setAuthFinanceCalculation(true);
+					ai.getInvoice().setFinances( FinanceDAO.getFinancesForInvoice(ctx, ai.getInvoice())); 
+					if (ai.getInvoice().getFinances() == null || ai.getInvoice().getFinances().size() == 0) {
+						ai.getInvoice().addFinance(new Finance()
+								.setDueDate(ai.getInvoice().getIssueDate())
+								.setAmount(ai.getInvoice().getTotal())
+								.setPayment(!ai.isSales())
+								.setFinanceStatus(FinanceStatus.PENDING));
+					}
+				}
 			}
 		})
 		;
@@ -436,9 +450,7 @@ public class TediParser {
 	
 	public static TediResult toFullInvoice(AONContext ctx, AonConfiguration aonCtx, TediInvoice tedi) {
 		
-		System.out.println( TediInvoiceJSON.toJSON( tedi ).toString(2) );
-		
-		
+//		System.out.println( TediInvoiceJSON.toJSON( tedi ).toString(2) );
 		
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setInvoice(new Invoice());
@@ -454,13 +466,6 @@ public class TediParser {
 		aonCtx.setPayMethods(PayMethodDAO.getPayMethodsById(ctx));
 		TediInvoiceTransfer.toAon(ctx, aonCtx,result);
 		fillVats(ctx, aonCtx, result);
-		if (ai.getInvoice().getFinances() == null || ai.getInvoice().getFinances().size() == 0) {
-			ai.getInvoice().addFinance(new Finance()
-					.setDueDate(ai.getInvoice().getIssueDate())
-					.setAmount(ai.getInvoice().getTotal())
-					.setPayment(!ai.isSales())
-					.setFinanceStatus(FinanceStatus.PENDING));
-		}
 		ai.setAccountEntry(getEntryBase(ctx,aonCtx,ai));
 		if (result.isImportable()) {
 			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ai));

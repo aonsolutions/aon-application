@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog.AonMessageDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
@@ -28,7 +29,6 @@ import com.esferalia.aon.gwt.fiscal.client.RawdocServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.RawdocServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
-import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
@@ -525,13 +525,13 @@ public class RawdocModule extends MainEntryPoint {
 
 						@Override
 						public void onSuccess(TediResult result) {
-							CustomPopup entryDialog = new CustomPopup();
+							AonCustomPopup entryDialog = new AonCustomPopup();
 							entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 							entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
 							entryDialog.setAnimationEnabled(true);
 							entryDialog.setGlassEnabled(true);
 							entryDialog.setModal(true);
-							entryDialog.setCaption(AON.MSG.accountEntries());
+							entryDialog.setCaption(AON.MSG.accountingDocument());
 							AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
 							module.onModuleLoad(new AccountEntryModuleOptions()
 									.setParentWidget(entryDialog)

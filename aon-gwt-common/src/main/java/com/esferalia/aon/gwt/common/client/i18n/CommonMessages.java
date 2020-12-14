@@ -3250,6 +3250,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Asientos contables")
 	String accountEntries();
 
+ 	@DefaultMessage("Contabilizar documento")
+	String accountingDocument();
+
  	@DefaultMessage("Asiento contable")
 	String accountEntry();
  	

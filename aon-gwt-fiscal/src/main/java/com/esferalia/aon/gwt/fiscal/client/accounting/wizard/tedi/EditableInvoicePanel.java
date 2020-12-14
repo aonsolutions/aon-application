@@ -1027,6 +1027,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoiceDataTableCellDiv0.setStyleName(AON.CSS.aonDisplayTableCell());
 		invoiceDataTableCellDiv0.addStyleName(AON.CSS.aonTextVerticalContainer());
 		invoiceDataTableCellDiv0.getElement().getStyle().setWidth(40, Unit.PX);
+		invoiceDataTableCellDiv0.getElement().getStyle().setProperty("min-width", 40, Unit.PX);
 		invoiceDataTableCellDiv0.getElement().getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
 		invoiceDataTableCellDiv0.getElement().getStyle().setBorderColor("DarkGray");
 		invoiceDataTableCellDiv0.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
@@ -1548,6 +1549,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		vatDataTableCellDiv0.setStyleName(AON.CSS.aonDisplayTableCell());
 		vatDataTableCellDiv0.addStyleName(AON.CSS.aonTextVerticalContainer());
 		vatDataTableCellDiv0.getElement().getStyle().setWidth(40, Unit.PX);
+		vatDataTableCellDiv0.getElement().getStyle().setProperty("min-width", 40, Unit.PX);
 		vatDataTableCellDiv0.getElement().getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
 		vatDataTableCellDiv0.getElement().getStyle().setBorderColor("DarkGray");
 		vatDataTableCellDiv0.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
@@ -1640,6 +1642,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		financeDataTableCellDiv0.setStyleName(AON.CSS.aonDisplayTableCell());
 		financeDataTableCellDiv0.addStyleName(AON.CSS.aonTextVerticalContainer());
 		financeDataTableCellDiv0.getElement().getStyle().setWidth(40, Unit.PX);
+		financeDataTableCellDiv0.getElement().getStyle().setProperty("min-width", 40, Unit.PX);
 		financeDataTableCellDiv0.getElement().getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
 		financeDataTableCellDiv0.getElement().getStyle().setBorderColor("DarkGray");
 		financeDataTableCellDiv0.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
@@ -1675,6 +1678,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		otherDataTableCellDiv0.setStyleName(AON.CSS.aonDisplayTableCell());
 		otherDataTableCellDiv0.addStyleName(AON.CSS.aonTextVerticalContainer());
 		otherDataTableCellDiv0.getElement().getStyle().setWidth(40, Unit.PX);
+		otherDataTableCellDiv0.getElement().getStyle().setProperty("min-width", 40, Unit.PX);
 		otherDataTableCellDiv0.getElement().getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
 		otherDataTableCellDiv0.getElement().getStyle().setBorderColor("DarkGray");
 		otherDataTableCellDiv0.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);

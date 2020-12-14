@@ -467,6 +467,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_custom_dialog")
 	String aonCustomDialog();
 	
+	@ClassName("aon_custom_dialog_panel")
+	String aonCustomDialogPanel();
+	
 	@ClassName("aon_custom_dialog_glass")
 	String aonCustomDialogGlass();
 	
