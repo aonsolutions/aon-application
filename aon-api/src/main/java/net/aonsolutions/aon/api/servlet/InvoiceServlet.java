@@ -186,7 +186,8 @@ public class InvoiceServlet extends HttpServlet{
 				    f.put("type", r.getMimeType().getName());
 				    json.put("file", f);
 				}
-
+				JSONArray log = new JSONArray(r.getLog() != null ? r.getLog() : "[]");
+				json.put("comments", log);
 				jsArray.put(json);
 			});
 		}
@@ -251,6 +252,7 @@ public class InvoiceServlet extends HttpServlet{
 			}
 		}
     	rawdoc.setJson(json.toString());
+    	rawdoc.setLog(json.opt("comments") != null? json.optJSONArray("comments").toString(): "[]");
 		
 		rawdoc = AON.rawdocSave(domain.getName(), domain.getId(), login, rawdoc);
 		json.put("id", rawdoc.getId());

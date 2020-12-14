@@ -290,10 +290,15 @@ export class AonInvoice extends AonElement {
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
 			if(!ta.value.isEmpty()){
+				let dt = new Date()
+				let m = dt.getMonth() + 1;
+				let month = m < 10 ? '0' + m : m;
+				let dateStr = dt.getDay() + '/' + month  + '/' + dt.getYear() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
 				let comment = {
-					date: new Date(),
+					date: dateStr,
 					user: '',
-					comment: ta.value
+					status:  'Rechazado',
+					reason: ta.value
 				};
 				this._invoice.comments.push(comment);
 				this.buildComments();
@@ -384,10 +389,15 @@ export class AonInvoice extends AonElement {
 		d.setContentHTML('<textarea id="commentTextArea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');
+			let dt = new Date()
+			let m = dt.getMonth() + 1;
+			let month = m < 10 ? '0' + m : m;
+			let dateStr = dt.getDay() + '/' + month  + '/' + dt.getYear() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
 			let comment = {
-				date: new Date(),
+				date: dateStr,
 				user: '',
-				comment: ta.value
+				status: this.getCommentStatus(),
+				reason: ta.value
 			};
 			this._invoice.comments.push(comment);
 			this.save();
@@ -399,6 +409,14 @@ export class AonInvoice extends AonElement {
 		ta.style.width = '100%';
 		ta.style.height = '100px';
 		d.open();
+	}
+
+	getCommentStatus(){
+		if(this._invoice.isInbox())
+			return 'Inbox';
+		else if(this._invoice.isRejected()) {
+			return 'Rechazado'
+		} else return 'Papelera';
 	}
 
 	recordInvoice() {
@@ -422,10 +440,12 @@ export class AonInvoice extends AonElement {
 			ul.style.width = '100%';
 			card.setContent(ul);
 			this._invoice.comments.forEach((item, i) => {
-				let li = this.createElement('li');
-				li.style.backgrounColor = 'transparent !important';
-				li.innerHTML = item.comment;
-				ul.appendChild(li);
+				if(item.reason) {
+					let li = this.createElement('li');
+					li.style.backgrounColor = 'transparent !important';
+					li.innerHTML = item.reason;
+					ul.appendChild(li);
+				}
 			});
 		}
 	}

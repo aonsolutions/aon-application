@@ -179,7 +179,7 @@ public class RawdocDAO {
 			.set(RAWDOC.TYPE  ,rawdoc.getType().value())
 			.set(RAWDOC.STATUS,rawdoc.getStatus().value())
 			.set(RAWDOC.JSON,rawdoc.getJson())
-			.set(RAWDOC.LOG, getLogArray(ctx, r, rawdoc.getStatus(), null))
+			.set(RAWDOC.LOG, rawdoc.getLog() != null ? rawdoc.getLog() : getLogArray(ctx, r, rawdoc.getStatus(), null))
 			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
 			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.where(RAWDOC.ID.eq(rawdoc.getId()))

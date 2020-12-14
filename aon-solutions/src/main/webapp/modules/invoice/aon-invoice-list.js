@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Paymethods} from '../../services/paymethod.js';
-import {getInvoices, getInvoice} from '../../services/service.js';
+import {getInvoices, getInvoice, insertInvoice, deleteInvoices} from '../../services/service.js';
 import {InvoiceAction} from './invoiceEnums.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
@@ -150,36 +150,43 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	deleteInvoices() {
-		let aonInvoice = this.getElement('aonInvoice');
-		let d = document.getElementById(aonInvoice.DIALOG);
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_TO_TRASH);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
-		d.open();
+		let cont = 0;
+		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+		aonInvoiceTable.selected.forEach((invoice, i) => {
+			invoice.status = CONSTANT.TRASH;
+			insertInvoice(invoice).then(() => {
+				cont = cont + 1;
+				if(cont === aonInvoiceTable.selected.length) {
+					this.init();
+				}
+			});
+		});
 	}
 
 	deleteForeverInvoices() {
+		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		let aonInvoice = this.getElement('aonInvoice');
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.AON_MSG_DELETE_FOREVER);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
+		d.setContentHTML('Estás seguro de eliminar las facturas seleccionadas');
+		d.addAcceptAction(() => deleteInvoices(aonInvoiceTable.selected.map(r => r.id)).then(() => this.init()));
 		d.open();
 	}
 
 	rejectInvoices() {
-		let aonInvoice = this.getElement('aonInvoice');
-		let d = document.getElementById(aonInvoice.DIALOG);
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_REJECT_INVOICES);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
-		d.open();
+		let cont = 0;
+		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+		aonInvoiceTable.selected.forEach((invoice, i) => {
+			invoice.status = CONSTANT.REFUSED;
+			insertInvoice(invoice).then(() => {
+				cont = cont + 1;
+				if(cont === aonInvoiceTable.selected.length) {
+					this.init();
+				}
+			});
+		});
 	}
 
 	downloadInvoices() {
@@ -205,14 +212,17 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	restoreInvoices() {
-		let aonInvoice = this.getElement('aonInvoice');
-		let d = document.getElementById(aonInvoice.DIALOG);
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_RESTORE_INVOICES);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
-		d.open();
+		let cont = 0;
+		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+		aonInvoiceTable.selected.forEach((invoice, i) => {
+			invoice.status = CONSTANT.INBOX;
+			insertInvoice(invoice).then(() => {
+				cont = cont + 1;
+				if(cont === aonInvoiceTable.selected.length) {
+					this.init();
+				}
+			});
+		});
 	}
 
 	removeInvoiceActions() {
