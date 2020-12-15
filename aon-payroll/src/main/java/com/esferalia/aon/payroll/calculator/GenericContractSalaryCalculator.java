@@ -387,6 +387,27 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		}
 		
 	}
+	
+	private static class UndefDeduction  extends SimpleContractDeduction  {
+		
+		
+		private UndefinedVariablesException exception;
+
+		public UndefDeduction(IContractDeduction contractDeduction, UndefinedVariablesException exception) {
+			super(contractDeduction);
+			this.exception = exception;
+		}
+
+		boolean willBeDefined(Collection<String> willbeDefined) {
+
+			for (String var : exception.getVariableNames())
+				if (!willbeDefined.contains(var))
+					return false;
+
+			return true;
+		}
+		
+	}
 
 	private IListener listener;
 	private ISalaryBuilder<T> salaryBuilder;
@@ -798,7 +819,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			Date start = ctx.getStartDate();
 			Date end = ctx.getEndDate();
-
+			
+			LinkedList<IContractDeduction> undefContractDeductions = new LinkedList<IContractDeduction>(); 
+			
 			Collection<IContractDeduction> contractDeductions = ctx.getContractDeductions();
 			ExpressionContext expressionContext = ctx.getExpressionContext();
 			for (IContractDeduction contractDeduction : contractDeductions) {
@@ -844,13 +867,48 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (RemoveVariableError e) {
 					onUndefinedData(contractDeduction, e.getVariable());
 				} catch (UndefinedVariablesException e) {
-					onUndefinedData(contractDeduction, e.getMessage(), e.getVariableNames());
+					undefContractDeductions.add(new UndefDeduction(contractDeduction, e));
+					//onUndefinedData(contractDeduction, e.getMessage(), e.getVariableNames());
 				} catch (CompileException e) {
 					onCompileError(contractDeduction, getSyntaxExpressionErrorMessage(contractDeduction));
 
 				}
-
 			}
+			
+			for (IContractDeduction contractDeduction : undefContractDeductions) {
+				DeductionType type = contractDeduction.getType();
+
+				Date deductionStart = Period.max(contractDeduction.getStartDate(), start);
+				Date deductionEnd = Period.min(contractDeduction.getEndDate(), end);
+				
+				try {
+
+					Double deduction = resolveDeduction(expressionContext, contractDeduction, deductionStart,
+							deductionEnd);
+					totalDeduction += deduction;
+
+					if (type.isSsDeduction()) {
+						ssContributions += deduction;
+						expressionContext.setVariable(EMPLOYEE_QUOTA, ssContributions, start, end);
+					} 
+				} catch (HideException e) {
+					if (AonStringUtils.isNotBlank(e.getMessage()))
+						onCheckError(e.getMessage());
+				} catch (RemoveException e) {
+					// TODO: Something ??? It's really necessary...
+				} catch (InvalidVariables e) {
+					onInvalidData(contractDeduction, e.getMessage(), e.getVariables());
+				} catch (InterruptedException e) {
+					throw e; // Not catch
+				} catch (CheckException e) {
+					onCheckError(contractDeduction, e.getMessage());
+				} catch (RemoveVariableError e) {
+					onUndefinedData(contractDeduction, e.getVariable());
+				} catch (UndefinedVariablesException e) {
+					onUndefinedData(contractDeduction, e.getMessage(), e.getVariableNames());
+				} // compilation error 
+			}
+			
 
 			salaryBuilder.setTotalIrpf(totalIrpf);
 			salaryBuilder.setTotalSS(ssContributions);

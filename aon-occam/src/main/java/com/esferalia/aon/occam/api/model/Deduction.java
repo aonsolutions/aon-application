@@ -1,15 +1,11 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
-import java.time.Month;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.type.BonusType;
-import com.esferalia.aon.occam.api.model.type.PaymentType;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
 
-import jdk.internal.module.ModuleHashes.HashSupplier;
-
-public class Bonus implements Serializable, HasId, HasDomain  , HasStartDate, HasEndDate {
+public class Deduction implements Serializable, HasId, HasDomain, HasStartDate, HasEndDate {
 
 	private Integer id;
 	private Integer domain;
@@ -17,7 +13,7 @@ public class Bonus implements Serializable, HasId, HasDomain  , HasStartDate, Ha
 	private Date endDate;
 	private String description;
 	private String expression;
-	private BonusType type ;
+	private DeductionType type ;
 	
 	
 	@Override
@@ -25,16 +21,16 @@ public class Bonus implements Serializable, HasId, HasDomain  , HasStartDate, Ha
 		return id;
 	}
 
-	public Bonus setId(Integer id) {
+	public Deduction setId(Integer id) {
 		this.id = id;
 		return this;
 	}
 	
-	public BonusType getType() {
+	public DeductionType getType() {
 		return type;
 	}
 	
-	public Bonus setType(BonusType type) {
+	public Deduction setType(DeductionType type) {
 		this.type = type;
 		return this;
 	}
@@ -44,7 +40,7 @@ public class Bonus implements Serializable, HasId, HasDomain  , HasStartDate, Ha
 		return domain;
 	}
 
-	public Bonus setDomain(Integer domain) {
+	public Deduction setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -54,7 +50,7 @@ public class Bonus implements Serializable, HasId, HasDomain  , HasStartDate, Ha
 		return startDate;
 	}
 
-	public Bonus setStartDate(Date startDate) {
+	public Deduction setStartDate(Date startDate) {
 		this.startDate = startDate;
 		return this;
 	}
@@ -64,7 +60,7 @@ public class Bonus implements Serializable, HasId, HasDomain  , HasStartDate, Ha
 		return endDate;
 	}
 
-	public Bonus setEndDate(Date endDate) {
+	public Deduction setEndDate(Date endDate) {
 		this.endDate = endDate;
 		return this;
 	}
@@ -73,7 +69,7 @@ public class Bonus implements Serializable, HasId, HasDomain  , HasStartDate, Ha
 		return description;
 	}
 
-	public Bonus setDescription(String name) {
+	public Deduction setDescription(String name) {
 		this.description = name;
 		return this;
 	}
@@ -82,7 +78,7 @@ public class Bonus implements Serializable, HasId, HasDomain  , HasStartDate, Ha
 		return expression;
 	}
 
-	public Bonus setExpression(String expression) {
+	public Deduction setExpression(String expression) {
 		this.expression = expression;
 		return this;
 	}

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
@@ -28,12 +29,11 @@ import java.util.regex.Pattern;
 
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
-import org.jooq.Record1;
-import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
+import com.esferalia.aon.jooq.tables.records.ContractDeductionRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
@@ -44,6 +44,9 @@ import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Bonus;
+import com.esferalia.aon.occam.api.model.Deduction;
+import com.esferalia.aon.occam.api.model.HasEndDate;
+import com.esferalia.aon.occam.api.model.HasStartDate;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Gender;
@@ -133,6 +136,10 @@ public class EmployeeDAO {
 
 	public static Bonus [] setBonuses(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Bonus ...bonuses) {
 		return setBonuses(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), bonuses);
+	}
+
+	public static Deduction [] setDeductions(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Deduction ...deductions) {
+		return setDeductions(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), deductions);
 	}
 
 	private static  EnterpriseCccRecord getEnterpriseCCC(DSLContext dslContext, Integer domainId, Employee employee) {
@@ -342,15 +349,6 @@ public class EmployeeDAO {
 	
 	private static Bonus [] setBonuses(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate, Bonus ...bonuses) {
 		
-		
-//		Arrays.parallelSort(bonuses, (b1,b2) -> {
-//			int compare = compare(b1.getStartDate(), b2.getStartDate());
-//			return compare != 0 ? compare : compare(b1.getEndDate(),b2.getEndDate());
-//		});
-//		
-//		java.sql.Date startDate = toSql(bonuses[0].getStartDate());
-//		java.sql.Date endDate = toSql(bonuses[bonuses.length -1].getEndDate());
-		
 		List<ContractRecord> contractRecords = 
 		dslContext
 		.select()
@@ -380,7 +378,38 @@ public class EmployeeDAO {
 		return bonuses;
 	}
 
-	private static boolean intersects(ContractRecord r, Bonus b) {
+	private static Deduction [] setDeductions(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate, Deduction ...deductions) {
+		
+		List<ContractRecord> contractRecords = 
+		dslContext
+		.select()
+		.from(DOMAIN)
+		.innerJoin(PERSON).on(PERSON.DOMAIN.eq(DOMAIN.ID))
+		.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+		.where(DOMAIN.NAME.eq(domainName))
+		.and(PERSON.SOCIAL_SECURITY_NUM.eq(naf))
+		.and(ENTERPRISE_CCC.CCC.eq(ccc))
+		.and(DSL.condition(endDate == null ).or(CONTRACT.START_DATE.le(endDate)))
+		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(startDate)))
+		.fetchInto(CONTRACT)
+		;
+		
+		for ( ContractRecord contractRecord : contractRecords  ) {
+			Deduction contractDeductions [] = 
+			Arrays.stream(deductions)
+			.filter( b -> intersects(contractRecord, b) )
+			.toArray(Deduction[]::new);
+			if ( contractDeductions.length >= 0 ) {
+				setDeductions(dslContext, domainName, startDate, endDate, contractRecord, contractDeductions);
+			}
+			
+		}
+		
+		return deductions;
+	}
+
+	private static <T  extends HasStartDate & HasEndDate >boolean intersects(ContractRecord r, T b) {
 		return compare(max(r.getStartDate(), b.getStartDate()), min(r.getEndDate(), b.getEndDate())) <= 0;
 	}
 	
@@ -450,6 +479,85 @@ public class EmployeeDAO {
 		
 	}
 	
+	private static Deduction [] setDeductions(DSLContext dslContext, String domainName, java.sql.Date startDate, java.sql.Date endDate, ContractRecord contractRecord, Deduction ...deductions) {
+		
+		List<Deduction> deductionsList = new ArrayList<Deduction>(deductions.length);
+		Arrays.stream(deductions).forEach( deduction -> deductionsList.add(deduction));
+		
+		dslContext
+		.select()
+		.from(CONTRACT_DEDUCTION)
+		.where(CONTRACT_DEDUCTION.CONTRACT.eq(contractRecord.getId()))
+		.and(DSL.condition(endDate == null ).or(CONTRACT_DEDUCTION.START_DATE.le(endDate)))
+		.and(CONTRACT_DEDUCTION.END_DATE.isNull().or(CONTRACT_DEDUCTION.END_DATE.ge(startDate)))
+		.fetchStreamInto(CONTRACT_DEDUCTION)
+		.forEach( contractDeduction -> {
+			if ( remove(deductionsList, contractDeduction) ) {
+				return;
+			}
+			
+			if ( compare(contractDeduction.getStartDate(), startDate) >= 0 ) { 
+				if ( compare(contractDeduction.getEndDate(), endDate ) <= 0 ) {
+					// contract bonus starts after start date and ends before end date. So delete it.
+					contractDeduction.delete();
+				}
+				else { 
+					// contract bonus ends after end date. So now starts just after end date. 
+					contractDeduction.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					contractDeduction.update();
+				}
+			} else {
+				if ( compare(contractDeduction.getEndDate(), endDate ) <= 0 ) {
+					// contract bonus starts before start date and ends before end date. So ends just before start date.
+					contractDeduction.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					contractDeduction.update();
+				} else {
+					// contract bonus starts before start date and ends after end date. So we need to split it.
+					ContractDeductionRecord leftContractDeduction = contractDeduction;
+					ContractDeductionRecord rightContractDeduction = contractDeduction.copy();
+					leftContractDeduction.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					leftContractDeduction.update();
+					rightContractDeduction.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					rightContractDeduction.insert();
+				}
+			}
+				
+		});
+		;
+		
+		for (Deduction deduction : deductionsList) {
+			dslContext
+			.insertInto(CONTRACT_DEDUCTION)
+			.set(CONTRACT_DEDUCTION.DOMAIN, contractRecord.getDomain())
+			.set(CONTRACT_DEDUCTION.CONTRACT, contractRecord.getId())
+			.set(CONTRACT_DEDUCTION.START_DATE, toSql(deduction.getStartDate()))
+			.set(CONTRACT_DEDUCTION.END_DATE, toSql(deduction.getEndDate()))
+			.set(CONTRACT_DEDUCTION.DESCRIPTION, deduction.getDescription())
+			.set(CONTRACT_DEDUCTION.EXPRESSION, deduction.getExpression())
+			.execute()
+			;
+		}
+		
+		
+		
+		return deductions;
+		
+	}
+	
+
+
+	private static boolean remove( List<Deduction> list, ContractDeductionRecord r ) {
+		for (int i = 0; i < list.size(); i++) {
+			Deduction b = list.get(i);
+			if ( !equals(b, r) )
+				continue;
+			list.remove(i);
+			return true;
+				
+		}	
+		return false; 
+	}
+
 	private static boolean remove( List<Bonus> list, ContractBonusRecord r ) {
 		for (int i = 0; i < list.size(); i++) {
 			Bonus b = list.get(i);
@@ -480,14 +588,40 @@ public class EmployeeDAO {
 				
 	}
 	
+	private static boolean equals( Deduction deduction, ContractDeductionRecord record) {
+		if( equals(deduction.getStartDate(),record.getStartDate())
+				&& equals(deduction.getEndDate(),record.getEndDate())
+				&& AonStringUtils.equals(getExpression(deduction), getExpression(record)))
+			return true;
+		if (  AonStringUtils.equals(getExpression(deduction), getExpression(record)) ){
+			if ((compare( record.getStartDate(), deduction.getStartDate()) <= 0 )
+				&& (compare( record.getEndDate(), deduction.getEndDate()) >= 0 )
+				&& (AonDateUtils.get(deduction.getStartDate(), Calendar.DAY_OF_MONTH) == 1 )
+				&& (deduction.getEndDate() == null || AonDateUtils.get(deduction.getEndDate(), Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(deduction.getEndDate(), Calendar.DAY_OF_MONTH) ))
+				return true;
+		}
+		
+		
+		return false;
+				
+	}
+
 	private static String getExpression(Bonus bonus) {
 		return Optional.ofNullable(bonus.getExpression()).map( b -> b.replaceAll("/\\*[^\\*]*\\*/", "")).orElse("");
+	}
+
+	private static String getExpression(Deduction deduction) {
+		return Optional.ofNullable(deduction.getExpression()).map( b -> b.replaceAll("/\\*[^\\*]*\\*/", "")).orElse("");
 	}
 
 	private static String getExpression(ContractBonusRecord record) {
 		return Optional.ofNullable(record.getExpression()).map( b -> b.replaceAll("/\\*[^\\*]*\\*/", "")).orElse("");
 	}
 	
+	private static String getExpression(ContractDeductionRecord record) {
+		return Optional.ofNullable(record.getExpression()).map( b -> b.replaceAll("/\\*[^\\*]*\\*/", "")).orElse("");
+	}
+
 	private static boolean equals ( Date d1, Date d2) {
 		
 		return  d1 == d2 

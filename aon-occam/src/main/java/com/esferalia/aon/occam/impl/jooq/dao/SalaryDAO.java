@@ -254,6 +254,7 @@ public class SalaryDAO {
 				.setStartDate(rootRecord.getValue(SALARY.START_DATE))
 				.setEndDate(rootRecord.getValue(SALARY.END_DATE))
 				.setSalaryDays(rootRecord.getValue(SALARY.TIME_UNITS))
+				.setEmployeeName(rootRecord.getValue(SALARY.EMPLOYEE_NAME))
 				.setEnterpriseCCC(rootRecord.getValue(SALARY.CCC))
 				.setEnterpriseName(rootRecord.getValue(SALARY.ENTERPRISE_NAME))
 				.setEnterpriseDocument(rootRecord.getValue(SALARY.ENTERPRISE_DOCUMENT))
@@ -268,9 +269,8 @@ public class SalaryDAO {
 				.setIrpfBase(rootRecord.getValue(SALARY.IRPF_BASE))
 				.setMoneyIrpfBase(rootRecord.getValue(SALARY.MONEY_IRPF_BASE))
 				.setInkindIrpfBase(rootRecord.getValue(SALARY.INKIND_IRPF_BASE))
-
 				.setTotalEnterprise(rootRecord.getValue(SALARY.TOTAL_ENTERPRISE))
-				.setTotalSSContributions(rootRecord.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS))				
+				.setTotalSSContributions(rootRecord.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS))
 				;
 				
 				int salaryId = rootRecord.getValue(SALARY.ID);

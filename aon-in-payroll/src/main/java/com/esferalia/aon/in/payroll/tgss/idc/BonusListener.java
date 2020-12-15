@@ -19,87 +19,20 @@ class BonusListener  implements IdcListener {
 	static final int[] ssBonusCodes = new int[] { 1, 2, 13, 15, 16, 37, 41, 46, 48, 51, 52, 54, 55 };
 		
 	@SuppressWarnings("serial")
-	static final Map<String, String> QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
+	static final Map<String, String> ENTERPRISE_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
-			put("01", "IT_E + IMS_E + DESMPL_E + FOGASA_E + FP_E");
-			put("02", "DESMPL_E");
-			put("03", "CGC_E");
-			put("04", "DESMPL + DESMPL_E");
-			put("05", "DESMPL");
-			put("06", "DESMPL + DESMPL_E + FP + FP_E + FOGASA + FOGASA_E");
-			put("07", "CGC_E + DESMPL_E + FOGASA_E + FP_E");
-			put("08", "CGC + IT + IMS + DESMPL + FOGASA + FP");
-			put("09", "CGC_E");
-			put("10", "CGC + CGC_E + DESMPL + DESMPL_E + FP + FP_E + FOGASA + FOGASA_E");
-			put("11", "");
-			put("12", "DESMPL + DESMPL_E + FOGASA + FOGASA_E");
-			put("13", "FOGASA + FOGASA_E");
-			put("14", "");
-			put("15", "");
-			put("16", "");
-			put("17", "");
-			put("18", "");
-			put("19", "");
-			put("20", "");
-			put("21", "");
-			put("22", "");
-			put("23", "");
-			put("24", "CGC + CGC_E + IT + IT_E");
-			put("25", "");
-			put("26", "");
-			put("27", "IT + IT_E + IMS + IMS_E + DESMPL + DESMPL_E + FOGASA + FOGASA_E");
-			put("28", "IT + IT_E + IMS + IMS_EFOGASA + FOGASA_E");
-			put("29", "");
-			put("30", "");
-			put("31", "");
-			put("32", "");
-			put("33", "");
-			put("34", "");
-			put("35", "");
-			put("36", "");
-			put("37", "");
-			put("38", "IT + IT_E + IMS + IMS_E");
-			put("39", "IT + IT_E");
-			put("40", "CGC + CGC_E + DESMPL + DESMPL_E");
-			put("41", "IT + IT_E + IMS + IMS_E");
-			put("42", "");
-			put("43", "CGC + CGC_E");
-			put("44", "IT + IT_E + CGC + CGC_E + DESMPL + DESMPL_E + FOGASA + FOGASA_E");
-			put("45", "IT + IT_E + CGC + CGC_E + FOGASA + FOGASA_E");
-			put("46", "");
-			put("47", "");
-			put("48", "");
-			put("49", "");
-			put("50", "");
-			put("51", "");
-			put("52", "");
-			put("53", "DESMPL + DESMPL_E + FOGASA + FOGASA_E + FP + FP_E");
-			put("54", "CGC");
-			put("55", "");
-			put("56", "");
-			put("57", "CGC + IT + IMS + DESMPL + FOGASA + FP + CGC_E + IT_E + IMS_E + DESMPL_E + FOGASA_E + FP_E");
-			put("58", "");
-			put("59", "");
-			put("60", "");
-			put("61", "");
-			put("62", "");
-			put("63", "");
-			put("64", "");
-			put("65", "");
-			put("68", "CGC + CGC_E + IT_E + IMS_E");
-			put("69", "");
-			put("70", "");
-			put("71", "");
-			put("72", "");
-			put("73", "");
-			put("74", "");
-			put("75", "");
-			put("76", "");
-			put("77", "");
-			put("78", "FP + FP_E");
-			put("79", "DESMPL + DESMPL_E + FP + FP_E");
-			put("80", "");
-			put("81", "");
+
+			put("57", "CUOTA_EMPRESARIAL"); 	// Cuota Total
+			put("68", "CGC_E + IT_E + IMS_E"); 	// Contingencias Comunes y Profesionales - Cuota Total
+			//put("81", "");
+		}
+	};
+
+	@SuppressWarnings("serial")
+	static final Map<String, String> EMPLOYEE_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
+		{
+			put("68", "CGC");
+			//put("57", "CUOTA_OBRERA"); 	// Cuota Total
 		}
 	};
 	
@@ -138,8 +71,10 @@ class BonusListener  implements IdcListener {
 			String quota, Date start, Date end) {
 		if ( PEC_BONUS_MAP.containsKey(code )) {
 			try {
-				Bonus ssBonus = newSSBonus(nss, ccc, code, description, portTipo, quota, start, end);
-				ssBonuses.add(ssBonus);
+				if ( ENTERPRISE_QUOTA_EXPRESSION_MAP.containsKey(quota))
+					ssBonuses.add( newEnterpriseBonus(nss, ccc, code, description, portTipo, quota, start, end)) ;
+				if ( EMPLOYEE_QUOTA_EXPRESSION_MAP.containsKey(quota))
+					ssBonuses.add( newEmployeeBonus(nss, ccc, code, description, portTipo, quota, start, end)) ;
 			} catch (ParseException e) {
 			}
 		}
@@ -150,7 +85,7 @@ class BonusListener  implements IdcListener {
 	
 	// ------------------------------------------------------------------------
 	
-	private static Bonus newSSBonus(String nss, String ccc, String code, String description, String portTipo,
+	private static Bonus newEnterpriseBonus(String nss, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
 		
 		double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
@@ -167,11 +102,36 @@ class BonusListener  implements IdcListener {
 				Calendar.getInstance().getTimeInMillis(),
 				code, 
 				quota,  
-				QUOTA_EXPRESSION_MAP.get(quota), 
+				ENTERPRISE_QUOTA_EXPRESSION_MAP.get(quota), 
 				percent
 				));
+		
 		
 		return ssBonus;
 	}
 
+	private static Bonus newEmployeeBonus(String nss, String ccc, String code, String description, String portTipo,
+			String quota, Date start, Date end) throws ParseException {
+		
+		double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
+		
+		Bonus ssBonus = new Bonus();		
+		ssBonus.setCcc(ccc);
+		ssBonus.setNss(nss);
+		ssBonus.setStartDate(start);
+		ssBonus.setEndDate(end);
+		ssBonus.setDescription(String.format(new Locale("es", "ES"),"%s (%.2f%%)", description, percent));
+		ssBonus.setFormula(String.format(Locale.ROOT,
+				"/*epoch:%d,pec:%s,quota:%s*/" +
+				"/*read-only*/( %s ) * %.2f / 100.00 * -1/**/", 
+				Calendar.getInstance().getTimeInMillis(),
+				code, 
+				quota,  
+				EMPLOYEE_QUOTA_EXPRESSION_MAP.get(quota), 
+				percent
+				));
+		ssBonus.setEmployee();
+		
+		return ssBonus;
+	}
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Bonus;
+import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
@@ -41,6 +42,10 @@ public interface IPayroll {
 	// -------------------- BONUS 
 	
 	public Bonus [] setBonuses(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Bonus ...bonuses);
+
+	// -------------------- DEDUCTIONS 
+	
+	public Deduction [] setDeductions(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Deduction ...deductions);
 
 	// -------------------- CCC
 	

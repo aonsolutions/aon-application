@@ -415,8 +415,9 @@ public class IdcTest {
 	public void testIdcplcccBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplcccI.pdf") ){
 			Collection<Bonus> ssBonuses = Idcplccc.getSSBonuses(is);
-			assertEquals(4, ssBonuses.size());
-			
+			assertEquals(8, ssBonuses.size());
+			assertEquals(4, ssBonuses.stream().filter(b -> b.isEmployee()).count());
+			assertEquals(4, ssBonuses.stream().filter(b -> b.isEnterprise()).count());
 			ssBonuses.forEach( b -> System.out.println(b));
 		}
 	}

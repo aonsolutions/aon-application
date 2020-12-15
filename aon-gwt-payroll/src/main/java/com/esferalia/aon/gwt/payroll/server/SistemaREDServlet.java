@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +40,11 @@ import com.esferalia.aon.in.payroll.tgss.idc.Idcplccc;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Bonus;
+import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.BonusType;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -442,9 +445,11 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, date);
 			
 			for ( String naf : nafs ) {
+				Collection<com.esferalia.aon.in.payroll.tgss.idc.Bonus> ssBonus = Idcplccc.getSSBonuses(data);
 				Bonus bonuses [] =
-				Idcplccc.getSSBonuses(data).stream()
+				ssBonus.stream()
 				.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
+				.filter(b -> b.isEnterprise() )
 				.map( b -> 
 				new Bonus()
 				.setExpression(b.getFormula())
@@ -455,7 +460,25 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				)
 				.toArray(Bonus[]::new)
 				;
+
 				PAYROLL.setBonuses(domainName, domainId, userLogin, ccc, naf, firstDayOfMonth, lastDayOfMonth, bonuses);					
+				
+				Deduction deductions [] =
+				ssBonus.stream()
+				.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
+				.filter(b -> b.isEmployee() )
+				.map( b -> 
+				new Deduction()
+				.setExpression(b.getFormula())
+				.setDescription(b.getDescription())
+				.setStartDate(b.getStartDate())
+				.setEndDate(b.getEndDate())
+				.setType(DeductionType.OTHER)
+				)
+				.toArray(Deduction[]::new)
+				;
+				
+				PAYROLL.setDeductions(domainName, domainId, userLogin, ccc, naf, firstDayOfMonth, lastDayOfMonth, deductions);
 			}
 			
 		} catch ( Throwable e ) {

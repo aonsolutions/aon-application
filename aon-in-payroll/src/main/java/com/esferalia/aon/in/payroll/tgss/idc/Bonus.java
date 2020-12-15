@@ -10,6 +10,7 @@ public class Bonus {
 	private Date startDate;
 	private String description;
 	private String expression;
+	private boolean employee;
 
 	public Date getStartDate() {
 		return startDate;
@@ -57,6 +58,18 @@ public class Bonus {
 
 	public void setCcc(String ccc) {
 		this.ccc = ccc;
+	}
+	
+	public boolean isEnterprise() {
+		return !employee;
+	}
+	
+	public boolean isEmployee() {
+		return employee;
+	}
+	
+	public void setEmployee() {
+		this.employee = true;
 	}
 
 	@Override
