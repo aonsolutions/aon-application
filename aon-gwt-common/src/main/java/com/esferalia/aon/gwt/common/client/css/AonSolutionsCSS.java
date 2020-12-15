@@ -39,8 +39,14 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_pdf")
 	String aonIconPdf();
 	
+	@ClassName("aon_icon_image")
+	String aonIconImage();
+
 	@ClassName("aon_icon_excel")
 	String aonIconExcel();
+
+	@ClassName("aon_icon_word")
+	String aonIconWord();
 
 	@ClassName("aon_icon_comments")
 	String aonIconComments();

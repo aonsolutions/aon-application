@@ -25,8 +25,12 @@
 .aon_icon_audit { background-image: iconAudit;}
 @url iconPdf aonIconPdf;
 .aon_icon_pdf { background-image: iconPdf;}
+@url iconImage aonIconImage;
+.aon_icon_image { background-image: iconImage;}
 @url iconExcel aonIconExcel;
 .aon_icon_excel { background-image: iconExcel;}
+@url iconWord aonIconWord;
+.aon_icon_word { background-image: iconWord;}
 @url iconComments aonIconComments;
 .aon_icon_comments { background-image: iconComments;}
 @url iconNoComments aonIconNoComments;

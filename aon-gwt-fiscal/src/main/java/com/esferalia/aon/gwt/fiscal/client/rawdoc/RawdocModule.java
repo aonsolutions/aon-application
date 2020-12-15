@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -60,6 +61,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -437,11 +439,28 @@ public class RawdocModule extends MainEntryPoint {
 		
 	}
 	
-	public void showViewer( String url ) {
+	public void showViewer( MimeType mimeType, String url ) {
 		openFootPanelIfNeeded( 3 );
 		tabLayout.selectTab(viewerTabIndex);
-		FullViewer viewer = new FullViewer(url, ViewerDefaultScale.PAGE_WIDTH);
-		viewerContainer.setWidget(viewer);
+		
+		if ( mimeType != null && mimeType.isPDF()) {
+			FullViewer viewer = new FullViewer(url, ViewerDefaultScale.PAGE_WIDTH);
+			viewerContainer.setWidget(viewer);
+		} else if ( mimeType != null && mimeType.isImage()) {
+			ScrollPanel imagePanel = new ScrollPanel();
+			imagePanel.setStyleName(AON.CSS.aonTextCenter());
+			Image image = new Image( url );
+			imagePanel.setWidget(image);
+			viewerContainer.setWidget(imagePanel);
+		} else {
+			ScrollPanel labelPanel = new ScrollPanel();
+			Label unknown = new Label("No se ha podido determinar un visor para este tipo de documento.");
+			unknown.setStyleName(AON.CSS.aonBlockMessage());
+			unknown.addStyleName(AON.CSS.aonBlockInfoMessage());
+			unknown.addStyleName(AON.CSS.aonMargin());
+			labelPanel.setWidget(unknown);
+			viewerContainer.setWidget(labelPanel);
+		}
 	}
 
 	public void clearViewer( ) {
@@ -816,22 +835,25 @@ public class RawdocModule extends MainEntryPoint {
 			});
 		}
 		
-		AonTableButton viewDoc = new AonTableButton(AON.MSG.attach(), AON.CSS.aonIconPdf());
-		viewDoc.getElement().getStyle().setMarginRight(5, Unit.PX);
-		viewDoc.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				String params = "domain="+ opt.getDomain() 
+		AonTableButton viewDoc = null;
+		if ( rawdoc.getMimeType() != null) {
+			viewDoc = new AonTableButton(AON.MSG.attach(), getAttachIcon(rawdoc.getMimeType()));
+			viewDoc.getElement().getStyle().setMarginRight(5, Unit.PX);
+			viewDoc.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					String params = "domain="+ opt.getDomain() 
 					+ "&id=" +  rawdoc.getId();
-				params = RawdocModule.b64encode(params);
-				String url = URL.encode(GWT.getModuleBaseURL() + "ms/download_rawdoc" 
-						+ "/" + opt.getDomainName() 
-						+ "/" + opt.getUser() 
-						+ "/" +  params);
-				showViewer(url);
-			}
-		});
+					params = RawdocModule.b64encode(params);
+					String url = URL.encode(GWT.getModuleBaseURL() + "ms/download_rawdoc" 
+							+ "/" + opt.getDomainName() 
+							+ "/" + opt.getUser() 
+							+ "/" +  params);
+					showViewer(rawdoc.getMimeType(),url);
+				}
+			});
+		}
 
 		Label invReference = new Label();
 		Label invDate = new Label();
@@ -887,6 +909,19 @@ public class RawdocModule extends MainEntryPoint {
 		++col;
 		tab.setWidget(row, col, ensureButton(deleteForever));
 		++col;
+	}
+
+	private String getAttachIcon(MimeType mimeType) {
+		if (mimeType.isPDF() ) {
+			return AON.CSS.aonIconPdf();	
+		} else if (mimeType.isImage()) {
+			return AON.CSS.aonIconImage();
+		} else if (mimeType.isMsExcel()) {
+			return AON.CSS.aonIconExcel();
+		} else if (mimeType.isMsWord()) {
+			return AON.CSS.aonIconWord();
+		} 
+		return AON.CSS.aonIconUnknown();
 	}
 
 	private Widget ensureButton(Widget button) {
