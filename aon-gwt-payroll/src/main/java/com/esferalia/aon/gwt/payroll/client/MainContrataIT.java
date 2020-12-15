@@ -214,19 +214,31 @@ public class MainContrataIT extends MainEntryPoint {
 									AonConfirmDialog dialog = new AonConfirmDialog();
 									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 									
-									mainContrataITObject.getEmployeesInfo(false,
-											t -> {
-												initContractTable();
-												setTableHeights();
-											},
-											f -> {}
-									);
+									if(it.isComunicate())
+										mainContrataITObject.deleteComunicateIT(employeeITInfo, it, t -> {
+											mainContrataITObject.getEmployeesInfo(false,
+													a -> {
+														initContractTable();
+														setTableHeights();
+													},
+													b -> {}
+											);
+										}, d -> {});
+									else
+										mainContrataITObject.getEmployeesInfo(false,
+												t -> {
+													initContractTable();
+													setTableHeights();
+												},
+												d -> {}
+										);
+									
 								},
 								f -> {});
 					}
 
 					@Override
-					protected void onAccept() {
+					protected void onAcceptIT() {
 						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
 								s -> {
 									AonConfirmDialog dialog = new AonConfirmDialog();
@@ -237,8 +249,30 @@ public class MainContrataIT extends MainEntryPoint {
 												initContractTable();
 												setTableHeights();
 											},
-											f -> {}
+											d -> {}
 									);
+								},
+								f -> {});
+					}
+
+					@Override
+					protected void onAcceptITObj(IT it) {
+						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
+								s -> {
+									mainContrataITObject.comunicateIT(employeeITInfo, it, t -> {
+										AonConfirmDialog dialog = new AonConfirmDialog();
+										dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+										
+										getITCertificatePDF(employeeITInfo, it);
+										
+										mainContrataITObject.getEmployeesInfo(false,
+												a -> {
+													initContractTable();
+													initITTable();
+												},
+												b -> {}
+										);
+									}, d -> {});
 								},
 								f -> {});
 					}
@@ -414,21 +448,31 @@ public class MainContrataIT extends MainEntryPoint {
 									AonConfirmDialog dialog = new AonConfirmDialog();
 									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 									
-									mainContrataITObject.getEmployeesInfo(false,
-											t -> {
-												initContractTable();
-												initITTable();
-												setTableHeights();
-												inactiveITsCB.setValue(true);
-											},
-											f -> {}
-									);
+									if(it.isComunicate())
+										mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
+											mainContrataITObject.getEmployeesInfo(false,
+													a -> {
+														initContractTable();
+														initITTable();
+													},
+													b -> {}
+											);
+										}, d -> {});
+									else
+										mainContrataITObject.getEmployeesInfo(false,
+												t -> {
+													initContractTable();
+													initITTable();
+												},
+												d -> {}
+										);
+									
 								},
 								f -> {});
 					}
 
 					@Override
-					protected void onAccept() {
+					protected void onAcceptIT() {
 						mainContrataITObject.createUpdateITEmployee(itEmployee,
 								s -> {
 									AonConfirmDialog dialog = new AonConfirmDialog();
@@ -438,11 +482,31 @@ public class MainContrataIT extends MainEntryPoint {
 											t -> {
 												initContractTable();
 												initITTable();
-												setTableHeights();
-												inactiveITsCB.setValue(true);
 											},
-											f -> {}
+											d -> {}
 									);
+								},
+								f -> {});
+					}
+
+					@Override
+					protected void onAcceptITObj(IT it) {
+						mainContrataITObject.createUpdateITEmployee(itEmployee,
+								s -> {
+									mainContrataITObject.comunicateIT(itEmployee, it, t -> {
+										AonConfirmDialog dialog = new AonConfirmDialog();
+										dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+										
+										getITCertificatePDF(itEmployee, it);
+										
+										mainContrataITObject.getEmployeesInfo(false,
+												a -> {
+													initContractTable();
+													initITTable();
+												},
+												b -> {}
+										);
+									}, d -> {});
 								},
 								f -> {});
 					}
@@ -1380,4 +1444,25 @@ public class MainContrataIT extends MainEntryPoint {
 		filterITListPanel.add(filterPanel);
 	}
 
+	private void getITCertificatePDF(ITEmployee itEmployee, IT it) {
+		String affiliationNumber = itEmployee.getEmployeeInfo().getSsNumber();
+		String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
+		String contributionAccount = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
+		String dateFromStr = formatFullDate.format(new Date());
+		String dateToStr = formatFullDate.format(new Date());
+		String startDateStr = formatFullDate.format(it.getStartDate());
+		
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "it_export/";
+		String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
+		 		+ "&userLogin=" + Wnd.getCurrentUser()
+	            + "&affiliationNumber=" + affiliationNumber
+	            + "&regime=" + regime
+	            + "&contributionAccount=" + contributionAccount
+	            + "&dateFromStr=" + dateFromStr
+				+ "&dateToStr=" + dateToStr
+				+ "&startDateStr=" + startDateStr;
+		
+		Window.open(fileDownloadURL+query, "ITExporter", "resizable=yes,scrollbars=yes,status=yes");
+	
+	}
 }

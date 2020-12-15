@@ -589,6 +589,8 @@ public abstract class ITDialog extends AonCustomDialog {
 	@UiHandler("baseRDBx")
 	public void onBaseRDBxChange(ValueChangeEvent<Double> event) {
 		this.it.setRegulationBase(event.getValue());
+		this.it.setDailyCGCBase(event.getValue());
+		this.it.setDailyCGPBase(event.getValue());
 	}
 	
 	@UiHandler("partialityCoefDBx")
@@ -623,7 +625,8 @@ public abstract class ITDialog extends AonCustomDialog {
 	// ----------------------------------------------- METODOS ABSTRACTOS -------------------------------------------------
 	
 	protected abstract void onDelete(IT it);
-	protected abstract void onAccept();
+	protected abstract void onAcceptIT();
+	protected abstract void onAcceptITObj(IT it);
 
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 
@@ -1473,6 +1476,8 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	private void getButtonsPanel() {
+		buttonsPanel.clear();
+		
 		closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
 		closeBtnDialog.setText( AON.MSG.cancelAction());
@@ -1510,12 +1515,34 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(checkIfSaveIsPossible()) {
 			if(null == this.it.getId() || -1 == this.it.getId())
 				itDialogObject.addIT(this.it);
-			onAccept();
-			hide();
+			
+			comunicateIT(null);
+			
+//			AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+//			comunicateDialog.confirm(
+//					"COMUNIC" + String.valueOf("\u0040"), 
+//					String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+//					new AonConfirmDialogCallback() {
+//
+//						@Override
+//						public void onAccept() {
+//							comunicateIT(it);
+//						}
+//
+//						@Override
+//						public void onCancel() {
+//							comunicateIT(null);
+//						}});
 		} else {
 			AonConfirmDialog dialog = new AonConfirmDialog();
 			dialog.info("AVISO: Fechas", "La fecha y la causa de baja deben estar rellenadas.");
 		}
 	}
+	
+	private void comunicateIT(IT it) {
+		onAcceptIT();
+		hide();
+	}
+
 	
 }

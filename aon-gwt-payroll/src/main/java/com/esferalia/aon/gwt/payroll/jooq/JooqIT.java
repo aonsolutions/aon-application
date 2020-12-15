@@ -5,12 +5,16 @@ import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractLeaveDetail.CONTRACT_LEAVE_DETAIL;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.LeaveBatch.LEAVE_BATCH;
+import static com.esferalia.aon.jooq.tables.LeaveBatchDetail.LEAVE_BATCH_DETAIL;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,7 +35,9 @@ import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.jooq.tables.records.ContractLeaveDetailRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
+import com.esferalia.aon.jooq.tables.records.LeaveBatchRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.ibm.icu.util.Calendar;
 
@@ -171,8 +177,11 @@ public class JooqIT {
 					for(Record contractLeaveDetailRecord : contractLeaveDetailRecords) {
 						ITPart itPart = new ITPart();
 						
+						Integer contractLeaveDetailId = contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.ID);
+						Byte typePart = contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.TYPE);
+						
 						itPart.setDomain(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.DOMAIN));
-						itPart.setType(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.TYPE));
+						itPart.setType(typePart);
 						itPart.setIt(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE));
 						itPart.setCollegeNumber(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER));
 						itPart.setConfirmOrderNumber(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER));
@@ -181,6 +190,23 @@ public class JooqIT {
 						itPart.setStatus(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.STATUS));
 						
 						it.addITPart(itPart);
+						
+						if(typePart == (byte) 0) { // Parte de Baja -> Check communicationStatus
+							Record leaveBatchRecord = dslContext.select().from(LEAVE_BATCH).where(LEAVE_BATCH.ID.eq(
+									dslContext.select(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
+										.from(LEAVE_BATCH_DETAIL)
+										.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.eq(contractLeaveDetailId))
+										.fetchOne(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
+							)).and(LEAVE_BATCH.COMMUNICATION_ID.eq("COMUNICA")).fetchOne();
+							
+							if(null != leaveBatchRecord) {
+								it.setIsComunicate(leaveBatchRecord.get(LEAVE_BATCH.STATUS) == (byte)0 ? false : true);
+								it.setComunicationDate(leaveBatchRecord.get(LEAVE_BATCH.DATE));
+							} else
+								it.setIsComunicate(false);
+							
+//							it.setIsComunicate(false);
+						}
 						
 					}
 					
@@ -299,8 +325,11 @@ public class JooqIT {
 					for(Record contractLeaveDetailRecord : contractLeaveDetailRecords) {
 						ITPart itPart = new ITPart();
 						
+						Integer contractLeaveDetailId = contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.ID);
+						Byte typePart = contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.TYPE);
+						
 						itPart.setDomain(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.DOMAIN));
-						itPart.setType(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.TYPE));
+						itPart.setType(typePart);
 						itPart.setIt(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE));
 						itPart.setCollegeNumber(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER));
 						itPart.setConfirmOrderNumber(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER));
@@ -309,6 +338,20 @@ public class JooqIT {
 						itPart.setStatus(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.STATUS));
 						
 						it.addITPart(itPart);
+						
+						if(typePart == (byte) 0) { // Parte de Baja -> Check communicationStatus
+							Record leaveBatchRecord = dslContext.select().from(LEAVE_BATCH).where(LEAVE_BATCH.ID.eq(
+									dslContext.select(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
+										.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.eq(contractLeaveDetailId))
+										.fetchOne(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
+							)).and(LEAVE_BATCH.COMMUNICATION_ID.eq("COMUNICA")).fetchOne();
+							
+							if(null != leaveBatchRecord) {
+								it.setIsComunicate(leaveBatchRecord.get(LEAVE_BATCH.STATUS) == (byte)0 ? false : true);
+								it.setComunicationDate(leaveBatchRecord.get(LEAVE_BATCH.DATE));
+							} else
+								it.setIsComunicate(false);
+						}
 						
 					}
 					
@@ -402,6 +445,24 @@ public class JooqIT {
 		contractData.setOcupation(null);
 		contractData.setJourneytypeId(null);
 		contractData.setJourneyType(null);
+		
+		//ENTERPRISE CCC TABLE
+		Integer enterpriseCCC = contractTable.get(CONTRACT.ENTERPRISE_CCC);
+		
+		if(null == enterpriseCCC) {
+			contractData.setCccId(null);
+			contractData.setCccType(null);
+			
+		}else {
+			Record enterpriseCCCTable = dslContext.select().from(ENTERPRISE_CCC)
+					.where(ENTERPRISE_CCC.ID.eq(enterpriseCCC))
+					.fetchOne();
+			
+			contractData.setCccId(enterpriseCCCTable.get(ENTERPRISE_CCC.ID));
+			contractData.setCccType(enterpriseCCCTable.get(ENTERPRISE_CCC.TYPE));
+			
+			contractData.setCompleteCCC(getCCCRegimeCode(enterpriseCCCTable.get(ENTERPRISE_CCC.TYPE))+enterpriseCCCTable.get(ENTERPRISE_CCC.CCC));
+		}
 		
 		// CONTRACT DATA TABLE
 		Date currentDate = new Date(new java.util.Date().getTime());
@@ -517,7 +578,7 @@ public class JooqIT {
 					
 					Date date = null == itPart.getDate() ? null : new Date(itPart.getDate().getTime());
 					
-					dslContext.insertInto(CONTRACT_LEAVE_DETAIL)
+					ContractLeaveDetailRecord contractLeaveDetail = dslContext.insertInto(CONTRACT_LEAVE_DETAIL)
 						.set(CONTRACT_LEAVE_DETAIL.DOMAIN, domainId)
 						.set(CONTRACT_LEAVE_DETAIL.TYPE, itPart.getType())
 						.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveId)
@@ -526,7 +587,25 @@ public class JooqIT {
 						.set(CONTRACT_LEAVE_DETAIL.CIAS, itPart.getCias())
 						.set(CONTRACT_LEAVE_DETAIL.DATE, date)
 						.set(CONTRACT_LEAVE_DETAIL.STATUS, itPart.getStatus())
-						.execute();
+						.returning(CONTRACT_LEAVE_DETAIL.ID)
+						.fetchOne();
+					
+					if(itPart.getType() == (byte)0 && (null != it.isComunicate() && it.isComunicate())) {
+						LeaveBatchRecord leaveBatchRecord = dslContext.insertInto(LEAVE_BATCH)
+							.set(LEAVE_BATCH.DOMAIN, domainId)
+							.set(LEAVE_BATCH.DATE, new Timestamp(new java.util.Date().getTime()))
+							.set(LEAVE_BATCH.STATUS, (byte)1)
+							.set(LEAVE_BATCH.COMMUNICATION_ID, "COMUNICA")
+							.set(LEAVE_BATCH.INCOME_FILE, (byte[]) null)
+							.set(LEAVE_BATCH.OUTCOME_FILE, (byte[]) null)
+							.returning(LEAVE_BATCH.ID).fetchOne();
+						
+						dslContext.insertInto(LEAVE_BATCH_DETAIL)
+							.set(LEAVE_BATCH_DETAIL.DOMAIN, domainId)
+							.set(LEAVE_BATCH_DETAIL.LEAVE_BATCH, leaveBatchRecord.getId())
+							.set(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL, contractLeaveDetail.getId())
+							.execute();
+					}
 				}
 				
 				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {	// MATERNIDAD || PATERNIDAD
@@ -727,6 +806,23 @@ public class JooqIT {
 				.execute();
 		}
 		
+		dslContext.delete(LEAVE_BATCH)
+			.where(LEAVE_BATCH.ID.in(
+					dslContext.select(LEAVE_BATCH_DETAIL.LEAVE_BATCH).from(LEAVE_BATCH_DETAIL)
+						.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.in(
+								dslContext.select(CONTRACT_LEAVE_DETAIL.ID).from(CONTRACT_LEAVE_DETAIL)
+									.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(itId))
+									.fetch(CONTRACT_LEAVE_DETAIL.ID)
+						)).fetch(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
+			)).execute();
+		
+		dslContext.delete(LEAVE_BATCH_DETAIL)
+			.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.in(
+					dslContext.select(CONTRACT_LEAVE_DETAIL.ID).from(CONTRACT_LEAVE_DETAIL)
+						.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(itId))
+						.fetch(CONTRACT_LEAVE_DETAIL.ID)
+			)).execute();
+		
 		dslContext.delete(CONTRACT_LEAVE_DETAIL)
 			.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(itId))
 			.execute();
@@ -734,6 +830,8 @@ public class JooqIT {
 		dslContext.delete(CONTRACT_LEAVE)
 			.where(CONTRACT_LEAVE.ID.eq(itId))
 				.execute();
+		
+		
 		
 		dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 		
@@ -808,7 +906,30 @@ public class JooqIT {
 		
 		return result;
 	}
-
 	
+	private static String getCCCRegimeCode(Byte cccRegime) {
+		switch (cccRegime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		case 8:
+			return "0112";
+		default:
+			return "0111";
+		}
+	}
 
 }

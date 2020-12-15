@@ -29,6 +29,9 @@ public class IT implements Serializable {
 	private Double baseReg;
 	private Double partialityCoef;
 	
+	private Date comunicationDate;
+	private Boolean isComunicate;
+	
 	private String fullName;
 	
 	private List<ITPart> itParts;
@@ -202,6 +205,22 @@ public class IT implements Serializable {
 
 	public void setMaternityReason(Byte maternityReason) {
 		this.maternityReason = maternityReason;
+	}
+
+	public Boolean isComunicate() {
+		return isComunicate;
+	}
+
+	public void setIsComunicate(Boolean isComunicate) {
+		this.isComunicate = isComunicate;
+	}
+
+	public Date getComunicationDate() {
+		return comunicationDate;
+	}
+
+	public void setComunicationDate(Date comunicationDate) {
+		this.comunicationDate = comunicationDate;
 	}
 	
 }
