@@ -74,7 +74,7 @@ public class SistemaRED_Secondary_User {
 		
 		String name = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNOMBRESEC");
 		String province = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPROVSEC");
-		String naf = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNAFSEC");
+		String naf = getRealNAF(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNAFSEC"));
 		String situation = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFSITSEC");
 		Date situation_date = Toolkit.parseDate(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFFECSITSEC"),"dd/MM/yyyy");
 		String telephone = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTELEFONOSEC");
@@ -102,6 +102,31 @@ public class SistemaRED_Secondary_User {
 		return builder.build();
 	}
 	
+	private static String getRealNAF(String naf) {
+		if(naf.length() == 9)
+			naf = "0" + naf;
+		
+		String province = naf.substring(0, 2);
+		String nafCenter = naf.substring(2, naf.length());
+		
+		String completeNAF = "";
+		
+		if(nafCenter.substring(0,1).equals("0")) {
+			Long nafD = Long.parseLong(province+nafCenter.substring(1, nafCenter.length()));
+			long mod = (nafD%97);
+			completeNAF = nafD + "" + (mod < 10 ? "0"+mod : mod);
+		} else {
+			Long nafD = Long.parseLong(province+nafCenter);
+			long mod = (nafD%97);
+			completeNAF = nafD + "" + (mod < 10 ? "0"+mod : mod);
+		}
+		
+		if(completeNAF.length() == 11)
+			completeNAF = "0" + completeNAF;
+		
+		return completeNAF;
+	}
+
 	//HANDLE EXCEPTIONS OF 
 	public static Collection<SecondaryUser> getSecondaryUsers(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType) throws SegSocialException{
