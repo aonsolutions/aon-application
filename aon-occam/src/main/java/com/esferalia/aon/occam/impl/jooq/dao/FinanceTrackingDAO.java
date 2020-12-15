@@ -210,25 +210,34 @@ public class FinanceTrackingDAO {
 		try {
 			ctx.checkWrite();
 			FinanceTracking financeTracking = FinanceValidation.validateUndoTracking(ctx, financeId);
-			Integer accountEntryId = ctx.getDslContext()
-				.select(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY)
-					.from(ACCOUNT_ENTRY_FINANCE_TRACKING)
-					.where(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING.eq(financeTracking.getId()))
-				.fetch()
-				.stream()
-				.map( rec -> rec.getValue(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY))
-				.findFirst()
-				.orElse(null);
-			if (accountEntryId != null) {
-				FinanceEntry fe = FinanceEntryDAO.getFinanceEntry(ctx, accountEntryId);
-				if (fe.getTrackings().size() == 1) {
-					AccountEntryDAO.delete(ctx, accountEntryId);
-				} else {
-					fe.getTrackings().get(financeId).setDeleted(true);
-					FinanceEntryDAO.update(ctx, fe);
+			if (financeTracking == null) {
+				// No debe suceder. Si el vencimiento no esta pendiente y no 
+				// tiene movimientos se marca como pendiente.
+				Finance finance = FinanceDAO.getFinance(ctx, financeId);
+				if (!finance.isPending()) {
+					updateFinanceStatus(ctx, finance.getId(), FinanceStatus.PENDING ); 
 				}
 			} else {
-				FinanceTrackingDAO.delete(ctx, financeTracking);
+				Integer accountEntryId = ctx.getDslContext()
+						.select(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY)
+						.from(ACCOUNT_ENTRY_FINANCE_TRACKING)
+						.where(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING.eq(financeTracking.getId()))
+						.fetch()
+						.stream()
+						.map( rec -> rec.getValue(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY))
+						.findFirst()
+						.orElse(null);
+				if (accountEntryId != null) {
+					FinanceEntry fe = FinanceEntryDAO.getFinanceEntry(ctx, accountEntryId);
+					if (fe.getTrackings().size() == 1) {
+						AccountEntryDAO.delete(ctx, accountEntryId);
+					} else {
+						fe.getTrackings().get(financeId).setDeleted(true);
+						FinanceEntryDAO.update(ctx, fe);
+					}
+				} else {
+					FinanceTrackingDAO.delete(ctx, financeTracking);
+				}
 			}
 		} catch (Throwable t) {
 			ctx.log().info(" ----- [ERROR] " + t.getMessage());
