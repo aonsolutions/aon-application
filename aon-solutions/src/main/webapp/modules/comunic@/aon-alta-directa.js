@@ -14,6 +14,7 @@ import '../../components/aon-icon-button.js';
 export class AonAltaDirecta extends AonElement {
     _contrato;
     ACTION;
+    TOAST;
     static get observedAttributes() {
         return ['data'];
     }
@@ -43,6 +44,7 @@ export class AonAltaDirecta extends AonElement {
         this.aonComunicaEl = this.aonComunica.getParent();
         this.aonComunicaToolbar = this.getElement('aonComunicaToolbar');
         this.aonComunicaToolbar.setAttribute('option', 'Comunicar contrato');
+        this.TOAST = this.getElement(`aonComunicaToast`);
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -141,14 +143,14 @@ export class AonAltaDirecta extends AonElement {
                 <div class="aonCol-sm-12 aonCol-md-6">
                     <aon-input name="apellido1" id="apellido1" description="1er Apellido" type="text"></aon-input>
                 </div>
-                <div class="aonCol-sm-10 aonCol-md-5">
+                <div class="aonCol-sm-10 aonCol-md-5 aonCol-xs-11">
                     <aon-input name="apellido2" id="apellido2" description="2do Apellido" type="text"></aon-input>
                 </div>
-                <div class="aonCol-sm-2 aonCol-md-1">
+                <div class="aonCol-sm-2 aonCol-md-1 aonCol-xs-1">
                     <aon-icon-button id="iconSegSocial" aonIcon="aon_seg_social"> </aon-icon-button>
                 </div>
             </div>  
-            <div class="aonCol-sm-12">
+            <div class="aonCol-sm-12 aonCol-md-12 aonCol-xs-12">
                 <aon-input name="nombre" id="nombre" description="Nombre" type="text" disabled="true"></aon-input>
             </div>
         `);
@@ -642,20 +644,18 @@ export class AonAltaDirecta extends AonElement {
 
     async save() {
         this.aonComunica.startLoader();
-        const toast = this.getElement(`aonComunicaToast`);
         try {
             await postAltaDirecta(this.getContrato());
-            toast.start({ message: 'Alta procesada!', type: 'success', delay: 3000 });
+            this.TOAST.start({ message: 'Alta procesada!', type: 'success', delay: 3000 });
             this.back();
         } catch (error) {
-            toast.start({ message: error, type: 'error' });
+            this.TOAST.start({ message: error, type: 'error' });
         }
         this.aonComunica.stopLoader();
     }
 
     async update() {
         this.aonComunica.startLoader();
-        const toast = this.getElement(`aonComunicaToast`);
         let cto_new = this.getContrato();
         const cto_old = this._contrato;
         for (const property in cto_new) {
@@ -665,10 +665,10 @@ export class AonAltaDirecta extends AonElement {
         }
         try {
             await postUpdateCto(cto_new);
-            toast.start({ message: 'Contrato modificado!', type: 'primary', delay: 3000 });
+            this.TOAST.start({ message: 'Contrato modificado!', type: 'primary', delay: 3000 });
             this.back();
         } catch (error) {
-            toast.start({ message: error, type: 'error' });
+            this.TOAST.start({ message: error, type: 'error' });
         }
         this.aonComunica.stopLoader();
     }
@@ -680,7 +680,7 @@ export class AonAltaDirecta extends AonElement {
     async getNaf() {
         const contrato = this.getContrato();
         const ipf = contrato.ipf;
-        const apellido1 = contrato.apellido2;
+        const apellido1 = contrato.apellido1;
         const nss_sugges = this.getElement(`${this.id}Nss`); //SUGGESTION
         if (ipf && apellido1) {
             nss_sugges.loading(true);
@@ -691,7 +691,9 @@ export class AonAltaDirecta extends AonElement {
                     setValueName('nombre', resp.name);
                     this.disabledCardTrabajor(true);
                 }
-            } catch (error) { }
+            } catch (error) {
+                this.TOAST.start({ message: error, type: 'error' });
+            }
             nss_sugges.loading(false);
         }
     }

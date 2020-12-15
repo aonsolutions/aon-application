@@ -63,12 +63,10 @@ export class AonCtaList extends AonElement {
 			try {
 				const resp = await this.getData();
 				aonCtaTable.removeRows();
-				resp.map(async(res) => {
-					const tipo = await this.getTipo(res.type);
+				resp.map(res => {
 					aonCtaTable.addRow({
 						...res,
 						ccc: `${res.cccRegimeCode} - ${res.ccc}`,
-						tipo,
 						option: this.getOptions(res)
 					});
 				})
@@ -93,7 +91,7 @@ export class AonCtaList extends AonElement {
 					aonCtaTable.addLi({
 						icon:'assignment',
 						title: `${res.cccRegimeCode} - ${res.ccc}`,
-						subtitle: `${res.geozone}`,
+						subtitle: `(${res.tipo}) ${res.geozone}`,
 						option: this.getOptions(res)
 					}, idx);
 				})
@@ -110,7 +108,7 @@ export class AonCtaList extends AonElement {
 	getOptions(res){
 		return [
 			{
-				name:'Certificado Corr.',
+				name:'Cert. Corriente',
 				icon:'print',
 				fn: (el) =>this.getCertCorriente(res, el)
 			}
@@ -118,13 +116,16 @@ export class AonCtaList extends AonElement {
 	}
 
 	async getData() {
-		const resp = await getWorkplaceCCCs();
+		const workplaces = await getWorkplaceCCCs();
 		let cuentas = [];
-		resp.map(({ccc}) => {
-			ccc.map(c=>{
-				cuentas.push(c);
-			})
-		})
+		for (const workplace in  workplaces) {
+			const cccs = workplaces[workplace].ccc;
+			if(cccs) for (const ccc in cccs) {
+				let cuenta = cccs[ccc];
+				cuenta["tipo"] = await this.getTipo(cuenta.type);
+				cuentas.push(cuenta);
+			}
+		}
 		return cuentas;
 	}
 

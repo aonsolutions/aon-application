@@ -222,50 +222,44 @@ export const getAllTipoCtz = () => new Promise((resolve) => {
             },
             { 
                 id: 1, 
-                name: "Principal", 
-                value: 1, 
+                name: "F y A", 
+                value: 1,
                 regimen: "0111" 
             },
             { 
                 id: 2, 
-                name: "Formación y aprendizaje", 
+                name: "Aprendizaje", 
                 value: 2,
                 regimen: "0111" 
             },
             { 
                 id: 3, 
-                name: "Aprendizaje", 
+                name: "Asimilados",
                 value: 3,
                 regimen: "0111" 
             },
             { 
                 id: 4, 
-                name: "Asimilados R.General",
+                name: "Becarios", 
                 value: 4,
                 regimen: "0111" 
             },
             { 
                 id: 5, 
-                name: "Becarios", 
+                name: "Emp. hogar", 
                 value: 5,
-                regimen: "0111" 
-            },
-            { 
-                id: 6, 
-                name: "Emplead@s del hogar", 
-                value: 6,
                 regimen: "0138" 
             },
             { 
-                id: 7, 
-                name: "Trabajadores cuenta ajena agrarios", 
-                value: 7,
+                id: 6, 
+                name: "Agrarios", 
+                value: 6,
                 regimen: "0163" 
             },
             { 
-                id: 8, 
+                id: 7, 
                 name: "Artistas", 
-                value: 8,
+                value: 7,
                 regimen: "0112" 
             },
         ];

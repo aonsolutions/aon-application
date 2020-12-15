@@ -57,7 +57,7 @@ export class AonComunica extends AonElement {
 				}
 			},
 			{
-				name: 'Cuenta de Ctz',
+				name: 'CCC',
 				icon: 'account_balance',
 				fn: () => {
 					this.getElement(this.aonComunicaEl.TOOLBAR).setAttribute('option', 'Cuentas de cotización');
