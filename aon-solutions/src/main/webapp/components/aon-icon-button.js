@@ -128,7 +128,8 @@ export class AonIconButton extends AonElement {
 
 		if('color' === name){
 			let button = this.getElement(this.BUTTON);
-			button.style.color = this.getAttribute('color') ? this.getAttribute('color') : '#5f6368';
+			if(button)
+				button.style.color = this.getAttribute('color') ? this.getAttribute('color') : '#5f6368';
 		}
 	}
 

@@ -125,6 +125,12 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryDAO.getRegistryStream(ctx, filter));
 	}
 	
+	@Override
+	public Stream<Registry> getAonRegistryStream(AONContext ctx, RegistryFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getAonRegistryStream(ctx, filter));
+	}
+	
 	// ------------------------------------- RMEDIA
 
 	@Override

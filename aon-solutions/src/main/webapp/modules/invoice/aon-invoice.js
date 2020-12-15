@@ -3,7 +3,7 @@ import {Transactions} from '../../services/transaction.js';
 import {Paymethods} from '../../services/paymethod.js';
 import {TaxType, TaxIVAPercentage, TaxIRPFPercentage, InvoiceAction} from './invoiceEnums.js';
 import {getInvoiceCategories} from '../../services/invoiceCategory.js';
-import {insertInvoice, deleteInvoices, getUserAppRole} from '../../services/service.js';
+import {insertInvoice, deleteInvoices, getUserAppRole, getGlobalRegistries} from '../../services/service.js';
 import {isNumber, round} from '../../services/utils.js';
 import {Invoice} from './Invoice.js';
 import {getNextInvoice, getPreviousInvoice} from './InvoiceCache.js';
@@ -13,6 +13,7 @@ import '../../components/aon-toolbar.js';
 import '../../components/aon-card.js';
 import '../../components/aon-date.js';
 import '../../components/aon-select.js';
+import '../../components/aon-suggestion.js';
 import '../../components/aon-input.js';
 import '../../components/aon-number.js';
 import '../../components/aon-checkbox.js';
@@ -532,7 +533,7 @@ export class AonInvoice extends AonElement {
 
 		// NIF
 		let tdNif = document.createElement('td');
-		tdNif.innerHTML = `<aon-input id="nif" description="NIF"></aon-input>`;
+		tdNif.innerHTML = `<aon-suggestion id="nif" title="NIF"></aon-suggestion>`;
 		tr2.appendChild(tdNif);
 		let nif = document.getElementById('nif');
 		nif.value = this.isEmitida()
@@ -541,12 +542,34 @@ export class AonInvoice extends AonElement {
 		if(this.isAccounting()) {
 			nif.readonly = 'readonly';
 		}
+		nif.addEventListener('keyup', () => {
+			if(nif.value.length > 2) {
+				getGlobalRegistries({document:nif.value}).then( registries =>
+					nif.buildOptions(registries.map(r => {return {name: r.document, value: r.document, registry: r};}))
+				);
+			} else {
+				nif.closeOptions();
+			}
+		});
+		nif.addEventListener('select', (event) => {
+			let registry = event.detail.registry;
+			let name = document.getElementById('name');
+			name.value = registry.name;
+			let address = document.getElementById('address');
+			address.buildAddressValue(JSON.stringify(registry.address));
+			if(this._invoice.isEmitida) {
+				this._invoice.receiver = registry;
+			} else {
+				this._invoice.sender = registry;
+			}
+			this.save();
+		});
 		nif.addEventListener('change', () => this.updateRegistry());
 
 		// NAME
 		let tdName = document.createElement('td');
 		tdName.setAttribute('colspan','3');
-		tdName.innerHTML = `<aon-input id="name" description="Razón Social"></aon-input>`;
+		tdName.innerHTML = `<aon-suggestion id="name" title="Razón Social"></aon-suggestion>`;
 		tr2.appendChild(tdName);
 		let name = document.getElementById('name');
 		name.value = this.isEmitida()
@@ -556,6 +579,28 @@ export class AonInvoice extends AonElement {
 		if(this.isAccounting()) {
 			name.readonly = 'readonly';
 		}
+		name.addEventListener('keyup', () => {
+			if(name.value.length > 2) {
+				getGlobalRegistries({name:name.value}).then( registries =>
+					name.buildOptions(registries.map(r => {return {name: r.name, value: r.name, registry: r};}))
+				);
+			} else {
+				name.closeOptions();
+			}
+		});
+		name.addEventListener('select', (event) => {
+			let registry = event.detail.registry;
+			let nif = document.getElementById('nif');
+			nif.value = registry.document;
+			let address = document.getElementById('address');
+			address.buildAddressValue(JSON.stringify(registry.address));
+			if(this._invoice.isEmitida) {
+				this._invoice.receiver = registry;
+			} else {
+				this._invoice.sender = registry;
+			}
+			this.save();
+		});
 		name.addEventListener('change', () => this.updateRegistry());
 
 		let tr3 = document.createElement('tr');

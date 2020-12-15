@@ -15,3 +15,5 @@ export * from './fileService.js';
 export * from './comunicaService.js';
 
 export * from './signinService.js';
+
+export * from './registryService.js';

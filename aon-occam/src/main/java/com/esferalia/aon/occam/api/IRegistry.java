@@ -61,6 +61,7 @@ public interface IRegistry {
 	
 	public Registry getRegistry(AONContext ctx, RegistryFilter filter);
 	public Stream<Registry> getRegistryStream(AONContext ctx, RegistryFilter filter);
+	public Stream<Registry> getAonRegistryStream(AONContext ctx, RegistryFilter filter);
 	
 	public Stream<RegistryMedia> getRMediaStream(AONContext ctx, RegistryMediaFilter filter);
 	public Stream<RegistryNote> getRNoteStream(AONContext ctx, RegistryNoteFilter filter);

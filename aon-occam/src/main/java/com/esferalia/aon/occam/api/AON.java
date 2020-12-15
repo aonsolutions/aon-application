@@ -2375,13 +2375,14 @@ public class AON {
 	}
 
 	public static Stream<Registry> getRegistryStream(String domainName, Integer domainId, String login, RegistryFilter filter){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().getRegistryStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		}
+	}
+	
+	public static Stream<Registry> getAonRegistryStream(String domainName, Integer domainId, String login, RegistryFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getAonRegistryStream(ctx, filter);
 		}
 	}
 	

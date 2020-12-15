@@ -280,6 +280,14 @@ public class RegistryDAO {
 	}
 	
 	
+	public static Stream<Registry> getAonRegistryStream(AONContext ctx, RegistryFilter filter){
+		return ctx.getDslContext().select().from(REGISTRY)
+				.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(REGISTRY.ID))
+				.leftOuterJoin(GEOZONE).on(GEOZONE.ID.eq(RADDRESS.GEOZONE))
+				.where(REGISTRY_PROPERTIES.getConditions(filter)).fetch()
+			.stream().map(new FullRegistryFiller());
+	}
+	
 	public static Stream<Registry> getRegistryStream(AONContext ctx, RegistryFilter filter){
 		return ctx.getDslContext().select().from(REGISTRY)
 				.where(REGISTRY_PROPERTIES.getConditions(filter)).fetch()
@@ -324,6 +332,46 @@ public class RegistryDAO {
 		}
 		
 	}
+	
+	public static class FullRegistryFiller  implements Function<Record,Registry> {
+
+		@Override
+		public Registry apply(Record record) {
+			RAddress address = new RAddress()
+					.setId(record.getValue(RADDRESS.ID))
+					.setDomain(record.getValue(RADDRESS.DOMAIN))
+					.setAddress(record.getValue(RADDRESS.ADDRESS))
+					.setAddress2(record.getValue(RADDRESS.ADDRESS2))
+					.setAddress3(record.getValue(RADDRESS.ADDRESS3))
+					.setAlias(record.getValue(RADDRESS.ALIAS))
+					.setCity(record.getValue(RADDRESS.CITY))
+					.setGeozone(record.getValue(RADDRESS.GEOZONE))
+					.setGeozoneName(record.getValue(GEOZONE.NAME))
+					.setMunicipality_code(record.getValue(RADDRESS.MUNICIPALITY_CODE))
+					.setNumber(record.getValue(RADDRESS.NUMBER))
+					.setRecipient(record.getValue(RADDRESS.RECIPIENT))
+					.setRegistry(record.getValue(RADDRESS.REGISTRY))
+					.setRegistryName(record.getValue(REGISTRY.NAME))
+					.setStreet_type(record.getValue(RADDRESS.STREET_TYPE))
+					.setType(record.getValue(RADDRESS.TYPE))
+					.setZip(record.getValue(RADDRESS.ZIP));
+			return new Registry()
+					.setId(record.getValue(REGISTRY.ID))
+					.setDomain(record.getValue(REGISTRY.DOMAIN))
+					.setAlias(record.getValue(REGISTRY.ALIAS))
+					.setDocument(record.getValue(REGISTRY.DOCUMENT))
+					.setDocumentType(DocumentType.safeValueOf(record.getValue(REGISTRY.DOCUMENT_TYPE)))
+					.setDocumentCountry(Country.safeValueOf(record.getValue(REGISTRY.DOCUMENT_COUNTRY)))
+					.setName(record.getValue(REGISTRY.NAME))
+					.setNationality(Country.safeValueOf(record.getValue(REGISTRY.NATIONALITY)))
+					.setSecurityLevel(SecurityLevel.safeValueOf( record.getValue(REGISTRY.SECURITY_LEVEL)))
+					.setType(record.getValue(REGISTRY.TYPE))
+					.setAddress(address)
+				;
+		}
+		
+	}
+	
 	public static Condition[] getConditions(AccountingRegistryFilter filter) {
 		return ACCOUNTING_REGISTRY_PROPERTIES.getConditions(filter);		
 	}
