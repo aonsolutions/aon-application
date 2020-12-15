@@ -10,6 +10,7 @@ public class InvalidDataException extends SegSocialException{
 	public static void checkCode(Integer statusCode, String msg) throws SegSocialException {
 		switch (statusCode) {
 		case 221:
+		case 3251:
 		case 2006:
 		case 3083:
 		case 2148:
