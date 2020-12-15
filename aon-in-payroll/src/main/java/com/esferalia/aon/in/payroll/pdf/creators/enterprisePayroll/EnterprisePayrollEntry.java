@@ -1,6 +1,8 @@
 package com.esferalia.aon.in.payroll.pdf.creators.enterprisePayroll;
 
-public class EnterprisePayrollEntry implements EnterprisePayrollEntryType {
+import java.util.Objects;
+
+public class EnterprisePayrollEntry{
 	String empleado;
 	String tipo;
 	Double devengado;
@@ -23,35 +25,97 @@ public class EnterprisePayrollEntry implements EnterprisePayrollEntryType {
 	Double costeTotalSS;
 	Double ssTotalSS;
 
-	public void setEmpleado(String empleado) {this.empleado = empleado;}
-	public void setEmpleadoSS(String empleado) {this.empleadoSS = empleado;}
+	boolean has_ss;
+	boolean has_aon;
 
-	public void setTipo(String tipo) {this.tipo = tipo;}
-	public void setTipoSS(String tipo) {this.tipoSS = tipo;}
+	public static enum EnterpriseEntryType{
+		AON_SYSTEM,
+		SEG_SOCIAL
+	}
 
-	public void setDevengado(double devengado) {this.devengado = devengado;}
-	public void setDevengadoSS(double devengado) {this.devengadoSS = devengado;}
 
-	public void setSsTrab(double ssTrab) {this.ssTrab = ssTrab;}
-	public void setSsTrabSS(double ssTrab) {this.ssTrabSS = ssTrab;}
+	//CONSTRUCTOR
+	public EnterprisePayrollEntry(EnterpriseEntryType type, String empleado, String tipo, Double devengado, Double ssTrab, Double irpf, Double deducciones, Double liquido, Double ssEmpr, Double costeTotal, Double ssTotal) {
+		has_ss = false;
+		has_aon = false;
 
-	public void setIrpf(double irpf) {this.irpf = irpf;}
-	public void setIrpfSS(double irpf) {this.irpfSS = irpf;}
+		if(type == EnterpriseEntryType.AON_SYSTEM){
+			this.empleado = 	empleado;
+			this.tipo = 		tipo;
+			this.devengado = 	devengado;
+			this.ssTrab = 		ssTrab;
+			this.irpf = 		irpf;
+			this.deducciones = deducciones;
+			this.liquido = 		liquido;
+			this.ssEmpr = 		ssEmpr;
+			this.costeTotal = 	costeTotal;
+			this.ssTotal = 		ssTotal;
+			has_aon = 			true;
+		}
+		if(type == EnterpriseEntryType.SEG_SOCIAL){
+			this.empleadoSS = 		empleado;
+			this.tipoSS = 			tipo;
+			this.devengadoSS = 		devengado;
+			this.ssTrabSS = 		ssTrab;
+			this.irpfSS = 			irpf;
+			this.deduccionesSS = 	deducciones;
+			this.liquidoSS = 		liquido;
+			this.ssEmprSS = 		ssEmpr;
+			this.costeTotalSS = 	costeTotal;
+			this.ssTotalSS = 		ssTotal;
+			has_ss = 				true;
+		}
+	}
 
-	public void setDeducciones(double deducciones) {this.deducciones = deducciones;}
-	public void setDeduccionesSS(double deducciones) {this.deduccionesSS = deducciones;}
+	public EnterprisePayrollEntry() {}
 
-	public void setLiquido(double liquido) {this.liquido = liquido;}
-	public void setLiquidoSS(double liquido) {this.liquidoSS = liquido;}
+	//SETS SS PARAMETERS WITH OTHER OBJECT
+	public void merge_ss_entry(EnterprisePayrollEntry ss_en){
 
-	public void setSsEmpr(double ssEmpr) {this.ssEmpr = ssEmpr;}
-	public void setSsEmprSS(double ssEmpr) {this.ssEmprSS = ssEmpr;}
+		this.tipoSS = 			ss_en.getTipoSS();
+		this.devengadoSS = 		ss_en.getDevengadoSS();
+		this.ssTrabSS =			ss_en.getDevengadoSS();
+		this.irpfSS = 			ss_en.getDevengadoSS();
+		this.deduccionesSS = 	ss_en.getDeduccionesSS();
+		this.liquidoSS = 		ss_en.getLiquidoSS();
+		this.ssEmprSS = 		ss_en.getSsEmprSS();
+		this.costeTotalSS = 	ss_en.getCosteTotalSS();
+		this.ssTotalSS = 		ss_en.getSsTotalSS();
+		has_ss = true;
+	}
 
-	public void setCosteTotal(double costeTotal) {this.costeTotal = costeTotal;}
-	public void setCosteTotalSS(double costeTotal) {this.costeTotalSS = costeTotal;}
+	public String getEmpleado() {return empleado;}
+	public String getEmpleadoSS() {return empleadoSS;}
 
-	public void setSsTotal(double ssTotal) {this.ssTotal = ssTotal;}
-	public void setSsTotalSS(double ssTotal) {this.ssTotalSS = ssTotal;}
+	public String getTipo() {return tipo;}
+	public String getTipoSS() {return tipoSS;}
+
+	public Double getDevengado() {return devengado;}
+	public Double getDevengadoSS() {return devengadoSS;}
+
+	public Double getSsTrab() {return ssTrab;}
+	public Double getSsTrabSS() {return ssTrabSS;}
+
+	public Double getIrpf() {return irpf;}
+	public Double getIrpfSS() {return irpfSS;}
+
+	public Double getDeducciones() {return deducciones;}
+	public Double getDeduccionesSS() {return deduccionesSS;}
+
+	public Double getLiquido() {return liquido;}
+	public Double getLiquidoSS() {return liquidoSS;}
+
+	public Double getSsEmpr() {return ssEmpr;}
+	public Double getSsEmprSS() {return ssEmprSS;}
+
+	public Double getCosteTotal() {return costeTotal;}
+	public Double getCosteTotalSS() {return costeTotalSS;}
+
+	public Double getSsTotal() {return ssTotal;}
+	public Double getSsTotalSS() {return ssTotalSS;}
+
+	public boolean Has_ss(){return has_ss;}
+	public boolean Has_aon(){return has_aon;}
 
 	public String toString() {
 		return "EnterprisePayrollEntry{" +
@@ -76,6 +140,19 @@ public class EnterprisePayrollEntry implements EnterprisePayrollEntryType {
 				", costeTotalSS=" + costeTotalSS +
 				", ssTotalSS=" + ssTotalSS +
 				'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		EnterprisePayrollEntry that = (EnterprisePayrollEntry) o;
+		return Objects.equals(empleado, that.empleado) && Objects.equals(tipo, that.tipo) && Objects.equals(devengado, that.devengado) && Objects.equals(ssTrab, that.ssTrab) && Objects.equals(irpf, that.irpf) && Objects.equals(deducciones, that.deducciones) && Objects.equals(liquido, that.liquido) && Objects.equals(ssEmpr, that.ssEmpr) && Objects.equals(costeTotal, that.costeTotal) && Objects.equals(ssTotal, that.ssTotal) && Objects.equals(empleadoSS, that.empleadoSS) && Objects.equals(tipoSS, that.tipoSS) && Objects.equals(devengadoSS, that.devengadoSS) && Objects.equals(ssTrabSS, that.ssTrabSS) && Objects.equals(irpfSS, that.irpfSS) && Objects.equals(deduccionesSS, that.deduccionesSS) && Objects.equals(liquidoSS, that.liquidoSS) && Objects.equals(ssEmprSS, that.ssEmprSS) && Objects.equals(costeTotalSS, that.costeTotalSS) && Objects.equals(ssTotalSS, that.ssTotalSS);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(empleado, tipo, devengado, ssTrab, irpf, deducciones, liquido, ssEmpr, costeTotal, ssTotal, empleadoSS, tipoSS, devengadoSS, ssTrabSS, irpfSS, deduccionesSS, liquidoSS, ssEmprSS, costeTotalSS, ssTotalSS);
 	}
 }
 
