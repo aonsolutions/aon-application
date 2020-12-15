@@ -117,7 +117,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		toolbar.getElement().getStyle().setHeight(50, Unit.PX);
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		
-		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRefresh());
+		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
 		loadingBtn.addStyleName(style.loadingPanel());
 		
 		Label loadingL = new Label("Accediendo al sistema RED para consultar los usuarios secundarios...");

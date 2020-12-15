@@ -225,7 +225,7 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 	}
 
 	private void getButtonsPanel() {
-		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRefresh());
+		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
 		loadingPanel.add(loadingBtn);
 		
 		closeBtnDialog = new Button();
