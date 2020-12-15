@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
@@ -2638,6 +2639,45 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					employee.getIpf());
 			
 			return employeeSegSocial;
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public boolean createITCertificate(String domainName, String userLogin, String affiliationNumber,
+			String regime, String contributionAccount, String docType, String docNum, String applicantType,
+			String reason, java.util.Date dateFrom, java.util.Date dateTo, float baseCC, float baseCP, int days) {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			Boolean recordCertificate = SistemaRED.recordCertificate(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
+			return recordCertificate;
+		
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void deleteComunicateIT(String domainName, String userLogin, String affiliationNumber,
+			String regime, String contributionAccount, java.util.Date dateFrom, java.util.Date dateTo,
+			java.util.Date startDate) {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			SistemaRED.voidPaternity(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
+		
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
 		}

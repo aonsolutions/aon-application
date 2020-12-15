@@ -652,4 +652,24 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.getNafxIpf(currentDomainName, currentUser, ipf, apellido1, apellido2, new AsyncCallbackWrapper<EmployeeSegSocial>(callback));
 	}
 
+	@Override
+	public void createITCertificate(String currentDomainName, String currentUser, String affiliationNumber,
+			String regime, String contributionAccount, String docType, String docNum, String applicantType,
+			String reason, Date dateFrom, Date dateTo, float baseCC, float baseCP, int days,
+			AsyncCallback<Boolean> callback) {
+		AON.start();
+		enterprisesServiceAsync.createITCertificate(currentDomainName, currentUser, affiliationNumber,
+				regime, contributionAccount, docType, docNum, applicantType,
+				reason, dateFrom, dateTo, baseCC, baseCP, days, new AsyncCallbackWrapper<Boolean>(callback));
+	}
+
+	@Override
+	public void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber,
+			String regime, String contributionAccount, Date dateFrom, Date dateTo, Date startDate,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteComunicateIT(currentDomainName, currentUser, affiliationNumber,
+				regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallbackWrapper<Void>(callback));
+	}
+
 }

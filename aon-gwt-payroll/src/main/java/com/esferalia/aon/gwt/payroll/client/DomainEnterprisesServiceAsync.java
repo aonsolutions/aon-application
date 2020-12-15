@@ -411,6 +411,20 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getNafxIpf(getCurrentDomainName(), getCurrentUser(), ipf, apellido1, apellido2, asyncCallback);
 	}
 	
+	public void createITCertificate(String affiliationNumber, String regime, String contributionAccount, String docType,
+			String docNum, String applicantType, String reason, Date dateFrom, Date dateTo, float baseCC, float baseCP,
+			int days, AsyncCallback<Boolean> asyncCallback) {
+		enterprisesServiceAsync.createITCertificate(getCurrentDomainName(), getCurrentUser(), affiliationNumber, regime, contributionAccount, docType,
+				docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP,
+				days, asyncCallback);
+	}
+	
+	public void deleteComunicateIT(String affiliationNumber, String regime, String contributionAccount, Date dateFrom,
+			Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.deleteComunicateIT(getCurrentDomainName(), getCurrentUser(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo,
+				startDate, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {

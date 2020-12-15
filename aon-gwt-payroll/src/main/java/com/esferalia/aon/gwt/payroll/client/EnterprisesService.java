@@ -232,5 +232,12 @@ public interface EnterprisesService extends RemoteService {
 
 	EmployeeSegSocial getNafxIpf(String currentDomainName, String currentUser, String ipf, String apellido1,
 			String apellido2);
+
+	boolean createITCertificate(String currentDomainName, String currentUser, String affiliationNumber, String regime,
+			String contributionAccount, String docType, String docNum, String applicantType, String reason,
+			Date dateFrom, Date dateTo, float baseCC, float baseCP, int days);
+
+	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
+			String contributionAccount, Date dateFrom, Date dateTo, Date startDate);
 	
 }

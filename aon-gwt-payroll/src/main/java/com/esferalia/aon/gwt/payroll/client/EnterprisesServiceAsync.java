@@ -146,5 +146,10 @@ public interface EnterprisesServiceAsync {
 	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback);
 	void getIpfxNaf(String currentDomainName, String currentUser, ArrayList<String> nssList, AsyncCallback<EmployeeSegSocial> asyncCallback);
 	void getNafxIpf(String currentDomainName, String currentUser, String ipf, String apellido1, String apellido2, AsyncCallback<EmployeeSegSocial> asyncCallback);
+	void createITCertificate(String currentDomainName, String currentUser, String affiliationNumber, String regime,
+			String contributionAccount, String docType, String docNum, String applicantType, String reason,
+			Date dateFrom, Date dateTo, float baseCC, float baseCP, int days, AsyncCallback<Boolean> asyncCallback);
+	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
+			String contributionAccount, Date dateFrom, Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback);
 	
 }
