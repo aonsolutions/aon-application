@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div styleClass="aon-portlet">
+		<aon:div styleClass="aon-portlet-title">
+			<aon:outputText value="#{bundle.config_domain_module}" styleClass="aon-bold aon-icon aon-icon-company"/>
+			<aon:div styleClass="aon-portlet-title-buttons" style="width: auto;">
+				<aon:commandLink id="domainBooking"
+					actionListener="#{domainBooking.onInit}" action="domainBooking_list">
+					<aon:outputText value="#{bundle.config_domain_booking}"
+						style="padding-bottom: 1px;padding-top: 1px;"
+						styleClass="aon-portlet-title-text aon-icon aon-button-goto"/>
+					<f:setPropertyActionListener target="#{domainBooking.backAction}"
+						value="#{null}"/>						
+				</aon:commandLink>
+			</aon:div>			
+		</aon:div>
+		<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+			<ui:include src="/com/code/aon/ui/config/facelet/domain/new_selection_listContent.xhtml" />
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+			
+		
+	<h:panelGrid columns="2" styleClass="aon-width-all aon-padding-bottom"
+		columnClasses="aon-float-left,aon-float-right">		
+		<aon:panelGroup>
+			<aon:outputText styleClass="aon-italic aon-margin-right aon-bold" value="#{bundle.aon_filter}:"/>
+			<aon:inputText id="domainFilter" size="60" value="#{domainSwitcher.filter}">
+				<a4j:support 
+					event="onkeyup"
+					reRender="domainSwitcherTableContainer"
+					eventsQueue="domainSwitcherFilterKeyUp"
+					requestDelay="500"
+					ajaxSingle="true"
+					ignoreDupResponses="true"
+					limitToList="true"/>
+			</aon:inputText>
+		</aon:panelGroup>
+		<aon:panelGroup>	
+			<aon:outputText 
+				styleClass="aon-italic aon-bold aon-margin-right" 
+				value="#{bundle.admin_domain_show}:" />
+			<aon:outputLabel for="Domains_showInactive"
+				styleClass="aon-italic" 
+				value="#{bundle.admin_domain_show_inactives}" />
+			<aon:selectBooleanCheckbox id="Domains_showInactive"
+				value="#{domainSwitcher.showInactive}" >
+				<a4j:support 
+					event="onclick"
+					reRender="domainSwitcherTableContainer"
+					eventsQueue="domainSwitcherFilterKeyUp"
+					actionListener="#{domainSwitcher.onChangeShowInactive}"
+					requestDelay="500"
+					ajaxSingle="true"
+					ignoreDupResponses="true"
+					limitToList="true"/>						
+			</aon:selectBooleanCheckbox>			
+			<aon:outputLabel for="Domains_showExpired"
+				styleClass="aon-italic" 
+				value="#{bundle.admin_domain_show_expired}" />										
+			<aon:selectBooleanCheckbox id="Domains_showExpired"
+				value="#{domainSwitcher.showExpired}" >
+				<a4j:support 
+					event="onclick"
+					reRender="domainSwitcherTableContainer"
+					eventsQueue="domainSwitcherFilterKeyUp"
+					actionListener="#{domainSwitcher.onChangeShowExpired}"
+					requestDelay="500"
+					ajaxSingle="true"
+					ignoreDupResponses="true"
+					limitToList="true"/>						
+			</aon:selectBooleanCheckbox>
+		</aon:panelGroup>															
+	</h:panelGrid>
+	<aon:div id="domainSwitcherTableContainer" styleClass="aon-width-all">
+		<aon:methodParam name="rowSelectorAction" value="start" />
+		<aon:methodParam name="rowSelectorActionListener" value="#{domains.onSelectChildDomain}" type="actionListener" />
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+			<ui:param name="controller" value="#{domainSwitcher}" />
+			<ui:param name="skipFocusFirst" value="true" />
+			<ui:define name="columns">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_name}" />
+					</f:facet>							
+					<aon:outputText value="#{to.description}"
+						title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
+						style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"/>					
+				</aon:column>
+
+				<aon:column styleClass="aon-width-40">
+					<aon:outputText 
+						rendered="#{to.enableHeredity}"
+						title="#{bundle.aon_domian_enableHeredity}"
+						styleClass="aon-icon2 aon-icon-index" />														
+					<aon:outputText 
+						rendered="#{!to.enableHeredity}"
+						title="#{bundle.aon_domian_disableHeredity}"
+						styleClass="aon-icon2 aon-icon-disableHeredity" />
+					<aon:div onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
+						onmouseout="enableRowSelector();" layout="inline" >										
+						<h:outputLink 
+							value="https://#{domainSwitcher.currentDomainURL}" target="_blank"
+							title="https://#{to.name}"
+							styleClass="aon-icon"
+							style="background: url('#{to.logo}') no-repeat scroll left center transparent; color: transparent; font-size: 16px; " >
+							I
+						</h:outputLink>
+					</aon:div>
+				</aon:column>
+			</ui:define>
+		</ui:decorate>
+	</aon:div>
+
+</ui:composition>
