@@ -1,7 +1,5 @@
 package solutions.aon.seg.social;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -9,11 +7,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import com.gargoylesoftware.css.parser.javacc.ParseException;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -39,7 +35,6 @@ import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
 import solutions.aon.seg.social.exceptions.paternity.PaternityException;
 import solutions.aon.seg.social.exceptions.paternity.PaternityNotFoundException;
 import solutions.aon.seg.social.exceptions.paternity.PaternityWrongDataException;
-import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.PaternityCertificate;
 import solutions.aon.seg.social.objects.PaternityCertificate.PaternityCertificateBuilder;
@@ -131,7 +126,7 @@ public class Paternity {
 			throw new CertificateNotFoundException();
 		} catch (StringIndexOutOfBoundsException e) {
 			throw new UnfilledMandatory();
-		}
+		} 
 		return false;
 	
 	}
@@ -485,8 +480,13 @@ public class Paternity {
 					htmlPage=htmlPage.getElementById("SPM.ACC.AC_CO_INFORME").click();
 					HtmlButton docButton=htmlPage.querySelector("button[class='botonDesplegable desplegar']");
 					htmlPage=docButton.click();
-					HtmlAnchor docAnchor=htmlPage.querySelector("a[title='Informe:Anulación de certificado de Otro progenitor (Nacimiento de hijo)']");
-					InputStream is=docAnchor.click().getWebResponse().getContentAsStream();
+					
+					
+					// TODO: Nuevo -> Revisar!!!!
+					HtmlAnchor anchor=htmlPage.getElementById("contenedor_documentosInformes").querySelector("a");
+//					HtmlAnchor docAnchor=htmlPage.querySelector("a[title='Informe:Anulación de certificado de Otro progenitor (Nacimiento de hijo)']");
+					
+					InputStream is=anchor.click().getWebResponse().getContentAsStream();
 					byte[] ret=is.readAllBytes();
 					is.close();
 					return ret;

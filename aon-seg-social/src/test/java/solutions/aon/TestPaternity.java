@@ -1,10 +1,13 @@
 package solutions.aon;
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -74,6 +77,44 @@ public class TestPaternity {
 			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("24-11-2020");
 			assertTrue("Should throw an exception", Paternity.grabarCertificado(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", ID_TYPE[0], "58025118M", APPLICANT_TYPE[1], FATHER_REASON[0], startDate, endDate, 1200, 1200, 28));	
 			
+		}catch(SegSocialException e) {
+			fail("Wrong data");
+		} catch (ParseException e) {
+			fail("Date typed wrong");
+		} catch (FileNotFoundException e1) {
+			fail("Certificate file does not exist");
+		} catch (IOException e1) {
+			fail("Certificate error");
+		}
+	}*/
+	
+	/*@Test
+	public void testGrabarConsultarBorrarCertificadoOk() {
+		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
+			
+			Date startDate = new SimpleDateFormat("dd-MM-yyyy").parse("07-12-2020");
+			Date endDate = new SimpleDateFormat("dd-MM-yyyy").parse("28-03-2021");
+			
+			Date creationDate = new SimpleDateFormat("dd-MM-yyyy").parse("16-12-2020");
+			
+			String cccType = "0111";
+			String ccc = "01105360062";
+			
+			String naf = "281468615302";
+			String document = "47227931F";
+			
+			boolean isSaved = Paternity.grabarCertificado(certificateInputStream, "jg@FNMT", "pkcs12", naf, cccType, ccc, ID_TYPE[0], document, APPLICANT_TYPE[0], FATHER_REASON[0], startDate, endDate, 2300, 2300, 30);	
+			
+			if(isSaved) {
+				byte[] pdfBytes = Paternity.getCertificatePdf(certificateInputStream, "jg@FNMT", "pkcs12", naf, cccType, ccc, creationDate, creationDate, Optional.of(startDate));
+				FileOutputStream out = new FileOutputStream(new File("/Users/sergio/Desktop/ParteIT.pdf"));
+				out.write(pdfBytes);
+				out.flush();
+				out.close();
+				
+				Paternity.voidPaternity(certificateInputStream, "jg@FNMT", "pkcs12", naf, cccType, ccc, creationDate, creationDate, Optional.of(startDate));
+			}
+				
 		}catch(SegSocialException e) {
 			fail("Wrong data");
 		} catch (ParseException e) {
