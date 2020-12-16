@@ -103,6 +103,36 @@
 		background-color: #ddd;
 	}
 	
+	.aon-table-row-hover {
+		background-color: #eee !important;
+	}
+
+	.aon-panelGrid-search {
+    	background-color: #fafafa;
+    	border: #ddd 1px solid;
+	}
+	
+	.aon-panelGrid-search-info {
+    	background: none;
+    	border-bottom: #ddd 1px solid;
+	}	
+	
+	.aon-panelGrid-search .aon-panelGrid-odd,
+	.aon-panelGrid-search .aon-panelGrid-even {
+    	background-color: #fafafa;
+	}
+	
+	.aon-panelGrid-search .rich-stglpanel-header {
+    	background-image: none;
+    	background-color: #f6f6f6;
+	}
+	
+	.aon-commandButton,
+	.aon-search-lookup-button {
+    	background: none;
+    	border: #ddd 1px solid;
+    	background-color: #eee;
+	}	
 	
 	</style>
 		
@@ -125,7 +155,7 @@
 
 				<aon:div style="margin-bottom:2px;">
 					<aon:commandLink id="index" action="index" title="#{bundle.aon_home}" >
-					<aon:graphicImage style="margin-left: 150px; height: 30px; vertical-align: middle;"
+					<aon:graphicImage style="margin-left: 150px; height: 24px; vertical-align: middle;"
 						value="#{customize.headerLogo}" />
 					</aon:commandLink>
 					<aon:if test="#{customize.separator != null}">					
