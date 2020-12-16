@@ -39,6 +39,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificate;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeePeculiarities;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
@@ -2657,6 +2658,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			float newBaseCC = JooqEmployee.getBaseCC(connection, docNum, dateFrom);
+			baseCC = 0 == newBaseCC ? baseCC : newBaseCC;
+			
+			float newBaseCP = JooqEmployee.getBaseCP(connection, docNum, dateFrom);
+			baseCP = 0 == newBaseCP ? baseCP : newBaseCP;
+			
+			days = JooqEmployee.getDays(connection, docNum, dateFrom);
 			
 			Boolean recordCertificate = SistemaRED.recordCertificate(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
 			return recordCertificate;

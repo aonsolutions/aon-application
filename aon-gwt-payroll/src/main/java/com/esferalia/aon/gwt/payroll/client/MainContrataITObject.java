@@ -119,9 +119,12 @@ public class MainContrataITObject {
 						String reason = checkITReason(it.getMaternityReason());
 						Date dateFrom = it.getStartDate();
 						Date dateTo = null != it.getEndDate() ? it.getEndDate() : DateUtils.addDays2Date(DateUtils.copyDateOnly(it.getStartDate()), (16*7));
+						if("P" == applicantType || applicantType.equals("P"))
+							dateTo = null != it.getEndDate() ? it.getEndDate() : DateUtils.addDays2Date(DateUtils.copyDateOnly(it.getStartDate()), (12*7));
+							
 						float baseCC = it.getDailyCGCBase().floatValue();
 						float baseCP = it.getDailyCGPBase().floatValue();
-						int days = 	(16*7);
+						int days = 	30;
 						
 						impl.createITCertificate(affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days, new AsyncCallback<Boolean>() {
 

@@ -23,12 +23,14 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1939,6 +1941,74 @@ public class JooqEmployee {
 		contractOtherDataNames.add("P_OPT5_EMPLOYER");
 		
 		return contractOtherDataNames;
+	}
+
+	public static float getBaseCC(Connection conn, String docNum, java.util.Date dateFrom) {
+		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dateFrom);
+		cal.add(Calendar.MONTH, -1);
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		
+		Result<Record> salaryData = dslContext.select().from(SALARY_DATA)
+			.where(SALARY_DATA.NAME.eq("BASE_CGC"))
+			.and(SALARY_DATA.SALARY.eq(
+					dslContext.select(SALARY.ID).from(SALARY)
+						.where(SALARY.EMPLOYEE_DOCUMENT.eq(docNum))
+						.and(SALARY.END_DATE.eq(new Date(cal.getTimeInMillis())))
+			)).fetch();
+		
+		if(salaryData.isNotEmpty())
+			return Float.parseFloat(salaryData.get(0).get(SALARY_DATA.EXPRESSION));
+		
+		return 0;
+	}
+
+	public static float getBaseCP(Connection conn, String docNum, java.util.Date dateFrom) {
+		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dateFrom);
+		cal.add(Calendar.MONTH, -1);
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		
+		Result<Record> salaryData = dslContext.select().from(SALARY_DATA)
+			.where(SALARY_DATA.NAME.eq("BASE_CGP"))
+			.and(SALARY_DATA.SALARY.eq(
+					dslContext.select(SALARY.ID).from(SALARY)
+						.where(SALARY.EMPLOYEE_DOCUMENT.eq(docNum))
+						.and(SALARY.END_DATE.eq(new Date(cal.getTimeInMillis())))
+			)).fetch();
+		
+		if(salaryData.isNotEmpty())
+			return Float.parseFloat(salaryData.get(0).get(SALARY_DATA.EXPRESSION));
+		
+		return 0;
+	}
+
+	public static int getDays(Connection conn, String docNum, java.util.Date dateFrom) {
+		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dateFrom);
+		cal.add(Calendar.MONTH, -1);
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		
+		Result<Record> salaryData = dslContext.select().from(SALARY_DATA)
+			.where(SALARY_DATA.NAME.eq("DIAS_NOMINA"))
+			.and(SALARY_DATA.SALARY.eq(
+					dslContext.select(SALARY.ID).from(SALARY)
+						.where(SALARY.EMPLOYEE_DOCUMENT.eq(docNum))
+						.and(SALARY.END_DATE.eq(new Date(cal.getTimeInMillis())))
+			)).fetch();
+		
+		if(salaryData.isNotEmpty()) {
+			Double newDays = Double.parseDouble(salaryData.get(0).get(SALARY_DATA.EXPRESSION));
+			return newDays.intValue();
+		}
+		
+		return cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
 
 }

@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
@@ -238,41 +239,46 @@ public class MainContrataIT extends MainEntryPoint {
 					}
 
 					@Override
-					protected void onAcceptIT() {
+					protected void onAcceptIT(IT it) {
 						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
 								s -> {
 									AonConfirmDialog dialog = new AonConfirmDialog();
 									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 									
-									mainContrataITObject.getEmployeesInfo(false,
-											t -> {
-												initContractTable();
-												setTableHeights();
-											},
-											d -> {}
-									);
-								},
-								f -> {});
-					}
-
-					@Override
-					protected void onAcceptITObj(IT it) {
-						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
-								s -> {
-									mainContrataITObject.comunicateIT(employeeITInfo, it, t -> {
-										AonConfirmDialog dialog = new AonConfirmDialog();
-										dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-										
-										getITCertificatePDF(employeeITInfo, it);
-										
-										mainContrataITObject.getEmployeesInfo(false,
-												a -> {
-													initContractTable();
-													initITTable();
-												},
-												b -> {}
-										);
-									}, d -> {});
+									AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+									comunicateDialog.confirm(
+											"COMUNIC" + String.valueOf("\u0040"), 
+											String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+											new AonConfirmDialogCallback() {
+						
+												@Override
+												public void onAccept() {
+													mainContrataITObject.comunicateIT(employeeITInfo, it, t -> {
+														AonConfirmDialog dialog = new AonConfirmDialog();
+														dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+														
+														getITCertificatePDF(employeeITInfo, it);
+														
+														mainContrataITObject.getEmployeesInfo(false,
+																a -> {
+																	initContractTable();
+																	initITTable();
+																},
+																b -> {}
+														);
+													}, d -> {});
+												}
+						
+												@Override
+												public void onCancel() {
+													mainContrataITObject.getEmployeesInfo(false,
+															t -> {
+																initContractTable();
+																setTableHeights();
+															},
+															d -> {}
+													);
+												}});	
 								},
 								f -> {});
 					}
@@ -472,41 +478,46 @@ public class MainContrataIT extends MainEntryPoint {
 					}
 
 					@Override
-					protected void onAcceptIT() {
+					protected void onAcceptIT(IT it) {
 						mainContrataITObject.createUpdateITEmployee(itEmployee,
 								s -> {
 									AonConfirmDialog dialog = new AonConfirmDialog();
 									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 									
-									mainContrataITObject.getEmployeesInfo(false,
-											t -> {
-												initContractTable();
-												initITTable();
-											},
-											d -> {}
-									);
-								},
-								f -> {});
-					}
-
-					@Override
-					protected void onAcceptITObj(IT it) {
-						mainContrataITObject.createUpdateITEmployee(itEmployee,
-								s -> {
-									mainContrataITObject.comunicateIT(itEmployee, it, t -> {
-										AonConfirmDialog dialog = new AonConfirmDialog();
-										dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-										
-										getITCertificatePDF(itEmployee, it);
-										
-										mainContrataITObject.getEmployeesInfo(false,
-												a -> {
-													initContractTable();
-													initITTable();
-												},
-												b -> {}
-										);
-									}, d -> {});
+									AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+									comunicateDialog.confirm(
+											"COMUNIC" + String.valueOf("\u0040"), 
+											String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+											new AonConfirmDialogCallback() {
+						
+												@Override
+												public void onAccept() {
+													mainContrataITObject.comunicateIT(itEmployee, it, t -> {
+														AonConfirmDialog dialog = new AonConfirmDialog();
+														dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+														
+														getITCertificatePDF(itEmployee, it);
+														
+														mainContrataITObject.getEmployeesInfo(false,
+																a -> {
+																	initContractTable();
+																	initITTable();
+																},
+																b -> {}
+														);
+													}, d -> {});
+												}
+						
+												@Override
+												public void onCancel() {
+													mainContrataITObject.getEmployeesInfo(false,
+															t -> {
+																initContractTable();
+																setTableHeights();
+															},
+															d -> {}
+													);
+												}});	
 								},
 								f -> {});
 					}

@@ -625,8 +625,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	// ----------------------------------------------- METODOS ABSTRACTOS -------------------------------------------------
 	
 	protected abstract void onDelete(IT it);
-	protected abstract void onAcceptIT();
-	protected abstract void onAcceptITObj(IT it);
+	protected abstract void onAcceptIT(IT it);
 
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 
@@ -1516,23 +1515,7 @@ public abstract class ITDialog extends AonCustomDialog {
 			if(null == this.it.getId() || -1 == this.it.getId())
 				itDialogObject.addIT(this.it);
 			
-			comunicateIT(null);
-			
-//			AonConfirmDialog comunicateDialog = new AonConfirmDialog();
-//			comunicateDialog.confirm(
-//					"COMUNIC" + String.valueOf("\u0040"), 
-//					String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
-//					new AonConfirmDialogCallback() {
-//
-//						@Override
-//						public void onAccept() {
-//							comunicateIT(it);
-//						}
-//
-//						@Override
-//						public void onCancel() {
-//							comunicateIT(null);
-//						}});
+			comunicateIT(it);
 		} else {
 			AonConfirmDialog dialog = new AonConfirmDialog();
 			dialog.info("AVISO: Fechas", "La fecha y la causa de baja deben estar rellenadas.");
@@ -1540,7 +1523,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	private void comunicateIT(IT it) {
-		onAcceptIT();
+		onAcceptIT(it);
 		hide();
 	}
 
