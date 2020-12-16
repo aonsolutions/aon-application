@@ -2200,7 +2200,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			AndEnterpriseStatus enterpriseStatus = new AndEnterpriseStatus();
 			
-			for ( CCC ccc: cccs ) {
+			Map<String, CCC> cccsMap = cccs.stream().collect(Collectors.toMap(ccc -> ccc.getRegime()+ccc.getCode(), ccc -> ccc, (ccc1, ccc2) -> ccc1));
+			
+			for ( CCC ccc: cccsMap.values() ) {
 				Collection<solutions.aon.seg.social.objects.Employee> ssEmployees = 
 				SistemaRED.getEmployees(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
 				
