@@ -1,6 +1,8 @@
 package solutions.aon;
 
 import org.junit.Test;
+
+import junit.framework.Assert;
 import solutions.aon.seg.social.SistemaRED_Employee;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
@@ -13,8 +15,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -97,6 +103,23 @@ public class TestEmployee {
 		catch (Exception e) {fail("unknown exception");}
 	}
 	
+	@Test
+	public void getEmployeesCcc2PagesTest() {
+		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMTI.p12")) {
+			Collection<Employee> employees = SistemaRED_Employee.getEmployees(certificateInputStream,"123456","pkcs12","0111","11122534302");
+			Map<String, Employee> employeesMap = employees.stream().collect( Collectors.toMap( e -> e.getName().orElse("-") , e -> e ));
+			for (Employee employee : employees) {
+				System.out.println( employee.getName().orElse("Unknown"));
+			}
+		}
+		catch (invalidCccException | StatusCodeException ignored) {}
+		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
+		catch (SegSocialException e) {fail("unexpected SegSocialException");}
+		catch (FileNotFoundException e) {fail("File not found");}
+		catch (IOException e) {fail("IOException");}
+		catch (Exception e) {fail(e.getMessage());}
+	}
+
 	@Test
 	public void getEmployeesCccEmptyTest() {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {

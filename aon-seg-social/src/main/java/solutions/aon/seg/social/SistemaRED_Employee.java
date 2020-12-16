@@ -230,19 +230,23 @@ import javax.tools.Tool;
 
 	//COMMON GETEMPLOYEE CODE
 	private static ArrayList<Employee> getEmployeesFromTable(HtmlPage htmlPage, ArrayList<Employee> employees, String regime, String ccc) throws IOException, SegSocialException {
-		Iterable<DomElement> tableContent = htmlPage.getElementById("Sub1000112079").getLastElementChild().getChildElements();
-		ArrayList<ArrayList<String>> data = new ArrayList<>();
-		ArrayList<String> empData = new ArrayList<>();
+		
+		
+		
 		int i = 1;
 		boolean end = false;
 
 		while (!end) {
+			ArrayList<ArrayList<String>> datas = new ArrayList<>();
+			ArrayList<String> empData = new ArrayList<>();
+			Iterable<DomElement> tableContent = htmlPage.getElementById("Sub1000112079").getLastElementChild().getChildElements();
+			
 			for (DomElement tr : tableContent) {
 				Iterable<DomElement> rowContent = tr.getChildElements();
 				for (DomElement td : rowContent) {
 					if (i == 5) {
 						empData.add(td.getVisibleText());
-						data.add(empData);
+						datas.add(empData);
 						empData = new ArrayList<>();
 						i = 0;
 					} else if (i == 1 && td.getVisibleText().equals("")) break;
@@ -254,7 +258,7 @@ import javax.tools.Tool;
 			EmployeeBuilder builder = new EmployeeBuilder();
 
 
-			for (ArrayList<String> empdata : data) {
+			for (ArrayList<String> empdata : datas) {
 				String nss = empdata.get(0);
 				if (nss != null) nss = nss.replace(" ", "");
 				String name = empdata.get(1);
