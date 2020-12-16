@@ -171,5 +171,14 @@ public class HtmlUnitToolkit {
 		catch(CSSException e){ throw new CSSParseException();}
 		catch(Exception e){ throw new InternalException();}
 	}
+	
+	public static HtmlElement createButton(HtmlPage page, HtmlForm form) {
+	      //create submit 
+	      HtmlElement button = (HtmlElement) page.createElement("button");
+	      button.setAttribute("type", "submit");
+	      
+	     form.appendChild(button);
+	     return button;
+	}
 
 }

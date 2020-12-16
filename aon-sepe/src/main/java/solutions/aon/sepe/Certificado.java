@@ -69,10 +69,7 @@ public class Certificado {
 	      HtmlForm formDatos =  (HtmlForm) htmlPage.querySelector("form[name=idpRedirect]");
 	      formDatos.getInputByName("SelectedIdP").setValueAttribute("AFIRMA");
 	      //create submit 
-	      HtmlElement button = (HtmlElement) htmlPage.createElement("button");
-	      button.setAttribute("type", "submit");
-	      
-	      formDatos.appendChild(button);
+	      HtmlElement button = HtmlUnitToolkit.createButton(htmlPage, formDatos);
 	      
 		  htmlPage = button.click();
 		  

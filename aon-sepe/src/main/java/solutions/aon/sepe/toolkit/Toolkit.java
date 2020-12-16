@@ -10,7 +10,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
 import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
@@ -201,4 +205,49 @@ public class Toolkit {
 		return new String[] {dia, mes , anio};
 	}
 	
+	public static String identity(String ipf) {
+		ipf = removeExtraZeros(ipf);
+		Pattern nif  = Pattern.compile(
+				//  -------- LEGAL_PERSON_NIF PATTERN  
+				// -------- (1) --> X00000000
+					"^[A-JUV]"
+					+"[\\s-_/]?"
+					+"[0-9]{2}"
+					+"[-_/\\.]?"
+					+"[0-9]{3}"
+					+"[-_/\\.]?"
+					+"[0-9]{3}$"
+					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		Pattern dni  = Pattern.compile(
+					"[0-9]?"
+					+"[0-9]"
+					+"[\\s-_/\\.]?"
+					+"[0-9]{3}"
+					+"[\\s-_/\\.]?"
+					+"[0-9]{3}"
+					+"[\\s-_/]?"
+					+"[A-Z]"
+					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+				//  -------- NIE PATTERN 
+				// -------- (1) --> X0000000X
+		Pattern nie  = Pattern.compile(
+					"[XYZ]"
+					+"[\\s-_/]?"
+					+"[0-9]{7}"
+					+"[\\s-_/]?"
+					+"[A-HJ-NP-TV-Z]"
+				, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		
+		Map<Pattern, Integer> patterns = new HashMap<Pattern, Integer>();
+		patterns.put(nif, 1);
+		patterns.put(dni, 1);
+		patterns.put(nie, 6);
+		
+		String identity = "";
+		for (Entry<Pattern, Integer> entry : patterns.entrySet()) {
+			if ( entry.getKey().matcher(ipf).matches()) { identity = entry.getValue().toString(); break; }
+		}
+		return identity;
+	}
+
 }

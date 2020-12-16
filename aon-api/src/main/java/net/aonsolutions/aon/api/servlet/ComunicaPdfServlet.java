@@ -21,10 +21,10 @@ import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
 
 import solutions.aon.seg.social.toolkit.Toolkit;
+import solutions.aon.sepe.SepeContrata;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 
@@ -59,7 +59,12 @@ public class ComunicaPdfServlet extends HttpServlet{
 			resp.setStatus(HttpServletResponse.SC_OK);
 
 			if(pathInfo  != null) {
-				PDF = this.routerSegSocial(pathInfo[1], domain, token,  json);
+				if(pathInfo[2]!=null && pathInfo[2].equalsIgnoreCase("sepe"))	{
+					PDF = this.routerSepe(pathInfo[1], domain, token,  json);
+				} else {
+					PDF = this.routerSegSocial(pathInfo[1], domain, token,  json);
+				}
+					
 		        resp.setContentType(MimeType.PDF.getName());
 				resp.setHeader("Content-disposition", "inline; filename=\"informe.pdf\";");
 				ByteArrayInputStream fileInpurOs =  new ByteArrayInputStream(PDF);
@@ -105,13 +110,37 @@ public class ComunicaPdfServlet extends HttpServlet{
 		return PDF;
 	}
 
+	//router Sepe
+	private byte[] routerSepe(String route, Domain domain, String token, JSONObject json) throws SegSocialException, Exception {
+		byte[] PDF = null;
+//		User user = AON_SOLUTIONS.getUser(domain, token);
+//		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+//		final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
+		InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("SEPE.p12");
+		String certificatePassword = "aon@FNMT";
+		String certificateType = "pkcs12";
+		switch (route) {
+			case "get-contrato":
+				LOGGER.info("GET-CONTRATO");
+				PDF =  getContratoPdf(certificateInputStream, certificatePassword,  certificateType, json);
+				break;
+			case "get-copy-basic":
+				LOGGER.info("GET-COPY-BASIC");
+				PDF = getCopyBasicPdf(certificateInputStream, certificatePassword,  certificateType, json);
+				break;
+			default:
+				break;
+		}
+		return PDF;
+	}
+
 	private byte[] getTA(final InputStream certificateInputStream, final String certificatePassword,
 			  final String certificateType, JSONObject json) throws SegSocialException {
 		String regimen = json.getString("regime");
 		String ccc = json.getString("ctaCti");
 		String nss = json.getString("nss");
 		Date fecha = Toolkit.parseDate(json.getString("fra"), "YYYY-MM-dd");
-	    return SistemaRED.getTA(certificateInputStream, "jg@FNMT", "pkcs12", regimen, ccc, nss, fecha);	
+	    return SistemaRED.getTA(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss, fecha);		
 	}
 	
 	private byte[] getIDC(final InputStream certificateInputStream, final String certificatePassword,
@@ -120,7 +149,7 @@ public class ComunicaPdfServlet extends HttpServlet{
 		String ccc = json.getString("ctaCti");
 		String nss = json.getString("nss");
 		Date fecha = Toolkit.parseDate(json.getString("fra"), "YYYY-MM-dd");
-	    return SistemaRED.getIDC(certificateInputStream, "jg@FNMT", "pkcs12", regimen, ccc, nss, fecha);	
+	    return SistemaRED.getIDC(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss, fecha);	
 	}
 	
 	private byte[] getCertCorriente(final InputStream certificateInputStream, final String certificatePassword,
@@ -129,4 +158,24 @@ public class ComunicaPdfServlet extends HttpServlet{
 		String ccc = json.getString("ccc");
 	    return SistemaRED.getUp2DateSS(certificateInputStream, certificatePassword, certificateType, regimen, ccc);	
 	}
+	
+	private byte[] getContratoPdf(final InputStream certificateInputStream, final String certificatePassword,
+			  final String certificateType, JSONObject json) throws Exception {
+		String ipf = json.getString("ipf");
+		System.out.println(json.getString("fecha"));
+		Date fecha = Toolkit.parseDate(json.getString("fecha"), "YYYY-MM-dd");
+
+		return SepeContrata.getContratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fecha, fecha);
+
+	}
+	
+	private byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
+			  final String certificateType, JSONObject json) throws Exception {
+		String ipf = json.getString("ipf");
+		Date fecha = Toolkit.parseDate(json.getString("fecha"), "YYYY-MM-dd");
+
+		return SepeContrata.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fecha, fecha);	
+	}
+	
+	
 }
