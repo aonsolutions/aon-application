@@ -366,15 +366,19 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				String ccc = req.getParameter(Parameter.CCC.name()+i);
 				String naf = req.getParameter(Parameter.NAF.name()+i);
 				String date = req.getParameter(Parameter.DATE.name()+i);
-	
-				Employee employee = addEmployee(userLogin, domainName, domainId, userId, regime, ccc, naf);
+				try {
+
+					Employee employee = addEmployee(userLogin, domainName, domainId, userId, regime, ccc, naf);
+					cccNafs.computeIfAbsent(new Pair(regime,ccc), k -> new ArrayList()).add(naf);
+					
+					byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d, \"employeeName\":\"%s\" },", employee.getEmployeeId(), employee.getWorkplaceId(), employee.getName().orElse(naf)).getBytes();
+					os.write(content);	
+					os.flush();
+					contentLength += content.length;
+				} catch ( Exception e ) {
+					System.out.println(naf + "-" + e.getLocalizedMessage());
+				}
 				
-				cccNafs.computeIfAbsent(new Pair(regime,ccc), k -> new ArrayList()).add(naf);
-	
-				byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d, \"employeeName\":\"%s\" },", employee.getEmployeeId(), employee.getWorkplaceId(), employee.getName().orElse(naf)).getBytes();
-				os.write(content);	
-				os.flush();
-				contentLength += content.length;
 			}
 			os.write(']');
 			os.flush();
