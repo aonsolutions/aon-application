@@ -16,8 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.AccountParams;
+import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -66,18 +69,35 @@ public class InvoiceServlet extends HttpServlet{
 		String domainName = req.getHeader("domain_name");
 		Domain domain = AON.getDomain(domainName, domainId, "");
 		Object object = new JSONObject();
-		if(req.getParameter(IConstants.ID) != null) {
-			Integer id = AonNumberUtils.toInteger(req.getParameter(IConstants.ID));
-			object = getInvoice(domain, "api", id);
+
+		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
+		if(pathInfo != null) {
+			if("accounts".equalsIgnoreCase(pathInfo[1])) {
+				JSONArray array = new JSONArray();
+				String type = req.getParameter(IConstants.TYPE);
+				ACCOUNTING.getAccounts(domain.getName(), domain.getId(), "", f -> accountFilter(f, domain, type)).forEach(acc -> {
+					JSONObject json = new JSONObject();
+					json.put("code", acc.getCode());
+					json.put("name", acc.getFullName());
+					array.put(json);
+				});
+				object = array;
+			}
 		} else {
-			String status = req.getParameter(IConstants.STATUS);
-			String[] types = req.getParameter(IConstants.TYPE) != null ? req.getParameter(IConstants.TYPE).split(","): null;
-		
-			Integer page = AonNumberUtils.toInteger(req.getParameter("page"));
-			Integer perPage = AonNumberUtils.toInteger(req.getParameter("per_page"));
-		
-			object = getInvoices(domain, "api", status, types, page, perPage);
+			if(req.getParameter(IConstants.ID) != null) {
+				Integer id = AonNumberUtils.toInteger(req.getParameter(IConstants.ID));
+				object = getInvoice(domain, "api", id);
+			} else {
+				String status = req.getParameter(IConstants.STATUS);
+				String[] types = req.getParameter(IConstants.TYPE) != null ? req.getParameter(IConstants.TYPE).split(","): null;
+				
+				Integer page = AonNumberUtils.toInteger(req.getParameter("page"));
+				Integer perPage = AonNumberUtils.toInteger(req.getParameter("per_page"));
+				
+				object = getInvoices(domain, "api", status, types, page, perPage);
+			}
 		}
+
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, object, new JSONObject());	
 	}
@@ -148,6 +168,24 @@ public class InvoiceServlet extends HttpServlet{
     	
     	if(perPage != null) {
     		filter.perPage(perPage);
+    	}
+    	
+		return filter;
+    }
+	
+	public static Filter accountFilter(AccountProperties f, Domain domain, String type) {
+		Integer[] domains = { domain.getId(), domain.getParentId() };
+		Filter filter =  f.getDomainProperty().in(domains);
+
+    	InvoiceType iType = InvoiceType.safeValueOf(type);
+    	if(iType != null && InvoiceType.SALES.equals(iType)) {
+    		filter = filter.and(f.getCodeProperty().like("700%").or(f.getCodeProperty().like("705%"))); 
+    	}
+    	if(iType != null && InvoiceType.PURCHASE.equals(iType)) {
+    		filter = filter.and(f.getCodeProperty().like("60%").or(f.getCodeProperty().like("62%"))); 
+    	}
+    	if(iType != null && (InvoiceType.EXPENSES.equals(iType) || InvoiceType.UNDEDUCTIBLE.equals(iType))) {
+    		filter = filter.and(f.getCodeProperty().like("629%")); 
     	}
     	
 		return filter;

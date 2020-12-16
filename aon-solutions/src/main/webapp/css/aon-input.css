@@ -184,3 +184,7 @@ input:read-only + .omrs-input-label {
 	cursor: pointer;
 	width: 100%;
 }
+
+.aonInputListOptionsItem:hover {
+	 background-color: #f1f1f1;
+}

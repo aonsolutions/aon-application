@@ -150,4 +150,12 @@ export class Invoice {
     let year = date.getFullYear();
     return day + '/' + month + '/' + year;
   }
+
+  getInvoiceType() {
+    if(this.isEmitida()){
+      return 'sales';
+    } else if(this.isRecibida()) {
+      return 'purchase';
+    } else return 'ticket';
+  }
 }

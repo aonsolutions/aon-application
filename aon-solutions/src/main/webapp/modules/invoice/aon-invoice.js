@@ -3,7 +3,7 @@ import {Transactions} from '../../services/transaction.js';
 import {Paymethods} from '../../services/paymethod.js';
 import {TaxType, TaxIVAPercentage, TaxIRPFPercentage, InvoiceAction} from './invoiceEnums.js';
 import {getInvoiceCategories} from '../../services/invoiceCategory.js';
-import {insertInvoice, deleteInvoices, getUserAppRole, getGlobalRegistries} from '../../services/service.js';
+import {insertInvoice, deleteInvoices, getUserAppRole, getGlobalRegistries, getInvoiceAccounts} from '../../services/service.js';
 import {isNumber, round} from '../../services/utils.js';
 import {Invoice} from './Invoice.js';
 import {getNextInvoice, getPreviousInvoice} from './InvoiceCache.js';
@@ -509,6 +509,7 @@ export class AonInvoice extends AonElement {
 		}
 		// DATE
 		let tdDate = document.createElement('td');
+		tdDate.setAttribute('colspan', this._invoice.isEmitida() ? '1' : '2');
 		tdDate.innerHTML = `<aon-date id="date" title="${MSG.AON_MSG_DATE}"></aon-date>`;
 		tr.appendChild(tdDate);
 		let date = document.getElementById('date');
@@ -520,6 +521,7 @@ export class AonInvoice extends AonElement {
 
 		// TOTAL
 		let tdTotal = document.createElement('td');
+		tdTotal.setAttribute('colspan', this._invoice.isEmitida() ? '1' : '2');
 		tdTotal.innerHTML = `<aon-number id="total" description="${MSG.AON_MSG_TOTAL}" format="true"></aon-number>`;
 		tr.appendChild(tdTotal);
 		let total = document.getElementById('total');
@@ -533,6 +535,7 @@ export class AonInvoice extends AonElement {
 
 		// NIF
 		let tdNif = document.createElement('td');
+		tdNif.setAttribute('colspan', this._invoice.isEmitida() ? '1' : '2');
 		tdNif.innerHTML = `<aon-suggestion id="nif" title="NIF"></aon-suggestion>`;
 		tr2.appendChild(tdNif);
 		let nif = document.getElementById('nif');
@@ -568,7 +571,7 @@ export class AonInvoice extends AonElement {
 
 		// NAME
 		let tdName = document.createElement('td');
-		tdName.setAttribute('colspan','3');
+		tdName.setAttribute('colspan', this._invoice.isEmitida() ? '3' : '4');
 		tdName.innerHTML = `<aon-suggestion id="name" title="Razón Social"></aon-suggestion>`;
 		tr2.appendChild(tdName);
 		let name = document.getElementById('name');
@@ -608,7 +611,7 @@ export class AonInvoice extends AonElement {
 
 		// ADDRESS
 		let tdAddress = document.createElement('td');
-		tdAddress.setAttribute('colspan', '4');
+		tdAddress.setAttribute('colspan', this._invoice.isEmitida() ? '4' : '6');
 		tdAddress.innerHTML = `<aon-input id="address" type="address" description="Dirección"></aon-input>`;
 		tr3.appendChild(tdAddress);
 		let address = document.getElementById('address');
@@ -626,20 +629,24 @@ export class AonInvoice extends AonElement {
 
 		// CATEGORY
 		let tdCategory = document.createElement('td');
-		tdCategory.setAttribute('colspan', '2');
+		tdCategory.setAttribute('colspan', this._invoice.isEmitida() ? '2' : '3');
 		tdCategory.innerHTML = `<aon-select id="category" title="${MSG.AON_MSG_CATEGORY}"></aon-select>`;
 		tr4.appendChild(tdCategory);
-		let category = document.getElementById('category');
-		category.options = JSON.stringify(getInvoiceCategories(this._invoice.type));
-		category.value = this._invoice.category;
-		if(this.isAccounting()) {
-			category.readonly = 'readonly';
-		}
-		category.addEventListener('select', () => this.update('category'));
+
+		getInvoiceAccounts({type: this._invoice.getInvoiceType()}).then(accounts => {
+			let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
+			let category = document.getElementById('category');
+			category.options = JSON.stringify(accs);
+			category.value = this._invoice.category;
+			if(this.isAccounting()) {
+				category.readonly = 'readonly';
+			}
+			category.addEventListener('select', () => this.update('category'));
+		});
 
 		// PAYMETHOD
 		let tdPaymethod = document.createElement('td');
-		tdPaymethod.setAttribute('colspan', '2');
+		tdPaymethod.setAttribute('colspan', this._invoice.isEmitida() ? '2' : '3');
 		tdPaymethod.innerHTML = `<aon-select id="pay_method" title="${MSG.AON_MSG_PAYMETHOD}"></aon-select>`;
 		tr4.appendChild(tdPaymethod);
 		let paymethod = document.getElementById('pay_method');
