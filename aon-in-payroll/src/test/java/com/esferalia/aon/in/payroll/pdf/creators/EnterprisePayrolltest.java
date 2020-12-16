@@ -10,76 +10,114 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class EnterprisePayrolltest {
 	@Test
-	@Ignore
 	public void EnterprisePayrollTest1() throws IOException {
 		AONContext context = AONContext.getAONContext("sherpa.aonsolutions.net", "admin");
-		Stream<Salary> salaries = AON.getSalaries(context, f -> f.getIdProperty().gt(0));
-		Stream<Salary> salaries_2 = AON.getSalaries(context, f -> f.getIdProperty().gt(0));
 
-		Map<String, Map<String, EnterprisePayrollEntry>> entries = new HashMap<>();
-		Map<String, Map<String, EnterprisePayrollEntry>> ss_entries = entries;
-
+		String[] possibleDates = {"2019-1", "2019-10", "2019-11","2019-12","2019-2","2019-3","2019-4","2019-5","2019-6","2019-7","2019-8","2019-9","2020-08"};
 		HashMap<String, Map<String, EnterprisePayrollEntry>> aon_system = new HashMap();
 		HashMap<String, Map<String, EnterprisePayrollEntry>> ss_system = new HashMap();
 
-		String[] keys = {"Murcia", "Bilbo", "Madrid", "Barcelona"};
+		for (String dateStr : possibleDates) {
+			Stream<Salary> salaries = AON.getSalaries(context, f -> f.getStartDateProperty().between(parseDate(dateStr + "-01", "yyyy-MM-dd"), parseDate(dateStr + "-30", "yyyy-MM-dd")));
+			Stream<Salary> salaries_2 = AON.getSalaries(context, f -> f.getStartDateProperty().between(parseDate(dateStr + "-01", "yyyy-MM-dd"), parseDate(dateStr + "-30", "yyyy-MM-dd")));
 
-		Object[] final_aon_entries = Arrays.asList(salaries.map(s ->	createEnterprisePayroll(s,false)).toArray()).stream().toArray();
-		Object[] final_ss_entries = Arrays.asList(salaries_2.map(s ->	createEnterprisePayroll(s,true)).toArray()).stream().toArray();
+			Map<String, Map<String, EnterprisePayrollEntry>> entries = new HashMap<>();
+			Map<String, Map<String, EnterprisePayrollEntry>> ss_entries = entries;
 
-		HashMap<String, EnterprisePayrollEntry> map = new HashMap<>();
-		aon_system.put("Aon Testing", map);
-		ss_system.put("Aon Testing", map);
+			Object[] final_aon_entries = Arrays.asList(salaries.map(s -> createEnterprisePayroll(s, false)).toArray()).stream().toArray();
+			Object[] final_ss_entries = Arrays.asList(salaries_2.map(s -> createEnterprisePayroll(s, true)).toArray()).stream().toArray();
 
-		for (Object entry : final_aon_entries) {
-			EnterprisePayrollEntry e = (EnterprisePayrollEntry)entry;
-			map.put(e.getEmpleado(),e);
-			if(map.size()> 2) break;
+			HashMap<String, EnterprisePayrollEntry> map = new HashMap<>();
+			aon_system.put(dateStr, map);
+
+			HashMap<String, EnterprisePayrollEntry> map_2 = new HashMap<>();
+			ss_system.put(dateStr, map_2);
+
+			for (Object entry : final_aon_entries) {
+				EnterprisePayrollEntry e = (EnterprisePayrollEntry) entry;
+				map.put(e.getEmpleado(), e);
+
+			}
+
+			for (Object entry : final_ss_entries) {
+				EnterprisePayrollEntry e = (EnterprisePayrollEntry) entry;
+				System.out.println(e.getEmpleadoSS());
+				map_2.put(e.getEmpleadoSS(), e);
+
+			}
 		}
 
-		for (Object entry : final_ss_entries) {
-			EnterprisePayrollEntry e = (EnterprisePayrollEntry)entry;
-			System.out.println(e.getEmpleadoSS());
-			map.put(e.getEmpleadoSS(),e);
-			if(map.size()> 2) break;
+		EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "Nomina de empresa", "Aon Solutions", aon_system, ss_system);
+		EnterprisePayrollTemplate.createAonPdf(payroll, "./Test1.pdf");
+	}
+
+	@Test
+	public void EnterprisePayrollTest2() throws IOException {
+		AONContext context = AONContext.getAONContext("sherpa.aonsolutions.net", "admin");
+
+		String[] possibleDates = {"2019-1", "2019-10", "2019-11","2019-12","2019-2","2019-3","2019-4","2019-5","2019-6","2019-7","2019-8","2019-9","2020-08"};
+		HashMap<String, Map<String, EnterprisePayrollEntry>> aon_system = new HashMap();
+
+		for (String dateStr : possibleDates) {
+			Stream<Salary> salaries = AON.getSalaries(context, f -> f.getStartDateProperty().between(parseDate(dateStr + "-01", "yyyy-MM-dd"), parseDate(dateStr + "-30", "yyyy-MM-dd")));
+
+			Map<String, Map<String, EnterprisePayrollEntry>> entries = new HashMap<>();
+			Object[] final_aon_entries = Arrays.asList(salaries.map(s -> createEnterprisePayroll(s, false)).toArray()).stream().toArray();
+
+			HashMap<String, EnterprisePayrollEntry> map = new HashMap<>();
+			aon_system.put(dateStr, map);
+
+			HashMap<String, EnterprisePayrollEntry> map_2 = new HashMap<>();
+			for (Object entry : final_aon_entries) {
+				EnterprisePayrollEntry e = (EnterprisePayrollEntry) entry;
+				map.put(e.getEmpleado(), e);
+
+			}
 		}
 
-
-
-		EnterprisePayroll payroll = new EnterprisePayroll("/home/akrck02/eclipse-workspace/aon-application/aon-seg-social/logo.png",new Date(),"Nomina de empresa","Aon Solutions",aon_system,ss_system);
-		EnterprisePayrollTemplate.createAonPdf(payroll,"./aonEnteprisePayrollTemplate.pdf");
-
-
+		EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "Nomina de empresa", "Aon Solutions", aon_system, aon_system);
+		EnterprisePayrollTemplate.createAonPdf(payroll, "./Test2.pdf");
 	}
 
-	private Object show(EnterprisePayrollEntry s) {
+	@Test
+	public void EnterprisePayrollTest3() throws IOException {
+		AONContext context = AONContext.getAONContext("sherpa.aonsolutions.net", "admin");
 
-		System.out.println("------------ENTRY-------------");
-		System.out.println("nombre: " + s.getEmpleado());
-		System.out.println("tipo: " + s.getTipo());
-		System.out.println("devengado: " + s.getDevengado());
-		System.out.println("ss trabajdor: " + s.getSsTrab());
-		System.out.println("irpf: " + s.getIrpf());
-		System.out.println("deducciones: " + s.getDeducciones());
-		System.out.println("liquido: " + s.getLiquido());
-		System.out.println("ss empresa: " + s.getSsEmpr());
-		System.out.println("coste total: " + s.getCosteTotal());
-		System.out.println("total ss: " + s.getSsTotalSS());
-		return  s;
+		String[] possibleDates = {"2019-1", "2019-10", "2019-11","2019-12","2019-2","2019-3","2019-4","2019-5","2019-6","2019-7","2019-8","2019-9","2020-08"};
+		HashMap<String, Map<String, EnterprisePayrollEntry>> aon_system = new HashMap();
+
+		for (String dateStr : possibleDates) {
+			Stream<Salary> salaries = AON.getSalaries(context, f -> f.getStartDateProperty().between(parseDate(dateStr + "-01", "yyyy-MM-dd"), parseDate(dateStr + "-30", "yyyy-MM-dd")));
+
+			Map<String, Map<String, EnterprisePayrollEntry>> entries = new HashMap<>();
+			Object[] final_aon_entries = Arrays.asList(salaries.map(s -> createEnterprisePayroll(s, true)).toArray()).stream().toArray();
+
+			HashMap<String, EnterprisePayrollEntry> map = new HashMap<>();
+			aon_system.put(dateStr, map);
+
+			HashMap<String, EnterprisePayrollEntry> map_2 = new HashMap<>();
+			for (Object entry : final_aon_entries) {
+				EnterprisePayrollEntry e = (EnterprisePayrollEntry) entry;
+				map.put(e.getEmpleado(), e);
+
+			}
+		}
+
+		EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "Nomina de empresa", "Aon Solutions", null, aon_system);
+		EnterprisePayrollTemplate.createAonPdf(payroll, "./Test3.pdf");
 	}
 
-
-	private EnterprisePayrollEntry createEnterprisePayroll(Salary salary, boolean segSocial){
-
+	private EnterprisePayrollEntry createEnterprisePayroll(Salary salary, boolean segSocial) {
 		EnterprisePayrollEntry.EnterpriseEntryType type = EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM;
-		if(segSocial) type = EnterprisePayrollEntry.EnterpriseEntryType.SEG_SOCIAL;
-
+		if (segSocial) type = EnterprisePayrollEntry.EnterpriseEntryType.SEG_SOCIAL;
 
 		EnterprisePayrollEntry entry = new EnterprisePayrollEntry(
 				type,
@@ -91,8 +129,22 @@ public class EnterprisePayrolltest {
 				salary.getTotalDeduction(),
 				salary.getTotalLiquid(),
 				salary.getTotalEnterprise(),
-				0.00,
-				salary.getTotalSSContributions());
+				salary.getTotalPayment() + salary.getTotalEnterprise(),
+				salary.getTotalSSContributions() + salary.getTotalEnterprise());
+
 		return entry;
 	}
+
+	public static Date parseDate(String dateStr, String format) {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
+		Date formattedDate;
+
+		try {
+			formattedDate = dateFormatter.parse(dateStr);
+			return formattedDate;
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+
 }

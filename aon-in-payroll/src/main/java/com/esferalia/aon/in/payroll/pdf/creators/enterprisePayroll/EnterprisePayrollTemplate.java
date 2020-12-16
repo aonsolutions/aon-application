@@ -183,16 +183,22 @@ public class EnterprisePayrollTemplate {
 		PDPageContentStream contents = new PDPageContentStream(doc, page);
 
 		float width = 75, height = width / 3.142857143f;
-		PDFToolkit.drawImage(doc, contents, payroll.getLogo(), width, height);
-		PDFToolkit.drawText(contents, fileTitle, 120f, 550f,black,helvetica_bold, 13);
-		PDFToolkit.drawText(contents, enterprise, 120f, 535f,black,helvetica_bold, 9);
-		PDFToolkit.drawText(contents, payroll.getSubheader(), 180f, 535f, black,helvetica_bold, 9);
+		float x = 25;
+		if(payroll.getLogo() != null){
+			PDFToolkit.drawImage(doc, contents, payroll.getLogo(),x,535, width, height);
+			x+=95;
+		}
+
+		PDFToolkit.drawText(contents, fileTitle, x, 550f,black,helvetica_bold, 13);
+		PDFToolkit.drawText(contents, enterprise, x, 535f,black,helvetica_bold, 9);
+		PDFToolkit.drawText(contents, payroll.getSubheader(), x+60, 535f, black,helvetica_bold, 9);
 
 		PDFToolkit.drawText(contents,  date, 770f, 535f, black, helvetica, 8);
 		PDFToolkit.drawBox(contents, 25, 495, 190, 14.5f,black);
 		PDFToolkit.drawText(contents, tableHeaders[0], 29f, 498f, white, helvetica_bold, 9.2f);
 
-		float x = 216, y = 495, w = 65, h = 14.5f;
+		x = 216;
+		float y = 495, w = 65, h = 14.5f;
 		for (int i = 1; i <= 9; i++, x += 66) {
 			PDFToolkit.drawBox(contents, x, y, w, h,black);
 			PDFToolkit.drawText(contents, tableHeaders[i], x + 4, y + 3,white, helvetica_bold,9.2f);
@@ -381,65 +387,5 @@ public class EnterprisePayrollTemplate {
 		PDFToolkit.drawText(contents, df.format(totalEmpresaSS[6]), x+654, y, green, helvetica, 7);
 		PDFToolkit.drawText(contents, df.format(totalEmpresaSS[7]), x+718, y, green, helvetica, 7);
 		return y;
-	}
-
-	//[DEBUG] GETTING THINGS DONE...
-	public static void main(String[] args) throws IOException {
-		HashMap<String, Map<String, EnterprisePayrollEntry>> aon_entries = new HashMap<>();
-		HashMap<String,EnterprisePayrollEntry> extras = new HashMap<>();
-		HashMap<String,EnterprisePayrollEntry> atrasos = new HashMap<>();
-
-		String[] extras_arr = {"DIAZ PEREZ ANA","COCA FUENTES PATRICIA","CASTELLANO HURTADO EUGENIO"};
-		String[] atrasos_arr = {"CASTELLANO HURTADO EUGENIO","RUESGAS GARCIA SHEILA","VALDEPEÑAS DEL POZO SERGIO","TREPIANA ZARATE RAUL","VASQUEZ BEAUPERTHUY RAY DE JESUS ","DIAZ PEREZ ANA","COCA FUENTES PATRICIA"};
-		int base = 1000;
-
-		for (String value : extras_arr)		extras.put(value,empleadoRandom(value, EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM));
-		for (String value : atrasos_arr) 	atrasos.put(value,empleadoRandom(value, EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM));
-
-		aon_entries.put("Bilbao", extras);
-		aon_entries.put("Murcia", atrasos);
-		aon_entries.put("A coruña", extras);
-		aon_entries.put("Almeria", atrasos);
-		aon_entries.put("Sevilla", atrasos);
-		aon_entries.put("Pamplona", atrasos);
-
-		HashMap<String, Map<String, EnterprisePayrollEntry>> ss_entries = new HashMap<>();
-		HashMap<String,EnterprisePayrollEntry> extras_2 = new HashMap<>();
-		HashMap<String,EnterprisePayrollEntry> pagos = new HashMap<>();
-		HashMap<String,EnterprisePayrollEntry> cosos = new HashMap<>();
-
-		for (String value : extras_arr)		extras_2.put(value,empleadoRandom(value, EnterprisePayrollEntry.EnterpriseEntryType.SEG_SOCIAL));
-		for (String value : atrasos_arr) 	pagos.put(value,empleadoRandom(value, EnterprisePayrollEntry.EnterpriseEntryType.SEG_SOCIAL));
-
-		ss_entries.put("Bilbao", extras_2);
-		ss_entries.put("Cáceres", pagos);
-		ss_entries.put("Sevilla", atrasos);
-		ss_entries.put("Pamplona", atrasos);
-		ss_entries.put("Zaragoza", pagos);
-		ss_entries.put("Córdoba", pagos);
-
-
-		createAonPdf(new EnterprisePayroll("logo.png", new Date(119, Calendar.APRIL,20), "Nómina de la empresa", "Aon Solutions",aon_entries,ss_entries), null);
-	}
-
-	public static EnterprisePayrollEntry empleadoRandom(String value , EnterprisePayrollEntry.EnterpriseEntryType type){
-		int base = 1000;
-		String[]tipos = {"Nomina","Otros"};
-		Double[]valores = {null,120.50,140.70,160.30,180.20,120.50,140.70,160.30,180.20};
-
-		EnterprisePayrollEntry entry = new EnterprisePayrollEntry(
-				type,
-				value,
-				tipos[(int)(Math.random()*2)],
-				1.2,
-				valores[(int)(Math.random()* valores.length)],
-				valores[(int)(Math.random()* valores.length)],
-				valores[(int)(Math.random()* valores.length)],
-				valores[(int)(Math.random()* valores.length)],
-				valores[(int)(Math.random()* valores.length)],
-				Math.random()* base,
-				Math.random()* base
-		);
-		return entry;
 	}
 }

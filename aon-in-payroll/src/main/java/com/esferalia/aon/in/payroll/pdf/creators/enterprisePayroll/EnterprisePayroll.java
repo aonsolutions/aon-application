@@ -25,6 +25,7 @@ public class EnterprisePayroll {
 	public Map<String,Map<String,EnterprisePayrollEntry>> merge(Map<String, Map<String, EnterprisePayrollEntry>> aon_category_entries, Map<String, Map<String, EnterprisePayrollEntry>> ss_category_entries){
 
 		if(ss_category_entries == null) ss_category_entries = new HashMap<>();
+		if(aon_category_entries == null) aon_category_entries = new HashMap<>();
 		Set<String> ss_categories = ss_category_entries.keySet();
 
 		for (String category : ss_categories){
@@ -52,4 +53,15 @@ public class EnterprisePayroll {
 	public String getHeader() {return header;}
 	public String getSubheader() {return subheader;}
 	public Map<String, Map<String, EnterprisePayrollEntry>> getEntries() {return entries;}
+
+	@Override
+	public String toString() {
+		return "EnterprisePayroll{" +
+				"logo='" + logo + '\'' +
+				", month=" + month +
+				", header='" + header + '\'' +
+				", subheader='" + subheader + '\'' +
+				", entries=" + entries +
+				'}';
+	}
 }

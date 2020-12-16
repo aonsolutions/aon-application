@@ -43,8 +43,8 @@ public class PDFToolkit {
 
 
 	//DRAWS AN IMAGE
-	public static void drawImage(PDDocument doc, PDPageContentStream contents, String route, float width, float height) throws IOException {
-		contents.drawImage(PDImageXObject.createFromFile(route,doc),20,535,width,height);
+	public static void drawImage(PDDocument doc, PDPageContentStream contents, String route,float x, float y, float width, float height) throws IOException {
+		contents.drawImage(PDImageXObject.createFromFile(route,doc),x,y,width,height);
 	}
 
 	public static void drawImage(PDDocument doc, PDPageContentStream contents, byte[] logo, float width, float height) throws IOException {

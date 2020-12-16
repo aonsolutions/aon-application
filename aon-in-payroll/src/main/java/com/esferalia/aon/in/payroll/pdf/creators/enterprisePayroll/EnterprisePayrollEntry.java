@@ -74,8 +74,8 @@ public class EnterprisePayrollEntry{
 
 		this.tipoSS = 			ss_en.getTipoSS();
 		this.devengadoSS = 		ss_en.getDevengadoSS();
-		this.ssTrabSS =			ss_en.getDevengadoSS();
-		this.irpfSS = 			ss_en.getDevengadoSS();
+		this.ssTrabSS =			ss_en.getSsTrabSS();
+		this.irpfSS = 			ss_en.getIrpfSS();
 		this.deduccionesSS = 	ss_en.getDeduccionesSS();
 		this.liquidoSS = 		ss_en.getLiquidoSS();
 		this.ssEmprSS = 		ss_en.getSsEmprSS();
@@ -154,5 +154,7 @@ public class EnterprisePayrollEntry{
 	public int hashCode() {
 		return Objects.hash(empleado, tipo, devengado, ssTrab, irpf, deducciones, liquido, ssEmpr, costeTotal, ssTotal, empleadoSS, tipoSS, devengadoSS, ssTrabSS, irpfSS, deduccionesSS, liquidoSS, ssEmprSS, costeTotalSS, ssTotalSS);
 	}
+
+
 }
 
