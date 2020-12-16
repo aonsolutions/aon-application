@@ -44,11 +44,11 @@ public class CustomizeBean implements Serializable {
 	
 	private static final String FONT_STYLE_DEFAULT = "black";
 	
-	private static final String FAVICON_DEFAULT = "/images/favicon.ico";
+	private static final String FAVICON_DEFAULT = "/images/favicon.svg";
 	
-	private static final String TOOLBAR_LOGO_DEFAULT = "/images/aon-icon/aon-icon-logo.png";	
+	private static final String TOOLBAR_LOGO_DEFAULT = "/images/aon-icon/aon-icon-logo.svg";	
 
-	private static final String LOGIN_LOGO_DEFAULT = "/com/code/aon/ui/resources/facelet/login/css/images/login/aon-solutions.png";	
+	private static final String LOGIN_LOGO_DEFAULT = "/com/code/aon/ui/resources/facelet/login/css/images/login/aon-solutions.svg";	
 	
 	private String toolbarLogo;
 

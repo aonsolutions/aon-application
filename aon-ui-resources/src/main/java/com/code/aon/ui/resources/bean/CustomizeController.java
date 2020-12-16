@@ -17,7 +17,7 @@ public class CustomizeController extends CustomizeBean {
 
 	private static final String RESOURCE_RESOLVER = "aonResource";
 
-	private static final String HEADER_LOGO_DEFAULT = "/images/aon-header/aon-solutions.png";
+	private static final String HEADER_LOGO_DEFAULT = "/images/aon-header/aon-solutions.svg";
 
 	
 	private static final String STATUS_START_DEFAULT = "/images/aon-header/aon-outputConnectionStatus-start.gif";

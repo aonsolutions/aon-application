@@ -65,7 +65,7 @@ public interface ICommonConstants {
 	
 	String HOME_ACTION = "home";
 	
-	String FAVICON_NAME = "favicon.ico";
+	String FAVICON_NAME = "favicon.svg";
 
 	String LOGIN_LOGO_NAME = "aon-login-logo";
 

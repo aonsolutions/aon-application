@@ -68,7 +68,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final String TOOLBAR_LOGO_DEFAULT =
-	new ResourceResolver().getResolve().get( "/images/aon-icon/aon-icon-logo.png");
+	new ResourceResolver().getResolve().get( "/images/aon-icon/aon-icon-logo.svg");
 
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(DomainSwitcher.class);

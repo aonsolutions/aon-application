@@ -189,7 +189,14 @@ public enum MimeType implements IResourceable {
     /**
      * Signed Facturae file MIME Type.
      */
-    MIME_SIGNED_FACTURAE ("text/xml", "xml");
+    MIME_SIGNED_FACTURAE ("text/xml", "xml"),
+    
+    /**
+     * SVG file MIME Type.
+     */
+    MIME_SVG ("image/svg+xml", "svg")
+    
+    ;
     
     
     /**
