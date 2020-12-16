@@ -39,6 +39,13 @@ public class Aio implements EntryPoint {
 	private Issues issues;
 	private Documental documental;
 	
+
+	public static native Boolean isAonSolutions()
+	/*-{
+		var newAon = $wnd.localStorage.getItem("aon_solutions"); 
+		return newAon ? true : false;
+	}-*/;
+	
 	public static native String getToken()
 	/*-{
 		return $wnd.localStorage.getItem("aon_session_id");
@@ -88,7 +95,7 @@ public class Aio implements EntryPoint {
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		
 		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);		
-		if(getToken() != null) {
+		if(isAonSolutions()) {
 			impl.getAonDataToken(getDomainName(), getDomainId(), getToken(), new AsyncCallback<AonData>() {
 				
 				@Override public void onSuccess(AonData result) {

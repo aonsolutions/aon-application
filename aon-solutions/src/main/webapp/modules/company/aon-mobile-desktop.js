@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getCompanies, getDomainNotice, getUserNotice} from  '../../services/service.js';
+import {getCompanies, getDomainNotice, getUserNotice, getUser} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 
 import '../../components/aon-icon.js';
@@ -126,6 +126,9 @@ export class AonMobileDesktop extends AonElement {
 			localStorage.setItem('company', JSON.stringify(company));
 			localStorage.setItem("aon_domain_id", company.id);
 			localStorage.setItem("aon_domain_name", company.domain);
+			getUser().then(user => {
+				localStorage.setItem('aon_domain_login', user.login);
+			});
 			this.build();
 		});
 

@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {closeSession, getUserAppRole, getCompanies, getUserNotice} from  '../../services/service.js';
+import {closeSession, getUserAppRole, getCompanies, getUserNotice, getUser} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 
 import '../../components/aon-application.js';
@@ -282,6 +282,9 @@ export class AonParent extends AonElement {
 		this.clearElement('aonMenu');
 		let aonMenu = this.getElement('aonMenu');
 		aonMenu.build();
+		getUser().then(user => {
+			localStorage.setItem('aon_domain_login', user.login);
+		});
 
 		getUserAppRole().then(user => {
 			let aonHeader = document.getElementById('aonHeader');

@@ -55,7 +55,7 @@ public class UserServlet extends HttpServlet{
 			if("app".equalsIgnoreCase(pathInfo[1])) {
 				String user = req.getParameter("user");
 				Integer userId = AonNumberUtils.toInteger(user);
-				JSONArray json = getDomainUser(domain, token, userId);
+				JSONArray json = getDomainUserRoles(domain, token, userId);
 				Utils.addCorsHeader(resp);
 				Utils.giveBack(req, resp, json, new JSONObject());
 			} else if("notice".equalsIgnoreCase(pathInfo[1])) {
@@ -66,6 +66,12 @@ public class UserServlet extends HttpServlet{
 				}
 				Utils.addCorsHeader(resp);
 				Utils.giveBack(req, resp, rawdocUserData.toJSON(), new JSONObject());
+			} if("info".equalsIgnoreCase(pathInfo[1])) {
+				String user = req.getParameter("user");
+				Integer userId = AonNumberUtils.toInteger(user);
+				JSONObject json = getDomainUser(domain, token, userId);
+				Utils.addCorsHeader(resp);
+				Utils.giveBack(req, resp, json, new JSONObject());
 			}
 
 		} else {
@@ -94,7 +100,7 @@ public class UserServlet extends HttpServlet{
 		}
 	}
 
-	private JSONArray getDomainUser(Domain domain, String token, Integer userId) {
+	private JSONArray getDomainUserRoles(Domain domain, String token, Integer userId) {
 		AonToken aonToken = SECURITY.getAonToken(token);
 		User user = new User();
 		if(userId != null) {
@@ -104,6 +110,22 @@ public class UserServlet extends HttpServlet{
 				.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
 		
 		return getUserRoles(domain, user);
+	}
+	
+	private JSONObject getDomainUser(Domain domain, String token, Integer userId) {
+		AonToken aonToken = SECURITY.getAonToken(token);
+		User user = new User();
+		if(userId != null) {
+			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(userId));
+		} else user = AON.getUser(domain.getName(), domain.getId(), "", f -> 
+				(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+				.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
+
+		JSONObject json = new JSONObject();
+		json.put("id",user.getId());
+		json.put("name", user.getName());
+		json.put("login", user.getLogin());
+		return json;
 	}
 	
 	private JSONArray getUserRoles(Domain domain, User user) {

@@ -54,6 +54,8 @@
 		let panel = rootPanel || 'rootPanel';
 		if(rootPanel) {
 			localStorage.setItem('rootPanel', rootPanel);
+		} else {
+			localStorage.removeItem('rootPanel');
 		}
 		removeRootPanel(panel);
 		preStartModule(module);

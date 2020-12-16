@@ -151,6 +151,8 @@ export class AonHeader extends AonElement {
 
 			localStorage.removeItem('aon_domain_id');
 			localStorage.removeItem('aon_domain_name');
+			localStorage.removeItem('aon_domain_login');
+
 			rootPanel('<aon-parent id="aonParent"></aon-parent>');
 		});
 

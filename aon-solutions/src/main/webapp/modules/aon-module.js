@@ -42,6 +42,8 @@ export class AonModule extends AonElement {
 			document.getElementById("aonHome").style.display = 'block';
 			localStorage.removeItem('aon_domain_id');
 			localStorage.removeItem('aon_domain_name');
+			localStorage.removeItem('aon_domain_login');
+
 			rootPanel(this.isMobile()
 			 	? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 			 	: '<aon-parent id="aonParent"></aon-parent>');

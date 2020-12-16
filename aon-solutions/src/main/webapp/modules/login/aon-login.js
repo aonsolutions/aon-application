@@ -152,6 +152,7 @@ export class AonLogin extends AonElement {
 			loader.stop();
 			localStorage.removeItem('aon_domain_id');
 			localStorage.removeItem('aon_domain_name');
+			localStorage.removeItem('aon_domain_login');
 			rootPanel(this.isMobile()
 				? '<aon-mobile-desktop id="aonParent"></aon-mobile-desktop>'
 				: '<aon-parent id="aonParent"></aon-parent>');
