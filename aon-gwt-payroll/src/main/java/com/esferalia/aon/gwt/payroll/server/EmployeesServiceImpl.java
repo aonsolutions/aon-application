@@ -2925,7 +2925,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			stmt.setInt(1, workplaceId);
 			rs = stmt.executeQuery();
 			
-			if ( rs.next() ) {
+			if ( rs.next() && rs.getDate(startCol) != null) {
 				return getWorkplaceCosts(workplaceId, rs.getDate(startCol), rs.getDate(endCol));
 			}
 
