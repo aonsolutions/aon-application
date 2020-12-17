@@ -152,7 +152,7 @@
 		<module>aon-jasperreports</module>
 		<module>aon-common-resources</module>
 		<module>aon-db-up2date</module>
-		<module>aon-saltra-api</module>
+		<module>aon-sepe</module>
 		<module>aon-seg-social</module>
 		<module>aon-in-invoice</module>
 		<module>aon-in-payroll</module>
