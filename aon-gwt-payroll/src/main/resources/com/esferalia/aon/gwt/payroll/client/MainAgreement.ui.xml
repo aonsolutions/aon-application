@@ -22,12 +22,27 @@
 	<ui:image field='agreementgroup' src='agreementgroup.png' />
 
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-		<g:west size='360'>
-			<g:DockLayoutPanel>
-				<g:center>
-					<aon:Agreements debugId="agreements" ui:field='agreements' />	
-				</g:center>
-			</g:DockLayoutPanel>
+		<g:west size='275'>
+
+			<g:StackLayoutPanel unit='EM'>
+
+				<g:stack ui:field="agreementStack">
+					<g:header size='3'>
+						<div class='{style.stackHeader}'>
+							<div class='{style.agreementIcon}' />
+							CONVENIOS
+						</div>
+					</g:header>
+					
+					<g:DockLayoutPanel>
+						<g:center>
+							<aon:Agreements debugId="agreements" ui:field='agreements' />	
+						</g:center>
+					</g:DockLayoutPanel>					
+				</g:stack>
+
+			</g:StackLayoutPanel>
+
 		</g:west>
 		<g:center>
 			<g:SimpleLayoutPanel>

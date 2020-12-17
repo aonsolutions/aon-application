@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
@@ -26,7 +25,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -245,10 +243,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	/*
 	 * @UiField MetaData metaData;
 	 */
-	
-	@UiField
-	SplitLayoutPanel splitLayoutPanel;
-	
 	@UiField
 	Agreements agreements;
 
@@ -269,18 +263,11 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	public void onModuleLoad() {
 
 		// Inject rich styles.
-//		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-//		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-//		GWT.<MainEntryPoint.CodeMirrorResources> create(
-//				MainEntryPoint.CodeMirrorResources.class).css()
-//				.ensureInjected();
-		
-		// Inject rich styles.
-		AON.ensureInjected();
-		GWT.<GWTResources>create(GWTResources.class).css().ensureInjected();
-		GWT.<AonResources>create(AonResources.class).css().ensureInjected();
-		GWT.<MainEntryPoint.CodeMirrorResources>create(MainEntryPoint.CodeMirrorResources.class).css().ensureInjected();
-		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
+		GWT.<MainEntryPoint.CodeMirrorResources> create(
+				MainEntryPoint.CodeMirrorResources.class).css()
+				.ensureInjected();
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
@@ -492,18 +479,5 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	private static boolean isEditable(AgreementDraftObject agreementDraftObject) {
 		return agreementDraftObject.isMine() || !agreementDraftObject.isSystem();		
 	}
-	
-	@Override
-	public void onCollapseMenuButtonClick() {
-		//TODO: no se redimensiona el menu lateral 
-		splitLayoutPanel.setWidgetSize(agreements, 25);
-	}
 
-	@Override
-	public void onShowMenuButtonClick() {
-		//TODO: no se redimensiona el menu lateral 
-		splitLayoutPanel.setWidgetSize(agreements, 385);
-	}
-
-	
 }

@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateTimeFormatException;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.EmptyStringException;
@@ -102,7 +100,6 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -1043,6 +1040,21 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiField
 	MyStyle style;
 
+	@UiField
+	Button fxButton;
+
+	@UiField
+	Button undoButton;
+
+	@UiField
+	Button redoButton;
+
+	@UiField
+	Button undoAllButton;
+
+	@UiField
+	Button acceptButton;
+
 //	@UiField
 //	Button deleteButton;
 
@@ -1164,15 +1176,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private FilterPatternTimer filterPatternTimer;
 	private boolean isOnCategoryTab = false;
 	
-	private AonToolbar toolbar;
-	private AonToolbarButton acceptButton;
-	private AonToolbarButton undoAllButton;
-	private AonToolbarButton undoButton;
-	private AonToolbarButton redoButton;
-	private AonToolbarButton fxButton;
-	private AonToolbarButton printPreviewButton;
-	
-	
 	public AgreementDraft() {
 		initWidget(binder.createAndBindUi(this));
 		initPaymentsTable();
@@ -1227,11 +1230,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		filterPattern = "";
 		
 		isOnCategoryTab = false;
-		
-		draftScrollPane.getElement().getStyle().setMarginTop(50, Unit.PX);
-		
-		toolbar = getToolbarPanel();
-		draftPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		
 	}
 	
@@ -1918,6 +1916,48 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	// Handlers
 	// ------------------------------------------
 
+	@UiHandler("redoButton")
+	void onRedoClick(ClickEvent event) {
+		agreementDraftObject.redo();
+		calculate();
+	}
+
+	@UiHandler("undoButton")
+	void onUndoClick(ClickEvent event) {
+		agreementDraftObject.undo();
+		calculate();
+	}
+
+	@UiHandler("acceptButton")
+	void onAcceptClick(ClickEvent event) {
+		agreementDraftObject.save(this);
+	}
+
+	@UiHandler("fxButton")
+	void onFxClicked(MouseDownEvent event) {
+		FxDialog fxDialog = new FxDialog(contextProvider) {
+			@Override
+			void onAcceptButtonClick(ClickEvent event) {
+				super.onAcceptButtonClick(event);
+				fxhasValue.setValue(getExpression(), true);
+				((Focusable) fxhasValue).setFocus(true);
+			}
+		};
+
+		fxDialog.setExpression(fxhasValue.getValue());
+		fxDialog.center();
+		fxDialog.show();
+
+	}
+
+	@UiHandler("undoAllButton")
+	void onUndoAllClicked(MouseDownEvent event) {
+		agreementDraftObject.clearDrafts();
+		agreementDraftObject.clearNewDatesWithChanges();
+		agreementDraftObject.clearDeleteDatesWithChanges();
+		agreementDraftObject.calculate(AgreementDraft.this);
+	}
+
 	@UiHandler("descriptionTextBox")
 	void onDescriptionValueChange(ValueChangeEvent<String> event) {
 		agreementDraftObject.setDescription(event.getValue());
@@ -1931,6 +1971,18 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiHandler("draftScrollPane")
 	void onMainScroll(ScrollEvent event) {
 		moveSalaryTableFrozenColsAndRows();
+	}
+
+	@UiHandler("printPreviewButton")
+	void onClickPrintPreviewButton(ClickEvent event) {
+		showPreview();
+
+		initZoomListBox();
+		initTypeListBox();
+		initLevelListBox();
+		initPreviewMonthListBox();
+
+		printPreview();
 	}
 
 	@UiHandler("closePreviewButton")
@@ -4369,99 +4421,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	private static <T extends Item<?>> boolean isZero(T item) {
 		return SpecialExpresion.isZero(item.getExpression());
-	}
-	
-	private AonToolbar getToolbarPanel() {
-		
-		AonToolbar toolbar = new AonToolbar("Convenio");
-		
-		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.save(AgreementDraft.this);
-			}
-		});
-		toolbar.add(acceptButton);
-		
-		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndo() );
-		undoAllButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.clearDrafts();
-				agreementDraftObject.clearNewDatesWithChanges();
-				agreementDraftObject.clearDeleteDatesWithChanges();
-				agreementDraftObject.calculate(AgreementDraft.this);
-			}
-		});
-		toolbar.add(undoAllButton);
-		undoAllButton.setVisible(false);
-		
-		undoButton = new AonToolbarButton(AON.MSG.undo(), AON.CSS.aonIconUndo() );
-		undoButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.undo();
-				calculate();
-			}
-		});
-		toolbar.add(undoButton);
-		undoButton.setVisible(false);
-		
-		redoButton = new AonToolbarButton("Rehace", AON.CSS.aonIconRedo() );
-		redoButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.redo();
-				calculate();
-			}
-		});
-		toolbar.add(redoButton);
-		redoButton.setVisible(false);
-		
-		printPreviewButton = new AonToolbarButton(AON.MSG.draftPrint(), AON.CSS.aonIconPdf() );
-		printPreviewButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				showPreview();
-
-				initZoomListBox();
-				initTypeListBox();
-				initLevelListBox();
-				initPreviewMonthListBox();
-
-				printPreview();
-			}
-		});
-		toolbar.add(printPreviewButton);
-		
-		fxButton = new AonToolbarButton("Calculadora", AON.CSS.aonIconFx() );
-		fxButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				FxDialog fxDialog = new FxDialog(contextProvider) {
-					@Override
-					void onAcceptButtonClick(ClickEvent event) {
-						super.onAcceptButtonClick(event);
-						fxhasValue.setValue(getExpression(), true);
-						((Focusable) fxhasValue).setFocus(true);
-					}
-				};
-
-				fxDialog.setExpression(fxhasValue.getValue());
-				fxDialog.center();
-				fxDialog.show();
-			}
-		});
-		toolbar.add(fxButton);
-		fxButton.setEnabled(false);
-		
-		CheckBox changesCheck = new CheckBox();
-		changesCheck.setText("Cambios");
-		changesCheck.setVisible(false);
-		toolbar.add(changesCheck);
-		
-		return toolbar;
 	}
 	
 }
