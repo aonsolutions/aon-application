@@ -201,6 +201,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_renew")
 	String aonIconRenew();
 	
+	@ClassName("aon_icon_fx")
+	String aonIconFx();
+	
 	@ClassName("aon_icon_add_task")
 	String aonIconAddTask();
 
@@ -533,20 +536,38 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_toolbar")
 	String aonToolbar();
 	
+	@ClassName("aon_toolbar_small")
+	String aonToolbarSmall();
+	
 	@ClassName("aon_toolbar_inner")
 	String aonToolbarInner();
-
+	
+	@ClassName("aon_toolbar_small_inner")
+	String aonToolbarSmallInner();
+	
 	@ClassName("aon_toolbar_title_container")
 	String aonToolbarTitleContainer();
+	
+	@ClassName("aon_toolbar_small_title_container")
+	String aonToolbarSmallTitleContainer();
 
 	@ClassName("aon_toolbar_title")
 	String aonToolbarTitle();
-	
+
+	@ClassName("aon_toolbar_small_title")
+	String aonToolbarSmallTitle();
+
 	@ClassName("aon_toolbar_button_container")
 	String aonToolbarButtonContainer();
+	
+	@ClassName("aon_toolbar_small_button_container")
+	String aonToolbarSmallButtonContainer();
 
 	@ClassName("aon_toolbar_message_container")
 	String aonToolbarMessageContainer();
+	
+	@ClassName("aon_toolbar_small_message_container")
+	String aonToolbarSmallMessageContainer();
 
 	@ClassName("aon_toolbar_message")
 	String aonToolbarMessage();
@@ -559,6 +580,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_toolbar_button")
 	String aonToolbarButton();
+	
+	@ClassName("aon_toolbar_small_button")
+	String aonToolbarSmallButton();
 
 	@ClassName("aon_ok_button")
 	String aonOkButton();

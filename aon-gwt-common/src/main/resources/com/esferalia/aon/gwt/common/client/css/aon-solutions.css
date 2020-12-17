@@ -133,6 +133,8 @@
 .aon_icon_lock { background-image: iconLock;}
 @url iconRenew aonIconRenew;
 .aon_icon_renew { background-image: iconRenew;}
+@url iconFx aonIconFx;
+.aon_icon_fx { background-image: iconFx;}
 @url iconAddTask aonIconAddTask;
 .aon_icon_add_task { background-image: iconAddTask;}
 @url iconCustomer aonIconCustomer;
@@ -559,6 +561,13 @@
 	box-sizing: border-box;
 	height: 50px;
 }
+
+.aon_toolbar_small {
+	width: 100%;
+	padding: 5px 0;
+	box-sizing: border-box;
+}
+
 .aon_toolbar_inner {
 	display: flex;
 	align-items: center;
@@ -566,13 +575,32 @@
 	border-bottom: solid #c4c4c4 1px;
 	min-height: 37px;
 }
+.aon_toolbar_small_inner {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	border-bottom: solid #c4c4c4 1px;
+	min-height: 32px;
+}
 .aon_toolbar_button_container {
 	margin-left: 1em;
+}
+
+.aon_toolbar_small_button_container {
+	display: flex;
 }
 
 .aon_toolbar_message_container {
 	margin-left: 40px;
 	margin-right: 40px;
+	display: flex;
+	flex-grow: 1;
+	justify-content: center;
+}
+
+.aon_toolbar_small_message_container {
+	margin-left: 5px;
+	margin-right: 5px;
 	display: flex;
 	flex-grow: 1;
 	justify-content: center;
@@ -608,15 +636,33 @@
 	white-space: nowrap;
 	width: auto;
 }
+.aon_toolbar_small_title_container {
+	padding-right: 2em;
+	float: right;
+	text-align: right;
+	white-space: nowrap;
+	width: auto;
+}
 .aon_toolbar_title {
 	font-weight: bold;
 	text-transform: uppercase;
 	font-size: 1.2em;
 }
+.aon_toolbar_small_title {
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 1.1em;
+	padding-left: 10px;
+}
 
 .aon_toolbar_button {
 	width: 36px;
 	height: 36px;
+}
+
+.aon_toolbar_small_button {
+	width: 24px;
+	height: 24px;
 }
 
 .aon_button {
