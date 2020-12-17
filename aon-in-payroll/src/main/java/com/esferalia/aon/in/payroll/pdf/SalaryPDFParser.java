@@ -16,7 +16,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryPDFParser {
 	
-	private static final SalaryPDFTemplate PDF_TEMPLATES [] = {AltaiPDFTemplate.ALTAI_PDF_TEMPLATE, A3PDFTemplate.A3_PDF_TEMPLATE};
+	private static final SalaryPDFTemplate PDF_TEMPLATES [] = {AltaiPDFTemplate.ALTAI_PDF_TEMPLATE, A3PDFTemplate.A3_PDF_TEMPLATE, DSIPDFTemplate.DSI_PDF_TEMPLATE};
 	
 	
 	public static void parse( File file , ISalaryBuilder<?> salaryBuilder) throws IOException, UnknownPDFException {
@@ -56,7 +56,7 @@ public class SalaryPDFParser {
 			if ( AonStringUtils.isBlank(text) ) 
 				continue;
 			
-//			System.out.println(text);
+			//System.out.println(text);
 			
 			template = parse(template, text, salaryBuilder);
 			
@@ -70,7 +70,7 @@ public class SalaryPDFParser {
 					return template.parse(text, salaryBuilder);
 				} catch ( SalaryPDFException e ) {
 					return template;
-				} catch ( Exception e ) {
+				} catch ( UnknownPDFException e ) {
 				}
 			}
 			throw new UnknownPDFException("Formato de nómina desconocido");

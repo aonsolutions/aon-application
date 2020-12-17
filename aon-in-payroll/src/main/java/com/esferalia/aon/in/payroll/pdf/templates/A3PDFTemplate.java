@@ -5,33 +5,25 @@ import static com.esferalia.aon.salary.enumeration.DeductionType.COMMON_CONTINGE
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.esferalia.aon.salary.enumeration.DeductionType;
-import com.esferalia.aon.salary.enumeration.PaymentType;
-
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
+import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.payment.IPayment;
-import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class A3PDFTemplate implements SalaryPDFTemplate {
@@ -48,21 +40,32 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 			Matcher matcher = find(reader, EMPLOYEE_NAME);
-			salaryBuilder.setEmployeeName(AonStringUtils.trimToNull(matcher.group("name")));
+			String empName=AonStringUtils.trimToNull(matcher.group("name"));
 			
 			matcher = find(reader, EMPLOYEE_ADDRESS);
-			salaryBuilder.setEmployeeAddress(AonStringUtils.trimToNull(matcher.group()).replaceAll("\\s{2,}", " "));
-
+			String empHome=AonStringUtils.trimToNull(matcher.group()).replaceAll("\\s{2,}", " ");
+			
+			
+			
+			
+			
 			matcher = find(reader, PC_AND_MUNICIPALITY);
-			salaryBuilder.setEmployeeCity(AonStringUtils.trimToNull(matcher.group("municipality")));
+			String empCity=AonStringUtils.trimToNull(matcher.group("municipality"));
+			
 			
 			matcher = find(reader, NIF);
-			salaryBuilder.setEnterpriseDocument(AonStringUtils.trimToNull(matcher.group("nif")));
+			String nif=AonStringUtils.trimToNull(matcher.group("nif"));
 			
 			matcher = find(reader, ENTERPRISE_HOME);
 			salaryBuilder.setEnterpriseName(AonStringUtils.trimToNull(matcher.group("enterprisename")));
 			salaryBuilder.setEnterpriseAddress(AonStringUtils.trimToNull(matcher.group("address")));
 			salaryBuilder.setCcc(AonStringUtils.trimToNull(matcher.group("nss")).replaceAll("[/]","").replaceAll("[-]", ""));
+			
+			salaryBuilder.setEmployeeName(empName);
+			salaryBuilder.setEmployeeAddress(empHome);
+			salaryBuilder.setEmployeeCity(empCity);
+			salaryBuilder.setEnterpriseDocument(nif);
+			
 			
 			matcher = find(reader, WORKER);
 			salaryBuilder.setCategory(AonStringUtils.trimToNull(matcher.group("job")));
