@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
@@ -24,7 +25,7 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 
 import solutions.aon.seg.social.toolkit.Toolkit;
-import solutions.aon.sepe.SepeContrata;
+import solutions.aon.sepe.Sepe;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 
@@ -34,7 +35,7 @@ import solutions.aon.seg.social.exceptions.SegSocialException;
 
 public class ComunicaPdfServlet extends HttpServlet{
 		
-	private static final Logger LOGGER  = Logger.getLogger(ComunicaServlet.class.getName());
+	private static final Logger LOGGER  = Logger.getLogger(ComunicaPdfServlet.class.getName());
 	
 	
 	@Override
@@ -46,8 +47,7 @@ public class ComunicaPdfServlet extends HttpServlet{
 		String token = json.getString("session_id");
 		String domainName = json.getString("domain_name");
 		Integer domainId = json.getInt("domain_id");
-		byte[] PDF = null;
-
+		
 		Domain domain = AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
 
 		try {
@@ -56,10 +56,11 @@ public class ComunicaPdfServlet extends HttpServlet{
 			
 			Utils.addCorsHeader(resp);
 			
-			resp.setStatus(HttpServletResponse.SC_OK);
+			byte[] PDF = null;
 
+			resp.setStatus(HttpServletResponse.SC_OK);
 			if(pathInfo  != null) {
-				if(pathInfo[2]!=null && pathInfo[2].equalsIgnoreCase("sepe"))	{
+				if( pathInfo.length == 3 && pathInfo[2].equalsIgnoreCase("sepe"))	{
 					PDF = this.routerSepe(pathInfo[1], domain, token,  json);
 				} else {
 					PDF = this.routerSegSocial(pathInfo[1], domain, token,  json);
@@ -90,7 +91,7 @@ public class ComunicaPdfServlet extends HttpServlet{
 		byte[] PDF = null;
 		User user = AON_SOLUTIONS.getUser(domain, token);
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
-		final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		switch (route) {
 			case "get-ta":
 				LOGGER.info("GET-TA");
@@ -111,14 +112,16 @@ public class ComunicaPdfServlet extends HttpServlet{
 	}
 
 	//router Sepe
-	private byte[] routerSepe(String route, Domain domain, String token, JSONObject json) throws SegSocialException, Exception {
+	private byte[] routerSepe(String route, Domain domain, String token, JSONObject json) throws Exception {
 		byte[] PDF = null;
 //		User user = AON_SOLUTIONS.getUser(domain, token);
-//		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+//		Certificate certificate = AON.getCertificateSEPE(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 //		final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
-		InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("SEPE.p12");
+		
+		byte[] cert = ComunicaPdfServlet.class.getResourceAsStream("SEPE.p12").readAllBytes();
+		final InputStream certificateInputStream = new ByteArrayInputStream(cert);
 		String certificatePassword = "aon@FNMT";
-		String certificateType = "pkcs12";
+		String certificateType = "PKCS12";
 		switch (route) {
 			case "get-contrato":
 				LOGGER.info("GET-CONTRATO");
@@ -136,19 +139,23 @@ public class ComunicaPdfServlet extends HttpServlet{
 
 	private byte[] getTA(final InputStream certificateInputStream, final String certificatePassword,
 			  final String certificateType, JSONObject json) throws SegSocialException {
+		
 		String regimen = json.getString("regime");
 		String ccc = json.getString("ctaCti");
 		String nss = json.getString("nss");
-		Date fecha = Toolkit.parseDate(json.getString("fra"), "YYYY-MM-dd");
+		Date fecha = Toolkit.parseDate(json.getString("fra"), "yyyy-MM-dd");
+		
 	    return SistemaRED.getTA(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss, fecha);		
 	}
 	
 	private byte[] getIDC(final InputStream certificateInputStream, final String certificatePassword,
 			  final String certificateType, JSONObject json) throws SegSocialException {
+		
 		String regimen = json.getString("regime");
 		String ccc = json.getString("ctaCti");
 		String nss = json.getString("nss");
-		Date fecha = Toolkit.parseDate(json.getString("fra"), "YYYY-MM-dd");
+		Date fecha = Toolkit.parseDate(json.getString("fra"), "yyyy-MM-dd");
+		
 	    return SistemaRED.getIDC(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss, fecha);	
 	}
 	
@@ -161,20 +168,21 @@ public class ComunicaPdfServlet extends HttpServlet{
 	
 	private byte[] getContratoPdf(final InputStream certificateInputStream, final String certificatePassword,
 			  final String certificateType, JSONObject json) throws Exception {
+		
 		String ipf = json.getString("ipf");
-		System.out.println(json.getString("fecha"));
-		Date fecha = Toolkit.parseDate(json.getString("fecha"), "YYYY-MM-dd");
-
-		return SepeContrata.getContratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fecha, fecha);
+		Date fecha = Toolkit.parseDate(json.getString("fecha"), "yyyy-MM-dd");
+		
+		return Sepe.getContratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fecha, fecha);
 
 	}
 	
 	private byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
 			  final String certificateType, JSONObject json) throws Exception {
+		
 		String ipf = json.getString("ipf");
-		Date fecha = Toolkit.parseDate(json.getString("fecha"), "YYYY-MM-dd");
-
-		return SepeContrata.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fecha, fecha);	
+		Date fecha = Toolkit.parseDate(json.getString("fecha"), "yyyy-MM-dd");
+		
+		return Sepe.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fecha, fecha);	
 	}
 	
 	

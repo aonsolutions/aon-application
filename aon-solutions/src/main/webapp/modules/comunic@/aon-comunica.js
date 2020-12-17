@@ -6,6 +6,7 @@ import './aon-movements.js';
 import '../../components/aon-toast.js';
 import '../../components/aon-application.js';
 import './cta/aon-cta-list.js';
+import './contrato/aon-contrato-list.js';
 
 export class AonComunica extends AonElement {
 
@@ -36,7 +37,7 @@ export class AonComunica extends AonElement {
 	}
 
 	buildToolbar(){
-		let options = [
+		const options = [
 			{
 				name: 'Contratos',
 				aonIcon: {
@@ -45,7 +46,10 @@ export class AonComunica extends AonElement {
 				},
 				fn: () => {
 					this.aonComunicaEl.removeToolbarOptions();
-					startModule('aon_gwt_payroll', 'MainContrata', this.aonComunicaEl.CONTENT);
+					if(this.isMobile())
+						this.aonComunicaEl.setContentHTML(`<aon-contrato-list id="aonContratoList" ></aon-contrato-list>`)
+					else 
+						startModule('aon_gwt_payroll', 'MainContrata', this.aonComunicaEl.CONTENT);
 				}
 			},
 			{

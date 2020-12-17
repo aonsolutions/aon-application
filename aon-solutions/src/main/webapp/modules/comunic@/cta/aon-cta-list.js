@@ -116,16 +116,21 @@ export class AonCtaList extends AonElement {
 	}
 
 	async getData() {
-		const workplaces = await getWorkplaceCCCs();
 		let cuentas = [];
-		for (const workplace in  workplaces) {
-			const cccs = workplaces[workplace].ccc;
-			if(cccs) for (const ccc in cccs) {
-				let cuenta = cccs[ccc];
-				cuenta["tipo"] = await this.getTipo(cuenta.type);
-				cuentas.push(cuenta);
+		try {
+			const workplaces = await getWorkplaceCCCs();
+			for (const workplace in  workplaces) {
+				const cccs = workplaces[workplace].ccc;
+				if(cccs) for (const ccc in cccs) {
+					let cuenta = cccs[ccc];
+					cuenta["tipo"] = await this.getTipo(cuenta.type);
+					cuentas.push(cuenta);
+				}
 			}
+		} catch(e){
+			console.log(e)
 		}
+
 		return cuentas;
 	}
 

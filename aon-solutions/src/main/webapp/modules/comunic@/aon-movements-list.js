@@ -125,33 +125,39 @@ export class AonMovementsList extends AonElement {
 	}
 
 	async getData() {
-		const resp = await getMovements(this.getFilter());
-		return resp.sort((a, b) => new Date(b.fra) - new Date(a.fra)).map(res => {
-			const { ipf, fra, situation } = res;
-			const fecha = setDate(fra);
-			const date_now = new Date();
-			const prev = new Date(fra).getTime() > date_now.getTime();
-			const dni = ipf.toString().substring(1);
-			let color = "#000";
-			let tipo_mov = situation === "AL" ? "Alta" : "Baja";
-			if (prev) {
-				color = "#488601";
-				tipo_mov = `${tipo_mov} previa`;
-			} else if (this.aonComunicaEl.anularCondition(situation, fra)) {
-				color = "#CB8D00";
-				tipo_mov = `${tipo_mov} Consolidada`;
-			} else
-				tipo_mov = `${tipo_mov} Consolidada`;
-
-			const status = `<span style="font-weight: 700;color: ${color};">${tipo_mov}</span>`;
-			return {
-				...res,
-				dni,
-				fecha,
-				status,
-				prev
-			};
-		});
+		let data = [];
+		try {
+			const resp = await getMovements(this.getFilter());
+			data = resp.sort((a, b) => new Date(b.fra) - new Date(a.fra)).map(res => {
+				const { ipf, fra, situation } = res;
+				const fecha = setDate(fra);
+				const date_now = new Date();
+				const prev = new Date(fra).getTime() > date_now.getTime();
+				const dni = ipf.toString().substring(1);
+				let color = "#000";
+				let tipo_mov = situation === "AL" ? "Alta" : "Baja";
+				if (prev) {
+					color = "#488601";
+					tipo_mov = `${tipo_mov} previa`;
+				} else if (this.aonComunicaEl.anularCondition(situation, fra)) {
+					color = "#CB8D00";
+					tipo_mov = `${tipo_mov} Consolidada`;
+				} else
+					tipo_mov = `${tipo_mov} Consolidada`;
+	
+				const status = `<span style="font-weight: 700;color: ${color};">${tipo_mov}</span>`;
+				return {
+					...res,
+					dni,
+					fecha,
+					status,
+					prev
+				};
+			});
+		} catch(e) {
+			console.log(e);
+		}
+		return data;
 	}
 
 	getFilter = () => JSON.parse(this.getAttribute('filter'));

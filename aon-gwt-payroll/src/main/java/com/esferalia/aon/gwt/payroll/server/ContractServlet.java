@@ -40,8 +40,8 @@ public class ContractServlet extends HttpServlet {
 		try {
 		
 			Connection conn = AonServletUtils.getConnection(domainName);
-			
-			content = gjson.toJson(JooqContrataContract.getEmployeesInfo(conn, domainId, false)).getBytes();
+			boolean allEmployees = Boolean.parseBoolean(req.getParameter("allEmployees"));  
+			content = gjson.toJson(JooqContrataContract.getEmployeesInfo(conn, domainId, allEmployees)).getBytes();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
