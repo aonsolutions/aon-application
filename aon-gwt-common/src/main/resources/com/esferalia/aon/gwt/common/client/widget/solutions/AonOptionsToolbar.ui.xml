@@ -1,0 +1,21 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style>
+	.newButton {
+		float: right;
+	}
+	.searchTextBox {
+		float: left;
+		margin-top: 2px;
+	}
+	
+	.legend-icon {
+		margin-top: 3px;
+	}
+	</ui:style>
+
+	<g:HTMLPanel debugId='buttonBarBeta' ui:field='buttonBar'></g:HTMLPanel>
+	<!-- <g:FlowPanel debugId='buttonBar' ui:field='buttonBar'></g:FlowPanel> -->
+</ui:UiBinder> 
