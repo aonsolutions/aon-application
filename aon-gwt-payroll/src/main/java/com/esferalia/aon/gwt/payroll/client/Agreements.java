@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
-import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonOptionsToolbar;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Agreements extends ResizeComposite implements
-		AgreementsTree.Listener, OptionsToolbar.Listener {
+		AgreementsTree.Listener, AonOptionsToolbar.Listener {
 
 	interface Listener {
 
@@ -34,6 +34,10 @@ public class Agreements extends ResizeComposite implements
 		void onAgreementContextMenu(Agreement agreement, ContextMenuEvent event);
 
 		void onAgreementSelected(Agreement agreement);
+
+		void onCollapseMenuButtonClick();
+
+		void onShowMenuButtonClick();
 	}
 	
 	interface Toolbar {
@@ -58,8 +62,10 @@ public class Agreements extends ResizeComposite implements
 
 	private static final Binder BINDER = GWT.create(Binder.class);
 
+//	@UiField
+//	OptionsToolbar toolbar;
 	@UiField
-	OptionsToolbar toolbar;
+	AonOptionsToolbar toolbar;
 	@UiField
 	AgreementsTree agreementsTree;
 
@@ -246,6 +252,18 @@ public class Agreements extends ResizeComposite implements
 	}
 	
 	@Override
+	public void onCollapseMenuButtonClick(ClickEvent event) {
+		for (Listener listener : listeners)
+			listener.onCollapseMenuButtonClick();
+	}
+	
+	@Override
+	public void onShowMenuButtonClick(ClickEvent event) {
+		for (Listener listener : listeners)
+			listener.onShowMenuButtonClick();
+	}
+	
+	@Override
 	public void onTreeItemSelected(SelectionEvent<TreeItem> event) {
 		TreeItem selectedItem = event.getSelectedItem();
 		Object object = selectedItem.getUserObject();
@@ -336,7 +354,5 @@ public class Agreements extends ResizeComposite implements
 				.replaceAll("\\s+", "_")
 				;
 	}
-
-	
 
 }
