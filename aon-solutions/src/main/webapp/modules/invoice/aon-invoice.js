@@ -630,7 +630,7 @@ export class AonInvoice extends AonElement {
 		// CATEGORY
 		let tdCategory = document.createElement('td');
 		tdCategory.setAttribute('colspan', this._invoice.isEmitida() ? '2' : '3');
-		tdCategory.innerHTML = `<aon-select id="category" title="${MSG.AON_MSG_CATEGORY}"></aon-select>`;
+		tdCategory.innerHTML = `<aon-select id="category" title="${MSG.AON_MSG_CATEGORY}" autocomplete="true" ></aon-select>`;
 		tr4.appendChild(tdCategory);
 
 		getInvoiceAccounts({type: this._invoice.getInvoiceType()}).then(accounts => {
@@ -899,6 +899,7 @@ export class AonInvoice extends AonElement {
 		// DETAIL DESCRIPTION
 		let tdDetailDescription = document.createElement('td');
 		tdDetailDescription.setAttribute('colspan','3');
+		tdDetailDescription.style.width = '50%';
 		tdDetailDescription.innerHTML = `<aon-input id="detailDescription${i}" description="${MSG.AON_MSG_CONCEPT}"></aon-input>`;
 		tr.appendChild(tdDetailDescription);
 		let detailDescription = document.getElementById('detailDescription' + i);

@@ -1,6 +1,5 @@
 import {AonInvoice} from './aon-invoice.js';
-import {insertInvoice, deleteInvoices, getUserAppRole} from '../../services/service.js';
-import {getInvoiceCategories} from '../../services/invoiceCategory.js';
+import {insertInvoice, deleteInvoices, getUserAppRole, getGlobalRegistries, getInvoiceAccounts} from '../../services/service.js';
 import {Transactions} from '../../services/transaction.js';
 import {Paymethods} from '../../services/paymethod.js';
 import {TaxType, TaxIVAPercentage, TaxIRPFPercentage, InvoiceAction} from './invoiceEnums.js';
@@ -198,7 +197,7 @@ export class AonMobileInvoice extends AonInvoice {
 
     // NIF
     let tdNif = document.createElement('td');
-    tdNif.innerHTML = `<aon-input id="nif" description="NIF"></aon-input>`;
+    tdNif.innerHTML = `<aon-suggestion id="nif" title="NIF"></aon-suggestion>`;
     tr2.appendChild(tdNif);
     let nif = document.getElementById('nif');
     nif.value = this.isEmitida()
@@ -207,11 +206,33 @@ export class AonMobileInvoice extends AonInvoice {
     if(this.isAccounting()) {
       nif.readonly = 'readonly';
     }
+    nif.addEventListener('keyup', () => {
+      if(nif.value.length > 2) {
+        getGlobalRegistries({document:nif.value}).then( registries =>
+          nif.buildOptions(registries.map(r => {return {name: r.document, value: r.document, registry: r};}))
+        );
+      } else {
+        nif.closeOptions();
+      }
+    });
+    nif.addEventListener('select', (event) => {
+      let registry = event.detail.registry;
+      let name = document.getElementById('name');
+      name.value = registry.name;
+      let address = document.getElementById('address');
+      address.buildAddressValue(JSON.stringify(registry.address));
+      if(this._invoice.isEmitida) {
+        this._invoice.receiver = registry;
+      } else {
+        this._invoice.sender = registry;
+      }
+      this.save();
+    });
     nif.addEventListener('change', () => this.updateRegistry());
 
     // NAME
     let tdName = document.createElement('td');
-    tdName.innerHTML = `<aon-input id="name" description="Razón Social"></aon-input>`;
+    tdName.innerHTML = `<aon-suggestion id="name" title="Razón Social"></aon-suggestion>`;
     tr2.appendChild(tdName);
     let name = document.getElementById('name');
     name.value = this.isEmitida()
@@ -220,6 +241,28 @@ export class AonMobileInvoice extends AonInvoice {
     if(this.isAccounting()) {
       name.readonly = 'readonly';
     }
+    name.addEventListener('keyup', () => {
+      if(name.value.length > 2) {
+        getGlobalRegistries({name:name.value}).then( registries =>
+          name.buildOptions(registries.map(r => {return {name: r.name, value: r.name, registry: r};}))
+        );
+      } else {
+        name.closeOptions();
+      }
+    });
+    name.addEventListener('select', (event) => {
+      let registry = event.detail.registry;
+      let nif = document.getElementById('nif');
+      nif.value = registry.document;
+      let address = document.getElementById('address');
+      address.buildAddressValue(JSON.stringify(registry.address));
+      if(this._invoice.isEmitida) {
+        this._invoice.receiver = registry;
+      } else {
+        this._invoice.sender = registry;
+      }
+      this.save();
+    });
     name.addEventListener('change', () => this.updateRegistry());
 
     let tr3 = document.createElement('tr');
@@ -244,20 +287,28 @@ export class AonMobileInvoice extends AonInvoice {
 
     // CATEGORY
     let tdCategory = document.createElement('td');
-    tdCategory.innerHTML = `<aon-select id="category" title="Categoría"></aon-select>`;
+    tdCategory.setAttribute('colspan', '2');
+    tdCategory.innerHTML = `<aon-select id="category" title="${MSG.AON_MSG_CATEGORY}" autocomplete="true"></aon-select>`;
     tr4.appendChild(tdCategory);
-    let category = document.getElementById('category');
-    category.options = JSON.stringify(getInvoiceCategories(this._invoice.type));
-    category.value = this._invoice.category;
-    if(this.isAccounting()) {
-      category.readonly = 'readonly';
-    }
-    category.addEventListener('select', () => this.update('category'));
+    getInvoiceAccounts({type: this._invoice.getInvoiceType()}).then(accounts => {
+			let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
+			let category = document.getElementById('category');
+			category.options = JSON.stringify(accs);
+			category.value = this._invoice.category;
+			if(this.isAccounting()) {
+				category.readonly = 'readonly';
+			}
++
+			category.addEventListener('select', () => this.update('category'));
+		});
 
+    let tr5 = document.createElement('tr');
+    table.appendChild(tr5);
     // PAYMETHOD
     let tdPaymethod = document.createElement('td');
+    tdPaymethod.setAttribute('colspan', '2');
     tdPaymethod.innerHTML = `<aon-select id="pay_method" title="Forma de Pago"></aon-select>`;
-    tr4.appendChild(tdPaymethod);
+    tr5.appendChild(tdPaymethod);
     let paymethod = document.getElementById('pay_method');
     paymethod.options = JSON.stringify(Paymethods);
     if(this._invoice.finances.length === 1) {
