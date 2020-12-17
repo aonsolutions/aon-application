@@ -4,6 +4,7 @@ import java.util.Base64;
 import java.util.LinkedList;
 
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.RawdocService;
@@ -38,8 +39,20 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public TediResult parse(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException {
 		String url = null;
 		if (AON.rawdocHasData(domainName, domain,user,rawdocId)) {
+//			StringBuilder baseURL = new StringBuilder();
+//			baseURL.append( getThreadLocalRequest().getContextPath() );
+// ---------------------
+			HttpServletRequest req = getThreadLocalRequest();
+			String scheme = req.getScheme();
+			String serverName = req.getServerName();
+			int serverPort = req.getServerPort();
 			StringBuilder baseURL = new StringBuilder();
+			baseURL.append(scheme).append("://").append(serverName);
+			if (serverPort != 80 && serverPort != 443) {
+				baseURL.append(":").append(serverPort);
+			}
 			baseURL.append( getThreadLocalRequest().getContextPath() );
+//----------------------
 			String params = "domain="+ domain + "&id=" +  rawdocId;
 			params = Base64.getEncoder().encodeToString(params.getBytes());
 			url = baseURL.toString() + "/ms/download_rawdoc" 
