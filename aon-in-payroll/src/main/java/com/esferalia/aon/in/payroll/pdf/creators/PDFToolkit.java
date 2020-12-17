@@ -1,19 +1,28 @@
 package com.esferalia.aon.in.payroll.pdf.creators;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
+import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
 import java.awt.*;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
+import java.util.List;
 
 public class PDFToolkit {
+
+	public final static Color AON_BLUE = new Color(0x3a5b9e);
+	public final static PDFont HELVETICA = PDType1Font.HELVETICA;
+	public final static PDFont HELVETICA_BOLD = PDType1Font.HELVETICA_BOLD;
 
 	//CREATE AN HORIZONTAL PAGE
 	public static PDPage createHorizontalPage(){
@@ -65,4 +74,28 @@ public class PDFToolkit {
 		formattedDate = Optional.of(dateFormatter.format(date));
 		return formattedDate;
 	}
+
+	//GET PDF FORM FIELDS
+	public static List<PDField> getFormFields(PDDocument doc){
+		PDDocumentCatalog pdCatalog = doc.getDocumentCatalog();
+		PDAcroForm pdAcroForm = pdCatalog.getAcroForm();
+		return  pdAcroForm.getFields();
+	}
+
+	//GET FIELD RECTANGLE
+	public static PDRectangle getFieldRectangle(PDField field){
+		return field.getWidgets().get(0).getRectangle();
+	}
+
+	//GET FIELD PAGE
+	public static PDPage get_field_page(PDField field){
+		return field.getWidgets().get(0).getPage();
+	}
+
+	//OPEN PAGE IN APPEND MODE
+	public static PDPageContentStream open_in_append_mode(PDDocument doc, PDPage page){
+		try { return new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);}
+		catch (IOException e) {return null;}
+	}
+
 }
