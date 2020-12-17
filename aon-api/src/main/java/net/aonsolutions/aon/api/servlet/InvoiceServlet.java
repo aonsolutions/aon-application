@@ -76,10 +76,12 @@ public class InvoiceServlet extends HttpServlet{
 				JSONArray array = new JSONArray();
 				String type = req.getParameter(IConstants.TYPE);
 				ACCOUNTING.getAccounts(domain.getName(), domain.getId(), "", f -> accountFilter(f, domain, type)).forEach(acc -> {
-					JSONObject json = new JSONObject();
-					json.put("code", acc.getCode());
-					json.put("name", acc.getFullName());
-					array.put(json);
+					if(acc.getCode().length() > 5) {
+						JSONObject json = new JSONObject();
+						json.put("code", acc.getCode());
+						json.put("name", acc.getFullName());
+						array.put(json);
+					}
 				});
 				object = array;
 			}
