@@ -239,19 +239,21 @@ public class EmployeesServiceHelper {
 			.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(sqlDate))) 
 			);
 			
-			Map<String,List<Variable>>  ssContractData = null;
 			
 			// check tipo_contrato == tc2 			
 			if ( employee.getContract().isPresent() ) {
 				String ssContractType = employee.getContract().get();
 				String aonContractType = getString(dataList, ContextVariable.TC2, "");
 				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 ) {
-					ssContractData = getSSContractData(certificate, regime, ccc, nss, employee.getFra());
 					employeeStatus.and(
 							new EmployeeStatus.MismatchedContractType()
 							.setAonContractType(aonContractType)
 							.setSsContractType(ssContractType)
-							.setVariables(ssContractData.get(TC2.getName()))
+							.setVariables(Collections.singletonList(
+									new StringVariable.Builder()
+									.setName(TC2.getName())
+									.setStartDate(employee.getFra())
+									.create()))
 							);
 				}
 			}
@@ -261,14 +263,15 @@ public class EmployeesServiceHelper {
 				String ssQuoteGroup = employee.getGc().get();
 				String aonQuoteGroup = getString(dataList, ContextVariable.QUOTE_GROUP, "");
 				if ( AonStringUtils.compareIgnoreCase(ssQuoteGroup, aonQuoteGroup ) != 0 ) {
-					if ( ssContractData == null ) {
-						ssContractData = getSSContractData(certificate, regime, ccc, nss, employee.getFra());
-					}
 					employeeStatus.and(
 							new EmployeeStatus.MismatchedQuoteGroup()
 							.setAonQuoteGroup(aonQuoteGroup)
 							.setSsQuoteGroup(ssQuoteGroup)
-							.setVariables(ssContractData.get(QUOTE_GROUP.getName()))
+							.setVariables(Collections.singletonList(
+									new StringVariable.Builder()
+									.setName(QUOTE_GROUP.getName())
+									.setStartDate(employee.getFra())
+									.create()))
 							);
 				} 
 			}
@@ -320,8 +323,25 @@ public class EmployeesServiceHelper {
 
 	}
 	
+	public static Map<String,List<Variable>> getSSContractData(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId, Date date) {
+		Contract contract;
+		try {
+			contract = PAYROLL.
+			getContract(domainName, domainId, userLogin, p -> p.getIdProperty().eq(contractId))
+			.orElseThrow(() -> new IOException() );
+			String ccc = contract.getEnterpriseCCC();
+			String naf = contract.getPersonSsNumber();
+			String regime = contract.getSsRegime().getCode();	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			return getSSContractData(certificate, regime, ccc, naf, date);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Collections.emptyMap();
+		}
+	}
 
-	private static Map<String,List<Variable>> getSSContractData(Certificate certificate, String regime, String ccc, String nss, Date date)  {
+	public static Map<String,List<Variable>> getSSContractData(Certificate certificate, String regime, String ccc, String nss, Date date)  {
 		Map<String, List<Variable>> ssContractData = new HashMap<String, List<Variable>>();
 		
 		Collection<Idc> idcDates;

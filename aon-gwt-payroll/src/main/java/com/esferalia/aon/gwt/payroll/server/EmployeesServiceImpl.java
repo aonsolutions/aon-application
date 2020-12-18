@@ -5447,18 +5447,28 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	public void setData(String domainName, String user, Integer contractId, ArrayList<Variable> data) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)){
 			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
 			
-			ContractData contractDatas [] = 
-			data.stream().map( v -> 
-			new ContractData()
-			.setName(v.getName())
-			.setExpression(v.getExpression())
-			.setStartDate(v.getStartDate())
-			.setEndDate(v.getEndDate()))
-			.toArray(ContractData[]::new)
-			;
+			data.stream().findFirst().ifPresent( d -> {
+				Map<String, List<Variable>> map = EmployeesServiceHelper.getSSContractData(connection, domainName, domainId, user, userId, contractId, d.getStartDate());
+				List<Variable> list = map.getOrDefault(d.getName(), Collections.emptyList());
+				
+				ContractData contractDatas [] = 
+						list.stream().map( v -> 
+						new ContractData()
+						.setName(v.getName())
+						.setExpression(v.getExpression())
+						.setStartDate(v.getStartDate())
+						.setEndDate(v.getEndDate()))
+						.toArray(ContractData[]::new)
+						;
+						
+				PAYROLL.setContractData(domainName, domainId, user, f -> f.getIdProperty().eq(contractId), contractDatas);
+				
+			});
+
 			
-			PAYROLL.setContractData(domainName, domainId, user, f -> f.getIdProperty().eq(contractId), contractDatas);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
