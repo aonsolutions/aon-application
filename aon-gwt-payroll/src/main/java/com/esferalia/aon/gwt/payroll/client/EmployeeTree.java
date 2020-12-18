@@ -34,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractCCCCretaRequestCom
 import com.esferalia.aon.gwt.payroll.client.MainCreta.SyncCallback;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
+import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
@@ -65,6 +66,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
@@ -2822,13 +2824,38 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private void checkStatus(EmployeeDraftObject employeeDraftObject) {
 		employeeDraftObject.checkStatus(employeeStatus -> {
 			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
-
+				
 				@Override
 				public void run() {
 					employeeDraftObject.checkStatus(employeeStatus -> {
 						removeAll();
 						employeeStatus.visit(this);
+						EmployeeStatus.ifSistemaREDError(
+								employeeStatus,
+								EmployeeTree.this::showFootPanel,
+								EmployeeTree.this::closeFootPanel					
+								);
+						
 					}, throwable -> {
+						closeFootPanel();
+						getEmployeeDraft().setTaVisible(false);
+						getEmployeeDraft().setIdcVisible(false);
+					});
+				}
+				
+				private void updateContractData (List<Variable> variables) {
+					DomainEmployeesServiceAsync.newInstance().setData(employeeDraftObject.getContractId(), new ArrayList<Variable>(variables), new AsyncCallback<Void>() {
+
+						@Override
+						public void onSuccess(Void result) {
+							getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
+							run();
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+
 					});
 				}
 				
@@ -2840,6 +2867,31 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				@Override
 				protected void cleanOcupation() {
 					getEmployeeDraft().setOcupation(null);
+				}
+				
+				@Override
+				protected void updateStartDate(MismatchedStartDate mismatchedStartDate) {
+					getEmployeeDraft().setStartDate(mismatchedStartDate.getSsStartDate());
+				}
+
+				@Override
+				protected void updateOccupation(MismatchedOccupation mismatchedOccupation) {
+					updateContractData(mismatchedOccupation.getVariables());
+				}
+
+				@Override
+				protected void updateQuoteGroup(MismatchedQuoteGroup mismatchedQuoteGroup) {
+					updateContractData(mismatchedQuoteGroup.getVariables());
+				}
+
+				@Override
+				protected void updateContractType(MismatchedContractType mismatchedContractType) {		
+					updateContractData(mismatchedContractType.getVariables());
+				}
+
+				@Override
+				protected void updatePartialFactor(MismatchedPartialFactor mismatchedPartialFactor) {
+					updateContractData(mismatchedPartialFactor.getVariables());
 				}
 
 				@Override
@@ -2869,10 +2921,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					});
 				}
 				
-				protected void updateStartDate(MismatchedStartDate mismatchedStartDate) {
-					getEmployeeDraft().setStartDate(mismatchedStartDate.getSsStartDate());
-				}
-
 				
 			};
 

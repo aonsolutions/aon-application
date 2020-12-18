@@ -401,14 +401,29 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 
 	@Override
 	public void mismatchedContractType(MismatchedContractType status) {
-		addError(new SaltraEvent() {
-			
-			@Override
-			public void append(SafeHtmlBuilder builder) {
-				builder.append(TEMPLATE.contractTypeMismatchedTreeItem(getMainStyle(), getAnchorStyle(), status.getSsContractType()));
-			}
-		});
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(
+		new Label(
+			"Trabajador con un Tipo de Contrato diferente "
+			+"'" + status.getSsContractType() +"'."
+			+" Pulse "
+			)
+		);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		Anchor anchor = new Anchor("aqu\u00ed");
+		anchor.addClickHandler(e -> updateContractType(status));		
+		anchor.getElement().getStyle().setColor("blue");
+		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
 		
+		horizontalPanel.add(anchor);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(new Label("para actualizar el Tipo de Contrato en AON."));
+		
+		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
+		
+		addError(horizontalPanel).setUserObject(status);
+
 		syncErrors();
 	}
 	
@@ -427,40 +442,85 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	
 	@Override
 	public void mismatchedOccupation(MismatchedOccupation status) {
-		addError(new SaltraEvent() {
-			
-			@Override
-			public void append(SafeHtmlBuilder builder) {
-				builder.append(TEMPLATE.occupationMismatchedTreeItem(getMainStyle(), getAnchorStyle(), status.getSsOccupation()));
-			}
-		});
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(
+		new Label(
+			"Trabajador con un Ocupaci\u00f3n diferente "
+			+"'" + status.getSsOccupation() +"'."
+			+" Pulse "
+			)
+		);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		Anchor anchor = new Anchor("aqu\u00ed");
+		anchor.addClickHandler(e -> updateOccupation(status));		
+		anchor.getElement().getStyle().setColor("blue");
+		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
 		
-		syncErrors();		
+		horizontalPanel.add(anchor);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(new Label("para actualizar la Ocupaci\u00f3n en AON."));
+		
+		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
+		
+		addError(horizontalPanel).setUserObject(status);
+
+		syncErrors();
 	}
 	
 	@Override
 	public void mismatchedPartialFactor(MismatchedPartialFactor status) {
-		addError(new SaltraEvent() {
-			
-			@Override
-			public void append(SafeHtmlBuilder builder) {
-				builder.append(TEMPLATE.partialFactorMismatchedTreeItem(getMainStyle(), getAnchorStyle(), status.getSsPartialFactor()));
-			}
-		});
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(
+		new Label(
+			"Trabajador con un Coeficiente de Parcialidad diferente "
+			+"'" + status.getSsPartialFactor() +"'."
+			+" Pulse "
+			)
+		);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		Anchor anchor = new Anchor("aqu\u00ed");
+		anchor.addClickHandler(e -> updatePartialFactor(status));		
+		anchor.getElement().getStyle().setColor("blue");
+		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
 		
-		syncErrors();	
+		horizontalPanel.add(anchor);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(new Label("para actualizar el Coeficiente de Parcialidad en AON."));
+		
+		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
+		
+		addError(horizontalPanel).setUserObject(status);
+
+		syncErrors();
 	}
 	
 	@Override
 	public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
-		addError(new SaltraEvent() {
-			
-			@Override
-			public void append(SafeHtmlBuilder builder) {
-				builder.append(TEMPLATE.quoteGroupMismatchedTreeItem(getMainStyle(), getAnchorStyle(), status.getSsQuoteGroup()));
-			}
-		});
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(
+		new Label(
+			"Trabajador con un Grupo de Cotizaci\u00f3n diferente "
+			+"'" + status.getSsQuoteGroup() +"'."
+			+" Pulse "
+			)
+		);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		Anchor anchor = new Anchor("aqu\u00ed");
+		anchor.addClickHandler(e -> updateQuoteGroup(status));		
+		anchor.getElement().getStyle().setColor("blue");
+		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
 		
+		horizontalPanel.add(anchor);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(new Label("para actualizar el Grupo de Cotizaci\u00f3n en AON."));
+		
+		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
+		
+		addError(horizontalPanel).setUserObject(status);
+
 		syncErrors();
 		}
 	// ------------------------------------------------------ EnterprisesStatus
@@ -555,7 +615,17 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	protected void updateStartDate(MismatchedStartDate mismatchedStartDate) {
 	}
 		
+	protected void updateOccupation(MismatchedOccupation mismatchedOccupation) {
+	}
 
+	protected void updateQuoteGroup(MismatchedQuoteGroup mismatchedQuoteGroup) {
+	}
+
+	protected void updateContractType(MismatchedContractType mismatchedContractType) {		
+	}
+
+	protected void updatePartialFactor(MismatchedPartialFactor mismatchedPartialFactor) {
+	}
 	// ------------------------------------------------------------------------
 	
 	protected void removeAll() {

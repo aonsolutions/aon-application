@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -455,5 +456,11 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	@Override
 	public void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback) {
 		failure(callback);				
+	}
+	
+	@Override
+	public void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data,
+			AsyncCallback<Void> callback) {
+		failure(callback);
 	}
 }

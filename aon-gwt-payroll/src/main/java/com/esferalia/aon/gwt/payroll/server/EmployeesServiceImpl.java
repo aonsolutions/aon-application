@@ -164,6 +164,8 @@ import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
@@ -5437,6 +5439,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return dataUri;
 		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void setData(String domainName, String user, Integer contractId, ArrayList<Variable> data) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)){
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			ContractData contractDatas [] = 
+			data.stream().map( v -> 
+			new ContractData()
+			.setName(v.getName())
+			.setExpression(v.getExpression())
+			.setStartDate(v.getStartDate())
+			.setEndDate(v.getEndDate()))
+			.toArray(ContractData[]::new)
+			;
+			
+			PAYROLL.setContractData(domainName, domainId, user, f -> f.getIdProperty().eq(contractId), contractDatas);
+		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}

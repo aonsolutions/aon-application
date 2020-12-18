@@ -717,4 +717,37 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 	}
 
+	public void setEndDate(Date endDate) {
+		end_date.setValue(endDate, false);
+		onContractEndDateChange();
+	}
+	
+	public void setStartDate(Date endDate) {
+		start_date.setValue(endDate, false);
+		onContractStartDateChange();
+	}
+
+	public void setOcupation(String str) {
+		switch (str) {
+		case "a":
+			occupation.setSelectedIndex(1);
+		case "b":
+			occupation.setSelectedIndex(2);
+		case "d":
+			occupation.setSelectedIndex(3);
+		case "e":
+			occupation.setSelectedIndex(4);
+		case "f":
+			occupation.setSelectedIndex(5);
+		case "g":
+			occupation.setSelectedIndex(6);
+		case "h":
+			occupation.setSelectedIndex(7);
+		default:
+			occupation.setSelectedIndex(0);
+		}
+		onContractOccupationChange();
+		
+	}
+	
 }

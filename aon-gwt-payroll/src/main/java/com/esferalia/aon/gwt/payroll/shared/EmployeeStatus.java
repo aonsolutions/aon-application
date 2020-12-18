@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 public abstract class EmployeeStatus implements Serializable {
@@ -134,12 +135,26 @@ public abstract class EmployeeStatus implements Serializable {
 		}
 	}
 	
+	public static class MismatchedContractData extends AndEmployeeStatus {
+		
+		private List<Variable> variables;
+		
+		
+		public List<Variable> getVariables() {
+			return variables;
+		}
+		
+		public MismatchedContractData setVariables(List<Variable> variables) {
+			this.variables = variables;
+			return this;
+		}
+		
+	}
 
-	public static class MismatchedContractType extends AndEmployeeStatus {
+	public static class MismatchedContractType extends MismatchedContractData {
 		
 		private String ssContractType;
-		private String aonContractType;
-
+		private String aonContractType;		
 		
 		public String getAonContractType() {
 			return aonContractType;
@@ -148,7 +163,7 @@ public abstract class EmployeeStatus implements Serializable {
 		public String getSsContractType() {
 			return ssContractType;
 		}
-
+		
 		public MismatchedContractType setSsContractType(String ssContractType) {
 			this.ssContractType = ssContractType;
 			return this;
@@ -158,6 +173,12 @@ public abstract class EmployeeStatus implements Serializable {
 			this.aonContractType = aonContractType;
 			return this;
 
+		}
+		
+		@Override
+		public MismatchedContractType setVariables(List<Variable> variables) {
+			super.setVariables(variables);
+			return this;
 		}
 		
 		@Override
@@ -199,7 +220,7 @@ public abstract class EmployeeStatus implements Serializable {
 		}
 	}
 	
-	public static class MismatchedOccupation extends AndEmployeeStatus {
+	public static class MismatchedOccupation extends MismatchedContractData {
 		
 		private String ssOccupation;
 		private String aonOccupation;
@@ -225,13 +246,19 @@ public abstract class EmployeeStatus implements Serializable {
 		}
 		
 		@Override
+		public MismatchedOccupation setVariables(List<Variable> variables) {
+			super.setVariables(variables);
+			return this;
+		}
+		
+		@Override
 		public void visit(Visitor visitor) {
 			visitor.mismatchedOccupation(this);
 			super.visit(visitor);
 		}
 	}
 		
-	public static class MismatchedPartialFactor extends AndEmployeeStatus {
+	public static class MismatchedPartialFactor extends MismatchedContractData {
 		
 		private String ssPartialFactor;
 		private String aonPartialFactor;
@@ -257,13 +284,19 @@ public abstract class EmployeeStatus implements Serializable {
 		}
 		
 		@Override
+		public MismatchedPartialFactor setVariables(List<Variable> variables) {
+			super.setVariables(variables);
+			return this;
+		}
+		
+		@Override
 		public void visit(Visitor visitor) {
 			visitor.mismatchedPartialFactor(this);
 			super.visit(visitor);
 		}
 	}
 	
-	public static class MismatchedQuoteGroup extends AndEmployeeStatus {
+	public static class MismatchedQuoteGroup extends MismatchedContractData {
 		
 		private String ssQuoteGroup;
 		private String aonQuoteGroup;
@@ -288,6 +321,12 @@ public abstract class EmployeeStatus implements Serializable {
 
 		}
 		
+		@Override
+		public MismatchedQuoteGroup setVariables(List<Variable> variables) {
+			super.setVariables(variables);
+			return this;
+		}
+
 		@Override
 		public void visit(Visitor visitor) {
 			visitor.mismatchedQuoteGroup(this);

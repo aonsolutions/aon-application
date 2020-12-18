@@ -576,24 +576,28 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	@Override
 	public EmployeeContractInfo getEmployeeInfoDataBase(String domain, Integer employeeContract) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public EmployeeContractInfo setEmployeeInfoDataBase(String domain, EmployeeContractInfo newEmployeeInfo) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public EmployeeContractInfo createEmployeeContract(String domain, EmployeeContractInfo newEmployeeInfo) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public WorkplaceEmployees getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
@@ -601,6 +605,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	public Map<String, String> getWorkplaceEventsVariables(String currentDomainName, Integer workplaceId,
 			Integer agreementId, Date startDate, Date endDate) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
@@ -608,6 +613,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	public EmployeeEventsData getEmployeeEventsByContract(String currentDomainName, Integer contractId,
 			ArrayList<String> employeeContractVariablesDB) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
@@ -615,60 +621,70 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	public String setEmployeeAFIChanges(String currentDomainName, Integer contractId, Date newDate, boolean isChangeContract, String tc2,
 			boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public String resetCalendar(String currentDomainName, Integer employeeId) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public List<SalaryInfo> getEmployeeSalaries(String currentDomainName, Integer employeeId) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public String deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public List<SalaryInfo> getWorkplaceSalaries(String currentDomainName, Integer workplaceId) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public WorkplaceEmployees getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public List<SalaryInfo> getEnterpriseSalaries(String currentDomainName, Integer enterpriseId) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public List<SalaryInfo> getFilterSalaries(String currentDomainName, SalaryInfoFilter filter) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public EmployeeCalendarInfo getEmployeeCalendarInfo(String currentDomainName, Integer contractId) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
@@ -676,12 +692,14 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	public String setEmployeeCalendarInfo(String currentDomainName, Integer contractId,
 			EmployeeCalendarInfo employeeCalendarInfo) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public String resetEmployeeCalendarInfo(String currentDomainName, Integer contractId) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
@@ -689,45 +707,57 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	public EmployeeEventsData setEmployeeEvents(String currentDomainName, Integer idEmployee,
 			EmployeeEventsData employeeEventsData) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public ArrayList<EventEmployee> setEventsDraft(String currentDomainName, ArrayList<EventEmployee> eventEmployees) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public String generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 	
 	@Override
 	public String getEmployeeTa(String domain, String user, Integer contractId, Date date) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public String getEmployeeIdc(String domain, String user,Integer contractId, Date date) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public String fillContract(String currentDomainName,  Integer contractId, Integer contractType, String formativeLvl) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
-	
+	@Override
+	public void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data) {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
+		
+	}
 
 }

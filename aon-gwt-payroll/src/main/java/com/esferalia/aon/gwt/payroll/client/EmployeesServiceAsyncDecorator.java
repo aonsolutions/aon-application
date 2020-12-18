@@ -748,5 +748,11 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.fillContract(currentDomainName, contractId, contractType, formativeLvl, new AsyncCallbackWrapper<String>(callback));
 	}
 	
+	@Override
+	public void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		employeesServiceAsync.setData(currentDomainName, user, contractId, data, new AsyncCallbackWrapper<Void>(callback));
+	}
 	
 }

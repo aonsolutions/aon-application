@@ -493,6 +493,11 @@ public class DomainEmployeesServiceAsync {
 	public void fillContract(Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<String> callback) {
 		employeesServiceAsync.fillContract(getCurrentDomainName(), contractId, contractType, formativeLvl, callback);
 	}
+	
+	void setData(Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback) {
+		employeesServiceAsync.setData(getCurrentDomainName(), getCurrentUser(), contractId, data, callback);
+	}
+
 	// ------------------------------------------------------------------------
 	
 	public AgreementServiceAsync asAgreementServiceAsync() {

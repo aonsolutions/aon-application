@@ -1029,11 +1029,11 @@ public class EmployeeDraft extends Composite {
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 	
 	public void setEndDate(Date endDate) {
-		employee.end_date.setValue(endDate, true);
+		employee.setEndDate(endDate);
 	}
 	
 	public void setStartDate(Date endDate) {
-		employee.start_date.setValue(endDate, true);
+		employee.setStartDate(endDate);
 	}
 
 	public void setOcupation(String occupation) {

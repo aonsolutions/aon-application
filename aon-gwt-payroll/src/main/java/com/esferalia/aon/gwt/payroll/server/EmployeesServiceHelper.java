@@ -1,5 +1,9 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 
 import java.io.IOException;
@@ -36,6 +40,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Event.Type;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.PaymentEvent;
@@ -47,6 +52,7 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
+import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -233,27 +239,39 @@ public class EmployeesServiceHelper {
 			.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(sqlDate))) 
 			);
 			
+			Map<String,List<Variable>>  ssContractData = null;
+			
 			// check tipo_contrato == tc2 			
-			employee.getContract().ifPresent(ssContractType -> {
+			if ( employee.getContract().isPresent() ) {
+				String ssContractType = employee.getContract().get();
 				String aonContractType = getString(dataList, ContextVariable.TC2, "");
 				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 ) {
+					ssContractData = getSSContractData(certificate, regime, ccc, nss, employee.getFra());
 					employeeStatus.and(
 							new EmployeeStatus.MismatchedContractType()
 							.setAonContractType(aonContractType)
-							.setSsContractType(ssContractType));
+							.setSsContractType(ssContractType)
+							.setVariables(ssContractData.get(TC2.getName()))
+							);
 				}
-			});
+			}
 			
 			// check grupo_cotizacion == quote_group 
-			employee.getGc().ifPresent(ssQuoteGroup -> {		
+			if ( employee.getGc().isPresent()) {
+				String ssQuoteGroup = employee.getGc().get();
 				String aonQuoteGroup = getString(dataList, ContextVariable.QUOTE_GROUP, "");
 				if ( AonStringUtils.compareIgnoreCase(ssQuoteGroup, aonQuoteGroup ) != 0 ) {
+					if ( ssContractData == null ) {
+						ssContractData = getSSContractData(certificate, regime, ccc, nss, employee.getFra());
+					}
 					employeeStatus.and(
 							new EmployeeStatus.MismatchedQuoteGroup()
 							.setAonQuoteGroup(aonQuoteGroup)
-							.setSsQuoteGroup(ssQuoteGroup));
+							.setSsQuoteGroup(ssQuoteGroup)
+							.setVariables(ssContractData.get(QUOTE_GROUP.getName()))
+							);
 				} 
-			});
+			}
 			
 			
 			{
@@ -300,6 +318,66 @@ public class EmployeesServiceHelper {
 			return new EmployeeStatus.CredentialsNotFound();
 		}
 
+	}
+	
+
+	private static Map<String,List<Variable>> getSSContractData(Certificate certificate, String regime, String ccc, String nss, Date date)  {
+		Map<String, List<Variable>> ssContractData = new HashMap<String, List<Variable>>();
+		
+		Collection<Idc> idcDates;
+		try {
+			idcDates = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, nss);
+		} catch (SegSocialException e1) {
+			return ssContractData;
+		}
+		
+		List<Date> dates  = idcDates.stream().map(idc -> idc.getFecha() ).filter( d -> d.compareTo(date)>=0).sorted((d1,d2) -> d2.compareTo(d1)).collect(Collectors.toList());
+		
+		ContextVariable numberVars  [] = new ContextVariable [] {PARTIAL_FACTOR};
+		ContextVariable stringVars  [] = new ContextVariable [] {QUOTE_GROUP, OCCUPATION, TC2};
+		
+		
+		for ( ContextVariable v : stringVars )
+			ssContractData.put(v.getName(), new LinkedList<Variable>());
+		for ( ContextVariable v : numberVars )
+			ssContractData.put(v.getName(), new LinkedList<Variable>());
+		
+		Date endDate = null;
+		for (Date startDate : dates) {				
+			byte data[];
+			try {
+				data = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, nss, startDate);
+				Map<ContextVariable, Object> contractData = com.esferalia.aon.in.payroll.tgss.idc.Idc.getContractData(data);
+				for ( ContextVariable v : stringVars ) {
+					if ( contractData.containsKey(v) ) {					
+						StringVariable variable = new StringVariable();
+						variable.setName(v.getName());
+						variable.setValue(contractData.get(v));
+						variable.setStartDate(startDate);
+						variable.setEndDate(endDate);				
+						ssContractData.get(v.getName()).add(variable);
+						variable.setExpression(String.format("\"%s\"", contractData.get(v).toString()));
+					}
+				}
+				for ( ContextVariable v : numberVars ) {
+					if ( contractData.containsKey(v) ) {
+						NumberVariable variable = new NumberVariable();
+						variable.setName(v.getName());
+						variable.setValue(contractData.get(v));
+						variable.setStartDate(startDate);
+						variable.setEndDate(endDate);				
+						ssContractData.get(v.getName()).add(variable);
+						variable.setExpression(contractData.get(v).toString());
+					}
+				}
+				endDate = AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return ssContractData;
 	}
 	
 	private static String getString(List<ContractData> dataList, ContextVariable contextVariable, String def ) {
