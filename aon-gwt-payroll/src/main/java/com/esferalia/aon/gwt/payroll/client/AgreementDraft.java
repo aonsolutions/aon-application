@@ -676,7 +676,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					
 					if ( expressionBox.isReadOnly() ) return;
 					
-					AgreementDraft.this.fxButton.setEnabled(false);
+//					AgreementDraft.this.fxButton.setEnabled(false);
 					expressionBox.getElement().getStyle().setColor(color);
 					reset.schedule(100);
 				}
@@ -873,7 +873,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			this.expressionBox.addBlurHandler(new BlurHandler() {
 				@Override
 				public void onBlur(BlurEvent event) {
-					AgreementDraft.this.fxButton.setEnabled(false);
+//					 AgreementDraft.this.fxButton.setEnabled(false);
 				}
 			});
 			this.expressionBox.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -1842,6 +1842,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		setDescription();
 		
+		fxButton.setEnabled(false);
 	}
 
 	@Override
@@ -4375,15 +4376,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		AonToolbar toolbar = new AonToolbar("Convenio");
 		
-		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				agreementDraftObject.save(AgreementDraft.this);
-			}
-		});
-		toolbar.add(acceptButton);
-		
 		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndo() );
 		undoAllButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -4395,14 +4387,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			}
 		});
 		toolbar.add(undoAllButton);
-		undoAllButton.setVisible(false);
 		
 		undoButton = new AonToolbarButton(AON.MSG.undo(), AON.CSS.aonIconUndo() );
 		undoButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				agreementDraftObject.undo();
-				calculate();
+				agreementDraftObject.calculate(AgreementDraft.this);
+//				calculate();
 			}
 		});
 		toolbar.add(undoButton);
@@ -4413,11 +4405,21 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			@Override
 			public void onClick(ClickEvent event) {
 				agreementDraftObject.redo();
-				calculate();
+				agreementDraftObject.calculate(AgreementDraft.this);
+//				calculate();
 			}
 		});
 		toolbar.add(redoButton);
 		redoButton.setVisible(false);
+		
+		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		acceptButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				agreementDraftObject.save(AgreementDraft.this);
+			}
+		});
+		toolbar.add(acceptButton);
 		
 		printPreviewButton = new AonToolbarButton(AON.MSG.draftPrint(), AON.CSS.aonIconPdf() );
 		printPreviewButton.addClickHandler(new ClickHandler() {
@@ -4439,6 +4441,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		fxButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				if(null == contextProvider)
+					contextProvider = new ContextProvider();
+				
 				FxDialog fxDialog = new FxDialog(contextProvider) {
 					@Override
 					void onAcceptButtonClick(ClickEvent event) {
