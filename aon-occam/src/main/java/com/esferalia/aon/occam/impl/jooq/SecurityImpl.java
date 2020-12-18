@@ -282,4 +282,11 @@ public class SecurityImpl implements ISecurity {
 				configuration -> SecurityDAO.insertCertificate(ctx, userFilter, certificate));
 	}
 
+	@Override
+	public Certificate getCertificateSEPE(AONContext ctx, Integer domainId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SecurityDAO.getCertificateSEPE(ctx, domainId))
+		.orElseThrow(CertificateNotFoundException::new);
+	}
+
 }

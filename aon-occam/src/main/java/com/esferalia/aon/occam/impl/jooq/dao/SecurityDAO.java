@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLICATION_MODULE;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Profile.PROFILE;
 import static com.esferalia.aon.jooq.tables.ProfileRole.PROFILE_ROLE;
@@ -1066,6 +1067,27 @@ public class SecurityDAO {
 		;
 		
 		return certificate;
+	}
+	
+	public static Optional<Certificate> getCertificateSEPE(AONContext aonContext, Integer domainId) {
+		return getCertificateSEPE(aonContext.getDslContext(), domainId);
+	}
+
+	private static Optional<Certificate> getCertificateSEPE(DSLContext dslContext, Integer domainId) {
+		return dslContext
+		.select()
+		.from(ENTERPRISE)
+		.innerJoin(REGISTRY).onKey()
+		.innerJoin(RATTACH).on(REGISTRY.ID.eq(RATTACH.REGISTRY), RATTACH.TYPE.eq(DIGITAL_CERTIFICATE.value()) )
+		.innerJoin(RADDINFO).on(REGISTRY.ID.eq(RADDINFO.REGISTRY), RADDINFO.ATTRIBUTE.eq(DIGITAL_CERTIFICATE_PASSWORD))
+		.where(ENTERPRISE.DOMAIN.eq(domainId))
+		.fetchOptional()
+		.map(r -> new Certificate()
+		.setType(MimeType.PKCS12.name())
+		.setPassword(r.get(RADDINFO.VALUE))
+		.setCertificate(r.get(RATTACH.DATA))
+		);
+		
 	}
 
 	public static boolean isOCRActive(AONContext ctx, int domain) {

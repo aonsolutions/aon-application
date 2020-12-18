@@ -90,5 +90,6 @@ public interface ISecurity {
 	// CERTIFICATE
 	public Certificate getCertificate(AONContext ctx, UserFilter userFilter ) ; 
 	public Certificate insertCertificate(AONContext ctx, UserFilter userFilter , Certificate certificate) ;
+	public Certificate getCertificateSEPE(AONContext ctx, Integer domainId);
 	
 }

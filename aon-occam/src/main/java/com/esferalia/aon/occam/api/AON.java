@@ -536,6 +536,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Certificate getCertificateSEPE(String domainName, Integer domainId, String login) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getCertificateSEPE(ctx, domainId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	// ********************************************
 	// ********************************** COMMON **
