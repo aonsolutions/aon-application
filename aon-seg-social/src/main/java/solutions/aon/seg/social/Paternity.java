@@ -163,22 +163,29 @@ public class Paternity {
 				//CHECKING IF THE PAGE THREW RESULTS
 				try {
 					HtmlTable resultTable=(HtmlTable)htmlPage.querySelector("#ARQcapaPrincipalPest fieldset>div>table");
-					int rows=resultTable.getRowCount()-1;
-					for(int i=1;i<=rows;i++) {
-						HtmlTableCell resultCell=resultTable.getCellAt(i, 0);
-						formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
-						try {
-							HtmlInput resultInput=(HtmlInput) resultCell.getFirstElementChild();
-							htmlPage=resultInput.click();
-							//VOIDING
-							
-							HtmlPage htmlAux=formDatos.getInputByValue("Anular").click();
-							htmlAux=htmlAux.getElementById("SPM.ACC.AC_GE_ANULAR").click();
-							//htmlPage=HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("SPM.ACC.AC_GE_ANULAR")).orElseThrow().click();
-						}catch (NullPointerException |ElementNotFoundException e) {
-							//It's already voided
-						}
-					}
+					int rows=resultTable.getRowCount()-2;
+					formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+					htmlPage=htmlPage.getElementById("isn"+rows).click();
+					HtmlPage htmlAux=formDatos.getInputByValue("Anular").click();
+					htmlAux=htmlAux.getElementById("SPM.ACC.AC_GE_ANULAR").click();
+					
+//					HtmlTable resultTable=(HtmlTable)htmlPage.querySelector("#ARQcapaPrincipalPest fieldset>div>table");
+//					int rows=resultTable.getRowCount()-1;
+//					for(int i=1;i<=rows;i++) {
+//						HtmlTableCell resultCell=resultTable.getCellAt(i, 0);
+//						formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+//						try {
+//							HtmlInput resultInput=(HtmlInput) resultCell.getFirstElementChild();
+//							htmlPage=resultInput.click();
+//							//VOIDING
+//							
+//							HtmlPage htmlAux=formDatos.getInputByValue("Anular").click();
+//							htmlAux=htmlAux.getElementById("SPM.ACC.AC_GE_ANULAR").click();
+//							//htmlPage=HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("SPM.ACC.AC_GE_ANULAR")).orElseThrow().click();
+//						}catch (NullPointerException |ElementNotFoundException e) {
+//							//It's already voided
+//						}
+//					}
 					
 //					//VOIDING
 //					formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
@@ -473,9 +480,9 @@ public class Paternity {
 				//CHECKING IF THE PAGE THREW RESULTS
 				try {
 					HtmlTable resultTable=(HtmlTable)htmlPage.querySelector("#ARQcapaPrincipalPest fieldset>div>table");
-					int rows=resultTable.getRowCount()-1;
+					int rows=resultTable.getRowCount()-2;
 					formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
-					htmlPage=htmlPage.getElementById("isn0").click();
+					htmlPage=htmlPage.getElementById("isn"+rows).click();
 					htmlPage=formDatos.getInputByValue("Ver detalle").click();
 					htmlPage=htmlPage.getElementById("SPM.ACC.AC_CO_INFORME").click();
 					HtmlButton docButton=htmlPage.querySelector("button[class='botonDesplegable desplegar']");
