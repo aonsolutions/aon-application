@@ -33,38 +33,6 @@ public class PdfTest {
 	
 	
 	
-	
-	@Test
-	@Ignore
-	public void parserTest() throws IOException, UnknownPDFException{
-		File f = new File("src/test/resources/com/esferalia/aon/in/payroll/pdf");
-		String[] list = f.list();
-		for (String path : list) {
-			Pattern pattern = Pattern.compile("dsi.+?\\.pdf", Pattern.CASE_INSENSITIVE);
-			Matcher matcher = pattern.matcher(path);
-			if(matcher.matches()) {
-				try (InputStream is = PdfTest.class.getResourceAsStream("dsi_paga_extra.pdf")){
-					SalaryPDFParser.parse(is, new SalaryBuilder() {
-						//checking if all files are compatible with the parser
-					});
-				}
-			}
-		}
-		
-		
-		
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	@Test
 	//@Ignore
 	public void testDsi() throws IOException, UnknownPDFException{
@@ -746,7 +714,7 @@ public class PdfTest {
 	}
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void testA3() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("a3.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
