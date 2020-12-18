@@ -35,7 +35,7 @@ public class PdfTest {
 	
 	
 	@Test
-	//@Ignore
+	@Ignore
 	public void parserTest() throws IOException, UnknownPDFException{
 		File f = new File("src/test/resources/com/esferalia/aon/in/payroll/pdf");
 		String[] list = f.list();

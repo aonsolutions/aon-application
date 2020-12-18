@@ -16,8 +16,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Ignore("sherpa buffff")
 public class EnterprisePayrolltest {
 	@Test
+	
 	public void EnterprisePayrollTest1() throws IOException {
 		AONContext context = AONContext.getAONContext("sherpa.aonsolutions.net", "admin");
 
