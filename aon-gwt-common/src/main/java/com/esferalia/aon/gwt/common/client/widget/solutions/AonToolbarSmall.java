@@ -12,6 +12,7 @@ public class AonToolbarSmall extends FlowPanel {
 	public static final int HEIGTH = 50;
 	
 	private FlowPanel buttonContainer;
+	private FlowPanel buttonPanel;
 	private FlowPanel messagePanel;
 	private Label title;
 	
@@ -22,14 +23,6 @@ public class AonToolbarSmall extends FlowPanel {
 		FlowPanel innerToolbar = new FlowPanel();
 		innerToolbar.setStyleName(AON.CSS.aonToolbarSmallInner());
 		
-		buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.CSS.aonToolbarSmallButtonContainer());
-		innerToolbar.add(buttonContainer);
-
-		messagePanel = new FlowPanel();
-		messagePanel.setStyleName(AON.CSS.aonToolbarSmallMessageContainer());
-		innerToolbar.add(messagePanel);
-		
 		FlowPanel titlePanel = new FlowPanel();
 		titlePanel.addStyleName(AON.CSS.aonToolbarSmallTitleContainer());
 		title = new Label( name );
@@ -37,6 +30,35 @@ public class AonToolbarSmall extends FlowPanel {
 		titlePanel.add( title );
 		innerToolbar.add(titlePanel);
 
+		messagePanel = new FlowPanel();
+		messagePanel.setStyleName(AON.CSS.aonToolbarSmallMessageContainer());
+		innerToolbar.add(messagePanel);
+		
+		buttonContainer = new FlowPanel();
+		buttonContainer.setStyleName(AON.CSS.aonToolbarSmallButtonContainer());
+		innerToolbar.add(buttonContainer);
+		
+		super.add(innerToolbar);
+	}
+	
+	public AonToolbarSmall() {
+		super();
+		setStyleName(AON.CSS.aonToolbarSmall());
+		
+		FlowPanel innerToolbar = new FlowPanel();
+		innerToolbar.setStyleName(AON.CSS.aonToolbarSmallInner());
+
+		buttonPanel = new FlowPanel();
+		innerToolbar.add(buttonPanel);
+		
+		messagePanel = new FlowPanel();
+		messagePanel.setStyleName(AON.CSS.aonToolbarSmallMessageContainer());
+		innerToolbar.add(messagePanel);
+		
+		buttonContainer = new FlowPanel();
+		buttonContainer.setStyleName(AON.CSS.aonToolbarSmallButtonContainer());
+		innerToolbar.add(buttonContainer);
+		
 		super.add(innerToolbar);
 	}
 
@@ -75,7 +97,10 @@ public class AonToolbarSmall extends FlowPanel {
 	
 	public void setCenterWidget(Widget widget) {
 		messagePanel.add(widget);
-	}
+	}	
 	
+	public void setLeftWidget(Widget widget) {
+		buttonPanel.add(widget);
+	}	
 	
 }

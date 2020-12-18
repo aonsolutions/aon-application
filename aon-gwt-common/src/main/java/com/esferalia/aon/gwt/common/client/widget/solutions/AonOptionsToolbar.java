@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -140,27 +141,27 @@ public class AonOptionsToolbar extends Composite {
 	
 	private AonToolbarSmall getToolbarPanel() {
 		
-		AonToolbarSmall toolbar = new AonToolbarSmall("Convenios");
-		
-		searchTextBox = new TextBox();
-		searchTextBox.addKeyUpHandler(event -> {
-			for(Listener listener : listeners)
-				listener.onKeyUpSearchTextBox(event);
-		});
-		toolbar.setCenterWidget(searchTextBox);
+		AonToolbarSmall toolbar = new AonToolbarSmall();
 		
 		showMenuButton = new AonToolbarSmallButton("Mostrar", AON.CSS.aonIconRight() );
 		showMenuButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				showMenuButton.setVisible(false);
 				for(Listener listener : listeners)
 					listener.onShowMenuButtonClick(event);
-				
-				showMenuButton.setVisible(false);
 			}
 		});
-		toolbar.add(showMenuButton);
+		toolbar.setLeftWidget(showMenuButton);
 		showMenuButton.setVisible(false);
+		
+		searchTextBox = new TextBox();
+		searchTextBox.getElement().getStyle().setWidth(80, Unit.PCT);
+		searchTextBox.addKeyUpHandler(event -> {
+			for(Listener listener : listeners)
+				listener.onKeyUpSearchTextBox(event);
+		});
+		toolbar.setCenterWidget(searchTextBox);
 		
 		newButton = new AonToolbarSmallButton(AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		newButton.addClickHandler(new ClickHandler() {
@@ -227,14 +228,12 @@ public class AonOptionsToolbar extends Composite {
 		collapseMenuButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				showMenuButton.setVisible(true);
 				for(Listener listener : listeners)
 					listener.onCollapseMenuButtonClick(event);
-				
-				showMenuButton.setVisible(true);
 			}
 		});
 		toolbar.add(collapseMenuButton);
-		
 		
 		return toolbar;
 	}
