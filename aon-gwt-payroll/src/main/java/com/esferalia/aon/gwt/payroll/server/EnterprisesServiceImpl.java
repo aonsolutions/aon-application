@@ -76,6 +76,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AndEnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
@@ -91,10 +92,8 @@ import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
-import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -2660,10 +2659,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			
 			float newBaseCC = JooqEmployee.getBaseCC(connection, docNum, dateFrom);
-			baseCC = 0 == newBaseCC ? baseCC : newBaseCC;
+//			baseCC = 0 == newBaseCC ? baseCC : newBaseCC;
 			
 			float newBaseCP = JooqEmployee.getBaseCP(connection, docNum, dateFrom);
-			baseCP = 0 == newBaseCP ? baseCP : newBaseCP;
+//			baseCP = 0 == newBaseCP ? baseCP : newBaseCP;
 			
 			days = JooqEmployee.getDays(connection, docNum, dateFrom);
 			
@@ -2690,6 +2689,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			SistemaRED.voidPaternity(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
 		
 		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void setComunicationIT(String domainName, String userLogin, ITEmployee itEmployee, IT it) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqIT.setComunicationIT(connection, domainId, itEmployee, it);
+		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}

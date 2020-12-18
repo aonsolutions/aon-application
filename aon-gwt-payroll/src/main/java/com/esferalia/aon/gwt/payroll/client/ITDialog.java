@@ -169,6 +169,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	private AonToolbarButton listIT;
 	private AonToolbarButton backListIT;
 	private AonToolbarButton newIT;
+	private AonToolbarButton showCertificate;
 	
 	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
@@ -213,6 +214,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(null != this.it) {
 			paintSelectedIT(this.it, false);
 			showDeleteOption();
+			if(null != this.it.isComunicate() && this.it.isComunicate())
+				showCertificate.setVisible(true);
 		} else
 			hideDeleteOption();
 		
@@ -243,6 +246,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(null != this.it) {
 			paintSelectedIT(this.it, false);
 			showDeleteOption();
+			if(null != this.it.isComunicate() && this.it.isComunicate())
+				showCertificate.setVisible(true);
 		} else
 			hideDeleteOption();
 		
@@ -273,6 +278,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(null != this.it) {
 			paintSelectedIT(this.it, false);
 			showDeleteOption();
+			if(null != this.it.isComunicate() && this.it.isComunicate())
+				showCertificate.setVisible(true);
 		} else
 			hideDeleteOption();
 		
@@ -535,6 +542,16 @@ public abstract class ITDialog extends AonCustomDialog {
 		this.it.setDescription(observationTB.getValue());
 	}
 	
+	@UiHandler("directPayDate")
+	public void onDirectPayDateChange(ValueChangeEvent<Date> event) {
+		if(this.it == null) {
+			this.it = new IT();
+			this.it.setId(-1);
+		}
+		
+		this.it.setDirectPayDate(directPayDate.getValue());
+	}
+	
 	@UiHandler("raggedList")
 	public void onRaggedListChange(ChangeEvent event) {
 		if(this.it == null) {
@@ -623,8 +640,9 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 
 	// ----------------------------------------------- METODOS ABSTRACTOS -------------------------------------------------
-	
+	protected abstract void onShowCertitificateIT(IT it);
 	protected abstract void onDelete(IT it);
+	protected abstract void onAccept();
 	protected abstract void onAcceptIT(IT it);
 
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
@@ -705,6 +723,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		observationTB.setValue(it.getDescription());
 		
+		directPayDate.setValue(it.getDirectPayDate());
+		
 		initConfirmationsTable();
 		
 		for(ITPart itPart : it.getITParts()) {
@@ -723,7 +743,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		calculateScrollPanelHeight();
 		
-		setDirectPayDate();
+//		setDirectPayDate();
 		createRealStartDate();
 		
 		if(it.getTypeLowPart() == (byte) 2 || it.getTypeLowPart() == (byte)3) {
@@ -1054,6 +1074,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(null != date) {
 			date = DateUtils.addDays2Date(date, 365);
 			directPayDate.setValue(date);
+			this.it.setDirectPayDate(date);
 		}
 	}
 
@@ -1397,12 +1418,30 @@ public abstract class ITDialog extends AonCustomDialog {
 		});
 		toolbar.add(deleteIT);
 		
+		showCertificate = new AonToolbarButton( "Certificado IT", AON.CSS.aonIconPdf());
+		showCertificate.setAccessKey('C');
+		showCertificate.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onShowCertitificateIT(event);
+			}
+		});
+		toolbar.add(showCertificate);
+		showCertificate.setVisible(false);
+		
 		backListIT.setVisible(false);
 		newIT.setVisible(false);
 		deleteIT.setVisible(false);
 
 		return toolbar;
 
+	}
+	
+	private void onShowCertitificateIT(ClickEvent event) {
+		if(null != this.it.getId()) {
+			onShowCertitificateIT(it);
+			hide();
+		}
 	}
 	
 	private void onDeleteIT(ClickEvent event) {
@@ -1515,7 +1554,12 @@ public abstract class ITDialog extends AonCustomDialog {
 			if(null == this.it.getId() || -1 == this.it.getId())
 				itDialogObject.addIT(this.it);
 			
-			comunicateIT(it);
+			if((null == this.it.getId() || -1 == this.it.getId()) && (this.it.getTypeLowPart() == (byte)2 || (this.it.getTypeLowPart() == (byte)3)))
+					comunicateIT(it);
+			else {
+				onAccept();
+				hide();
+			}
 		} else {
 			AonConfirmDialog dialog = new AonConfirmDialog();
 			dialog.info("AVISO: Fechas", "La fecha y la causa de baja deben estar rellenadas.");

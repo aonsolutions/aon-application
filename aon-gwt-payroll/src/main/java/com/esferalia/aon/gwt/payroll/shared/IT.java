@@ -32,6 +32,8 @@ public class IT implements Serializable {
 	private Date comunicationDate;
 	private Boolean isComunicate;
 	
+	private Date directPayDate;
+	
 	private String fullName;
 	
 	private List<ITPart> itParts;
@@ -221,6 +223,14 @@ public class IT implements Serializable {
 
 	public void setComunicationDate(Date comunicationDate) {
 		this.comunicationDate = comunicationDate;
+	}
+
+	public Date getDirectPayDate() {
+		return directPayDate;
+	}
+
+	public void setDirectPayDate(Date directPayDate) {
+		this.directPayDate = directPayDate;
 	}
 	
 }

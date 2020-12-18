@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -423,6 +424,10 @@ public class DomainEnterprisesServiceAsync {
 			Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback) {
 		enterprisesServiceAsync.deleteComunicateIT(getCurrentDomainName(), getCurrentUser(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo,
 				startDate, asyncCallback);
+	}
+	
+	public void setComunicationIT(ITEmployee itEmployee, IT it, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.setComunicationIT(getCurrentDomainName(), getCurrentUser(), itEmployee, it, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

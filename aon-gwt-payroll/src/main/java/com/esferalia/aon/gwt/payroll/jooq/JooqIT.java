@@ -6,11 +6,11 @@ import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractLeaveDetail.CONTRACT_LEAVE_DETAIL;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.LeaveBatch.LEAVE_BATCH;
+import static com.esferalia.aon.jooq.tables.LeaveBatchDetail.LEAVE_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
-import static com.esferalia.aon.jooq.tables.LeaveBatch.LEAVE_BATCH;
-import static com.esferalia.aon.jooq.tables.LeaveBatchDetail.LEAVE_BATCH_DETAIL;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -73,6 +73,10 @@ public class JooqIT {
 		return createUpdateITEmployeeDB(DSL.using(conn, getDefaultSettings()), domainId, employeeITInfo);
 	}
 	
+	public static void setComunicationIT(Connection conn, Integer domainId, ITEmployee itEmployee, IT it) {
+		setComunicationITDB(DSL.using(conn, getDefaultSettings()), domainId, itEmployee, it);
+	}
+	
 	private static List<ITEmployee> getEmployeesITInfoDB(DSLContext dslContext, Integer domainId, Boolean allEmployees) {
 		List<ITEmployee> itEmployees = new ArrayList<ITEmployee>();
 		
@@ -130,6 +134,18 @@ public class JooqIT {
 					it.setParent(contractLeaveRecord.get(CONTRACT_LEAVE.PARENT));
 					it.setDailyREGBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_REG_BASE));
 					it.setTypeHighPart(contractLeaveRecord.get(CONTRACT_LEAVE.DISCHARGE_CAUSE));
+					
+					Record contractDataDatePayRecord = dslContext.select().from(CONTRACT_DATA)
+							.where(
+									CONTRACT_DATA.NAME.eq("INICIO_PAGO_DIRECTO")
+							).and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+							.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
+							.fetchOne();
+					
+					if(null != contractDataDatePayRecord) {
+						java.util.Date directDayPay = getDirectPayDateByExpression(contractDataDatePayRecord.get(CONTRACT_DATA.EXPRESSION));
+						it.setDirectPayDate(directDayPay);
+					}
 					
 					// Matenity
 					if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {
@@ -278,6 +294,18 @@ public class JooqIT {
 					it.setParent(contractLeaveRecord.get(CONTRACT_LEAVE.PARENT));
 					it.setDailyREGBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_REG_BASE));
 					it.setTypeHighPart(contractLeaveRecord.get(CONTRACT_LEAVE.DISCHARGE_CAUSE));
+					
+					Record contractDataDatePayRecord = dslContext.select().from(CONTRACT_DATA)
+							.where(
+									CONTRACT_DATA.NAME.eq("INICIO_PAGO_DIRECTO")
+							).and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+							.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
+							.fetchOne();
+					
+					if(null != contractDataDatePayRecord) {
+						java.util.Date directDayPay = getDirectPayDateByExpression(contractDataDatePayRecord.get(CONTRACT_DATA.EXPRESSION));
+						it.setDirectPayDate(directDayPay);
+					}
 					
 					// Matenity
 					if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {
@@ -590,22 +618,33 @@ public class JooqIT {
 						.returning(CONTRACT_LEAVE_DETAIL.ID)
 						.fetchOne();
 					
-					if(itPart.getType() == (byte)0 && (null != it.isComunicate() && it.isComunicate())) {
-						LeaveBatchRecord leaveBatchRecord = dslContext.insertInto(LEAVE_BATCH)
-							.set(LEAVE_BATCH.DOMAIN, domainId)
-							.set(LEAVE_BATCH.DATE, new Timestamp(new java.util.Date().getTime()))
-							.set(LEAVE_BATCH.STATUS, (byte)1)
-							.set(LEAVE_BATCH.COMMUNICATION_ID, "COMUNICA")
-							.set(LEAVE_BATCH.INCOME_FILE, (byte[]) null)
-							.set(LEAVE_BATCH.OUTCOME_FILE, (byte[]) null)
-							.returning(LEAVE_BATCH.ID).fetchOne();
-						
-						dslContext.insertInto(LEAVE_BATCH_DETAIL)
-							.set(LEAVE_BATCH_DETAIL.DOMAIN, domainId)
-							.set(LEAVE_BATCH_DETAIL.LEAVE_BATCH, leaveBatchRecord.getId())
-							.set(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL, contractLeaveDetail.getId())
-							.execute();
-					}
+//					if(itPart.getType() == (byte)0 && (null != it.isComunicate() && it.isComunicate())) {
+//						LeaveBatchRecord leaveBatchRecord = dslContext.insertInto(LEAVE_BATCH)
+//							.set(LEAVE_BATCH.DOMAIN, domainId)
+//							.set(LEAVE_BATCH.DATE, new Timestamp(new java.util.Date().getTime()))
+//							.set(LEAVE_BATCH.STATUS, (byte)1)
+//							.set(LEAVE_BATCH.COMMUNICATION_ID, "COMUNICA")
+//							.set(LEAVE_BATCH.INCOME_FILE, (byte[]) null)
+//							.set(LEAVE_BATCH.OUTCOME_FILE, (byte[]) null)
+//							.returning(LEAVE_BATCH.ID).fetchOne();
+//						
+//						dslContext.insertInto(LEAVE_BATCH_DETAIL)
+//							.set(LEAVE_BATCH_DETAIL.DOMAIN, domainId)
+//							.set(LEAVE_BATCH_DETAIL.LEAVE_BATCH, leaveBatchRecord.getId())
+//							.set(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL, contractLeaveDetail.getId())
+//							.execute();
+//					}
+				}
+				
+				if(null != it.getDirectPayDate()) {
+					dslContext.insertInto(CONTRACT_DATA)
+						.set(CONTRACT_DATA.DOMAIN, domainId)
+						.set(CONTRACT_DATA.NAME, "INICIO_PAGO_DIRECTO")
+						.set(CONTRACT_DATA.CONTRACT, contractId)
+						.set(CONTRACT_DATA.EXPRESSION, getExpressionDirectPayDate(it.getDirectPayDate()))
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.execute();
 				}
 				
 				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {	// MATERNIDAD || PATERNIDAD
@@ -715,8 +754,20 @@ public class JooqIT {
 						.or(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
 						.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_MATERNIDAD"))
 						.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PATERNIDAD"))
+						.or(CONTRACT_DATA.NAME.eq("INICIO_PAGO_DIRECTO"))
 					).and(CONTRACT_DATA.START_DATE.eq(startDate))
 					.execute();
+				
+				if(null != it.getDirectPayDate()) {
+					dslContext.insertInto(CONTRACT_DATA)
+						.set(CONTRACT_DATA.DOMAIN, domainId)
+						.set(CONTRACT_DATA.NAME, "INICIO_PAGO_DIRECTO")
+						.set(CONTRACT_DATA.CONTRACT, contractId)
+						.set(CONTRACT_DATA.EXPRESSION, getExpressionDirectPayDate(it.getDirectPayDate()))
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.execute();
+				}
 				
 				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {	// MATERNIDAD || PATERNIDAD
 					
@@ -784,6 +835,68 @@ public class JooqIT {
 		else
 			return "Parte IT actualizado.";
 	}
+	
+	private static String getExpressionDirectPayDate(java.util.Date directPayDate) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(directPayDate);
+		return "FECHA(" + cal.get(Calendar.YEAR) + "," + (cal.get(Calendar.MONTH) + 1) + "," + cal.get(Calendar.DAY_OF_MONTH) + ")";
+	}
+	
+	private static java.util.Date getDirectPayDateByExpression(String directPayDateExpression) {
+		Calendar cal = Calendar.getInstance();
+		
+		String date = directPayDateExpression.substring(6, directPayDateExpression.length() - 1);
+		String[] directPayDateArr = date.split(",");
+		
+		cal.set(Calendar.YEAR, Integer.parseInt(directPayDateArr[0]));
+		cal.set(Calendar.MONTH, (Integer.parseInt(directPayDateArr[1]) - 1));
+		cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(directPayDateArr[2]));
+		
+		return cal.getTime();
+	}
+
+	private static void setComunicationITDB(DSLContext dslContext, Integer domainId, ITEmployee itEmployee, IT it) {
+		
+		Date startDate = null == it.getStartDate() ? null : new Date(it.getStartDate().getTime());
+		Date endDate = null == it.getEndDate() ? null : new Date(it.getEndDate().getTime());
+		
+		Integer contractId = itEmployee.getContractInfo().getContractId();
+		
+		Record contractLeaveRecord = dslContext.select().from(CONTRACT_LEAVE)
+			.where(CONTRACT_LEAVE.START_DATE.eq(startDate))
+			.and(CONTRACT_LEAVE.CONTRACT.eq(contractId))
+			.fetchOne();
+		
+		for(ITPart itPart : it.getITParts()) {
+			Date date = null == itPart.getDate() ? null : new Date(itPart.getDate().getTime());
+			
+			if(itPart.getType() == (byte)0) {
+				
+				Record contractLeaveDetail = dslContext.select().from(CONTRACT_LEAVE_DETAIL)
+						.where(CONTRACT_LEAVE_DETAIL.DATE.eq(date))
+						.and(CONTRACT_LEAVE_DETAIL.TYPE.eq((byte)0))
+						.and(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(
+								contractLeaveRecord.get(CONTRACT_LEAVE.ID)
+						)).fetchOne();
+					
+				LeaveBatchRecord leaveBatchRecord = dslContext.insertInto(LEAVE_BATCH)
+					.set(LEAVE_BATCH.DOMAIN, domainId)
+					.set(LEAVE_BATCH.DATE, new Timestamp(new java.util.Date().getTime()))
+					.set(LEAVE_BATCH.STATUS, (byte)1)
+					.set(LEAVE_BATCH.COMMUNICATION_ID, "COMUNICA")
+					.set(LEAVE_BATCH.INCOME_FILE, (byte[]) null)
+					.set(LEAVE_BATCH.OUTCOME_FILE, (byte[]) null)
+					.returning(LEAVE_BATCH.ID).fetchOne();
+				
+				dslContext.insertInto(LEAVE_BATCH_DETAIL)
+					.set(LEAVE_BATCH_DETAIL.DOMAIN, domainId)
+					.set(LEAVE_BATCH_DETAIL.LEAVE_BATCH, leaveBatchRecord.getId())
+					.set(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL, contractLeaveDetail.get(CONTRACT_LEAVE_DETAIL.ID))
+					.execute();
+			}
+		}
+	}
+
 
 	private static String deleteITDB(DSLContext dslContext, Integer domainId, Integer itId) {
 		
@@ -802,6 +915,7 @@ public class JooqIT {
 					.or(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
 					.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_MATERNIDAD"))
 					.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PATERNIDAD"))
+					.or(CONTRACT_DATA.NAME.eq("INICIO_PAGO_DIRECTO"))
 				).and(CONTRACT_DATA.START_DATE.eq(startDate))
 				.execute();
 		}

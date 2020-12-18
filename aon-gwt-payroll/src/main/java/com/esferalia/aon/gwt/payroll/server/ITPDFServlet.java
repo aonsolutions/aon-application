@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.server;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
@@ -17,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.security.Certificate;
-import com.google.gwt.i18n.client.DateTimeFormat;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException; 
@@ -27,7 +28,7 @@ import solutions.aon.seg.social.exceptions.SegSocialException;
 @WebServlet(name = "IT-EXPORT", urlPatterns = { "/aon_gwt_payroll/it_export/*" })
 public class ITPDFServlet extends HttpServlet {
 	
-	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private SimpleDateFormat formatFullDate = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -39,19 +40,28 @@ public class ITPDFServlet extends HttpServlet {
 		String regime = req.getParameter("regime");
 		String contributionAccount = req.getParameter("contributionAccount");
 		
-		String dateFromStr = req.getParameter("dateFrom");
-		String dateToStr = req.getParameter("dateTo");
-		String startDateStr = req.getParameter("startDate");
+		String dateFromStr = req.getParameter("dateFromStr");
+		String dateToStr = req.getParameter("dateToStr");
+		String startDateStr = req.getParameter("startDateStr");
 		
-		Date dateFrom = formatFullDate.parse(dateFromStr);
-		Date dateTo = formatFullDate.parse(dateToStr);
-		Date startDate = formatFullDate.parse(startDateStr);
-		Optional<Date> optionalStartDate = Optional.of(startDate);
-				
-
+		Date dateFrom = null;
+		Date dateTo = null;
+		Date startDate = null;
+		Optional<Date> optionalStartDate = null;
+		
+		try {
+			dateFrom = formatFullDate.parse(dateFromStr);
+			dateTo = formatFullDate.parse(dateToStr);
+			startDate = formatFullDate.parse(startDateStr);
+			optionalStartDate = Optional.of(startDate);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		try (Connection connection = AonServletUtils.getConnection(domainName)){
 			// Make sure to show the download dialog
-	        res.setHeader("Content-Disposition", "attachment; filename=\"IT.pdf\"");
+	        res.setHeader("Content-Disposition", "attachment; filename=\"ConfirmationIT.pdf\"");
 	        
 	        String fileType = "application/pdf";
 	        res.setContentType(fileType);

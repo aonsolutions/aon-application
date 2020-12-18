@@ -282,6 +282,29 @@ public class MainContrataIT extends MainEntryPoint {
 								},
 								f -> {});
 					}
+					
+					@Override
+					protected void onShowCertitificateIT(IT it) {
+						getITCertificatePDF(employeeITInfo, it);
+					}
+
+					@Override
+					protected void onAccept() {
+						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
+								s -> {
+									AonConfirmDialog dialog = new AonConfirmDialog();
+									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
+									
+									mainContrataITObject.getEmployeesInfo(false,
+											t -> {
+												initContractTable();
+												setTableHeights();
+											},
+											d -> {}
+									);
+								},
+								f -> {});
+					}
 	        		
 	        	};
 	        	
@@ -518,6 +541,29 @@ public class MainContrataIT extends MainEntryPoint {
 															d -> {}
 													);
 												}});	
+								},
+								f -> {});
+					}
+
+					@Override
+					protected void onShowCertitificateIT(IT it) {
+						getITCertificatePDF(itEmployee, it);
+					}
+					
+					@Override
+					protected void onAccept() {
+						mainContrataITObject.createUpdateITEmployee(itEmployee,
+								s -> {
+									AonConfirmDialog dialog = new AonConfirmDialog();
+									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
+									
+									mainContrataITObject.getEmployeesInfo(false,
+											t -> {
+												initContractTable();
+												setTableHeights();
+											},
+											d -> {}
+									);
 								},
 								f -> {});
 					}
@@ -1456,24 +1502,27 @@ public class MainContrataIT extends MainEntryPoint {
 	}
 
 	private void getITCertificatePDF(ITEmployee itEmployee, IT it) {
-		String affiliationNumber = itEmployee.getEmployeeInfo().getSsNumber();
-		String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
-		String contributionAccount = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-		String dateFromStr = formatFullDate.format(new Date());
-		String dateToStr = formatFullDate.format(new Date());
-		String startDateStr = formatFullDate.format(it.getStartDate());
+		mainContrataITObject.getNafxIpf(itEmployee, s -> {
+			String affiliationNumber = s.getNss();
+			String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
+			String contributionAccount = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
+			String dateFromStr = formatFullDate.format(new Date());
+			String dateToStr = formatFullDate.format(new Date());
+			String startDateStr = formatFullDate.format(it.getStartDate());
+			
+			String fileDownloadURL = GWT.getModuleBaseURL()+ "it_export/";
+			String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
+			 		+ "&userLogin=" + Wnd.getCurrentUser()
+		            + "&affiliationNumber=" + affiliationNumber
+		            + "&regime=" + regime
+		            + "&contributionAccount=" + contributionAccount
+		            + "&dateFromStr=" + dateFromStr
+					+ "&dateToStr=" + dateToStr
+					+ "&startDateStr=" + startDateStr;
+			
+			Window.open(fileDownloadURL+query, "ITExporter", "resizable=yes,scrollbars=yes,status=yes");
+		}, f -> {});
 		
-		String fileDownloadURL = GWT.getModuleBaseURL()+ "it_export/";
-		String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
-		 		+ "&userLogin=" + Wnd.getCurrentUser()
-	            + "&affiliationNumber=" + affiliationNumber
-	            + "&regime=" + regime
-	            + "&contributionAccount=" + contributionAccount
-	            + "&dateFromStr=" + dateFromStr
-				+ "&dateToStr=" + dateToStr
-				+ "&startDateStr=" + startDateStr;
-		
-		Window.open(fileDownloadURL+query, "ITExporter", "resizable=yes,scrollbars=yes,status=yes");
 	
 	}
 }
