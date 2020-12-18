@@ -47,6 +47,10 @@ public interface IPayroll {
 	
 	public Deduction [] setDeductions(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Deduction ...deductions);
 
+	// -------------------- BONUS 
+	
+	public ContractData [] setContractData(AONContext ctx, String domainName, ContractFilter filter, ContractData...contractDatas);
+
 	// -------------------- CCC
 	
 	public Stream<CCCInfo> getCCCStream(AONContext ctx);

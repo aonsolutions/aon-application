@@ -30,6 +30,14 @@ public class PAYROLL {
 	// ********************************* PAYROLL **
 	// ********************************************
 
+	// -------------------- CONTRACT DATA
+	
+	public static ContractData[] setContractData(String domainName, Integer domainId, String login, ContractFilter filter, ContractData... contractDatas) {
+		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
+			return getPayroll().setContractData(ctx, domainName, filter, contractDatas);
+		}
+	}
+
 	// -------------------- DEDUCTIONS
 	
 	public static Deduction[] setDeductions(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate, Deduction... deductions) {

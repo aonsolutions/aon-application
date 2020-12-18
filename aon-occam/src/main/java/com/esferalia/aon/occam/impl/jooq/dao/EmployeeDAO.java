@@ -15,18 +15,23 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
+import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.impl.DSL;
@@ -45,12 +50,15 @@ import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Deduction;
+import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.HasEndDate;
 import com.esferalia.aon.occam.api.model.HasStartDate;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractPropertiesDAO;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -140,6 +148,10 @@ public class EmployeeDAO {
 
 	public static Deduction [] setDeductions(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Deduction ...deductions) {
 		return setDeductions(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), deductions);
+	}
+
+	public static ContractData[] setContractData(AONContext aonContext, String domainName, ContractFilter filter, ContractData... contractDatas) {
+		return setContractData(aonContext.getDslContext(), domainName, filter, contractDatas);
 	}
 
 	private static  EnterpriseCccRecord getEnterpriseCCC(DSLContext dslContext, Integer domainId, Employee employee) {
@@ -409,6 +421,123 @@ public class EmployeeDAO {
 		return deductions;
 	}
 
+	private static ContractData [] setContractData(DSLContext dslContext, String domainName, ContractFilter filter, ContractData ...contractDatas) {
+		if ( contractDatas == null )
+			return new ContractData[0];
+		if ( contractDatas.length == 0 )
+			return new ContractData[0];
+			
+		// TODO: Support multiple names ?
+		
+		Condition[] conditions = new ContractPropertiesDAO().getConditions(filter);
+		Set<String> names = Arrays.stream(contractDatas).map(c -> c.getName()).collect(Collectors.toSet());
+		
+		// merge contiguous contract data
+		ContractData mergedContractDatas [] = join(contractDatas);
+		
+		dslContext
+		.select()
+		.from(CONTRACT)
+		.where(conditions)
+		.fetchStreamInto(CONTRACT)
+		.forEach(contractRecord -> {
+			
+			
+			
+			for (ContractData contractData : mergedContractDatas) {
+				dslContext
+				.select()
+				.from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractRecord.getId()))
+				.and(CONTRACT_DATA.NAME.eq(contractData.getName()))
+				.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(toSql(contractData.getStartDate()))))
+				.and(DSL.condition(contractData.getEndDate()==null).or(CONTRACT_DATA.START_DATE.le(toSql(contractData.getEndDate()))))
+				.fetchStreamInto(CONTRACT_DATA)
+				.forEach(contractDataRecord -> {
+					if ( ( compare(contractData.getStartDate(),  contractDataRecord.getStartDate()) <= 0 ) &&
+						( compare(contractData.getEndDate(),  contractDataRecord.getEndDate()) >= 0 ) ) {
+						contractDataRecord.delete();
+					}else if ( compare(contractData.getStartDate(),  contractDataRecord.getStartDate()) <= 0 ) {
+						if ( AonStringUtils.equals(contractData.getExpression(), contractDataRecord.getExpression())) {
+							contractData.setEndDate(contractDataRecord.getEndDate());
+							contractDataRecord.delete();
+						} else {
+							contractDataRecord.setStartDate(toSql(AonDateUtils.add(contractData.getEndDate(), DAY_OF_MONTH,1)));
+							contractDataRecord.update();
+						}
+					} else if ( compare(contractData.getEndDate(),  contractDataRecord.getEndDate()) >= 0  ) {
+						if ( AonStringUtils.equals(contractData.getExpression(), contractDataRecord.getExpression())) {
+							contractData.setStartDate(contractDataRecord.getStartDate());
+							contractDataRecord.delete();
+							
+						} else {
+							contractDataRecord.setEndDate(toSql(AonDateUtils.add(contractData.getStartDate(), DAY_OF_MONTH,-1)));
+							contractDataRecord.update();
+						}
+					}else {
+						if ( AonStringUtils.equals(contractData.getExpression(), contractDataRecord.getExpression())) {
+							contractData.setStartDate(contractDataRecord.getStartDate());
+							contractData.setEndDate(contractDataRecord.getEndDate());
+							contractDataRecord.delete();
+						} else {
+							ContractDataRecord newContractDataRecord = contractDataRecord.copy();
+							newContractDataRecord.setEndDate(toSql(AonDateUtils.add(contractData.getStartDate(), DAY_OF_MONTH,-1)));
+							newContractDataRecord.insert();
+							contractDataRecord.setStartDate(toSql(AonDateUtils.add(contractData.getEndDate(), DAY_OF_MONTH,1)));
+							contractDataRecord.update();
+						}
+					}
+				});
+				;
+
+				dslContext
+				.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
+				.set(CONTRACT_DATA.DOMAIN, contractRecord.getDomain())
+				.set(CONTRACT_DATA.NAME, contractData.getName())
+				.set(CONTRACT_DATA.EXPRESSION, contractData.getExpression())
+				.set(CONTRACT_DATA.START_DATE, toSql(contractData.getStartDate()))
+				.set(CONTRACT_DATA.END_DATE, toSql(contractData.getEndDate()))
+				.execute();
+				;
+			
+			}
+		})
+		;
+		
+		return contractDatas; // TODO: From data base perhaps ?
+	}
+
+	private static ContractData [] join(ContractData  contractDatas []) {
+		Arrays.sort(contractDatas,  (d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		LinkedList<ContractData> list = new LinkedList<ContractData>();
+		list.add(copy(contractDatas[0]));
+		
+		for (int i = 0; i < contractDatas.length; i++) {
+			ContractData last = list.getLast();
+			ContractData next = contractDatas[i];
+			Date startDate = AonDateUtils.add(next.getStartDate(), DAY_OF_MONTH, -1); 
+			if ( AonStringUtils.equals(last.getExpression(), next.getExpression()) &&
+					compare(startDate, last.getEndDate()) <= 0 ) {
+				last.setEndDate(max(last.getEndDate(), next.getEndDate()));
+			}
+			else {
+				list.add(copy(next));
+			}
+		}
+		
+		return list.toArray(ContractData[]::new);
+	}
+	
+	private static ContractData copy(ContractData src) {
+		return new ContractData()
+				.setName(src.getName())
+				.setExpression(src.getExpression())
+				.setStartDate(src.getStartDate())
+				.setEndDate(src.getEndDate());
+	}
+	
+	
 	private static <T  extends HasStartDate & HasEndDate >boolean intersects(ContractRecord r, T b) {
 		return compare(max(r.getStartDate(), b.getStartDate()), min(r.getEndDate(), b.getEndDate())) <= 0;
 	}
