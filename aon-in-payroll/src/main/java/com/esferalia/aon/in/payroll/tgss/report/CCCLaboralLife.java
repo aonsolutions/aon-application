@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CCCVidaLaboral {
+public class CCCLaboralLife {
 
 	//PARSER HANDLE EXCEPTIONS
 	public static Collection<Employee> parse(InputStream is, Employee.EmployeeBuilder builder) throws IOException, UnknownPDFException {

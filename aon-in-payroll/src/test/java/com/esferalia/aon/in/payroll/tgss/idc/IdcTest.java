@@ -549,6 +549,15 @@ public class IdcTest {
 	}
 
 	@Test
+	public void testIdcContractDataIV() throws IOException, UnknownPDFException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcIV.pdf") ){
+			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "100");
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "02");			
+		}
+	}
+
+	@Test
 	public void testIdcplcccTrabajadoresTramosII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplcccII.pdf") ){
 			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {

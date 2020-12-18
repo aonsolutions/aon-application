@@ -205,6 +205,10 @@ public class IdcParser {
 	private static Matcher find( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
 		String line  ; 
 		while ( ( line = reader.readLine() ) != null  ) {
+			if ( AonStringUtils.isBlank(line) )
+				continue;
+			line = AonStringUtils.trim(line);
+			
 			Matcher matcher = pattern.matcher(line) ;
 			if ( !matcher.matches() ) {
 				continue;
@@ -254,19 +258,19 @@ public class IdcParser {
 	//ACTIVIDAD ECONOMICA: 9311 Gestión de instalaciones deportivas REGIMEN: REGIMEN GENERAL
 	private static final Pattern EMPLOYEE_PERIOD_START = 
 	Pattern.compile(
-	"^PERIODO\\s*:\\s*DESDE\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*.\\s*$"
+	"^PERIODO\\s*:\\s*DESDE\\s*(?<start>[0-9]+-[0-9]+-[0-9]+).*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TIPO CONTRATO: 289 INDEFINIDO.TIEMPO PARCIAL.TRANSFORMACION ALTA: 01-05-2018 BAJA:  
 	private static final Pattern CONTRACT_TYPE_START_END = 
 	Pattern.compile(
-	"^TIPO\\s*CONTRATO\\s*:\\s*(?<contractType>[0-9]+).*ALTA\\s*:\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*BAJA\\s*:\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)*$"
+	"^TIPO\\s*CONTRATO\\s*:\\s*(?<contractType>[0-9]*).*ALTA\\s*:\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*BAJA\\s*:\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//COEF.TIEMPO PARCIAL: 500 REDUCCIÓN JORNADA/COEFIC:  FECHA: 01-11-2019 EDAD: 55
 	private static final Pattern CONTRACT_PARTIALCOEF_DATE_AGE = 
 	Pattern.compile(
-	"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>[0-9]{3})?.*REDUCCIÓN\\s*JORNADA/COEFIC\\s*:\\s*FECHA\\s*:\\s*(?<date>[0-9]+-[0-9]+-[0-9]+)\\s*EDAD\\s*:\\s*(?<age>[0-9]+)$"
+	"^COEF\\.\\s*TIEMPO\\s*PARCIAL\\s*:\\s*(?<partialCoef>[0-9]{3})?.*REDUCCIÓN\\s*JORNADA/COEFIC\\s*:\\s*FECHA\\s*:\\s*(?<date>[0-9]+-[0-9]+-[0-9]+)\\s*EDAD\\s*:\\s*(?<age>[0-9]+)?$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//GC/M*: 08 RELEVO:  TIPO DE INACTIVIDAD/COEFIC: T.ACT.PAR.PR.COVID19/300 C.C.C.: 0111 11 112501771
