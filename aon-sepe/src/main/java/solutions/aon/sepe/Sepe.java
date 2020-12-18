@@ -13,8 +13,8 @@ public class Sepe {
 		return Contrato.contratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 	}
 
-	public static byte[] getCopyBasicPdf(InputStream certificateInputStream, String certificatePassword,
-			 String certificateType, String ipf, Date fini, Date fend) throws Exception {
+	public static byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, Date fini, Date fend) throws Exception {
 			return Contrato.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 	}
 	

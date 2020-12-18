@@ -48,8 +48,10 @@ export class AonComunica extends AonElement {
 					this.aonComunicaEl.removeToolbarOptions();
 					if(this.isMobile())
 						this.aonComunicaEl.setContentHTML(`<aon-contrato-list id="aonContratoList" ></aon-contrato-list>`)
-					else 
+					else {
 						startModule('aon_gwt_payroll', 'MainContrata', this.aonComunicaEl.CONTENT);
+					}
+
 				}
 			},
 			{

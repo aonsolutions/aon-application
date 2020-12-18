@@ -31,8 +31,8 @@ public class Contrato {
 			return contratoPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 	}
 	
-	public static byte[] getCopyBasicPdf(InputStream certificateInputStream,  String certificatePassword,
-			String certificateType, String ipf, Date fini, Date fend) throws Exception {
+	public static byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, Date fini, Date fend) throws Exception {
 			return getCopyBasicPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 	}
 	
@@ -47,13 +47,13 @@ public class Contrato {
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletRegresar?ruta=menu_consultasgeneral&origen=").click();
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaEmpresa?pagina=idtrabajador&origen=").click();//por identificador del trabajador
 
-	        pdf = page_cont_or_cbasic(htmlPage, fini, fend, ipf);
+	        pdf = page_contrac_or_cbasic(htmlPage, fini, fend, ipf);
 	        return pdf;
 		} 
 	}
 	
-	private static byte[] getCopyBasicPdfImpl(InputStream certificateInputStream, 
-			String certificatePassword, String certificateType, String ipf, Date fini, Date fend ) throws Exception  {
+	private static byte[] getCopyBasicPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, Date fini, Date fend ) throws Exception  {
 		byte[] pdf = null;
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 		    
@@ -64,12 +64,12 @@ public class Contrato {
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaImpresionCB?pagina=entrada").click();
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletRegresar?ruta=menu_consultaImpCB&origen=consultaImpresionCB").click();
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaImpresionCB?pagina=idtrabajador&origen=consultaImpresionCB").click();//por identificador del trabajador
-	        pdf = page_cont_or_cbasic(htmlPage, fini, fend, ipf);
+	        pdf = page_contrac_or_cbasic(htmlPage, fini, fend, ipf);
 	        return pdf;
 		}
 	}
 	
-	private static byte[] page_cont_or_cbasic(HtmlPage htmlPage, Date fini, Date fend, String ipf) throws Exception {
+	private static byte[] page_contrac_or_cbasic(HtmlPage htmlPage, Date fini, Date fend, String ipf) throws Exception {
     	String[] fri = Toolkit.formatDate(fini);
     	String[] fre = Toolkit.formatDate(fend);
 	    Integer ident  = 0; //NIF DEFAULT
@@ -107,8 +107,8 @@ public class Contrato {
         HtmlCheckBoxInput checkBox = htmlPage.querySelector("form[name=datos] input[value="+columnCheck+"]");
         htmlPage = (HtmlPage) checkBox.click();
         handleSepeExceptions(htmlPage);
-        formDatos = htmlPage.querySelector("form[name=datos]");
-        UnexpectedPage document = formDatos.getInputByName("Boton_imprimir").click();
+    	HtmlForm formDatos1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+        UnexpectedPage document = formDatos1.getInputByName("Boton_imprimir").click();
 		InputStream inp = document.getWebResponse().getContentAsStream();
 		byte[] pdf = inp.readAllBytes();
 		inp.close();
@@ -116,6 +116,9 @@ public class Contrato {
 	}
 	
 	private static HtmlPage first_page_sepe_contrata(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+		  webClient.getOptions().setJavaScriptEnabled(true);
+		  webClient.getOptions().setThrowExceptionOnScriptError(false);
+		  webClient.setJavaScriptErrorListener(HtmlUnitToolkit.jascriptFunctionExceptionError());
 	      HtmlPage htmlPage = webClient.getPage("https://www.sepe.es:444/ccomunicacto/servlet/ServletInicio?CCAA=99&idioma=14");
 		  return htmlPage;
 	}

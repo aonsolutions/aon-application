@@ -91,12 +91,13 @@ export class AonContratoList extends AonElement {
 				const resp = await this.getData();
 				aonCtaTable.removeAllLi();
 				resp.map((res, idx) => {
-					aonCtaTable.addLi({
+					let options = {
 						icon: 'assignment',
 						title: ` ${res.surName} ${res.name}`,
-						subtitle: `(${res.document}) ${res.startDate}`,
-						option: this.getOptions(res)
-					}, idx);
+						subtitle: `(${res.document}) ${res.startDate}`
+					};
+					if(res.contractType) options.option = this.getOptions(res);
+					aonCtaTable.addLi(options, idx);
 				})
 			} catch (e) {
 				const toast = this.getElement(`aonComunicaToast`);
@@ -112,12 +113,12 @@ export class AonContratoList extends AonElement {
 		return [
 			{
 				name:'Contrato',
-				icon:'print',
+				aonIcon: 'aon_cto',
 				fn: (el) =>this.getContratoPdf(res, el)
             },
 			{
 				name:'Copia básica',
-				icon:'print',
+				aonIcon: 'aon_cbc',
 				fn: (el) =>this.getCopyBasicPdf(res, el)
 			}
 		];
@@ -127,11 +128,16 @@ export class AonContratoList extends AonElement {
         let data = [];
         try {
             const contracts = await getContracts({allEmployees:false});
-            contracts.map(({employeeInfo, contractInfo:{startDate}})=>{
+            contracts.map(({employeeInfo, contractInfo:{startDate, contractType}})=>{
+
+				contractType = Number.parseInt(contractType);
+				if(contractType) employeeInfo.contractType = contractType;
+
                 if(startDate){
-					employeeInfo["fecha"] = startDate;
-					employeeInfo["startDate"] = setDate(startDate);
+					employeeInfo.fecha = startDate;
+					employeeInfo.startDate = setDate(startDate);
 				} 
+
                 data.push(employeeInfo);
             });
         } catch(e) {

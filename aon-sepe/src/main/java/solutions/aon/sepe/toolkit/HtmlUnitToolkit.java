@@ -43,21 +43,18 @@ public class HtmlUnitToolkit {
 		try {
 			WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 			webClient.getOptions().setCssEnabled(false);
-			webClient.getOptions().setJavaScriptEnabled(true);
 			webClient.getOptions().setDownloadImages(false);
 			webClient.setJavaScriptTimeout(15000);
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
 					certificateType);
 			
-			webClient.getOptions().setThrowExceptionOnScriptError(false);
-			webClient.setJavaScriptErrorListener(jascriptFunctionExceptionError());
 			return webClient;	
 		}
 		catch(RuntimeException e) {throw new InvalidCertificateException();}
 	}
 	
-	private static JavaScriptErrorListener jascriptFunctionExceptionError() {
+	public static JavaScriptErrorListener jascriptFunctionExceptionError() {
 		return new JavaScriptErrorListener() {
 			
 			@Override
@@ -172,12 +169,11 @@ public class HtmlUnitToolkit {
 		catch(Exception e){ throw new InternalException();}
 	}
 	
-	public static HtmlElement createButton(HtmlPage page, HtmlForm form) {
+	public static HtmlElement createButton(HtmlPage page) {
 	      //create submit 
-	      HtmlElement button = (HtmlElement) page.createElement("button");
-	      button.setAttribute("type", "submit");
-	      
-	     form.appendChild(button);
+		 HtmlElement button = (HtmlElement) page.createElement("button");
+		 button.setAttribute("type", "submit");
+		 button.setAttribute("value", "Load");
 	     return button;
 	}
 
