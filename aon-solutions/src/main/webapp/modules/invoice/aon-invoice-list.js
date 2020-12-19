@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Paymethods} from '../../services/paymethod.js';
-import {getInvoices, getInvoice, insertInvoice, deleteInvoices} from '../../services/service.js';
+import {getInvoices, getInvoice, insertInvoice, deleteInvoices, sendInvoiceMail} from '../../services/service.js';
 import {InvoiceAction} from './invoiceEnums.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
@@ -56,7 +56,7 @@ export class AonInvoiceList extends AonElement {
 		this.init();
 		aonInvoiceTable.addEventListener('more', () => {
 			if(this.more)
-				this.loadMore()
+				this.loadMore();
 		});
 
 		aonInvoiceTable.addEventListener('select', () => {
@@ -206,8 +206,16 @@ export class AonInvoiceList extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.AON_MSG_SEND_INVOICES);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
+		d.setContentHTML('<aon-input id="sendInvoicesMail" description="Email"></aon-input>');
+		d.addAcceptAction(() => {
+			let mail = this.getElement('sendInvoicesMail');
+			let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+			let message = {
+				to: mail.value,
+				invoices: aonInvoiceTable.selected
+			};
+			sendInvoiceMail(message).then(() => {});
+		});
 		d.open();
 	}
 

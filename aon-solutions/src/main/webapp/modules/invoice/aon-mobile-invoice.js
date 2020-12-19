@@ -183,7 +183,7 @@ export class AonMobileInvoice extends AonInvoice {
 
     // TOTAL
     let tdTotal = document.createElement('td');
-    tdTotal.innerHTML = `<aon-number id="total" description="Total" format="true"></aon-number>`;
+    tdTotal.innerHTML = `<aon-number id="total" description="Total" format="true" decimals="2"></aon-number>`;
     tr1.appendChild(tdTotal);
     let total = document.getElementById('total');
     total.value = this._invoice.total;
@@ -396,7 +396,7 @@ export class AonMobileInvoice extends AonInvoice {
 
     let tdTotalSuplidos = document.createElement('td');
     tdTotalSuplidos.setAttribute('colspan', '1');
-    tdTotalSuplidos.innerHTML = `<aon-number id="totalSuplidos" description="${MSG.AON_MSG_TOTAL_SUPPLIED}" format="true"></aon-number>`;
+    tdTotalSuplidos.innerHTML = `<aon-number id="totalSuplidos" description="${MSG.AON_MSG_TOTAL_SUPPLIED}" format="true" decimals="2"></aon-number>`;
     trSuplidos.appendChild(tdTotalSuplidos);
     let totalSuplidos = this.getElement('totalSuplidos');
     totalSuplidos.value = this._invoice.suplidos.total;
@@ -461,7 +461,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// DETAIL AMOUNT
 		let tdDetailAmount = document.createElement('td');
-		tdDetailAmount.innerHTML = `<aon-number id="detailAmount${i}" description="Importe" format="true"></aon-number>`;
+		tdDetailAmount.innerHTML = `<aon-number id="detailAmount${i}" description="Importe" format="true"  decimals="2"></aon-number>`;
 		tr.appendChild(tdDetailAmount);
 		let detailAmount = document.getElementById('detailAmount' + i);
 		detailAmount.readonly = 'readonly';
@@ -521,7 +521,7 @@ export class AonMobileInvoice extends AonInvoice {
     // DETAIL QUANTITY
     let tdDetailQuantity = document.createElement('td');
     tdDetailQuantity.setAttribute('colspan','1');
-    tdDetailQuantity.innerHTML = `<aon-number id="dialogDetailQuantity${i}" description="Cantidad" format="true"></aon-number>`;
+    tdDetailQuantity.innerHTML = `<aon-number id="dialogDetailQuantity${i}" description="Cantidad" format="true" decimals="2"></aon-number>`;
     tr2.appendChild(tdDetailQuantity);
     let detailQuantity = document.getElementById('dialogDetailQuantity' + i);
     detailQuantity.value = detail.quantity;
@@ -533,7 +533,7 @@ export class AonMobileInvoice extends AonInvoice {
     // DETAIL PRICE
     let tdDetailPrice = document.createElement('td');
     tdDetailPrice.setAttribute('colspan','1');
-    tdDetailPrice.innerHTML = `<aon-number id="dialogDetailPrice${i}" description="Precio" format="true"></aon-number>`;
+    tdDetailPrice.innerHTML = `<aon-number id="dialogDetailPrice${i}" description="Precio" format="true" decimals="2"></aon-number>`;
     tr2.appendChild(tdDetailPrice);
     let detailPrice = document.getElementById('dialogDetailPrice' + i);
     detailPrice.value = detail.price;
@@ -548,7 +548,7 @@ export class AonMobileInvoice extends AonInvoice {
     // DETAIL DISCOUNT
     let tdDetailDiscount = document.createElement('td');
     tdDetailDiscount.setAttribute('colspan','1');
-    tdDetailDiscount.innerHTML = `<aon-number id="dialogDetailDiscount${i}" description="%Dto" format="true"></aon-number>`;
+    tdDetailDiscount.innerHTML = `<aon-number id="dialogDetailDiscount${i}" description="%Dto" format="true" decimals="2"></aon-number>`;
     tr3.appendChild(tdDetailDiscount);
     let detailDiscount = document.getElementById('dialogDetailDiscount' + i);
     detailDiscount.value = detail.discount;
@@ -627,7 +627,7 @@ export class AonMobileInvoice extends AonInvoice {
 		// FINANCE AMOUNT
 		let tdFinanceAmount = document.createElement('td');
 		tdFinanceAmount.setAttribute('colspan','2');
-		tdFinanceAmount.innerHTML = `<aon-number id="dialogFinanceAmount${i}" description="Importe" format="true"></aon-number>`;
+		tdFinanceAmount.innerHTML = `<aon-number id="dialogFinanceAmount${i}" description="Importe" format="true" decimals="2"></aon-number>`;
 		tr3.appendChild(tdFinanceAmount);
 		let financeAmount = document.getElementById('dialogFinanceAmount' + i);
 		financeAmount.value = finance.amount;
@@ -674,7 +674,7 @@ export class AonMobileInvoice extends AonInvoice {
 
 		// FINANCE AMOUNT
 		let tdFinanceAmount = document.createElement('td');
-		tdFinanceAmount.innerHTML = `<aon-number id="financeAmount${i}" description="Importe" format="true"></aon-number>`;
+		tdFinanceAmount.innerHTML = `<aon-number id="financeAmount${i}" description="Importe" format="true" decimals="2"></aon-number>`;
 		tr.appendChild(tdFinanceAmount);
 		let financeAmount = document.getElementById('financeAmount' + i);
 		financeAmount.value = finance.amount;

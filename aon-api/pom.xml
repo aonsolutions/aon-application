@@ -60,6 +60,13 @@
 		
 		<dependency>
 			<groupId>solutions.aon</groupId>
+			<artifactId>aon.aws</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>solutions.aon</groupId>
 			<artifactId>aon.seg.social</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
@@ -120,6 +127,13 @@
     		<version>5.1.3</version>
 			<scope>compile</scope>
 	    </dependency>
+	    
+	    <!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity -->
+		<dependency>
+    		<groupId>org.apache.velocity</groupId>
+    		<artifactId>velocity</artifactId>
+    		<version>1.7</version>
+		</dependency>
 	    
 		<!-- Test dependecies -->
 		<dependency>

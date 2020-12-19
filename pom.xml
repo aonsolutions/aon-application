@@ -214,7 +214,7 @@
 		<!-- AWS API Gateway & Lambda 
 		<module>aon-rest-api</module>
 		-->
-
+		<module>aon-aws</module>
 		<module>aon.accounting.report</module>
 	</modules>
 

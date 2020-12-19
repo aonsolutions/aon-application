@@ -11,6 +11,8 @@ export const getInvoices = (data) => get(`${API_URL}/invoice`, data);
 
 export const insertInvoice = (data) => post(`${API_URL}/invoice`, data);
 
+export const sendInvoiceMail = (data) => post(`${API_URL}/send_mail/invoice`, data);
+
 export const deleteInvoices = (invoiceIds) => remove(`${API_URL}/invoice`, { id: invoiceIds });
 
 export const getInvoiceAccounts = (data) => get(`${API_URL}/invoice/accounts`, data);
