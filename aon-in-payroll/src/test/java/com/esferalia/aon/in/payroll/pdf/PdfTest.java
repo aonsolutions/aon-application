@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -14,8 +13,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,7 +31,7 @@ public class PdfTest {
 	
 	
 	@Test
-	//@Ignore
+	@Ignore
 	public void testDsi() throws IOException, UnknownPDFException{
 		try (InputStream is = PdfTest.class.getResourceAsStream("dsi_nomina_1pag.pdf")){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -371,7 +368,7 @@ public class PdfTest {
 	
 	
 	@Test
-	//@Ignore
+	@Ignore
 	public void testDsiAt() throws IOException, UnknownPDFException{
 		try (InputStream is = PdfTest.class.getResourceAsStream("dsi_at.pdf")){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -714,7 +711,7 @@ public class PdfTest {
 	}
 	
 	@Test
-	//@Ignore
+	@Ignore
 	public void testA3() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("a3.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
