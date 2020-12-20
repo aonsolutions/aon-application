@@ -4466,6 +4466,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		changesCheck.setVisible(false);
 		toolbar.add(changesCheck);
 		
+		fxButton.ensureDebugId("fxButton");
+		redoButton.ensureDebugId("redoButton");
+		undoButton.ensureDebugId("undoButton");
+		undoAllButton.ensureDebugId("undoAllButton");
+		acceptButton.ensureDebugId("acceptButton");
+		printPreviewButton.ensureDebugId("printPreviewButton");
+		
 		return toolbar;
 	}
 	

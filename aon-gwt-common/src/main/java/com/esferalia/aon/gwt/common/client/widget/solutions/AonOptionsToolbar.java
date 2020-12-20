@@ -235,6 +235,13 @@ public class AonOptionsToolbar extends Composite {
 		});
 		toolbar.add(collapseMenuButton);
 		
+		newButton.ensureDebugId("newButton");
+		copyButton.ensureDebugId("copyButton");
+		draftButton.ensureDebugId("draftButton");
+		pasteButton.ensureDebugId("pasteButton");
+		viewButton.ensureDebugId("viewButton");
+		collapseAllButton.ensureDebugId("collapseAllButton");
+		
 		return toolbar;
 	}
 	
