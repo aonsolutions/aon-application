@@ -1569,7 +1569,28 @@ public class CretaServlet extends HttpServlet
 	}
 	
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> distinct(Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> ts){
-		return ts.collect(Collectors.groupingBy(
+		return ts
+				
+//		.peek( t -> {
+//			if ( (t.getLiquidacion() == null )
+//					|| ( t.getLiquidacion().getCcc() == null )
+//					|| ( t.getLiquidacion().getPeriodoDesde() == null )
+//					|| ( t.getLiquidacion().getPeriodoHasta() == null )
+//					)
+//				try {
+//					Utils.marshal(t, System.out );
+//				} catch (JAXBException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//		})
+				
+		.filter(t -> t.getLiquidacion() != null )
+		.filter(t -> t.getLiquidacion().getCcc() != null )
+		.filter(t -> t.getLiquidacion().getPeriodoDesde() != null )
+		.filter(t -> t.getLiquidacion().getPeriodoHasta() != null )
+		
+		.collect(Collectors.groupingBy(
 		t -> 
 			t.getLiquidacion().getTipo()
 			+ t.getLiquidacion().getCcc().getRegimen()
