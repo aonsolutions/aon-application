@@ -59,51 +59,6 @@
 							value="&#160;" actionListener="#{webmailMessage.onSendEmail}" >
 						</aon:commandLink>
 						<ui:insert name="beforeRightMenuContent"/>								
-						<aon:commandLink id="home" action="home"
-							rendered="#{!aonConfiguration.properties.hideMenuHome}"
-							title="#{bundle.aon_home}"
-							styleClass="aon-menu-icon aon-icon-home"
-							value="&#160;" />
-						<aon:dropDownMenu>
-			                <f:facet name="label"> 
-		                        <aon:graphicImage title="#{bundle.aon_help}"
-		                        	value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-help.png']}" />
-			                </f:facet>		
-			                <aon:if test="#{aonConfiguration.bean.alarm.showList}">
-		                		<aon:menuItem id="alarm"
-									value="#{bundle.aon_alarm}"
-									action="alarm_list" actionListener="#{alarm.onInit}" 
-									iconClass="aon-icon-alarm" />
-							</aon:if>	
-			                <ui:insert name="beforeHelpMenuContent"/>
-			                <aon:menuGroup
-			                	rendered="#{!aonConfiguration.properties.hideMenuChooseLanguage}"
-			                	value="#{bundle.aon_chooseLocale}">
-		                		<aon:menuItem id="spanishLanguage" reRender="aonHeader,aonContent"
-		                			value="#{aonConfiguration.locales[0].displayName}"
-									iconClass="#{aonConfiguration.locales[0].iconClass}" 
-									actionListener="#{aonConfiguration.locales[0].onChangeLanguage}" />
-		                		<aon:menuItem id="englishLanguage" reRender="aonHeader,aonContent"
-		                			value="#{aonConfiguration.locales[1].displayName}"
-									iconClass="#{aonConfiguration.locales[1].iconClass}" 
-									actionListener="#{aonConfiguration.locales[1].onChangeLanguage}" />
-			                </aon:menuGroup>		                
-							<aon:menuItem submitMode="none" reRender="aonStatus"
-								rendered="#{!aonConfiguration.properties.hideMenuHelp}"
-								iconClass="aon-icon-menu-help">
-								<h:outputLink style="font-size:1em;"
-									value="#{aonConfiguration.helpURL}"
-									target="_blank" >
-									<aon:outputText value="#{bundle.aon_help}" />
-								</h:outputLink>
-							</aon:menuItem>
-							<aon:menuItem id="about" reRender="aboutWindowPanel"
-								rendered="#{!aonConfiguration.properties.hideMenuAbout}"
-								iconClass="aon-icon-about"
-								value="#{bundle.aon_about}" >
-								<f:setPropertyActionListener target="#{aonConfiguration.properties.showAbout}" value="#{true}" />
-							</aon:menuItem>
-						</aon:dropDownMenu>
 					</aon:componentGroup>						
 				</rich:toolBarGroup>	 		
 	 		</aon:menuBar>
