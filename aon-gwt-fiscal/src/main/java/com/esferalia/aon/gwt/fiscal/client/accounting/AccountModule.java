@@ -4,22 +4,26 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountPanel.AonAccountPanelCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountModulePanel;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
+import com.esferalia.aon.occam.api.model.Account;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.Label;
 
 public class AccountModule extends MainEntryPoint {
 
@@ -32,37 +36,22 @@ public class AccountModule extends MainEntryPoint {
 
 	@Override
 	public void onModuleLoad() {
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+		AccountModuleOptions options = new AccountModuleOptions();
+		options.setParentWidget(root);
+		options.setDomainName(getCurrentDomainName());
+		options.setDomain(getCurrentDomain());
+		options.setUser(getCurrentUser());
+		this.onModuleLoad( options );
+	}
+	
+	public void onModuleLoad( final AccountModuleOptions options ) {
 		
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		AccountModulePanel accountPanel = new AccountModulePanel(
-				getCurrentDomainName(),
-				getCurrentDomain(),
-				getCurrentUser()
-				);
+		AccountModulePanel accountPanel = new AccountModulePanel( options );
 		
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label("PLAN GENERAL CONTABLE"));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
-		
+		AonToolbar toolbar = new AonToolbar( "PLAN GENERAL CONTABLE" );
 		FormPanel diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		Hidden accountEntryParamsHidden = new Hidden(IRequestParamsNames.ACCOUNT_PARAMS);
@@ -75,31 +64,60 @@ public class AccountModule extends MainEntryPoint {
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
 		formFlowPanel.add(userHidden);
-		buttonContainer.add(diskForm);
+		toolbar.add(diskForm);
 
-		final Button excel = new Button();
-		excel.setText(AON.MSG.export());
-		excel.setTitle(AON.MSG.export());
-		excel.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		excel.addStyleName(AON.AON_CSS.aonIconExcel());
+		final AonToolbarButton reset = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() ,AonButton.AON_ACCESSKEY_RESET);
+		reset.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				showAccountDialog( options, accountPanel );
+			}
+		});
+		toolbar.add(reset);
+
+		final AonToolbarButton excel = new AonToolbarButton( AON.MSG.export() , AON.CSS.aonIconExcel());
 		excel.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_ACCOUNT_REPORT_PRINT);
-				accountEntryParamsHidden.setValue(JsonParams.convert(accountPanel.getWidgetParams()));
+				accountEntryParamsHidden.setValue(JsonParams.convert(accountPanel.getWidgetParams( options )));
 				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 				domainNameHidden.setValue(getCurrentDomainName());
 				userHidden.setValue(getCurrentUser());
 				diskForm.submit();
 			}
 		});
-		buttonContainer.add(excel);
-		toolbarPanel.add(toolbar);
-		dockLayoutPanel.addNorth(toolbarPanel, 25);
+		toolbar.add(excel);
+		
+		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
+		
 		dockLayoutPanel.add( accountPanel );
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(dockLayoutPanel);
 	}
- 
+
+	private void showAccountDialog(AccountModuleOptions options, AccountModulePanel accountModulePanel) {
+		final AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption(AON.MSG.account());
+		final AonAccountPanel accountPanel = new AonAccountPanel( options.getDomainName(), options.getDomain(), options.getUser(), null, new AonAccountPanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+			}
+			
+			@Override
+			public void onAccept(Account result) {
+				dialog.hide();
+				accountModulePanel.onSearch(options);
+			}
+		});
+		
+		dialog.add( accountPanel );
+		dialog.center();
+		dialog.show();
+	}
+	
 }

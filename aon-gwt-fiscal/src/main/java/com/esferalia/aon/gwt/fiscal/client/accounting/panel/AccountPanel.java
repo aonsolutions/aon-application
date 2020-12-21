@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.Account;
@@ -36,7 +37,6 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -71,7 +71,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 	private int lastScrollPos = 0;
 	
 	private static enum COLS {
-		  NUM(AonStringUtils.EMPTY		,"20px"  ,AON.AON_CSS.aonTextCenter())
+		  NUM(AonStringUtils.EMPTY		,"20px"  ,AON.CSS.aonTextCenter())
 		, COD(AON.MSG.code()			,"150px" ,null)
 		, DES(AON.MSG.description()		,"auto"  ,null)
 		, ALI(AON.MSG.aliasAbbr()		,"170px" ,null)
@@ -106,8 +106,8 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 
 	public AccountPanel(AccountParams params) {
 		
-		addStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonPaddingBottom());
+		addStyleName(AON.CSS.aonScrollArea());
+		addStyleName(AON.CSS.aonPaddingBottom());
 		
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
@@ -169,7 +169,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 	private void search(AccountParams params) {
 		container.clear();
 		tab = new FlexTable();
-		tab.addStyleName(AON.AON_CSS.aonDataTable());
+		tab.addStyleName(AON.CSS.aonGrid());
 		
 		paintHeader();
 		container.setWidget(tab);
@@ -182,10 +182,10 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 		for ( COLS col : COLS.values()) {
 			tab.getColumnFormatter().setWidth(col.ordinal(), col.getColWidth());	
 			tab.setWidget(0, col.ordinal(), new Label( col.getHeaderLabel() ));
-			tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.AON_CSS.aonDataTableHeader());
+			tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
 			if ( col.getCellStyleClass() != null) {
 				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
-				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.AON_CSS.aonNowrap());
+				tab.getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonNowrap());
 			}
 		}
 	}
@@ -261,9 +261,8 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 
 			private void paintInactiveRow(final int r, int col, Account account) {
 				Label msg = new Label("");
-				msg.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-				msg.setWidth("20px");
-				msg.addStyleName(AON.AON_CSS.aonIconShield());
+				msg.setStyleName(AON.CSS.aonTabIcon());
+				msg.addStyleName(AON.CSS.aonIconLevelTop());
 				tab.setWidget(r, col, msg);
 				col++;
 				
@@ -282,8 +281,7 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				col++;
 
 				CheckBox activeCheck = new CheckBox();
-				activeCheck.setStyleName(AON.AON_CSS.aonBorderNone());
-				activeCheck.addStyleName(AON.AON_CSS.aonWidthAll());
+				activeCheck.addStyleName(AON.CSS.aonWidthAll());
 				activeCheck.setValue(account.isActive());
 				activeCheck.setEnabled(false);
 				tab.setWidget(r, col, activeCheck);
@@ -292,45 +290,42 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 
 			private void paintDeletedRow(final int r, int col, Account account) {
 				Label msg = new Label("");
-				msg.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-				msg.setWidth("20px");
+				msg.setStyleName(AON.CSS.aonTabIcon());
+				msg.addStyleName(AON.CSS.aonIconLevelThis());
 				tab.setWidget(r, col, msg);
 				col++;
 				
 				Label codeLabel = new Label(account.getCode());
-				codeLabel.setStyleName(AON.AON_CSS.aonTextLineThrough());
+				codeLabel.setStyleName(AON.CSS.aonTextLineThrough());
 				codeLabel.getElement().getStyle().setPaddingLeft( ((account.getLevel()-1)) , Unit.EM);
 				tab.setWidget(r, col, codeLabel);
 				col++;
 				
 				Label descriptionLabel = new Label(account.getDescription());
-				descriptionLabel.setStyleName(AON.AON_CSS.aonTextLineThrough());
+				descriptionLabel.setStyleName(AON.CSS.aonTextLineThrough());
 				tab.setWidget(r, col, descriptionLabel);
 				col++;
 
 				Label aliasLabel = new Label(account.getAlias());
-				aliasLabel.setStyleName(AON.AON_CSS.aonTextLineThrough());
+				aliasLabel.setStyleName(AON.CSS.aonTextLineThrough());
 				tab.setWidget(r, col, aliasLabel);
 				col++;
 
 				Label costCenterLabel = new Label(account.getCostCenter());
-				costCenterLabel.setStyleName(AON.AON_CSS.aonTextLineThrough());
+				costCenterLabel.setStyleName(AON.CSS.aonTextLineThrough());
 				tab.setWidget(r, col, costCenterLabel);
 				col++;
 
 				CheckBox activeCheck = new CheckBox();
-				activeCheck.setStyleName(AON.AON_CSS.aonBorderNone());
-				activeCheck.addStyleName(AON.AON_CSS.aonWidthAll());
+				activeCheck.setStyleName(AON.CSS.aonBorderNone());
+				activeCheck.addStyleName(AON.CSS.aonWidthAll());
 				activeCheck.setValue(account.isActive());
 				activeCheck.setEnabled(false);
 				tab.setWidget(r, col, activeCheck);
 				col++;
 				
 				FlowPanel buttonContainer = new FlowPanel();
-				Button undoButton = new Button();
-				undoButton.setTitle(AON.MSG.restoreAction());
-				undoButton.setStyleName(AON.AON_CSS.aonIconUndo());
-				undoButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+				AonTableButton undoButton = new AonTableButton(AON.MSG.restoreAction(), AON.CSS.aonIconUndo());
 				undoButton.addClickHandler( new ClickHandler() {
 					
 					@Override
@@ -372,7 +367,6 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 
 			private void paintActiveRow(final int r, int col, Account account) {
 				Label msg = new Label("");
-				msg.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
 				TextBox codeBox = new TextBox();
 				TextBox descriptionBox = new TextBox();
 				TextBox aliasBox = new TextBox();
@@ -411,50 +405,48 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 					}
 				});
 				
-				msg.setWidth("20px");
+				msg.setStyleName(AON.CSS.aonTabIcon());
 				tab.setWidget(r, col, msg);
 				col++;
 				
-				codeBox.setStyleName(AON.AON_CSS.aonBorderNone());
-				codeBox.addStyleName(AON.AON_CSS.aonWidthAll());
+				codeBox.setStyleName(AON.CSS.aonBorderNone());
+				codeBox.addStyleName(AON.CSS.aonWidthAll());
 				codeBox.getElement().getStyle().setPaddingLeft( ((account.getLevel()-1)) , Unit.EM);
 				codeBox.setMaxLength(9);
 				codeBox.setValue(account.getCode());
 				tab.setWidget(r, col, codeBox);
 				col++;
 				
-				descriptionBox.setStyleName(AON.AON_CSS.aonBorderNone());
-				descriptionBox.addStyleName(AON.AON_CSS.aonWidthAll());
+				descriptionBox.setStyleName(AON.CSS.aonBorderNone());
+				descriptionBox.addStyleName(AON.CSS.aonWidthAll());
 				descriptionBox.setMaxLength(128);
 				descriptionBox.setValue(account.getDescription());
 				tab.setWidget(r, col, descriptionBox);
 				col++;
 
-				aliasBox.setStyleName(AON.AON_CSS.aonBorderNone());
-				aliasBox.addStyleName(AON.AON_CSS.aonWidthAll());
+				aliasBox.setStyleName(AON.CSS.aonBorderNone());
+				aliasBox.addStyleName(AON.CSS.aonWidthAll());
 				aliasBox.setMaxLength(32);
 				aliasBox.setValue(account.getAlias());
 				tab.setWidget(r, col, aliasBox);
 				col++;
 
-				costCenterBox.setStyleName(AON.AON_CSS.aonBorderNone());
-				costCenterBox.addStyleName(AON.AON_CSS.aonWidthAll());
+				costCenterBox.setStyleName(AON.CSS.aonBorderNone());
+				costCenterBox.addStyleName(AON.CSS.aonWidthAll());
 				costCenterBox.setMaxLength(32);
 				costCenterBox.setValue(account.getCostCenter());
 				tab.setWidget(r, col, costCenterBox);
 				col++;
 
-				activeCheck.setStyleName(AON.AON_CSS.aonBorderNone());
-				activeCheck.addStyleName(AON.AON_CSS.aonWidthAll());
+				activeCheck.setStyleName(AON.CSS.aonBorderNone());
+				activeCheck.addStyleName(AON.CSS.aonWidthAll());
 				activeCheck.setValue(account.isActive());
 				tab.setWidget(r, col, activeCheck);
 				col++;
 				
 				FlowPanel buttonContainer = new FlowPanel();
-				Button deleteButton = new Button();
-				deleteButton.setTitle(AON.MSG.deleteAction());
-				deleteButton.setStyleName(AON.AON_CSS.aonIconDelete());
-				deleteButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+				
+				AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
 				deleteButton.addClickHandler( new ClickHandler() {
 					
 					@Override
@@ -518,11 +510,11 @@ public class AccountPanel extends ScrollPanel implements HasSelectionHandlers<Ac
 			
 			@Override
 			public void onSuccess(Account result) {
-				msg.addStyleName(AON.AON_CSS.aonIconPointGreen());
+				msg.addStyleName(AON.CSS.aonIconValid());
 				new Timer() {
 					@Override
 					public void run() {
-						msg.removeStyleName(AON.AON_CSS.aonIconPointGreen());
+						msg.removeStyleName(AON.CSS.aonIconValid());
 					}
 				}.schedule(CHANGE_DISPLAY_MILLIS);
 			}

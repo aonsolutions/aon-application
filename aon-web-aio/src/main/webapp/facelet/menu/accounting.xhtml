@@ -160,18 +160,16 @@
 										value="#{bundle.account_module}" />
 								</aon:div>
 								
-								<aon:if test="#{domainSwitcher.alphaUser}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_account"
-											action="gwt_account-acc"
-											title="PLAN GENERAL CONTABLE">
-											<aon:outputText
-												styleClass="aon-fiscal-link-label aon-icon-beta-text"
-												style="margin-left: 5px; padding-left: 20px;"
-												value="PLAN GENERAL CONTABLE" />
-										</aon:commandLink>
-									</aon:div>
-								</aon:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_account"
+										action="gwt_account-acc"
+										title="PLAN GENERAL CONTABLE">
+										<aon:outputText
+											styleClass="aon-fiscal-link-label aon-icon-beta-text"
+											style="margin-left: 5px; padding-left: 20px;"
+											value="PLAN GENERAL CONTABLE" />
+									</aon:commandLink>
+								</aon:div>
 
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">

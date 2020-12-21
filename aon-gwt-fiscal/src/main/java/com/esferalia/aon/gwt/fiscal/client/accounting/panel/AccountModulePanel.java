@@ -2,9 +2,11 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountModuleOptions;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -14,7 +16,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -28,10 +29,6 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class AccountModulePanel extends DockLayoutPanel implements Focusable, HasAccountEntrySelectionHandlers{
 
-	private String currentDomainName;
-	private String currentUser;
-	private Integer currentDomainId;
-	
 	private SimpleLayoutPanel northPanel;
 	private SimpleLayoutPanel centerPanel;
 	
@@ -45,16 +42,13 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 	private ListBox level;
 	private TextBox costCenter;
 
-	private Button cleanButton;
-	private Button refreshButton;
+	private AonSearchPanelButton cleanButton;
+	private AonSearchPanelButton refreshButton;
 
-	public AccountModulePanel(String domainName, int domainId,String user) {
+	public AccountModulePanel(AccountModuleOptions options) {
 		super(Unit.PX);
-		this.currentDomainName = domainName;
-		this.currentUser = user;
-		this.currentDomainId = domainId;
-		addStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonMarginBottom());
+		addStyleName(AON.CSS.aonScrollArea());
+		addStyleName(AON.CSS.aonMarginBottom());
 		northPanel = new SimpleLayoutPanel();
 		
 		id = new IntegerBox();
@@ -63,41 +57,41 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
-				onSearch();
+				onSearch( options );
 			}
 		});
 		
 		code= new TextBox();
 		code.setVisibleLength(9);
 		code.setMaxLength(9);
-		code.setStyleName(AON.AON_CSS.aonInputText());
+		code.setStyleName(AON.CSS.aonInputText());
 		code.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				onSearch();
+				onSearch( options );
 			}
 		});
 		
 		description= new TextBox();
 		description.setVisibleLength(20);
-		description.setStyleName(AON.AON_CSS.aonInputText());
+		description.setStyleName(AON.CSS.aonInputText());
 		description.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				onSearch();
+				onSearch( options );
 			}
 		});
 		
 		alias = new TextBox();
 		alias.setVisibleLength(10);
-		alias.setStyleName(AON.AON_CSS.aonInputText());
+		alias.setStyleName(AON.CSS.aonInputText());
 		alias.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				onSearch();
+				onSearch( options );
 			}
 		});
 		
@@ -114,7 +108,7 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				onSearch();
+				onSearch( options );
 			}
 		});
 
@@ -127,73 +121,65 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 		active.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				onSearch();
+				onSearch( options );
 			}
 		});
 
 		costCenter = new TextBox();
 		costCenter.setVisibleLength(15);
-		costCenter.setStyleName(AON.AON_CSS.aonInputText());
+		costCenter.setStyleName(AON.CSS.aonInputText());
 		costCenter.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				onSearch();
+				onSearch( options );
 			}
 		});
 
 		tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
-		tab.addStyleName(AON.AON_CSS.aonWidthAll());
+		tab.setStyleName(AON.CSS.aonSearchPanel());
+		tab.addStyleName(AON.CSS.aonMarginLeft());
+		tab.addStyleName(AON.CSS.aonMarginRight());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
 		
 		int row = 0;
 		int col = 0;
 		
 		tab.setWidget(row, col, new Label(AON.MSG.code()));
-		tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(row,col, AON.CSS.aonSearchPanelLabel());
 		col++;
 		tab.setWidget(row, col, code);
-		tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonPanelGridEven());
 		col++;
 		
 		tab.setWidget(row, col, new Label(AON.MSG.description()));
-		tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(row,col, AON.CSS.aonSearchPanelLabel());
 		col++;
 		tab.setWidget(row, col, description);
-		tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonPanelGridEven());
 		col++;
 		
 		tab.setWidget(row, col, new Label(AON.MSG.aliasAbbr()));
-		tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(row,col, AON.CSS.aonSearchPanelLabel());
 		col++;
 		tab.setWidget(row, col, alias);
-		tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonPanelGridEven());
 		col++;
 
 		tab.setWidget(row, col, new Label(AON.MSG.level()));
-		tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(row,col, AON.CSS.aonSearchPanelLabel());
 		col++;
 		tab.setWidget(row, col, level);
-		tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonPanelGridEven());
 		col++;
 
 		tab.setWidget(row, col, new Label(AON.MSG.costCenter()));
-		tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(row,col, AON.CSS.aonSearchPanelLabel());
 		col++;
 		tab.setWidget(row, col, costCenter);
-		tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonPanelGridEven());
 		col++;
 
 		tab.setWidget(row, col, active);
-		tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonPanelGridEven());
 		col++;
 
-		cleanButton = new Button();
-		cleanButton.setTitle(AON.MSG.clean());
-		cleanButton.setStyleName(AON.AON_CSS.aonIconDelete());
-		cleanButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-		cleanButton.addStyleName(AON.AON_CSS.aonMarginLeft());
-		cleanButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
 		cleanButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -205,20 +191,16 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 				level.setSelectedIndex(0);
 				costCenter.setValue(null,false);
 				code.setFocus(true);
-				onSearch();
+				onSearch( options );
 			}
 		});
 
-		refreshButton = new Button();
-		refreshButton.setTitle(AON.MSG.refresh());
-		refreshButton.setStyleName(AON.AON_CSS.aonIconRefresh());
-		refreshButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-		refreshButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+		refreshButton = new AonSearchPanelButton( AON.MSG.refresh(), AON.CSS.aonIconRefresh() );
 		refreshButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		refreshButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				onSearch();
+				onSearch( options );
 			}
 		});
 
@@ -226,7 +208,6 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 		buttonsPanel.add( cleanButton );
 		buttonsPanel.add( refreshButton );
 		tab.setWidget(row, col, buttonsPanel);
-		tab.getCellFormatter().setStyleName(row,col, AON.AON_CSS.aonPanelGridEven());
 		col++;
 		
 		for (int i = 0; i < col; i++) {
@@ -242,19 +223,9 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 		addNorth(northPanel, 60);
 		centerPanel = new SimpleLayoutPanel();
 		add(centerPanel);
-		onSearch();
+		onSearch( options );
 	}
 	
-	public String getCurrentDomainName() {
-		return currentDomainName;
-	}
-	public Integer getCurrentDomainId() {
-		return currentDomainId;
-	}
-	public String getCurrentUser() {
-		return currentUser;
-	}
-
 	@Override
 	public HandlerRegistration addSelectionHandler(AccountEntrySelectionHandler handler) {
 		return super.addHandler(handler, AccountEntrySelectionEvent.getType());
@@ -280,25 +251,17 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 		code.setTabIndex(index);
 	}
 	
-	private void onSearch() {
-		AccountParams params = getWidgetParams();
+	public void onSearch( AccountModuleOptions options ) {
+		AccountParams params = getWidgetParams( options );
 		AccountPanel accountPanel = new AccountPanel(params);
-//		accountPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
-//			
-//			@Override
-//			public void onSelection(AccountSelectionEvent event) {
-//				AccountEntrySelectionEvent.fire(AccountModulePanel.this, event.getSelectedItem(), event.getCallback() );
-//			}
-//
-//		});
 		centerPanel.setWidget(accountPanel);
 	}
 
-	public AccountParams getWidgetParams() {
+	public AccountParams getWidgetParams( AccountModuleOptions options) {
 		return new AccountParams()
-			.setDomainName(this.currentDomainName)
-			.setDomain(this.currentDomainId)
-			.setUser(this.currentUser)
+			.setDomainName(options.getDomainName())
+			.setDomain(options.getDomain())
+			.setUser(options.getUser())
 			.setId(id.getValue())
 			.setCode(code.getValue())
 			.setDescription(description.getValue())

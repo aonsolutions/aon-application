@@ -427,6 +427,9 @@
 .aon_border {
 	border: #c4c4c4 1px solid;
 }
+.aon_border_none {
+	border: none;
+}
 .aon_border_top {
 	border-top: #c4c4c4 1px solid;
 }

@@ -445,6 +445,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_border")
 	String aonBorder();
 
+	@ClassName("aon_border_none")
+	String aonBorderNone();
+
 	@ClassName("aon_border_top")
 	String aonBorderTop();
 
