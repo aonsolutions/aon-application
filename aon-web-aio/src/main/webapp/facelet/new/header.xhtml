@@ -263,29 +263,29 @@
 									style="#{customize.fontStyle}" >
 								</h:outputLink>
 							</f:facet>
-							<!--		
 			                <aon:if test="#{aonConfiguration.bean.alarm.showList}">
 		                		<aon:menuItem id="alarm"
 									value="#{bundle.aon_alarm}"
-									action="alarm_list" actionListener="#{alarm.onInit}" 
+									action="home_alarm" actionListener="#{alarm.onInit}" 
 									iconClass="aon-icon-alarm" />
 							</aon:if>	
-							<aon:menuItem id="favorites" action="actionFavorite"
+							<aon:menuItem id="favorites" action="home_favorite"
+								update="aonContent"
 								rendered="#{!aonConfiguration.properties.hideMenuFavorite}"
 								iconClass="aon-icon-favorite"
 								actionListener="#{actionFavorite.onInit}"
 								value="#{bundle.aon_favorites_management}" />
 							<aon:if test="#{!aonRole.sysAdmin and (domainSwitcher.type != 'ADMIN')}">
-								<aon:menuItem id="advancedMode" action="advancedMode"
+								<aon:menuItem id="advancedMode" action="home_advanced"
 								actionListener="#{adminMain.onInitAdvancedMode}"
 								rendered="#{!aonConfiguration.properties.hideMenuAdvancedMode}"
 								value="#{bundle.admin_advanced_mode}" />
 							</aon:if>
-							<aon:menuItem id="config_userProfile" action="domainUser_profile"
+							<aon:menuItem id="config_userProfile" action="home_user"
 								iconClass="aon-icon-menu-user"
 								actionListener="#{domainUser.onInitUserProfile}"
 								value="#{bundle.admin_user_profile}" />
-							<aon:menuItem id="changePassword" action="changePassword_form"
+							<aon:menuItem id="changePassword" action="home_password"
 								iconClass="aon-icon-changePassword"
 								actionListener="#{changePassword.onInit}"
 								value="#{bundle.aon_security_change_password}" />
@@ -300,8 +300,7 @@
 		                			value="#{aonConfiguration.locales[1].displayName}"
 									iconClass="#{aonConfiguration.locales[1].iconClass}" 
 									actionListener="#{aonConfiguration.locales[1].onChangeLanguage}" />
-			                </aon:menuGroup>		                
-							-->
+			                </aon:menuGroup>	
 							<aon:menuItem submitMode="none" reRender="aonStatus"
 								rendered="#{!aonConfiguration.properties.hideMenuHelp}"
 								iconClass="aon-icon-menu-help">

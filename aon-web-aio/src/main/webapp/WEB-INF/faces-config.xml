@@ -193,6 +193,29 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>home_advanced</from-outcome>
+			<to-view-id>/facelet/homepage/advanced.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>home_alarm</from-outcome>
+			<to-view-id>/facelet/homepage/alarm.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>home_password</from-outcome>
+			<to-view-id>/facelet/homepage/password.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>home_user</from-outcome>
+			<to-view-id>/facelet/homepage/user.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>home_favorite</from-outcome>
+			<to-view-id>/facelet/homepage/favorite.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
    	<!-- ************************************************** -->
    	<!-- ************* OPTIONAL LISTENERS ***************** -->
    	<!-- ************************************************** -->
