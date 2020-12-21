@@ -18,10 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.layout.client.Layout.AnimationCallback;
-import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -323,6 +320,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 				MainAgreement.this.parentDomain = parentDomain;				
 			}
 		});
+		
 	}
 
 	// ---------------------------------------------------- Agreements.Listener
@@ -490,7 +488,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	
 	@Override
 	public void onCollapseMenuButtonClick() {
-		splitLayoutPanel.setWidgetSize(agreements, 20);
+		splitLayoutPanel.setWidgetSize(agreements, 23);
 		splitLayoutPanel.animate(500);
 	}
 

@@ -11,7 +11,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -147,17 +146,31 @@ public class AonOptionsToolbar extends Composite {
 		
 		AonToolbarSmall toolbar = new AonToolbarSmall();
 		
-		showMenuButton = new AonToolbarSmallButton("Mostrar", AON.CSS.aonIconRight() );
+		showMenuButton = new AonToolbarSmallButton("Mostrar", AON.CSS.aonIconMenu() );
 		showMenuButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				showMenuButton.setVisible(false);
+				collapseMenuButton.setVisible(true);
 				for(Listener listener : listeners)
 					listener.onShowMenuButtonClick(event);
 			}
 		});
-		toolbar.setLeftWidget(showMenuButton);
+		toolbar.addLeftWidget(showMenuButton);
 		showMenuButton.setVisible(false);
+		
+		collapseMenuButton = new AonToolbarSmallButton("Ocultar", AON.CSS.aonIconMenuCollapse() );
+		collapseMenuButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				collapseMenuButton.setVisible(false);
+				showMenuButton.setVisible(true);
+				
+				for(Listener listener : listeners)
+					listener.onCollapseMenuButtonClick(event);
+			}
+		});
+		toolbar.addLeftWidget(collapseMenuButton);
 		
 		searchTextBox = new TextBox();
 		searchTextBox.getElement().getStyle().setWidth(80, Unit.PCT);
@@ -237,17 +250,6 @@ public class AonOptionsToolbar extends Composite {
 		});
 		toolbar.add(collapseAllButton);
 		collapseAllButton.setVisible(false);
-		
-		collapseMenuButton = new AonToolbarSmallButton(AON.MSG.closed(), AON.CSS.aonIconLeft() );
-		collapseMenuButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				showMenuButton.setVisible(true);
-				for(Listener listener : listeners)
-					listener.onCollapseMenuButtonClick(event);
-			}
-		});
-		toolbar.add(collapseMenuButton);
 		
 		newButton.ensureDebugId("newButton");
 		copyButton.ensureDebugId("copyButton");

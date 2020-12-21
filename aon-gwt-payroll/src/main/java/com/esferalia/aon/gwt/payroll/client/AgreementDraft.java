@@ -78,7 +78,6 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
@@ -4400,7 +4399,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		toolbar.add(undoButton);
 		undoButton.setVisible(false);
 		
-		redoButton = new AonToolbarButton("Rehace", AON.CSS.aonIconRedo() );
+		redoButton = new AonToolbarButton("Rehacer", AON.CSS.aonIconRedo() );
 		redoButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -4437,7 +4436,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		});
 		toolbar.add(printPreviewButton);
 		
-		fxButton = new AonToolbarButton("Calculadora", AON.CSS.aonIconFx() );
+		fxButton = new AonToolbarButton("fx", AON.CSS.aonIconFx() );
 		fxButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

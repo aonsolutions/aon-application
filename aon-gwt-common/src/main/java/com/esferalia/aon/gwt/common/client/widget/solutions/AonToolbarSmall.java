@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -49,6 +50,7 @@ public class AonToolbarSmall extends FlowPanel {
 		innerToolbar.setStyleName(AON.CSS.aonToolbarSmallInner());
 
 		buttonPanel = new FlowPanel();
+		buttonPanel.getElement().getStyle().setMarginLeft(1, Unit.PX);
 		innerToolbar.add(buttonPanel);
 		
 		messagePanel = new FlowPanel();
@@ -69,6 +71,10 @@ public class AonToolbarSmall extends FlowPanel {
 	@Override
 	public void add(Widget w) {
 		buttonContainer.add(w);
+	}
+	
+	public void addLeftWidget(Widget w) {
+		buttonPanel.add(w);
 	}
 	
 	public void showInfoMessage( String msg ) {
