@@ -904,9 +904,17 @@ public class JooqIT {
 		
 		Record contractLeaveRecord = dslContext.select().from(CONTRACT_LEAVE).where(CONTRACT_LEAVE.ID.eq(itId)).fetchOne();
 		Byte type = contractLeaveRecord.get(CONTRACT_LEAVE.TYPE);
+		
+		Date startDate = contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE);
+		Integer contractId = contractLeaveRecord.get(CONTRACT_LEAVE.CONTRACT);
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.and(
+					CONTRACT_DATA.NAME.eq("INICIO_PAGO_DIRECTO")
+			).and(CONTRACT_DATA.START_DATE.eq(startDate))
+			.execute();
+		
 		if(type == (byte)2 || type == (byte)3) {
-			Date startDate = contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE);
-			Integer contractId = contractLeaveRecord.get(CONTRACT_LEAVE.CONTRACT);
 			dslContext.delete(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
 				.and(
@@ -915,7 +923,6 @@ public class JooqIT {
 					.or(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
 					.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_MATERNIDAD"))
 					.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PATERNIDAD"))
-					.or(CONTRACT_DATA.NAME.eq("INICIO_PAGO_DIRECTO"))
 				).and(CONTRACT_DATA.START_DATE.eq(startDate))
 				.execute();
 		}
