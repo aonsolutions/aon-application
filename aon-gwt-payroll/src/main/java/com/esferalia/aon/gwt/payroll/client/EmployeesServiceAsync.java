@@ -251,4 +251,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 
+	void getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate, Date endDate,
+			AsyncCallback<String> callback);
+
+	void getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate,
+			AsyncCallback<String> callback);
+
 }

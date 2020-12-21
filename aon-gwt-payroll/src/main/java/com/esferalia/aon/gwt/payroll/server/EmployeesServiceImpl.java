@@ -30,6 +30,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
@@ -39,6 +40,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -257,6 +259,8 @@ import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
 import solutions.aon.seg.social.objects.WorkerLiquidation;
+import solutions.aon.sepe.Contrata;
+import solutions.aon.sepe.Contrato;
 
 /**
  * The server side implementation of the RPC service.
@@ -5588,6 +5592,60 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {salary.setBonuses(bonuses);} catch (SalaryException e) {}
 		
 		return salary;
+	}
+
+	@Override
+	public String getEmployeeCbc(String domainName, String userLogin, String ipf, Date startDate, Date endDate) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			Certificate certificaSepe = AON.getCertificateSEPE(domainName, domainId, userLogin);
+			
+			InputStream certificateInputStream = new ByteArrayInputStream(certificaSepe.getCertificate());
+			
+			byte[] pdfBytes = Contrato.getCopyBasicPdf(certificateInputStream, certificaSepe.getPassword(), certificaSepe.getType(), ipf, startDate, endDate);
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+			
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+			
+			stringWriter.flush();		
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+			
+			return dataUri;
+		}  catch ( Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public String getEmployeeCto(String domainName, String userLogin, String ipf, Date startDate, Date endDate) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			Certificate certificaSepe = AON.getCertificateSEPE(domainName, domainId, userLogin);
+			
+			InputStream certificateInputStream = new ByteArrayInputStream(certificaSepe.getCertificate());
+			
+			byte[] pdfBytes = Contrato.contratoPdf(certificateInputStream, certificaSepe.getPassword(), certificaSepe.getType(), ipf, startDate, endDate);
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+			
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+			
+			stringWriter.flush();		
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+			
+			return dataUri;
+		}  catch ( Exception e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 	
 

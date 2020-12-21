@@ -319,6 +319,24 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate,
+					Date endDate, AsyncCallback<String> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate,
+					Date endDate, AsyncCallback<String> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 		

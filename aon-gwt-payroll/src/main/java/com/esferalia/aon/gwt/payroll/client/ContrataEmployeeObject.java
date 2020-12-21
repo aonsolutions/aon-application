@@ -458,6 +458,32 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void downloadCbc(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeCbc(employeeData.getDocument(), contractData.getStartDate(), contractData.getStartDate(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void downloadCto(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeCto(employeeData.getDocument(), contractData.getStartDate(), contractData.getStartDate(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	public void fillContract(Consumer<String> success, Consumer<Throwable> failure) {
 		employeesService.fillContract(contractData.getContractId(), getContractType(), getFormativeLevel(), new AsyncCallback<String>() {
 			@Override

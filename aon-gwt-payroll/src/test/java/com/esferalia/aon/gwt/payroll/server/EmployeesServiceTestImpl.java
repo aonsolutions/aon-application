@@ -760,4 +760,18 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		
 	}
 
+	@Override
+	public String getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate,
+			Date endDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate,
+			Date endDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

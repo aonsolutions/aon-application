@@ -232,6 +232,10 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	String fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl);
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data);
+
+	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate, Date endDate);
+
+	String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate);
 	
 
 }

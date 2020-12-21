@@ -754,5 +754,19 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.setData(currentDomainName, user, contractId, data, new AsyncCallbackWrapper<Void>(callback));
 	}
+
+	@Override
+	public void getEmployeeCbc(String currentDomainName, String user, String document, Date startDate,
+			Date endDate, AsyncCallback<String> callback) {
+		AON.start();
+		employeesServiceAsync.getEmployeeCbc(currentDomainName, user, document, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void getEmployeeCto(String currentDomainName, String user, String document, Date startDate,
+			Date endDate, AsyncCallback<String> callback) {
+		AON.start();
+		employeesServiceAsync.getEmployeeCto(currentDomainName, user, document, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
+	}
 	
 }

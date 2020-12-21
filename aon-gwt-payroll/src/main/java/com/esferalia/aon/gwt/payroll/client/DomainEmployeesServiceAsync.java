@@ -497,6 +497,15 @@ public class DomainEmployeesServiceAsync {
 	void setData(Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback) {
 		employeesServiceAsync.setData(getCurrentDomainName(), getCurrentUser(), contractId, data, callback);
 	}
+	
+	public void getEmployeeCbc(String document, Date startDate, Date endDate, AsyncCallback<String> callback) {
+		employeesServiceAsync.getEmployeeCbc(getCurrentDomainName(), getCurrentUser(), document, startDate, endDate, callback);
+	}
+
+	public void getEmployeeCto(String document, Date startDate, Date endDate, AsyncCallback<String> callback) {
+		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), document, startDate, endDate, callback);
+	}
+
 
 	// ------------------------------------------------------------------------
 	

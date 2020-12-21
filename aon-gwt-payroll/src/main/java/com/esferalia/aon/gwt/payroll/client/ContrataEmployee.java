@@ -29,7 +29,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Messages;
@@ -605,6 +604,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton exportContract;
 	private AonToolbarButton ta;
 	private AonToolbarButton idc;
+	private AonToolbarButton cbc;
+	private AonToolbarButton cto;
 	private AonToolbarButton afi;
 	private AonToolbarButton closePDF;
 	private ListBox zoomListBox;
@@ -795,6 +796,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void setTGSSVisible( boolean visible ) {
 		idc.setVisible(visible);
 		ta.setVisible(visible);
+	}
+	
+	private void setSEPEVisible( boolean visible ) {
+		cbc.setVisible(visible);
+		cto.setVisible(visible);
 	}
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
 	
@@ -1483,6 +1489,32 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		);
 	}
 	
+	private void showCbc() {
+
+		contrataEmployeeObject.downloadCbc(
+		(dataURI) -> {
+				showPdf();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+		}, 
+		(trowable)-> {
+			
+		}
+		);
+	}
+	
+	private void showCto() {
+
+		contrataEmployeeObject.downloadCto(
+		(dataURI) -> {
+				showPdf();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+		}, 
+		(trowable)-> {
+			
+		}
+		);
+	}
+	
 	private void showContract() {
 		contrataEmployeeObject.fillContract(
 				(dataURI) -> {
@@ -1498,6 +1530,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showPdf() {
 		ta.setVisible(false);
 		idc.setVisible(false);
+		cbc.setVisible(false);
+		cto.setVisible(false);
 		afi.setVisible(false);
 		saveContract.setVisible(false);
 		deleteContract.setVisible(false);
@@ -1518,6 +1552,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		ta.setVisible(true);
 		idc.setVisible(true);
 		afi.setVisible(true);
+		cbc.setVisible(true);
+		cto.setVisible(true);
 		
 		zoomListBox.setVisible(false);
 		closePDF.setVisible(false);
@@ -1611,6 +1647,24 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			}
 		});
 		toolbar.add(idc);
+		
+		cbc = new AonToolbarButton( "Copia B" + String.valueOf("\u00E1") + "sica", AON.CSS.aonIconSepeCbc() );
+		cbc.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onCBC(event);
+			}
+		});
+		toolbar.add(cbc);
+		
+		cto = new AonToolbarButton( "Copia Contrato", AON.CSS.aonIconSepeCto() );
+		cto.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onCTO(event);
+			}
+		});
+		toolbar.add(cto);
 		
 		closePDF = new AonToolbarButton( AON.MSG.closed(), AON.CSS.aonIconClose() );
 		closePDF.setAccessKey('I');
@@ -1732,6 +1786,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private void onIDC(ClickEvent event) {
 		showIdc();
+	}
+	
+	private void onCBC(ClickEvent event) {
+		showCbc();
+	}
+	
+	private void onCTO(ClickEvent event) {
+		showCto();
 	}
 
 	private void onClosePDF(ClickEvent event) {
