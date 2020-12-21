@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.RegExp;
@@ -155,6 +156,21 @@ public class MainDigitalCertificatesObject {
 			}
 		});
 		
+	}
+	
+	public void checkStatus(Consumer<EnterpriseStatus> success, Consumer<Throwable> failure) {
+		
+		impl.getEnterpriseStatus(null, new AsyncCallback<EnterpriseStatus>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept( caught );
+			}
+			
+			 @Override
+			public void onSuccess(EnterpriseStatus result) {
+				 success.accept(result);
+			}
+		});
 	}
 
 	public void setConfidential(byte certificateType, boolean isConfidential) {

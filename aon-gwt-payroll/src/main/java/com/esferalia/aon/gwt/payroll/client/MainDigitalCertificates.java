@@ -11,9 +11,12 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
@@ -40,6 +43,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainDigitalCertificates extends MainEntryPoint{
@@ -69,6 +73,9 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	
 	@UiField
 	Grid digitalCertificatesDataTable;
+	
+	@UiField
+	VerticalPanel secondayUsersPanel;
 	
 	@UiField
 	Grid secondaryUserDataTableHeader;
@@ -101,6 +108,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton accept;
+	private AonToolbarButton showSecondaryUsers;
 	
 	private boolean showInactives = false;
 	
@@ -135,17 +143,55 @@ public class MainDigitalCertificates extends MainEntryPoint{
 
 	public void onModuleLoad(MainDigitalCertificatesObject mainDigitalCertificatesObject) {
 		this.mainDigitalCertificatesObject = mainDigitalCertificatesObject;
+		secondayUsersPanel.setVisible(false);
 		this.mainDigitalCertificatesObject.getDigitalCertificates(
 				s -> {
 					this.accept.setVisible(false);
 					initPreview();
 					insertRows();
 					fillCertificatesRows(s);
-					
-					mainDigitalCertificatesObject.getSecondaryUsers(t -> {
-						insertSecondaryUsersRows();
-					}, e -> {});
 				}, f -> {});
+		
+		checkStatus(this.mainDigitalCertificatesObject);
+	}
+	
+	private void checkStatus(MainDigitalCertificatesObject mainDigitalCertificatesObject) {
+		mainDigitalCertificatesObject.checkStatus(enterpriseStatus -> {
+			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
+				
+				@Override
+				public void up2Date() {}
+
+				@Override
+				public void run() {}
+				
+				@Override
+				protected void newAffiliated(JsSistemaREDResults jsSaltraResults) {}
+				
+				@Override
+				protected void newAffiliated(JsArray<JsSistemaREDResults> jsSaltraResults ) {}
+
+				@Override
+				protected void newAffiliated(JsArray<JsSistemaREDResults> jsResults, int total ) {}
+				
+				@Override
+				protected void saltraCredentialsFound() {}
+			};
+
+			enterpriseStatus.visit(sistemaREDResults);
+			EnterpriseStatus.ifSistemaREDError(enterpriseStatus, () -> {
+				MainDigitalCertificates.this.setSistemaREDVisible(false);
+			}, () -> {
+				MainDigitalCertificates.this.setSistemaREDVisible(false);
+			});
+
+		}, throwable -> {
+			MainDigitalCertificates.this.setSistemaREDVisible(false);
+		});
+	}
+
+	private void setSistemaREDVisible(boolean visible) {
+		this.showSecondaryUsers.setVisible(visible);
 	}
 
 	private void initPreview() {
@@ -672,8 +718,26 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		});
 		toolbar.add(accept);
 
+		showSecondaryUsers = new AonToolbarButton( "Segundos Autorizados", AON.CSS.aonIconList() );
+		showSecondaryUsers.setAccessKey('G');
+		showSecondaryUsers.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onShowSecondaryUsers(event);
+			}
+		});
+		toolbar.add(showSecondaryUsers);
+
 		return toolbar;
 
+	}
+	
+	private void onShowSecondaryUsers(ClickEvent event) {
+		secondayUsersPanel.setVisible(true);
+		mainDigitalCertificatesObject.getSecondaryUsers(t -> {
+			this.showSecondaryUsers.setVisible(false);
+			insertSecondaryUsersRows();
+		}, e -> {});
 	}
 	
 	private void onAccept(ClickEvent event) {
@@ -685,10 +749,10 @@ public class MainDigitalCertificates extends MainEntryPoint{
 						initPreview();
 						insertRows();
 						fillCertificatesRows(t);
+						this.showSecondaryUsers.setVisible(true);
+						this.secondayUsersPanel.setVisible(false);
 						
-						mainDigitalCertificatesObject.getSecondaryUsers(b -> {
-							insertSecondaryUsersRows();
-						}, e -> {});
+						checkStatus(this.mainDigitalCertificatesObject);
 					}, f -> {});
 		}, f -> {});
 	}

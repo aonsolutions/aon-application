@@ -136,7 +136,7 @@
 				    	</g:HTMLPanel>
 				    </g:VerticalPanel>
 				    
-				    <g:VerticalPanel styleName="{style.styleBorder}">
+				    <g:VerticalPanel ui:field="secondayUsersPanel" styleName="{style.styleBorder}">
 			    		<g:Label styleName='{style.tittle}'>Usr. Secundarios</g:Label>
 				    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} " debugId="paymetDialogHTMLPanel">
 				    		<g:VerticalPanel>
