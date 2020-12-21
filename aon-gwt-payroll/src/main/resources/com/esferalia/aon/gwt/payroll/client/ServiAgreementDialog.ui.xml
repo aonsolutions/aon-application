@@ -34,7 +34,7 @@
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			margin: 5px 10px;
+			margin: 10px;
 		}
 		
 		.w400{
@@ -49,7 +49,7 @@
 		<g:VerticalPanel>
 			<g:HTMLPanel styleName="{style.mainPanel}">
 				<g:Label styleName="{style.title}">Convenio</g:Label>
-				<g:SuggestBox ui:field="serviAgreementsSB" styleName="w400"></g:SuggestBox>
+				<g:SuggestBox ui:field="serviAgreementsSB" styleName="{style.w400}"></g:SuggestBox>
 			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
 		</g:VerticalPanel>
