@@ -117,6 +117,16 @@
 .aon_icon_tgss_ta { background-image: iconTgssTa;}
 @url iconTgssFie aonIconTgssFie;
 .aon_icon_tgss_fie { background-image: iconTgssFie;}
+@url iconSepeC2 aonIconSepeC2;
+.aon_icon_sepe_c2 { background-image: iconSepeC2;}
+@url iconSepeCbc aonIconSepeCbc;
+.aon_icon_sepe_cbc { background-image: iconSepeCbc;}
+@url iconSepeCt aonIconSepeCt;
+.aon_icon_sepe_ct { background-image: iconSepeCt;}
+@url iconSepeCto aonIconSepeCto;
+.aon_icon_sepe_cto { background-image: iconSepeCto;}
+@url iconCloudImport aonIconCloudImport;
+.aon_icon_cloud_import { background-image: iconCloudImport;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
 @url iconUpgrade aonIconUpgrade;
