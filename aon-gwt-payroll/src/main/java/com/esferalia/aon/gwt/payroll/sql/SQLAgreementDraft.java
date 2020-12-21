@@ -3,11 +3,11 @@ package com.esferalia.aon.gwt.payroll.sql;
 import static com.esferalia.aon.gwt.payroll.shared.AgreementDraft.isRemove;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getInteger;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getType;
-import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
-import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
+import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,7 +29,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -40,9 +39,9 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqUtils;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -50,7 +49,6 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.jooq.tables.AgreementData;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementDataColumns;
@@ -61,6 +59,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLAgreementDraft {
 
@@ -233,7 +232,7 @@ public class SQLAgreementDraft {
 					+ AgreementPaymentColumns.START_DATE + " <= ? " + " AND "
 					+ SQLConstants.AGREEMENT_PAYMENT + "."
 					+ AgreementColumns.DOMAIN + " IN ("
-					+ StringUtils.repeat("?", ",", domainList.size()) + ")"
+					+ AonStringUtils.repeat("?", ",", domainList.size()) + ")"
 					+ " ORDER BY "+ 
 					SQLConstants.AGREEMENT_PAYMENT + "." 
 					+AgreementPaymentColumns.DOMAIN
@@ -536,7 +535,7 @@ public class SQLAgreementDraft {
 		PreparedStatement stmt = null;
 		try {
 
-			String in = StringUtils.repeat("?", ",", domainIds.length);
+			String in = AonStringUtils.repeat("?", ",", domainIds.length);
 
 			SortedSet<Date> months = new TreeSet<Date>();
 
@@ -1053,7 +1052,7 @@ public class SQLAgreementDraft {
 
 		
 //		} else {
-//			if (StringUtils.isNotBlank(variable.getExpression())) {
+//			if (AonStringUtils.isNotBlank(variable.getExpression())) {
 //				updateLevelData(conn, variable.getId(), variable.getStartDate());
 //			} else {
 //				removeLevelData(conn, variable.getId());
@@ -1076,13 +1075,13 @@ public class SQLAgreementDraft {
 //				removeLevelData(conn, dbVariable.getId());
 //				continue;
 //			}
-			if(dbVariable.getId().equals(variable.getId()) && StringUtils.isBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())){
+			if(dbVariable.getId().equals(variable.getId()) && AonStringUtils.isBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())){
 				removeData(conn, variable.getId());
 				continue;
-			} else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && !dbVariable.getStartDate().equals(variable.getStartDate())) {
+			} else if(dbVariable.getId().equals(variable.getId()) && AonStringUtils.isNotBlank(variable.getExpression()) && !dbVariable.getStartDate().equals(variable.getStartDate())) {
 				updateData(conn, variable.getId(), variable.getStartDate());
 				continue;
-			} else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())) {
+			} else if(dbVariable.getId().equals(variable.getId()) && AonStringUtils.isNotBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())) {
 				updateData(conn, variable);
 				continue;
 			} else if(dbVariable.getStartDate().equals(variable.getStartDate()) && null != variable.getId()) {
@@ -1106,12 +1105,12 @@ public class SQLAgreementDraft {
 		}
 		
 		// Inserts if not empty (""), not null and not whitespace only
-//		if (StringUtils.isNotBlank((variable.getExpression()))) {
+//		if (AonStringUtils.isNotBlank((variable.getExpression()))) {
 //			insertData(conn, domainId, agreementId, variable);
 //		}
 		
 		if(null == variable.getId()) {
-			if (StringUtils.isNotBlank(variable.getExpression())) {
+			if (AonStringUtils.isNotBlank(variable.getExpression())) {
 				insertData(conn, domainId, agreementId, variable);
 			}
 		}
@@ -1122,7 +1121,7 @@ public class SQLAgreementDraft {
 			Integer levelId, Variable variable) throws SQLException {
 
 //		} else {
-//			if (StringUtils.isNotBlank(variable.getExpression())) {
+//			if (AonStringUtils.isNotBlank(variable.getExpression())) {
 //				updateLevelData(conn, variable.getId(), variable.getStartDate());
 //			} else {
 //				removeLevelData(conn, variable.getId());
@@ -1146,18 +1145,18 @@ public class SQLAgreementDraft {
 //				continue;
 //			}
 			
-			if(dbVariable.getId().equals(variable.getId()) && StringUtils.isBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())){
+			if(dbVariable.getId().equals(variable.getId()) && AonStringUtils.isBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())){
 				removeLevelData(conn, dbVariable.getId());
 				continue;
-			} else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && !dbVariable.getStartDate().equals(variable.getStartDate())) {
+			} else if(dbVariable.getId().equals(variable.getId()) && AonStringUtils.isNotBlank(variable.getExpression()) && !dbVariable.getStartDate().equals(variable.getStartDate())) {
 				// Update date Level Data
 				updateLevelData(conn, dbVariable.getId(), variable.getStartDate());
 				continue;
-			}else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())) {
+			}else if(dbVariable.getId().equals(variable.getId()) && AonStringUtils.isNotBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())) {
 				// Update new value for level data
 				updateLevelData(conn, dbVariable.getId(), variable.getStartDate(), variable);
 				continue;
-			} else if(dbVariable.getStartDate().equals(variable.getStartDate()) && StringUtils.isBlank(variable.getExpression())) {
+			} else if(dbVariable.getStartDate().equals(variable.getStartDate()) && AonStringUtils.isBlank(variable.getExpression())) {
 				removeLevelData(conn, dbVariable.getId());
 				continue;
 			} else if(dbVariable.getStartDate().equals(variable.getStartDate())) {
@@ -1179,13 +1178,13 @@ public class SQLAgreementDraft {
 		}
 		
 		if(null == variable.getId()) {
-			if (StringUtils.isNotBlank(variable.getExpression())) {
+			if (AonStringUtils.isNotBlank(variable.getExpression())) {
 				insertLevelData(conn, domainId, levelId, variable);
 			}
 		}
 		
 		// Inserts if not empty (""), not null and not whitespace only
-//		if (StringUtils.isNotBlank((variable.getExpression()))) {
+//		if (AonStringUtils.isNotBlank((variable.getExpression()))) {
 //			insertLevelData(conn, domainId, levelId, variable);
 //		}
 

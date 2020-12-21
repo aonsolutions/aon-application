@@ -26,7 +26,6 @@ import java.util.SortedSet;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 import org.mvel2.MVEL;
 
@@ -52,7 +51,6 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
-import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -516,7 +514,7 @@ public class EmployeesServiceHelper {
 
 		for (Level draftLevel : draft.getDraftLevels()) {
 			allLevels.remove(draftLevel);
-			if (!StringUtils.equals(REMOVE, draftLevel.getDescription()))
+			if (!AonStringUtils.equals(REMOVE, draftLevel.getDescription()))
 				allLevels.add(draftLevel);
 		}
 
@@ -527,7 +525,7 @@ public class EmployeesServiceHelper {
 
 		for (Extra draftExtra : draft.getDraftExtras()) {
 			allExtras.remove(draftExtra);
-			if (!StringUtils.equals(REMOVE, draftExtra.getIssueDate()))
+			if (!AonStringUtils.equals(REMOVE, draftExtra.getIssueDate()))
 				allExtras.add(draftExtra);
 		}
 
@@ -661,7 +659,7 @@ public class EmployeesServiceHelper {
 		}
 
 		for (ISystemPayment p : ctx.getSystemPayments()) {
-			if (StringUtils.isBlank(p.getName()))
+			if (AonStringUtils.isBlank(p.getName()))
 				continue;
 
 			boolean defined[] = new boolean[Scope.NUM_VALUES];
@@ -691,7 +689,7 @@ public class EmployeesServiceHelper {
 		}
 
 		for (IContractPayment p : ctx.getAgreementPayments()) {
-			if (StringUtils.isBlank(p.getName()))
+			if (AonStringUtils.isBlank(p.getName()))
 				continue;
 
 			boolean defined[] = new boolean[Scope.NUM_VALUES];
@@ -736,7 +734,7 @@ public class EmployeesServiceHelper {
 	private static boolean hide(Payment payment, Set<Payment> parents) {
 		if (payment.getConceptId() == null)
 			return false;
-		if (!StringUtils.equals(REMOVE, payment.getExpression()))
+		if (!AonStringUtils.equals(REMOVE, payment.getExpression()))
 			return false;
 
 		if (payment.getId() < 0)
@@ -1321,7 +1319,7 @@ public class EmployeesServiceHelper {
 
 	public static String getUserScript(String script) {
 		
-		if (StringUtils.isBlank(script))
+		if (AonStringUtils.isBlank(script))
 			return script;
 		
 		return script.replaceAll("\"/\\*user\\*/(.*)/\\*\\*/\"", "$1");

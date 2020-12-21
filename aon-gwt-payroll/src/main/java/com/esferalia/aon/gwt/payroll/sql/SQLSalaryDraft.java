@@ -9,8 +9,6 @@ import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -18,7 +16,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementDataColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
@@ -37,6 +34,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLSalaryDraft {
 
@@ -58,7 +56,7 @@ public class SQLSalaryDraft {
 			makeRoomPayment(conn, payment, contract);
 			String expression = payment.getExpression();
 			
-			if ( StringUtils.containsIgnoreCase(expression, "CONVENIO()" )){
+			if ( AonStringUtils.containsIgnoreCase(expression, "CONVENIO()" )){
 				continue;
 			}
 			

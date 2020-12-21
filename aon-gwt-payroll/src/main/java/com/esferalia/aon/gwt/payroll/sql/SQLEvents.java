@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.payroll.sql;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getInteger;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getType;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
-import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
@@ -27,7 +26,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -58,6 +56,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLEvents {
 
@@ -329,7 +328,7 @@ public class SQLEvents {
 			if (employeesIds.size() == 0)
 				return events; // Empty events.
 
-			String namesHosts = StringUtils.repeat("?", ",", names.length);
+			String namesHosts = AonStringUtils.repeat("?", ",", names.length);
 
 			// Try to load System events ( 'data' )
 			sql = "SELECT * FROM " + SQLConstants.SYSTEM_DATA + " WHERE "

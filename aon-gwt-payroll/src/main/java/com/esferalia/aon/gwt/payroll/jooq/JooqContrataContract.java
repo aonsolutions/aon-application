@@ -3,13 +3,13 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Cno.CNO;
-import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
+import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractClause.CONTRACT_CLAUSE;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
-import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -40,7 +40,6 @@ import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record10;
@@ -68,6 +67,7 @@ import com.esferalia.aon.payroll.contract.ContractFill;
 import com.esferalia.aon.payroll.sepe.contrata.Contrata;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.ibm.icu.util.Calendar;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
@@ -93,7 +93,7 @@ public class JooqContrataContract {
 			Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, domainId, contractId);
 			
 			FormativeLevel formativeLevel = new FormativeLevel();
-			contractFillInfo.put("E_FORMATIVE_LVL", StringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
+			contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
 			contractFillInfo.put("E_FORMATIVE_LVL_CODE", formativeLevelCode);
 			
 			byte[] data = ContractFill.fillContract(contractType, contractOtherInfo, contractFillInfo);
@@ -113,7 +113,7 @@ public class JooqContrataContract {
 			Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, domainId, contractId);
 			
 			FormativeLevel formativeLevel = new FormativeLevel();
-			contractFillInfo.put("E_FORMATIVE_LVL", StringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
+			contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
 			contractFillInfo.put("E_FORMATIVE_LVL_CODE", formativeLevelCode);
 			
 			return ContractFill.fillContract(contractType, contractOtherInfo, contractFillInfo);
@@ -537,7 +537,7 @@ public class JooqContrataContract {
 			.execute();
 		
 		for(Entry<String, String> entry : contractOtherInfo.entrySet()) {
-			if(StringUtils.isNotBlank(entry.getValue())) {
+			if(AonStringUtils.isNotBlank(entry.getValue())) {
 				dslContext.insertInto(CONTRACT_INFO)
 					.set(CONTRACT_INFO.DOMAIN, domainId)
 					.set(CONTRACT_INFO.CONTRACT, contractId)
@@ -604,7 +604,7 @@ public class JooqContrataContract {
 		Date endDate = null == employeeContractInfo.getContractInfo().getEndDate() ? null : new Date(employeeContractInfo.getContractInfo().getEndDate().getTime());
 		
 		String cno = contractSpecificData.getCno();
-		if(!StringUtils.isBlank(cno)) {
+		if(!AonStringUtils.isBlank(cno)) {
 			dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.NAME.eq("CNO")).and(CONTRACT_DATA.CONTRACT.eq(contractId)).execute();
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domainId)

@@ -32,13 +32,10 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import javax.servlet.annotation.WebServlet;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.ql.Criteria;
@@ -72,6 +69,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(
 		name = "CalculateServlet", 
@@ -693,7 +691,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	private static Integer getExtra(HttpServletRequest request) throws ParseException {
 		String extra = request.getParameter(EXTRA);
-		return StringUtils.isBlank(extra) ? null : Integer.parseInt(extra);
+		return AonStringUtils.isBlank(extra) ? null : Integer.parseInt(extra);
 	}
 
 
@@ -719,7 +717,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	private static SalaryType getSalaryType(HttpServletRequest request) throws ParseException {
 		String value = request.getParameter(SALARY_TYPE);
-		return StringUtils.isBlank(value) ? SalaryType.SALARY : SalaryType.valueOf(value);
+		return AonStringUtils.isBlank(value) ? SalaryType.SALARY : SalaryType.valueOf(value);
 	}
 
 	private static Date getDate(HttpServletRequest request, String name) throws ParseException {
@@ -730,7 +728,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	private static boolean getBoolean(HttpServletRequest request, String name) throws ParseException {
 		String value = request.getParameter(name);
-		return StringUtils.isBlank(value) ? false : Boolean.parseBoolean(value);
+		return AonStringUtils.isBlank(value) ? false : Boolean.parseBoolean(value);
 
 	}
 

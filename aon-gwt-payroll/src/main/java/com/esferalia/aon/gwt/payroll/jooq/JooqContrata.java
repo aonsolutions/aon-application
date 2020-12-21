@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 
@@ -13,7 +12,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contrata.contratos.CIFNIFTYPE;
@@ -73,6 +71,7 @@ import com.esferalia.aon.sepe.api.contrata.contratos.DATOSTRABAJADORTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSUSOLIBREEMPRESATYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.NOMBREAPELLIDOSTYPE;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqContrata {
 	
@@ -595,8 +594,8 @@ public class JooqContrata {
 			contractSpecificData.setTemporalWorkEnterprise(true);
 			contractSpecificData.setNif(datos.getCIFNIFEMPRESAUSUARIA().getCIFNIF());
 			contractSpecificData.setSocialReason(datos.getRAZONSOCIALEMPRESAUSUARIA());
-			contractSpecificData.setContractTemplate(!StringUtils.isBlank(datos.getINDCTOPLANTILLA()) && datos.getINDCTOPLANTILLA().equals("S"));
-			contractSpecificData.setForeignEnterprise(!StringUtils.isBlank(datos.getINDEMPRESAEXTRANJERA()) && datos.getINDEMPRESAEXTRANJERA().equals("S"));
+			contractSpecificData.setContractTemplate(!AonStringUtils.isBlank(datos.getINDCTOPLANTILLA()) && datos.getINDCTOPLANTILLA().equals("S"));
+			contractSpecificData.setForeignEnterprise(!AonStringUtils.isBlank(datos.getINDEMPRESAEXTRANJERA()) && datos.getINDEMPRESAEXTRANJERA().equals("S"));
 		}
 	}
 	
@@ -604,7 +603,7 @@ public class JooqContrata {
 		if(datos != null){
 			contractSpecificData.setAnnexedB(true);
 			contractSpecificData.setSourceYear(datos.getAÑOCONTINGENTE());
-			if(!StringUtils.isBlank(datos.getINDCARACTEROFERTA())) {
+			if(!AonStringUtils.isBlank(datos.getINDCARACTEROFERTA())) {
 				if(datos.getINDCARACTEROFERTA().equals("E")) {
 					contractSpecificData.setAnnexed(true);
 				} else {
@@ -659,7 +658,7 @@ public class JooqContrata {
 			if(NumberUtils.isNumber(datos.getPORCENTAJEJORNADAREDUCCION())){
 				contractSpecificData.setJourneyPercent((Double.parseDouble(datos.getPORCENTAJEJORNADAREDUCCION())/100)+"");
 			}
-			if(StringUtils.isNotBlank(datos.getPORCENTAJEREDUCCION())){
+			if(AonStringUtils.isNotBlank(datos.getPORCENTAJEREDUCCION())){
 				contractSpecificData.setQuoteReduction(datos.getPORCENTAJEREDUCCION().equals("75"));
 			}
 		}
@@ -723,7 +722,7 @@ public class JooqContrata {
 	private static void completeDatosContratoPracticas(DATOSCONTRATOPRACTICASTYPE datos, ContractSpecificData contractSpecificData) {
 		if(datos != null){
 			contractSpecificData.setAcademicTitulation(datos.getTITULACIONACADEMICA());
-			if(!StringUtils.isEmpty(datos.getINDCERTIFPROFESIONALIDAD())){
+			if(!AonStringUtils.isEmpty(datos.getINDCERTIFPROFESIONALIDAD())){
 				contractSpecificData.setProfesionality(datos.getINDCERTIFPROFESIONALIDAD().equals("S"));
 			}
 		}
@@ -745,10 +744,10 @@ public class JooqContrata {
 	}
 	
 	private static String getHoras(String duracion){
-		return StringUtils.isBlank(duracion)?null:duracion.substring(0,4);
+		return AonStringUtils.isBlank(duracion)?null:duracion.substring(0,4);
 	}
 	private static String getMinutos(String duracion){
-		return StringUtils.isBlank(duracion)?null:duracion.substring(4,6);
+		return AonStringUtils.isBlank(duracion)?null:duracion.substring(4,6);
 	}
 	
 	public static IContratoType createContratoModel(String code) {
@@ -918,7 +917,7 @@ public class JooqContrata {
 		} else {
 //			AonUtil.addErrorMessage("El trabajador no tiene definida la fecha de nacimiento.");
 		}
-		if(StringUtils.isEmpty(employeeContractInfo.getEmployeeInfo().getDocument())){
+		if(AonStringUtils.isEmpty(employeeContractInfo.getEmployeeInfo().getDocument())){
 //			AonUtil.addErrorMessage("El trabajador no tiene definido el nmero de documento.");
 		} else {
 			// FIXME
@@ -936,7 +935,7 @@ public class JooqContrata {
 		}
 		datos.setNACIONALIDAD("724");
 		datos.setNOMBREAPELLIDOS(createNombreApellidos(employeeContractInfo));
-		if(StringUtils.isEmpty(employeeContractInfo.getEmployeeInfo().getSsNumber())){
+		if(AonStringUtils.isEmpty(employeeContractInfo.getEmployeeInfo().getSsNumber())){
 //			AonUtil.addErrorMessage("El trabajador no tiene definido el nmero de seguridad social.");
 		} else {
 			datos.setNUMEROSEGURIDADSOCIAL(employeeContractInfo.getEmployeeInfo().getSsNumber());
@@ -964,9 +963,9 @@ public class JooqContrata {
 	private static NOMBREAPELLIDOSTYPE createNombreApellidos(EmployeeContractInfo employeeContractInfo) {
 		NOMBREAPELLIDOSTYPE datos = new NOMBREAPELLIDOSTYPE();
 		
-		String name = StringUtils.trimToEmpty(employeeContractInfo.getEmployeeInfo().getName());
-		String firstSurname = StringUtils.trimToEmpty(employeeContractInfo.getEmployeeInfo().getSurName());
-		String secondSurname = StringUtils.trimToEmpty(employeeContractInfo.getEmployeeInfo().getSecondSurName());
+		String name = AonStringUtils.trimToEmpty(employeeContractInfo.getEmployeeInfo().getName());
+		String firstSurname = AonStringUtils.trimToEmpty(employeeContractInfo.getEmployeeInfo().getSurName());
+		String secondSurname = AonStringUtils.trimToEmpty(employeeContractInfo.getEmployeeInfo().getSecondSurName());
 		
 		name = name.length()>15?name.substring(0, 15):name;
 		firstSurname = firstSurname.length()>20?firstSurname.substring(0, 20):firstSurname;
@@ -1011,7 +1010,7 @@ public class JooqContrata {
 		}
 		
 		String cno = contractSpecificData.getCno();
-		if(StringUtils.isEmpty(cno)){
+		if(AonStringUtils.isEmpty(cno)){
 //			AonUtil.addErrorMessage("El trabajador no tiene definido el cdigo de ocupacion (CNO).");
 		} else {
 			datos.setCODIGOOCUPACION(completeLength(cno, 8,  " ", true));
@@ -1078,7 +1077,7 @@ public class JooqContrata {
 	}
 	
 	private static DATOSUSOLIBREEMPRESATYPE createDatosUsoLibreEmpresa(EmployeeContractInfo employeeContractInfo) {
-		if(StringUtils.isNotBlank(employeeContractInfo.getContractSpecificData().getUseEnterpriseFree())){
+		if(AonStringUtils.isNotBlank(employeeContractInfo.getContractSpecificData().getUseEnterpriseFree())){
 			DATOSUSOLIBREEMPRESATYPE datos = new DATOSUSOLIBREEMPRESATYPE();
 			datos.setUSOLIBREEMPRESA(employeeContractInfo.getContractSpecificData().getUseEnterpriseFree());
 			return datos;
@@ -1157,9 +1156,9 @@ public class JooqContrata {
 	
 	private static NOMBREAPELLIDOSTYPE createNombreApellidosRelief(EmployeeContractInfo employeeContractInfo) {
 		NOMBREAPELLIDOSTYPE datos = new NOMBREAPELLIDOSTYPE();
-		String name = StringUtils.trimToEmpty(employeeContractInfo.getContractSpecificData().getRetirementName());
-		String firstSurname = StringUtils.trimToEmpty(employeeContractInfo.getContractSpecificData().getRetirementSurname());
-		String secondSurname = StringUtils.trimToEmpty(employeeContractInfo.getContractSpecificData().getRetirementSurname2());
+		String name = AonStringUtils.trimToEmpty(employeeContractInfo.getContractSpecificData().getRetirementName());
+		String firstSurname = AonStringUtils.trimToEmpty(employeeContractInfo.getContractSpecificData().getRetirementSurname());
+		String secondSurname = AonStringUtils.trimToEmpty(employeeContractInfo.getContractSpecificData().getRetirementSurname2());
 		
 		name = name.length()>15?name.substring(0, 15):name;
 		firstSurname = firstSurname.length()>20?firstSurname.substring(0, 20):firstSurname;
@@ -1467,7 +1466,7 @@ public class JooqContrata {
 	
 	private static DATOSCONTRATOPRACTICASTYPE createDatosContratoPracticas(EmployeeContractInfo employeeContractInfo) {
 		DATOSCONTRATOPRACTICASTYPE datos = new DATOSCONTRATOPRACTICASTYPE();
-		if(null != employeeContractInfo.getContractSpecificData().getAcademicTitulation() && StringUtils.isNotBlank(employeeContractInfo.getContractSpecificData().getAcademicTitulation()))
+		if(null != employeeContractInfo.getContractSpecificData().getAcademicTitulation() && AonStringUtils.isNotBlank(employeeContractInfo.getContractSpecificData().getAcademicTitulation()))
 			datos.setTITULACIONACADEMICA(employeeContractInfo.getContractSpecificData().getAcademicTitulation());
 		if(employeeContractInfo.getContractSpecificData().getProfesionality()!=null){
 			datos.setINDCERTIFPROFESIONALIDAD(employeeContractInfo.getContractSpecificData().getProfesionality()?"S":"N");

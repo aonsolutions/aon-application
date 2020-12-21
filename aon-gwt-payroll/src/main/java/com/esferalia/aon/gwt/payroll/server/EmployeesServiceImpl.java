@@ -63,7 +63,6 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.servlet.annotation.WebServlet;
 
-import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.SortField;
@@ -166,7 +165,6 @@ import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
-import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.payroll.Contract;
@@ -196,7 +194,6 @@ import com.esferalia.aon.payroll.calculator.sql.SQLAgreementSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.sql.AbstractSQL.SalaryData;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
@@ -257,9 +254,7 @@ import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
-import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
 import solutions.aon.seg.social.objects.WorkerLiquidation;
-import solutions.aon.sepe.Contrata;
 import solutions.aon.sepe.Contrato;
 
 /**
@@ -3546,7 +3541,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 //
 //			for (Payment payment : payments) {
 //
-//				if (StringUtils.equals(REMOVE, payment.getExpression()))
+//				if (AonStringUtils.equals(REMOVE, payment.getExpression()))
 //					continue;
 //				try {
 //					Set<String> paymentVars = ExpressionContext
@@ -3626,7 +3621,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			for (Payment payment : payments) {
 
-				if (StringUtils.equals(REMOVE, payment.getExpression()))
+				if (AonStringUtils.equals(REMOVE, payment.getExpression()))
 					continue;
 				
 				try {
@@ -4228,16 +4223,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			
 			// fill salary , ugly code
-			salary.setEmployeeDocument(StringUtils.repeat(" ", 9));
-			String levelDescription = StringUtils.repeat(" ", 2);
-			String draftDescription = StringUtils.repeat(" ", 12);
-			String categoryDescription = StringUtils.repeat(" ", 12);
+			salary.setEmployeeDocument(AonStringUtils.repeat(" ", 9));
+			String levelDescription = AonStringUtils.repeat(" ", 2);
+			String draftDescription = AonStringUtils.repeat(" ", 12);
+			String categoryDescription = AonStringUtils.repeat(" ", 12);
 
 			for (Level level : draft.getLevels()) {
 				if (level.getId() == levelId) {
 
 					String description = level.getDescription();
-					if (!StringUtils.isBlank(description))
+					if (!AonStringUtils.isBlank(description))
 						levelDescription = description;
 
 					Map<Integer, Set<String>> categoriesMap = draft
@@ -4246,7 +4241,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						Set<String> categories = categoriesMap.get(levelId);
 						if (categories != null) {
 							for (String category : categories) {
-								if (!StringUtils.isBlank(category)) {
+								if (!AonStringUtils.isBlank(category)) {
 									categoryDescription = category;
 									break;
 								}
@@ -4260,8 +4255,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			salary.setEmployeeName(levelDescription + " " + categoryDescription);
 			salary.setCategory(categoryDescription);
-			salary.setCcc(StringUtils.repeat(" ", 11));
-			salary.setSocialSecurityNumber(StringUtils.repeat(" ", 10));
+			salary.setCcc(AonStringUtils.repeat(" ", 11));
+			salary.setSocialSecurityNumber(AonStringUtils.repeat(" ", 10));
 
 			Contract contract = new Contract();
 			contract.setId(0);
@@ -4303,11 +4298,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				person.setRegistry(enterprise.getRegistry());
 
 			} catch (Exception e) {
-				if (!StringUtils.isBlank(draft.getDescription()))
+				if (!AonStringUtils.isBlank(draft.getDescription()))
 					draftDescription = draft.getDescription();
 				salary.setEnterpriseName(draftDescription);
-				salary.setEnterpriseDocument(StringUtils.repeat(" ", 9));
-				salary.setEnterpriseAddress(StringUtils.repeat(" ", 25));
+				salary.setEnterpriseDocument(AonStringUtils.repeat(" ", 9));
+				salary.setEnterpriseAddress(AonStringUtils.repeat(" ", 25));
 			}
 
 			// TODO: Calendar ???

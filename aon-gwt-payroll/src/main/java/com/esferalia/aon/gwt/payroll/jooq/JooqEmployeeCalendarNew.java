@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -31,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarHours;
 import com.esferalia.aon.gwt.payroll.shared.CalendarHours.DayHours.DayHour;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployeeCalendarNew {
 	
@@ -643,7 +643,7 @@ public class JooqEmployeeCalendarNew {
 		for(Entry<java.util.Date, String> entry : monthExtraHoursMap.entrySet()) {
 			String expression = entry.getValue();
 			
-			if(null != expression && !StringUtils.isEmpty(expression)) {
+			if(null != expression && !AonStringUtils.isEmpty(expression)) {
 				Date startDate = parseDateUtilToSql(entry.getKey());
 				Date endDate = parseDateUtilToSql(DateUtils.getLastDayOfMonth(entry.getKey()));
 				

@@ -37,7 +37,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -62,6 +61,8 @@ import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployee {
 
@@ -133,8 +134,8 @@ public class JooqEmployee {
 				.set(REGISTRY.DOMAIN, domain)
 				.set(REGISTRY.DOCUMENT, employeeData.getDocument())
 				.set(REGISTRY.DOCUMENT_TYPE, null == employeeData.getDocumentType() ? (byte) 0 : employeeData.getDocumentType())
-				.set(REGISTRY.DOCUMENT_COUNTRY, StringUtils.isBlank(employeeData.getNationality()) ? "ES" : employeeData.getNationalityCode())
-				.set(REGISTRY.NATIONALITY, StringUtils.isBlank(employeeData.getNationality())  ? "ES" : employeeData.getNationalityCode())
+				.set(REGISTRY.DOCUMENT_COUNTRY, AonStringUtils.isBlank(employeeData.getNationality()) ? "ES" : employeeData.getNationalityCode())
+				.set(REGISTRY.NATIONALITY, AonStringUtils.isBlank(employeeData.getNationality())  ? "ES" : employeeData.getNationalityCode())
 				.set(REGISTRY.NAME, employeeData.getFullName())
 				.returning(REGISTRY.ID)
 				.fetchOne();
@@ -190,12 +191,12 @@ public class JooqEmployee {
 					.set(RADDRESS.DOMAIN, domain)
 					.set(RADDRESS.REGISTRY, registryId)
 					.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
-					.set(RADDRESS.ADDRESS, StringUtils.isBlank(employeeData.getAddress()) ? "-" : employeeData.getAddress())
+					.set(RADDRESS.ADDRESS, AonStringUtils.isBlank(employeeData.getAddress()) ? "-" : employeeData.getAddress())
 					.set(RADDRESS.ADDRESS2, employeeData.getAddressInfo())
-					.set(RADDRESS.NUMBER, StringUtils.isBlank(employeeData.getAddresNum()) ? "-" : employeeData.getAddresNum())
+					.set(RADDRESS.NUMBER, AonStringUtils.isBlank(employeeData.getAddresNum()) ? "-" : employeeData.getAddresNum())
 					.set(RADDRESS.ZIP, employeeData.getAddressZip())
 					.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
-					.set(RADDRESS.MUNICIPALITY_CODE, StringUtils.leftPad(employeeData.getAddressCity(), 5, '0'))
+					.set(RADDRESS.MUNICIPALITY_CODE, AonStringUtils.leftPad(employeeData.getAddressCity(), 5, '0'))
 					.set(RADDRESS.GEOZONE, geozoneId)
 					.returning(RADDRESS.ID, RADDRESS.GEOZONE)
 					.fetchOne();
@@ -261,7 +262,7 @@ public class JooqEmployee {
 			// No tiene forma de pago, pero ha podido introducir un banco
 			if(null == payMethodId) {
 				String account = employeeData.getAccount();
-				if(!StringUtils.isBlank(account)) {
+				if(!AonStringUtils.isBlank(account)) {
 					account.trim();
 					account.replaceAll(" ", "");
 					
@@ -289,7 +290,7 @@ public class JooqEmployee {
 				Integer rbankTableId = null;
 				
 				String account = employeeData.getAccount();
-				if(!StringUtils.isBlank(account)) {
+				if(!AonStringUtils.isBlank(account)) {
 					account.trim();
 					account.replaceAll(" ", "");
 					
@@ -361,7 +362,7 @@ public class JooqEmployee {
 				.execute();
 		
 			if(null != contractData.getContractType()) {
-				String contractType = StringUtils.leftPad(contractData.getContractType(), 3, "0");
+				String contractType = AonStringUtils.leftPad(contractData.getContractType(), 3, "0");
 				
 				dslContext.insertInto(CONTRACT_DATA)
 					.set(CONTRACT_DATA.DOMAIN, domain)
@@ -1012,7 +1013,7 @@ public class JooqEmployee {
 						.set(RADDRESS.NUMBER, employeeData.getAddresNum())
 						.set(RADDRESS.ZIP, employeeData.getAddressZip())
 						.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
-						.set(RADDRESS.MUNICIPALITY_CODE, StringUtils.leftPad(employeeData.getAddressCity(), 5, '0'))
+						.set(RADDRESS.MUNICIPALITY_CODE, AonStringUtils.leftPad(employeeData.getAddressCity(), 5, '0'))
 						.set(RADDRESS.GEOZONE, geozoneId)
 						.where(RADDRESS.ID.eq(rAddressId))
 						.execute();
@@ -1123,7 +1124,7 @@ public class JooqEmployee {
 		// Insertar RBank si lo precisa
 		String account = employeeData.getAccount();
 		Integer rbankTableId = null;
-		if(!StringUtils.isBlank(account)) {
+		if(!AonStringUtils.isBlank(account)) {
 			
 			Result<Record> findRBankRecord = dslContext.select().from(RBANK)
 					.where(RBANK.BANK_ACCOUNT.eq(account))
@@ -1266,7 +1267,7 @@ public class JooqEmployee {
 			if(!contractData.hasPayroll()) {
 				if(null == contractData.getContracttypeId()){
 					if(null != contractData.getContractType()){
-						String contractType = StringUtils.leftPad(contractData.getContractType(), 3, "0");
+						String contractType = AonStringUtils.leftPad(contractData.getContractType(), 3, "0");
 						ContractDataRecord tc2Record = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
 							.values(contractData.getContracttypeId(), domain, "TC2", contractData.getContractId(), "\"" + contractType + "\"", 
@@ -1282,7 +1283,7 @@ public class JooqEmployee {
 						contractData.setContractId(null);
 						contractData.setContractType(null);
 					}else{
-						String contractType = StringUtils.leftPad(contractData.getContractType(), 3, "0");
+						String contractType = AonStringUtils.leftPad(contractData.getContractType(), 3, "0");
 						dslContext.update(CONTRACT_DATA)
 							.set(CONTRACT_DATA.EXPRESSION, "\""+ contractType +"\"")
 							.set(CONTRACT_DATA.START_DATE, startDate)
