@@ -1,10 +1,10 @@
-package solutions.aon.seg.social.exceptions.statusCode;
+package solutions.aon.sepe.exceptions.statusCode;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
-import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.sepe.exceptions.SepeException;
 
-public class StatusCodeException extends SegSocialException{
+public class StatusCodeException extends SepeException{
 
 	public StatusCodeException(){}
 	public StatusCodeException(int code){super("Status code : " + code);}

@@ -109,17 +109,38 @@ export const remove = (url, data) => {
 
 export const getToken = () => localStorage.getItem("aon_session_id");
 
+const openMobile = (url) => {
+  const obj = {
+    action: "pdfDownload",
+    url
+  }
+  webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(obj));
+}
+
+const openDesktop = (url) => open(url);
 
 export const openPDF = (url, data) => {
-  let token = getToken();
-  let domainId = localStorage.getItem("aon_domain_id");
-  let domainName = localStorage.getItem("aon_domain_name");
-  let datos = {
+  const token = getToken();
+  const domainId = localStorage.getItem("aon_domain_id");
+  const domainName = localStorage.getItem("aon_domain_name");
+  const datos = {
     ...data,
     domain_name: domainName,
     session_id: token,
     domain_id: domainId
   }
-  let json = btoa(JSON.stringify(datos));
-  open(`${url}?json=${json}`)
+  const json = btoa(JSON.stringify(datos));
+  const newUrl = `${url}?json=${json}`;
+  
+  let _webkit = false;
+  try { 
+    if("undefined" !== typeof webkit )
+      _webkit = webkit.messageHandlers.cordova_iab; 
+  } catch(e){}
+
+  if(_webkit) 
+    openMobile(newUrl);
+  else 
+    openDesktop(newUrl);
 }
+

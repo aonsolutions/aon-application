@@ -18,6 +18,11 @@ public class Sepe {
 			return Contrato.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 	}
 	
+	public static byte[] transformacionsPdf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, Date fini) throws Exception {
+			return Contrato.transformacionsPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini);
+	}
+	
 	public static void main(String[] args)
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 	}

@@ -1,26 +1,21 @@
 package solutions.aon.sepe;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Date;
-
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
-
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
-
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
-
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
-
-
+import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.toolkit.HtmlUnitToolkit;
 import solutions.aon.sepe.toolkit.Toolkit;
 
@@ -34,6 +29,11 @@ public class Contrato {
 	public static byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend) throws Exception {
 			return getCopyBasicPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+	}
+	
+	public static byte[] transformacionsPdf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, Date fini) throws Exception {
+			return transformacionsPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini);
 	}
 	
 	private static byte[] contratoPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
@@ -115,6 +115,41 @@ public class Contrato {
         return pdf;
 	}
 	
+	private static byte[] transformacionsPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, Date fini ) throws Exception  {
+		byte[] pdf= null;
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+	    	String[] fri = Toolkit.formatDate(fini);
+		    Integer ident  = 0; //NIF DEFAULT
+		    if(Toolkit.identity(ipf).equals("6")) ident = 1; // NIE
+		    
+	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+		
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click(); 
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_consultasImpresion.jsp?origen=").click();
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaTransformacion?pagina=entrada").click();
+	        HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+	    	HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+	    	formDatos.getInputByName("tipoacceso").click();
+			HtmlOption option = (HtmlOption)  formDatos.querySelectorAll("select[name=tipodocumento]>option").get(ident);				
+			option.click();
+			formDatos.getInputByName("nifnietrabajador").setValueAttribute(ipf);
+			formDatos.getInputByName("diafechaini").setValueAttribute(fri[0]);
+			formDatos.getInputByName("mesfechaini").setValueAttribute(fri[1]);
+			formDatos.getInputByName("anniofechaini").setValueAttribute(fri[2]);
+			htmlPage = formDatos.getInputByName("aceptar").click();
+			handleSepeExceptions(htmlPage);
+			
+			//Developing!
+		    UnexpectedPage document = htmlPage.getElementByName("Boton_imprimir").click();
+			InputStream inp = document.getWebResponse().getContentAsStream();
+			pdf = inp.readAllBytes();
+			inp.close();
+	        return pdf;
+		} 
+	}
+	
 	private static HtmlPage first_page_sepe_contrata(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
 		  webClient.getOptions().setJavaScriptEnabled(true);
 		  webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -124,13 +159,30 @@ public class Contrato {
 	}
 	
 	
-		
-	private static void handleSepeExceptions(HtmlPage htmlPage) throws Exception{
+	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
 		try {
 			String error = htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText();
-			if(!error.isEmpty()) {
-				throw new Exception(error);
-			}
+			if(!error.isEmpty()) 
+				throw new SepeException(error);
 		} catch (NullPointerException e) {}
 	}
+	
+	
+//	public static void main(String[] args)   {
+//		try(final FileInputStream certificateInputStream =  new FileInputStream("src/test/resources/solutions/aon/SEPE.p12")){
+//				String certificatePassword = "aon@FNMT";
+//				String certificateType = "pkcs12";
+//				String regimen = "0111";
+//		     	String ctaCti = "01105360062";
+//		     	String nss = "291136796369";
+//				String ipf = "Y7514970X";
+//				String grup_ctz = "01";
+//				String nif = "72740703Y";
+//				Date fecha = Toolkit.parseDate("06-05-2016", "dd-MM-yyyy");
+//				transformacionsPdfImpl(certificateInputStream, certificatePassword, certificateType, nif, fecha);
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
+	
 }

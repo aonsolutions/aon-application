@@ -16,8 +16,9 @@ import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
-import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
+import solutions.aon.sepe.exceptions.SepeException;
+
+
 
 public class Toolkit {
 	
@@ -85,13 +86,13 @@ public class Toolkit {
 	}
 	
 	//SPLITS AN STRING BY 2 AND RETURNS AN ARRAY
-	public static String[] SplitString(String str, int i) throws InvalidDataException {
+	public static String[] SplitString(String str, int i) throws SepeException {
 		try {return new String[] {str.substring(0,i),str.substring(i)};}
-		catch(StringIndexOutOfBoundsException e) {throw new InvalidDataException();}
+		catch(StringIndexOutOfBoundsException e) {throw new SepeException(e.getMessage());}
 	}
 	
 	//SPLITS AN ARRAY MULTIPLE TIMES AND RETURNS AN ARRAY
-	public static ArrayList<String> splitString_m(String str, int... indexes ) throws InvalidDataException {
+	public static ArrayList<String> splitString_m(String str, int... indexes ) throws Exception {
 		try {
 			ArrayList<String> result = new ArrayList<>();
 			int ant = 0;
@@ -104,7 +105,7 @@ public class Toolkit {
 			
 			return result;
 		}
-		catch(StringIndexOutOfBoundsException e) {throw new InvalidDataException();}
+		catch(StringIndexOutOfBoundsException e) {throw new SepeException(e.getMessage());}
 	}
 	
 	//CONVERTS A BYTE ARRAY INTO A PDF FILE ON THE PROJECT FOLDER PATH
@@ -162,9 +163,9 @@ public class Toolkit {
 	}
 	
 	//HANDLES EMPTY DATA 
-	public static void verifyData(Object[] data) throws InvalidDataException {
+	public static void verifyData(Object[] data) throws SepeException {
 		for (Object o : data) 
-			if(o ==  null || (o instanceof String && ((String) o).trim().equals(""))) throw new UnfilledMandatory();
+			if(o ==  null || (o instanceof String && ((String) o).trim().equals(""))) throw new SepeException("UnfilledMandatory");
 	}
 
 	//REMOVE WEIRD CARACTERS

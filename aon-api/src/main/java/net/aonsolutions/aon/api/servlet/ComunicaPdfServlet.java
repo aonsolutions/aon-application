@@ -114,22 +114,17 @@ public class ComunicaPdfServlet extends HttpServlet{
 	//router Sepe
 	private byte[] routerSepe(String route, Domain domain, String token, JSONObject json) throws Exception {
 		byte[] PDF = null;
-//		User user = AON_SOLUTIONS.getUser(domain, token);
-//		Certificate certificate = AON.getCertificateSEPE(domain.getName(), domain.getId(), user.getLogin(), user.getId());
-//		final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
-		
-		byte[] cert = ComunicaPdfServlet.class.getResourceAsStream("SEPE.p12").readAllBytes();
-		final InputStream certificateInputStream = new ByteArrayInputStream(cert);
-		String certificatePassword = "aon@FNMT";
-		String certificateType = "PKCS12";
+		User user = AON_SOLUTIONS.getUser(domain, token);
+		Certificate certificate = AON.getCertificateSEPE(domain.getName(), domain.getId(),  user.getLogin());
+		final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
 		switch (route) {
 			case "get-contrato":
 				LOGGER.info("GET-CONTRATO");
-				PDF =  getContratoPdf(certificateInputStream, certificatePassword,  certificateType, json);
+				PDF =  getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), json);
 				break;
 			case "get-copy-basic":
 				LOGGER.info("GET-COPY-BASIC");
-				PDF = getCopyBasicPdf(certificateInputStream, certificatePassword,  certificateType, json);
+				PDF = getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), json);
 				break;
 			default:
 				break;

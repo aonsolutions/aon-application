@@ -1,13 +1,11 @@
 package solutions.aon.sepe.toolkit;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.function.Function;
 
-import com.gargoylesoftware.css.parser.CSSException;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 
@@ -17,11 +15,10 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 
-import solutions.aon.seg.social.exceptions.SegSocialException;
+import aon.sepe.exceptions.invalidData.InvalidDataException;
+import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.exceptions.certificate.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.internal.CSSParseException;
-import solutions.aon.seg.social.exceptions.internal.InternalException;
-import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
+
 
 public class HtmlUnitToolkit {
 
@@ -93,7 +90,7 @@ public class HtmlUnitToolkit {
 	}
 	
 	//GETS THE SS STATUS CODE
-	public static Integer getSSCode(HtmlPage htmlPage) throws SegSocialException {
+	public static Integer getSSCode(HtmlPage htmlPage) throws SepeException {
 		String status;
 		try {
 			status=HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL");
@@ -102,31 +99,31 @@ public class HtmlUnitToolkit {
 			if((status.length()>0)&&(status.charAt(0)=='*'))	status=status.substring(1);
 			if(status.equals(""))	return 3083;
 			if(!status.contains("*"))
-				if(!status.contains("-"))	throw new SegSocialException (status);
+				if(!status.contains("-"))	throw new SepeException(status);
 				else return Integer.parseInt(status.substring(0, status.indexOf("-")));
 
 			return Integer.parseInt(status.substring(0, status.indexOf("*")));
 		}catch (ElementNotFoundException e) {return 3083;}
-		catch(NumberFormatException nfe) {throw new SegSocialException ();}
+		catch(NumberFormatException nfe) {throw new SepeException();}
 	}
 
 	//GETS THE SS STATUS CODE
-	public static String getSSmessage(HtmlPage htmlPage) throws SegSocialException {
+	public static String getSSmessage(HtmlPage htmlPage) throws SepeException {
 		try { return HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL"); }
 		catch (ElementNotFoundException e) {return "";}
-		catch(NumberFormatException e) {throw new SegSocialException (e);}
+		catch(NumberFormatException e) {throw new SepeException (e);}
 	}
 
 	//MANAGES THE EXCEPTIONS
-	public static void manageStatusCode(HtmlPage htmlPage) throws SegSocialException {
-		Integer code = getSSCode(htmlPage);
-		String msg = getSSmessage(htmlPage);
-		System.out.println(code);
-		InvalidDataException.checkCode(code,msg);
+	public static void manageStatusCode(HtmlPage htmlPage) throws SepeException {
+		Integer code = htmlPage.getWebResponse().getStatusCode();
+        String msg = null; //getSSmessage(htmlPage); 
+//		System.out.println("StatusCode: "+code);
+		InvalidDataException.checkCode(code, msg);
 	}
 
 	//MANAGES THE EXCEPTIONS OF NEW UI
-	public static void manageStatusMessage(HtmlPage document) throws SegSocialException {
+	public static void manageStatusMessage(HtmlPage document) throws SepeException {
 		DomNodeList<DomNode> errors = document.querySelectorAll(".mensajeError");
 		if(errors.size() == 0) return;
 
@@ -138,43 +135,14 @@ public class HtmlUnitToolkit {
 		throw new InvalidDataException(errorList.toString());
 	}
 
-	//SHOW HTML ELEMENTS AS XML
-	public static void showAsXML(HtmlElement ...elements) {
-		for (HtmlElement e : elements) { if(e != null) System.out.println(e.asXml());}
-	}
-	
-	//SHOW HTML ELEMENTS AS TEXT
-	public static void showAsText(HtmlElement ...elements) {
-		for (HtmlElement e : elements) { if(e != null) System.out.println(e.asText());}
-	}
 
-	//GET ELEMENT BY NAME
-	public static HtmlElement getByName(HtmlPage page, String name) throws InternalException {
-		try{return page.querySelector("*[name = " + name + "]");}
-		catch(CSSException e){ throw new CSSParseException();}
-		catch(Exception e){ throw new InternalException();}
-	}
-
-	//GET ELEMENT BY ID
-	public static HtmlElement getById(HtmlPage page, String id) throws InternalException {
-		try{return page.querySelector("#" + id);}
-		catch(CSSException e){ throw new CSSParseException();}
-		catch(Exception e){ throw new InternalException();}
-	}
-
-	//GET ELEMENT BY CLASS
-	public static HtmlElement getByClass(HtmlPage page, String _class) throws InternalException {
-		try{return page.querySelector("." + _class);}
-		catch(CSSException e){ throw new CSSParseException();}
-		catch(Exception e){ throw new InternalException();}
-	}
-	
 	public static HtmlElement createButton(HtmlPage page) {
 	      //create submit 
-		 HtmlElement button = (HtmlElement) page.createElement("button");
-		 button.setAttribute("type", "submit");
-		 button.setAttribute("value", "Load");
-	     return button;
+		 HtmlElement el = (HtmlElement) page.createElement("button");
+		 String s = "submit";
+		 el.setTextContent(s);
+		 el.setAttribute("type", s);
+	     return el;
 	}
 
 }
