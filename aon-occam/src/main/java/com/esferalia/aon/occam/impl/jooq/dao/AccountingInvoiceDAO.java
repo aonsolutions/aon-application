@@ -125,7 +125,7 @@ public class AccountingInvoiceDAO {
 				ai.setInvoice(invoice);
 				ai.getInvoice().setDetails(new LinkedList<InvoiceDetail>());
 				
-				AccountingRegistry reg = RegistryDAO.getAccountingRegistries(ctx
+				AccountingRegistry reg = AccountingRegistryDAO.getAccountingRegistries(ctx
 						, filter -> filter.getIdProperty().eq(invoice.getRegistry()))
 						.filter(f -> AccountingRegistryType.getFor(invoice.getType()).equals(f.getType()))
 						.findFirst()
@@ -407,7 +407,7 @@ public class AccountingInvoiceDAO {
 	}
 	
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry, AccountingInvoice ai) {
-		AccountingRegistry reg = RegistryDAO.getAccountingRegistries(ctx, filter -> filter.getIdProperty().eq(registry)).filter(f -> AccountingRegistryType.getFor(type).equals(f.getType()))
+		AccountingRegistry reg = AccountingRegistryDAO.getAccountingRegistries(ctx, filter -> filter.getIdProperty().eq(registry)).filter(f -> AccountingRegistryType.getFor(type).equals(f.getType()))
 				.findFirst().orElse(null);
 		if (reg == null) {
 			throw new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\"");
@@ -430,7 +430,7 @@ public class AccountingInvoiceDAO {
 
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry,
 			final Integer activity, final Date issueDate) {
-		AccountingRegistry reg =  RegistryDAO.getAccountingRegistries(ctx
+		AccountingRegistry reg =  AccountingRegistryDAO.getAccountingRegistries(ctx
 					, filter -> filter.getIdProperty().eq(registry))
 				.filter(f -> AccountingRegistryType.getFor(type).equals(f.getType()))
 				.findFirst()

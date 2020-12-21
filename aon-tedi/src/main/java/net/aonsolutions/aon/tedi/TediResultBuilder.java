@@ -43,8 +43,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -730,7 +730,7 @@ public class TediResultBuilder {
 				invoice.setRegistryName(result.getTedi().getRegistry().getName());
 				invoice.setRegistryDocumentCountry(Country.safeValueOf(result.getTedi().getRegistry().getDocumentCountry()));
 			}
-			LinkedList<AccountingRegistry> registries = RegistryDAO
+			LinkedList<AccountingRegistry> registries = AccountingRegistryDAO
 					.getAccountingRegistries(ctx, f -> f.getDocumentProperty().eq(invoice.getRegistryDocument()))
 					.filter(filterExpression)
 					.collect(Collectors.toCollection(LinkedList::new));

@@ -684,7 +684,7 @@ public class AccountingUtilitiesDAO {
 			 	?(AonStringUtils.PERCENT + params.getQuery() + AonStringUtils.PERCENT)
 				:(params.getQuery());
 			 	
-	 	Condition[] where = RegistryDAO.getConditions(p -> p.getDocumentProperty().like(q)
+	 	Condition[] where = AccountingRegistryDAO.getConditions(p -> p.getDocumentProperty().like(q)
 	 			.or(p.getNameProperty().like(q))
 	 			.or(p.getAliasProperty().like(q))
 	 			.or(p.getAccountCodeProperty().like(q))

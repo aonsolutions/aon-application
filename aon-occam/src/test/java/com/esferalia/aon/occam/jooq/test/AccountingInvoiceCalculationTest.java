@@ -17,7 +17,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.watson.server.AonRandomStringUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -46,7 +46,7 @@ public class AccountingInvoiceCalculationTest {
 	public void test0() throws IOException {
 		fail = 0;
 		registries = 0;
-		RegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountCodeProperty().eq("430000001"))
+		AccountingRegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountCodeProperty().eq("430000001"))
 			.forEach( reg -> doTest0(reg.getId(), reg.getType().getInvoiceType() ));
 	}	
 	private void doTest0(Integer registry, InvoiceType type)  {
@@ -73,17 +73,17 @@ public class AccountingInvoiceCalculationTest {
 		fail = 0;
 		registries = 0;
 		
-		RegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountDescriptionProperty().like("%GAR%"))
+		AccountingRegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountDescriptionProperty().like("%GAR%"))
 			.forEach( reg -> doTest1(reg.getId(), reg.getType().getInvoiceType() ));
-		RegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountDescriptionProperty().like("%ALV%"))
+		AccountingRegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountDescriptionProperty().like("%ALV%"))
 			.forEach( reg -> doTest1(reg.getId(), reg.getType().getInvoiceType() ));
-		RegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountDescriptionProperty().like("%FER%"))
+		AccountingRegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountDescriptionProperty().like("%FER%"))
 		.forEach( reg -> doTest1(reg.getId(), reg.getType().getInvoiceType() ));
-		RegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountDescriptionProperty().like("%ARR%"))
+		AccountingRegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountDescriptionProperty().like("%ARR%"))
 		.forEach( reg -> doTest1(reg.getId(), reg.getType().getInvoiceType() ));
-		RegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountDescriptionProperty().like("%CAN%"))
+		AccountingRegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountDescriptionProperty().like("%CAN%"))
 		.forEach( reg -> doTest1(reg.getId(), reg.getType().getInvoiceType() ));
-		RegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountDescriptionProperty().like("%ANG%"))
+		AccountingRegistryDAO.getAccountingRegistries(ctx, p -> p.getAccountDescriptionProperty().like("%ANG%"))
 		.forEach( reg -> doTest1(reg.getId(), reg.getType().getInvoiceType() ));
 		
 //		System.out.println( " ------------------------ Start SALES" );

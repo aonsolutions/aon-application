@@ -48,13 +48,13 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO.AccountEntryOrder;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AnalyticalAccountingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryFormatter;
 import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
@@ -69,18 +69,18 @@ public class AccountingImpl implements IAccounting {
 	@Override
 	public Stream<AccountingRegistry> getAccountingRegistries(AONContext ctx, AccountingRegistryFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryDAO.getAccountingRegistries(ctx, filter));
+				configuration -> AccountingRegistryDAO.getAccountingRegistries(ctx, filter));
 	}
 	@Override
 	public AccountingRegistry insert(AONContext ctx, AccountingRegistry reg) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryDAO.insert(ctx, reg));
+				configuration -> AccountingRegistryDAO.insert(ctx, reg));
 	}
 	
 	@Override
 	public AccountingRegistry update(AONContext ctx, AccountingRegistry reg) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryDAO.update(ctx, reg));
+				configuration -> AccountingRegistryDAO.update(ctx, reg));
 	}
 	
 	// --------- ACCOUNT -------------------------------------------------
