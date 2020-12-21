@@ -1,0 +1,4330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000679</FICHEROS>
+    <AMBITO>AUTONOMICO</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO DE DERIVADOS DEL CEMENTO DE LA COMUNIDAD VALENCIANA</NOMBRE>
+    <CODIGO_SS>80000535012002</CODIGO_SS>
+    <INFO_BOE>REVISION SALARIAL (DOGV NUM. 8926 / 15.10.2020)</INFO_BOE>
+    <FECHA_ULT_ACT>16-10-2020</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2017</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2019</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <GRUPO>GRUPO 1</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <GRUPO>GRUPO 2</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <GRUPO>GRUPO 2</GRUPO>
+      <NOMBRE>NIVEL IV</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <GRUPO>GRUPO 2</GRUPO>
+      <NOMBRE>NIVEL V</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <GRUPO>GRUPO 3</GRUPO>
+      <NOMBRE>NIVEL VI</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <GRUPO>GRUPO 3</GRUPO>
+      <NOMBRE>NIVEL VII</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <GRUPO>GRUPO 4</GRUPO>
+      <NOMBRE>NIVEL VIII</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <NOMBRE>NIVEL IX</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>9</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <NOMBRE>NIVEL X</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>10</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <GRUPO>GRUPO 7</GRUPO>
+      <NOMBRE>NIVEL XI</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>11</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <GRUPO>GRUPO 8</GRUPO>
+      <NOMBRE>NIVEL XII</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>12</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <GRUPO>GRUPO 1</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>13</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <GRUPO>GRUPO 2</GRUPO>
+      <NOMBRE>IIII</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>14</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <GRUPO>GRUPO 2</GRUPO>
+      <NOMBRE>NIVEL IV</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>15</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <GRUPO>GRUPO 2</GRUPO>
+      <NOMBRE>NIVEL V</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>16</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <GRUPO>GRUPO 3</GRUPO>
+      <NOMBRE>NIVEL VI</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>17</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <GRUPO>GRUPO 3</GRUPO>
+      <NOMBRE>NIVEL VII</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>18</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <GRUPO>GRUPO 4</GRUPO>
+      <NOMBRE>NIVEL VIII</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>19</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <NOMBRE>NIVEL IX</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>20</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <NOMBRE>NIVEL X</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>21</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <GRUPO>GRUPO 7</GRUPO>
+      <NOMBRE>NIVEL XI</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>22</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <GRUPO>GRUPO 8</GRUPO>
+      <NOMBRE>NIVEL XII</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>23</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <GRUPO>GRUPO 1</GRUPO>
+      <NOMBRE>GRUPO 1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>24</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <GRUPO>GRUPO 2</GRUPO>
+      <NOMBRE>GRUPO 2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>25</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <GRUPO>GRUPO 3</GRUPO>
+      <NOMBRE>GRUPO 3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>26</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <GRUPO>GRUPO 4</GRUPO>
+      <NOMBRE>GRUPO 4</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>27</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <NOMBRE>GRUPO 5</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>28</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <NOMBRE>GRUPO 6</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>29</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <GRUPO>GRUPO 7</GRUPO>
+      <NOMBRE>GRUPO 7</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>30</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <GRUPO>GRUPO 8</GRUPO>
+      <NOMBRE>GRUPO 8</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>31</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <NOMBRE>GRUPO 1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>32</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <NOMBRE>GRUPO 2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>33</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <NOMBRE>GRUPO 3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>34</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <NOMBRE>GRUPO 4</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>35</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <NOMBRE>GRUPO 5</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>36</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <NOMBRE>GRUPO 6</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>37</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <NOMBRE>GRUPO 7</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>38</CODIGO>
+      <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+      <NOMBRE>GRUPO 8</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>39</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <NOMBRE>GRUPO 1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>40</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <NOMBRE>GRUPO 2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>41</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <NOMBRE>GRUPO 3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>42</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <NOMBRE>GRUPO 4</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>43</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <NOMBRE>GRUPO 5</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>44</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <NOMBRE>GRUPO 6</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>45</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <NOMBRE>GRUPO 7</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>46</CODIGO>
+      <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+      <NOMBRE>GRUPO 8</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>47</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <NOMBRE>GRUPO 1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>48</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <NOMBRE>GRUPO 2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>49</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <NOMBRE>GRUPO 3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>50</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <NOMBRE>GRUPO 4</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>51</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <NOMBRE>GRUPO 5</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>52</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <NOMBRE>GRUPO 6</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>53</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <NOMBRE>GRUPO 7</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>54</CODIGO>
+      <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+      <NOMBRE>GRUPO 8</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>SALARIO BASE</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>50</CODIGO>
+      <NOMBRE>GRATIFICACION</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>701</CODIGO>
+      <NOMBRE>HORA ORDINARIA</NOMBRE>
+      <TIPO_AMDH>H</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>SALARIO BASE</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>1107</CODIGO>
+      <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>907</CODIGO>
+      <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>657</CODIGO>
+      <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>908</CODIGO>
+      <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>907</CODIGO>
+      <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>52</CODIGO>
+      <NOMBRE>INCENTIVOS</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>505</CODIGO>
+      <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+      <TIPO_AMDH>H</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>506</CODIGO>
+      <NOMBRE>MEDIA DIETA</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>623</CODIGO>
+      <NOMBRE>PLUS CARENCIA DE INCENTIVOS</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>SALARIO CONVENIO</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>1119</CODIGO>
+      <NOMBRE>PAGAS EXTRA</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2017</AÑO>
+      <INFO_BOE>REVISION SALARIAL (DOGC NUM. 8604 / 01.08.2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 1</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1986.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>27857.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>2011.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>16.05</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1889.68</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>26505.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1914.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>15.27</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>NIVEL IV</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1889.68</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>26505.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1914.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>15.27</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>NIVEL V</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1889.68</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>26505.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1914.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>15.27</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <NOMBRE>NIVEL VI</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1653.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23203.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1678.99</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>13.37</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <NOMBRE>NIVEL VII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1653.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23203.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1678.99</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>13.37</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <NOMBRE>NIVEL VIII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1590.1</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22311.82</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1615.31</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.86</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <NOMBRE>NIVEL IX</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1532.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21510.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1558.05</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.39</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <NOMBRE>NIVEL X</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1529.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21460.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1554.49</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.37</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 7</GRUPO>
+          <NOMBRE>NIVEL XI</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1511.77</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21215.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1536.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.22</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>NIVEL XII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1494.23</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20969.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1519.47</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.08</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 1</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>50.73</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1543.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>25221.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2286.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1245.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1568.33</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>IIII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>45.83</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1394.14</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22921.22</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2076.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1245.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1419.25</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>NIVEL IV</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>45.83</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1394.14</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22921.22</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2076.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1245.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1419.25</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>NIVEL V</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>45.83</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1394.14</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22921.22</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2076.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1245.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1419.25</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <NOMBRE>NIVEL VI</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>42.62</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1296.39</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21413.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1939.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1245.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1321.59</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <NOMBRE>NIVEL VII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>42.62</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1296.39</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21413.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1939.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1245.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1321.59</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <NOMBRE>NIVEL VIII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>41.21</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1253.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20757.03</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1879.58</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1245.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1278.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <NOMBRE>NIVEL IX</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>40.57</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1234.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20455.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1852.06</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1245.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1259.45</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <NOMBRE>NIVEL X</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>39.95</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1215.12</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20159.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1824.64</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1245.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1240.22</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 7</GRUPO>
+          <NOMBRE>NIVEL XI</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>39.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1195.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19863.99</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1797.76</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1245.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1221.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>NIVEL XII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>38.71</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1177.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19579.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1771.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1245.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1202.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 1</GRUPO>
+          <NOMBRE>GRUPO 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>50.09</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>27838.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1704.49</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1848.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>5.96</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>12.46</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>GRUPO 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>38.21</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22750.11</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1330.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2088.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>5.96</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>11.42</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <NOMBRE>GRUPO 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>36</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21058.15</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1200.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1933.57</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>5.96</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>9.47</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <NOMBRE>GRUPO 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.88</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20395.79</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1159.22</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1872.76</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>5.96</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>9.01</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <NOMBRE>GRUPO 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20098.77</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1141.22</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1845.59</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>5.96</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>8.99</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <NOMBRE>GRUPO 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19804.58</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1123.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1818.48</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>5.96</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>8.63</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 7</GRUPO>
+          <NOMBRE>GRUPO 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.21</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19510.34</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1109.25</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1791.57</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>5.96</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>8.62</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>GRUPO 8</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.53</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19224.91</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1103.85</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1765.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>5.96</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>8.62</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2018</AÑO>
+      <INFO_BOE>REVISION SALARIAL (DOGV NUM. 8649 DE 04.10.2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 1</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>2011.09</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>28206.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>2036.57</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>52</CODIGO>
+              <NOMBRE>INCENTIVOS</NOMBRE>
+              <IMPORTE>113.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>623</CODIGO>
+              <NOMBRE>PLUS CARENCIA DE INCENTIVOS</NOMBRE>
+              <IMPORTE>61.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>16.25</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1913.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>26837.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1938.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>52</CODIGO>
+              <NOMBRE>INCENTIVOS</NOMBRE>
+              <IMPORTE>113.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>623</CODIGO>
+              <NOMBRE>PLUS CARENCIA DE INCENTIVOS</NOMBRE>
+              <IMPORTE>61.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>15.46</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>NIVEL IV</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1913.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>26837.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1938.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>52</CODIGO>
+              <NOMBRE>INCENTIVOS</NOMBRE>
+              <IMPORTE>113.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>623</CODIGO>
+              <NOMBRE>PLUS CARENCIA DE INCENTIVOS</NOMBRE>
+              <IMPORTE>61.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>15.46</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>NIVEL V</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1913.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>26837.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1938.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>52</CODIGO>
+              <NOMBRE>INCENTIVOS</NOMBRE>
+              <IMPORTE>113.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>623</CODIGO>
+              <NOMBRE>PLUS CARENCIA DE INCENTIVOS</NOMBRE>
+              <IMPORTE>61.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>15.46</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <NOMBRE>NIVEL VI</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1674.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23493.5</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1699.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>52</CODIGO>
+              <NOMBRE>INCENTIVOS</NOMBRE>
+              <IMPORTE>113.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>623</CODIGO>
+              <NOMBRE>PLUS CARENCIA DE INCENTIVOS</NOMBRE>
+              <IMPORTE>61.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>13.54</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <NOMBRE>NIVEL VII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1674.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23493.5</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1699.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>52</CODIGO>
+              <NOMBRE>INCENTIVOS</NOMBRE>
+              <IMPORTE>113.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>623</CODIGO>
+              <NOMBRE>PLUS CARENCIA DE INCENTIVOS</NOMBRE>
+              <IMPORTE>61.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>13.54</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <NOMBRE>NIVEL VIII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1609.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22590.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1635.5</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>52</CODIGO>
+              <NOMBRE>INCENTIVOS</NOMBRE>
+              <IMPORTE>113.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>623</CODIGO>
+              <NOMBRE>PLUS CARENCIA DE INCENTIVOS</NOMBRE>
+              <IMPORTE>61.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>13.02</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <NOMBRE>NIVEL IX</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1552.01</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21779.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1577.53</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>52</CODIGO>
+              <NOMBRE>INCENTIVOS</NOMBRE>
+              <IMPORTE>113.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>623</CODIGO>
+              <NOMBRE>PLUS CARENCIA DE INCENTIVOS</NOMBRE>
+              <IMPORTE>61.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.54</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <NOMBRE>NIVEL X</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1548.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21728.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1573.92</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>52</CODIGO>
+              <NOMBRE>INCENTIVOS</NOMBRE>
+              <IMPORTE>113.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>623</CODIGO>
+              <NOMBRE>PLUS CARENCIA DE INCENTIVOS</NOMBRE>
+              <IMPORTE>61.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.52</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 7</GRUPO>
+          <NOMBRE>NIVEL XI</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1530.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21480.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1556.19</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>52</CODIGO>
+              <NOMBRE>INCENTIVOS</NOMBRE>
+              <IMPORTE>113.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>623</CODIGO>
+              <NOMBRE>PLUS CARENCIA DE INCENTIVOS</NOMBRE>
+              <IMPORTE>61.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.37</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>NIVEL XII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1512.91</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21231.82</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1538.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>52</CODIGO>
+              <NOMBRE>INCENTIVOS</NOMBRE>
+              <IMPORTE>113.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>623</CODIGO>
+              <NOMBRE>PLUS CARENCIA DE INCENTIVOS</NOMBRE>
+              <IMPORTE>61.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.23</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 1</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>51.36</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1562.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>26303.23</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>9.49</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>3043.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1260.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1587.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>IIII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>46.4</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1411.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23903.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>9.49</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2764.35</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1260.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1436.99</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>NIVEL IV</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>46.4</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1411.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23903.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>9.49</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2764.35</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1260.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1436.99</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>NIVEL V</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>46.4</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1411.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23903.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>9.49</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2764.35</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1260.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1436.99</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <NOMBRE>NIVEL VI</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>43.15</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1312.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22331.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>9.49</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2581.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1260.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1338.11</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <NOMBRE>NIVEL VII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>43.15</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1312.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22331.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>9.49</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2581.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1260.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1338.11</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <NOMBRE>NIVEL VIII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>41.73</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1269.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21646.99</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>9.49</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2502.29</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1260.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1294.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <NOMBRE>NIVEL IX</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>41.08</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1249.73</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21332.48</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>9.49</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2465.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1260.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1275.19</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <NOMBRE>NIVEL X</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>40.45</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1230.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21023.51</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>9.49</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2429.42</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1260.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1255.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 7</GRUPO>
+          <NOMBRE>NIVEL XI</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>39.81</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1210.91</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20715.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>9.49</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2393.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1260.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1236.53</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>NIVEL XII</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>39.19</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1192.28</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20418.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>9.49</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2359.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>1260.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1107</CODIGO>
+              <NOMBRE>PAGAS EXTRA VERANO Y NAVIDAD</NOMBRE>
+              <IMPORTE>1217.64</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 1</GRUPO>
+          <NOMBRE>GRUPO 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>50.72</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>28206.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1725.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>1867.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>6.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>12.62</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <NOMBRE>GRUPO 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>38.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23725.52</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1347.59</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2771.16</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>6.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>11.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <NOMBRE>GRUPO 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>36.45</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21961.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1215.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2565.31</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>6.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>9.59</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <NOMBRE>GRUPO 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>35.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21270.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1173.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2484.63</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>6.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>9.12</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <NOMBRE>GRUPO 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20960.5</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1155.49</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2448.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>6.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>9.1</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <NOMBRE>GRUPO 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20653.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1137.28</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2412.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>6.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>8.74</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 7</GRUPO>
+          <NOMBRE>GRUPO 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20346.85</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1123.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2376.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>6.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>8.73</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>GRUPO 8</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.94</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20049.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>50</CODIGO>
+              <NOMBRE>GRATIFICACION</NOMBRE>
+              <IMPORTE>1117.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>657</CODIGO>
+              <NOMBRE>PLUS ACERCAMIENTO</NOMBRE>
+              <IMPORTE>2342.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>907</CODIGO>
+              <NOMBRE>COMPLEMENTO NO SALARIAL</NOMBRE>
+              <IMPORTE>6.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>908</CODIGO>
+              <NOMBRE>COMPLEMENTO CONVENIO</NOMBRE>
+              <IMPORTE>8.73</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>REVISION SALARIAL (DOGV NUM. 8926 / 15.10.2020)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1736</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <NOMBRE>GRUPO 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>2044.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>28629.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>16.49</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>2044.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <NOMBRE>GRUPO 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1945.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>27239.76</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>15.69</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1945.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <NOMBRE>GRUPO 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1703.28</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23845.91</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>13.74</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1703.28</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <NOMBRE>GRUPO 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1637.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22929.58</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>13.21</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1637.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <NOMBRE>GRUPO 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1578.99</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22105.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.73</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1578.99</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <NOMBRE>GRUPO 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1575.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22054.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.7</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1575.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <NOMBRE>GRUPO 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1557.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21802.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.56</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1557.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>PROVINCIA DE ALICANTE</GRUPO>
+          <NOMBRE>GRUPO 8</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1539.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21550.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.41</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1539.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <NOMBRE>GRUPO 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1926.05</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>26964.76</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>19.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>15.53</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1926.05</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <NOMBRE>GRUPO 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1750.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>24505.16</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>19.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>14.12</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1750.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <NOMBRE>GRUPO 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1635.25</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22893.45</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>19.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>13.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1635.25</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <NOMBRE>GRUPO 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1585.1</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22191.41</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>19.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.78</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1585.1</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <NOMBRE>GRUPO 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1562.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21869</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>19.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.6</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1562.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>44</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <NOMBRE>GRUPO 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1539.45</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21552.25</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>19.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.41</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1539.45</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>45</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <NOMBRE>GRUPO 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1516.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21236.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>19.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.23</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1516.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>46</CODIGO>
+          <GRUPO>PROVINCIA DE CASTELLON</GRUPO>
+          <NOMBRE>GRUPO 8</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1495.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20932.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>19.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.06</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1495.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>47</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <NOMBRE>GRUPO 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>2044.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>28629.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>16.49</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>2044.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>48</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <NOMBRE>GRUPO 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1745.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>24442.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>14.08</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1745.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>49</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <NOMBRE>GRUPO 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1616.06</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22624.79</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>13.03</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1616.06</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>50</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <NOMBRE>GRUPO 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1565.22</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21913.15</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.62</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1565.22</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>51</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <NOMBRE>GRUPO 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1542.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21594.03</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.44</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1542.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>52</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <NOMBRE>GRUPO 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1519.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21277.96</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.26</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1519.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>53</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <NOMBRE>GRUPO 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1497.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20961.83</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>12.07</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1497.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>54</CODIGO>
+          <GRUPO>PROVINCIA DE VALENCIA</GRUPO>
+          <NOMBRE>GRUPO 8</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1475.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20655.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>20.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>701</CODIGO>
+              <NOMBRE>HORA ORDINARIA</NOMBRE>
+              <IMPORTE>11.9</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1475.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

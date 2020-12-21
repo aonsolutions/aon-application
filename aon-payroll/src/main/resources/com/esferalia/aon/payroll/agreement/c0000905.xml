@@ -1,0 +1,3144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000905</FICHEROS>
+    <AMBITO>PROVINCIAL</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO DE LA INDUSTRIA DE LA ALIMENTACION DE ALMERIA</NOMBRE>
+    <CODIGO_SS>04000385011982</CODIGO_SS>
+    <INFO_BOE>CONVENIO COLECTIVO (BOP NUMERO 212 - MARTES, 05 DE NOVIEMBRE DE 2019)</INFO_BOE>
+    <FECHA_ULT_ACT>14-11-2019</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2019</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2021</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>1. TITULADOS</GRUPO>
+      <NOMBRE>AYUDANTE TECNICO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>1. TITULADOS</GRUPO>
+      <NOMBRE>GRADO MEDIO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>1. TITULADOS</GRUPO>
+      <NOMBRE>GRADO SUPERIOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>2. NO TITULADOS</GRUPO>
+      <NOMBRE>AUXILIAR DE LABORATORIO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>2. NO TITULADOS</GRUPO>
+      <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>2. NO TITULADOS</GRUPO>
+      <NOMBRE>MAESTRO DE FABRICACION Y JEFE DE TALLER</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>3. OFICINAS TECNICAS DE ORGANIZACION</GRUPO>
+      <NOMBRE>AUXILIAR DE ORGANIZACION</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>3. OFICINAS TECNICAS DE ORGANIZACION</GRUPO>
+      <NOMBRE>JEFE DE 1ª Y 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>9</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>3. OFICINAS TECNICAS DE ORGANIZACION</GRUPO>
+      <NOMBRE>TECNICO DE ORGANIZACION DE 1ª Y 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>10</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+      <NOMBRE>ANALISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>11</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+      <NOMBRE>JEFE DE EXPLOTACION Y PROGRAMADOR DE ORDENADORES</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>12</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+      <NOMBRE>JEFE DE PROCESO DE DATOS</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>13</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+      <NOMBRE>OPERADOR DE ORDENADORES</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>14</CODIGO>
+      <GRUPO>GRUPO I. TECNICOS</GRUPO>
+      <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+      <NOMBRE>PROGRAMADOR DE MAQUINAS AUXILIARES</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>15</CODIGO>
+      <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+      <NOMBRE>AUXILIAR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>16</CODIGO>
+      <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+      <NOMBRE>JEFE ADMINISTRATIVO DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>17</CODIGO>
+      <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+      <NOMBRE>JEFE ADMINISTRATIVO DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>18</CODIGO>
+      <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+      <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>19</CODIGO>
+      <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+      <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>20</CODIGO>
+      <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+      <NOMBRE>TELEFONISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>21</CODIGO>
+      <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+      <NOMBRE>CORREDOR DE PLAZA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>22</CODIGO>
+      <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+      <NOMBRE>INSPECTOR DE VENTAS</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>23</CODIGO>
+      <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+      <NOMBRE>JEFE DE VENTAS</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>24</CODIGO>
+      <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+      <NOMBRE>PROMOTOR DE PROPAGANDA Y/O PUBLICIDAD</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>25</CODIGO>
+      <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+      <NOMBRE>VENDEDOR DE AUTOVENTAS</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>26</CODIGO>
+      <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+      <NOMBRE>VIAJANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>27</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+      <NOMBRE>AYUDANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>28</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+      <NOMBRE>ENCARGADO DE SECCION</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>29</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+      <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>30</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+      <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>31</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+      <NOMBRE>AYUDANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>32</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+      <NOMBRE>ENCARGADO DE SECCION</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>33</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+      <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>34</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+      <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>35</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>3. PERSONAL DE OFICIOS AUXILIARES</GRUPO>
+      <NOMBRE>ENCARGADO DE SECCION</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>36</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>3. PERSONAL DE OFICIOS AUXILIARES</GRUPO>
+      <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>37</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>3. PERSONAL DE OFICIOS AUXILIARES</GRUPO>
+      <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>38</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>4. PEONAJE</GRUPO>
+      <NOMBRE>PEON</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>39</CODIGO>
+      <GRUPO>GRUPO IV. OBREROS</GRUPO>
+      <GRUPO>4. PEONAJE</GRUPO>
+      <NOMBRE>PERSONAL DE LIMPIEZA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>40</CODIGO>
+      <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+      <NOMBRE>ALMACENERO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>41</CODIGO>
+      <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+      <NOMBRE>BASCULERO-PESADOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>42</CODIGO>
+      <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+      <NOMBRE>COBRADOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>43</CODIGO>
+      <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+      <NOMBRE>CONSERJE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>44</CODIGO>
+      <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+      <NOMBRE>GUARDA JURADO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>45</CODIGO>
+      <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+      <NOMBRE>GUARDA VIGILANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>46</CODIGO>
+      <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+      <NOMBRE>MOZO DE ALMACEN</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>47</CODIGO>
+      <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+      <NOMBRE>ORDENANZA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>48</CODIGO>
+      <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+      <NOMBRE>PORTERO</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>SALARIO BASE</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>19</CODIGO>
+      <NOMBRE>TRIENIOS</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOP NUMERO 212 - MARTES, 05 DE NOVIEMBRE DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>1. TITULADOS</GRUPO>
+          <NOMBRE>AYUDANTE TECNICO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>993.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>1. TITULADOS</GRUPO>
+          <NOMBRE>GRADO MEDIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1184.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>63.77</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>1. TITULADOS</GRUPO>
+          <NOMBRE>GRADO SUPERIOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1291.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>70.2</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>2. NO TITULADOS</GRUPO>
+          <NOMBRE>AUXILIAR DE LABORATORIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>930.76</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>48.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>2. NO TITULADOS</GRUPO>
+          <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1120.99</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>59.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>2. NO TITULADOS</GRUPO>
+          <NOMBRE>MAESTRO DE FABRICACION Y JEFE DE TALLER</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1109.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>59.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>3. OFICINAS TECNICAS DE ORGANIZACION</GRUPO>
+          <NOMBRE>AUXILIAR DE ORGANIZACION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>930.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>48.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>3. OFICINAS TECNICAS DE ORGANIZACION</GRUPO>
+          <NOMBRE>JEFE DE 1ª Y 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1120.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>59.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>3. OFICINAS TECNICAS DE ORGANIZACION</GRUPO>
+          <NOMBRE>TECNICO DE ORGANIZACION DE 1ª Y 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1089.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>58.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>ANALISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1120.99</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>59.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>JEFE DE EXPLOTACION Y PROGRAMADOR DE ORDENADORES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1120.99</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>59.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>JEFE DE PROCESO DE DATOS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1184.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>63.77</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>OPERADOR DE ORDENADORES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>987.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.94</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>PROGRAMADOR DE MAQUINAS AUXILIARES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1120.99</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>59.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>AUXILIAR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>930.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>48.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1248.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>67.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1184.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>63.77</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1089.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>58.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>993.28</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>898.12</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>46.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>CORREDOR DE PLAZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>955.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>50.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>INSPECTOR DE VENTAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1201.58</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>64.78</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>JEFE DE VENTAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1216.36</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>65.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>PROMOTOR DE PROPAGANDA Y/O PUBLICIDAD</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>957.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>50.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>VENDEDOR DE AUTOVENTAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>955.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>50.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>VIAJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>955.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>50.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>49.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+          <NOMBRE>ENCARGADO DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1026.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>54.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>55.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.62</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.05</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>49.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+          <NOMBRE>ENCARGADO DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1026.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>54.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>50.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>49.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>3. PERSONAL DE OFICIOS AUXILIARES</GRUPO>
+          <NOMBRE>ENCARGADO DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1026.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>54.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>3. PERSONAL DE OFICIOS AUXILIARES</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>55.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>3. PERSONAL DE OFICIOS AUXILIARES</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>55.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>4. PEONAJE</GRUPO>
+          <NOMBRE>PEON</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>49.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>4. PEONAJE</GRUPO>
+          <NOMBRE>PERSONAL DE LIMPIEZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>49.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>ALMACENERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.62</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.05</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>BASCULERO-PESADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>50.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>COBRADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>50.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>CONSERJE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>50.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>44</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>GUARDA JURADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>50.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>45</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>GUARDA VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>50.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>46</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>MOZO DE ALMACEN</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>49.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>47</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>ORDENANZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>50.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>48</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>PORTERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>50.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOP NUMERO 212 - MARTES, 05 DE NOVIEMBRE DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>1. TITULADOS</GRUPO>
+          <NOMBRE>AYUDANTE TECNICO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1020.38</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>1. TITULADOS</GRUPO>
+          <NOMBRE>GRADO MEDIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1217.08</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>65.52</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>1. TITULADOS</GRUPO>
+          <NOMBRE>GRADO SUPERIOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1327.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>72.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>2. NO TITULADOS</GRUPO>
+          <NOMBRE>AUXILIAR DE LABORATORIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>956.36</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>49.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>2. NO TITULADOS</GRUPO>
+          <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1151.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>61.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>2. NO TITULADOS</GRUPO>
+          <NOMBRE>MAESTRO DE FABRICACION Y JEFE DE TALLER</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1140.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>60.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>3. OFICINAS TECNICAS DE ORGANIZACION</GRUPO>
+          <NOMBRE>AUXILIAR DE ORGANIZACION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>956.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>49.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>3. OFICINAS TECNICAS DE ORGANIZACION</GRUPO>
+          <NOMBRE>JEFE DE 1ª Y 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1151.81</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>61.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>3. OFICINAS TECNICAS DE ORGANIZACION</GRUPO>
+          <NOMBRE>TECNICO DE ORGANIZACION DE 1ª Y 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1119.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>59.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>ANALISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1151.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>61.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>JEFE DE EXPLOTACION Y PROGRAMADOR DE ORDENADORES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1151.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>61.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>JEFE DE PROCESO DE DATOS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1217.08</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>65.52</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>OPERADOR DE ORDENADORES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1015.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>PROGRAMADOR DE MAQUINAS AUXILIARES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1151.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>61.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>AUXILIAR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>956.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>49.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1282.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>69.45</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1217.08</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>65.52</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1119.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>59.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1020.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.73</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>922.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>47.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>CORREDOR DE PLAZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>981.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>INSPECTOR DE VENTAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1234.62</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>66.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>JEFE DE VENTAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1249.81</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>67.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>PROMOTOR DE PROPAGANDA Y/O PUBLICIDAD</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>984.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>VENDEDOR DE AUTOVENTAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>981.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>VIAJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>981.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+          <NOMBRE>ENCARGADO DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1054.49</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>55.76</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>35.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>57.18</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.52</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+          <NOMBRE>ENCARGADO DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1054.49</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>55.76</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>3. PERSONAL DE OFICIOS AUXILIARES</GRUPO>
+          <NOMBRE>ENCARGADO DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1054.49</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>55.76</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>3. PERSONAL DE OFICIOS AUXILIARES</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>35.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>57.18</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>3. PERSONAL DE OFICIOS AUXILIARES</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>35.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>57.18</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>4. PEONAJE</GRUPO>
+          <NOMBRE>PEON</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>4. PEONAJE</GRUPO>
+          <NOMBRE>PERSONAL DE LIMPIEZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>ALMACENERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.52</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>BASCULERO-PESADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>COBRADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>CONSERJE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>44</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>GUARDA JURADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>45</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>GUARDA VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>46</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>MOZO DE ALMACEN</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>47</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>ORDENANZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>48</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>PORTERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2021</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOP NUMERO 212 - MARTES, 05 DE NOVIEMBRE DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>1. TITULADOS</GRUPO>
+          <NOMBRE>AYUDANTE TECNICO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1048.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>55.18</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>1. TITULADOS</GRUPO>
+          <NOMBRE>GRADO MEDIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1250.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>67.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>1. TITULADOS</GRUPO>
+          <NOMBRE>GRADO SUPERIOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1363.99</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>74.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>2. NO TITULADOS</GRUPO>
+          <NOMBRE>AUXILIAR DE LABORATORIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>982.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.21</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>2. NO TITULADOS</GRUPO>
+          <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1183.5</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>63.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>2. NO TITULADOS</GRUPO>
+          <NOMBRE>MAESTRO DE FABRICACION Y JEFE DE TALLER</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1171.78</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>62.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>3. OFICINAS TECNICAS DE ORGANIZACION</GRUPO>
+          <NOMBRE>AUXILIAR DE ORGANIZACION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>982.73</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>3. OFICINAS TECNICAS DE ORGANIZACION</GRUPO>
+          <NOMBRE>JEFE DE 1ª Y 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1183.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>63.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>3. OFICINAS TECNICAS DE ORGANIZACION</GRUPO>
+          <NOMBRE>TECNICO DE ORGANIZACION DE 1ª Y 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1150.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>61.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>ANALISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1183.5</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>63.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>JEFE DE EXPLOTACION Y PROGRAMADOR DE ORDENADORES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1183.5</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>63.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>JEFE DE PROCESO DE DATOS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1250.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>67.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>OPERADOR DE ORDENADORES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1042.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>54.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO I. TECNICOS</GRUPO>
+          <GRUPO>4. TECNICOS DE PROCESOS DE DATOS</GRUPO>
+          <NOMBRE>PROGRAMADOR DE MAQUINAS AUXILIARES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1183.5</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>63.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>AUXILIAR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>982.73</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>51.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1317.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>71.36</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1250.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>67.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1150.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>61.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1048.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>55.21</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO II. ADMINISTRATIVOS</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>948.2</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>49.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>CORREDOR DE PLAZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1008.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>INSPECTOR DE VENTAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1268.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>68.39</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>JEFE DE VENTAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1284.18</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>69.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>PROMOTOR DE PROPAGANDA Y/O PUBLICIDAD</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1011.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>VENDEDOR DE AUTOVENTAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1008.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>GRUPO III. MERCANTILES</GRUPO>
+          <NOMBRE>VIAJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1008.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.47</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+          <NOMBRE>ENCARGADO DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1083.49</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>57.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>36.52</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>58.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>1. PERSONAL DE PRODUCCION</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>54.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.47</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+          <NOMBRE>ENCARGADO DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1083.49</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>57.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>2. PERSONAL DE ACABADO, ENVASADO Y EMPAQUETADO</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.47</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>3. PERSONAL DE OFICIOS AUXILIARES</GRUPO>
+          <NOMBRE>ENCARGADO DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1083.49</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>57.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>3. PERSONAL DE OFICIOS AUXILIARES</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>36.52</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>58.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>3. PERSONAL DE OFICIOS AUXILIARES</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>36.52</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>58.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>4. PEONAJE</GRUPO>
+          <NOMBRE>PEON</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.47</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>GRUPO IV. OBREROS</GRUPO>
+          <GRUPO>4. PEONAJE</GRUPO>
+          <NOMBRE>PERSONAL DE LIMPIEZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.47</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>ALMACENERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>54.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>BASCULERO-PESADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>COBRADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>CONSERJE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>44</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>GUARDA JURADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>45</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>GUARDA VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>46</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>MOZO DE ALMACEN</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>52.47</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>47</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>ORDENANZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>48</CODIGO>
+          <GRUPO>GRUPO V. SUBALTERNOS</GRUPO>
+          <NOMBRE>PORTERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>53.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

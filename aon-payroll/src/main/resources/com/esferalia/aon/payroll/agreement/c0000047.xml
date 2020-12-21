@@ -1,0 +1,5355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000047</FICHEROS>
+    <AMBITO>NACIONAL</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO ESTATAL DE EMPRESAS DE CONSULTORIA Y ESTUDIOS DE MERCADO Y DE LA OPINION PUBLICA</NOMBRE>
+    <CODIGO_SS>99001355011983</CODIGO_SS>
+    <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 57 - MARTES 6 DE MARZO DE 2018)</INFO_BOE>
+    <FECHA_ULT_ACT>24-05-2019</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2017</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2020</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <GRUPO>AREA 1</GRUPO>
+      <GRUPO>GRUPO A</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <GRUPO>AREA 1</GRUPO>
+      <GRUPO>GRUPO B</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <GRUPO>AREA 1</GRUPO>
+      <GRUPO>GRUPO B</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <GRUPO>AREA 1</GRUPO>
+      <GRUPO>GRUPO C</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <GRUPO>AREA 1</GRUPO>
+      <GRUPO>GRUPO C</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <GRUPO>AREA 1</GRUPO>
+      <GRUPO>GRUPO C</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <GRUPO>AREA 1</GRUPO>
+      <GRUPO>GRUPO D</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <GRUPO>AREA 1</GRUPO>
+      <GRUPO>GRUPO D</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>9</CODIGO>
+      <GRUPO>AREA 1</GRUPO>
+      <GRUPO>GRUPO D</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>10</CODIGO>
+      <GRUPO>AREA 1</GRUPO>
+      <GRUPO>GRUPO E</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>11</CODIGO>
+      <GRUPO>AREA 1</GRUPO>
+      <GRUPO>GRUPO E</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>12</CODIGO>
+      <GRUPO>AREA 1</GRUPO>
+      <GRUPO>GRUPO E</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>13</CODIGO>
+      <GRUPO>AREA 2</GRUPO>
+      <GRUPO>GRUPO A</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>14</CODIGO>
+      <GRUPO>AREA 2</GRUPO>
+      <GRUPO>GRUPO B</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>15</CODIGO>
+      <GRUPO>AREA 2</GRUPO>
+      <GRUPO>GRUPO B</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>16</CODIGO>
+      <GRUPO>AREA 2</GRUPO>
+      <GRUPO>GRUPO C</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>17</CODIGO>
+      <GRUPO>AREA 2</GRUPO>
+      <GRUPO>GRUPO C</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>18</CODIGO>
+      <GRUPO>AREA 2</GRUPO>
+      <GRUPO>GRUPO C</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>19</CODIGO>
+      <GRUPO>AREA 2</GRUPO>
+      <GRUPO>GRUPO D</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>20</CODIGO>
+      <GRUPO>AREA 2</GRUPO>
+      <GRUPO>GRUPO D</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>21</CODIGO>
+      <GRUPO>AREA 2</GRUPO>
+      <GRUPO>GRUPO D</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>22</CODIGO>
+      <GRUPO>AREA 2</GRUPO>
+      <GRUPO>GRUPO E</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>23</CODIGO>
+      <GRUPO>AREA 2</GRUPO>
+      <GRUPO>GRUPO E</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>24</CODIGO>
+      <GRUPO>AREA 2</GRUPO>
+      <GRUPO>GRUPO E</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>25</CODIGO>
+      <GRUPO>AREA 3</GRUPO>
+      <GRUPO>GRUPO A</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>26</CODIGO>
+      <GRUPO>AREA 3</GRUPO>
+      <GRUPO>GRUPO B</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>27</CODIGO>
+      <GRUPO>AREA 3</GRUPO>
+      <GRUPO>GRUPO B</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>28</CODIGO>
+      <GRUPO>AREA 3</GRUPO>
+      <GRUPO>GRUPO C</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>29</CODIGO>
+      <GRUPO>AREA 3</GRUPO>
+      <GRUPO>GRUPO C</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>30</CODIGO>
+      <GRUPO>AREA 3</GRUPO>
+      <GRUPO>GRUPO C</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>31</CODIGO>
+      <GRUPO>AREA 3</GRUPO>
+      <GRUPO>GRUPO D</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>32</CODIGO>
+      <GRUPO>AREA 3</GRUPO>
+      <GRUPO>GRUPO D</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>33</CODIGO>
+      <GRUPO>AREA 3</GRUPO>
+      <GRUPO>GRUPO D</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>34</CODIGO>
+      <GRUPO>AREA 3</GRUPO>
+      <GRUPO>GRUPO E</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>35</CODIGO>
+      <GRUPO>AREA 3</GRUPO>
+      <GRUPO>GRUPO E</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>36</CODIGO>
+      <GRUPO>AREA 3</GRUPO>
+      <GRUPO>GRUPO E</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>37</CODIGO>
+      <GRUPO>AREA 4</GRUPO>
+      <GRUPO>GRUPO A</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>38</CODIGO>
+      <GRUPO>AREA 4</GRUPO>
+      <GRUPO>GRUPO B</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>39</CODIGO>
+      <GRUPO>AREA 4</GRUPO>
+      <GRUPO>GRUPO B</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>40</CODIGO>
+      <GRUPO>AREA 4</GRUPO>
+      <GRUPO>GRUPO C</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>41</CODIGO>
+      <GRUPO>AREA 4</GRUPO>
+      <GRUPO>GRUPO C</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>42</CODIGO>
+      <GRUPO>AREA 4</GRUPO>
+      <GRUPO>GRUPO C</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>43</CODIGO>
+      <GRUPO>AREA 4</GRUPO>
+      <GRUPO>GRUPO D</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>44</CODIGO>
+      <GRUPO>AREA 4</GRUPO>
+      <GRUPO>GRUPO D</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>45</CODIGO>
+      <GRUPO>AREA 4</GRUPO>
+      <GRUPO>GRUPO D</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>46</CODIGO>
+      <GRUPO>AREA 4</GRUPO>
+      <GRUPO>GRUPO E</GRUPO>
+      <NOMBRE>NIVEL I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>47</CODIGO>
+      <GRUPO>AREA 4</GRUPO>
+      <GRUPO>GRUPO E</GRUPO>
+      <NOMBRE>NIVEL II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>48</CODIGO>
+      <GRUPO>AREA 4</GRUPO>
+      <GRUPO>GRUPO E</GRUPO>
+      <NOMBRE>NIVEL III</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>SALARIO BASE</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>600</CODIGO>
+      <NOMBRE>PLUS CONVENIO</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>11</CODIGO>
+      <NOMBRE>SALARIO TOTAL</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2017</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 57 - MARTES 6 DE MARZO DE 2018)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1800</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16832.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1186.05</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>18018.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>15905.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1121.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17027.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14134.92</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>997.29</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15132.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12362.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>869.81</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13232.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11730.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>835.29</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12566</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11288.41</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>803.79</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12092.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11294.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>791.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12085.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11094.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>750.76</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11845</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10822.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>732.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11555.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9982.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>699.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10681.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9907.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>693.89</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10601.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9772.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>684.52</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10457.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16832.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1186.05</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>18018.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>15905.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1121.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17027.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14134.92</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>997.29</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15132.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12362.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>869.81</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13232.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11730.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>835.29</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12566</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11288.41</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>803.79</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12092.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11294.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>791.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12085.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11094.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>750.76</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11845</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10822.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>732.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11555.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9982.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>699.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10681.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9907.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>693.89</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10601.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9772.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>684.52</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10457.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>24063.38</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1686.63</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>25750.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>23353.96</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1623.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>24977.5</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>22628.59</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1582.31</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>24210.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>22202.33</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1481.22</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>23683.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>20694.5</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1450.5</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>22145</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>18769.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1315.57</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>20085</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>15905.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1121.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17027.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14724.41</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1028.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15752.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14434.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1015.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15450</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14242.49</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1002.19</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15244.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12126.34</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>853.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12979.58</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10105.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>707.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10813.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16832.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1186.05</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>18018.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>15905.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1121.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17027.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14134.92</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>997.29</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15132.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12362.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>869.81</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13232.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11730.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>835.29</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12566</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11288.41</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>803.79</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12092.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11294.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>791.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12085.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>44</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11094.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>750.76</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11845</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>45</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10822.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>732.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11555.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>46</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9982.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>699.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10681.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>47</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9907.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>693.89</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10601.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>48</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9772.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>684.52</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10457.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2018</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 57 - MARTES 6 DE MARZO DE 2018)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1800</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>17168.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1209.77</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>18378.74</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16223.96</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1144.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17368.28</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14417.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1017.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15434.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12609.52</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>887.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13496.73</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11965.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>852</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12817.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11514.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>819.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12334.05</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11520.5</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>806.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12327.4</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11316.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>765.78</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12081.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11039.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>747.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11786.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10181.74</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>713.06</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10894.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10105.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>707.77</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10813.03</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9968.33</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>698.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10666.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>17168.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1209.77</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>18378.74</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16223.96</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1144.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17368.28</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14417.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1017.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15434.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12609.52</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>887.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13496.73</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11965.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>852</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12817.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11514.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>819.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12334.05</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11520.5</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>806.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12327.4</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11316.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>765.78</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12081.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11039.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>747.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11786.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10181.74</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>713.06</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10894.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10105.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>707.77</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10813.03</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9968.33</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>698.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10666.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>24544.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1720.36</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>26265.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>23821.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1656.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>25477.05</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>23081.16</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1613.96</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>24695.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>22646.38</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1510.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>24157.22</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>21108.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1479.51</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>22587.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>19144.82</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1341.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>20486.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16223.96</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1144.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17368.28</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>15018.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1049</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>16067.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14723.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1035.99</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15759</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14527.34</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1022.23</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15549.57</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12368.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>870.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13239.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10942.35</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>767.82</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11710.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>17168.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1209.77</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>18378.74</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16223.96</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1144.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17368.28</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14417.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1017.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15434.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12609.52</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>887.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13496.73</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11965.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>852</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12817.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11514.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>819.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12334.05</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11520.5</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>806.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12327.4</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>44</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11316.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>765.78</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12081.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>45</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11039.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>747.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11786.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>46</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10181.74</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>713.06</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10894.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>47</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10105.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>707.77</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10813.03</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>48</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9968.33</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>698.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10666.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 57 - MARTES 6 DE MARZO DE 2018)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1800</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>17512.35</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1233.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>18746.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16548.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1167.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17715.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14705.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1037.58</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15743.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12861.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>904.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13766.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12204.63</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>869.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13073.67</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11744.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>836.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12580.73</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11750.91</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>823.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12573.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11542.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>781.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12323.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11260.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>761.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12022.16</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10385.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>727.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11112.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10307.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>721.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11029.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10167.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>712.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10879.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>17512.35</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1233.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>18746.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16548.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1167.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17715.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14705.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1037.58</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15743.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12861.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>904.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13766.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12204.63</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>869.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13073.67</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11744.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>836.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12580.73</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11750.91</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>823.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12573.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11542.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>781.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12323.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11260.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>761.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12022.16</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10385.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>727.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11112.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10307.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>721.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11029.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10167.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>712.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10879.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>25035.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1754.77</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>26790.31</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>24297.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1689.13</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>25986.59</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>23542.78</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1646.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>25189.02</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>23099.31</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1541.06</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>24640.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>21530.56</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1509.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>23039.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>19527.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1368.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>20896.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16548.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1167.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17715.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>15319.28</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1069.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>16389.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>15017.47</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1056.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>16074.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14817.89</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1042.67</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15860.56</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12616.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>887.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13503.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11779.29</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>827.78</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12607.07</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>17512.35</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1233.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>18746.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16548.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1167.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17715.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14705.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1037.58</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15743.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12861.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>904.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13766.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12204.63</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>869.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13073.67</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11744.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>836.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12580.73</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11750.91</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>823.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12573.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>44</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11542.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>781.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12323.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>45</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11260.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>761.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12022.16</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>46</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10385.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>727.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11112.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>47</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10307.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>721.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11029.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>48</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10167.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>712.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10879.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 57 - MARTES 6 DE MARZO DE 2018)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1800</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>17512.35</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1233.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>18746.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16548.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1167.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17715.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14705.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1037.58</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15743.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12861.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>904.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13766.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12204.63</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>869.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13073.67</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11744.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>836.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12580.73</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11750.91</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>823.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12573.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11542.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>781.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12323.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11260.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>761.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12022.16</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10385.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>727.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11112.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10307.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>721.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11029.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>AREA 1</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10167.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>712.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10879.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>17512.35</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1233.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>18746.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16548.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1167.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17715.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14705.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1037.58</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15743.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12861.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>904.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13766.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12204.63</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>869.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13073.67</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11744.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>836.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12580.73</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11750.91</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>823.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12573.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11542.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>781.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12323.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11260.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>761.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12022.16</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10385.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>727.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11112.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10307.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>721.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11029.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>AREA 2</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10167.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>712.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10879.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>25035.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1754.77</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>26790.31</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>24297.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1689.13</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>25986.59</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>23542.78</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1646.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>25189.02</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>23099.31</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1541.06</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>24640.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>21530.56</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1509.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>23039.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>19527.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1368.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>20896.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16548.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1167.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17715.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>15319.28</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1069.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>16389.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>15017.47</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1056.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>16074.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14817.89</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1042.67</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15860.56</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12616.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>887.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13503.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>AREA 3</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12616.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>887.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13503.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO A</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>17512.35</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1233.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>18746.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16548.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1167.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>17715.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO B</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14705.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>1037.58</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>15743.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12861.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>904.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13766.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12204.63</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>869.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>13073.67</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO C</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11744.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>836.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12580.73</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11750.91</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>823.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12573.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>44</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11542.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>781.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12323.54</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>45</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO D</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11260.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>761.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>12022.16</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>46</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10385.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>727.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11112.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>47</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10307.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>721.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>11029.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>48</CODIGO>
+          <GRUPO>AREA 4</GRUPO>
+          <GRUPO>GRUPO E</GRUPO>
+          <NOMBRE>NIVEL III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10167.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>712.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>11</CODIGO>
+              <NOMBRE>SALARIO TOTAL</NOMBRE>
+              <IMPORTE>10879.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

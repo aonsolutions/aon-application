@@ -430,6 +430,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setComunicationIT(getCurrentDomainName(), getCurrentUser(), itEmployee, it, asyncCallback);
 	}
 	
+	public void getServiAgreement(String serviAgreementCode, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.getServiAgreement(getCurrentDomainName(), serviAgreementCode, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {

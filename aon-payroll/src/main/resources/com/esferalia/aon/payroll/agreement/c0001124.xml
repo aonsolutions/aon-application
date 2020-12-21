@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0001124</FICHEROS>
+    <AMBITO>PROVINCIAL</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO DE LIMPIEZA DE AVIONES EN LOS AEROPUERTOS DE SANTA CRUZ DE TENERIFE</NOMBRE>
+    <CODIGO_SS>38002545011994</CODIGO_SS>
+    <INFO_BOE>CONVENIO COLECTIVO (BOP NUM. 145, LUNES 2 DE DICIEMBRE DE 2019)</INFO_BOE>
+    <FECHA_ULT_ACT>11-12-2019</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2019</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2021</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>CAPATAZ</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <NOMBRE>GERENTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>JEFE DE SERVICIO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <NOMBRE>RESPONSABLE DE SERVICIO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>RESTO TRABAJADORES/AS</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>SALARIO BASE</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>671</CODIGO>
+      <NOMBRE>PLUS ROTACION</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>624</CODIGO>
+      <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOP NUM. 145, LUNES 2 DE DICIEMBRE DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>CAPATAZ</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1148.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GERENTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1913.78</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>JEFE DE SERVICIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1560.77</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>RESPONSABLE DE SERVICIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1213.91</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>RESTO TRABAJADORES/AS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1037.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOP NUM. 145, LUNES 2 DE DICIEMBRE DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>CAPATAZ</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1171.81</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GERENTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1952.06</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>JEFE DE SERVICIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1591.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>RESPONSABLE DE SERVICIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1238.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>RESTO TRABAJADORES/AS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1057.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2021</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOP NUM. 145, LUNES 2 DE DICIEMBRE DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>CAPATAZ</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1195.25</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GERENTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1991.1</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>JEFE DE SERVICIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1623.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>RESPONSABLE DE SERVICIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1262.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>RESTO TRABAJADORES/AS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1079.09</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>671</CODIGO>
+              <NOMBRE>PLUS ROTACION</NOMBRE>
+              <IMPORTE>38.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

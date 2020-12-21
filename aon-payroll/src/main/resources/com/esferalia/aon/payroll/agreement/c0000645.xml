@@ -1,0 +1,1895 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000645</FICHEROS>
+    <AMBITO>AUTONOMICO</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO DE TRANSITARIOS DE MADRID (2019 - 2020)</NOMBRE>
+    <CODIGO_SS>28010785011999</CODIGO_SS>
+    <INFO_BOE>REVISION SALARIAL (BOCM NUM. 71 - LUNES 23 DE MARZO DE 2020)</INFO_BOE>
+    <FECHA_ULT_ACT>30-03-2020</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2019</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2020</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>NIVEL 1 JEFE SECCION</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>NIVEL 2 TITULADO SUPERIOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>NIVEL 3 JEFE DE NEGOCIADO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>NIVEL 1 TECNICO COMERCIAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>NIVEL 2 VENDEDOR 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>NIVEL 3 VENDEDOR 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>NIVEL 1 OFICIAL ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>NIVEL 2 AUXILIAR ADMINISTRATIVO 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>9</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>NIVEL 3 AUXILIAR ADMINISTRATIVO 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>10</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>NIVEL 4 TELEFONISTA/RECEPCIONISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>11</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>NIVEL 1 ENCARGADO ALMACEN</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>12</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>NIVEL 2 MOZO ALMACEN 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>13</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>NIVEL 3 MOZO ALMACEN 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>14</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>NIVEL 4 CONDUCTOR CARNET "E"</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>15</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>NIVEL 5 CONDUCTOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>16</CODIGO>
+      <GRUPO>GRUPO V</GRUPO>
+      <NOMBRE>NIVEL 1 CONSERJE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>17</CODIGO>
+      <GRUPO>GRUPO V</GRUPO>
+      <NOMBRE>NIVEL 2 VIGILANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>18</CODIGO>
+      <GRUPO>GRUPO V</GRUPO>
+      <NOMBRE>NIVEL 3 MENSAJERO 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>19</CODIGO>
+      <GRUPO>GRUPO V</GRUPO>
+      <NOMBRE>NIVEL 4 MENSAJERO 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>20</CODIGO>
+      <GRUPO>GRUPO V</GRUPO>
+      <NOMBRE>NIVEL 5 PERSONAL LIMPIEZA</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>SALARIO CONVENIO</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>48</CODIGO>
+      <NOMBRE>TURNICIDAD</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>526</CODIGO>
+      <NOMBRE>DIETAS</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>501</CODIGO>
+      <NOMBRE>DIETA COMIDA</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>505</CODIGO>
+      <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+      <TIPO_AMDH>H</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>608</CODIGO>
+      <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>SALARIO CONVENIO</NOMBRE>
+      <TIPO_AMDH>H</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOCM NUM. 261 - SABADO 2 DE NOVIEMBRE DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>NIVEL 1 JEFE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1961.09</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>NIVEL 2 TITULADO SUPERIOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1961.09</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>NIVEL 3 JEFE DE NEGOCIADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1681.76</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>NIVEL 1 TECNICO COMERCIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1480.1</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>NIVEL 2 VENDEDOR 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1187.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>NIVEL 3 VENDEDOR 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1065.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>NIVEL 1 OFICIAL ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1480.1</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>NIVEL 2 AUXILIAR ADMINISTRATIVO 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1187.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>NIVEL 3 AUXILIAR ADMINISTRATIVO 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1065.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>NIVEL 4 TELEFONISTA/RECEPCIONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1187.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>NIVEL 1 ENCARGADO ALMACEN</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1333.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>NIVEL 2 MOZO ALMACEN 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1187.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>NIVEL 3 MOZO ALMACEN 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1154.62</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>NIVEL 4 CONDUCTOR CARNET "E"</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1482.1</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>NIVEL 5 CONDUCTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1333.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>NIVEL 1 CONSERJE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1238.78</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>NIVEL 2 VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1114.06</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>NIVEL 3 MENSAJERO 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1016.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>NIVEL 4 MENSAJERO 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>967.68</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>NIVEL 5 PERSONAL LIMPIEZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>7.34</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>68.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.35</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>49.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>68.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>REVISION SALARIAL (BOCM NUM. 71 - LUNES 23 DE MARZO DE 2020)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>NIVEL 1 JEFE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>2000.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>NIVEL 2 TITULADO SUPERIOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>2000.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>NIVEL 3 JEFE DE NEGOCIADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1715.4</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>NIVEL 1 TECNICO COMERCIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1509.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>NIVEL 2 VENDEDOR 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1211.05</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>NIVEL 3 VENDEDOR 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1086.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>NIVEL 1 OFICIAL ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1509.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>NIVEL 2 AUXILIAR ADMINISTRATIVO 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1211.05</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>NIVEL 3 AUXILIAR ADMINISTRATIVO 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1086.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>NIVEL 4 TELEFONISTA/RECEPCIONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1211.05</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>NIVEL 1 ENCARGADO ALMACEN</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1360.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>NIVEL 2 MOZO ALMACEN 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1211.05</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>NIVEL 3 MOZO ALMACEN 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1177.71</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>NIVEL 4 CONDUCTOR CARNET "E"</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1511.74</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>NIVEL 5 CONDUCTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1360.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>NIVEL 1 CONSERJE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1263.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>NIVEL 2 VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1136.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>NIVEL 3 MENSAJERO 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1036.76</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>NIVEL 4 MENSAJERO 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>987.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>NIVEL 5 PERSONAL LIMPIEZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>7.49</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>70.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>15.32</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.36</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>526</CODIGO>
+              <NOMBRE>DIETAS</NOMBRE>
+              <IMPORTE>50.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>608</CODIGO>
+              <NOMBRE>PLUS TOXICIDAD</NOMBRE>
+              <IMPORTE>70.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

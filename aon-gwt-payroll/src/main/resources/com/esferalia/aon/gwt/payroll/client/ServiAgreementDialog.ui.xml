@@ -1,0 +1,58 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:c='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:d='urn:import:com.google.gwt.user.cellview.client' >
+
+	<ui:Style type="com.esferalia.aon.gwt.payroll.client.ServiAgreementDialog.MyStyle">
+		
+		.noselect {
+			-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none; /* Safari */
+			-khtml-user-select: none; /* Konqueror HTML */
+			-moz-user-select: none; /* Firefox */
+			-ms-user-select: none; /* Internet Explorer/Edge */
+			user-select: none; /* Non-prefixed version, currently
+				                                  supported by Chrome and Opera */
+		}
+		
+		.title{
+			font-weight: bold;
+			text-transform: uppercase;
+			font-size: 1em;
+			margin-right: 10px; 
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+			margin: 5px 10px;
+		}
+		
+		.mainPanel{
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin: 5px 10px;
+		}
+		
+		.w400{
+			width: 400px;
+		}
+		
+		
+	</ui:Style>
+
+
+	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel"> 
+		<g:VerticalPanel>
+			<g:HTMLPanel styleName="{style.mainPanel}">
+				<g:Label styleName="{style.title}">Convenio</g:Label>
+				<g:SuggestBox ui:field="serviAgreementsSB" styleName="w400"></g:SuggestBox>
+			</g:HTMLPanel>
+			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
+		</g:VerticalPanel>
+	</g:HTMLPanel>
+
+</ui:UiBinder>

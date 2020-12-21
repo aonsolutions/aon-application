@@ -1,0 +1,3000 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000429</FICHEROS>
+    <AMBITO>PROVINCIAL</AMBITO>
+    <NOMBRE>INDUSTRIA, LOS SERVICIOS Y LAS TECNOLOGIAS DEL METAL DE ALICANTE</NOMBRE>
+    <CODIGO_SS>03000375011982</CODIGO_SS>
+    <INFO_BOE>REVISION SALARIAL (BOP Nº 32 DE 14/02/2019)</INFO_BOE>
+    <FECHA_ULT_ACT>11-03-2019</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2019</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2019</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <GRUPO>GRUPO 1</GRUPO>
+      <GRUPO>TECNICOS</GRUPO>
+      <NOMBRE>ANALISTAS DE SISTEMAS (TITU. SUPERIOR)</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <GRUPO>GRUPO 1</GRUPO>
+      <GRUPO>TECNICOS</GRUPO>
+      <NOMBRE>INGENIEROS ARQUITECTOS Y LICEN</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <GRUPO>GRUPO 2</GRUPO>
+      <GRUPO>TECNICOS</GRUPO>
+      <NOMBRE>ATS</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <GRUPO>GRUPO 2</GRUPO>
+      <GRUPO>TECNICOS</GRUPO>
+      <NOMBRE>DIPLOMADOS UNIVERSITARIOS</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <GRUPO>GRUPO 2</GRUPO>
+      <GRUPO>TECNICOS</GRUPO>
+      <NOMBRE>GRADUADOS SOCIALES</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <GRUPO>GRUPO 2</GRUPO>
+      <GRUPO>TECNICOS</GRUPO>
+      <NOMBRE>PERITOS, ING.TEC Y APAREJA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <GRUPO>GRUPO 2</GRUPO>
+      <GRUPO>TECNICOS</GRUPO>
+      <NOMBRE>TITULADOS SUPERIORES DE ENTRADA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <GRUPO>GRUPO 3</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>JEFE DE 1ª ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>9</CODIGO>
+      <GRUPO>GRUPO 3</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>JEFE DE LABORATORIO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>10</CODIGO>
+      <GRUPO>GRUPO 3</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>JEFE DE TALLER</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>11</CODIGO>
+      <GRUPO>GRUPO 3</GRUPO>
+      <GRUPO>TECNICOS</GRUPO>
+      <NOMBRE>DELINEANTE PROYECTISTA Y DIBUJANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>12</CODIGO>
+      <GRUPO>GRUPO 3</GRUPO>
+      <GRUPO>TECNICOS</GRUPO>
+      <NOMBRE>JEFE DE ORGANIZACION DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>13</CODIGO>
+      <GRUPO>GRUPO 4</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>JEFE DE 2ª ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>14</CODIGO>
+      <GRUPO>GRUPO 4</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>CONTRAMAESTRE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>15</CODIGO>
+      <GRUPO>GRUPO 4</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>ENCARGADO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>16</CODIGO>
+      <GRUPO>GRUPO 4</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>MAESTRO DE TALLER</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>17</CODIGO>
+      <GRUPO>GRUPO 4</GRUPO>
+      <GRUPO>TECNICOS</GRUPO>
+      <NOMBRE>JEFE DE ORGANIZACION DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>18</CODIGO>
+      <GRUPO>GRUPO 4</GRUPO>
+      <GRUPO>TECNICOS</GRUPO>
+      <NOMBRE>JEFE DE SECCION</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>19</CODIGO>
+      <GRUPO>GRUPO 4</GRUPO>
+      <GRUPO>TECNICOS</GRUPO>
+      <NOMBRE>PROGRAMADOR DE ORDENADOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>20</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>ANALISTA DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>21</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>ARCHIVADOR DE BIBLIOTECA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>22</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>CONDUCTOR MECANICO C1,C2,D,E</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>23</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>DELINEANTE DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>24</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>DELINEANTE DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>25</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>FOTOGRAFO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>26</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>OFICIAL DE 1ª ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>27</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>OFICIAL DE 2ª ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>28</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>PRACTICO DE TOPOGRAFIA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>29</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>TECNICO DE ORGANIZACION DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>30</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>TECNICO DE ORGANIZACION DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>31</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>VIAJANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>32</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>33</CODIGO>
+      <GRUPO>GRUPO 5</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>34</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>ALMACENERO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>35</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>ANALISTA DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>36</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>AUXILIAR ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>37</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>AUXILIAR DE LABORATORIO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>38</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>AUXILIAR DE OFICINA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>39</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>AUXILIAR DE ORGANIZACION</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>40</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>CONDUCTOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>41</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>CONSERJE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>42</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>DEPENDIENTE DE ECONOMATO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>43</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>LISTERO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>44</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>PESADOR BASCULERO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>45</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>TELEFONISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>46</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>CAPATAZ, ESPE. Y P</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>47</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>ESPECIALISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>48</CODIGO>
+      <GRUPO>GRUPO 6</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>OFICIAL DE 3ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>49</CODIGO>
+      <GRUPO>GRUPO 7</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>ORDENANZA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>50</CODIGO>
+      <GRUPO>GRUPO 7</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>PORTERO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>51</CODIGO>
+      <GRUPO>GRUPO 7</GRUPO>
+      <GRUPO>EMPLEADOS</GRUPO>
+      <NOMBRE>VIGILANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>52</CODIGO>
+      <GRUPO>GRUPO 7</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>PEON</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>53</CODIGO>
+      <GRUPO>GRUPO 8</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>FORMACION 1º AÑO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>54</CODIGO>
+      <GRUPO>GRUPO 8</GRUPO>
+      <GRUPO>OPERARIOS</GRUPO>
+      <NOMBRE>SIN EQUIPARACION FORMACION 2º Y 3º AÑO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>55</CODIGO>
+      <GRUPO>PERSONAL SUBALTERNO</GRUPO>
+      <NOMBRE>ENFERMERO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>56</CODIGO>
+      <GRUPO>PERSONAL SUBALTERNO</GRUPO>
+      <NOMBRE>LIMPIEZA A JORNADA COMPLETA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>57</CODIGO>
+      <GRUPO>PERSONAL SUBALTERNO</GRUPO>
+      <NOMBRE>VIGILANTE JURADO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>58</CODIGO>
+      <GRUPO>PERSONAL TECNICO</GRUPO>
+      <NOMBRE>MAESTRO INDUSTRIAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>59</CODIGO>
+      <GRUPO>PERSONAL TECNICO</GRUPO>
+      <NOMBRE>PERITOS, ING.TECN. APAREJA(1)</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>SALARIO BASE</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>1326</CODIGO>
+      <NOMBRE>P.C.I.</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>510</CODIGO>
+      <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>511</CODIGO>
+      <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>512</CODIGO>
+      <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>513</CODIGO>
+      <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>REVISION SALARIAL (BOP Nº 32 DE 14/02/2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO 1</GRUPO>
+          <GRUPO>TECNICOS</GRUPO>
+          <NOMBRE>ANALISTAS DE SISTEMAS (TITU. SUPERIOR)</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1887.53</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO 1</GRUPO>
+          <GRUPO>TECNICOS</GRUPO>
+          <NOMBRE>INGENIEROS ARQUITECTOS Y LICEN</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1887.53</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <GRUPO>TECNICOS</GRUPO>
+          <NOMBRE>ATS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1751.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <GRUPO>TECNICOS</GRUPO>
+          <NOMBRE>DIPLOMADOS UNIVERSITARIOS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1751.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <GRUPO>TECNICOS</GRUPO>
+          <NOMBRE>GRADUADOS SOCIALES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1751.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <GRUPO>TECNICOS</GRUPO>
+          <NOMBRE>PERITOS, ING.TEC Y APAREJA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1751.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO 2</GRUPO>
+          <GRUPO>TECNICOS</GRUPO>
+          <NOMBRE>TITULADOS SUPERIORES DE ENTRADA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1751.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>JEFE DE 1ª ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1464.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>JEFE DE LABORATORIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1520.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>JEFE DE TALLER</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1520.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <GRUPO>TECNICOS</GRUPO>
+          <NOMBRE>DELINEANTE PROYECTISTA Y DIBUJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1423</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO 3</GRUPO>
+          <GRUPO>TECNICOS</GRUPO>
+          <NOMBRE>JEFE DE ORGANIZACION DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1423</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>JEFE DE 2ª ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1355.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>CONTRAMAESTRE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1324.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>ENCARGADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1324.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>MAESTRO DE TALLER</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1324.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <GRUPO>TECNICOS</GRUPO>
+          <NOMBRE>JEFE DE ORGANIZACION DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1357.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <GRUPO>TECNICOS</GRUPO>
+          <NOMBRE>JEFE DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1357.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO 4</GRUPO>
+          <GRUPO>TECNICOS</GRUPO>
+          <NOMBRE>PROGRAMADOR DE ORDENADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1357.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>ANALISTA DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1211.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>ARCHIVADOR DE BIBLIOTECA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1211.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>CONDUCTOR MECANICO C1,C2,D,E</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1211.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>DELINEANTE DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1211.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>DELINEANTE DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1211.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>FOTOGRAFO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1211.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1211.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1211.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>PRACTICO DE TOPOGRAFIA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1211.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>TECNICO DE ORGANIZACION DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1211.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>TECNICO DE ORGANIZACION DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1211.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>VIAJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1211.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>OFICIAL DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>38.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.78</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>GRUPO 5</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>OFICIAL DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>38.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.78</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>ALMACENERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1123.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>ANALISTA DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1123.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>AUXILIAR ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1123.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>AUXILIAR DE LABORATORIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1123.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>AUXILIAR DE OFICINA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1123.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>AUXILIAR DE ORGANIZACION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1123.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>CONDUCTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1123.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>CONSERJE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1123.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>DEPENDIENTE DE ECONOMATO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1123.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>LISTERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1123.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>44</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>PESADOR BASCULERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1123.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>45</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1123.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>46</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>CAPATAZ, ESPE. Y P</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>36.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.62</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>47</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>ESPECIALISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>36.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.62</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>48</CODIGO>
+          <GRUPO>GRUPO 6</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>OFICIAL DE 3ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>36.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.62</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>49</CODIGO>
+          <GRUPO>GRUPO 7</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>ORDENANZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1085.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>50</CODIGO>
+          <GRUPO>GRUPO 7</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>PORTERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1085.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>51</CODIGO>
+          <GRUPO>GRUPO 7</GRUPO>
+          <GRUPO>EMPLEADOS</GRUPO>
+          <NOMBRE>VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1085.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>52</CODIGO>
+          <GRUPO>GRUPO 7</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>PEON</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>35.94</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>53</CODIGO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>FORMACION 1º AÑO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>0.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>0.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>54</CODIGO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <GRUPO>OPERARIOS</GRUPO>
+          <NOMBRE>SIN EQUIPARACION FORMACION 2º Y 3º AÑO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>0.8</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>0.8</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>55</CODIGO>
+          <GRUPO>PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>ENFERMERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1104.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>56</CODIGO>
+          <GRUPO>PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>LIMPIEZA A JORNADA COMPLETA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1042.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>3.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>57</CODIGO>
+          <GRUPO>PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>VIGILANTE JURADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1092.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>58</CODIGO>
+          <GRUPO>PERSONAL TECNICO</GRUPO>
+          <NOMBRE>MAESTRO INDUSTRIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1319.15</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>59</CODIGO>
+          <GRUPO>PERSONAL TECNICO</GRUPO>
+          <NOMBRE>PERITOS, ING.TECN. APAREJA(1)</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1793.8</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>510</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>42.25</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>511</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MAS 100KMS</NOMBRE>
+              <IMPORTE>13.56</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>512</CODIGO>
+              <NOMBRE>DIETA COMPLETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>30.03</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>513</CODIGO>
+              <NOMBRE>MEDIA DIETA DESPL.MENOS 100KMS</NOMBRE>
+              <IMPORTE>10.88</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1326</CODIGO>
+              <NOMBRE>P.C.I.</NOMBRE>
+              <IMPORTE>5.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

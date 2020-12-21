@@ -11,6 +11,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -36,6 +37,8 @@ public class AonOptionsToolbar extends Composite {
 		void onCollapseMenuButtonClick(ClickEvent event);
 
 		void onShowMenuButtonClick(ClickEvent event);
+
+		void onImportButtonClick(ClickEvent event);
 	}
 	
 	private static AonOptionsToolbarUiBinder uiBinder = GWT
@@ -56,6 +59,7 @@ public class AonOptionsToolbar extends Composite {
 	private AonButton copyButton;
 	private AonButton draftButton;
 	private AonButton newButton;
+	private AonButton importButton;
 	private AonButton collapseAllButton;
 	private AonButton collapseMenuButton;
 	private AonButton showMenuButton;
@@ -172,6 +176,16 @@ public class AonOptionsToolbar extends Composite {
 			}
 		});
 		toolbar.add(newButton);
+		
+		importButton = new AonToolbarSmallButton("Importar Convenio", AON.CSS.aonIconCloudImport() );
+		importButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				for(Listener listener : listeners)
+					listener.onImportButtonClick(event);
+			}
+		});
+		toolbar.add(importButton);
 		
 		draftButton = new AonToolbarSmallButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
 		draftButton.addClickHandler(new ClickHandler() {

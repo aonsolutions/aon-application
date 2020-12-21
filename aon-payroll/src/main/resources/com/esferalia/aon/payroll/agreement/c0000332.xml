@@ -1,0 +1,5179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000332</FICHEROS>
+    <AMBITO>AUTONOMICO</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO DE LIMPIEZA DE EDIFICIOS Y LOCALES DE LA RIOJA</NOMBRE>
+    <CODIGO_SS>26000245011982</CODIGO_SS>
+    <INFO_BOE>CONVENIO COLECTIVO (BOLR NUM.134 - VIERNES, 8 DE NOVIEMBRE DE 2019)</INFO_BOE>
+    <FECHA_ULT_ACT>14-11-2019</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2019</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2022</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <GRUPO>A) SUBGRUPO I</GRUPO>
+      <NOMBRE>DIRECTOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <GRUPO>A) SUBGRUPO I</GRUPO>
+      <NOMBRE>DIRECTOR ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <GRUPO>A) SUBGRUPO I</GRUPO>
+      <NOMBRE>DIRECTOR COMERCIAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <GRUPO>A) SUBGRUPO I</GRUPO>
+      <NOMBRE>JEFE DE COMPRAS</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <GRUPO>A) SUBGRUPO I</GRUPO>
+      <NOMBRE>JEFE DE PERSONAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <GRUPO>A) SUBGRUPO I</GRUPO>
+      <NOMBRE>JEFE DE SERVICIOS</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <GRUPO>B) SUBGRUPO II</GRUPO>
+      <NOMBRE>TITULADO GRADO MEDIO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <GRUPO>B) SUBGRUPO II</GRUPO>
+      <NOMBRE>TITULADO GRADO SUPERIOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>9</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <GRUPO>B) SUBGRUPO II</GRUPO>
+      <NOMBRE>TITULADO LABORAL O PROFESIONAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>10</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>AUXILIAR ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>11</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>CAJERO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>12</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>COBRADOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>13</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>JEFE ADMINISTRATIVO 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>14</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>JEFE ADMINISTRATIVO 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>15</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>OFICIAL 1ª ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>16</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>OFICIAL 2ª ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>17</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>TELEFONISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>18</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>19</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>ENCARGADO GRUPO O EDIFICIO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>20</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>RESPONSABLE DE EQUIPO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>21</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>SUPERVISOR O ENCARGADO DE SECTOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>22</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>SUPERVISOR O ENCARGADO DE ZONA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>23</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>ALMACENERO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>24</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>AYUDANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>25</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>CONDUCTOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>26</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>ESPECIALISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>27</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>LIMPIADOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>28</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>LISTERO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>29</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>OFICIAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>30</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>ORDENANZA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>31</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>PEON</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>32</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>PEON ESPECIALIZADO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>33</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>VIGILANTE</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>SALARIO BASE</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>8</CODIGO>
+      <NOMBRE>SALARIO HORA</NOMBRE>
+      <TIPO_AMDH>H</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>15</CODIGO>
+      <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>505</CODIGO>
+      <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+      <TIPO_AMDH>H</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOLR NUM.134 - VIERNES, 8 DE NOVIEMBRE DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1590.28</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>25164.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>14.47</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1440.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22909.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.17</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR COMERCIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1440.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22909.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.17</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>JEFE DE COMPRAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1440.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22909.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.17</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>JEFE DE PERSONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1440.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22909.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.17</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>JEFE DE SERVICIOS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1440.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22909.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.17</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>B) SUBGRUPO II</GRUPO>
+          <NOMBRE>TITULADO GRADO MEDIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1213.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19495.29</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.21</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>B) SUBGRUPO II</GRUPO>
+          <NOMBRE>TITULADO GRADO SUPERIOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1304.09</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20861.82</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>12</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>B) SUBGRUPO II</GRUPO>
+          <NOMBRE>TITULADO LABORAL O PROFESIONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1104.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17855.75</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.27</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>AUXILIAR ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>954.21</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15601.96</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.97</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>CAJERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1140.47</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18402.07</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.58</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>COBRADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>931.64</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15262.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.78</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1244.97</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19973.05</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.49</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1199.5</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19289.48</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.09</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>OFICIAL 1ª ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1104.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17855.75</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.27</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>OFICIAL 2ª ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1028.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16716.23</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.61</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>931.64</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15262.65</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.78</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1167.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18812.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.82</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ENCARGADO GRUPO O EDIFICIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>30.89</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15342.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.82</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>RESPONSABLE DE EQUIPO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>29.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14731.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.47</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>SUPERVISOR O ENCARGADO DE SECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1054.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17104.99</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.84</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>SUPERVISOR O ENCARGADO DE ZONA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1100.08</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17794.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.23</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ALMACENERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>865.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14269.4</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.21</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>29.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14841.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.53</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CONDUCTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.74</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17098.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.83</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ESPECIALISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16437.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.45</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>LIMPIADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>28.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14412.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>LISTERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>865.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14269.4</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.21</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>OFICIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16437.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.45</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ORDENANZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>878.8</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14468.29</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.32</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PEON</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>28.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14412.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.29</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PEON ESPECIALIZADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>29.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14841.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.53</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>865.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14269.4</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.21</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOLR NUM.134 - VIERNES, 8 DE NOVIEMBRE DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1615.72</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>25567.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>14.7</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1463.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23277.03</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.39</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR COMERCIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1463.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23277.03</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.39</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>JEFE DE COMPRAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1463.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23277.03</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.39</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>JEFE DE PERSONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1463.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23277.03</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.39</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>JEFE DE SERVICIOS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1463.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23277.03</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.39</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>B) SUBGRUPO II</GRUPO>
+          <NOMBRE>TITULADO GRADO MEDIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1232.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19808.09</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.39</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>B) SUBGRUPO II</GRUPO>
+          <NOMBRE>TITULADO GRADO SUPERIOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1324.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21196.57</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>12.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>B) SUBGRUPO II</GRUPO>
+          <NOMBRE>TITULADO LABORAL O PROFESIONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1121.8</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18142.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.43</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>AUXILIAR ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>969.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15852.52</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.12</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>CAJERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1158.72</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18697.42</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.75</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>COBRADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>946.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15507.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.92</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1264.89</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20293.51</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.67</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1218.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19598.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.27</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>OFICIAL 1ª ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1121.8</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18142.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.43</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>OFICIAL 2ª ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1044.78</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16984.53</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.77</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>946.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15507.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.92</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1186.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19114</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.99</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ENCARGADO GRUPO O EDIFICIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.38</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15618.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.98</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>RESPONSABLE DE EQUIPO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>30.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14997.14</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.62</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>SUPERVISOR O ENCARGADO DE SECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1071.06</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17379.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.99</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>SUPERVISOR O ENCARGADO DE ZONA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1117.68</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18080.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.4</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ALMACENERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>879.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14498.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.34</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>30.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15111.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.69</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CONDUCTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>35.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17410.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.01</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ESPECIALISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16733.74</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.62</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>LIMPIADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>29.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14672.67</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.44</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>LISTERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>879.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14498.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.34</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>OFICIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16733.74</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.62</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ORDENANZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>892.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14700.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.45</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PEON</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>29.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14672.67</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.44</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PEON ESPECIALIZADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>30.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15111.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.69</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>879.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14498.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.34</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2021</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOLR NUM.134 - VIERNES, 8 DE NOVIEMBRE DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1644.8</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>26028.83</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>14.97</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1489.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23697.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.63</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR COMERCIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1489.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23697.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.63</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>JEFE DE COMPRAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1489.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23697.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.63</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>JEFE DE PERSONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1489.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23697.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.63</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>JEFE DE SERVICIOS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1489.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23697.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.63</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>B) SUBGRUPO II</GRUPO>
+          <NOMBRE>TITULADO GRADO MEDIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1254.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20165.68</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.6</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>B) SUBGRUPO II</GRUPO>
+          <NOMBRE>TITULADO GRADO SUPERIOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1348.81</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21579.11</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>12.41</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>B) SUBGRUPO II</GRUPO>
+          <NOMBRE>TITULADO LABORAL O PROFESIONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1141.99</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18469.92</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.62</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>AUXILIAR ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>986.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16138.85</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>CAJERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1179.58</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19035.02</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.95</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>COBRADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>963.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15787.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.08</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1287.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20659.82</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.88</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1240.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19952.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.47</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>OFICIAL 1ª ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1141.99</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18469.92</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.62</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>OFICIAL 2ª ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1063.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17291.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.94</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>963.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15787.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.08</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1207.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19459.11</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ENCARGADO GRUPO O EDIFICIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.94</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15866.64</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.12</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>RESPONSABLE DE EQUIPO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>30.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15237.36</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.76</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>SUPERVISOR O ENCARGADO DE SECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1090.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17693.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.17</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>SUPERVISOR O ENCARGADO DE ZONA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1137.8</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18406.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.58</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ALMACENERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>895.25</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14760.59</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.49</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>30.81</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15351.36</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.83</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CONDUCTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>35.94</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17690.64</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.17</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ESPECIALISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17002.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.78</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>LIMPIADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>29.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14909.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.57</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>LISTERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>895.25</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14760.59</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.49</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>OFICIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17002.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.78</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ORDENANZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>908.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14966.25</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.61</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PEON</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>29.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14909.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.57</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PEON ESPECIALIZADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>30.81</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15351.36</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.83</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>895.25</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14760.59</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.49</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2022</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOLR NUM.134 - VIERNES, 8 DE NOVIEMBRE DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1677.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>26550.42</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>15.27</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1519.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>24171.85</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.9</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR COMERCIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1519.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>24171.85</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.9</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>JEFE DE COMPRAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1519.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>24171.85</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.9</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>JEFE DE PERSONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1519.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>24171.85</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.9</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>A) SUBGRUPO I</GRUPO>
+          <NOMBRE>JEFE DE SERVICIOS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1519.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>24171.85</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>13.9</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>B) SUBGRUPO II</GRUPO>
+          <NOMBRE>TITULADO GRADO MEDIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1279.89</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20570.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.83</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>B) SUBGRUPO II</GRUPO>
+          <NOMBRE>TITULADO GRADO SUPERIOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1375.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22011.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>12.66</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <GRUPO>B) SUBGRUPO II</GRUPO>
+          <NOMBRE>TITULADO LABORAL O PROFESIONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1164.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18840.28</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.83</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>AUXILIAR ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1006.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16462.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.47</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>CAJERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1203.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19416.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.17</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>COBRADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>982.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16104.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.26</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1313.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21073.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>12.12</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1265.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20352.78</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.7</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>OFICIAL 1ª ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1164.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18840.28</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.83</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>OFICIAL 2ª ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1084.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17638.06</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.14</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>982.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16104.66</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.26</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1231.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19849.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>11.41</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ENCARGADO GRUPO O EDIFICIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>32.58</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16185.48</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.31</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>RESPONSABLE DE EQUIPO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15542.52</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.94</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>SUPERVISOR O ENCARGADO DE SECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1112.15</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18048.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.38</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>SUPERVISOR O ENCARGADO DE ZONA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1160.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18776.09</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.8</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ALMACENERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>913.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15056.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.66</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15661.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.01</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CONDUCTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>36.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18045.96</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>10.38</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ESPECIALISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>35.12</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17343.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.97</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>LIMPIADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>30.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15209.64</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.75</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>LISTERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>913.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15056.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.66</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>OFICIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>35.12</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17343.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.97</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ORDENANZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>927.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15266.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.78</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PEON</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>30.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15209.64</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.75</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PEON ESPECIALIZADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15661.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>9.01</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>913.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15056.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>8</CODIGO>
+              <NOMBRE>SALARIO HORA</NOMBRE>
+              <IMPORTE>8.66</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>15</CODIGO>
+              <NOMBRE>QUEBRANDO DE MONEDA</NOMBRE>
+              <IMPORTE>4.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.19</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 
+import org.jooq.DSLContext;
 import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
@@ -90,6 +91,7 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -97,6 +99,7 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.payroll.agreement.AgreementParser;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
@@ -2698,6 +2701,20 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			JooqIT.setComunicationIT(connection, domainId, itEmployee, it);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void getServiAgreement(String domainName, String serviAgreementCode) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			AONContext ctx = new AONContext(connection);
+			DSLContext dslContext = ctx.getDslContext();
+			
+			AgreementParser.getAgreement(dslContext, serviAgreementCode, domainId);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

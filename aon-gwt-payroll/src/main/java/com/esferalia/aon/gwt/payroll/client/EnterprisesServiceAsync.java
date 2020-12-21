@@ -154,5 +154,6 @@ public interface EnterprisesServiceAsync {
 			String contributionAccount, Date dateFrom, Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback);
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it,
 			AsyncCallback<Void> asyncCallback);
+	void getServiAgreement(String currentDomainName, String serviAgreementCode, AsyncCallback<Void> asyncCallback);
 	
 }

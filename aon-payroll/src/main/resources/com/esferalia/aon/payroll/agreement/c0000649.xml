@@ -1,0 +1,2838 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000649</FICHEROS>
+    <AMBITO>AUTONOMICO</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO DEL COMERCIO DE VIDRIO, LOZA, CERAMICA Y SIMILARES DE CATALUÑA</NOMBRE>
+    <CODIGO_SS>79000085011993</CODIGO_SS>
+    <INFO_BOE>CONVENIO COLECTIVO (DOGC NUM. 7905 - 27.6.2019)</INFO_BOE>
+    <FECHA_ULT_ACT>05-07-2019</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2017</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2019</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>JEFE/A ADMINISTRATIVO/A</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>JEFE/A DE PERSONAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>JEFE/A SECCION ADMINISTRATIVA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>CONTABLE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>OFICIAL ADMINISTRATIVO/A</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>SECRETARIO/A</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>AUXILIAR ADMINISTRATIVO/A</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>OPERADOR/A DE INFORMATICA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>9</CODIGO>
+      <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>TELEFONISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>10</CODIGO>
+      <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+      <GRUPO>GRUPO V</GRUPO>
+      <NOMBRE>APRENDIZ DE CONVENIO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>11</CODIGO>
+      <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+      <GRUPO>GRUPO V</GRUPO>
+      <NOMBRE>ASPIRANTE ADMINISTRATIVO/A</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>12</CODIGO>
+      <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>JEFE/A DE VENTAS</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>13</CODIGO>
+      <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>ENCARGADO/A</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>14</CODIGO>
+      <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>JEFE/A DE ALMACEN O DE SUCURSAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>15</CODIGO>
+      <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>JEFE/A DE GRUPO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>16</CODIGO>
+      <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>CORREDOR/A DE PLAZA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>17</CODIGO>
+      <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>VENDEDOR/A DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>18</CODIGO>
+      <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>VENDEDOR/A DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>19</CODIGO>
+      <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>VIAJANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>20</CODIGO>
+      <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>AUXILIAR DE CAJA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>21</CODIGO>
+      <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>AYUDANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>22</CODIGO>
+      <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>COBRADOR/A</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>23</CODIGO>
+      <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+      <GRUPO>GRUPO V</GRUPO>
+      <NOMBRE>APRENDIZ DE CONVENIO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>24</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>DIRECTOR/A</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>25</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>JEFE/A DE DIVISION</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>26</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>TITULADOS/AS GRADO MEDIO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>27</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>TITULADOS/AS GRADO SUPERIOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>28</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>DELINEANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>29</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>DIBUJANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>30</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>ESCAPARATISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>31</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>MOZO/A ESPECIALIZADO/A</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>32</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>PROFESIONAL DE OFICIO DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>33</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>PROFESIONAL DE OFICIO DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>34</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>ASCENSORISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>35</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>CONSERJE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>36</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>EMPAQUETADOR/A</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>37</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>MOZO/A</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>38</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>ORDENANZA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>39</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>PERSONAL DE LIMPIEZA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>40</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>PORTERO/A</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>41</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>VIGILANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>42</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO V</GRUPO>
+      <NOMBRE>APRENDIZ DE CONVENIO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>43</CODIGO>
+      <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>MOZO/A ESPECIALIZADO</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>SALARIO BASE</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>601</CODIGO>
+      <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2017</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (DOGC NUM. 7905 - 27.6.2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1779</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE/A ADMINISTRATIVO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1328.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE/A DE PERSONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1328.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE/A SECCION ADMINISTRATIVA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1113.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>CONTABLE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1037.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>OFICIAL ADMINISTRATIVO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1008.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>SECRETARIO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1015.81</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AUXILIAR ADMINISTRATIVO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>919.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>OPERADOR/A DE INFORMATICA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>919.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>892.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>APRENDIZ DE CONVENIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>724.58</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>ASPIRANTE ADMINISTRATIVO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>724.58</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE/A DE VENTAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1328.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>ENCARGADO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1328.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE/A DE ALMACEN O DE SUCURSAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1139.23</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE/A DE GRUPO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1095.77</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>CORREDOR/A DE PLAZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1037.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>VENDEDOR/A DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1008.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>VENDEDOR/A DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>963.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>VIAJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1037.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AUXILIAR DE CAJA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>951.25</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>919.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>COBRADOR/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>892.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>APRENDIZ DE CONVENIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>724.58</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1473.36</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE/A DE DIVISION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1328.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>TITULADOS/AS GRADO MEDIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1182.78</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>TITULADOS/AS GRADO SUPERIOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1328.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>DELINEANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>964.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>DIBUJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1140.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ESCAPARATISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1113.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>MOZO/A ESPECIALIZADO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>910.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>PROFESIONAL DE OFICIO DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>964.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>PROFESIONAL DE OFICIO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>921.38</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ASCENSORISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>892.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CONSERJE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>892.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>EMPAQUETADOR/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>892.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>MOZO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>892.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ORDENANZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>892.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PERSONAL DE LIMPIEZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>892.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PORTERO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>892.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>892.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>APRENDIZ DE CONVENIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>724.58</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>84.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2018</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (DOGC NUM. 7905 - 27.6.2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1779</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE/A ADMINISTRATIVO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1354.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE/A DE PERSONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1354.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE/A SECCION ADMINISTRATIVA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1136.1</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>CONTABLE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1058.38</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>OFICIAL ADMINISTRATIVO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1028.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>SECRETARIO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1036.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AUXILIAR ADMINISTRATIVO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>937.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>OPERADOR/A DE INFORMATICA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>937.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>910.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>APRENDIZ DE CONVENIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>739.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>ASPIRANTE ADMINISTRATIVO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>739.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE/A DE VENTAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1354.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>ENCARGADO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1354.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE/A DE ALMACEN O DE SUCURSAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1162.01</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE/A DE GRUPO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1117.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>CORREDOR/A DE PLAZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1058.38</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>VENDEDOR/A DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1028.72</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>VENDEDOR/A DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>982.64</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>VIAJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1058.38</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AUXILIAR DE CAJA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>970.28</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>937.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>COBRADOR/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>910.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>APRENDIZ DE CONVENIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>739.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1502.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE/A DE DIVISION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1354.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>TITULADOS/AS GRADO MEDIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1206.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>TITULADOS/AS GRADO SUPERIOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1354.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>DELINEANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>984.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>DIBUJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1162.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ESCAPARATISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1136.1</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>MOZO/A ESPECIALIZADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>929.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>PROFESIONAL DE OFICIO DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>984.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>PROFESIONAL DE OFICIO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>939.81</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ASCENSORISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>910.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CONSERJE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>910.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>EMPAQUETADOR/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>910.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>MOZO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>910.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ORDENANZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>910.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PERSONAL DE LIMPIEZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>910.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PORTERO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>910.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>910.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>APRENDIZ DE CONVENIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>739.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>85.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (DOGC NUM. 7905 - 27.6.2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1779</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE/A ADMINISTRATIVO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1381.72</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE/A DE PERSONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1381.72</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE/A SECCION ADMINISTRATIVA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1158.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>CONTABLE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1079.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>OFICIAL ADMINISTRATIVO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1049.01</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>SECRETARIO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1056.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AUXILIAR ADMINISTRATIVO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>956.71</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>OPERADOR/A DE INFORMATICA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>956.71</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>928.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>APRENDIZ DE CONVENIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>AREA FUNCIONAL ADMINISTRATIVA</GRUPO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>ASPIRANTE ADMINISTRATIVO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE/A DE VENTAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1381.72</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>ENCARGADO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1381.72</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE/A DE ALMACEN O DE SUCURSAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1185.25</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>JEFE/A DE GRUPO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1140.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>CORREDOR/A DE PLAZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1079.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>VENDEDOR/A DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1049.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>VENDEDOR/A DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1002.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>VIAJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1079.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AUXILIAR DE CAJA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>989.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>956.71</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>COBRADOR/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>928.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>AREA FUNCIONAL MERCANTIL</GRUPO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>APRENDIZ DE CONVENIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>DIRECTOR/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1532.89</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE/A DE DIVISION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1381.72</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>TITULADOS/AS GRADO MEDIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1230.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>TITULADOS/AS GRADO SUPERIOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1381.72</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>DELINEANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1003.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>DIBUJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1186.09</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ESCAPARATISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1158.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>MOZO/A ESPECIALIZADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>947.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>PROFESIONAL DE OFICIO DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1003.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>PROFESIONAL DE OFICIO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>958.61</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ASCENSORISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>928.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CONSERJE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>928.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>EMPAQUETADOR/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>928.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>MOZO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>928.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ORDENANZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>928.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PERSONAL DE LIMPIEZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>928.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PORTERO/A</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>928.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>928.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>AREA FUNCIONAL TECNICO/A DE OFICIO Y SUBALTERNO/A</GRUPO>
+          <GRUPO>GRUPO V</GRUPO>
+          <NOMBRE>APRENDIZ DE CONVENIO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>87.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

@@ -242,5 +242,7 @@ public interface EnterprisesService extends RemoteService {
 			String contributionAccount, Date dateFrom, Date dateTo, Date startDate);
 
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it);
+
+	void getServiAgreement(String currentDomainName, String serviAgreementCode);
 	
 }

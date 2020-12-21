@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0002060</FICHEROS>
+    <AMBITO>AUTONOMICO</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO DE COMERCIO DE ACTIVIDADES DIVERSAS PARA LA COMUNITAT VALENCIANA</NOMBRE>
+    <CODIGO_SS>80100165012019</CODIGO_SS>
+    <INFO_BOE>REVISION SALARIAL (DOGV NUM. 8816 / 20.05.2020)</INFO_BOE>
+    <FECHA_ULT_ACT>20-05-2020</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2019</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2020</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>GRUPO I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <NOMBRE>GRUPO II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>GRUPO III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <NOMBRE>GRUPO IV</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>GRUPO V</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>4</CODIGO>
+      <NOMBRE>SALARIO CONVENIO ANUAL</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>SALARIO CONVENIO</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>500</CODIGO>
+      <NOMBRE>DIETA COMPLETA</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>506</CODIGO>
+      <NOMBRE>MEDIA DIETA</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>901</CODIGO>
+      <NOMBRE>COMPLEMENTO ESPECIFICO</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (DOGV NUM. 8648 DE 03.10.2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1776</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>GRUPO I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>853.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>4</CODIGO>
+              <NOMBRE>SALARIO CONVENIO ANUAL</NOMBRE>
+              <IMPORTE>12803.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>45.12</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>14.3</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>901</CODIGO>
+              <NOMBRE>COMPLEMENTO ESPECIFICO</NOMBRE>
+              <IMPORTE>76.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GRUPO II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1019.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>4</CODIGO>
+              <NOMBRE>SALARIO CONVENIO ANUAL</NOMBRE>
+              <IMPORTE>15290.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>45.12</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>14.3</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>901</CODIGO>
+              <NOMBRE>COMPLEMENTO ESPECIFICO</NOMBRE>
+              <IMPORTE>76.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>GRUPO III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1172.21</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>4</CODIGO>
+              <NOMBRE>SALARIO CONVENIO ANUAL</NOMBRE>
+              <IMPORTE>17583.22</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>45.12</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>14.3</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>901</CODIGO>
+              <NOMBRE>COMPLEMENTO ESPECIFICO</NOMBRE>
+              <IMPORTE>76.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>GRUPO IV</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1258.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>4</CODIGO>
+              <NOMBRE>SALARIO CONVENIO ANUAL</NOMBRE>
+              <IMPORTE>18876.53</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>45.12</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>14.3</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>901</CODIGO>
+              <NOMBRE>COMPLEMENTO ESPECIFICO</NOMBRE>
+              <IMPORTE>76.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>GRUPO V</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1451.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>4</CODIGO>
+              <NOMBRE>SALARIO CONVENIO ANUAL</NOMBRE>
+              <IMPORTE>21777.87</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>45.12</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>14.3</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>901</CODIGO>
+              <NOMBRE>COMPLEMENTO ESPECIFICO</NOMBRE>
+              <IMPORTE>76.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>REVISION SALARIAL (DOGV NUM. 8816 / 20.05.2020)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1776</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>GRUPO I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>886.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>4</CODIGO>
+              <NOMBRE>SALARIO CONVENIO ANUAL</NOMBRE>
+              <IMPORTE>13300</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>46.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>14.59</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>901</CODIGO>
+              <NOMBRE>COMPLEMENTO ESPECIFICO</NOMBRE>
+              <IMPORTE>78.4</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GRUPO II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1039.73</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>4</CODIGO>
+              <NOMBRE>SALARIO CONVENIO ANUAL</NOMBRE>
+              <IMPORTE>15596.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>46.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>14.59</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>901</CODIGO>
+              <NOMBRE>COMPLEMENTO ESPECIFICO</NOMBRE>
+              <IMPORTE>78.4</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>GRUPO III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1195.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>4</CODIGO>
+              <NOMBRE>SALARIO CONVENIO ANUAL</NOMBRE>
+              <IMPORTE>17934.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>46.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>14.59</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>901</CODIGO>
+              <NOMBRE>COMPLEMENTO ESPECIFICO</NOMBRE>
+              <IMPORTE>78.4</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>GRUPO IV</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1283.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>4</CODIGO>
+              <NOMBRE>SALARIO CONVENIO ANUAL</NOMBRE>
+              <IMPORTE>19254.06</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>46.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>14.59</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>901</CODIGO>
+              <NOMBRE>COMPLEMENTO ESPECIFICO</NOMBRE>
+              <IMPORTE>78.4</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>GRUPO V</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1480.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>4</CODIGO>
+              <NOMBRE>SALARIO CONVENIO ANUAL</NOMBRE>
+              <IMPORTE>22213.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>46.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>14.59</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>901</CODIGO>
+              <NOMBRE>COMPLEMENTO ESPECIFICO</NOMBRE>
+              <IMPORTE>78.4</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

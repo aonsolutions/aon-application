@@ -682,4 +682,10 @@ public class EnterprisesServiceAsyncDecorator implements
 	
 	}
 
+	@Override
+	public void getServiAgreement(String currentDomainName, String serviAgreementCode, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.getServiAgreement(currentDomainName, serviAgreementCode, new AsyncCallbackWrapper<Void>(callback));
+	}
+
 }
