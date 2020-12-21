@@ -1895,8 +1895,18 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			}
 		});
 			
-			
-		dropPanel = new FocusPanel();
+		if (!invoiceCallback.getConfiguration().isOCRActive()) {
+			Label noOCR = new Label( "OCR NO CONTRATADO" );
+			noOCR.setStyleName(AON.CSS.aonFlexGrow1());
+			noOCR.addStyleName(AON.CSS.aonPaddingRight());
+			noOCR.addStyleName(AON.CSS.aonTextRight());
+			noOCR.addStyleName(AON.CSS.aonColorBlue());
+			dropPanel = new FocusPanel( noOCR );	
+		} else {
+			dropPanel = new FocusPanel();
+		}
+		
+		
 		dropPanel.setStyleName(AON.CSS.aonDropZone());
 		dropPanel.addStyleName(AON.CSS.aonDropZoneImage());
 		

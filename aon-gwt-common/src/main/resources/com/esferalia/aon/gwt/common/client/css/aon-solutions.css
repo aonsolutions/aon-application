@@ -1024,7 +1024,7 @@
 	min-height: 80px;
 	height: 80px;
 	min-width: 180px;
-	display: table;
+	display: flex;
 	margin-top: 1em;
 	margin-left: auto;
 	margin-right: auto;
@@ -1034,7 +1034,7 @@
 	border-color: #bbb;
 	border-radius: 2em;
 	text-align: center;
-	vertical-align: middle;	
+	align-items: end;	
     padding-top: 28px;
     padding-bottom: 28px;
     font-size: 1.2em;
