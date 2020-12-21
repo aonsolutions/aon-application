@@ -232,6 +232,13 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>solutions.aon</groupId>
+			<artifactId>aon.sepe</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
 		   <groupId>com.esferalia.aon</groupId>
