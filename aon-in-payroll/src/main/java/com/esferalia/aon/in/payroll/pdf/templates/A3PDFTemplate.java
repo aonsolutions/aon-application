@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import java.util.function.IntPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +31,35 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class A3PDFTemplate implements SalaryPDFTemplate {
 
 	public static final A3PDFTemplate A3_PDF_TEMPLATE = new A3PDFTemplate();
-
+	
+	
+	private static String removeSpace(String str, int... pos) {
+		try {
+			if(Arrays.stream(pos).anyMatch(new IntPredicate() {
+				
+				@Override
+				public boolean test(int value) {
+					if(value==-1)
+						return true;
+					return false;
+				}
+			})) {
+				str=str.replaceAll(" ", "");
+			}
+			else {
+				for (int i : pos) {
+					if(str.charAt(i)==' ') {
+						str=str.substring(0, i)+str.substring(i+1);
+					}
+				}	
+			}
+		} catch (IndexOutOfBoundsException | NullPointerException e) {
+			
+		} finally {
+			return str;
+		}
+	}
+	
 	
 	@Override
 	public SalaryPDFTemplate parse(String text, ISalaryBuilder<?> salaryBuilder) throws IOException, UnknownPDFException {
@@ -41,10 +71,10 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 			Matcher matcher = find(reader, EMPLOYEE_NAME);
 			String empName=AonStringUtils.trimToNull(matcher.group("name"));
+			empName=removeSpace(empName, 13);
 			
 			matcher = find(reader, EMPLOYEE_ADDRESS);
 			String empHome=AonStringUtils.trimToNull(matcher.group()).replaceAll("\\s{2,}", " ");
-			
 			
 			
 			
@@ -63,6 +93,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			
 			salaryBuilder.setEmployeeName(empName);
 			salaryBuilder.setEmployeeAddress(empHome);
+			empCity=removeSpace(empCity, 6);
 			salaryBuilder.setEmployeeCity(empCity);
 			salaryBuilder.setEnterpriseDocument(nif);
 			
@@ -118,6 +149,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 				if(matcher.group("devengos")!=null) {
 					Double amount=a3DoubleParser(AonStringUtils.trimToNull(matcher.group("devengos")));
 					String description=AonStringUtils.trimToNull(matcher.group("concept"));
+					description=removeSpace(description, 19);
 					String context=description;
 					if(context.charAt(0)=='*') {
 						context=context.substring(1);
@@ -150,9 +182,37 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 					//Date start, Date end, IDeduction deduction, Map<String, ITimedVariable<?>> context);
 					Double amount=a3DoubleParser(AonStringUtils.trimToNull(matcher.group("deducciones")));
 					String description=AonStringUtils.trimToNull(matcher.group("concept"));
+					description=removeSpace(description, 19);
 					String context=description;
 					DeductionType dt=null;
-					switch(AonStringUtils.trimToNull(matcher.group("concept").toUpperCase())) {
+					if(description.contains("COTIZACION CONT.COMU")) {
+						dt=DeductionType.COMMON_CONTINGENCY;
+						description=dt.getName(new Locale("es", "ES"));
+						totalSS+=amount;
+						context="CGC";
+					}
+					else if (description.contains("COTIZACION FORMACION")) {
+						dt=DeductionType.JOB_TRAINING;
+						description=dt.getName(new Locale("es", "ES"));
+						totalSS+=amount;
+						context="FP";
+					}
+					else if(description.contains("COTIZACION DESEMPLEO")) {
+						dt=DeductionType.UNEMPLOYMENT;
+						description=dt.getName(new Locale("es", "ES"));
+						totalSS+=amount;
+						context="DESMPL";
+					}
+					else if (description.contains("TRIBUTACION I.R.P.F.")) {
+						dt=DeductionType.IRPF;
+						description=dt.getName(new Locale("es", "ES"));
+						context="IRPF";
+					}
+					
+					
+					
+					
+					/*switch(desc) {
 					case "COTIZACION CONT.COMU":
 						//"CGC"
 						//"CGC_E"
@@ -186,7 +246,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 						break;
 					default:
 						//totalSS+=amount;
-					}
+					}*/
 
 					salaryBuilder.addDeduction(
 							amount,
@@ -229,7 +289,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			}
 			
 			try {
-				Double cgcBase=Double.parseDouble(AonStringUtils.trimToNull(remnbases.get(2)).replaceAll("\\.", "").replaceAll("[,]", "."));
+				Double cgcBase=Double.parseDouble(removeSpace(AonStringUtils.trimToNull(remnbases.get(2)).replaceAll("\\.", "").replaceAll("[,]", "."), -1));
 				salaryBuilder.setCgcBase(cgcBase);
 				salaryBuilder.addData(ContextVariable.CGC_BASE.getName(), new TimedObject<Double>(cgcBase, per ));
 			}catch (NullPointerException e) {
@@ -237,7 +297,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			}
 			
 			try {
-				Double rawCgcBase=Double.parseDouble(AonStringUtils.trimToNull(remnbases.get(2)).replaceAll("\\.", "").replaceAll("[,]", "."));
+				Double rawCgcBase=Double.parseDouble(removeSpace(AonStringUtils.trimToNull(remnbases.get(2)).replaceAll("\\.", "").replaceAll("[,]", "."), -1));
 				salaryBuilder.setRawCgcBase(rawCgcBase);
 				salaryBuilder.addData(ContextVariable.CGC_BASE_RAW.getName(), new TimedObject<Double>(rawCgcBase, per ));
 			}catch (NullPointerException e) {
@@ -245,7 +305,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			}
 			
 			try {
-				Double cgpBase=Double.parseDouble(AonStringUtils.trimToNull(remnbases.get(3)).replaceAll("\\.", "").replaceAll("[,]", "."));
+				Double cgpBase=Double.parseDouble(removeSpace(AonStringUtils.trimToNull(remnbases.get(3)).replaceAll("\\.", "").replaceAll("[,]", "."), -1));
 				salaryBuilder.setCgpBase(cgpBase);
 				salaryBuilder.addData(ContextVariable.CGP_BASE.getName(), new TimedObject<Double>(cgpBase, per ));
 			}catch (NullPointerException e) {
@@ -253,7 +313,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			}
 			
 			try {
-				Double totalIrpf=Double.parseDouble(AonStringUtils.trimToNull(remnbases.get(4)).replaceAll("\\.", "").replaceAll("[,]", "."));
+				Double totalIrpf=Double.parseDouble(removeSpace(AonStringUtils.trimToNull(remnbases.get(4)).replaceAll("\\.", "").replaceAll("[,]", "."), -1));
 				salaryBuilder.setTotalIrpf(totalIrpf);
 				salaryBuilder.addData(ContextVariable.IRPF_BASE.getName(), new TimedObject<Double>(totalIrpf, per ));
 			}catch (NullPointerException e) {
@@ -261,7 +321,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			}
 			
 			try {
-				Double totalPayment=Double.parseDouble(AonStringUtils.trimToNull(remnbases.get(5)).replaceAll("\\.", "").replaceAll("[,]", "."));
+				Double totalPayment=Double.parseDouble(removeSpace(AonStringUtils.trimToNull(remnbases.get(5)).replaceAll("\\.", "").replaceAll("[,]", "."), -1));
 				salaryBuilder.setTotalPayment(totalPayment);
 				salaryBuilder.addData(ContextVariable.TOTAL_PAYMENT.getName(), new TimedObject<Double>(totalPayment, per ));
 			}catch (NullPointerException e) {
@@ -269,7 +329,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			}
 			
 			try {
-				Double totalDeduction=Double.parseDouble(AonStringUtils.trimToNull(remnbases.get(6)).replaceAll("\\.", "").replaceAll("[,]", "."));
+				Double totalDeduction=Double.parseDouble(removeSpace(AonStringUtils.trimToNull(remnbases.get(6)).replaceAll("\\.", "").replaceAll("[,]", "."), -1));
 				salaryBuilder.setTotalDeduction(totalDeduction);
 			}catch (NullPointerException e) {
 				salaryBuilder.setTotalDeduction(null);
@@ -694,7 +754,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	//1.260,31                  1.260,31        1.260,31     1.260,31    1.260,31        161,61     
 	//1.175,00       166,66     1.341,66        1.341,66     1.175,00    1.175,00        306,26      
 	private static final Pattern TOTAL =
-			Pattern.compile("(((\\d+\\.)?\\d+[,]\\d+)|\\s{9,10})"
+			Pattern.compile("(((\\d[\\d\\s]*\\.)?[\\s\\d]+[,]\\d+)|\\s{9,10})"
 			, Pattern.CASE_INSENSITIVE);
 	
 	private static final Pattern TOTAL_ROW =

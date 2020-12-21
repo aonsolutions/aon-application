@@ -15,13 +15,15 @@ import com.esferalia.aon.occam.api.AONContext;
 public class JooqPdfTest {
 
 	@Test
-	@Ignore("This can't be commited")
+	@Ignore
 	public void testA3() throws IOException, UnknownPDFException, SQLException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("a3.pdf") ;
 			Connection connection = DriverManager.getConnection("jdbc:mysql://172.17.0.2:3306/test-aonsolutions-org", "root", "root");
 			AONContext aonContext = new AONContext(connection))
 		{
-			SalaryPDFParser.parse(is, new JooqPDFSalaryBuilder(aonContext.getDslContext(), "payroll-test.aonsolutions.org"));
+			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(), "payroll-test.aonsolutions.org");
+			SalaryPDFParser.parse(is, builder);
+			builder.execute();
 		}
 	}
 	

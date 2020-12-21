@@ -31,7 +31,7 @@ public class PdfTest {
 	
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void testDsi() throws IOException, UnknownPDFException{
 		try (InputStream is = PdfTest.class.getResourceAsStream("dsi_nomina_1pag.pdf")){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -368,7 +368,7 @@ public class PdfTest {
 	
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void testDsiAt() throws IOException, UnknownPDFException{
 		try (InputStream is = PdfTest.class.getResourceAsStream("dsi_at.pdf")){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -711,7 +711,7 @@ public class PdfTest {
 	}
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void testA3() throws IOException, UnknownPDFException {
 		try ( InputStream is = PdfTest.class.getResourceAsStream("a3.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
@@ -864,7 +864,7 @@ public class PdfTest {
 						case "*Domingos-festiv":
 							break;
 						default:
-							fail("Unrecognized concept");
+							fail("Unrecognized payment concept: "+description);
 					}
 					HashSet<Double> devengos=new HashSet<Double>(Arrays.asList(802.24, 128.36, 31.17, 169.0, 78.2, 51.34));
 					if(!devengos.contains(amount))
@@ -890,7 +890,7 @@ public class PdfTest {
 						case "Impuesto sobre la renta de las personas físicas":
 							break;
 						default:
-							fail("Unrecognized concept");
+							fail("Unrecognized deduction concept: "+description+", length: "+description.length());
 					}
 					HashSet<Double> deductions = new HashSet<Double>(Arrays.asList(31.17, 59.23, 1.26, 19.53, 50.42));
 					if(!deductions.contains(amount))

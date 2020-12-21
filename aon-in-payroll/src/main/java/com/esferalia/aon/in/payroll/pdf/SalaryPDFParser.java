@@ -41,7 +41,6 @@ public class SalaryPDFParser {
 		}
 		
 		PDFTextStripper stripper= new PDFTextStripper();
-		
 		stripper.setSortByPosition(true);
 		
 		SalaryPDFTemplate template = null;
