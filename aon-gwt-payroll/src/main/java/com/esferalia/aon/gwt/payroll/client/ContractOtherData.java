@@ -2,16 +2,19 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
@@ -60,7 +63,7 @@ public class ContractOtherData extends ResizeComposite {
 	TextBox doingFunctionsTB;
 
 	@UiField
-	CheckBox distanceCB;
+	Button distanceB;
 
 	@UiField
 	TextBox distanceAddressTB;
@@ -87,7 +90,7 @@ public class ContractOtherData extends ResizeComposite {
 	TextBox timeDistributionFDTB;
 
 	@UiField
-	ListBox partialTimeLB;
+	Button partialTimeB;
 	
 	@UiField
 	TextBox journeyHoursTCTB;
@@ -105,7 +108,7 @@ public class ContractOtherData extends ResizeComposite {
 	TextBox agreementJourneyHoursTB;
 
 	@UiField
-	ListBox complementaryHoursLB;
+	Button complementaryHoursB;
 	
 	@UiField
 	TextBox trialPeriodTB;
@@ -138,7 +141,7 @@ public class ContractOtherData extends ResizeComposite {
 	TextBox subsidyTB;
 	
 	@UiField
-	ListBox fourthLawLB;
+	Button fourthLawB;
 	
 	@UiField
 	ListBox unemploymentLB;
@@ -147,10 +150,10 @@ public class ContractOtherData extends ResizeComposite {
 	ListBox unemploymentOldLB;
 	
 	@UiField
-	CheckBox benefitsPerceptorCB;
+	Button benefitsPerceptorB;
 	
 	@UiField
-	CheckBox firstEmployeeCB;
+	Button firstEmployeeB;
 	
 	@UiField
 	ListBox employeeLB;
@@ -162,7 +165,7 @@ public class ContractOtherData extends ResizeComposite {
 	TextBox agreementLineTwoTB;
 	
 	@UiField
-	ListBox contactHoursLB;
+	Button contactHoursB;
 	
 	@UiField
 	TextBox hoursTB;
@@ -171,16 +174,16 @@ public class ContractOtherData extends ResizeComposite {
 	ListBox remunerationFormLB;
 	
 	@UiField
-	ListBox overnightAgreementLB;
+	Button overnightAgreementB;
 	
 	@UiField
 	TextBox overnightRegimeTB;
 	
 	@UiField
-	ListBox quoteReductionTCLB;
+	Button quoteReductionTCB;
 	
 	@UiField
-	ListBox quoteReductionFDLB;
+	Button quoteReductionFDB;
 	
 	@UiField
 	TextBox sepeOfficeCOTB;
@@ -212,7 +215,7 @@ public class ContractOtherData extends ResizeComposite {
 	TextBox doingFunctionsTempTB;
 
 	@UiField
-	CheckBox distanceTempCB;
+	Button distanceTempB;
 
 	@UiField
 	TextBox distanceAddressTempTB;
@@ -239,7 +242,7 @@ public class ContractOtherData extends ResizeComposite {
 	TextBox trialPeriodTempTB;
 	
 	@UiField
-	CheckBox permitedHighDurationTempCB;
+	Button permitedHighDurationTempB;
 	
 	@UiField
 	TextBox salaryAmountTempTB;
@@ -287,7 +290,7 @@ public class ContractOtherData extends ResizeComposite {
 	TextBox lenguageFormationTempTB;
 	
 	@UiField
-	ListBox hoursDealTempLB;
+	Button hoursDealTempB;
 	
 	@UiField
 	TextBox presentHoursTempTB;
@@ -299,7 +302,7 @@ public class ContractOtherData extends ResizeComposite {
 	ListBox timeCompensationTempLB;
 	
 	@UiField
-	ListBox dealOvernightLB;
+	Button dealOvernightB;
 	
 	@UiField
 	TextBox overnightRegimeTempTB;
@@ -355,7 +358,7 @@ public class ContractOtherData extends ResizeComposite {
 	TextBox minorAgentQualityOfFormTB;
 	
 	@UiField
-	ListBox ssReductionFormLB;
+	Button ssReductionFormB;
 	
 	@UiField
 	ListBox employeeFormLB;
@@ -376,7 +379,7 @@ public class ContractOtherData extends ResizeComposite {
 	TextBox trialPeriodFormTB;
 	
 	@UiField
-	CheckBox agreementTrialFormCB;
+	Button agreementTrialFormB;
 	
 	@UiField
 	TextBox salaryAmountFormTB;
@@ -388,10 +391,10 @@ public class ContractOtherData extends ResizeComposite {
 	TextBox holidaysFormTB;
 	
 	@UiField
-	CheckBox degreeExistFormCB;
+	Button degreeExistFormB;
 	
 	@UiField
-	CheckBox degreeExist2FormCB;
+	Button degreeExist2FormB;
 
 	// -------------------------------------------------- Practice Table
 	
@@ -543,9 +546,11 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("FUNCTIONS", value);
 	}
 	
-	@UiHandler("distanceCB")
-	void onDistanceCBChange(ValueChangeEvent<Boolean> event) {
-		Boolean value = distanceCB.getValue();
+	@UiHandler("distanceB")
+	void onDistanceCBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(distanceB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(distanceB, value);
 		if(value)
 			setContractOtherData("EMPLOYEE_CONTRACT_DISTANCE", "true");
 		else
@@ -600,10 +605,15 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("DISC_WORK_ESTIM_SCHEDULE", value);
 	}
 	
-	@UiHandler("partialTimeLB")
-	void onPartialTimeLBChange(ChangeEvent event) {
-		String selectedValue = partialTimeLB.getSelectedValue();
-		setContractOtherData("DISC_AGREEMENT_COLLECTIVE", selectedValue);
+	@UiHandler("partialTimeB")
+	void onPartialTimeLBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(partialTimeB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(partialTimeB, value);
+		if(value)
+			setContractOtherData("DISC_AGREEMENT_COLLECTIVE", "DISC_AGREEMENT_COLLECTIVE_YES");
+		else
+			setContractOtherData("DISC_AGREEMENT_COLLECTIVE", "DISC_AGREEMENT_COLLECTIVE_NO");
 	}
 	
 	@UiHandler("journeyHoursTCTB")
@@ -636,10 +646,15 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("DEFAULT_JOURNAL_HOURS", value);
 	}
 	
-	@UiHandler("complementaryHoursLB")
-	void onComplementaryHoursLBChange(ChangeEvent event) {
-		String selectedValue = complementaryHoursLB.getSelectedValue();
-		setContractOtherData("COMPLEMENTARY_HOURS", selectedValue);
+	@UiHandler("complementaryHoursB")
+	void onComplementaryHoursLBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(complementaryHoursB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(complementaryHoursB, value);
+		if(value)
+			setContractOtherData("COMPLEMENTARY_HOURS", "COMPLEMENTARY_HOURS_YES");
+		else
+			setContractOtherData("COMPLEMENTARY_HOURS", "COMPLEMENTARY_HOURS_NO");
 	}
 	
 	@UiHandler("trialPeriodTB")
@@ -702,10 +717,15 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("I_OPT2_REDUCTION", value);
 	}
 	
-	@UiHandler("fourthLawLB")
-	void onFourthLawLBChange(ChangeEvent event) {
-		String selectedValue = fourthLawLB.getSelectedValue();
-		setContractOtherData("I_OPT5_BONUS_ART4_RDL3_2012", selectedValue);
+	@UiHandler("fourthLawB")
+	void onFourthLawLBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(fourthLawB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(fourthLawB, value);
+		if(value)
+			setContractOtherData("I_OPT5_BONUS_ART4_RDL3_2012", "OPT5_BONUS_ART4_RDL3_2012_YES");
+		else
+			setContractOtherData("I_OPT5_BONUS_ART4_RDL3_2012", "OPT5_BONUS_ART4_RDL3_2012_NO");
 	}
 	
 	@UiHandler("unemploymentLB")
@@ -720,18 +740,22 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("I_OPT5_UNEMPLOYED_GT_45", selectedValue);
 	}
 	
-	@UiHandler("benefitsPerceptorCB")
-	void onBenefitsPerceptorCBChange(ValueChangeEvent<Boolean> event) {
-		Boolean value = benefitsPerceptorCB.getValue();
+	@UiHandler("benefitsPerceptorB")
+	void onBenefitsPerceptorCBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(benefitsPerceptorB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(benefitsPerceptorB, value);
 		if(value)
 			setContractOtherData("I_OPT5_UNEMPL_3_MONTH_BENEFIT", "true");
 		else
 			setContractOtherData("I_OPT5_UNEMPL_3_MONTH_BENEFIT", "");
 	}
 	
-	@UiHandler("firstEmployeeCB")
-	void onFirstEmployeeCBChange(ValueChangeEvent<Boolean> event) {
-		Boolean value = firstEmployeeCB.getValue();
+	@UiHandler("firstEmployeeB")
+	void onFirstEmployeeCBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(firstEmployeeB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(firstEmployeeB, value);
 		if(value)
 			setContractOtherData("I_OPT5_FIRST_EMPLOYEE_AND_LT_30", "true");
 		else
@@ -756,10 +780,15 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("I_OPT6_AGREEMENT_COLLECTIVE2", value);
 	}
 	
-	@UiHandler("contactHoursLB")
-	void onContactHoursLBChange(ChangeEvent event) {
-		String selectedValue = contactHoursLB.getSelectedValue();
-		setContractOtherData("I_OPT15_ONSITE_HOURS", selectedValue);
+	@UiHandler("contactHoursB")
+	void onContactHoursLBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(contactHoursB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(contactHoursB, value);
+		if(value)
+			setContractOtherData("I_OPT15_ONSITE_HOURS", "OPT15_ONSITE_HOURS_YES");
+		else
+			setContractOtherData("I_OPT15_ONSITE_HOURS", "OPT15_ONSITE_HOURS_NO");
 	}
 
 	@UiHandler("hoursTB")
@@ -774,10 +803,15 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("I_OPT15_SALARY", selectedValue);
 	}
 	
-	@UiHandler("overnightAgreementLB")
-	void onOvernightAgreementLBChange(ChangeEvent event) {
-		String selectedValue = overnightAgreementLB.getSelectedValue();
-		setContractOtherData("I_OPT15_OVERNIGHT", selectedValue);
+	@UiHandler("overnightAgreementB")
+	void onOvernightAgreementLBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(overnightAgreementB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(overnightAgreementB, value);
+		if(value)
+			setContractOtherData("I_OPT15_OVERNIGHT", "OPT15_OVERNIGHT_YES");
+		else
+			setContractOtherData("I_OPT15_OVERNIGHT", "OPT15_OVERNIGHT_NO");
 	}
 	
 	@UiHandler("overnightRegimeTB")
@@ -786,16 +820,26 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("I_OPT15_OVERNIGHT_WEEK_DAYS", value);
 	}
 	
-	@UiHandler("quoteReductionTCLB")
-	void onQuoteReductionTCLBChange(ChangeEvent event) {
-		String selectedValue = quoteReductionTCLB.getSelectedValue();
-		setContractOtherData("I_OPT17_FULL_TIME_QUOTE_BONUS", selectedValue);
+	@UiHandler("quoteReductionTCB")
+	void onQuoteReductionTCLBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(quoteReductionTCB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(quoteReductionTCB, value);
+		if(value)
+			setContractOtherData("I_OPT17_FULL_TIME_QUOTE_BONUS", "OPT17_FULL_TIME_QUOTE_BONUS_YES");
+		else
+			setContractOtherData("I_OPT17_FULL_TIME_QUOTE_BONUS", "OPT17_FULL_TIME_QUOTE_BONUS_NO");
 	}
 	
-	@UiHandler("quoteReductionFDLB")
-	void onQuoteReductionFDLBChange(ChangeEvent event) {
-		String selectedValue = quoteReductionFDLB.getSelectedValue();
-		setContractOtherData("I_OPT17_DISCONT_TIME_QUOTE_BONUS", selectedValue);
+	@UiHandler("quoteReductionFDB")
+	void onQuoteReductionFDLBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(quoteReductionFDB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(quoteReductionFDB, value);
+		if(value)
+			setContractOtherData("I_OPT17_DISCONT_TIME_QUOTE_BONUS", "OPT17_DISCONT_TIME_QUOTE_BONUS_YES");
+		else
+			setContractOtherData("I_OPT17_DISCONT_TIME_QUOTE_BONUS", "OPT17_DISCONT_TIME_QUOTE_BONUS_NO");
 	}
 	
 	@UiHandler("sepeOfficeCOTB")
@@ -848,9 +892,11 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("T_FUNCTIONS", value);
 	}
 	
-	@UiHandler("distanceTempCB")
-	void onDistanceTempCBChange(ValueChangeEvent<Boolean> event) {
-		Boolean value = distanceTempCB.getValue();
+	@UiHandler("distanceTempB")
+	void onDistanceTempCBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(distanceTempB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(distanceTempB, value);
 		if(value)
 			setContractOtherData("T_EMPLOYEE_CONTRACT_DISTANCE", "true");
 		else
@@ -905,9 +951,11 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("T_TRIAL_DURATION", value);
 	}
 	
-	@UiHandler("permitedHighDurationTempCB")
-	void onPermitedHighDurationTempCBChange(ValueChangeEvent<Boolean> event) {
-		Boolean value = permitedHighDurationTempCB.getValue();
+	@UiHandler("permitedHighDurationTempB")
+	void onPermitedHighDurationTempCBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(permitedHighDurationTempB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(permitedHighDurationTempB, value);
 		if(value)
 			setContractOtherData("T_GREATER_DURATION_AGREEMENT_COL", "true");
 		else
@@ -1004,10 +1052,15 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("T_OPT10_FORMATION_TYPE_OPT2_TEXT", value);
 	}
 	
-	@UiHandler("hoursDealTempLB")
-	void onHoursDealTempLBChange(ChangeEvent event) {
-		String selectedValue = hoursDealTempLB.getSelectedValue();
-		setContractOtherData("T_OPT12_ONSITE_HOURS", selectedValue);
+	@UiHandler("hoursDealTempB")
+	void onHoursDealTempLBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(hoursDealTempB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(hoursDealTempB, value);
+		if(value)
+			setContractOtherData("T_OPT12_ONSITE_HOURS", "OPT12_ONSITE_HOURS_YES");
+		else
+			setContractOtherData("T_OPT12_ONSITE_HOURS", "OPT12_ONSITE_HOURS_NO");
 	}
 	
 	@UiHandler("presentHoursTempTB")
@@ -1028,10 +1081,15 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("T_OPT12_SALARY_OPT", selectedValue);
 	}
 	
-	@UiHandler("dealOvernightLB")
-	void onDealOvernightLBChange(ChangeEvent event) {
-		String selectedValue = dealOvernightLB.getSelectedValue();
-		setContractOtherData("T_OPT12_OVERNIGHT", selectedValue);
+	@UiHandler("dealOvernightB")
+	void onDealOvernightLBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(dealOvernightB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(dealOvernightB, value);
+		if(value)
+			setContractOtherData("T_OPT12_OVERNIGHT", "OPT12_OVERNIGHT_YES");
+		else
+			setContractOtherData("T_OPT12_OVERNIGHT", "OPT12_OVERNIGHT_NO");
 	}
 	
 	@UiHandler("overnightRegimeTempTB")
@@ -1132,10 +1190,15 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("L_LEGAL_REPRESENTATIVE_CHARGE", value);
 	}
 	
-	@UiHandler("ssReductionFormLB")
-	void onSsReductionFormLBChange(ChangeEvent event) {
-		String selectedValue = ssReductionFormLB.getSelectedValue();
-		setContractOtherData("L_QUOTE_BONUS", selectedValue);
+	@UiHandler("ssReductionFormB")
+	void onSsReductionFormLBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(ssReductionFormB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(ssReductionFormB, value);
+		if(value)
+			setContractOtherData("L_QUOTE_BONUS", "QUOTE_BONUS_YES");
+		else
+			setContractOtherData("L_QUOTE_BONUS", "QUOTE_BONUS_NO");
 	}
 	
 	@UiHandler("employeeFormLB")
@@ -1174,9 +1237,11 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("L_TRIAL_DURATION", value);
 	}
 	
-	@UiHandler("agreementTrialFormCB")
-	void onAgreementTrialFormCBChange(ValueChangeEvent<Boolean> event) {
-		Boolean value = agreementTrialFormCB.getValue();
+	@UiHandler("agreementTrialFormB")
+	void onAgreementTrialFormCBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(agreementTrialFormB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(agreementTrialFormB, value);
 		if(value)
 			setContractOtherData("L_TRIAL_DURATION_INCREASE", "true");
 		else
@@ -1201,18 +1266,22 @@ public class ContractOtherData extends ResizeComposite {
 		setContractOtherData("L_HOLIDAYS", value);
 	}
 	
-	@UiHandler("degreeExistFormCB")
-	void onDegreeExistFormCBChange(ValueChangeEvent<Boolean> event) {
-		Boolean value = degreeExistFormCB.getValue();
+	@UiHandler("degreeExistFormB")
+	void onDegreeExistFormCBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(degreeExistFormB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(degreeExistFormB, value);
 		if(value)
 			setContractOtherData("L_ANNEX_I_CHECK", "true");
 		else
 			setContractOtherData("L_ANNEX_I_CHECK", "");
 	}
 	
-	@UiHandler("degreeExist2FormCB")
-	void onDegreeExist2FormCBChange(ValueChangeEvent<Boolean> event) {
-		Boolean value = degreeExist2FormCB.getValue();
+	@UiHandler("degreeExist2FormB")
+	void onDegreeExist2FormCBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(degreeExist2FormB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(degreeExist2FormB, value);
 		if(value)
 			setContractOtherData("L_ANNEX_II_CHECK", "true");
 		else
@@ -1421,7 +1490,7 @@ public class ContractOtherData extends ResizeComposite {
 		this.minorAgentNIFTB.setValue("");
 		this.minorAgentQualityOfTB.setValue("");
 		this.doingFunctionsTB.setValue("");
-		this.distanceCB.setValue(false);
+		getEnableDisableButton(this.distanceB, false);
 		this.distanceAddressTB.setValue("");
 		this.discontinuousWorkTB.setValue("");
 		this.intermittentCyclicalActivityTB.setValue("");
@@ -1430,13 +1499,13 @@ public class ContractOtherData extends ResizeComposite {
 		this.journeyHoursFDTB.setValue("");
 		this.journeyPeriodFDTB.setValue("");
 		this.timeDistributionFDTB.setValue("");
-		this.partialTimeLB.clear();
+		getEnableDisableButton(this.partialTimeB, false);
 		this.journeyHoursTCTB.setValue("");
 		this.startJourneyTCTB.setValue("");
 		this.endJourneyTCTB.setValue("");
 		this.journeyHoursTPTB.setValue("");
 		this.agreementJourneyHoursTB.setValue("");
-		this.complementaryHoursLB.clear();
+		getEnableDisableButton(this.complementaryHoursB, false);
 		this.trialPeriodTB.setValue("");
 		this.salaryAmountTB.setValue("");
 		this.salaryPeriodTB.setValue("");
@@ -1447,21 +1516,21 @@ public class ContractOtherData extends ResizeComposite {
 		this.withoutDisabilitySevereLB.clear();
 		this.disabilitySevereLB.clear();
 		this.subsidyTB.setValue("");
-		this.fourthLawLB.clear();
+		getEnableDisableButton(this.fourthLawB, false);
 		this.unemploymentLB.clear();
 		this.unemploymentOldLB.clear();
-		this.benefitsPerceptorCB.setValue(false);
-		this.firstEmployeeCB.setValue(false);
+		getEnableDisableButton(this.benefitsPerceptorB, false);
+		getEnableDisableButton(this.firstEmployeeB, false);
 		this.employeeLB.clear();
 		this.agreementLineOneTB.setValue("");
 		this.agreementLineTwoTB.setValue("");
-		this.contactHoursLB.clear();
+		getEnableDisableButton(this.contactHoursB, false);
 		this.hoursTB.setValue("");
 		this.remunerationFormLB.clear();
-		this.overnightAgreementLB.clear();
+		getEnableDisableButton(this.overnightAgreementB, false);
 		this.overnightRegimeTB.setValue("");
-		this.quoteReductionTCLB.clear();
-		this.quoteReductionFDLB.clear();
+		getEnableDisableButton(this.quoteReductionTCB, false);
+		getEnableDisableButton(this.quoteReductionFDB, false);
 		this.sepeOfficeCOTB.setValue("");
 		
 		// ------------------------------------------------------- Temporal Table
@@ -1473,7 +1542,7 @@ public class ContractOtherData extends ResizeComposite {
 		this.minorAgentNIFTempTB.setValue("");
 		this.minorAgentQualityOfTempTB.setValue("");
 		this.doingFunctionsTempTB.setValue("");
-		this.distanceTempCB.setValue(false);
+		getEnableDisableButton(this.distanceTempB, false);
 		this.distanceAddressTempTB.setValue("");
 		this.journeyHoursTCTempTB.setValue("");
 		this.startJourneyTCTempTB.setValue("");
@@ -1482,7 +1551,7 @@ public class ContractOtherData extends ResizeComposite {
 		this.timeDistributionTempTB.setValue("");
 		this.endContractTempTB.setValue("");
 		this.trialPeriodTempTB.setValue("");
-		this.permitedHighDurationTempCB.setValue(false);
+		getEnableDisableButton(this.permitedHighDurationTempB, false);
 		this.salaryAmountTempTB.setValue("");
 		this.salaryPeriodTempTB.setValue("");
 		this.salaryConceptTempTB.setValue("");
@@ -1498,11 +1567,11 @@ public class ContractOtherData extends ResizeComposite {
 		this.formationWillTempLB.clear();
 		this.officeSPEmployeeTempTB.setValue("");
 		this.lenguageFormationTempTB.setValue("");
-		this.hoursDealTempLB.clear();
+		getEnableDisableButton(this.hoursDealTempB, false);
 		this.presentHoursTempTB.setValue("");
 		this.distributionHoursTempTB.setValue("");
 		this.timeCompensationTempLB.clear();
-		this.dealOvernightLB.clear();
+		getEnableDisableButton(this.dealOvernightB, false);
 		this.overnightRegimeTempTB.setValue("");
 		this.officialOrganismTempTB.setValue("");
 		this.withoutSevereDisTempLB.clear();
@@ -1522,19 +1591,19 @@ public class ContractOtherData extends ResizeComposite {
 		this.minorAgentFormTB.setValue("");
 		this.minorAgentNIFFormTB.setValue("");
 		this.minorAgentQualityOfFormTB.setValue("");
-		this.ssReductionFormLB.clear();
+		getEnableDisableButton(this.ssReductionFormB, false);
 		this.employeeFormLB.clear();
 		this.workplaceFormTB.setValue("");
 		this.tutorFormTB.setValue("");
 		this.efectiveWorkHoursFormTB.setValue("");
 		this.activityHoursFormTB.setValue("");
 		this.trialPeriodFormTB.setValue("");
-		this.agreementTrialFormCB.setValue(false);
+		getEnableDisableButton(this.agreementTrialFormB, false);
 		this.salaryAmountFormTB.setValue("");
 		this.salaryPeriodFormTB.setValue("");
 		this.holidaysFormTB.setValue("");
-		this.degreeExistFormCB.setValue(false);
-		this.degreeExist2FormCB.setValue(false);
+		getEnableDisableButton(this.degreeExistFormB, false);
+		getEnableDisableButton(this.degreeExist2FormB, false);
 		
 		// ------------------------------------------------------- Practice Table
 		
@@ -1574,14 +1643,6 @@ public class ContractOtherData extends ResizeComposite {
 		
 		// ------------------------------------------------------- Indefinite Table
 		
-		this.partialTimeLB.addItem("-", "");
-		this.partialTimeLB.addItem("NO", "DISC_AGREEMENT_COLLECTIVE_NO");
-		this.partialTimeLB.addItem("SI", "DISC_AGREEMENT_COLLECTIVE_YES");
-		
-		this.complementaryHoursLB.addItem("-", "");
-		this.complementaryHoursLB.addItem("NO", "COMPLEMENTARY_HOURS_NO");
-		this.complementaryHoursLB.addItem("SI", "COMPLEMENTARY_HOURS_YES");
-		
 		this.withoutDisabilitySevereLB.addItem("-", "");
 		this.withoutDisabilitySevereLB.addItem("Hombres menores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_NO_SEVERE_MAN_LT_45");
 		this.withoutDisabilitySevereLB.addItem("Hombres mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_NO_SEVERE_MAN_GT_45");
@@ -1593,10 +1654,6 @@ public class ContractOtherData extends ResizeComposite {
 		this.disabilitySevereLB.addItem("Hombres mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_SEVERE_MAN_GT_45");
 		this.disabilitySevereLB.addItem("Mujeres menores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_SEVERE_WOMAN_LT_45");
 		this.disabilitySevereLB.addItem("Mujeres mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT2_DISABILITY_SEVERE_WOMAN_GT_45");
-		
-		this.fourthLawLB.addItem("-", "");
-		this.fourthLawLB.addItem("NO", "OPT5_BONUS_ART4_RDL3_2012_NO");
-		this.fourthLawLB.addItem("SI", "OPT5_BONUS_ART4_RDL3_2012_YES");
 		
 		this.unemploymentLB.addItem("-", "");
 		this.unemploymentLB.addItem("J" + String.valueOf("\u00F3") + "venes", "OPT5_UNEMPLOYED_BT_16_30_JUNIOR");
@@ -1610,26 +1667,10 @@ public class ContractOtherData extends ResizeComposite {
 		this.employeeLB.addItem("Menor de 30 a" + String.valueOf("\u00F1") + "os", "OPT6_LT_30_EMPLOYEE");
 		this.employeeLB.addItem("Menor de 35 a" + String.valueOf("\u00F1") + "os con discapacidad mayor o igual al 33%", "OPT6_LT_35_EMPLOYEE_AND_HANDICAP_GTE_33");
 		
-		this.contactHoursLB.addItem("-", "");
-		this.contactHoursLB.addItem("NO", "OPT15_ONSITE_HOURS_NO");
-		this.contactHoursLB.addItem("SI", "OPT15_ONSITE_HOURS_YES");
-		
 		this.remunerationFormLB.addItem("-", "");
 		this.remunerationFormLB.addItem("Comp. con periodo equiv. de descanso", "OPT15_SALARY_OPT1");
 		this.remunerationFormLB.addItem("Retrib. con salario no inferior a horas extras", "OPT15_SALARY_OPT2");
 		this.remunerationFormLB.addItem("Cualquiera de las anteriores", "OPT15_SALARY_OPT3");
-		
-		this.overnightAgreementLB.addItem("-", "");
-		this.overnightAgreementLB.addItem("NO", "OPT15_OVERNIGHT_NO");
-		this.overnightAgreementLB.addItem("SI", "OPT15_OVERNIGHT_YES");
-		
-		this.quoteReductionTCLB.addItem("-", "");
-		this.quoteReductionTCLB.addItem("NO", "OPT17_FULL_TIME_QUOTE_BONUS_NO");
-		this.quoteReductionTCLB.addItem("SI", "OPT17_FULL_TIME_QUOTE_BONUS_YES");
-		
-		this.quoteReductionFDLB.addItem("-", "");
-		this.quoteReductionFDLB.addItem("NO", "OPT17_DISCONT_TIME_QUOTE_BONUS_NO");
-		this.quoteReductionFDLB.addItem("SI", "OPT17_DISCONT_TIME_QUOTE_BONUS_YES");
 		
 		// ------------------------------------------------------- Temporal Table
 		
@@ -1647,18 +1688,10 @@ public class ContractOtherData extends ResizeComposite {
 		this.formationWillTempLB.addItem("Formaci" + String.valueOf("\u00F3") + "n acreditable oficialmente o promovida por los Servicios P" + String.valueOf("\u00FA") + "blicos de Empleo", "OPT10_FORMATION_TYPE_OPT1");
 		this.formationWillTempLB.addItem("Fromaci" + String.valueOf("\u00F3") + "n en idiomas o tecnolog" + String.valueOf("\u00ED") + "as de la informaci" + String.valueOf("\u00F3") + "n y la comunicaci" + String.valueOf("\u00F3") + "n de una duraci" + String.valueOf("\u00F3") + "n m" + String.valueOf("\u00ED") + "nima de 90 horas", "OPT10_FORMATION_TYPE_OPT2");
 		
-		this.hoursDealTempLB.addItem("-", "");
-		this.hoursDealTempLB.addItem("NO", "OPT12_ONSITE_HOURS_NO");
-		this.hoursDealTempLB.addItem("SI", "OPT12_ONSITE_HOURS_YES");
-		
 		this.timeCompensationTempLB.addItem("-", "");
 		this.timeCompensationTempLB.addItem("Per" + String.valueOf("\u00ED") + "odos de descanso", "OPT12_SALARY_OPT1");
 		this.timeCompensationTempLB.addItem("Retribuci" + String.valueOf("\u00F3") + "n con salario", "OPT12_SALARY_OPT2");
 		this.timeCompensationTempLB.addItem("Cualquiera de la anteriores", "OPT12_SALARY_OPT3");
-		
-		this.dealOvernightLB.addItem("-", "");
-		this.dealOvernightLB.addItem("NO", "OPT12_OVERNIGHT_NO");
-		this.dealOvernightLB.addItem("SI", "OPT12_OVERNIGHT_YES");
 		
 		this.withoutSevereDisTempLB.addItem("-", "");
 		this.withoutSevereDisTempLB.addItem("Hombres menores de 45 a" + String.valueOf("\u00F1") + "os", "OPT13_DISABILITY_MAN_LT_45");
@@ -1673,10 +1706,6 @@ public class ContractOtherData extends ResizeComposite {
 		this.severeDisTempLB.addItem("Mujeres mayores de 45 a" + String.valueOf("\u00F1") + "os", "OPT13_SEVERE_DISABILITY_WOMAN_GT_45");
 		
 		// ------------------------------------------------------- Formation Table
-		
-		this.ssReductionFormLB.addItem("-", "");
-		this.ssReductionFormLB.addItem("NO", "QUOTE_BONUS_NO");
-		this.ssReductionFormLB.addItem("SI", "QUOTE_BONUS_YES");
 		
 		this.employeeFormLB.addItem("-", "");
 		this.employeeFormLB.addItem("Mayor de 16 y menor de 30 a" + String.valueOf("\u00F1") + "os", "EMPLOYEE_OPT1");
@@ -1786,7 +1815,7 @@ public class ContractOtherData extends ResizeComposite {
 		minorAgentNIFTB.setValue(getContractOtherData("LEGAL_REPRESENTATIVE_NIF"));
 		minorAgentQualityOfTB.setValue(getContractOtherData("LEGAL_REPRESENTATIVE_CHARGE"));
 		doingFunctionsTB.setValue(getContractOtherData("FUNCTIONS"));
-		distanceCB.setValue(getContractOtherDataCB("EMPLOYEE_CONTRACT_DISTANCE"));
+		getEnableDisableButton(distanceB, getContractOtherDataCB("EMPLOYEE_CONTRACT_DISTANCE"));
 		distanceAddressTB.setValue(getContractOtherData("EMPLOYEE_CONTRACT_DIST_ADDR"));
 		discontinuousWorkTB.setValue(getContractOtherData("DISC_WORK_DESCRIPTION"));
 		intermittentCyclicalActivityTB.setValue(getContractOtherData("DISC_WORK_ACTIVITY"));
@@ -1795,13 +1824,13 @@ public class ContractOtherData extends ResizeComposite {
 		journeyHoursFDTB.setValue(getContractOtherData("DISC_WORK_ESTIM_JOURNAL_HOURS"));
 		journeyPeriodFDTB.setValue(getContractOtherData("DISC_WORK_ESTIM_JOURNAL_PERIOD"));
 		timeDistributionFDTB.setValue(getContractOtherData("DISC_WORK_ESTIM_SCHEDULE"));
-		setSelectedValueLB(partialTimeLB, getContractOtherData("DISC_AGREEMENT_COLLECTIVE"));
+		getEnableDisableButton(partialTimeB, AonStringUtils.containsIgnoreCase(getContractOtherData("DISC_AGREEMENT_COLLECTIVE"), "YES"));
 		journeyHoursTCTB.setValue(getContractOtherData("FULL_TIME_WEEK_HOURS"));
 		startJourneyTCTB.setValue(getContractOtherData("FULL_TIME_START_TIME"));
 		endJourneyTCTB.setValue(getContractOtherData("FULL_TIME_END_TIME"));
 		journeyHoursTPTB.setValue(getContractOtherData("PARTIALLY_TIME_HOURS"));
 		agreementJourneyHoursTB.setValue(getContractOtherData("DEFAULT_JOURNAL_HOURS"));
-		setSelectedValueLB(complementaryHoursLB, getContractOtherData("COMPLEMENTARY_HOURS"));
+		getEnableDisableButton(complementaryHoursB, AonStringUtils.containsIgnoreCase(getContractOtherData("COMPLEMENTARY_HOURS"), "YES"));
 		trialPeriodTB.setValue(getContractOtherData("TRIAL_DURATION"));
 		salaryAmountTB.setValue(getContractOtherData("SALARY_AMOUNT"));
 		salaryPeriodTB.setValue(getContractOtherData("SALARY_PERIOD"));
@@ -1812,21 +1841,21 @@ public class ContractOtherData extends ResizeComposite {
 		setSelectedValueLB(withoutDisabilitySevereLB, getContractOtherData("I_OPT2_DISABILITY_NO_SEVERE"));
 		setSelectedValueLB(disabilitySevereLB, getContractOtherData("I_OPT2_DISABILITY_SEVERE"));
 		subsidyTB.setValue(getContractOtherData("I_OPT2_REDUCTION"));
-		setSelectedValueLB(fourthLawLB, getContractOtherData("I_OPT5_BONUS_ART4_RDL3_2012"));
+		getEnableDisableButton(fourthLawB, AonStringUtils.containsIgnoreCase(getContractOtherData("I_OPT5_BONUS_ART4_RDL3_2012"), "YES"));
 		setSelectedValueLB(unemploymentLB, getContractOtherData("I_OPT5_UNEMPLOYED_BT_16_30"));
 		setSelectedValueLB(unemploymentOldLB, getContractOtherData("I_OPT5_UNEMPLOYED_GT_45"));
-		benefitsPerceptorCB.setValue(getContractOtherDataCB("I_OPT5_UNEMPL_3_MONTH_BENEFIT"));
-		firstEmployeeCB.setValue(getContractOtherDataCB("I_OPT5_FIRST_EMPLOYEE_AND_LT_30"));
+		getEnableDisableButton(benefitsPerceptorB, getContractOtherDataCB("I_OPT5_UNEMPL_3_MONTH_BENEFIT"));
+		getEnableDisableButton(firstEmployeeB, getContractOtherDataCB("I_OPT5_FIRST_EMPLOYEE_AND_LT_30"));
 		setSelectedValueLB(employeeLB, getContractOtherData("I_OPT6_AGE"));
 		agreementLineOneTB.setValue(getContractOtherData("I_OPT6_AGREEMENT_COLLECTIVE1"));
 		agreementLineTwoTB.setValue(getContractOtherData("I_OPT6_AGREEMENT_COLLECTIVE2"));
-		setSelectedValueLB(contactHoursLB, getContractOtherData("I_OPT15_ONSITE_HOURS"));
+		getEnableDisableButton(contactHoursB, AonStringUtils.containsIgnoreCase(getContractOtherData("I_OPT15_ONSITE_HOURS"), "YES"));
 		hoursTB.setValue(getContractOtherData("I_OPT15_ONSITE_WEEK_HOURS"));
 		setSelectedValueLB(remunerationFormLB, getContractOtherData("I_OPT15_SALARY"));
-		setSelectedValueLB(overnightAgreementLB, getContractOtherData("I_OPT15_OVERNIGHT"));
+		getEnableDisableButton(overnightAgreementB, AonStringUtils.containsIgnoreCase(getContractOtherData("I_OPT15_OVERNIGHT"), "YES"));
 		overnightRegimeTB.setValue(getContractOtherData("I_OPT15_OVERNIGHT_WEEK_DAYS"));
-		setSelectedValueLB(quoteReductionTCLB, getContractOtherData("I_OPT17_FULL_TIME_QUOTE_BONUS"));
-		setSelectedValueLB(quoteReductionFDLB, getContractOtherData("I_OPT17_DISCONT_TIME_QUOTE_BONUS"));
+		getEnableDisableButton(quoteReductionTCB, AonStringUtils.containsIgnoreCase(getContractOtherData("I_OPT17_FULL_TIME_QUOTE_BONUS"), "YES"));
+		getEnableDisableButton(quoteReductionFDB, AonStringUtils.containsIgnoreCase(getContractOtherData("I_OPT17_DISCONT_TIME_QUOTE_BONUS"), "YES"));
 		sepeOfficeCOTB.setValue(getContractOtherData("I_OPT17_SRC_CONTRACT_SEPE_MUNIC"));
 	}
 	
@@ -1838,7 +1867,7 @@ public class ContractOtherData extends ResizeComposite {
 		minorAgentNIFTempTB.setValue(getContractOtherData("T_LEGAL_REPRESENTATIVE_NIF"));
 		minorAgentQualityOfTempTB.setValue(getContractOtherData("T_LEGAL_REPRESENTATIVE_CHARGE"));
 		doingFunctionsTempTB.setValue(getContractOtherData("T_FUNCTIONS"));
-		distanceTempCB.setValue(getContractOtherDataCB("T_EMPLOYEE_CONTRACT_DISTANCE"));
+		getEnableDisableButton(distanceTempB, getContractOtherDataCB("T_EMPLOYEE_CONTRACT_DISTANCE"));
 		distanceAddressTempTB.setValue(getContractOtherData("T_EMPLOYEE_CONTRACT_DIST_ADDR"));
 		journeyHoursTCTempTB.setValue(getContractOtherData("T_FULL_TIME_WEEK_HOURS"));
 		startJourneyTCTempTB.setValue(getContractOtherData("T_FULL_TIME_START_TIME"));
@@ -1847,7 +1876,7 @@ public class ContractOtherData extends ResizeComposite {
 		timeDistributionTempTB.setValue(getContractOtherData("T_PARTIALLY_TIME_JOB_DISTRIB"));
 		endContractTempTB.setValue(getContractOtherData("T_END_DATE_TEXT"));
 		trialPeriodTempTB.setValue(getContractOtherData("T_TRIAL_DURATION"));
-		permitedHighDurationTempCB.setValue(getContractOtherDataCB("T_GREATER_DURATION_AGREEMENT_COL"));
+		getEnableDisableButton(permitedHighDurationTempB, getContractOtherDataCB("T_GREATER_DURATION_AGREEMENT_COL"));
 		salaryAmountTempTB.setValue(getContractOtherData("T_SALARY_AMOUNT"));
 		salaryPeriodTempTB.setValue(getContractOtherData("T_SALARY_PERIOD"));
 		salaryConceptTempTB.setValue(getContractOtherData("T_SALARY_CONCEPT"));
@@ -1863,11 +1892,11 @@ public class ContractOtherData extends ResizeComposite {
 		setSelectedValueLB(formationWillTempLB, getContractOtherData("T_OPT10_FORMATION_TYPE_OPT"));
 		officeSPEmployeeTempTB.setValue(getContractOtherData("T_OPT10_FORMATION_TYPE_OPT1_TEXT"));
 		lenguageFormationTempTB.setValue(getContractOtherData("T_OPT10_FORMATION_TYPE_OPT2_TEXT"));
-		setSelectedValueLB(hoursDealTempLB, getContractOtherData("T_OPT12_ONSITE_HOURS"));
+		getEnableDisableButton(hoursDealTempB, AonStringUtils.containsIgnoreCase(getContractOtherData("T_OPT12_ONSITE_HOURS"), "YES"));
 		presentHoursTempTB.setValue(getContractOtherData("T_OPT12_ONSITE_WEEK_HOURS"));
 		distributionHoursTempTB.setValue(getContractOtherData("T_OPT12_ONSITE_HOURS_DISTRIB"));
 		setSelectedValueLB(timeCompensationTempLB, getContractOtherData("T_OPT12_SALARY_OPT"));
-		setSelectedValueLB(dealOvernightLB, getContractOtherData("T_OPT12_OVERNIGHT"));
+		getEnableDisableButton(dealOvernightB, AonStringUtils.containsIgnoreCase(getContractOtherData("T_OPT12_OVERNIGHT"), "YES"));
 		overnightRegimeTempTB.setValue(getContractOtherData("T_OPT12_OVERNIGHT_WEEK_DAYS"));
 		officialOrganismTempTB.setValue(getContractOtherData("T_OPT13_DISABILITY_ISSUED_BY"));
 		setSelectedValueLB(withoutSevereDisTempLB, getContractOtherData("T_OPT13_DISABILITY"));
@@ -1887,19 +1916,19 @@ public class ContractOtherData extends ResizeComposite {
 		minorAgentFormTB.setValue(getContractOtherData("L_LEGAL_REPRESENTATIVE_NAME"));
 		minorAgentNIFFormTB.setValue(getContractOtherData("L_LEGAL_REPRESENTATIVE_NIF"));
 		minorAgentQualityOfFormTB.setValue(getContractOtherData("L_LEGAL_REPRESENTATIVE_CHARGE"));
-		setSelectedValueLB(ssReductionFormLB, getContractOtherData("L_QUOTE_BONUS"));
+		getEnableDisableButton(ssReductionFormB, AonStringUtils.containsIgnoreCase(getContractOtherData("L_QUOTE_BONUS"), "YES"));
 		setSelectedValueLB(employeeFormLB, getContractOtherData("L_EMPLOYEE_OPT"));
 		workplaceFormTB.setValue(getContractOtherData("L_CONTRACT_WORKPLACE_ADDRESS"));
 		tutorFormTB.setValue(getContractOtherData("L_FORMATION_TEACHER"));
 		efectiveWorkHoursFormTB.setValue(getContractOtherData("L_HORARIO_LABORAL"));
 		activityHoursFormTB.setValue(getContractOtherData("L_HORARIO_LECTIVO"));
 		trialPeriodFormTB.setValue(getContractOtherData("L_TRIAL_DURATION"));
-		agreementTrialFormCB.setValue(getContractOtherDataCB("L_TRIAL_DURATION_INCREASE"));
+		getEnableDisableButton(agreementTrialFormB, getContractOtherDataCB("L_TRIAL_DURATION_INCREASE"));
 		salaryAmountFormTB.setValue(getContractOtherData("L_SALARY_AMOUNT"));
 		salaryPeriodFormTB.setValue(getContractOtherData("L_SALARY_PERIOD"));
 		holidaysFormTB.setValue(getContractOtherData("L_HOLIDAYS"));
-		degreeExistFormCB.setValue(getContractOtherDataCB("L_ANNEX_I_CHECK"));
-		degreeExist2FormCB.setValue(getContractOtherDataCB("L_ANNEX_II_CHECK"));
+		getEnableDisableButton(degreeExistFormB, getContractOtherDataCB("L_ANNEX_I_CHECK"));
+		getEnableDisableButton(degreeExist2FormB, getContractOtherDataCB("L_ANNEX_II_CHECK"));
 	}
 	
 	private void fillContractOtherDataPractice() {
@@ -1951,5 +1980,18 @@ public class ContractOtherData extends ResizeComposite {
 		return contractEmployeeInfo.getContractOtherData();
 	}
 	
+	private void getEnableDisableButton(Button button, boolean disabled) {
+		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
+		button.removeStyleName(AON.AON_NO_MARGIN);
+		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		
+		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		button.setStyleName(AON.AON_NO_MARGIN, true);
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+	}
+	
+	private boolean isActiveToggleButton(Button button) {
+		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
+	}
 
 }

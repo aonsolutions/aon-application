@@ -106,7 +106,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>A distancia</g:Label>
 							</td>
 							<td>
-							    <g:CheckBox ui:field="distanceCB"></g:CheckBox>
+							    <g:Button ui:field="distanceB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -178,7 +178,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Se acoge a modalidad tiempo parcial</g:Label>
 							</td>
 							<td>
-							    <g:ListBox ui:field="partialTimeLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							    <g:Button ui:field="partialTimeB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -226,7 +226,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Horas complementarias</g:Label>
 							</td>
 							<td>
-							    <g:ListBox ui:field="complementaryHoursLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							    <g:Button ui:field="complementaryHoursB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -314,7 +314,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>4 de la Ley 3/2012, de 6 de julio ( BOE de 7 de julio )</g:Label>
 							</td>
 							<td>
-							 	<g:ListBox ui:field="fourthLawLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							 	<g:Button ui:field="fourthLawB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -338,7 +338,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Percerptor de prestaciones durante al menos 3 meses</g:Label>
 							</td>
 							<td>
-							    <g:CheckBox ui:field="benefitsPerceptorCB"></g:CheckBox>
+							    <g:Button ui:field="benefitsPerceptorB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -346,7 +346,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Primer trabajador y menor de 30 años</g:Label>
 							</td>
 							<td>
-							    <g:CheckBox ui:field="firstEmployeeCB"></g:CheckBox>
+							    <g:Button ui:field="firstEmployeeB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -378,7 +378,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Acuerdo de horas presenciales</g:Label>
 							</td>
 							<td>
-								<g:ListBox ui:field="contactHoursLB" styleName='{style.maxWidthLB}'></g:ListBox>
+								<g:Button ui:field="contactHoursB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -402,7 +402,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Acuerdo de pernocta</g:Label>
 							</td>
 							<td>
-								<g:ListBox ui:field="overnightAgreementLB" styleName='{style.maxWidthLB}'></g:ListBox>
+								<g:Button ui:field="overnightAgreementB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -418,7 +418,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Reducción de cuotas (T. Completo)</g:Label>
 							</td>
 							<td>
-								<g:ListBox ui:field="quoteReductionTCLB" styleName='{style.maxWidthLB}'></g:ListBox>
+								<g:Button ui:field="quoteReductionTCB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -426,7 +426,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Reducción de cuotas (Fijo/Discontinuo)</g:Label>
 							</td>
 							<td>
-								<g:ListBox ui:field="quoteReductionFDLB" styleName='{style.maxWidthLB}'></g:ListBox>
+								<g:Button ui:field="quoteReductionFDB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -512,7 +512,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>A distancia</g:Label>
 							</td>
 							<td>
-							    <g:CheckBox ui:field="distanceTempCB"></g:CheckBox>
+							    <g:Button ui:field="distanceTempB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -584,7 +584,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Duración mayor permitida por conv. coletivo</g:Label>
 							</td>
 							<td>
-							    <g:CheckBox ui:field="permitedHighDurationTempCB"></g:CheckBox>
+							    <g:Button ui:field="permitedHighDurationTempB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -712,7 +712,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Acuerdo de horas de presencia del empleador</g:Label>
 							</td>
 							<td>
-							 	<g:ListBox ui:field="hoursDealTempLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							 	<g:Button ui:field="hoursDealTempB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -744,7 +744,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Acuerdo para pernoctar en el servicio del empleador</g:Label>
 							</td>
 							<td>
-								<g:ListBox ui:field="dealOvernightLB" styleName='{style.maxWidthLB}'></g:ListBox>
+								<g:Button ui:field="dealOvernightB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -894,7 +894,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Reducción de cuotas S.S.</g:Label>
 							</td>
 							<td>
-							    <g:ListBox ui:field="ssReductionFormLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							    <g:Button ui:field="ssReductionFormB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -950,7 +950,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Período de prueba de mayor duración por convenio</g:Label>
 							</td>
 							<td>
-							    <g:CheckBox ui:field="agreementTrialFormCB"></g:CheckBox>
+							    <g:Button ui:field="agreementTrialFormB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -982,7 +982,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Existe título de F.P., cert. de prof. y centro disponible (Anexo I)</g:Label>
 							</td>
 							<td>
-							    <g:CheckBox ui:field="degreeExistFormCB"></g:CheckBox>
+							    <g:Button ui:field="degreeExistFormB"></g:Button>
 							</td>
 						</tr>
 						<tr>
@@ -990,7 +990,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Existe título de F.P., cert. de prof. y centro disponible (Anexo II)</g:Label>
 							</td>
 							<td>
-							    <g:CheckBox ui:field="degreeExist2FormCB"></g:CheckBox>
+							    <g:Button ui:field="degreeExist2FormB"></g:Button>
 							</td>
 						</tr>
 					</tbody>
