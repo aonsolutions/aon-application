@@ -355,4 +355,31 @@ public class Agreements extends ResizeComposite implements
 				;
 	}
 
+	@Override
+	public void onImportButtonClick(ClickEvent event) {
+		ServiAgreementDialog serviAgreementDialog = new ServiAgreementDialog() {
+
+			@Override
+			protected void onAccept(String serviAgreementCode) {
+				agreementsTree.getEnterpriseService().getServiAgreement(serviAgreementCode, 
+						new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						getAgreements();
+					}
+				});
+			}
+			
+		};
+		
+		serviAgreementDialog.center();
+		serviAgreementDialog.show();
+	}
+
 }
