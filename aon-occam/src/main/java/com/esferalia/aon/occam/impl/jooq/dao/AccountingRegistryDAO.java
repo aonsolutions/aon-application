@@ -89,6 +89,7 @@ public class AccountingRegistryDAO {
 				,WTF_FIELD,SUR_FIELD,VAP_FIELD,STA_FIELD
 				,REGISTRY.ID,REGISTRY.DOCUMENT,REGISTRY.DOCUMENT_TYPE
 				,REGISTRY.DOCUMENT_COUNTRY,REGISTRY.NAME,REGISTRY.ALIAS
+				,REGISTRY.NATIONALITY
 				,ACCOUNT.ID,ACCOUNT.CODE,ACCOUNT.DESCRIPTION
 				)
 			.from(
@@ -153,6 +154,7 @@ public class AccountingRegistryDAO {
 					.setAccountCode(rec.getValue(ACCOUNT.CODE))
 					.setAccountDescription(rec.getValue(ACCOUNT.DESCRIPTION))
 					.setAlias(rec.getValue(REGISTRY.ALIAS))
+					.setNationality(Country.safeValueOf(rec.getValue(REGISTRY.NATIONALITY)))
 					.setDocument(rec.getValue(REGISTRY.DOCUMENT))
 					.setDocumentType(DocumentType.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_TYPE)))
 					.setDocumentCountry(Country.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_COUNTRY)))

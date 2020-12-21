@@ -8,8 +8,6 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.product.Product;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -135,40 +133,7 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 				new AsyncCallbackWrapper<LinkedList<Creditor>>(callback));
 	}
 
-	// -------------------------------------------------------------- REGISTRY
-
-	@Override
-	public void getAccountingRegistry(String domainName, int domain, String user, AccountingRegistry ar,
-			AsyncCallback<AccountingRegistry> callback) {
-		AON.start();
-		serviceAsync.getAccountingRegistry(domainName, domain, user, ar,   
-				new AsyncCallbackWrapper<AccountingRegistry>(callback));
-	}
-	
-	@Override
-	public void getAccountingRegistries(String domainName, int domain, String user, Integer id,
-			AsyncCallback<LinkedList<AccountingRegistry>> callback) {
-		AON.start();
-		serviceAsync.getAccountingRegistries(domainName, domain, user, id,   
-				new AsyncCallbackWrapper<LinkedList<AccountingRegistry>>(callback));
-	}
-	@Override
-	public void getAccountingRegistries(String domainName, int domain, String user, String query,
-			AsyncCallback<LinkedList<AccountingRegistry>> callback) {
-		AON.start();
-		serviceAsync.getAccountingRegistries(domainName, domain, user, query,   
-				new AsyncCallbackWrapper<LinkedList<AccountingRegistry>>(callback));
-	}
-
-	@Override
-	public void getAccountingRegistries(String domainName, int domain, String user, AccountingRegistryParams params,
-			AsyncCallback<LinkedList<AccountingRegistry>> callback) {
-		AON.start();
-		serviceAsync.getAccountingRegistries(domainName, domain, user, params,   
-				new AsyncCallbackWrapper<LinkedList<AccountingRegistry>>(callback));
-		
-	}
-	
+	// -------------------------------------------------------------- 
 	@Override
 	public void getInvoiceRegistries(String domainName, int domain, String user, String query,
 			AsyncCallback<LinkedList<InvoiceRegistry>> callback) {
@@ -184,24 +149,5 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.getInvoiceProducts(domainName, domain, user, query,   
 				new AsyncCallbackWrapper<LinkedList<Product>>(callback));
 	}
-
-	@Override
-	public void insert(String domainName, int domain, String user, AccountingRegistry reg,
-			AsyncCallback<AccountingRegistry> callback) {
-		AON.start();
-		serviceAsync.insert(domainName, domain, user, reg,   
-				new AsyncCallbackWrapper<AccountingRegistry>(callback));
-		
-	}
-	
-	@Override
-	public void update(String domainName, int domain, String user, AccountingRegistry reg,
-			AsyncCallback<AccountingRegistry> callback) {
-		AON.start();
-		serviceAsync.update(domainName, domain, user, reg,   
-				new AsyncCallbackWrapper<AccountingRegistry>(callback));
-		
-	}
-
 
 }

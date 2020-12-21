@@ -3,9 +3,9 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.AccountingRegistryService;
+import com.esferalia.aon.gwt.common.client.AccountingRegistryServiceAsync;
+import com.esferalia.aon.gwt.common.client.AccountingRegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.common.client.widget.StreetTypeListBox;
@@ -79,9 +79,10 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 		void setFocus(boolean b);
 	}
 
-	static CommonServiceAsync commonService;
-	final AccRegTypeListBox type = new AccRegTypeListBox();
-	FlowPanel documentWarningContainer = new FlowPanel();
+	private static AccountingRegistryServiceAsync SERVICE;
+	private final AccRegTypeListBox type = new AccRegTypeListBox();
+	private FlowPanel documentWarningContainer = new FlowPanel();
+	
 	public AonAccountingRegistryPanel(final String domainName,final int domain,final String user
 			, Integer id 
 			, AonConfiguration config
@@ -95,13 +96,13 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 			, AccountingRegistry initial
 			, final AonAccountingRegistryPanelCallback callback) {
 		
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
+		AccountingRegistryServiceAsync serviceRaw = GWT.create(AccountingRegistryService.class);
+		SERVICE = new AccountingRegistryServiceAsyncDecorator(serviceRaw);
 		
 		setWidth("700px");
 		setHeight("650px");
 		if (id != null) {
-			commonService.getAccountingRegistries(domainName, domain, user, id
+			SERVICE.getAccountingRegistries(domainName, domain, user, id
 					,new AsyncCallback<LinkedList<AccountingRegistry>>() {
 				
 				@Override
@@ -766,7 +767,7 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 					okButton.setEnabled(true);
 					name.setFocus(true);
 				} else {
-					commonService.insert(domainName, domain, user, reg, new AsyncCallback<AccountingRegistry>() {
+					SERVICE.insert(domainName, domain, user, reg, new AsyncCallback<AccountingRegistry>() {
 
 						@Override
 						public void onSuccess(AccountingRegistry result) {
@@ -801,7 +802,7 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 					updateButton.setEnabled(true);
 					name.setFocus(true);
 				} else {
-					commonService.update(domainName, domain, user, reg, new AsyncCallback<AccountingRegistry>() {
+					SERVICE.update(domainName, domain, user, reg, new AsyncCallback<AccountingRegistry>() {
 
 						@Override
 						public void onSuccess(AccountingRegistry result) {
@@ -869,7 +870,7 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 		 && fulldocument.getType() != null 
 		 && fulldocument.getCountry() != null 
 		 && AonStringUtils.isNotBlank( fulldocument.getDocument())) {
-			commonService.getAccountingRegistries(domainName, domain, user,
+			SERVICE.getAccountingRegistries(domainName, domain, user,
 					new AccountingRegistryParams()
 						.setType(accountingRegistryType)
 						.setId(id)
@@ -933,7 +934,7 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 								.setDocumentType(fulldocument.getType())
 								.setDocument(fulldocument.getDocument())
 								.setType(accountingRegistryType);
-						commonService.getAccountingRegistry(domainName, domain, user, 
+						SERVICE.getAccountingRegistry(domainName, domain, user, 
 								ar,  new AsyncCallback<AccountingRegistry>() {
 									
 							@Override

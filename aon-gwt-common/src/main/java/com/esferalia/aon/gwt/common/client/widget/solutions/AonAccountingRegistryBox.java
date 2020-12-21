@@ -3,9 +3,9 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.AccountingRegistryService;
+import com.esferalia.aon.gwt.common.client.AccountingRegistryServiceAsync;
+import com.esferalia.aon.gwt.common.client.AccountingRegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryPanel.AonAccountingRegistryPanelCallback;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -42,8 +42,8 @@ import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
@@ -62,7 +62,7 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 	private static final int MIN_CHARACTERS = 3;
 	private static final int MAX_CHARACTERS = 9;
 
-	private CommonServiceAsync commonService;
+	private AccountingRegistryServiceAsync SERVICE;
 
 	private Integer id;
 	private String description;
@@ -140,8 +140,8 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 	}
 	
 	public AonAccountingRegistryBox(final String domainName, final int domain, final String user,final AonConfiguration config, boolean showDescription) {
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
+		AccountingRegistryServiceAsync commonServiceRaw = GWT.create(AccountingRegistryService.class);
+		SERVICE = new AccountingRegistryServiceAsyncDecorator(commonServiceRaw);
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {
@@ -149,7 +149,7 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 				if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					commonService.getAccountingRegistries(domainName,domain,user,request.getQuery()
+					SERVICE.getAccountingRegistries(domainName,domain,user,request.getQuery()
 							,new AsyncCallback<LinkedList<AccountingRegistry>>() {
 		
 								public void onFailure(Throwable caught) {
