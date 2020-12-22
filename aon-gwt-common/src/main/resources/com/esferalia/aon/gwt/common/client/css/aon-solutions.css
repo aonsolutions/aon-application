@@ -185,6 +185,8 @@
 .aon_icon_down { background-image: iconDown;}
 @url iconLeft aonIconLeft;
 .aon_icon_left { background-image: iconLeft;}
+@url iconDownload aonIconDownload;
+.aon_icon_download { background-image: iconDownload;}
 
 /* BASICS */
 .aon_selector {

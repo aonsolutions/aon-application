@@ -65,4 +65,17 @@ public class ModuleOptions<T extends ModuleOptions<T>> implements Serializable {
 		this.parentWidget = parentWidget;
 		return (T) this;
 	}
+	
+	public boolean isGuest() {
+		return getConfiguration() != null
+			&& getConfiguration().getUser() != null		
+			&& getConfiguration().getUser().hasGuestRole() 
+			&& !getConfiguration().getUser().hasAdminRole();
+	}
+	
+	public boolean hasConfidentialityRole() {
+		return getConfiguration() != null
+			&& getConfiguration().getUser() != null 
+			&& getConfiguration().getUser().hasConfidentialityRole();
+	}
 }

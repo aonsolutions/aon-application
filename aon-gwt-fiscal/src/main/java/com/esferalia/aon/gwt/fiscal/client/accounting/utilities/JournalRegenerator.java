@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanel;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -151,7 +152,11 @@ class JournalRegenerator extends OptionBase {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					JournalPanel journalPanel = new JournalPanel(domainName, user, domain.getId()
+					JournalPanel journalPanel = new JournalPanel(
+						new AccountingReportModuleOptions()
+							.setDomainName(domainName)
+							.setDomain(domain.getId())
+							.setUser(user)
 						,new AccountEntryParams()
 							.setDomain(item.getDomain())
 							.setPeriod(item.getAccountPeriod().getId()));

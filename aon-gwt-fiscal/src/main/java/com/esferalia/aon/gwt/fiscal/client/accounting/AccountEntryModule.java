@@ -1445,8 +1445,8 @@ public class AccountEntryModule extends MainEntryPoint {
 		
 		if (getOptions().isJournalTabVisible()) {
 			SimpleLayoutPanel journalPanelContainer = new SimpleLayoutPanel();
-			journalPanel = new JournalPanelReport(getOptions().getDomainName(), getOptions().getUser()
-					, getOptions().getDomain(), JOURNAL_PANEL_TAB_OFFSET, getOptions().getConfiguration());
+			journalPanel = new JournalPanelReport( getOptions().getDomainName(), getOptions().getUser()
+					, getOptions().getDomain(), getOptions().getConfiguration());
 			journalPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
 				@Override
 				public void onSelection(AccountEntrySelectionEvent event) {

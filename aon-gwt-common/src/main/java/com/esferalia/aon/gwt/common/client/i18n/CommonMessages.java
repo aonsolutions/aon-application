@@ -505,6 +505,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Imprimir")
 	String print();
 
+	@DefaultMessage("Imprimir en formato PDF")
+	String printPDF();
+
+	@DefaultMessage("Imprimir en formato Excel")
+	String printExcel();
+
 	@DefaultMessage("Finalizado")
 	String finished();
 

@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryPrinter;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -49,9 +50,6 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 
 	private static final String ACCOUNT_ENTRY_STREAM_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/AccountEntryFlatStreamServlet");
 	
-	private String domainName;
-	private String user;
-	private int domainId;
 	private final int limit = 101;
 	private Integer oldId = -1;
 	private final MutableInt offset = new MutableInt(0);
@@ -61,18 +59,12 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 	private FlowPanel container;
 	private int lastScrollPos = 0;
 	
-	public JournalPanel(String domainName,String user,int domainId, AccountEntryParams params) {
+	public JournalPanel(AccountingReportModuleOptions options, AccountEntryParams params) {
 		
-		this.domainName = domainName;
-		this.user = user;
-		this.domainId = domainId;
+		setStyleName(AON.CSS.aonTextCenter());
+		addStyleName(AON.CSS.aonScrollArea());
+		addStyleName(AON.CSS.aonMarginBottom());
 		
-		addStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonMarginBottom());
-		
-		setStyleName(AON.AON_CSS.aonTextCenter());
-		addStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonMarginBottom());
 		
 		container = new FlowPanel();
 		setWidget(container);
@@ -91,12 +83,12 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 					int maxScrollTop = getWidget().getOffsetHeight() - getOffsetHeight();
 					if (lastScrollPos >= maxScrollTop) {
 						disableSearch();
-						search(offset.getValue(),params);
+						search(options,offset.getValue(),params);
 					}
 				}
 			}
 		});
-		onSearch(params);
+		onSearch(options, params);
 	}
 
 	public boolean isSearchEnabled() {
@@ -118,9 +110,9 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 		moreData.setValue(0);
 	}
 	
-	private void onSearch(AccountEntryParams params) {
+	private void onSearch(AccountingReportModuleOptions options, AccountEntryParams params) {
 		enableMoreData();
-		search(params);
+		search(options, params);
 	}
 
 	@Override
@@ -128,14 +120,14 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 		return super.addHandler(handler, AccountEntrySelectionEvent.getType());
 	}
 
-	private void search(AccountEntryParams params) {
+	private void search(AccountingReportModuleOptions options, AccountEntryParams params) {
 		container.clear();
 		offset.setValue(0);
 		oldId = -1;
-		search(offset.getValue(),params);
+		search(options, offset.getValue(),params);
 	}
 	
-	private void search(final int ofs,AccountEntryParams params) {
+	private void search(AccountingReportModuleOptions options, final int ofs,AccountEntryParams params) {
 		if (!isMoreData()) return;
 		
 		final AonToast toast = new AonToast();
@@ -203,7 +195,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 						// Si el primer apunte tiene más de 100 líneas (más líneas que "limit"), se 
 						// fuerza una nueva búsqueda para mostrar algo puesto que no sale nada.
 						if (container.getWidgetCount() == 0 && entry != null) {
-							search(offset.getValue(),params);						
+							search(options, offset.getValue(),params);						
 						}
 						
 					} catch (IndexOutOfBoundsException e) {
@@ -308,9 +300,9 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 			
 		});
 		StringBuffer requestData = new StringBuffer();
-		requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + this.domainName  );
-		requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + this.domainId );
-		requestData.append("&"+IRequestParamsNames.USER					+"=" + this.user );
+		requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + options.getDomainName()  );
+		requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + options.getDomain() );
+		requestData.append("&"+IRequestParamsNames.USER					+"=" + options.getUser() );
 		requestData.append("&"+IRequestParamsNames.ACCOUNT_ENTRY_PARAMS +"=" + JsonParams.convert( params ));
 		requestData.append("&"+IRequestParamsNames.OFFSET 				+"=" + ofs );
 		requestData.append("&"+IRequestParamsNames.LIMIT				+"=" + limit );
