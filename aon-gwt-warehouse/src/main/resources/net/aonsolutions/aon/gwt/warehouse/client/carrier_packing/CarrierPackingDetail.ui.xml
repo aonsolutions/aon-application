@@ -15,7 +15,7 @@
 		}
 	</ui:style>
 	<g:DockLayoutPanel ui:field="contentDockLayoutPanel">
-		<g:north size="120">
+		<g:north size="150">
 			<g:HTMLPanel ui:field="entryHeader" styleName="aon-margin-top10 aon-margin-left10 aon-margin-right10" >
 				<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
 					<tr>
