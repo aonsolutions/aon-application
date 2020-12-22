@@ -179,8 +179,8 @@ public class MainDigitalCertificates extends MainEntryPoint{
 			};
 
 			enterpriseStatus.visit(sistemaREDResults);
-			EnterpriseStatus.ifSistemaREDError(enterpriseStatus, () -> {
-				MainDigitalCertificates.this.setSistemaREDVisible(false);
+			EnterpriseStatus.ifSistemaREDEnabled(enterpriseStatus, () -> {
+				MainDigitalCertificates.this.setSistemaREDVisible(true);
 			}, () -> {
 				MainDigitalCertificates.this.setSistemaREDVisible(false);
 			});
@@ -428,9 +428,10 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	    					insertRows();
 	    					fillCertificatesRows(mainDigitalCertificatesObject.getDigitalCertificateList());
 	    					
-	    					mainDigitalCertificatesObject.getSecondaryUsers(t -> {
-	    						insertSecondaryUsersRows();
-	    					}, a -> {});
+	    					this.showSecondaryUsers.setVisible(true);
+							this.secondayUsersPanel.setVisible(false);
+							
+							checkStatus(this.mainDigitalCertificatesObject);
 	    				}, f -> {});
 			});
 			
@@ -514,9 +515,10 @@ public class MainDigitalCertificates extends MainEntryPoint{
         					insertRows();
         					fillCertificatesRows(s);
         					
-        					mainDigitalCertificatesObject.getSecondaryUsers(t -> {
-        						insertSecondaryUsersRows();
-        					}, a -> {});
+        					this.showSecondaryUsers.setVisible(true);
+    						this.secondayUsersPanel.setVisible(false);
+    						
+    						checkStatus(this.mainDigitalCertificatesObject);
         				}, f -> {});
             }
 	    });
