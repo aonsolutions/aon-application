@@ -11,32 +11,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
-//import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.Toolkit;
-
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaREDMov;
 import solutions.aon.seg.social.exceptions.SegSocialException;
@@ -51,7 +43,7 @@ public class ComunicaServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("AON EXAMPLE SERVLET - GET METHOD");
-		JSONObject json;
+
 		OutputStream os = resp.getOutputStream();
 		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		byte content [] = gjson.toJson(null).getBytes();
@@ -68,7 +60,7 @@ public class ComunicaServlet extends HttpServlet{
 			
 			resp.setStatus(HttpServletResponse.SC_OK);
 			
-			json = requestParamsToJSON(req);
+			JSONObject json = Utils.getParamsJSON(req);
 			content = this.routerSegSocial(pathInfo[1], domain, token,  json);
 			
 		} catch (SegSocialException e) {
@@ -177,10 +169,10 @@ public class ComunicaServlet extends HttpServlet{
             String regimen = ccc.getCccRegimeCode();
             try{
                 employees.addAll(SistemaRED.getTotalEmployees(new ByteArrayInputStream(cert), certificatePassword, certificateType, regimen, cti));
-            }catch(InvalidCertificateException e) {
+            } catch(InvalidCertificateException e) {
                 e.printStackTrace();
                 errors.add("invalidCertificate");
-            }catch(Exception e) {
+            } catch(Exception e) {
                 e.printStackTrace();
             }
         });	
@@ -287,8 +279,8 @@ public class ComunicaServlet extends HttpServlet{
 		map.put("ocupacion_edit", false);
 		
 		if(json.isNull("fecha")) {
-			throw new Exception("Cuenta de cotizaciï¿½nuerido");
-		};
+			throw new Exception("fecha requerida");
+		}
 		String regimen = json.optString("regimen");
 		String ctaCti = json.optString("ctaCti");
 		String nss = json.optString("nss");
@@ -297,7 +289,7 @@ public class ComunicaServlet extends HttpServlet{
 		
 		String ocup = json.optString("ocupacion");
 		if(!ocup.isEmpty() && !json.optString("ocupacion_edit").isEmpty() && json.getBoolean("ocupacion_edit")) {
-            try{
+            try {
             	map.put("ocupacion_edit", true);
             	SistemaRED.cambioOcupacion(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, ocup, fecha);
             } catch(Exception e) {
@@ -322,40 +314,22 @@ public class ComunicaServlet extends HttpServlet{
 	}
 	
 	private void validateSendMov(JSONObject json) throws Exception {
-		if(json.isNull("ctaCti")) {
+		if(json.isNull("ctaCti")) 
 			throw new Exception("Cuenta de cotización requerida");
-		};
-		if(json.isNull("nss")) {
+		else if(json.isNull("nss")) 
 			throw new Exception("Número de afiliación requerido");
-		};
-		if(json.isNull("ipf")) {
+	    else if(json.isNull("ipf")) 
 			throw new Exception("DNI/NIE requerido");
-		};
-		if(json.isNull("fecha")) {
+		else if(json.isNull("fecha")) 
 			throw new Exception("Fecha requerida");
-		};
-		if(json.isNull("grup_ctz")) {
+		else if(json.isNull("grup_ctz")) 
 			throw new Exception("Grupo de cotización requerido");
-		};
-		if(json.isNull("type_cto")) {
+		else if(json.isNull("type_cto")) 
 			throw new Exception("Tipo de contrato requerido");
-		};
-		if( "501".equals(json.getString("type_cto")) || "502".equals(json.getString("type_cto")) ) {
+		else if( "501".equals(json.getString("type_cto")) || "502".equals(json.getString("type_cto")) ) 
 			if(json.optString("coefparcial") == null || "".equals(json.optString("coefparcial")) ) {
 				throw new Exception("Coeficiente parcial requerido");
 			}
-		};
 	}
 	
-	private JSONObject requestParamsToJSON(ServletRequest req) {
-	    JSONObject jsonObj = new JSONObject();
-	    @SuppressWarnings("unchecked")
-		Map<String,String[]> params = req.getParameterMap();
-	    for (Map.Entry<String,String[]> entry : params.entrySet()) {
-	      String v[] = entry.getValue();
-	      Object o = (v.length == 1) ? v[0] : v;
-	      jsonObj.put(entry.getKey(), o);
-	    }
-	    return jsonObj;
-	}
 }

@@ -214,61 +214,60 @@ export const getEmployee = (data) => get(`${API_URL}/comunica/get-employee`, dat
 export const getAllTipoCtz = () => new Promise((resolve) => {
     const json =
         [
-            { 
-                id: 0, 
-                name: "Principal", 
-                value: 0, 
-                regimen: "0111" 
+            {
+                id: 0,
+                name: "Principal",
+                value: 0,
+                regimen: "0111"
             },
-            { 
-                id: 1, 
-                name: "F y A", 
+            {
+                id: 1,
+                name: "F y A",
                 value: 1,
-                regimen: "0111" 
+                regimen: "0111"
             },
-            { 
-                id: 2, 
-                name: "Aprendizaje", 
+            {
+                id: 2,
+                name: "Aprendizaje",
                 value: 2,
-                regimen: "0111" 
+                regimen: "0111"
             },
-            { 
-                id: 3, 
+            {
+                id: 3,
                 name: "Asimilados",
                 value: 3,
-                regimen: "0111" 
+                regimen: "0111"
             },
-            { 
-                id: 4, 
-                name: "Becarios", 
+            {
+                id: 4,
+                name: "Becarios",
                 value: 4,
-                regimen: "0111" 
+                regimen: "0111"
             },
-            { 
-                id: 5, 
-                name: "Emp. hogar", 
+            {
+                id: 5,
+                name: "Emp. hogar",
                 value: 5,
-                regimen: "0138" 
+                regimen: "0138"
             },
-            { 
-                id: 6, 
-                name: "Agrarios", 
+            {
+                id: 6,
+                name: "Agrarios",
                 value: 6,
-                regimen: "0163" 
+                regimen: "0163"
             },
-            { 
-                id: 7, 
-                name: "Artistas", 
+            {
+                id: 7,
+                name: "Artistas",
                 value: 7,
-                regimen: "0112" 
+                regimen: "0112"
             },
         ];
 
     resolve(json);
 });
 
-
-export const getTipoCtz =  (data) => new Promise(async(resolve) => {
+export const getTipoCtz = (data) => new Promise(async (resolve) => {
     const json = await getAllTipoCtz();
     resolve(json.find(r => r.value == data));
 });

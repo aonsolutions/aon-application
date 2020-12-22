@@ -12,12 +12,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -135,6 +137,18 @@ public class Utils {
 			s = "{}";
 		}
 		return new JSONObject(s);
+	}
+	
+	public static JSONObject getParamsJSON(ServletRequest req) {
+	    JSONObject jsonObj = new JSONObject();
+	    @SuppressWarnings("unchecked")
+		Map<String,String[]> params = req.getParameterMap();
+	    for (Map.Entry<String,String[]> entry : params.entrySet()) {
+	      String v[] = entry.getValue();
+	      Object o = (v.length == 1) ? v[0] : v;
+	      jsonObj.put(entry.getKey(), o);
+	    }
+	    return jsonObj;
 	}
 	
 	public static String getStatusColor(Task task){

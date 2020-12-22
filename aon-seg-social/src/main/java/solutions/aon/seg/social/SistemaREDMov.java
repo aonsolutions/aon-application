@@ -1,6 +1,5 @@
 package solutions.aon.seg.social;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -565,7 +564,7 @@ public class SistemaREDMov {
 	}
 	
 	
-	public static void main(String[] args)  {
+//	public static void main(String[] args)  {
 //		try (final FileInputStream certificateInputStream =  new FileInputStream("src/test/resources/solutions/aon/FNMT.p12")) {			
 //				String certificatePassword = "jg@FNMT";
 //				String certificateType = "pkcs12";
@@ -601,6 +600,6 @@ public class SistemaREDMov {
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
-	}
+//	}
 
 }

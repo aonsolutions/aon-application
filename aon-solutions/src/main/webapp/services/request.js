@@ -109,17 +109,7 @@ export const remove = (url, data) => {
 
 export const getToken = () => localStorage.getItem("aon_session_id");
 
-const openMobile = (url) => {
-  const obj = {
-    action: "pdfDownload",
-    url
-  }
-  webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(obj));
-}
-
-const openDesktop = (url) => open(url);
-
-export const openPDF = (url, data) => {
+export const openPDF = async (url, data) => {
   const token = getToken();
   const domainId = localStorage.getItem("aon_domain_id");
   const domainName = localStorage.getItem("aon_domain_name");
@@ -131,16 +121,45 @@ export const openPDF = (url, data) => {
   }
   const json = btoa(JSON.stringify(datos));
   const newUrl = `${url}?json=${json}`;
-  
-  let _webkit = false;
-  try { 
-    if("undefined" !== typeof webkit )
-      _webkit = webkit.messageHandlers.cordova_iab; 
-  } catch(e){}
 
-  if(_webkit) 
-    openMobile(newUrl);
-  else 
-    openDesktop(newUrl);
+  let _webkit = false;
+  try {
+    if ("undefined" !== typeof webkit)
+      _webkit = webkit.messageHandlers.cordova_iab;
+  } catch (e) { }
+
+  if (_webkit) {
+    const obj = await openFileMobile(newUrl).catch(e => null);
+    if (obj) _webkit.postMessage(JSON.stringify(obj));
+  } else {
+    openFileDesktop(newUrl);
+  }
 }
 
+const openFileMobile = async (url) => new Promise((resolve, reject) => {
+  request("GET", url, getToken(), undefined, (result, error) => {
+    if (error) reject(error);
+    else {
+      const contentType = "application/pdf";
+      const blob = new Blob([result], { type: contentType });
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+
+      reader.onloadend = function () {
+        const base64String = reader.result.toString().replace(/^data:.+;base64,/, '');
+        const obj = {
+          fileBase64: base64String,
+          fileName: "document.pdf",
+          contentType,
+          action: "fileDownload"
+        }
+        resolve(obj);
+      }
+      reader.onerror = function () {
+        reject(true);
+      }
+    }
+  });
+});
+
+const openFileDesktop = (url) => open(url);

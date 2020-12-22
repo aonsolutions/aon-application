@@ -1,12 +1,9 @@
 package solutions.aon.sepe;
 
-import java.io.FileInputStream;
+//import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.Date;
-import org.apache.xerces.impl.dv.util.Base64;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -23,8 +20,20 @@ import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Certificado {
 
+	public static byte[] certEnterprisePdf(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String nif, Date fecha) throws SepeException {
+		try {
+			return certEnterprisePdfImpl(certificateInputStream, certificatePassword, certificateType, nif, fecha);
+		} catch (InterruptedException e) {
+			throw new SepeException(e);
+		} catch (IOException e) {
+			throw new SepeException(e);
+		} 
+	}
+	
+	
 	private static byte[] certEnterprisePdfImpl(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, String nif, Date fecha ) throws SepeException, InterruptedException, FailingHttpStatusCodeException, MalformedURLException, IOException  {
+			final String certificatePassword, final String certificateType, String nif, Date fecha ) throws IOException, SepeException, InterruptedException  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
@@ -67,14 +76,13 @@ public class Certificado {
 			byte[] pdf = inp.readAllBytes();
 			inp.close();
 			
-//			System.out.println(Base64.encode(pdf));
+		    //System.out.println(Base64.encode(pdf));
 			
 			return pdf;
 		} 
 	}
 	
-
-	private static HtmlPage first_page_sepe_cert(WebClient webClient) throws  SepeException, InterruptedException, FailingHttpStatusCodeException, MalformedURLException, IOException{
+	private static HtmlPage first_page_sepe_cert(WebClient webClient)  throws IOException, SepeException, InterruptedException{
 		 webClient.getOptions().setJavaScriptEnabled(true);
 		  webClient.getOptions().setThrowExceptionOnScriptError(false);
 		  webClient.setJavaScriptErrorListener(HtmlUnitToolkit.jascriptFunctionExceptionError());
@@ -102,24 +110,22 @@ public class Certificado {
 		} catch (NullPointerException e) {}
 	}
 	
-	public static void main(String[] args)   {
-		try(final FileInputStream certificateInputStream =  new FileInputStream("src/test/resources/solutions/aon/SEPE.p12")){
-				String certificatePassword = "aon@FNMT";
-				String certificateType = "pkcs12";
-//				String regimen = "0111";
-//		     	String ctaCti = "01105360062";
-//		     	String nss = "291136796369";
-//				String ipf = "Y7514970X";
-//				String grup_ctz = "01";
-				String nif = "72740703Y";
-				Date fecha = Toolkit.parseDate("06-05-2016", "dd-MM-yyyy");
-				certEnterprisePdfImpl(certificateInputStream, certificatePassword, certificateType, nif, fecha);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
-
+//	public static void main(String[] args)   {
+//		try(final FileInputStream certificateInputStream =  new FileInputStream("src/test/resources/solutions/aon/SEPE.p12")){
+//				String certificatePassword = "aon@FNMT";
+//				String certificateType = "pkcs12";
+////				String regimen = "0111";
+////		     	String ctaCti = "01105360062";
+////		     	String nss = "291136796369";
+////				String ipf = "Y7514970X";
+////				String grup_ctz = "01";
+//				String nif = "72740703Y";
+//				Date fecha = Toolkit.parseDate("06-05-2016", "dd-MM-yyyy");
+//				certEnterprisePdfImpl(certificateInputStream, certificatePassword, certificateType, nif, fecha);
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//	}
 
 }

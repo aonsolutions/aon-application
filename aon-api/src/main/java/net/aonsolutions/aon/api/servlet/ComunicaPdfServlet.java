@@ -1,14 +1,11 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.Date;
-
 import java.util.logging.Logger;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,8 +19,6 @@ import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
-
-
 import solutions.aon.seg.social.toolkit.Toolkit;
 import solutions.aon.sepe.Sepe;
 import solutions.aon.seg.social.SistemaRED;
@@ -36,7 +31,6 @@ import solutions.aon.seg.social.exceptions.SegSocialException;
 public class ComunicaPdfServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(ComunicaPdfServlet.class.getName());
-	
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -52,7 +46,7 @@ public class ComunicaPdfServlet extends HttpServlet{
 
 		try {
 
-			String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
+			String[] pathInfo = req.getPathInfo() != null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
 			
 			Utils.addCorsHeader(resp);
 			
@@ -72,8 +66,7 @@ public class ComunicaPdfServlet extends HttpServlet{
 				AonIOUtils.copy(fileInpurOs, resp.getOutputStream());
 				resp.flushBuffer();
 			}
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
             e.printStackTrace(); 
 			resp.setStatus(500);
 		}
@@ -111,7 +104,7 @@ public class ComunicaPdfServlet extends HttpServlet{
 		return PDF;
 	}
 
-	//router Sepe
+	//router sepe
 	private byte[] routerSepe(String route, Domain domain, String token, JSONObject json) throws Exception {
 		byte[] PDF = null;
 		User user = AON_SOLUTIONS.getUser(domain, token);
