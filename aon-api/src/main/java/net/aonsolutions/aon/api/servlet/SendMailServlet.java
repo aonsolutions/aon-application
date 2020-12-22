@@ -78,7 +78,11 @@ public class SendMailServlet extends HttpServlet{
 			}
 		}
 		
-		SES.sendEmail(from, to, subject, body);
+		String m = SES.sendEmail(from, to, subject, body);
+		JSONObject j = new JSONObject();
+		j.put("message", m);
+		Utils.addCorsHeader(resp);
+		Utils.giveBack(req, resp, j, new JSONObject());
 	}
 		
 	
@@ -111,7 +115,7 @@ public class SendMailServlet extends HttpServlet{
 	
 	private String getUrl(Domain domain, String login, JSONObject invoice) {	
 		
-		String str = "domain="+ domain.getId() + "&id=" + invoice.getString("id") + "&attach_type=data";
+		String str = "domain="+ domain.getId() + "&id=" + invoice.getInt("id") + "&attach_type=data";
 	    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
 	    return "https://" +domain.getName() +"/ms/download_rawdoc/"  + domain.getName() + "/" + login + "/" +  result;
 

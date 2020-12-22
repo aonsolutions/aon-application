@@ -33,8 +33,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
@@ -46,11 +44,11 @@ import com.amazonaws.services.simpleemail.model.RawMessage;
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
 
-public class SES {
+public class SES extends AWS{
 	
 	private static String CONFIGURATION_SET = "ConfigSet";
 
-    public static void sendEmail(String from, String to, String subject, String body) {
+    public static String sendEmail(String from, String to, String subject, String body) {
         Destination destination = new Destination().withToAddresses(new String[]{to});
 
         Content subject2 = new Content().withData(subject);
@@ -62,30 +60,18 @@ public class SES {
         SendEmailRequest request = new SendEmailRequest().withSource(from).withDestination(destination).withMessage(message);
         
         try {
-            System.out.println("Attempting to send an email through Amazon SES by using the AWS SDK for Java...");
-
-            ProfileCredentialsProvider credentialsProvider = new ProfileCredentialsProvider();
-            try {
-                credentialsProvider.getCredentials();
-            } catch (Exception e) {
-                throw new AmazonClientException(
-                        "Cannot load the credentials from the credential profiles file. " +
-                        "Please make sure that your credentials file is at the correct " +
-                        "location (/home/anderibz/.aws/credentials), and is in valid format.",
-                        e);
-            }
-
             AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
-                .withCredentials(credentialsProvider)
+                .withCredentials(getProvider())
                 .withRegion("eu-west-1")
                 .build();
 
             client.sendEmail(request);
             System.out.println("Email sent!");
-
+            return "ok";
         } catch (Exception ex) {
             System.out.println("The email was not sent.");
             System.out.println("Error message: " + ex.getMessage());
+            return "Error message: " + ex.getMessage();
         }
     }
     
