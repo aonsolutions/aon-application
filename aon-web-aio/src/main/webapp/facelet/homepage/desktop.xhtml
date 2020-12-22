@@ -25,7 +25,12 @@
 					aon-portlets-column2,aon-portlets-column3">
 
 				<aon:if test="#{!desktop.showGraphicsPortlet}">
-					<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
+	  						<aon:if test="#{!userUtils.newAONTheme}">				
+								<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
+							</aon:if>
+	  						<aon:if test="#{userUtils.newAONTheme}">				
+								<ui:include src="/facelet/new/portlet/infoGroupPortlet.xhtml" />
+							</aon:if>
 				</aon:if>
 				<aon:div styleClass="aon-width-all">
 					<aon:if test="#{domainSwitcher.childDomain}">
@@ -81,16 +86,21 @@
 					</aon:if>
 				</aon:div>
 
-				<aon:div>
-					<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
-					<ui:include src="/facelet/homepage/portlet/externalApplicationsChildPortlet.xhtml" />
-					<ui:include src="/facelet/homepage/portlet/externalApplicationsParentPortlet.xhtml" />
-					<aon:if test="#{desktop.showGraphicsPortlet}">
-						<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
-					</aon:if>			
-					<ui:include src="/facelet/homepage/portlet/emailVerifyPortlet.xhtml" />
-					<ui:include src="/facelet/homepage/portlet/supportPortlet.xhtml" />
-				</aon:div>
+				<aon:if test="#{!userUtils.newAONTheme}">				
+					<aon:div>
+						<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
+						<ui:include src="/facelet/homepage/portlet/externalApplicationsChildPortlet.xhtml" />
+						<ui:include src="/facelet/homepage/portlet/externalApplicationsParentPortlet.xhtml" />
+						<aon:if test="#{desktop.showGraphicsPortlet}">
+							<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
+						</aon:if>			
+						<ui:include src="/facelet/homepage/portlet/emailVerifyPortlet.xhtml" />
+						<ui:include src="/facelet/homepage/portlet/supportPortlet.xhtml" />
+					</aon:div>
+				</aon:if>
+	  			<aon:if test="#{userUtils.newAONTheme}">				
+					<ui:include src="/facelet/new/portlet/infoRightGroupPortlet.xhtml" />
+				</aon:if>
 			</aon:panelGrid>
 
 		</aon:div>

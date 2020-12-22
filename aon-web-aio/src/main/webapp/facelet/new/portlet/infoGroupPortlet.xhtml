@@ -1,0 +1,90 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+	
+	
+	<aon:div id="desktopDiv1" style="padding-top: 5px; width:14px" >
+		
+	<style>
+		.aon-portlets-column1{
+			width : 0px;
+			padding: 0px;
+			text-align: right;
+		}
+		.aon-show-button {
+			opacity: 0.6; 
+			padding: 10px;
+			position:relative;
+			background-color: #ddd; 
+			border-top-right-radius: 50%; 
+			border-bottom-right-radius: 50%;  
+		}
+		.aon-hide-button {
+			z-index: 66;
+			opacity: 0.6; 
+			padding: 10px;
+			position:relative;
+			background-color: #ddd; 
+			transform: rotate(180deg);
+			border-top-right-radius: 50%; 
+			border-bottom-right-radius: 50%;  
+		}
+	</style>
+	
+	<script type='text/javascript' >
+		function showInfoGroup() {
+			document.getElementById("aonContent:mainForm:showButton").style.display='none';
+			document.getElementById("aonContent:mainForm:hideButton").style.display='initial';
+			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='200px';
+			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='100%';
+			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='block';
+		}
+		
+		function hideInfoGroup() {
+			document.getElementById("aonContent:mainForm:showButton").style.display='initial';
+			document.getElementById("aonContent:mainForm:hideButton").style.display='none';
+			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='0px';
+			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='14px';
+			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='none';
+		}
+	</script>
+
+		<h:graphicImage 
+		id="showButton"
+		styleClass="aon-show-button"
+		url="#{aonResource.resolve['/images/aon-right-arrow.png']}" 
+		onclick="javascript:showInfoGroup()"/>	
+		
+		<h:graphicImage 
+		id="hideButton"
+		style="display:none"
+		styleClass="aon-hide-button"
+		url="#{aonResource.resolve['/images/aon-right-arrow.png']}" 
+		onclick="javascript:hideInfoGroup()"/>	
+
+		<aon:div id="infoGroupDiv" style="display:none;  position:relative; top: -32px" >
+			<aon:div styleClass="aon-portlet" >
+				<aon:div styleClass="aon-portlet-title">								
+					<aon:commandLink id="menu_refresh"
+						title="#{bundle.aon_refresh}"
+						reRender="desktopDiv1" immediate="true"
+						actionListener="#{desktop.onRefresh}">
+						<aon:outputText value="#{bundle.aon_refresh}"
+							style="padding-bottom: 1px;padding-top: 1px;"
+							styleClass="aon-portlet-title-text aon-icon aon-icon-refresh"/>
+					</aon:commandLink>
+				</aon:div>
+			</aon:div>
+			<aon:if test="#{domainSwitcher.parentDomain or desktop.groupwareEnabled}">
+				<ui:include src="/facelet/homepage/portlet/taskPortlet.xhtml" />
+			</aon:if>
+			<ui:include src="/facelet/homepage/portlet/noticePortlet.xhtml" />
+		</aon:div>
+	</aon:div>
+					
+</ui:composition>
