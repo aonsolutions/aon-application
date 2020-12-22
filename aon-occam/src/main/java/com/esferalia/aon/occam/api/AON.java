@@ -6001,13 +6001,18 @@ public class AON {
 	}
 	
 	public static Stream<Rawdoc> getRawdocStream(String domainName, int domain, String user, RawdocFilter filter,int offset, int limit) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)){
 			return getFinance().getRawdocStream(ctx, filter,offset,limit);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		} 
+	}
+	
+	public static Stream<Rawdoc> getRawdocFullStream(String domainName, int domain, String user, RawdocFilter filter) {
+		return getRawdocFullStream(domainName, domain, user, filter,0,Integer.MAX_VALUE); 
+	}
+	
+	public static Stream<Rawdoc> getRawdocFullStream(String domainName, int domain, String user, RawdocFilter filter,int offset, int limit) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().getRawdocFullStream(ctx, filter,offset,limit);
 		}
 	}
 

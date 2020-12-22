@@ -332,6 +332,12 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public Stream<Rawdoc> getRawdocFullStream(AONContext ctx, RawdocFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> RawdocDAO.getFull(ctx, filter, offset, limit));
+	}
+	
+	@Override
 	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> RawdocDAO.getDomainData(ctx,searchDomain));

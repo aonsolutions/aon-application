@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Paymethods} from '../../services/paymethod.js';
-import {getInvoices, getInvoice, insertInvoice, deleteInvoices, sendInvoiceMail} from '../../services/service.js';
+import {getInvoices, getInvoice, insertInvoice, deleteInvoices, sendInvoiceMail, downloadInvoices} from '../../services/service.js';
 import {InvoiceAction} from './invoiceEnums.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
@@ -190,14 +190,17 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	downloadInvoices() {
-		let aonInvoice = this.getElement('aonInvoice');
-		let d = document.getElementById(aonInvoice.DIALOG);
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_DOWNLOAD_INVOICES);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
-		d.open();
+		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+
+		let data = {
+			domain_id: localStorage.getItem('aon_domain_id'),
+			domain_name: localStorage.getItem('aon_domain_name'),
+			domain_login: localStorage.getItem('aon_domain_login'),
+			ids: aonInvoiceTable.selected.map(r => r.id),
+			status: this.getFilter().status
+		};
+		let json = btoa(JSON.stringify(data));
+		downloadInvoices(json);
 	}
 
 	sendInvoices() {

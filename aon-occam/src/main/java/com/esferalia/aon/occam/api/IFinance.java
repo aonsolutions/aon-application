@@ -119,6 +119,7 @@ public interface IFinance {
 	// 	************************** RAWDOC *************
 	// 	***********************************************
 	public Stream<Rawdoc> getRawdocStream(AONContext ctx, RawdocFilter filter, int offset, int limit);
+	public Stream<Rawdoc> getRawdocFullStream(AONContext ctx, RawdocFilter filter, int offset, int limit);
 	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain);
 	public RawdocUserData getRawdocUserData(AONContext ctx, byte[] auth);
 	public RawdocUserData getRawdocUserData(AONContext ctx, int searchDomain);

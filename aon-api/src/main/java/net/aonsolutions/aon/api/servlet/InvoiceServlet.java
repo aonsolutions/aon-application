@@ -19,7 +19,6 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -45,7 +44,6 @@ import net.aonsolutions.aon.tedi.AonParser;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
-import net.aonsolutions.aon.tedi.TediParser;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
@@ -312,14 +310,14 @@ public class InvoiceServlet extends HttpServlet{
 	private static InvoiceStatus getInvoiceStatus(String status) {
 		InvoiceStatus st = InvoiceStatus.safeValueOf(status);
 		if(st == null) {
-			if("inbox".equals(status) || "pending".equals(status)
-					|| "verified".equals(status)) {
+			if("inbox".equalsIgnoreCase(status) || "pending".equalsIgnoreCase(status)
+					|| "verified".equalsIgnoreCase(status)) {
 				st = InvoiceStatus.PENDING;
-			} else if("accepted".equals(status)) {
+			} else if("accepted".equalsIgnoreCase(status) || "scored".equalsIgnoreCase(status) || "accounting".equalsIgnoreCase(status)) {
 				st = InvoiceStatus.SCORED;
-			} else if("refused".equals(status)) {
+			} else if("refused".equalsIgnoreCase(status) || "rejected".equalsIgnoreCase(status)) {
 				st = InvoiceStatus.REFUSED; 
-			} else if("trash".equals(status)) {
+			} else if("trash".equalsIgnoreCase(status) || "draft".equalsIgnoreCase(status)) {
 				st = InvoiceStatus.TRASH;
 			}
 		}

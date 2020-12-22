@@ -131,6 +131,17 @@ public class RawdocDAO {
 				.findFirst()
 				.orElse(null);
 	}
+
+	public static Stream<Rawdoc> getFull(AONContext ctx, RawdocFilter filter, int offset, int limit) {
+		return ctx.getDslContext()
+				.select( RAWDOC.fields() )
+				.from(RAWDOC)
+				.where(RAWDOC_PROPERTIES.getConditions(filter))
+				.limit(offset,limit)
+				.fetch()
+				.stream()
+				.map(new FullRawdocFiller());
+	}
 	
 	public static Rawdoc getFull(AONContext ctx, Integer id) {
 		return ctx.getDslContext()
