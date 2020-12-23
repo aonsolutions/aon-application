@@ -84,4 +84,8 @@ export const deleteFile = (data) => {
 
 export const insertDocument = (data) => post(`${API_URL}/documental`, data);
 
+export const downloadDocuments = (data) => open(`${API_URL}/multiple_download/document?json=${data}`);
+
+export const sendDocumentMail = (data) => post(`${API_URL}/send_mail/document`, data);
+
 export const deleteDocuments = (documentIds) => remove(`${API_URL}/documental`, { id: invoiceIds });

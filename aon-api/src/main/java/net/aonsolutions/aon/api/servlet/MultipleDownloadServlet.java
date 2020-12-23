@@ -27,16 +27,22 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.FileList;
 
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.json.TediInvoiceJSON;
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 
 @WebServlet(name = "MultipleDownloadServlet", urlPatterns = {"/ms/api/multiple_download/*"})
 public class MultipleDownloadServlet extends HttpServlet{
@@ -149,7 +155,7 @@ public class MultipleDownloadServlet extends HttpServlet{
     			String name = data.opt("reference") != null ? data.optString("reference") : "invoice";
 				try {
 					if(r.getData() != null) {
-						File file = File.createTempFile(name, r.getMimeType().getExtension());
+						File file = File.createTempFile(name, "." + r.getMimeType().getExtension());
 						AonFileUtils.writeByteArrayToFile(file, r.getData());
 						list.add(file);
 					} else {
@@ -165,8 +171,43 @@ public class MultipleDownloadServlet extends HttpServlet{
 	}
 	
 	private LinkedList<File> getDocumentalFiles(Domain domain, User user, JSONObject json) {
+		String type = json.opt("type")!= null ? json.optString("type") : "";
+		RegistryAttachmentType t = type.equalsIgnoreCase("system") ? RegistryAttachmentType.SYSTEM_MESSAGE : RegistryAttachmentType.CORPORATE_IDENTITY;
+   		LinkedList<Integer> ids = toList(json.optJSONArray("ids"));
+		Integer[] idsArray = ids.toArray(new Integer[ids.size()]);
+		LinkedList<File> list = new LinkedList<>();
+			
+		DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());
+		Drive drive = AonDrive.getInstace().serviceInitialize(g);
 		
-		return new LinkedList<>();
+		AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getTypeProperty().eq(t.value()).and(f.getIdProperty().in(idsArray)), AttachType.REGISTRY, true)
+		.forEach(r -> {
+			if(r.getData() == null && r.getDriveId() != null) {
+				String[] keys = {"fileId", "aontype", "domain"};
+				String[] values = {r.getId() + "", "registry", r.getDomain().getName()};
+				FileList fl = SearchFiles.searchFilesAppProperties(drive, keys, values);
+				if(fl.getFiles().size() > 0) {
+					if(!fl.getFiles().get(0).getId().equals(r.getDriveId())) {
+						r.setDriveId(fl.getFiles().get(0).getId());
+						AON.updateAttach(domain.getName(), domain.getId(), "", r);
+					}
+					if("0".equals(r.getDparentId())) {
+						r.setDparentId(fl.getFiles().get(0).getSize().toString());
+						AON.updateAttach(domain.getName(), domain.getId(), "", r);
+					}
+				}
+				r.setData(AonDrive.getInstace().downloadFileByteArray(drive, r.getDriveId()));
+			} 
+			try {
+				File file = File.createTempFile(r.getDescription(), "." + r.getMimeType().getExtension());
+				AonFileUtils.writeByteArrayToFile(file, r.getData());
+				list.add(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
+		
+		return list;
 	}
 	
 	private static InvoiceStatus getInvoiceStatus(String status) {

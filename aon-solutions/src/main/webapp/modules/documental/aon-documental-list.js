@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {DocumentalAction} from './DocumentalEnums.js';
-import {getDocuments} from '../../services/service.js';
+import {getDocuments, downloadDocuments, sendDocumentMail} from '../../services/service.js';
 
 import '../../components/aon-table.js';
 
@@ -104,14 +104,16 @@ export class AonDocumentalList extends AonElement {
 	}
 
 	downloadFiles() {
-		let aonDocumental = this.getElement('aonDocumental');
-		let d = document.getElementById(aonDocumental.DIALOG);
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_DOWNLOAD_FILES);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
-		d.open();
+		let aonDocumentalTable = this.getElement(this.TABLE);
+		let data = {
+			domain_id: localStorage.getItem('aon_domain_id'),
+			domain_name: localStorage.getItem('aon_domain_name'),
+			domain_login: localStorage.getItem('aon_domain_login'),
+			ids: aonDocumentalTable.selected.map(r => r.id),
+			type: this.getFilter().type
+		};
+		let json = btoa(JSON.stringify(data));
+		downloadDocuments(json);
 	}
 
 	editFiles() {
@@ -131,8 +133,16 @@ export class AonDocumentalList extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.AON_MSG_SEND_FILES);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
+		d.setContentHTML('<aon-input id="sendDocumentsMail" description="Email"></aon-input>');
+		d.addAcceptAction(() => {
+			let mail = this.getElement('sendDocumentsMail');
+			let aonDocumentalTable = this.getElement(this.TABLE);
+			let message = {
+				to: mail.value,
+				documents: aonDocumentalTable.selected
+			};
+			sendDocumentMail(message).then(() => {});
+		});
 		d.open();
 	}
 

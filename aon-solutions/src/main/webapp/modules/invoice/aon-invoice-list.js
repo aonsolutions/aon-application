@@ -46,10 +46,10 @@ export class AonInvoiceList extends AonElement {
 
  	build() {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
-		aonInvoiceTable.addColumn(MSG.AON_MSG_DATE, 'date', 'dateTable', '15%');
-		aonInvoiceTable.addColumn(MSG.AON_MSG_INVOICE_NUMBER, 'string', 'reference', '20%');
+		aonInvoiceTable.addColumn(MSG.AON_MSG_DATE, 'date', 'dateTable', '10%');
+		aonInvoiceTable.addColumn(MSG.AON_MSG_INVOICE_NUMBER, 'string', 'reference', '25%');
 		aonInvoiceTable.addColumn(MSG.AON_MSG_HOLDER, 'string', 'name', '35%');
-		aonInvoiceTable.addColumn(MSG.AON_MSG_AMOUNT, 'number', 'total', '10');
+		aonInvoiceTable.addColumn(MSG.AON_MSG_AMOUNT, 'number', 'total', '10%');
 		aonInvoiceTable.addColumn(MSG.AON_MSG_PAYMETHOD, 'string', 'paymethod', '15%');
 		// INFO
 		// aonInvoiceTable.addColumn('', '', '');

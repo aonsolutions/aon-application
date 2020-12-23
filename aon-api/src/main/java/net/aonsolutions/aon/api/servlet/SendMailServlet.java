@@ -59,7 +59,7 @@ public class SendMailServlet extends HttpServlet{
 		Domain domain = AON.getDomain(domainName, domainId, "");
 		User user = AON_SOLUTIONS.getUser(domain, token);
 		AonToken aonToken = SECURITY.getAonToken(token);
-		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getAuth());
+		//Auth auth = AON_SOLUTIONS.getAuth(aonToken.getAuth());
 		
 		JSONObject json = Utils.getRequestJSON(req);
 		String from = "no-reply@aon.solutions"; //auth.getEmail();
@@ -74,7 +74,8 @@ public class SendMailServlet extends HttpServlet{
 			}
 			
 			if("document".equalsIgnoreCase(pathInfo[1])) {
-				
+				subject = "Documentos";
+				body = documentContent(domain, user.getLogin(), json.getJSONArray("documents"));				
 			}
 		}
 		
@@ -96,9 +97,9 @@ public class SendMailServlet extends HttpServlet{
 		for (int i = 0; i < invoiceArray.length(); i++) {
 			JSONObject inv = invoiceArray.getJSONObject(i);
 			InvoiceMail im = new InvoiceMail();
-			im.setReference(inv.opt("reference") != null ? inv.getString("reference"): getUrl(domain, login, inv));
-			im.setTotal(inv.opt("total") != null ? Double.toString(inv.getDouble("total")) : getUrl(domain, login, inv));
-			im.setUrl(inv.opt("file") != null ? inv.optJSONObject("file").optString("url") : getUrl(domain, login, inv));
+			im.setReference(inv.opt("reference") != null ? inv.getString("reference"): "");
+			im.setTotal(inv.opt("total") != null ? Double.toString(inv.getDouble("total")) : "");
+			im.setUrl(inv.opt("file") != null ? inv.optJSONObject("file").optString("url") : getInvoiceUrl(domain, login, inv));
 			list.add(im);
 		}
 		
@@ -112,13 +113,44 @@ public class SendMailServlet extends HttpServlet{
 
 		return writer.toString();
 	}
-	
-	private String getUrl(Domain domain, String login, JSONObject invoice) {	
+	private String documentContent(Domain domain, String login, JSONArray documentArray) {
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
 		
+		LinkedList<DocumentMail> list = new LinkedList<>();
+		for (int i = 0; i < documentArray.length(); i++) {
+			JSONObject doc = documentArray.getJSONObject(i);
+			DocumentMail dm = new DocumentMail();
+			dm.setDate(doc.opt("date") != null ? doc.getString("date"): "");
+			dm.setTitle(doc.opt("title") != null ? doc.getString("title") : "");
+			dm.setUrl(getDocumentUrl(domain, login, doc));
+			list.add(dm);
+		}
+		
+		VelocityContext context = new VelocityContext();
+		context.put("documents", list);
+		
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/document.vm");
+		
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
+	}
+	
+	private String getInvoiceUrl(Domain domain, String login, JSONObject invoice) {	
 		String str = "domain="+ domain.getId() + "&id=" + invoice.getInt("id") + "&attach_type=data";
 	    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
 	    return "https://" +domain.getName() +"/ms/download_rawdoc/"  + domain.getName() + "/" + login + "/" +  result;
 
+	}
+	
+	private String getDocumentUrl(Domain domain, String login, JSONObject document) {	
+		String str = "domain="+ domain.getId() + "&id=" + document.getInt("id") + "&attach_type=data";
+	    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+	    return "https://" +domain.getName() +"/ms/download_attachment/"  + domain.getName() + "/" + login + "/" +  result;
 	}
 	
 	public class InvoiceMail {
@@ -144,6 +176,44 @@ public class SendMailServlet extends HttpServlet{
 		public void setTotal(String total) {
 			this.total = total;
 		}
+
+		public String getUrl() {
+			return url;
+		}
+
+		public void setUrl(String url) {
+			this.url = url;
+		}
+	}
+	
+	public class DocumentMail {
+		String date;
+		String title;
+		String url; 
+		
+		public DocumentMail() {
+		}
+
+	
+		public String getDate() {
+			return date;
+		}
+
+
+		public void setDate(String date) {
+			this.date = date;
+		}
+
+
+		public String getTitle() {
+			return title;
+		}
+
+
+		public void setTitle(String title) {
+			this.title = title;
+		}
+
 
 		public String getUrl() {
 			return url;
