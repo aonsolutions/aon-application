@@ -287,25 +287,14 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			entryType.addItem(et.getDescription());
 		}
 		
-		entryDate.getTextBox().addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					entryDate.hideDatePicker();
-					AccountEntryModuleTEDI.this.wizardContent.setFocus(true);
-		        }
-			}
-		});
-		
 		entryType.addBlurHandler(new BlurHandler() {
 			
 			@Override
 			public void onBlur(BlurEvent event) {
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 					public void execute() {
-						LOGGER.info("BLUR entryType");
-						AccountEntryModuleTEDI.this.wizardContent.setFocus(true);
+						LOGGER.info("BLUR entryType ");
+						AccountEntryModuleTEDI.this.getWizardContent().setFocus(true);
 					}
 				});
 			}
@@ -329,6 +318,11 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			
 		}
 	}
+
+	private IWizardContent getWizardContent() {
+		return this.wizardContent;
+	}
+
 
 	private void loadModule() {
 		boolean editing = (getOptions().getAccountEntryId() != null) || (getOptions().getAccountingInvoice() !=null);

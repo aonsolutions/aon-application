@@ -50,6 +50,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -81,6 +82,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private AonTableButton attachOpenButton;
 	private AccountingInvoice invoice;
 	private AccountingRegistry lastRegistry;
+	private Focusable focusableWidget;
 	
 	public InvoicePanel(final IAccountEntryModuleCallback callback) {
 		TediServiceAsync serviceRaw = GWT.create(TediService.class);
@@ -143,7 +145,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				AccountEntrySelectionEvent.fire( InvoicePanel.this, event.getSelectedItem(), null);
 			}
 		});
-		
+		focusableWidget = eip;
 		centerContainer.setWidget( eip );
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
@@ -160,6 +162,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	public void select(AccountingInvoice ai,final ISelectionCallback cbk) {
 		LOGGER.info("Select invoice");
 		setWrapper(ai);
+		focusableWidget = null;
 		if (getWrapper() != null) {
 			if (getWrapper().getRegistry() == null || isAccountSource()) {
 				editInvoice();
@@ -410,6 +413,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	@Override
 	public void setFocus(boolean b) {
+		if (focusableWidget != null) {
+			focusableWidget.setFocus(true);
+		}
 	}
 
 	public void entryDateChanged(Date entryDate) {
