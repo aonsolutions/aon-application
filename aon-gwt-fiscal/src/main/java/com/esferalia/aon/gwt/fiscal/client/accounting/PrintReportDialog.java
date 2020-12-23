@@ -1,8 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class PrintReportDialog extends CustomDialog {
+public class PrintReportDialog extends AonCustomDialog {
 	
 	public interface IPrintReportDialogCallback {
 		public void onAccept(ReportMetadata metadata);
@@ -41,16 +41,16 @@ public class PrintReportDialog extends CustomDialog {
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
-		title.setStyleName(AON.AON_CSS.aonInputText());
+		title.setStyleName(AON.CSS.aonInputText());
 		title.setVisibleLength(50);
-		subject.setStyleName(AON.AON_CSS.aonInputText());
+		subject.setStyleName(AON.CSS.aonInputText());
 		subject.setVisibleLength(40);
 		pageOffset.setVisibleLength(5);
-		pageOffsetText.setStyleName(AON.AON_CSS.aonInputText());
+		pageOffsetText.setStyleName(AON.CSS.aonInputText());
 		pageOffsetText.setVisibleLength(40);
-		headerText.setStyleName(AON.AON_CSS.aonInputText());
+		headerText.setStyleName(AON.CSS.aonInputText());
 		headerText.setVisibleLength(40);
-		footerText.setStyleName(AON.AON_CSS.aonInputText());
+		footerText.setStyleName(AON.CSS.aonInputText());
 		footerText.setVisibleLength(40);
 		
 		FlexTable tab = new FlexTable();
@@ -58,24 +58,23 @@ public class PrintReportDialog extends CustomDialog {
 		FlowPanel rootPanel = new FlowPanel(); 
 		tab.setCellPadding(0);
 		tab.setCellSpacing(0);
-		tab.setStyleName(AON.AON_CSS.aonMarginTop());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
+		tab.setStyleName(AON.CSS.aonMarginTop());
+		tab.addStyleName(AON.CSS.aonMarginBottom());
+		tab.addStyleName(AON.CSS.aonTable());
 		ColumnFormatter cf = tab.getColumnFormatter();
 		cf.setWidth(0, "130px");
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		cf.addStyleName(0, AON.CSS.aonPaddingLeft() );
+		cf.addStyleName(0, AON.CSS.aonPaddingRight() );
 		cf.setWidth(1, "250px");
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		cf.addStyleName(0, AON.CSS.aonPaddingLeft() );
+		cf.addStyleName(0, AON.CSS.aonPaddingRight() );
 
 		int row = 0;
 		
 		// TITLE
 		title.setValue(metadata.getTitle());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label("T\u00EDtulo"));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 1, title);
 		row++;
 		
@@ -84,7 +83,7 @@ public class PrintReportDialog extends CustomDialog {
 		
 		
 		tab.setWidget(row, 0, new HTML( builder.toSafeHtml()));
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonMarginTop());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonMarginTop());
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		row++;
 		
@@ -97,25 +96,22 @@ public class PrintReportDialog extends CustomDialog {
 				subject.setEnabled(showCover.getValue());
 			}
 		});
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label("Mostrar portada"));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 1, showCover);
 		row++;
 
 		// SUBJECT
 		subject.setValue(metadata.getSubject());
 		subject.setEnabled(metadata.isShowCover());
-		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeftImportant());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextRight());
+		tab.getFlexCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTextRight());
 		tab.setWidget(row, 0, new Label("Subt\u00EDtulo (portada)"));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 1, subject);
 		row++;
 
 		tab.setWidget(row, 0, new HTML( builder.toSafeHtml()));
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonMarginTop());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonMarginTop());
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		row++;
 		
@@ -128,25 +124,22 @@ public class PrintReportDialog extends CustomDialog {
 				pageOffsetText.setEnabled(pageOffset.getValue() > 0);
 			}
 		});
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label("Contador de p\u00E1gina a partir de "));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 1, pageOffset);
 		row++;
 
 		// PAGE OFFSET TEXT
 		pageOffsetText.setValue(metadata.getPageOffsetText());
 		pageOffsetText.setEnabled(metadata.getPageOffset() > 0);
-		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeftImportant());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextRight());
+		tab.getFlexCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTextRight());
 		tab.setWidget(row, 0, new Label("Texto para p\u00E1gina global"));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 1, pageOffsetText);
 		row++;
 		
 		tab.setWidget(row, 0, new HTML( builder.toSafeHtml()));
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonMarginTop());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonMarginTop());
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		row++;
 		
@@ -159,25 +152,22 @@ public class PrintReportDialog extends CustomDialog {
 				headerText.setEnabled(hideFilter.getValue());
 			}
 		});
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label("Ocultar datos de filtro en cabecera"));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 1, hideFilter);
 		row++;
 		
 		// HEADER TEXT
 		headerText.setEnabled(metadata.isHideFilter());
 		headerText.setValue(metadata.getHeaderText());
-		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeftImportant());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextRight());
+		tab.getFlexCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTextRight());
 		tab.setWidget(row, 0, new Label("Texto alternativo cabecera"));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 1, headerText);
 		row++;
 		
 		tab.setWidget(row, 0, new HTML( builder.toSafeHtml()));
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonMarginTop());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonMarginTop());
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		row++;
 		
@@ -190,31 +180,28 @@ public class PrintReportDialog extends CustomDialog {
 				footerText.setEnabled(hideDateTimeOnFooter.getValue());
 			}
 		});
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label("Ocultar fecha/hora en pie de p\u00E1gina"));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 1, hideDateTimeOnFooter);
 		row++;
 		
 		// FOOTER TEXT
 		footerText.setValue(metadata.getFooterText());
 		footerText.setEnabled(metadata.isHideDateTimeOnFooter());
-		tab.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPaddingLeftImportant());
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextRight());
+		tab.getFlexCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTextRight());
 		tab.setWidget(row, 0, new Label("Texto alternativo pie de p\u00E1g."));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 1, footerText);
 		row++;
 		
 		rootPanel.add(tab);
 		
 		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.setStyleName(AON.AON_CSS.aonPadding());
-		buttonsPanel.addStyleName(AON.AON_CSS.aonMarginTop());
-		buttonsPanel.addStyleName(AON.AON_CSS.aonTextCenter());
+		buttonsPanel.setStyleName(AON.CSS.aonPadding());
+		buttonsPanel.addStyleName(AON.CSS.aonMarginTop());
+		buttonsPanel.addStyleName(AON.CSS.aonTextCenter());
 		Button acceptButton = new Button();
-		acceptButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
+		acceptButton.setStyleName(AON.CSS.aonOkButton());
 		acceptButton.setText( AON.MSG.accept());
 		
 		acceptButton.addClickHandler(new ClickHandler() {
@@ -237,8 +224,8 @@ public class PrintReportDialog extends CustomDialog {
 		});
 		buttonsPanel.add(acceptButton);
 		Button cancelButton = new Button();
-    	cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
-    	cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
+    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
 		cancelButton.addClickHandler(new ClickHandler() {
 

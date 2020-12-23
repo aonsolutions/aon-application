@@ -471,6 +471,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Certificado")
 	String certificate();
 
+	@DefaultMessage("Maximizar")
+	String maximize();
+	
+	@DefaultMessage("Minimizar")
+	String minimize();
+
 	@DefaultMessage("Borrador")
 	String draft();
 
@@ -3940,7 +3946,7 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Ocultar / Mostrar caracter\u00EDsticas de la factura")
 	String invoiceParams();
-
+	
 
 }
 

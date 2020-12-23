@@ -295,6 +295,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_inline_block")
 	String aonInlineBlock();
 	
+	@ClassName("aon_display_none")
+	String aonDisplayNone();
+	
 	@ClassName("aon_display_table")
 	String aonDisplayTable();
 
@@ -387,6 +390,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_clickable")
 	String aonClickable();
+	
+	@ClassName("aon_clickable_label")
+	String aonClickableLabel();
 
 	@ClassName("aon_flex_block_inline")
 	String aonFlexBlockInline();
@@ -480,6 +486,13 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_background_yellow")
 	String aonBackgroundYellow();
+
+	@ClassName("aon_background_ligth_yellow")
+	String aonBackgroundLigthYellow();
+	
+	@ClassName("aon-background_ligthgray")
+	String aonBackgroundLigthGray();
+	
 
 	@ClassName("aon_pointer_events_none")
 	String aonPointerEventsNone();

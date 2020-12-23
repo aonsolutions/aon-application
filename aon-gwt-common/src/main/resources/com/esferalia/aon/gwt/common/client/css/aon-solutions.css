@@ -216,12 +216,16 @@
 .aon_inline {
 	display: inline;
 }
+.aon_display_none {
+	display: none;
+}
 .aon_inline_block {
 	display: inline-block;
 }
 
 .aon_display_table {
 	display: table;
+	box-sizing: border-box;
 }
 
 .aon_display_table_row {
@@ -353,6 +357,13 @@
 .aon_clickable {
 	cursor: pointer;
 }
+.aon_clickable_label {
+	cursor: pointer;
+}
+.aon_clickable_label:hover {
+	text-decoration: underline;
+}
+
 .aon_padding {
 	padding: 1em;
 }
@@ -420,6 +431,12 @@
 }
 .aon_background_yellow {
 	background-color: #FFFF00;
+}
+.aon_background_ligth_yellow {
+	background-color: #FFF8C0;
+}
+.aon-background_ligthgray {
+	background-color: #EEE;
 }
 
 .aon_pointer_events_none {

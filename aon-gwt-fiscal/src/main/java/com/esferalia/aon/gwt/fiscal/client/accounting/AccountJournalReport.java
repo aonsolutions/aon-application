@@ -133,9 +133,9 @@ public class AccountJournalReport extends MainEntryPoint {
 
 								diskForm.setAction(GWT.getHostPageBaseURL() + ACC_JORNAL_REPORT_PDF_PRINT);
 								accountEntryParamsHidden.setValue(JsonParams.convert(params));
-								domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-								domainNameHidden.setValue(getCurrentDomainName());
-								userHidden.setValue(getCurrentUser());
+								domainIdHidden.setValue(String.valueOf(options.getDomain()));
+								domainNameHidden.setValue(options.getDomainName());
+								userHidden.setValue(options.getUser());
 								diskForm.submit();
 							}
 						});
@@ -158,9 +158,9 @@ public class AccountJournalReport extends MainEntryPoint {
 			public void onClick(ClickEvent event) {
 				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_JORNAL_REPORT_EXCEL_PRINT);
 				accountEntryParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams(options)));
-				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-				domainNameHidden.setValue(getCurrentDomainName());
-				userHidden.setValue(getCurrentUser());
+				domainIdHidden.setValue(String.valueOf(options.getDomain()));
+				domainNameHidden.setValue(options.getDomainName());
+				userHidden.setValue(options.getUser());
 				diskForm.submit();
 			}
 		});
@@ -173,9 +173,9 @@ public class AccountJournalReport extends MainEntryPoint {
 			public void onClick(ClickEvent event) {
 				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_JORNAL_FLAT_REPORT_PRINT);
 				accountEntryParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams(options)));
-				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-				domainNameHidden.setValue(getCurrentDomainName());
-				userHidden.setValue(getCurrentUser());
+				domainIdHidden.setValue(String.valueOf(options.getDomain()));
+				domainNameHidden.setValue(options.getDomainName());
+				userHidden.setValue(options.getUser());
 				diskForm.submit();
 			}
 		});
@@ -190,7 +190,7 @@ public class AccountJournalReport extends MainEntryPoint {
 				@Override
 				public void onSelection(AccountEntrySelectionEvent event) {
 					AccountEntry entry = event.getSelectedItem();
-					showEntry(entry.getDomain(), entry.getId(), event.getCallback());
+					showEntry(options,entry.getDomain(), entry.getId(), event.getCallback());
 					
 				}
 			});
@@ -200,7 +200,7 @@ public class AccountJournalReport extends MainEntryPoint {
 		root.add(dockLayoutPanel);
 	}
 	
-	private void showEntry(int domain,Integer entryId, ModuleCallback moduleCallback) {
+	private void showEntry(AccountingReportModuleOptions options, int domain,Integer entryId, ModuleCallback moduleCallback) {
 		AonCustomPopup entryDialog = new AonCustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
@@ -212,8 +212,8 @@ public class AccountJournalReport extends MainEntryPoint {
 		module.onModuleLoad(
 			new AccountEntryModuleOptions()
 			.setParentWidget(entryDialog)
-			.setDomainName(getCurrentDomainName())
-			.setUser(getCurrentUser())
+			.setDomainName(options.getDomainName())
+			.setUser(options.getUser())
 			.setDomain(domain)
 			.setAccountEntryId(entryId)
 			.setJournalTabVisible(false)
