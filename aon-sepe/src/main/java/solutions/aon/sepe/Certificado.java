@@ -22,13 +22,11 @@ public class Certificado {
 
 	public static byte[] certEnterprisePdf(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String nif, Date fecha) throws SepeException {
-		try {
-			return certEnterprisePdfImpl(certificateInputStream, certificatePassword, certificateType, nif, fecha);
-		} catch (InterruptedException e) {
-			throw new SepeException(e);
-		} catch (IOException e) {
-			throw new SepeException(e);
-		} 
+			try {
+				return certEnterprisePdfImpl(certificateInputStream, certificatePassword, certificateType, nif, fecha);
+			} catch (IOException | SepeException | InterruptedException e) {
+				throw new SepeException(e);
+			}
 	}
 	
 	
