@@ -2987,6 +2987,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						EnterpriseStatus.ifSistemaREDEnabled(enterpiseStatus, () -> {
 							getCCCCretaDetail().setSLDButtonsVisible(true);
 						}, () -> {
+							cost = new Cost() {
+								protected void getSLDAsHTML() {}
+							};
 							getCCCCretaDetail().setSLDButtonsVisible(false);
 						});
 						EnterpriseStatus.ifSistemaREDError(enterpiseStatus, 
@@ -3009,6 +3012,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			EnterpriseStatus.ifSistemaREDEnabled(enterpiseStatus, () -> {
 				getCCCCretaDetail().setSLDButtonsVisible(true);
 			}, () -> {
+				cost = new Cost() {
+					protected void getSLDAsHTML() {}
+				};
 				getCCCCretaDetail().setSLDButtonsVisible(false);
 			});
 			
