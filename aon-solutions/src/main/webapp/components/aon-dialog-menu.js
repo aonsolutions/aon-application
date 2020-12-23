@@ -24,7 +24,7 @@ export class AonDialogMenu extends AonElement {
 	connectedCallback () {
 		this.innerHTML = `
 		<div id="${this.DIALOG}" class="aonDialog">
-			<div id="${this.CONTENT}" class="aonDialogContent">
+			<div id="${this.CONTENT}" class="aonDialogMenuContent">
 
 			</div>
 		</div>
@@ -44,6 +44,13 @@ export class AonDialogMenu extends AonElement {
 		content.style.padding = '0px';
 
 		dialog.onclick = (event) => {
+			if (event.target === dialog) {
+				this.close();
+  		}
+		}
+
+		dialog.oncontextmenu = (event) => {
+			event.preventDefault();
 			if (event.target === dialog) {
 				this.close();
   		}
@@ -86,12 +93,14 @@ export class AonDialogMenu extends AonElement {
 				let ic = document.createElement('i');
 				ic.className = 'material-icons';
 				ic.style.verticalAlign = 'middle';
+				ic.style.fontSize = '16px';
 				ic.innerHTML = item.icon;
 				li.appendChild(ic);
 			}
 
 			let span = document.createElement('span');
 			span.style.marginLeft = '5px';
+			span.style.fontSize = '13px';
 			span.innerHTML = item.name;
 			li.appendChild(span);
 			li.addEventListener('click', () => {

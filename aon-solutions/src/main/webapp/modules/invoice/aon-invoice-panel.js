@@ -69,7 +69,7 @@ export class AonInvoicePanel extends AonElement {
 			aonInvoice.addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
 
 			aonInvoice.addSearchOption();
-			aonInvoice.addEventListener('search', (event) => {});
+      aonInvoice.addEventListener('search', (event) => this.search(event.detail));
 		}
 
 		this.appendChild(input);
@@ -133,6 +133,11 @@ export class AonInvoicePanel extends AonElement {
 			else if(filter.status === 'refused') toolbar.setAttribute('option', MSG.AON_MSG_REJECTEDS);
 		}
 		this.aonInvoiceList(filter);
+	}
+
+	search(value) {
+		this._filter.description = value;
+		this.aonInvoiceList();
 	}
 
 	aonInvoiceList(filter) {

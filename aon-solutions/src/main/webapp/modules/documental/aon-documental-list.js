@@ -76,7 +76,7 @@ export class AonDocumentalList extends AonElement {
 				if(documents.length == 0)
 					this.more = false;
 				documents.forEach((doc, i) => {
-					aonDocumentalTable.addRow(doc, () => this.aonDocument(doc, i));
+					aonDocumentalTable.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
 				});
 			});
 		}
@@ -91,7 +91,7 @@ export class AonDocumentalList extends AonElement {
 				aonDocumentalTable.selected = [];
 				this.removeDocumentalActions();
 				documents.forEach((doc, i) => {
-					aonDocumentalTable.addRow(doc, () => this.aonDocument(doc, i));
+					aonDocumentalTable.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
 				});
 			});
 		}
@@ -165,6 +165,32 @@ export class AonDocumentalList extends AonElement {
 		aonDocumental.removeToolbarOption(DocumentalAction.EDIT);
 		aonDocumental.removeToolbarOption(DocumentalAction.DOWNLOAD);
 		aonDocumental.removeToolbarOption(DocumentalAction.SEND);
+	}
+
+	aonDocumentContextMenu(e, doc, i) {
+		e.preventDefault();
+		let rect = e.target.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+		let y = e.clientY - rect.top;
+
+	  const top  = rect.top + y;
+	  const left = rect.left + x;
+
+    let aonDocumental = this.getElement('aonDocumental');
+		let d = document.getElementById(aonDocumental.OPTION_DIALOG);
+
+		let send = DocumentalAction.SEND;
+		send.fn = () => {}; //this.send();
+
+		let download = DocumentalAction.DOWNLOAD;
+		download.fn = () => {}; //this.download();
+
+		let remove = DocumentalAction.DELETE;
+		remove.fn = () => {}; //this.remove();
+
+		let actions = [send, download, remove];
+		d.setMenuOptions(actions, top, left);
+		d.open();
 	}
 
 	getFilter() {

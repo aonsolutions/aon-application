@@ -1,7 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Paymethods} from '../../services/paymethod.js';
-import {getInvoices, getInvoice, insertInvoice, deleteInvoices, sendInvoiceMail, downloadInvoices} from '../../services/service.js';
+import {getInvoices, getInvoice, insertInvoice, deleteInvoices, sendInvoiceMail, downloadInvoices, getUserAppRole} from '../../services/service.js';
 import {InvoiceAction} from './invoiceEnums.js';
+import {Invoice} from './Invoice.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 
@@ -13,6 +14,7 @@ import * as MSG from "../../environments/msg.js";
 export class AonInvoiceList extends AonElement {
 
 	more;
+	_roles;
 
 	static get observedAttributes() {
 		return [CONSTANT.FILTER];
@@ -41,7 +43,10 @@ export class AonInvoiceList extends AonElement {
 		this.innerHTML = `
 			<aon-table id='aonInvoiceTable' selectable='true'></aon-table>
 			`;
-		this.build();
+		getUserAppRole().then(roles => {
+			this._roles = roles;
+			this.build();
+		});
  	}
 
  	build() {
@@ -92,7 +97,7 @@ export class AonInvoiceList extends AonElement {
 					let month = date.getMonth() + 1;
 					let year = date.getFullYear();
 					invoice.dateTable = day + '/' + month + '/' + year;
-					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i));
+					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
 			});
 		}
@@ -120,7 +125,7 @@ export class AonInvoiceList extends AonElement {
 					let month = date.getMonth() + 1;
 					let year = date.getFullYear();
 					invoice.dateTable = day + '/' + month + '/' + year;
-					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i));
+					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i), (e) => this.aonInvoiceContextMenu(e, invoice, i));
 				});
 			});
 		}
@@ -257,6 +262,7 @@ export class AonInvoiceList extends AonElement {
 		});
 		return value;
 	}
+
 	aonInvoice(invoice, i) {
 		if(this.getFilter().status !== 'accounting') {
 			setIndex(i);
@@ -269,6 +275,74 @@ export class AonInvoiceList extends AonElement {
 				aip.aonInvoice(invoice.type, inv);
 			});
 		}
+	}
+
+	aonInvoiceContextMenu(e, invoice, i) {
+		let inv =	new Invoice(invoice.type);
+		inv.createInvoice(invoice);
+
+		e.preventDefault();
+		let rect = e.target.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+		let y = e.clientY - rect.top;
+
+	  const top  = rect.top + y;
+	  const left = rect.left + x;
+
+    let aonInvoice = this.getElement('aonInvoice');
+    let d = document.getElementById(aonInvoice.OPTION_DIALOG);
+
+		let send = InvoiceAction.SEND;
+		send.fn = () => {}; //this.recordInvoice();
+
+		let download = InvoiceAction.DOWNLOAD;
+    download.fn = () => {}; //this.recordInvoice();
+
+    let record = InvoiceAction.RECORD;
+    record.fn = () => {}; //this.recordInvoice();
+
+    let reject = InvoiceAction.REJECT;
+    reject.fn = () => {}; //this.rejectInvoice();
+
+    let restore = InvoiceAction.RESTORE;
+    restore.fn = () => {}; //this.restoreInvoice();
+
+    let addComment = InvoiceAction.COMMENT;
+    addComment.fn = () => {}; //this.addInvoiceComment();
+
+  	let deleteInvoice = InvoiceAction.DELETE;
+	  deleteInvoice.fn = () => {}; //this.trashInvoice();
+
+	  let deleteForever = InvoiceAction.DELETE_FOREVER;
+	  deleteForever.fn = () => {}; //this.removeInvoice();
+
+	  let rectify = InvoiceAction.RECTIFY;
+	  rectify.fn = () => {}; //this.rectifyInvoice();
+
+	  let duplicate = InvoiceAction.DUPLICATE;
+	  duplicate.fn = () => {}; //this.duplicateInvoice();
+
+    let addFile = InvoiceAction.ADD_FILE;
+  	addFile.fn = () => {}; //this.addInvoiceFile();
+
+	  let actions = [];
+	  if(inv.isRejected()) {
+	  	actions = [restore, deleteInvoice];
+	  } else if(inv.isDraft()) {
+	    actions = [restore, deleteForever];
+	  }  else if(inv.isInbox()){
+	  	if(this._roles.includes('ADMIN') || this._roles.includes('INVOICE_MANAGER')){
+	    	actions = [send, download, addComment, deleteInvoice, reject, record, rectify, duplicate];
+	  	} else {
+	      actions = [send, download, addComment, deleteInvoice, rectify, duplicate];
+	    }
+		}
+	  if(!inv.file && !inv.isEmitida()){
+	  	actions.push(addFile);
+	  }
+
+	  d.setMenuOptions(actions, top, left);
+	  d.open();
 	}
 
 	getFilter() {

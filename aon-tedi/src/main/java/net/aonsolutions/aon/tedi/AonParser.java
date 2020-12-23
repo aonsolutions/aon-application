@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.tedi;
 
 import java.util.LinkedList;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AON;
@@ -9,7 +10,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -17,7 +17,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
-import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 import es.translogia.tedi.ewok.TediAddress;
 import es.translogia.tedi.ewok.TediFinance;
@@ -95,7 +95,7 @@ public class AonParser {
 		return taxes.stream().map(r -> new TediInvoiceTax()
 					.setBase(r.getBase())
 					.setPercentage(r.getPercentage())
-					.setQuota(r.getQuota())
+					.setQuota(AonMathUtils.round(r.getBase()/100 * r.getPercentage(), 2))
 					.setSurcharge(r.getSurcharge())
 					.setSurchargeQuota(r.getSurchargeQuota())
 					.setTaxType(r.getTaxType() == TaxType.RETENTION ? TediTaxType.IRPF : TediTaxType.IVA))
@@ -119,13 +119,27 @@ public class AonParser {
 	}
 	
 	public LinkedList<TediInvoiceDetail> getDetails(LinkedList<InvoiceDetail> details) {
-		return details.stream().map(r -> new TediInvoiceDetail()
+		return details.stream().map(r -> {
+			Double amount = AonMathUtils.round( r.getQuantity() * r.getPrice());
+			amount = amount - amount * (calculateDiscountExpression(r.getDiscountExpression()) / 100);
+			return new TediInvoiceDetail()
 					.setDescription(r.getDescription())
 					.setBase(r.getTaxableBase())
 					.setPrice(r.getPrice())
-					.setDiscount(AonNumberUtils.toDouble(r.getDiscountExpression()))
-					.setQuantity(r.getQuantity()))
-			.collect(Collectors.toCollection(LinkedList::new));
+					.setDiscount(calculateDiscountExpression(r.getDiscountExpression()))
+					.setQuantity(r.getQuantity())
+					.setAmount(amount);
+			}).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Double calculateDiscountExpression(String discountExpression) {
+		Pattern PATTERN = Pattern.compile("\\+");
+		String[] arr = PATTERN.split(discountExpression);
+    	Double discount = 0.0;
+		for (int i = 0; i < arr.length; i++) {
+        	discount =  discount + Double.parseDouble(arr[i].trim());
+    	}
+		return AonMathUtils.round(discount);
 	}
 	
 	public TediInvoiceType getInvoiceType(InvoiceType type){

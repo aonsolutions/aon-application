@@ -627,6 +627,14 @@ form {
   width: 80%;
 }
 
+.aonDialogMenuContent {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  width: 80%;
+}
+
 .aonProgress,
 .aonProgress:before {
   height: 3px;

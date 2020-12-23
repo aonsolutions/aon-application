@@ -101,7 +101,7 @@ export class AonTable extends AonElement {
 			header.appendChild(th);
 		}
 
-		addRow(value, fn) {
+		addRow(value, fn, contextMenu) {
 			let body = this.getElement(this.getId() + 'TableBody');
 			if(!body) return true;
 			let tr = document.createElement('tr');
@@ -138,6 +138,8 @@ export class AonTable extends AonElement {
 				} else {
 					td.innerHTML = value[id] ? value[id] : '';
 					td.addEventListener('click', fn);
+					if(contextMenu)
+						td.addEventListener('contextmenu', contextMenu);
 				}
 				tr.appendChild(td);
 			});

@@ -149,10 +149,15 @@ export class AonInvoice extends AonElement {
 		invoiceToolbar.addSeparator();
 
 		if(this._invoice.isInbox()) {
-			invoiceToolbar.addButton('Options', 'more_vert', () => {
-				let button = this.getElement(invoiceToolbar.TOOL_SECTION + 'OptionsButton');
-				const top  = button.getBoundingClientRect().top;
-				const left = button.getBoundingClientRect().left;
+			invoiceToolbar.addButton('Options', 'more_vert', (e) => {
+				e.preventDefault();
+				let rect = e.target.getBoundingClientRect();
+		    let x = e.clientX - rect.left;
+				let y = e.clientY - rect.top;
+
+			  const top  = rect.top + y;
+			  const left = rect.left + x;
+
 				let d = document.getElementById(aonInvoice.OPTION_DIALOG);
 				let rectify = InvoiceAction.RECTIFY;
 				rectify.fn = () => this.rectifyInvoice();
@@ -361,14 +366,22 @@ export class AonInvoice extends AonElement {
 	}
 
 	duplicateInvoice() {
-		let aonInvoice = this.getElement('aonInvoice');
-		let d = document.getElementById(aonInvoice.DIALOG);
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.AON_MSG_DUPLICATE_INVOICE);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
-		d.open();
+		let dupInv = this._invoice;
+		dupInv.id = undefined;
+		dupInv.date = new Date();
+		dupInv.series = undefined;
+		dupInv.number = undefined;
+		dupInv.reference = undefined;
+		if(dupInv.finances) {
+			dupInv.finances.forEach((item, i) => {
+				dupInv.finances[i].due_date = new Date();
+			});
+		}
+
+		insertInvoice(dupInv).then((r) => {
+			let aip = document.querySelector('aon-invoice-panel');
+			aip.aonInvoice(r.type, r);
+		});
 	}
 
 	printInvoice() {
