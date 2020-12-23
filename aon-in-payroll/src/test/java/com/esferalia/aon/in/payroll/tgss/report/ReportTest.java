@@ -49,7 +49,6 @@ public class ReportTest {
 //	}
 	
 	@Test
-	@Ignore("Not yet")
 	public void testCCCVidaLaboral() throws IOException, UnknownPDFException {
 		try (InputStream is = ReportTest.class.getResourceAsStream("cccvidalaboral.pdf")){
 			Collection<Employee> employees = CCCLaboralLife.parse(is, new EmployeeBuilder());
@@ -68,6 +67,23 @@ public class ReportTest {
 
 			employee = map.get("011005151164");
 			Assert.assertEquals(1, employee.size());
+		}
+	}
+
+	@Test
+	public void testCCCVidaLaboralUltra() throws IOException, UnknownPDFException {
+		try (InputStream is = ReportTest.class.getResourceAsStream("cccvidalaboral.pdf")){
+			Collection<Employee> employees = CCCLaboralLife.parse(is, new EmployeeBuilder());
+			Map<String, List<Employee> > map =
+					employees.stream()
+							.collect(Collectors.toMap(e -> e.getNss(), e -> Collections.singletonList(e), ReportTest::union ));
+
+			List<Employee> employee = map.get("010019805355");
+
+			employee = map.get("011001022503");
+			Assert.assertEquals(2, employee.size());
+
+			System.out.println(employee);
 		}
 	}
 

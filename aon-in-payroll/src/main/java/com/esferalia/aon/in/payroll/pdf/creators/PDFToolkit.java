@@ -13,7 +13,9 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
 import java.awt.*;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 import java.util.List;
@@ -23,6 +25,14 @@ public class PDFToolkit {
 	public final static Color AON_BLUE = new Color(0x3a5b9e);
 	public final static PDFont HELVETICA = PDType1Font.HELVETICA;
 	public final static PDFont HELVETICA_BOLD = PDType1Font.HELVETICA_BOLD;
+
+	public final static Color WHITE = new Color(0xffffff);
+	public final static Color BLACK = new Color(0x000000);
+	public final static Color BLUE 	= new Color(0x3a5b9e);
+	public final static Color RED 	= new Color(0xf44336);
+	public final static Color GREEN = new Color(0x228b22);
+
+	public final static DecimalFormat df = new DecimalFormat("0.00");
 
 	//CREATE AN HORIZONTAL PAGE
 	public static PDPage createHorizontalPage(){
@@ -76,21 +86,50 @@ public class PDFToolkit {
 	}
 
 	//GET PDF FORM FIELDS
-	public static List<PDField> getFormFields(PDDocument doc){
+	public static List<PDField> get_form_fields(PDDocument doc){
 		PDDocumentCatalog pdCatalog = doc.getDocumentCatalog();
 		PDAcroForm pdAcroForm = pdCatalog.getAcroForm();
 		return  pdAcroForm.getFields();
 	}
 
 	//GET FIELD RECTANGLE
-	public static PDRectangle getFieldRectangle(PDField field){
-		return field.getWidgets().get(0).getRectangle();
+	public static Optional<PDRectangle> get_field_rectangle(Optional<PDField> field, int widget_index){
+		if(field.isEmpty()) return Optional.empty();
+		PDField f = field.get();
+		if(widget_index >= f.getWidgets().size()) return Optional.empty();
+		return Optional.of(f.getWidgets().get(widget_index).getRectangle());
+	}
+
+	//GET FIELD RECTANGLES
+	public static ArrayList<Optional<PDRectangle>> get_field_rectangles(Optional<PDField> field){
+		ArrayList<Optional<PDRectangle>> rectangles = new ArrayList<>();
+		if(field.isPresent()){
+			for (int i = 0; i < field.get().getWidgets().size(); i++)
+				rectangles.add(get_field_rectangle(field,i));
+
+		}
+
+		return rectangles;
 	}
 
 	//GET FIELD PAGE
-	public static PDPage get_field_page(PDField field){
-		return field.getWidgets().get(0).getPage();
+	public static Optional<PDPage> get_field_page(Optional<PDField> field, int widget_index){
+		if(field.isEmpty()) return Optional.empty();
+		PDField f = field.get();
+		if(widget_index >= f.getWidgets().size()) return Optional.empty();
+		return Optional.of(f.getWidgets().get(widget_index).getPage());
 	}
+
+	//GET FIELD PAGES
+	public static ArrayList<Optional<PDPage>> get_field_pages(Optional<PDField> field){
+		ArrayList<Optional<PDPage>> pages = new ArrayList<>();
+		if(field.isPresent()){
+			for (int i = 0; i < field.get().getWidgets().size(); i++)
+				pages.add(get_field_page(field,i));
+		}
+		return pages;
+	}
+
 
 	//OPEN PAGE IN APPEND MODE
 	public static PDPageContentStream open_in_append_mode(PDDocument doc, PDPage page){

@@ -66,23 +66,26 @@ public class CCCLaboralLife {
 				String nss = 			employeeData.group("nss1") + employeeData.group("nss2");
 				String ipf = 			employeeData.group("ipf1") + employeeData.group("ipf2");
 				String name = 			employeeData.group("name");
-				builder.setNss(nss).setIpf(ipf).setName(name);
+				;
 
 				Optional<Matcher> data = attempt(br, GENERAL_INFO);
-				builder.setFra(null)
-						.setFea(null)
-						.setFrb(null)
-						.setFeb(null);
-
 				while(data.isPresent()) {
 					employeeData = data.get();
 
 					String type = 			employeeData.group("type");
 					Date startDate = 		null;
 					Date effectDate = 		null;
+					Date realSitDate = 		null;
+					Date effectSitDate  =	null;
 
-					if(employeeData.group("startDate") != null)  	startDate = 		parseDate(employeeData.group("startDate"),"dd-MM-yyyy");
-					if(employeeData.group("effectDate") != null)  	effectDate = 		parseDate(employeeData.group("effectDate"),"dd-MM-yyyy");
+					if(!type.equals("BAJA") && !type.equals("ALTA")){
+						data = attempt(br, GENERAL_INFO);
+						continue;
+					}
+					if(employeeData.group("startDate") != null)  	startDate  		= 	parseDate(employeeData.group("startDate"),"dd-MM-yyyy");
+					if(employeeData.group("effectDate") != null)  	effectDate 		= 	parseDate(employeeData.group("effectDate"),"dd-MM-yyyy");
+					if(employeeData.group("realSitDate") != null)  	realSitDate 	= 	parseDate(employeeData.group("realSitDate"),"dd-MM-yyyy");
+					if(employeeData.group("effectSitDate") != null) effectSitDate 	= 	parseDate(employeeData.group("effectSitDate"),"dd-MM-yyyy");
 
 					String gc =				employeeData.group("gc");
 					String tc = 			employeeData.group("tc");
@@ -106,11 +109,16 @@ public class CCCLaboralLife {
 
 					int cotDays = 			Integer.parseInt(employeeData.group("cotDays"));
 
-					if(ctp != null) 			builder.setCtp(ctp);
-					if(type.equalsIgnoreCase("ALTA")) builder.setFra(startDate).setFea(effectDate);
-					if(type.equalsIgnoreCase("BAJA")) builder.setFrb(startDate).setFeb(effectDate);
+					if(ctp != null) 		builder.setCtp(ctp);
 
-					builder.setSituation(type)
+					builder.setNss(nss)
+							.setIpf(ipf)
+							.setName(name)
+							.setFra(startDate)
+							.setFea(effectDate)
+							.setFrb(effectSitDate)
+							.setFeb(realSitDate)
+							.setSituation(type)
 							.setGc(gc)
 							.setTc(tc)
 							.setEp(ep)
@@ -119,13 +127,13 @@ public class CCCLaboralLife {
 							.setTotal(total)
 							.setCotDays(cotDays);
 
+					Employee e = builder.build();
+					employees.add(e);
+
 					data = attempt(br, GENERAL_INFO);
 				}
-				Employee e = builder.build();
-				employees.add(e);
 			}
 		}catch(UnknownPDFException ignored){}
-
 		return	employees;
 	}
 
@@ -153,7 +161,6 @@ public class CCCLaboralLife {
 
 	//FIND A STRING THAT MATCHES THE REGEXP PATTERN
 	private static Matcher find( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
-
 		String line  ;
 		while ( ( line = reader.readLine() ) != null  ) {
 			Matcher matcher = pattern.matcher(line) ;
