@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountPeriodBox;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -591,7 +592,12 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 						.setSecurityLevel( newParams.getSecurityLevel() )
 						.setAccount( newParams.getAccount().clone() )
 				;
-				StatementPanel statement = new StatementPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), stmParams, true);
+				StatementPanel statement = new StatementPanel(
+						new AccountingReportModuleOptions()
+							.setDomainName(getCurrentDomainName())
+							.setDomain(getCurrentDomainId())
+							.setUser(getCurrentUser())
+						, stmParams, true);
 				statement.addSelectionHandler(new AccountEntrySelectionHandler () {
 					
 					@Override

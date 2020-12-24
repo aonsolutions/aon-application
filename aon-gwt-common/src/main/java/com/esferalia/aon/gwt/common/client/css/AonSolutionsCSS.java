@@ -282,6 +282,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_download")
 	String aonIconDownload();
 	
+	@ClassName("aon_icon_wizard")
+	String aonIconWizard();
+
+	@ClassName("aon_icon_minus")
+	String aonIconMinus();
+
 	/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();
@@ -361,6 +367,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_font_medium")
 	String aonFontMedium();
 	
+	@ClassName("aon_font_larger")
+	String aonFontLarger();
+
 	@ClassName("aon_font_small")
 	String aonFontSmall();
 
@@ -490,9 +499,14 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_background_ligth_yellow")
 	String aonBackgroundLigthYellow();
 	
-	@ClassName("aon-background_ligthgray")
+	@ClassName("aon_background_ligthgray")
 	String aonBackgroundLigthGray();
 	
+	@ClassName("aon_background_highlighted_green")
+	String aonBackgroundHighlightedGreen();
+
+	@ClassName("aon_background_highlighted_orange")
+	String aonBackgroundHighlightedOrange();
 
 	@ClassName("aon_pointer_events_none")
 	String aonPointerEventsNone();
@@ -538,7 +552,7 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_confirm_dialog")
 	String aonConfirmDialog();
 
-	@ClassName("aon_confirm_dialog-msg")
+	@ClassName("aon_confirm_dialog_msg")
 	String aonConfirmDialogMsg();
 	
 	/* TABLE */
@@ -685,6 +699,7 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_suggest_box_popup")
 	String aonSuggestBoxPopup();
+
 
 }
 

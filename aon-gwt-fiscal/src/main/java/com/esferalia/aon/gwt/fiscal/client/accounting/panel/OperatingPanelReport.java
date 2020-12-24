@@ -598,7 +598,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 						.setSecurityLevel( newParams.getSecurityLevel() )
 						.setAccount( newParams.getAccount().clone() )
 				;
-				StatementPanel statement = new StatementPanel(options.getDomainName(), options.getUser(), options.getDomain(), stmParams, true);
+				StatementPanel statement = new StatementPanel(options, stmParams, true);
 				statement.addSelectionHandler(new AccountEntrySelectionHandler () {
 					
 					@Override

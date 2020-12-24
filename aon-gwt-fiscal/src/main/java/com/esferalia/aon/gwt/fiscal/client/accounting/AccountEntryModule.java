@@ -984,11 +984,11 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override
 			public void onSuccess(Account result) {
 				StatementPanelReport statementPanel = new  StatementPanelReport(
-						getOptions().getDomainName()
-						,getOptions().getUser()
-						,getOptions().getDomain()
-						,Integer.MAX_VALUE
-						,getOptions().getConfiguration()
+						new AccountingReportModuleOptions()
+							 .setDomainName( getOptions().getDomainName() )
+							 .setUser( getOptions().getUser() )
+							 .setDomain( getOptions().getDomain() )
+							 .setConfiguration( getOptions().getConfiguration() )
 						,new AccountingReportParams()
 							.setAccount(result)
 							.setPeriod(period.getValue())

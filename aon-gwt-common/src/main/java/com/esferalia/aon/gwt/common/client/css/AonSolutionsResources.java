@@ -94,6 +94,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconAdd();
 
+	@Source("icons/aon-icon-minus.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconMinus();
+
 	@Source("icons/aon-icon-save.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconSave();
@@ -373,5 +377,9 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-download.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconDownload();
+
+	@Source("icons/aon-icon-wizard.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconWizard();
 }
 
