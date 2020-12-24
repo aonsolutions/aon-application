@@ -7,6 +7,8 @@ import './documental/aon-documental.js';
 import './messenger/aon-messenger.js';
 import './invoice/aon-invoice-panel.js';
 
+import '../components/aon-dialog-menu.js';
+
 import {getReader} from '../services/utils.js'
 
 import { uploadFile } from '../services/fileService.js'
@@ -79,6 +81,7 @@ export class AonMobileMenu extends AonElement {
 					hidden
 				  />
 			</div>
+			<aon-dialog-menu id="aonMobileMenuComunicaaonDialogAddOption" ></aon-dialog-menu>
 		`;
 		let rp = this.getElement('rootPanel');
 		let aonMenuSidenav = this.getElement('aonMobileMenuSidenav');
@@ -118,12 +121,38 @@ export class AonMobileMenu extends AonElement {
 		aonMobileMenuCamera.style.marginLeft = n;
 
 		let aonMobileMenuCameraButton = this.getElement('aonMobileMenuCameraButton');
-		aonMobileMenuCameraButton.addEventListener('click',() => this.openCamera());
+		aonMobileMenuCameraButton.addEventListener('click',({target}) => {
+			let top  = target.getBoundingClientRect().top;
+			const left = target.getBoundingClientRect().left;
+			const height = window.innerHeight;
+
+			if((height - top) < (height / 2)) 
+				top = top - 120;
+	
+			let d = this.getElement(`${aonMobileMenuComunica.id}aonDialogAddOption`);
+	
+			let options = [{
+				name: "Documental",
+				icon: 'snippet_folder',
+				fn: () => this.openCamera("documental")
+			}, {
+				name: 'Solicitudes',
+				icon: 'assignment',
+				fn: () => this.openCamera("solicitud")
+			}, {
+				name: 'Facturas',
+				icon: 'receipt',
+				fn: () => this.openCamera("factura")
+			}];
+			d.setMenuOptions(options, top, left);
+			d.open();
+		});
 
 		this.getElement(this.CAMERA_INPUT).addEventListener('change', (ev)=> this.sendImage(ev) );
 	}
 
-	openCamera(){
+	openCamera(type){
+		console.log("type>>",type);
 		if("undefined" === typeof webkit) {
 			this.getElement('aonMobileMenuCameraInput').click();
 			return false;

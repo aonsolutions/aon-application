@@ -7,6 +7,7 @@ const formatParams = (params) => {
   );
 };
 
+
 export const request = (method, url, token, sendData, fn) => {
   let xhr = new XMLHttpRequest();
   if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
@@ -23,7 +24,6 @@ export const request = (method, url, token, sendData, fn) => {
   xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
   xhr.send(JSON.stringify(sendData));
-
   xhr.onload = () => {
     if (xhr.status != 200) {
       // analyze HTTP status of the response
@@ -80,6 +80,19 @@ export const requestBidoq = (method, url, sendData, fn) => {
   };
 };
 
+export const requestFile = (method, url, fn) => {
+  const xhr = new XMLHttpRequest();
+  xhr.open(method, url);
+  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.responseType = 'blob';
+  xhr.send();
+  xhr.onload = () => {
+    xhr.status != 200 ? fn(undefined, xhr.response) : fn(xhr.response);
+  };
+  xhr.onerror = () => {};
+};
+
 export const get = (url, data) => {
   return new Promise((resolve, reject) => {
     request("GET", url, getToken(), data, (result, error) => {
@@ -109,7 +122,7 @@ export const remove = (url, data) => {
 
 export const getToken = () => localStorage.getItem("aon_session_id");
 
-export const openPDF = async (url, data) => {
+export const openPDF = (url, data) => {
   const token = getToken();
   const domainId = localStorage.getItem("aon_domain_id");
   const domainName = localStorage.getItem("aon_domain_name");
@@ -121,34 +134,27 @@ export const openPDF = async (url, data) => {
   }
   const json = btoa(JSON.stringify(datos));
   const newUrl = `${url}?json=${json}`;
+  let _webkit = undefined;
 
-  let _webkit = false;
-  try {
-    if ("undefined" !== typeof webkit)
-      _webkit = webkit.messageHandlers.cordova_iab;
-  } catch (e) { }
+  try { if ("undefined" !== typeof webkit) { _webkit = webkit.messageHandlers.cordova_iab; } } catch (e) {}
 
-  if (_webkit) {
-    const obj = await openFileMobile(newUrl).catch(e => null);
-    if (obj) _webkit.postMessage(JSON.stringify(obj));
-  } else {
+  if (_webkit) 
+    openFileMobile(newUrl).then(obj =>  webkit.postMessage(JSON.stringify(obj)) ).catch(e => null);
+  else 
     openFileDesktop(newUrl);
-  }
 }
 
 const openFileMobile = async (url) => new Promise((resolve, reject) => {
-  request("GET", url, getToken(), undefined, (result, error) => {
+  requestFile("GET", url, (result, error) => {
     if (error) reject(error);
     else {
       const contentType = "application/pdf";
-      const blob = new Blob([result], { type: contentType });
       const reader = new FileReader();
-      reader.readAsDataURL(blob);
-
-      reader.onloadend = function () {
-        const base64String = reader.result.toString().replace(/^data:.+;base64,/, '');
+      reader.readAsDataURL(result);
+      reader.onload = function () {
+        const base64Str = reader.result.toString().replace(/^data:.+;base64,/, '');
         const obj = {
-          fileBase64: base64String,
+          fileBase64: base64Str,
           fileName: "document.pdf",
           contentType,
           action: "fileDownload"

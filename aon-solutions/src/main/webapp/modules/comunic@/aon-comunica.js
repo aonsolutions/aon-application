@@ -32,8 +32,8 @@ export class AonComunica extends AonElement {
 		this.aonComunicaEl = this.getElement(this.AON_COMUNICA);
 
 		this.buildToolbar();
-		this.getElement(this.aonComunicaEl.TOOLBAR).setAttribute('option', 'Movimientos');
-		this.aonComunicaEl.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
+		this.getElement(this.aonComunicaEl.TOOLBAR).setAttribute('option', 'Contratos');
+		this.aonComunicaEl.setContentHTML(`<aon-contrato-list id="aonContratoList" ></aon-contrato-list>`)
 	}
 
 	buildToolbar(){
@@ -83,10 +83,17 @@ export class AonComunica extends AonElement {
 			},
 			{
 				name: 'Movimientos',
-				icon: 'repeat',
+				aonIcon: {
+					icon: 'aon_seg_social',
+					color: 'black'
+				},
 				fn: () => this.aonComunicaEl.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`)
 			}
 		];
+		if(this.isMobile()){
+			delete options[1]; 
+			delete options[3]; 
+		}
 		this.aonComunicaEl.addSidenavOptions('OPCIONES', options);
 	}
 
