@@ -26,10 +26,10 @@
 
 				<aon:if test="#{!desktop.showGraphicsPortlet}">
 	  						<aon:if test="#{!userUtils.newAONTheme}">				
-								<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
+								<ui:include src="/facelet/homepage/portlet/infoLeftGroupPortlet.xhtml" />
 							</aon:if>
 	  						<aon:if test="#{userUtils.newAONTheme}">				
-								<ui:include src="/facelet/new/portlet/infoGroupPortlet.xhtml" />
+								<ui:include src="/facelet/new/portlet/infoLeftGroupPortlet.xhtml" />
 							</aon:if>
 				</aon:if>
 				<aon:div styleClass="aon-width-all">
@@ -87,16 +87,7 @@
 				</aon:div>
 
 				<aon:if test="#{!userUtils.newAONTheme}">				
-					<aon:div>
-						<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
-						<ui:include src="/facelet/homepage/portlet/externalApplicationsChildPortlet.xhtml" />
-						<ui:include src="/facelet/homepage/portlet/externalApplicationsParentPortlet.xhtml" />
-						<aon:if test="#{desktop.showGraphicsPortlet}">
-							<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
-						</aon:if>			
-						<ui:include src="/facelet/homepage/portlet/emailVerifyPortlet.xhtml" />
-						<ui:include src="/facelet/homepage/portlet/supportPortlet.xhtml" />
-					</aon:div>
+					<ui:include src="/facelet/homepage/portlet/infoRightGroupPortlet.xhtml" />
 				</aon:if>
 	  			<aon:if test="#{userUtils.newAONTheme}">				
 					<ui:include src="/facelet/new/portlet/infoRightGroupPortlet.xhtml" />

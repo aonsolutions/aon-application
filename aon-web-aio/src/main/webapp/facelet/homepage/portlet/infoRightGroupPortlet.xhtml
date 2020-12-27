@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+	
+	
+	<aon:div id="desktopRightDiv1" style="padding-top: 5px; width:8px" >
+		
+	<style>
+		.aon-portlets-column3{
+			width : 0px;
+			padding: 0px;
+			text-align: left;
+		}
+		.aon-show-right-button {
+			opacity: 0.6; 
+			padding: 10px;
+			position:relative;
+			background-color: #ddd; 
+			transform: rotate(180deg);
+			border-top-right-radius: 50%; 
+			border-bottom-right-radius: 50%;  
+		}
+		.aon-hide-right-button {
+			z-index: 66;
+			opacity: 0.6; 
+			padding: 10px;
+			position:relative;
+			background-color: #ddd; 
+			border-top-right-radius: 50%; 
+			border-bottom-right-radius: 50%;  
+		}
+	</style>
+	
+	<script type='text/javascript' >
+		function showInfoRightGroup() {
+			document.getElementById("aonContent:mainForm:showRightButton").style.display='none';
+			document.getElementById("aonContent:mainForm:hideRightButton").style.display='initial';
+			document.getElementById("aonContent:mainForm:desktopRightDiv1").parentNode.style.width='200px';
+			document.getElementById("aonContent:mainForm:desktopRightDiv1").style.width='100%';
+			document.getElementById("aonContent:mainForm:infoGroupRightDiv").style.display='block';
+		}
+		
+		function hideInfoRightGroup() {
+			document.getElementById("aonContent:mainForm:showRightButton").style.display='initial';
+			document.getElementById("aonContent:mainForm:hideRightButton").style.display='none';
+			document.getElementById("aonContent:mainForm:desktopRightDiv1").parentNode.style.width='0px';
+			document.getElementById("aonContent:mainForm:desktopRightDiv1").style.width='8px';
+			document.getElementById("aonContent:mainForm:infoGroupRightDiv").style.display='none';
+		}
+	</script>
+
+		<h:graphicImage 
+		id="showRightButton"
+		styleClass="aon-show-right-button"
+		url="#{aonResource.resolve['/images/aon-right-arrow.png']}" 
+		onclick="javascript:showInfoRightGroup()"/>	
+		
+		<h:graphicImage 
+		id="hideRightButton"
+		style="display:none"
+		styleClass="aon-hide-right-button"
+		url="#{aonResource.resolve['/images/aon-right-arrow.png']}" 
+		onclick="javascript:hideInfoRightGroup()"/>	
+
+		<aon:div id="infoGroupRightDiv" style="display:none;  position:relative; top: -32px" >
+			<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
+			<ui:include src="/facelet/homepage/portlet/externalApplicationsChildPortlet.xhtml" />
+			<ui:include src="/facelet/homepage/portlet/externalApplicationsParentPortlet.xhtml" />
+			<aon:if test="#{desktop.showGraphicsPortlet}">
+				<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
+			</aon:if>			
+			<ui:include src="/facelet/homepage/portlet/emailVerifyPortlet.xhtml" />
+			<ui:include src="/facelet/homepage/portlet/supportPortlet.xhtml" />
+		</aon:div>
+
+	</aon:div>
+					
+</ui:composition>
