@@ -4,26 +4,15 @@
 	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:commonsolutions='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
-
 	<ui:style>
 	
 	</ui:style>
 
-
 	<ui:image field='view' src='view.png' />
 
-	<ui:with type="com.esferalia.aon.gwt.payroll.client.MetaData.Resources"
-		field="res" />
+	<ui:with type="com.esferalia.aon.gwt.payroll.client.MetaData.Resources" field="res" />
 
 	<g:DockLayoutPanel unit='PX'>
-		<g:north size="45">
-			<g:VerticalPanel>
-				<commonsolutions:AonOptionsToolbar ui:field="toolbar" />
-			</g:VerticalPanel>
-			
-			<!-- <common:OptionsToolbar ui:field="toolbar" /> -->
-		</g:north>
-
 		<g:center>
 			<employee:AgreementsTree ui:field="agreementsTree" />
 		</g:center>

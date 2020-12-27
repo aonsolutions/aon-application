@@ -11,22 +11,27 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAgreementsToolbar;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Listener;
+import com.esferalia.aon.gwt.payroll.client.Agreements.Toolbar;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -41,10 +46,9 @@ interface EditionListener {
 }
 
 public class MainAgreement extends MainEntryPoint implements Listener,
-		EditionListener, Agreements.Toolbar {
+		EditionListener, Agreements.Toolbar, AonAgreementsToolbar.Listener {
 	
 
-	
 	static class DraftObjectListener implements UndoManager.Listener {
 
 		private TreeItem treeItem;
@@ -68,8 +72,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	}
 
-	static interface Binder extends UiBinder<Widget, MainAgreement> {
-	}
+	static interface Binder extends UiBinder<Widget, MainAgreement> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
@@ -247,7 +250,17 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	 */
 	
 	@UiField
-	SplitLayoutPanel splitLayoutPanel;
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String borderR();
+	}
+	
+	@UiField
+	DockLayoutPanel splitLayoutPanel;
+	
+	@UiField
+	AonAgreementsToolbar toolbar;
 	
 	@UiField
 	Agreements agreements;
@@ -264,6 +277,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	private List<EditionListener> editionsListener;
 	
 	private AgreementServiceAsync agreementServiceAsync;
+	
+	private List<Listener> listeners;
+	private List<Toolbar> toolbars;
 	
 	@Override
 	public void onModuleLoad() {
@@ -290,6 +306,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 		
+		agreements.addStyleName(style.borderR());
+		
 		this.editionsListener = new LinkedList<EditionListener>();
 		this.agreement = null;
 		this.parentDomain = null;
@@ -297,6 +315,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		this.agreements.addToolbar(this);
 		this.agreements.addListener(this);
 		this.agreementDrafts = new HashMap<Integer, AgreementDraftObject>();
+		
+		this.toolbars = new LinkedList<Toolbar>();
+		this.listeners = new LinkedList<Listener>();
+		
+		addToolbar(this);
+		toolbar.addListener(this);
 		
 		addEditionOptions(this);
 		
@@ -370,7 +394,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			agreementDraft.setAgreementDraftObject(agreementDraftObject);
 		}
 		
-		agreements.toolbar.setVisibleDraftButton(isEditable(agreementDraftObject));
+		toolbar.setVisibleDraftButton(isEditable(agreementDraftObject));
 		
 	}
 	
@@ -488,7 +512,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	
 	@Override
 	public void onCollapseMenuButtonClick() {
-		splitLayoutPanel.setWidgetSize(agreements, 23);
+		splitLayoutPanel.setWidgetSize(agreements, 0);
 		splitLayoutPanel.animate(500);
 	}
 
@@ -497,6 +521,122 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		splitLayoutPanel.setWidgetSize(agreements, 350);
 		splitLayoutPanel.animate(500);
 	}
+	
+	// --------------------------------------------------------- NEW TOOLBAR
+	
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
 
+	public void removeListener(Listener listener) {
+		listeners.remove(listener);
+	}
+	
+	public void addToolbar(Toolbar toolbar) {
+		toolbars.add(toolbar);
+	}
+	
+	public void removeToolbar(Toolbar toolbar) {
+		toolbars.remove(toolbar);
+	}
+
+	@Override
+	public void onNewButtonClick(ClickEvent event) {
+		addNewItemTree(null);
+	}
+
+	@Override
+	public void onPasteButtonClick(ClickEvent event) {
+		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
+		
+		if(object instanceof Agreement) {
+			for(Toolbar toolbar : toolbars)
+				toolbar.onAgreementCtrlV((Agreement) object);
+		}
+	}
+
+	@Override
+	public void onCopyButtonClick(ClickEvent event) {
+		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
+		
+		if(object instanceof Agreement) {
+			Agreement agreement = (Agreement) object;
+			
+			if(agreement.getId() >= 0) {
+				for(Toolbar toolbar : toolbars)
+					toolbar.onAgreementCtrlC((Agreement) object);
+			}
+		}
+	}
+
+	@Override
+	public void onDraftButtonClick(ClickEvent event) {
+		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
+		if(object instanceof Agreement) {
+			for(Toolbar toolbar : toolbars)
+				toolbar.onMoveToTrash((Agreement) object);
+		}
+	}
+
+	@Override
+	public void onCollapseAllButtonClick(ClickEvent event) {
+		
+	}
+
+	@Override
+	public void onKeyUpSearchTextBox(KeyUpEvent event) {
+		agreements.filter(toolbar.getSearchTextBox().getValue());
+	}
+
+	@Override
+	public void onCollapseMenuButtonClick(ClickEvent event) {
+		splitLayoutPanel.setWidgetSize(agreements, 0);
+		splitLayoutPanel.animate(500);
+	}
+
+	@Override
+	public void onShowMenuButtonClick(ClickEvent event) {
+		splitLayoutPanel.setWidgetSize(agreements, 350);
+		splitLayoutPanel.animate(500);
+	}
+
+	@Override
+	public void onImportButtonClick(ClickEvent event) {
+		ServiAgreementDialog serviAgreementDialog = new ServiAgreementDialog() {
+
+			@Override
+			protected void onAccept(String serviAgreementCode) {
+				getAgreementsTree().getEnterpriseService().getServiAgreement(serviAgreementCode, 
+						new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						agreements.getAgreements();
+					}
+				});
+			}
+			
+		};
+		
+		serviAgreementDialog.center();
+		serviAgreementDialog.show();
+	}
+
+	private AgreementsTree getAgreementsTree() {
+		return this.agreements.agreementsTree;
+	}
+	
+	public void addNewItemTree(Agreement agreement) {
+		agreements.addAgreementItem(agreements.newAgreement());
+		//Select the Last One
+		getAgreementsTree().getTree().setSelectedItem(
+				getAgreementsTree().getTree().getItem(
+						getAgreementsTree().getTree().getItemCount() - 1));
+	}
 	
 }

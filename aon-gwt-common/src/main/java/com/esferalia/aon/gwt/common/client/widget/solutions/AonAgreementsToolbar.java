@@ -4,20 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AonOptionsToolbar extends Composite {
+public class AonAgreementsToolbar extends Composite {
 
 	public interface Listener {
 		
@@ -40,42 +43,50 @@ public class AonOptionsToolbar extends Composite {
 		void onImportButtonClick(ClickEvent event);
 	}
 	
-	private static AonOptionsToolbarUiBinder uiBinder = GWT
-			.create(AonOptionsToolbarUiBinder.class);
+	private static AonOptionsToolbarUiBinder uiBinder = GWT.create(AonOptionsToolbarUiBinder.class);
 
-	interface AonOptionsToolbarUiBinder extends
-			UiBinder<Widget, AonOptionsToolbar> {
+	interface AonOptionsToolbarUiBinder extends	UiBinder<Widget, AonAgreementsToolbar> {}
+	
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String title();
 	}
 	
 	@UiField
-	HTMLPanel buttonBar;
+	HTMLPanel headerSection;
+	
+	@UiField
+	HTMLPanel toolsSection;
 
 	private List<Listener> listeners;
 	
-	private AonToolbarSmall toolbar;
-	private AonButton viewButton;
-	private AonButton pasteButton;
-	private AonButton copyButton;
-	private AonButton draftButton;
-	private AonButton newButton;
-	private AonButton importButton;
-	private AonButton collapseAllButton;
-	private AonButton collapseMenuButton;
 	private AonButton showMenuButton;
+	
+	private AonButton searchButton;
 	private TextBox searchTextBox;
 	
-	public AonOptionsToolbar() {
+	private AonButton newButton;
+	private AonButton importButton;
+	private AonButton draftButton;
+	private AonButton copyButton;
+	private AonButton pasteButton;
+	private AonButton viewButton;
+	private AonButton collapseAllButton;
+	
+	private boolean agreementTreeShowed = true;
+	private boolean searchTextBoxShowed = false;
+	
+	public AonAgreementsToolbar() {
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		toolbar = getToolbarPanel();
-		buttonBar.add(toolbar);
-		
+		createToolbar();
 		this.listeners = new ArrayList<Listener>();
 	}
 
-	public void setVisibleSearchTextBox(boolean visible) {
-		searchTextBox.setVisible(visible);
-	}
+//	public void setVisibleSearchTextBox(boolean visible) {
+//		searchTextBox.getElement().getStyle().setOpacity(1);
+//	}
 	
 	public void setVisiblePasteButton(boolean visible) {
 		pasteButton.setVisible(visible);
@@ -133,7 +144,6 @@ public class AonOptionsToolbar extends Composite {
 		return searchTextBox;
 	}
 	
-	
 	public void addListener(Listener listener) {
 		listeners.add(listener);
 	}
@@ -142,45 +152,57 @@ public class AonOptionsToolbar extends Composite {
 		listeners.remove(listener);
 	}
 	
-	private AonToolbarSmall getToolbarPanel() {
+	private void createToolbar() {
 		
-		AonToolbarSmall toolbar = new AonToolbarSmall();
-		
-		showMenuButton = new AonToolbarSmallButton("Mostrar", AON.CSS.aonIconMenu() );
+		showMenuButton = new AonToolbarButton("Ocultar", AON.CSS.aonIconMenu() );
 		showMenuButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				showMenuButton.setVisible(false);
-				collapseMenuButton.setVisible(true);
-				for(Listener listener : listeners)
-					listener.onShowMenuButtonClick(event);
-			}
-		});
-		toolbar.addLeftWidget(showMenuButton);
-		showMenuButton.setVisible(false);
-		
-		collapseMenuButton = new AonToolbarSmallButton("Ocultar", AON.CSS.aonIconMenuCollapse() );
-		collapseMenuButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				collapseMenuButton.setVisible(false);
-				showMenuButton.setVisible(true);
+				if(agreementTreeShowed) {
+					showMenuButton.setTitle("Mostrar");
+					for(Listener listener : listeners)
+						listener.onCollapseMenuButtonClick(event);
+				} else {
+					showMenuButton.setTitle("Ocultar");
+					for(Listener listener : listeners)
+						listener.onShowMenuButtonClick(event);
+				}
 				
-				for(Listener listener : listeners)
-					listener.onCollapseMenuButtonClick(event);
+				agreementTreeShowed = !agreementTreeShowed;
+				
 			}
 		});
-		toolbar.addLeftWidget(collapseMenuButton);
+		
+		headerSection.add(showMenuButton);
+		
+		Label title = new Label("Convenios");
+		title.addStyleName(style.title());
+		headerSection.add(title);
 		
 		searchTextBox = new TextBox();
-		searchTextBox.getElement().getStyle().setWidth(80, Unit.PCT);
 		searchTextBox.addKeyUpHandler(event -> {
 			for(Listener listener : listeners)
 				listener.onKeyUpSearchTextBox(event);
 		});
-		toolbar.setCenterWidget(searchTextBox);
+		toolsSection.add(searchTextBox);
+		searchTextBox.getElement().getStyle().setOpacity(0);
 		
-		newButton = new AonToolbarSmallButton(AON.MSG.newAction(), AON.CSS.aonIconAdd() );
+		searchButton = new AonToolbarButton("Buscar", AON.CSS.aonIconSearch() );
+		searchButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if(searchTextBoxShowed) {
+					hideSearchTextBox();
+				} else {
+					showSearchTextBox();
+				}
+				
+				searchTextBoxShowed = !searchTextBoxShowed;
+			}
+		});
+		toolsSection.add(searchButton);
+		
+		newButton = new AonToolbarButton(AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		newButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -188,9 +210,9 @@ public class AonOptionsToolbar extends Composite {
 					listener.onNewButtonClick(event);
 			}
 		});
-		toolbar.add(newButton);
+		toolsSection.add(newButton);
 		
-		importButton = new AonToolbarSmallButton("Importar Convenio", AON.CSS.aonIconCloudImport() );
+		importButton = new AonToolbarButton("Importar Convenio", AON.CSS.aonIconCloudImport() );
 		importButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -198,9 +220,9 @@ public class AonOptionsToolbar extends Composite {
 					listener.onImportButtonClick(event);
 			}
 		});
-		toolbar.add(importButton);
+		toolsSection.add(importButton);
 		
-		draftButton = new AonToolbarSmallButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
+		draftButton = new AonToolbarButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
 		draftButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -208,19 +230,19 @@ public class AonOptionsToolbar extends Composite {
 					listener.onDraftButtonClick(event);
 			}
 		});
-		toolbar.add(draftButton);
+		toolsSection.add(draftButton);
 		
-		viewButton = new AonToolbarSmallButton( "Ver", AON.CSS.aonIconShowPass() );
+		viewButton = new AonToolbarButton( "Ver", AON.CSS.aonIconShowPass() );
 		viewButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				
 			}
 		});
-		toolbar.add(viewButton);
+		toolsSection.add(viewButton);
 		viewButton.setVisible(false);
 		
-		copyButton = new AonToolbarSmallButton("Copiar", AON.CSS.aonIconCopy() );
+		copyButton = new AonToolbarButton("Copiar", AON.CSS.aonIconCopy() );
 		copyButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -228,9 +250,9 @@ public class AonOptionsToolbar extends Composite {
 					listener.onCopyButtonClick(event);
 			}
 		});
-		toolbar.add(copyButton);
+		toolsSection.add(copyButton);
 		
-		pasteButton = new AonToolbarSmallButton("Pegar", AON.CSS.aonIconPaste() );
+		pasteButton = new AonToolbarButton("Pegar", AON.CSS.aonIconPaste() );
 		pasteButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -238,9 +260,9 @@ public class AonOptionsToolbar extends Composite {
 					listener.onPasteButtonClick(event);
 			}
 		});
-		toolbar.add(pasteButton);
+		toolsSection.add(pasteButton);
 		
-		collapseAllButton = new AonToolbarSmallButton("Mas", AON.CSS.aonIconDown() );
+		collapseAllButton = new AonToolbarButton("Mas", AON.CSS.aonIconDown() );
 		collapseAllButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -248,7 +270,7 @@ public class AonOptionsToolbar extends Composite {
 					listener.onCollapseAllButtonClick(event);
 			}
 		});
-		toolbar.add(collapseAllButton);
+		toolsSection.add(collapseAllButton);
 		collapseAllButton.setVisible(false);
 		
 		newButton.ensureDebugId("newButton");
@@ -257,8 +279,40 @@ public class AonOptionsToolbar extends Composite {
 		pasteButton.ensureDebugId("pasteButton");
 		viewButton.ensureDebugId("viewButton");
 		collapseAllButton.ensureDebugId("collapseAllButton");
-		
-		return toolbar;
+	}
+	
+	private void showSearchTextBox(){
+		final Element e = searchTextBox.getElement();
+
+	    new Animation() {
+
+	        @Override
+	        protected void onUpdate( double progress ) {
+	            e.getStyle().setOpacity( progress );
+	        }
+
+	        @Override
+	        protected void onComplete() {
+	        	 e.getStyle().setOpacity( 1.0 );
+	        }
+	    }.run( 500 );
+	}
+	
+	private void hideSearchTextBox(){
+		final Element e = searchTextBox.getElement();
+
+	    new Animation() {
+
+	        @Override
+	        protected void onUpdate( double progress ) {
+	            e.getStyle().setOpacity( 1.0 - progress );
+	        }
+
+	        @Override
+	        protected void onComplete() {
+	        	 e.getStyle().setOpacity( 0 );
+	        }
+	    }.run( 500 );
 	}
 	
 }

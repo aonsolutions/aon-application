@@ -5,14 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonOptionsToolbar;
-import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -25,7 +22,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Agreements extends ResizeComposite implements
-		AgreementsTree.Listener, AonOptionsToolbar.Listener {
+		AgreementsTree.Listener {
 
 	interface Listener {
 
@@ -62,10 +59,6 @@ public class Agreements extends ResizeComposite implements
 
 	private static final Binder BINDER = GWT.create(Binder.class);
 
-//	@UiField
-//	OptionsToolbar toolbar;
-	@UiField
-	AonOptionsToolbar toolbar;
 	@UiField
 	AgreementsTree agreementsTree;
 
@@ -83,7 +76,6 @@ public class Agreements extends ResizeComposite implements
 		this.toolbars = new LinkedList<Toolbar>();
 		
 		agreementsTree.addListener(this);
-		toolbar.addListener(this);
 		
 		agreementsTree.getEnterpriseService().getDomain(
 				new AsyncCallback<Integer>() {
@@ -150,7 +142,7 @@ public class Agreements extends ResizeComposite implements
 			listener.onAgreementSelected(agreement);
 	}
 
-	private synchronized Agreement newAgreement() {
+	public synchronized Agreement newAgreement() {
 		Agreement agreement = new Agreement();
 		int newId = newsIdCounter--;
 		agreement.setId(newsIdCounter);
@@ -160,20 +152,16 @@ public class Agreements extends ResizeComposite implements
 		return agreement;
 	}
 	
-	private TreeItem addAgreementItem(Agreement agreement) {
+	public TreeItem addAgreementItem(Agreement agreement) {
 		String description = agreement.getDescription();
 		if (agreement.isRedefined()) {
 			description = "*" + description;
 		}
 
 		List<ImageResource> marks = new ArrayList<ImageResource>();
-		if (NumberUtils.notEquals(0, agreement.getDomain()) 
-				&& NumberUtils.notEquals(domain, agreement.getDomain()) )
+		if (AonNumberUtils.notEquals(0, agreement.getDomain()) 
+				&& AonNumberUtils.notEquals(domain, agreement.getDomain()) )
 			marks.add(IMAGES.parent());
-
-//		TreeItem agreementTreeItem = new TreeItem(AgreementsTree.imageItemSafeHtml(description,
-//				AgreementsTree.getImageResource(agreement, domain),
-//				marks.toArray(new ImageResource[marks.size()])));
 		
 		TreeItem agreementTreeItem = new TreeItem(AgreementsTree.imageItemSafeHtml(description,
 				AgreementsTree.getImageResource(agreement, domain)));
@@ -191,44 +179,6 @@ public class Agreements extends ResizeComposite implements
 	@Override
 	public boolean evaluateId(Agreement agreement) {
 		return agreement.getId() >= 0;
-	}
-	
-	@Override
-	public void onNewButtonClick(ClickEvent event) {
-		addNewItemTree(null);
-	}
-
-	@Override
-	public void onPasteButtonClick(ClickEvent event) {
-		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
-		
-		if(object instanceof Agreement) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onAgreementCtrlV((Agreement) object);
-		}
-	}
-
-	@Override
-	public void onCopyButtonClick(ClickEvent event) {
-		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
-		
-		if(object instanceof Agreement) {
-			Agreement agreement = (Agreement) object;
-			
-			if(agreement.getId() >= 0) {
-				for(Toolbar toolbar : toolbars)
-					toolbar.onAgreementCtrlC((Agreement) object);
-			}
-		}
-	}
-
-	@Override
-	public void onDraftButtonClick(ClickEvent event) {
-		Object object = agreementsTree.getTree().getSelectedItem().getUserObject();
-		if(object instanceof Agreement) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onMoveToTrash((Agreement) object);
-		}
 	}
 
 	@Override
@@ -252,18 +202,6 @@ public class Agreements extends ResizeComposite implements
 	}
 	
 	@Override
-	public void onCollapseMenuButtonClick(ClickEvent event) {
-		for (Listener listener : listeners)
-			listener.onCollapseMenuButtonClick();
-	}
-	
-	@Override
-	public void onShowMenuButtonClick(ClickEvent event) {
-		for (Listener listener : listeners)
-			listener.onShowMenuButtonClick();
-	}
-	
-	@Override
 	public void onTreeItemSelected(SelectionEvent<TreeItem> event) {
 		TreeItem selectedItem = event.getSelectedItem();
 		Object object = selectedItem.getUserObject();
@@ -280,17 +218,7 @@ public class Agreements extends ResizeComposite implements
 
 	}
 	
-	@Override
-	public void onCollapseAllButtonClick(ClickEvent event) {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void onKeyUpSearchTextBox(KeyUpEvent event) {
-		filter(toolbar.getSearchTextBox().getValue());
-	}
-	
-	private void filter(String pattern) {
+	public void filter(String pattern) {
 		Tree tree = agreementsTree.tree;
 		for ( int i = 0; i < tree.getItemCount(); i++ ) {
 			TreeItem item = tree.getItem(i);
@@ -341,8 +269,8 @@ public class Agreements extends ResizeComposite implements
 						// Get remainning
 						if ( agreements.size() == limit )
 							getAgreements(offset + limit, limit);
-						else 
-							toolbar.setVisibleSearchTextBox(true);
+//						else 
+//							toolbar.setVisibleSearchTextBox(true);
 
 					}
 				});
@@ -353,33 +281,6 @@ public class Agreements extends ResizeComposite implements
 				.toLowerCase()
 				.replaceAll("\\s+", "_")
 				;
-	}
-
-	@Override
-	public void onImportButtonClick(ClickEvent event) {
-		ServiAgreementDialog serviAgreementDialog = new ServiAgreementDialog() {
-
-			@Override
-			protected void onAccept(String serviAgreementCode) {
-				agreementsTree.getEnterpriseService().getServiAgreement(serviAgreementCode, 
-						new AsyncCallback<Void>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(Void result) {
-						getAgreements();
-					}
-				});
-			}
-			
-		};
-		
-		serviAgreementDialog.center();
-		serviAgreementDialog.show();
 	}
 
 }

@@ -131,6 +131,8 @@
 .aon_icon_menu { background-image: iconMenu;}
 @url iconMenuCollapse aonIconMenuCollapse;
 .aon_icon_menu_collapse { background-image: iconMenuCollapse;}
+@url iconRestore aonIconRestore;
+.aon_icon_restore { background-image: iconRestore;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
 @url iconUpgrade aonIconUpgrade;

@@ -1,10 +1,11 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'
-	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:commonsolutions='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
 
-	<ui:style>
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainAgreement.MyStyle">
 	
 	.stackHeader {
 	  padding: .7em .5em .7em .6em;
@@ -16,12 +17,21 @@
 	     float: left;
 	     padding-left: 5px;
 	}
+	
+	.borderR{
+		border-right: 1px solid #ddd;
+	}
 	 
 	</ui:style>
 
 	<ui:image field='agreementgroup' src='agreementgroup.png' />
 
-	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+	<g:DockLayoutPanel ui:field="splitLayoutPanel" unit="PX">
+		
+		<g:north size="45">
+			<commonsolutions:AonAgreementsToolbar ui:field="toolbar" />
+		</g:north>
+		
 		<g:west size='350'>
 			<aon:Agreements debugId="agreements" ui:field='agreements' />
 		</g:west>
@@ -32,6 +42,6 @@
 		</g:center>
 
 
-	</g:SplitLayoutPanel>
+	</g:DockLayoutPanel>
 
 </ui:UiBinder>
