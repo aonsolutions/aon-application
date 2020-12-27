@@ -170,6 +170,22 @@ public class SistemaRED {
 		}
 	}
 
+	public static byte[] getIDCNSSfinal ( InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
+		return SistemaRED_I.getContributionInformationNSS(certificateInputStream, certificatePassword, certificateType,
+				regimen, ccc, nss, date);
+	}
+
+	public static byte[] getIDCNSS(final byte certificateData[], final String certificatePassword,
+			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return SistemaRED_I.getContributionInformationNSS(certificateInputStream, certificatePassword,
+					certificateType, regimen, ccc, nss, date);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
+
 	public static byte[] getUp2DateSS(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException {
 		return SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, certificatePassword,

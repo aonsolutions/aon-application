@@ -32,6 +32,7 @@ import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.Idc;
 import solutions.aon.seg.social.objects.SituacionEmpresa;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -1002,6 +1003,27 @@ public class TestSisetemaRED_I {
 		}
 	}
 	
+	@Test
+	public void testgetIDCNSS() {
+		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
+		  byte data [] = SistemaRED_I.getContributionInformationNSS(
+				  certificateInputStream, 
+				  "jg@FNMT", 
+				  "pkcs12", 
+				  "0111", 
+				  "01105360062",
+				  "011005185924", 
+				  new Date());
+		  PDDocument.load(data);
+		} catch (SegSocialException e) {
+			System.out.println(e.getMessage());
+			fail("SegSocialException");
+		} catch (FailingHttpStatusCodeException e) {
+			  assertTrue(true);
+		} catch (IOException e1) {
+			fail("Error with the certificate input");
+		}
+	}
 	
 	
 	@Test

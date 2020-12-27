@@ -238,11 +238,11 @@ public class SistemaRED_I {
 
 	public static byte[] getContributionInformation(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String affiliationNumber, String regime,
-			String contributionAccount, Date fecha) throws SegSocialException {
+			String ccc, Date fecha) throws SegSocialException {
 		try {
 			return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR",
 					certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime,
-					contributionAccount, fecha);
+					ccc, fecha);
 		} catch (InterruptedException ie) {
 			throw new SegSocialException();
 		}
@@ -250,23 +250,35 @@ public class SistemaRED_I {
 
 	public static byte[] getContributionInformationCCC(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regime,
-			String contributionAccount, Date fecha) throws SegSocialException {
+			String ccc, Date fecha) throws SegSocialException {
 		try {
 			return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR38&E=I&AP=AFIR",
 					certificateInputStream, certificatePassword, certificateType, null, regime,
-					contributionAccount, fecha);
+					ccc, fecha);
+		} catch (InterruptedException ie) {
+			throw new SegSocialException();
+		}
+	}
+
+	public static byte[] getContributionInformationNSS(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String regime,
+			String ccc, String nss, Date fecha) throws SegSocialException {
+		try {
+			return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR39&E=I&AP=AFIR",
+					certificateInputStream, certificatePassword, certificateType, nss, regime,
+					ccc, fecha);
 		} catch (InterruptedException ie) {
 			throw new SegSocialException();
 		}
 	}
 
 	public static byte[] getTADuplicate(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String affiliationNumber, String regime, String contributionAccount,
+			final String certificateType, String affiliationNumber, String regime, String ccc,
 			Date fecha) throws SegSocialException {
 		try {
 			return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR",
 					certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime,
-					contributionAccount, fecha);
+					ccc, fecha);
 		} catch (InterruptedException ie) {
 			throw new SegSocialException();
 		}
@@ -274,7 +286,7 @@ public class SistemaRED_I {
 
 	public static byte[] getPdfInfo(final String href, final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
-			final String regime, final String contributionAccount, final Date fecha)
+			final String regime, final String ccc, final Date fecha)
 			throws SegSocialException, InterruptedException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
@@ -294,12 +306,16 @@ public class SistemaRED_I {
 			try {
 				jacadaform.getInputByName("txt_SDFREGCTA_NH").setValueAttribute(regime);
 			} catch (ElementNotFoundException enfe) {
-				jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
-			}
+				try {
+					jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
+				} catch (ElementNotFoundException oenfe) { 
+					jacadaform.getInputByName("txt_SDFREGCTA_ayuda").setValueAttribute(regime);
+				}
+			} 
 			jacadaform.getInputByName("txt_SDFTESCTA")
-					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
+					.setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
 			jacadaform.getInputByName("txt_SDFCUENTA")
-					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
+					.setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.setTime(fecha);
 			try {
@@ -349,27 +365,27 @@ public class SistemaRED_I {
 	
 	public static Collection<byte[]> getTACertificatePDFs (final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
-			final String regime, final String contributionAccount, final Date fecha)
+			final String regime, final String ccc, final Date fecha)
 			throws SegSocialException, InterruptedException{
-		Object[] arr_fields= {affiliationNumber, regime, contributionAccount, fecha};
+		Object[] arr_fields= {affiliationNumber, regime, ccc, fecha};
 		Toolkit.verifyData(arr_fields);
-		return getPdfsInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
+		return getPdfsInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, ccc, fecha);
 	}
 	
 	public static Collection<byte[]> getContributionPDFs (final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
-			final String regime, final String contributionAccount, final Date fecha)
+			final String regime, final String ccc, final Date fecha)
 			throws SegSocialException, InterruptedException{
-		Object[] arr_fields= {affiliationNumber, regime, contributionAccount, fecha};
+		Object[] arr_fields= {affiliationNumber, regime, ccc, fecha};
 		Toolkit.verifyData(arr_fields);
-		return getPdfsInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
+		return getPdfsInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, ccc, fecha);
 	}
 	
 	public static Collection<byte[]> getPdfsInfo(final String href, final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
-			final String regime, final String contributionAccount, final Date fecha)
+			final String regime, final String ccc, final Date fecha)
 			throws SegSocialException, InterruptedException {
-		Object[] arr_fields= {affiliationNumber, regime, contributionAccount, fecha};
+		Object[] arr_fields= {affiliationNumber, regime, ccc, fecha};
 		Toolkit.verifyData(arr_fields);
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
@@ -401,7 +417,7 @@ public class SistemaRED_I {
 			
  			boolean fin=false;
  			int clicks=0;
- 			HtmlPage htmlPage=getPageForPdfs(href, webClient, affiliationNumber, regime, contributionAccount, fecha, clicks);
+ 			HtmlPage htmlPage=getPageForPdfs(href, webClient, affiliationNumber, regime, ccc, fecha, clicks);
  			while(!fin) {
  				DomNodeList<DomNode> iter=htmlPage.querySelectorAll("#Sub0900112079>tbody>tr");
  	 			if(iter.size()==0) {
@@ -428,7 +444,7 @@ public class SistemaRED_I {
 				clicks++;
 				if(!fin) {
 					try {
-						htmlPage=getPageForPdfs(href, webClient, affiliationNumber, regime, contributionAccount, fecha, clicks);
+						htmlPage=getPageForPdfs(href, webClient, affiliationNumber, regime, ccc, fecha, clicks);
 						HtmlUnitToolkit.manageStatusCode(htmlPage);
 					}
 					catch(NoMoreDataException nmde) {
@@ -461,7 +477,7 @@ public class SistemaRED_I {
 	
 	
 	public static HtmlPage getPageForPdfs(final String href, final WebClient webClient, final String affiliationNumber,
-			final String regime, final String contributionAccount, final Date fecha, final int clicks)
+			final String regime, final String ccc, final Date fecha, final int clicks)
 			throws SegSocialException, InterruptedException {
 
 		try{
@@ -479,9 +495,9 @@ public class SistemaRED_I {
 				jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
 			}
 			jacadaform.getInputByName("txt_SDFTESCTA")
-					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
+					.setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
 			jacadaform.getInputByName("txt_SDFCUENTA")
-					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
+					.setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.setTime(fecha);
 			jacadaform.getInputByName("txt_SDFDIA").setValueAttribute("" + calendar.get(Calendar.DAY_OF_MONTH));
@@ -536,9 +552,9 @@ public class SistemaRED_I {
 	
 
 	public static byte[] getObligationAwarenessCertificate(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, String regime, String contributionAccount)
+			final String certificatePassword, final String certificateType, String regime, String ccc)
 			throws SegSocialException {
-		Object[] arr_fields= {regime, contributionAccount};
+		Object[] arr_fields= {regime, ccc};
 		Toolkit.verifyData(arr_fields);
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
@@ -550,7 +566,7 @@ public class SistemaRED_I {
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Inputting contribution account and regime
-			jacadaform.getInputByName("txt_SDFWMIDENT").setValueAttribute(contributionAccount);
+			jacadaform.getInputByName("txt_SDFWMIDENT").setValueAttribute(ccc);
 			jacadaform.getInputByName("txt_SDFWMRESU").setValueAttribute(regime);
 			// Selecting document's printing method
 			Iterable<DomElement> itOptions = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
@@ -583,8 +599,8 @@ public class SistemaRED_I {
 	// CERTIFICATES
 	public static Collection<Idc> getIDCDates(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
-			final String regime, final String contributionAccount) throws SegSocialException {
-		Object[] arr_fields= {affiliationNumber, regime, contributionAccount};
+			final String regime, final String ccc) throws SegSocialException {
+		Object[] arr_fields= {affiliationNumber, regime, ccc};
 		Toolkit.verifyData(arr_fields);
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
@@ -604,9 +620,9 @@ public class SistemaRED_I {
 				jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
 			}
 			jacadaform.getInputByName("txt_SDFTESCTA")
-					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
+					.setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
 			jacadaform.getInputByName("txt_SDFCUENTA")
-					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
+					.setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
 			// Selecting document's printing method
 			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			for (DomElement de : it) {
@@ -668,7 +684,7 @@ public class SistemaRED_I {
 
 	public static Collection<Date> getDischargeDates(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
-			final String regime, final String contributionAccount) throws SegSocialException {
+			final String regime, final String ccc) throws SegSocialException {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
@@ -681,9 +697,9 @@ public class SistemaRED_I {
 			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
 			jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
 			jacadaform.getInputByName("txt_SDFTESCTA")
-					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
+					.setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
 			jacadaform.getInputByName("txt_SDFCUENTA")
-					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
+					.setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
 			// Selecting document's printing method
 			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			for (DomElement de : it) {
@@ -738,8 +754,8 @@ public class SistemaRED_I {
 	
 	public static byte[] getContributionSettlementReport(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
-			final String regime, final String contributionAccount, final Optional<Date> settlementPeriod) throws SegSocialException {
-		Object[] arr_fields= {affiliationNumber, regime, contributionAccount, settlementPeriod};
+			final String regime, final String ccc, final Optional<Date> settlementPeriod) throws SegSocialException {
+		Object[] arr_fields= {affiliationNumber, regime, ccc, settlementPeriod};
 		Toolkit.verifyData(arr_fields);
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
@@ -752,8 +768,8 @@ public class SistemaRED_I {
 			//REGIME
 			jacadaform.getInputByName("txt_SDFREGCTA_ayuda").setValueAttribute(regime);
 			//CCC
-			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
-			jacadaform.getInputByName("txt_SDFCUENTA").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
+			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
+			jacadaform.getInputByName("txt_SDFCUENTA").setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
 			//Settlement period
 			if(!settlementPeriod.isEmpty()) {
 				Calendar c=Calendar.getInstance();
