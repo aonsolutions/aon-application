@@ -30,6 +30,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
@@ -208,6 +209,7 @@ public class IdcTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testIdcplnss() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnss.pdf") ){
 			IdcplnssParser.parse(is, new IdcListener() {
