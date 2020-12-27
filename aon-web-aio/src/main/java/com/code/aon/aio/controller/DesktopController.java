@@ -10,7 +10,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.PhaseId;
 import javax.faces.model.DataModel;
 
 import org.slf4j.Logger;
@@ -65,6 +67,7 @@ public class DesktopController implements Serializable {
 	private DesktopState state;
 	private Boolean logEnabled;
 	
+	
     public DesktopState getState() {
     	if ( state == null ) {
     		state = new DesktopState();
@@ -83,6 +86,7 @@ public class DesktopController implements Serializable {
 		getState().setNoticeInfo(null);
 		getState().setRecentNoteModel(null);
 	}
+	
  
     public void onSelectNote(ActionEvent event) throws ManagerBeanException{
         NoteController noteController = (NoteController)FormUtil.getController(IGroupWareConstants.NOTE_CONTROLLER_NAME);
@@ -125,7 +129,10 @@ public class DesktopController implements Serializable {
 	}
 	
 	public String getTemplate() {
-		if ( getState().getInitOption()!=null && getState().isPatchInitAction() ) {
+		String template = getTemplateParameter();
+		if ( template != null ) {
+			return template;
+		} else if ( getState().getInitOption()!=null && getState().isPatchInitAction() ) {
 			return INIT_ACTION_TEMPLATE;
 		} else if ( getState().isAdminDomain() ) {
 			return ADMIN_TEMPLATE;
@@ -133,6 +140,14 @@ public class DesktopController implements Serializable {
 			return PORTAL_TEMPLATE;
 		}
 		return DESKTOP_TEMPLATE;
+	}
+
+	private String getTemplateParameter() {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		Map<String,String> params = 
+	    ctx.getExternalContext().getRequestParameterMap();
+		
+	    return params.get("template");
 	}
 
 	public void onEnableSupport(ActionEvent event) {

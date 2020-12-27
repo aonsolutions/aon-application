@@ -9,8 +9,8 @@
 
 	<h:panelGrid columns="2" styleClass="aon-width-all aon-margin-bottom"
 		style="border: solid #CCCCCC 1px; color: #777777; background-color: #F5F5F5;" 
-		columnClasses="aon-width-50 aon-vertical-align-top
-					,aon-width-auto aon-vertical-align-top">
+		columnClasses="aon-width-50 aon-vertical-align-center
+					,aon-width-auto aon-vertical-align-center">
 					
 		<aon:commandLink id="goToParentFromLogo-back" 
 			action="home" actionListener="#{domains.onParentDomain}"
@@ -24,7 +24,7 @@
 				createContent="#{parentDomain.createLogoContent}">
 			</a4j:mediaOutput-->
 			<img
-				style="height:60px;"
+				style="height:60px;"				
 				src="aonDocuments/company.logo?#{domainSwitcher.parentDomainId}"/>
 			
 		</aon:commandLink>

@@ -27,6 +27,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CompanyDocumentServlet extends HttpServlet {
@@ -136,30 +137,36 @@ public class CompanyDocumentServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
 		Attach attach = getAttachment(req);
-		if ( attach != null && attach.getData() != null) {
-			Integer length = attach.getData().length;
-			ByteArrayInputStream bais = new ByteArrayInputStream(attach.getData());
-		    res.addHeader("Content-Disposition","attachment; filename=\"" + attach.getDescription() + "." + attach.getMimeType().getExtension() +"\"");
-		    //p_response.setContentType("application/octet-stream");
-		    res.setContentType(attach.getMimeType().getName());
-
-		    if (length > 0 && length <= Integer.MAX_VALUE)	
-		    	res.setContentLength((int)length);
-		    
-	        ServletOutputStream out = res.getOutputStream();
-	        res.setBufferSize(32768);
-	        int bufSize = res.getBufferSize();
-	        byte[] buffer = new byte[bufSize];
-	        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
-	        int bytes;
-	        while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
-	        	out.write(buffer, 0, bytes);
-		        	
-		        
-	        bis.close();
-	        bais.close();
-	        out.flush();
-	        out.close();
+		
+		if ( attach == null || attach.getData() == null) {
+			attach = new Attach();
+			attach.setMimeType(MimeType.PNG);
+			attach.setDescription("transparent");
+			attach.setData(CompanyDocumentServlet.class.getResourceAsStream("transparent.png").readAllBytes());
 		}
+
+		Integer length = attach.getData().length;
+		ByteArrayInputStream bais = new ByteArrayInputStream(attach.getData());
+	    res.addHeader("Content-Disposition","attachment; filename=\"" + attach.getDescription() + "." + attach.getMimeType().getExtension() +"\"");
+	    //p_response.setContentType("application/octet-stream");
+	    res.setContentType(attach.getMimeType().getName());
+
+	    if (length > 0 && length <= Integer.MAX_VALUE)	
+	    	res.setContentLength((int)length);
+	    
+        ServletOutputStream out = res.getOutputStream();
+        res.setBufferSize(32768);
+        int bufSize = res.getBufferSize();
+        byte[] buffer = new byte[bufSize];
+        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
+        int bytes;
+        while ((bytes = bis.read(buffer, 0, bufSize)) >= 0)
+        	out.write(buffer, 0, bytes);
+	        	
+	        
+        bis.close();
+        bais.close();
+        out.flush();
+        out.close();
 	}
 }
