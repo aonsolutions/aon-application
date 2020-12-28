@@ -1,18 +1,24 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog.IPrintReportDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.TrialBalancePanelReport;
-import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.google.gwt.core.client.GWT;
@@ -20,59 +26,70 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.Label;
 
 public class AccountTrialBalanceReport extends MainEntryPoint {
 	
 	private static final String ACC_TRIAL_BALANCE_REPORT_PRINT = "/aon_gwt_fiscal/roms/AccountTrialBalanceReportExcelPrint";
 	private static final String ACC_TRIAL_BALANCE_REPORT_PDF_PRINT  = "/aon_gwt_fiscal/roms/AccountTrialBalanceReportPDFPrint";
 	private static final String ACC_LEDGER_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/AccountLedgerReportExcelPrint";
+	private static CommonServiceAsync commonService;
 	
 	@Override
 	public void onModuleLoad() {
-		
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+		AccountingReportModuleOptions options = new AccountingReportModuleOptions();
+		options.setParentWidget(root);
+		options.setDomainName(getCurrentDomainName());
+		options.setDomain(getCurrentDomain());
+		options.setUser(getCurrentUser());
+		this.onModuleLoad( options );
+	}
+	
+	public void onModuleLoad( final AccountingReportModuleOptions options ) {
+		if (options.getConfiguration() == null) {
+			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
+			commonService.getAonConfiguration(options.getDomainName(), options.getDomain(), options.getUser()
+				,new AsyncCallback<AonConfiguration>() {
+					@Override
+					public void onSuccess(AonConfiguration result) {
+						loadModule(options.setConfiguration(result));
+					}
+	
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error al leer la configuraci\u00F3n");
+					}
+				});
+		} else {
+			loadModule(options);
+		}
+	}
+	
+	public void loadModule( final AccountingReportModuleOptions options ) {
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		TrialBalancePanelReport panel = new TrialBalancePanelReport(getCurrentDomainName(), getCurrentUser(), getCurrentDomain());
-		
-		panel.addSelectionHandler(new AccountEntrySelectionHandler() {
-			
-			@Override
-			public void onSelection(AccountEntrySelectionEvent event) {
-				AccountEntry entry = event.getSelectedItem();  
-				showEntry(entry.getDomain(), entry.getId(), event.getCallback());
+		TrialBalancePanelReport panel = new TrialBalancePanelReport(options);
+
+		if (!options.isGuest()) {
+			panel.addSelectionHandler(new AccountEntrySelectionHandler() {
 				
-			}
-		});
+				@Override
+				public void onSelection(AccountEntrySelectionEvent event) {
+					AccountEntry entry = event.getSelectedItem();  
+					showEntry(options, entry.getId(), event.getCallback());
+					
+				}
+			});
+		}
 		
 		
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label("Balance de sumas y saldos"));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
+		AonToolbar toolbar = new AonToolbar(AON.MSG.trialBalabce());
 		
 		FormPanel diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
@@ -86,18 +103,16 @@ public class AccountTrialBalanceReport extends MainEntryPoint {
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
 		formFlowPanel.add(userHidden);
-		buttonContainer.add(diskForm);
+		toolbar.add(diskForm);
 
-		final Button pdf = new Button();
-		pdf.setText(AON.MSG.print());
-		pdf.setTitle(AON.MSG.print());
-		pdf.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		pdf.addStyleName(AON.AON_CSS.aonIconPdf());
-		pdf.addClickHandler(new ClickHandler() {
+		FlowPanel buttonContainer = new FlowPanel();
+		
+		final AonToolbarButton pdfReport = new AonToolbarButton( AON.MSG.printPDF(),AON.CSS.aonIconPdf() );
+		pdfReport.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				AccountingReportParams params = panel.getWidgetParams();
+				AccountingReportParams params = panel.getWidgetParams(options);
 				ReportMetadata metadata = new ReportMetadata().setTitle("Balance de sumas y saldos");
 				PrintReportDialog dialog = new PrintReportDialog(metadata
 						, new IPrintReportDialogCallback() {
@@ -124,9 +139,9 @@ public class AccountTrialBalanceReport extends MainEntryPoint {
 
 								diskForm.setAction(GWT.getHostPageBaseURL() + ACC_TRIAL_BALANCE_REPORT_PDF_PRINT);
 								accountReportParamsHidden.setValue(JsonParams.convert(params));
-								domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-								domainNameHidden.setValue(getCurrentDomainName());
-								userHidden.setValue(getCurrentUser());
+								domainIdHidden.setValue(String.valueOf(options.getDomain()));
+								domainNameHidden.setValue(options.getDomainName());
+								userHidden.setValue(options.getUser());
 								diskForm.submit();
 							}
 						});
@@ -134,70 +149,67 @@ public class AccountTrialBalanceReport extends MainEntryPoint {
 				dialog.show();
 			}
 		});
-		buttonContainer.add(pdf);
+		buttonContainer.add(pdfReport);
 
-		final Button print = new Button();
-		print.setText(AON.MSG.print());
-		print.setTitle(AON.MSG.print());
-		print.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		print.addStyleName(AON.AON_CSS.aonIconExcel());
+		final AonToolbarButton print = new AonToolbarButton( AON.MSG.printExcel(),AON.CSS.aonIconExcel() );
 		print.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_TRIAL_BALANCE_REPORT_PRINT);
-				accountReportParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams()));
-				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-				domainNameHidden.setValue(getCurrentDomainName());
-				userHidden.setValue(getCurrentUser());
+				accountReportParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams(options)));
+				domainIdHidden.setValue(String.valueOf(options.getDomain()));
+				domainNameHidden.setValue(options.getDomainName());
+				userHidden.setValue(options.getUser());
 				diskForm.submit();
 			}
 		});
 		buttonContainer.add(print);
 
-		final Button ledger = new Button();
-		ledger.setText("Desglose (Mayor)");
-		ledger.setTitle("Desglose (Mayor)");
-		ledger.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		ledger.addStyleName(AON.AON_CSS.aonIconExcel());
+		final AonToolbarButton ledger = new AonToolbarButton( "Desglose (Mayor)",AON.CSS.aonIconList() );
 		ledger.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_LEDGER_REPORT_EXCEL_PRINT);
-				accountReportParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams()));
-				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-				domainNameHidden.setValue(getCurrentDomainName());
-				userHidden.setValue(getCurrentUser());
+				accountReportParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams(options)));
+				domainIdHidden.setValue(String.valueOf(options.getDomain()));
+				domainNameHidden.setValue(options.getDomainName());
+				userHidden.setValue(options.getUser());
 				diskForm.submit();
 			}
 		});
 		buttonContainer.add(ledger);
 
-		toolbarPanel.add(toolbar);
 		
-		dockLayoutPanel.addNorth(toolbarPanel, 25);
+		toolbar.add(buttonContainer);
+		
+		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		dockLayoutPanel.add( panel );
 		
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(dockLayoutPanel);
 	}
 
-	private void showEntry(int domain,Integer entryId, ModuleCallback callback) {
-		CustomPopup entryDialog = new CustomPopup();
+	private void showEntry(final AccountingReportModuleOptions options,Integer entryId, ModuleCallback callback) {
+		AonCustomPopup entryDialog = new AonCustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
 		entryDialog.setAnimationEnabled(true);
 		entryDialog.setGlassEnabled(true);
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModule module = new AccountEntryModule();
+		AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
 		module.onModuleLoad(new AccountEntryModuleOptions()
 			.setParentWidget(entryDialog)
-			.setDomainName(getCurrentDomainName())
-			.setUser(getCurrentUser())
-			.setDomain(domain)
+			.setDomainName(options.getDomainName())
+			.setUser(options.getUser())
+			.setDomain(options.getDomain())
 			.setAccountEntryId(entryId)
+			.setJournalTabVisible(false)
+			.setExtraInfoTabVisible(false)
+			.setBalancesSectionVisible(false)
+			.setStatementTabVisible(false)
 			.setExternalCallback(new ModuleCallback() {
 				@Override
 				public void onRemove(IAccountEntryWrapper removed) {

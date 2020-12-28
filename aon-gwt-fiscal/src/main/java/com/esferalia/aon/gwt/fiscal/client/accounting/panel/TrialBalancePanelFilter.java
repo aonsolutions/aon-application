@@ -4,17 +4,18 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountPeriodBox;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -32,7 +33,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -46,13 +46,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasValueChangeHandlers<AccountingReportParams>{
 	
-	private String domainName;
-	private String user;
-	private Integer domainId;
-
 	private AccountPeriodBox period;
-	private DateBoxEx fromDate;
-	private DateBoxEx toDate;
+	private AonDateBox fromDate;
+	private AonDateBox toDate;
 	private ListBox activity;
 	
 	private TextBox account;
@@ -65,45 +61,29 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 	private CheckBox operatingEntriesExcluded;
 	private CheckBox closingEntriesExcluded;
 	
-	public TrialBalancePanelFilter(String domainName,String user, int domainId, AonConfiguration config, AccountingReportParams params) {
-		this.domainName = domainName;
-		this.user = user;
-		this.domainId = domainId;
+	public TrialBalancePanelFilter(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		
-		setStyleName(AON.AON_CSS.aonSelector());
+		setStyleName(AON.CSS.aonSelector());
 		FlexTable mainTab = new FlexTable();
-		mainTab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
-		mainTab.addStyleName(AON.AON_CSS.aonWidthAll());
+		mainTab.setStyleName(AON.CSS.aonSearchPanel());
+		mainTab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		mainTab.addStyleName(AON.CSS.aonBlockCenter());
+		
 		mainTab.getColumnFormatter().setWidth(0, "auto");
 		mainTab.getColumnFormatter().setWidth(1, "50px");
-		mainTab.setWidget(0, 0, getFilterTab(config,params));
+		mainTab.setWidget(0, 0, getFilterTab(options,params));
 		mainTab.setWidget(0, 1, getMinMaxButtonsPanel());
-		mainTab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		mainTab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonVerticalAlignTop());
 		setWidget(mainTab);
-	}
-
-	
-	public String getDomainName() {
-		return domainName;
-	}
-	public String getUser() {
-		return user;
-	}
-	public Integer getDomainId() {
-		return domainId;
 	}
 
 	private FlowPanel getMinMaxButtonsPanel() {
 		FlowPanel min = new FlowPanel();
-		min.setStyleName(AON.AON_CSS.aonTextRight());
-		min.addStyleName(AON.AON_CSS.aonPaddingRight());
-		min.addStyleName(AON.AON_CSS.aonNowrap());
-		min.addStyleName(AON.AON_CSS.aonWidthAll());
+		min.setStyleName(AON.CSS.aonTextRight());
+		min.addStyleName(AON.CSS.aonPaddingRight());
+		min.addStyleName(AON.CSS.aonNowrap());
+		min.addStyleName(AON.CSS.aonWidthAll());
 		
-		Button maximize = new Button();
-		maximize.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		maximize.addStyleName(AON.AON_CSS.aonIconMaximize());
+		AonSearchPanelButton maximize = new AonSearchPanelButton(AON.MSG.maximize(),AON.CSS.aonIconMaximize());
 		maximize.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -114,9 +94,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 
 		min.add(maximize);
 		
-		Button minimize = new Button();
-		minimize.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		minimize.addStyleName(AON.AON_CSS.aonIconMinimize());
+		AonSearchPanelButton minimize = new AonSearchPanelButton(AON.MSG.minimize(),AON.CSS.aonIconMinimize());
 		minimize.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -140,7 +118,8 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		return addHandler(handler, MaximizeEvent.getType());
 	}
 
-	private ListBox getPeriodBox(LinkedList<AccountPeriod> periods, String selectedValue) {
+	private ListBox getPeriodBox(final AccountingReportModuleOptions options, String selectedValue) {
+		LinkedList<AccountPeriod> periods = options.getConfiguration().getPeriods();
 		ListBox periodBox = new ListBox();
 		periodBox.clear();
 		periodBox.addItem(" --- ", "");
@@ -186,12 +165,12 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 							if (pair != null) {
 								fromDate.setValue(dates.get(i).getLeft(),false);
 								toDate.setValue(dates.get(i).getRight(),false);
-								ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+								ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 							}
 						} else {
 							fromDate.setValue(periodStart,false);
 							toDate.setValue(periodEnd,false);
-							ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+							ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 						}
 					}
 				});
@@ -208,10 +187,10 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		return periodBox;
 	}
 
-	private Widget getFilterTab(AonConfiguration config, AccountingReportParams params) {
+	private Widget getFilterTab(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		FlexTable tab = new FlexTable();
-		tab.addStyleName(AON.AON_CSS.aonWidthAll());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
+		tab.addStyleName(AON.CSS.aonWidthAll());
+		tab.addStyleName(AON.CSS.aonMarginTop());
 		tab.getColumnFormatter().setWidth(0, "1%");
 		tab.getColumnFormatter().setWidth(1, "1%");
 		tab.getColumnFormatter().setWidth(2, "1%");
@@ -221,13 +200,13 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		tab.getColumnFormatter().setWidth(6, "auto");
 		
 		tab.setWidget(0, 0, new Label(AON.MSG.fiscalYear() +"/"+ AON.MSG.date()));
-		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(0,0, AON.CSS.aonSearchPanelLabel());
 		
 		FlexTable dateTab = new FlexTable();
 		period = new AccountPeriodBox();
 		period.setWidth("100px");
-		fromDate = new DateBoxEx();
-		toDate = new DateBoxEx();
+		fromDate = new AonDateBox();
+		toDate = new AonDateBox();
 		operatingEntriesExcluded = new CheckBox();
 		
 		account = new TextBox();
@@ -248,44 +227,43 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		dateTab.getColumnFormatter().setWidth(5, "80px");
 	
 		// ***********************************************************************  EJERCICIO
-		period.fill(config.getPeriods(),true);
+		period.fill(options.getConfiguration().getPeriods(),true);
 		dateTab.setWidget(0, 0, period);
-		period.addStyleName(AON.AON_CSS.aonMarginRight());
+		period.addStyleName(AON.CSS.aonMarginRight());
 		
 		// **********************************************************************  PERIOD BOX
-		ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
+		ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
 		dateTab.setWidget(0, 1, periodBox);
 
 		// **********************************************************************  FROM DATE
 		InlineLabel from = new InlineLabel(AON.MSG.from());
-		from.setStyleName(AON.AON_CSS.aonItalic());
-		from.addStyleName(AON.AON_CSS.aonMarginRight());
-		from.addStyleName(AON.AON_CSS.aonMarginLeft());
+		from.setStyleName(AON.CSS.aonItalic());
+		from.addStyleName(AON.CSS.aonMarginRight());
+		from.addStyleName(AON.CSS.aonMarginLeft());
 		dateTab.setWidget(0, 2, from);
 		dateTab.setWidget(0, 3, fromDate);
 		
 		// **********************************************************************  TO DATE
 		InlineLabel to = new InlineLabel(AON.MSG.to());
-		to.setStyleName(AON.AON_CSS.aonItalic());
-		to.addStyleName(AON.AON_CSS.aonMarginRight());
-		to.addStyleName(AON.AON_CSS.aonMarginLeft());
+		to.setStyleName(AON.CSS.aonItalic());
+		to.addStyleName(AON.CSS.aonMarginRight());
+		to.addStyleName(AON.CSS.aonMarginLeft());
 		dateTab.setWidget(0, 4, to);
 		dateTab.setWidget(0, 5, toDate);
 
 		tab.setWidget(0, 1, dateTab);
-		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonPanelGridEven());
 		tab.getFlexCellFormatter().setColSpan(0, 1, 3);
 
 		// ************************************************************************  ACTIVITY
-		boolean activitiesListBoxEnabled = (config != null && config.hasActivities());
-		if (activitiesListBoxEnabled) {
+		
+		if (options.getConfiguration().hasActivities()) {
 			activity = new ListBox();
 			activity.setWidth("150px");
 			activity.addItem("-- Todas --", "");
 			activity.addItem("-- Sin actividad --", "-1");
 			activity.setSelectedIndex(0);
 			int i = 2;
-			for (EnterpriseActivity ea : config.getActivities()) {
+			for (EnterpriseActivity ea : options.getConfiguration().getActivities()) {
 				activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
 					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
@@ -303,47 +281,46 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 			tab.setWidget(0, 2, new Label());
 			tab.setWidget(0, 3, new Label());
 		}
-		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonPanelGridOdd());
-		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonPanelGridEven());
+		tab.getCellFormatter().setStyleName(0,2, AON.CSS.aonSearchPanelLabel());
 
 
 		// ************************************************************************  ACCOUNT
 		tab.setWidget(1, 0, new Label(AON.MSG.account()));
-		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(1,0, AON.CSS.aonSearchPanelLabel());
 		
-		account.setStyleName(AON.AON_CSS.aonInputText());
+		account.setStyleName(AON.CSS.aonInputText());
 		account.setVisibleLength(10);
 		FlexTable accountContainer = new FlexTable();
 		accountContainer.setWidget(0, 0, account);
 		FlowPanel accountHelpPanel = new FlowPanel();
 		
 		InlineLabel i1 = new InlineLabel("Tesorer\u00EDa");
-		i1.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i1.addStyleName(AON.AON_CSS.aonClickable());
+		i1.setStyleName(AON.CSS.aonInnerLabel());
+		i1.addStyleName(AON.CSS.aonClickable());
 		i1.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("57",true);}});
 		InlineLabel i2 = new InlineLabel("Bancos");
-		i2.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i2.addStyleName(AON.AON_CSS.aonClickable());
+		i2.setStyleName(AON.CSS.aonInnerLabel());
+		i2.addStyleName(AON.CSS.aonClickable());
 		i2.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("572",true);}});
 		InlineLabel i3 = new InlineLabel("Caja");
-		i3.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i3.addStyleName(AON.AON_CSS.aonClickable());
+		i3.setStyleName(AON.CSS.aonInnerLabel());
+		i3.addStyleName(AON.CSS.aonClickable());
 		i3.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("570",true);}});
 		InlineLabel i4 = new InlineLabel("Adm.P\u00FAblicas");
-		i4.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i4.addStyleName(AON.AON_CSS.aonClickable());
+		i4.setStyleName(AON.CSS.aonInnerLabel());
+		i4.addStyleName(AON.CSS.aonClickable());
 		i4.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("47",true);}});
 		InlineLabel i5 = new InlineLabel("Clientes");
-		i5.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i5.addStyleName(AON.AON_CSS.aonClickable());
+		i5.setStyleName(AON.CSS.aonInnerLabel());
+		i5.addStyleName(AON.CSS.aonClickable());
 		i5.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("430",true);}});
 		InlineLabel i6 = new InlineLabel("Proveedores");
-		i6.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i6.addStyleName(AON.AON_CSS.aonClickable());
+		i6.setStyleName(AON.CSS.aonInnerLabel());
+		i6.addStyleName(AON.CSS.aonClickable());
 		i6.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("400",true);}});
 		InlineLabel i7 = new InlineLabel("Acreedores");
-		i7.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i7.addStyleName(AON.AON_CSS.aonClickable());
+		i7.setStyleName(AON.CSS.aonInnerLabel());
+		i7.addStyleName(AON.CSS.aonClickable());
 		i7.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("410",true);}});
 		accountHelpPanel.add(i1);
 		accountHelpPanel.add(i2);
@@ -356,10 +333,9 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		
 		tab.setWidget(1, 1, accountContainer);
 		tab.getFlexCellFormatter().setColSpan(1, 1, 3);
-		tab.getCellFormatter().setStyleName(1,1, AON.AON_CSS.aonPanelGridEven());
 		
 		// ************************************************************************  CONFIDENTIAL
-		if (config.getUser().hasConfidentialityRole()) {
+		if (options.hasConfidentialityRole()) {
 			confidential.addItem( "Asientos NO confidenciales" );
 			confidential.addItem( "Asientos confidenciales" );
 			confidential.addItem(" Todos ");
@@ -371,19 +347,14 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 				confidential.setSelectedIndex(2);
 			}
 			tab.setWidget(1, 2, new Label(AON.MSG.show()));
-			tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonPanelGridOdd());
+			tab.getCellFormatter().setStyleName(1,2, AON.CSS.aonSearchPanelLabel());
 			tab.setWidget(1, 3, confidential);
 		}
 		
 		// ************************************************************************  CLEAN
-		Button cleanButton = new Button("Limpiar");
-		cleanButton.setStyleName(AON.AON_CSS.aonIconDelete());
-		cleanButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-		cleanButton.addStyleName(AON.AON_CSS.aonMarginLeft());
-		cleanButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		AonSearchPanelButton cleanButton = new AonSearchPanelButton(AON.MSG.clean(), AON.CSS.aonIconClear());
 		cleanButton.setTitle(AON.MSG.clean());
 		tab.setWidget(1, 4, cleanButton);
-		tab.getCellFormatter().setStyleName(1,4, AON.AON_CSS.aonPanelGridEven());
 		
 		cleanButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -393,7 +364,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 				toDate.setValue(period.getSelectedDeadline(),false);
 				confidential.setSelectedIndex(2);
 				level.setSelectedIndex(2);
-				if (activitiesListBoxEnabled) {
+				if (options.getConfiguration().hasActivities()) {
 					activity.setSelectedIndex(0);
 				}
 				period.setFocus(true);
@@ -402,13 +373,13 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 				noActivityAccountVisible.setValue(false, false);
 				operatingEntriesExcluded.setValue(false, false);
 				closingEntriesExcluded.setValue(false, false);
-				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		
 		// ************************************************************************  LEVEL
 		tab.setWidget(2, 0, new Label(AON.MSG.level()));
-		tab.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(2,0, AON.CSS.aonSearchPanelLabel());
 		
 		level.addItem( "Cuentas a 1 d\u00EDgitos","1");
 		level.addItem( "Cuentas a 2 d\u00EDgitos","2");
@@ -417,14 +388,12 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		level.addItem( "Cuentas a 9 d\u00EDgitos","9");
 		level.setSelectedIndex(4);
 		tab.setWidget(2, 1, level);
-		tab.getCellFormatter().setStyleName(2,1, AON.AON_CSS.aonPanelGridEven());
 		
 		// ************************************************************  LOW LEVEL VISIBLE
 		VerticalPanel checks1 = new VerticalPanel();
 		checks1.add(lowLevelAccountVisible);
 		checks1.add(noActivityAccountVisible);
 		tab.setWidget(2, 2, checks1);
-		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonPanelGridEven());
 		tab.getFlexCellFormatter().setColSpan(2, 2, 2);
 		
 		// ************************************************************  NO ACTIVITY ACCOUNT
@@ -432,8 +401,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		checks2.add(operatingEntriesExcluded);
 		checks2.add(closingEntriesExcluded);
 		tab.setWidget(2, 3, checks2);
-		tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonPanelGridEven());
-		tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonNowrap());
+		tab.getCellFormatter().setStyleName(2,3, AON.CSS.aonNowrap());
 		tab.getFlexCellFormatter().setColSpan(2, 3, 2);
 		
 
@@ -442,7 +410,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		period.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
+				ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
 				dateTab.setWidget(0, 1, periodBox);
 				if (periodBox.getSelectedIndex() > 0) {
 					operatingEntriesExcluded.setEnabled(true);
@@ -454,28 +422,28 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 					operatingEntriesExcluded.setValue(operatingEntriesExcluded.isEnabled(),false);
 					closingEntriesExcluded.setValue(closingEntriesExcluded.isEnabled(),false);
 				}
-				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		
 		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 
 		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
-		if (activitiesListBoxEnabled) {
+		if (options.getConfiguration().hasActivities()) {
 			activity.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+					ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 				}
 			});
 		}
@@ -483,15 +451,15 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		account.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		
-		if (config.getUser().hasConfidentialityRole()) {
+		if (options.hasConfidentialityRole()) {
 			confidential.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+					ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 				}
 			});
 		}
@@ -499,48 +467,48 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		level.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		
 		lowLevelAccountVisible.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		
 		noActivityAccountVisible.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		
 		operatingEntriesExcluded.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		closingEntriesExcluded.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(TrialBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		return tab;
 	}
 	
-	public AccountingReportParams getWidgetParams() {
+	public AccountingReportParams getWidgetParams(final AccountingReportModuleOptions options) {
 		Integer activityId = null;
 		if (activity != null) {
 			if (activity.getSelectedIndex() > 0 ) {
 				activityId = AonNumberUtils.toInteger(activity.getSelectedValue());
 			}
 		}
-		return new AccountingReportParams()
-			.setDomain(getDomainId())
+		return new AccountingReportParams ()
+			.setDomain(options.getDomain())
 			.setPeriod(period.getSelectedIndex()==0?null:AonNumberUtils.toInteger( period.getSelectedValue()))
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())

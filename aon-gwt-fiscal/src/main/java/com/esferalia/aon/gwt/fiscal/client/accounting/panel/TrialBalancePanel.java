@@ -44,8 +44,8 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 
 		root = new FlowPanel();
 		setWidget(root);
-		addStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonMarginBottom());		
+		addStyleName(AON.CSS.aonScrollArea());
+		addStyleName(AON.CSS.aonMarginBottom());		
 		
 		search();
 		scrollToTop();
@@ -67,15 +67,15 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 			@Override
 			public void onSuccess(final AccountTrialBalanceReport report) {
 				FlexTable tab = new FlexTable();
-				tab.addStyleName(AON.AON_CSS.aonReportTable());
+				tab.addStyleName(AON.CSS.aonGrid());
 				int row = 0;
 				int col = 0;
 				
 				if (report.isEmpty()) {
-					tab.addStyleName(AON.AON_CSS.aonMarginTop());
+					tab.addStyleName(AON.CSS.aonMarginTop());
 					tab.setWidget(row, col++, new Label(AON.MSG.noData()));
-					tab.addStyleName(AON.AON_CSS.aonReportTableBold());	
-					tab.addStyleName(AON.AON_CSS.aonTextCenter());
+					tab.addStyleName(AON.CSS.aonBold());	
+					tab.addStyleName(AON.CSS.aonTextCenter());
 				} else {
 					tab.getColumnFormatter().setWidth( col++, "80px");
 					tab.getColumnFormatter().setWidth( col++, "auto");
@@ -110,7 +110,8 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 					
 					tab.setWidget(row+1, colPlus, new Label(AON.MSG.account()));
 					tab.getFlexCellFormatter().setColSpan(row+1, colPlus, 2);
-					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.CSS.aonGridHeader());
+					tab.getCellFormatter().addStyleName(row+1, colPlus, AON.CSS.aonTextCenter());
 					colPlus++;
 					
 					if (report.hasBeforePeriodAmounts()) {
@@ -119,13 +120,16 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 								:"Saldos anteriores";
 						tab.setWidget(row, col, new Label(msg));
 						tab.getFlexCellFormatter().setColSpan(row, col, 2);
-						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+						tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonGridHeader());
+						tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonTextCenter());
 						
 						tab.setWidget(row+1, colPlus, new Label("Saldo deudor"));
-						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.CSS.aonGridHeader());
+						tab.getCellFormatter().addStyleName(row+1, colPlus, AON.CSS.aonTextCenter());
 						colPlus++;
 						tab.setWidget(row+1, colPlus, new Label("Saldo acreed."));
-						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.CSS.aonGridHeader());
+						tab.getCellFormatter().addStyleName(row+1, colPlus, AON.CSS.aonTextCenter());
 						colPlus++;
 						col++;
 					}
@@ -133,13 +137,16 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 					if (report.hasOpeningAmounts()) {
 						tab.setWidget(row, col, new Label("Saldo apertura"));
 						tab.getFlexCellFormatter().setColSpan(row, col, 2);
-						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+						tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonGridHeader());
+						tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonTextCenter());
 						
 						tab.setWidget(row+1, colPlus, new Label("Saldo deudor"));
-						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.CSS.aonGridHeader());
+						tab.getCellFormatter().addStyleName(row+1, colPlus, AON.CSS.aonTextCenter());
 						colPlus++;
 						tab.setWidget(row+1, colPlus, new Label("Saldo acreed."));
-						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.CSS.aonGridHeader());
+						tab.getCellFormatter().addStyleName(row+1, colPlus, AON.CSS.aonTextCenter());
 						colPlus++;
 						
 						col++;
@@ -149,38 +156,47 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 						
 						tab.setWidget(row, col, new Label("Saldo hasta " + AON.DATE_FORMAT.format(report.getParams().getFromDate())));
 						tab.getFlexCellFormatter().setColSpan(row, col, 2);
-						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+						tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonGridHeader());
+						tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonTextCenter());
 						
 						tab.setWidget(row+1, colPlus, new Label("Saldo deudor"));
-						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.CSS.aonGridHeader());
+						tab.getCellFormatter().addStyleName(row+1, colPlus, AON.CSS.aonTextCenter());
 						colPlus++;
 						tab.setWidget(row+1, colPlus, new Label("Saldo acreed."));
-						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+						tab.getCellFormatter().setStyleName(row+1, colPlus, AON.CSS.aonGridHeader());
+						tab.getCellFormatter().addStyleName(row+1, colPlus, AON.CSS.aonTextCenter());
 						colPlus++;
 						col++;
 					}
 					
 					tab.setWidget(row, col, new Label("Sumas periodo"));
 					tab.getFlexCellFormatter().setColSpan(row, col, 2);
-					tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+					tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonGridHeader());
+					tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonTextCenter());
 					
 					tab.setWidget(row+1, colPlus, new Label("Debe"));
-					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.CSS.aonGridHeader());
+					tab.getCellFormatter().addStyleName(row+1, colPlus, AON.CSS.aonTextCenter());
 					colPlus++;
 					tab.setWidget(row+1, colPlus, new Label("Haber."));
-					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.CSS.aonGridHeader());
+					tab.getCellFormatter().addStyleName(row+1, colPlus, AON.CSS.aonTextCenter());
 					colPlus++;
 					col++;
 
 					tab.setWidget(row, col, new Label("Saldos finales"));
 					tab.getFlexCellFormatter().setColSpan(row, col, 2);
-					tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+					tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonGridHeader());
+					tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonTextCenter());
 					
 					tab.setWidget(row+1, colPlus, new Label("Saldo deudor"));
-					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.CSS.aonGridHeader());
+					tab.getCellFormatter().addStyleName(row+1, colPlus, AON.CSS.aonTextCenter());
 					colPlus++;
 					tab.setWidget(row+1, colPlus, new Label("Saldo acreed."));
-					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.AON_CSS.aonReportTableHeader());
+					tab.getCellFormatter().setStyleName(row+1, colPlus, AON.CSS.aonGridHeader());
+					tab.getCellFormatter().addStyleName(row+1, colPlus, AON.CSS.aonTextCenter());
 					colPlus++;
 					col++;
 					
@@ -194,15 +210,17 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 					if (!report.getParams().isLowLevelAccountVisible()) {
 						AccountTrialBalance tot = report.getTotalBalance();
 						tot.setDescription("TOTALES");
-						paintRow(report, tab,row, report.getTotalBalance());
-						tab.getRowFormatter().addStyleName(row, AON.AON_CSS.aonReportTableBold());	
+						paintRow(report, tab,row, report.getTotalBalance(),true);
+						tab.getRowFormatter().addStyleName(row, AON.CSS.aonBold());	
 					}
 				}
 				root.add(tab);
 			}
-				
 			private void paintRow(AccountTrialBalanceReport report, FlexTable tab, int row, AccountTrialBalance bal ) {
-				tab.getRowFormatter().setStyleName(row, AON.AON_CSS.aonReportTableRowBckHover());
+				paintRow(report, tab, row, bal , false);	
+			}
+			
+			private void paintRow(AccountTrialBalanceReport report, FlexTable tab, int row, AccountTrialBalance bal, boolean bold ) {
 				int col = 0;
 				Label codeLabel = new Label(bal.getCode() );
 				boolean inBold = false;
@@ -211,8 +229,9 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 					inBold = (length<report.getParams().getLevel());
 					codeLabel.getElement().getStyle().setMarginLeft( length > 4 ? 20.0 : (length-1)*5 , Unit.PX);
 				}
+				inBold = bold || inBold; 
 				tab.setWidget(row, col, codeLabel);
-				codeLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
+				codeLabel.setStyleName(AON.CSS.aonClickableLabel());
 				codeLabel.addClickHandler(new ClickHandler() {
 					
 					@Override
@@ -223,10 +242,10 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 					}
 				});
 				
-				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBold());
 				col++;
 				tab.setWidget(row, col, new Label(bal.getDescription()));
-				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBold());
 				col++;
 				
 				boolean toogleStyle = true;
@@ -291,9 +310,9 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 			}
 
 			private void decorateCell(FlexTable tab, int row, int col, boolean toogleStyle, boolean inBold) {
-				tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
-				if (toogleStyle) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
-				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+				tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonTextRight());
+				if (toogleStyle) tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBackgroundLigthGray());
+				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBold());
 			}
 
 			@Override

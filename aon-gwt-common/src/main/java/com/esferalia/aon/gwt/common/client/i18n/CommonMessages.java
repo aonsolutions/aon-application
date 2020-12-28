@@ -3259,7 +3259,10 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Listado")
 	String listTemplates();
  	
- 	@DefaultMessage("Asientos contables")
+	@DefaultMessage("Balance de sumas y saldos")
+	String trialBalabce();
+
+	@DefaultMessage("Asientos contables")
 	String accountEntries();
 
  	@DefaultMessage("Contabilizar documento")
@@ -3947,6 +3950,5 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Ocultar / Mostrar caracter\u00EDsticas de la factura")
 	String invoiceParams();
 	
-
 }
 
