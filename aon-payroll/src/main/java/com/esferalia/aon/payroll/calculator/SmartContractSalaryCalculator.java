@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,7 +42,9 @@ import org.jooq.impl.DSL;
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -50,6 +53,8 @@ import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExt
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -295,7 +300,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					&& payment.getMonth() == getMonth(issueDate) 
 					&& payment.getSalaryType() == ctx.getSalaryType() 
 					&& ctx.getSalaryType() == SalaryType.SALARY ) {
-    				amount = calculateExtra(ctx, payment, issueDate).orElse(amount);
+    				amount = getExtra(ctx, payment, issueDate, amount).orElse(amount);
 					payment = new SalaryExtraPayment(payment, amount);
 					double tax = delegate.tax(payment, start, end, issueDate, amount );
 					throw new YesExtraException(tax);
@@ -1174,6 +1179,13 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 	}
 	
+	private static Optional<Double> getExtra(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate, Double amount) throws AonException {
+		Optional<Double> quoted = getMonthlyQuoted(ctx, contractPayment, endDate, amount);
+		if ( quoted.isPresent() )
+			return quoted;
+
+		return calculateExtra(ctx, contractPayment, endDate);
+	}
 
 	private static Optional<Double> calculateExtra(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate) throws AonException {
 		SQLContractSalaryCalculatorContext extraCtx = null;
@@ -1264,9 +1276,71 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				try {
 					extraCtx.close();
 				} catch (SQLException e) {
-				}
+				} 
 			}
 		}
+	}
+	
+	private static Optional<Double> getMonthlyQuoted(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate,Double amount) throws AonException {
+		Collection<Payment> payments = getMonthlyQuotePayments(ctx, contractPayment, endDate);
+		
+		int expected = 0;
+		for ( Date date = AonDateUtils.getFirstDayOfMonth(getContractStartate(ctx)); expected < 11 && date.compareTo(AonDateUtils.getFirstDayOfMonth(endDate))< 0; date = AonDateUtils.add(date, Calendar.MONTH,1) )
+			expected++;
+		
+				
+		if ( payments.size() == expected )
+			return Optional.ofNullable(payments.stream().collect(Collectors.summingDouble(p -> p.getQuote())) + amount / 12.00);
+		return Optional.empty();
+	}
+	
+	private static Collection<Payment> getMonthlyQuotePayments(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate) throws AonException {
+		
+		
+		List<Payment> monthlyQuotedPayments = new ArrayList<Payment>();
+		
+		int contractId = ctx.getId();
+		
+		Date endExtraDate = getLastDayOfMonth(add(endDate, Calendar.MONTH, -1));
+		Date startExtraDate = add(add(endDate, Calendar.YEAR, -1), Calendar.DAY_OF_MONTH,1);
+		
+		AON.getSalaries(new AONContext(ctx.getConnection()),
+		p -> p.getIsSalaryProperty().eq(true)
+			.and(p.getContractProperty().eq(contractId))
+			.and(p.getStartDateProperty().le(endExtraDate))
+			.and(p.getEndDateProperty().ge(startExtraDate)))
+		.forEach(salary -> {
+			salary.getPayments().stream()
+			.filter(p -> AonStringUtils.equals(contractPayment.getDescription(), p.getDescription()))
+			.findFirst().ifPresentOrElse(
+			(p) -> monthlyQuotedPayments.add(p), 
+			( ) -> salary.getPayments().stream()
+			.filter(p -> AonStringUtils.equals(contractPayment.getName(), p.getName()))
+			.findFirst().ifPresent(p -> monthlyQuotedPayments.add(p))) ;
+
+		})
+		;
+		
+		
+		return monthlyQuotedPayments;
+	}
+
+	private static Optional<IContractPayment> getSalaryPaymentOf(com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, IContractPayment contractPayment ) {
+		if ( AonStringUtils.equals(contractPayment.getDescription(), salaryPayment.getDescription()) ) {
+			return Optional.of(contractPayment);
+		}
+		
+		return Optional.empty();
+	}
+
+	private Optional<IContractPayment> getSalaryPaymentOff(com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, Collection<IContractPayment> contractPayments ) {
+		for (IContractPayment contractPayment : contractPayments) {
+			if ( AonStringUtils.equals(contractPayment.getName(), salaryPayment.getName()) ) {
+				return Optional.of(contractPayment);
+			}
+		}
+		
+		return Optional.empty();
 	}
 
 	private static boolean extraEmited(Date issueDate, IContractPayment payment, ISQLContractSalaryCalculatorContext ctx) {
@@ -1553,6 +1627,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return AonStringUtils.startsWith(p.getQuoteExpression(), "/*fixBaseCgcMin*/");
 	}
 	
+	private  static Date getContractStartate(ISQLContractSalaryCalculatorContext ctx) {
+		return ctx.getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE);
+	}
 
 	
 }
