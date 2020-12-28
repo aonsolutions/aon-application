@@ -140,6 +140,7 @@ public class AccountStatementReport extends MainEntryPoint {
 			.setUser(getCurrentUser())
 			.setDomain(domain)
 			.setAccountEntryId(entryId)
+			.setSessionLogTabVisible(false)
 			.setJournalTabVisible(false)
 			.setExtraInfoTabVisible(false)
 			.setBalancesSectionVisible(false)

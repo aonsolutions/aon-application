@@ -3261,7 +3261,13 @@ public interface CommonMessages extends Messages {
  	
 	@DefaultMessage("Balance de sumas y saldos")
 	String trialBalabce();
+	
+	@DefaultMessage("Listado mayor de cuentas")
+	String ledgerReport();
 
+	@DefaultMessage("Balances contables")
+	String accountingBalances();
+	
 	@DefaultMessage("Asientos contables")
 	String accountEntries();
 

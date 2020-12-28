@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -48,9 +49,6 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 
 	private static final int LINE_LENGTH = 185;
 	
-	private String domainName;
-	private String user;
-	private int domainId;
 	private final int limit = 100;
 	private Integer oldId = -1;
 	private final MutableInt offset = new MutableInt(0);
@@ -59,22 +57,17 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 	private FlowPanel container;
 	private int lastScrollPos = 0;
 	
-	public LedgerPanel(String domainName,String user,int domainId, AccountingReportParams params) {
+	public LedgerPanel(final AccountingReportModuleOptions options, AccountingReportParams params) {
+		addStyleName(AON.CSS.aonScrollArea());
+		addStyleName(AON.CSS.aonMarginBottom());
 		
-		this.domainName = domainName;
-		this.user = user;
-		this.domainId = domainId;
-		
-		addStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonMarginBottom());
-		
-		setStyleName(AON.AON_CSS.aonTextCenter());
-		addStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonMarginBottom());
+		setStyleName(AON.CSS.aonTextCenter());
+		addStyleName(AON.CSS.aonScrollArea());
+		addStyleName(AON.CSS.aonMarginBottom());
 		
 		container = new FlowPanel("pre");
-		container.addStyleName(AON.AON_CSS.aonFixedFont());
-		container.addStyleName(AON.AON_CSS.aonFontMedium());
+		container.addStyleName(AON.CSS.aonFixedFont());
+		container.addStyleName(AON.CSS.aonFontSmaller());
 
 		setWidget(container);
 		
@@ -92,12 +85,12 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 					int maxScrollTop = getWidget().getOffsetHeight() - getOffsetHeight();
 					if (lastScrollPos >= maxScrollTop) {
 						disableSearch();
-						search(params, offset.getValue(),limit, null);
+						search(options,params, offset.getValue(),limit, null);
 					}
 				}
 			}
 		});
-		onSearch(params);
+		onSearch(options, params);
 	}
 
 	public boolean isSearchEnabled() {
@@ -119,9 +112,9 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 		moreData.setValue(0);
 	}
 	
-	private void onSearch(AccountingReportParams params) {
+	private void onSearch(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		enableMoreData();
-		search(params);
+		search(options, params);
 	}
 
 	@Override
@@ -129,7 +122,7 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 		return super.addHandler(handler, AccountEntrySelectionEvent.getType());
 	}
 
-	private void search(AccountingReportParams params) {
+	private void search(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		offset.setValue(0);
 		container.clear();
 		
@@ -146,21 +139,20 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 		buf.append(AonStringUtils.SPACE);
 		buf.append(AonStringUtils.rightPad("N\u00BA Documento",15));
 		Label headerLabel = new Label();
-		headerLabel.setStyleName(AON.AON_CSS.aonBold());
-		headerLabel.addStyleName(AON.AON_CSS.aonMarginTop());
-		headerLabel.addStyleName(AON.AON_CSS.aonBorderBottom());
-		headerLabel.addStyleName(AON.AON_CSS.aonBorderTop());
-		headerLabel.addStyleName(AON.AON_CSS.aonPre());
-		headerLabel.addStyleName(AON.AON_CSS.aonPre());
+		headerLabel.setStyleName(AON.CSS.aonBold());
+		headerLabel.addStyleName(AON.CSS.aonMarginTop());
+		headerLabel.addStyleName(AON.CSS.aonBorderBottom());
+		headerLabel.addStyleName(AON.CSS.aonBorderTop());
+		headerLabel.addStyleName(AON.CSS.aonPre());
 		headerLabel.setText(buf.toString());
 		container.add(headerLabel);
 		
 		
 		oldId = -1;
-		search(params,offset.getValue(),limit, null);
+		search(options,params,offset.getValue(),limit, null);
 	}
 	
-	private void search(AccountingReportParams params, final int ofs,int  limit, Integer scrollPosition) {
+	private void search(final AccountingReportModuleOptions options, AccountingReportParams params, final int ofs,int  limit, Integer scrollPosition) {
 		if (!isMoreData()) return;
 		final AonToast toast = new AonToast();
 		final InlineLabel label =  new InlineLabel("Un momento, por favor ...");
@@ -189,19 +181,19 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 							JsFlatAccountEntryDetail flatEntry = array.get(i);
 							if (!AonNumberUtils.equals( flatEntry.getAccount(), oldId)) {
 								Label accountLabel = new Label();
-								accountLabel.setStyleName(AON.AON_CSS.aonBold());
-								accountLabel.addStyleName(AON.AON_CSS.aonMarginTop());
-								accountLabel.addStyleName(AON.AON_CSS.aonMarginBottom());
-								accountLabel.addStyleName(AON.AON_CSS.aonTextUnderline());
-								accountLabel.addStyleName(AON.AON_CSS.aonPre());
+								accountLabel.setStyleName(AON.CSS.aonBold());
+								accountLabel.addStyleName(AON.CSS.aonMarginTop());
+								accountLabel.addStyleName(AON.CSS.aonMarginBottom());
+								accountLabel.addStyleName(AON.CSS.aonTextUnderline());
+								accountLabel.addStyleName(AON.CSS.aonPre());
 								accountLabel.setText(AonStringUtils.center( 
 										(flatEntry.getAccountCode() + AonStringUtils.SPACE + flatEntry.getAccountDescription())
 										, LINE_LENGTH));
 								container.add(accountLabel);
 								if (AonMathUtils.isNotZero( flatEntry.getInitialDebitBalance()) || AonMathUtils.isNotZero( flatEntry.getInitialUnpaidBalance())) {
 									Label initialLabel = new Label();
-									initialLabel.setStyleName(AON.AON_CSS.aonPre());
-									initialLabel.addStyleName(AON.AON_CSS.aonColoRoyalblue());
+									initialLabel.setStyleName(AON.CSS.aonPre());
+									initialLabel.addStyleName(AON.CSS.aonColorBlue());
 									initialLabel.setText(
 										AonStringUtils.rightPad( 
 											  AonStringUtils.repeat(" ",21)
@@ -231,8 +223,8 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 							buf.append(AonStringUtils.SPACE);
 							buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.defaultIfBlank(flatEntry.getDocumentNumber(),""),14),15));
 							Label entryLabel = new Label();
-							entryLabel.setStyleName(AON.AON_CSS.aonPre());
-							entryLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
+							entryLabel.setStyleName(AON.CSS.aonPre());
+							entryLabel.addStyleName(AON.CSS.aonClickableBlock());
 							entryLabel.setText(buf.toString());
 							container.add(entryLabel);
 							entryLabel.addClickHandler(new ClickHandler() {
@@ -241,7 +233,7 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 								public void onClick(ClickEvent event) {
 									AccountEntry ae = new AccountEntry()
 											.setId(flatEntry.getEntryId())
-											.setDomain( LedgerPanel.this.domainId );
+											.setDomain( options.getDomain() );
 									AccountEntrySelectionEvent.fire(LedgerPanel.this, ae, new ModuleCallback() {
 										
 										@Override
@@ -249,7 +241,7 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 											int scrollPosition = LedgerPanel.this.getVerticalScrollPosition();
 											container.clear();
 											oldId = -1;
-											search(params,0,offset.getValue(), Integer.valueOf( scrollPosition) );
+											search(options,params,0,offset.getValue(), Integer.valueOf( scrollPosition) );
 										}
 										
 										@Override
@@ -266,7 +258,7 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 											container.clear();
 											oldId = -1;
 											enableMoreData();
-											search(params,0,offset.getValue() > limit ? offset.getValue() : limit, Integer.valueOf( scrollPosition) );
+											search(options,params,0,offset.getValue() > limit ? offset.getValue() : limit, Integer.valueOf( scrollPosition) );
 										}
 									} );
 								}
@@ -306,9 +298,9 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 			
 		});
 		StringBuffer requestData = new StringBuffer();
-		requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + this.domainName  );
-		requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + this.domainId );
-		requestData.append("&"+IRequestParamsNames.USER					+"=" + this.user );
+		requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + options.getDomainName() );
+		requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + options.getDomain() );
+		requestData.append("&"+IRequestParamsNames.USER					+"=" + options.getUser() );
 		requestData.append("&"+IRequestParamsNames.ACCOUNT_ENTRY_PARAMS +"=" + JsonParams.convert( params ));
 		requestData.append("&"+IRequestParamsNames.OFFSET 				+"=" + ofs );
 		requestData.append("&"+IRequestParamsNames.LIMIT				+"=" + limit );

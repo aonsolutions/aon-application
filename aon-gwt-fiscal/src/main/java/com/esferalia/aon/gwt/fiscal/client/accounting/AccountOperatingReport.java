@@ -182,6 +182,7 @@ public class AccountOperatingReport extends MainEntryPoint {
 			.setUser(options.getUser())
 			.setDomain(domain)
 			.setAccountEntryId(entryId)
+			.setSessionLogTabVisible(false)
 			.setJournalTabVisible(false)
 			.setExtraInfoTabVisible(false)
 			.setBalancesSectionVisible(false)

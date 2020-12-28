@@ -7,14 +7,16 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountPeriodBox;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
@@ -38,7 +40,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -55,39 +56,28 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 
 	private static CommonServiceAsync commonService;
 
-	private String currentDomainName;
-	private String currentUser;
-	private Integer currentDomainId;
-	
 	private SimpleLayoutPanel northPanel;
 	private SimpleLayoutPanel centerPanel;
 	
 	private AccountPeriodBox period;
-	private DateBoxEx fromDate;
-	private DateBoxEx toDate;
+	private AonDateBox fromDate;
+	private AonDateBox toDate;
 	private ListBox activity;
 	private TextBox account;
 	private ListBox confidential;
 
 	private boolean activitiesListBoxEnabled;
 	
-	public LedgerPanelReport(String domainName,String user, int domainId) {
-		this(domainName,user,domainId,Integer.MAX_VALUE,null);
-	}
-	
-	public LedgerPanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config) {
+	public LedgerPanelReport(final AccountingReportModuleOptions options) {
 		super(Unit.PX);
-		this.currentDomainName = domainName;
-		this.currentUser = user;
-		this.currentDomainId = domainId;
-		if (config == null) {
+		if (options.getConfiguration() == null) {
 			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
-			commonService.getAonConfiguration(domainName, domainId, user
+			commonService.getAonConfiguration(options.getDomainName(), options.getDomain(), options.getUser()
 				,new AsyncCallback<AonConfiguration>() {
 					@Override
 					public void onSuccess(AonConfiguration result) {
-						fill(tabIndex, result);
+						fill(options.setConfiguration(result));
 					}
 	
 					@Override
@@ -96,43 +86,33 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 					}
 				});
 		} else {
-			fill (tabIndex,config );
+			fill (options);
 		}
 	}
 	
-	private void fill(int tabIndex, AonConfiguration config) {
-		activitiesListBoxEnabled = (config != null && config.hasActivities());
-		setStyleName(AON.AON_CSS.aonSelector());
-		addStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonMarginBottom());
+	private void fill(final AccountingReportModuleOptions options) {
+		activitiesListBoxEnabled = (options.getConfiguration() != null && options.getConfiguration().hasActivities());
+		setStyleName(AON.CSS.aonSelector());
+		addStyleName(AON.CSS.aonScrollArea());
+		addStyleName(AON.CSS.aonMarginBottom());
 		northPanel = new SimpleLayoutPanel();
 		FlexTable mainTab = new FlexTable();
-		mainTab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
-		mainTab.addStyleName(AON.AON_CSS.aonWidthAll());
+		mainTab.setStyleName(AON.CSS.aonSearchPanel());
+		mainTab.addStyleName(AON.CSS.aonWidthAlmostAll());
+		mainTab.addStyleName(AON.CSS.aonBlockCenter());
 		mainTab.getColumnFormatter().setWidth(0, "auto");
 		mainTab.getColumnFormatter().setWidth(1, "50px");
-		mainTab.setWidget(0, 0, getFilterTab(config,new AccountingReportParams()));
+		mainTab.setWidget(0, 0, getFilterTab(options,new AccountingReportParams()));
 		mainTab.setWidget(0, 1, getMinMaxButtonsPanel());
-		mainTab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		mainTab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonVerticalAlignTop());
 		northPanel.setWidget(mainTab);
 		addNorth(northPanel, 110);
 		centerPanel = new SimpleLayoutPanel();
 		add(centerPanel);
-		onSearch();
+		onSearch(options);
 	}
 	
-	public String getCurrentDomainName() {
-		return currentDomainName;
-	}
-	public Integer getCurrentDomainId() {
-		return currentDomainId;
-	}
-	public String getCurrentUser() {
-		return currentUser;
-	}
-	
-	private ListBox getPeriodBox(LinkedList<AccountPeriod> periods, String selectedValue) {
+	private ListBox getPeriodBox(final AccountingReportModuleOptions options, String selectedValue) {
+		LinkedList<AccountPeriod> periods = options.getConfiguration().getPeriods();
 		ListBox periodBox = new ListBox();
 		periodBox.clear();
 		periodBox.addItem(" --- ", "");
@@ -178,12 +158,12 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 							if (pair != null) {
 								fromDate.setValue(dates.get(i).getLeft(),false);
 								toDate.setValue(dates.get(i).getRight(),false);
-								onSearch();
+								onSearch(options);
 							}
 						} else {
 							fromDate.setValue(periodStart,false);
 							toDate.setValue(periodEnd,false);
-							onSearch();
+							onSearch(options);
 						}
 					}
 				});
@@ -200,10 +180,10 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 		return periodBox;
 	}
 
-	private Widget getFilterTab(AonConfiguration config, AccountingReportParams params) {
+	private Widget getFilterTab(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		FlexTable tab = new FlexTable();
-		tab.addStyleName(AON.AON_CSS.aonWidthAll());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
+		tab.addStyleName(AON.CSS.aonWidthAll());
+		tab.addStyleName(AON.CSS.aonMarginTop());
 		tab.getColumnFormatter().setWidth(0, "1%");
 		tab.getColumnFormatter().setWidth(1, "1%");
 		tab.getColumnFormatter().setWidth(2, "1%");
@@ -213,13 +193,13 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 		tab.getColumnFormatter().setWidth(6, "auto");
 		
 		tab.setWidget(0, 0, new Label(AON.MSG.fiscalYear() +"/"+ AON.MSG.date()));
-		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(0,0, AON.CSS.aonSearchPanelLabel());
 		
 		FlexTable dateTab = new FlexTable();
 		period = new AccountPeriodBox();
 		period.setWidth("100px");
-		fromDate = new DateBoxEx();
-		toDate = new DateBoxEx();
+		fromDate = new AonDateBox();
+		toDate = new AonDateBox();
 		
 		account = new TextBox();
 		confidential = new ListBox();
@@ -232,36 +212,35 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 		dateTab.getColumnFormatter().setWidth(5, "80px");
 	
 		// ***********************************************************************  EJERCICIO
-		period.fill(config.getPeriods(),true);
+		period.fill(options.getConfiguration().getPeriods(),true);
 		dateTab.setWidget(0, 0, period);
-		period.addStyleName(AON.AON_CSS.aonMarginRight());
+		period.addStyleName(AON.CSS.aonMarginRight());
 		
 		// **********************************************************************  PERIOD BOX
-		ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
+		ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
 		dateTab.setWidget(0, 1, periodBox);
 
 		// **********************************************************************  FROM DATE
 		InlineLabel from = new InlineLabel(AON.MSG.from());
-		from.setStyleName(AON.AON_CSS.aonItalic());
-		from.addStyleName(AON.AON_CSS.aonMarginRight());
-		from.addStyleName(AON.AON_CSS.aonMarginLeft());
+		from.setStyleName(AON.CSS.aonItalic());
+		from.addStyleName(AON.CSS.aonMarginRight());
+		from.addStyleName(AON.CSS.aonMarginLeft());
 		dateTab.setWidget(0, 2, from);
 		dateTab.setWidget(0, 3, fromDate);
 		
 		// **********************************************************************  TO DATE
 		InlineLabel to = new InlineLabel(AON.MSG.to());
-		to.setStyleName(AON.AON_CSS.aonItalic());
-		to.addStyleName(AON.AON_CSS.aonMarginRight());
-		to.addStyleName(AON.AON_CSS.aonMarginLeft());
+		to.setStyleName(AON.CSS.aonItalic());
+		to.addStyleName(AON.CSS.aonMarginRight());
+		to.addStyleName(AON.CSS.aonMarginLeft());
 		dateTab.setWidget(0, 4, to);
 		dateTab.setWidget(0, 5, toDate);
 
 		tab.setWidget(0, 1, dateTab);
-		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonPanelGridEven());
 		tab.getFlexCellFormatter().setColSpan(0, 1, 3);
 
 		// ************************************************************************  ACTIVITY
-		boolean activitiesListBoxEnabled = (config != null && config.hasActivities());
+		boolean activitiesListBoxEnabled = (options.getConfiguration() != null && options.getConfiguration().hasActivities());
 		if (activitiesListBoxEnabled) {
 			activity = new ListBox();
 			activity.setWidth("150px");
@@ -269,7 +248,7 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 			activity.addItem("-- Sin actividad --", "-1");
 			activity.setSelectedIndex(0);
 			int i = 2;
-			for (EnterpriseActivity ea : config.getActivities()) {
+			for (EnterpriseActivity ea : options.getConfiguration().getActivities()) {
 				activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
 					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
@@ -287,47 +266,46 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 			tab.setWidget(0, 2, new Label());
 			tab.setWidget(0, 3, new Label());
 		}
-		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonPanelGridOdd());
-		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonPanelGridEven());
+		tab.getCellFormatter().setStyleName(0,2, AON.CSS.aonSearchPanelLabel());
 
 
 		// ************************************************************************  ACCOUNT
 		tab.setWidget(1, 0, new Label(AON.MSG.account()));
-		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(1,0, AON.CSS.aonSearchPanelLabel());
 		
-		account.setStyleName(AON.AON_CSS.aonInputText());
+		account.setStyleName(AON.CSS.aonInputText());
 		account.setVisibleLength(10);
 		FlexTable accountContainer = new FlexTable();
 		accountContainer.setWidget(0, 0, account);
 		FlowPanel accountHelpPanel = new FlowPanel();
 		
 		InlineLabel i1 = new InlineLabel("Tesorer\u00EDa");
-		i1.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i1.addStyleName(AON.AON_CSS.aonClickable());
+		i1.setStyleName(AON.CSS.aonInnerLabel());
+		i1.addStyleName(AON.CSS.aonClickable());
 		i1.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("57",true);}});
 		InlineLabel i2 = new InlineLabel("Bancos");
-		i2.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i2.addStyleName(AON.AON_CSS.aonClickable());
+		i2.setStyleName(AON.CSS.aonInnerLabel());
+		i2.addStyleName(AON.CSS.aonClickable());
 		i2.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("572",true);}});
 		InlineLabel i3 = new InlineLabel("Caja");
-		i3.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i3.addStyleName(AON.AON_CSS.aonClickable());
+		i3.setStyleName(AON.CSS.aonInnerLabel());
+		i3.addStyleName(AON.CSS.aonClickable());
 		i3.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("570",true);}});
 		InlineLabel i4 = new InlineLabel("Adm.P\u00FAblicas");
-		i4.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i4.addStyleName(AON.AON_CSS.aonClickable());
+		i4.setStyleName(AON.CSS.aonInnerLabel());
+		i4.addStyleName(AON.CSS.aonClickable());
 		i4.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("47",true);}});
 		InlineLabel i5 = new InlineLabel("Clientes");
-		i5.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i5.addStyleName(AON.AON_CSS.aonClickable());
+		i5.setStyleName(AON.CSS.aonInnerLabel());
+		i5.addStyleName(AON.CSS.aonClickable());
 		i5.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("430",true);}});
 		InlineLabel i6 = new InlineLabel("Proveedores");
-		i6.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i6.addStyleName(AON.AON_CSS.aonClickable());
+		i6.setStyleName(AON.CSS.aonInnerLabel());
+		i6.addStyleName(AON.CSS.aonClickable());
 		i6.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("400",true);}});
 		InlineLabel i7 = new InlineLabel("Acreedores");
-		i7.setStyleName(AON.AON_CSS.aonInnerLabel());
-		i7.addStyleName(AON.AON_CSS.aonClickable());
+		i7.setStyleName(AON.CSS.aonInnerLabel());
+		i7.addStyleName(AON.CSS.aonClickable());
 		i7.addClickHandler(new ClickHandler() {@Override public void onClick(ClickEvent event) { account.setValue("410",true);}});
 		accountHelpPanel.add(i1);
 		accountHelpPanel.add(i2);
@@ -340,10 +318,9 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 		
 		tab.setWidget(1, 1, accountContainer);
 		tab.getFlexCellFormatter().setColSpan(1, 1, 3);
-		tab.getCellFormatter().setStyleName(1,1, AON.AON_CSS.aonPanelGridEven());
 		
 		// ************************************************************************  CONFIDENTIAL
-		if (config.getUser().hasConfidentialityRole()) {
+		if (options.hasConfidentialityRole()) {
 			confidential.addItem( "Asientos NO confidenciales" );
 			confidential.addItem( "Asientos confidenciales" );
 			confidential.addItem(" Todos ");
@@ -355,19 +332,14 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 				confidential.setSelectedIndex(2);
 			}
 			tab.setWidget(1, 0, new Label(AON.MSG.show()));
-			tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonPanelGridOdd());
+			tab.getCellFormatter().setStyleName(1,0, AON.CSS.aonSearchPanelLabel());
 			tab.setWidget(1, 3, confidential);
 		}
 		
 		// ************************************************************************  CLEAN
-		Button cleanButton = new Button("Limpiar");
-		cleanButton.setStyleName(AON.AON_CSS.aonIconDelete());
-		cleanButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-		cleanButton.addStyleName(AON.AON_CSS.aonMarginLeft());
-		cleanButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		AonSearchPanelButton cleanButton = new AonSearchPanelButton(AON.MSG.clean(),AON.CSS.aonIconClear());
 		cleanButton.setTitle(AON.MSG.clean());
 		tab.setWidget(1, 4, cleanButton);
-		tab.getCellFormatter().setStyleName(1,4, AON.AON_CSS.aonPanelGridEven());
 		
 		cleanButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -381,7 +353,7 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 				}
 				period.setFocus(true);
 				account.setValue(null,false);
-				onSearch();
+				onSearch(options);
 			}
 		});
 		
@@ -390,30 +362,30 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 		period.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
+				ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
 				dateTab.setWidget(0, 1, periodBox);
-				onSearch();
+				onSearch(options);
 			}
 		});
 		
 		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				onSearch();
+				onSearch(options);
 			}
 		});
 
 		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				onSearch();
+				onSearch(options);
 			}
 		});
 		if (activitiesListBoxEnabled) {
 			activity.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					onSearch();
+					onSearch(options);
 				}
 			});
 		}
@@ -421,15 +393,15 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 		account.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				onSearch();
+				onSearch(options);
 			}
 		});
 		
-		if (config.getUser().hasConfidentialityRole()) {
+		if (options.hasConfidentialityRole()) {
 			confidential.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					onSearch();
+					onSearch(options);
 				}
 			});
 		}
@@ -464,9 +436,9 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 		fromDate.setTabIndex(index);
 	}
 	
-	private void onSearch() {
-		AccountingReportParams params = getWidgetParams();
-		LedgerPanel ledgerPanel = new LedgerPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
+	private void onSearch( final AccountingReportModuleOptions options ) {
+		AccountingReportParams params = getWidgetParams(options);
+		LedgerPanel ledgerPanel = new LedgerPanel(options, params);
 		ledgerPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
 			
 			@Override
@@ -478,7 +450,7 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 		centerPanel.setWidget(ledgerPanel);
 	}
 
-	public AccountingReportParams getWidgetParams() {
+	public AccountingReportParams getWidgetParams( final AccountingReportModuleOptions options ) {
 		Integer activityId = null;
 		if (activitiesListBoxEnabled) {
 			if (activity.getSelectedIndex() > 0 ) {
@@ -486,7 +458,7 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 			}
 		}
 		return new AccountingReportParams()
-			.setDomain(this.currentDomainId)
+			.setDomain(options.getDomain())
 			.setPeriod(period.getValue())
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
@@ -498,14 +470,12 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 	
 	private FlowPanel getMinMaxButtonsPanel() {
 		FlowPanel min = new FlowPanel();
-		min.setStyleName(AON.AON_CSS.aonTextRight());
-		min.addStyleName(AON.AON_CSS.aonPaddingRight());
-		min.addStyleName(AON.AON_CSS.aonNowrap());
-		min.addStyleName(AON.AON_CSS.aonWidthAll());
+		min.setStyleName(AON.CSS.aonTextRight());
+		min.addStyleName(AON.CSS.aonPaddingRight());
+		min.addStyleName(AON.CSS.aonNowrap());
+		min.addStyleName(AON.CSS.aonWidthAll());
 		
-		Button maximize = new Button();
-		maximize.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		maximize.addStyleName(AON.AON_CSS.aonIconMaximize());
+		AonSearchPanelButton maximize = new AonSearchPanelButton(AON.MSG.maximize(),AON.CSS.aonIconMaximize());
 		maximize.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -516,9 +486,7 @@ public class LedgerPanelReport extends DockLayoutPanel implements Focusable, Has
 
 		min.add(maximize);
 		
-		Button minimize = new Button();
-		minimize.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		minimize.addStyleName(AON.AON_CSS.aonIconMinimize());
+		AonSearchPanelButton minimize = new AonSearchPanelButton(AON.MSG.minimize(),AON.CSS.aonIconMinimize());
 		minimize.addClickHandler(new ClickHandler() {
 			
 			@Override

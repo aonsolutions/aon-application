@@ -219,6 +219,9 @@
 .aon_scroll_area {
 	padding: 8px 1.5em 1.5em 1.5em;
 }
+.aon_pre {
+	white-space: pre;
+}
 .aon_inline {
 	display: inline;
 }
@@ -371,6 +374,14 @@
 }
 .aon_clickable_label:hover {
 	text-decoration: underline;
+}
+.aon_clickable_block {
+	background-color: transparent;
+	cursor: pointer;
+}
+
+.aon_clickable_block:hover {
+	background-color: #FFFFD1;
 }
 
 .aon_padding {

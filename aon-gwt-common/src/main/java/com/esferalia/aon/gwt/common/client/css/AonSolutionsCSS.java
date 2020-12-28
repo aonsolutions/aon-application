@@ -298,6 +298,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_scroll_area")
 	String aonScrollArea();
 	
+	@ClassName("aon_pre")
+	String aonPre();
+
 	@ClassName("aon_inline")
 	String aonInline();
 	
@@ -405,6 +408,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_clickable_label")
 	String aonClickableLabel();
+	
+	@ClassName("aon_clickable_block")
+	String aonClickableBlock();
 
 	@ClassName("aon_flex_block_inline")
 	String aonFlexBlockInline();
