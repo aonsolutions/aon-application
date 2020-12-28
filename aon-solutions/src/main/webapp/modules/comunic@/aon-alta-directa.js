@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { INPUTS_ALL } from '../../environments/constants.js';
-import { setValueName, serializeForm, setDate } from '../../services/utils.js';
+import { setValueName, serializeForm } from '../../services/utils.js';
 import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../services/service.js'
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';

@@ -19,3 +19,5 @@ export * from './signinService.js';
 export * from './registryService.js';
 
 export * from './contratoService.js';
+
+export * from './actionMobile.js';

@@ -1,7 +1,7 @@
 import {INPUTS_ALL} from '../environments/constants.js';
 
 export const getReader = (file) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const READER = new FileReader();
     READER.readAsDataURL(file);
     READER.onload = () => {

@@ -1,22 +1,19 @@
-import {AonElement} from '../components/AonElement.js';
-import {rootPanel} from '../services/gwtLoader.js';
-
+import { AonElement } from '../components/AonElement.js';
+import { rootPanel } from '../services/gwtLoader.js';
+import { getReader } from '../services/utils.js';
+import { uploadFileDocumental, insertInvoice, actionMobile } from '../services/service.js';
+import { Invoice } from './invoice/Invoice.js';
 import '../components/aon-icon-button.js';
 import './comunic@/aon-comunica.js';
 import './documental/aon-documental.js';
 import './messenger/aon-messenger.js';
 import './invoice/aon-invoice-panel.js';
-
 import '../components/aon-dialog-menu.js';
-
-import {getReader} from '../services/utils.js'
-
-import { uploadFile } from '../services/fileService.js'
 
 export class AonMobileMenu extends AonElement {
 
 	CAMERA_INPUT;
-
+	TYPE_IMG;
 	get id() {
 		return this.getAttribute('id');
 	}
@@ -41,14 +38,14 @@ export class AonMobileMenu extends AonElement {
 		this.setAttribute('user', user);
 	}
 
-	constructor () {
+	constructor() {
 		super();
-		this.CAMERA_INPUT =  this.id + 'CameraInput';
+		this.CAMERA_INPUT = this.id + 'CameraInput';
 	}
 
-	connectedCallback () {
+	connectedCallback() {
 		this.build();
-  	}
+	}
 
 	build() {
 		this.innerHTML = `
@@ -82,6 +79,7 @@ export class AonMobileMenu extends AonElement {
 				  />
 			</div>
 			<aon-dialog-menu id="aonMobileMenuComunicaaonDialogAddOption" ></aon-dialog-menu>
+			<div id="aonMobileMenuLoading" class="aonLoading"></div>
 		`;
 		let rp = this.getElement('rootPanel');
 		let aonMenuSidenav = this.getElement('aonMobileMenuSidenav');
@@ -121,20 +119,20 @@ export class AonMobileMenu extends AonElement {
 		aonMobileMenuCamera.style.marginLeft = n;
 
 		let aonMobileMenuCameraButton = this.getElement('aonMobileMenuCameraButton');
-		aonMobileMenuCameraButton.addEventListener('click',({target}) => {
-			let top  = target.getBoundingClientRect().top;
+		aonMobileMenuCameraButton.addEventListener('click', ({ target }) => {
+			let top = target.getBoundingClientRect().top;
 			const left = target.getBoundingClientRect().left;
 			const height = window.innerHeight;
 
-			if((height - top) < (height / 2)) 
+			if ((height - top) < (height / 2))
 				top = top - 120;
-	
+
 			let d = this.getElement(`${aonMobileMenuComunica.id}aonDialogAddOption`);
-	
+
 			let options = [{
 				name: "Documental",
 				icon: 'snippet_folder',
-				fn: () => this.openCamera("documental")
+				fn: () => this.openCamera("document")
 			}, {
 				name: 'Solicitudes',
 				icon: 'assignment',
@@ -142,35 +140,73 @@ export class AonMobileMenu extends AonElement {
 			}, {
 				name: 'Facturas',
 				icon: 'receipt',
-				fn: () => this.openCamera("factura")
+				fn: () => this.openCamera("invoice")
 			}];
 			d.setMenuOptions(options, top, left);
 			d.open();
 		});
 
-		this.getElement(this.CAMERA_INPUT).addEventListener('change', (ev)=> this.sendImage(ev) );
+		this.getElement(this.CAMERA_INPUT).addEventListener('change', (ev) => this.changeImage(ev));
 	}
 
-	openCamera(type){
-		console.log("type>>",type);
-		if("undefined" === typeof webkit) {
-			this.getElement('aonMobileMenuCameraInput').click();
-			return false;
-		}
-	    if(!webkit.messageHandlers.cordova_iab) throw "Cordova IAB postMessage API not found!";
-	    webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify({action:"camera"}));
+	async openCamera(type) {
+		this.TYPE_IMG = type;
+		const result = await actionMobile({ action: "camera" });
+		if (!result) this.getElement('aonMobileMenuCameraInput').click();
 	}
 
-	async sendImage({target}){
-		try {
-			const {files: [file]} = target;
-			const archivo = await getReader(file);
-			const resp = await uploadFile({ file: archivo });
-			console.log("archivo guardado!", resp);
-		} catch (error) {
-			console.log(error);
+	async changeImage({ target }) {
+		const { files: [file] } = target;
+		const archivo = await getReader(file).catch(e => null);
+		if (archivo) this.sendImage(archivo);
+	}
+
+	sendImage(fileObj) {
+		switch (this.TYPE_IMG) {
+			case "document":
+				this.attachDocument(fileObj);
+				break;
+			case "invoice":
+				this.attachInvoice(fileObj);
+				break;
+			case "solicitud":
+				break;
+			default:
+				break;
 		}
 	}
+
+	async attachDocument(file) {
+		this.loading(true);
+		const data = {
+			...file,
+			contentName: file.name,
+			contentSize: file.size
+		};
+		await uploadFileDocumental(data).catch(e => null);
+		this.loading(false);
+	}
+
+	async attachInvoice(file) {
+		this.loading(true);
+		const data = {
+			file,
+			invoice: new Invoice('recibida')
+		};
+		await insertInvoice(data).catch(e => null);
+		this.loading(false);
+	}
+
+	async sendTokenFCM(token) {
+		console.log("tokenFCM>", typeof token, token);
+	}
+
+	loading(load) {
+		let block = load ? 'block' : 'none';
+		let aonEl = document.querySelector('#aonMobileMenuLoading');
+		aonEl.style.display = block;
+	}
+
 }
 
 window.customElements.define('aon-mobile-menu', AonMobileMenu);

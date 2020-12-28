@@ -90,7 +90,7 @@ export const requestFile = (method, url, fn) => {
   xhr.onload = () => {
     xhr.status != 200 ? fn(undefined, xhr.response) : fn(xhr.response);
   };
-  xhr.onerror = () => {};
+  xhr.onerror = () => { };
 };
 
 export const get = (url, data) => {
@@ -134,13 +134,10 @@ export const openPDF = (url, data) => {
   }
   const json = btoa(JSON.stringify(datos));
   const newUrl = `${url}?json=${json}`;
-  let _webkit = undefined;
 
-  try { if ("undefined" !== typeof webkit) { _webkit = webkit.messageHandlers.cordova_iab; } } catch (e) {}
-
-  if (_webkit) 
-    openFileMobile(newUrl).then(obj =>  webkit.postMessage(JSON.stringify(obj)) ).catch(e => null);
-  else 
+  if (webkitRequestMobile())
+    openFileMobile(newUrl).then(async (obj) => await actionRequestMobile(obj)).catch(e => null);
+  else
     openFileDesktop(newUrl);
 }
 
@@ -169,3 +166,28 @@ const openFileMobile = async (url) => new Promise((resolve, reject) => {
 });
 
 const openFileDesktop = (url) => open(url);
+
+//if true is mobile APP
+export const webkitRequestMobile = () => {
+  let result = false;
+  try {
+    if ("undefined" !== typeof webkit && webkit.messageHandlers.cordova_iab) {
+      result = true;
+    }
+  } catch (e) { }
+  return result;
+}
+
+export const actionRequestMobile = (data) => {
+  return new Promise((resolve) => {
+    let result = false;
+    try {
+      if (webkitRequestMobile()) {
+        let _webkit = webkit.messageHandlers.cordova_iab;
+        if(data) _webkit.postMessage(JSON.stringify(data));
+        result = true;
+      }
+    } catch (e) {console.log(e)}
+    resolve(result)
+  });
+}
