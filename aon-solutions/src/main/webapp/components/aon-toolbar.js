@@ -186,6 +186,7 @@ export class AonToolbar extends AonElement {
 		let input = this.getElement(inputId);
 		input.style.border = '0px';
 		input.style.borderBottom = '1px solid #999';
+		input.style.backgroundColor = 'transparent';
 		input.style.outline = 'none';
 		input.style.fontSize = '14px';
 		input.addEventListener('keyup', () => {

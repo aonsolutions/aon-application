@@ -633,6 +633,7 @@ form {
   padding: 20px;
   border: 1px solid #ddd;
   width: 80%;
+  box-shadow: 2px 2px 5px 1px #ddd;
 }
 
 .aonProgress,

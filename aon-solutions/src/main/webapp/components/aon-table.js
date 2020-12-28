@@ -63,7 +63,6 @@ export class AonTable extends AonElement {
 							let it = this.getElement(item.id + 'Input');
 							it.click();
 						}
-
 					});
 				});
 			}
@@ -92,6 +91,15 @@ export class AonTable extends AonElement {
 			});
 		}
 
+		deselectAll() {
+			document.querySelectorAll('aon-checkbox').forEach((item, i) => {
+				if(item.getValue()){
+					let it = this.getElement(item.id + 'Input');
+					it.click();
+				}
+			});
+		}
+
 		addColumn(name, type, id, width) {
 			let header = this.getElement(this.getId() + 'TableHeader');
 			let th = document.createElement('th');
@@ -107,20 +115,23 @@ export class AonTable extends AonElement {
 			let tr = document.createElement('tr');
 			tr.style.cursor = 'pointer';
 			body.appendChild(tr);
-
+			let checkBoxId = `aaa${body.children.length}`;
 			if(this.hasAttribute('selectable')) {
 				let tdCheckBox = document.createElement('td');
 				tdCheckBox.style.width = '5%';
+				let checkBoxId = `aaa${body.children.length}`;
 				tdCheckBox.innerHTML = `<aon-checkbox id="aaa${body.children.length}"> </aon-checkbox>`;
 				tr.appendChild(tdCheckBox);
 				let checkbox = this.getElement(`aaa${body.children.length}`);
 				checkbox.addEventListener('change', () => {
 					if(checkbox.getValue()) {
 						this.selected.push(value);
+						tr.style.backgroundColor = 'aliceblue';
 					} else {
 						this.selected.forEach((item, i) => {
 							if(item == value) {
 								this.selected.splice(i, 1);
+								tr.style.backgroundColor = '';
 							}
 						});
 					}
@@ -138,8 +149,13 @@ export class AonTable extends AonElement {
 				} else {
 					td.innerHTML = value[id] ? value[id] : '';
 					td.addEventListener('click', fn);
-					if(contextMenu)
+					if(contextMenu){
+						td.addEventListener('contextmenu', () => {
+							this.deselectAll();
+							this.getElement(checkBoxId + 'Input').click();
+						});
 						td.addEventListener('contextmenu', contextMenu);
+					}
 				}
 				tr.appendChild(td);
 			});
