@@ -59,10 +59,6 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 
 	private static CommonServiceAsync commonService;
 
-	private String currentDomainName;
-	private String currentUser;
-	private Integer currentDomainId;
-	
 	private SimpleLayoutPanel centerPanel;
 	private TabLayoutPanel tabPanel;
 	
@@ -79,24 +75,20 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 
 	private boolean activitiesListBoxEnabled;
 	
-	public AnalyticalPanelReport(String domainName,String user, int domainId) {
-		this(domainName,user,domainId,Integer.MAX_VALUE,null,null);
+	public AnalyticalPanelReport(final AccountingReportModuleOptions options) {
+		this(options,null);
 	}
 	
-	public AnalyticalPanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config, AccountingReportParams params) {
+	public AnalyticalPanelReport(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		super(Unit.PX);
-		this.currentDomainName = domainName;
-		this.currentUser = user;
-		this.currentDomainId = domainId;
-		
-		if (config == null) {
+		if (options.getConfiguration() == null) {
 			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
-			commonService.getAonConfiguration(domainName, domainId, user
+			commonService.getAonConfiguration(options.getDomainName(), options.getDomain(), options.getUser()
 				,new AsyncCallback<AonConfiguration>() {
 					@Override
 					public void onSuccess(AonConfiguration result) {
-						fill(tabIndex, result, params);
+						fill(options.setConfiguration(result), params);
 					}
 	
 					@Override
@@ -105,15 +97,15 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 					}
 				});
 		} else {
-			fill (tabIndex,config,params);
+			fill (options,params);
 		}
 	}
 	
-	private void fill(int tabIndex, AonConfiguration config, AccountingReportParams params) {
-		if (config.getPeriods() == null || config.getPeriods().size() == 0 ) {
+	private void fill(final AccountingReportModuleOptions options, AccountingReportParams params) {
+		if (options.getConfiguration().getPeriods() == null || options.getConfiguration().getPeriods().size() == 0 ) {
 			Window.alert("No se han encontrado ejercicios contables");
 		} else {
-			activitiesListBoxEnabled = (config != null && config.hasActivities());
+			activitiesListBoxEnabled = (options.getConfiguration() != null && options.getConfiguration().hasActivities());
 			addStyleName(AON.AON_CSS.aonScrollArea());
 			addStyleName(AON.AON_CSS.aonMarginBottom());
 			SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
@@ -126,21 +118,11 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 			centerPanelContainer.setWidget(tabPanel);
 			add(centerPanelContainer);
 
-			fillNorthPanel(northPanel,tabIndex,config,params);
+			fillNorthPanel(northPanel,options,params);
 		}
 	}
 	
-	public String getCurrentDomainName() {
-		return currentDomainName;
-	}
-	public Integer getCurrentDomainId() {
-		return currentDomainId;
-	}
-	public String getCurrentUser() {
-		return currentUser;
-	}
-	
-	private void fillNorthPanel(SimpleLayoutPanel northPanel, int tabIndex ,final AonConfiguration config, AccountingReportParams params) {
+	private void fillNorthPanel(SimpleLayoutPanel northPanel, final AccountingReportModuleOptions options, AccountingReportParams params) {
 		
 		FlexTable dateTab = new FlexTable();
 		period = new AccountPeriodBox();
@@ -149,14 +131,14 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 		toDate = new DateBoxEx();
 		
 		boolean periodBoxShown = false;
-		period.fill(config.getPeriods(),true);
+		period.fill(options.getConfiguration().getPeriods(),true);
 		period.removeItem(0);
 		if (params != null) {
 			if (params.getPeriod() != null) {
-				for (AccountPeriod p : config.getPeriods()) {
+				for (AccountPeriod p : options.getConfiguration().getPeriods()) {
 					if (AonNumberUtils.equals(p.getId(), params.getPeriod())) {
 						period.select(params.getPeriod());
-						ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
+						ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
 						dateTab.setWidget(0, 1, periodBox);
 						periodBoxShown = true;
 					}
@@ -173,9 +155,9 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
+				ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
 				dateTab.setWidget(0, 1, periodBox);
-				onSearch();
+				onSearch(options);
 			}
 		});
 
@@ -183,7 +165,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				onSearch();
+				onSearch(options);
 			}
 		});
 		
@@ -191,7 +173,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				onSearch();
+				onSearch(options);
 			}
 		});
 		
@@ -213,11 +195,11 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				onSearch();
+				onSearch(options);
 			}
 		});
 		
-		if (config.getUser().hasConfidentialityRole()) {
+		if (options.hasConfidentialityRole()) {
 			confidential = new ListBox();
 			confidential.addItem( "Asientos NO confidenciales" );
 			confidential.addItem( "Asientos confidenciales" );
@@ -233,7 +215,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 				
 				@Override
 				public void onChange(ChangeEvent event) {
-					onSearch();
+					onSearch(options);
 				}
 			});
 		}
@@ -245,7 +227,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 			activity.addItem("-- Sin actividad --", "-1");
 			activity.setSelectedIndex(0);
 			int i = 2;
-			for (EnterpriseActivity ea : config.getActivities()) {
+			for (EnterpriseActivity ea : options.getConfiguration().getActivities()) {
 				activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
 					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
@@ -260,7 +242,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 			activity.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					onSearch();
+					onSearch(options);
 				}
 			});
 		}
@@ -297,7 +279,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 		period.addStyleName(AON.AON_CSS.aonMarginRight());
 		
 		if (!periodBoxShown) {
-			ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
+			ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
 			dateTab.setWidget(0, 1, periodBox);
 		}
 
@@ -356,7 +338,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 				centerPanel.clear();
 				costCentersSet = null;
 				period.setFocus(true);
-				onSearch();
+				onSearch(options);
 			}
 		});
 
@@ -369,7 +351,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 		refreshButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				onSearch();
+				onSearch(options);
 			}
 		});
 
@@ -379,7 +361,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 		tab.setWidget(1, 1, level);
 		tab.getCellFormatter().setStyleName(1,1, AON.AON_CSS.aonPanelGridEven());
 		
-		if (config.getUser().hasConfidentialityRole()) {
+		if (options.hasConfidentialityRole()) {
 			tab.setWidget(1, 2, new Label(AON.MSG.show()));
 			tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonPanelGridOdd());
 			
@@ -441,10 +423,11 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 			tab.addStyleName(AON.AON_CSS.aonDisplayNone());
 			AnalyticalPanelReport.this.setWidgetSize(northPanel, 25);
 		}
-		onSearch();
+		onSearch(options);
 	}
 
-	private ListBox getPeriodBox(LinkedList<AccountPeriod> periods, String selectedValue) {
+	private ListBox getPeriodBox(final AccountingReportModuleOptions options, String selectedValue) {
+		LinkedList<AccountPeriod> periods =  options.getConfiguration().getPeriods();
 		ListBox periodBox = new ListBox();
 		periodBox.clear();
 		periodBox.addItem(" --- ", "");
@@ -490,12 +473,12 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 							if (pair != null) {
 								fromDate.setValue(dates.get(i).getLeft(),false);
 								toDate.setValue(dates.get(i).getRight(),false);
-								onSearch();
+								onSearch(options);
 							}
 						} else {
 							fromDate.setValue(periodStart,false);
 							toDate.setValue(periodEnd,false);
-							onSearch();
+							onSearch(options);
 						}
 					}
 				});
@@ -538,19 +521,19 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 	public void setTabIndex(int index) {
 		fromDate.setTabIndex(index);
 	}
-	private void onSearch() {
-		AccountingReportParams params = getWidgetParams();
-		onSearch(params,0);
+	private void onSearch(final AccountingReportModuleOptions options) {
+		AccountingReportParams params = getWidgetParams( options );
+		onSearch(options, params,0);
 	}
-	private void onSearch(AccountingReportParams params, int tab) {
+	private void onSearch(final AccountingReportModuleOptions options, AccountingReportParams params, int tab) {
 		SimpleLayoutPanel panel = (SimpleLayoutPanel) tabPanel.getWidget(tab);
 		panel.clear();
-		panel.add(getResultPanel(params));
+		panel.add(getResultPanel(options, params));
 		tabPanel.selectTab(tab);
 	}
 	
-	private AnalyticalPanel getResultPanel(AccountingReportParams params) {
-		AnalyticalPanel analyticalPanel = new AnalyticalPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
+	private AnalyticalPanel getResultPanel(final AccountingReportModuleOptions options, AccountingReportParams params) {
+		AnalyticalPanel analyticalPanel = new AnalyticalPanel(options.getDomainName(), options.getUser(), options.getDomain(), params);
 		analyticalPanel.addSelectionHandler( new SelectionHandler<AccountingReportParams>() {
 			
 			@Override
@@ -594,9 +577,9 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 				;
 				StatementPanel statement = new StatementPanel(
 						new AccountingReportModuleOptions()
-							.setDomainName(getCurrentDomainName())
-							.setDomain(getCurrentDomainId())
-							.setUser(getCurrentUser())
+							.setDomainName(options.getDomainName())
+							.setDomain(options.getDomain())
+							.setUser(options.getUser())
 						, stmParams, true);
 				statement.addSelectionHandler(new AccountEntrySelectionHandler () {
 					
@@ -614,7 +597,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 				else if (newParams.getLevel() == 3) newParams.setLevel(4);
 				else if (newParams.getLevel() == 4) newParams.setLevel(9);
 				else newParams.setLevel(9);
-				TrialBalancePanel trialBalance = new TrialBalancePanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), newParams);
+				TrialBalancePanel trialBalance = new TrialBalancePanel(options, newParams);
 				trialBalance.addSelectionHandler(new SelectionHandler<AccountingReportParams>() {
 
 					@Override
@@ -629,7 +612,7 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 		return analyticalPanel;
 	}
 
-	public AccountingReportParams getWidgetParams() {
+	public AccountingReportParams getWidgetParams(final AccountingReportModuleOptions options) {
 		Integer activityId = null;
 		if (activitiesListBoxEnabled) {
 			if (activity.getSelectedIndex() > 0 ) {
@@ -638,9 +621,9 @@ public class AnalyticalPanelReport extends DockLayoutPanel implements Focusable,
 		}
 		int l = level.getSelectedIndex();
 		return new AccountingReportParams()
-			.setDomainName(this.currentDomainName)
-			.setDomain(this.currentDomainId)
-			.setUser(this.currentUser)
+			.setDomainName(options.getDomainName())
+			.setDomain(options.getDomain())
+			.setUser(options.getUser())
 			.setPeriod(AonNumberUtils.toInteger( period.getSelectedValue()))
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())

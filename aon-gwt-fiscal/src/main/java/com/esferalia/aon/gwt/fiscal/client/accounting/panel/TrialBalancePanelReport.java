@@ -125,7 +125,7 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 	}
 	
 	private TrialBalancePanel getResultPanel(final AccountingReportModuleOptions options, AccountingReportParams params) {
-		TrialBalancePanel resultsPanel = new TrialBalancePanel(options.getDomainName(), options.getUser(), options.getDomain(), params);
+		TrialBalancePanel resultsPanel = new TrialBalancePanel(options, params);
 		resultsPanel.addSelectionHandler( new TrialBalanceSelectionHandler(options) );
 		return resultsPanel;
 	}

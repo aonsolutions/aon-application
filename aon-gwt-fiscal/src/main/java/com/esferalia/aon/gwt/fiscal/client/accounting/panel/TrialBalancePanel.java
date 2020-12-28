@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.AccountingReportService;
 import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
@@ -31,37 +32,23 @@ public class TrialBalancePanel extends ScrollPanel implements HasSelectionHandle
 	
 	private FlowPanel root;
 	
-	private String currentDomainName;
-	private String currentUser;
-	private Integer currentDomainId;
-	private AccountingReportParams params;
-	
-	public TrialBalancePanel(String currentDomainName, String currentUser, Integer currentDomainId, AccountingReportParams params) {
-		this.currentDomainName = currentDomainName;
-		this.currentUser = currentUser;
-		this.currentDomainId = currentDomainId;
-		this.params = params;
-
+	public TrialBalancePanel(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		root = new FlowPanel();
 		setWidget(root);
 		addStyleName(AON.CSS.aonScrollArea());
 		addStyleName(AON.CSS.aonMarginBottom());		
 		
-		search();
+		search(options,params);
 		scrollToTop();
 	}
-	
-	public AccountingReportParams getParams() {
-		return params;
-	}
 
-	private void search() {
+	private void search(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		root.clear();
 		
 		AccountingReportServiceAsync serviceRaw = GWT.create(AccountingReportService.class);
 		SERVICE = new AccountingReportServiceAsyncDecorator(serviceRaw);
 		
-		SERVICE.getAccountTrialBalanceReport(currentDomainName,currentUser,currentDomainId,params
+		SERVICE.getAccountTrialBalanceReport(options.getDomainName(),options.getUser(),options.getDomain(),params
 				,  new AsyncCallback<AccountTrialBalanceReport>() {
 			
 			@Override

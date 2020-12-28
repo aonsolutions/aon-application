@@ -615,7 +615,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 				else if (newParams.getLevel() == 3) newParams.setLevel(4);
 				else if (newParams.getLevel() == 4) newParams.setLevel(9);
 				else newParams.setLevel(9);
-				TrialBalancePanel trialBalance = new TrialBalancePanel(options.getDomainName(), options.getUser(), options.getDomain(), newParams);
+				TrialBalancePanel trialBalance = new TrialBalancePanel(options, newParams);
 				trialBalance.addSelectionHandler(new SelectionHandler<AccountingReportParams>() {
 
 					@Override

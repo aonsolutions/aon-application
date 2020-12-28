@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
@@ -13,6 +16,7 @@ import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.google.gwt.core.client.GWT;
@@ -20,6 +24,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -32,21 +37,55 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 	
 	private static final String ACC_ANALYTICAL_REPORT_PRINT 		= "/aon_gwt_fiscal/roms/AccountAnalyticalReportExcelPrint";
 	private static final String ACC_ANALYTICAL_REPORT_PDF_PRINT  = "/aon_gwt_fiscal/roms/AccountAnalyticalReportPDFPrint";
+	private static CommonServiceAsync commonService;
 	
 	@Override
 	public void onModuleLoad() {
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+		AccountingReportModuleOptions options = new AccountingReportModuleOptions();
+		options.setParentWidget(root);
+		options.setDomainName(getCurrentDomainName());
+		options.setDomain(getCurrentDomain());
+		options.setUser(getCurrentUser());
+		this.onModuleLoad( options );
+	}
+	
+	public void onModuleLoad( final AccountingReportModuleOptions options ) {
+		if (options.getConfiguration() == null) {
+			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
+			commonService.getAonConfiguration(options.getDomainName(), options.getDomain(), options.getUser()
+				,new AsyncCallback<AonConfiguration>() {
+					@Override
+					public void onSuccess(AonConfiguration result) {
+						loadModule(options.setConfiguration(result));
+					}
+	
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error al leer la configuraci\u00F3n");
+					}
+				});
+		} else {
+			loadModule(options);
+		}
+	}
+	
+	public void loadModule( final AccountingReportModuleOptions options ) {
 		AON.ensureInjected();
 		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		AnalyticalPanelReport panel = new AnalyticalPanelReport(getCurrentDomainName(), getCurrentUser(), getCurrentDomain());
-		panel.addSelectionHandler(new AccountEntrySelectionHandler() {
+		AnalyticalPanelReport panel = new AnalyticalPanelReport(options);
+		if (!options.isGuest()) {
+			panel.addSelectionHandler(new AccountEntrySelectionHandler() {
+				@Override
+				public void onSelection(AccountEntrySelectionEvent event) {
+					AccountEntry entry = event.getSelectedItem();  
+					showEntry(options, entry.getId(), event.getCallback());
+					
+				}
+			});
+		}
 			
-			@Override
-			public void onSelection(AccountEntrySelectionEvent event) {
-				AccountEntry entry = event.getSelectedItem();  
-				showEntry(entry.getDomain(), entry.getId(), event.getCallback());
-				
-			}
-		});
 		
 		FlowPanel toolbarPanel = new FlowPanel();
 		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
@@ -93,7 +132,7 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				AccountingReportParams params = panel.getWidgetParams();
+				AccountingReportParams params = panel.getWidgetParams(options);
 				ReportMetadata metadata = new ReportMetadata().setTitle("Cuenta de explotaci\u00F3n");
 				PrintReportDialog dialog = new PrintReportDialog(metadata
 						, new IPrintReportDialogCallback() {
@@ -120,9 +159,9 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 
 								diskForm.setAction(GWT.getHostPageBaseURL() + ACC_ANALYTICAL_REPORT_PDF_PRINT);
 								accountReportParamsHidden.setValue(JsonParams.convert(params));
-								domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-								domainNameHidden.setValue(getCurrentDomainName());
-								userHidden.setValue(getCurrentUser());
+								domainIdHidden.setValue(String.valueOf(options.getDomain()));
+								domainNameHidden.setValue(options.getDomainName());
+								userHidden.setValue(options.getUser());
 								diskForm.submit();
 							}
 						});
@@ -142,10 +181,10 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 			@Override
 			public void onClick(ClickEvent event) {
 				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_ANALYTICAL_REPORT_PRINT);
-				accountReportParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams()));
-				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-				domainNameHidden.setValue(getCurrentDomainName());
-				userHidden.setValue(getCurrentUser());
+				accountReportParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams( options )));
+				domainIdHidden.setValue(String.valueOf(options.getDomain()));
+				domainNameHidden.setValue(options.getDomainName());
+				userHidden.setValue(options.getUser());
 				diskForm.submit();
 			}
 		});
@@ -160,7 +199,7 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 		root.add(dockLayoutPanel);
 	}
 
-	private void showEntry(int domain,Integer entryId, ModuleCallback callback) {
+	private void showEntry(final AccountingReportModuleOptions options,Integer entryId, ModuleCallback callback) {
 		CustomPopup entryDialog = new CustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
@@ -171,9 +210,9 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 		AccountEntryModule module = new AccountEntryModule();
 		module.onModuleLoad(new AccountEntryModuleOptions()
 			.setParentWidget(entryDialog)
-			.setDomainName(getCurrentDomainName())
-			.setUser(getCurrentUser())
-			.setDomain(domain)
+			.setDomainName(options.getDomainName())
+			.setUser(options.getUser())
+			.setDomain(options.getDomain())
 			.setAccountEntryId(entryId)
 			.setExternalCallback(new ModuleCallback() {
 			

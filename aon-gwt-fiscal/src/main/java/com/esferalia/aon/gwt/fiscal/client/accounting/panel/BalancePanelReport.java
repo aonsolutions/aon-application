@@ -36,35 +36,24 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 
 	private static CommonServiceAsync commonService;
 
-	private String currentDomainName;
-	private String currentUser;
-	private Integer currentDomainId;
-	private AonConfiguration config;
-	
 	private SimpleLayoutPanel centerPanel;
 	private TabLayoutPanel tabPanel;
 	private BalancePanelFilter filter;
 	
-	public BalancePanelReport(String domainName,String user, int domainId) {
-		this(domainName,user,domainId,Integer.MAX_VALUE,null,null);
+	public BalancePanelReport(final AccountingReportModuleOptions options) {
+		this(options,null);
 	}
 	
-	public BalancePanelReport(String domainName,String user,int domainId, int tabIndex, AonConfiguration config, AccountingReportParams params) {
+	public BalancePanelReport(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		super(Unit.PX);
-		this.currentDomainName = domainName;
-		this.currentUser = user;
-		this.currentDomainId = domainId;
-		this.config = config;
-		
-		if (config == null) {
+		if (options.getConfiguration() == null) {
 			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
-			commonService.getAonConfiguration(domainName, domainId, user
+			commonService.getAonConfiguration(options.getDomainName(), options.getDomain(), options.getUser()
 				,new AsyncCallback<AonConfiguration>() {
 					@Override
 					public void onSuccess(AonConfiguration result) {
-						BalancePanelReport.this.config = result;
-						fill(tabIndex, params);
+						fill( options.setConfiguration(result), params);
 					}
 	
 					@Override
@@ -73,27 +62,27 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 					}
 				});
 		} else {
-			fill (tabIndex,params);
+			fill (options,params);
 		}
 	}
 	
-	private void fill(int tabIndex, AccountingReportParams params) {
-		if (config.getPeriods() == null || config.getPeriods().size() == 0 ) {
+	private void fill(final AccountingReportModuleOptions options, AccountingReportParams params) {
+		if (options.getConfiguration().getPeriods() == null || options.getConfiguration().getPeriods().size() == 0 ) {
 			Window.alert("No se han encontrado ejercicios contables");
 		} else {
-			addStyleName(AON.AON_CSS.aonScrollArea());
-			addStyleName(AON.AON_CSS.aonMarginBottom());
+			addStyleName(AON.CSS.aonScrollArea());
+			addStyleName(AON.CSS.aonMarginBottom());
 			SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
 			addNorth(northPanel, 118);
 			centerPanel = new SimpleLayoutPanel();
-			centerPanel.setStyleName(AON.AON_CSS.aonSelector());
+			centerPanel.setStyleName(AON.CSS.aonSelector());
 			tabPanel = new TabLayoutPanel(30, Unit.PX);
 			tabPanel.add(new SimpleLayoutPanel(),new CloseTab("Resultados", false));
 			
 			centerPanel.setWidget(tabPanel);
 			add(centerPanel);
 			
-			filter = new BalancePanelFilter(getCurrentDomainName(),getCurrentUser(),getCurrentDomainId(), config, params);
+			filter = new BalancePanelFilter(options, params);
 			filter.addMaximizeHandler(new MaximizeHandler() {
 				
 				@Override
@@ -115,38 +104,28 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 				@Override
 				public void onValueChange(ValueChangeEvent<AccountingReportParams> event) {
 					AccountingReportParams params = event.getValue();
-					onSearch(params,0);
+					onSearch(options,params,0);
 				}
 			});
 			northPanel.setWidget(filter);
-			onSearch(filter.getWidgetParams(),0);
+			onSearch(options,filter.getWidgetParams(options),0);
 		}
 	}
 	
-	private String getCurrentDomainName() {
-		return currentDomainName;
-	}
-	private Integer getCurrentDomainId() {
-		return currentDomainId;
-	}
-	private String getCurrentUser() {
-		return currentUser;
-	}
-
 	@Override
 	public HandlerRegistration addSelectionHandler(AccountEntrySelectionHandler handler) {
 		return super.addHandler(handler, AccountEntrySelectionEvent.getType());
 	}
 
-	private void onSearch(AccountingReportParams params, int tab) {
+	private void onSearch(final AccountingReportModuleOptions options, AccountingReportParams params, int tab) {
 		SimpleLayoutPanel panel = (SimpleLayoutPanel) tabPanel.getWidget(tab);
 		panel.clear();
-		panel.add(getResultPanel(params));
+		panel.add(getResultPanel(options,params));
 		tabPanel.selectTab(tab);
 	}
 	
-	private BalancePanel getResultPanel(AccountingReportParams params) {
-		BalancePanel resultsPanel = new BalancePanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
+	private BalancePanel getResultPanel(final AccountingReportModuleOptions options, AccountingReportParams params) {
+		BalancePanel resultsPanel = new BalancePanel(options, params);
 		resultsPanel.addSelectionHandler( new SelectionHandler<AccountingReportParams>() {
 			
 			@Override
@@ -155,7 +134,7 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 				newParams.setLevel(9);
 				newParams.setNoActivityAccountVisible(true);
 				newParams.setLowLevelAccountVisible(true);
-				TrialBalancePanel trialBalancePanel = getTrialBalanceResultPanel(newParams);
+				TrialBalancePanel trialBalancePanel = getTrialBalanceResultPanel(options,newParams);
 				SimpleLayoutPanel breakdownPanel = new SimpleLayoutPanel();
 				String code = newParams.getAccount().getCode();
 				String prefix = "Bal S/S: ";
@@ -176,17 +155,23 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 		return resultsPanel;
 	}
 
-	public AccountingReportParams getWidgetParams() {
-		return filter.getWidgetParams();
+	public AccountingReportParams getWidgetParams(final AccountingReportModuleOptions options) {
+		return filter.getWidgetParams(options);
 	}
 	
-	private TrialBalancePanel getTrialBalanceResultPanel(AccountingReportParams params) {
-		TrialBalancePanel resultsPanel = new TrialBalancePanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomainId(), params);
-		resultsPanel.addSelectionHandler( new TrialBalanceSelectionHandler() );
+	private TrialBalancePanel getTrialBalanceResultPanel(final AccountingReportModuleOptions options, AccountingReportParams params) {
+		TrialBalancePanel resultsPanel = new TrialBalancePanel(options, params);
+		resultsPanel.addSelectionHandler( new TrialBalanceSelectionHandler(options) );
 		return resultsPanel;
 	}
 	
 	public class TrialBalanceSelectionHandler implements SelectionHandler<AccountingReportParams> {
+		private final AccountingReportModuleOptions options;
+		
+		public TrialBalanceSelectionHandler(AccountingReportModuleOptions options) {
+			this.options = options;
+		}
+
 		@Override
 		public void onSelection(SelectionEvent<AccountingReportParams> event) {
 			AccountingReportParams newParams = event.getSelectedItem();
@@ -200,7 +185,7 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 				else if (newParams.getLevel() == 3) newParams.setLevel(4);
 				else if (newParams.getLevel() == 4) newParams.setLevel(9);
 				else newParams.setLevel(9);
-				TrialBalancePanel breakdown = getTrialBalanceResultPanel(newParams);
+				TrialBalancePanel breakdown = getTrialBalanceResultPanel(this.options,newParams);
 				prefix = "Bal S/S: ";
 				tabLabel = prefix + AonStringUtils.abbreviate(code, 15);
 				breakdownPanel.add(breakdown);
@@ -215,9 +200,9 @@ public class BalancePanelReport extends DockLayoutPanel implements HasAccountEnt
 						.setAccount( newParams.getAccount().clone() )
 				;
 				StatementPanel statement = new StatementPanel(new AccountingReportModuleOptions()
-						.setDomainName(getCurrentDomainName())
-						.setDomain(getCurrentDomainId())
-						.setUser(getCurrentUser())
+						.setDomainName(this.options.getDomainName())
+						.setDomain(this.options.getDomain())
+						.setUser(this.options.getUser())
 						, stmParams, true);
 				statement.addSelectionHandler(new AccountEntrySelectionHandler () {
 					

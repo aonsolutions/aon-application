@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.AccountingReportService;
 import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountBalanceLineStyle;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
@@ -39,37 +40,23 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 	
 	private FlowPanel root;
 	
-	private String currentDomainName;
-	private String currentUser;
-	private Integer currentDomainId;
-	private AccountingReportParams params;
-	
-	public BalancePanel(String currentDomainName, String currentUser, Integer currentDomainId, AccountingReportParams params) {
-		this.currentDomainName = currentDomainName;
-		this.currentUser = currentUser;
-		this.currentDomainId = currentDomainId;
-		this.params = params;
-
+	public BalancePanel(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		root = new FlowPanel();
 		setWidget(root);
-		addStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonMarginBottom());		
+		addStyleName(AON.CSS.aonScrollArea());
+		addStyleName(AON.CSS.aonMarginBottom());		
 		
-		search();
+		search(options,params);
 		scrollToTop();
 	}
 	
-	public AccountingReportParams getParams() {
-		return params;
-	}
-
-	private void search() {
+	private void search(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		root.clear();
 		
 		AccountingReportServiceAsync serviceRaw = GWT.create(AccountingReportService.class);
 		SERVICE = new AccountingReportServiceAsyncDecorator(serviceRaw);
 		
-		SERVICE.getAccountBalanceReport(currentDomainName,currentUser,currentDomainId,params
+		SERVICE.getAccountBalanceReport(options.getDomainName(),options.getUser(),options.getDomain(),params
 				,  new AsyncCallback<AccountBalanceReport>() {
 			
 			@Override
@@ -79,32 +66,32 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 					if (w != null) root.add(w);
 				}
 				FlexTable tab = new FlexTable();
-				tab.addStyleName(AON.AON_CSS.aonReportTable());
+				tab.addStyleName(AON.CSS.aonGrid());
 				int row = 0;
 				int col = 0;
 				
 				if (report.isEmpty()) {
-					tab.addStyleName(AON.AON_CSS.aonMarginTop());
+					tab.addStyleName(AON.CSS.aonMarginTop());
 					tab.setWidget(row, col++, new Label(AON.MSG.noData()));
-					tab.addStyleName(AON.AON_CSS.aonReportTableBold());	
-					tab.addStyleName(AON.AON_CSS.aonTextCenter());
+					tab.addStyleName(AON.CSS.aonBold());	
+					tab.addStyleName(AON.CSS.aonTextCenter());
 				} else {
 					tab.getColumnFormatter().setWidth( col++, "auto");
 
 					col = 0;
 					tab.setWidget(row,col, new Label());
-					tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+					tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonGridHeader());
 					col++;
 					
 					if (report.getParams().isBreakdownEnabled() ) {
 						tab.getColumnFormatter().setWidth( col, "120px");
 						tab.setWidget(row,col, new Label("S.Deudor"));
-						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+						tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonGridHeader());
 						col++;
 
 						tab.getColumnFormatter().setWidth( col, "120px");
 						tab.setWidget(row,col, new Label("S.Acreedor"));
-						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+						tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonGridHeader());
 						col++;
 					}
 					LinkedHashMap<String, Integer> columns = new LinkedHashMap<String, Integer>(); 
@@ -112,7 +99,7 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						tab.getColumnFormatter().setWidth( col, "120px");
 						
 						tab.setWidget(row,col, new Label(period));
-						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
+						tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonGridHeader());
 						columns.put(period, Integer.valueOf(col));	
 						col++;
 					}
@@ -129,12 +116,16 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 			private Widget getErrorPanel(AccountBalanceReport report) {
 				boolean something = false;
 				FlowPanel panel = new FlowPanel();
-				panel.setStyleName(AON.AON_CSS.aonErrorPanel());
-				panel.addStyleName(AON.AON_CSS.aonBold());
+				panel.setStyleName(AON.CSS.aonBlockErrorMessage());
+				panel.addStyleName(AON.CSS.aonBlockMessage());
+				panel.addStyleName(AON.CSS.aonBold());
+				panel.addStyleName(AON.CSS.aonMarginBottom());
+				FlowPanel innerPanel = new FlowPanel();
+				innerPanel.setStyleName(AON.CSS.aonWidthAll());
 				for (String key : report.getUnreadAccounts().keySet()) {
 					LinkedList<AccountBalance> balances = report.getUnreadAccounts().get(key); 
 					if (balances != null && balances.size() > 0) {
-						panel.add(new Label( (balances.size()>1
+						innerPanel.add(new Label( (balances.size()>1
 									?"El saldo de las siguientes cuentas contables"
 									:"El saldo de la siguiente cuenta contable")
 								+ " no se est\u00E1 teniendo en cuenta para el c\u00E1lculo del balance del ejericio "+key 								
@@ -151,9 +142,9 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 									?" Saldo acreedor: " +  AON.FMT.format(bal.getCreditBalance())
 									:"")
 							);
-							b.setStyleName(AON.AON_CSS.aonFixedFont());
-							b.addStyleName(AON.AON_CSS.aonMarginLeft());
-							panel.add(b);
+							b.setStyleName(AON.CSS.aonFixedFont());
+							b.addStyleName(AON.CSS.aonMarginLeft());
+							innerPanel.add(b);
 							something = true;
 						}
 					}
@@ -161,18 +152,18 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				}
 				if (something && AonStringUtils.isNotBlank(report.getHelpLink())) {
 					FlowPanel helpPanel = new FlowPanel();
-					helpPanel.setStyleName(AON.AON_CSS.aonTextRight());
+					helpPanel.setStyleName(AON.CSS.aonTextRight());
 					Anchor anchor = new Anchor("[AYUDA]", report.getHelpLink());
-					anchor.setStyleName(AON.AON_CSS.aonMarginTop());
+					anchor.setStyleName(AON.CSS.aonMarginTop());
 					anchor.setTarget("_blank");
 					helpPanel.add(anchor);
-					panel.add( helpPanel );
+					innerPanel.add( helpPanel );
 				}
+				panel.add(innerPanel);
 				return something?panel:null;
 			}
 
 			private void paintRow(AccountBalanceReport report, LinkedHashMap<String, Integer> columns, FlexTable tab, int row, BalanceLine line) {
-				tab.getRowFormatter().setStyleName(row, AON.AON_CSS.aonReportTableRowBckHover());
 				int col = 0;
 				boolean inBold = line.getType() == AccountBalanceLineStyle.HEADER0 
 							  || line.getType() == AccountBalanceLineStyle.TOTAL0;
@@ -183,23 +174,23 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				FlowPanel descriptionPanel = new FlowPanel();
 				Label descriptionLabel = new Label( AonStringUtils.rightPad(p + line.getPrefix(), 8) + " " + line.getDescription() );
 				if (line.getType() == AccountBalanceLineStyle.HEADER0) {
-					descriptionLabel.addStyleName(AON.AON_CSS.aonMarginTop());	
+					descriptionLabel.addStyleName(AON.CSS.aonMarginTop());	
 				}
-				descriptionLabel.addStyleName(AON.AON_CSS.aonPre());
+				descriptionLabel.addStyleName(AON.CSS.aonPre());
 				if (breakdown) {
 					descriptionPanel .getElement().getStyle().setFontSize(fontSize - 0.1, Unit.EM);
 					descriptionLabel.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
-					tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());	
+					tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBackgroundLigthGray());	
 				} else {
 					descriptionPanel.getElement().getStyle().setFontSize(fontSize, Unit.EM);
 				}
 				descriptionPanel.add(descriptionLabel);
 				tab.setWidget(row, col, descriptionPanel);
-				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
+				if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBold());
 				col++;
 				
 				if (AonStringUtils.isNotBlank(line.getAccounts())) {
-					descriptionLabel.addStyleName(AON.AON_CSS.aonClickableLabel());
+					descriptionLabel.addStyleName(AON.CSS.aonClickableLabel());
 					descriptionLabel.addClickHandler(new ClickHandler() {
 						
 						@Override
@@ -222,9 +213,9 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						debitLabel.getElement().getStyle().setFontSize(fontSize - 0.1, Unit.EM);
 						debitLabel.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
 						tab.setWidget(row, col, debitLabel);
-						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
-						tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonPaddingRight());
-						tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
+						tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonTextRight());
+						tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonPaddingRight());
+						tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBackgroundLigthGray());
 						col++;
 						
 						Label creditLabel = new Label(
@@ -235,9 +226,9 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						creditLabel.getElement().getStyle().setFontSize(fontSize - 0.1, Unit.EM);
 						creditLabel.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
 						tab.setWidget(row, col, creditLabel);
-						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
-						tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonPaddingRight());
-						tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
+						tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonTextRight());
+						tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonPaddingRight());
+						tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBackgroundLigthGray());
 						col++;
 					}
 				}
@@ -245,16 +236,16 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 				int offset = 1 + ((report.getParams().isBreakdownEnabled())?2:0);
 				for ( ;col < ( offset + report.getPeriods().size());  col++) {
 					tab.setWidget(row,col, new Label());
-					tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextRight());
-					if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());
-					if (breakdown) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundDisabled());
+					tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonTextRight());
+					if (inBold) tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBold());
+					if (breakdown) tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBackgroundLigthGray());
 				}
 				
 				for ( String period : line.getAmounts().keySet() ) {
 					int column = columns.get(period);
 					Label numLabel = new Label(AON.ACCOUNT_FMT.format(line.getAmounts().get(period)));
 					if (line.getType() == AccountBalanceLineStyle.HEADER0) {
-						numLabel.addStyleName(AON.AON_CSS.aonMarginTop());	
+						numLabel.addStyleName(AON.CSS.aonMarginTop());	
 					}
 					numLabel.getElement().getStyle().setMarginRight( (line.getLevel() * 12.0) , Unit.PX);
 					numLabel.getElement().getStyle().setFontSize(fontSize, Unit.EM);

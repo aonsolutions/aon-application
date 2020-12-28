@@ -12,10 +12,10 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountPeriodBox;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
@@ -51,10 +51,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements HasValueChangeHandlers<AccountingReportParams>{
 	
-	private String domainName;
-	private String user;
-	private Integer domainId;
-
 	private AccountPeriodBox period;
 	private DateBoxEx fromDate;
 	private DateBoxEx toDate;
@@ -64,33 +60,18 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 	private ListBox balanceType;
 	private HashMap<Integer,String> selectedDomains;
 	
-	public ConsolidatedBalancePanelFilter(String domainName,String user, int domainId, AonConfiguration config, AccountingReportParams params) {
-		this.domainName = domainName;
-		this.user = user;
-		this.domainId = domainId;
-		
+	public ConsolidatedBalancePanelFilter(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		setStyleName(AON.AON_CSS.aonSelector());
 		FlexTable mainTab = new FlexTable();
 		mainTab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
 		mainTab.addStyleName(AON.AON_CSS.aonWidthAll());
 		mainTab.getColumnFormatter().setWidth(0, "auto");
 		mainTab.getColumnFormatter().setWidth(1, "50px");
-		mainTab.setWidget(0, 0, getFilterTab(config,params));
+		mainTab.setWidget(0, 0, getFilterTab(options,params));
 		mainTab.setWidget(0, 1, getMinMaxButtonsPanel());
 		mainTab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
 		mainTab.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonVerticalAlignTop());
 		setWidget(mainTab);
-	}
-
-	
-	public String getDomainName() {
-		return domainName;
-	}
-	public String getUser() {
-		return user;
-	}
-	public Integer getDomainId() {
-		return domainId;
 	}
 
 	private FlowPanel getMinMaxButtonsPanel() {
@@ -139,7 +120,8 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 		return addHandler(handler, MaximizeEvent.getType());
 	}
 
-	private ListBox getPeriodBox(LinkedList<AccountPeriod> periods, String selectedValue) {
+	private ListBox getPeriodBox(final AccountingReportModuleOptions options, String selectedValue) {
+		LinkedList<AccountPeriod> periods = options.getConfiguration().getPeriods();
 		ListBox periodBox = new ListBox();
 		periodBox.clear();
 		periodBox.addItem(" --- ", "");
@@ -185,12 +167,12 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 							if (pair != null) {
 								fromDate.setValue(dates.get(i).getLeft(),false);
 								toDate.setValue(dates.get(i).getRight(),false);
-								ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams());
+								ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams(options));
 							}
 						} else {
 							fromDate.setValue(periodStart,false);
 							toDate.setValue(periodEnd,false);
-							ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams());
+							ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams(options));
 						}
 					}
 				});
@@ -207,7 +189,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 		return periodBox;
 	}
 
-	private Widget getFilterTab(AonConfiguration config, AccountingReportParams params) {
+	private Widget getFilterTab(final AccountingReportModuleOptions options, AccountingReportParams params) {
 		FlexTable tab = new FlexTable();
 		tab.addStyleName(AON.AON_CSS.aonWidthAll());
 		tab.addStyleName(AON.AON_CSS.aonMarginTop());
@@ -239,12 +221,12 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 		dateTab.getColumnFormatter().setWidth(5, "80px");
 	
 		// ***********************************************************************  EJERCICIO
-		period.fill(config.getPeriods(),true);
+		period.fill(options.getConfiguration().getPeriods(),true);
 		dateTab.setWidget(0, 0, period);
 		period.addStyleName(AON.AON_CSS.aonMarginRight());
 		
 		// **********************************************************************  PERIOD BOX
-		ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
+		ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
 		dateTab.setWidget(0, 1, periodBox);
 
 		// **********************************************************************  FROM DATE
@@ -283,7 +265,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		tab.setWidget(0, 2, new Label("Comparar con ..."));
@@ -294,7 +276,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 		
 		
 		// ************************************************************************  ACTIVITY
-		boolean activitiesListBoxEnabled = (config != null && config.hasActivities());
+		boolean activitiesListBoxEnabled = (options.getConfiguration() != null && options.getConfiguration().hasActivities());
 		if (activitiesListBoxEnabled) {
 			activity = new ListBox();
 			activity.setWidth("150px");
@@ -302,7 +284,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 			activity.addItem("-- Sin actividad --", "-1");
 			activity.setSelectedIndex(0);
 			int i = 2;
-			for (EnterpriseActivity ea : config.getActivities()) {
+			for (EnterpriseActivity ea : options.getConfiguration().getActivities()) {
 				activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
 					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
@@ -324,7 +306,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 		tab.getCellFormatter().setStyleName(1,1, AON.AON_CSS.aonPanelGridEven());
 		
 		// ************************************************************************  CONFIDENTIAL
-		if (config.getUser().hasConfidentialityRole()) {
+		if (options.hasConfidentialityRole()) {
 			confidential.addItem( "Asientos NO confidenciales" );
 			confidential.addItem( "Asientos confidenciales" );
 			confidential.addItem(" Todos ");
@@ -338,7 +320,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 			confidential.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams());
+					ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams(options));
 				}
 			});
 			
@@ -364,7 +346,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 			public void visitBalanceNormal() {balanceType.addItem( "Balance de situaci\u00F3n (Normal)");}
 			@Override public void visitBalanceAbbreviate() {
 				balanceType.addItem( "Balance de situaci\u00F3n (Abreviado)");
-				if (config != null && config.getCompany() != null && !AonDocumentUtil.isCooperative(config.getCompany().getDocument())) {
+				if (options.getConfiguration() != null && options.getConfiguration().getCompany() != null && !AonDocumentUtil.isCooperative(options.getConfiguration().getCompany().getDocument())) {
 					balanceType.setSelectedIndex( balanceType.getItemCount() - 1);				
 				}
 			}
@@ -383,7 +365,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 			@Override
 			public void visitBalanceCoopNormal() {
 				balanceType.addItem( "Balance de situaci\u00F3n COOPERATIVAS (Normal)");
-				if (config != null && config.getCompany() != null && AonDocumentUtil.isCooperative(config.getCompany().getDocument())) {
+				if (options.getConfiguration() != null && options.getConfiguration().getCompany() != null && AonDocumentUtil.isCooperative(options.getConfiguration().getCompany().getDocument())) {
 					balanceType.setSelectedIndex( balanceType.getItemCount() - 1);
 				}
 			}
@@ -405,7 +387,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		tab.setWidget(1, 4, new Label("Tipo balance"));
@@ -421,7 +403,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 		String names = "";
 		int remainder = 0;
 		if (selectedDomains == null) {
-			LinkedList<Domain> domains = (params != null && params.getDomains() != null && params.getDomains().size() > 0 )?params.getDomains():config.getChildDomains();
+			LinkedList<Domain> domains = (params != null && params.getDomains() != null && params.getDomains().size() > 0 )?params.getDomains():options.getConfiguration().getChildDomains();
 			selectedDomains = new HashMap<Integer,String>();
 			for (Domain d : domains ) {
 				selectedDomains.put(d.getId(), d.getDescription());
@@ -468,7 +450,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 				contentPanel.setStyleName(AON.AON_CSS.aonMarginBottom());
 				contentPanel.setStyleName(AON.AON_CSS.aonMarginTop());
 				FlowPanel checksPanel = new FlowPanel();
-				for ( Domain d : config.getChildDomains()) {
+				for ( Domain d : options.getConfiguration().getChildDomains()) {
 					FlowPanel checkPanel = new FlowPanel();
 					CheckBox box = new CheckBox( d.getDescription());
 					box.setValue(selectedDomains != null && selectedDomains.containsKey(d.getId()));
@@ -513,7 +495,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 							names = "[Seleccionar empresas]";
 						}
 						domains.setText(names);
-						ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams());
+						ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams(options));
 					}
 				});
 		    	buttonsPanel.add(okButton);
@@ -560,7 +542,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 					activity.setSelectedIndex(0);
 				}
 				period.setFocus(true);
-				ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		
@@ -568,30 +550,30 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 		period.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				ListBox periodBox = getPeriodBox(config.getPeriods(),period.getSelectedValue());
+				ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
 				dateTab.setWidget(0, 1, periodBox);
-				ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		
 		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 
 		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams());
+				ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams(options));
 			}
 		});
 		if (activitiesListBoxEnabled) {
 			activity.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams());
+					ValueChangeEvent.<AccountingReportParams>fire(ConsolidatedBalancePanelFilter.this, getWidgetParams(options));
 				}
 			});
 		}
@@ -599,7 +581,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 		return tab;
 	}
 	
-	public AccountingReportParams getWidgetParams() {
+	public AccountingReportParams getWidgetParams(final AccountingReportModuleOptions options) {
 		Integer activityId = null;
 		if (activity != null) {
 			if (activity.getSelectedIndex() > 0 ) {
@@ -611,7 +593,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 			domains.add( new Domain().setId(id).setDescription(selectedDomains.get(id)));
 		}
 		return new AccountingReportParams()
-			.setDomain(getDomainId())
+			.setDomain(options.getDomain())
 			.setPeriod(period.getSelectedIndex()==0?null:AonNumberUtils.toInteger( period.getSelectedValue()))
 			.setFromDate(fromDate.getValue())
 			.setToDate(toDate.getValue())
