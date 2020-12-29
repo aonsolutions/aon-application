@@ -1,5 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.util.Date;
 
 public class EnterpriseBillTest {
 
+	@Ignore
 	@Test
 	public void EnterpriseBillCreationTest(){
 		ArrayList<EnterpriseBillEntry> entries = new ArrayList<>();
