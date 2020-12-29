@@ -9,7 +9,6 @@ import java.util.Date;
 
 public class EnterpriseBillTest {
 
-	@Ignore
 	@Test
 	public void EnterpriseBillCreationTest(){
 		ArrayList<EnterpriseBillEntry> entries = new ArrayList<>();

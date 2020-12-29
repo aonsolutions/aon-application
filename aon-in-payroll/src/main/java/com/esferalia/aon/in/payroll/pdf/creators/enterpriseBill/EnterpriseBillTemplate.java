@@ -220,7 +220,8 @@ public class EnterpriseBillTemplate {
 			y-= 10;
 		}
 
-		PDFToolkit.drawTextRight(contents,new PDRectangle(x,bottom + 107,69,15), PDFToolkit.format(sum) + " €",PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, -12);
+//		PDFToolkit.drawTextRight(contents,new PDRectangle(x,bottom + 107,69,15), PDFToolkit.format(sum) + " €",PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, -12);
+		PDFToolkit.drawTextRight(contents,new PDRectangle(x,bottom + 107,69,15), PDFToolkit.format(sum) + " \u20AC",PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, -12);
 	}
 
 	//DRAW FINANCES
