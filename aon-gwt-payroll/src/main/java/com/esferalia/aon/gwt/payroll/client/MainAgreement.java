@@ -97,6 +97,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 		@Override
 		public void execute() {
+			for(EditionListener listener : editionsListener)
+				listener.onAgreementPaste(agreement);
 		}
 	}
 	
@@ -144,6 +146,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		private Agreement agreementCopy = null;		
 		private MenuItem newItem = null;
 		private MenuItem copyItem = null;
+		private MenuItem pasteItem = null;
 		private MenuItem moveItem = null;
 		private MenuItem deleteItem = null;
 		
@@ -157,6 +160,10 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			copyItem = addItem("Copiar", new CopyAgreementCommand(), 
 					AON.AON_ICON_COPY, AON.AON_ICON_CMD_BUTTON);
 			copyItem.ensureDebugId("copyItem");
+			
+			pasteItem = addItem("Pegar", new PasteAgreementCommand(), 
+					AON.AON_ICON_PASTE, AON.AON_ICON_CMD_BUTTON);
+			pasteItem.ensureDebugId("pasteItem");
 			
 			deleteItem = addItem("Eliminar", new DeleteAgreementCommand(), 
 					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);			
