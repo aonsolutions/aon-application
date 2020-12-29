@@ -30,6 +30,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.enumeration.VariableType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
@@ -228,6 +229,19 @@ public class ContextFunctions {
 				ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName(),
 				ContextVariable.SALARY_HOURS.getName(),
 				ContextVariable.WORKED_HOURS.getName(),
+				
+				// Cuotas
+//				ContextVariable.CGC_EMPLOYEE.getName(), 
+//				ContextVariable.CGC_ENTERPRISE.getName(),
+//				ContextVariable.IT_ENTERPRISE.getName(), 
+//				ContextVariable.IMS_ENTERPRISE.getName(),
+//				ContextVariable.FP_EMPLOYEE.getName(), 
+//				ContextVariable.FP_ENTERPRISE.getName(),
+//				ContextVariable.UNEMPLOY_EMPLOYEE.getName(), 
+//				ContextVariable.UNEMPLOY_ENTERPRISE.getName(),
+//				ContextVariable.FOGASA_ENTERPRISE.getName(), 
+				ContextVariable.ENTERPRISE_QUOTA.getName(),
+//				ContextVariable.EMPLOYEE_QUOTA.getName(),				
 				})
 		{
 			for ( ITimedVariable<Object> var : context.getVariables(name) ) {

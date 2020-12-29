@@ -1054,7 +1054,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				if (bonusEnd.before(bonusStart)) {
 					continue; // TODO : must be done in context ?
 				}
-
+				
+				if ( bonusStart.after(start))
+					ContextFunctions.section(ctx.getExpressionContext(), AonDateUtils.add(bonusStart, Calendar.DAY_OF_MONTH,-1));
+				if ( bonusEnd.before(end))
+					ContextFunctions.section(ctx.getExpressionContext(), bonusEnd);
+					
+					
 				total += resolveBonus(bonusStart, bonusEnd, contractBonus, expressionContext);
 			}
 
