@@ -148,10 +148,10 @@ public class EmployeesServiceHelper {
 		
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		
-		Date date = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf)
-		.stream().map( idc -> idc.getFecha() ).sorted( (d1,d2) -> d2.compareTo(d1 )).findFirst().orElseThrow(DataDoesNotExist::new) ;		
+//		Date date = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf)
+//		.stream().map( idc -> idc.getFecha() ).sorted( (d1,d2) -> d2.compareTo(d1 )).findFirst().orElseThrow(DataDoesNotExist::new) ;		
 		
-		byte data [] =  SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+		byte data [] =  SistemaRED.getIDCNSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, new Date());
 		return Base64.getEncoder().encodeToString(data);
 	}
 
