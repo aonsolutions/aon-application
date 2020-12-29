@@ -83,7 +83,7 @@ public class IdcplnssParser {
 			String employeeName = matcher.group("name");
 			String employeeNss = matcher.group("province") + matcher.group("nss");
 			
-			matcher = find(reader, ENTERPRISE_PERIOD_CCC_NAME);
+			matcher = find(reader, ENTERPRISE_NAME_CCC_CIF_REGIME);
 			
 			String enterpriseRegime = matcher.group("regime");
 			String enterpriseName = matcher.group("name");
@@ -93,11 +93,13 @@ public class IdcplnssParser {
 			
 			onEmployee(listener, employeeNss, employeeName);
 			
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			Date fromDate = simpleDateFormat.parse(matcher.group("from"));
+			matcher = find(reader, LIQUIDATION_PERIOD);
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM yyyy", new Locale("es", "ES"));
+			Date fromDate = simpleDateFormat.parse(matcher.group("month"));
 			//Date endDate = simpleDateFormat.parse(matcher.group("to"));	
 			listener.onPeriod(fromDate);
 			
+			simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", new Locale("es", "ES"));
 			matcher = ateempt(reader, EMPLOYEE_PERIOD);
 			while ( matcher != null ) {
 				Date startDate = simpleDateFormat.parse(matcher.group("start"));
@@ -112,8 +114,6 @@ public class IdcplnssParser {
 					String quota = matcher.group("quota");
 					String colective = matcher.group("colective"); 
 					String law = matcher.group("law");
-					startDate = simpleDateFormat.parse(matcher.group("start"));
-					endDate = simpleDateFormat.parse(matcher.group("end"));				
 										
 					onEmployeeQuotePEC(listener, enterpriseCCC, employeeNss, startDate, endDate, code, description,
 							tipo, quota);
@@ -181,6 +181,7 @@ public class IdcplnssParser {
 		
 		String line  ; 
 		while ( ( line = reader.readLine() ) != null  ) {
+//			System.out.println(line);
 			Matcher matcher = pattern.matcher(line) ;
 			if ( !matcher.matches() ) {
 				continue;
@@ -226,19 +227,25 @@ public class IdcplnssParser {
 			"^NOMBRE\\s*Y\\s*APELLIDOS\\s*:\\s*(?<name>.+)NÚMERO\\s*SEGURIDAD\\s*SOCIAL\\s*:\\s*(?<province>[0-9]{2})\\s*(?<nss>[0-9]+)\\s*DOC.IDENTIFICATIVO\\s*:\\s*([0-9])\\s*NÚMERO\\s*:\\s*(?<cif>.+)SEXO.*$"
 			, Pattern.CASE_INSENSITIVE);
 	
-	private static final Pattern ENTERPRISE_PERIOD_CCC_NAME = 
+	private static final Pattern ENTERPRISE_NAME_CCC_CIF_REGIME = 
 	Pattern.compile(
-	"^PERIODO\\s*SOLICITADO\\s*:\\s*DESDE\\s*(?<from>[0-9]+-[0-9]+-[0-9]+)\\s*HASTA\\s*(?<to>[0-9]+-[0-9]+-[0-9]+)\\s*CCC\\s*SOLICITADO\\s*:\\s*(?<regime>[0-9]+)\\s*(?<province>[0-9]+)\\s*(?<ccc>[0-9]+)\\s*(?<name>.*)$"
+	"^RAZÓN\\s*SOCIAL\\s*:\\s*(?<name>.+)C\\.C\\.C\\.\\s*:\\s*(?<province>[0-9]{2})\\s*(?<ccc>[0-9]+)\\s*DNI/NIE/CIF\\s*:\\s*(?<cif>.+)RÉGIMEN\\s*:\\s*(?<regime>.*)$"
 	, Pattern.CASE_INSENSITIVE);
+	
+	private static final Pattern LIQUIDATION_PERIOD = 
+	Pattern.compile(
+	"^PERIODO\\s*DE\\s*LIQUIDACIÓN:\\s*(?<month>[A-Z]+\\s*[0-9]+).*$"
+	, Pattern.CASE_INSENSITIVE);
+	
 		
 	private static final Pattern EMPLOYEE_PERIOD = 
 	Pattern.compile(
-	"^\\s*(?<index>[0-9]+)\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)\\s+([0-9]+)\\s*([0-9]+-[0-9]+-[0-9]+).*$"
+	"^\\s*(?<index>[0-9]+)\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)\\s+(?<group>[0-9]+).*$"
 	, Pattern.CASE_INSENSITIVE);
 
 	private static final Pattern EMPLOYEE_PEC = 
 	Pattern.compile(
-	"^\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<colective>[0-9]{4})(.*)\\s+(?<law>[0-9]{4}.*).*$"
+	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<colective>[0-9]{4})(.*)\\s+(?<law>[0-9]{4}.*).*$"
 	, Pattern.CASE_INSENSITIVE);
 	//        03-07-2020 31-07-2020   37 EXONE.ERE.F.MAY.COMP 60,00  01 CUOTA EMPRESARIAL 4608 EX.FM37CV<50.789R 0222 RDL 24/2020      H1B
 }

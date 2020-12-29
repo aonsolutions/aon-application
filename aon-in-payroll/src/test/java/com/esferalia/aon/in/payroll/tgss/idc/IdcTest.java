@@ -1,6 +1,10 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
+import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
+import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
+import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.OCTOBER;
 import static java.util.Calendar.SEPTEMBER;
@@ -13,12 +17,15 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,11 +41,29 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.DeductionConceptRecord;
+import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBonus;
+import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryCost;
+import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
+import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mchange.util.AssertException;
 
-import junit.framework.Assert;
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Liquidacion;
@@ -48,7 +73,16 @@ import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
 
-public class IdcTest {
+public class IdcTest extends AbstractSQLTestCase {
+
+	private static final double DELTA = 0.001;
+	
+	public static class Data {
+		String name;
+		Date endDate;
+		Date startDate;
+		String expression;
+	}
 
 	@Test
 	public void testIdcplccc() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
@@ -425,6 +459,260 @@ public class IdcTest {
 	}
 
 	@Test
+	public void testIdcplnssIVBonusI() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SQLException, SalaryException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssIV.pdf") ){
+			Collection<Bonus> ssBonuses = Idcplnss.getSSBonuses(is);
+			assertEquals(1, ssBonuses.size());
+			//EXONE.ERE.F.MAY.COMP (100,00%) 01-12-2020 10-12-2020
+			
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.DECEMBER);
+			calendar.set(Calendar.YEAR,2020);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			Date _01122020 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,10);
+			Date _10122020 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,11);
+			Date _11122020 = calendar.getTime();
+
+			calendar.set(Calendar.DAY_OF_MONTH,31);
+			Date _31122020 = calendar.getTime();
+			
+			Data ereFactor = new Data() { {
+				expression = "1.0";
+				endDate = _10122020;
+				startDate = _01122020;
+				name = ContextVariable.ERE_FACTOR_FORCE_OFF.getName();
+			}
+			};
+			Salary salary = calculate(ssBonuses, Collections.singleton(ereFactor));	
+			
+			for ( ContextVariable var : new ContextVariable [] {
+					ContextVariable.CGC_BASE,
+					ContextVariable.CGP_BASE,
+					}) {
+				SalaryData[] salaryData = 
+				salary.getSalaryDatas().stream()
+				.filter( d->AonStringUtils.equals(d.getName(), var.getName()))
+				.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+				.toArray( SalaryData[]::new );
+				
+				assertEquals(var.getName(),1, salaryData.length);
+				assertEquals(var.getName(),_11122020, salaryData[0].getStartDate());
+				assertEquals(var.getName(),_31122020, salaryData[0].getEndDate());
+			}
+			
+			for ( ContextVariable var : new ContextVariable [] {
+					ContextVariable.CGC_BASE_ENTERPRISE,
+					ContextVariable.CGP_BASE_ENTERPRISE,
+					}) {
+				SalaryData[] salaryData = 
+				salary.getSalaryDatas().stream()
+				.filter( d->AonStringUtils.equals(d.getName(), var.getName()))
+				.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+				.toArray( SalaryData[]::new );
+				
+				assertEquals(var.getName(),2, salaryData.length);
+				assertEquals(var.getName(),_01122020, salaryData[0].getStartDate());
+				assertEquals(var.getName(),_10122020, salaryData[0].getEndDate());
+				
+				assertEquals(var.getName(),_11122020, salaryData[1].getStartDate());
+				assertEquals(var.getName(),_31122020, salaryData[1].getEndDate());
+			}
+
+			for (SalaryPayment payment : salary.getSalaryPayments()) {
+				System.out.println( payment.getDescription() + ": " + payment.getAmount() + ", " + payment.getQuote());
+			}
+			
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println( cost.getName() + ": " + cost.getAmount() );
+			}
+			
+			assertEquals(1, salary.getSalaryBonus().size());
+			double totalBonus = 0.00;
+			for (SalaryBonus bonus : salary.getSalaryBonus()) {
+				totalBonus += bonus.getAmount();
+				System.out.println( bonus.getDescription() + ": " + bonus.getAmount() );
+			}
+			
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost );
+			
+			assertEquals(totalCost * 9 / 30, totalBonus, DELTA);
+
+			assertEquals(totalCost * 21 / 30, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+	
+	@Test
+	public void testIdcplnssIVBonusII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SQLException, SalaryException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssIV.pdf") ){
+			Collection<Bonus> ssBonuses = Idcplnss.getSSBonuses(is);
+			assertEquals(1, ssBonuses.size());
+			//EXONE.ERE.F.MAY.COMP (100,00%) 01-12-2020 10-12-2020
+			
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.DECEMBER);
+			calendar.set(Calendar.YEAR,2020);
+			calendar.set(Calendar.HOUR, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			Date _01122020 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,10);
+			Date _10122020 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,11);
+			Date _11122020 = calendar.getTime();
+
+			calendar.set(Calendar.DAY_OF_MONTH,31);
+			Date _31122020 = calendar.getTime();
+			
+
+			Salary salary = calculate(ssBonuses);	
+			
+			for ( ContextVariable var : new ContextVariable [] {
+					ContextVariable.CGC_BASE,
+					ContextVariable.CGP_BASE,
+					
+//					ContextVariable.CGC_EMPLOYEE,
+//					ContextVariable.CGC_ENTERPRISE,
+//					ContextVariable.FP_EMPLOYEE,
+//					ContextVariable.FP_ENTERPRISE,
+//					
+//					ContextVariable.EMPLOYEE_QUOTA,
+//					ContextVariable.ENTERPRISE_QUOTA,
+					}) {
+				SalaryData[] salaryData = 
+				salary.getSalaryDatas().stream()
+				.filter( d->AonStringUtils.equals(d.getName(), var.getName()))
+				.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+				.toArray( SalaryData[]::new );
+				
+				assertEquals(var.getName(),2, salaryData.length);
+				assertEquals(var.getName(),_01122020, salaryData[0].getStartDate());
+				assertEquals(var.getName(),_10122020, salaryData[0].getEndDate());
+				
+				assertEquals(var.getName(),_11122020, salaryData[1].getStartDate());
+				assertEquals(var.getName(),_31122020, salaryData[1].getEndDate());
+			}
+			
+			
+
+			
+			
+			
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println( cost.getName() + ": " + cost.getAmount() );
+			}
+			
+			assertEquals(1, salary.getSalaryBonus().size());
+			double totalBonus = 0.00;
+			for (SalaryBonus bonus : salary.getSalaryBonus()) {
+				totalBonus += bonus.getAmount();
+				System.out.println( bonus.getDescription() + ": " + bonus.getAmount() );
+			}
+			
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost );
+			
+			assertEquals(totalCost * 10 / 30, totalBonus, DELTA);
+
+			assertEquals(totalCost * 20 / 30, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+	
+	protected Salary calculate(Collection<Bonus> ssBonuses) throws ExpressionException, SQLException, SalaryException {
+		return calculate(ssBonuses, Collections.emptyList());
+	}
+		
+	protected Salary calculate(Collection<Bonus> ssBonuses,Collection<Data> datas) throws ExpressionException, SQLException, SalaryException {
+		Date bonusDate = ssBonuses.stream().map( b -> b.getStartDate()).sorted().findFirst().orElseThrow();
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		ContractRecord contract = newContract(aonContext, toSQL(bonusDate) , ssBonuses, datas);
+		
+		java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(bonusDate));
+		java.sql.Date endDate = toSQL(AonDateUtils.getLastDayOfMonth(bonusDate));
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> builder = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		Salary salary = builder.calculate(ctx);
+		return salary;
+	}
+
+	@Test
+	public void testIdcplnssIIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssIII.pdf") ){
+			Collection<Bonus> ssBonuses = Idcplnss.getSSBonuses(is);
+			assertEquals(1, ssBonuses.size());
+			//EXONE.ERE.F.MAY.COMP (100,00%)
+			
+
+			Salary salary = calculate(ssBonuses);		
+			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
+			
+			
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println( cost.getName() + ": " + cost.getAmount() );
+			}
+			
+			assertEquals(1, salary.getSalaryBonus().size());
+			double totalBonus = 0.00;
+			for (SalaryBonus bonus : salary.getSalaryBonus()) {
+				totalBonus += bonus.getAmount();
+				System.out.println( bonus.getDescription() + ": " + bonus.getAmount() );
+			}
+
+			assertEquals(totalCost, totalBonus, DELTA);
+
+		}
+	}
+
+	@Test
+	public void testIdcplnssIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssI.pdf") ){
+			Collection<Bonus> ssBonuses = Idcplnss.getSSBonuses(is);
+			assertEquals(0, ssBonuses.size());
+		}
+	}
+
+	@Test
+	public void testIdcplnssIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssII.pdf") ){
+			Collection<Bonus> ssBonuses = Idcplnss.getSSBonuses(is);
+			assertEquals(2, ssBonuses.size());
+			assertEquals(1, ssBonuses.stream().filter(b -> b.isEmployee()).count());
+			assertEquals(1, ssBonuses.stream().filter(b -> b.isEnterprise()).count());
+			
+			Salary salary = calculate(ssBonuses);
+			
+			System.out.println( salary.getTotalEnterprise() );
+			
+		}
+	}
+
+	@Test
 	public void testIdcplcccTrabajadoresTramos() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplccc.pdf") ){
 			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {});
@@ -749,5 +1037,163 @@ public class IdcTest {
 		
 		throw new AssertException("Dato Solicitado " + codigo + " Not Found");
 	}
+	
+	private ContractRecord newContract(AONContext aonContext, java.sql.Date startDate, Collection<Bonus> ssBonuses) {
+		return newContract(aonContext, startDate, ssBonuses, Collections.emptyList());
+	}
+	
+	private ContractRecord newContract(AONContext aonContext, java.sql.Date startDate, Collection<Bonus> ssBonuses, Collection<Data> datas) {
+		
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanDeductionConcepts(aonContext);
+		cleanSystemDeductions(aonContext);
+		
+		
+		addSystemData(aonContext, startDate, null, new HashMap<String,String>(){
+			{
+				put("PORCENTAJE_FP", "0.10");
+				put("PORCENTAJE_FP_E", "0.60");
+				
+				put("PORCENTAJE_CGC", "4.70");
+				put("PORCENTAJE_CGC_E", "23.60");
+				
+				put("OCUPACION_IT", "["
+						+ "\"h\": 1.40]");
+				put("OCUPACION_IMS", "["
+						+ "\"h\": 2.20]");
+				
+				put("PORCENTAJE_DESMPL", "[ "
+						+ "\"100\": 1.55"
+						+ "][TC2]");
+				put("PORCENTAJE_DESMPL_E", "[ "
+						+ "\"100\": 5.50"
+						+ "][TC2]");
 
+				put("PORCENTAJE_FOGASA", "0.20");
+			}
+			});
+		
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(startDate), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY, "BASE_CGC_E * PORCENTAJE_CGC_E/100");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(startDate), "IT_E",
+				DeductionType.PROFESSIONAL_CONTINGENCY, "BASE_CGP_E * (isdef PORCENTAJE_IT ? PORCENTAJE_IT : (PORCENTAJE_IT=( isdef OCUPACION ? OCUPACION_IT[OCUPACION] : TARIFA_IT)))/100");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(startDate), "IMS_E",
+				DeductionType.PROFESSIONAL_CONTINGENCY, "BASE_CGP_E * (isdef PORCENTAJE_IMS ? PORCENTAJE_IMS : (PORCENTAJE_IMS=( isdef OCUPACION ? OCUPACION_IMS[OCUPACION] : TARIFA_IMS)))/100");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(startDate), "DESEMPL_E",
+				DeductionType.UNEMPLOYMENT, "(PORCENTAJE_DESMPL == 0) ? 0.00 : ( BASE_CGP_E * ( isdef PORCENTAJE_DESMPL_E ? PORCENTAJE_DESMPL_E : PORCENTAJE_DESMPL_E=(INDEFINIDO ? 5.50 : (TIEMPO_COMPLETO ? 6.70 : 7.70)))/100)");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(startDate), "FOGASA_E",
+				DeductionType.FOGASA, "BASE_CGP_E * PORCENTAJE_FOGASA / 100");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(startDate), "FP_E",
+				DeductionType.FOGASA, "BASE_CGP_E * PORCENTAJE_FP_E/100");
+		
+		
+		
+		DeductionConceptRecord fpConcept = addDeductionConcept(aonContext, "FP", DeductionType.COMMON_CONTINGENCY);
+		DeductionConceptRecord cgcConcept = addDeductionConcept(aonContext, "CGC", DeductionType.COMMON_CONTINGENCY);
+		DeductionConceptRecord desmplConcept = addDeductionConcept(aonContext, "DESMPL", DeductionType.COMMON_CONTINGENCY);
+		
+		addSSRegimeDeduction(aonContext, fpConcept, SSRegimeType.GENERAL, startDate, "BASE_CGC * PORCENTAJE_FP/100");
+		addSSRegimeDeduction(aonContext, cgcConcept, SSRegimeType.GENERAL, startDate, "BASE_CGC * PORCENTAJE_CGC/100");
+		addSSRegimeDeduction(aonContext, desmplConcept, SSRegimeType.GENERAL, startDate, "BASE_CGC * PORCENTAJE_DESMPL/100");
+		
+		ContractRecord contract = newContract(
+				aonContext, 
+				getFirstDayOfYear(startDate),
+				new HashMap<String,String>(){
+				{
+					put(ContextVariable.OCCUPATION.getName(), "'h'");
+					put(ContextVariable.TC2.getName(), "'100'");
+					put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+				}
+				},
+				new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00*DIAS_TRABAJADOS/DIAS_MES",
+						}, 
+				new String[] {
+						
+				},
+				null
+			);	
+		
+		PaymentConceptRecord ereFzaExoneradoConcept = addConcept(aonContext, "ERE_FZA_EXONERADO");
+		addPayment(aonContext, 
+		contract, 
+		ereFzaExoneradoConcept, 
+		"/*read-only*/DIAS_ERE_FZA_EXONERADO * 0.00/**/", 
+		"DIAS_ERE_FZA_EXONERADO * BASE_REGULADORA");
+
+		datas.forEach( d-> addData(aonContext, contract, toSQL(d.startDate), toSQL(d.endDate), d.name, d.expression));
+		
+		ssBonuses.forEach( b -> addBonus(aonContext, contract, toSQL(b.getStartDate()), toSQL(b.getEndDate()), b.getFormula(), b.getDescription()) );
+		
+		return contract;
+	}
+	
+	protected final void cleanDeductionConcepts(AONContext aonContext) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext.getDslContext().delete(DEDUCTION_CONCEPT).execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+	
+	public static final DeductionConceptRecord addDeductionConcept(AONContext aonContext, String code, DeductionType type) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+		DeductionConceptRecord deductionConceptRecord = 
+		aonContext.getDslContext()
+				.insertInto(DEDUCTION_CONCEPT)
+				.set(DEDUCTION_CONCEPT.DOMAIN,0)
+				.set(DEDUCTION_CONCEPT.CODE, code)
+				.set(DEDUCTION_CONCEPT.TYPE, (byte) type.ordinal())
+				.set(DEDUCTION_CONCEPT.DESCRIPTION, code)
+				.returning()
+				.fetchOne();
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+		return deductionConceptRecord;
+	}
+
+	protected final void addSSRegimeDeduction(AONContext aonContext, DeductionConceptRecord concept, SSRegimeType ssRegimetype, java.sql.Date startDate,
+			String expression) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext.getDslContext()
+				.insertInto(SYSTEM_DEDUCTION)
+				.set(SYSTEM_DEDUCTION.START_DATE, startDate)
+				.set(SYSTEM_DEDUCTION.DOMAIN, (-1) * ssRegimetype.ordinal())
+				.set(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT, concept.getId())
+				.set(SYSTEM_DEDUCTION.EXPRESSION, expression)
+				.execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+	
+	protected final void addSystemPayment(AONContext aonContext, PaymentConceptRecord concept, java.sql.Date startDate,
+			String description, String expression, String quoteExpression, String irpfExpression ) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext.getDslContext()
+				.insertInto(SYSTEM_PAYMENT)
+				.set(SYSTEM_PAYMENT.DOMAIN, 0)
+				.set(SYSTEM_PAYMENT.START_DATE, startDate)
+				.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT, concept.getId())
+				.set(SYSTEM_PAYMENT.DESCRIPTION, description)
+				.set(SYSTEM_PAYMENT.EXPRESSION, expression)
+				.set(SYSTEM_PAYMENT.IRPF_EXPRESSION, irpfExpression)
+				.set(SYSTEM_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+				.execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
+	private static java.sql.Date toSQL(java.util.Date date) {
+		return date == null ? null : new java.sql.Date(date.getTime());
+	}
 }

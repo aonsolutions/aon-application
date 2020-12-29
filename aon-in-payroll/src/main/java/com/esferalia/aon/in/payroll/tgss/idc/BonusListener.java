@@ -96,15 +96,7 @@ class BonusListener  implements IdcListener {
 		ssBonus.setStartDate(start);
 		ssBonus.setEndDate(end);
 		ssBonus.setDescription(String.format(new Locale("es", "ES"),"%s (%.2f%%)", description, percent));
-		ssBonus.setFormula(String.format(Locale.ROOT,
-				"/*epoch:%d,pec:%s,quota:%s*/" +
-				"/*read-only*/( %s ) * %.2f / 100.00/**/", 
-				Calendar.getInstance().getTimeInMillis(),
-				code, 
-				quota,  
-				ENTERPRISE_QUOTA_EXPRESSION_MAP.get(quota), 
-				percent
-				));
+		ssBonus.setFormula(getEnterpriseFormula(code, portTipo, quota, start, end));
 		
 		
 		return ssBonus;
@@ -133,5 +125,21 @@ class BonusListener  implements IdcListener {
 		ssBonus.setEmployee();
 		
 		return ssBonus;
+	}
+	
+	private static String getEnterpriseFormula(String code, String portTipo,
+			String quota, Date start, Date end) throws ParseException {
+
+		double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
+
+		return String.format(Locale.ROOT,
+				"/*epoch:%d,pec:%s,quota:%s*/" +
+				"/*read-only*/( %s ) * %.2f / 100.00/**/", 
+				Calendar.getInstance().getTimeInMillis(),
+				code, 
+				quota,  
+				ENTERPRISE_QUOTA_EXPRESSION_MAP.get(quota), 
+				percent
+				);
 	}
 }

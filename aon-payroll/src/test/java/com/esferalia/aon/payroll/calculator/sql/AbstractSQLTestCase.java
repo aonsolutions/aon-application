@@ -1352,6 +1352,20 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	public static final ContractBonusRecord addBonus(AONContext aonContext, ContractRecord contract,
+			Date startDate, Date endDate, String expression, String description) {
+		return aonContext.getDslContext()
+				.insertInto(CONTRACT_BONUS)
+				.set(CONTRACT_BONUS.DOMAIN, contract.getDomain())
+				.set(CONTRACT_BONUS.CONTRACT, contract.getId())
+				.set(CONTRACT_BONUS.START_DATE, startDate)
+				.set(CONTRACT_BONUS.END_DATE, endDate)
+				.set(CONTRACT_BONUS.EXPRESSION, expression)
+				.set(CONTRACT_BONUS.DESCRIPTION, description)
+				.returning().fetchOne();
+
+	}
+
+	public static final ContractBonusRecord addBonus(AONContext aonContext, ContractRecord contract,
 			Date startDate, BonusConceptRecord concept) {
 		return aonContext.getDslContext().insertInto(CONTRACT_BONUS).set(CONTRACT_BONUS.DOMAIN, contract.getDomain())
 				.set(CONTRACT_BONUS.BONUS_CONCEPT, concept.getId()).set(CONTRACT_BONUS.CONTRACT, contract.getId())
