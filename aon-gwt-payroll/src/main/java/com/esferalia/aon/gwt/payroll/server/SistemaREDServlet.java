@@ -36,7 +36,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
-import com.esferalia.aon.in.payroll.tgss.idc.Idcplccc;
+import com.esferalia.aon.in.payroll.tgss.idc.Idcplnss;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Bonus;
@@ -446,10 +446,10 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(date);
 
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, date);
 			
 			for ( String naf : nafs ) {
-				Collection<com.esferalia.aon.in.payroll.tgss.idc.Bonus> ssBonus = Idcplccc.getSSBonuses(data);
+				byte data [] = SistemaRED.getIDCNSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+				Collection<com.esferalia.aon.in.payroll.tgss.idc.Bonus> ssBonus = Idcplnss.getSSBonuses(data);
 				Bonus bonuses [] =
 				ssBonus.stream()
 				.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
