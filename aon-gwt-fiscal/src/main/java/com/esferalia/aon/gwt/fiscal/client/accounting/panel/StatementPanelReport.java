@@ -221,7 +221,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 					msg.setStyleName(AON.CSS.aonColorRed());
 					tab.setWidget(2, 1, msg);			
 				} else {
-					tab.clearCell(2, 1);
+					tab.setWidget(2, 1, new Label());
 				}
 			}
 		});

@@ -86,7 +86,7 @@ public class AccountStatementReport extends MainEntryPoint {
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
 		formFlowPanel.add(userHidden);
-		toolbar.add(formFlowPanel);		
+		toolbar.add(diskForm);		
 
 		FlowPanel buttonContainer = new FlowPanel();
 		
@@ -97,9 +97,9 @@ public class AccountStatementReport extends MainEntryPoint {
 			public void onClick(ClickEvent event) {
 				diskForm.setAction(GWT.getHostPageBaseURL() + ACC_STATEMENT_REPORT_PRINT);
 				accountReportParamsHidden.setValue(JsonParams.convert(panel.getWidgetParams(options)));
-				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-				domainNameHidden.setValue(getCurrentDomainName());
-				userHidden.setValue(getCurrentUser());
+				domainIdHidden.setValue(String.valueOf(options.getDomain()));
+				domainNameHidden.setValue(options.getDomainName());
+				userHidden.setValue(options.getUser());
 				diskForm.submit();
 			}
 		});
