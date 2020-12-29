@@ -8,50 +8,40 @@ public class EnterpriseBill {
 	private InputStream background;
 	private boolean detailed;
 
-	private String bill_number;
+	private String reference;
 	private Date date;
-	private String nif;
-	private String enterprise_type;
-	private String address_ln_1;
-	private String getAddress_ln_2;
-	private List<EnterpriseBillEntry> entries;
 
-	private double base;
-	private int percent;
-	private double quote;
-	private double total;
-	private Date payDate;
-	private String payType;
-	private String account;
-	private double amount;
+	private String document;
+	private String name;
+
+	private String address;
+	private String zip_city_province;
+
+	private List<EnterpriseBillEntry> entries;
+	private List<EnterpriseBillTax> taxes;
+	private List<EnterpriseBillFinance> finances;
 
 	private double bottom_px;
 	private double top_px;
 	private InputStream qr_code;
 
-	public EnterpriseBill(InputStream background, boolean detailed, String bill_number, Date date, String nif,
-						  String enterprise_type, String address_ln_1, String getAddress_ln_2,
-						  List<EnterpriseBillEntry> entries, double base, int percent, double quote,
-						  double total, Date payDate, String payType, String account, double amount,
+	public EnterpriseBill(InputStream background, boolean detailed, String reference,
+						  Date date, String document, String name, String address,
+						  String zip_city_province, List<EnterpriseBillEntry> entries,
+						  List<EnterpriseBillTax> taxes, List<EnterpriseBillFinance> finances,
 						  double bottom_px, double top_px, InputStream qr_code) {
 
 		this.background = background;
 		this.detailed = detailed;
-		this.bill_number = bill_number;
+		this.reference = reference;
 		this.date = date;
-		this.nif = nif;
-		this.enterprise_type = enterprise_type;
-		this.address_ln_1 = address_ln_1;
-		this.getAddress_ln_2 = getAddress_ln_2;
+		this.document = document;
+		this.name = name;
+		this.address = address;
+		this.zip_city_province = zip_city_province;
 		this.entries = entries;
-		this.base = base;
-		this.percent = percent;
-		this.quote = quote;
-		this.total = total;
-		this.payDate = payDate;
-		this.payType = payType;
-		this.account = account;
-		this.amount = amount;
+		this.taxes = taxes;
+		this.finances = finances;
 		this.bottom_px = bottom_px;
 		this.top_px = top_px;
 		this.qr_code = qr_code;
@@ -65,64 +55,40 @@ public class EnterpriseBill {
 		return detailed;
 	}
 
-	public String getBill_number() {
-		return bill_number;
+	public String getReference() {
+		return reference;
 	}
 
 	public Date getDate() {
 		return date;
 	}
 
-	public String getNif() {
-		return nif;
+	public String getDocument() {
+		return document;
 	}
 
-	public String getEnterprise_type() {
-		return enterprise_type;
+	public String getName() {
+		return name;
 	}
 
-	public String getAddress_ln_1() {
-		return address_ln_1;
+	public String getAddress() {
+		return address;
 	}
 
-	public String getGetAddress_ln_2() {
-		return getAddress_ln_2;
+	public String getZip_city_province() {
+		return zip_city_province;
 	}
 
 	public List<EnterpriseBillEntry> getEntries() {
 		return entries;
 	}
 
-	public double getBase() {
-		return base;
+	public List<EnterpriseBillTax> getTaxes() {
+		return taxes;
 	}
 
-	public int getPercent() {
-		return percent;
-	}
-
-	public double getQuote() {
-		return quote;
-	}
-
-	public double getTotal() {
-		return total;
-	}
-
-	public Date getPayDate() {
-		return payDate;
-	}
-
-	public String getPayType() {
-		return payType;
-	}
-
-	public String getAccount() {
-		return account;
-	}
-
-	public double getAmount() {
-		return amount;
+	public List<EnterpriseBillFinance> getFinances() {
+		return finances;
 	}
 
 	public double getBottom_px() {
@@ -140,26 +106,20 @@ public class EnterpriseBill {
 	@Override
 	public String toString() {
 		return "EnterpriseBill{" +
-				"background='" + background + '\'' +
+				"background=" + background +
 				", detailed=" + detailed +
-				", bill_number='" + bill_number + '\'' +
+				", reference='" + reference + '\'' +
 				", date=" + date +
-				", nif='" + nif + '\'' +
-				", enterprise_type='" + enterprise_type + '\'' +
-				", address_ln_1='" + address_ln_1 + '\'' +
-				", getAddress_ln_2='" + getAddress_ln_2 + '\'' +
+				", document='" + document + '\'' +
+				", name='" + name + '\'' +
+				", address='" + address + '\'' +
+				", zip_city_province='" + zip_city_province + '\'' +
 				", entries=" + entries +
-				", base=" + base +
-				", percent=" + percent +
-				", quote=" + quote +
-				", total=" + total +
-				", payDate=" + payDate +
-				", payType='" + payType + '\'' +
-				", account='" + account + '\'' +
-				", amount=" + amount +
+				", taxes=" + taxes +
+				", finances=" + finances +
 				", bottom_px=" + bottom_px +
 				", top_px=" + top_px +
-				", qr_code='" + qr_code + '\'' +
+				", qr_code=" + qr_code +
 				'}';
 	}
 }

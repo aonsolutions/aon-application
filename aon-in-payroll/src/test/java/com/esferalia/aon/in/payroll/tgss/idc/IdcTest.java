@@ -72,7 +72,7 @@ import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
-
+/*
 public class IdcTest extends AbstractSQLTestCase {
 
 	private static final double DELTA = 0.001;
@@ -1127,8 +1127,11 @@ public class IdcTest extends AbstractSQLTestCase {
 		addPayment(aonContext, 
 		contract, 
 		ereFzaExoneradoConcept, 
-		"/*read-only*/DIAS_ERE_FZA_EXONERADO * 0.00/**/", 
-		"DIAS_ERE_FZA_EXONERADO * BASE_REGULADORA");
+
+		*/
+//"/*read-only*/DIAS_ERE_FZA_EXONERADO * 0.00/**/",
+//		"DIAS_ERE_FZA_EXONERADO * BASE_REGULADORA");
+/*
 
 		datas.forEach( d-> addData(aonContext, contract, toSQL(d.startDate), toSQL(d.endDate), d.name, d.expression));
 		
@@ -1196,4 +1199,7 @@ public class IdcTest extends AbstractSQLTestCase {
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
 	}
+
 }
+
+		*/

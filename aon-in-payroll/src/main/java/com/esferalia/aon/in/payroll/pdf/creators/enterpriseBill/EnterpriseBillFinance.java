@@ -1,0 +1,44 @@
+package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill;
+
+import java.util.Date;
+
+public class EnterpriseBillFinance {
+
+	private Date due_date;
+	private String paymethod;
+	private String iban;
+	private double amount;
+
+	public EnterpriseBillFinance(Date due_date, String paymethod, String iban, double amount) {
+		this.due_date = due_date;
+		this.paymethod = paymethod;
+		this.iban = iban;
+		this.amount = amount;
+	}
+
+	public Date getDue_date() {
+		return due_date;
+	}
+
+	public String getPaymethod() {
+		return paymethod;
+	}
+
+	public String getIban() {
+		return iban;
+	}
+
+	public double getAmount() {
+		return amount;
+	}
+
+	@Override
+	public String toString() {
+		return "EnterpriseBillFinance{" +
+				"due_date=" + due_date +
+				", paymethod='" + paymethod + '\'' +
+				", iban='" + iban + '\'' +
+				", amount=" + amount +
+				'}';
+	}
+}

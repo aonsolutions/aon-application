@@ -19,8 +19,15 @@ public class PdfFieldNameParserTest {
 
 	@Test
 	public void displayPdfPracticasTest() throws FileNotFoundException {
-		try(InputStream is = PdfFieldNameParserTest.class.getResourceAsStream("PracticasTest.pdf")){
+		try(InputStream is = PdfFieldNameParserTest.class.getResourceAsStream("Practicas.pdf")){
 			PdfFieldNameParser.display_pdf_form_names(is,"DisplayedPracticasTest.pdf");
+		} catch (IOException | UnknownPDFException e) {e.printStackTrace();}
+	}
+
+	@Test
+	public void displayPdfPracticasTestValues() throws FileNotFoundException {
+		try(InputStream is = PdfFieldNameParserTest.class.getResourceAsStream("Practicas.pdf")){
+			PdfFieldNameParser.display_pdf_form_values(is,"DisplayedValuesPracticasTest.pdf");
 		} catch (IOException | UnknownPDFException e) {e.printStackTrace();}
 	}
 
@@ -33,7 +40,7 @@ public class PdfFieldNameParserTest {
 
 	@Test
 	public void displayPdfFormacionTest() throws FileNotFoundException {
-		try(InputStream is = PdfFieldNameParserTest.class.getResourceAsStream("FormacionTest.pdf")){
+		try(InputStream is = PdfFieldNameParserTest.class.getResourceAsStream("Formacion.pdf")){
 			PdfFieldNameParser.display_pdf_form_names(is,"DisplayedFormacionTest.pdf");
 		} catch (IOException | UnknownPDFException e) {e.printStackTrace();}
 	}
@@ -47,7 +54,7 @@ public class PdfFieldNameParserTest {
 
 	@Test
 	public void displayPdfIndefinidoTest() throws FileNotFoundException {
-		try(InputStream is = PdfFieldNameParserTest.class.getResourceAsStream("IndefinidoTest.pdf")){
+		try(InputStream is = PdfFieldNameParserTest.class.getResourceAsStream("Indefinido.pdf")){
 			PdfFieldNameParser.display_pdf_form_names(is,"DisplayedIndefinidoTest.pdf");
 		} catch (IOException | UnknownPDFException e) {e.printStackTrace();}
 	}
@@ -61,7 +68,7 @@ public class PdfFieldNameParserTest {
 
 	@Test
 	public void displayPdfTemporalTest() throws FileNotFoundException {
-		try(InputStream is = PdfFieldNameParserTest.class.getResourceAsStream("TemporalTest.pdf")){
+		try(InputStream is = PdfFieldNameParserTest.class.getResourceAsStream("Temporal.pdf")){
 			PdfFieldNameParser.display_pdf_form_names(is,"DisplayedTemporalTest.pdf");
 		} catch (IOException | UnknownPDFException e) {e.printStackTrace();}
 	}
