@@ -81,8 +81,8 @@ export class AonMobileMenu extends AonElement {
 			<aon-dialog-menu id="aonMobileMenuComunicaaonDialogAddOption" ></aon-dialog-menu>
 			<div id="aonMobileMenuLoading" class="aonLoading"></div>
 		`;
-		let rp = this.getElement('rootPanel');
-		let aonMenuSidenav = this.getElement('aonMobileMenuSidenav');
+		// let rp = this.getElement('rootPanel');
+		// let aonMenuSidenav = this.getElement('aonMobileMenuSidenav');
 
 		let n = ((window.innerWidth / 5) - 40) / 2;
 
@@ -183,7 +183,8 @@ export class AonMobileMenu extends AonElement {
 			contentName: file.name,
 			contentSize: file.size
 		};
-		await uploadFileDocumental(data).catch(e => null);
+		const result = await uploadFileDocumental(data).catch(e => null);
+		await rootPanel(`<aon-documental />`);
 		this.loading(false);
 	}
 
@@ -193,7 +194,12 @@ export class AonMobileMenu extends AonElement {
 			file,
 			invoice: new Invoice('recibida')
 		};
-		await insertInvoice(data).catch(e => null);
+		const result = await insertInvoice(data).catch(e => null);
+		await rootPanel(`<aon-invoice-panel />`);
+		if(result){
+			let iEl = document.querySelector(`aon-invoice-panel`);
+			if(iEl) iEl.aonInvoice(result.type, result);
+		}
 		this.loading(false);
 	}
 

@@ -122,7 +122,7 @@ export const remove = (url, data) => {
 
 export const getToken = () => localStorage.getItem("aon_session_id");
 
-export const openPDF = (url, data) => {
+export const openPDF = async (url, data) => {
   const token = getToken();
   const domainId = localStorage.getItem("aon_domain_id");
   const domainName = localStorage.getItem("aon_domain_name");
@@ -136,9 +136,11 @@ export const openPDF = (url, data) => {
   const newUrl = `${url}?json=${json}`;
 
   if (webkitRequestMobile())
-    openFileMobile(newUrl).then(async (obj) => await actionRequestMobile(obj)).catch(e => null);
+    await openFileMobile(newUrl).then(async (obj) => await actionRequestMobile(obj)).catch(e => null);
   else
     openFileDesktop(newUrl);
+
+  return;
 }
 
 const openFileMobile = async (url) => new Promise((resolve, reject) => {

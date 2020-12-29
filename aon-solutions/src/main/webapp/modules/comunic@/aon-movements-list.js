@@ -33,16 +33,17 @@ export class AonMovementsList extends AonElement {
 		this.paintView();
 		this.build();
 	}
+	
+	disconnectedCallback() {
+		if (this.aonComunica) this.aonComunica.removeFloatOption();
+	}
+
 
 	paintView() {
 		if (this.isMobile())
 			this.innerHTML = ` <aon-mobile-list id='${this.ID}' />`;
 		else
 			this.innerHTML = ` <aon-table id='${this.ID}' />`;
-	}
-
-	disconnectedCallback() {
-		if (this.aonComunica) this.aonComunica.removeFloatOption();
 	}
 
 	async build() {
@@ -69,10 +70,8 @@ export class AonMovementsList extends AonElement {
 				})
 			} catch (e) {
 				const toast = this.getElement(`aonComunicaToast`);
-				if ("invalidCertificate" === e) {
-					if (toast) toast.start({ message: e, type: 'error' });
-					this.getElement('aonComunicaSidenavCertificados').click()
-				}
+				if ("invalidCertificate" === e && toast)
+					toast.start({ message: e, type: 'error' });
 			}
 		}
 	}
@@ -87,7 +86,7 @@ export class AonMovementsList extends AonElement {
 				resp.map((res, idx) => {
 					// let icon = res.situation === "AL" ? 'trending_up' : 'trending_down';
 					aonMovementTable.addLi({
-						aonIcon:'aon_seg_social',
+						aonIcon: 'aon_seg_social',
 						title: `${res.name}`,
 						subtitle: `${res.status} ${res.fecha}`,
 						option: this.aonComunicaEl.getOptions(res)
@@ -95,10 +94,9 @@ export class AonMovementsList extends AonElement {
 				})
 			} catch (e) {
 				const toast = this.getElement(`aonComunicaToast`);
-				if ("invalidCertificate" === e) {
-					if (toast) toast.start({ message: e, type: 'error' });
-					this.getElement('aonComunicaSidenavCertificados').click()
-				}
+				if ("invalidCertificate" === e && toast)
+					toast.start({ message: e, type: 'error' });
+
 			}
 		}
 	}
@@ -144,7 +142,7 @@ export class AonMovementsList extends AonElement {
 					tipo_mov = `${tipo_mov} Consolidada`;
 				} else
 					tipo_mov = `${tipo_mov} Consolidada`;
-	
+
 				const status = `<span style="font-weight: 700;color: ${color};">${tipo_mov}</span>`;
 				return {
 					...res,
@@ -154,7 +152,7 @@ export class AonMovementsList extends AonElement {
 					prev
 				};
 			});
-		} catch(e) {
+		} catch (e) {
 			console.log(e);
 		}
 		return data;

@@ -1,4 +1,4 @@
-import {INPUTS_ALL} from '../environments/constants.js';
+import { INPUTS_ALL } from '../environments/constants.js';
 
 export const getReader = (file) => {
   return new Promise((resolve) => {
@@ -54,7 +54,7 @@ export const serializeForm = (form) => {
 
 export const setValueName = (name, value) => {
   let el = document.querySelector(`[name="${name}"]`);
-  if(el && value) el.value = value;
+  if (el && value) el.value = value;
   return el;
 }
 

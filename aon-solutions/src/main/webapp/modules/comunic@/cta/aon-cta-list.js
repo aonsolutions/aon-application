@@ -40,10 +40,6 @@ export class AonCtaList extends AonElement {
 			this.innerHTML = ` <aon-table id='${this.ID}' />`;
 	}
 
-	disconnectedCallback() {
-		if (this.aonComunica) this.aonComunica.removeFloatOption();
-	}
-
 	async build() {
 		this.aonComunica.startLoader();
 		if (this.isMobile())
@@ -140,8 +136,10 @@ export class AonCtaList extends AonElement {
 	}
 
 	getCertCorriente(data, el) {
+		this.aonComunica.startLoading();
 		const { ccc, cccRegimeCode: regimen } = data;
 		getCertCorriente({ ccc, regimen }); // open pdf
+		this.aonComunica.stopLoading();
 	}
 }
 window.customElements.define('aon-cta-list', AonCtaList);

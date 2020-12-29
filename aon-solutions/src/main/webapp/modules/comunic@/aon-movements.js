@@ -36,15 +36,14 @@ export class AonMovements extends AonElement {
         aonComunica.removeToolbarOptions();
 
         if (this.isMobile()) {
-            let floatButton = this.getElement('aonComunicaFloatSpan');
+            let floatButton = this.getElement(`${aonComunica.id}FloatSpan`);
             if (!floatButton) {
                 aonComunica.addFloatOption({
                     id: 'AddAlta',
                     name: 'addalta',
                     icon: 'add'
-                }, () =>  this.aonAltaDirecta());
+                }, () =>  this.aonAltaDirecta()); 
             }
-
         } else {
             aonComunica.addToolbarOption('Add', 'add', () => this.aonAltaDirecta());
         }

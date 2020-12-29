@@ -22,6 +22,7 @@ export class AonComunica extends AonElement {
 		this.paintView();
 		this.build()
 	}
+	disconnectedCallback() {}
 	paintView() {
 		this.innerHTML = `
 			<aon-toast id="${this.AON_COMUNICA}Toast"></aon-toast>
@@ -32,8 +33,8 @@ export class AonComunica extends AonElement {
 		this.aonComunicaEl = this.getElement(this.AON_COMUNICA);
 
 		this.buildToolbar();
-		this.getElement(this.aonComunicaEl.TOOLBAR).setAttribute('option', 'Contratos');
-		this.aonComunicaEl.setContentHTML(`<aon-contrato-list id="aonContratoList" ></aon-contrato-list>`)
+
+		this.paintViewContrato();
 	}
 
 	buildToolbar(){
@@ -44,15 +45,7 @@ export class AonComunica extends AonElement {
 					icon: 'contract',
 					color: 'black'
 				},
-				fn: () => {
-					this.aonComunicaEl.removeToolbarOptions();
-					if(this.isMobile())
-						this.aonComunicaEl.setContentHTML(`<aon-contrato-list id="aonContratoList" ></aon-contrato-list>`)
-					else {
-						startModule('aon_gwt_payroll', 'MainContrata', this.aonComunicaEl.CONTENT);
-					}
-
-				}
+				fn: () => this.paintViewContrato()
 			},
 			{
 				name: 'Partes IT',
@@ -97,6 +90,16 @@ export class AonComunica extends AonElement {
 		this.aonComunicaEl.addSidenavOptions('OPCIONES', options);
 	}
 
+
+	paintViewContrato(){
+		this.aonComunicaEl.removeToolbarOptions();
+		if(this.isMobile())
+			this.aonComunicaEl.setContentHTML(`<aon-contrato-list id="aonContratoList" ></aon-contrato-list>`)
+		else {
+			startModule('aon_gwt_payroll', 'MainContrata', this.aonComunicaEl.CONTENT);
+		}
+	}
+
 	async deleteMov(data, el) {
 		if (confirm(`Estas seguro de anular el movimiento de ${data.name} ?`)) {
 			const toast = this.getElement(`${this.AON_COMUNICA}Toast`);
@@ -112,14 +115,18 @@ export class AonComunica extends AonElement {
 		}
 	}
 
-	getTa(data, el) {
+	async getTa(data, el) {
+		this.aonComunicaEl.startLoading();
 		const { regime, ctaCti, nss, fra } = data;
-		getTA({ regime, ctaCti, nss, fra }); // open pdf
+		await getTA({ regime, ctaCti, nss, fra }); // open pdf
+		this.aonComunicaEl.stopLoading();
 	}
 
 	getIdc(data, el) {
+		this.aonComunicaEl.startLoading();
 		const { regime, ctaCti, nss, fra } = data;
 		getIDC({ regime, ctaCti, nss, fra }); // open pdf
+		this.aonComunicaEl.stopLoading();
 	}
 
 	anularCondition(situation, fra) {

@@ -643,7 +643,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     async save() {
-        this.aonComunica.startLoader();
+        this.aonComunica.startLoading();
         try {
             await postAltaDirecta(this.getContrato());
             this.TOAST.start({ message: 'Alta procesada!', type: 'success', delay: 3000 });
@@ -651,11 +651,11 @@ export class AonAltaDirecta extends AonElement {
         } catch (error) {
             this.TOAST.start({ message: error, type: 'error' });
         }
-        this.aonComunica.stopLoader();
+        this.aonComunica.stopLoading();
     }
 
     async update() {
-        this.aonComunica.startLoader();
+        this.aonComunica.startLoading();
         let cto_new = this.getContrato();
         const cto_old = this._contrato;
         for (const property in cto_new) {
@@ -670,7 +670,7 @@ export class AonAltaDirecta extends AonElement {
         } catch (error) {
             this.TOAST.start({ message: error, type: 'error' });
         }
-        this.aonComunica.stopLoader();
+        this.aonComunica.stopLoading();
     }
 
     back() {

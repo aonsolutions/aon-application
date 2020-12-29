@@ -171,6 +171,15 @@ export class AonApplication extends AonElement {
 		this.getElement(this.LOADER).stop();
 	}
 
+
+	startLoading() {
+		this.getElement(this.LOADER).startLoading();
+	}
+
+	stopLoading() {
+		this.getElement(this.LOADER).stopLoading();
+	}
+
 	toogleSidenav() {
 		let sidenav = this.getElement(this.SIDENAV);
 		let content = this.getElement(this.CONTENT);
@@ -433,6 +442,7 @@ export class AonApplication extends AonElement {
 	}
 	removeFloatOption() {
 		let el = this.getElement(this.id + 'FloatSpan');
+		console.log("removeFloat");
 		if (el) el.remove();
 	}
 

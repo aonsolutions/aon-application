@@ -4,11 +4,12 @@
 		myNode.innerHTML = '';
 	}
 
-	export const rootPanel = (html) => {
+	export const rootPanel = (html) => new Promise((resolve)=>{
 		const myNode = document.getElementById("rootPanel");
 		myNode.innerHTML = '';
 		myNode.innerHTML = html;
-	}
+		resolve(myNode);
+	});
 
 	export const drawChartsCallback = () => {
 

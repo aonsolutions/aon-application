@@ -26,7 +26,6 @@ export class AonContratoList extends AonElement {
 		super();
         this.aonComunica = this.getElement('aonComunica');
         this.aonComunicaToolbar = this.getElement('aonComunicaToolbar');
-		this.aonComunicaEl = this.aonComunica.getParent();
 		this.ID = "aonContratoTable";
 	}
 
@@ -40,10 +39,6 @@ export class AonContratoList extends AonElement {
 			this.innerHTML = ` <aon-mobile-list id='${this.ID}' />`;
 		else
 			this.innerHTML = ` <aon-table id='${this.ID}' />`;
-	}
-
-	disconnectedCallback() {
-		if (this.aonComunica) this.aonComunica.removeFloatOption();
 	}
 
 	async build() {
@@ -148,13 +143,17 @@ export class AonContratoList extends AonElement {
 	}
 
 	getContratoPdf(data, el) {
+		this.aonComunica.startLoading();
 		const { document:ipf, fecha } = data;
 		getContratoPdf({ ipf, fecha });
+		this.aonComunica.stopLoading();
     }
 
     getCopyBasicPdf(data, el) {
+		this.aonComunica.startLoading();
 		const { document:ipf, fecha } = data;
 		getCopyBasicPdf({ ipf, fecha });
+		this.aonComunica.stopLoading();
 	}
 }
 window.customElements.define('aon-contrato-list', AonContratoList);
