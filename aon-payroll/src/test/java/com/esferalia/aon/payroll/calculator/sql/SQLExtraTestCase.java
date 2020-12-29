@@ -4600,6 +4600,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 	}
 
+
+
 	@Test
 	public void testBiAnualExtrasAtSalaryWithoutAgreementV() throws ExpressionException,
 			SQLException, SalaryException {
@@ -4659,6 +4661,51 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testBiAnualExtrasAtSalaryWithoutAgreementVI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001);
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.JUNE);
+		calendar.set(DAY_OF_MONTH, 1);
+		Date contractDate = new Date(calendar.getTimeInMillis());
+
+		ContractRecord contract = newContract(
+				aonContext
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		//@formatter:off
+		
+		addPayment(aonContext, contract, conceptSalarioBase, "1000.00 * DIAS_TRABAJADOS/DIAS_MES");
+		addPayment(aonContext, contract, conceptPlusSalarial, "100.00 * DIAS_TRABAJADOS/DIAS_MES");
+		
+		addPayment(aonContext, contract, contract.getStartDate(), null , conceptPagaExtra, "PAGA EXTRAORDINARIA VERANO", "SI(MES(INICIO)< 7,MENSUALIDAD*2, 0.00)", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JUNE.ordinal());
+		addPayment(aonContext, contract, contract.getStartDate(), null , conceptPagaExtra, "PAGA EXTRAORDINARIA NAVIDAD", "SI(MES(INICIO) > 6,MENSUALIDAD*2, 0.00)", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		
+
+		Date endDate = getLastDayOfYear(getToday());
+		Date startDate = getFirstDayOfMonth(endDate);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());		
+		
+		assertEquals(1100.00*2, Math.round(salary.getTotalPayment()), DELTA);
+		assertEquals(1100.00/6.00, salary.getExtraPayProration(), DELTA);
+		
+	}
+	
+	
 	@Test
 	public void testExtraConstantsI() throws ExpressionException,
 			SQLException, SalaryException {

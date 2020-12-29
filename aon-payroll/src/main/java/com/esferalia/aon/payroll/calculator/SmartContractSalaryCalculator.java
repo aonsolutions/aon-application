@@ -1198,7 +1198,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			
 			extraStartDate = Period.max(extraStartDate, ctx.getDate(CONTRACT.getName() , CONTRACT.START_DATE.getName() ));
 			
-			double extraQuotes = 0.00;
+			double totalExtraQuote = 0.00;
 			List<Period> defined = new ArrayList<Period>() ;
 			
 			Date startDate = AonDateUtils.getFirstDayOfMonth(extraStartDate);
@@ -1211,34 +1211,27 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 //					continue;
 //				}
 				
+				List<Double> extraQuotes = new ArrayList<Double>();
 				Salary salary = 
 				new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() {
-					private Double extraQuote = 0.00;
 					@Override
 					public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
 							Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
 						if ( contractPayment.getId().equals(((IContractPayment)payment).getId()) ) {						
-							extraQuote += quote;
+							extraQuotes.add(quote);
 						} else if (
 							lastDayOfMonth.before(extraEnDate) &&
 							contractPayment.getMonth() == ((IContractPayment)payment).getMonth() &&
 							AonStringUtils.equals(contractPayment.getName(), ((IContractPayment)payment).getName() )
 							
 						) {
-							extraQuote += quote;
+							extraQuotes.add(quote);
 						}
 					}
 					@Override
 					public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
 							Map<String, ITimedVariable<?>> context) {
 						addPayment(0.00, quote, tax, null, startDate, endDate, payment, context);
-					}
-					
-					@Override
-					public Salary getSalary() {
-						salary = super.getSalary();
-						salary.setTotalPayment(extraQuote);
-						return salary;
 					}
 					
 					
@@ -1250,15 +1243,18 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				}
 				.calculate(extraCtx)
 				;
-				
-				if ( salary.getTotalPayment() == 0.00 )
+
+				if (extraQuotes.isEmpty() )
 					continue;
 				
-				extraQuotes += salary.getTotalPayment();
+				
+				double extraQuote = extraQuotes.stream().collect(Collectors.summingDouble(d->d));
+				
+				totalExtraQuote += extraQuote;
 				defined.add(new Period(salary.getStartDate(), salary.getEndDate()));
 			}
 			
-			double extra = extraQuotes;
+			double extra = totalExtraQuote;
 			
 			Period extraPeriod = new Period(extraStartDate, Period.min(endDate, ctx.getDate(CONTRACT.getName() , CONTRACT.END_DATE.getName() )));
 			List<Period> undefined = Period.sub(extraPeriod, defined);
