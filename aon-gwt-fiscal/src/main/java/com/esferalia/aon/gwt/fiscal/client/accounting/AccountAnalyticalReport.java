@@ -6,12 +6,14 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog.IPrintReportDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AnalyticalPanelReport;
-import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -25,13 +27,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.Label;
 
 public class AccountAnalyticalReport extends MainEntryPoint {
 	
@@ -87,27 +86,7 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 		}
 			
 		
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label("Cuenta de explotaci\u00F3n"));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
+		AonToolbar toolbar = new AonToolbar(AON.MSG.accountingAnalyticalBalance());
 
 		FormPanel diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
@@ -121,14 +100,11 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 		formFlowPanel.add(domainIdHidden);
 		formFlowPanel.add(domainNameHidden);
 		formFlowPanel.add(userHidden);
-		buttonContainer.add(diskForm);
+		toolbar.add(diskForm);
 
-		final Button pdf = new Button();
-		pdf.setText(AON.MSG.print());
-		pdf.setTitle(AON.MSG.print());
-		pdf.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		pdf.addStyleName(AON.AON_CSS.aonIconPdf());
-		pdf.addClickHandler(new ClickHandler() {
+		FlowPanel buttonContainer = new FlowPanel();
+		final AonToolbarButton reportPDF = new AonToolbarButton(AON.MSG.printPDF(), AON.CSS.aonIconPdf());
+		reportPDF.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -169,14 +145,10 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 				dialog.show();
 			}
 		});
-		buttonContainer.add(pdf);
+		buttonContainer.add(reportPDF);
 
-		final Button print = new Button();
-		print.setText(AON.MSG.print());
-		print.setTitle(AON.MSG.print());
-		print.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		print.addStyleName(AON.AON_CSS.aonIconExcel());
-		print.addClickHandler(new ClickHandler() {
+		final AonToolbarButton printExcel = new AonToolbarButton(AON.MSG.printExcel(), AON.CSS.aonIconExcel());
+		printExcel.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -188,11 +160,11 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 				diskForm.submit();
 			}
 		});
-		buttonContainer.add(print);
+		buttonContainer.add(printExcel);
 
-		toolbarPanel.add(toolbar);
+		toolbar.add(buttonContainer);
 		
-		dockLayoutPanel.addNorth(toolbarPanel, 25);
+		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		dockLayoutPanel.add( panel );
 		
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
@@ -200,20 +172,25 @@ public class AccountAnalyticalReport extends MainEntryPoint {
 	}
 
 	private void showEntry(final AccountingReportModuleOptions options,Integer entryId, ModuleCallback callback) {
-		CustomPopup entryDialog = new CustomPopup();
+		AonCustomPopup entryDialog = new AonCustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
 		entryDialog.setAnimationEnabled(true);
 		entryDialog.setGlassEnabled(true);
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModule module = new AccountEntryModule();
+		AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
 		module.onModuleLoad(new AccountEntryModuleOptions()
 			.setParentWidget(entryDialog)
 			.setDomainName(options.getDomainName())
 			.setUser(options.getUser())
 			.setDomain(options.getDomain())
 			.setAccountEntryId(entryId)
+			.setSessionLogTabVisible(false)
+			.setJournalTabVisible(false)
+			.setExtraInfoTabVisible(false)
+			.setBalancesSectionVisible(false)
+			.setStatementTabVisible(false)
 			.setExternalCallback(new ModuleCallback() {
 			
 				@Override

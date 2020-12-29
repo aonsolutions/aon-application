@@ -3268,6 +3268,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Balances contables")
 	String accountingBalances();
 	
+	@DefaultMessage("Cuenta de explotaci\u00F3n anal\u00EDtica")
+	String accountingAnalyticalBalance();
+	
 	@DefaultMessage("Asientos contables")
 	String accountEntries();
 
