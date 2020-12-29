@@ -627,6 +627,35 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			protected void fireMessagesResults(Messages messages) {
 				paintMessagesResult(messages);
 			}
+
+			@Override
+			protected void onExportPDF() {
+				contrataEmployeeObject.getContractOtherInfo(s -> {
+					if(StringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
+						contrataEmployeeObject.getContractSpecificData(su -> {
+							contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+							contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
+							contrataEmployeeObject.saveContractExport(
+									a -> {
+										contractAttachUI.setContractAttachments(a);
+										this.refreshPage();
+									},
+									e -> {}
+							);
+						}, f -> {});
+					else {
+						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+						contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
+						contrataEmployeeObject.saveContractExport(
+								a -> {
+									contractAttachUI.setContractAttachments(a);
+									this.refreshPage();
+								},
+								e -> {}
+						);
+					}
+				}, f -> {});
+			}
 		};
 		contractBonusUI = new ContractBonusUI() {
 			@Override
@@ -664,7 +693,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		scrolledPanel.setHeight((height-260)+"px");
 		scrolledPanelContractOtherData.setHeight((height-260)+"px");
 		scrolledPanelClauses.setHeight((height-265)+"px");
-		scrolledPanelAttach.setHeight((height-265)+"px");
+		scrolledPanelAttach.setHeight((height-200)+"px");
 		scrolledPanelBonus.setHeight((height-265)+"px");
 		scrolledPanelContractSpecificData.setHeight((height-260)+"px");
 		scrolledPDFPanel.setHeight((height-260)+"px");
@@ -1514,18 +1543,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 		);
 	}
-	
-	private void showContract() {
-		contrataEmployeeObject.fillContract(
-				(dataURI) -> {
-					showPdf();
-					pdfViewer.setDocument(dataURI, zoom / 100.00);
-				}, 
-				(trowable)-> {
-					
-				});
-	}
-	
 	
 	private void showPdf() {
 		ta.setVisible(false);

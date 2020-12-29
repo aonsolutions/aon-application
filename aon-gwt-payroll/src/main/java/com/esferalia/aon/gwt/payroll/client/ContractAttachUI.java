@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Messages;
@@ -17,7 +19,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -26,6 +27,7 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -70,7 +72,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	Grid attachmentsDataTable;
 
 	@UiField
-	Label newAttachment;
+	HTMLPanel footerOptionsToolbar;
 	
 	// ------------------------------------------------------ Constructor ---------------------------------------------------------
 
@@ -81,6 +83,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	public ContractAttachUI() {
 		initWidget(uiBinder.createAndBindUi(this));
 		messages = new Messages();
+		initFooterOptionsToolbar();
 	}
 	
 	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfoIn) {
@@ -91,10 +94,34 @@ public abstract class ContractAttachUI extends ResizeComposite {
 			paintContractAttach(contractAttach);
 	}
 	
-	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
-	
-	@UiHandler("newAttachment")
-	public void onNewAttachmentPartClick(ClickEvent event) {
+	private void initFooterOptionsToolbar() {
+		footerOptionsToolbar.clear();
+		
+		AonTableButton newAttachmentBtn = new AonTableButton(AON.MSG.newAction(),  AON.CSS.aonIconAdd());
+		newAttachmentBtn.addClickHandler(e -> {
+			onAddNewAttachment(e);
+		});
+		
+		Label newAttachmentL = new Label("A" + String.valueOf("\u00F1") + "adir Documento");
+		newAttachmentL.getElement().getStyle().setMarginRight(5, Unit.PX);
+		
+		footerOptionsToolbar.add(newAttachmentBtn);
+		footerOptionsToolbar.add(newAttachmentL);
+		
+		AonTableButton pdfExportBtn = new AonTableButton("Generar Borrador",  AON.CSS.aonIconPdf());
+		pdfExportBtn.addClickHandler(e -> {
+			onExportPDF();
+		});
+		
+		Label pdfExportL = new Label("Borrador Contrato");
+		
+		footerOptionsToolbar.add(pdfExportBtn);
+		footerOptionsToolbar.add(pdfExportL);
+	}
+
+	protected abstract void onExportPDF();
+
+	private void onAddNewAttachment(ClickEvent e) {
 		ContractAttach contractAttach = new ContractAttach();
 		contractAttach.setDomain(employeeContractInfo.getEmployeeInfo().getDomain());
 		contractAttach.setContract(employeeContractInfo.getContractInfo().getContractId());
@@ -109,8 +136,17 @@ public abstract class ContractAttachUI extends ResizeComposite {
 					
 				}, f -> {});
 	}
+
+	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
 	
 	// --------------------------------------------------- UiHandlers (Aux Methods) -------------------------------------------------
+	
+	public void refreshPage() {
+		resetAttachDataTableStructure();
+		
+		for(ContractAttach contractAttachIn : employeeContractInfo.getContractAttachments())
+			paintContractAttach(contractAttachIn);
+	}
 	
 	private void resetAttachDataTableStructure() {
 		attachmentsDataTable.clear();
@@ -127,8 +163,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		
 		Label description = new Label("DESCRIPCI" + String.valueOf("\u00D3") + "N");
 		Label type = new Label("TIPO");
-		Label confidential = new Label();
-		confidential.setStyleName("aon-editDataTable-button aon-icon-confidential");
+		AonTableButton confidential = new AonTableButton("Confidencial", AON.CSS.aonIconLock());
 		Label date = new Label("FECHA");
 		Label scope = new Label(String.valueOf("\u00C1") + "MBITO");
 		Label file = new Label("ARCHIVO");
@@ -193,7 +228,8 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		Widget formPanel = createFormPanel(contractAttach);
 		
 		// Attach Delete Button
-		Button deleteBTN = new Button();
+		AonTableButton deleteBTN = new AonTableButton("Eliminar", AON.CSS.aonIconDelete());
+		deleteBTN.getElement().getStyle().setMarginTop(5, Unit.PX);
 		deleteBTN.addClickHandler((e) -> {
 			deleteContractAttach(contractAttach, 
 					s -> {
@@ -207,7 +243,6 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		descriptionTB.addStyleName(style.maxWidthTB());
 		typeLB.addStyleName(style.maxWidthLB());
 		scopeLB.addStyleName(style.maxWidthLB());
-		deleteBTN.setStyleName("aon-editDataTable-button aon-icon-delete");
 		
 		// If id != null exists then fill the fields
 		if(null != contractAttach.getId()) {
@@ -248,11 +283,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		mainFlowPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		
 		Label fileNameL = new Label();
-		
-		if(null != contractAttach.getData()) {
-			mainFlowPanel.add(getDownloadButton(contractAttach));
-			fileNameL.setText(contractAttach.getDescription());
-		}
+		fileNameL.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		
 		//Create formPanel to UploadFiles
 		FlowPanel flowPanel = new FlowPanel();
@@ -315,12 +346,10 @@ public abstract class ContractAttachUI extends ResizeComposite {
             }
 	    });
 		
-		Button fileButton = new Button();
-		fileButton.setStyleName("aon-editDataTable-button aon-icon-attach-file");
+		AonTableButton fileButton = new AonTableButton("Subir Documento", AON.CSS.aonIconAttach());
 		fileButton.addClickHandler(e -> {
 			fileU.click();
 		});
-		
 	
 		flowPanel.add(attachId);
 		flowPanel.add(extension);
@@ -331,7 +360,11 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		
 		formPanel.add(flowPanel);
 			
-		mainFlowPanel.add(formPanel);	
+		mainFlowPanel.add(formPanel);
+		if(null != contractAttach.getData()) {
+			mainFlowPanel.add(getDownloadButton(contractAttach));
+			fileNameL.setText(contractAttach.getDescription());
+		}
 		mainFlowPanel.add(fileNameL);
 		return mainFlowPanel;
 	}
@@ -340,8 +373,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 
 	private Button getDownloadButton(ContractAttach contractAttach) {
 		// Create download button
-		Button downloadBtn = new Button();
-		downloadBtn.setStyleName("aon-editDataTable-button aon-icon-mail-save");
+		AonTableButton downloadBtn = new AonTableButton("Descargar Documento", AON.CSS.aonIconDownload());
 		downloadBtn.addClickHandler((e) -> {
 //			Window.alert("Name : " + contractAttach.getDescription() + ", Ext : " + parseMimeTypeToString(contractAttach.getMimeType()));
 			String fileDownloadURL = GWT.getModuleBaseURL()+ "attach/"
@@ -518,6 +550,10 @@ public abstract class ContractAttachUI extends ResizeComposite {
 				failure.accept(caught);
 			}
 		});
+	}
+
+	public void setContractAttachments(List<ContractAttach> contractAttachments) {
+		employeeContractInfo.setContractAttachments(contractAttachments);
 	}
 
 }

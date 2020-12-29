@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.DateField;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject_COPIA.Callback;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -309,7 +310,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<String> callback) {
+			public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<List<ContractAttach>> callback) {
 				// TODO Auto-generated method stub
 				
 			}

@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -747,7 +748,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String fillContract(String currentDomainName,  Integer contractId, Integer contractType, String formativeLvl) {
+	public List<ContractAttach> fillContract(String currentDomainName,  Integer contractId, Integer contractType, String formativeLvl) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;

@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -743,9 +744,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<String> callback) {
+	public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<List<ContractAttach>> callback) {
 		AON.start();
-		employeesServiceAsync.fillContract(currentDomainName, contractId, contractType, formativeLvl, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.fillContract(currentDomainName, contractId, contractType, formativeLvl, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
 	}
 	
 	@Override

@@ -38,6 +38,7 @@
 		
 		.gridStyle{
 			margin-left: 10px;
+			width: 950px;
 		}
 		
 		.footerStyle{
@@ -52,6 +53,7 @@
 		
 		.scrollStyle {
 			margin-left: 10px;
+			width: 950px;
 			margin-bottom: 10px;
 		}
 		
@@ -84,11 +86,41 @@
 			vertical-align: top;
 		}
 		
+		.footerToolbar{
+			padding: 10px;
+			display: flex;
+		    align-items: center;
+		    justify-content: space-between;
+		}
+		
+		.footerOptionsToolbar{
+			display: flex;
+		    align-items: center;
+		}
+		
+		.styleBorder{
+			border-style: solid; 
+			width: 975px; 
+			border-width: 1px; 
+			margin: 10px;
+		}
+		
+		.tittle{
+			top: -1.2em;
+			font-size: 12px;
+			margin-left: 10px;
+			position: relative;
+			width: 150px;
+			background-color: white;
+			padding: 5px;
+			text-align: center;
+		}
+		
 	</ui:style>
 
    	<g:HTMLPanel> 
         <g:VerticalPanel ui:field="attachmentsTable" styleName="{style.styleBorder}"> 
-	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Documentos</g:Label>
+	    	<g:Label styleName='{style.tittle}'>Documentos</g:Label>
 	    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
 	    		<g:VerticalPanel>
 	    			<g:Grid ui:field="attachmentsDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
@@ -98,9 +130,9 @@
 		    		<g:ScrollPanel ui:field="attachmentsScrollPanel" styleName="{style.scrollStyle}">
 		    			<g:Grid ui:field="attachmentsDataTable"></g:Grid>
 		    		</g:ScrollPanel>
-		    		<g:HTMLPanel styleName="{style.footerStyle}">
-	    				<g:Label ui:field="newAttachment" styleName="aon-finding-toolbar-item aon-icon-reset {style.footerElement}">NUEVO</g:Label>
-	    			</g:HTMLPanel>
+		    		<g:HTMLPanel styleName="{style.footerToolbar}">
+		    			<g:HTMLPanel styleName="{style.footerOptionsToolbar}" ui:field="footerOptionsToolbar"></g:HTMLPanel>
+		    		</g:HTMLPanel>
 	    		</g:VerticalPanel>
 	    	</g:HTMLPanel>
 		</g:VerticalPanel>

@@ -6,6 +6,7 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCom
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
+import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTIVE_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
@@ -38,6 +39,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -66,6 +68,7 @@ import javax.servlet.annotation.WebServlet;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.SortField;
+import org.jooq.impl.DSL;
 import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
@@ -118,6 +121,7 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -5425,21 +5429,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public String fillContract(String domainName, Integer contractId, Integer contractType, String formativeLvl) {
-		try {
-			String base64Pdf = JooqContrataContract.contractFill(domainName, contractId, contractType, formativeLvl);
-			Writer stringWriter = new StringWriter();
+	public List<ContractAttach> fillContract(String domainName, Integer contractId, Integer contractType, String formativeLvl) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
-			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+			byte[] pdfBytes = JooqContrataContract.contractFill(connection, domainId, contractId, contractType, formativeLvl);
+			JooqContrataContract.saveDraftContract(domainName, contractId, pdfBytes);
+			return JooqContrataContract.getContractAttachments(connection, domainId, contractId);
 			
-			stringWriter.flush();		
-			String dataUri = stringWriter.toString();
-			stringWriter.close();
-			
-			return dataUri;
-		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
-		}
+		}catch (SQLException e) {
+			throw new RuntimeException(e);
+		} 
 	}
 	
 	@Override

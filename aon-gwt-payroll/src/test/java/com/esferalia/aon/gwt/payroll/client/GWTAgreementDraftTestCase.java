@@ -16,6 +16,7 @@ import org.junit.Before;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
@@ -272,7 +273,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 		@Override
 		public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl,
-				AsyncCallback<String> callback) {
+				AsyncCallback<List<ContractAttach>> callback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -551,7 +552,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<String> callback) {
+					public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<List<ContractAttach>> callback) {
 						// TODO Auto-generated method stub
 						
 					}

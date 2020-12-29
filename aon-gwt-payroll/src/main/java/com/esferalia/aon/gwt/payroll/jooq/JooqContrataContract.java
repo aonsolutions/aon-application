@@ -84,11 +84,29 @@ public class JooqContrataContract {
 		return SETTINGS;
 	}
 	
-	public static String contractFill(String domainName, Integer contractId, Integer contractType, String formativeLevelCode) {
+	public static void saveDraftContract(String domainName, Integer contractId, byte[] pdfBytes) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
+			dslContext.insertInto(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DOMAIN, domainId)
+				.set(CONTRACT_ATTACH.CONTRACT, contractId)
+				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+				.set(CONTRACT_ATTACH.DESCRIPTION, "BORRADOR CONTRATO")
+				.set(CONTRACT_ATTACH.DATA, pdfBytes)
+				.set(CONTRACT_ATTACH.TYPE, (byte)0)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.execute();
+			
+		}catch (SQLException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+	
+	public static byte[] contractFill(Connection connection, Integer domainId, Integer contractId, Integer contractType, String formativeLevelCode) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+				
 			Map<String, String> contractOtherInfo = getContractOtherInfoDB(dslContext, domainId, contractId, contractType+"");
 			Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, domainId, contractId);
 			
@@ -97,10 +115,7 @@ public class JooqContrataContract {
 			contractFillInfo.put("E_FORMATIVE_LVL_CODE", formativeLevelCode);
 			
 			byte[] data = ContractFill.fillContract(contractType, contractOtherInfo, contractFillInfo);
-			return Base64.getEncoder().encodeToString(data);
-		}catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+			return data;
 	}
 
 	public static byte[] contractFill(String domainName, Integer contractId, String contractTypeStr, String formativeLevelCode) {
@@ -563,14 +578,17 @@ public class JooqContrataContract {
 	private static ContractSpecificData getContractSpecificDataDB(DSLContext dslContext, Integer domainId, Integer contractId) {
 		ContractSpecificData contractSpecificData = new ContractSpecificData();
 		
-		Record contractAttachRecord = dslContext.select().from(CONTRACT_ATTACH)
+		Result<Record> contractAttachRecords = dslContext.select().from(CONTRACT_ATTACH)
 			.where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
 			.and(CONTRACT_ATTACH.TYPE.eq((byte)4))
-			.fetchOne();
+			.fetch();
+//			.fetchOne();
 		
-		if(null == contractAttachRecord)
+		if(null == contractAttachRecords || contractAttachRecords.isEmpty())
 			return contractSpecificData;	
 
+		Record contractAttachRecord = contractAttachRecords.get(0);
+		
 		contractSpecificData.setId(contractAttachRecord.get(CONTRACT_ATTACH.ID));
 
 		Contrata contrata = new Contrata();

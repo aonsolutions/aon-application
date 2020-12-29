@@ -8,6 +8,7 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -247,7 +248,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback);
 
 	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl,
-			AsyncCallback<String> callback);
+			AsyncCallback<List<ContractAttach>> callback);
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 

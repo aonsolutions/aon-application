@@ -484,10 +484,10 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void fillContract(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.fillContract(contractData.getContractId(), getContractType(), getFormativeLevel(), new AsyncCallback<String>() {
+	public void saveContractExport(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
+		employeesService.fillContract(contractData.getContractId(), getContractType(), getFormativeLevel(), new AsyncCallback<List<ContractAttach>>() {
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(List<ContractAttach> result) {
 				success.accept(result);
 			}
 			@Override
@@ -496,6 +496,19 @@ public class ContrataEmployeeObject {
 			}
 		});
 	}
+	
+//	public void fillContract(Consumer<String> success, Consumer<Throwable> failure) {
+//		employeesService.fillContract(contractData.getContractId(), getContractType(), getFormativeLevel(), new AsyncCallback<String>() {
+//			@Override
+//			public void onSuccess(String result) {
+//				success.accept(result);
+//			}
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				failure.accept(caught);
+//			}
+//		});
+//	}
 	
 	public void checkStatus(Consumer<EmployeeStatus> success, Consumer<Throwable> failure) {
 		
