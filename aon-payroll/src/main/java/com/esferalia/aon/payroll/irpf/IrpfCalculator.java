@@ -124,7 +124,7 @@ public class IrpfCalculator {
 		if ( year == 2020 )
 			return calculateIrpf2020(ctx);
 		else 
-			return calculateIrpf2020(ctx);
+			return calculateIrpf2021(ctx);
 	}
 	
 	
@@ -2281,7 +2281,7 @@ public class IrpfCalculator {
 			File error2021File = File.createTempFile(
 					AEATRetencionesError2021.class.getSimpleName(), null);
 
-			es.aeat.pret.c200.mc.ModuloCalculo.procesarFicheroXml(entrada2021File.getAbsolutePath(),
+			es.aeat.pret.c200.mc.c210.ModuloCalculo.procesarFicheroXml(entrada2021File.getAbsolutePath(),
 					error2021File.getAbsolutePath(), null,
 					salida2021File.getAbsolutePath());
 			entrada2021File.delete();
