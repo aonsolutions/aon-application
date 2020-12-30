@@ -124,7 +124,7 @@ public class IrpfCalculator {
 		if ( year == 2020 )
 			return calculateIrpf2020(ctx);
 		else 
-			return calculateIrpf2021(ctx);
+			return calculateIrpf2020(ctx);
 	}
 	
 	
