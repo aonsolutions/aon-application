@@ -88,46 +88,30 @@ public class PdfTest {
 				public void setSeniorityDate(Date seniorityDate) {
 					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
 					System.out.println(df.format(seniorityDate));
-					try {
-						Date expected = new SimpleDateFormat("dd-MM-yyyy").parse("14-09-1972");
-						assertEquals(expected, seniorityDate);
-					} catch (ParseException e) {
-						fail("Wrong comparison date");
-					}
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(seniorityDate);
+					assertEquals("14-09-1972", actual);
 				}
 				//6th line
 				@Override
 				public void setStartDate(Date startDate) {
 					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
 					System.out.println(df.format(startDate));
-					try {
-						Date expected = new SimpleDateFormat("dd-MM-yyyy").parse("01-02-2020");
-						assertEquals(expected, startDate);
-					} catch (ParseException e) {
-						fail("Wrong comparison date");
-					}
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(startDate);
+					assertEquals("01-02-2020", actual);
 				}
 				@Override
 				public void setEndDate(Date endDate) {
 					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
 					System.out.println(df.format(endDate));
-					try {
-						Date expected = new SimpleDateFormat("dd-MM-yyyy").parse("29-02-2020");
-						assertEquals(expected, endDate);
-					} catch (ParseException e) {
-						fail("Wrong comparison date");
-					}
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(endDate);
+					assertEquals("29-02-2020", actual);
 				}
 				@Override
 				public void setChargeDate(Date chargeDate) {
 					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
 					System.out.println(df.format(chargeDate));
-					try {
-						Date expected = new SimpleDateFormat("dd-MM-yyyy").parse("29-02-2020");
-						assertEquals(expected, chargeDate);
-					} catch (ParseException e) {
-						fail("Wrong comparison date");
-					}
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(chargeDate);
+					assertEquals("29-02-2020", actual);
 				}
 				@Override
 				public void setTimeUnits(Integer timeUnits) {
@@ -426,46 +410,30 @@ public class PdfTest {
 				public void setSeniorityDate(Date seniorityDate) {
 					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
 					System.out.println(df.format(seniorityDate));
-					try {
-						Date expected = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2019");
-						assertEquals(expected, seniorityDate);
-					} catch (ParseException e) {
-						fail("Wrong comparison date");
-					}
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(seniorityDate);
+					assertEquals("01-01-2019", actual);
 				}
 				//6th line
 				@Override
 				public void setStartDate(Date startDate) {
 					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
 					System.out.println(df.format(startDate));
-					try {
-						Date expected = new SimpleDateFormat("dd-MM-yyyy").parse("01-06-2020");
-						assertEquals(expected, startDate);
-					} catch (ParseException e) {
-						fail("Wrong comparison date");
-					}
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(startDate);
+					assertEquals("01-06-2020", actual);
 				}
 				@Override
 				public void setEndDate(Date endDate) {
 					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
 					System.out.println(df.format(endDate));
-					try {
-						Date expected = new SimpleDateFormat("dd-MM-yyyy").parse("30-06-2020");
-						assertEquals(expected, endDate);
-					} catch (ParseException e) {
-						fail("Wrong comparison date");
-					}
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(endDate);
+					assertEquals("30-06-2020", actual);
 				}
 				@Override
 				public void setChargeDate(Date chargeDate) {
 					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
 					System.out.println(df.format(chargeDate));
-					try {
-						Date expected = new SimpleDateFormat("dd-MM-yyyy").parse("30-06-2020");
-						assertEquals(expected, chargeDate);
-					} catch (ParseException e) {
-						fail("Wrong comparison date");
-					}
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(chargeDate);
+					assertEquals("30-06-2020", actual);
 				}
 				@Override
 				public void setTimeUnits(Integer timeUnits) {
@@ -775,12 +743,10 @@ public class PdfTest {
 
 				@Override
 				public void setSeniorityDate(Date seniorityDate) {
-					System.out.println(seniorityDate);
-					try {
-						assertEquals(new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2008"), seniorityDate);
-					} catch (ParseException e) {
-						fail();
-					}
+					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
+					System.out.println(df.format(seniorityDate));
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(seniorityDate);
+					assertEquals("01-10-2008", actual);
 				}
 
 				@Override
@@ -807,35 +773,26 @@ public class PdfTest {
 				
 				@Override
 				public void setStartDate(Date startDate) {
-					System.out.println(startDate);
-					try {
-						Date expected=new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2020");
-						assertEquals(expected, startDate);
-					} catch (ParseException e) {
-						fail();
-					}
+					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
+					System.out.println(df.format(startDate));
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(startDate);
+					assertEquals("01-01-2020", actual);
 				}
 				
 				@Override
 				public void setEndDate(Date endDate) {
-					System.out.println(endDate);
-					try {
-						Date expected=new SimpleDateFormat("dd-MM-yyyy").parse("31-01-2020");
-						assertEquals(expected, endDate);
-					} catch (ParseException e) {
-						fail();
-					}
+					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
+					System.out.println(df.format(endDate));
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(endDate);
+					assertEquals("31-01-2020", actual);
 				}
 				
 				@Override
 				public void setChargeDate(Date chargeDate) {
-					System.out.println(chargeDate);
-					try {
-						Date expected=new SimpleDateFormat("dd-MM-yyyy").parse("31-01-2020");
-						assertEquals(expected, chargeDate);
-					} catch (ParseException e) {
-						fail();
-					}
+					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
+					System.out.println(df.format(chargeDate));
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(chargeDate);
+					assertEquals("31-01-2020", actual);
 				}
 
 				@Override
@@ -938,13 +895,10 @@ public class PdfTest {
 
 				@Override
 				public void setIssueDate(Date issueDate) {
-					System.out.println(issueDate);
-					try {
-						Date expected=new SimpleDateFormat("dd-MM-yyyy").parse("31-01-2020");
-						assertEquals(expected, issueDate);
-					} catch (ParseException e) {
-						fail();
-					}		
+					DateFormat df = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
+					System.out.println(df.format(issueDate));
+					String actual = new SimpleDateFormat("dd-MM-yyyy").format(issueDate);
+					assertEquals("31-01-2020", actual);	
 				}
 
 
@@ -1100,6 +1054,18 @@ public class PdfTest {
 			});
 		}
 	}
+	
+	
+	
+	@Test
+	//@Ignore
+	public void testA3New() throws IOException, UnknownPDFException {
+		try ( InputStream is = PdfTest.class.getResourceAsStream("year_payrolls_lorena.pdf") ){
+			SalaryPDFParser.parse(is, new SalaryBuilder());
+		}
+	}
+	
+	
 
 	@Test
 	@Ignore

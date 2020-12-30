@@ -5,9 +5,9 @@ import static com.esferalia.aon.salary.enumeration.DeductionType.COMMON_CONTINGE
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.in.payroll.pdf.templates.AltaiPDFTemplate.PDFContract;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
@@ -31,6 +32,20 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class A3PDFTemplate implements SalaryPDFTemplate {
 
 	public static final A3PDFTemplate A3_PDF_TEMPLATE = new A3PDFTemplate();
+	
+	/*salaryBuilder.setContract(
+					new PDFContract()
+					.setCcc(ccc) 
+					.setNaf(naf)
+					.setNif(nif)
+					.setCif(cif)
+					.setEndDate(endDate)
+					.setStartDate(startDate)
+					.setEmployeeCode(employeeCode)
+					.setEnterpriseCode(enterpriseCode)
+					.setEmployeeName(employeeName)
+					.setEnterpriseName(enterpriseName)
+			);*/
 	
 	
 	private static String removeSpace(String str, int... pos) {
@@ -74,8 +89,10 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			empName=removeSpace(empName, 13);
 			
 			matcher = find(reader, EMPLOYEE_ADDRESS);
-			String empHome=AonStringUtils.trimToNull(matcher.group()).replaceAll("\\s{2,}", " ");
-			
+			String empHome=null;
+			try {
+				empHome=AonStringUtils.trimToNull(matcher.group()).replaceAll("\\s{2,}", " ");
+			} catch (NullPointerException e) {}
 			
 			
 			
@@ -87,9 +104,11 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			String nif=AonStringUtils.trimToNull(matcher.group("nif"));
 			
 			matcher = find(reader, ENTERPRISE_HOME);
-			salaryBuilder.setEnterpriseName(AonStringUtils.trimToNull(matcher.group("enterprisename")));
+			String entName = AonStringUtils.trimToNull(matcher.group("enterprisename"));
+			salaryBuilder.setEnterpriseName(entName);
 			salaryBuilder.setEnterpriseAddress(AonStringUtils.trimToNull(matcher.group("address")));
-			salaryBuilder.setCcc(AonStringUtils.trimToNull(matcher.group("nss")).replaceAll("[/]","").replaceAll("[-]", ""));
+			String ccc = AonStringUtils.trimToNull(matcher.group("nss")).replaceAll("[/]","").replaceAll("[-]", "");
+			salaryBuilder.setCcc(ccc);
 			
 			salaryBuilder.setEmployeeName(empName);
 			salaryBuilder.setEmployeeAddress(empHome);
@@ -97,15 +116,18 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			salaryBuilder.setEmployeeCity(empCity);
 			salaryBuilder.setEnterpriseDocument(nif);
 			
+			matcher = find(reader, WORKER_HEADER);
 			
 			matcher = find(reader, WORKER);
 			salaryBuilder.setCategory(AonStringUtils.trimToNull(matcher.group("job")));
 			String seniority=AonStringUtils.trimToNull(matcher.group("old"));
 			salaryBuilder.setSeniorityDate(a3DateParser(seniority));
-			salaryBuilder.setEmployeeDocument(AonStringUtils.trimToNull(matcher.group("nif")));
+			String dni = AonStringUtils.trimToNull(matcher.group("nif"));
+			salaryBuilder.setEmployeeDocument(dni);
 			
 			matcher = find(reader, SS_INFO);
-			salaryBuilder.setSocialSecurityNumber(AonStringUtils.trimToNull(matcher.group("affnum")).replaceAll("[/]","").replaceAll("[-]", ""));
+			String naf =AonStringUtils.trimToNull(matcher.group("affnum")).replaceAll("[/]","").replaceAll("[-]", "");
+			salaryBuilder.setSocialSecurityNumber(naf);
 			String quoteGroup=AonStringUtils.trimToNull(matcher.group("tarifa"));
 			salaryBuilder.setQuoteGroup(quoteGroup);
 			String codct=AonStringUtils.trimToNull(matcher.group("codct"));
@@ -134,7 +156,17 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			} catch (NumberFormatException e) {
 				
 			}
-			
+			salaryBuilder.setContract(
+					new PDFContract()
+					.setCcc(ccc) 
+					.setNaf(naf)
+					.setNif(dni)
+					.setCif(nif)
+					.setEndDate(dTo)
+					.setStartDate(dFrom)
+					.setEmployeeName(empName)
+					.setEnterpriseName(entName)
+			);
 			salaryBuilder.addData("__ENTERPRISE_CODE", new TimedObject<String>(codct, per));
 			salaryBuilder.addData("__EMPLOYEE_CODE", new TimedObject<String>(quoteGroup, per));
 			
@@ -154,7 +186,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 					if(context.charAt(0)=='*') {
 						context=context.substring(1);
 						context=context.toUpperCase();
-						context.replaceAll("\\s", "_");
+						context = context.replaceAll("\\s", "_");
 					}
 					PaymentType pt=PaymentType.CRA_0001;
 					
@@ -185,6 +217,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 					description=removeSpace(description, 19);
 					String context=description;
 					DeductionType dt=null;
+					context=null;
 					if(description.contains("COTIZACION CONT.COMU")) {
 						dt=DeductionType.COMMON_CONTINGENCY;
 						description=dt.getName(new Locale("es", "ES"));
@@ -502,11 +535,13 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			totalSS=Math.round(totalSS*100.0)/100.0;
 			salaryBuilder.setTotalSS(totalSS);
 			salaryBuilder.getSalary();
-			
 		}
 		return this;
 	
 	}
+	
+	
+	
 	
 	private static class Deduction implements IDeduction {
 
@@ -673,9 +708,18 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 					return null;
 				}
 				
+				Calendar calendar = Calendar.getInstance();
+				calendar.set(Calendar.DAY_OF_MONTH, day);
+				calendar.set(Calendar.MONTH, month -1   );
+				calendar.set(Calendar.YEAR, year   );
 				
+				calendar.set(Calendar.HOUR_OF_DAY, 12);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				calendar.set(Calendar.ZONE_OFFSET, 2);
 				
-				return new SimpleDateFormat("dd-MM-yy").parse(""+day+"-"+month+"-"+year);
+				return calendar.getTime();
 			}
 			else {
 				return null;
@@ -703,11 +747,11 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	, Pattern.CASE_INSENSITIVE);
 	//    CL    ALFONSO VI             30       3  DC                 
 	private static final Pattern EMPLOYEE_ADDRESS = 
-	Pattern.compile("^\\s*(?<tipo>[^\\s]+)\\s+(?<address>.+)$"
+	Pattern.compile("^\\s*(?<tipo>[^\\s]+)?\\s+(?<address>.+)?$"
 	, Pattern.CASE_INSENSITIVE);
 	//  09000  MIRANDA DE EBRO 
 	private static final Pattern PC_AND_MUNICIPALITY =
-	Pattern.compile("^\\s*(?<postcode>\\d{5})\\s*(?<municipality>.+)$"
+	Pattern.compile("^\\s*(?<postcode>\\d{5})?\\s*(?<municipality>.+)?$"
 	, Pattern.CASE_INSENSITIVE);
 	//  BURGOS    
 	private static final Pattern PROVINCE =
@@ -728,8 +772,10 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	Pattern.compile("TRABAJADOR/A\\s*CATEGORIA\\s*NºMATRIC\\s*ANTIGUEDAD\\s*D\\.N\\.I\\."
 	, Pattern.CASE_INSENSITIVE);
 	//IVANOV , PETAR GEORGIEV           FREGADOR                  1 OCT 08   X8865220P   
+	//    SANCHEZ REY, LORENA               COMERCIAL                 1 MAR 20   31725099A   
+	//"(?<name>.+?)\\s{2,}(?<job>.+?)?\\s{2,}(?<nummatric>.*?)?\\s*(?<old>\\d+\\s+\\w+\\s+\\d+)?\\s{2,}(?<nif>(\\d|\\w)\\d{8}\\w)\\s*"
 	private static final Pattern WORKER =
-	Pattern.compile("\\s*(?<surname>\\w+)\\s*,\\s*(?<name>[\\w|\\s]+?)\\s{2,}(?<job>.+?)\\s{2,}(?<nummatric>.*?)?\\s*(?<old>\\d+\\s+\\w+\\s+\\d+)\\s{2,}(?<nif>[\\w|\\d]{9})\\s*"
+	Pattern.compile("\\s*(?<name>.+?)\\s{2,}(?<job>.+?)?\\s{2,}(?<old>\\d+\\s\\w{3}\\s\\d+)?(?<nif>.+?)\\s*"
 	, Pattern.CASE_INSENSITIVE);
 	//Nº AFILIACION. S.S. TARIFA COD.CT SECCION NRO. PERIODO TOT. DIAS
 	private static final Pattern SS_INFO_HEADER =

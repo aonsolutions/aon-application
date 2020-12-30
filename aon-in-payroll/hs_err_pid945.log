@@ -1,0 +1,21 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007fb97eab8133, pid=945, tid=962
+#
+# JRE version: OpenJDK Runtime Environment 18.9 (11.0.8+10) (build 11.0.8+10)
+# Java VM: OpenJDK 64-Bit Server VM 18.9 (11.0.8+10, mixed mode, tiered, compressed oops, g1 gc, linux-amd64)
+# Problematic frame:
+# C  [libjimage.so+0x3133]
+#
+# Core dump will be written. Default location: Core dumps may be processed with "/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h" (or dumping to /home/igonzalez/eclipse-workspace/aon.parent/aon-in-payroll/core.945)
+#
+# If you would like to submit a bug report, please visit:
+#   https://bugreport.java.com/bugreport/crash.jsp
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:43559 -ea -javaagent:/home/igonzalez/.var/app/org.eclipse.Committers/eclipse/configuration/org.eclipse.osgi/236/0/.cp/lib/javaagent-shaded.jar -Dfile.encoding=ISO-8859-1 org.eclipse.jdt.internal.junit.runner.RemoteTestRunner -version 3 -port 33005 -testLoaderClass org.eclipse.jdt.internal.junit4.runner.JUnit4TestLoader -loaderpluginname org.eclipse.jdt.junit4.runtime -classNames com.esferalia.aon.in.payroll.pdf.PdfTest
+
+Host: 

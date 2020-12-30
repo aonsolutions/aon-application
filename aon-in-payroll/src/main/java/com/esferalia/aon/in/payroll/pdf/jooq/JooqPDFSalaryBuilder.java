@@ -339,7 +339,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 				domain.setParent(parentDomain.getId());
 				domain.setOwner(parentDomain.getOwner());
 				domain.setEnableheredity(enableHeredity);
-				domain.setScope(parentDomain.getScope());
+				domain.setScope(3535/*parentDomain.getScope()*/);
 				domain.setDescription(contract.getEnterpriseName());
 				domain.setCreationDate(new Timestamp(System.currentTimeMillis()));
 				domain.setName(String.format("%s-%s-%s", domainNamePreffix, contract.getCif(), parentDomainName));
@@ -364,7 +364,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 				getDSLContext().newRecord(ENTERPRISE);
 				enterprise.setDomain(domain.getId());
 				enterprise.setRegistry(r3gistry.getId());
-				enterprise.setScope(parentDomain.getScope());
+				enterprise.setScope(3535/*parentDomain.getScope()*/);
 				enterprise.insert();
 				
 				return enterprise;

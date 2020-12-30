@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.in.payroll.pdf.templates.AltaiPDFTemplate.PDFContract;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
@@ -30,6 +32,21 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 	
 	public static final DSIPDFTemplate DSI_PDF_TEMPLATE = new DSIPDFTemplate();
 	
+	/*salaryBuilder.setContract(
+	new PDFContract()
+	.setCcc(ccc) 
+	.setNaf(naf)
+	.setNif(nif)
+	.setCif(cif)
+	.setEndDate(endDate)
+	.setStartDate(startDate)
+	.setEmployeeCode(employeeCode)
+	.setEnterpriseCode(enterpriseCode)
+	.setEmployeeName(employeeName)
+	.setEnterpriseName(enterpriseName)
+	);*/
+
+	
 	@Override
 	public SalaryPDFTemplate parse(String text, ISalaryBuilder<?> salaryBuilder) throws IOException, UnknownPDFException {
 		salaryBuilder.createNewSalary();
@@ -40,14 +57,19 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 			Double totalSS = 0d;
 			
 			Matcher matcher = find(reader, ENTERPRISE_WORKER);
-			salaryBuilder.setEmployeeName(AonStringUtils.trimToNull(matcher.group("name")));
-			salaryBuilder.setEnterpriseName(AonStringUtils.trimToNull(matcher.group("enterprise")));
+			String employeeName = AonStringUtils.trimToNull(matcher.group("name"));
+			salaryBuilder.setEmployeeName(employeeName);
+			String enterpriseName = AonStringUtils.trimToNull(matcher.group("enterprise"));
+			salaryBuilder.setEnterpriseName(enterpriseName);
 			matcher = find(reader, HOME_NIF);
 			salaryBuilder.setEmployeeAddress(AonStringUtils.trimToNull(matcher.group("home")));
-			salaryBuilder.setEmployeeDocument(AonStringUtils.trimToNull(matcher.group("nif")));
+			String nif = AonStringUtils.trimToNull(matcher.group("nif"));
+			salaryBuilder.setEmployeeDocument(nif);
 			matcher = find(reader, CIF_NSS);
-			salaryBuilder.setEnterpriseDocument(AonStringUtils.trimToNull(matcher.group("ccc")));
-			salaryBuilder.setSocialSecurityNumber(AonStringUtils.trimToNull(matcher.group("nss").replaceAll("/", "")));
+			String cif = AonStringUtils.trimToNull(matcher.group("cif"));
+			salaryBuilder.setEnterpriseDocument(cif);
+			String naf = AonStringUtils.trimToNull(matcher.group("nss").replaceAll("/", ""));
+			salaryBuilder.setSocialSecurityNumber(naf);
 			matcher = find(reader, CATEGORY);
 			salaryBuilder.setCategory(AonStringUtils.trimToNull(matcher.group("category")));
 			matcher = find(reader, NSS_GROUP_OLD);
@@ -56,16 +78,32 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 				ccc = ccc.replaceAll("/", "");
 			}
 			String seniority = AonStringUtils.trimToNull(matcher.group("seniority"));
-			Date seniorityDate = null;
 			if(seniority!=null) {
 				try {
-					seniorityDate = new SimpleDateFormat("dd/MM/yyyy").parse(seniority);
-				} catch (ParseException e) {}
+					String[] dmy=seniority.split("/");
+					if(dmy.length!=3)
+						throw new Exception();
+					Integer day = Integer.parseInt(dmy[0]);
+					Integer month = Integer.parseInt(dmy[1]);
+					Integer year = Integer.parseInt(dmy[2]);
+					Calendar calendar = Calendar.getInstance();
+					calendar.set(Calendar.DAY_OF_MONTH, day);
+					calendar.set(Calendar.MONTH, month -1   );
+					calendar.set(Calendar.YEAR, year   );
+					
+					calendar.set(Calendar.HOUR_OF_DAY, 12);
+					calendar.set(Calendar.MINUTE, 0);
+					calendar.set(Calendar.SECOND, 0);
+					calendar.set(Calendar.MILLISECOND, 0);
+					calendar.set(Calendar.ZONE_OFFSET, 2);
+					
+					salaryBuilder.setSeniorityDate(calendar.getTime());
+				} catch (Exception e) {}
 			}
 			salaryBuilder.setCcc(ccc);
 			String quoteGroup = AonStringUtils.trimToNull(matcher.group("quotegroup"));
 			salaryBuilder.setQuoteGroup(quoteGroup);
-			salaryBuilder.setSeniorityDate(seniorityDate);
+			//salaryBuilder.setSeniorityDate(seniorityDate);
 			matcher = find(reader, LIQPERIOD_TOTDAYS);
 			String liqString = AonStringUtils.trimToNull(matcher.group("liqper"));
 			Date dFrom = null;
@@ -79,19 +117,30 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 				if(matcher.matches()) {
 					
 					
-					String strFrom = AonStringUtils.trimToNull(matcher.group("dayfrom"))+"-"+monthChooser(AonStringUtils.trimToNull(matcher.group("monthfrom")))+"-"+AonStringUtils.trimToNull(matcher.group("year"));
-					String strTo = matcher.group("dayto")+"-"+monthChooser(AonStringUtils.trimToNull(matcher.group("monthto")))+"-"+matcher.group("year");
+					String strFrom =  matcher.group("dayfrom")+" "+AonStringUtils.trimToNull(matcher.group("monthfrom"))+" "+AonStringUtils.trimToNull(matcher.group("year"));
+					String strTo = matcher.group("dayto")+" "+AonStringUtils.trimToNull(matcher.group("monthto"))+" "+matcher.group("year");
 					try {
-						dFrom = new SimpleDateFormat("d-MM-yyyy").parse(strFrom);
-						dTo = new SimpleDateFormat("d-MM-yyyy").parse(strTo);
+						dFrom = dsiDateParser(strFrom);
+						dTo = dsiDateParser(strTo);
 						salaryBuilder.setStartDate(dFrom);
 						salaryBuilder.setEndDate(dTo);
 						salaryBuilder.setChargeDate(dTo);
-					} catch (ParseException e) {}
+					} catch (NullPointerException e) {}
 					
 				}
 			}
 			Period per = new Period(dFrom, dTo);
+			salaryBuilder.setContract(
+					new PDFContract()
+					.setCcc(ccc) 
+					.setNaf(naf)
+					.setNif(nif)
+					.setCif(cif)
+					.setEndDate(dTo)
+					.setStartDate(dFrom)
+					.setEmployeeName(employeeName)
+					.setEnterpriseName(enterpriseName)
+					);
 			salaryBuilder.addData("__EMPLOYEE_CODE", new TimedObject<String>(quoteGroup, per));
 			matcher = find(reader, PAYMENTS_HEADER);
 			String line = reader.readLine();
@@ -111,7 +160,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 					try {
 						Double amount = Double.parseDouble(strAmount);
 						PaymentType pt = PaymentType.CRA_0001;
-						String description = concept;
+						String description = null;
 						switch (concept) {
 							case "SALARIO BASE":
 								description = "SALARIO_BASE";
@@ -119,7 +168,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 							case "HORAS EXTRAORDINARIAS":
 								description = "HORAS_EXTRAS";
 								pt = PaymentType.CRA_0002;
-								break;	
+								break;
 						}
 						
 						salaryBuilder.addPayment(amount
@@ -271,9 +320,28 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 				Double totalLiquid = Double.parseDouble(AonStringUtils.trimToNull(matcher.group("amount").replaceAll("\\.", "").replaceAll(",", ".")));
 				salaryBuilder.setTotalLiquid(totalLiquid);
 			} catch (NullPointerException | NumberFormatException e) {}
+			
+			matcher = find(reader, ISSUE_DATE);
+			try {
+				Integer day = Integer.parseInt(AonStringUtils.trimToNull(matcher.group("day")));
+				Integer month = Integer.parseInt(monthChooser(AonStringUtils.trimToNull(matcher.group("month"))));
+				Integer year = Integer.parseInt(AonStringUtils.trimToNull(matcher.group("year")));
+				Calendar calendar = Calendar.getInstance();
+				calendar.set(Calendar.DAY_OF_MONTH, day);
+				calendar.set(Calendar.MONTH, month -1   );
+				calendar.set(Calendar.YEAR, year   );
+				
+				calendar.set(Calendar.HOUR_OF_DAY, 12);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				calendar.set(Calendar.ZONE_OFFSET, 2);
+				
+				salaryBuilder.setIssueDate(calendar.getTime());
+			} catch (NullPointerException | DateFormatException | NumberFormatException e) {}
+			
 			matcher = find(reader, ENTERPRISE_APPORT_HEADER_2);
-			
-			
+
 			matcher = find(reader, CC_MONTHLY);
 			
 			String remuneration = AonStringUtils.trimToNull(matcher.group("amount"));
@@ -451,6 +519,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 			}
 			totalSS = Math.round(totalSS*100.0)/100.0;
 			salaryBuilder.setTotalSS(totalSS);
+			salaryBuilder.getSalary();
 		}
 		return this;
 	}
@@ -487,6 +556,81 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 	}
 	
 	
+	
+	private static Date dsiDateParser(final String date){
+		Pattern dPatt=Pattern.compile("\\s*(?<day>\\d{1,2})\\s*(?<esmonth>\\w+)\\s*(?<year>\\d+)\\s*");
+		try {
+			Matcher m=dPatt.matcher(date);
+			if(m.matches()) {
+				int day=Integer.parseInt(m.group("day"));
+				int year=Integer.parseInt(m.group("year"));
+				int month;
+				String strMonth=m.group("esmonth");
+				if((strMonth.equalsIgnoreCase("ENE"))||(strMonth.equalsIgnoreCase("ENERO"))) {
+					month=1;
+				}
+				else if ((strMonth.equalsIgnoreCase("FEB"))||(strMonth.equalsIgnoreCase("FEBRERO"))) {
+					month=2;
+				}
+				else if ((strMonth.equalsIgnoreCase("MAR"))||(strMonth.equalsIgnoreCase("MARZO"))) {
+					month=3;
+				}
+				else if ((strMonth.equalsIgnoreCase("ABR"))||(strMonth.equalsIgnoreCase("ABRIL"))) {
+					month=4;
+				}
+				else if ((strMonth.equalsIgnoreCase("MAY"))||(strMonth.equalsIgnoreCase("MAYO"))) {
+					month=5;
+				}
+				else if ((strMonth.equalsIgnoreCase("JUN"))||(strMonth.equalsIgnoreCase("JUNIO"))) {
+					month=6;
+				}
+				else if ((strMonth.equalsIgnoreCase("JUL"))||(strMonth.equalsIgnoreCase("JULIO"))) {
+					month=7;
+				}
+				else if ((strMonth.equalsIgnoreCase("AGO"))||(strMonth.equalsIgnoreCase("AGOSTO"))) {
+					month=8;
+				}
+				else if ((strMonth.equalsIgnoreCase("SEP"))||(strMonth.equalsIgnoreCase("SEPTIEMBRE"))) {
+					month=9;
+				}
+				else if ((strMonth.equalsIgnoreCase("OCT"))||(strMonth.equalsIgnoreCase("OCTUBRE"))) {
+					month=10;
+				}
+				else if ((strMonth.equalsIgnoreCase("NOV"))||(strMonth.equalsIgnoreCase("NOVIEMBRE"))) {
+					month=11;
+				}
+				else if ((strMonth.equalsIgnoreCase("DIC"))||(strMonth.equalsIgnoreCase("DICIEMBRE"))) {
+					month=12;
+				}
+				else {
+					return null;
+				}
+				
+				Calendar calendar = Calendar.getInstance();
+				calendar.set(Calendar.DAY_OF_MONTH, day);
+				calendar.set(Calendar.MONTH, month -1   );
+				calendar.set(Calendar.YEAR, year   );
+				
+				calendar.set(Calendar.HOUR_OF_DAY, 12);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				calendar.set(Calendar.ZONE_OFFSET, 2);
+				
+				return calendar.getTime();
+			}
+			else {
+				return null;
+			}
+			
+		} catch (Exception e) {
+			System.err.println(e.getClass());
+			return null;
+		}
+	}
+	
+	
+	
 	//	Empresa: EMPRESA S.L. Trabajador: ANDREA ANDREA, MARIA
 	private static Pattern ENTERPRISE_WORKER =
 	Pattern.compile("^\\s*Empresa:\\s*(?<enterprise>.+?)\\s*Trabajador:\\s*(?<name>[\\w\\s,]+)\\s*$"
@@ -497,7 +641,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 	, Pattern.CASE_INSENSITIVE);
 	//	C.I.F.: B50671908 Nº de Afiliación a la Seguridad Social: 08/02983860/69
 	private static Pattern CIF_NSS =
-	Pattern.compile("\\s*C\\.I\\.F\\.:\\s*(?<ccc>[\\w\\d]+)\\s*Nº\\s*de\\s*Afiliación\\s*"
+	Pattern.compile("\\s*C\\.I\\.F\\.:\\s*(?<cif>[\\w\\d]+)\\s*Nº\\s*de\\s*Afiliación\\s*"
 			+ "a\\s*la\\s*Seguridad\\s*Social:\\s*(?<nss>[\\d/]+)\\s*"
 	, Pattern.CASE_INSENSITIVE);
 //	Código de Cuenta de Cotización a la Categoría o Grupo Profesional:
@@ -583,6 +727,9 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 	, Pattern.CASE_INSENSITIVE);
 	
 //	ZARAGOZA, 29 de febrero de 2020
+	public static Pattern ISSUE_DATE =
+	Pattern.compile("\\s*(?<place>[^,]+)?,?\\s*(?<date>(?<day>\\d{1,2})\\s*de\\s*(?<month>\\w+?)\\s*de\\s*(?<year>\\d{4}))\\s*"
+	, Pattern.CASE_INSENSITIVE);
 //	RECIBI,
 //	INFORMACION ADICIONAL:
 //	Texto de informacion adicional
