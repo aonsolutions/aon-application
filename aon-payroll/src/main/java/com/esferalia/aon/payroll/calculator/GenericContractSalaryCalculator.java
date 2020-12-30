@@ -1383,7 +1383,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					results = fixExtraResults(contractPayment, results, start, end, expressionContext);
 			}			
 			
-			double resultsDouble = results.stream().collect(Collectors.summingDouble( r -> r.getValue() ));		
+			double resultsDouble = results.stream().filter( r -> r.getValue() != null ).collect(Collectors.summingDouble( r -> r.getValue() ));		
 
 			for (ITimedResult<Double> result : results) {
 
