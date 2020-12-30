@@ -50,7 +50,7 @@ public abstract class TaxCalculator {
 	public abstract Map<Period,Double> getAmounts(PaymentType type);
 	
 	public abstract double tax(IContractPayment payment, Date start, Date end, 
-			Date issueDate, double amount ) throws AonException;
+			Date issueDate, double amount, double total ) throws AonException;
 
 	
 	public static class NotNowException extends  AonException {
@@ -131,7 +131,7 @@ public abstract class TaxCalculator {
 
 		@Override
 		public double tax(IContractPayment contractPayment, Date start, Date end,
-				Date issue, final double amount) throws AonException {
+				Date issue, final double amount, final double total) throws AonException {
 			
 			SalaryType salaryType = contractPayment.getSalaryType();
 			if ( salaryType != context.getSalaryType() ) {

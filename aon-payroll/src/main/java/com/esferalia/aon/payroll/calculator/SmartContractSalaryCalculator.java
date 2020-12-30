@@ -293,27 +293,27 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			return delegate.getAmounts(type);
 		}
 
-		public double tax(IContractPayment payment, Date start, Date end, Date issueDate, double amount)
+		public double tax(IContractPayment payment, Date start, Date end, Date issueDate, double amount, double total)
 				throws AonException {
 			try {
 				if ( payment.getType() == PaymentType.CRA_0004 
 					&& payment.getMonth() == getMonth(issueDate) 
 					&& payment.getSalaryType() == ctx.getSalaryType() 
 					&& ctx.getSalaryType() == SalaryType.SALARY ) {
-    				amount = getExtra(ctx, payment, issueDate, amount).orElse(amount);
+    				amount = getExtra(ctx, payment, issueDate, amount, total).orElse(amount);
 					payment = new SalaryExtraPayment(payment, amount);
-					double tax = delegate.tax(payment, start, end, issueDate, amount );
+					double tax = delegate.tax(payment, start, end, issueDate, amount, total);
 					throw new YesExtraException(tax);
 				}
 				
-				return delegate.tax(payment, start, end, issueDate, amount);
+				return delegate.tax(payment, start, end, issueDate, amount, total);
 			
 			} catch (ExtraException e) {
-				return taxExtra(payment, start, end, issueDate, amount);
+				return taxExtra(payment, start, end, issueDate, amount, total);
 			} 
 		}
 		
-		private double taxExtra(IContractPayment payment, Date start, Date end, Date issueDate, double amount) 
+		private double taxExtra(IContractPayment payment, Date start, Date end, Date issueDate, double amount, double total) 
 				throws AonException {
 			try {
 				IExtraPayment extraPayment = getExtraPayment(payment);
@@ -324,7 +324,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				if ( !extraEmited(extraIssueDate, payment, ctx)) {
 					amount = calculateExtra(ctx, extraPayment, extraIssueDate);
 					payment = new SalaryExtraPayment(payment, amount);
-					double tax = delegate.tax(payment, start, end, extraIssueDate, amount );
+					double tax = delegate.tax(payment, start, end, extraIssueDate, amount, total);
 					throw new YesExtraException(tax);
 				}
 				
@@ -1179,8 +1179,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 	}
 	
-	private static Optional<Double> getExtra(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate, Double amount) throws AonException {
-		Optional<Double> quoted = getMonthlyQuoted(ctx, contractPayment, endDate, amount);
+	private static Optional<Double> getExtra(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate, Double amount,Double total) throws AonException {
+		Optional<Double> quoted = getMonthlyQuoted(ctx, contractPayment, endDate, amount, total);
 		if ( quoted.isPresent() )
 			return quoted;
 
@@ -1277,7 +1277,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 	}
 	
-	private static Optional<Double> getMonthlyQuoted(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate,Double amount) throws AonException {
+	private static Optional<Double> getMonthlyQuoted(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate,Double amount, Double total) throws AonException {
 		Collection<Payment> payments = getMonthlyQuotePayments(ctx, contractPayment, endDate);
 		
 		int expected = 0;
@@ -1286,7 +1286,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 				
 		if ( payments.size() == expected )
-			return Optional.ofNullable(payments.stream().collect(Collectors.summingDouble(p -> p.getQuote())) + amount / 12.00);
+			return Optional.ofNullable(payments.stream().collect(Collectors.summingDouble(p -> p.getQuote())) * amount/total  + amount / 12.00);
 		return Optional.empty();
 	}
 	
@@ -1312,7 +1312,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			(p) -> monthlyQuotedPayments.add(p), 
 			( ) -> salary.getPayments().stream()
 			.filter(p -> AonStringUtils.equals(contractPayment.getName(), p.getName()))
-			.findFirst().ifPresent(p -> monthlyQuotedPayments.add(p))) ;
+			.findFirst().ifPresentOrElse(
+			p -> monthlyQuotedPayments.add(p), 
+			() -> monthlyQuotedPayments.add( new Payment(0.00, 0.00, contractPayment.getExpression(), contractPayment.getDescription(), contractPayment.getName())) ) ) ;
 
 		})
 		;

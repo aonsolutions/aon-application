@@ -1381,10 +1381,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					contractPayment.getSalaryType() == SalaryType.SALARY ) {
 				if ( !results.get(0).getContext().containsKey(ContextVariable.PRORATION))
 					results = fixExtraResults(contractPayment, results, start, end, expressionContext);
-			}
+			}			
 			
-			
-			
+			double resultsDouble = results.stream().collect(Collectors.summingDouble( r -> r.getValue() ));		
 
 			for (ITimedResult<Double> result : results) {
 
@@ -1417,7 +1416,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				try {
 					Double tax ;
 					try {
-						tax = taxCalculator.tax(contractPayment, resultStart, resultEnd, issueDate, resultValue);
+						tax = taxCalculator.tax(contractPayment, resultStart, resultEnd, issueDate, resultValue, resultsDouble);
 					} catch ( YesExtraException e ) {
 						tax = e.getTax();
 						resultValue = e.getTax();

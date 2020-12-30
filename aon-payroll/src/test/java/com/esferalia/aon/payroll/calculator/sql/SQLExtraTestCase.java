@@ -4705,7 +4705,198 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 	}
 	
-	
+	@Test
+	public void testAnualExtrasAtSalaryWithoutAgreementITI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001);
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.JUNE);
+		calendar.set(DAY_OF_MONTH, 1);
+		Date contractDate = new Date(calendar.getTimeInMillis());
+
+		ContractRecord contract = newContract(
+				aonContext
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		//@formatter:off
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.MONTH_DAYS, "30.00");
+		
+		addPayment(aonContext, contract, conceptSalarioBase, "1000.00 * DIAS_TRABAJADOS/DIAS_MES");
+		addPayment(aonContext, contract, conceptPlusSalarial, "100.00 * DIAS_TRABAJADOS/DIAS_MES");
+		
+		addPayment(aonContext, contract, contract.getStartDate(), null , conceptPagaExtra, "PAGA EXTRAORDINARIA VERANO", "MENSUALIDAD", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JUNE.ordinal());
+		addPayment(aonContext, contract, contract.getStartDate(), null , conceptPagaExtra, "PAGA EXTRAORDINARIA NAVIDAD", "MENSUALIDAD", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		
+
+		int month ;
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		for ( month = 0 ; month < 11 ; month++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, add(startDate,Calendar.DAY_OF_MONTH,10), add(startDate,Calendar.DAY_OF_MONTH,20), null);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());		
+		
+		assertEquals(1100.00/6.00 * 20 / 30, salary.getExtraPayProration(), DELTA);
+		assertEquals(1100.00*20/30 + 1100.00*11/12 + 1100.00/12.00*20/30, salary.getTotalPayment(), 0.005);
+		
+	}
+
+	@Test
+	public void testBiAnualExtrasAtSalaryWithoutAgreementITI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001);
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.JUNE);
+		calendar.set(DAY_OF_MONTH, 1);
+		Date contractDate = new Date(calendar.getTimeInMillis());
+
+		ContractRecord contract = newContract(
+				aonContext
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		//@formatter:off
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.MONTH_DAYS, "30.00");
+		
+		addPayment(aonContext, contract, conceptSalarioBase, "1000.00 * DIAS_TRABAJADOS/DIAS_MES");
+		addPayment(aonContext, contract, conceptPlusSalarial, "100.00 * DIAS_TRABAJADOS/DIAS_MES");
+		
+		addPayment(aonContext, contract, contract.getStartDate(), null , conceptPagaExtra, "PAGA EXTRAORDINARIA VERANO", "SI(MES(INICIO)< 7,MENSUALIDAD*2, 0.00)", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JUNE.ordinal());
+		addPayment(aonContext, contract, contract.getStartDate(), null , conceptPagaExtra, "PAGA EXTRAORDINARIA NAVIDAD", "SI(MES(INICIO) > 6,MENSUALIDAD*2, 0.00)", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		
+
+		int month ;
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		for ( month = 0 ; month < 11 ; month++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, add(startDate,Calendar.DAY_OF_MONTH,10), add(startDate,Calendar.DAY_OF_MONTH,20), null);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());		
+		
+		assertEquals(1100.00/6.00 * 20 / 30, salary.getExtraPayProration(), DELTA);
+		assertEquals(1100.00*20/30 + 1100.00*5/6 + 1100.00/6.00*20/30, salary.getTotalPayment(), 0.005);
+		
+	}
+
+	@Test
+	public void testBiAnualExtrasAtSalaryWithoutAgreementERTEI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001);
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.JUNE);
+		calendar.set(DAY_OF_MONTH, 1);
+		Date contractDate = new Date(calendar.getTimeInMillis());
+
+		ContractRecord contract = newContract(
+				aonContext
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		//@formatter:off
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.MONTH_DAYS, "30.00");
+		
+		addPayment(aonContext, contract, conceptSalarioBase, "1000.00 * DIAS_TRABAJADOS/DIAS_MES");
+		addPayment(aonContext, contract, conceptPlusSalarial, "100.00 * DIAS_TRABAJADOS/DIAS_MES");
+		
+		addPayment(aonContext, contract, contract.getStartDate(), null , conceptPagaExtra, "PAGA EXTRAORDINARIA VERANO", "SI(MES(INICIO)< 7,MENSUALIDAD*2, 0.00)", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JUNE.ordinal());
+		addPayment(aonContext, contract, contract.getStartDate(), null , conceptPagaExtra, "PAGA EXTRAORDINARIA NAVIDAD", "SI(MES(INICIO) > 6,MENSUALIDAD*2, 0.00)", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		
+		
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addData(aonContext, contract, add(startDate, Calendar.MONTH,8), getLastDayOfMonth(add(startDate, Calendar.MONTH,9)), ContextVariable.ERE_FACTOR_FORCE_OFF, "1.0");
+
+		int month ;
+		for ( month = 0 ; month < 11 ; month++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection) {
+
+				
+				@Override
+				public void addPayment(Double amount, Double quote, Double tax, String description,
+						java.util.Date startDate, java.util.Date endDate, IPayment payment,
+						Map<String, ITimedVariable<?>> context) {
+					if ( "PAGA EXTRAORDINARIA NAVIDAD".equals(description) )
+						System.out.println(description + " : " + quote + " ( " + amount + ") "  );
+					super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				}
+			};
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());		
+		
+		assertEquals(1100.00/6.00, salary.getExtraPayProration(), DELTA);
+		assertEquals(1100.00 + 1100.00*8/12.00, salary.getTotalPayment(), 0.005);
+		
+	}	
 	@Test
 	public void testExtraConstantsI() throws ExpressionException,
 			SQLException, SalaryException {

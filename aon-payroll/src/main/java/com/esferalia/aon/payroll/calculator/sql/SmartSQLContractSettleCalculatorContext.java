@@ -367,7 +367,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 						return new TaxCalculator() {
 							
 							@Override
-							public double tax(IContractPayment payment, Date start, Date end, Date issueDate, double amount)
+							public double tax(IContractPayment payment, Date start, Date end, Date issueDate, double amount, double total)
 									throws AonException {
 								return amount;
 							}
