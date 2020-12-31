@@ -95,6 +95,18 @@
 				</execution>
 			</executions>
             </plugin>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-surefire-plugin</artifactId>
+			  <configuration>
+			    <systemProperties>
+			      <property>
+			        <name>javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema</name>
+			        <value>com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory</value>
+			      </property>
+			    </systemProperties>
+			  </configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -231,12 +243,6 @@
 			<artifactId>aon.seg.social</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		
 		<dependency>

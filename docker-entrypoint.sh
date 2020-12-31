@@ -56,7 +56,10 @@ EOF
 	-e 's/DYNAMODB_MANAGER_REGION_ID/'$DYNAMODB_MANAGER_REGION_ID'/' $AON_AIO_HOME/META-INF/context.xml;
 
         cat << EOF > $TOMCAT_BINDIR/setenv.sh
-CATALINA_OPTS="-Duser.language=es -Duser.country=ES -Djava.security.auth.login.config=$TOMCAT_CONFDIR/login.config"
+CATALINA_OPTS="-Duser.language=es \
+-Duser.country=ES \
+-Djava.security.auth.login.config=$TOMCAT_CONFDIR/login.config \
+-Djavax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema=com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory"
 EOF
 	echo
 	echo $(date)
