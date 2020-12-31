@@ -1,15 +1,25 @@
 package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill;
 
+import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.creators.PDFToolkit;
+import com.esferalia.aon.in.payroll.pdf.creators.exceptions.JsonParseException;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.jooq.tools.json.JSONArray;
+import org.jooq.tools.json.JSONParser;
+import org.jooq.tools.json.JSONObject;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class EnterpriseBillTemplate {
 
@@ -27,57 +37,183 @@ public class EnterpriseBillTemplate {
 	private static byte[] background;
 	private static byte[] qr_code;
 
+	private static boolean adapt;
+
+	//CREATE THE PDF WITH A JSON
+	public static void create_with_json(InputStream json, PrintInvoiceConfiguration config, InputStream qr_code) throws CanNotCreatePdfException, JsonParseException {
+
+		JSONParser parser = new JSONParser();
+		try {
+			String text = new BufferedReader(new InputStreamReader(json, StandardCharsets.UTF_8))
+					.lines()
+					.collect(Collectors.joining("\n"));
+
+			Object obj = parser.parse(text);
+
+			JSONObject jsonObj = 		(JSONObject) obj;
+			JSONObject receiver = 		(JSONObject) jsonObj.get("receiver");
+			JSONObject address_info = 	(JSONObject) receiver.get("address");
+			JSONArray  taxes_info =		(JSONArray)  jsonObj.get("taxes");
+			JSONArray  finances_info =	(JSONArray)  jsonObj.get("finances");
+			JSONArray  entries_info =	(JSONArray)  jsonObj.get("details");
+
+			String reference = 		(String) jsonObj.get("reference");
+			Date date = 			parseDate("" + jsonObj.get("date"),"yyyy-MM-dd");
+			String document = 		(String) receiver.get("document");
+			String name =  			(String) receiver.get("name");
+			String address = 		(String) address_info.get("address");
+			String address_ln_2 = 	address_info.get("zip") + " " + address_info.get("city") + " " + address_info.get("province");
+
+			ArrayList<EnterpriseBillTax> taxes 			= new ArrayList<>();
+			ArrayList<EnterpriseBillFinance> finances 	= new ArrayList<>();
+			ArrayList<EnterpriseBillEntry> entries 		= new ArrayList<>();
+
+			for (Object tax: taxes_info) {
+				JSONObject tax_obj = (JSONObject) tax;
+
+				double base = 		Double.parseDouble("" + tax_obj.get("base"));
+				double percent = 	Double.parseDouble("" + tax_obj.get("percentage"));
+				String type = 		(String) tax_obj.get("type");
+				double quota = 		Double.parseDouble("" + tax_obj.get("quota"));
+
+				taxes.add(new EnterpriseBillTax(base,percent,type,quota));
+			}
+			for (Object finance: finances_info) {
+				JSONObject finance_obj = (JSONObject) finance;
+
+				Date due_date = 		parseDate("" + finance_obj.get("due_date"),"yyyy-MM-dd");
+				String pay_method = 	(String) finance_obj.get("paymethod");
+				String iban =			(String) finance_obj.get("iban");
+				double amount = 		Double.parseDouble("" + finance_obj.get("amount"));
+
+				finances.add(new EnterpriseBillFinance(due_date,pay_method,iban,amount));
+			}
+			for (Object entry: entries_info) {
+				JSONObject entry_obj = (JSONObject) entry;
+
+				String description = 	(String) entry_obj.get("description");
+				double quantity = 		Double.parseDouble("" + entry_obj.get("quantity"));
+				double price = 			Double.parseDouble("" + entry_obj.get("price"));
+				double discount = 		Double.parseDouble("" + entry_obj.get("discount"));
+				double amount = 		Double.parseDouble("" + entry_obj.get("amount"));
+
+				entries.add(new EnterpriseBillEntry(description,quantity,price,discount,amount));
+			}
+
+			EnterpriseBill bill = new EnterpriseBill(
+					config.getBackgroundImage(),
+					config.getDetailed(),
+					reference,
+					date,
+					document,
+					name,
+					address,
+					address_ln_2,
+					entries,
+					taxes,
+					finances,
+					config.getFooter(),
+					config.getHeader(),
+					qr_code
+			);
+
+			create("JSON_Bill_test.pdf",bill,config.getAdjustImage());
+		}
+		catch (CanNotCreatePdfException e) {throw e;}
+		catch (Exception e) {throw new JsonParseException(e);}
+	}
+
+	//CREATE DEMO
+	public static void demoPdf(PrintInvoiceConfiguration config, InputStream qr_code) throws IOException, CanNotCreatePdfException {
+		EnterpriseBill bill = new EnterpriseBill(
+				config.getBackgroundImage(),
+				config.getDetailed(),
+				"",
+				null,
+				"",
+				"EMPRESA DEMO.SL",
+				"AVDA. PRINCIPAL, 50",
+				"66666 CIUDAD PROVINCIA",
+				new ArrayList<>(),
+				new ArrayList<>(),
+				new ArrayList<>(),
+				config.getFooter(),
+				config.getHeader(),
+				qr_code
+		);
+
+		create("demo_bill.pdf",bill,config.getAdjustImage());
+	}
+
 
 	//CREATE THE PDF DOCUMENT
-	public static void create(String name,EnterpriseBill bill) throws IOException {
+	public static void create(String name,EnterpriseBill bill, boolean adapt_background) throws IOException, CanNotCreatePdfException {
 		try (PDDocument doc = new PDDocument()) {
 
-			if(name != null) filename = name;
-			top = (float) bill.getTop_px();
-			bottom = (float) bill.getBottom_px();
-			background = bill.getBackground().readAllBytes();
-			qr_code = bill.getQr_code().readAllBytes();
+			if(name != null) 	filename = name;
+			top = 				(float) bill.getTop_px();
+			bottom = 			(float) bill.getBottom_px();
+
+			adapt = adapt_background;
+			if(bill.getBackground() != null) 	background = bill.getBackground().readAllBytes();
+			if(bill.getQr_code() != null) 		qr_code = bill.getQr_code().readAllBytes();
 
 			PDPageContentStream contents = draw_page(doc, bill);
-			y = height - top - top_info_height-5;
-			for (EnterpriseBillEntry entry : bill.getEntries()){
+			y = height - top - top_info_height - 5;
 
-				x = 50;
-
-				if(y <= limit){
-					contents.close();
-					contents = draw_page(doc,bill);
-					y = height - top - top_info_height - 5;
+			if(bill.getEntries() != null) {
+				for (EnterpriseBillEntry entry : bill.getEntries()) {
 					x = 50;
+
+					if (y <= limit) {
+						contents.close();
+						contents = draw_page(doc, bill);
+						y = height - top - top_info_height - 5;
+						x = 50;
+					}
+
+					if (bill.isDetailed()) {
+						PDFToolkit.drawText(contents, PDFToolkit.cropped_string(entry.getDescription(),240,PDFToolkit.HELVETICA,8), x + 5, y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 8);
+						x += 250;
+
+						PDFToolkit.drawTextRight(contents, new PDRectangle(x, y, 69, 15), PDFToolkit.format(entry.getQuantity()) + "", PDFToolkit.BLACK, PDFToolkit.HELVETICA, 8, 4.5f, 0);
+						x += 70;
+
+						PDFToolkit.drawTextRight(contents, new PDRectangle(x, y, 69, 15), PDFToolkit.format(entry.getPrice()), PDFToolkit.BLACK, PDFToolkit.HELVETICA, 8, 4.5f, 0);
+						x += 70;
+
+						String percent = "";
+						if (entry.getPercent() > 99) 		percent = "100%";
+						else if (entry.getPercent() != 0) 	percent = PDFToolkit.format(entry.getPercent()) + "%";
+
+
+						PDFToolkit.drawTextRight(contents, new PDRectangle(x, y, 39, 15), percent, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 8, 4.5f, 0);
+						x += 40;
+
+						PDFToolkit.drawTextRight(contents, new PDRectangle(x, y, 69, 15), PDFToolkit.format(entry.getAmount()), PDFToolkit.BLACK, PDFToolkit.HELVETICA, 8, 4.5f, 0);
+					} else {
+						PDFToolkit.drawText(contents, PDFToolkit.cropped_string(entry.getDescription(),420,PDFToolkit.HELVETICA,8), x + 5, y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 8);
+						x+= 430;
+						PDFToolkit.drawTextRight(contents, new PDRectangle(x, y, 69, 15), PDFToolkit.format(entry.getAmount()), PDFToolkit.BLACK, PDFToolkit.HELVETICA, 8, 4.5f, 0);
+
+					}
+					y -= 10;
 				}
-
-				PDFToolkit.drawText(contents, entry.getDescription(), x+5, y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 8);
-				x += 250;
-
-				PDFToolkit.drawTextRight(contents,new PDRectangle(x,y,69,15),entry.getQuantity()+"",PDFToolkit.BLACK,PDFToolkit.HELVETICA,8,4.5f,0);
-				x+=70;
-
-				PDFToolkit.drawTextRight(contents,new PDRectangle(x,y,69,15),PDFToolkit.format(entry.getPrice()),PDFToolkit.BLACK,PDFToolkit.HELVETICA,8,4.5f,0);
-				x+=70;
-
-				PDFToolkit.drawTextRight(contents,new PDRectangle(x,y,39,15),entry.getPercent()+"",PDFToolkit.BLACK,PDFToolkit.HELVETICA,8,4.5f,0);
-				x+=40;
-
-				PDFToolkit.drawTextRight(contents,new PDRectangle(x,y,69,15),PDFToolkit.format(entry.getAmount()),PDFToolkit.BLACK,PDFToolkit.HELVETICA,8,4.5f,0);
-				y -= 10;
 			}
 			contents.close();
 			doc.save(filename);
-		}
+		}catch (Exception e){throw new CanNotCreatePdfException(e);}
 	}
 
 	//DRAW PAGE
-	public static PDPageContentStream draw_page(PDDocument doc, EnterpriseBill bill) throws IOException {
+	private static PDPageContentStream draw_page(PDDocument doc, EnterpriseBill bill) throws IOException {
 		PDPage page = PDFToolkit.createVerticalPage();
 		doc.addPage(page);
 
 		PDPageContentStream contents = new PDPageContentStream(doc, page);
-		PDFToolkit.drawImage(doc,contents,background,0,0,page.getMediaBox().getWidth(),page.getMediaBox().getHeight());
+		if(background != null)
+			if(adapt) 	PDFToolkit.drawImage(doc,contents,background,0,0,page.getMediaBox().getWidth(),page.getMediaBox().getHeight());
+			else		PDFToolkit.drawImage(doc,contents,background,0,0);
 
 		width = page.getMediaBox().getWidth();
 		height = page.getMediaBox().getHeight();
@@ -96,7 +232,7 @@ public class EnterpriseBillTemplate {
 	}
 
 	//DRAW UPPER INFO
-	public static void draw_top_info(PDPageContentStream contents, EnterpriseBill bill) throws IOException {
+	private static void draw_top_info(PDPageContentStream contents, EnterpriseBill bill) throws IOException {
 		PDFToolkit.drawText(contents, "FACTURA", x, y, PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, 16);
 		y-=30;
 
@@ -106,7 +242,8 @@ public class EnterpriseBillTemplate {
 		PDFToolkit.drawBox(contents,x,y, 200,.5f,PDFToolkit.BLACK);
 		y-= 16;
 
-		PDFToolkit.drawText(contents, "Fecha: " + formatDate(bill.getDate(),"dd,MM,yyyy").get(), x, y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 11);
+		if(bill.getDate() != null) PDFToolkit.drawText(contents, "Fecha: " + formatDate(bill.getDate(),"dd,MM,yyyy").get(), x, y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 11);
+		else PDFToolkit.drawText(contents, "Fecha: ", x, y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 11);
 		y-=4;
 
 		PDFToolkit.drawBox(contents,x,y, 200,.5f,PDFToolkit.BLACK);
@@ -121,7 +258,7 @@ public class EnterpriseBillTemplate {
 
 		PDFToolkit.drawBox(contents,x,y, 250,80,PDFToolkit.LIGHT_GRAY);
 		x+=10;
-		y = height - top - 35;
+		y = height - top - 45;
 
 		PDFToolkit.drawText(contents, bill.getName(), x, y, PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, 12);
 		y-=15;
@@ -133,8 +270,8 @@ public class EnterpriseBillTemplate {
 	}
 
 	//DRAW DETAILED HEADER
-	public static void draw_detailed_header(PDPageContentStream contents) throws IOException {
-		y -= 70;
+	private static void draw_detailed_header(PDPageContentStream contents) throws IOException {
+		y -= 60;
 		x = 50;
 
 		PDFToolkit.drawBox(contents,x,y, 249,15,PDFToolkit.BLACK);
@@ -158,8 +295,8 @@ public class EnterpriseBillTemplate {
 	}
 
 	//DRAW SIMPLE HEADER
-	public static void draw_simple_header(PDPageContentStream contents) throws IOException {
-		y -= 70;
+	private static void draw_simple_header(PDPageContentStream contents) throws IOException {
+		y -= 60;
 		x = 50;
 		PDFToolkit.drawBox(contents,x,y, 429,15,PDFToolkit.BLACK);
 		PDFToolkit.drawText(contents, "Descripción", x+5f, y+4.5f, PDFToolkit.WHITE, PDFToolkit.HELVETICA_BOLD, 9);
@@ -170,17 +307,17 @@ public class EnterpriseBillTemplate {
 	}
 
 	//DRAW BOTTOM INFO
-	public static void draw_bottom_info(PDPageContentStream contents, PDDocument doc, EnterpriseBill bill) throws IOException {
+	private static void draw_bottom_info(PDPageContentStream contents, PDDocument doc, EnterpriseBill bill) throws IOException {
 		x = 50;
 		y = bottom + 10;
-		PDFToolkit.drawImage(doc,contents,qr_code,x,y,120,120);
+		if(qr_code != null) PDFToolkit.drawImage(doc,contents,qr_code,x,y,120,120);
 
 		draw_taxes(contents,bill);
 		draw_finances(contents,bill);
 	}
 
 	//DRAW TAXES
-	public static void draw_taxes(PDPageContentStream contents, EnterpriseBill bill) throws IOException {
+	private static void draw_taxes(PDPageContentStream contents, EnterpriseBill bill) throws IOException {
 
 		x = 240;
 		y = bottom + 107;
@@ -209,23 +346,28 @@ public class EnterpriseBillTemplate {
 			x = 240;
 			PDFToolkit.drawTextRight(contents,new PDRectangle(x,y,79,15),PDFToolkit.format(tax.getBase()),PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, -12);
 			x+=80;
-			PDFToolkit.drawTextRight(contents,new PDRectangle(x,y,49,15),PDFToolkit.format(tax.getPercentage()),PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, -12);
+
+			String percent = "";
+			if(tax.getPercentage() > 99) percent = "100%";
+			else if(tax.getPercentage() != 0) percent = PDFToolkit.format(tax.getPercentage()) + "%";
+
+			PDFToolkit.drawTextRight(contents,new PDRectangle(x,y,49,15),percent,PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, -12);
 			x+=50;
 			PDFToolkit.drawTextCenter(contents,new PDRectangle(x,y,59,15),tax.getType(),PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, -12);
 			x+=60;
 			PDFToolkit.drawTextRight(contents,new PDRectangle(x,y,49,15),PDFToolkit.format(tax.getQuota()),PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, -12);
 			x+=50;
 
-			sum += tax.getQuota();
+			sum += tax.getQuota() + tax.getBase();
 			y-= 10;
 		}
 
 //		PDFToolkit.drawTextRight(contents,new PDRectangle(x,bottom + 107,69,15), PDFToolkit.format(sum) + " €",PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, -12);
-		PDFToolkit.drawTextRight(contents,new PDRectangle(x,bottom + 107,69,15), PDFToolkit.format(sum) + " \u20AC",PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, -12);
+		PDFToolkit.drawTextRight(contents,new PDRectangle(x,bottom + 107,69,15), PDFToolkit.format(sum) + " \u20AC",PDFToolkit.BLACK,PDFToolkit.HELVETICA_BOLD, 8, 5, -14);
 	}
 
 	//DRAW FINANCES
-	public static void draw_finances(PDPageContentStream contents, EnterpriseBill bill) throws IOException {
+	private static void draw_finances(PDPageContentStream contents, EnterpriseBill bill) throws IOException {
 		x = 180;
 		y = bottom + 50;
 
@@ -262,7 +404,7 @@ public class EnterpriseBillTemplate {
 	}
 
 	//FORMAT DATE TO STRING IN A SPECIFIC FORMAT
-	public static Optional<String> formatDate(Date date, String format) {
+	private static Optional<String> formatDate(Date date, String format) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
 		Optional<String> formattedDate;
 		formattedDate = Optional.of(dateFormatter.format(date));
@@ -270,6 +412,14 @@ public class EnterpriseBillTemplate {
 	}
 
 
+	//PARSE A DATE WITH AN SPECIFIC FORMAT
+	public static Date parseDate(String dateStr,String format) {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
+		Date formattedDate;
 
-
+		try {
+			formattedDate = dateFormatter.parse(dateStr);
+			return formattedDate;
+		} catch (ParseException e){return null;}
+	}
 }

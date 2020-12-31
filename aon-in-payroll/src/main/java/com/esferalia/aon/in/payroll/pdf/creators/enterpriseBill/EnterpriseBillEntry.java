@@ -1,16 +1,14 @@
 package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill;
 
-import java.util.Date;
-
 public class EnterpriseBillEntry
 {
 	private String description;
-	private int quantity;
+	private double quantity;
 	private double price;
-	private int percent;
+	private double percent;
 	private double amount;
 
-	public EnterpriseBillEntry(String description, int quantity, double price, int percent, double amount) {
+	public EnterpriseBillEntry(String description, double quantity, double price, double percent, double amount) {
 		this.description = description;
 		this.quantity = quantity;
 		this.price = price;
@@ -22,7 +20,7 @@ public class EnterpriseBillEntry
 		return description;
 	}
 
-	public int getQuantity() {
+	public double getQuantity() {
 		return quantity;
 	}
 
@@ -30,7 +28,7 @@ public class EnterpriseBillEntry
 		return price;
 	}
 
-	public int getPercent() {
+	public double getPercent() {
 		return percent;
 	}
 

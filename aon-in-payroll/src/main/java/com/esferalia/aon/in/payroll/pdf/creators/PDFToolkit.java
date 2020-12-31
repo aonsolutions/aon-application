@@ -81,6 +81,20 @@ public class PDFToolkit {
 		contents.endText();
 	}
 
+	//CROP TEXT
+	public static String cropped_string(String text, double width, PDFont font, float fontSize) throws IOException {
+		if(text == null) return text;
+
+		String txt = text;
+		float fw = (font.getStringWidth(text) / 1000.0f) * fontSize;
+		while (fw > width){
+			text = text.substring(0, text.length()-1);
+			fw = (font.getStringWidth(text + "...") / 1000.0f) * fontSize;
+		}
+
+		return  (txt.equals(text))? text : text + "..." ;
+	}
+
 	//DRAWS A CENTERED TEXT
 	public static void drawTextCenter(PDPageContentStream contents, PDRectangle box, String content, Color
 			color, PDFont font, float fontSize, float y_margin) throws IOException {
@@ -105,9 +119,11 @@ public class PDFToolkit {
 		contents.drawImage(PDImageXObject.createFromFile(route, doc), x, y, width, height);
 	}
 
-	public static void drawImage(PDDocument doc, PDPageContentStream contents, byte[] logo, float width, float height) throws IOException {
-		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo, null), 20, 535, width, height);
+	public static void drawImage(PDDocument doc, PDPageContentStream contents, byte[] logo, float x, float y) throws IOException {
+		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo, null), x, y);
 	}
+
+
 	public static void drawImage(PDDocument doc, PDPageContentStream contents, byte[] logo, float x, float y, float width, float height) throws IOException {
 		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo, null), x, y, width, height);
 	}
@@ -187,3 +203,4 @@ public class PDFToolkit {
 	}
 
 }
+

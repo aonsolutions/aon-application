@@ -12,8 +12,17 @@ public class EnterpriseBillFinance {
 	public EnterpriseBillFinance(Date due_date, String paymethod, String iban, double amount) {
 		this.due_date = due_date;
 		this.paymethod = paymethod;
-		this.iban = iban;
+		this.iban = split_iban(iban);
 		this.amount = amount;
+	}
+
+	public static String split_iban(String iban){
+		String new_iban = "";
+		return	  iban.substring(0,4) 	+ "_"
+				+ iban.substring(4,8) 	+ "_"
+				+ iban.substring(8,12) 	+ "_"
+				+ iban.substring(12,14) + "_"
+				+ iban.substring(14);
 	}
 
 	public Date getDue_date() {
