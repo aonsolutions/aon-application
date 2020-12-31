@@ -18,10 +18,10 @@ public class EnterpriseBillFinance {
 
 	public static String split_iban(String iban){
 		String new_iban = "";
-		return	  iban.substring(0,4) 	+ "_"
-				+ iban.substring(4,8) 	+ "_"
-				+ iban.substring(8,12) 	+ "_"
-				+ iban.substring(12,14) + "_"
+		return	  iban.substring(0,4) 	+ "."
+				+ iban.substring(4,8) 	+ "."
+				+ iban.substring(8,12) 	+ "."
+				+ iban.substring(12,14) + "."
 				+ iban.substring(14);
 	}
 

@@ -15,6 +15,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -201,6 +202,25 @@ public class PDFToolkit {
 			return null;
 		}
 	}
+	//RETURN LATIN VERSION OF A NUMBER WITH . AND , (STRING)
+	public static String to_latin_number(double number){
+		DecimalFormat formater = new DecimalFormat("###,###.##");
+		return formater.format(number);
+	}
+
+	//PARSE A DATE WITH AN SPECIFIC FORMAT
+	public static Date parseDate(String dateStr, String format) {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
+		Date formattedDate;
+
+		try {
+			formattedDate = dateFormatter.parse(dateStr);
+			return formattedDate;
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+
 
 }
 
