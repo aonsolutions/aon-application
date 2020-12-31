@@ -8,11 +8,11 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 	
 	
-	<aon:div id="desktopDiv1" style="padding-top: 5px; width:14px" >
+	<aon:div id="desktopDiv1" style="padding-top: 5px;" >
 		
 	<style>
 		.aon-portlets-column1{
-			width : 0px;
+			width : 10px;
 			padding: 0px;
 			text-align: right;
 		}
@@ -41,15 +41,19 @@
 			document.getElementById("aonContent:mainForm:showButton").style.display='none';
 			document.getElementById("aonContent:mainForm:hideButton").style.display='initial';
 			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='200px';
+			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.textAlign='right';
 			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='100%';
+			document.getElementById("aonContent:mainForm:desktopDiv1").style.paddingLeft='2px';
 			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='block';
 		}
 		
 		function hideInfoGroup() {
 			document.getElementById("aonContent:mainForm:showButton").style.display='initial';
 			document.getElementById("aonContent:mainForm:hideButton").style.display='none';
-			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='0px';
-			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='14px';
+			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='10px';
+			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.textAlign='left';
+			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='0%';
+			document.getElementById("aonContent:mainForm:desktopDiv1").style.paddingLeft='0px';
 			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='none';
 		}
 	</script>

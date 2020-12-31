@@ -135,6 +135,8 @@
 .aon_icon_restore { background-image: iconRestore;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconMoveTo aonIconMoveTo;
+.aon_icon_move_to { background-image: iconMoveTo;}
 @url iconUpgrade aonIconUpgrade;
 .aon_icon_upgrade { background-image: iconUpgrade;}
 @url iconSend aonIconSend;
