@@ -5,7 +5,6 @@ import static com.esferalia.aon.salary.enumeration.DeductionType.COMMON_CONTINGE
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -62,7 +61,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 			String enterpriseName = AonStringUtils.trimToNull(matcher.group("enterprise"));
 			salaryBuilder.setEnterpriseName(enterpriseName);
 			matcher = find(reader, HOME_NIF);
-			salaryBuilder.setEmployeeAddress(AonStringUtils.trimToNull(matcher.group("home")));
+			salaryBuilder.setEnterpriseAddress(AonStringUtils.trimToNull(matcher.group("home")));
 			String nif = AonStringUtils.trimToNull(matcher.group("nif"));
 			salaryBuilder.setEmployeeDocument(nif);
 			matcher = find(reader, CIF_NSS);
@@ -237,7 +236,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 						else if (concept.contains("DESEMPLEO")) {
 							dt = DeductionType.UNEMPLOYMENT;
 							concept=dt.getName(new Locale("es", "ES"));
-							context = "DESEMPL";
+							context = "DESMPL";
 							con = ContextVariable.UNEMPLOY_EMPLOYEE;
 							salaryBuilder.setCgpBase(base);
 						}
@@ -340,6 +339,14 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 				salaryBuilder.setIssueDate(calendar.getTime());
 			} catch (NullPointerException | DateFormatException | NumberFormatException e) {}
 			
+			
+//			matcher = find(reader, ADITIONAL_INFO);
+//			line = reader.readLine();
+//			matcher = ENTERPRISE_APPORT_HEADER_1.matcher(line);
+//			while (!matcher.matches()) {
+//				//ADD SOMEWHERE THE ADDITIONAL INFO OF THE PAYROLL
+//			}
+//			
 			matcher = find(reader, ENTERPRISE_APPORT_HEADER_2);
 
 			matcher = find(reader, CC_MONTHLY);
@@ -460,7 +467,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 					try {
 						Double unem_cost = Double.parseDouble(str_unem_cost);
 						String description=DeductionType.UNEMPLOYMENT.getName(new Locale("es", "ES"));
-						Deduction costDeduction=new Deduction().setType(DeductionType.UNEMPLOYMENT).setName("DESEMPL_E");
+						Deduction costDeduction=new Deduction().setType(DeductionType.UNEMPLOYMENT).setName("DESMPL_E");
 						salaryBuilder.addCost(unem_cost, description, dFrom, dTo, costDeduction, Collections.emptyMap());
 						totalSS+=unem_cost;
 					} catch (NumberFormatException e) {}
@@ -487,7 +494,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 				try {
 					Double fogasa_cost = Double.parseDouble(str_fogasa_cost);
 					String description=DeductionType.FOGASA.getName(new Locale("es", "ES"));
-					Deduction costDeduction=new Deduction().setType(DeductionType.FOGASA).setName("FOGASA");
+					Deduction costDeduction=new Deduction().setType(DeductionType.FOGASA).setName("FOGASA_E");
 					salaryBuilder.addCost(fogasa_cost, description, dFrom, dTo, costDeduction, Collections.emptyMap());
 					totalSS+=fogasa_cost;
 				} catch (NumberFormatException e) {}
@@ -732,6 +739,9 @@ public class DSIPDFTemplate implements SalaryPDFTemplate{
 	, Pattern.CASE_INSENSITIVE);
 //	RECIBI,
 //	INFORMACION ADICIONAL:
+	public static Pattern ADITIONAL_INFO =
+	Pattern.compile("\\s*INFORMACION\\s*ADICIONAL:\\s*",
+	Pattern.CASE_INSENSITIVE);
 //	Texto de informacion adicional
 	
 //	DETERMINACION DE LAS BASES DE COTIZACION A LA SEGURIDAD SOCIAL Y CONCEPTOS DE RECAUDACION CONJUNTA Y DE LA BASE 

@@ -106,7 +106,9 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			matcher = find(reader, ENTERPRISE_HOME);
 			String entName = AonStringUtils.trimToNull(matcher.group("enterprisename"));
 			salaryBuilder.setEnterpriseName(entName);
-			salaryBuilder.setEnterpriseAddress(AonStringUtils.trimToNull(matcher.group("address")));
+			String entAddress = AonStringUtils.trimToNull(matcher.group("address"));
+			entAddress = removeSpace(entAddress, 13);
+			salaryBuilder.setEnterpriseAddress(entAddress);
 			String ccc = AonStringUtils.trimToNull(matcher.group("nss")).replaceAll("[/]","").replaceAll("[-]", "");
 			salaryBuilder.setCcc(ccc);
 			
@@ -459,7 +461,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			description=DeductionType.FOGASA.getName(new Locale("es", "ES"));
 			if(apportBase!=null)
 				salaryBuilder.addData(ContextVariable.FOGASA_ENTERPRISE.getName(), new TimedObject<Double>(apportBase, per ));
-			costDeduction=new Deduction().setType(DeductionType.FOGASA).setName("FOGASA");
+			costDeduction=new Deduction().setType(DeductionType.FOGASA).setName("FOGASA_E");
 			if(individualApport!=null) {
 				salaryBuilder.addCost(individualApport, description, dFrom, dTo, costDeduction, Collections.emptyMap());
 				totalEnterprise+=individualApport;
@@ -783,7 +785,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	Pattern.CASE_INSENSITIVE);
 	//48/10454983-40     7  200              4  MENS 01 ENE 20 a 31 ENE 20          30  
 	private static final Pattern SS_INFO =
-	Pattern.compile("\\s*(?<affnum>\\d+/\\d+-\\d+)\\s*(?<tarifa>\\d*)\\s*(?<codct>\\d*)\\s*(?<section>.*?)?\\s*(?<nro>\\d*)\\s*(?<period>.*\\s*a\\s*.*?)\\s{2,}(?<days>\\d*)\\s*"
+	Pattern.compile("\\s*(?<affnum>\\d+/\\d+-\\d+)\\s*(?<tarifa>\\d*)\\s*(?<codct>\\d*)\\s*(?<section>.*?)?\\s*(?<nro>\\d*)\\s*(?<period>.*\\s*a\\s*.*?)?\\s{2,}(?<days>\\d*)\\s*"
 	, Pattern.CASE_INSENSITIVE);
 	//CUANTIA PRECIO CONCEPTO DEVENGOS DEDUCCIONES
 	private static final Pattern CONCEPT_HEADER=

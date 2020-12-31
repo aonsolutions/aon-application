@@ -7,7 +7,6 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -48,9 +47,9 @@ public class PdfTest {
 				}
 				//2nd line
 				@Override
-				public void setEmployeeAddress(String employeeAddress) {
-					System.out.println(employeeAddress);
-					assertEquals("CL VIA, 12", employeeAddress);
+				public void setEnterpriseAddress(String enterpriseAddress) {
+					System.out.println(enterpriseAddress);
+					assertEquals("CL VIA, 12", enterpriseAddress);
 				}
 				@Override
 				public void setEmployeeDocument(String employeeDocument) {
@@ -369,9 +368,9 @@ public class PdfTest {
 				}
 				//2nd line
 				@Override
-				public void setEmployeeAddress(String employeeAddress) {
-					System.out.println(employeeAddress);
-					assertEquals("CL VIA, 12", employeeAddress);
+				public void setEnterpriseAddress(String enterpriseAddress) {
+					System.out.println(enterpriseAddress);
+					assertEquals("CL VIA, 12", enterpriseAddress);
 				}
 				@Override
 				public void setEmployeeDocument(String employeeDocument) {
@@ -1065,7 +1064,13 @@ public class PdfTest {
 		}
 	}
 	
-	
+//	@Test
+//	@Ignore
+//	public void hfhffh() throws IOException, UnknownPDFException {
+//		try ( InputStream is = PdfTest.class.getResourceAsStream("dsi_paga_extra.pdf") ){
+//			SalaryPDFParser.parse(is, new SalaryBuilder());
+//		}
+//	}
 
 	@Test
 	@Ignore

@@ -289,23 +289,22 @@ public class JooqPdfTest {
 					String eDate = df.format(endDate);
 
 					String sql = "select total_payment from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(rs.getDouble("total_payment")!=totalPayment) {
+						if (rs.next()) {
+							if (rs.getDouble("total_payment") != totalPayment) {
 								fail("total payment fail");
 							}
-						}
-						else {
+						} else {
 							fail("total payment fail");
 						}
 					} catch (SQLException e) {
 						fail("total payment sql fail");
 					}
-					
+
 				}
 
 				@Override
@@ -313,21 +312,20 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select pro_ext_base from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(extraPayProration==null)
-								extraPayProration=0.0;
-							if(rs.getDouble("pro_ext_base")!=extraPayProration) {
+						if (rs.next()) {
+							if (extraPayProration == null)
+								extraPayProration = 0.0;
+							if (rs.getDouble("pro_ext_base") != extraPayProration) {
 								fail("ProExtBase fail");
 							}
-						}
-						else {
+						} else {
 							fail("ProExtBase fail");
 						}
 					} catch (SQLException e) {
@@ -340,21 +338,20 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select cgc_base from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(commonBase==null)
-								commonBase=0.0;
-							if(rs.getDouble("cgc_base")!=commonBase) {
+						if (rs.next()) {
+							if (commonBase == null)
+								commonBase = 0.0;
+							if (rs.getDouble("cgc_base") != commonBase) {
 								fail("Cgc Base fail");
 							}
-						}
-						else {
+						} else {
 							fail("Cgc Base fail");
 						}
 					} catch (SQLException e) {
@@ -367,21 +364,20 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select cgp_base from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(professionalBase==null)
-								professionalBase=0.0;
-							if(rs.getDouble("cgp_base")!=professionalBase) {
+						if (rs.next()) {
+							if (professionalBase == null)
+								professionalBase = 0.0;
+							if (rs.getDouble("cgp_base") != professionalBase) {
 								fail("CgpBase fail");
 							}
-						}
-						else {
+						} else {
 							fail("CgpBase fail");
 						}
 					} catch (SQLException e) {
@@ -394,21 +390,20 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select total_irpf from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(totalIrpf==null)
-								totalIrpf=0.0;
-							if(rs.getDouble("total_irpf")!=totalIrpf) {
+						if (rs.next()) {
+							if (totalIrpf == null)
+								totalIrpf = 0.0;
+							if (rs.getDouble("total_irpf") != totalIrpf) {
 								fail("total Irpf fail");
 							}
-						}
-						else {
+						} else {
 							fail("total Irpf fail");
 						}
 					} catch (SQLException e) {
@@ -421,21 +416,20 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select total_deduction from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(totalDeduction==null)
-								totalDeduction=0.0;
-							if(rs.getDouble("total_deduction")!=totalDeduction) {
+						if (rs.next()) {
+							if (totalDeduction == null)
+								totalDeduction = 0.0;
+							if (rs.getDouble("total_deduction") != totalDeduction) {
 								fail("total payment fail");
 							}
-						}
-						else {
+						} else {
 							fail("total deduction fail");
 						}
 					} catch (SQLException e) {
@@ -449,20 +443,19 @@ public class JooqPdfTest {
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
 					String iDate = df.format(issueDate);
-					
+
 					String sql = "select issue_date from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							
-							if(!iDate.equals(rs.getString("issue_date"))) {
+						if (rs.next()) {
+
+							if (!iDate.equals(rs.getString("issue_date"))) {
 								fail("Issue date fail");
 							}
-						}
-						else {
+						} else {
 							fail("Issue date fail");
 						}
 					} catch (SQLException e) {
@@ -475,21 +468,20 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select total_liquid from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(totalLiquid==null)
-								totalLiquid=0.0;
-							if(rs.getDouble("total_liquid")!=totalLiquid) {
+						if (rs.next()) {
+							if (totalLiquid == null)
+								totalLiquid = 0.0;
+							if (rs.getDouble("total_liquid") != totalLiquid) {
 								fail("total liquid fail");
 							}
-						}
-						else {
+						} else {
 							fail("total liquid fail");
 						}
 					} catch (SQLException e) {
@@ -503,27 +495,26 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select count(*) c from salary_cost sd where exists "
 							+ "(select id from salary where id  = sd.salary and " + "start_date=str_to_date('" + sDate
 							+ "','%Y-%m-%d') and end_date=str_to_date('" + eDate + "','%Y-%m-%d') and "
-							+ "employee_document='" + dni + "') and cost_concept='" + cost.getName()
-							+ "' and " + "amount=" + amount;
+							+ "employee_document='" + dni + "') and cost_concept='" + cost.getName() + "' and "
+							+ "amount=" + amount;
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(rs.getInt("c")!=1) {
+						if (rs.next()) {
+							if (rs.getInt("c") != 1) {
 								fail("cost fail");
 							}
-						}
-						else {
+						} else {
 							fail("cost fail");
 						}
 					} catch (SQLException e) {
 						fail("cost sql fail");
 					}
-					
+
 				}
 
 				@Override
@@ -531,38 +522,32 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select count(*) c from salary_data sd where exists "
 							+ "(select id from salary where id  = sd.salary and " + "start_date=str_to_date('" + sDate
 							+ "','%Y-%m-%d') and end_date=str_to_date('" + eDate + "','%Y-%m-%d') and "
 							+ "employee_document='" + dni + "') and name='" + name + "' and "
-							+ "start_date=str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date=str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date=str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date=str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(rs.getInt("c")!=1) {
-								if(!(name.equals("BASE_IRPF")||name.equals("TOTAL_DEVENGADO")||name.equals("CGC_E")))
+						if (rs.next()) {
+							if (rs.getInt("c") != 1) {
+								if (!(name.equals("BASE_IRPF") || name.equals("TOTAL_DEVENGADO")
+										|| name.equals("CGC_E")))
 									fail("data fail");
-								
-								//CONCEPTS IGNORED ON THE IF CLAUSE ARE IGNORED WHEN INSERTING
-								
+
+								// CONCEPTS IGNORED ON THE IF CLAUSE ARE IGNORED WHEN INSERTING
+
 							}
-						}
-						else {
+						} else {
 							fail("data fail");
 						}
 					} catch (SQLException e) {
 						fail("data sql fail");
 					}
 				}
-
-				
-				
-				
-				
-				
 
 // 'contract', 'person', 'enterprise', 'salary' , 'salary_payment' y
 // 'salary_deduction'
@@ -591,13 +576,12 @@ public class JooqPdfTest {
 				private String empName, empAddress, empCity, entName, entAddress, cat, dni;
 				private Date senDate, startDate, endDate;
 				private int timeUnits;
-				
-				
+
 				@Override
 				public void setEnterpriseName(String enterpriseName) {
 					entName = enterpriseName;
 				}
-				
+
 				@Override
 				public void setEmployeeName(String employeeName) {
 					empName = employeeName;
@@ -607,7 +591,7 @@ public class JooqPdfTest {
 				public void setEnterpriseAddress(String enterpriseAddress) {
 					entAddress = enterpriseAddress;
 				}
-				
+
 				@Override
 				public void setEmployeeDocument(String employeeDocument) {
 					dni = employeeDocument;
@@ -633,23 +617,19 @@ public class JooqPdfTest {
 						fail("SQL exception");
 					}
 				}
-				
-				/*@Override
-				public void setEmployeeAddress(String employeeAddress) {
-					
-					String sql = "select distinct enterprise_name, enterprise_address from salary where employee_document = '"
-							+ dni + "'";
-					try {
-						Statement st = connection.createStatement();
-						ResultSet rs = st.executeQuery(sql);
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					
-					empAddress = employeeAddress;
-				}*/
+
+				/*
+				 * @Override public void setEmployeeAddress(String employeeAddress) {
+				 * 
+				 * String sql =
+				 * "select distinct enterprise_name, enterprise_address from salary where employee_document = '"
+				 * + dni + "'"; try { Statement st = connection.createStatement(); ResultSet rs
+				 * = st.executeQuery(sql); } catch (SQLException e) { // TODO Auto-generated
+				 * catch block e.printStackTrace(); }
+				 * 
+				 * 
+				 * empAddress = employeeAddress; }
+				 */
 
 				@Override
 				public void setEmployeeCity(String employeeCity) {
@@ -658,12 +638,12 @@ public class JooqPdfTest {
 
 				@Override
 				public void setEnterpriseDocument(String enterpriseDocument) {
-					String sql = "select distinct enterprise_document from salary where employee_document = '"
-							+ dni + "'";
+					String sql = "select distinct enterprise_document from salary where employee_document = '" + dni
+							+ "'";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
+						if (rs.next()) {
 							assertEquals(rs.getString("enterprise_document"), enterpriseDocument);
 						}
 					} catch (SQLException e) {
@@ -672,18 +652,13 @@ public class JooqPdfTest {
 					}
 				}
 
-				
-
-				
-
 				@Override
 				public void setCcc(String ccc) {
-					String sql = "select distinct ccc from salary where employee_document = '"
-							+ dni + "'";
+					String sql = "select distinct ccc from salary where employee_document = '" + dni + "'";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
+						if (rs.next()) {
 							assertEquals(rs.getString("ccc"), ccc);
 						}
 					} catch (SQLException e) {
@@ -694,12 +669,11 @@ public class JooqPdfTest {
 
 				@Override
 				public void setCategory(String category) {
-					String sql = "select distinct category from salary where employee_document = '"
-							+ dni + "'";
+					String sql = "select distinct category from salary where employee_document = '" + dni + "'";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
+						if (rs.next()) {
 							assertEquals(rs.getString("category"), category);
 						}
 					} catch (SQLException e) {
@@ -710,28 +684,26 @@ public class JooqPdfTest {
 
 				@Override
 				public void setSeniorityDate(Date seniorityDate) {
-					
-					String sql = "select distinct seniority_date sd from salary where employee_document = '"
-							+ dni + "'";
+
+					String sql = "select distinct seniority_date sd from salary where employee_document = '" + dni
+							+ "'";
 					Statement st;
 					try {
 						st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						
+
 						DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-						if(rs.next())
+						if (rs.next())
 							assertEquals(rs.getString("sd"), df.format(seniorityDate));
 						else
 							fail("No results for seniority date");
-						
+
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
-				}
 
-				
+				}
 
 				@Override
 				public void setSocialSecurityNumber(String socialSecurityNumber) {
@@ -807,7 +779,7 @@ public class JooqPdfTest {
 								fail("End date fail");
 							}
 						}
-						
+
 						String sDate = df.format(startDate);
 						String eDate = df.format(endDate);
 						sql = "select time_units as tu from salary where start_date=str_to_date('" + sDate
@@ -820,9 +792,7 @@ public class JooqPdfTest {
 								fail("Time units fail");
 							}
 						}
-						
-						
-						
+
 					} catch (SQLException e) {
 						fail("SQL exception");
 					}
@@ -830,7 +800,7 @@ public class JooqPdfTest {
 
 				@Override
 				public void setTimeUnits(Integer timeUnits) {
-					this.timeUnits=timeUnits;
+					this.timeUnits = timeUnits;
 //					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 //					String sDate = df.format(startDate);
 //					String eDate = df.format(endDate);
@@ -859,18 +829,18 @@ public class JooqPdfTest {
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
 					String sql;
-					if(payment.getName()!=null) {
-					sql = "select count(*) c from salary_payment sp where exists "
-							+ "(select id from salary where id  = sp.salary and " + "start_date=str_to_date('" + sDate
-							+ "','%Y-%m-%d') and " + "end_date=str_to_date('" + eDate + "','%Y-%m-%d') and "
-							+ "employee_document='" + dni + "') and " + "payment_concept='" + payment.getName()
-							+ "' and " + "amount=" + amount;
-					}
-					else {
+					if (payment.getName() != null) {
 						sql = "select count(*) c from salary_payment sp where exists "
-								+ "(select id from salary where id  = sp.salary and " + "start_date=str_to_date('" + sDate
-								+ "','%Y-%m-%d') and " + "end_date=str_to_date('" + eDate + "','%Y-%m-%d') and "
-								+ "employee_document='" + dni + "') and " + "payment_concept is null and " + "amount=" + amount;
+								+ "(select id from salary where id  = sp.salary and " + "start_date=str_to_date('"
+								+ sDate + "','%Y-%m-%d') and " + "end_date=str_to_date('" + eDate + "','%Y-%m-%d') and "
+								+ "employee_document='" + dni + "') and " + "payment_concept='" + payment.getName()
+								+ "' and " + "amount=" + amount;
+					} else {
+						sql = "select count(*) c from salary_payment sp where exists "
+								+ "(select id from salary where id  = sp.salary and " + "start_date=str_to_date('"
+								+ sDate + "','%Y-%m-%d') and " + "end_date=str_to_date('" + eDate + "','%Y-%m-%d') and "
+								+ "employee_document='" + dni + "') and " + "payment_concept is null and " + "amount="
+								+ amount;
 					}
 					try {
 						Statement st = connection.createStatement();
@@ -919,23 +889,22 @@ public class JooqPdfTest {
 					String eDate = df.format(endDate);
 
 					String sql = "select total_payment from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(rs.getDouble("total_payment")!=totalPayment) {
+						if (rs.next()) {
+							if (rs.getDouble("total_payment") != totalPayment) {
 								fail("total payment fail");
 							}
-						}
-						else {
+						} else {
 							fail("total payment fail");
 						}
 					} catch (SQLException e) {
 						fail("total payment sql fail");
 					}
-					
+
 				}
 
 				@Override
@@ -943,21 +912,20 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select pro_ext_base from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(extraPayProration==null)
-								extraPayProration=0.0;
-							if(rs.getDouble("pro_ext_base")!=extraPayProration) {
+						if (rs.next()) {
+							if (extraPayProration == null)
+								extraPayProration = 0.0;
+							if (rs.getDouble("pro_ext_base") != extraPayProration) {
 								fail("ProExtBase fail");
 							}
-						}
-						else {
+						} else {
 							fail("ProExtBase fail");
 						}
 					} catch (SQLException e) {
@@ -970,21 +938,20 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select cgc_base from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(commonBase==null)
-								commonBase=0.0;
-							if(rs.getDouble("cgc_base")!=commonBase) {
+						if (rs.next()) {
+							if (commonBase == null)
+								commonBase = 0.0;
+							if (rs.getDouble("cgc_base") != commonBase) {
 								fail("Cgc Base fail");
 							}
-						}
-						else {
+						} else {
 							fail("Cgc Base fail");
 						}
 					} catch (SQLException e) {
@@ -997,21 +964,20 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select cgp_base from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(professionalBase==null)
-								professionalBase=0.0;
-							if(rs.getDouble("cgp_base")!=professionalBase) {
+						if (rs.next()) {
+							if (professionalBase == null)
+								professionalBase = 0.0;
+							if (rs.getDouble("cgp_base") != professionalBase) {
 								fail("CgpBase fail");
 							}
-						}
-						else {
+						} else {
 							fail("CgpBase fail");
 						}
 					} catch (SQLException e) {
@@ -1024,21 +990,20 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select total_irpf from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(totalIrpf==null)
-								totalIrpf=0.0;
-							if(rs.getDouble("total_irpf")!=totalIrpf) {
+						if (rs.next()) {
+							if (totalIrpf == null)
+								totalIrpf = 0.0;
+							if (rs.getDouble("total_irpf") != totalIrpf) {
 								fail("total Irpf fail");
 							}
-						}
-						else {
+						} else {
 							fail("total Irpf fail");
 						}
 					} catch (SQLException e) {
@@ -1051,21 +1016,20 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select total_deduction from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(totalDeduction==null)
-								totalDeduction=0.0;
-							if(rs.getDouble("total_deduction")!=totalDeduction) {
+						if (rs.next()) {
+							if (totalDeduction == null)
+								totalDeduction = 0.0;
+							if (rs.getDouble("total_deduction") != totalDeduction) {
 								fail("total payment fail");
 							}
-						}
-						else {
+						} else {
 							fail("total deduction fail");
 						}
 					} catch (SQLException e) {
@@ -1079,20 +1043,19 @@ public class JooqPdfTest {
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
 					String iDate = df.format(issueDate);
-					
+
 					String sql = "select issue_date from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							
-							if(!iDate.equals(rs.getString("issue_date"))) {
+						if (rs.next()) {
+
+							if (!iDate.equals(rs.getString("issue_date"))) {
 								fail("Issue date fail");
 							}
-						}
-						else {
+						} else {
 							fail("Issue date fail");
 						}
 					} catch (SQLException e) {
@@ -1105,21 +1068,20 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select total_liquid from salary where employee_document = '" + dni + "' and "
-							+ "start_date = str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date = str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date = str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date = str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(totalLiquid==null)
-								totalLiquid=0.0;
-							if(rs.getDouble("total_liquid")!=totalLiquid) {
+						if (rs.next()) {
+							if (totalLiquid == null)
+								totalLiquid = 0.0;
+							if (rs.getDouble("total_liquid") != totalLiquid) {
 								fail("total liquid fail");
 							}
-						}
-						else {
+						} else {
 							fail("total liquid fail");
 						}
 					} catch (SQLException e) {
@@ -1133,27 +1095,26 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select count(*) c from salary_cost sd where exists "
 							+ "(select id from salary where id  = sd.salary and " + "start_date=str_to_date('" + sDate
 							+ "','%Y-%m-%d') and end_date=str_to_date('" + eDate + "','%Y-%m-%d') and "
-							+ "employee_document='" + dni + "') and cost_concept='" + cost.getName()
-							+ "' and " + "amount=" + amount;
+							+ "employee_document='" + dni + "') and cost_concept='" + cost.getName() + "' and "
+							+ "amount=" + amount;
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(rs.getInt("c")!=1) {
+						if (rs.next()) {
+							if (rs.getInt("c") != 1) {
 								fail("cost fail");
 							}
-						}
-						else {
+						} else {
 							fail("cost fail");
 						}
 					} catch (SQLException e) {
 						fail("cost sql fail");
 					}
-					
+
 				}
 
 				@Override
@@ -1161,38 +1122,30 @@ public class JooqPdfTest {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 					String sDate = df.format(startDate);
 					String eDate = df.format(endDate);
-					
+
 					String sql = "select count(*) c from salary_data sd where exists "
 							+ "(select id from salary where id  = sd.salary and " + "start_date=str_to_date('" + sDate
 							+ "','%Y-%m-%d') and end_date=str_to_date('" + eDate + "','%Y-%m-%d') and "
 							+ "employee_document='" + dni + "') and name='" + name + "' and "
-							+ "start_date=str_to_date('"+sDate+"', '%Y-%m-%d') and "
-							+ "end_date=str_to_date('"+eDate+"', '%Y-%m-%d')";
+							+ "start_date=str_to_date('" + sDate + "', '%Y-%m-%d') and " + "end_date=str_to_date('"
+							+ eDate + "', '%Y-%m-%d')";
 					try {
 						Statement st = connection.createStatement();
 						ResultSet rs = st.executeQuery(sql);
-						if(rs.next()) {
-							if(rs.getInt("c")!=1) {
-								if(!(name.equals("BASE_IRPF")||name.equals("TOTAL_DEVENGADO")||name.equals("CGC_E")))
+						if (rs.next()) {
+							if (rs.getInt("c") != 1) {
+								if (!(name.equals("BASE_IRPF") || name.equals("TOTAL_DEVENGADO")
+										|| name.equals("CGC_E")))
 									fail("data fail");
-								
-								//AVERIGUAR POR QUÉ NO INSERTA LAS 3 BASES DEL 'IF' SUPERIOR
-								
+
 							}
-						}
-						else {
+						} else {
 							fail("data fail");
 						}
 					} catch (SQLException e) {
 						fail("data sql fail");
 					}
 				}
-
-				
-				
-				
-				
-				
 
 // 'contract', 'person', 'enterprise', 'salary' , 'salary_payment' y
 // 'salary_deduction'
