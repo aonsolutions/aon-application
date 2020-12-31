@@ -690,13 +690,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private void setScrollPanelsHeight() {
 		int height = Window.getClientHeight(); 
-		scrolledPanel.setHeight((height-260)+"px");
-		scrolledPanelContractOtherData.setHeight((height-260)+"px");
-		scrolledPanelClauses.setHeight((height-265)+"px");
+		scrolledPanel.setHeight((height-200)+"px");
+		scrolledPanelContractOtherData.setHeight((height-200)+"px");
+		scrolledPanelClauses.setHeight((height-200)+"px");
 		scrolledPanelAttach.setHeight((height-200)+"px");
-		scrolledPanelBonus.setHeight((height-265)+"px");
-		scrolledPanelContractSpecificData.setHeight((height-260)+"px");
-		scrolledPDFPanel.setHeight((height-260)+"px");
+		scrolledPanelBonus.setHeight((height-200)+"px");
+		scrolledPanelContractSpecificData.setHeight((height-200)+"px");
+		scrolledPDFPanel.setHeight((height-200)+"px");
 	}
 	
 	private void initTabLayOutPanel() {

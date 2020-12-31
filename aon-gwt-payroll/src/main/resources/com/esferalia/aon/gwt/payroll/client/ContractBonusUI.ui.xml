@@ -37,13 +37,11 @@
 		}
 		
 		.footerStyle{
-			background-color: #eaeaea;
-			padding-top: 5px;
-		}
-		
-		.footerElement{
-			margin-left: 10px;
-			border: none;
+			border-top: 1px solid #eaeaea;
+		    align-items: center;
+		    padding: 5px;
+		    gap: 5px;
+		    display: flex;
 		}
 		
 		.scrollStyle {
@@ -75,8 +73,7 @@
 		    				<g:Grid ui:field="contractBonusDataTable"></g:Grid>
 		    			</g:DeckPanel>
 		    		</g:ScrollPanel>
-		    		<g:HTMLPanel styleName="{style.footerStyle}">
-	    				<g:Label ui:field="messageLabel" styleName="aon-finding-toolbar-item aon-icon-info {style.footerElement}"></g:Label>
+		    		<g:HTMLPanel ui:field="messagePanel" styleName="{style.footerStyle}">
 	    			</g:HTMLPanel>
 	    		</g:VerticalPanel>
 	    	</g:HTMLPanel>

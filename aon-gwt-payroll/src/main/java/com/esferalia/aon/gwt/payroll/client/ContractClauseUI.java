@@ -1,34 +1,24 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -69,7 +59,7 @@ public class ContractClauseUI extends ResizeComposite {
 	Grid clausesDataTable;
 
 	@UiField
-	Label newClause;
+	HTMLPanel footerOptionsToolbar;
 	
 	// ------------------------------------------------------ Constructor ---------------------------------------------------------
 
@@ -78,6 +68,7 @@ public class ContractClauseUI extends ResizeComposite {
 	
 	public ContractClauseUI() {
 		initWidget(uiBinder.createAndBindUi(this));
+		initFooterOptionsToolbar();
 	}
 	
 	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfoIn) {
@@ -88,10 +79,23 @@ public class ContractClauseUI extends ResizeComposite {
 			paintContractClause(contractClause);
 	}
 	
-	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
+	private void initFooterOptionsToolbar() {
+		footerOptionsToolbar.clear();
+		
+		AonTableButton newAttachmentBtn = new AonTableButton(AON.MSG.newAction(),  AON.CSS.aonIconAdd());
+		newAttachmentBtn.addClickHandler(e -> {
+			onAddNewAttachment(e);
+		});
+		
+		Label newAttachmentL = new Label("A" + String.valueOf("\u00F1") + "adir Clausula");
+		newAttachmentL.getElement().getStyle().setMarginRight(5, Unit.PX);
+		
+		footerOptionsToolbar.add(newAttachmentBtn);
+		footerOptionsToolbar.add(newAttachmentL);
+		
+	}
 	
-	@UiHandler("newClause")
-	public void onNewClauseClick(ClickEvent event) {
+	private void onAddNewAttachment(ClickEvent e) {
 		ContractClause contractClause = new ContractClause();
 		contractClause.setDomain(employeeContractInfo.getEmployeeInfo().getDomain());
 		contractClause.setContract(employeeContractInfo.getContractInfo().getContractId());
@@ -108,6 +112,8 @@ public class ContractClauseUI extends ResizeComposite {
 					
 				}, f -> {});
 	}
+	
+	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
 	
 	// --------------------------------------------------- UiHandlers (Aux Methods) -------------------------------------------------
 	
@@ -165,7 +171,7 @@ public class ContractClauseUI extends ResizeComposite {
 		});
 		
 		// Delete Button
-		Button deleteBTN = new Button();
+		AonTableButton deleteBTN = new AonTableButton("Eliminar", AON.CSS.aonIconDelete());
 		deleteBTN.addClickHandler((e) -> {
 			deleteContractClause(contractClause, 
 					s -> {
@@ -180,7 +186,6 @@ public class ContractClauseUI extends ResizeComposite {
 		nameTB.addStyleName(style.maxWidthTB());
 		descriptionTA.addStyleName(style.maxWidthTB());
 		descriptionTA.setHeight("95px");
-		deleteBTN.setStyleName("aon-editDataTable-button aon-icon-delete");
 		
 		// If id != null exists then fill the fields
 		if(null != contractClause.getId()) {

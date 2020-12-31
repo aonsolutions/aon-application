@@ -108,12 +108,12 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		footerOptionsToolbar.add(newAttachmentBtn);
 		footerOptionsToolbar.add(newAttachmentL);
 		
-		AonTableButton pdfExportBtn = new AonTableButton("Generar Borrador",  AON.CSS.aonIconPdf());
+		AonTableButton pdfExportBtn = new AonTableButton("Generar Borrador Contrato",  AON.CSS.aonIconPdf());
 		pdfExportBtn.addClickHandler(e -> {
 			onExportPDF();
 		});
 		
-		Label pdfExportL = new Label("Borrador Contrato");
+		Label pdfExportL = new Label("Generar Contrato");
 		
 		footerOptionsToolbar.add(pdfExportBtn);
 		footerOptionsToolbar.add(pdfExportL);

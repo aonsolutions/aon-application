@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Messages;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
@@ -18,6 +20,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -60,7 +63,7 @@ public abstract class ContractBonusUI extends ResizeComposite {
 	Grid contractBonusDataTable;
 
 	@UiField
-	Label messageLabel;
+	HTMLPanel messagePanel;
 	
 	// ------------------------------------------------------ Constructor ---------------------------------------------------------
 
@@ -85,7 +88,12 @@ public abstract class ContractBonusUI extends ResizeComposite {
 		for(SSBonusData contractBonus : employeeContractInfo.getContractBonus())
 			paintContractBonus(contractBonus);
 		
-		messageLabel.setText("Bonificaciones actualizadas a " + formatFullDate.format(new Date()));
+		// Footer
+		messagePanel.clear();
+		AonTableButton infoBtn = new AonTableButton("Actualizado", AON.CSS.aonIconInfo());
+		Label messageLabel = new Label("Bonificaciones actualizadas a " + formatFullDate.format(new Date()));
+		messagePanel.add(infoBtn);
+		messagePanel.add(messageLabel);
 	}
 	
 	// --------------------------------------------------- UiHandlers (Aux Methods) -------------------------------------------------
