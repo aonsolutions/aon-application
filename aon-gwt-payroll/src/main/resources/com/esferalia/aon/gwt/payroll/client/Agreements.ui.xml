@@ -4,8 +4,15 @@
 	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:commonsolutions='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
-	<ui:style>
-	
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.Agreements.MyStyle">
+		.treeItem{
+			display: flex;
+			align-items: center;
+		}
+		
+		.rotate{
+			transform: rotate(180deg);
+		}
 	</ui:style>
 
 	<ui:image field='view' src='view.png' />

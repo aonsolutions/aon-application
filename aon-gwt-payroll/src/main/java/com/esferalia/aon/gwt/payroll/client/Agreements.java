@@ -4,18 +4,23 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -59,6 +64,14 @@ public class Agreements extends ResizeComposite implements
 
 	private static final Binder BINDER = GWT.create(Binder.class);
 
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String treeItem();
+		String rotate();
+	}
+	
 	@UiField
 	AgreementsTree agreementsTree;
 
@@ -163,7 +176,12 @@ public class Agreements extends ResizeComposite implements
 				&& AonNumberUtils.notEquals(domain, agreement.getDomain()) )
 			marks.add(IMAGES.parent());
 		
-		TreeItem agreementTreeItem = new TreeItem(AgreementsTree.imageItemSafeHtml(description,
+		TreeItem agreementTreeItem = null;
+		
+		if (AonNumberUtils.notEquals(0, agreement.getDomain()) && AonNumberUtils.equals(domain, agreement.getDomain()))
+			agreementTreeItem = new TreeItem(getNewOwnAgreementRow(description));
+		else 
+			agreementTreeItem = new TreeItem(AgreementsTree.imageItemSafeHtml(description,
 				AgreementsTree.getImageResource(agreement, domain)));
 
 		agreementTreeItem.setUserObject(agreement);
@@ -175,6 +193,17 @@ public class Agreements extends ResizeComposite implements
 		return agreementTreeItem;
 	}
 
+
+	private Widget getNewOwnAgreementRow(String description) {
+		HTMLPanel panel = new HTMLPanel("");
+		panel.addStyleName(style.treeItem()); 
+		AonTableButton arrow = new AonTableButton("", AON.CSS.aonIconBack());
+		arrow.addStyleName(style.rotate());
+		Label descriptionL = new Label(description);
+		panel.add(arrow);
+		panel.add(descriptionL);
+		return panel;
+	}
 
 	@Override
 	public boolean evaluateId(Agreement agreement) {

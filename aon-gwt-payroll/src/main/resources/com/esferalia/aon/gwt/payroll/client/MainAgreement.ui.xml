@@ -21,6 +21,13 @@
 	.borderR{
 		border-right: 1px solid #ddd;
 	}
+	
+	.cmd_btn{
+		background-position: center left;
+		background-repeat: no-repeat;
+		padding-left: 25px !important;
+		background-size: contain;
+	}
 	 
 	</ui:style>
 

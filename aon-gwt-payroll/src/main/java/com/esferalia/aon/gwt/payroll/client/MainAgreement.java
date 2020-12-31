@@ -153,24 +153,24 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		public AgreementContextMenu() {
 			
 			newItem = addItem("Nuevo", new NewAgreementCommand(), 
-					AON.AON_ICON_RESET, AON.AON_ICON_CMD_BUTTON);
+					AON.CSS.aonIconAdd(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			newItem.ensureDebugId("newItem");
 			addSeparator();
 			
 			copyItem = addItem("Copiar", new CopyAgreementCommand(), 
-					AON.AON_ICON_COPY, AON.AON_ICON_CMD_BUTTON);
+					AON.CSS.aonIconCopy(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			copyItem.ensureDebugId("copyItem");
 			
 			pasteItem = addItem("Pegar", new PasteAgreementCommand(), 
-					AON.AON_ICON_PASTE, AON.AON_ICON_CMD_BUTTON);
+					AON.CSS.aonIconPaste(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			pasteItem.ensureDebugId("pasteItem");
 			
 			deleteItem = addItem("Eliminar", new DeleteAgreementCommand(), 
-					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);			
+					AON.CSS.aonIconDelete(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());			
 			deleteItem.ensureDebugId("deleteItem");
 			
 			moveItem = addItem("Mover a..", new MoveAgreementCommand(), 
-					AON.AON_ICON_MOVE_UP, AON.AON_ICON_CMD_BUTTON);
+					AON.CSS.aonIconMoveTo(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			moveItem.ensureDebugId("moveItem");
 			moveItem.setTitle("Mover convenio al dominio padre");
 			moveItem.setVisible(false);
@@ -261,6 +261,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	interface MyStyle extends CssResource {
 		String borderR();
+		String cmd_btn();
 	}
 	
 	@UiField
