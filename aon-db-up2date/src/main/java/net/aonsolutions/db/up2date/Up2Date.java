@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.accounting.AlterAccountEntryDetailConcept;
 import net.aonsolutions.db.up2date.accounting.DropTableAccountHelper;
 import net.aonsolutions.db.up2date.accounting.RawdocCreation;
+import net.aonsolutions.db.up2date.irpf.Irpf2021Update;
 import net.aonsolutions.db.up2date.payroll.EresUpdateIII;
 import net.aonsolutions.db.up2date.tgss.SMI2020UpdateRollback;
 
@@ -135,11 +136,12 @@ public class Up2Date {
 //    		RealDecreeLaw182020UpdateIV.REALDECREELAW182020UPDATEIV
 //    		TrainningBases2020Fix.TRAINNINGBASES2020FIX
 //    		AuthUpdate.AUTH_UPDATE
-    		//AlterAccountEntryDetailConcept.ALTER_ACCOUNT_ENTRY_DETAIL_CONCEPT,
-    		//EresUpdateIII.ERESUPDATEIII,
-    		//SMI2020UpdateRollback.SMI2020UPDATEROLLBACK
-    		// DropTableAccountHelper.DROP_TABLE_ACCOUNT_HELPER
-    		RawdocCreation.RAWDOC_CREATION
+//			AlterAccountEntryDetailConcept.ALTER_ACCOUNT_ENTRY_DETAIL_CONCEPT,
+//			EresUpdateIII.ERESUPDATEIII,
+//			SMI2020UpdateRollback.SMI2020UPDATEROLLBACK
+//			DropTableAccountHelper.DROP_TABLE_ACCOUNT_HELPER
+    		RawdocCreation.RAWDOC_CREATION,
+    		Irpf2021Update.IRPF2021UPDATEII
     };
 
 
