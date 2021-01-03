@@ -1206,6 +1206,7 @@ public class SQLFunctionsTestCase extends
 		Date lastDayOfMonth = getLastDayOfMonth(getToday());
 		
 		int month = get(firsDayOfMonth, Calendar.MONTH);
+		int year = get(firsDayOfMonth, Calendar.YEAR);
 		
 		Date endDate = add(firsDayOfMonth, DAY_OF_MONTH, 9);
 		ContractRecord contract = newContract(aonContext,
@@ -1214,7 +1215,7 @@ public class SQLFunctionsTestCase extends
 						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
 						"250.00 * DIAS_TRABAJADOS / DIAS_MES", }
 			, new String[] {
-						String.format("TRAMO(FECHA(2020,%s,10)); BASE_CGC * 0.10", month+1), 
+						String.format("TRAMO(FECHA(%s,%s,10)); BASE_CGC * 0.10", year , month+1), 
 						}
 			);
 		

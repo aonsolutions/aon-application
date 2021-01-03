@@ -4207,12 +4207,6 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
 		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
 
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(MONTH, Calendar.JUNE);
-		calendar.set(DAY_OF_MONTH, 1);
-		Date contractDate = new Date(calendar.getTimeInMillis());
-
 		ContractRecord contract = newContract(
 				aonContext
 				,new String[] {} 
@@ -4230,10 +4224,6 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		extraDate = add(extraDate, MONTH, 1);
 		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
 		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "1100.00", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
-		//addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
-		extraDate = add(extraDate, MONTH, 1);
-		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
-		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "1100.00", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
 		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
 		extraDate = add(extraDate, MONTH, 1);
 		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
@@ -4245,8 +4235,12 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
 		extraDate = add(extraDate, MONTH, 1);
 		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
-		//addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "1100.00", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
-		//addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "1100.00", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		extraDate = add(extraDate, MONTH, 1);
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "1100.00", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
 		extraDate = add(extraDate, MONTH, 1);
 		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), null, conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
 		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), null, conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());

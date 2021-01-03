@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -29,7 +30,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -443,6 +443,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 	
 	@Test
+	@Ignore("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -495,6 +496,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 
 	@Test
+	@Ignore("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -531,6 +533,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 	
 	@Test
+	@Ignore("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREIII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -585,6 +588,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 	
 	@Test
+	@Ignore("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREIV() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -639,6 +643,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 
 	@Test
+	@Ignore("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREV() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -702,6 +707,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 
 	@Test
+	@Ignore("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREVI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -764,6 +770,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 
 	@Test
+	@Ignore("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREVII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -815,6 +822,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 
 	@Test
+	@Ignore("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREVIII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -868,6 +876,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 
 	@Test
+	@Ignore("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREIX() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -930,6 +939,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 
 	@Test
+	@Ignore("'REINCORPRADO_ERE' has been deprecated")
 	public void testVariableREINCORPRADO_EREX() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -1881,6 +1891,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 	}
 
 	@Test
+	@Ignore("'REINCORPRADO_ERE' has been deprecated")
 	public void testBackBonusI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();

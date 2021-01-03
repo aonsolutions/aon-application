@@ -5671,8 +5671,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		return newContract(aonContext, ccc, contractCode, quoteGroup, CCCType.PRINCIPAL);
 	}
 
+	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup ,Date startDate, Date endDate) {
+		return newContract(aonContext, ccc, contractCode, quoteGroup, CCCType.PRINCIPAL, startDate, endDate, null, Integer.toString((int)(Math.random() * 1000000000.00)));
+	}
+
 	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType) {
-		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, getFirstDayOfYear(getToday()), null, null, Integer.toString((int)(Math.random() * 1000000000.00)));
+		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, add(getFirstDayOfYear(getToday()), Calendar.MONTH,-1), null, null, Integer.toString((int)(Math.random() * 1000000000.00)));
 	}
 
 	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType, Date startDate, Date endDate, String dni ) {
