@@ -84,14 +84,14 @@ public class OfferServlet extends HttpServlet{
 				
 				if(registry.getId() == null) {
 					registry = new Registry()
-							.setDomain(domain.getId())
+							.setDomain(domain)
 							.setName(tc.getName())
 							.setDocument(tc.getDocument());
 					registry = AON.insertRegistry(domain.getName(), domain.getId(), "", registry);
 				}
 				
 				Target tar = new Target();
-				tar.setDomain(domain.getId());
+				tar.setDomain(domain);
 				tar.setAdvertising((short) 0);
 				tar.setWithholding((short) 0);
 				tar.setTransaction((short) 0);

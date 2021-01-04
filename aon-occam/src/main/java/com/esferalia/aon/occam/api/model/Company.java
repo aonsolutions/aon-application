@@ -13,9 +13,6 @@ public class Company extends Registry implements Serializable {
 	private String document;
 	private String name;
 	
-    private Integer domain;
-    private String domainName;
-    private boolean domainActive;
     private boolean active;
 	private boolean surcharge;
 	private boolean withholding;
@@ -77,25 +74,7 @@ public class Company extends Registry implements Serializable {
 		this.vatAccrualPayment = vatAccrualPayment;
 		return this;
 	}
-
-	public Integer getDomain() {
-		return domain;
-	}
-
-	public Company setDomain(Integer domain) {
-		this.domain = domain;
-		return this;
-	}
 	
-	public String getDomainName() {
-		return domainName;
-	}
-
-	public Company setDomainName(String domainName) {
-		this.domainName = domainName;
-		return this;
-	}
-
 	public boolean isActive() {
 		return active;
 	}
@@ -122,12 +101,4 @@ public class Company extends Registry implements Serializable {
 		this.scope = scope;
 	}
 
-	public boolean isDomainActive() {
-		return domainActive;
-	}
-
-	public Company setDomainActive(boolean domainActive) {
-		this.domainActive = domainActive;
-		return this;
-	}
 }

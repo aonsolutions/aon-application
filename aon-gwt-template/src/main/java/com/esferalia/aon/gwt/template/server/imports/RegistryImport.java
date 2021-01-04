@@ -457,7 +457,7 @@ public class RegistryImport {
 				reg = regList.stream().filter(f -> f.getDomain().equals(0)).findFirst().get();
 			} else {
 				r.getRegistry()
-					.setDomain(domain.getId())
+					.setDomain(domain)
 					.setDocumentType(getDocumentType(r.getRegistry().getDocument()));
 				reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry());
 				r.getRegistry().getAddress()
@@ -531,10 +531,10 @@ public class RegistryImport {
 				if(customer == null || customer.getId() == null) {
 					Customer c = new Customer()
 							.setAccount(acc.getId())
-							.setDomain(domain.getId())
 							.setRegistry(reg)
 							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
 							.setStatus(RegistryStatus.ACTIVE);
+					c.setDomain(domain);
 					AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
 				}
 			}
@@ -548,7 +548,7 @@ public class RegistryImport {
 							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
 							.setStatus(RegistryStatus.ACTIVE);
 					sup.setId(registryId);
-					sup.setDomain(domain.getId());
+					sup.setDomain(domain);
 					AON.insertSupplier(domain.getName(), domain.getId(), user.getLogin(), sup);
 				}
 			}

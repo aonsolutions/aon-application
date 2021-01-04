@@ -54,6 +54,7 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
+import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -110,6 +111,7 @@ import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
@@ -158,6 +160,7 @@ import com.esferalia.aon.occam.api.model.Properties.ScopeProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
+import com.esferalia.aon.occam.api.model.Properties.TimeControlProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserAppRoleProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
@@ -1601,6 +1604,26 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(USER_APP_ROLE.USER_ID);}
 		@Override public Property<Byte> getAppProperty() {return new FilterDAO.PropertyDAO<>(USER_APP_ROLE.APP);}
 		@Override public Property<Byte> getRoleProperty() {return new FilterDAO.PropertyDAO<>(USER_APP_ROLE.ROLE);}
+	}
+	
+	protected static class TimeControlPropertiesDAO implements TimeControlProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, TimeControlFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(TimeControlFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.DOMAIN);}
+		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.DATE);}
+		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.TASK_HOLDER);}		
 	}
 	
 }

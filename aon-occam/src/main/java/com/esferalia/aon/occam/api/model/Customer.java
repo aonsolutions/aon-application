@@ -8,13 +8,12 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 @SuppressWarnings("serial")
 public class Customer  extends Registry implements Serializable{
-	Integer id; // registryId
+
 	Integer account;
 	Date creationDate;
 	String creationUser;
 	Byte deliveryGrouped;
 	Byte deliveryValuated;
-	Integer domain;
 	Byte eInvoice;
 	Integer invoicingGroup;
 	Date modificationDate;
@@ -38,13 +37,6 @@ public class Customer  extends Registry implements Serializable{
 		deliveryValuated = (byte) 1;
 	}
 	
-	public Integer getId() {
-		return id;
-	}
-	public Customer setId(Integer id) {
-		this.id = id;
-		return this;
-	}
 	public Integer getAccount() {
 		return account;
 	}
@@ -80,13 +72,7 @@ public class Customer  extends Registry implements Serializable{
 		this.deliveryValuated = deliveryValuated;
 		return this;
 	}
-	public Integer getDomain() {
-		return domain;
-	}
-	public Customer setDomain(Integer domain) {
-		this.domain = domain;
-		return this;
-	}
+
 	public Byte geteInvoice() {
 		return eInvoice;
 	}

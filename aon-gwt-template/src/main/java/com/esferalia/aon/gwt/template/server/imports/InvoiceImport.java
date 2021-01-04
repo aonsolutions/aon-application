@@ -708,18 +708,18 @@ public class InvoiceImport {
 				if(reg == null || !reg.getDomain().equals(domain.getId())) {
 					reg = reg != null ? reg : new Registry();
 					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
-						.setDomain(domain.getId())
+						.setDomain(domain)
 						.setDocument(nif)
 						.setDocumentCountry(country)
 						.setName(name)
 						.setNationality(country));
 				}	
 				customer = new Customer()
-					.setDomain(domain.getId())
 					.setRegistry(reg)
 					.setStatus(RegistryStatus.ACTIVE)
 					.setTransaction(transaction.value())
 					.setScope(getScopeId(domain, user));
+				customer.setDomain(domain);
 				customer.setName(reg.getName());
 				customer.setId(reg.getId());
 				AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), customer);
@@ -743,7 +743,7 @@ public class InvoiceImport {
 				if(reg == null || !reg.getDomain().equals(domain.getId())) {
 					reg = reg != null ? reg : new Registry();
 					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
-						.setDomain(domain.getId())
+						.setDomain(domain)
 						.setDocument(nif)
 						.setDocumentCountry(country)
 						.setName(name)
@@ -758,7 +758,7 @@ public class InvoiceImport {
 						.setStatus(RegistryStatus.ACTIVE)
 						.setScope(getScopeId(domain, user))
 						.setAccount(acc.getId());
-				supplier.setDomain(domain.getId());
+				supplier.setDomain(domain);
 				supplier.setId(reg.getId());
 				supplier.setName(reg.getName());
 				AON.insertSupplier(domain.getName(), domain.getId(), user.getLogin(), supplier);
@@ -782,7 +782,7 @@ public class InvoiceImport {
 				if(reg == null || !reg.getDomain().equals(domain.getId())) {
 					reg = reg != null ? reg : new Registry();
 					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
-						.setDomain(domain.getId())
+						.setDomain(domain)
 						.setDocument(nif)
 						.setDocumentCountry(country)
 						.setName(name)

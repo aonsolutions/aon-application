@@ -6,38 +6,32 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 
 @SuppressWarnings("serial")
 public class TaskHolder extends Registry implements Serializable{
-
-	private Integer domain;
-	private Byte type;
-	private Byte active;
+	
+	private TaskHolderType taskHolderType;
+	private Boolean active;
 	private Integer userId;
 	private Integer costProfile;
 	
 	public TaskHolder() {}
-
-	public Integer getDomain() {
-		return domain;
+	
+	public TaskHolderType getTaskHolderType() {
+		return taskHolderType;
 	}
 
-	public TaskHolder setDomain(Integer domain) {
-		this.domain = domain;
+	public TaskHolder setTaskHolderType(TaskHolderType taskHolderType) {
+		this.taskHolderType = taskHolderType;
 		return this;
 	}
 
-	public Byte getType() {
-		return type;
+	public byte getActiveValue() {
+		return isActive() ? (byte) 1 : (byte) 0; 
 	}
-
-	public TaskHolder setType(Byte type) {
-		this.type = type;
-		return this;
-	}
-
-	public Byte getActive() {
+	
+	public Boolean isActive() {
 		return active;
 	}
 
-	public TaskHolder setActive(Byte active) {
+	public TaskHolder setActive(Boolean active) {
 		this.active = active;
 		return this;
 	}

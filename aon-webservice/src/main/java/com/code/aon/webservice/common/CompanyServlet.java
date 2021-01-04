@@ -81,9 +81,8 @@ public class CompanyServlet extends HttpServlet{
 			if("generateScope".equals(pathInfo[3])){
 				Integer id = json.getInt("company");
 				Company cp = AON.getCompany(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id));
-				Domain d = AON.getDomain(domainName, cp.getDomain(), userName);
-				d.setScope(json.getInt("scope"));
-				AON.updateDomainScope(d.getName(), cp.getDomain(), userName, d);
+				cp.getDomain().setScope(json.getInt("scope"));
+				AON.updateDomainScope(cp.getDomain().getName(), cp.getDomain().getId(), userName, cp.getDomain());
 			} 
 			
 			resp.setContentType("application/json;charset=UTF-8");

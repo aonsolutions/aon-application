@@ -84,6 +84,7 @@ import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DomainAppPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ScopePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserAppRolePropertiesDAO;
@@ -322,25 +323,11 @@ public class SecurityDAO {
 	
 	
 	public static LinkedList<Domain> getCompaniesByScope(AONContext ctx, Integer scope){
-		
 		return ctx.getDslContext().select()
 		.from(DOMAIN).join(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
 		.where(DOMAIN.PARENT.eq(ctx.getDomainId()))
 		.and(SCOPE.ID.eq(scope))
 		.fetch().stream().map(new DomainFiller()).collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-
-	public static class DomainFiller  implements Function<Record, Domain> {
-
-		@Override
-		public Domain apply(Record record) {
-			return new Domain()
-				.setId(record.getValue(DOMAIN.ID))
-				.setName(record.getValue(DOMAIN.NAME))
-				.setDescription(record.getValue(DOMAIN.DESCRIPTION));
-		}
-		
 	}
 	
 	public static class AuthFiller  implements Function<Record8<byte[], String, String, String, String, String, String, String>,Auth> {

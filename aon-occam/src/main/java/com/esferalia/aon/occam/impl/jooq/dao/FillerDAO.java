@@ -49,8 +49,6 @@ import java.util.function.Function;
 
 import org.jooq.Record;
 
-import com.esferalia.aon.jooq.tables.Domain;
-import com.esferalia.aon.jooq.tables.EnterpriseCcc;
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonCompany;
@@ -59,6 +57,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.commission.Commission;
@@ -132,6 +131,25 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FillerDAO {
+	
+	public static class DomainFiller implements Function<Record, Domain> {
+		@Override
+		public Domain apply(Record r) {
+			return buildDomain(r);
+		}
+		
+		public static Domain buildDomain(Record r) {
+			return new Domain()
+					.setActive(r.getValue(DOMAIN.ACTIVE) == 1)
+					.setDescription(r.getValue(DOMAIN.DESCRIPTION))
+					.setDomainType(DomainType.values()[r.getValue(DOMAIN.TYPE)])
+					.setEnableHeredity(r.getValue(DOMAIN.ENABLEHEREDITY) == 1)
+					.setId(r.getValue(DOMAIN.ID))
+					.setName(r.getValue(DOMAIN.NAME))
+					.setParentId(r.getValue(DOMAIN.PARENT))
+					.setDomainManagement(r.getValue(DOMAIN.DOMAINMANAGEMENT) == 1);	
+		}
+	}
 
 	public static class ApplicationParameterFiller implements Function<Record, ApplicationParameter> {
 		@Override
@@ -201,7 +219,7 @@ public class FillerDAO {
 					.setDocument(r.getValue(REGISTRY.DOCUMENT))
 					.setDocumentCountry(null) // TODO
 					.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
-					.setDomain(r.getValue(REGISTRY.DOMAIN))
+					.setDomain(new Domain().setId(r.getValue(REGISTRY.DOMAIN)))
 					.setId(r.getValue(REGISTRY.ID))
 					.setName(r.getValue(REGISTRY.NAME))
 					.setNationality(null) // TODO
@@ -219,7 +237,7 @@ public class FillerDAO {
 			carrier.setDocument(r.getValue(REGISTRY.DOCUMENT));
 			carrier.setDocumentCountry(null); // TODO
 			carrier.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			carrier.setDomain(r.getValue(REGISTRY.DOMAIN));
+			carrier.setDomain(new Domain().setId(r.getValue(REGISTRY.DOMAIN)));
 			carrier.setId(r.getValue(REGISTRY.ID));
 			carrier.setName(r.getValue(REGISTRY.NAME));
 			carrier.setNationality(null); // TODO
@@ -238,7 +256,7 @@ public class FillerDAO {
 			supplier.setDocument(r.getValue(REGISTRY.DOCUMENT));
 			supplier.setDocumentCountry(null); // TODO
 			supplier.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			supplier.setDomain(r.getValue(REGISTRY.DOMAIN));
+			supplier.setDomain(new Domain().setId(r.getValue(REGISTRY.DOMAIN)));
 			supplier.setId(r.getValue(REGISTRY.ID));
 			supplier.setName(r.getValue(REGISTRY.NAME));
 			supplier.setNationality(null); // TODO
@@ -291,7 +309,7 @@ public class FillerDAO {
 			target.setDocument(r.getValue(REGISTRY.DOCUMENT));
 			target.setDocumentCountry(null); // TODO
 			target.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			target.setDomain(r.getValue(REGISTRY.DOMAIN));
+			target.setDomain(new Domain().setId(r.getValue(REGISTRY.DOMAIN)));
 			target.setId(r.getValue(REGISTRY.ID));
 			target.setName(r.getValue(REGISTRY.NAME));
 			target.setNationality(null); // TODO
@@ -320,14 +338,13 @@ public class FillerDAO {
 			person.setDocument(r.getValue(REGISTRY.DOCUMENT));
 			person.setDocumentCountry(null); // TODO
 			person.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			person.setDomain(r.getValue(REGISTRY.DOMAIN));
 			person.setId(r.getValue(REGISTRY.ID));
 			person.setName(r.getValue(REGISTRY.NAME));
 			person.setNationality(null); // TODO
 			person.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			person.setType(r.getValue(REGISTRY.TYPE));
+			person.setDomain(new Domain().setId(r.getValue(PERSON.DOMAIN)));
 			return person.setBirthDate(r.getValue(PERSON.BIRTH_DATE))
-					.setDomain(r.getValue(PERSON.DOMAIN))
 					.setFirstName(r.getValue(PERSON.NAME))
 					.setFirstSurname(r.getValue(PERSON.FIRST_SURNAME))
 					.setSecondSurname(r.getValue(PERSON.SECOND_SURNAME))
@@ -351,13 +368,12 @@ public class FillerDAO {
 			customer.setType(r.getValue(REGISTRY.TYPE));
 			customer.setNationality(null); // TODO
 			customer.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-
+			customer.setDomain(new Domain().setId(r.getValue(CUSTOMER.DOMAIN)));
 			return customer.setAccount(r.getValue(CUSTOMER.ACCOUNT))
 					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
 					.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))
 					.setDeliveryGrouped(r.getValue(CUSTOMER.DELIVERY_GROUPED))
 					.setDeliveryValuated(r.getValue(CUSTOMER.DELIVERY_VALUATED))
-					.setDomain(r.getValue(CUSTOMER.DOMAIN))
 					.seteInvoice(r.getValue(CUSTOMER.E_INVOICE))
 					.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
 					.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
@@ -628,11 +644,16 @@ public class FillerDAO {
 	public static class AonCompanyFiller implements Function<Record, AonCompany> {
 		@Override
 		public AonCompany apply(Record r) {
-			Domain domain = DOMAIN.as("d");
-			Domain parent = DOMAIN.as("p");
+			com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
+			com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
 			
+			Domain d = new Domain()
+					.setId(r.getValue(domain.ID))
+					.setName(r.getValue(domain.NAME))
+					.setActive(r.getValue(domain.ACTIVE) == 1)
+					.setParentId(r.getValue(domain.PARENT));
 			Company company = new Company();
-			company.setDomainName(r.getValue(domain.NAME));
+			company.setDomain(d);
 			company.setAlias(r.getValue(REGISTRY.ALIAS));
 			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
@@ -646,9 +667,7 @@ public class FillerDAO {
 					.setDescription(r.getValue(SCOPE.DESCRIPTION)));
 			company
 				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
-				.setDomainActive(r.getValue(domain.ACTIVE) == 1)
 				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
-				.setDomain(r.getValue(COMPANY.DOMAIN))
 				.setDocument(r.getValue(REGISTRY.DOCUMENT))
 				.setId(r.getValue(REGISTRY.ID))
 				.setName(r.getValue(REGISTRY.NAME))
@@ -680,13 +699,12 @@ public class FillerDAO {
 		@Override
 		public Company apply(Record r) {
 			Company company = new Company();
-			company.setDomainName(r.getValue(DOMAIN.NAME));
+			company.setDomain(DomainFiller.buildDomain(r));
 			company.setAlias(r.getValue(REGISTRY.ALIAS));
 			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
 			company.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
 			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null); // TODO
-			company.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			company.setType(r.getValue(REGISTRY.TYPE));	
 			company.setScope(new Scope()
 					.setId(r.getValue(SCOPE.ID))
@@ -694,9 +712,7 @@ public class FillerDAO {
 					.setDescription(r.getValue(SCOPE.DESCRIPTION)));
 			return company
 				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
-				.setDomainActive(r.getValue(DOMAIN.ACTIVE) == 1)
 				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
-				.setDomain(r.getValue(COMPANY.DOMAIN))
 				.setDocument(r.getValue(REGISTRY.DOCUMENT))
 				.setId(r.getValue(REGISTRY.ID))
 				.setName(r.getValue(REGISTRY.NAME))
@@ -1176,7 +1192,7 @@ public class FillerDAO {
 			supplier.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			supplier.setDocument(r.getValue(REGISTRY.DOCUMENT));
 			supplier.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			supplier.setDomain(r.getValue(REGISTRY.DOMAIN));
+			supplier.setDomain(new Domain().setId(r.getValue(REGISTRY.DOMAIN)));
 			supplier.setId(r.getValue(REGISTRY.ID));
 			supplier.setName(r.getValue(REGISTRY.NAME));
 			supplier.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
@@ -1237,4 +1253,6 @@ public class FillerDAO {
 		}
 	}
 
+	
+	
 }

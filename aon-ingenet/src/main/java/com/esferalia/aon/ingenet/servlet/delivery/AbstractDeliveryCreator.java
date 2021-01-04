@@ -991,7 +991,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 				LinkedList<Scope> scopes = SecurityDAO.getDomainScopes(ctx);
 				DATOSAGENCIATRANSPORTETYPE at = albaran.getDATOSHOJARUTA().getDATOSAGENCIATRANSPORTE();
 				carrier = new Carrier();
-				carrier.setDomain(ctx.getDomainId());
+				carrier.setDomain(new Domain().setId(ctx.getDomainId()));
 				carrier.setScope(scopes.get(0).getId());
 				carrier.setName(at.getDATOSREGISTRO().getNOMBRE());
 				carrier.setAlias(at.getDATOSREGISTRO().getALIAS());

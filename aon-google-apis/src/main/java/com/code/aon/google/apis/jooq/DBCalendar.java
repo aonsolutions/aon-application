@@ -205,7 +205,7 @@ public class DBCalendar {
 					.setDocument(rr.getDocument())
 					.setDocumentCountry(Country.safeValueOf(rr.getDocumentCountry()))
 					.setDocumentType(DocumentType.safeValueOf( rr.getDocumentType()))
-					.setDomain(rr.getDomain())
+					.setDomain(new Domain().setId(rr.getDomain()))
 					.setId(rr.getId())
 					.setName(rr.getName())
 					.setNationality(Country.safeValueOf(rr.getNationality()))

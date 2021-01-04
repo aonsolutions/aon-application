@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -157,16 +158,19 @@ public class WorkServlet extends HttpServlet{
 	
 	private JSONObject addOperator(Domain domain, String userName, JSONObject json){
 		Registry registry = new Registry().setName(json.getString("name")).setAlias(json.getString("name"))
-				.setDomain(domain.getId());
+				.setDomain(domain);
 		registry = AON.insertRegistry(domain.getName(), domain.getId(), userName, registry);
 		if(json.opt("email") != null){
 			RegistryMedia rmedia = new RegistryMedia().setMedia((byte) 4).setValue(json.getString("email"))
 				.setDomain(domain.getId()).setRegistry(registry);
 			AON.insertRMedia(domain.getName(), domain.getId(), userName, rmedia);
 		}			
-		TaskHolder taskHolder = new TaskHolder().setActive((byte) 1).setDomain(domain.getId())
-				.setType((byte) 0);
+		TaskHolder taskHolder = new TaskHolder()
+				.setActive(true)
+				.setTaskHolderType(TaskHolderType.INTERNAL);
 		taskHolder.setId(registry.getId());
+		taskHolder.setDomain(domain);
+
 		AON.insertTaskHolder(domain.getName(), domain.getId(), userName, taskHolder);
 		if(json.opt("workgroups") != null){
 			String[] workgroups = json.getString("workgroups").split("@");
@@ -184,7 +188,7 @@ public class WorkServlet extends HttpServlet{
 			.setName(json.getString("name")).setAlias(json.getString("name"));
 		AON.updateRegistry(domain.getName(), domain.getId(), userName, registry);
 		TaskHolder holder = AON.getTaskHolder(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id));
-		holder.setActive(json.getString("active").equals("true") ? (byte) 1 : (byte) 0);
+		holder.setActive(json.getString("active").equals("true"));
 		AON.updateTaskHolder(domain.getName(), domain.getId(), userName, holder);
 		if(json.opt("email") != null){
 			RegistryMedia rmedia = AON.getRMedia(domain.getName(), domain.getId(), userName,
@@ -255,7 +259,7 @@ public class WorkServlet extends HttpServlet{
 			return new User()
 					.setId(r.getId())
 					.setLogin(r.getName())
-					.setStatus(r.getActive() == 1 ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE);  
+					.setStatus(r.isActive() ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE);  
 		}
 	}
 

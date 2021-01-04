@@ -335,7 +335,7 @@ public class InvoiceServlet extends HttpServlet{
 		// Company
 		c.setActive(company.isActive());
 		c.setVatAccrualPayment(company.isVatAccrualPayment());
-		c.setDomain(company.getDomain());
+		c.setDomain(company.getDomain().getId());
 		c.setSurcharge(company.isSurcharge());
 		c.setWithholding(company.isWithholding());
 		c.setEInvoice(company.iseInvoice());

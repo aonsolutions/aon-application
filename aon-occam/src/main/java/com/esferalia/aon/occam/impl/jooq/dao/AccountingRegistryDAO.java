@@ -18,6 +18,7 @@ import org.jooq.Param;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.AccountingRegistryProperties;
@@ -176,7 +177,7 @@ public class AccountingRegistryDAO {
 
 		final Integer registryId = RegistryDAO.insert(ctx, new Registry()
 			.setId(reg.getDomain())
-			.setDomain(reg.getDomain())
+			.setDomain(new Domain().setId(reg.getDomain()))
 			.setDocument(reg.getDocument())
 			.setDocumentCountry(reg.getDocumentCountry())
 			.setDocumentType(reg.getDocumentType())

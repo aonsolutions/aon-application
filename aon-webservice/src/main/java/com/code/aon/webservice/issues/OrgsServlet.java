@@ -71,7 +71,7 @@ public class OrgsServlet extends HttpServlet{
 		Stream<User> userList;
 		
 		if(workgroupId != -1) userList = AON.getTaskMemberWStream(domain.getName(), domain.getId(), userName, "%" + filter + "%",
-				workgroupId).filter(t -> t.getActive() != 0).map(new RegistryToUserFiller());
+				workgroupId).filter(t -> t.isActive()).map(new RegistryToUserFiller());
 		else userList = AON.getTaskHolderStream(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getNameProperty().like("%" + filter + "%")).and(f.getActiveProperty().eq((byte)1)))
 				.sorted((e1,e2) -> e1.getName().compareTo(e2.getName())).map(new RegistryToUserFiller());
@@ -112,7 +112,7 @@ public class OrgsServlet extends HttpServlet{
 			return new User()
 					.setId(r.getId())
 					.setLogin(r.getName())
-					.setStatus(r.getActive() == 1 ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE);  
+					.setStatus(r.isActive() ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE);  
 		}
 	}
 	

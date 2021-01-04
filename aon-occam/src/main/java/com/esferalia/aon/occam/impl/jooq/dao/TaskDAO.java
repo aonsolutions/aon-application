@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -34,6 +35,7 @@ import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
@@ -55,6 +57,7 @@ import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
@@ -755,6 +758,13 @@ public class TaskDAO {
 				.where(TASK_HOLDER_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new TaskHolderFiller());
 	}
+	
+	public static Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth){
+		return ctx.getDslContext().select()
+				.from(TASK_HOLDER).join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.join(USER).on(USER.AUTH.eq(auth))
+				.fetch().stream().map(new TaskHolderFiller());
+	}
 
 	
 	public static TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter){
@@ -764,14 +774,14 @@ public class TaskDAO {
 	
 	public static TaskHolder updateTaskHolder(AONContext ctx, TaskHolder taskHolder){
 		return ctx.getDslContext().update(TASK_HOLDER)
-				.set(TASK_HOLDER.ACTIVE, taskHolder.getActive())
+				.set(TASK_HOLDER.ACTIVE, taskHolder.getActiveValue())
 				.where(TASK_HOLDER.REGISTRY.eq(taskHolder.getId()))
 			.returning().fetch().stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());	
 	}
 	
 	public static TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder){
 		return ctx.getDslContext().insertInto(TASK_HOLDER, TASK_HOLDER.ACTIVE, TASK_HOLDER.COST_PROFILE, TASK_HOLDER.DOMAIN, TASK_HOLDER.REGISTRY, TASK_HOLDER.TYPE, TASK_HOLDER.USER_ID)
-			.values(taskHolder.getActive(), taskHolder.getCostProfile(), taskHolder.getDomain(), taskHolder.getId(),taskHolder.getType(), taskHolder.getUserId())
+			.values(taskHolder.getActiveValue(), taskHolder.getCostProfile(), taskHolder.getDomain().getId(), taskHolder.getId(),taskHolder.getType(), taskHolder.getUserId())
 			.returning().fetch().stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());
 	}
 	
@@ -809,11 +819,12 @@ public class TaskDAO {
 		public TaskHolder apply(TaskHolderRecord t) {
 			TaskHolder taskHolder = new TaskHolder();
 			taskHolder.setId(t.getRegistry());
+			taskHolder.setDomain(new Domain().setId(t.getDomain()));
 			return taskHolder
-					.setActive(t.getActive())
+					.setActive(t.getActive() == (byte) 1)
 					.setCostProfile(t.getCostProfile())
-					.setDomain(t.getDomain())
-					.setType(t.getType())
+
+					.setTaskHolderType(TaskHolderType.valueOf(t.getType()))
 					.setUserId(t.getUserId());
 		}
 	}
@@ -832,12 +843,11 @@ public class TaskDAO {
 			taskHolder.setNationality(Country.safeValueOf(t.getValue(REGISTRY.NATIONALITY))); // TODO
 			taskHolder.setSecurityLevel(SecurityLevel.values()[t.getValue(REGISTRY.SECURITY_LEVEL)]);
 			taskHolder.setType(t.getValue(REGISTRY.TYPE));
-			
+			taskHolder.setDomain(new Domain().setId(t.getValue(TASK_HOLDER.DOMAIN)));
 			return taskHolder
-					.setActive(t.getValue(TASK_HOLDER.ACTIVE))
+					.setActive(t.getValue(TASK_HOLDER.ACTIVE) == 1)
 					.setCostProfile(t.getValue(TASK_HOLDER.COST_PROFILE))
-					.setDomain(t.getValue(TASK_HOLDER.DOMAIN))
-					.setType(t.getValue(TASK_HOLDER.TYPE))
+					.setTaskHolderType(TaskHolderType.valueOf(t.getValue(TASK_HOLDER.TYPE)))
 					.setUserId(t.getValue(TASK_HOLDER.USER_ID));
 		}
 	}

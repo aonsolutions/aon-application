@@ -1267,6 +1267,13 @@ public interface Properties {
 		Property<byte[]> getAuthProperty();
 		Property<Byte> getSharedProperty();
 	}
+
+	public interface TimeControlProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Timestamp> getDateProperty();
+		Property<Integer> getTaskHolderProperty();
+	}
 	
 	public interface RawdocProperties{
 		Property<Integer> getIdProperty();

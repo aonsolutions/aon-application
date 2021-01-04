@@ -627,7 +627,7 @@ public class WarehouseDAO {
 						REGISTRY.DOMAIN, REGISTRY.NAME, REGISTRY.NATIONALITY,
 						REGISTRY.TYPE)
 				.values(carrier.getAlias(), carrier.getDocument(),
-						carrier.getDomain(), carrier.getName(),
+						carrier.getDomain().getId(), carrier.getName(),
 						carrier.getDocumentCountry().getIso2(),
 						carrier.getType()).returning().fetch().stream()
 				.map(new RegistryFiller()).findFirst().orElse(new Registry());
@@ -635,7 +635,7 @@ public class WarehouseDAO {
 		ctx.getDslContext()
 				.insertInto(CARRIER, CARRIER.DOMAIN, CARRIER.SCOPE,
 						CARRIER.REGISTRY, CARRIER.STATUS)
-				.values(carrier.getDomain(), carrier.getScope(),
+				.values(carrier.getDomain().getId(), carrier.getScope(),
 						registry.getId(), carrier.getStatus().value())
 				.execute();
 		return registry.getId();

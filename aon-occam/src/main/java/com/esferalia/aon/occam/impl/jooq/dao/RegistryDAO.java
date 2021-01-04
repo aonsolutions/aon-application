@@ -47,6 +47,7 @@ import com.esferalia.aon.jooq.tables.records.SegmentRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
@@ -259,7 +260,7 @@ public class RegistryDAO {
 		public Registry apply(Record record) {
 			return new Registry()
 					.setId(record.getValue(REGISTRY.ID))
-					.setDomain(record.getValue(REGISTRY.DOMAIN))
+					.setDomain(new Domain().setId(record.getValue(REGISTRY.DOMAIN)))
 					.setAlias(record.getValue(REGISTRY.ALIAS))
 					.setDocument(record.getValue(REGISTRY.DOCUMENT))
 					.setDocumentType(DocumentType.safeValueOf(record.getValue(REGISTRY.DOCUMENT_TYPE)))
@@ -297,7 +298,7 @@ public class RegistryDAO {
 					.setZip(record.getValue(RADDRESS.ZIP));
 			return new Registry()
 					.setId(record.getValue(REGISTRY.ID))
-					.setDomain(record.getValue(REGISTRY.DOMAIN))
+					.setDomain(new Domain().setId(record.getValue(REGISTRY.DOMAIN)))
 					.setAlias(record.getValue(REGISTRY.ALIAS))
 					.setDocument(record.getValue(REGISTRY.DOCUMENT))
 					.setDocumentType(DocumentType.safeValueOf(record.getValue(REGISTRY.DOCUMENT_TYPE)))
@@ -381,7 +382,7 @@ public class RegistryDAO {
 	protected static Integer insert(AONContext ctx, Registry reg) {
 		ctx.checkWrite();
 		return ctx.getDslContext().insertInto(REGISTRY)
-			.set(REGISTRY.DOMAIN,reg.getDomain())
+			.set(REGISTRY.DOMAIN, reg.getDomain().getId())
 			.set(REGISTRY.DOCUMENT,reg.getDocument())
 			.set(REGISTRY.DOCUMENT_TYPE,reg.getDocumentType()==null?null:reg.getDocumentType().value())
 			.set(REGISTRY.DOCUMENT_COUNTRY,reg.getDocumentCountry()==null?null:reg.getDocumentCountry().getIso2())
@@ -540,7 +541,7 @@ public class RegistryDAO {
 		String documentCountry = registry.getDocumentCountry() != null ? registry.getDocumentCountry().getIso2() : "ES";
 		return ctx.getDslContext().insertInto(REGISTRY, REGISTRY.DOMAIN, REGISTRY.ALIAS, REGISTRY.DOCUMENT, 
 				REGISTRY.DOCUMENT_COUNTRY, REGISTRY.NAME, REGISTRY.NATIONALITY,	REGISTRY.TYPE)
-			.values(registry.getDomain(), registry.getAlias(), registry.getDocument(), 
+			.values(registry.getDomain().getId(), registry.getAlias(), registry.getDocument(), 
 				documentCountry, registry.getName(), nationality, registry.getType()).returning()
 			.fetch().stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
 	}
@@ -643,7 +644,7 @@ public class RegistryDAO {
 				CUSTOMER.SCOPE, CUSTOMER.STATUS, CUSTOMER.SURCHARGE, CUSTOMER.TARIFF, CUSTOMER.TRANSACTION, CUSTOMER.WITHHOLDING,
 				CUSTOMER.CREATION_USER, CUSTOMER.CREATION_DATE, CUSTOMER.MODIFICATION_USER, CUSTOMER.MODIFICATION_DATE)
 			.values(customer.getAccount(), customer.getDeliveryGrouped(), customer.getDeliveryValuated(), 
-					customer.getDomain(), customer.geteInvoice(), customer.getInvoicingGroup(), customer.getProjectGrouped(), customer.getRegistry().getId(),
+					customer.getDomain().getId(), customer.geteInvoice(), customer.getInvoicingGroup(), customer.getProjectGrouped(), customer.getRegistry().getId(),
 					customer.getScope(), customer.getStatus().value(), customer.getSurcharge(), customer.getTariff(), customer.getTransaction(), customer.getWithholding(),
 					ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser(), new Timestamp(new Date().getTime()))
 			.execute();
@@ -708,7 +709,7 @@ public class RegistryDAO {
 	public static Carrier insertCarrier(AONContext ctx, Carrier carrier){
 		Registry registry = insertRegistry(ctx, carrier);
 		ctx.getDslContext().insertInto(CARRIER, CARRIER.DOMAIN, CARRIER.REGISTRY, CARRIER.SCOPE, CARRIER.STATUS)
-			.values(carrier.getDomain(), registry.getId(), carrier.getScope(), carrier.getStatus().value())
+			.values(carrier.getDomain().getId(), registry.getId(), carrier.getScope(), carrier.getStatus().value())
 			.execute();
 		carrier.setId(registry.getId());
 		return carrier;
@@ -750,7 +751,7 @@ public class RegistryDAO {
 				SUPPLIER.WITHHOLDING_FARMER, SUPPLIER.VAT_ACCRUAL_PAYMENT, SUPPLIER.TRANSACTION, SUPPLIER.STATUS, 
 				SUPPLIER.SCOPE, SUPPLIER.PURCHASE_VALUATED, SUPPLIER.ACCOUNT, SUPPLIER.CREATION_USER, SUPPLIER.CREATION_DATE,
 				SUPPLIER.MODIFICATION_USER, SUPPLIER.MODIFICATION_DATE)
-			.values(supplier.getId(), supplier.getDomain(), supplier.getTariff(), supplier.getWithholding().byteValue(), supplier.getWithholdingFarmer().byteValue(),
+			.values(supplier.getId(), supplier.getDomain().getId(), supplier.getTariff(), supplier.getWithholding().byteValue(), supplier.getWithholdingFarmer().byteValue(),
 					supplier.getVatAccrualPayment().byteValue(),supplier.getTransaction().byteValue(), supplier.getStatus().value(), supplier.getScope(), 
 					supplier.getPurchaseValuated().byteValue(), supplier.getAccount(), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser(),
 					new Timestamp(new Date().getTime())).execute();
@@ -770,7 +771,7 @@ public class RegistryDAO {
 		ctx.getDslContext().insertInto(TARGET, TARGET.ADVERTISING, TARGET.DOMAIN, TARGET.REGISTRY, TARGET.SCOPE,
 				TARGET.STATUS, TARGET.SURCHARGE, TARGET.TARIFF, TARGET.TRANSACTION, TARGET.WITHHOLDING,
 				TARGET.CREATION_DATE, TARGET.CREATION_USER, TARGET.MODIFICATION_DATE, TARGET.MODIFICATION_USER)
-			.values(target.getAdvertising().byteValue(), target.getDomain(), target.getId(), target.getScope(), target.getStatus().value(),
+			.values(target.getAdvertising().byteValue(), target.getDomain().getId(), target.getId(), target.getScope(), target.getStatus().value(),
 					target.getSurcharge().byteValue(), target.getTariff(),target.getTransaction().byteValue(), target.getWithholding().byteValue(),
 					new Timestamp(new Date().getTime()), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser()).execute();
 		return target;

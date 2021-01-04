@@ -10,7 +10,6 @@ import com.esferalia.aon.occam.api.model.type.MaritalStatus;
 @SuppressWarnings("serial")
 public class Person extends Registry implements Serializable {
 	
-    private Integer domain;
     private Date birthDate;
     private Gender gender;
     private MaritalStatus maritalStatus;
@@ -18,15 +17,6 @@ public class Person extends Registry implements Serializable {
     private String firstName;
     private String firstSurname;
     private String secondSurname;
-
-	public Integer getDomain() {
-		return domain;
-	}
-
-	public Person setDomain(Integer domain) {
-		this.domain = domain;
-		return this;
-	}
 
 	public Date getBirthDate() {
 		return birthDate;

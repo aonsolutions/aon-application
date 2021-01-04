@@ -18,10 +18,12 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.ApiImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
+import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AON_SOLUTIONS {
@@ -40,6 +42,10 @@ public class AON_SOLUTIONS {
 	
 	private static ISecurity getSecurity() {
 		return new SecurityImpl();
+	}
+	
+	private static ITask getTask() {
+		return new TaskImpl();
 	}
 
 	public static Auth getAuth(String domainName, Integer domainId, String email) { 
@@ -257,5 +263,26 @@ public class AON_SOLUTIONS {
 			}
 		} 
 	}
+
+	public static TaskHolder getTaskHolder(AonToken aonToken) {
+		TaskHolder taskHolder = null;
+		try (AONContext ctx = AONContext.getAONContext(aonToken.getSchemaFirstDomain(),0, "")){
+			taskHolder = getTask().getTaskHolderStream(ctx, aonToken.getAuth()).findFirst().orElse(null);
+		}
+		if(taskHolder == null) {
+			List<String> schemas = AONContext.getSchemas();
+			for(String schema: schemas) {
+				if(taskHolder == null) {
+					String domain = AONContext.getSchemaFirstDomain(schema);
+					try (AONContext ctx = AONContext.getAONContext(domain, 0, "")){
+						taskHolder = getTask().getTaskHolderStream(ctx, aonToken.getAuth()).findFirst().orElse(null);
+					}
+				}
+			}
+		}
+		return taskHolder;
+	}
+	
+	
 	
 }

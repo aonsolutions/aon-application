@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -15,7 +16,7 @@ public class Registry implements Serializable{
 	private String document;
 	private Country documentCountry;
 	private DocumentType documentType;
-	private Integer domain;
+	private Domain domain;
 	private Integer id;
 	private String name;
 	private Country nationality;
@@ -51,10 +52,10 @@ public class Registry implements Serializable{
 		this.documentType = documentType;
 		return this;
 	}
-	public Integer getDomain() {
+	public Domain getDomain() {
 		return domain;
 	}
-	public Registry setDomain(Integer domain) {
+	public Registry setDomain(Domain domain) {
 		this.domain = domain;
 		return this;
 	}

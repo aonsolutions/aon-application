@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -64,10 +65,10 @@ public class UploadDocumentalServlet extends HttpServlet{
 		String name = json.optString("contentName");
 		Long size = json.optLong("contenSize");
 		byte[] fileData = Base64.getDecoder().decode(base64);
-		
+		Company cp = AON.getCompany(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()));
 
     	Attach attach = new Attach()
-    			.setAttachModule(1) // TODO
+    			.setAttachModule(cp.getId()) // TODO
     			.setAttachType(AttachType.REGISTRY)
     			.setData(fileData)
     			.setDescription(name)

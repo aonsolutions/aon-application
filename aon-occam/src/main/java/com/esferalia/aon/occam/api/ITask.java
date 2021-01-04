@@ -67,6 +67,7 @@ public interface ITask {
 	public Stream<TaskHolder> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId);
 	
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter);
+	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth);
 	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter);
 	public TaskHolder updateTaskHolder(AONContext ctx, TaskHolder taskHolder); 
 	public TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder);

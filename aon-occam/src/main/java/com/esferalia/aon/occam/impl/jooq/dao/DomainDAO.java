@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.Properties.DomainGserviceaccountPropert
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class DomainDAO {
@@ -99,17 +100,17 @@ public class DomainDAO {
 				.join(COMPANY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
 				.where(DOMAIN.ID.eq(ctx.getDomainId()).or(DOMAIN.PARENT.eq(ctx.getDomainId())))
 				.and(REGISTRY.DOCUMENT.eq(document))
-			.fetchInto(DOMAIN).stream().map(new FullDomainFiller()).findFirst().orElse(new Domain());
+			.fetchInto(DOMAIN).stream().map(new DomainFiller()).findFirst().orElse(new Domain());
 	}
 	
 	public static Domain getDomain(AONContext ctx, DomainFilter filter){
 		return ctx.getDslContext().select().from(DOMAIN).where(DOMAIN_PROPERTIES.getConditions(filter))
-			.fetchInto(DOMAIN).stream().map(new FullDomainFiller()).findFirst().orElse(new Domain());
+			.fetchInto(DOMAIN).stream().map(new DomainFiller()).findFirst().orElse(new Domain());
 	}
 	
 	public static LinkedList<Domain> getDomainList(AONContext ctx, DomainFilter filter){
 		return ctx.getDslContext().select().from(DOMAIN).where(DOMAIN_PROPERTIES.getConditions(filter))
-			.fetchInto(DOMAIN).stream().map(new FullDomainFiller()).collect(Collectors.toCollection(LinkedList::new));
+			.fetchInto(DOMAIN).stream().map(new DomainFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static LinkedList<Domain> getActiveChildDomains(AONContext ctx) {
@@ -130,7 +131,7 @@ public class DomainDAO {
 				.orderBy(DOMAIN.DESCRIPTION)
 				.fetchInto(DOMAIN)
 				.stream()
-				.map(new FullDomainFiller())
+				.map(new DomainFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
@@ -144,7 +145,7 @@ public class DomainDAO {
 				.or(DOMAIN.ID.in(AttachmentDAO.sepeAttachDomainList(ctx)))
 				.or(DOMAIN.ID.in(AttachmentDAO.offerAttachDomainList(ctx)))
 				.or(DOMAIN.ID.in(AttachmentDAO.contractAttachDomainList(ctx)))
-			.fetchInto(DOMAIN).stream().map(new FullDomainFiller()).collect(Collectors.toCollection(LinkedList::new));
+			.fetchInto(DOMAIN).stream().map(new DomainFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Domain insertDomain(AONContext ctx, Integer parentDomain,
@@ -534,22 +535,6 @@ public class DomainDAO {
 					.setPrivateKey(r.getPrivateKey())
 					.setPublicKey(r.getPublicKey())
 					.setSize(r.getSize());
-		}
-	}
-	
-	private static class FullDomainFiller implements Function<DomainRecord, Domain> {
-		@Override
-		public Domain apply(DomainRecord r) {
-			return new Domain()
-					.setActive(r.getActive() == 1)
-					.setDescription(r.getDescription())
-					.setDomainType(DomainType.values()[r.getType()])
-					.setEnableHeredity(r.getEnableheredity() == 1)
-					.setId(r.getId())
-					.setName(r.getName())
-					.setParentId(r.getParent())
-					.setDomainManagement(r.getDomainmanagement()  == 1)
-					;
 		}
 	}
 }

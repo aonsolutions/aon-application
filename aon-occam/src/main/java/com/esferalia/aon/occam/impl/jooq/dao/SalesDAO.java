@@ -521,11 +521,14 @@ public class SalesDAO {
 		
 		@Override
 		public Sales apply(Record r) {
+			Customer customer = new Customer();
+			customer.setId(r.getValue(SALES.CUSTOMER));
+
 			Sales sales = new Sales();
 			sales.setId(r.getValue(SALES.ID));
 			sales.setDomain(r.getValue(SALES.DOMAIN));
 			sales.setProject(r.getValue(SALES.PROJECT));
-			sales.setCustomer(new Customer().setId(r.getValue(SALES.CUSTOMER)));
+			sales.setCustomer(customer);
 			sales.setSeries(r.getValue(SALES.SERIES));
 			sales.setNumber(r.getValue(SALES.NUMBER));
 			sales.setPurchaseReference(r.getValue(SALES.PURCHASE_REFERENCE));

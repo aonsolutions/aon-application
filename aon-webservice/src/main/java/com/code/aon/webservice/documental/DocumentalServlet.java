@@ -342,8 +342,13 @@ public class DocumentalServlet extends HttpServlet{
 					.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
 			}
 		} else {
-			AON.getUserScopeStream(domain.getName(), domain.getId(), login, user.getId(), f -> f.getDomainProperty().eq(domain.getId()))
+			if(user.getDomain().equals(domain.getId())) {
+				AON.getUserScopeStream(domain.getName(), domain.getId(), login, user.getId(), f -> f.getDomainProperty().eq(domain.getId()))
 				.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
+			} else {
+				AON.getScopeStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()))
+					.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
+			}
 		}
 		return array;
 	}

@@ -77,6 +77,7 @@ import com.esferalia.aon.occam.api.model.Properties.TaskHolderWorkgroupPropertie
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaxProperties;
+import com.esferalia.aon.occam.api.model.Properties.TimeControlProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserAppRoleProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
@@ -539,6 +540,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface UserFilter{
 		Filter filter(UserProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface TimeControlFilter{
+		Filter filter(TimeControlProperties properties);
 	}
 	
 	@FunctionalInterface

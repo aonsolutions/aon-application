@@ -1063,7 +1063,7 @@ public class DeliveryImport {
 						.setDocument(r.getDocumento())
 						.setDocumentCountry(Country.safeValueOf(r.getPaisDocumento()))
 						.setDocumentType(DocumentType.safeValueOf(r.getTipoDocumento()))
-						.setDomain(domain.getId())
+						.setDomain(domain)
 						.setName(r.getRazonSocial())
 						.setNationality(Country.safeValueOf(r.getNacionalidad()));
 				registry = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), registry);
@@ -1072,7 +1072,6 @@ public class DeliveryImport {
 					account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), r.getCuenta()).getId();
 				}
 				customer = new Customer()
-						.setDomain(domain.getId())
 						.setRegistry(registry)
 						.setScope(scope)
 						.setStatus(RegistryStatus.ACTIVE)
@@ -1084,7 +1083,7 @@ public class DeliveryImport {
 						.setDeliveryValuated((byte) 1)
 						.setProjectGrouped((byte) 1)
 						.seteInvoice((byte) 0);
-
+				customer.setDomain(domain);
 				AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), customer);
 
 				if(r.getAliasDireccion() != null) {
