@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
+package com.esferalia.aon.gwt.fiscal.client.finance;
 
 import java.util.LinkedList;
 

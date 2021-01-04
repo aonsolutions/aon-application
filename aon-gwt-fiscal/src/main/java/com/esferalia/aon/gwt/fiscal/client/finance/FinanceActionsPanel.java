@@ -8,11 +8,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.Aon
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinancePayPanel;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinancePayPanel.FinancePayPanelCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceReturnPanel;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceReturnPanel.FinanceReturnPanelCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoiceFinanceTrackingPanel;
+import com.esferalia.aon.gwt.fiscal.client.finance.FinancePayPanel.FinancePayPanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.finance.FinanceReturnPanel.FinanceReturnPanelCallback;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.google.gwt.dom.client.Style.Unit;
