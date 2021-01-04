@@ -24,13 +24,13 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.EnterpriseFilter;
@@ -233,8 +233,8 @@ public class CompanyDAO {
 		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
 		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
 		
-		Domain domain = DOMAIN.as("d");
-		Domain parent = DOMAIN.as("p");
+		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
+		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
 		return ctx.getDslContext().select()
 			.from(COMPANY)
 			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
@@ -257,6 +257,29 @@ public class CompanyDAO {
 				,COMPANY.SURCHARGE,COMPANY.WITHHOLDING,COMPANY.VAT_ACCRUAL_PAYMENT)
 			.from(COMPANY)
 			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+			.where(COMPANY.DOMAIN.equal(domain))
+			.fetch()
+			.stream()
+			.map(rec -> {
+				Company c = new Company()
+						.setId(rec.getValue(COMPANY.REGISTRY))
+						.setDocument(rec.getValue(REGISTRY.DOCUMENT))
+						.setName(rec.getValue(REGISTRY.NAME))
+						.setSurcharge(rec.getValue(COMPANY.SURCHARGE)==1)
+						.setWithholding(rec.getValue(COMPANY.WITHHOLDING)==1)
+						.setVatAccrualPayment(rec.getValue(COMPANY.VAT_ACCRUAL_PAYMENT)==1);
+				c.setDomain(new Domain().setId(domain));
+				return c;
+			})
+			.findFirst()
+			.orElse(null);
+	}
+/*
+	public static Company getCompany(AONContext ctx,int domain) {
+		return ctx.getDslContext()
+			.select()
+			.from(COMPANY)
+			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
 			.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
 			.where(COMPANY.DOMAIN.equal(domain))
 			.fetch()
@@ -265,7 +288,7 @@ public class CompanyDAO {
 			.findFirst()
 			.orElse(null);
 	}
-	
+*/
 	public static LinkedList<CompanyAdministrator> getDirStaff(AONContext ctx,int domain) {
 		return ctx.getDslContext()
 				.select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME,RDIR_STAFF.DIRECTOR,RDIR_STAFF.SHAREHOLDER,RDIR_STAFF.PERCENT_SHARE,RDIR_STAFF.NOMINAL_VALUE)
