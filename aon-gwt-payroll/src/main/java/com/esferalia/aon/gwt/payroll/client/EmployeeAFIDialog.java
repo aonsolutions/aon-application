@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
@@ -67,13 +68,13 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	Label startContractLabel;
 	
 	@UiField
-	CheckBox startContractCkBox;
+	Button startContractTB;
 	
 	@UiField
 	Label endContractLabel;
 	
 	@UiField
-	CheckBox endContractCkBox;
+	Button endContractTB;
 	
 	@UiField
 	DateBoxEx newDate;
@@ -91,7 +92,10 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	ListBox ocupation;
 	
 	@UiField
-	CheckBox generationAFICkBox;
+	Button generationAFITB;
+	
+	@UiField
+	Button notifyMovTB;
 	
 	@UiField
 	HTMLPanel buttonsPanel;
@@ -130,6 +134,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		setWidget(binder.createAndBindUi(this));
 		
 		getButtonsPanel();
+		initToggleButtons();
 		
 		this.contractType = new ContractType();
 		this.payrollDate = payrollDate;
@@ -160,7 +165,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				initView();
 				
 				acceptBtnDialog.setEnabled(true);
-				generationAFICkBox.setEnabled(true);
+				generationAFITB.setEnabled(true);
 			}
 		});
 		
@@ -168,6 +173,13 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		this.acceptBtnDialog.ensureDebugId("input_accept");
 	}
 	
+	private void initToggleButtons() {
+		getEnableDisableButton(generationAFITB, false);
+		getEnableDisableButton(notifyMovTB, false);
+		getEnableDisableButton(startContractTB, false);
+		getEnableDisableButton(endContractTB, false);
+	}
+
 	private void checkStartEndContractAFI(Date startDate, Date endDate) {
 		contractStartDate = new Date();
 		contractStartDate = DateUtils.copyDateOnly(startDate);
@@ -191,31 +203,31 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		}
 		
 		if(null == startDate) {
-			this.startContractCkBox.addStyleName(style.hidden());
+			this.startContractTB.addStyleName(style.hidden());
 			this.startContractLabel.addStyleName(style.hidden());
 		}else if( (currentDate.before(startDate) || currentDate.equals(startDate)) &&
 			(currentDate.after(currentStartDateM60) || currentDate.equals(currentStartDateM60)) ) {
 			
-			this.startContractCkBox.removeStyleName(style.hidden());
+			this.startContractTB.removeStyleName(style.hidden());
 			this.startContractLabel.removeStyleName(style.hidden());
 			
 		}else {
-			this.startContractCkBox.addStyleName(style.hidden());
+			this.startContractTB.addStyleName(style.hidden());
 			this.startContractLabel.addStyleName(style.hidden());
 		}
 		
 		
 		if(null == endDate) {
-			this.endContractCkBox.addStyleName(style.hidden());
+			this.endContractTB.addStyleName(style.hidden());
 			this.endContractLabel.addStyleName(style.hidden());
 		} else if( (currentDate.before(currentEndDateP3) || currentDate.equals(currentEndDateP3)) &&
 			(currentDate.after(currentEndDateM60) || currentDate.equals(currentEndDateM60)) ) {
 			
-			this.endContractCkBox.removeStyleName(style.hidden());
+			this.endContractTB.removeStyleName(style.hidden());
 			this.endContractLabel.removeStyleName(style.hidden());
 			
 		}else {
-			this.endContractCkBox.addStyleName(style.hidden());
+			this.endContractTB.addStyleName(style.hidden());
 			this.endContractLabel.addStyleName(style.hidden());
 		}
 	}
@@ -623,30 +635,52 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			deleteButton.removeStyleName(style.hidden());
 	}
 
-	@UiHandler("startContractCkBox")
-	void onStartDateClick(ValueChangeEvent<Boolean> event) {
+	@UiHandler("startContractTB")
+	void onStartDateClick(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(startContractTB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(startContractTB, value);
+		
 		if(hasChange()) {
 //			acceptButton.setEnabled(true);
-			generationAFICkBox.setEnabled(true);
-			generationAFICkBox.setChecked(true);
+			generationAFITB.setEnabled(true);
+			getEnableDisableButton(generationAFITB, true);
 			this.newDate.setValue(contractStartDate, true);
 		}else {
 //			acceptButton.setEnabled(false);
-			generationAFICkBox.setEnabled(false);
-			generationAFICkBox.setChecked(false);
+			generationAFITB.setEnabled(false);
+			getEnableDisableButton(generationAFITB, false);
 			this.newDate.setValue(null, true);
 		}
 	}
 	
-	@UiHandler("endContractCkBox")
-	void onEndDateClick(ValueChangeEvent<Boolean> event) {
+	@UiHandler("endContractTB")
+	void onEndDateClick(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(endContractTB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(endContractTB, value);
+		
 		if(hasChange()) {
-			generationAFICkBox.setEnabled(true);
-			generationAFICkBox.setChecked(true);
+			generationAFITB.setEnabled(true);
+			getEnableDisableButton(generationAFITB, true);
 		}else {
-			generationAFICkBox.setEnabled(false);
-			generationAFICkBox.setChecked(false);
+			generationAFITB.setEnabled(false);
+			getEnableDisableButton(generationAFITB, false);
 		}
+	}
+	
+	@UiHandler("generationAFITB")
+	void onGenerationAFITBClick(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(generationAFITB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(generationAFITB, value);
+	}
+	
+	@UiHandler("notifyMovTB")
+	void onNotifyMovTBClick(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(notifyMovTB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(notifyMovTB, value);
 	}
 	
 	protected abstract void onAcceptCb();
@@ -710,11 +744,11 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	}
 
 	public boolean isStartContract() {
-		return (null == startContractCkBox) ? false : startContractCkBox.isChecked();
+		return isActiveToggleButton(startContractTB);
 	}
 	
 	public boolean isEndContract() {
-		return (null == endContractCkBox) ? false : endContractCkBox.isChecked();
+		return isActiveToggleButton(endContractTB);
 	}
 	
 	public boolean isChangeContract() {
@@ -730,7 +764,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	}
 	
 	public boolean isGenerationAFI() {
-		return generationAFICkBox.isChecked();
+		return isActiveToggleButton(generationAFITB);
 	}
 	
 	public Date getNewDate() {
@@ -872,7 +906,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	}
 	
 	private void saveAFIChanges(Consumer<String> success, Consumer<Throwable> failure) {
-			impl.setEmployeeAFIChanges(contractId,	afiChangesMap, new AsyncCallback<String>() {
+			impl.setEmployeeAFIChanges(contractId, afiChangesMap, new AsyncCallback<String>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -925,6 +959,20 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		onAccept();
 		hide();
 		onAcceptCb();
+	}
+	
+	private void getEnableDisableButton(Button button, boolean disabled) {
+		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
+		button.removeStyleName(AON.AON_NO_MARGIN);
+		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		
+		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		button.setStyleName(AON.AON_NO_MARGIN, true);
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+	}
+	
+	private boolean isActiveToggleButton(Button button) {
+		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
 	}
 
 }

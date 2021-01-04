@@ -198,7 +198,17 @@
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
-			margin-top: 15px;
+			margin-top: 10px;
+		}
+		
+		.flexEndPanel{
+			display: flex;
+			align-items: center;
+			margin: 10px 0 0 10px;
+		}
+		
+		.ml10{
+			margin-left: 10px;
 		}
 		
 	</ui:style>
@@ -209,7 +219,7 @@
 	        <tbody>
 	            <tr>
 	            	<td style="width: 30px;">
-	                    <g:CheckBox ui:field="startContractCkBox"></g:CheckBox>
+	                    <g:Button ui:field="startContractTB"></g:Button>
 	                </td>
 	                <td>
 	                    <g:Label styleName="{style.bold}" ui:field="startContractLabel">Notificar Alta Contrato</g:Label>
@@ -217,7 +227,7 @@
 	            </tr>
 	            <tr>
 	            	<td style="width: 30px;">
-	                    <g:CheckBox ui:field="endContractCkBox"></g:CheckBox>
+	                    <g:Button ui:field="endContractTB"></g:Button>
 	                </td>
 	                <td>
 	                    <g:Label styleName="{style.bold}" ui:field="endContractLabel">Notificar Baja Contrato</g:Label>
@@ -279,12 +289,14 @@
 	        </tbody>
 	    </table>
 	    
-	    <div class="{style.buttons}">
-	    	<g:HorizontalPanel styleName="{style.alignRight}">
-	    		<g:Label styleName="{style.bold} {style.paddingText}">Generar fichero AFI</g:Label>
-	    		<g:CheckBox ui:field="generationAFICkBox"></g:CheckBox>	
-	    	</g:HorizontalPanel>
-		</div>
+	   	<g:HTMLPanel styleName="{style.flexEndPanel}">
+	   		<g:Button ui:field="generationAFITB"></g:Button>
+    		<g:Label styleName="{style.bold} {style.ml10}">Generar fichero AFI</g:Label>	
+    	</g:HTMLPanel>
+    	<g:HTMLPanel styleName="{style.flexEndPanel}">
+    		<g:Button ui:field="notifyMovTB"></g:Button>
+    		<g:Label styleName="{style.bold} {style.ml10}">Notificar movimiento</g:Label>
+    	</g:HTMLPanel>
 		
 		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
 
