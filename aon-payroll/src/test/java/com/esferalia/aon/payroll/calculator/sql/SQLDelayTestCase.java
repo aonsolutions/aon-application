@@ -849,6 +849,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
+				add(getFirstDayOfYear(getToday()), Calendar.YEAR,-1),
 				new String[] {
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
@@ -1023,6 +1024,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
+				add(getFirstDayOfYear(getToday()), Calendar.YEAR,-1),
 				new String[] {
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
 				}, 
@@ -1107,6 +1109,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
+				add(getFirstDayOfYear(getToday()), Calendar.YEAR,-1),
 				new String[] {
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
 				}, 
