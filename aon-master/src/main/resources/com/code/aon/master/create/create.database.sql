@@ -6304,6 +6304,21 @@ CREATE TABLE `loan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Prestamos';
 
 #
+# Structure for the `location` table : 
+#
+
+CREATE TABLE `location` (
+	`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
+	`domain` int(4) NOT NULL COMMENT 'Dominio',
+	`description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripción de la Ubicación',
+	`coordinates` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Coordenadas de la Ubicación',
+   	`radio` int(4) DEFAULT 50 COMMENT 'Radio de la Ubicación',
+	PRIMARY KEY (`id`),
+	KEY `IDX_LOCATION_DOMAIN` (`domain`),
+	CONSTRAINT `FK_LOCATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ubicación';
+
+#
 # Structure for the `signature` table : 
 #
 
@@ -8377,6 +8392,29 @@ CREATE TABLE `tax_detail` (
   CONSTRAINT `FK_TAX_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_TAX_DETAIL_TAX` FOREIGN KEY (`tax`) REFERENCES `tax` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Historico de Impuestos';
+
+#
+# Structure for the `timecontrol` table : 
+#
+
+CREATE TABLE `timecontrol` (
+	`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
+	`domain` int(4) NOT NULL COMMENT 'Dominio',
+	`task_holder` int(4) NOT NULL COMMENT 'Identificador del operario',
+	`status` tinyint(2) NOT NULL COMMENT 'Estado del control de horario',
+	`date` datetime NOT NULL COMMENT 'Fecha del control de horario',
+	`comments` text COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Comentarios del control de horario',
+	`location` int(4) DEFAULT NULL COMMENT 'Ubicación del Operario',
+	`coordinates` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Coordenadas de la Ubicación',
+	PRIMARY KEY (`id`),
+	KEY `IDX_TIMECONTROL_DOMAIN` (`domain`),
+	KEY `IDX_TIMECONTROL_TASK_HOLDER` (`task_holder`),
+	KEY `IDX_TIMECONTROL_LOCATION` (`location`),
+	CONSTRAINT `FK_TIMECONTROL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+	CONSTRAINT `FK_TIMECONTROL_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`),
+	CONSTRAINT `FK_TIMECONTROL_LOCATION` FOREIGN KEY (`location`) REFERENCES `location` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Control de Horario';
+
 
 #
 # Structure for the `training_center` table : 

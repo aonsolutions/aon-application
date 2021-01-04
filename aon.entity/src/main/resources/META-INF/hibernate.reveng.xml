@@ -49,6 +49,7 @@
 	<table-filter match-name="elaboration_detail_composition" exclude="true" />
 	
 	<table-filter match-name="carrier_packing" exclude="true" />
+	<table-filter match-name="location" exclude="true" />
 
 
 	<!--  ***************** -->
