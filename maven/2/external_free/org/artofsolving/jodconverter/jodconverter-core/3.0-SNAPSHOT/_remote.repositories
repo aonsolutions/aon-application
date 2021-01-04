@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Fri Oct 16 10:22:23 CEST 2020
+jodconverter-core-3.0-SNAPSHOT.jar>=
+jodconverter-core-3.0-SNAPSHOT-sources.jar>=
+jodconverter-core-3.0-SNAPSHOT.pom>=

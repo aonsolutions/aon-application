@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.artofsolving.jodconverter</groupId>
+  <artifactId>jodconverter-core</artifactId>
+  <versioning>
+    <versions>
+      <version>3.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20201016082223</lastUpdated>
+  </versioning>
+</metadata>
