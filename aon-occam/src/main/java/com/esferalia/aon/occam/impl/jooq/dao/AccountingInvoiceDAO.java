@@ -420,10 +420,20 @@ public class AccountingInvoiceDAO {
 					"No se puede inicializar una factura de " + type.getDescription() + ". El titular suministrado " + "genera facturas de " + reg.getType().getInvoiceType().getDescription());
 		}
 		final AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, ai.getInvoice().getIssueDate());
+		ai.setRegistry(reg);
 		reg.getType().visit(reg, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), config));
-		ai.getInvoice().setRegistry(registry);
+		ai.getInvoice()
+			.setRegistry(registry);
+		
+		LinkedList<Finance> newFinances = new LinkedList<Finance>();
+		newFinances.addAll(FinanceDAO.getFinancesForInvoice(ctx, ai.getInvoice()));
+		for (Finance finance : ai.getInvoice().getFinances()) {
+			finance.setRemoved(true);
+		}
+		newFinances.addAll(ai.getInvoice().getFinances());
+		
 		ai.setAuthFinanceCalculation(true)
-		  .getInvoice().setFinances( FinanceDAO.getFinancesForInvoice(ctx, ai.getInvoice()) );
+		  .getInvoice().setFinances( newFinances );
 		ai.setSuggestedAccounts(getSuggestedAccounts(ctx, ai.getRegistry().getId()));
 		return ai;
 	}

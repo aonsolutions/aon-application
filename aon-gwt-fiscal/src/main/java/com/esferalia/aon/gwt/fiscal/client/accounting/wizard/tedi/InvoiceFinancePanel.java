@@ -391,8 +391,8 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			bankAccount.setValue(finance.getBankAccountSafeValue());
 			bankAccount.setReadOnly(true);
 			bankAccountPanel.add(bankAccount);
+			AonTableButton editBank = new AonTableButton("Editar banco", AON.CSS.aonIconEdit()); 
 			if (finance.isFullPending()) {
-				AonTableButton editBank = new AonTableButton("Editar banco", AON.CSS.aonIconEdit());
 				editBank.addClickHandler(new ClickHandler() {
 					
 					@Override
@@ -540,6 +540,8 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			}			
 			final FinanceActionsPanel actionsPanel = actionsPanel0;
 			
+			AonTableButton restoreButton = new AonTableButton( AON.MSG.restoreAction(), AON.CSS.aonIconRestoreDeleted() );
+			AonTableButton removeButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
 			if (finance.isPending() && amount != firstAmount) {
 				
 				// *************************************************************************
@@ -550,8 +552,6 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 				FlowPanel buttonsPanel = new FlowPanel();
 				buttonsPanel.setStyleName(AON.CSS.aonDisplayTableCell());
 				buttonsPanel.addStyleName(AON.CSS.aonNowrap());
-				AonTableButton restoreButton = new AonTableButton( AON.MSG.restoreAction(), AON.CSS.aonIconRestoreDeleted() );
-				AonTableButton removeButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
 				buttonsPanel.add(restoreButton);
 				buttonsPanel.add(removeButton);
 				add(buttonsPanel);
@@ -561,6 +561,7 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 				restoreButton.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
+						
 						restoreButton.setVisible(false);
 						removeButton.setVisible(true);		
 						finance.setRemoved(false);
@@ -595,6 +596,7 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 						payMethod.addStyleName(AON.CSS.aonTextLineThrough());
 						payMethod.setEnabled(false);
 						bankAccount.addStyleName(AON.CSS.aonTextLineThrough());
+						editBank.setEnabled(false);
 						amount.addStyleName(AON.CSS.aonTextLineThrough());
 						amount.setEnabled(false);
 						status.addStyleName(AON.CSS.aonTextLineThrough());
@@ -622,6 +624,25 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			cell.add(l);
 			add(cell);
 			// ------------------ SO FAR
+			
+			if ( finance.isRemoved()) {
+				restoreButton.setVisible(true);
+				removeButton.setVisible(false);		
+				finance.setRemoved(true);
+				dueDate.addStyleName(AON.CSS.aonTextLineThrough());
+				dueDate.setEnabled(false);
+				payMethod.addStyleName(AON.CSS.aonTextLineThrough());
+				payMethod.setEnabled(false);
+				bankAccount.addStyleName(AON.CSS.aonTextLineThrough());
+				editBank.setEnabled(false);
+				amount.addStyleName(AON.CSS.aonTextLineThrough());
+				amount.setEnabled(false);
+				status.addStyleName(AON.CSS.aonTextLineThrough());
+				if ( actionsPanel != null) {
+					actionsPanel.setVisible(false);
+				}
+				checkAmounts(callback);
+			}
 			
 			if (focus) {
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
