@@ -4,6 +4,7 @@ import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
@@ -179,7 +180,7 @@ public class MainCCC extends MainEntryPoint{
 			Label typeCode = new Label(cccInfo.getCccRegimeCode());
 			typeCode.getElement().getStyle().setPadding(4, Unit.PX);
 			typeCode.getElement().getStyle().setMarginLeft(15, Unit.PX);
-			Label accountStatus = new Label();
+			AonTableButton accountStatus = new AonTableButton("", AON.CSS.aonIconInvalid());
 			TextBox account = new TextBox();
 			account.setMaxLength(11);
 			account.setValue(cccInfo.getCcc());
@@ -194,14 +195,12 @@ public class MainCCC extends MainEntryPoint{
 						if(checkCCC(accountValue)) {
 							geozone.setText(province);
 							geozone.removeStyleName(style.warningColor());
-							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+							accountStatus.addStyleName(AON.CSS.aonIconValid());
 						}else {
 							province = null == province ? "DESCONOCIDA" : province;
 							geozone.setText(province);
 							geozone.addStyleName(style.warningColor());
-							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+							accountStatus.addStyleName(AON.CSS.aonIconInvalid());
 						}
 						mainCCCObject.insertCCC(
 								cccInfo.getCccId(), 
@@ -216,11 +215,9 @@ public class MainCCC extends MainEntryPoint{
 			});
 			
 			if(checkCCC(cccInfo.getCcc())) {
-				accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-				accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				accountStatus.addStyleName(AON.CSS.aonIconValid());
 			}else {
-				accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-				accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				accountStatus.addStyleName(AON.CSS.aonIconInvalid());
 			}
 			
 			hPanel.add(typeCode);
@@ -259,8 +256,7 @@ public class MainCCC extends MainEntryPoint{
 				}
 			});
 			
-			Button delete = new Button();
-			delete.setStyleName("aon-editDataTable-button aon-icon-delete");
+			AonTableButton delete = new AonTableButton("Eliminar CCC", AON.CSS.aonIconDelete());
 			delete.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -299,7 +295,7 @@ public class MainCCC extends MainEntryPoint{
 		Label typeCode = new Label("");
 		typeCode.getElement().getStyle().setPadding(4, Unit.PX);
 		typeCode.getElement().getStyle().setMarginLeft(15, Unit.PX);
-		Label accountStatus = new Label();
+		AonTableButton accountStatus = new AonTableButton("", AON.CSS.aonIconInvalid());
 		TextBox account = new TextBox();
 		account.setMaxLength(11);
 		account.addStyleName("aon-inputText");
@@ -313,14 +309,12 @@ public class MainCCC extends MainEntryPoint{
 					if(checkCCC(accountValue)) {
 						geozone.setText(province);
 						geozone.removeStyleName(style.warningColor());
-						accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-						accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+						accountStatus.addStyleName(AON.CSS.aonIconValid());
 					}else {
 						province = null == province ? "DESCONOCIDA" : province;
 						geozone.setText(province);
 						geozone.addStyleName(style.warningColor());
-						accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-						accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+						accountStatus.addStyleName(AON.CSS.aonIconInvalid());
 					}
 					mainCCCObject.insertCCC(
 							newId, 
@@ -388,8 +382,7 @@ public class MainCCC extends MainEntryPoint{
 			}
 		});
 		
-		Button delete = new Button();
-		delete.setStyleName("aon-editDataTable-button aon-icon-delete");
+		AonTableButton delete = new AonTableButton("Eliminar CCC", AON.CSS.aonIconDelete());
 		delete.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

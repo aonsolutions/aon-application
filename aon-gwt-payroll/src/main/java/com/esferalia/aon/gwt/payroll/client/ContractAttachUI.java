@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Messages;
 import com.esferalia.aon.gwt.payroll.shared.Messages.Message;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
@@ -22,7 +23,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -205,9 +205,16 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		});
 		
 		// Confidential CheckBox
-		CheckBox confidentialCB = new CheckBox();
-		confidentialCB.addValueChangeHandler((e) -> {
-			contractAttach.setSecurityLevel(e.getValue() ? (byte)0 : (byte)1);
+		Button confidentialB = new Button();
+		getEnableDisableButton(confidentialB, false);
+		confidentialB.addClickHandler((e) -> {
+			Boolean oldValue = isActiveToggleButton(confidentialB);
+			Boolean value = !oldValue;
+			getEnableDisableButton(confidentialB, value);
+			if(value)
+				contractAttach.setSecurityLevel((byte)1);
+			else
+				contractAttach.setSecurityLevel((byte)0);
 		});
 		
 		// Attach DateBoxEx
@@ -248,7 +255,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		if(null != contractAttach.getId()) {
 			descriptionTB.setText(contractAttach.getDescription());
 			setSelectedValueLB(typeLB, contractAttach.getType().toString());
-			confidentialCB.setValue(contractAttach.getSecurityLevel() == (byte)1 ? true : false);
+			getEnableDisableButton(confidentialB, contractAttach.getSecurityLevel() == (byte)1);
 			dateBox.setValue(contractAttach.getAttachDate());
 			setSelectedValueLB(scopeLB, contractAttach.getScope().toString());
 		}
@@ -257,7 +264,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		if(null == contractAttach.getContract()) {
 			descriptionTB.setReadOnly(true);
 			typeLB.setEnabled(false);
-			confidentialCB.setEnabled(false);
+			confidentialB.setEnabled(false);
 			dateBox.setEnabled(false);
 			scopeLB.setEnabled(false);
 		}
@@ -265,7 +272,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		//Add to table
 		attachmentsDataTable.setWidget(row, 0, descriptionTB);
 		attachmentsDataTable.setWidget(row, 1, typeLB);
-		attachmentsDataTable.setWidget(row, 2, confidentialCB);
+		attachmentsDataTable.setWidget(row, 2, confidentialB);
 		attachmentsDataTable.setWidget(row, 3, dateBox);
 		attachmentsDataTable.setWidget(row, 4, scopeLB);
 		attachmentsDataTable.setWidget(row, 5, formPanel);
@@ -410,17 +417,17 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	}
 	
 	private void setColumnsWidth() {
-		attachmentsDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(280, Unit.PX);
+		attachmentsDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(270, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(190, Unit.PX);
-		attachmentsDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(25, Unit.PX);
+		attachmentsDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(35, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(95, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setWidth(95, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setWidth(225, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 6).getStyle().setWidth(20, Unit.PX);
 		
-		attachmentsDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(280, Unit.PX);
+		attachmentsDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(270, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(190, Unit.PX);
-		attachmentsDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(25, Unit.PX);
+		attachmentsDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(35, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(95, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(95, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(5).getStyle().setWidth(225, Unit.PX);
@@ -554,6 +561,20 @@ public abstract class ContractAttachUI extends ResizeComposite {
 
 	public void setContractAttachments(List<ContractAttach> contractAttachments) {
 		employeeContractInfo.setContractAttachments(contractAttachments);
+	}
+	
+	private void getEnableDisableButton(Button button, boolean disabled) {
+		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
+		button.removeStyleName(AON.AON_NO_MARGIN);
+		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		
+		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		button.setStyleName(AON.AON_NO_MARGIN, true);
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+	}
+	
+	private boolean isActiveToggleButton(Button button) {
+		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
 	}
 
 }
