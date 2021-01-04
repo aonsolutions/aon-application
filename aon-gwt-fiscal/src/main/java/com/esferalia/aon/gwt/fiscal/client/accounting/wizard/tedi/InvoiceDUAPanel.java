@@ -3,8 +3,9 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.fiscal.client.widget.AccountingInvoiceBox;
 import com.esferalia.aon.occam.api.model.AccountingDUAInfo;
 import com.esferalia.aon.occam.api.model.AccountingDUAInvoice;
@@ -12,6 +13,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -23,16 +25,17 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers<IInvoicePanelCallback>, Focusable {
+public class InvoiceDUAPanel extends AonDisplayTable implements HasSelectionHandlers<IInvoicePanelCallback>, Focusable {
 	
 	private AccountingInvoiceBox duaInvoice;
-	private FlexTable tab;
+	private AonDisplayTable duaDataTab;
+	private AonDisplayTable duaDataTaxTab; 
 	private TextBox code; 
 	private DoubleBox price;
 	private DoubleBox adjust;
@@ -53,53 +56,42 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 		dutyTotal = new DoubleBox(10);
 		authCalc = new CheckBox( AON.MSG.authomaticCalculation() );
 
-		tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonAccountTable());
-		tab.getColumnFormatter().setWidth(0, "120px");
-		tab.getColumnFormatter().setWidth(1, "120px");
-		tab.getColumnFormatter().setWidth(2, "80px");
-		tab.getColumnFormatter().setWidth(3, "120px");
-		tab.getColumnFormatter().setWidth(4, "120px");
-		tab.getColumnFormatter().setWidth(5, "auto");
-		tab.setVisible(false);
 		
-		
-		FlexTable duaTab = new FlexTable();
-		duaTab.getColumnFormatter().setWidth(0, "40px");
-		duaTab.getColumnFormatter().setWidth(1, "130px");
-		duaTab.getColumnFormatter().setWidth(2, "auto");
-		
-		duaTab.setStyleName(AON.AON_CSS.aonAccountTable());
-		duaTab.addStyleName(AON.AON_CSS.aonWidthAll());
-		duaTab.addStyleName(AON.AON_CSS.aonSimpleBorder());
-		duaTab.addStyleName(AON.AON_CSS.aonMarginTop5());
-		duaTab.addStyleName(AON.AON_CSS.aonMarginTop5());
-		duaTab.getElement().getStyle().setBackgroundColor(EditableInvoicePanel.DUA_BACKGROUND_COLOR);
-		
-		setWidget(duaTab);
-		
-		int row = 0;
-		int col = 0;
-		
-		Label duaLabel = new Label("DUA");
-		duaLabel.setStyleName(AON.AON_CSS.aonTextVertical());
-		duaLabel.addStyleName(AON.AON_CSS.aonBold());
-		duaTab.setWidget(row, col, duaLabel);
-		duaTab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonSimpleBorder());
-		duaTab.getCellFormatter().getElement(row, col).getStyle().setBackgroundColor("LightGreen");
-		duaTab.getCellFormatter().getElement(row, col).getStyle().setHeight(40.0, Unit.PX);
-		duaTab.getFlexCellFormatter().setRowSpan(0, 0, 2);		
-		col++;
+		addStyleName(AON.CSS.aonWidthAll());
+		addStyleName(AON.CSS.aonMarginTopSep());
+		getElement().getStyle().setBackgroundColor(EditableInvoicePanel.DUA_BACKGROUND_COLOR);
 
-		InlineLabel lbl3 = new InlineLabel("Fra. Importaci\u00F3n");
-		lbl3.setStyleName(AON.AON_CSS.aonInnerLabel());
-		duaTab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		duaTab.setWidget(row, col, lbl3);
-		col++;
+		AonDisplayTableRow labelRow = addRow();
+		AonDisplayTableCell labelCell = labelRow.addCell();
+		labelCell.addStyleName(AON.CSS.aonTextVerticalContainer());
+		labelCell.getElement().getStyle().setWidth(40, Unit.PX);
+		labelCell.getElement().getStyle().setBackgroundColor("LightGreen");
+		labelCell.getElement().getStyle().setBorderColor("Green");
+		labelCell.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		labelCell.getElement().getStyle().setBorderWidth(1, Unit.PX);
+		labelCell.getElement().getStyle().setProperty("border-radius", 10, Unit.PCT);
+		Label duaDescription = new Label("DUA");
+		duaDescription.setStyleName(AON.CSS.aonTextVertical());
+		duaDescription.addStyleName(AON.CSS.aonBold());
+		labelCell.add(duaDescription);
+
+		AonDisplayTable duaTab = new AonDisplayTable();
+		duaTab.addStyleName(AON.CSS.aonWidthAll());
+		duaTab.addStyleName(AON.CSS.aonMarginTop());
+		duaTab.getElement().getStyle().setBackgroundColor(EditableInvoicePanel.DUA_BACKGROUND_COLOR);
+		labelRow.addCell( duaTab );
 		
+		// ************************************************************
+		// ***************** FACTURA DE IMPORTACION *******************
+		// ************************************************************
+		
+		FlowPanel invoicePanel = new FlowPanel();
+		invoicePanel.setStyleName(AON.CSS.aonNowrap());
+		InlineLabel lbl3 = new InlineLabel("Fra. Importaci\u00F3n");
+		lbl3.setStyleName(AON.CSS.aonFlexLabel());
+		invoicePanel.add(lbl3);
 		duaInvoice = new AccountingInvoiceBox(callback.getCurrentDomainName(),callback.getCurrentDomainId(),callback.getCurrentUser(),callback.getConfiguration());
 		duaInvoice.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
-
 			@Override
 			public void onSelection(SelectionEvent<AccountingInvoice> event) {
 				AccountingInvoice extInvoice = event.getSelectedItem();
@@ -108,40 +100,27 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 			}
 			
 		});
-		duaTab.setWidget(row, col, duaInvoice);
-		col++;
-		
-		row++;
-		col=0;
-		duaTab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		duaTab.getFlexCellFormatter().setColSpan(row, col, 2);
-		duaTab.setWidget(row, col, tab);
+		invoicePanel.add(duaInvoice);
+		duaTab.addRow().addCell(invoicePanel);
 		
 
-		row=0;
-		col=0;
-
+		// ***********************************************
+		// ***************** DATOS DUA *******************
+		// ***********************************************
+		duaDataTab = new AonDisplayTable();
+		duaDataTab.setVisible(false);
+		duaTab.addRow().addCell(duaDataTab);
 		InlineLabel dateLbl = new InlineLabel(AON.MSG.date());
-		dateLbl.setStyleName(AON.AON_CSS.aonInnerLabel());
-		dateLbl.addStyleName(AON.AON_CSS.aonMarginRight());
-		tab.setWidget(row, col, dateLbl);
-		col++;
+		dateLbl.setStyleName(AON.CSS.aonFlexLabel());
 		
-
-		DateBoxEx  date = new DateBoxEx();
-		date.addStyleName(AON.AON_CSS.aonMarginRight());
+		AonDateBox  date = new AonDateBox();
 		date.setValue(callback.getInvoice().getInvoice().getIssueDate());
 		date.setEnabled(false);
-		tab.setWidget(row, col, date);
-		col++;
 		
 		InlineLabel codeLbl = new InlineLabel("[A] " + AON.MSG.duaNumber());
-		codeLbl.setStyleName(AON.AON_CSS.aonInnerLabel());
-		codeLbl.addStyleName(AON.AON_CSS.aonMarginRight());
-		tab.setWidget(row, col, codeLbl);
-		col++;
-		
-		code.setStyleName(AON.AON_CSS.aonInputText());
+		codeLbl.setStyleName(AON.CSS.aonFlexLabel());
+
+		code.setStyleName(AON.CSS.aonInputText());
 		code.setVisibleLength(18);
 		code.setMaxLength(18);
 		code.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -152,10 +131,7 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 				SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 			}
 		});
-		tab.setWidget(row, col, code);
-		tab.getFlexCellFormatter().setColSpan(row, col, 2);
-		col++;
-		
+
 		authCalc.addClickHandler( new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -165,30 +141,24 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 			}
 		});
 
-		
-		tab.setWidget(row, col, authCalc);
-		
-		row++;
-		col=0;
+		duaDataTab.addRow()
+			.addCell( dateLbl )
+			.addCell( date )
+			.addCell( codeLbl )
+			.addCell( code )
+			.addCell( authCalc )
+			.addCell( new Label() , AON.CSS.aonFlexGrow1())
+			;
 		
 		InlineLabel priceLbl = new InlineLabel("[42] " + AON.MSG.productPrice());
-		priceLbl.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		tab.setWidget(row, col, priceLbl);
-		col++;
+		priceLbl.setStyleName(AON.CSS.aonFlexLabel());
 		
-		price.addStyleName(AON.AON_CSS.aonMarginRight());
+		price.addStyleName(AON.CSS.aonMarginRight());
 		price.setEnabled(false);
-		tab.setWidget(row, col, price);
-		col++;
-		
+
 		InlineLabel adjustLbl = new InlineLabel("[45] " + AON.MSG.adjust());
-		adjustLbl.setStyleName(AON.AON_CSS.aonInnerLabel());
-		adjustLbl.addStyleName(AON.AON_CSS.aonMarginRight());
-		tab.setWidget(row, col, adjustLbl);
-		col++;
-		
-		adjust.addStyleName(AON.AON_CSS.aonMarginRight());
+		adjustLbl.setStyleName(AON.CSS.aonFlexLabel());
+
 		adjust.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
 			@Override
@@ -197,17 +167,10 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 				SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 			}
 		});
-		tab.setWidget(row, col, adjust);
-		col++;
-		
+
 		InlineLabel statisticalValueLbl = new InlineLabel("[46] " + AON.MSG.statisticalValue());
-		statisticalValueLbl.setStyleName(AON.AON_CSS.aonInnerLabel());
-		statisticalValueLbl.addStyleName(AON.AON_CSS.aonMarginRight());
-		statisticalValueLbl.addStyleName(AON.AON_CSS.aonBold());
-		tab.setWidget(row, col, statisticalValueLbl);
-		col++;
-		
-		statisticalValue.addStyleName(AON.AON_CSS.aonMarginRight());
+		statisticalValueLbl.setStyleName(AON.CSS.aonFlexLabel());
+
 		statisticalValue.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
 			@Override
@@ -222,30 +185,44 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 				SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 			}
 		});
-		tab.setWidget(row, col, statisticalValue);
-		col++;
+
+		duaDataTab.addRow()
+			.addCell( priceLbl )
+			.addCell( price )
+			.addCell( adjustLbl )
+			.addCell( adjust )
+			.addCell( statisticalValueLbl )
+			.addCell( statisticalValue , AON.CSS.aonFlexGrow1())
+		;
 		
-		row++;
-		col=0;
+		// **********************************************
+		// ***************** TRIBUTOS *******************
+		// **********************************************
 		
+		duaDataTaxTab = new AonDisplayTable();
+		duaDataTaxTab.setVisible(false);
+		duaTab.addRow().addCell(duaDataTaxTab);
+
 		InlineLabel dutyLbl = new InlineLabel("[47] Tributos ");
-		dutyLbl.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		tab.setWidget(row, col, dutyLbl);
-		col++;
-		
+		dutyLbl.setStyleName(AON.CSS.aonFlexLabel());
+
 		tab47 = new FlexTable();
 		tab47.setStyleName(AON.AON_CSS.aonAccountTable());
-		tab47.getColumnFormatter().setWidth(0, "40");
+		tab47.getColumnFormatter().setWidth(0, "120");
 		tab47.getColumnFormatter().setWidth(1, "120");
 		tab47.getColumnFormatter().setWidth(2, "60");
 		tab47.getColumnFormatter().setWidth(3, "120");
-		tab.setWidget(row, col, tab47 );
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		tab.getFlexCellFormatter().setColSpan(row, col, 5);
+
+		duaDataTaxTab.addRow()
+			.addCell(dutyLbl)
+			.addCell(tab47, AON.CSS.aonFlexGrow1())
+		;
 		
-		row = 0;
-		col = 0;
+		// ** ** **
+
+
+		int row = 0;
+		int col = 0;
 		
 		Label label = new Label(AON.MSG.type());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
@@ -421,10 +398,12 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 
 	protected void duaInvoiceSelected(IInvoicePanelCallback callback, AccountingInvoice extInvoice) {
 		if (extInvoice == null) {
-			tab.setVisible( false );
+			duaDataTab.setVisible(false);
+			duaDataTaxTab.setVisible(false);
 			callback.getInvoice().setDuaInvoice(null);
 		} else {
-			tab.setVisible( true );
+			duaDataTab.setVisible(true);
+			duaDataTaxTab.setVisible(true);
 			AccountingDUAInvoice duaInvoice = new AccountingDUAInvoice();
 			duaInvoice.setAccountingInvoice(extInvoice);
 			duaInvoice.setInfo(new AccountingDUAInfo()
@@ -448,13 +427,15 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 		AccountingInvoice extInvoice = null;
 		AccountingDUAInfo info = null;
 		if (callback.getInvoice().getDuaInvoice() != null) {
-			tab.setVisible( true );
+			duaDataTab.setVisible(true);
+			duaDataTaxTab.setVisible(true);
 			extInvoice = callback.getInvoice().getDuaInvoice().getAccountingInvoice();
 			if (callback.getInvoice().getDuaInvoice().getInfo() != null) {
 				info = callback.getInvoice().getDuaInvoice().getInfo();
 			}
 		} else {
-			tab.setVisible( false );
+			duaDataTab.setVisible(false);
+			duaDataTaxTab.setVisible(false);
 			info = new AccountingDUAInfo();	
 		}
 		duaInvoice.setValue(extInvoice,false);
@@ -497,11 +478,8 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 	}
 
 	private void decorateHeader(FlexTable tab, int row, int col) {
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderTop());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontMedium());
+		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonDisplayGridHeaderCell());
+		tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonNowrap());
+		tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBorderBottom());
 	}
 }

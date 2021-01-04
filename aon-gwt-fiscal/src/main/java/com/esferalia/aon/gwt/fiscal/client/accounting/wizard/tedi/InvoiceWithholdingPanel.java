@@ -63,7 +63,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 		withholdingTableRowDiv.add(withholdingTableCellDiv0);
 		
 		Label withholdingDescription = new Label("IRPF");
-		withholdingDescription.setStyleName(AON.CSS.aonTextCenter());
+		withholdingDescription.setStyleName(AON.CSS.aonTextVertical());
 		withholdingDescription.addStyleName(AON.CSS.aonBold());
 		withholdingTableCellDiv0.add(withholdingDescription);
 		
