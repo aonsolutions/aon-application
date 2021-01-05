@@ -258,4 +258,25 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate,
 			AsyncCallback<String> callback);
 
+	void sendEmployeeAlta(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			AsyncCallback<Void> callback);
+
+	void sendEmployeeBaja(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			AsyncCallback<Void> callback);
+
+	void movPrevDelete(String currentDomainName, String currentUser, String situation, String regimen, String ctaCti,
+			String nss, Date fecha, AsyncCallback<Void> callback);
+
+	void altaConsolidadaDelete(String currentDomainName, String currentUser, String situation, String regimen,
+			String ctaCti, String nss, AsyncCallback<Void> callback);
+
+	void cambioGrupCtz(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
+			String nss, String grup_ctz, Date fecha, AsyncCallback<Void> callback);
+
+	void cambioOcupacion(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
+			String nss, String ocup, Date fecha, AsyncCallback<Void> callback);
+
+	void cambioCatProf(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
+			String nss, String cat, Date fecha, AsyncCallback<Void> callback);
+
 }

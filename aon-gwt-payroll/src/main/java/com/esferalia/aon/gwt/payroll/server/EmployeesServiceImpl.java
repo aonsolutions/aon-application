@@ -256,8 +256,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.SistemaREDMov;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
+import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.objects.WorkerLiquidation;
 import solutions.aon.sepe.Contrato;
 
@@ -5642,7 +5644,144 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e);
 		}
 	}
-	
 
+	@Override
+	public void sendEmployeeAlta(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			
+			solutions.aon.seg.social.objects.Employee employee  = createEmployee(employeeContractInfo);
+			
+			SistemaREDMov.sendAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void sendEmployeeBaja(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			
+			solutions.aon.seg.social.objects.Employee employee  = createEmployee(employeeContractInfo);
+			
+			SistemaREDMov.sendBaja(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void movPrevDelete(String domainName, String userLogin, String situation, String regimen, String ctaCti, String nss, Date fecha) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			
+			SistemaREDMov.movPrevDelete(certificateInputStream, certificate.getPassword(), certificate.getType(), situation, regimen, ctaCti, nss, fecha);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void altaConsolidadaDelete(String domainName, String userLogin, String situation, String regimen, String ctaCti, String nss) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			
+			SistemaREDMov.altaConsolidadaDelete(certificateInputStream, certificate.getPassword(), certificate.getType(), situation, regimen, ctaCti, nss);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void cambioGrupCtz(String domainName, String userLogin, String ipf, String regimen, String ctaCti, String nss, String grup_ctz, Date fecha) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			
+			SistemaREDMov.cambioGrupCtz(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, regimen, ctaCti, nss, grup_ctz, fecha);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void cambioOcupacion(String domainName, String userLogin, String ipf, String regimen, String ctaCti, String nss, String ocup, Date fecha) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			
+			SistemaREDMov.cambioOcupacion(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, regimen, ctaCti, nss, ocup, fecha);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void cambioCatProf(String domainName, String userLogin, String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			
+			SistemaREDMov.cambioCatProf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, regimen, ctaCti, nss, cat, fecha);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new IllegalArgumentException(e);
+		}	
+	}
+	
+	private solutions.aon.seg.social.objects.Employee createEmployee(EmployeeContractInfo employeeContractInfo) {
+		
+		EmployeeBuilder builder = new EmployeeBuilder();
+		
+		// TODO: setAttributes
+		
+		return builder.build();
+	}
 
 }

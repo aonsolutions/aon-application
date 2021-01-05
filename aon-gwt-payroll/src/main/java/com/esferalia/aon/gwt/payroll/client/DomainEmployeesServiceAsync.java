@@ -506,7 +506,34 @@ public class DomainEmployeesServiceAsync {
 	public void getEmployeeCto(String document, Date startDate, Date endDate, AsyncCallback<String> callback) {
 		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), document, startDate, endDate, callback);
 	}
+	
+	public void sendEmployeeAlta(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+		employeesServiceAsync.sendEmployeeAlta(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
+	}
+	
+	public void sendEmployeeBaja(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+		employeesServiceAsync.sendEmployeeBaja(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
+	}
 
+	public void movPrevDelete(String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) {
+		employeesServiceAsync.movPrevDelete(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, fecha, callback);
+	}
+	
+	public void altaConsolidadaDelete(String situation, String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) {
+		employeesServiceAsync.altaConsolidadaDelete(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, callback);
+	}
+	
+	public void cambioGrupCtz(String ipf, String regimen, String ctaCti, String nss, String grup_ctz, Date fecha, AsyncCallback<Void> callback) {
+		employeesServiceAsync.cambioGrupCtz(getCurrentDomainName(), getCurrentUser(), ipf, regimen, ctaCti, nss, grup_ctz, fecha, callback);
+	}
+	
+	public void cambioOcupacion(String ipf, String regimen, String ctaCti, String nss, String ocup, Date fecha, AsyncCallback<Void> callback) {
+		employeesServiceAsync.cambioOcupacion(getCurrentDomainName(), getCurrentUser(), ipf, regimen, ctaCti, nss, ocup, fecha, callback);
+	}
+	
+	public void cambioCatProf(String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha, AsyncCallback<Void> callback) {
+		employeesServiceAsync.cambioCatProf(getCurrentDomainName(), getCurrentUser(), ipf, regimen, ctaCti, nss, cat, fecha, callback);
+	}
 
 	// ------------------------------------------------------------------------
 	

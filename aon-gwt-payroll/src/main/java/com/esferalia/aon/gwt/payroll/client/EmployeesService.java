@@ -237,6 +237,25 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate, Date endDate);
 
 	String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate);
+
+	void sendEmployeeAlta(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
+
+	void sendEmployeeBaja(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
+
+	void movPrevDelete(String currentDomainName, String currentUser, String situation, String regimen, String ctaCti,
+			String nss, Date fecha);
+
+	void altaConsolidadaDelete(String currentDomainName, String currentUser, String situation, String regimen,
+			String ctaCti, String nss);
+
+	void cambioGrupCtz(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
+			String nss, String grup_ctz, Date fecha);
+
+	void cambioOcupacion(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
+			String nss, String ocup, Date fecha);
+
+	void cambioCatProf(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
+			String nss, String cat, Date fecha);
 	
 
 }

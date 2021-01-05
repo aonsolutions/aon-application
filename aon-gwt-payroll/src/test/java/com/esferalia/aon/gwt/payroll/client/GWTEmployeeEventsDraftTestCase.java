@@ -333,6 +333,69 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void sendEmployeeAlta(String currentDomainName, String currentUser,
+					EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void sendEmployeeBaja(String currentDomainName, String currentUser,
+					EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void movPrevDelete(String currentDomainName, String currentUser, String situation, String regimen,
+					String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void altaConsolidadaDelete(String currentDomainName, String currentUser, String situation,
+					String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void cambioGrupCtz(String currentDomainName, String currentUser, String ipf, String regimen,
+					String ctaCti, String nss, String grup_ctz, Date fecha, AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void cambioOcupacion(String currentDomainName, String currentUser, String ipf, String regimen,
+					String ctaCti, String nss, String ocup, Date fecha, AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void cambioCatProf(String currentDomainName, String currentUser, String ipf, String regimen,
+					String ctaCti, String nss, String cat, Date fecha, AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 
