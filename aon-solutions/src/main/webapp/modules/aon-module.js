@@ -1,5 +1,6 @@
 import {AonElement} from '../components/AonElement.js';
 import {rootPanel} from '../services/gwtLoader.js';
+import {setPosition} from '../services/maps.js';
 
 import './login/aon-login.js';
 import './aon-home.js';
@@ -50,7 +51,9 @@ export class AonModule extends AonElement {
 		} else {
 			this.getElement(this.AON_LOGIN).style.display = 'block';
 			this.getElement(this.AON_HOME).style.display = 'none';
-		};
+		}
+		
+		window.setPosition = (pos) => setPosition(pos);
 	}
 }
 window.customElements.define('aon-module',  AonModule);

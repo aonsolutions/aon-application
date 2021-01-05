@@ -1,4 +1,7 @@
+import {actionMobile} from './actionMobile.js';
 const options = {};
+
+let position;
 
 const getCurrent = () => new Promise((resolve, reject) => {
     if (navigator.geolocation)
@@ -8,7 +11,7 @@ const getCurrent = () => new Promise((resolve, reject) => {
 });
 
 const successCallback = ({ coords, timestamp }) => {
-    return { latitude: coords.latitude, longitude: coords.latitude, timestamp };
+    return { latitude: coords.latitude, longitude: coords.longitude, timestamp };
 }
 
 const errorCallback = (error) => {
@@ -52,19 +55,31 @@ const degrees_to_radians = (degrees) => degrees * (Math.PI / 180);
 
 export const getPosition = async () => {
     let result = null;
-    try {
-        result = await getCurrent().then(successCallback)
-    } catch (e) {
-        console.warn(errorCallback(e));
+    let isApp = await actionMobile({ action: "setPosition" });
+     
+    if(isApp){
+        result = await sleepPosition();
+    } else {
+        try {
+            result = await getCurrent().then(successCallback)
+        } catch (e) {
+            console.warn(errorCallback(e));
+        }
     }
-
     return result;
 };
 
-// getPosition().then((pos) => {
-//     if(pos){
-//         console.log("latitude >", pos.latitude);
-//         console.log("longitude >", pos.longitude);
-//         console.log("timestamp >", pos.timestamp);
-//     }
-// });
+export const setPosition = async (pos) => {
+    position = pos; 
+};
+
+const sleepPosition = () => {
+    return new Promise((resolve,reject)=>{
+        let idInterval = setInterval(()=>{
+            if(position){
+                resolve(position);
+                clearInterval(idInterval);
+            }
+        }, 300);
+    })
+}
