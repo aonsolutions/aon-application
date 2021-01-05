@@ -54,6 +54,32 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 			;
 	}
 	
+	public double calculateReduccion(int epigraph,double cuota,double lorca,double covid) {
+		double red = 0.0;
+		if ( AonMathUtils.equals(1, lorca)) {
+			red = AonMathUtils.round(red + (cuota * 20 / 100));
+		}
+		if ( AonMathUtils.equals(1, covid)) {
+			String epi = this.mod303.getActivityList().get(epigraph).getEpigraph();
+			double percent =  
+				("653.2".equals(epi) || "653.4".equals(epi) ||
+				"653.5".equals(epi)  || "654.2".equals(epi) ||
+				"654.5".equals(epi)  || "654.6".equals(epi) ||
+				"659.3".equals(epi)  || "663.1".equals(epi) ||
+				"671.4".equals(epi)  || "671.5".equals(epi) ||
+				"672.1".equals(epi)  || "672.2".equals(epi) ||
+				"672.3".equals(epi)  || "673.1".equals(epi) ||
+				"673.2".equals(epi)  || "675".equals(epi) ||
+				"676".equals(epi) 	 || "681".equals(epi) ||
+				"682".equals(epi) 	 || "683".equals(epi) ||
+				"721.1".equals(epi)  || "721.3".equals(epi))
+			? 35.0
+			: 20.0;
+			red = AonMathUtils.round(red + (cuota * percent / 100));		
+		}
+		return red;
+	}
+
 	public double calculateIndiceTemporada(Double dias) {
 		if (dias != null) {
 			if (dias > 0 && dias <= 60) return 1.50;

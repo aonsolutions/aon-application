@@ -18,6 +18,7 @@ public class Mod303Activity implements Serializable {
 	private int dia;			// Número de días de ejercicio de la actividad en el trimestre
 	private int emp;			// Número de empleados a 1-01 (o en la fecha de inicio de la actividad)
 	private int lor;			// Si realiza la actividad en LORCA, seleccione lo que proceda
+	private int cov;			// Si aplica la reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
 	
 	private double dev;			// Cuota devengada operaciones corrientes
 	private double red;			// Reducciones
@@ -117,12 +118,19 @@ public class Mod303Activity implements Serializable {
 	public int getLor() {
 		return lor;
 	}
-
 	public Mod303Activity setLor(int lor) {
 		this.lor = lor;
 		return this;
 	}
 
+	public int getCov() {
+		return cov;
+	}
+	public Mod303Activity setCov(int cov) {
+		this.cov = cov;
+		return this;
+	}
+	
 	public int getDia() {
 		return dia;
 	}
@@ -272,6 +280,7 @@ public class Mod303Activity implements Serializable {
 		this.setTem(0);
 		this.setEmp(0);
 		this.setLor(0);
+		this.setCov(0);
 		this.setDev(0);
 		this.setRed(0);
 		this.setInd(0);
@@ -299,6 +308,7 @@ public class Mod303Activity implements Serializable {
 				.setDia(toClone.getDia())
 				.setEmp(toClone.getEmp())
 				.setLor(toClone.getLor())
+				.setCov(toClone.getCov())
 				.setDev(toClone.getDev())
 				.setRed(toClone.getRed())
 				.setInd(toClone.getInd())

@@ -10,6 +10,7 @@ public abstract class Mod303Declaration {
 	
 	public static Mod303Declaration getInstance( Mod303 mod) {
 		
+		if (AEAT_2020_Declaration.accept(mod)) 		return new AEAT_2020_Declaration();
 		if (AEAT_2018_Declaration.accept(mod)) 		return new AEAT_2018_Declaration();
 		if (AEAT_2017_Declaration.accept(mod)) 		return new AEAT_2017_Declaration();
 		if (BIZKAIA_2018_Declaration.accept(mod)) 	return new BIZKAIA_2018_Declaration();

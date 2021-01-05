@@ -221,8 +221,11 @@ public class Model303 extends MainEntryPoint {
 		if (selected.isAEAT()) {
 			if (selected.getYear() < 2018) {
 				declarationContainer.setWidget( new Model3032017AEAT(selected,new Model303Callback(), getAonData()));
-			} else {
+			} else if ((selected.getYear() >= 2018 && selected.getYear() < 2020) 
+				|| (selected.getYear() == 2020 && !selected.isLastPeriod()))  {
 				declarationContainer.setWidget( new Model3032018AEAT(selected,new Model303Callback(), getAonData()));
+			} else {
+				declarationContainer.setWidget( new Model3032020AEAT(selected,new Model303Callback(), getAonData()));
 			}
 		} else if (selected.isBizkaia()) {
 			if (selected.getYear() < 2017) {

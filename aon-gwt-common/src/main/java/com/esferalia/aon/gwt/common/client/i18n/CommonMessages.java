@@ -3490,6 +3490,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Si realiza la actividad en LORCA, seleccione lo que proceda")
 	String irpfActivityLor();
 
+	@DefaultMessage("Reducci\u00F3n extraordinaria de la cuota anual devengada por operaciones corrientes (Reducci\u00F3n extraordinaria por covid-19, art. 9 RD-Ley 35/2020)")
+	String covidReduction();
+
 	@DefaultMessage("N\u00BA de bateas y de barcos auxiliares de la empresa")
 	String irpfActivityBat();
 
