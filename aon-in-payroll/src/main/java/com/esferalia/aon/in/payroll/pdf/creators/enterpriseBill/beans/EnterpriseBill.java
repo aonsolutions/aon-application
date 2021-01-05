@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill;
+package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans;
 
 import java.io.InputStream;
 import java.util.Date;

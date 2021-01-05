@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill;
+package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans;
 
 public class EnterpriseBillTax {
 

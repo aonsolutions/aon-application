@@ -82,12 +82,11 @@ public class ReportTest {
 
 			employee = map.get("011001022503");
 			Assert.assertEquals(2, employee.size());
-
-			System.out.println(employee);
 		}
 	}
 
 	@Test
+	@Ignore
 	public void testCCCVidaLaboralI() throws IOException, UnknownPDFException {
 		try (InputStream is = ReportTest.class.getResourceAsStream("cccvidalaboralI.pdf")){
 			Collection<Employee> employees = CCCLaboralLife.parse(is, new EmployeeBuilder());

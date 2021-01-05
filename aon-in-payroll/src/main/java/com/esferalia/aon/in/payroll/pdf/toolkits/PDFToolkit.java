@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.creators;
+package com.esferalia.aon.in.payroll.pdf.toolkits;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
@@ -44,11 +44,7 @@ public class PDFToolkit {
 		return new PDPage(new PDRectangle(297 * POINTS_PER_MM, 210 * POINTS_PER_MM));
 	}
 
-	public static String format(double num) {
-		return df.format(num);
-	}
-
-	//CREATE AN HORIZONTAL PAGE
+	//CREATE AN VERTICAL PAGE
 	public static PDPage createVerticalPage() {
 		float POINTS_PER_INCH = 72;
 		float POINTS_PER_MM = 1 / (10 * 2.54f) * POINTS_PER_INCH;
@@ -65,9 +61,8 @@ public class PDFToolkit {
 		contents.endText();
 	}
 
-	//DRAWS A RIGHT ALIGN TEXT
+	//DRAWS A RIGHT ALIGNED TEXT
 	public static void drawTextRight(PDPageContentStream contents, PDRectangle box, String content, Color color, PDFont font, float fontSize, float x_margin, float y_margin) throws IOException {
-		float h = box.getHeight();
 		float w = box.getWidth();
 		float fw = (font.getStringWidth(content) / 1000.0f) * fontSize;
 
@@ -80,27 +75,11 @@ public class PDFToolkit {
 		contents.newLineAtOffset(x, y);
 		contents.showText(content);
 		contents.endText();
-	}
-
-	//CROP TEXT
-	public static String cropped_string(String text, double width, PDFont font, float fontSize) throws IOException {
-		if(text == null) return text;
-
-		String txt = text;
-		float fw = (font.getStringWidth(text) / 1000.0f) * fontSize;
-		while (fw > width){
-			text = text.substring(0, text.length()-1);
-			fw = (font.getStringWidth(text + "...") / 1000.0f) * fontSize;
-		}
-
-		return  (txt.equals(text))? text : text + "..." ;
-	}
+	}	
 
 	//DRAWS A CENTERED TEXT
 	public static void drawTextCenter(PDPageContentStream contents, PDRectangle box, String content, Color
 			color, PDFont font, float fontSize, float y_margin) throws IOException {
-
-		float h = box.getHeight();
 		float w = box.getWidth();
 		float fw = (font.getStringWidth(content) / 1000.0f) * fontSize;
 
@@ -202,12 +181,13 @@ public class PDFToolkit {
 			return null;
 		}
 	}
+	
 	//RETURN LATIN VERSION OF A NUMBER WITH . AND , (STRING)
 	public static String to_latin_number(double number){
 		DecimalFormat formater = new DecimalFormat("###,###.##");
 		return formater.format(number);
 	}
-
+	
 	//PARSE A DATE WITH AN SPECIFIC FORMAT
 	public static Date parseDate(String dateStr, String format) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
@@ -221,6 +201,43 @@ public class PDFToolkit {
 		}
 	}
 
+	//DIVIDE A STRING TO FIT A WIDTH
+	public static List<String> divide_string_to_fit(String text, float max, PDFont font, float fontSize) throws IOException{
+		ArrayList<String> lines = new ArrayList<>();
+		ArrayList<String> words = (ArrayList<String>) StringToolkit.to_words(text);
+
+		String line = "";
+		
+		for (String word : words) {
+			float fw = (font.getStringWidth(line + " " + word) / 1000.0f) * fontSize;
+			if(fw > max) {
+				lines.add(line);
+				line = "";
+			}else line += " " + word;
+		}	
+		if(lines.size() > 1 && !lines.get(lines.size()-1).equals(line)) lines.add(line);
+		
+		return lines;
+	}
+
+	//CROP TEXT WITH ...
+	public static String cropped_string(String text, double width, PDFont font, float fontSize) throws IOException {
+		if(text == null) return text;
+
+		String txt = text;
+		float fw = (font.getStringWidth(text) / 1000.0f) * fontSize;
+		while (fw > width){
+			text = text.substring(0, text.length()-1);
+			fw = (font.getStringWidth(text + "...") / 1000.0f) * fontSize;
+		}
+
+		return  (txt.equals(text))? text : text + "..." ;
+	}	
+	
+	//FORMAT A DOUBLE
+	public static String format(double num) {
+		return df.format(num);
+	}
 
 }
 

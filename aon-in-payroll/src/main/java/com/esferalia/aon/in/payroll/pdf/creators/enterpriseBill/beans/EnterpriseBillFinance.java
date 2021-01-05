@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill;
+package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans;
 
 import java.util.Date;
 
@@ -17,7 +17,6 @@ public class EnterpriseBillFinance {
 	}
 
 	public static String split_iban(String iban){
-		String new_iban = "";
 		return	  iban.substring(0,4) 	+ "."
 				+ iban.substring(4,8) 	+ "."
 				+ iban.substring(8,12) 	+ "."

@@ -1,8 +1,14 @@
 package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill;
 
+import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans.EnterpriseBill;
+import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans.EnterpriseBillEntry;
+import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans.EnterpriseBillFinance;
+import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans.EnterpriseBillTax;
+import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.templates.EnterpriseBillTemplate;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.JsonParseException;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -20,8 +26,8 @@ public class EnterpriseBillTest {
 		ArrayList<EnterpriseBillTax> taxes = new ArrayList<>();
 		ArrayList<EnterpriseBillFinance> finances = new ArrayList<>();
 
-		for (int i = 1; i < 100; i++)
-			entries.add(new EnterpriseBillEntry("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." + i,99999999.99,99999999.99,100,99999999.99));
+		for (int i = 1; i < 20; i++)
+			entries.add(new EnterpriseBillEntry("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris." + i,99999999.99,99999999.99,100,99999999.99));
 		for (int i = 0; i < 3; i++)
 			taxes.add(new EnterpriseBillTax(999999.99,100,"IVA",999999.99));
 		for (int i = 0; i < 3; i++)
@@ -57,12 +63,13 @@ public class EnterpriseBillTest {
 			  .setHeader(105)
 			  .setFooter(75);
 
-		try {EnterpriseBillTemplate.create_with_json(EnterpriseBillTest.class.getResourceAsStream("factura.json"), config, EnterpriseBillTest.class.getResourceAsStream("qrcode.png"));}
+		try {EnterpriseBillMaker.create_with_json(EnterpriseBillTest.class.getResourceAsStream("factura.json"), config, EnterpriseBillTest.class.getResourceAsStream("qrcode.png"));}
 		catch (CanNotCreatePdfException e) {fail("Can not create pdf");}
 		catch (JsonParseException e) {fail("Can not parse json");}
 	}
 
 	@Test
+	@Ignore
 	public void EnterpriseBillCreationDemoTest() {
 		PrintInvoiceConfiguration config = new PrintInvoiceConfiguration();
 		config.setAdjustImage(true)
@@ -71,7 +78,7 @@ public class EnterpriseBillTest {
 				.setHeader(105)
 				.setFooter(75);
 
-		try {EnterpriseBillTemplate.demoPdf(config, EnterpriseBillTest.class.getResourceAsStream("qrcode.png"));}
+		try {EnterpriseBillMaker.demoPdf(config, EnterpriseBillTest.class.getResourceAsStream("qrcode.png"));}
 		catch (CanNotCreatePdfException e) {fail("Can not create pdf" );}
 		catch (IOException e) {fail("Can not access test resources");}
 	}
