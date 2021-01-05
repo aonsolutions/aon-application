@@ -275,7 +275,10 @@ public class FacturasRecibidas extends SIIBuilt{
 				}
 			}
 		}
-		frt.setDescripcionOperacion(str + vat.getDetailDescription());
+		
+		str = str + vat.getDetailDescription().replaceAll("<", "").replaceAll(">", "");
+		
+		frt.setDescripcionOperacion(str.length() > 100 ? str.substring(0, 99) : str);
 
 		// FECHA OPERACION
 		frt.setFechaOperacion(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));// TODO

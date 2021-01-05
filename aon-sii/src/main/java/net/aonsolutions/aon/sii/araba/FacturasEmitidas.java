@@ -297,7 +297,10 @@ public class FacturasEmitidas extends SIIBuilt{
 					}
 				}
 			}
-			fet.setDescripcionOperacion(str + vat.getDetailDescription());
+			
+			str = str + vat.getDetailDescription().replaceAll("<", "").replaceAll(">", "");
+			
+			fet.setDescripcionOperacion(str.length() > 100 ? str.substring(0, 99) : str);
 			
 			// DATOS INMUEBLES (OPTIONAL) TODO // sii regimen IVA 12 - Operaciones de arrendamiento de local de negocio no sujetos a retención.
 			if(fet.getClaveRegimenEspecialOTrascendencia().equals("12")

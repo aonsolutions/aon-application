@@ -32,7 +32,7 @@ export class AonMobileHeader extends AonElement {
 
 	constructor () {
 		super();
-		THIS.BASE_ID = 'aonHeader';
+		this.BASE_ID = 'aonHeader';
 	}
 
 	connectedCallback () {
