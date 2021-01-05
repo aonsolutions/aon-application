@@ -19,8 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.timecontrol.LocationCreation;
-import net.aonsolutions.db.up2date.timecontrol.TimeControlCreation;
+import net.aonsolutions.db.up2date.timecontrol.CoordinatesUpdate;
 
 public class Up2Date {
 
@@ -138,8 +137,9 @@ public class Up2Date {
     		//DropTableAccountHelper.DROP_TABLE_ACCOUNT_HELPER
     		//RawdocCreation.RAWDOC_CREATION,
     		//Irpf2021Update.IRPF2021UPDATEII,
-    		LocationCreation.LOCATION_CREATION,
-    		TimeControlCreation.TIMECONTROL_CREATION
+    		//LocationCreation.LOCATION_CREATION,
+    		//TimeControlCreation.TIMECONTROL_CREATION,
+    		CoordinatesUpdate.COORDINATES_UPDATE
     };
 
 
