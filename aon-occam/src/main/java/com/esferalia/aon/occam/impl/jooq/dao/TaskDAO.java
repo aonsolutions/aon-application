@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORK
 import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -67,6 +68,7 @@ import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TaskDAO {
@@ -691,6 +693,7 @@ public class TaskDAO {
 	public static Stream<TaskHolder> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId){
 		return ctx.getDslContext().select().from(REGISTRY).join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(REGISTRY.ID))
 				.join(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
+				.join(DOMAIN).on(DOMAIN.ID.eq(TASK_HOLDER.DOMAIN))
 			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(REGISTRY.NAME.like(filter))
 				.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId)).orderBy(REGISTRY.NAME)
 			.fetch().stream().map(new TaskHolderFiller());
@@ -755,6 +758,7 @@ public class TaskDAO {
 	public static Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter){
 		return ctx.getDslContext().select()
 				.from(TASK_HOLDER).join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.join(DOMAIN).on(DOMAIN.ID.eq(TASK_HOLDER.DOMAIN))
 				.where(TASK_HOLDER_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new TaskHolderFiller());
 	}
@@ -762,13 +766,15 @@ public class TaskDAO {
 	public static Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth){
 		return ctx.getDslContext().select()
 				.from(TASK_HOLDER).join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.join(DOMAIN).on(DOMAIN.ID.eq(TASK_HOLDER.DOMAIN))
 				.join(USER).on(USER.AUTH.eq(auth))
 				.fetch().stream().map(new TaskHolderFiller());
 	}
 
 	
 	public static TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter){
-		return ctx.getDslContext().select().from(TASK_HOLDER).where(TASK_HOLDER_PROPERTIES.getConditions(filter))
+		return ctx.getDslContext()
+				.select().from(TASK_HOLDER).where(TASK_HOLDER_PROPERTIES.getConditions(filter))
 				.fetchInto(TASK_HOLDER).stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());
 	}
 	
@@ -843,7 +849,7 @@ public class TaskDAO {
 			taskHolder.setNationality(Country.safeValueOf(t.getValue(REGISTRY.NATIONALITY))); // TODO
 			taskHolder.setSecurityLevel(SecurityLevel.values()[t.getValue(REGISTRY.SECURITY_LEVEL)]);
 			taskHolder.setType(t.getValue(REGISTRY.TYPE));
-			taskHolder.setDomain(new Domain().setId(t.getValue(TASK_HOLDER.DOMAIN)));
+			taskHolder.setDomain(DomainFiller.buildDomain(t));
 			return taskHolder
 					.setActive(t.getValue(TASK_HOLDER.ACTIVE) == 1)
 					.setCostProfile(t.getValue(TASK_HOLDER.COST_PROFILE))

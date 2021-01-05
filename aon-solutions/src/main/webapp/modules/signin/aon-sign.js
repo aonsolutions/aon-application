@@ -1,5 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getSigninStatus, updateSigninStatus} from '../../services/service.js';
+import {getTimeControl, saveTimeControl} from '../../services/service.js';
+import {getPosition} from '../../services/maps.js';
 
 export class AonSign extends AonElement {
 
@@ -39,7 +40,7 @@ export class AonSign extends AonElement {
     let div = this.createElement('div');
     div.id = this.CONTENT;
     this.appendChild(div);
-    this.buildSignin();
+    getTimeControl().then(r => this.buildSignin(r));
   }
 
   entrada() {
@@ -54,7 +55,13 @@ export class AonSign extends AonElement {
     button.style.padding = '1rem 1rem';
 		button.innerHTML = 'ENTRADA';
 		button.addEventListener('click', () => {
-      this.buildSignin({status: 'in'});
+      getPosition().then(position => {
+        let signin = {
+          status: 'in',
+          coordinates: position.latitude + ',' + position.longitude
+        };
+        saveTimeControl(signin).then(r => this.buildSignin(r));
+      });
 		});
 		content.appendChild(button);
 	}
@@ -71,7 +78,13 @@ export class AonSign extends AonElement {
     button.style.padding = '1rem 1rem';
 		button.innerHTML = 'SALIDA';
 		button.addEventListener('click', () => {
-      this.buildSignin({status: 'out'});
+      getPosition().then(position => {
+        let signin = {
+          status: 'out',
+          coordinates: position.latitude + ',' + position.longitude
+        };
+        saveTimeControl(signin).then(r => this.buildSignin(r));
+      });
 		});
 		content.appendChild(button);
 
@@ -83,7 +96,13 @@ export class AonSign extends AonElement {
     button.style.padding = '1rem 1rem';
 		button2.innerHTML = 'PAUSA';
 		button2.addEventListener('click', () => {
-      this.buildSignin({status: 'pause'});
+      getPosition().then(position => {
+        let signin = {
+          status: 'pause',
+          coordinates: position.latitude + ',' + position.longitude
+        };
+        saveTimeControl(signin).then(r => this.buildSignin(r));
+      });
 		});
 		content.appendChild(button2);
 	}
@@ -100,36 +119,36 @@ export class AonSign extends AonElement {
     button.style.padding = '1rem 1rem';
 		button.innerHTML = 'VUELTA';
 		button.addEventListener('click', () => {
-      this.buildSignin({status: 'in'});
+      getPosition().then(position => {
+        let signin = {
+          status: 'in',
+          coordinates: position.latitude + ',' + position.longitude
+        };
+        saveTimeControl(signin).then(r => this.buildSignin(r));
+      });
 		});
 		content.appendChild(button);
 	}
 
   buildSignin(signin) {
-    if(signin)
-      updateSigninStatus(signin);
-
-    getSigninStatus().then(
-      r => {
-    		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
-        if(r.status === 'in') {
-          if(aonUserConnected) aonUserConnected.style.backgroundColor = '#86D364';
-          this.salida();
-          this.timeStop();
-          this.timeAction(r.time)
-        } else if(r.status === 'pause') {
-          if(aonUserConnected) aonUserConnected.style.backgroundColor = '#F39F1D';
-          this.vuelta();
-          this.timeStop();
-          this.getElement(this.TIME).innerHTML = this.timePaser(r.time);
-        } else {
-          if(aonUserConnected) aonUserConnected.style.backgroundColor = '#DC4D30';
-          this.entrada();
-          this.timeStop();
-          this.getElement(this.TIME).innerHTML = this.timePaser(r.time);
-        }
-      }
-    );
+		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
+    if(signin.status === 'in') {
+      let time = signin.time + (new Date().getTime() - signin.in_date);
+      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#86D364';
+      this.salida();
+      this.timeStop();
+      this.timeAction(time);
+    } else if(signin.status === 'pause') {
+      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#F39F1D';
+      this.vuelta();
+      this.timeStop();
+      this.getElement(this.TIME).innerHTML = this.timePaser(signin.time);
+    } else {
+      if(aonUserConnected) aonUserConnected.style.backgroundColor = '#DC4D30';
+      this.entrada();
+      this.timeStop();
+      this.getElement(this.TIME).innerHTML = this.timePaser(signin.time);
+    }
   }
 
   timeAction(time) {

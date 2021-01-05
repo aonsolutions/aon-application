@@ -1,5 +1,7 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getSigninStatus, updateSigninStatus} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl} from  '../services/service.js';
+import {getPosition} from '../services/maps.js';
+
 import {rootPanel} from '../services/gwtLoader.js';
 
 import '../components/aon-icon-button.js';
@@ -9,6 +11,8 @@ import './configuration/aon-configuration.js';
 import './company/aon-mobile-desktop.js';
 
 export class AonMobileHeader extends AonElement {
+
+	BASE_ID;
 
 	get id() {
 		return this.getAttribute('id');
@@ -28,6 +32,7 @@ export class AonMobileHeader extends AonElement {
 
 	constructor () {
 		super();
+		THIS.BASE_ID = 'aonHeader';
 	}
 
 	connectedCallback () {
@@ -48,28 +53,17 @@ export class AonMobileHeader extends AonElement {
   }
 
 	build() {
-		const BASE_ID = 'aonHeader';
 		let aonHeaderWeb = document.getElementById('aonHeaderWeb');
 		this.buildLogo();
 
-		getSigninStatus().then(r => {
-			let aonUserConnected = document.createElement('div');
-			aonUserConnected.id = BASE_ID + 'UserConnected';
-			aonUserConnected.className = 'aonConnected';
-			if(r.status === 'in'){
-				aonUserConnected.style.backgroundColor = '#86D364';
-			} else if(r.status === 'pause') {
-				aonUserConnected.style.backgroundColor = '#F39F1D';
-			} else {
-				aonUserConnected.style.backgroundColor = '#DC4D30';
-			}
-			let aonHeaderUserButtonIconButton = document.getElementById('aonHeaderUserButtonIconButton');
-			aonHeaderUserButtonIconButton.appendChild(aonUserConnected);
+		getTimeControl().then(r => {
+			this.timeControlStatus(r);
 		});
 
 		let aonHeaderUserButton = document.getElementById('aonHeaderUserButton');
 		aonHeaderUserButton.addEventListener('click', () => {
-			getSigninStatus().then(r => {
+			getTimeControl().then(r => {
+				this.timeControlStatus(r);
 				const top  = aonHeaderUserButton.getBoundingClientRect().top;
 				const left = aonHeaderUserButton.getBoundingClientRect().left;
 				let d = document.getElementById('aonHeaderDialogUserOption');
@@ -94,16 +88,38 @@ export class AonMobileHeader extends AonElement {
 		});
 	}
 
-	aonFichar(signin) {
-		updateSigninStatus(signin);
+	timeControlStatus(signin) {
+		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
+		if(!aonUserConnected) {
+			aonUserConnected = document.createElement('div');
+			aonUserConnected.id = this.BASE_ID + 'UserConnected';
+			aonUserConnected.className = 'aonConnected';
 
-		let aonSign = this.getElement('aonSign');
-		if(aonSign) {
-			aonSign.buildSignin();
+			let aonHeaderUserButtonIconButton = document.getElementById('aonHeaderUserButtonIconButton');
+			aonHeaderUserButtonIconButton.appendChild(aonUserConnected);
 		}
 
-		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
-		aonUserConnected.style.backgroundColor = signin === 'in' ? '#86D364' : '#DC4D30';
+		if(signin.status === 'in'){
+			aonUserConnected.style.backgroundColor = '#86D364';
+		} else if(signin.status === 'pause') {
+			aonUserConnected.style.backgroundColor = '#F39F1D';
+		} else {
+			aonUserConnected.style.backgroundColor = '#DC4D30';
+		}
+	}
+
+	aonFichar(signin) {
+		let position = getPosition();
+		signin.coordinates = position.latitude + ',' + position.longitude;
+
+		saveTimeControl(signin).then(r => {
+			let aonSign = this.getElement('aonSign');
+			if(aonSign) {
+				aonSign.buildSignin();
+			}
+
+			this.timeControlStatus(signin);
+		});
 	}
 
 

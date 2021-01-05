@@ -32,6 +32,7 @@ public class TimeControlDAO {
 
 	
 	public static Stream<TimeControlDetail> getTimeControlDetailStream(AONContext ctx, TimeControlFilter filter) {
+		ctx.checkRead();
 		return ctx.getDslContext()
 			.select()
 			.from(TIMECONTROL)
@@ -130,6 +131,37 @@ public class TimeControlDAO {
 				.and(f.getTaskHolderProperty().eq(taskHolderId))));
 	}
 	
+	public static TimeControlDetail saveTimeControlDetail(AONContext ctx, TimeControlDetail tcd) {
+		return tcd.getId() != null 
+			? updateTimeControlDetail(ctx, tcd)
+			: insertTimeControlDetail(ctx, tcd);
+	}
+	
+	public static TimeControlDetail insertTimeControlDetail(AONContext ctx, TimeControlDetail tcd) {
+		ctx.checkWrite();
+		Integer id = ctx.getDslContext()
+			.insertInto(TIMECONTROL, TIMECONTROL.DOMAIN, TIMECONTROL.TASK_HOLDER, TIMECONTROL.STATUS,
+				TIMECONTROL.DATE, TIMECONTROL.COMMENTS, TIMECONTROL.LOCATION, TIMECONTROL.LATITUDE, TIMECONTROL.LONGITUDE)
+			.values(tcd.getDomain().getId(), tcd.getTaskHolder().getId(), tcd.getStatus().value(),
+					new Timestamp(tcd.getDate().getTime()), tcd.getComments(), tcd.getLocation().getId(),
+					tcd.getCoordinates().getLatitude(), tcd.getCoordinates().getLongitude())
+			.execute();
+		
+		return tcd.setId(id);
+	}
+	
+	public static TimeControlDetail updateTimeControlDetail(AONContext ctx, TimeControlDetail tcd) {
+		ctx.checkWrite();
+		ctx.getDslContext()
+			.update(TIMECONTROL)
+			.set(TIMECONTROL.DATE, new Timestamp(tcd.getDate().getTime()))
+			.set(TIMECONTROL.COMMENTS, tcd.getComments())
+			.set(TIMECONTROL.LOCATION, tcd.getLocation().getId())
+			.where(TIMECONTROL.ID.eq(tcd.getId()))
+			.execute();		
+		return tcd;
+	}
+	
 	private static TimeControl buildTimeControl(Stream<TimeControlDetail> details) {
 		TimeControl tc = new TimeControl().setTime(0L);
 		details.forEach(r -> {
@@ -158,7 +190,7 @@ public class TimeControlDAO {
 			Location location = new Location()
 					.setId(record.getValue(LOCATION.ID))
 					.setDomain(new Domain().setId(record.getValue(LOCATION.DOMAIN)))
-					.setCoordinates(new Coordinates(record.getValue(LOCATION.COORDINATES)))
+					.setCoordinates(new Coordinates(record.getValue(LOCATION.LATITUDE), record.getValue(LOCATION.LONGITUDE)))
 					.setDescription(record.getValue(LOCATION.DESCRIPTION))
 					.setRadio(record.getValue(LOCATION.RADIO));
 			
@@ -170,7 +202,7 @@ public class TimeControlDAO {
 					.setTaskHolder(taskHolder)
 					.setLocation(location)
 					.setComments(record.getValue(TIMECONTROL.COMMENTS))
-					.setCoordinates(new Coordinates(record.getValue(TIMECONTROL.COORDINATES)));
+					.setCoordinates(new Coordinates(record.getValue(TIMECONTROL.LATITUDE),record.getValue(TIMECONTROL.LONGITUDE)));
 		}
 		
 	}

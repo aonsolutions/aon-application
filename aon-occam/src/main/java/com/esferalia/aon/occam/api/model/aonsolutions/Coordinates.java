@@ -2,7 +2,8 @@ package com.esferalia.aon.occam.api.model.aonsolutions;
 
 public class Coordinates {
 
-	private String coordinates;
+	private Double latitude;
+	private Double longitude;
 	
 	
 	public Coordinates() {
@@ -10,37 +11,43 @@ public class Coordinates {
 	}
 	
 	public Coordinates(String coordinates) {
-		this.coordinates = coordinates;
+		String[] c = coordinates.split(",");
+		this.latitude = Double.parseDouble(c[0]);
+		this.longitude = Double.parseDouble(c[1]);
 	}
 	
 	public Coordinates(Double latitude, Double longitude) {
-		this.coordinates = latitude + "," + longitude;
+		this.latitude = latitude;
+		this.longitude = longitude;
 	}
 
 	public String getCoordinates() {
-		return coordinates;
+		return getLatitude() + "," + getLongitude() ;
 	}
 
-	public void setCoordinates(String coordinates) {
-		this.coordinates = coordinates;
+	public Coordinates setCoordinates(String coordinates) {
+		String[] c = coordinates.split(",");
+		this.latitude = Double.parseDouble(c[0]);
+		this.longitude = Double.parseDouble(c[1]);
+		return this;
 	}
 	
 	public Double getLatitude() {
-		String[] coordinates = getCoordinates().split(",");
-		return Double.parseDouble(coordinates[0]);
+		return latitude;
 	}
 	
-	public void setLatitude(Double latitude) {
-		this.coordinates = latitude + "," + getLongitude();
+	public Coordinates setLatitude(Double latitude) {
+		this.latitude = latitude;
+		return this;
 	}
 	
 	public Double getLongitude() {
-		String[] coordinates = getCoordinates().split(",");
-		return Double.parseDouble(coordinates[1]);
+		return longitude;
 	}
 	
-	public void setLongitude(Double longitude) {
-		this.coordinates = getLatitude() + "," + longitude;
+	public Coordinates setLongitude(Double longitude) {
+		this.longitude = longitude;
+		return this;
 	}
 	
 }

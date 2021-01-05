@@ -70,14 +70,16 @@ public class TimeControl {
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("time", getTime());
-		json.put("in_date", getInDate().getTime());
-		json.put("status", getStatus().name().toLowerCase());
+		json.put("in_date", getInDate() != null ? getInDate().getTime() : null);
+		json.put("status", getStatus() != null ? getStatus().name().toLowerCase() : TimeControlStatus.OUT);
 		
-		JSONObject taskHolderJson = new JSONObject();
-		taskHolderJson.put("id", getTaskHolder().getId());
-		taskHolderJson.put("name", getTaskHolder().getName());
+		if(getTaskHolder() != null) {
+			JSONObject taskHolderJson = new JSONObject();
+			taskHolderJson.put("id", getTaskHolder().getId());
+			taskHolderJson.put("name", getTaskHolder().getName());
 
-		json.put("task_holder", taskHolderJson);
+			json.put("task_holder", taskHolderJson);
+		}
 		return json;
 	}
 }

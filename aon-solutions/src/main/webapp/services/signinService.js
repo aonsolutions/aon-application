@@ -1,6 +1,8 @@
-// import { request, post, get } from "./request.js";
-// import { API_URL } from "../environments/environments.js";
+import { post, get } from "./request.js";
+import { API_URL } from "../environments/environments.js";
 
+export const getTimeControl = (data) => get(`${API_URL}/timecontrol`, data);
+export const saveTimeControl = (data) => post(`${API_URL}/timecontrol`, data);
 
 export const getSigninStatus = () => {
   let date = new Date();

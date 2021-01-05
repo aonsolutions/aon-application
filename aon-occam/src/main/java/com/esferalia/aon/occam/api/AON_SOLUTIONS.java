@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -10,9 +11,13 @@ import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
+import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
+import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -24,6 +29,7 @@ import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
+import com.esferalia.aon.occam.impl.jooq.TimeControlImpl;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AON_SOLUTIONS {
@@ -46,6 +52,10 @@ public class AON_SOLUTIONS {
 	
 	private static ITask getTask() {
 		return new TaskImpl();
+	}
+	
+	private static ITimeControl getTimeControl() {
+		return new TimeControlImpl();
 	}
 
 	public static Auth getAuth(String domainName, Integer domainId, String email) { 
@@ -283,6 +293,41 @@ public class AON_SOLUTIONS {
 		return taskHolder;
 	}
 	
+	public static Stream<TimeControl> getTimeControlStream(Domain domain, String login, Date startDate, Date endDate) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().getTimeControlStream(ctx, startDate, endDate);
+		}
+	}
+	
+	public static Stream<TimeControl> getTaskHolderTimeControlStream(Domain domain, String login, Integer taskHolderId, Date startDate, Date endDate, TimeControlGroup group) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().getTaskHolderTimeControlStream(ctx, taskHolderId, startDate, endDate, group);
+		}
+	}
+	
+	public static TimeControl getTaskHolderTimeControl(Domain domain, String login, Integer taskHolderId, Date startDate, Date endDate) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().getTaskHolderTimeControl(ctx, taskHolderId, startDate, endDate);
+		}
+	}
+	
+	public static Stream<TimeControlDetail> getTimeControlDetailStream(Domain domain, String login, TimeControlFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().getTimeControlDetailStream(ctx, filter);
+		}
+	}
+	
+	public static LinkedList<TimeControlDetail> getTimeControlDetailList(Domain domain, String login, TimeControlFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().getTimeControlDetailList(ctx, filter);
+		}
+	}
+	
+	public static TimeControlDetail saveTimeControlDetail(Domain domain, String login, TimeControlDetail tcd) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().saveTimeControlDetail(ctx, tcd);
+		}
+	}
 	
 	
 }
