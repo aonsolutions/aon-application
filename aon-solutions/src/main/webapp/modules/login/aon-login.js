@@ -1,24 +1,27 @@
-import {AonElement} from '../../components/AonElement.js';
-import {login, getManifest, rememberPassword} from  '../../services/service.js';
-import {rootPanel} from '../../services/gwtLoader.js';
+import { AonElement } from "../../components/AonElement.js";
+import {
+  login,
+  getManifest,
+  rememberPassword,
+} from "../../services/service.js";
+import { rootPanel } from "../../services/gwtLoader.js";
 
-import '../../components/aon-input.js';
-import '../../components/aon-loader.js';
-import '../../components/aon-dialog.js';
+import "../../components/aon-input.js";
+import "../../components/aon-loader.js";
+import "../../components/aon-dialog.js";
 
-import '../company/aon-mobile-desktop.js';
-import '../company/aon-parent.js';
+import "../company/aon-mobile-desktop.js";
+import "../company/aon-parent.js";
 
 import * as MSG from "../../environments/msg.js";
 
 export class AonLogin extends AonElement {
+  constructor() {
+    super();
+  }
 
-	constructor () {
-		super();
-	}
-
-	connectedCallback () {
-		this.innerHTML = `
+  connectedCallback() {
+    this.innerHTML = `
 			<!-- Wide card with share menu button -->
 			<style>
 
@@ -72,7 +75,9 @@ export class AonLogin extends AonElement {
 							<div>
 								<aon-input id="aonLoginPassword" description="Contraseña" type="password" filled="true"></aon-input>
 							</div>
-
+							<div style="padding-bottom: 20px;">
+							No tienes cuenta? <a id="aonBtnRegister" class="aonLink aonColorSecondary"> click aquí</a>
+							</div>
 							<div style="padding-bottom: 20px;">
 								Si olvidaste tus datos de acceso haz <a id="aonLoginRemember" class="aonLink aonColorSecondary">click aquí</a>
 							</div>
@@ -102,76 +107,99 @@ export class AonLogin extends AonElement {
 			<aon-dialog id="aonDialogLogin" width="400px"></aon-dialog>
 			`;
 
-			this.buildLogo();
+    this.buildLogo();
 
-			let dialog = document.getElementById('aonDialogLogin');
-			dialog.setTitle(MSG.AON_MSG_RECOVER_PASSWORD);
-			dialog.setContentHTML(`
-				<form action="#">
-					<aon-input id="aonLoginRememberEmail" description="Email"></aon-input>
-				</form>`);
-			dialog.addAcceptAction(() =>rememberPassword(this.getElement('aonLoginRememberEmail').value));
+    this.aonDialogLoginRemember();
 
-			let aonManifest = document.getElementById('aonManifest');
-			getManifest().then(manifest => aonManifest.innerHTML = 'Version: ' + manifest.build_date);
+    let aonManifest = this.getElement("aonManifest");
+    getManifest().then(
+      (manifest) => (aonManifest.innerHTML = "Version: " + manifest.build_date)
+    );
 
-			let username = document.getElementById("aonLoginUser");
-			username.addEventListener('keyup', event => this.onEnter(event));
-			let password = document.getElementById("aonLoginPassword");
-			password.addEventListener('keyup', event => this.onEnter(event));
+    let username = this.getElement("aonLoginUser");
+    username.addEventListener("keyup", (event) => this.onEnter(event));
+    let password = this.getElement("aonLoginPassword");
+    password.addEventListener("keyup", (event) => this.onEnter(event));
 
-			let signin = document.getElementById('aonLoginSignin');
-			signin.addEventListener('click', () => this.signin());
+    let signin = this.getElement("aonLoginSignin");
+    signin.addEventListener("click", () => this.signin());
 
-			let aonLoginRemember = document.getElementById('aonLoginRemember');
-			aonLoginRemember.addEventListener('click', () => {
-      	dialog.open();
-    	});
-	}
+    let aonLoginRemember = this.getElement("aonLoginRemember");
+    aonLoginRemember.addEventListener("click", () =>
+      this.getElement("aonDialogLogin").open()
+    );
 
-	buildLogo() {
-		let logo = document.getElementById('aonLoginLogoImg');
-		if(window.location.href.includes('ayudat')){
-			logo.src = 'assets/ayudat-logo4.png';
-		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
-			logo.src = '../assets/ayudat-logo4.png';
-		} else logo.src = 'assets/aon-logo.png';
-	}
+    let aonBtnRegister = this.getElement("aonBtnRegister");
+    aonBtnRegister.addEventListener("click", () => {
+		this.hideElement('aonLogin');
+		this.showElement('aonRegister');
+	});
+  }
 
-	signin() {
-		const username = document.getElementById("aonLoginUser").value;
-		const password = document.getElementById("aonLoginPassword").value;
-		const data = {
-				username: username,
-				password: password
-		}
+  aonDialogLoginRemember() {
+    let dialog = this.getElement("aonDialogLogin");
+    dialog.setTitle(MSG.AON_MSG_RECOVER_PASSWORD);
+    dialog.setContentHTML(`
+			<form action="#">
+				<aon-input id="aonLoginRememberEmail" description="Email"></aon-input>
+			</form>`);
+    dialog.addAcceptAction(() =>
+      rememberPassword(this.getElement("aonLoginRememberEmail").value)
+    );
+  }
 
-		let loader = document.getElementById('aonLoginLoader');
-		loader.start();
-		login(data).then(() => {
-			loader.stop();
-			localStorage.removeItem('aon_domain_id');
-			localStorage.removeItem('aon_domain_name');
-			localStorage.removeItem('aon_domain_login');
-			rootPanel(this.isMobile()
-				? '<aon-mobile-desktop id="aonParent"></aon-mobile-desktop>'
-				: '<aon-parent id="aonParent"></aon-parent>');
-		}).catch(error => {
-			loader.stop();
-			let aonLoginError = document.getElementById('aonLoginError');
-			aonLoginError.style.display = 'block';
+  buildLogo() {
+    let logo = document.getElementById("aonLoginLogoImg");
+    if (window.location.href.includes("ayudat")) {
+      logo.src = "assets/ayudat-logo4.png";
+    } else if (
+      window.location.href.includes("translogia") ||
+      window.location.href.includes("tedi")
+    ) {
+      logo.src = "../assets/ayudat-logo4.png";
+    } else logo.src = "assets/aon-logo.png";
+  }
 
-			let aonLoginErrorMessage = document.getElementById('aonLoginErrorMessage');
-			aonLoginErrorMessage.innerHTML = error.message;
-		});
-	}
+  signin() {
+    const username = document.getElementById("aonLoginUser").value;
+    const password = document.getElementById("aonLoginPassword").value;
+    const data = {
+      username: username,
+      password: password,
+    };
 
-	onEnter(event) {
-		if (event.keyCode === 13) {
-    	event.preventDefault();
-    	document.getElementById('aonLoginSignin').click();
-  	}
-	}
+    let loader = document.getElementById("aonLoginLoader");
+    loader.start();
+    login(data)
+      .then(() => {
+        loader.stop();
+        localStorage.removeItem("aon_domain_id");
+        localStorage.removeItem("aon_domain_name");
+        localStorage.removeItem("aon_domain_login");
+        rootPanel(
+          this.isMobile()
+            ? '<aon-mobile-desktop id="aonParent"></aon-mobile-desktop>'
+            : '<aon-parent id="aonParent"></aon-parent>'
+        );
+      })
+      .catch((error) => {
+        loader.stop();
+        let aonLoginError = document.getElementById("aonLoginError");
+        aonLoginError.style.display = "block";
+
+        let aonLoginErrorMessage = document.getElementById(
+          "aonLoginErrorMessage"
+        );
+        aonLoginErrorMessage.innerHTML = error.message;
+      });
+  }
+
+  onEnter(event) {
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      document.getElementById("aonLoginSignin").click();
+    }
+  }
 }
 
-window.customElements.define('aon-login', AonLogin);
+window.customElements.define("aon-login", AonLogin);

@@ -1,4 +1,4 @@
-import { request, post, get} from "./request.js";
+import { get } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 

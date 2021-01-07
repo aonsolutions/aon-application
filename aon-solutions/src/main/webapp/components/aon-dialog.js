@@ -189,7 +189,7 @@ export class AonDialog extends AonElement {
 	}
 
 	setTitle(title) {
-		this.getElement(this.TITLE).innerHTML = title;
+		if(title) this.getElement(this.TITLE).innerHTML = title;
 	}
 
 	addCancelAction(fn) {

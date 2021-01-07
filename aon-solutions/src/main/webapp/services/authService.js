@@ -27,3 +27,5 @@ export const rememberPassword = (email) => post(`${API_URL}/remember`, {email});
 export const getManifest = (data) => get(`${API_URL}/manifest`, data);
 
 export const getAuth = (data) => get(`${API_URL}/auth`, data);
+
+export const registerUser = (user) => post(`${API_URL}/register/user`, user);

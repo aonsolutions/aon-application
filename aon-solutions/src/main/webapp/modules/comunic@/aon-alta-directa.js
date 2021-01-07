@@ -347,7 +347,7 @@ export class AonAltaDirecta extends AonElement {
             if (centro_trabajo && centro_trabajo.options) {
                 const options = JSON.parse(centro_trabajo.options);
                 for (const property in options) {
-                    if (options[property] && options[property]) {
+                    if (property && options[property]) {
                         let { type } = options[property].ccc.find(rs => rs.cccRegimeCode === obj.regimen && rs.ccc === obj.ctaCti);
                         if (type) {
                             this.selectTypeCto(type);

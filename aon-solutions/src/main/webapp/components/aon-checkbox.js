@@ -14,6 +14,15 @@ export class AonCheckbox extends AonElement {
 		this.setAttribute('id', id);
 	}
 
+	get name() {
+		return this.getAttribute('name');
+	}
+
+	set name(name) {
+		this.setAttribute('name', name);
+	}
+	
+
 	get value() {
 		return this.getAttribute('value');
 	}
@@ -71,6 +80,9 @@ export class AonCheckbox extends AonElement {
 
 		let input = document.createElement('input');
 		input.setAttribute('id', this.getAttribute('id') + 'Input');
+
+		input.name = this.name;
+
 		input.setAttribute('type', 'checkbox');
 		if(this.hasAttribute('value') && "true" === this.getAttribute('value')){
 			input.setAttribute('checked', 'checked');

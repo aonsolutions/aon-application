@@ -44,6 +44,10 @@ export class AonElement extends HTMLElement{
     document.getElementById(id).style.display = 'none';
   }
 
+  showElement(id) {
+    document.getElementById(id).style.display = 'block';
+  }
+
   rootPanel(element) {
     this.clearElement(this.ROOT_PANEL);
     this.getElement(this.ROOT_PANEL).appendChild(element);

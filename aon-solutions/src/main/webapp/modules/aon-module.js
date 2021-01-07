@@ -3,12 +3,14 @@ import {rootPanel} from '../services/gwtLoader.js';
 import {setPosition} from '../services/maps.js';
 
 import './login/aon-login.js';
+import './register/aon-register.js';
 import './aon-home.js';
 import './company/aon-parent.js';
 import './company/aon-mobile-desktop.js';
 
 export class AonModule extends AonElement {
 	AON_LOGIN;
+	AON_REGISTER;
 	AON_HOME;
 	AON_DESKTOP;
 	AON_PARENT;
@@ -16,6 +18,7 @@ export class AonModule extends AonElement {
 	constructor () {
 		super();
 		this.AON_LOGIN = 'aonLogin';
+		this.AON_REGISTER = 'aonRegister';
 		this.AON_HOME = 'aonHome';
 		this.AON_DESKTOP = 'aonDesktop';
 		this.AON_PARENT = 'aonParent';
@@ -24,15 +27,21 @@ export class AonModule extends AonElement {
 	connectedCallback () {
 		let loginDiv= this.createElement('div');
 		loginDiv.id = this.AON_LOGIN;
-		loginDiv.style.display = 'display:none'
+		loginDiv.style.display = 'none';
 		this.appendChild(loginDiv);
 		loginDiv.innerHTML = '<aon-login></aon-login>';
 
 		let homeDiv = this.createElement('div');
 		homeDiv.id = this.AON_HOME;
-		homeDiv.style.display = 'display:none'
+		homeDiv.style.display = 'none';
 		homeDiv.innerHTML = '<aon-home></aon-home>';
 		this.appendChild(homeDiv);
+
+		let registerDiv= this.createElement('div');
+		registerDiv.id = this.AON_REGISTER;
+		registerDiv.style.display = 'none';
+		this.appendChild(registerDiv);
+		registerDiv.innerHTML = '<aon-register></aon-register>';
 
 		this.load();
 	}

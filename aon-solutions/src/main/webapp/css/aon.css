@@ -61,6 +61,10 @@ form {
   transform: scale(0.99);
 }
 
+.aonButton[disabled=disabled], .aonButton:disabled {
+  cursor: not-allowed;
+  background-color: #cccccc;
+}
 .aonColorIcon {
   color: #5f6368;
 }

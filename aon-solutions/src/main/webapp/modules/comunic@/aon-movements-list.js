@@ -140,9 +140,10 @@ export class AonMovementsList extends AonElement {
 				} else if (this.aonComunicaEl.anularCondition(situation, fra)) {
 					color = "#CB8D00";
 					tipo_mov = `${tipo_mov} Consolidada`;
-				} else
+				} else{
 					tipo_mov = `${tipo_mov} Consolidada`;
-
+				}
+				
 				const status = `<span style="font-weight: 700;color: ${color};">${tipo_mov}</span>`;
 				return {
 					...res,
