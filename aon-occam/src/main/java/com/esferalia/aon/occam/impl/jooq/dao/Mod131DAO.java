@@ -1820,6 +1820,8 @@ public class Mod131DAO extends FiscalModelDAO {
 	public static Mod131Activity calculateMod131Activity(AONContext ctx, Mod131 mod131, Mod131Activity activity) {
 		if ( mod131.getYear() == 2020 && mod131.getPeriod() == Period.T4) {
 			return Mod131Aeat20204TCalculator.calculate(ctx, activity);
+		} else if ( mod131.getYear() == 2021 && mod131.getPeriod() == Period.T1) {
+			return Mod131Aeat20204TCalculator.calculate(ctx, activity);
 		}
 		return Mod131Aeat2016Calculator.calculate(ctx, activity);
 	}
