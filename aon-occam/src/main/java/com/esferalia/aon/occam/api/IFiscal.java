@@ -244,7 +244,7 @@ public interface IFiscal {
 	public Mod131 getMod131(AONContext ctx, int id);
 	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain);
 	public Mod131 calculate(AONContext ctx, Mod131 mod131);
-	public Mod131Activity calculateActivity(AONContext ctx, Mod131Activity activity);
+	public Mod131Activity calculateActivity(AONContext ctx, Mod131 mod131, Mod131Activity activity);
 	public Mod131 save(AONContext ctx, Mod131 mod131);
 	public Mod131 saveComments(AONContext ctx, Mod131 mod131);
 	public Mod131 initializeForFinish(AONContext ctx, Mod131 mod131);

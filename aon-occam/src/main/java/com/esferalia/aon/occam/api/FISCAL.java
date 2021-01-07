@@ -863,11 +863,11 @@ public class FISCAL {
 		}
 	}
 
-	public static Mod131Activity calculate(String domainName, int domain, String userLogin, Mod131Activity activity) {
+	public static Mod131Activity calculate(String domainName, int domain, String userLogin, Mod131 mod131, Mod131Activity activity) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,userLogin);
-			return getFiscal().calculateActivity(ctx, activity);
+			return getFiscal().calculateActivity(ctx, mod131, activity);
 		} finally {
 			if (ctx != null)
 				ctx.close();

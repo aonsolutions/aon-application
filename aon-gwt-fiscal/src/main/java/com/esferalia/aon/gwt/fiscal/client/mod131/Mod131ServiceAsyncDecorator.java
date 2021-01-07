@@ -37,9 +37,9 @@ public class Mod131ServiceAsyncDecorator implements Mod131ServiceAsync {
 		fsa.calculate(domainName, user, mod131, new AsyncCallbackWrapper<Mod131>(callback));
 	}
 	@Override
-	public void calculateActivity(String domainName, String user, int domain,Mod131Activity activity, AsyncCallback<Mod131Activity> callback) {
+	public void calculateActivity(String domainName, String user, int domain, Mod131 mod131,Mod131Activity activity, AsyncCallback<Mod131Activity> callback) {
 		AON.start();
-		fsa.calculateActivity(domainName, user, domain, activity, new AsyncCallbackWrapper<Mod131Activity>(callback));
+		fsa.calculateActivity(domainName, user, domain, mod131, activity, new AsyncCallbackWrapper<Mod131Activity>(callback));
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public interface Mod131Service extends RemoteService {
 	Mod131 getMod131(String domainName, String user, int domain, int id) throws AonCoreException;
 	LinkedList<Mod131> getMod131s(String domainName, String user, int domain) throws AonCoreException;
 	Mod131 calculate(String domainName, String user, Mod131 mod131) throws AonCoreException;
-	Mod131Activity calculateActivity(String domainName, String user, int domain, Mod131Activity activity) throws AonCoreException;
+	Mod131Activity calculateActivity(String domainName, String user, int domain, Mod131 mod131, Mod131Activity activity) throws AonCoreException;
 	Mod131 save(String domainName, String user, Mod131 mod131) throws AonCoreException;
 	Mod131 saveComments(String domainName, String user, Mod131 mod131) throws AonCoreException;
 	Mod131 initializeForFinish(String domainName, String user, Mod131 mod131) throws AonCoreException;

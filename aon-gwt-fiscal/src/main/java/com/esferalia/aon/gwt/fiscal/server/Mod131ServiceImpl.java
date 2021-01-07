@@ -43,8 +43,8 @@ public class Mod131ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return FISCAL.calculate(domainName, user, mod131);
 	}
 	@Override
-	public Mod131Activity calculateActivity(String domainName, String user, int domain, Mod131Activity activity) throws AonCoreException {
-		return FISCAL.calculate(domainName, domain, user, activity);
+	public Mod131Activity calculateActivity(String domainName, String user, int domain, Mod131 mod131, Mod131Activity activity) throws AonCoreException {
+		return FISCAL.calculate(domainName, domain, user, mod131, activity);
 	}
 
 	@Override

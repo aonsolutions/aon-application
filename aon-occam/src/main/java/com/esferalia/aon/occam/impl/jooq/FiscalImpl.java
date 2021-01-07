@@ -891,8 +891,8 @@ public class FiscalImpl implements IFiscal {
 		return Mod131DAO.calculateMod131(ctx, mod131);
 	}
 	@Override
-	public Mod131Activity calculateActivity(AONContext ctx, Mod131Activity activity) {
-		return Mod131DAO.calculateMod131Activity(ctx, activity);
+	public Mod131Activity calculateActivity(AONContext ctx, Mod131 mod131, Mod131Activity activity) {
+		return Mod131DAO.calculateMod131Activity(ctx, mod131, activity);
 	}
 	
 	@Override

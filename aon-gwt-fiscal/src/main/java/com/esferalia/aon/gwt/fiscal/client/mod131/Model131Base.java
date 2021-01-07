@@ -188,6 +188,11 @@ public abstract class Model131Base extends SimplePanel implements IMod131Declara
 				IMod131ActivityCallback activityCallback = new IMod131ActivityCallback() {
 					
 					@Override
+					public Mod131 getModel() {
+						return Model131Base.this.getModel();
+					}
+					
+					@Override
 					public void onCancel() {
 						dialog.hide();
 						calculateAndRefresh(callback);

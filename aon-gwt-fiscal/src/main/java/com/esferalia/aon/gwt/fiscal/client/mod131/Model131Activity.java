@@ -5,6 +5,7 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
@@ -117,6 +118,7 @@ public class Model131Activity extends DockLayoutPanel {
 	final EpigraphPanel epigraphPanel = new EpigraphPanel( new EpigraphPanelCallback(), null);
 
 	public static interface IMod131ActivityCallback {
+		Mod131 getModel();
 		Mod131Activity getActivity();
 		void onAccept();
 		void onCancel();
@@ -511,8 +513,8 @@ public class Model131Activity extends DockLayoutPanel {
 	}
 	
 	private void calculate() {
-		Model131.SERVICE.calculateActivity( callback.getDomainName(), callback.getUser(), callback.getDomain()
-				, this.callback.getActivity(), new AsyncCallback<Mod131Activity>() {
+		Model131.SERVICE.calculateActivity( callback.getDomainName(), callback.getUser(), callback.getDomain(),
+				callback.getModel(), this.callback.getActivity(), new AsyncCallback<Mod131Activity>() {
 					
 					@Override
 					public void onSuccess(Mod131Activity result) {

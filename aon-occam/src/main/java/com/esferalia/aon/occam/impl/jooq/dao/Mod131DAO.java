@@ -1817,7 +1817,10 @@ public class Mod131DAO extends FiscalModelDAO {
 		return mod; 
 	}
 	
-	public static Mod131Activity calculateMod131Activity(AONContext ctx, Mod131Activity activity) {
+	public static Mod131Activity calculateMod131Activity(AONContext ctx, Mod131 mod131, Mod131Activity activity) {
+		if ( mod131.getYear() == 2020 && mod131.getPeriod() == Period.T4) {
+			return Mod131Aeat20204TCalculator.calculate(ctx, activity);
+		}
 		return Mod131Aeat2016Calculator.calculate(ctx, activity);
 	}
 	
@@ -1910,7 +1913,7 @@ public class Mod131DAO extends FiscalModelDAO {
 		for (Mod131Activity activity : mod.getActivities()) {
 			// Solo se recalculan los datos de la actividad, si hay epígrafe
 			if (activity.getEpigraph() != null)
-				calculateMod131Activity(ctx, activity);
+				calculateMod131Activity(ctx, mod, activity);
 		}
 		return calculateMod131(ctx, mod);
 	}
