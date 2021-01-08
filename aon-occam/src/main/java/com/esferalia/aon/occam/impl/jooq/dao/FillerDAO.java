@@ -372,21 +372,21 @@ public class FillerDAO {
 			return customer.setAccount(r.getValue(CUSTOMER.ACCOUNT))
 					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
 					.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))
-					.setDeliveryGrouped(r.getValue(CUSTOMER.DELIVERY_GROUPED))
-					.setDeliveryValuated(r.getValue(CUSTOMER.DELIVERY_VALUATED))
-					.seteInvoice(r.getValue(CUSTOMER.E_INVOICE))
+					.setDeliveryGrouped(r.getValue(CUSTOMER.DELIVERY_GROUPED) == 1)
+					.setDeliveryValuated(r.getValue(CUSTOMER.DELIVERY_VALUATED) == 1)
+					.setEInvoice(r.getValue(CUSTOMER.E_INVOICE) == 1)
 					.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
 					.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
 					.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
-					.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED))
+					.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED) == 1)
 					// TODO QUITAR!!! 
 					.setRegistry(new Registry().setId(r.getValue(CUSTOMER.REGISTRY)).setName(r.getValue(REGISTRY.NAME)))
 					.setScope(r.getValue(CUSTOMER.SCOPE))
 					.setStatus(RegistryStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)))
-					.setSurcharge(r.getValue(CUSTOMER.STATUS))
+					.setSurcharge(r.getValue(CUSTOMER.STATUS)==1)
 					.setTariff(r.getValue(CUSTOMER.TARIFF))
-					.setTransaction(r.getValue(CUSTOMER.TRANSACTION))
-					.setWithholding(r.getValue(CUSTOMER.WITHHOLDING))
+					.setTransaction(InvoiceTransactionType.safeValueOf( r.getValue(CUSTOMER.TRANSACTION)))
+					.setWithholding(r.getValue(CUSTOMER.WITHHOLDING)==1)
 					.setStatus(RegistryStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)));
 		}
 	}

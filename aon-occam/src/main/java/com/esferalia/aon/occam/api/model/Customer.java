@@ -4,37 +4,127 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
-@SuppressWarnings("serial")
-public class Customer  extends Registry implements Serializable{
+public class Customer  extends Registry implements Serializable, HasAudit {
 
-	Integer account;
-	Date creationDate;
-	String creationUser;
-	Byte deliveryGrouped;
-	Byte deliveryValuated;
-	Byte eInvoice;
-	Integer invoicingGroup;
-	Date modificationDate;
-	String modificationUser;
-	Byte projectGrouped;
-	Registry registry;
-	Integer scope;
-	RegistryStatus status;
-	Byte surcharge;
-	Integer tariff;
-	Byte transaction;
-	Byte withholding;
+	private static final long serialVersionUID = -1763053163676341615L;
+	
+	private Registry registry;
+	
+	private Integer tariff;
+	private boolean surcharge;
+	private boolean withholding;
+	private InvoiceTransactionType transaction;
+	private RegistryStatus status;
+	private Integer scope;
+	private boolean eInvoice;
+	private Integer invoicingGroup;
+	private boolean projectGrouped;
+	private boolean deliveryGrouped;
+	private boolean deliveryValuated;
+	private Integer account;
+	
+	private Date creationDate;
+	private String creationUser;
+	private Date modificationDate;
+	private String modificationUser;
+
 	
 	public Customer() {
-		surcharge = (byte) 0;
-		withholding = (byte) 0;
-		transaction = (byte) 0;
-		eInvoice = (byte) 0;
-		projectGrouped = (byte) 1;
-		deliveryGrouped = (byte) 1;
-		deliveryValuated = (byte) 1;
+		transaction = InvoiceTransactionType.NATIONAL;
+		projectGrouped = true;
+		deliveryGrouped = true;
+		deliveryValuated = true;
+	}
+	
+	public Integer getTariff() {
+		return tariff;
+	}
+	public Customer setTariff(Integer tariff) {
+		this.tariff = tariff;
+		return this;
+	}
+
+	public boolean isSurcharge() {
+		return surcharge;
+	}
+	public Customer setSurcharge(boolean surcharge) {
+		this.surcharge = surcharge;
+		return this;
+	}
+
+	public boolean isWithholding() {
+		return withholding;
+	}
+	public Customer setWithholding(boolean withholding) {
+		this.withholding = withholding;
+		return this;
+	}
+
+	public InvoiceTransactionType getTransaction() {
+		return transaction;
+	}
+	public Customer setTransaction(InvoiceTransactionType transaction) {
+		this.transaction = transaction;
+		return this;
+	}
+	
+	public RegistryStatus getStatus() {
+		return status;
+	}
+	public Customer setStatus(RegistryStatus status) {
+		this.status = status;
+		return this;
+	}
+	
+	public Integer getScope() {
+		return scope;
+	}
+	public Customer setScope(Integer scope) {
+		this.scope = scope;
+		return this;
+	}
+
+	public boolean isEInvoice() {
+		return eInvoice;
+	}
+	public Customer setEInvoice(boolean eInvoice) {
+		this.eInvoice = eInvoice;
+		return this;
+	}
+
+	public Integer getInvoicingGroup() {
+		return invoicingGroup;
+	}
+	public Customer setInvoicingGroup(Integer invoicingGroup) {
+		this.invoicingGroup = invoicingGroup;
+		return this;
+	}
+	
+	public boolean isProjectGrouped() {
+		return projectGrouped;
+	}
+	public Customer setProjectGrouped(boolean projectGrouped) {
+		this.projectGrouped = projectGrouped;
+		return this;
+	}
+	
+	public boolean isDeliveryGrouped() {
+		return deliveryGrouped;
+	}
+	public Customer setDeliveryGrouped(boolean deliveryGrouped) {
+		this.deliveryGrouped = deliveryGrouped;
+		return this;
+	}
+	
+	public boolean isDeliveryValuated() {
+		return deliveryValuated;
+	}
+	public Customer setDeliveryValuated(boolean deliveryValuated) {
+		this.deliveryValuated = deliveryValuated;
+		return this;
 	}
 	
 	public Integer getAccount() {
@@ -44,6 +134,7 @@ public class Customer  extends Registry implements Serializable{
 		this.account = account;
 		return this;
 	}
+	
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -51,6 +142,7 @@ public class Customer  extends Registry implements Serializable{
 		this.creationDate = creationDate;
 		return this;
 	}
+	
 	public String getCreationUser() {
 		return creationUser;
 	}
@@ -58,35 +150,7 @@ public class Customer  extends Registry implements Serializable{
 		this.creationUser = creationUser;
 		return this;
 	}
-	public Byte getDeliveryGrouped() {
-		return deliveryGrouped;
-	}
-	public Customer setDeliveryGrouped(Byte deliveryGrouped) {
-		this.deliveryGrouped = deliveryGrouped;
-		return this;
-	}
-	public Byte getDeliveryValuated() {
-		return deliveryValuated;
-	}
-	public Customer setDeliveryValuated(Byte deliveryValuated) {
-		this.deliveryValuated = deliveryValuated;
-		return this;
-	}
 
-	public Byte geteInvoice() {
-		return eInvoice;
-	}
-	public Customer seteInvoice(Byte eInvoice) {
-		this.eInvoice = eInvoice;
-		return this;
-	}
-	public Integer getInvoicingGroup() {
-		return invoicingGroup;
-	}
-	public Customer setInvoicingGroup(Integer invoicingGroup) {
-		this.invoicingGroup = invoicingGroup;
-		return this;
-	}
 	public Date getModificationDate() {
 		return modificationDate;
 	}
@@ -94,6 +158,7 @@ public class Customer  extends Registry implements Serializable{
 		this.modificationDate = modificationDate;
 		return this;
 	}
+	
 	public String getModificationUser() {
 		return modificationUser;
 	}
@@ -101,60 +166,14 @@ public class Customer  extends Registry implements Serializable{
 		this.modificationUser = modificationUser;
 		return this;
 	}
-	public Byte getProjectGrouped() {
-		return projectGrouped;
-	}
-	public Customer setProjectGrouped(Byte projectGrouped) {
-		this.projectGrouped = projectGrouped;
-		return this;
-	}
+	
+	// **
+	
 	public Registry getRegistry() {
 		return registry;
 	}
 	public Customer setRegistry(Registry registry) {
 		this.registry = registry;
-		return this;
-	}
-	public Integer getScope() {
-		return scope;
-	}
-	public Customer setScope(Integer scope) {
-		this.scope = scope;
-		return this;
-	}
-	public RegistryStatus getStatus() {
-		return status;
-	}
-	public Customer setStatus(RegistryStatus status) {
-		this.status = status;
-		return this;
-	}
-	public Byte getSurcharge() {
-		return surcharge;
-	}
-	public Customer setSurcharge(Byte surcharge) {
-		this.surcharge = surcharge;
-		return this;
-	}
-	public Integer getTariff() {
-		return tariff;
-	}
-	public Customer setTariff(Integer tariff) {
-		this.tariff = tariff;
-		return this;
-	}
-	public Byte getTransaction() {
-		return transaction;
-	}
-	public Customer setTransaction(Byte transaction) {
-		this.transaction = transaction;
-		return this;
-	}
-	public Byte getWithholding() {
-		return withholding;
-	}
-	public Customer setWithholding(Byte withholding) {
-		this.withholding = withholding;
 		return this;
 	}
 	

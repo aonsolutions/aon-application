@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -1075,14 +1076,14 @@ public class DeliveryImport {
 						.setRegistry(registry)
 						.setScope(scope)
 						.setStatus(RegistryStatus.ACTIVE)
-						.setTransaction(r.getTransaccion()!= null ? r.getTransaccion().byteValue() : 0)
+						.setTransaction( r.getTransaccion()!= null ? InvoiceTransactionType.safeValueOf(r.getTransaccion()) : InvoiceTransactionType.NATIONAL)
 						.setAccount(account)
-						.setSurcharge(r.getRe() != null ? r.getRe().byteValue() : 0)
-						.setWithholding(r.getRetencion() != null ? r.getRetencion().byteValue() : 0)
-						.setDeliveryGrouped(r.getFacturarAlbaranesAgrupados() != null ? r.getFacturarAlbaranesAgrupados().byteValue() : 1)
-						.setDeliveryValuated((byte) 1)
-						.setProjectGrouped((byte) 1)
-						.seteInvoice((byte) 0);
+						.setSurcharge(r.getRe() != null ? r.getRe().byteValue() == 1 : false)
+						.setWithholding(r.getRetencion() != null ? r.getRetencion().byteValue() == 1 : false)
+						.setDeliveryGrouped(r.getFacturarAlbaranesAgrupados() != null ? r.getFacturarAlbaranesAgrupados()==1 : true)
+						.setDeliveryValuated(true)
+						.setProjectGrouped(true)
+						.setEInvoice(false);
 				customer.setDomain(domain);
 				AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), customer);
 

@@ -44,13 +44,13 @@ public class InvoiceFaker {
 				Customer customer = AonRandom.getRandomCustomer( ctx );
 				fillRegistryData(invoice, customer);
 				invoice.setScope(new Scope().setId( customer.getScope() ));
-				invoice.setTransaction( InvoiceTransactionType.safeValueOf( customer.getTransaction() ));
+				invoice.setTransaction( customer.getTransaction() );
 				invoice.setService( faker.random().nextInt(0, 100) > 90);
 				invoice.setVatAccrualPayment(invoice.isNational() && config.getCompany().isVatAccrualPayment());
 				invoice.setSeries(config.getDefaultInvoiceSeries());
 				invoice.setNumber( InvoiceDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
-				invoice.setSurcharge(customer.getSurcharge() == 1);
-				invoice.setWithholding(customer.getWithholding() == 1 && config.getCompany().isWithholding());
+				invoice.setSurcharge(customer.isSurcharge());
+				invoice.setWithholding(customer.isWithholding() && config.getCompany().isWithholding());
 				invoice.setWithholdingFarmer(false);
 			}
 			

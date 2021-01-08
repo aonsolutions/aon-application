@@ -717,7 +717,7 @@ public class InvoiceImport {
 				customer = new Customer()
 					.setRegistry(reg)
 					.setStatus(RegistryStatus.ACTIVE)
-					.setTransaction(transaction.value())
+					.setTransaction( transaction )
 					.setScope(getScopeId(domain, user));
 				customer.setDomain(domain);
 				customer.setName(reg.getName());

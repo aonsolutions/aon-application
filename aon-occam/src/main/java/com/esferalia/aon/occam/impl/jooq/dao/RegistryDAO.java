@@ -122,6 +122,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistrySellerPropert
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SellerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SupplierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class RegistryDAO {
 	
@@ -643,10 +644,23 @@ public class RegistryDAO {
 				CUSTOMER.DOMAIN, CUSTOMER.E_INVOICE, CUSTOMER.INVOICING_GROUP, CUSTOMER.PROJECT_GROUPED, CUSTOMER.REGISTRY,
 				CUSTOMER.SCOPE, CUSTOMER.STATUS, CUSTOMER.SURCHARGE, CUSTOMER.TARIFF, CUSTOMER.TRANSACTION, CUSTOMER.WITHHOLDING,
 				CUSTOMER.CREATION_USER, CUSTOMER.CREATION_DATE, CUSTOMER.MODIFICATION_USER, CUSTOMER.MODIFICATION_DATE)
-			.values(customer.getAccount(), customer.getDeliveryGrouped(), customer.getDeliveryValuated(), 
-					customer.getDomain().getId(), customer.geteInvoice(), customer.getInvoicingGroup(), customer.getProjectGrouped(), customer.getRegistry().getId(),
-					customer.getScope(), customer.getStatus().value(), customer.getSurcharge(), customer.getTariff(), customer.getTransaction(), customer.getWithholding(),
-					ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser(), new Timestamp(new Date().getTime()))
+			.values(customer.getAccount()
+					,AonEnumUtils.getByte(customer.isDeliveryGrouped())
+					,AonEnumUtils.getByte(customer.isDeliveryValuated())
+					,customer.getDomain().getId()
+					,AonEnumUtils.getByte(customer.isEInvoice())
+					,customer.getInvoicingGroup()
+					,AonEnumUtils.getByte(customer.isProjectGrouped())
+					,customer.getRegistry().getId()
+					,customer.getScope(), customer.getStatus().value()
+					,AonEnumUtils.getByte(customer.isSurcharge())
+					,customer.getTariff()
+					,AonEnumUtils.getByte(customer.getTransaction())
+					,AonEnumUtils.getByte(customer.isWithholding())
+					,ctx.getUser()
+					,new Timestamp(new Date().getTime())
+					,ctx.getUser()
+					,new Timestamp(new Date().getTime()))
 			.execute();
 		return customer;
 	}

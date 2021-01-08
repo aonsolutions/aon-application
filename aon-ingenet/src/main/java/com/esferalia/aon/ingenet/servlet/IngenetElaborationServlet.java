@@ -445,7 +445,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		
 		DATOSCLIENTETYPE datos = new DATOSCLIENTETYPE();
 		datos.setCODIGO(String.valueOf(customer.getId()));
-		datos.setALBARANVALORADO(new Byte("1").equals(customer.getDeliveryValuated())?"S":"N");
+		datos.setALBARANVALORADO(customer.isDeliveryValuated()?"S":"N");
 		datos.setDATOSREGISTRO(new DATOSREGISTROTYPE());
 		datos.getDATOSREGISTRO().setDATOSDOCUMENTO(new CIFNIFTYPE());
 		datos.getDATOSREGISTRO().getDATOSDOCUMENTO().setPAISDOCUMENTO(new PAISTYPE());
