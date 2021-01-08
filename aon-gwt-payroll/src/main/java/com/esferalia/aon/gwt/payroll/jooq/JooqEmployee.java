@@ -62,7 +62,6 @@ import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployee {
 
@@ -479,6 +478,17 @@ public class JooqEmployee {
 				 }
 			}
 		
+		if(null != contractData.getPartialityCoef()) {
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "COEFICIENTE_PARCIALIDAD")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, contractData.getPartialityCoef().toString())
+				.set(CONTRACT_DATA.START_DATE, contractStartDate)
+				.set(CONTRACT_DATA.END_DATE, contractEndDate)
+				.execute();
+		}
+		
 		return null;
 	}
 	
@@ -809,7 +819,11 @@ public class JooqEmployee {
 			}else if(r.get(CONTRACT_DATA.NAME).equals("TIEMPO_COMPLETO")) {
 				contractData.setJourneytypeId(r.get(CONTRACT_DATA.ID));
 				contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("TRUE") ? (byte) 0 : (byte) 1);
+			}else if(r.get(CONTRACT_DATA.NAME).equals("COEFICIENTE_PARCIALIDAD")) {
+				contractData.setPartialityCoefId(r.get(CONTRACT_DATA.ID));
+				contractData.setPartialityCoef(Double.parseDouble(r.get(CONTRACT_DATA.EXPRESSION)));
 			}
+			
 		}
 		
 		//CONTRACT INFO TABLE
@@ -1348,6 +1362,34 @@ public class JooqEmployee {
 						.execute();
 					}
 				}
+				
+				if(null == contractData.getPartialityCoefId()){
+					if(null != contractData.getPartialityCoef()){
+						ContractDataRecord ocupacionRecord = null;
+						
+						ocupacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+							.values(contractData.getPartialityCoefId(), domain, "COEFICIENTE_PARCIALIDAD", contractData.getContractId(), contractData.getPartialityCoef().toString(), 
+									startDate, endDate)
+							.returning(CONTRACT_DATA.ID)
+							.fetchOne();
+						
+						contractData.setPartialityCoefId(ocupacionRecord.getId());
+					}
+				}else{
+					if(null == contractData.getPartialityCoef()){
+						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getPartialityCoefId())).execute();
+						contractData.setOcupationId(null);
+						contractData.setOcupation(null);
+					}else{
+						dslContext.update(CONTRACT_DATA)
+						.set(CONTRACT_DATA.EXPRESSION, contractData.getPartialityCoef().toString())
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.where(CONTRACT_DATA.ID.eq(contractData.getPartialityCoefId()))
+						.execute();
+					}
+				}
 			}
 			
 			if(null == contractData.getContractmodelId()){
@@ -1388,7 +1430,7 @@ public class JooqEmployee {
 				.where(CONTRACT_INFO.ID.eq(contractData.getRetaId()))
 				.execute();
 		
-		}else {
+		} else {
 			
 			dslContext.update(CONTRACT)
 			.set(CONTRACT.ENTERPRISE_CCC, (Integer) null)
@@ -1470,6 +1512,15 @@ public class JooqEmployee {
 				contractData.setOcupation(null);
 			}
 			
+			if(null != contractData.getPartialityCoefId()){
+				dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.ID.eq(contractData.getPartialityCoefId()))
+				.execute();
+			
+				contractData.setPartialityCoefId(null);
+				contractData.setPartialityCoef(null);
+			}
+			
 			if(null != contractData.getContractmodelId()){
 				dslContext.delete(CONTRACT_INFO)
 				.where(CONTRACT_INFO.ID.eq(contractData.getContractmodelId()))
@@ -1481,13 +1532,13 @@ public class JooqEmployee {
 		}
 		
 		TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
-		if(contractJourneyDuration.isEmpty()) {
-			//ACTUALIZAR DURACION JORNADA
-			dslContext.delete(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.like("HORAS%"))
-				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
-				.execute();
-		}
+//		if(contractJourneyDuration.isEmpty()) {
+		//ACTUALIZAR DURACION JORNADA
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.like("HORAS%"))
+			.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+			.execute();
+//		}
 		
 		if(!contractJourneyDuration.isEmpty()){
 		 

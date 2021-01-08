@@ -23,7 +23,7 @@
 			margin-left: auto;
 			margin-right: auto;
 			margin-bottom: 15px;
-		}	
+		}
 		
 			
 	</ui:style>
@@ -114,7 +114,7 @@
 		</g:north>
 		<g:center> 
 		    <g:ScrollPanel>
-		    	<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
+		    	<g:VerticalPanel ui:field="scrolledPanel" >
 		    	<!-- g:HTMLPanel styleName="aon-height-all" debugId="paymetDialogHTMLPanel" -->
 		    		<g:DeckPanel ui:field="deckPanel">
 		    			<e:Employee ui:field="employee"/>

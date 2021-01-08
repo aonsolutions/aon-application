@@ -30,19 +30,13 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -438,54 +432,18 @@ public class EmployeeDraft extends Composite {
 			 else
 				 showElementsPartialTimeContract();
 			 saving();
-			
-//			Boolean journey_type = (this.journeyType.getSelectedIndex() == 0) ? true : false;
-//			 employeeDraftObject.setContractJourneyType(journey_type);
-//			 if(this.journeyType.getSelectedIndex() == 0)
-//				 employee.showElementsFullTimeContract();
-//			 else
-//				 employee.showElementsPartialTimeContract();
-//			 saving();
 		}
 		
 		@Override
 		public void onContractJourneyDurationClick() {
-			EmployeeTree.showEmployeeCalendar(employeeDraftObject.getEmployeeCalendar());
-			
-//			ContractJourneyDialog dialog = new ContractJourneyDialog(employeeDraftObject.getContractStartDate(), employeeDraftObject.getContractEndDate(),
-//					employeeDraftObject.getContractJourneyDuration()) {
-//
-//				@Override
-//				protected void onSave() {
-//					ContractJourneyDuration contractJourneyDuration = this.getContractJourneyDuration();
-//					if(contractJourneyDuration.getJourniesSize() != 0) {
-//						String result = contractJourneyDuration.getJourneyText();
-////						String result = "Desde ";
-////						Double hours = 0.0;
-////						for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
-////							hours += Double.parseDouble(((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()));
-////							if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " L : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
-////							if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
-////							if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
-////							if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
-////							if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
-////							if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ";
-////							if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + ((null == journeyDuration.getExpression() || "" == journeyDuration.getExpression()) ? "0" : journeyDuration.getExpression()) + " ( " + hours + " horas semanales )";
-////						}
-//						employee.journeyDuration.setText(result);
-//						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-//						employee.journeyDuration.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-//					}else {
-//						employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-//						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-//						employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-//					}
-//					employeeDraftObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
-//					saving();
-//				}				
-//			};
-//			dialog.center();
-//			dialog.show();		
+			EmployeeTree.showEmployeeCalendar(employeeDraftObject.getEmployeeCalendar());	
+		}
+		
+		@Override
+		public void onContractPartialityChange() {
+			Double partialityCoef = employee.partiality_coef.getValue();
+			employeeDraftObject.setPartialityCoef(partialityCoef);
+			saving();
 		}
 		
 		//EMPLOYEE TABLE
@@ -649,8 +607,7 @@ public class EmployeeDraft extends Composite {
 				employeeDraftObject.setEmployeeAccount(value);
 				saving();
 			}
-		}
-		
+		}		
 	}
 	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
@@ -746,6 +703,7 @@ public class EmployeeDraft extends Composite {
 				this.employee.contractType.getSelectedValue(),
 				this.employee.quote_group.getSelectedValue(),
 				this.employee.occupation.getSelectedValue(),
+				this.employee.partiality_coef.getValue(),
 				this.employeeDraftObject.getPayrollDate(),
 				this.employeeDraftObject.getContractId(),
 				this.employeeDraftObject.getDomainId(),

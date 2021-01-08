@@ -206,6 +206,47 @@ public class ContrataEmployeeObject {
 		});	
 	}
 	
+	public void getEmployeeContract(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
+		employeeContractData.setEmployeeInfo(employeeData);
+		employeeContractData.setContractInfo(contractData);
+		
+		employeesService.getEmployeeInfoDataBase(contractData.getContractId(), new AsyncCallback<EmployeeContractInfo>() {
+			
+			@Override
+			public void onSuccess(EmployeeContractInfo result) {
+				employeeContractData = result;
+				employeeData = result.getEmployeeInfo();
+				contractData = result.getContractInfo();
+				employeeContractData.setEmployeeInfo(employeeData);
+				employeeContractData.setContractInfo(contractData);
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+		});
+		
+		employeesService.setEmployeeInfoDataBase(this.employeeContractData, new AsyncCallback<EmployeeContractInfo>() {
+			
+			@Override
+			public void onSuccess(EmployeeContractInfo result) {
+				employeeContractData = result;
+				employeeData = result.getEmployeeInfo();
+				contractData = result.getContractInfo();
+				employeeContractData.setEmployeeInfo(employeeData);
+				employeeContractData.setContractInfo(contractData);
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	public void setEmployeeContract(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
 		employeeContractData.setEmployeeInfo(employeeData);
 		employeeContractData.setContractInfo(contractData);
@@ -611,6 +652,10 @@ public class ContrataEmployeeObject {
 		return getCharIndex(this.contractData.getOcupation());
 	}
 	
+	public Double getContractPartialityCoef() {
+		return this.contractData.getPartialityCoef();
+	}
+	
 	private int getCharIndex(String ocupation) {
 		switch (ocupation) {
 		case "a":
@@ -810,6 +855,10 @@ public class ContrataEmployeeObject {
 	
 	public void setContractOccupation(String occupation) {
 		contractData.setOcupation(occupation);		
+	}
+	
+	public void setPartialityCoef(Double partialityCoef) {
+		contractData.setPartialityCoef(partialityCoef);
 	}
 
 	public void setContractJourneyType(Boolean journey_type) {

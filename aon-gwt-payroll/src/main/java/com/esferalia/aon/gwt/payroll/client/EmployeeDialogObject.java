@@ -501,6 +501,10 @@ public class EmployeeDialogObject {
 	public void setContractOccupation(String occupation) {
 		contractData.setOcupation(occupation);		
 	}
+	
+	public void setPartialityCoef(Double partialityCoef) {
+		contractData.setPartialityCoef(partialityCoef);
+	}
 
 	public void setContractJourneyType(Boolean journey_type) {
 		contractData.setJourneyType(journey_type ? (byte) 1 : (byte) 0);

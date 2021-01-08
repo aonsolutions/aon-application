@@ -36,6 +36,7 @@ import com.esferalia.aon.gwt.payroll.shared.Messages.Message;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -359,7 +360,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contrataEmployeeObject.getContractJourneyDuration()) {
 
 				@Override
-				protected void onSave() {
+				protected void onSave(Double partialityCoef) {
 					ContractJourneyDuration contractJourneyDuration = this.getContractJourneyDuration();
 					if(contractJourneyDuration.getJourniesSize() != 0) {
 						String result = "Desde ";
@@ -382,10 +383,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 					}
 					contrataEmployeeObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
+					employee.partiality_coef.setValue(partialityCoef);
+					contrataEmployeeObject.setPartialityCoef(partialityCoef);
 				}	
 			};
 			dialog.center();
 			dialog.show();			
+		}
+		
+		@Override
+		public void onContractPartialityChange() {
+			 Double partialityCoef = employee.partiality_coef.getValue();
+			 contrataEmployeeObject.setPartialityCoef(partialityCoef);
 		}
 		
 		// TABLA DATOS EMPLEADO
@@ -690,13 +699,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private void setScrollPanelsHeight() {
 		int height = Window.getClientHeight(); 
-		scrolledPanel.setHeight((height-200)+"px");
-		scrolledPanelContractOtherData.setHeight((height-200)+"px");
-		scrolledPanelClauses.setHeight((height-200)+"px");
-		scrolledPanelAttach.setHeight((height-200)+"px");
-		scrolledPanelBonus.setHeight((height-200)+"px");
-		scrolledPanelContractSpecificData.setHeight((height-200)+"px");
-		scrolledPDFPanel.setHeight((height-200)+"px");
+		scrolledPanel.setHeight((height-220)+"px");
+		scrolledPanelContractOtherData.setHeight((height-220)+"px");
+		scrolledPanelClauses.setHeight((height-220)+"px");
+		scrolledPanelAttach.setHeight((height-220)+"px");
+		scrolledPanelBonus.setHeight((height-220)+"px");
+		scrolledPanelContractSpecificData.setHeight((height-220)+"px");
+		scrolledPDFPanel.setHeight((height-220)+"px");
 	}
 	
 	private void initTabLayOutPanel() {
@@ -732,6 +741,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		tabLayOutPanel.addSelectionHandler(e -> {
 			Integer itemIdx = tabLayOutPanel.getSelectedIndex();
 			switch (itemIdx) {
+			case 0:
+				contrataEmployeeObject.getEmployeeContract(s -> {
+					this.setContrataEmployeeObject(this.contrataEmployeeObject, s);
+				}, f -> {});
+				break;
 			case 1:
 				contrataEmployeeObject.getContractSpecificData(s -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
@@ -740,7 +754,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				break;
 			case 2:
 				contrataEmployeeObject.getContractOtherInfo(s -> {
-					if(StringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
+					if(AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
 						contrataEmployeeObject.getContractSpecificData(su -> {
 							exportContract.getElement().getStyle().clearDisplay();
 							contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
@@ -1234,6 +1248,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		employee.quote_group.setSelectedIndex(contrataEmployeeObject.getContractQuoteGroup());
 		employee.occupation.setSelectedIndex(contrataEmployeeObject.getContractOcupation());
+		employee.partiality_coef.setValue(contrataEmployeeObject.getContractPartialityCoef());
 	}
 	
 	public void blockVariablesExistingContract(){
@@ -1243,21 +1258,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employee.name.setEnabled(false);
 		employee.first_surname.setEnabled(false);
 		employee.second_surname.setEnabled(false);
-		
-		employee.birth_date.setEnabled(false);
-		employee.gender.setEnabled(false);
-		employee.street_type.setEnabled(false);
-		employee.address.setEnabled(false);
-		employee.addressNum.setEnabled(false);
-		employee.addressZip.setEnabled(false);
-		employee.addressMunicipality.setEnabled(false);
-		employee.addressProvince.setEnabled(false);
-		employee.mobile.setEnabled(false);
-		employee.phone.setEnabled(false);
-		employee.email.setEnabled(false);
-		employee.payMethod.setEnabled(false);
-		employee.bic.setEnabled(false);
-		employee.account.setEnabled(false);
 	}
 	
 	public void unblockVariablesExistingContract(){
@@ -1267,21 +1267,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employee.name.setEnabled(true);
 		employee.first_surname.setEnabled(true);
 		employee.second_surname.setEnabled(true);
-		
-		employee.birth_date.setEnabled(true);
-		employee.gender.setEnabled(true);
-		employee.street_type.setEnabled(true);
-		employee.address.setEnabled(true);
-		employee.addressNum.setEnabled(true);
-		employee.addressZip.setEnabled(true);
-		employee.addressMunicipality.setEnabled(true);
-		employee.addressProvince.setEnabled(true);
-		employee.mobile.setEnabled(true);
-		employee.phone.setEnabled(true);
-		employee.email.setEnabled(true);
-		employee.payMethod.setEnabled(true);
-		employee.bic.setEnabled(true);
-		employee.account.setEnabled(true);
 	}
 
 	public void updateMunicipalities() {
@@ -1729,7 +1714,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		if(checkIfSaveIsPossible())
 			if(checkDates())
 				contrataEmployeeObject.updateEmployee(
-						r -> {}, 
+						r -> {
+							this.setContrataEmployeeObject(this.contrataEmployeeObject, r);
+						}, 
 						t -> {}
 				);			
 			else{
@@ -1784,13 +1771,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				this.employee.contractType.getSelectedValue(),
 				this.employee.quote_group.getSelectedValue(),
 				this.employee.occupation.getSelectedValue(),
+				this.employee.partiality_coef.getValue(),
 				this.contrataEmployeeObject.getContractData().getPayrollDate(),
 				this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId()
 				){
 					@Override
-					protected void onAcceptCb() {}
+					protected void onAcceptCb() {
+						contrataEmployeeObject.getEmployeeContract(s -> {
+							setContrataEmployeeObject(contrataEmployeeObject, s);
+						}, f -> {});
+					}
 				};
 			
 		dialog.show();

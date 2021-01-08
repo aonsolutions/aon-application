@@ -143,6 +143,16 @@
 			margin-right: 10px;
 		}
 		
+		.flexPanel{
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+		}
 	</ui:style>
 
    	<g:HTMLPanel> 
@@ -341,7 +351,13 @@
 								<g:Label styleName="{style.firstColumnTextStyle}">Duración de lo jornada</g:Label>
 							</td>
 							<td colspan="6">
-								<g:Label ui:field="journeyDuration" debugId="journeyDuration" styleName='{style.maxWidth}'> </g:Label>
+								<g:HTMLPanel styleName="{style.flexPanel}">
+									<g:Label ui:field="journeyDuration" debugId="journeyDuration"> </g:Label>
+									<g:HTMLPanel styleName="{style.flex}">
+										<g:Label styleName="{style.mr-10}">Coef. Parcialidad: </g:Label>
+										<a:DoubleBox ui:field="partiality_coef" debugId="journeyDuration"></a:DoubleBox>
+									</g:HTMLPanel>
+								</g:HTMLPanel>
 							</td>
 						</tr>
 					</tbody>

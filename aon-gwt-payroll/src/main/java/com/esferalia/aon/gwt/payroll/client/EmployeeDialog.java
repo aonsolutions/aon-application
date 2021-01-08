@@ -41,7 +41,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
@@ -413,7 +412,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 					employeeDialogObject.getContractEndDate()) {
 
 				@Override
-				protected void onSave() {
+				protected void onSave(Double partialityCoef) {
 					ContractJourneyDuration contractJourneyDuration = this.getContractJourneyDuration();
 					if(contractJourneyDuration.getJourniesSize() != 0) {
 						String result = "Desde ";
@@ -436,10 +435,18 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 						employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 					}
 					employeeDialogObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
+					employee.partiality_coef.setValue(partialityCoef);
+					employeeDialogObject.setPartialityCoef(partialityCoef);
 				}	
 			};
 			dialog.center();
 			dialog.show();			
+		}
+		
+		@Override
+		public void onContractPartialityChange() {
+			Double partialityCoef = employee.partiality_coef.getValue();
+			employeeDialogObject.setPartialityCoef(partialityCoef);
 		}
 		
 		// TABLA DATOS EMPLEADO

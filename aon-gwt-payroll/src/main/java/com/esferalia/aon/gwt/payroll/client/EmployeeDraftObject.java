@@ -693,6 +693,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setJourneyType(journey);
 	}
 	
+	public void setPartialityCoef(Double partialityCoef) {
+		add(contractData::setPartialityCoef, 
+				contractData.getPartialityCoef(), 
+				partialityCoef );
+		
+		contractData.setPartialityCoef(partialityCoef);
+	}
+	
 	public void setContractJourneyDuration(TreeMap<Date, ArrayList<JourneyDuration>> contractJourneyDuration) {
 		contractData.setContractJourneyDuration(contractJourneyDuration);
 	}

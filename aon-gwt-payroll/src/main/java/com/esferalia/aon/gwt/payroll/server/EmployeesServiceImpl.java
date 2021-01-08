@@ -5656,7 +5656,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 			
-			solutions.aon.seg.social.objects.Employee employee  = createEmployee(employeeContractInfo);
+			ArrayList<String> nssList = new ArrayList<String>();
+			nssList.add(employeeContractInfo.getEmployeeInfo().getSsNumber());
+			Collection<solutions.aon.seg.social.objects.Employee> employeesAux = SistemaREDMov.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
+			solutions.aon.seg.social.objects.Employee eemployeeAux = (solutions.aon.seg.social.objects.Employee) employeesAux.toArray()[0];
+			
+			solutions.aon.seg.social.objects.Employee employee  = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
 			
 			SistemaREDMov.sendAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
 			
@@ -5676,7 +5681,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 			
-			solutions.aon.seg.social.objects.Employee employee  = createEmployee(employeeContractInfo);
+			ArrayList<String> nssList = new ArrayList<String>();
+			nssList.add(employeeContractInfo.getEmployeeInfo().getSsNumber());
+			Collection<solutions.aon.seg.social.objects.Employee> employeesAux = SistemaREDMov.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
+			solutions.aon.seg.social.objects.Employee eemployeeAux = (solutions.aon.seg.social.objects.Employee) employeesAux.toArray()[0];
+			
+			solutions.aon.seg.social.objects.Employee employee  = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
 			
 			SistemaREDMov.sendBaja(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
 			
@@ -5775,11 +5785,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}	
 	}
 	
-	private solutions.aon.seg.social.objects.Employee createEmployee(EmployeeContractInfo employeeContractInfo) {
+	private solutions.aon.seg.social.objects.Employee createEmployee(EmployeeContractInfo employeeContractInfo, String ipf) {
 		
 		EmployeeBuilder builder = new EmployeeBuilder();
 		
-		// TODO: setAttributes
+		builder.setNss(employeeContractInfo.getEmployeeInfo().getSsNumber());
+		builder.setName(employeeContractInfo.getEmployeeInfo().getName());
+		builder.setBirthDate(employeeContractInfo.getEmployeeInfo().getBirthdate());
+		builder.setIpf(ipf);
+		builder.setFra(employeeContractInfo.getContractInfo().getStartDate());
+		builder.setFrb(employeeContractInfo.getContractInfo().getEndDate());
+		builder.setRegime(employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4));
+		builder.setCtaCti(employeeContractInfo.getContractInfo().getCompleteCCC().substring(4, employeeContractInfo.getContractInfo().getCompleteCCC().length()));
+		builder.setGc(employeeContractInfo.getContractInfo().getQuoteGroup());
+		builder.setContract(employeeContractInfo.getContractInfo().getContractType());
+		builder.setColec(employeeContractInfo.getContractInfo().getAgreementColective());
+		builder.setMdctz(employeeContractInfo.getContractInfo().getMdctz());
+		builder.setCoef(employeeContractInfo.getContractInfo().getPartialityCoef().toString());
+		builder.setOcup(employeeContractInfo.getContractInfo().getOcupation());
 		
 		return builder.build();
 	}

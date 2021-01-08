@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 public class AFIChanges implements Serializable {
@@ -23,7 +24,7 @@ public class AFIChanges implements Serializable {
 		public AFIChange(String name, String value) {
 			super();
 			this.name = name;
-			this.value = value;
+			this.value = AonStringUtils.replace(value, "\"", "");
 		}
 
 		public String getName() {
@@ -70,10 +71,12 @@ public class AFIChanges implements Serializable {
 		AFIChange tc2 = new AFIChange("TC2", null);
 		AFIChange quoteGroup = new AFIChange("GRUPO_COTIZACION", null);
 		AFIChange ocupation = new AFIChange("OCUPACION", null);
+		AFIChange partialityCoef = new AFIChange("COEFICIENTE_PARCIALIDAD", null);
 		
 		afiChangesList.add(tc2);
 		afiChangesList.add(quoteGroup);
 		afiChangesList.add(ocupation);
+		afiChangesList.add(partialityCoef);
 		
 		DateUtils.resetTime(date);
 		
@@ -89,7 +92,6 @@ public class AFIChanges implements Serializable {
 	}
 
 	public void addAFIChangeByDate(Date date, String name, String value) {
-//		Window.alert("Insert/Update -> Date : " + date + ", Name : " + name + ", Value : " + value);
 		ArrayList<AFIChange> afiChangeList = this.afiChanges.get(date);
 		boolean exist = false;
 		if(afiChangeList.isEmpty()) {

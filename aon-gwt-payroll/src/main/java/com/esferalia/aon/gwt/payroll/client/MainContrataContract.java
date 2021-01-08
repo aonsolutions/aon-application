@@ -14,8 +14,6 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
@@ -742,21 +740,21 @@ public class MainContrataContract extends MainEntryPoint {
 		EmployeeDialog employeeDialog = new EmployeeDialog(true) {
 			@Override
 			protected void onAccept() {
-				AonConfirmDialog confirmDialog = new AonConfirmDialog();
-				confirmDialog.confirm(
-						"COMUNIC" + String.valueOf("\u0040"), 
-						String.valueOf("\u00BF") + "Desea dar de alta el contrato?",
-						new AonConfirmDialogCallback() {
-
-							@Override
-							public void onAccept() {
-								// TODO Auto-generated method stub
-							}
-
-							@Override
-							public void onCancel() {
-								// TODO Auto-generated method stub
-							}});
+//				AonConfirmDialog confirmDialog = new AonConfirmDialog();
+//				confirmDialog.confirm(
+//						"COMUNIC" + String.valueOf("\u0040"), 
+//						String.valueOf("\u00BF") + "Desea dar de alta el contrato?",
+//						new AonConfirmDialogCallback() {
+//
+//							@Override
+//							public void onAccept() {
+//								// TODO Auto-generated method stub
+//							}
+//
+//							@Override
+//							public void onCancel() {
+//								// TODO Auto-generated method stub
+//							}});
 				
 				redrawTable();
 			}

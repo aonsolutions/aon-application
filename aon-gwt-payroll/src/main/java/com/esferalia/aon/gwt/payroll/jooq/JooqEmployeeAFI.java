@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployeeAFI {
 
@@ -521,6 +522,7 @@ public class JooqEmployeeAFI {
 		contractDataVars.add("TC2");
 		contractDataVars.add("GRUPO_COTIZACION");
 		contractDataVars.add("OCUPACION");
+		contractDataVars.add("COEFICIENTE_PARCIALIDAD");
 		
 		dslContext.delete(CONTRACT_DATA)
 			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
@@ -552,162 +554,30 @@ public class JooqEmployeeAFI {
 			
 			for(AFIChange afiChange: afiChangesMap.getAFIChanges().get(entry.getKey())) {
 				if(null != afiChange.getValue())
-					dslContext.insertInto(CONTRACT_DATA)
-						.set(CONTRACT_DATA.DOMAIN, domainId)
-						.set(CONTRACT_DATA.CONTRACT, contractId)
-						.set(CONTRACT_DATA.NAME, afiChange.getName())
-						.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? afiChange.getValue() : "\"" + afiChange.getValue() + "\"")
-						.set(CONTRACT_DATA.START_DATE, startDate)
-						.set(CONTRACT_DATA.END_DATE, endDate)
-						.execute();
+					if(AonStringUtils.equals(afiChange.getName(), "COEFICIENTE_PARCIALIDAD"))
+						dslContext.insertInto(CONTRACT_DATA)
+							.set(CONTRACT_DATA.DOMAIN, domainId)
+							.set(CONTRACT_DATA.CONTRACT, contractId)
+							.set(CONTRACT_DATA.NAME, afiChange.getName())
+							.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? AonStringUtils.replace(afiChange.getValue(), "\"", "") : afiChange.getValue())
+							.set(CONTRACT_DATA.START_DATE, startDate)
+							.set(CONTRACT_DATA.END_DATE, endDate)
+							.execute();
+					else
+						dslContext.insertInto(CONTRACT_DATA)
+							.set(CONTRACT_DATA.DOMAIN, domainId)
+							.set(CONTRACT_DATA.CONTRACT, contractId)
+							.set(CONTRACT_DATA.NAME, afiChange.getName())
+							.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? afiChange.getValue() : "\"" + afiChange.getValue() + "\"")
+							.set(CONTRACT_DATA.START_DATE, startDate)
+							.set(CONTRACT_DATA.END_DATE, endDate)
+							.execute();
 			}
 			
 			cont++;
 		}
 		
-		//Insert info : OPCION 2
-//		AFIChanges afiChangesTC2 = parseAFIChanges(afiChangesMap, "TC2");
-//		AFIChanges afiChangesQuoteGroup = parseAFIChanges(afiChangesMap, "GRUPO_COTIZACION");
-//		AFIChanges afiChangesOcupation = parseAFIChanges(afiChangesMap, "OCUPACION");
-//		
-//		Integer cont = 1;
-//		
-//		dateList.clear();
-//		dateList.addAll(afiChangesTC2.getAFIChanges().keySet());
-//		for(Entry<java.util.Date, ArrayList<AFIChange>> entry : afiChangesTC2.getAFIChanges().entrySet()) {
-//			Date startDate = new Date(entry.getKey().getTime());
-//			Date endDate;
-//			if(cont < dateList.size()) {
-//				endDate = new Date(DateUtils.copyDateOnly(dateList.get(cont)).getTime());
-//				DateUtils.addDays2Date(endDate, -1);
-//			}else
-//				endDate = contractEndDate;
-//			
-//			for(AFIChange afiChange: afiChangesTC2.getAFIChanges().get(entry.getKey())) {
-//				if(null != afiChange.getValue())
-//					dslContext.insertInto(CONTRACT_DATA)
-//						.set(CONTRACT_DATA.DOMAIN, domainId)
-//						.set(CONTRACT_DATA.CONTRACT, contractId)
-//						.set(CONTRACT_DATA.NAME, afiChange.getName())
-//						.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? afiChange.getValue() : "\"" + afiChange.getValue() + "\"")
-//						.set(CONTRACT_DATA.START_DATE, startDate)
-//						.set(CONTRACT_DATA.END_DATE, endDate)
-//						.execute();
-//			}
-//			
-//			cont++;
-//		}
-//		
-//		cont = 1;
-//		
-//		dateList.clear();
-//		dateList.addAll(afiChangesQuoteGroup.getAFIChanges().keySet());
-//		for(Entry<java.util.Date, ArrayList<AFIChange>> entry : afiChangesQuoteGroup.getAFIChanges().entrySet()) {
-//			Date startDate = new Date(entry.getKey().getTime());
-//			Date endDate;
-//			if(cont < dateList.size()) {
-//				endDate = new Date(DateUtils.copyDateOnly(dateList.get(cont)).getTime());
-//				DateUtils.addDays2Date(endDate, -1);
-//			}else
-//				endDate = contractEndDate;
-//			
-//			for(AFIChange afiChange: afiChangesQuoteGroup.getAFIChanges().get(entry.getKey())) {
-//				if(null != afiChange.getValue())
-//					dslContext.insertInto(CONTRACT_DATA)
-//						.set(CONTRACT_DATA.DOMAIN, domainId)
-//						.set(CONTRACT_DATA.CONTRACT, contractId)
-//						.set(CONTRACT_DATA.NAME, afiChange.getName())
-//						.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? afiChange.getValue() : "\"" + afiChange.getValue() + "\"")
-//						.set(CONTRACT_DATA.START_DATE, startDate)
-//						.set(CONTRACT_DATA.END_DATE, endDate)
-//						.execute();
-//			}
-//			
-//			cont++;
-//		}
-//		
-//		cont = 1;
-//		
-//		dateList.clear();
-//		dateList.addAll(afiChangesOcupation.getAFIChanges().keySet());
-//		for(Entry<java.util.Date, ArrayList<AFIChange>> entry : afiChangesOcupation.getAFIChanges().entrySet()) {
-//			Date startDate = new Date(entry.getKey().getTime());
-//			Date endDate;
-//			if(cont < dateList.size()) {
-//				endDate = new Date(DateUtils.copyDateOnly(dateList.get(cont)).getTime());
-//				DateUtils.addDays2Date(endDate, -1);
-//			}else
-//				endDate = contractEndDate;
-//			
-//			for(AFIChange afiChange: afiChangesOcupation.getAFIChanges().get(entry.getKey())) {
-//				if(null != afiChange.getValue())
-//					dslContext.insertInto(CONTRACT_DATA)
-//						.set(CONTRACT_DATA.DOMAIN, domainId)
-//						.set(CONTRACT_DATA.CONTRACT, contractId)
-//						.set(CONTRACT_DATA.NAME, afiChange.getName())
-//						.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? afiChange.getValue() : "\"" + afiChange.getValue() + "\"")
-//						.set(CONTRACT_DATA.START_DATE, startDate)
-//						.set(CONTRACT_DATA.END_DATE, endDate)
-//						.execute();
-//			}
-//			
-//			cont++;
-//		}
-		
 		return null;
-	}
-
-	private static AFIChanges parseAFIChanges(AFIChanges afiChangesMap, String name) {
-		AFIChanges afiChangesAux = new AFIChanges();
-		
-		ArrayList<java.util.Date> dateList = new ArrayList<java.util.Date>();
-		dateList.addAll(afiChangesMap.getAFIChanges().keySet());
-		
-		Date dateAux = new Date(dateList.get(0).getTime());
-		String value = "";
-		for( AFIChange afiChange : afiChangesMap.getAFIChanges().get(dateAux)){
-			if(afiChange.getName().equals(name)) {
-				value = afiChange.getValue();
-				continue;
-			}
-		}
-		
-		Integer cont = 0;
-		for(Entry<java.util.Date, ArrayList<AFIChange>> entry : afiChangesMap.getAFIChanges().entrySet()) {
-			for(AFIChange afiChange: entry.getValue()) {
-				if(afiChange.getName().equals(name)) {
-					if(value.equals(afiChange.getValue())){
-						cont++;
-						if(cont == afiChangesMap.getAFIChanges().size()){
-							if(null != value) {
-								ArrayList<AFIChange> listAux = new ArrayList<>();
-								listAux.add(new AFIChange(name, value));
-								afiChangesAux.getAFIChanges().put(dateAux, listAux);
-							}
-						}
-						continue;
-					}else {
-						cont++;
-						ArrayList<AFIChange> listAux = new ArrayList<>();
-						listAux.add(new AFIChange(name, value));
-						afiChangesAux.getAFIChanges().put(dateAux, listAux);
-						
-						dateAux = new Date(entry.getKey().getTime());
-						value = afiChange.getValue();
-						
-						if(cont == afiChangesMap.getAFIChanges().size()){
-							if(null != value) {
-								ArrayList<AFIChange> listAux2 = new ArrayList<>();
-								listAux2.add(new AFIChange(name, value));
-								afiChangesAux.getAFIChanges().put(dateAux, listAux2);
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		return afiChangesAux;
 	}
 
 	private static AFIChanges getEmployeeAFIDB(DSLContext dslContext, Integer contractId) {
@@ -717,6 +587,7 @@ public class JooqEmployeeAFI {
 		contractDataVars.add("TC2");
 		contractDataVars.add("GRUPO_COTIZACION");
 		contractDataVars.add("OCUPACION");
+		contractDataVars.add("COEFICIENTE_PARCIALIDAD");
 		
 		Result<Record> contractDataRecords = dslContext.select().from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId))

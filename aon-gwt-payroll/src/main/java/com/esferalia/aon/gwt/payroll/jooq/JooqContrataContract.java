@@ -969,6 +969,7 @@ public class JooqContrataContract {
 			contractData.setOcupation(null);
 			contractData.setJourneytypeId(null);
 			contractData.setJourneyType(null);
+			contractData.setPartialityCoef(null);
 			
 			// CONTRACT DATA TABLE
 			Date currentDate = new Date(new java.util.Date().getTime());
@@ -1032,7 +1033,16 @@ public class JooqContrataContract {
 				}else if(r.get(CONTRACT_DATA.NAME).equals("TIEMPO_COMPLETO")) {
 					contractData.setJourneytypeId(r.get(CONTRACT_DATA.ID));
 					contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("TRUE") ? (byte) 0 : (byte) 1);
+				}else if(r.get(CONTRACT_DATA.NAME).equals("COEFICIENTE_PARCIALIDAD")) {
+					String expression = r.get(CONTRACT_DATA.EXPRESSION);
+					if(null != expression && expression.contains("\""))
+						expression = expression.split("\"")[1];
+					
+					Double partialityCoef = Double.parseDouble(expression);
+					contractData.setPartialityCoefId(r.get(CONTRACT_DATA.ID));
+					contractData.setPartialityCoef(partialityCoef);
 				}
+				
 			}
 			
 			// CONTRACT INFO TABLE

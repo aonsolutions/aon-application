@@ -52,6 +52,13 @@ public class ContractInfo implements Serializable{
 	private Boolean hasPayroll;
 	private Date payrollDate;
 	
+	// Comunic@ Fields
+	private String colectiveAgreement;
+	private String md_ctz;
+	
+	private Integer partialityCoefId;
+	private Double partialityCoef;
+	
 	public ContractInfo() {
 		super();
 		this.contractId = null;
@@ -86,6 +93,10 @@ public class ContractInfo implements Serializable{
 		this.oldEndDate = null;
 		this.hasPayroll = false;
 		this.payrollDate = null;
+		
+		this.colectiveAgreement = null;
+		this.md_ctz = null;
+		this.partialityCoef = null;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -357,6 +368,38 @@ public class ContractInfo implements Serializable{
 
 	public void setPayrollDate(Date payrollDate) {
 		this.payrollDate = payrollDate;
+	}
+	
+	public String getAgreementColective() {
+		return colectiveAgreement;
+	}
+
+	public void setAgreementColective(String colectiveAgreement) {
+		this.colectiveAgreement = colectiveAgreement;
+	}
+
+	public String getMdctz() {
+		return md_ctz;
+	}
+
+	public void setMdctz(String md_ctz) {
+		this.md_ctz = md_ctz;
+	}
+
+	public Double getPartialityCoef() {
+		return partialityCoef;
+	}
+
+	public void setPartialityCoef(Double coef) {
+		this.partialityCoef = coef;
+	}
+
+	public Integer getPartialityCoefId() {
+		return partialityCoefId;
+	}
+
+	public void setPartialityCoefId(Integer partialityCoefId) {
+		this.partialityCoefId = partialityCoefId;
 	}
 
 	public String toString(){

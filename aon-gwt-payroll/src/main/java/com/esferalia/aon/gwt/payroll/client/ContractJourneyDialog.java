@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -435,7 +436,7 @@ public abstract class ContractJourneyDialog extends AonCustomDialog {
 		return this.contractJourneyDuration;
 	}
 
-	protected abstract void onSave();
+	protected abstract void onSave(Double partialityCoef);
 	
 	private void getButtonsPanel() {
 		closeBtnDialog = new Button();
@@ -472,10 +473,21 @@ public abstract class ContractJourneyDialog extends AonCustomDialog {
 	}
 	
 	private void onAcceptDialog(ClickEvent event) {
+		Double partialityCoef = getPartialityCoef();
 		hide();
-		onSave();
+		onSave(partialityCoef);
 	}
 	
+	private Double getPartialityCoef() {
+		Double hours = 0.00;
+		for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
+			if(AonStringUtils.isNotBlank(journeyDuration.getExpression()) && !AonStringUtils.equals(journeyDuration.getExpression(), "NL")){
+				hours += Double.parseDouble(journeyDuration.getExpression());
+			}
+		}
+		return hours / 40;
+	}
+
 	private void showNewJourney() {
 		mainDeckPanel.showWidget(0);
 		this.setWidth("425px");

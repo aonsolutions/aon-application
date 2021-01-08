@@ -142,6 +142,10 @@
 			width: 100%;
 		}
 		
+		.width99{
+			width: 99%;
+		}
+		
 		.dateStyle{
 			width: 140px !important;
 			text-align: center !important;
@@ -236,7 +240,7 @@
 	        </tbody>
 	    </table>
 	    
-	    <table style="margin-top: 5px;">
+	    <table style="margin-top: 5px;" ui:field="dataTable">
 	        <tbody>
 	            <tr>
 	            	<td style="width: 230px;">
@@ -284,6 +288,16 @@
 	            <tr>
 	                <td colspan="2">
 	                    <g:ListBox ui:field="ocupation" styleName="{style.width100} {style.marginLft5}"></g:ListBox>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td colspan="2">
+	                    <g:Label styleName="{style.bold} {style.marginLft5}">Coeficiente Parcialidad</g:Label>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td colspan="2">
+	                	<a:DoubleBox ui:field="partialityCoef" styleName="{style.width99} {style.marginLft5}"></a:DoubleBox>
 	                </td>
 	            </tr>
 	        </tbody>

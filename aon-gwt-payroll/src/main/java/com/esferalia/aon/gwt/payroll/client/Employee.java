@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -152,6 +153,9 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiField
 	ListBox journeyType;
+	
+	@UiField
+	DoubleBox partiality_coef;
 
 	// TABLA DATOS EMPLEADO
 	
@@ -359,6 +363,11 @@ public abstract class Employee extends ResizeComposite {
 	void onContractOccupationChangeValue(ChangeEvent event) {
 		onContractOccupationChange();
 	}
+	
+	@UiHandler("partiality_coef")
+	void onContractPartialityCoefChangeValue(ValueChangeEvent<Double> event) {
+		onContractPartialityChange();
+	}
 
 	@UiHandler("journeyType")
 	void onContractJourneyTypeChangeValue(ChangeEvent event) {
@@ -482,6 +491,7 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onContractCategoryChange();
 	public abstract void onContractQuoteGroupChange();
 	public abstract void onContractOccupationChange();
+	public abstract void onContractPartialityChange();
 	public abstract void onContractJourneyTypeChange();
 	public abstract void onContractJourneyDurationClick();
 	
