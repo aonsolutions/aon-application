@@ -135,10 +135,10 @@ export class AonCtaList extends AonElement {
 		return name;
 	}
 
-	getCertCorriente(data, el) {
+	async getCertCorriente(data, el) {
 		this.aonComunica.startLoading();
 		const { ccc, cccRegimeCode: regimen } = data;
-		getCertCorriente({ ccc, regimen }); // open pdf
+		await getCertCorriente({ ccc, regimen }); // open pdf
 		this.aonComunica.stopLoading();
 	}
 }

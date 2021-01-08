@@ -52,7 +52,7 @@ export class AonContratoList extends AonElement {
 	}
 
 	async getTableDesk() {
-		const aonCtaTable = this.getElement(this.ID);
+		// const aonCtaTable = this.getElement(this.ID);
 		// aonCtaTable.addColumn('Tipo', 'string', 'tipo', '20%');
 		// aonCtaTable.addColumn('Cuenta de cotización', 'string', 'ccc', '40%');
 		// aonCtaTable.addColumn('Provincia', 'string', 'geozone', '35%');
@@ -126,9 +126,10 @@ export class AonContratoList extends AonElement {
             contracts.map(({employeeInfo, contractInfo:{startDate, contractType}})=>{
 
 				contractType = Number.parseInt(contractType);
-				if(contractType) employeeInfo.contractType = contractType;
+				if(contractType) 
+					employeeInfo.contractType = contractType;
 
-                if(startDate){
+                if(startDate) {
 					employeeInfo.fecha = startDate;
 					employeeInfo.startDate = setDate(startDate);
 				} 
@@ -142,17 +143,17 @@ export class AonContratoList extends AonElement {
 		return data;
 	}
 
-	getContratoPdf(data, el) {
+	async getContratoPdf(data, el) {
 		this.aonComunica.startLoading();
 		const { document:ipf, fecha } = data;
-		getContratoPdf({ ipf, fecha });
+		await getContratoPdf({ ipf, fecha });
 		this.aonComunica.stopLoading();
     }
 
-    getCopyBasicPdf(data, el) {
+    async getCopyBasicPdf(data, el) {
 		this.aonComunica.startLoading();
 		const { document:ipf, fecha } = data;
-		getCopyBasicPdf({ ipf, fecha });
+		await getCopyBasicPdf({ ipf, fecha });
 		this.aonComunica.stopLoading();
 	}
 }

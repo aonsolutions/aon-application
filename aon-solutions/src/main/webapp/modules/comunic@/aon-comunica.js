@@ -122,10 +122,10 @@ export class AonComunica extends AonElement {
 		this.aonComunicaEl.stopLoading();
 	}
 
-	getIdc(data, el) {
+	async getIdc(data, el) {
 		this.aonComunicaEl.startLoading();
 		const { regime, ctaCti, nss, fra } = data;
-		getIDC({ regime, ctaCti, nss, fra }); // open pdf
+		await getIDC({ regime, ctaCti, nss, fra }); // open pdf
 		this.aonComunicaEl.stopLoading();
 	}
 

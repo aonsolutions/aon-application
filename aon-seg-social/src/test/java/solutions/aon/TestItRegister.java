@@ -17,8 +17,8 @@ public class TestItRegister {
 	@Test
 	public void registerItCertificateTest() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			SistemaRED_ITParts.addItStart(certificateInputStream,"jg@FNMT","pkcs12", "0111", "01105360062", "291136796369", Contingencies.ENFERMEDAD_COMUN, Optional.of("1342341245"), Optional.of("0123456789"), new Date(), ContractType.RESTO_Y_AUTONOMOS,2.3f,23);
-		} catch (Exception e) {System.err.println(e);}
+			SistemaRED_ITParts.addItStart(certificateInputStream,"jg@FNMT","pkcs12", "0111", "01105360062", "291136796369", Contingencies.ENFERMEDAD_COMUN, Optional.of("1342341245"), Optional.of("01234567891"), new Date(), ContractType.RESTO_Y_AUTONOMOS, (float) 2.3, 23);
+		} catch (Exception e) {System.err.println(e.getMessage());}
 	}
 	
 	@Test
@@ -106,6 +106,7 @@ public class TestItRegister {
 	}
 	
 	@Test 
+	@Ignore
 	public void addItConfirmationCertificateTest(){
 
 	}

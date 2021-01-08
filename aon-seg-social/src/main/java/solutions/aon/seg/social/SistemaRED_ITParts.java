@@ -16,7 +16,6 @@ import solutions.aon.seg.social.objects.It.ItBuilder;
 import solutions.aon.seg.social.objects.ItPartId;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -306,7 +305,7 @@ public class SistemaRED_ITParts {
 	private static void addItEndImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, Contingencies contingency) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException {
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			HtmlPage document = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
-			HtmlOption type = document.querySelector("#tipoParte option:nth-child(3)");
+			HtmlOption type = document.querySelector("#tipoParte option:nth-child(4)");
 			document = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.ALTA);
 		}
 	}

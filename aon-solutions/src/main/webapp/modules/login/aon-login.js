@@ -87,7 +87,6 @@ export class AonLogin extends AonElement {
 							</div>
 
 						</div>
-					<!-- </form> -->
 			    <div class="aon-login-info2">
     				<span >
 							<a target="_blank" href="http://www.aonsolutions.es">
@@ -95,9 +94,7 @@ export class AonLogin extends AonElement {
 			      	</a>
 			        es una marca registrada de AON SOLUTIONS, S.L.
 			      </span>
-
 			      <div id="aonManifest">
-
 			      </div>
 			    </div>
 
@@ -131,9 +128,9 @@ export class AonLogin extends AonElement {
 
     let aonBtnRegister = this.getElement("aonBtnRegister");
     aonBtnRegister.addEventListener("click", () => {
-		this.hideElement('aonLogin');
-		this.showElement('aonRegister');
-	});
+      this.hideElement("aonLogin");
+      this.showElement("aonRegister");
+    });
   }
 
   aonDialogLoginRemember() {
