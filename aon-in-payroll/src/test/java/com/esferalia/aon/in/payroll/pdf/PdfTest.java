@@ -325,11 +325,51 @@ public class PdfTest {
 							//fail("Not catching the base");
 						}
 						break;
-					case "__EMPLOYEE_CODE":
+					case "GRUPO_COTIZACION":
 						if(!((String)data.getValue(data.getPeriod())).equals("02")) {
 							System.out.println((String)data.getValue(data.getPeriod()));
 							fail("Wrong employee code");
 						}
+						break;
+					case "DIAS_NOMINA":
+						if((int)data.getValue(data.getPeriod())!=30)
+							fail("Wrong time units");
+						break;
+					case "PORCENTAJE_IRPF":
+						if((Double)data.getValue(data.getPeriod())!=16d)
+							fail("Wrong irpf percent");
+						break;
+					case "PORCENTAJE_CGC":
+						if((Double)data.getValue(data.getPeriod())!=4.7)
+							fail("Wrong CGC percent");
+						break;
+					case "PORCENTAJE_DESMPL":
+						if((Double)data.getValue(data.getPeriod())!=1.55)
+							fail("Wrong DESMPL percent");
+						break;
+					case "PORCENTAJE_FP":
+						if((Double)data.getValue(data.getPeriod())!=0.1)
+							fail("Wrong FP percent");
+						break;
+					case "PORCENTAJE_CGC_E":
+						if((Double)data.getValue(data.getPeriod())!=23.6)
+							fail("Wrong CGC_E percent");
+						break;
+					case "PORCENTAJE_CGP_E":
+						if((Double)data.getValue(data.getPeriod())!=1.5)
+							fail("Wrong CGP_E percent");
+						break;
+					case "PORCENTAJE_DESMPL_E":
+						if((Double)data.getValue(data.getPeriod())!=5.5)
+							fail("Wrong DESMPL_E percent");
+						break;
+					case "PORCENTAJE_FP_E":
+						if((Double)data.getValue(data.getPeriod())!=0.6)
+							fail("Wrong DESMPL_E percent");
+						break;
+					case "PORCENTAJE_FOGASA":
+						if((Double)data.getValue(data.getPeriod())!=0.2)
+							fail("Wrong DESMPL_E percent");
 						break;
 					default:
 						System.err.println(name);
@@ -651,11 +691,51 @@ public class PdfTest {
 							fail("Not catching the base");
 						}
 						break;
-					case "__EMPLOYEE_CODE":
+					case "GRUPO_COTIZACION":
 						if(!((String)data.getValue(data.getPeriod())).equals("07")) {
 							System.out.println((String)data.getValue(data.getPeriod()));
 							fail("Wrong tarifa");
 						}
+						break;
+					case "DIAS_NOMINA":
+						if((int)data.getValue(data.getPeriod())!=30)
+							fail("Wrong time units");
+						break;
+					case "PORCENTAJE_IRPF":
+						if((Double)data.getValue(data.getPeriod())!=2d)
+							fail("Wrong irpf percent");
+						break;
+					case "PORCENTAJE_CGC":
+						if((Double)data.getValue(data.getPeriod())!=4.7)
+							fail("Wrong CGC percent");
+						break;
+					case "PORCENTAJE_DESMPL":
+						if((Double)data.getValue(data.getPeriod())!=1.55)
+							fail("Wrong DESMPL percent");
+						break;
+					case "PORCENTAJE_FP":
+						if((Double)data.getValue(data.getPeriod())!=0.1)
+							fail("Wrong FP percent");
+						break;
+					case "PORCENTAJE_CGC_E":
+						if((Double)data.getValue(data.getPeriod())!=23.6)
+							fail("Wrong CGC_E percent");
+						break;
+					case "PORCENTAJE_CGP_E":
+						if((Double)data.getValue(data.getPeriod())!=1.5)
+							fail("Wrong CGP_E percent");
+						break;
+					case "PORCENTAJE_DESMPL_E":
+						if((Double)data.getValue(data.getPeriod())!=5.5)
+							fail("Wrong DESMPL_E percent");
+						break;
+					case "PORCENTAJE_FP_E":
+						if((Double)data.getValue(data.getPeriod())!=0.6)
+							fail("Wrong DESMPL_E percent");
+						break;
+					case "PORCENTAJE_FOGASA":
+						if((Double)data.getValue(data.getPeriod())!=0.2)
+							fail("Wrong DESMPL_E percent");
 						break;
 					default:
 						System.err.println(name);
@@ -807,17 +887,17 @@ public class PdfTest {
 						Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
 					System.out.println("Amount: "+amount+", quote: "+quote+", tax: "+tax+", description: "+description+", start date: "+startDate+", end date: "+endDate+", payment type: "+payment.getType()+", payment name: "+payment.getName());
 					switch (description) {
-						case "*Salario Base":
+						case "Salario Base":
 							break;
-						case "*Antigüedad":
+						case "Antigüedad":
 							break;
-						case "*Plus Manutención":
+						case "Plus Manutención":
 							break;
-						case "*P.p.extras":
+						case "P.p.extras":
 							break;
-						case "*Bonus octubre":
+						case "Bonus octubre":
 							break;
-						case "*Domingos-festiv":
+						case "Domingos-festiv":
 							break;
 						default:
 							fail("Unrecognized payment concept: "+description);
@@ -963,20 +1043,71 @@ public class PdfTest {
 							fail("Not catching the base");
 						}
 						break;
-					case "__ENTERPRISE_CODE":
+					case "TC2":
 						if(!((String)data.getValue(data.getPeriod())).equals("200")) {
 							
 							fail("Wrong cod ct");
 						}
 						break;
-					case "__EMPLOYEE_CODE":
+					case "GRUPO_COTIZACION":
 						if(!((String)data.getValue(data.getPeriod())).equals("7")) {
 							System.out.println((String)data.getValue(data.getPeriod()));
 							fail("Wrong tarifa");
 						}
 						break;
+					case "DIAS_NOMINA":
+						if(!(((int)data.getValue(data.getPeriod()))==30)) {
+							System.out.println((String)data.getValue(data.getPeriod()));
+							fail("Wrong time units");
+						}
+						break;
+					case "PORCENTAJE_CGC":
+						if((Double)data.getValue(data.getPeriod())!=4.7) {
+							fail("Not catching the percentage");
+						}
+						break;
+					case "PORCENTAJE_FP":
+						if((Double)data.getValue(data.getPeriod())!=0.1) {
+							fail("Not catching the percentage");
+						}
+						break;
+					case "PORCENTAJE_DESMPL":
+						if((Double)data.getValue(data.getPeriod())!=1.55) {
+							fail("Not catching the percentage");
+						}
+						break;
+					case "PORCENTAJE_IRPF":
+						if((Double)data.getValue(data.getPeriod())!=4.0) {
+							fail("Not catching the percentage");
+						}
+						break;
+					case "PORCENTAJE_CGC_E":
+						if((Double)data.getValue(data.getPeriod())!=23.6) {
+							fail("Not catching the percentage");
+						}
+						break;
+					case "PORCENTAJE_CGP_E":
+						if((Double)data.getValue(data.getPeriod())!=1.5) {
+							fail("Not catching the percentage");
+						}
+						break;
+					case "PORCENTAJE_DESMPL_E":
+						if((Double)data.getValue(data.getPeriod())!=5.5) {
+							fail("Not catching the percentage");
+						}
+						break;
+					case "PORCENTAJE_FP_E":
+						if((Double)data.getValue(data.getPeriod())!=0.6) {
+							fail("Not catching the percentage");
+						}
+						break;
+					case "PORCENTAJE_FOGASA":
+						if((Double)data.getValue(data.getPeriod())!=0.2) {
+							fail("Not catching the percentage");
+						}
+						break;
 					default:
-						fail("Unrecognized type");
+						fail("Unrecognized type: "+ name);
 					}
 					
 					
@@ -1057,10 +1188,28 @@ public class PdfTest {
 	
 	
 	@Test
-	//@Ignore
+	@Ignore
 	public void testA3New() throws IOException, UnknownPDFException {
-		try ( InputStream is = PdfTest.class.getResourceAsStream("year_payrolls_lorena.pdf") ){
+		try ( InputStream is = PdfTest.class.getResourceAsStream("learning2020.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder());
+		}
+	}
+	
+	@Test
+	@Ignore
+	public void testA3Muchos() throws IOException, UnknownPDFException {
+		try ( InputStream is = PdfTest.class.getResourceAsStream("learning2020.pdf") ){
+			SalaryPDFParser.parse(is, new SalaryBuilder() {
+				public int cont = 1;
+				@Override
+				public void setTotalDeduction(Double totalDeduction) {
+					if(totalDeduction==null) {
+						fail("Fallo en la nómina "+cont);
+					}
+					cont++;
+				}
+				
+			});
 		}
 	}
 	

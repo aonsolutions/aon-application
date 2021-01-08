@@ -30,6 +30,7 @@ import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class A3PDFTemplate implements SalaryPDFTemplate {
+	//public static int cont = 1;
 
 	public static final A3PDFTemplate A3_PDF_TEMPLATE = new A3PDFTemplate();
 	
@@ -121,7 +122,12 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			matcher = find(reader, WORKER_HEADER);
 			
 			matcher = find(reader, WORKER);
+//			System.err.println(matcher.group());
+//			System.err.println("JOB: "+matcher.group("job"));
+//			System.err.println("OLD: "+matcher.group("old"));
+//			System.err.println("NIF: "+matcher.group("nif"));
 			salaryBuilder.setCategory(AonStringUtils.trimToNull(matcher.group("job")));
+			//System.out.println(matcher.group("old"));
 			String seniority=AonStringUtils.trimToNull(matcher.group("old"));
 			salaryBuilder.setSeniorityDate(a3DateParser(seniority));
 			String dni = AonStringUtils.trimToNull(matcher.group("nif"));
@@ -154,7 +160,10 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 				per=new Period(dFrom, dTo);
 			}
 			try {
-				salaryBuilder.setTimeUnits(Integer.parseInt(matcher.group("days")));
+				int timeUnits = Integer.parseInt(matcher.group("days"));
+				salaryBuilder.setTimeUnits(timeUnits);
+				salaryBuilder.addData("DIAS_NOMINA", new TimedObject<Integer>(timeUnits, per));
+				
 			} catch (NumberFormatException e) {
 				
 			}
@@ -169,8 +178,8 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 					.setEmployeeName(empName)
 					.setEnterpriseName(entName)
 			);
-			salaryBuilder.addData("__ENTERPRISE_CODE", new TimedObject<String>(codct, per));
-			salaryBuilder.addData("__EMPLOYEE_CODE", new TimedObject<String>(quoteGroup, per));
+			salaryBuilder.addData("TC2", new TimedObject<String>(codct, per));
+			salaryBuilder.addData("GRUPO_COTIZACION", new TimedObject<String>(quoteGroup, per));
 			
 			matcher = find(reader, CONCEPT_HEADER);
 			String concept_line = reader.readLine();
@@ -183,13 +192,14 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 				if(matcher.group("devengos")!=null) {
 					Double amount=a3DoubleParser(AonStringUtils.trimToNull(matcher.group("devengos")));
 					String description=AonStringUtils.trimToNull(matcher.group("concept"));
-					description=removeSpace(description, 19);
-					String context=description;
-					if(context.charAt(0)=='*') {
-						context=context.substring(1);
-						context=context.toUpperCase();
-						context = context.replaceAll("\\s", "_");
+					description=removeSpace(description, 19);	
+					if(description.charAt(0)=='*') {
+						description=description.substring(1);
 					}
+					String context=description;
+					context=context.toUpperCase();
+					context = context.replaceAll("\\s", "_");
+					context = (context.length()>25)?context.substring(0, 24):context;
 					PaymentType pt=PaymentType.CRA_0001;
 					
 					if(context.equalsIgnoreCase("P.P.EXTRAS")) {
@@ -217,31 +227,46 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 					Double amount=a3DoubleParser(AonStringUtils.trimToNull(matcher.group("deducciones")));
 					String description=AonStringUtils.trimToNull(matcher.group("concept"));
 					description=removeSpace(description, 19);
-					String context=description;
 					DeductionType dt=null;
-					context=null;
+					String context=null;
+					Double type=null;
+					try {
+						type = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("tipo")));
+					} catch (NullPointerException e) {}
 					if(description.contains("COTIZACION CONT.COMU")) {
 						dt=DeductionType.COMMON_CONTINGENCY;
 						description=dt.getName(new Locale("es", "ES"));
 						totalSS+=amount;
 						context="CGC";
+						if (type!=null) {
+							salaryBuilder.addData("PORCENTAJE_CGC", new TimedObject<Double>(type, per ));
+						}
 					}
 					else if (description.contains("COTIZACION FORMACION")) {
 						dt=DeductionType.JOB_TRAINING;
 						description=dt.getName(new Locale("es", "ES"));
 						totalSS+=amount;
 						context="FP";
+						if (type!=null) {
+							salaryBuilder.addData("PORCENTAJE_FP", new TimedObject<Double>(type, per ));
+						}
 					}
 					else if(description.contains("COTIZACION DESEMPLEO")) {
 						dt=DeductionType.UNEMPLOYMENT;
 						description=dt.getName(new Locale("es", "ES"));
 						totalSS+=amount;
 						context="DESMPL";
+						if (type!=null) {
+							salaryBuilder.addData("PORCENTAJE_DESMPL", new TimedObject<Double>(type, per ));
+						}
 					}
 					else if (description.contains("TRIBUTACION I.R.P.F.")) {
 						dt=DeductionType.IRPF;
 						description=dt.getName(new Locale("es", "ES"));
 						context="IRPF";
+						if (type!=null) {
+							salaryBuilder.addData("PORCENTAJE_IRPF", new TimedObject<Double>(type, per ));
+						}
 					}
 					
 					
@@ -305,16 +330,19 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			
 			//matcher = find(reader, TOTAL_HEADER);
 			String strSalary=reader.readLine();
+			//System.err.println(strSalary);
 			matcher=TOTAL.matcher(strSalary);
 			ArrayList<String> remnbases=new ArrayList<String>();
 			while(matcher.find()) {
+				//System.err.println("\t"+matcher.group());
 				remnbases.add(matcher.group());
 			}
+			//System.err.println("Bases: "+remnbases.size());
 			try {
 				salaryBuilder.setRemuneration(Double.parseDouble(AonStringUtils.trimToNull(remnbases.get(0)).replaceAll("\\.", "").replaceAll("[,]", ".")));
 				//salaryBuilder.addData(ContextVariable.IRPF_BASE.getName(), new TimedObject<Double>(irpfBase, period ));
 			}catch (NullPointerException e) {
-				salaryBuilder.setRemuneration(null);
+				salaryBuilder.setRemuneration(0d);
 			}
 			
 			try {
@@ -387,6 +415,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			matcher = find(reader, TOTAL_LIQUID_HEADER);
 			matcher = find(reader, TOTAL_LIQUID);
 			Double totLiq=a3DoubleParser(AonStringUtils.trimToNull(matcher.group("liquid")));
+			totLiq = totLiq==null?0d:totLiq;
 			salaryBuilder.setTotalLiquid(totLiq);
 			
 			//IBAN
@@ -415,6 +444,15 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			Double apportBase = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("base")));
 			Double individualApport = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("apport")));
 			String description=COMMON_CONTINGENCY.getName(new Locale("es", "ES"));
+			{
+				Double type=null;
+				try {
+					type = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("type")));
+				} catch (NullPointerException e) {}
+				if (type!=null) {
+					salaryBuilder.addData("PORCENTAJE_CGC_E", new TimedObject<Double>(type, per ));
+				}
+			}	
 			if(apportBase!=null)
 				salaryBuilder.addData(ContextVariable.CGC_ENTERPRISE.getName(), new TimedObject<Double>(apportBase, per ));
 			Deduction costDeduction=new Deduction().setType(COMMON_CONTINGENCY).setName("CGC_E");
@@ -426,6 +464,15 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			apportBase = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("base")));
 			individualApport = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("apport")));
 			description=DeductionType.PROFESSIONAL_CONTINGENCY.getName(new Locale("es", "ES"));
+			{
+				Double type=null;
+				try {
+					type = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("type")));
+				} catch (NullPointerException e) {}
+				if (type!=null) {
+					salaryBuilder.addData("PORCENTAJE_CGP_E", new TimedObject<Double>(type, per ));
+				}
+			}
 			if(apportBase!=null)
 				salaryBuilder.addData(ContextVariable.IT_ENTERPRISE.getName(), new TimedObject<Double>(apportBase, per ));
 			costDeduction=new Deduction().setType(DeductionType.PROFESSIONAL_CONTINGENCY).setName("IT_E");
@@ -437,6 +484,15 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			apportBase = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("base")));
 			individualApport = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("apport")));
 			description=DeductionType.UNEMPLOYMENT.getName(new Locale("es", "ES"));
+			{
+				Double type=null;
+				try {
+					type = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("type")));
+				} catch (NullPointerException e) {}
+				if (type!=null) {
+					salaryBuilder.addData("PORCENTAJE_DESMPL_E", new TimedObject<Double>(type, per ));
+				}
+			}
 			if(apportBase!=null)
 				salaryBuilder.addData(ContextVariable.UNEMPLOY_ENTERPRISE.getName(), new TimedObject<Double>(apportBase, per ));
 			costDeduction=new Deduction().setType(DeductionType.UNEMPLOYMENT).setName("DESEMPL_E");
@@ -448,6 +504,15 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			apportBase = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("base")));
 			individualApport = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("apport")));
 			description=DeductionType.JOB_TRAINING.getName(new Locale("es", "ES"));
+			{
+				Double type=null;
+				try {
+					type = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("type")));
+				} catch (NullPointerException e) {}
+				if (type!=null) {
+					salaryBuilder.addData("PORCENTAJE_FP_E", new TimedObject<Double>(type, per ));
+				}
+			}
 			if(apportBase!=null)
 				salaryBuilder.addData(ContextVariable.FP_ENTERPRISE.getName(), new TimedObject<Double>(apportBase, per ));
 			costDeduction=new Deduction().setType(DeductionType.JOB_TRAINING).setName("FP_E");
@@ -459,6 +524,15 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			apportBase = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("base")));
 			individualApport = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("apport")));
 			description=DeductionType.FOGASA.getName(new Locale("es", "ES"));
+			{
+				Double type=null;
+				try {
+					type = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("type")));
+				} catch (NullPointerException e) {}
+				if (type!=null) {
+					salaryBuilder.addData("PORCENTAJE_FOGASA", new TimedObject<Double>(type, per ));
+				}
+			}
 			if(apportBase!=null)
 				salaryBuilder.addData(ContextVariable.FOGASA_ENTERPRISE.getName(), new TimedObject<Double>(apportBase, per ));
 			costDeduction=new Deduction().setType(DeductionType.FOGASA).setName("FOGASA_E");
@@ -538,6 +612,9 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			salaryBuilder.setTotalSS(totalSS);
 			salaryBuilder.getSalary();
 		}
+		
+		//System.err.println(cont);
+		//cont++;
 		return this;
 	
 	}
@@ -734,10 +811,10 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	}
 	
 	private static Double a3DoubleParser(String strNum) {
-		strNum=strNum.replaceAll("\\.", "").replaceAll("[,]", ".");
 		try {
+			strNum=strNum.replaceAll("\\.", "").replaceAll("[,]", ".");
 			return Double.parseDouble(strNum);
-		} catch (NumberFormatException e) {
+		} catch (NumberFormatException | NullPointerException e) {
 			return null;
 		}
 	}
@@ -775,9 +852,10 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	, Pattern.CASE_INSENSITIVE);
 	//IVANOV , PETAR GEORGIEV           FREGADOR                  1 OCT 08   X8865220P   
 	//    SANCHEZ REY, LORENA               COMERCIAL                 1 MAR 20   31725099A   
-	//"(?<name>.+?)\\s{2,}(?<job>.+?)?\\s{2,}(?<nummatric>.*?)?\\s*(?<old>\\d+\\s+\\w+\\s+\\d+)?\\s{2,}(?<nif>(\\d|\\w)\\d{8}\\w)\\s*"
+	//    SANZ CASTILLA, GENOVEVA MARIA                               2 ENE 20   44963245Q   
+	//"(?<name>.+?)\\s{2,}(?<job>.+?)?\\s{2,}(?<nummatric>.*?)?\\s*(?<old>\\d{1,2}\\s+\\w+\\s+\\d{1,})\\s{2,}(?<nif>(\\d|\\w)\\d{8}\\w)\\s*"
 	private static final Pattern WORKER =
-	Pattern.compile("\\s*(?<name>.+?)\\s{2,}(?<job>.+?)?\\s{2,}(?<old>\\d+\\s\\w{3}\\s\\d+)?(?<nif>.+?)\\s*"
+	Pattern.compile("\\s*(?<name>.+?)\\s{3,}(?<job>.+?)?\\s{2,}(?<old>\\d+\\s\\w{3}\\s\\d+)(?<nif>.+?)\\s*"
 	, Pattern.CASE_INSENSITIVE);
 	//Nº AFILIACION. S.S. TARIFA COD.CT SECCION NRO. PERIODO TOT. DIAS
 	private static final Pattern SS_INFO_HEADER =
@@ -793,7 +871,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	, Pattern.CASE_INSENSITIVE);
 	//30,00     26,741     1  *Salario Base                               802,24                   
 	private static final Pattern CONCEPT =
-	Pattern.compile("\\s*(?<cuantia>\\d+[,]\\d*)?\\s*(?<price>\\d+[,]\\d*)?\\s*(?<unknownnumber>\\d+)?\\s*(?<concept>\\*?.+?)\\s{1,2}(?<tipo>\\d+[,]\\d*)?\\s*(?<devengos>\\d+[,]\\d*)?\\s{19}?(?<deducciones>\\d+[,]\\d*)?\\s*$"
+	Pattern.compile("\\s*(?<cuantia>(\\d[\\d\\s]*\\.)?[\\s\\d]{1,4}[,]\\d+)?\\s*(?<price>(\\d[\\d\\s]*\\.)?[\\s\\d]{1,4}[,]\\d+)?\\s*(?<unknownnumber>\\d+)?\\s*(?<concept>\\*?.+?)\\s{1,2}(?<tipo>\\d+[,]\\d*)?\\s*(?<devengos>\\d+[,]\\d*)?\\s{19}?(?<deducciones>(\\d[\\d\\s]*\\.)?[\\s\\d]{1,4}[,]\\d+)?\\s*$"
 	, Pattern.CASE_INSENSITIVE);
 	//REM. TOTAL P.P.EXTRAS BASE S.S. BASE A.T. Y DES. BASE I.R.P.F. T. DEVENGADO T.  A DEDUCIR
 	private static final Pattern TOTAL_HEADER =
@@ -801,8 +879,12 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	, Pattern.CASE_INSENSITIVE);
 	//1.260,31                  1.260,31        1.260,31     1.260,31    1.260,31        161,61     
 	//1.175,00       166,66     1.341,66        1.341,66     1.175,00    1.175,00        306,26      
+    //966,24                    966,24          966,24       966,24      966,24         81,16     
+	//1.108,33                  1.108,33        1.108,33     1.108,33    1.108,33         93,10     
+	//1.584,97                  1.584,97        1.584,97     1.584,97    1.584,97        284,97     
+	//4.500,00                                               4.500,00    4.500,00      1.125,00     
 	private static final Pattern TOTAL =
-			Pattern.compile("(((\\d[\\d\\s]*\\.)?[\\s\\d]+[,]\\d+)|\\s{9,10})"
+			Pattern.compile("(((\\d[\\d\\s]*\\.)?[\\s\\d]{1,4}[,]\\d+)|\\s{12,15})"
 			, Pattern.CASE_INSENSITIVE);
 	
 	private static final Pattern TOTAL_ROW =
@@ -830,7 +912,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	, Pattern.CASE_INSENSITIVE);
 	//                                         1.098,70        
 	private static final Pattern TOTAL_LIQUID =
-	Pattern.compile("\\s*(?<liquid>[\\d\\.,]+)\\s*"
+	Pattern.compile("\\s*(?<liquid>[\\d\\.,]+)?\\s*"
 	, Pattern.CASE_INSENSITIVE);
 	//IBAN:                                                                                                     
 	private static final Pattern IBAN =
