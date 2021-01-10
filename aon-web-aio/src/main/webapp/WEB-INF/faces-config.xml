@@ -46,6 +46,10 @@
 	            <key>showAbout</key>
 	            <value>#{false}</value>
 	         </map-entry>
+	         <map-entry>
+	            <key>showSearchResults</key>
+	            <value>#{false}</value>
+	         </map-entry>
 	      </map-entries>
 	   </managed-property>      	    				
 	</managed-bean>
