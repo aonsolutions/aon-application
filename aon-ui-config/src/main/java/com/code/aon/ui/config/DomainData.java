@@ -1,7 +1,10 @@
 package com.code.aon.ui.config;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.code.aon.AonVersion;
 
@@ -23,6 +26,10 @@ public class DomainData implements Serializable {
 	
 	private Date expirationDate;
 	
+	private String document;
+	
+	private List<String> cccs ;
+	
 	public DomainData(Integer id, String name, String description, Date expirationDate, boolean active, boolean enableHeredity) {
 		this.id = id;
 		this.name = name;
@@ -30,6 +37,7 @@ public class DomainData implements Serializable {
 		this.expirationDate = expirationDate;
 		this.active = active;
 		this.enableHeredity = enableHeredity;
+		this.cccs = new ArrayList<String>();
 	}
 
 	public Integer getId() {
@@ -55,9 +63,17 @@ public class DomainData implements Serializable {
 	public boolean isEnableHeredity() {
 		return enableHeredity;
 	}
+	
+	public String getDocument() {
+		return document;
+	}
 
 	public void setLogo(String logo) {
 		this.logo = logo;
+	}
+	
+	public void setDocument(String document) {
+		this.document = document;
 	}
 	
 	public boolean isExpired() {
@@ -66,5 +82,13 @@ public class DomainData implements Serializable {
 		}
 		return false;
 	}	
+	
+	public void addCCC(String ccc ) {
+		cccs.add(ccc);
+	}
+	
+	public String getCccs() {
+		return cccs.stream().collect(Collectors.joining(","));
+	}
 
 }

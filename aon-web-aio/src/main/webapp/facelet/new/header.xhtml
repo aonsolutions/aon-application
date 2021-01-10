@@ -317,7 +317,9 @@
 		
 			<aon:panelGroup style="text-align:left" >
 				<aon:form id="smartFilterForm">
-					<aon:outputText styleClass="aon-italic aon-margin-right aon-header-search" value=""/>
+					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" >
+						<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
+					</aon:commandLink>
 					<aon:inputText id="smartFilter" size="60" value="#{domainSwitcher.filter}" placeholder="Buscar" styleClass="aon-input-search"  autocomplete="off" >
 						<a4j:support 
 						event="onkeyup"
@@ -360,6 +362,16 @@
 										<aon:outputText value="Empresas" />
 									</f:facet>							
 									<aon:outputText value="#{to.description}"
+										title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
+										style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"/>					
+								</aon:column>
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<aon:outputText value="#{to.document}"
+										title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
+										style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"/>					
+								</aon:column>
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<aon:outputText value="#{to.cccs}"
 										title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
 										style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"/>					
 								</aon:column>

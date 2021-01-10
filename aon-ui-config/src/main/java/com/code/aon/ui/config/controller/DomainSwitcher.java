@@ -2,11 +2,15 @@ package com.code.aon.ui.config.controller;
 
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.io.Serializable;
 import java.net.IDN;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
@@ -57,6 +61,9 @@ import com.code.aon.ui.form.ITemplateController;
 import com.code.aon.ui.resources.bean.CustomizeController;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.jooq.tables.Enterprise;
+import com.esferalia.aon.jooq.tables.EnterpriseCcc;
+import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.SECURITY;
@@ -215,7 +222,12 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 					if (StringUtils
 							.containsIgnoreCase(d.getName(), getFilter())
 							|| StringUtils.containsIgnoreCase(
-									d.getDescription(), getFilter())) {
+									d.getDescription(), getFilter())
+							|| StringUtils.containsIgnoreCase(
+									d.getDocument(), getFilter())
+							|| StringUtils.containsIgnoreCase(
+									d.getCccs(), getFilter())
+							) {
 						filteredList.add(d);
 					}
 				}
@@ -269,7 +281,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return condition;
 	}
 
-	private void initializeModel() {
+	private void __initializeModel() {
 		List<DomainData> domains = Collections.emptyList();
 		if (getParentDomain() != null) {
 			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
@@ -313,6 +325,76 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			ctx.finalize();
 		}
 		setModel(new SerializableListDataModel(domains));
+	}
+
+	private void initializeModel() {
+		
+		if (getParentDomain() != null) {
+			
+			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
+			LinkedList<DomainData> domains = new LinkedList<DomainData>();
+			ctx
+			.getDslContext()
+			.select()
+			.from(DOMAIN)
+			
+			.leftOuterJoin(ENTERPRISE).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID))
+			.leftOuterJoin(REGISTRY).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
+			
+			.leftOuterJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.DOMAIN.eq(DOMAIN.ID))
+			
+			.leftOuterJoin(APP_PARAM).on(APP_PARAM.DOMAIN.eq(DOMAIN.ID).and(APP_PARAM.NAME.eq(AppParam.AON_CUSTOMIZE_ID.getValue())))
+			.leftOuterJoin(RATTACH).on(DSL.cast(APP_PARAM.VALUE, Integer.class).eq(RATTACH.REGISTRY).and(RATTACH.DESCRIPTION.eq(ICommonConstants.TOOLBAR_LOGO_NAME)))
+			
+			.where(getDomainCondition())
+
+			.orderBy(DOMAIN.DESCRIPTION)
+			.fetchStream()
+			.forEach( r -> {
+				DomainData last = domains.peekLast();
+				if ( last != null && last.getId().equals(r.get(DOMAIN.ID)) ) {
+					String ccc = r.get(ENTERPRISE_CCC.CCC);
+					if ( StringUtils.isNotBlank(ccc) ) 
+						last.addCCC(ccc);
+					return;
+				}
+				DomainData domainData = 
+						new DomainData(
+						r.get(DOMAIN.ID), 
+						r.get(DOMAIN.NAME), 
+						r.get(DOMAIN.DESCRIPTION), 
+						r.get(DOMAIN.EXPIRATIONDATE), 
+						r.get(DOMAIN.ACTIVE) == 1, 
+						r.get(DOMAIN.ENABLEHEREDITY) == 1);
+				
+				String ccc = r.get(ENTERPRISE_CCC.CCC);
+				if ( StringUtils.isNotBlank(ccc) ) 
+					domainData.addCCC(ccc);
+				
+				domainData.setDocument(r.get(REGISTRY.DOCUMENT));
+				
+				
+				byte logo [] = r.get(RATTACH.DATA);
+				if ( logo == null || ArrayUtils.isEmpty(logo) ) {
+					domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
+				}
+				else {
+					MimeType mimeType = AonEnumUtils.enumValue(r.get(RATTACH.MIMETYPE),
+							MimeType.MIME_PNG);
+					domainData.setLogo(String.format("data:%s;base64,%s", mimeType.getName(),
+							Base64.getEncoder().encodeToString(logo)));
+				}
+				
+				domains.add(domainData);
+				
+			})				
+			;
+
+			ctx.finalize();
+			setModel(new SerializableListDataModel(domains));
+		} else {
+			setModel(new SerializableListDataModel(Collections.emptyList()));
+		}
 	}
 
 	public void setModel(DataModel model) {
