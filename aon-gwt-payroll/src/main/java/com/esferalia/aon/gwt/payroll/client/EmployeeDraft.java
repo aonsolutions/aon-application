@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -660,6 +661,10 @@ public class EmployeeDraft extends Composite {
 	
 	@UiField
 	Button downloadButton;
+	
+	@UiField
+	MonthListBox idcMonthListBox;
+	
 	// ------------------------------------------------------ VARIABLES DE LA CLASE -------------------------------------------------
 	private int zoom;
 
@@ -983,6 +988,11 @@ public class EmployeeDraft extends Composite {
 //		});
 		
 	}
+	
+	@UiHandler("idcMonthListBox")
+	void onIdcMonthListBoxChange(ChangeEvent e) {
+		showIdc(idcMonthListBox.getSelectedMonth());
+	}
 		
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 	
@@ -1036,11 +1046,21 @@ public class EmployeeDraft extends Composite {
 					initializeUndoRedo();
 					initializeScheduler();
 					initializeView();
+					initializeIdcMonthListBox();
 			}, t -> {}
 		);
 		
 
 		
+	}
+	
+	private void initializeIdcMonthListBox() {
+		Date firstMonth = DateUtils.getFirstDayOfMonth(employeeDraftObject.getContractStartDate());
+		Date lastMonth = DateUtils.getFirstDayOfMonth();
+		idcMonthListBox.setFirstMonth(firstMonth);
+		idcMonthListBox.setLastMonth(lastMonth);
+		int months = DateUtils.getMonths(lastMonth, firstMonth);
+		idcMonthListBox.setVisibleRange(0, months+1);
 	}
 	
 	private void initializeUndoRedo() {
@@ -1618,12 +1638,18 @@ public class EmployeeDraft extends Composite {
 		}
 		);
 	}
-
+	
 	private void showIdc() {
+		showIdc(DateUtils.getFirstDayOfMonth());
+	}
 
-		employeeDraftObject.downloadIdc(
+	private void showIdc( Date month) {
+		employeeDraftObject.downloadIdc( 
+		month,
 		(dataURI) -> {
 				showPdf();
+				idcMonthListBox.setVisible(true);
+				idcMonthListBox.setSelected(month, true);
 				pdfViewer.setDocument(dataURI, zoom / 100.00);
 		}, 
 		(trowable)-> {
@@ -1631,8 +1657,7 @@ public class EmployeeDraft extends Composite {
 		}
 		);
 	}
-	
-	
+
 	private void showPdf() {
 		afiButton.setVisible(false);
 		peculiaritiesButton.setVisible(false);
@@ -1646,7 +1671,8 @@ public class EmployeeDraft extends Composite {
 		zoomListBox.setVisible(true);
 		closePdfButton.setVisible(true);
 		downloadButton.setVisible(true);
-
+		
+		
 		showWidget(pdfViewer);
 	}
 
@@ -1662,9 +1688,11 @@ public class EmployeeDraft extends Composite {
 		zoomListBox.setVisible(false);
 		closePdfButton.setVisible(false);
 		downloadButton.setVisible(false);
+		idcMonthListBox.setVisible(false);
 		
 		showWidget(employee);
 	}
+	
 	
 	private void showWidget(Widget widget) {
 		deckPanel.showWidget(deckPanel.getWidgetIndex(widget));

@@ -172,9 +172,9 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 
 		dropDownScrollPanel.add(dropDownCellList);
 		dropDownPopupPanel.add(dropDownScrollPanel);
-
+		
 		// Add a selection model to handle user selection.
-		dropDownselectionModel = new SingleSelectionModel<T>();
+		dropDownselectionModel = new SingleSelectionModel<T>(i -> i);
 		dropDownCellList.setSelectionModel(dropDownselectionModel);
 		dropDownCellList.setKeyboardSelectionPolicy(BOUND_TO_SELECTION);
 
@@ -440,6 +440,7 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 						.getFormatSafeHtmlRenderer().getFormat();
 				String text = format.format(selected);
 				ComboBox.this.setItemText(0, text);
+				
 			}
 		}
 		SelectionModelHandlers handlers = new SelectionModelHandlers();

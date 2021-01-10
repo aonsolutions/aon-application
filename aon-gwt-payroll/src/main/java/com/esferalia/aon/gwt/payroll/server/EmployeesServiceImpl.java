@@ -5401,7 +5401,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
 			String base64Pdf =
-			EmployeesServiceHelper.getIDC(connection, domainName, domainId, userLogin, userId, contractId)
+			EmployeesServiceHelper.getIDC(connection, domainName, domainId, userLogin, userId, contractId, date)
 			;
 			
 			Writer stringWriter = new StringWriter();

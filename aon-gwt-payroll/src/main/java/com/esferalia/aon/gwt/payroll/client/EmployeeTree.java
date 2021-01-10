@@ -21,12 +21,15 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.metrics.StatsEventLogger;
+import com.esferalia.aon.gwt.common.client.widget.ComboBox;
 import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.ComboBox.Format;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractBaseCretaDetail;
@@ -75,6 +78,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -83,6 +87,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -1765,6 +1770,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		void onClickIdcButton(ClickEvent e) {
+			showIdc(DateUtils.getFirstDayOfMonth());
+		}
+
+		void showIdc(Date date) {
 			XMLHttpRequest xhr = XMLHttpRequest.create();
 			xhr.open("POST", SistemaREDService.SISTEMA_RED_URL+ "/" + SistemaREDService.IDC_CCC_REPORT);
 			xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -1776,7 +1785,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						return;
 					try {
 						String dataURI = xhr.getResponseText();
-						showPFDF(dataURI, employeeDetail);
+						showIDC(dataURI, employeeDetail, date);
 						AON.stop();
 					} catch ( Throwable t ) {
 						AON.fail();
@@ -1791,12 +1800,39 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			.append("&" +SistemaREDService.Parameter.USER.name() + "=" + Wnd.getCurrentUser() )
 			.append("&" +SistemaREDService.Parameter.REGIME.name() + "=" + ccc.getRegime() )
 			.append("&" +SistemaREDService.Parameter.CCC.name() + "=" + ccc.getCode() )
+			.append("&" +SistemaREDService.Parameter.DATE.name() + "=" + DateTimeFormat.getFormat(SistemaREDService.DATE_PATTERN).format(date) )
 			;
 			
 			xhr.send(requestDataBuffer.toString());
 			AON.start();
 			
 		}
+		
+		void showIDC(String dataURI, DetailPanel detailPanel, Date date) {
+			PDFViewer viewer = new PDFViewer() {
+				public String getFileName() {
+					return "IDC/PL-CCC.pdf";
+				};
+				
+			};
+			MonthListBox monthListBox = new MonthListBox();
+			viewer.addCustomToolBarWidget(monthListBox);
+			Date lastMonth = DateUtils.getFirstDayOfMonth(); 
+			Date firstMonth = DateUtils.addYears2Date(DateUtils.getFirstDayOfMonth(), -1);
+			monthListBox.setFirstMonth(firstMonth);
+			monthListBox.setLastMonth(lastMonth);
+			monthListBox.setPageSize(13);
+			monthListBox.setVisibleRange(0, 13);
+			monthListBox.addChangeHandler(e -> showIdc(monthListBox.getSelectedMonth()));
+			
+			viewer.setTitle("IDC/PL-CCC");
+			viewer.setDocument(dataURI, Constants.DEFAULT_ZOOM / 100.00 );
+			detailPanel.setWidget(viewer);
+
+			monthListBox.setSelected(date, true);
+			monthListBox.getElement().getStyle().setWidth(150, Unit.PX);
+		}
+		
 
 		void onClickUp2DateSSButton(ClickEvent e) {
 			XMLHttpRequest xhr = XMLHttpRequest.create();
@@ -1810,7 +1846,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						return;
 					try {
 						String dataURI = xhr.getResponseText();
-						showPFDF(dataURI, employeeDetail);
+						showPDF(dataURI, employeeDetail);
 						AON.stop();
 					} catch ( Throwable t ) {
 						AON.fail();
@@ -3096,12 +3132,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	}
 
-	protected static void showPFDF(String dataURI, DetailPanel detailPanel) {
+	protected static void showPDF(String dataURI, DetailPanel detailPanel) {
 		PDFViewer viewer = new PDFViewer() {
 			public String getFileName() {
 				return "CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.pdf";
 			};
 		};
+		
 		viewer.setTitle("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.");
 		viewer.setDocument(dataURI, Constants.DEFAULT_ZOOM / 100.00 );
 		detailPanel.setWidget(viewer);

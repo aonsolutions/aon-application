@@ -78,7 +78,7 @@
 								<g:Button debugId='downloadButton' ui:field='downloadButton'
 									styleName='aon-finding-toolbar-item aon-icon-mail-save' text="Descargar" />	
 							</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							    <g:Label ui:field='saveStatus' styleName="{style.fontSaveStyle}"></g:Label>
 						    </g:HTMLPanel>
 						    
@@ -107,6 +107,9 @@
 									styleName="aon-finding-toolbar-item {res.css.aonIconRedo}" />
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<a:MonthListBox debugId='idcMonthListBox' ui:field="idcMonthListBox" visible="false"/>
+						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
 

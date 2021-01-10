@@ -67,6 +67,9 @@ public class PDFViewer extends Composite {
 		customToolBarPanel.add(button);
 	}
 
+	public void addCustomToolBarWidget(Widget widget) {
+		customToolBarPanel.add(widget);
+	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
 	

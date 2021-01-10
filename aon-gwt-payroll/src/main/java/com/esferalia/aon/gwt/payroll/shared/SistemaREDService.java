@@ -50,6 +50,6 @@ public interface SistemaREDService {
 	public static final String UP2DATE_REPORT = "up2date_report";
 	public static final String UP2DATE_CCC_REPORT = "up2date_ccc_report";
 	
-	
+	public static final String DATE_PATTERN = "dd/MM/yyyy";
 	
 }

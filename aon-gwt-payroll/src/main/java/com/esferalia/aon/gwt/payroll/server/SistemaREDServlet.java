@@ -10,6 +10,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
@@ -161,12 +163,12 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
+			Date date = getDateParameter(req);
 			String regime = req.getParameter(Parameter.REGIME.name());
 			String ccc = req.getParameter(Parameter.CCC.name());
-
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
-			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, new Date());
+			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, date);
 			
 			
 			resp.setStatus(HttpServletResponse.SC_OK);
@@ -430,6 +432,15 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		base64 = base64.replace('$', '+');
 		base64 = base64.replace('_', '/');
 		writer.write(base64);
+	}
+	
+	protected static Date getDateParameter(HttpServletRequest req) {
+		String date = req.getParameter(Parameter.DATE.name());			
+		try {
+			return new SimpleDateFormat(SistemaREDService.DATE_PATTERN).parse(date);
+		} catch (ParseException e) {
+			throw new IllegalArgumentException(e);
+		}		
 	}
 	
 	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,

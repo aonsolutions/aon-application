@@ -12,6 +12,7 @@ import java.util.Set;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx.DefaultFormat;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
@@ -619,6 +620,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton closePDF;
 	private ListBox zoomListBox;
 	private AonToolbarButton downloadPDF;
+	private MonthListBox monthListBox;
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
@@ -1696,7 +1698,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			}
 		});
 		toolbar.add(downloadPDF);
-
+		
+		
 		return toolbar;
 
 	}

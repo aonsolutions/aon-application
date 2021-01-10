@@ -134,7 +134,7 @@ public class EmployeesServiceHelper {
 
 
 
-	public static String getIDC(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId) throws SQLException, IOException, SegSocialException{
+	public static String getIDC(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId, Date date) throws SQLException, IOException, SegSocialException{
 		
 		Contract contract = 
 		PAYROLL.
@@ -151,7 +151,7 @@ public class EmployeesServiceHelper {
 //		Date date = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf)
 //		.stream().map( idc -> idc.getFecha() ).sorted( (d1,d2) -> d2.compareTo(d1 )).findFirst().orElseThrow(DataDoesNotExist::new) ;		
 		
-		byte data [] =  SistemaRED.getIDCNSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, new Date());
+		byte data [] =  SistemaRED.getIDCNSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
 	}
 
