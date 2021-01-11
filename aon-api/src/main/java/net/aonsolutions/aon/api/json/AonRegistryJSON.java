@@ -31,10 +31,10 @@ public enum AonRegistryJSON {
 	ADDRESS(
 		(registry, json) -> {
 			JSONObject jsonAddress = json.optJSONObject(IConstants.ADDRESS);
-			return (jsonAddress != null) ? registry.setAddress(AonAddressJSON.fromJSON(jsonAddress)) : registry;
+			return (jsonAddress != null) ? registry.setMainAddress(AonAddressJSON.fromJSON(jsonAddress)) : registry;
 		}, 
-		(registry, json) -> (registry.getAddress() != null)
-			? json.put(IConstants.ADDRESS, AonAddressJSON.toJSON(registry.getAddress()))
+		(registry, json) -> (registry.getMainAddress() != null)
+			? json.put(IConstants.ADDRESS, AonAddressJSON.toJSON(registry.getMainAddress()))
 			: json
 	);
 
@@ -55,7 +55,7 @@ public enum AonRegistryJSON {
 	}
 
 	public static Registry fromJSON(JSONObject json) {
-		Registry registry = new Registry().setAddress(new RAddress());
+		Registry registry = new Registry().setMainAddress(new RAddress());
 		if (json != null) {
 			for (AonRegistryJSON p : AonRegistryJSON.values()) {
 				p.fromJSON.from(registry, json);

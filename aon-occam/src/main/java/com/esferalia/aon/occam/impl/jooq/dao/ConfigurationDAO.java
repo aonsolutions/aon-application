@@ -109,7 +109,7 @@ public class ConfigurationDAO {
 				} 
 			});
 			if (conf.getCompany() != null && conf.getCompany().getId() != null) {
-				conf.getCompany().setAddress( RegistryDAO.getRAddressStream(ctx, 
+				conf.getCompany().setMainAddress( RegistryDAO.getRAddressStream(ctx, 
 					p -> p.getRegistryProperty().eq(conf.getCompany().getId()))
 					.findFirst().orElse(null));
 			}

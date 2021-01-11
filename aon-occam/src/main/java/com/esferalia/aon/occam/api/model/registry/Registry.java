@@ -22,7 +22,7 @@ public class Registry implements Serializable{
 	private Country nationality;
 	private SecurityLevel securityLevel;
 	private boolean legalPerson;
-	private RAddress address;
+	private RAddress mainAddress;
 	
 	public String getAlias() {
 		return alias;
@@ -102,11 +102,11 @@ public class Registry implements Serializable{
 		return this;
 	}
 	
-	public RAddress getAddress() {
-		return address;
+	public RAddress getMainAddress() {
+		return mainAddress;
 	}
-	public Registry setAddress(RAddress address) {
-		this.address = address;
+	public Registry setMainAddress(RAddress mainAddress) {
+		this.mainAddress = mainAddress;
 		return this;
 	}
 	

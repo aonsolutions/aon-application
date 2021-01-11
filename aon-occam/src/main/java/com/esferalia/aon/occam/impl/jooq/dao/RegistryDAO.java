@@ -269,7 +269,7 @@ public class RegistryDAO {
 					.setName(record.getValue(REGISTRY.NAME))
 					.setNationality(Country.safeValueOf(record.getValue(REGISTRY.NATIONALITY)))
 					.setSecurityLevel(SecurityLevel.safeValueOf( record.getValue(REGISTRY.SECURITY_LEVEL)))
-					.setLegalPerson(record.getValue(REGISTRY.TYPE)==1)
+					.setLegalPerson( AonEnumUtils.getBoolean( record.getValue(REGISTRY.TYPE) ))
 				;
 		}
 		
@@ -307,8 +307,8 @@ public class RegistryDAO {
 					.setName(record.getValue(REGISTRY.NAME))
 					.setNationality(Country.safeValueOf(record.getValue(REGISTRY.NATIONALITY)))
 					.setSecurityLevel(SecurityLevel.safeValueOf( record.getValue(REGISTRY.SECURITY_LEVEL)))
-					.setLegalPerson(record.getValue(REGISTRY.TYPE)==1)
-					.setAddress(address)
+					.setLegalPerson(AonEnumUtils.getBoolean(record.getValue(REGISTRY.TYPE)))
+					.setMainAddress(address)
 				;
 		}
 		

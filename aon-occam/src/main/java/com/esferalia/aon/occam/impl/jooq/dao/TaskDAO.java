@@ -850,7 +850,7 @@ public class TaskDAO {
 			taskHolder.setDocumentType(DocumentType.values()[t.getValue(REGISTRY.DOCUMENT_TYPE)]);
 			taskHolder.setNationality(Country.safeValueOf(t.getValue(REGISTRY.NATIONALITY))); // TODO
 			taskHolder.setSecurityLevel(SecurityLevel.values()[t.getValue(REGISTRY.SECURITY_LEVEL)]);
-			taskHolder.setLegalPerson(t.getValue(REGISTRY.TYPE)==1);
+			taskHolder.setLegalPerson(AonEnumUtils.getBoolean(t.getValue(REGISTRY.TYPE)));
 			taskHolder.setDomain(DomainFiller.buildDomain(t));
 			return taskHolder
 					.setActive(t.getValue(TASK_HOLDER.ACTIVE) == 1)

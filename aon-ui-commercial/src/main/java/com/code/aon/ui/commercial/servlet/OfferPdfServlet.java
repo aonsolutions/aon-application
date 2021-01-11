@@ -70,10 +70,10 @@ public class OfferPdfServlet extends HttpServlet {
 		Domain domain = AON.getDomain(domainName, domainId, userName, f->f.getNameProperty().eq(domainName));		
 
 		Company company = AON.getCompany(domainName, domainId, userName, f -> f.getDomainProperty().eq(domain.getId()));
-		company.setAddress(AON.getRAddres(domain.getName(), domain.getId(), userName, company.getId()));
+		company.setMainAddress(AON.getRAddres(domain.getName(), domain.getId(), userName, company.getId()));
 		Offer offer = AON.getOffer(domainName, domainId, userName, f -> f.getIdProperty().eq(offerId));
 		Target target = AON.getTarget(domain.getName(), domain.getId(),userName, f -> f.getIdProperty().eq(offer.getTarget().getId())).get();
-		target.setAddress(AON.getRAddres(domain.getName(), domain.getId(), userName, target.getId()));
+		target.setMainAddress(AON.getRAddres(domain.getName(), domain.getId(), userName, target.getId()));
 		offer.setTarget(target);
 
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), userName, 
@@ -117,8 +117,8 @@ public class OfferPdfServlet extends HttpServlet {
 	private static String getOneText(Domain domain, Company company) {
 		RecordData rd = AON.getRecordData(domain.getName(), domain.getId(), "", f -> f.getRegistryProperty().eq(company.getId()));
 		return "El proveedor de los productos y/o servicios objeto del presente contrato es la Sociedad Mercantil " +
-	      company.getName() + ", con N.I.F. " + company.getDocument() + " y docimicilio en "+ company.getAddress().getFullAddress() + ", "+
-	      company.getAddress().getZip() + " de " + company.getAddress().getCity() + " ("+ company.getAddress().getGeozoneName() + ")."  +
+	      company.getName() + ", con N.I.F. " + company.getDocument() + " y docimicilio en "+ company.getMainAddress().getFullAddress() + ", "+
+	      company.getMainAddress().getZip() + " de " + company.getMainAddress().getCity() + " ("+ company.getMainAddress().getGeozoneName() + ")."  +
 	      "[Constituida el " + AonDateUtils.simpleFormat(rd.getCreationDate()) + " e " + rd.getRegistration() + " el " +
 	      AonDateUtils.simpleFormat(rd.getRecordDate()) + " en el Tomo " + rd.getVolume() +", Folio " + rd.getPage() +
 	      ", Hoja " + rd.getSheet() + "]";
@@ -159,10 +159,10 @@ public class OfferPdfServlet extends HttpServlet {
 		Domain domain = AON.getDomain(AonUtil.getDomainName(), o.getDomain(), login, f-> f.getIdProperty().eq(o.getDomain()));
 		
 		Company company = AON.getCompany(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()));
-		company.setAddress(AON.getRAddres(domain.getName(), domain.getId(), login, company.getId()));
+		company.setMainAddress(AON.getRAddres(domain.getName(), domain.getId(), login, company.getId()));
 		Offer offer = AON.getOffer(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(o.getId()));
 		Target target = AON.getTarget(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(offer.getTarget().getId())).get();
-		target.setAddress(AON.getRAddres(domain.getName(), domain.getId(), login, target.getId()));
+		target.setMainAddress(AON.getRAddres(domain.getName(), domain.getId(), login, target.getId()));
 		offer.setTarget(target);
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, 
 				f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
@@ -336,17 +336,17 @@ public class OfferPdfServlet extends HttpServlet {
         t1.addCell(new Paragraph(offer.getTarget().getDocument(), getColorFont(9, DARK_BLUE)));
         
         t1.addCell(new Paragraph("Dirección:", getFont(9)));
-        PdfPCell cell = new PdfPCell(new Paragraph(offer.getTarget().getAddress().getFullAddress(), getColorFont(9, DARK_BLUE)));
+        PdfPCell cell = new PdfPCell(new Paragraph(offer.getTarget().getMainAddress().getFullAddress(), getColorFont(9, DARK_BLUE)));
         cell.setBorder(PdfPCell.NO_BORDER);
         cell.setColspan(5);
         t1.addCell(cell);
 
         t1.addCell(new Paragraph("C. Postal:", getFont(9)));
-        t1.addCell(new Paragraph(offer.getTarget().getAddress().getZip(), getColorFont(9, DARK_BLUE)));
+        t1.addCell(new Paragraph(offer.getTarget().getMainAddress().getZip(), getColorFont(9, DARK_BLUE)));
         t1.addCell(new Paragraph("Población:", getFont(9)));
-        t1.addCell(new Paragraph(offer.getTarget().getAddress().getCity(), getColorFont(9, DARK_BLUE)));
+        t1.addCell(new Paragraph(offer.getTarget().getMainAddress().getCity(), getColorFont(9, DARK_BLUE)));
         t1.addCell(new Paragraph("Provincia:", getFont(9)));
-        t1.addCell(new Paragraph(offer.getTarget().getAddress().getGeozoneName(), getColorFont(9, DARK_BLUE)));
+        t1.addCell(new Paragraph(offer.getTarget().getMainAddress().getGeozoneName(), getColorFont(9, DARK_BLUE)));
         
         RegistryMedia email = AON.getRMedia(domain.getName(), domain.getId(), "", f-> f.getRegistryProperty().eq(offer.getTarget().getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value())));
         RegistryMedia cellular = AON.getRMedia(domain.getName(), domain.getId(), "", f-> f.getRegistryProperty().eq(offer.getTarget().getId()).and(f.getMediaProperty().eq(MediaType.CELLULAR.value())));

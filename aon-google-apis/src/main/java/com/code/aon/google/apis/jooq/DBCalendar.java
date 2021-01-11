@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class DBCalendar {
 	
@@ -210,7 +211,7 @@ public class DBCalendar {
 					.setName(rr.getName())
 					.setNationality(Country.safeValueOf(rr.getNationality()))
 					.setSecurityLevel(SecurityLevel.safeValueOf( rr.getSecurityLevel()))
-					.setLegalPerson(rr.getType() == 1);
+					.setLegalPerson( AonEnumUtils.getBoolean( rr.getType() ));
 		} finally {
 			if (ctx != null)
 				ctx.close();

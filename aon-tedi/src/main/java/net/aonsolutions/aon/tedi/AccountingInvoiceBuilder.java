@@ -563,20 +563,20 @@ public class AccountingInvoiceBuilder {
 		else 
 			registry.setDocumentCountry(Country.ES.getIso2());
 		
-		if ( company.getAddress() == null ) 
+		if ( company.getMainAddress() == null ) 
 			return registry;
 		
 		TediAddress address = new TediAddress();
-		address.setCity(company.getAddress().getCity());
-		address.setProvince(company.getAddress().getGeozoneName());
-		address.setAddress(company.getAddress().getFullAddress());
-		address.setPostalCode(company.getAddress().getZip());
+		address.setCity(company.getMainAddress().getCity());
+		address.setProvince(company.getMainAddress().getGeozoneName());
+		address.setAddress(company.getMainAddress().getFullAddress());
+		address.setPostalCode(company.getMainAddress().getZip());
 		registry.setAddress(address);
 		
 		if ( address.getCountry() == null )
 			return registry;
 		
-		address.setCountry(company.getAddress().getCountry().getIso2());		
+		address.setCountry(company.getMainAddress().getCountry().getIso2());		
 		
 		return registry;
 	}

@@ -106,7 +106,7 @@ public class AonParser {
 		return new TediRegistry()
 				.setDocument(company.getDocument())
 				.setName(company.getName())
-				.setAddress(getAddress(company.getAddress()));
+				.setAddress(getAddress(company.getMainAddress()));
 	}
 	
 	public TediAddress getAddress(RAddress address) {

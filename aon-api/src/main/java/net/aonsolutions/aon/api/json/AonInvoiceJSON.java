@@ -77,7 +77,7 @@ public enum AonInvoiceJSON {
 				.setRegistryDocumentCountry(registry.getDocumentCountry())
 				.setRegistryDocumentType(registry.getDocumentType())
 				.setRegistryName(registry.getName())
-				.setRegistryAddress(registry.getAddress().getId());
+				.setRegistryAddress(registry.getMainAddress().getId());
 			}
 			return invoice;
 		},
@@ -90,7 +90,7 @@ public enum AonInvoiceJSON {
 					.setName(invoice.getRegistryName())
 					.setDocumentCountry(invoice.getRegistryDocumentCountry())
 					.setDocumentType(invoice.getRegistryDocumentType())
-					.setAddress(new RAddress()
+					.setMainAddress(new RAddress()
 							.setAddress(invoice.getAddress())
 							.setCity(invoice.getAddressTown())
 							.setGeozone(invoice.getAddressGeozone())
@@ -118,7 +118,7 @@ public enum AonInvoiceJSON {
 					.setRegistryDocumentCountry(registry.getDocumentCountry())
 					.setRegistryDocumentType(registry.getDocumentType())
 					.setRegistryName(registry.getName())
-					.setRegistryAddress(registry.getAddress().getId());
+					.setRegistryAddress(registry.getMainAddress().getId());
 			}
 			return invoice;
 		},
@@ -131,7 +131,7 @@ public enum AonInvoiceJSON {
 					.setName(invoice.getRegistryName())
 					.setDocumentCountry(invoice.getRegistryDocumentCountry())
 					.setDocumentType(invoice.getRegistryDocumentType())
-					.setAddress(new RAddress()
+					.setMainAddress(new RAddress()
 						.setAddress(invoice.getAddress())
 						.setCity(invoice.getAddressTown())
 						.setGeozone(invoice.getAddressGeozone())

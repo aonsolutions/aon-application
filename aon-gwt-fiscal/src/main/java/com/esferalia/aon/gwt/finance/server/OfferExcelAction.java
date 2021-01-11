@@ -148,9 +148,9 @@ public class OfferExcelAction extends AbsExcelAction implements Consumer<OfferDe
 		alignCenter( addCell( detail.getOffer().getTarget().getDocumentCountry() ));
 		addCell( detail.getOffer().getTarget().getDocument() );
 		addCell( detail.getOffer().getTarget().getName() );
-		addCell( detail.getOffer().getTarget().getAddress().getCity() );
-		addCell( detail.getOffer().getTarget().getAddress().getZip() );
-		addCell( detail.getOffer().getTarget().getAddress().getGeozoneName() );
+		addCell( detail.getOffer().getTarget().getMainAddress().getCity() );
+		addCell( detail.getOffer().getTarget().getMainAddress().getZip() );
+		addCell( detail.getOffer().getTarget().getMainAddress().getGeozoneName() );
 		 
 		addCell( detail.getItem()!= null ? detail.getItem().getCode() : null );
 		addCell( detail.getItem()!= null ? detail.getItem().getCategory()  : null );

@@ -72,7 +72,7 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 			.setDocument(company.getDocument())
 			.setDocumentCountry(getCountryCode(company.getDocumentCountry()))
 			.setName(company.getName())
-			.setAddress(getTediAddress( company.getAddress()));
+			.setAddress(getTediAddress( company.getMainAddress()));
 		
 	};
 	public static BiConsumer<TediContext,TediInvoice> SENDER = (ctx,inv) -> {
@@ -140,7 +140,7 @@ private TediInsightInvoice insight;
 				.setDocument(reg.getDocument())
 				.setDocumentCountry(getCountryCode(reg.getDocumentCountry()))
 				.setName(reg.getName())
-				.setAddress(getTediAddress( reg.getAddress()));
+				.setAddress(getTediAddress( reg.getMainAddress()));
 		}
 		return registry;
 	}

@@ -271,7 +271,7 @@ public class OfferDAO {
 									Country.safeValueOf(record
 											.getValue(REGISTRY.DOCUMENT_COUNTRY)))
 							.setName(record.getValue(REGISTRY.NAME))
-							.setAddress(new RAddress()
+							.setMainAddress(new RAddress()
 									.setGeozone(record.getValue(GEOZONE.ID))
 									.setGeozoneName(record.getValue(GEOZONE.NAME))
 									.setGeozoneCode(record.getValue(GEOZONE.CODE))

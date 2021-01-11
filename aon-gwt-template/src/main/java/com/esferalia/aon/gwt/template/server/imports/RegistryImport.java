@@ -65,7 +65,7 @@ public class RegistryImport {
 		
 		public RegistryImportClass() {
 			this.registry = new Registry()
-				.setAddress(new RAddress());
+				.setMainAddress(new RAddress());
 			this.account = new Account();
 			this.paymethod = new PayMethod();
 		}
@@ -323,17 +323,17 @@ public class RegistryImport {
 		if(IConstants.DOMICILIO.equalsIgnoreCase(title)
 				|| IConstants.DIRECCION.equalsIgnoreCase(title)
 				|| IConstants.DIRECCIÓN.equalsIgnoreCase(title)) {
-			reg.getRegistry().getAddress().setAddress(o.toString());
+			reg.getRegistry().getMainAddress().setAddress(o.toString());
 			
-			if(AonStringUtils.isBlank(reg.getRegistry().getAddress().getZip())) {
-				reg.getRegistry().getAddress().setZip(getZip(o.toString()));
+			if(AonStringUtils.isBlank(reg.getRegistry().getMainAddress().getZip())) {
+				reg.getRegistry().getMainAddress().setZip(getZip(o.toString()));
 			}
 			
-			if(reg.getRegistry().getAddress().getGeozone() == null) {
+			if(reg.getRegistry().getMainAddress().getGeozone() == null) {
 				GeoZone gz = getGeoZone(aonCtx, o.toString());
-				reg.getRegistry().getAddress().setGeozone(gz.getId());
-				reg.getRegistry().getAddress().setGeozoneCode(gz.getCode());
-				reg.getRegistry().getAddress().setGeozoneName(gz.getName());
+				reg.getRegistry().getMainAddress().setGeozone(gz.getId());
+				reg.getRegistry().getMainAddress().setGeozoneCode(gz.getCode());
+				reg.getRegistry().getMainAddress().setGeozoneName(gz.getName());
 			}
 			
 			return;
@@ -346,25 +346,25 @@ public class RegistryImport {
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
 				zip = Integer.toString(Utils.parseDouble(zip).intValue());
 			}
-			reg.getRegistry().getAddress().setZip(zip.length() < 5 ? "0" + zip : zip);
+			reg.getRegistry().getMainAddress().setZip(zip.length() < 5 ? "0" + zip : zip);
 			return;
 		}
 
 		if(IConstants.POBLACIÓN.equalsIgnoreCase(title) || IConstants.POBLACION.equalsIgnoreCase(title)
 				|| IConstants.CIUDAD.equalsIgnoreCase(title)) {
-			reg.getRegistry().getAddress().setCity(o.toString());
+			reg.getRegistry().getMainAddress().setCity(o.toString());
 			return ;
 		}
 		if(IConstants.PROVINCIA.equalsIgnoreCase(title)) {
 			Provinces pr = Provinces.getProvince(o.toString());
-			if(pr == null && reg.getRegistry().getAddress().getZip() != null ) {
-				pr = Provinces.getProvinceById(reg.getRegistry().getAddress().getZip().substring(0,2));
+			if(pr == null && reg.getRegistry().getMainAddress().getZip() != null ) {
+				pr = Provinces.getProvinceById(reg.getRegistry().getMainAddress().getZip().substring(0,2));
  			}
 			for(GeoZone gz : aonCtx.getGeozones()) {
 				if(pr != null && pr.getId() != null && gz.getCode().equals(pr.getId())) {
-					reg.getRegistry().getAddress().setGeozone(gz.getId());
-					reg.getRegistry().getAddress().setGeozoneCode(gz.getCode());
-					reg.getRegistry().getAddress().setGeozoneName(gz.getName());
+					reg.getRegistry().getMainAddress().setGeozone(gz.getId());
+					reg.getRegistry().getMainAddress().setGeozoneCode(gz.getCode());
+					reg.getRegistry().getMainAddress().setGeozoneName(gz.getName());
 				}
 			}
 			return;
@@ -460,11 +460,11 @@ public class RegistryImport {
 					.setDomain(domain)
 					.setDocumentType(getDocumentType(r.getRegistry().getDocument()));
 				reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry());
-				r.getRegistry().getAddress()
+				r.getRegistry().getMainAddress()
 					.setType((byte) 0)
 					.setDomain(domain.getId())
 					.setRegistry(reg.getId());
-				AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry().getAddress());
+				AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry().getMainAddress());
 				
 				for(RegistryMedia rm : r.getRmediaList()) {
 					rm.setRegistry(reg);
