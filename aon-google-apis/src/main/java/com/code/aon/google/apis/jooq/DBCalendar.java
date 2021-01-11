@@ -210,7 +210,7 @@ public class DBCalendar {
 					.setName(rr.getName())
 					.setNationality(Country.safeValueOf(rr.getNationality()))
 					.setSecurityLevel(SecurityLevel.safeValueOf( rr.getSecurityLevel()))
-					.setType(rr.getType());
+					.setLegalPerson(rr.getType() == 1);
 		} finally {
 			if (ctx != null)
 				ctx.close();

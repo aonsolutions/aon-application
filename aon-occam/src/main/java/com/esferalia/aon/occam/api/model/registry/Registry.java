@@ -21,7 +21,7 @@ public class Registry implements Serializable{
 	private String name;
 	private Country nationality;
 	private SecurityLevel securityLevel;
-	private Byte type;
+	private boolean legalPerson;
 	private RAddress address;
 	
 	public String getAlias() {
@@ -94,11 +94,11 @@ public class Registry implements Serializable{
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 		return this;
 	}
-	public Byte getType() {
-		return type;
+	public boolean isLegalPerson() {
+		return legalPerson;
 	}
-	public Registry setType(Byte type) {
-		this.type = type;
+	public Registry setLegalPerson(boolean legalPerson) {
+		this.legalPerson = legalPerson;
 		return this;
 	}
 	

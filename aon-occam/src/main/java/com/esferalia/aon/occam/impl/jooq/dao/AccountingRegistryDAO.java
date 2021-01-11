@@ -185,7 +185,7 @@ public class AccountingRegistryDAO {
 			.setAlias(reg.getAlias())
 			.setNationality(reg.getNationality())
 			.setSecurityLevel(SecurityLevel.OFFICIAL)
-			.setType(AonEnumUtils.getByte( AonDocumentUtil.isEntity(reg.getDocument())))
+			.setLegalPerson( AonDocumentUtil.isEntity(reg.getDocument()) )
 			);
 		reg.setId(registryId);
 		

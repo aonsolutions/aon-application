@@ -348,8 +348,8 @@ public class InvoiceServlet extends HttpServlet{
 		c.setConfidential(company.isConfidential());
 		c.setDocumentType(DocumentType.values()[company.getDocumentType().ordinal()]);
 		c.setSecurityLevel(SecurityLevel.values()[company.getSecurityLevel().ordinal()]);
-		if(company.getType() != null){
-			c.setType(RegistryType.values()[company.getType()]);
+		if(company.isLegalPerson()){
+			c.setType(RegistryType.LEGAL);
 		}		
 		c.setDocumentCountry(Country.valueOf(company.getDocumentCountry().getIso2()));
 		c.setNationality(Country.valueOf(company.getNationality().getIso2()));

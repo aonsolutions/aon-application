@@ -224,7 +224,7 @@ public class FillerDAO {
 					.setName(r.getValue(REGISTRY.NAME))
 					.setNationality(null) // TODO
 					.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)))
-					.setType(r.getValue(REGISTRY.TYPE));			
+					.setLegalPerson(r.getValue(REGISTRY.TYPE)==1);			
 		}
 	}
 	
@@ -242,7 +242,7 @@ public class FillerDAO {
 			carrier.setName(r.getValue(REGISTRY.NAME));
 			carrier.setNationality(null); // TODO
 			carrier.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			carrier.setType(r.getValue(REGISTRY.TYPE));
+			carrier.setLegalPerson(r.getValue(REGISTRY.TYPE)==1);
 			return carrier.setScope(r.getValue(CARRIER.SCOPE));				
 		}
 	}
@@ -261,7 +261,7 @@ public class FillerDAO {
 			supplier.setName(r.getValue(REGISTRY.NAME));
 			supplier.setNationality(null); // TODO
 			supplier.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			supplier.setType(r.getValue(REGISTRY.TYPE));
+			supplier.setLegalPerson(r.getValue(REGISTRY.TYPE)==1);
 			return supplier.setScope(r.getValue(SUPPLIER.SCOPE))
 					.setTariff(r.getValue(SUPPLIER.TARIFF))
 					.setAccount(r.getValue(SUPPLIER.ACCOUNT))
@@ -314,7 +314,7 @@ public class FillerDAO {
 			target.setName(r.getValue(REGISTRY.NAME));
 			target.setNationality(null); // TODO
 			target.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			target.setType(r.getValue(REGISTRY.TYPE));
+			target.setLegalPerson(r.getValue(REGISTRY.TYPE)==1);
 			return target.setScope(r.getValue(TARGET.SCOPE))
 					.setAdvertising(r.getValue(TARGET.ADVERTISING).shortValue())
 					.setSurcharge(r.getValue(TARGET.SURCHARGE).shortValue())
@@ -342,7 +342,7 @@ public class FillerDAO {
 			person.setName(r.getValue(REGISTRY.NAME));
 			person.setNationality(null); // TODO
 			person.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			person.setType(r.getValue(REGISTRY.TYPE));
+			person.setLegalPerson(r.getValue(REGISTRY.TYPE)==1);
 			person.setDomain(new Domain().setId(r.getValue(PERSON.DOMAIN)));
 			return person.setBirthDate(r.getValue(PERSON.BIRTH_DATE))
 					.setFirstName(r.getValue(PERSON.NAME))
@@ -365,7 +365,7 @@ public class FillerDAO {
 			customer.setDocumentCountry(null); // TODO
 			customer.setName(r.getValue(REGISTRY.NAME));
 			customer.setAlias(r.getValue(REGISTRY.ALIAS));
-			customer.setType(r.getValue(REGISTRY.TYPE));
+			customer.setLegalPerson(r.getValue(REGISTRY.TYPE)==1);
 			customer.setNationality(null); // TODO
 			customer.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			customer.setDomain(new Domain().setId(r.getValue(CUSTOMER.DOMAIN)));
@@ -660,7 +660,7 @@ public class FillerDAO {
 			company.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
 			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null); // TODO
 			company.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			company.setType(r.getValue(REGISTRY.TYPE));	
+			company.setLegalPerson(r.getValue(REGISTRY.TYPE)==1);	
 			company.setScope(new Scope()
 					.setId(r.getValue(SCOPE.ID))
 					.setDomain(r.getValue(SCOPE.DOMAIN))
@@ -705,7 +705,7 @@ public class FillerDAO {
 			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
 			company.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
 			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null); // TODO
-			company.setType(r.getValue(REGISTRY.TYPE));	
+			company.setLegalPerson(r.getValue(REGISTRY.TYPE)==1);	
 			company.setScope(new Scope()
 					.setId(r.getValue(SCOPE.ID))
 					.setDomain(r.getValue(SCOPE.DOMAIN))
@@ -1196,7 +1196,7 @@ public class FillerDAO {
 			supplier.setId(r.getValue(REGISTRY.ID));
 			supplier.setName(r.getValue(REGISTRY.NAME));
 			supplier.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			supplier.setType(r.getValue(REGISTRY.TYPE));
+			supplier.setLegalPerson(r.getValue(REGISTRY.TYPE)==1);
 			return new UdapaQuality()
 					.setDataResponse(new DataResponse()
 							.setDomain(r.getValue(DATA_RESPONSE.DOMAIN))

@@ -88,6 +88,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 
 @Deprecated
 public class DeliveryCreator implements Serializable {
@@ -1022,7 +1023,7 @@ public class DeliveryCreator implements Serializable {
 				carrier.setDocumentType(DocumentType.NIF);
 				carrier.setNationality(Country.safeValueOf("ES"));
 				carrier.setSecurityLevel(SecurityLevel.OFFICIAL);
-				carrier.setType((byte)1);
+				carrier.setLegalPerson( AonDocumentUtil.isEntity( at.getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO() ) );
 				carrier.setStatus(CarrierStatus.ACTIVE);
 				int id = WarehouseDAO.insertCarrier(ctx, carrier);
 				carrier.setId(id);

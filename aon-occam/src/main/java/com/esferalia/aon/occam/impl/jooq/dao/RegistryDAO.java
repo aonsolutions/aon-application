@@ -269,7 +269,7 @@ public class RegistryDAO {
 					.setName(record.getValue(REGISTRY.NAME))
 					.setNationality(Country.safeValueOf(record.getValue(REGISTRY.NATIONALITY)))
 					.setSecurityLevel(SecurityLevel.safeValueOf( record.getValue(REGISTRY.SECURITY_LEVEL)))
-					.setType(record.getValue(REGISTRY.TYPE))
+					.setLegalPerson(record.getValue(REGISTRY.TYPE)==1)
 				;
 		}
 		
@@ -307,7 +307,7 @@ public class RegistryDAO {
 					.setName(record.getValue(REGISTRY.NAME))
 					.setNationality(Country.safeValueOf(record.getValue(REGISTRY.NATIONALITY)))
 					.setSecurityLevel(SecurityLevel.safeValueOf( record.getValue(REGISTRY.SECURITY_LEVEL)))
-					.setType(record.getValue(REGISTRY.TYPE))
+					.setLegalPerson(record.getValue(REGISTRY.TYPE)==1)
 					.setAddress(address)
 				;
 		}
@@ -389,7 +389,7 @@ public class RegistryDAO {
 			.set(REGISTRY.DOCUMENT_COUNTRY,reg.getDocumentCountry()==null?null:reg.getDocumentCountry().getIso2())
 			.set(REGISTRY.NAME,reg.getName())
 			.set(REGISTRY.ALIAS,reg.getAlias())
-			.set(REGISTRY.TYPE,reg.getType())
+			.set(REGISTRY.TYPE,AonEnumUtils.getByte(reg.isLegalPerson()))
 			.set(REGISTRY.NATIONALITY,reg.getNationality()==null?null:reg.getNationality().getIso2())
 			.set(REGISTRY.SECURITY_LEVEL,(reg.isConfidential()
 					?SecurityLevel.CONFIDENTIAL.value()
@@ -543,7 +543,8 @@ public class RegistryDAO {
 		return ctx.getDslContext().insertInto(REGISTRY, REGISTRY.DOMAIN, REGISTRY.ALIAS, REGISTRY.DOCUMENT, 
 				REGISTRY.DOCUMENT_COUNTRY, REGISTRY.NAME, REGISTRY.NATIONALITY,	REGISTRY.TYPE)
 			.values(registry.getDomain().getId(), registry.getAlias(), registry.getDocument(), 
-				documentCountry, registry.getName(), nationality, registry.getType()).returning()
+				documentCountry, registry.getName(), nationality, 
+				AonEnumUtils.getByte(registry.isLegalPerson())).returning()
 			.fetch().stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
 	}
 	

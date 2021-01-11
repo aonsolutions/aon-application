@@ -69,6 +69,7 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TaskDAO {
@@ -787,7 +788,8 @@ public class TaskDAO {
 	
 	public static TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder){
 		return ctx.getDslContext().insertInto(TASK_HOLDER, TASK_HOLDER.ACTIVE, TASK_HOLDER.COST_PROFILE, TASK_HOLDER.DOMAIN, TASK_HOLDER.REGISTRY, TASK_HOLDER.TYPE, TASK_HOLDER.USER_ID)
-			.values(taskHolder.getActiveValue(), taskHolder.getCostProfile(), taskHolder.getDomain().getId(), taskHolder.getId(),taskHolder.getType(), taskHolder.getUserId())
+			.values(taskHolder.getActiveValue(), taskHolder.getCostProfile(), taskHolder.getDomain().getId(), taskHolder.getId(),
+					AonEnumUtils.getByte(taskHolder.isLegalPerson()), taskHolder.getUserId())
 			.returning().fetch().stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());
 	}
 	
@@ -848,7 +850,7 @@ public class TaskDAO {
 			taskHolder.setDocumentType(DocumentType.values()[t.getValue(REGISTRY.DOCUMENT_TYPE)]);
 			taskHolder.setNationality(Country.safeValueOf(t.getValue(REGISTRY.NATIONALITY))); // TODO
 			taskHolder.setSecurityLevel(SecurityLevel.values()[t.getValue(REGISTRY.SECURITY_LEVEL)]);
-			taskHolder.setType(t.getValue(REGISTRY.TYPE));
+			taskHolder.setLegalPerson(t.getValue(REGISTRY.TYPE)==1);
 			taskHolder.setDomain(DomainFiller.buildDomain(t));
 			return taskHolder
 					.setActive(t.getValue(TASK_HOLDER.ACTIVE) == 1)

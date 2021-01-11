@@ -82,6 +82,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DeliveryPropertiesDAO
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 
 
 public class WarehouseDAO {
@@ -629,7 +630,8 @@ public class WarehouseDAO {
 				.values(carrier.getAlias(), carrier.getDocument(),
 						carrier.getDomain().getId(), carrier.getName(),
 						carrier.getDocumentCountry().getIso2(),
-						carrier.getType()).returning().fetch().stream()
+						AonEnumUtils.getByte(carrier.isLegalPerson())
+						).returning().fetch().stream()
 				.map(new RegistryFiller()).findFirst().orElse(new Registry());
 
 		ctx.getDslContext()
