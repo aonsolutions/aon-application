@@ -72,7 +72,7 @@ import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
-/*
+
 public class IdcTest extends AbstractSQLTestCase {
 
 	private static final double DELTA = 0.001;
@@ -635,6 +635,129 @@ public class IdcTest extends AbstractSQLTestCase {
 			assertEquals(totalCost * 20 / 30, salary.getTotalEnterprise(), DELTA);
 		}
 	}
+
+	@Test
+	@Ignore
+	public void testIdcplnssVBonusI() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SQLException, SalaryException {
+		testIdcplnssVBonus(ContextVariable.ERE_FACTOR);
+	}
+	
+	@Test
+	@Ignore
+	public void testIdcplnssVBonusII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SQLException, SalaryException {
+		testIdcplnssVBonus(ContextVariable.ERE_FACTOR_FORCE);
+	}
+	
+	@Test
+	public void testIdcplnssVBonusIII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SQLException, SalaryException {
+		testIdcplnssVBonus(ContextVariable.ERE_FACTOR_FORCE_OFF);
+	}
+
+	public void testIdcplnssVBonus(ContextVariable ereFactorVariable) throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SQLException, SalaryException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssV.pdf") ){
+			Collection<Bonus> ssBonuses = Idcplnss.getSSBonuses(is);
+			assertEquals(2, ssBonuses.size());
+			//EXONE.ERE.F.MAY.COMP (100,00%) 01-12-2020 10-12-2020
+			//EXONE.ERE.F.MAY.PARC ( 55,00%)
+			
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.DECEMBER);
+			calendar.set(Calendar.YEAR,2020);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			Date _01122020 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,10);
+			Date _10122020 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,11);
+			Date _11122020 = calendar.getTime();
+
+			calendar.set(Calendar.DAY_OF_MONTH,31);
+			Date _31122020 = calendar.getTime();
+			
+			Collection<Data> ereFactors = new ArrayList<Data>() ;
+			ereFactors.add(new Data() { {
+				expression = "1.00";
+				endDate = _10122020;
+				startDate = _01122020;
+				name = ereFactorVariable.getName();
+			}
+			});
+			ereFactors.add(new Data() { {
+				expression = "0.55";
+				endDate = _31122020;
+				startDate = _11122020;
+				name = ereFactorVariable.getName();
+			}
+			});
+			
+			Salary salary = calculate(ssBonuses, ereFactors);	
+			
+			for ( ContextVariable var : new ContextVariable [] {
+					ContextVariable.CGC_BASE,
+					ContextVariable.CGP_BASE,
+					}) {
+				SalaryData[] salaryData = 
+				salary.getSalaryDatas().stream()
+				.filter( d->AonStringUtils.equals(d.getName(), var.getName()))
+				.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+				.toArray( SalaryData[]::new );
+				
+				assertEquals(var.getName(),1, salaryData.length);
+				assertEquals(var.getName(),_11122020, salaryData[0].getStartDate());
+				assertEquals(var.getName(),_31122020, salaryData[0].getEndDate());
+			}
+			
+			for ( ContextVariable var : new ContextVariable [] {
+					ContextVariable.CGC_BASE_ENTERPRISE,
+					ContextVariable.CGP_BASE_ENTERPRISE,
+					}) {
+				SalaryData[] salaryData = 
+				salary.getSalaryDatas().stream()
+				.filter( d->AonStringUtils.equals(d.getName(), var.getName()))
+				.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+				.toArray( SalaryData[]::new );
+				
+				assertEquals(var.getName(),2, salaryData.length);
+				assertEquals(var.getName(),_01122020, salaryData[0].getStartDate());
+				assertEquals(var.getName(),_10122020, salaryData[0].getEndDate());
+				
+				assertEquals(var.getName(),_11122020, salaryData[1].getStartDate());
+				assertEquals(var.getName(),_31122020, salaryData[1].getEndDate());
+			}
+
+			for (SalaryPayment payment : salary.getSalaryPayments()) {
+				System.out.println( payment.getDescription() + ": " + payment.getAmount() + ", " + payment.getQuote());
+			}
+			
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println( cost.getName() + ": " + cost.getAmount() );
+			}
+			
+			assertEquals(2, salary.getSalaryBonus().size());
+			double totalBonus = 0.00;
+			for (SalaryBonus bonus : salary.getSalaryBonus()) {
+				totalBonus += bonus.getAmount();
+				System.out.println( bonus.getDescription() + ": " + bonus.getAmount() );
+			}
+			
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost );
+			
+			assertEquals(totalCost * 9 / 30 + totalCost * 21 / 30 * 0.55, totalBonus, DELTA);
+
+			assertEquals(totalCost * 21 / 30 * 0.45, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+	
+	
 	
 	protected Salary calculate(Collection<Bonus> ssBonuses) throws ExpressionException, SQLException, SalaryException {
 		return calculate(ssBonuses, Collections.emptyList());
@@ -1123,15 +1246,26 @@ public class IdcTest extends AbstractSQLTestCase {
 				null
 			);	
 		
+		PaymentConceptRecord ereConcept = addConcept(aonContext, "ERE");
+		addPayment(aonContext, 
+		contract, 
+		ereConcept, 
+		"/*read-only*/DIAS_ERE * 0.00/**/", 
+		"DIAS_ERE * BASE_REGULADORA");
+
+		PaymentConceptRecord ereFzaConcept = addConcept(aonContext, "ERE_FZA");
+		addPayment(aonContext, 
+		contract, 
+		ereFzaConcept, 
+		"/*read-only*/DIAS_ERE_FZA * 0.00/**/", 
+		"DIAS_ERE_FZA * BASE_REGULADORA");
+		
 		PaymentConceptRecord ereFzaExoneradoConcept = addConcept(aonContext, "ERE_FZA_EXONERADO");
 		addPayment(aonContext, 
 		contract, 
 		ereFzaExoneradoConcept, 
-
-		*/
-//"/*read-only*/DIAS_ERE_FZA_EXONERADO * 0.00/**/",
-//		"DIAS_ERE_FZA_EXONERADO * BASE_REGULADORA");
-/*
+		"/*read-only*/DIAS_ERE_FZA_EXONERADO * 0.00/**/", 
+		"DIAS_ERE_FZA_EXONERADO * BASE_REGULADORA");
 
 		datas.forEach( d-> addData(aonContext, contract, toSQL(d.startDate), toSQL(d.endDate), d.name, d.expression));
 		
@@ -1199,7 +1333,4 @@ public class IdcTest extends AbstractSQLTestCase {
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
 	}
-
 }
-
-		*/

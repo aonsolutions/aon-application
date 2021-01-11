@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+
 class BonusListener  implements IdcListener {
 	
 	private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getNumberInstance(new Locale("es", "ES"));
@@ -37,7 +39,7 @@ class BonusListener  implements IdcListener {
 	};
 	
 	@SuppressWarnings("serial")
-	static final Map<String, String> PEC_BONUS_MAP = new HashMap<String, String>() {
+	static final Map<String, String> PEC_DESCRIPTION_MAP = new HashMap<String, String>() {
 		{
 			put("01", "BONIFICACIÓN INEM");
 			//put("02", "BONIFICACIÓN HACIENDA EMBARCACIONES ZONA ESPECIAL DE CANARIAS");
@@ -58,6 +60,17 @@ class BonusListener  implements IdcListener {
 		}
 	};
 		
+	@SuppressWarnings("serial")
+	static final Map<String, String> PEC_EXPRESSION_MAP = new HashMap<String, String>() {
+		{
+			put("01", "%s"); 															// BONIFICACIÓN INEM
+			put("15", String.format("%%s * %1$s",ContextVariable.ERE_FACTOR_FORCE_OFF, ContextVariable.ERE_FACTOR_FORCE, ContextVariable.ERE_FACTOR )); 	// EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL
+			put("37", "%s");
+			put("41", "%s");
+
+		}
+	};
+
 	private Collection<Bonus> ssBonuses = new LinkedList<Bonus>();
 	
 	public Collection<Bonus> getSSBonuses() {
@@ -69,7 +82,7 @@ class BonusListener  implements IdcListener {
 	@Override
 	public void onEmployeeQuotePEC(String nss, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) {
-		if ( PEC_BONUS_MAP.containsKey(code )) {
+		if ( PEC_DESCRIPTION_MAP.containsKey(code )) {
 			try {
 				if ( ENTERPRISE_QUOTA_EXPRESSION_MAP.containsKey(quota))
 					ssBonuses.add( newEnterpriseBonus(nss, ccc, code, description, portTipo, quota, start, end)) ;
@@ -132,14 +145,18 @@ class BonusListener  implements IdcListener {
 
 		double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
 
-		return String.format(Locale.ROOT,
+		String formula = String.format(Locale.ROOT,
 				"/*epoch:%d,pec:%s,quota:%s*/" +
-				"/*read-only*/( %s ) * %.2f / 100.00/**/", 
+				(percent == 100.00 ? "/*read-only*/%s/**/" : "/*read-only*/( %s ) * %.2f /**/"), 
 				Calendar.getInstance().getTimeInMillis(),
 				code, 
 				quota,  
-				ENTERPRISE_QUOTA_EXPRESSION_MAP.get(quota), 
-				percent
+				String.format(PEC_EXPRESSION_MAP.get(code), ENTERPRISE_QUOTA_EXPRESSION_MAP.get(quota)), 
+				(percent / 100.00)
 				);
+		
+		System.out.println(formula + " : " + formula.length());
+		
+		return formula;
 	}
 }
