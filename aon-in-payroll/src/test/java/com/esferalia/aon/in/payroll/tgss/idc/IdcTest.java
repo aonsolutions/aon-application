@@ -563,29 +563,25 @@ public class IdcTest extends AbstractSQLTestCase {
 			assertEquals(1, ssBonuses.size());
 			//EXONE.ERE.F.MAY.COMP (100,00%) 01-12-2020 10-12-2020
 			
-//			Calendar calendar = Calendar.getInstance();
-//			calendar.set(Calendar.DAY_OF_MONTH,1);
-//			calendar.set(Calendar.MONTH,Calendar.DECEMBER);
-//			calendar.set(Calendar.YEAR,2020);
-//			calendar.set(Calendar.HOUR, 0);
-//			calendar.set(Calendar.MINUTE, 0);
-//			calendar.set(Calendar.SECOND, 0);
-//			calendar.set(Calendar.MILLISECOND, 0);
-//			calendar.set(Calendar.AM_PM, 1);
-//			Date _01122020 = calendar.getTime();
-			Date _01122020 = Date.from(LocalDateTime.of(2020, 12, 01, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.DECEMBER);
+			calendar.set(Calendar.YEAR,2020);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			calendar.set(Calendar.AM_PM, 1);
+			Date _01122020 = calendar.getTime();
 			
-//			calendar.set(Calendar.DAY_OF_MONTH,10);
-//			Date _10122020 = calendar.getTime();
-			Date _10122020 = Date.from(LocalDateTime.of(2020, 12, 10, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
+			calendar.set(Calendar.DAY_OF_MONTH,10);
+			Date _10122020 = calendar.getTime();
 			
-//			calendar.set(Calendar.DAY_OF_MONTH,11);
-//			Date _11122020 = calendar.getTime();
-			Date _11122020 = Date.from(LocalDateTime.of(2020, 12, 11, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
+			calendar.set(Calendar.DAY_OF_MONTH,11);
+			Date _11122020 = calendar.getTime();
 
-//			calendar.set(Calendar.DAY_OF_MONTH,31);
-//			Date _31122020 = calendar.getTime();
-			Date _31122020 = Date.from(LocalDateTime.of(2020, 12, 31, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
+			calendar.set(Calendar.DAY_OF_MONTH,31);
+			Date _31122020 = calendar.getTime();
 			
 
 			Salary salary = calculate(ssBonuses);	
