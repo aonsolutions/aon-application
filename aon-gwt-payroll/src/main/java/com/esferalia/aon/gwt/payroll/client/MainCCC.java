@@ -24,7 +24,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -180,7 +179,7 @@ public class MainCCC extends MainEntryPoint{
 			Label typeCode = new Label(cccInfo.getCccRegimeCode());
 			typeCode.getElement().getStyle().setPadding(4, Unit.PX);
 			typeCode.getElement().getStyle().setMarginLeft(15, Unit.PX);
-			AonTableButton accountStatus = new AonTableButton("", AON.CSS.aonIconInvalid());
+			AonTableButton accountStatus = new AonTableButton("", AON.CSS.aonIconValid());
 			TextBox account = new TextBox();
 			account.setMaxLength(11);
 			account.setValue(cccInfo.getCcc());
@@ -195,11 +194,13 @@ public class MainCCC extends MainEntryPoint{
 						if(checkCCC(accountValue)) {
 							geozone.setText(province);
 							geozone.removeStyleName(style.warningColor());
+							accountStatus.removeStyleName(AON.CSS.aonIconInvalid());
 							accountStatus.addStyleName(AON.CSS.aonIconValid());
 						}else {
 							province = null == province ? "DESCONOCIDA" : province;
 							geozone.setText(province);
 							geozone.addStyleName(style.warningColor());
+							accountStatus.removeStyleName(AON.CSS.aonIconValid());
 							accountStatus.addStyleName(AON.CSS.aonIconInvalid());
 						}
 						mainCCCObject.insertCCC(
@@ -215,8 +216,10 @@ public class MainCCC extends MainEntryPoint{
 			});
 			
 			if(checkCCC(cccInfo.getCcc())) {
+				accountStatus.removeStyleName(AON.CSS.aonIconInvalid());
 				accountStatus.addStyleName(AON.CSS.aonIconValid());
 			}else {
+				accountStatus.removeStyleName(AON.CSS.aonIconValid());
 				accountStatus.addStyleName(AON.CSS.aonIconInvalid());
 			}
 			
@@ -295,7 +298,7 @@ public class MainCCC extends MainEntryPoint{
 		Label typeCode = new Label("");
 		typeCode.getElement().getStyle().setPadding(4, Unit.PX);
 		typeCode.getElement().getStyle().setMarginLeft(15, Unit.PX);
-		AonTableButton accountStatus = new AonTableButton("", AON.CSS.aonIconInvalid());
+		AonTableButton accountStatus = new AonTableButton("", AON.CSS.aonIconValid());
 		TextBox account = new TextBox();
 		account.setMaxLength(11);
 		account.addStyleName("aon-inputText");
@@ -309,11 +312,13 @@ public class MainCCC extends MainEntryPoint{
 					if(checkCCC(accountValue)) {
 						geozone.setText(province);
 						geozone.removeStyleName(style.warningColor());
+						accountStatus.removeStyleName(AON.CSS.aonIconInvalid());
 						accountStatus.addStyleName(AON.CSS.aonIconValid());
 					}else {
 						province = null == province ? "DESCONOCIDA" : province;
 						geozone.setText(province);
 						geozone.addStyleName(style.warningColor());
+						accountStatus.removeStyleName(AON.CSS.aonIconValid());
 						accountStatus.addStyleName(AON.CSS.aonIconInvalid());
 					}
 					mainCCCObject.insertCCC(
