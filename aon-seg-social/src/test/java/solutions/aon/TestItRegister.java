@@ -13,18 +13,24 @@ import solutions.aon.seg.social.SistemaRED_ITParts.Contingencies;
 import solutions.aon.seg.social.SistemaRED_ITParts.ContractType;
 
 public class TestItRegister {
- 
+	@Ignore
 	@Test
-	public void registerItCertificateTest() {
+	public void registerItBaja() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			SistemaRED_ITParts.addItStart(certificateInputStream,"jg@FNMT","pkcs12", "0111", "01105360062", "291136796369", Contingencies.ENFERMEDAD_COMUN, Optional.of("1342341245"), Optional.of("01234567891"), new Date(), ContractType.RESTO_Y_AUTONOMOS, (float) 2.3, 23);
+			SistemaRED_ITParts.registerItBaja(certificateInputStream,"jg@FNMT","pkcs12", 
+					"0111", "01105360062", "291136796369", 
+					Contingencies.ENFERMEDAD_COMUN, Optional.of("1342341245"), Optional.of("00000001"), 
+					new Date(), ContractType.RESTO_Y_AUTONOMOS, (float) 2.3, 23);
 		} catch (Exception e) {System.err.println(e.getMessage());}
 	}
 	
 	@Test
-	@Ignore
-	public void registerItTestRegime() {
-		
+//	@Ignore
+	public void removeIt() {
+		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
+			SistemaRED_ITParts.removeIt(certificateInputStream,"jg@FNMT","pkcs12", 
+					"0111", "01105360062", "291136796369", new Date());
+		} catch (Exception e) {System.err.println(e.getMessage());}
 	}
 	
 	@Test

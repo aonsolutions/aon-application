@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Optional;
 
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
@@ -52,6 +53,19 @@ public class Toolkit {
 		Optional<String> formattedDate;
 		formattedDate = Optional.of(dateFormatter.format(date));
 		return formattedDate;	
+	}
+	
+	public static String[] dateString(Date fecha) {
+		String dia="";
+		String mes="";
+		GregorianCalendar calendar = new GregorianCalendar();
+		calendar.setTime(fecha);
+		String anio = ""+(calendar.get(Calendar.YEAR));
+		if(calendar.get(Calendar.DATE)<10) dia="0"+calendar.get(Calendar.DATE);
+		else dia=""+calendar.get(Calendar.DATE);
+		if((calendar.get(Calendar.MONTH)+1)<10) mes="0"+(calendar.get(Calendar.MONTH)+1);
+		else mes=""+(calendar.get(Calendar.MONTH)+1);
+		return new String[] {dia, mes , anio};
 	}
 	
 	//GET DATE ARRAY [DD,MM,YYYY]

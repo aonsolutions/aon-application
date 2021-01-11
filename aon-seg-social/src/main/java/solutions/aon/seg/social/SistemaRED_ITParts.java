@@ -3,6 +3,7 @@ package solutions.aon.seg.social;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
+import com.gargoylesoftware.htmlunit.util.Cookie;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
@@ -22,7 +23,6 @@ import java.util.*;
 
 public class SistemaRED_ITParts {
 		
-	
 	//GET ITs
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc, Date from, Date to)throws SegSocialException{
@@ -197,34 +197,34 @@ public class SistemaRED_ITParts {
 	}
 	
 	//REGISTER IT START HANDLE EXCEPTIONS
-	public static void addItStart(InputStream certificateInputStream, String certificatePassword,String certificateType,
+	public static void registerItBaja(InputStream certificateInputStream, String certificatePassword,String certificateType,
 			String regime, String ccc, String naf, Contingencies contingency, Optional<String> licenseNumber, Optional<String> cias, Date startdate,
 			ContractType contractType,  float baseCot , int cotDays) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException {
 		
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency, licenseNumber, cias, startdate, contractType,baseCot,cotDays});
 		
-		try{ addItStartImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency,licenseNumber, cias, startdate, contractType, baseCot, cotDays);}
+		try{ registerItBajaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency,licenseNumber, cias, startdate, contractType, baseCot, cotDays);}
 		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
 	}
 	
 	//REGISTER IT START
-	private static void addItStartImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc,
+	private static void registerItBajaImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc,
 									   String naf, Contingencies contingency, Optional<String> licenseNumber, Optional<String> cias, Date startdate, ContractType contractType, float base_cot , int cotDays) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException {
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 
-			if(licenseNumber.isEmpty() && cias.isEmpty()) throw new InvalidDataException("Rellena cias o número de colegiado");
+//			if(licenseNumber.isEmpty() && cias.isEmpty()) throw new InvalidDataException("Rellena cias o número de colegiado");
 
-			HtmlPage document = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
-			HtmlOption type = document.querySelector("#tipoParte option:nth-child(2)");
-			document = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.BAJA);
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
+			HtmlOption type = htmlPage.querySelector("#tipoParte option:nth-child(2)");
+			htmlPage = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.BAJA);
 
-			HtmlInput n_coleg_1_in = document.querySelector("#ncol_0");
-			HtmlInput n_coleg_2_in = document.querySelector("#ncol_1");
-			HtmlInput n_coleg_3_in = document.querySelector("#ncol_2");
-			HtmlInput cias_in = document.querySelector("#cias");
-			HtmlInput startDate_dd_in = document.querySelector("#fechaBaja_dd");			
-			HtmlInput startDate_mm_in = document.querySelector("#fechaBaja_mm");			
-			HtmlInput startDate_aa_in = document.querySelector("#fechaBaja_aa");
+//			HtmlInput n_coleg_1_in = document.querySelector("#ncol_0");
+//			HtmlInput n_coleg_2_in = document.querySelector("#ncol_1");
+//			HtmlInput n_coleg_3_in = document.querySelector("#ncol_2");
+//			HtmlInput cias_in = document.querySelector("#cias");
+			HtmlInput startDate_dd_in = htmlPage.querySelector("#fechaBaja_dd");			
+			HtmlInput startDate_mm_in = htmlPage.querySelector("#fechaBaja_mm");			
+			HtmlInput startDate_aa_in = htmlPage.querySelector("#fechaBaja_aa");
 
 			HtmlOption contract_type_opt = null;
 			HtmlInput cot_base_in_1 = null;
@@ -236,20 +236,19 @@ public class SistemaRED_ITParts {
 
 			switch (contractType) {
 				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL: 	
-					contract_type_opt = document.querySelector("#tipoContrato option:nth-child(2)");	
-					cot_base_in_1 = document.querySelector("#sumaBC1");
-					cot_base_in_2 = document.querySelector("#sumaBC2");
-					cot_days_in = document.querySelector("#sumaDias");
+					contract_type_opt = htmlPage.querySelector("#tipoContrato option:nth-child(2)");	
+					cot_base_in_1 = htmlPage.querySelector("#sumaBC1");
+					cot_base_in_2 = htmlPage.querySelector("#sumaBC2");
+					cot_days_in = htmlPage.querySelector("#sumaDias");
 					break;
 				case RESTO_Y_AUTONOMOS:						
-					contract_type_opt = document.querySelector("#tipoContrato option:nth-child(3)");	
-					cot_base_in_1 = document.querySelector("#baseCotizacion1");
-					cot_base_in_2 = document.querySelector("#baseCotizacion2");
-					cot_days_in = document.querySelector("#diasCot");
+					contract_type_opt = htmlPage.querySelector("#tipoContrato option:nth-child(3)");	
+					cot_base_in_1 = htmlPage.querySelector("#baseCotizacion1");
+					cot_base_in_2 = htmlPage.querySelector("#baseCotizacion2");
+					cot_days_in = htmlPage.querySelector("#diasCot");
 					break;
 			}
-
-			cias_in.setValueAttribute(cias.get());
+			
 			startDate_dd_in.setValueAttribute(arr_startDate[0] + "");
 			startDate_mm_in.setValueAttribute(arr_startDate[1] + "");
 			startDate_aa_in.setValueAttribute(arr_startDate[2] + "");
@@ -257,21 +256,27 @@ public class SistemaRED_ITParts {
 			cot_base_in_2.setValueAttribute(arr_base_cot[1]);
 			cot_days_in.setValueAttribute(cotDays + "");
 
-			document = contract_type_opt.click();
+//			HtmlSelect ocup = document.querySelector("#ocupacion");
+//			ocup.setSelectedAttribute("9490", true); //.setValueAttribute("9490");
+			
+			htmlPage = contract_type_opt.click();
 
-			if(licenseNumber.isPresent()){
-				ArrayList<String> n_coleg_arr_ls = Toolkit.splitString_m(licenseNumber.get(), new int[]{2,4});
-				n_coleg_1_in.setValueAttribute(n_coleg_arr_ls.get(0));
-				n_coleg_2_in.setValueAttribute(n_coleg_arr_ls.get(1));
-				n_coleg_3_in.setValueAttribute(n_coleg_arr_ls.get(2));
-			}
-			if(licenseNumber.isPresent())	cias_in.setAttribute("value",cias.get());
+//			if(licenseNumber.isPresent()){
+//				ArrayList<String> n_coleg_arr_ls = Toolkit.splitString_m(licenseNumber.get(), new int[]{2,4});
+//				n_coleg_1_in.setValueAttribute(n_coleg_arr_ls.get(0));
+//				n_coleg_2_in.setValueAttribute(n_coleg_arr_ls.get(1));
+//				n_coleg_3_in.setValueAttribute(n_coleg_arr_ls.get(2));
+//				cias_in.setValueAttribute(cias.get());
+//			}
 			
-			HtmlSubmitInput validate = document.querySelector("#Validar");
-			document = validate.click();
+			HtmlSubmitInput validate = htmlPage.querySelector("#Validar");
+			htmlPage = validate.click();
+
+			HtmlSubmitInput confim = htmlPage.querySelector("#botones input[value=Confirmar]");
+			htmlPage = confim.click();
+
 			
-			HtmlUnitToolkit.showAsXML(new HtmlElement[]{cot_base_in_1,cot_base_in_2,cot_days_in});
-			Toolkit.buildFile(document.getWebResponse().getContentAsStream().readAllBytes(),"coso.txt");
+			Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testIt.html");
 			
 		} 
 	}
@@ -345,31 +350,89 @@ public class SistemaRED_ITParts {
 	}
 	
 	//Cancel IT
-	public static void removeItStart(InputStream certificateInputStream, String certificatePassword,String certificateType,String regime, String ccc, String naf, Date startdate)
-		throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException {
+	public static void removeIt(InputStream certificateInputStream, String certificatePassword,String certificateType,String regime, String ccc, String naf, Date startdate)
+		throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException, InterruptedException {
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, startdate});
-		try{ removeItStartImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, startdate);}
+		try{ removeItImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, startdate);}
 		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
 	}
 
 
 
 	//remove it
-	private static void removeItStartImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, Date startdate)
-			throws InvalidCertificateException, FailingHttpStatusCodeException, IOException {
+	private static void removeItImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, Date startdate)
+			throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InterruptedException, InvalidDataException {
+	
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/isincaA/menu.do?opcion=A");
+//			webClient.getOptions().setThrowExceptionOnScriptError(false);
+//			webClient.getOptions().setRedirectEnabled(true); 
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
 
-			HtmlInput regime_in = htmlPage.querySelector("#regimen");
-			HtmlInput ccc_in_1 = htmlPage.querySelector("#cc1");
-			HtmlInput ccc_in_2 = htmlPage.querySelector("#cc2");
-			HtmlInput naf_in_1 = htmlPage.querySelector("#naf2");
-			HtmlInput naf_in_2 = htmlPage.querySelector("#naf2");
-			HtmlInput date_in_dd = htmlPage.querySelector("#fechaBaja_dd");
-			HtmlInput date_in_mm = htmlPage.querySelector("#fechaBaja_mm");
-			HtmlInput date_in_aa = htmlPage.querySelector("#fechaBaja_aa");
-			HtmlInput continue_in = htmlPage.querySelector("#botonesANULAR input[name=boton]");
+			htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=A").click(); 
+			
+			String[] ccc_arr =  Toolkit.SplitString(ccc, 2);
+			String[] naf_arr =  Toolkit.SplitString(naf, 2);
+			String[] arr_startDate = Toolkit.dateString(startdate);
+			
+			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("BuscaPartesForm")).orElseThrow();
+			form.getInputByName("regimen").setValueAttribute(regime);
+			form.getInputByName("ccc1").setValueAttribute(ccc_arr[0]);
+			form.getInputByName("ccc2").setValueAttribute(ccc_arr[1]);
+			form.getInputByName("naf1").setValueAttribute(naf_arr[0]);
+			form.getInputByName("naf2").setValueAttribute(naf_arr[1]);
+			form.getInputByName("fechaBaja_dd").setValueAttribute(arr_startDate[0]);
+			form.getInputByName("fechaBaja_mm").setValueAttribute(arr_startDate[1]);
+			form.getInputByName("fechaBaja_aa").setValueAttribute(arr_startDate[2]);
 
+			HtmlSubmitInput  continue_in = htmlPage.querySelector("#botonesANULAR input[value=Continuar]");
+			htmlPage = continue_in.click();
+
+			String fbaja = arr_startDate[0]+"/"+arr_startDate[1]+"/"+arr_startDate[2];
+		
+			HtmlTable table = (HtmlTable) htmlPage.querySelector("#datos2 > fieldset > table");
+		
+			HtmlAnchor firstColumn = null;
+			for (final HtmlTableRow row : table.getRows()) {
+				HtmlTableCell cell = row.getCell(2);
+				if(cell.getVisibleText().indexOf(fbaja)>= 0) {
+					firstColumn = row.getCell(0).querySelector("a");
+					break;
+				}
+			}
+	
+			  Set<Cookie> cookies = htmlPage.getWebClient().getCookieManager().getCookies();
+			  StringBuilder cookieHeader = new StringBuilder();
+			  for (int index = 0; index < cookies.size(); index++){
+		            String cookie = cookies.toArray()[index].toString();
+		            String cookieNameValue =cookie.substring(0, cookie.indexOf(";"));
+		            String name = cookieNameValue.substring(0, cookieNameValue.indexOf("="));
+		            String value = cookieNameValue.substring(cookieNameValue.indexOf("=") + 1);
+
+		            if (index == 0){
+		                cookieHeader.append(name + "=" +value);
+		            } else {
+		                cookieHeader.append("; "+ name + "=" +value);
+		            }
+
+	        }
+
+			String newUrl = htmlPage.getFullyQualifiedUrl(firstColumn.getHrefAttribute()).toString().replaceAll("\\s","");
+			firstColumn.setAttribute("href", newUrl);
+			htmlPage = firstColumn.click();
+			
+			HtmlSubmitInput  anular = htmlPage.querySelector("#botones input[value=Anular]");
+			htmlPage = anular.click();
+			
+			//confirmar
+			HtmlSubmitInput  confirm = htmlPage.querySelector("#general > form input[value=Confirmar]");
+			htmlPage = confirm.click();
+			
+			//message exito
+			String message = htmlPage.querySelector("#miForm > div.importante > div.indent > span.TextoMensaje").asText();
+//			output->   Parte anulado con �xito.
+
+		
+			Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testItRemove.html");
 		}
 	}
 }
