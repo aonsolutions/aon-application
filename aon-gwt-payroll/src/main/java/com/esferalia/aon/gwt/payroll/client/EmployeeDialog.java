@@ -238,8 +238,22 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 			
 			if(this.activityCCC.getSelectedIndex() == 0)
 				employeeDialogObject.setActivityInfo(null);
-			else
+			else {
 				employeeDialogObject.setActivityInfo(activityCCC);
+				
+				Byte cccType = Byte.parseByte(activityCCC.split("/")[2]);
+				if(cccType == (byte)7)
+					employee.showMdCtzContract();
+				else
+					employee.hideMdCtzContract();
+				
+			}
+		}
+		
+		@Override
+		public void onContractMdCTZhange() {
+			String mdCtz = employee.mdCTZLB.getSelectedValue();
+			employeeDialogObject.setMdCtzInfo(mdCtz);
 		}
 		
 		@Override
@@ -565,6 +579,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 			
 			employeeDialogObject.setEmployeeAccount(account);
 		}
+
 		
 	}	
 
@@ -944,6 +959,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.ssRegimeType.setSelectedIndex(employeeDialogObject.getContractSSRegimen());
 		
 		setSelectedValueLB(employee.activityCCC, contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
+		if(contractData.getCccType() == (byte)7)
+			employee.showMdCtzContract();
+		else
+			employee.hideMdCtzContract();
+		setSelectedValueLB(employee.mdCTZLB, contractData.getMdctz());
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId().toString());
 		
 		setSelectedValueLB(employee.contractType, contractData.getContractType());

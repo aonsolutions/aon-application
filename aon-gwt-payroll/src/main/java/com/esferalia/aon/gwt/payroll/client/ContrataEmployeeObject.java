@@ -228,23 +228,23 @@ public class ContrataEmployeeObject {
 			}
 		});
 		
-		employeesService.setEmployeeInfoDataBase(this.employeeContractData, new AsyncCallback<EmployeeContractInfo>() {
-			
-			@Override
-			public void onSuccess(EmployeeContractInfo result) {
-				employeeContractData = result;
-				employeeData = result.getEmployeeInfo();
-				contractData = result.getContractInfo();
-				employeeContractData.setEmployeeInfo(employeeData);
-				employeeContractData.setContractInfo(contractData);
-				success.accept(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
+//		employeesService.setEmployeeInfoDataBase(this.employeeContractData, new AsyncCallback<EmployeeContractInfo>() {
+//			
+//			@Override
+//			public void onSuccess(EmployeeContractInfo result) {
+//				employeeContractData = result;
+//				employeeData = result.getEmployeeInfo();
+//				contractData = result.getContractInfo();
+//				employeeContractData.setEmployeeInfo(employeeData);
+//				employeeContractData.setContractInfo(contractData);
+//				success.accept(result);
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				failure.accept(caught);
+//			}
+//		});
 	}
 	
 	public void setEmployeeContract(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
@@ -797,6 +797,10 @@ public class ContrataEmployeeObject {
 		contractData.setCccType(cccType);
 	}
 	
+	public void setContractMdCtz(String md_ctz) {
+		contractData.setMdctz(md_ctz);
+	}
+	
 	public void setContractWorkplaceId(Integer workplaceId) {
 		contractData.setWorkplaceId(workplaceId);
 	}
@@ -815,6 +819,10 @@ public class ContrataEmployeeObject {
 		setContractActivityId(activityId);
 		setContractCCCId(cccId);
 		setContractCCCType(cccType);
+	}
+	
+	public void setMdCTZ(String md_ctz) {
+		setContractMdCtz(md_ctz);
 	}
 	
 	public void setContractType(String contract_type) {

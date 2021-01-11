@@ -241,6 +241,14 @@
 							</td>
 						</tr>
 						<tr>
+							<td style="background-color: #f6f6f6; width: 200px;">
+								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Modalidad Cotización</g:Label>
+							</td>
+							<td colspan="6">
+								<g:ListBox ui:field="mdCTZLB" debugId="mdCTZ" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
 						    <td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Centro de trabajo</g:Label>
 							</td>

@@ -489,6 +489,17 @@ public class JooqEmployee {
 				.execute();
 		}
 		
+		if(null != contractData.getMdctz() && !contractData.getMdctz().equals("-1")) {
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "MODELO_COTIZACION_AGRARIO")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, contractData.getMdctz())
+				.set(CONTRACT_DATA.START_DATE, contractStartDate)
+				.set(CONTRACT_DATA.END_DATE, contractEndDate)
+				.execute();
+		}
+		
 		return null;
 	}
 	
@@ -822,6 +833,9 @@ public class JooqEmployee {
 			}else if(r.get(CONTRACT_DATA.NAME).equals("COEFICIENTE_PARCIALIDAD")) {
 				contractData.setPartialityCoefId(r.get(CONTRACT_DATA.ID));
 				contractData.setPartialityCoef(Double.parseDouble(r.get(CONTRACT_DATA.EXPRESSION)));
+			}else if(r.get(CONTRACT_DATA.NAME).equals("MODELO_COTIZACION_AGRARIO")) {
+				contractData.setMdctzId(r.get(CONTRACT_DATA.ID));
+				contractData.setMdctz(r.get(CONTRACT_DATA.EXPRESSION));
 			}
 			
 		}
@@ -1379,14 +1393,42 @@ public class JooqEmployee {
 				}else{
 					if(null == contractData.getPartialityCoef()){
 						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getPartialityCoefId())).execute();
-						contractData.setOcupationId(null);
-						contractData.setOcupation(null);
+						contractData.setPartialityCoefId(null);
+						contractData.setPartialityCoef(null);
 					}else{
 						dslContext.update(CONTRACT_DATA)
 						.set(CONTRACT_DATA.EXPRESSION, contractData.getPartialityCoef().toString())
 						.set(CONTRACT_DATA.START_DATE, startDate)
 						.set(CONTRACT_DATA.END_DATE, endDate)
 						.where(CONTRACT_DATA.ID.eq(contractData.getPartialityCoefId()))
+						.execute();
+					}
+				}
+				
+				if(null == contractData.getMdctzId()){
+					if(null != contractData.getMdctz() && "-1" != contractData.getMdctz()){
+						ContractDataRecord mdCtzRecord = null;
+						
+						mdCtzRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+							.values(contractData.getMdctzId(), domain, "MODELO_COTIZACION_AGRARIO", contractData.getContractId(), contractData.getMdctz(), 
+									startDate, endDate)
+							.returning(CONTRACT_DATA.ID)
+							.fetchOne();
+						
+						contractData.setMdctzId(mdCtzRecord.getId());
+					}
+				}else{
+					if(null == contractData.getMdctz() || ("-1" == contractData.getMdctz() || "-1".equalsIgnoreCase(contractData.getMdctz()))){
+						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getMdctzId())).execute();
+						contractData.setMdctzId(null);
+						contractData.setMdctz(null);
+					}else{
+						dslContext.update(CONTRACT_DATA)
+						.set(CONTRACT_DATA.EXPRESSION, contractData.getMdctz())
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.where(CONTRACT_DATA.ID.eq(contractData.getMdctzId()))
 						.execute();
 					}
 				}

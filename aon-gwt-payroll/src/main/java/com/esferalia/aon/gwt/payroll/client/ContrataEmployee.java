@@ -186,8 +186,22 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			
 			if(this.activityCCC.getSelectedIndex() == 0)
 				contrataEmployeeObject.setActivityInfo(null);
-			else
+			else {
 				contrataEmployeeObject.setActivityInfo(activityCCC);
+			
+				byte cccType = Byte.parseByte(activityCCC.split("/")[2]);
+				if(cccType == (byte) 7) {
+					employee.showMdCtzContract();
+				} else {
+					employee.hideMdCtzContract();
+				}
+			}
+		}
+		
+		@Override
+		public void onContractMdCTZhange() {
+			String md_ctz = String.valueOf(this.mdCTZLB.getSelectedValue());
+			contrataEmployeeObject.setMdCTZ(md_ctz);
 		}
 		
 		@Override
@@ -1205,8 +1219,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employee.ssRegimeType.setSelectedIndex(contrataEmployeeObject.getContractSSRegimen());
 		
 		setSelectedValueLB(employee.activityCCC, contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
-		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId().toString());
+		if(contractData.getCccType() == (byte)7)
+			employee.showMdCtzContract();
+		else
+			employee.hideMdCtzContract();
+		setSelectedValueLB(employee.mdCTZLB, contractData.getMdctz());
 		
+		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId().toString());
 		setSelectedValueLB(employee.contractType, contractData.getContractType());
 		
 		Integer contractTypeId = contrataEmployeeObject.getContractType();

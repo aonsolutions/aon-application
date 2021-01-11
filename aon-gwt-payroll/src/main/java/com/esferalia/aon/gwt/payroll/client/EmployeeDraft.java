@@ -121,8 +121,14 @@ public class EmployeeDraft extends Composite {
 			
 			if(this.activityCCC.getSelectedIndex() == 0)
 				employeeDraftObject.setActivityInfo(null);
-			else
+			else {
 				employeeDraftObject.setActivityInfo(activityCCC);
+				Byte cccType = Byte.parseByte(activityCCC.split("/")[2]);
+				if(cccType == (byte)7)
+					employee.showMdCtzContract();
+				else
+					employee.hideMdCtzContract();
+			}
 			
 			saving();
 			
@@ -152,6 +158,13 @@ public class EmployeeDraft extends Composite {
 //				employeeDraftObject.setContractCCCType(cccType);
 //			}
 //			saving();
+		}
+		
+		@Override
+		public void onContractMdCTZhange() {
+			String mdCtz = employee.mdCTZLB.getSelectedValue();
+			employeeDraftObject.setMdCtzInfo(mdCtz);
+			saving();
 		}
 
 		@Override
@@ -608,7 +621,8 @@ public class EmployeeDraft extends Composite {
 				employeeDraftObject.setEmployeeAccount(value);
 				saving();
 			}
-		}		
+		}
+		
 	}
 	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
@@ -1253,6 +1267,13 @@ public class EmployeeDraft extends Composite {
 		this.employee.ssRegimeType.setSelectedIndex(employeeDraftObject.getContractSSRegimen());
 		
 		setSelectedValueLB(employee.activityCCC, employeeDraftObject.getActivityId()+"/"+employeeDraftObject.getCccId()+"/"+employeeDraftObject.getCccType());
+		if(employeeDraftObject.getCccType() == (byte)7)
+			employee.showMdCtzContract();
+		else
+			employee.hideMdCtzContract();
+		
+		setSelectedValueLB(employee.mdCTZLB, employeeDraftObject.getMdCtz());
+		
 		setSelectedValueLB(employee.workplace, employeeDraftObject.getWorkplaceId().toString());
 		
 		setSelectedValueLB(employee.contractType, employeeDraftObject.getContractType());

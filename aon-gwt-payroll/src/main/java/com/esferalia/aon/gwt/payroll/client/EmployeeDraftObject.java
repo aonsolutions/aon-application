@@ -22,7 +22,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Rbank;
-import com.esferalia.aon.gwt.payroll.shared.SaltraCredentialsNotFoundException;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -881,6 +880,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		setContractCCCType(cccType);
 	}
 	
+	public void setMdCtzInfo(String mdCtz) {
+		this.contractData.setMdctz(mdCtz);
+	}
+	
 	public int getCccId() {
 		return this.contractData.getCccId();
 	}
@@ -958,6 +961,11 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 
 	public Integer getPaymethodId() {
 		return employeeData.getPaymethodId();
+	}
+
+	public String getMdCtz() {
+		// TODO Auto-generated method stub
+		return contractData.getMdctz();
 	}
 	
 }

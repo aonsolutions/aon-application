@@ -462,6 +462,10 @@ public class EmployeeDialogObject {
 		setContractCCCType(cccType);
 	}
 	
+	public void setMdCtzInfo(String mdCtz) {
+		contractData.setMdctz(mdCtz);
+	}
+	
 	public void setContractType(String contract_type) {
 		contractData.setContractType(contract_type);
 	}

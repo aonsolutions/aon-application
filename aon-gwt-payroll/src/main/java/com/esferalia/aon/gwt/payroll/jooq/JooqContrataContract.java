@@ -32,7 +32,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1041,6 +1040,9 @@ public class JooqContrataContract {
 					Double partialityCoef = Double.parseDouble(expression);
 					contractData.setPartialityCoefId(r.get(CONTRACT_DATA.ID));
 					contractData.setPartialityCoef(partialityCoef);
+				} else if(r.get(CONTRACT_DATA.NAME).equals("MODELO_COTIZACION_AGRARIO")) {
+					contractData.setMdctzId(r.get(CONTRACT_DATA.ID));
+					contractData.setMdctz(r.get(CONTRACT_DATA.EXPRESSION));
 				}
 				
 			}

@@ -54,6 +54,8 @@ public class ContractInfo implements Serializable{
 	
 	// Comunic@ Fields
 	private String colectiveAgreement;
+	
+	private Integer md_ctzId;
 	private String md_ctz;
 	
 	private Integer partialityCoefId;
@@ -378,6 +380,14 @@ public class ContractInfo implements Serializable{
 		this.colectiveAgreement = colectiveAgreement;
 	}
 
+	public Integer getMdctzId() {
+		return md_ctzId;
+	}
+
+	public void setMdctzId(Integer md_ctzId) {
+		this.md_ctzId = md_ctzId;
+	}
+	
 	public String getMdctz() {
 		return md_ctz;
 	}
