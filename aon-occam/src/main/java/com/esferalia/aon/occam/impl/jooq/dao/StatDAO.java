@@ -127,7 +127,7 @@ public class StatDAO {
 					.setLabel(tag.getName())
 					.setType(StatFilterType.PRODUCT_TAG))); 
 
-		RegistryDAO.getSegments(ctx).forEach( seg -> 
+		RegistryOldDAO.getSegments(ctx).forEach( seg -> 
 	 		params.getFilterItems().add(new StatFilterItem()
 	 				.setId(AonNumberUtils.toString(seg.getId()))
 	 				.setLabel(seg.getName() + " ("+seg.getId()+")")
@@ -141,7 +141,7 @@ public class StatDAO {
 				.setType(StatFilterType.WORKPLACE));
 		}
 		
-		RegistryDAO.getSellers(ctx).forEach(
+		RegistryOldDAO.getSellers(ctx).forEach(
 				seller -> params.getFilterItems().add(new StatFilterItem()
 							.setId(seller.getId())
 							.setLabel(seller.getRegistryName())

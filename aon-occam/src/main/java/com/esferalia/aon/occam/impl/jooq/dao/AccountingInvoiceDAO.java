@@ -1100,25 +1100,25 @@ public class AccountingInvoiceDAO {
 				@Override
 				public void visitSupplier(AccountingRegistry reg) {
 					Account account = createAccountAndFill(reg);
-					RegistryDAO.updateSupplierAccount(ctx,reg.getId(),account.getId());
+					RegistryOldDAO.updateSupplierAccount(ctx,reg.getId(),account.getId());
 				}
 				
 				@Override
 				public void visitCustomer(AccountingRegistry reg) {
 					Account account = createAccountAndFill(reg);
-					RegistryDAO.updateCustomerAccount(ctx,reg.getId(),account.getId());
+					RegistryOldDAO.updateCustomerAccount(ctx,reg.getId(),account.getId());
 				}
 				
 				@Override
 				public void visitCreditor(AccountingRegistry reg) {
 					Account account = createAccountAndFill(reg);
-					RegistryDAO.updateCreditorAccount(ctx,reg.getId(),account.getId());
+					RegistryOldDAO.updateCreditorAccount(ctx,reg.getId(),account.getId());
 				}
 				
 				@Override
 				public void visitUndedCreditor(AccountingRegistry reg) {
 					Account account = createAccountAndFill(reg);
-					RegistryDAO.updateCreditorAccount(ctx,reg.getId(),account.getId());
+					RegistryOldDAO.updateCreditorAccount(ctx,reg.getId(),account.getId());
 				}
 				
 				private Account createAccountAndFill(AccountingRegistry reg) {

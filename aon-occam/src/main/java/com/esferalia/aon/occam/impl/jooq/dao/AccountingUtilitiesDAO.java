@@ -824,7 +824,7 @@ public class AccountingUtilitiesDAO {
 	}
 	
 	public static Account createAndLinkAccount(AONContext ctx, AccountingRegistryType registryType, Integer registryId) {
-		Registry registry = RegistryDAO.getRegistry(ctx, p -> p.getIdProperty().eq(registryId));
+		Registry registry = RegistryOldDAO.getRegistry(ctx, p -> p.getIdProperty().eq(registryId));
 		if (registry == null || registry.getId() == null) throw new AonCoreException("Registro no encontrado");
 		AccountLinker accountLinker = new AccountLinker(ctx, registry, registryType);
 		registryType.visit( null,  accountLinker);
@@ -851,25 +851,25 @@ public class AccountingUtilitiesDAO {
 		@Override
 		public void visitSupplier(AccountingRegistry nullReg) {
 			account = createAccount(registry);
-			RegistryDAO.updateSupplierAccount(ctx,registry.getId(),account.getId());
+			RegistryOldDAO.updateSupplierAccount(ctx,registry.getId(),account.getId());
 		}
 		
 		@Override
 		public void visitCustomer(AccountingRegistry nullReg) {
 			account = createAccount(registry);
-			RegistryDAO.updateCustomerAccount(ctx,registry.getId(),account.getId());
+			RegistryOldDAO.updateCustomerAccount(ctx,registry.getId(),account.getId());
 		}
 		
 		@Override
 		public void visitCreditor(AccountingRegistry nullReg) {
 			account = createAccount(registry);
-			RegistryDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
+			RegistryOldDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
 		}
 		
 		@Override
 		public void visitUndedCreditor(AccountingRegistry nullReg) {
 			account = createAccount(registry);
-			RegistryDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
+			RegistryOldDAO.updateCreditorAccount(ctx,registry.getId(),account.getId());
 		}
 		
 		private Account createAccount(Registry reg) {

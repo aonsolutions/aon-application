@@ -341,7 +341,7 @@ public class ProjectDAO {
 		.and(PROJECT_COMMERCIAL.DOMAIN.ne(REGISTRY.DOMAIN))
 		.fetch().stream().map(new FixProjectCommercialFiller())
 		.forEach(r -> {
-			Optional<Target> target = RegistryDAO.getTargetStream(ctx, f-> f.getDomainProperty().eq(ctx.getDomainId())
+			Optional<Target> target = RegistryOldDAO.getTargetStream(ctx, f-> f.getDomainProperty().eq(ctx.getDomainId())
 					.and(f.getDocumentProperty().eq(r.getDocument()))).findFirst();
 			if(target.isPresent()) {
 				ctx.getDslContext().update(PROJECT).set(PROJECT.REGISTRY, target.get().getId()).where(PROJECT.ID.eq(r.getProject())).execute();

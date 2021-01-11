@@ -61,7 +61,7 @@ import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 
@@ -404,7 +404,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 	private RegistryItem obtainCustomerItem(AONContext ctx, Item item, Customer customer) {
 		RegistryItem rItem = null;
 		if(item!=null && item.getId()!=null && customer!=null && customer.getId()!=null){
-			 rItem = RegistryDAO
+			 rItem = RegistryOldDAO
 					.getRItemStream(ctx,
 							f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getItemProperty().eq(item.getId()))
 									.and(f.getRegistryProperty().eq(customer.getId())))
@@ -420,7 +420,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 			Sales sales) {
 		Workplace workplace = WorkplaceDAO.getWorkplace(ctx, p -> p.getIdProperty().eq(sales.getWorkplace()));
 		if(workplace!=null){
-			RAddress address = RegistryDAO
+			RAddress address = RegistryOldDAO
 					.getRAddressStream(ctx,
 							p -> p.getIdProperty().eq(workplace.getAddress()))
 					.findFirst().orElse(new RAddress());
@@ -523,7 +523,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 	
 	private Registry obtainRegistry(AONContext ctx, Integer id){
 		if(id!=null){
-			return RegistryDAO.getRegistry(ctx, f -> f.getIdProperty().eq(id));
+			return RegistryOldDAO.getRegistry(ctx, f -> f.getIdProperty().eq(id));
 		}
 		return null;
 	}
@@ -539,7 +539,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 	
 	private String obtainCustomerPhone(AONContext ctx, Customer customer) {
 		if (customer != null && customer.getId() != null) {
-			return RegistryDAO
+			return RegistryOldDAO
 					.getRMediaStream(
 							ctx,
 							filter -> filter
@@ -554,7 +554,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 
 	private String obtainCustomerCellular(AONContext ctx, Customer customer) {
 		if (customer != null && customer.getId() != null) {
-			return RegistryDAO
+			return RegistryOldDAO
 					.getRMediaStream(
 							ctx,
 							filter -> filter
@@ -576,7 +576,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 	
 	private RAddress obtainAddress(AONContext ctx, Integer id) {
 		if (id != null) {
-			return RegistryDAO
+			return RegistryOldDAO
 					.getRAddressStream(ctx, f -> f.getIdProperty().eq(id))
 					.findFirst().orElse(new RAddress());
 		}

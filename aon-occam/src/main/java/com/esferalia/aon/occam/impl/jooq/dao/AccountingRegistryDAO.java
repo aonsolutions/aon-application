@@ -175,7 +175,7 @@ public class AccountingRegistryDAO {
 		if (reg.getType() == null) throw new AonCoreException("No se puede determinar el tipo. Es nulo. (Error Interno)");
 		ctx.checkWrite();
 
-		final Integer registryId = RegistryDAO.insert(ctx, new Registry()
+		final Integer registryId = RegistryOldDAO.insert(ctx, new Registry()
 			.setId(reg.getDomain())
 			.setDomain(new Domain().setId(reg.getDomain()))
 			.setDocument(reg.getDocument())
@@ -370,7 +370,7 @@ public class AccountingRegistryDAO {
 			}
 
 			if (!AonStringUtils.isBlank(reg.getPhone())) {
-				RegistryMedia rm = RegistryDAO.getRMediaStream(ctx, f -> 
+				RegistryMedia rm = RegistryOldDAO.getRMediaStream(ctx, f -> 
 					f.getRegistryProperty().eq(reg.getId())
 					.and(f.getValueProperty().eq(reg.getPhone()))).findFirst().orElse(null);
 				if(rm == null) {	
@@ -387,7 +387,7 @@ public class AccountingRegistryDAO {
 				}
 			}
 			if (!AonStringUtils.isBlank(reg.getCellular())) {
-				RegistryMedia rm = RegistryDAO.getRMediaStream(ctx, f -> 
+				RegistryMedia rm = RegistryOldDAO.getRMediaStream(ctx, f -> 
 					f.getRegistryProperty().eq(reg.getId())
 					.and(f.getValueProperty().eq(reg.getCellular()))).findFirst().orElse(null);
 				if(rm == null) {	
@@ -404,7 +404,7 @@ public class AccountingRegistryDAO {
 				}
 			}
 			if (!AonStringUtils.isBlank(reg.getFax())) {
-				RegistryMedia rm = RegistryDAO.getRMediaStream(ctx, f -> 
+				RegistryMedia rm = RegistryOldDAO.getRMediaStream(ctx, f -> 
 					f.getRegistryProperty().eq(reg.getId())
 					.and(f.getValueProperty().eq(reg.getFax()))).findFirst().orElse(null);
 				if(rm == null) {	
@@ -421,7 +421,7 @@ public class AccountingRegistryDAO {
 				}
 			}
 			if (!AonStringUtils.isBlank(reg.getEmail())) {
-				RegistryMedia rm = RegistryDAO.getRMediaStream(ctx, f -> 
+				RegistryMedia rm = RegistryOldDAO.getRMediaStream(ctx, f -> 
 					f.getRegistryProperty().eq(reg.getId())
 					.and(f.getValueProperty().eq(reg.getEmail()))).findFirst().orElse(null);
 				if(rm == null) {	
@@ -437,7 +437,7 @@ public class AccountingRegistryDAO {
 				}
 			}
 			if (!AonStringUtils.isBlank(reg.getWeb())) {
-				RegistryMedia rm = RegistryDAO.getRMediaStream(ctx, f -> 
+				RegistryMedia rm = RegistryOldDAO.getRMediaStream(ctx, f -> 
 					f.getRegistryProperty().eq(reg.getId())
 					.and(f.getValueProperty().eq(reg.getWeb()))).findFirst().orElse(null);
 				if(rm == null) {	

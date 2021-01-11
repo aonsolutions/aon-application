@@ -42,7 +42,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 
 public class FinanceImpl implements IFinance {
 
@@ -310,7 +310,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public LinkedList<RegistryBank> getRegistryBanks(AONContext ctx, Integer registry) {
 		return ctx.getDslContext().transactionResult(configuration -> {
-			return RegistryDAO.getRBankStream(ctx, filter -> filter.getRegistryProperty().eq(registry))
+			return RegistryOldDAO.getRBankStream(ctx, filter -> filter.getRegistryProperty().eq(registry))
 					.collect(Collectors.toCollection(LinkedList::new));
 		});			
 	}
@@ -319,7 +319,7 @@ public class FinanceImpl implements IFinance {
 	public LinkedList<RegistryBank> getCompanyRegistryBanks(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(configuration -> {
 			Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
-			return RegistryDAO.getRBankStream(ctx, filter -> filter.getRegistryProperty().eq(company.getId()))
+			return RegistryOldDAO.getRBankStream(ctx, filter -> filter.getRegistryProperty().eq(company.getId()))
 					.collect(Collectors.toCollection(LinkedList::new));
 		});
 	}

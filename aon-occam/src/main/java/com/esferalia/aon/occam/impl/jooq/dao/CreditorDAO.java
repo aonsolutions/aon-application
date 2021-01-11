@@ -39,7 +39,7 @@ public class CreditorDAO {
 		public Creditor apply(Record record) {
 			return new Creditor()
 				.setId(record.getValue(CREDITOR.REGISTRY))
-				.setRegistry(new RegistryDAO.RegistryFiller().apply(record))
+				.setRegistry(new RegistryOldDAO.RegistryFiller().apply(record))
 				.setDomain(record.getValue(CREDITOR.DOMAIN));
 		}
 	}

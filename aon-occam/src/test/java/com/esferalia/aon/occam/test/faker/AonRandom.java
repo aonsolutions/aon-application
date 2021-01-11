@@ -8,7 +8,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.github.javafaker.Faker;
 
 public class AonRandom {
@@ -24,7 +24,7 @@ public class AonRandom {
 		Customer c = null;
 		int i = 0;
 		while (c == null && i < 10 ) {
-			c = RegistryDAO.getCustomerStream(ctx, f -> f.getNameProperty().ge(letter))
+			c = RegistryOldDAO.getCustomerStream(ctx, f -> f.getNameProperty().ge(letter))
 				.findFirst()
 				.get();
 			i++;
@@ -37,7 +37,7 @@ public class AonRandom {
 		Creditor c = null;
 		int i = 0;
 		while (c == null && i < 10 ) {
-			c = RegistryDAO.getCreditorStream(ctx, f -> f.getNameProperty().ge(letter))
+			c = RegistryOldDAO.getCreditorStream(ctx, f -> f.getNameProperty().ge(letter))
 				.findFirst()
 				.get();
 			i++;
@@ -50,7 +50,7 @@ public class AonRandom {
 		Supplier s = null;
 		int i = 0;
 		while (s == null && i < 10 ) {
-			s = RegistryDAO.getSupplierStream(ctx, f -> f.getNameProperty().ge(letter))
+			s = RegistryOldDAO.getSupplierStream(ctx, f -> f.getNameProperty().ge(letter))
 				.findFirst()
 				.get();
 			i++;

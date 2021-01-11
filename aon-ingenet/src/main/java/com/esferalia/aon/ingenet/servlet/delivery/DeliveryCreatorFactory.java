@@ -83,7 +83,7 @@ import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.ElaborationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
@@ -1087,7 +1087,7 @@ public class DeliveryCreatorFactory implements Serializable {
 			DATOSAGENCIATRANSPORTETYPE datosagenciatransportetype) {
 		String document = datosagenciatransportetype.getDATOSREGISTRO()
 				.getDATOSDOCUMENTO().getDOCUMENTO();
-		Carrier carrier = RegistryDAO.getCarrierStream(
+		Carrier carrier = RegistryOldDAO.getCarrierStream(
 				ctx,
 				f -> f.getDomainProperty().eq(ctx.getDomainId())
 						.and(f.getDocumentProperty().eq(document))).findFirst().orElse(new Carrier());
@@ -1144,7 +1144,7 @@ public class DeliveryCreatorFactory implements Serializable {
 	 */
 	private RAddress obtainAddress(AONContext ctx, Customer customer,
 			DATOSDIRECCIONTYPE datosdireccionentrega) {
-		RAddress raddress = RegistryDAO
+		RAddress raddress = RegistryOldDAO
 				.getRAddressStream(
 						ctx,
 						f -> f.getDomainProperty()

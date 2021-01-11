@@ -135,7 +135,7 @@ public class FinanceEntryDAO {
 			&& (finance.isFromSalesInvoice()					// Es factura de Venta 
 			|| (!finance.hasInvoice() && !finance.isPayment())) // Cobro sin factura
 			) {
-			Account account = RegistryDAO.getCustomerAccount(ctx,finance.getRegistry().getId());
+			Account account = RegistryOldDAO.getCustomerAccount(ctx,finance.getRegistry().getId());
 			fillRegistryAccountData(finance,account);
 		}
 		return finance;
@@ -145,7 +145,7 @@ public class FinanceEntryDAO {
 			&& (finance.isFromPurchaseInvoice()					// Es factura de Compra 
 			|| (!finance.hasInvoice() && finance.isPayment()))  // Pago sin factura
 			) {
-			Account account = RegistryDAO.getSupplierAccount(ctx,finance.getRegistry().getId());
+			Account account = RegistryOldDAO.getSupplierAccount(ctx,finance.getRegistry().getId());
 			fillRegistryAccountData(finance,account);
 		}
 		return finance;
@@ -156,7 +156,7 @@ public class FinanceEntryDAO {
 			|| finance.isFromUndeductibleInvoice() 				// Es factura de Gastos No Ded.
 			|| (!finance.hasInvoice() && finance.isPayment()))  // Pago sin factura 
 			) {
-			Account account = RegistryDAO.getCreditorAccount(ctx,finance.getRegistry().getId());
+			Account account = RegistryOldDAO.getCreditorAccount(ctx,finance.getRegistry().getId());
 			fillRegistryAccountData(finance,account);
 		}
 		return finance;
@@ -221,17 +221,17 @@ public class FinanceEntryDAO {
 				
 				@Override
 				public void visitSales(Invoice invoice) {
-					fill( RegistryDAO.getCustomerAccount(ctx, finance.getRegistry().getId()));
+					fill( RegistryOldDAO.getCustomerAccount(ctx, finance.getRegistry().getId()));
 				}
 				
 				@Override
 				public void visitPurchase(Invoice invoice) {
-					fill( RegistryDAO.getSupplierAccount(ctx, finance.getRegistry().getId()));
+					fill( RegistryOldDAO.getSupplierAccount(ctx, finance.getRegistry().getId()));
 				}
 				
 				@Override
 				public void visitExpenses(Invoice invoice) {
-					fill( RegistryDAO.getCreditorAccount(ctx, finance.getRegistry().getId()));
+					fill( RegistryOldDAO.getCreditorAccount(ctx, finance.getRegistry().getId()));
 				}
 				@Override
 				public void visitUndeductible(Invoice invoice) {

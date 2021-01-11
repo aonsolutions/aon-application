@@ -326,13 +326,13 @@ public class FinanceDAO {
 	// -------------------------------------------------------------
 	public static LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice) {
 		LinkedList<Finance> finances = new LinkedList<Finance>();
-		RegistryPayMethod rPayMethod = RegistryDAO.getRPayMethodStream(ctx, prop -> prop.getDomainProperty()
+		RegistryPayMethod rPayMethod = RegistryOldDAO.getRPayMethodStream(ctx, prop -> prop.getDomainProperty()
 				.eq(ctx.getDomainId()).and(prop.getRegistryProperty().eq(invoice.getRegistry()))).findFirst()
 				.orElse(null);
 		;
 		RegistryBank rBank = null;
 		if (rPayMethod != null && rPayMethod.getRbank() != null) {
-			rBank = RegistryDAO.getRBankStream(ctx, prop -> prop.getDomainProperty().eq(ctx.getDomainId())
+			rBank = RegistryOldDAO.getRBankStream(ctx, prop -> prop.getDomainProperty().eq(ctx.getDomainId())
 					.and(prop.getIdProperty().eq(rPayMethod.getRbank()))).findFirst().orElse(null);
 		}
 		Date date = invoice.getIssueDate();
@@ -414,7 +414,7 @@ public class FinanceDAO {
 				.setId(record.getValue(FINANCE.ID))
 				.setDomain(record.getValue(FINANCE.DOMAIN))
 				.setPayment(AonEnumUtils.getBoolean( record.getValue(FINANCE.PAYMENT)) )
-				.setRegistry(new RegistryDAO.RegistryFiller().apply(record))
+				.setRegistry(new RegistryOldDAO.RegistryFiller().apply(record))
 				.setRegistryDocument(record.getValue(FINANCE.RDOCUMENT))
 				.setRegistryDocumentType(DocumentType.safeValueOf(record.getValue(FINANCE.RDOCUMENT_TYPE)))
 				.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(FINANCE.RDOCUMENT_COUNTRY)))

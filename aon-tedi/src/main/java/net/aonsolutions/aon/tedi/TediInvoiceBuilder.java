@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.OCRDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 import es.translogia.tedi.ewok.TediAddress;
@@ -132,7 +132,7 @@ private TediInsightInvoice insight;
 	
 	private static TediRegistry getRegistryData(TediContext ctx, String str) {
 		// BUSCAR la infomarción en la colleccion de NIFS.
-		Registry reg = RegistryDAO.getRegistryStream(ctx.getAONContext(), p -> p.getDocumentProperty().eq(str))
+		Registry reg = RegistryOldDAO.getRegistryStream(ctx.getAONContext(), p -> p.getDocumentProperty().eq(str))
 			.findFirst().orElse(null);
 		TediRegistry registry = null;
 		if (reg != null) {

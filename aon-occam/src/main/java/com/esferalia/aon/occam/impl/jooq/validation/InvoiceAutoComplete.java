@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -148,7 +148,7 @@ public class InvoiceAutoComplete {
 	 */
 	public static BiConsumer<Invoice,AonConfigurationContext> ENSURE_REGISTRY_DATA = (inv,ctx) -> {
 		if (AonStringUtils.isBlank(inv.getRegistryName()) || AonStringUtils.isBlank(inv.getRegistryDocument())) {
-			Registry registry = RegistryDAO.getRegistry(ctx.getContext(), f-> f.getIdProperty().eq(inv.getRegistry()));
+			Registry registry = RegistryOldDAO.getRegistry(ctx.getContext(), f-> f.getIdProperty().eq(inv.getRegistry()));
 			if (AonStringUtils.isBlank(inv.getRegistryName())) inv.setRegistryName(registry.getName());
 			if (AonStringUtils.isBlank(inv.getRegistryDocument())) {
 				inv.setRegistryDocumentType(registry.getDocumentType());

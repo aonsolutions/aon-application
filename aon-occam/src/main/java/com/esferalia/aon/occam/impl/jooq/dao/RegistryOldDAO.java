@@ -124,7 +124,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SupplierPropertiesDAO
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
-public class RegistryDAO {
+public class RegistryOldDAO {
 	
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
 	private static final SellerPropertiesDAO SELLER_PROPERTIES = new SellerPropertiesDAO();

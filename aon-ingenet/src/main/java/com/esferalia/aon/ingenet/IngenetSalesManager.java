@@ -27,7 +27,7 @@ import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
@@ -63,7 +63,7 @@ public class IngenetSalesManager {
 		
 		ctx.getDslContext().transaction(
 				configuration -> {
-					Integer customerId = RegistryDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getCustomer().getId())).getId();
+					Integer customerId = RegistryOldDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getCustomer().getId())).getId();
 					if (sales.getCustomer() != null
 							&& customerId==null) {
 						createRegistry(ctx, domainId, sales.getCustomer()
@@ -71,7 +71,7 @@ public class IngenetSalesManager {
 						SalesDAO.createCustomer(ctx, domainId, sales
 								.getCustomer().getId(), scopeId);
 					}
-					Integer sellerId = RegistryDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getSeller().getId())).getId();
+					Integer sellerId = RegistryOldDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getSeller().getId())).getId();
 					if (sales.getSeller() != null
 							&& sales.getSeller().getId() != null
 							&& sellerId==null) {
@@ -80,7 +80,7 @@ public class IngenetSalesManager {
 						SalesDAO.createSeller(ctx, domainId, sales.getSeller()
 								.getId(), scopeId);
 					}
-					Integer carrierId = RegistryDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getCarrier().getId())).getId();
+					Integer carrierId = RegistryOldDAO.getRegistry(ctx, f -> f.getIdProperty().eq(sales.getCarrier().getId())).getId();
 					if (sales.getCarrier() != null
 							&& sales.getCarrier().getId() != null
 							&& carrierId==null) {
@@ -89,7 +89,7 @@ public class IngenetSalesManager {
 						SalesDAO.createCarrier(ctx, domainId, sales
 								.getCarrier().getId(), scopeId);
 					}
-					long shippingCount = RegistryDAO.getRAddressStream(ctx, f -> f.getIdProperty().eq(sales.getShippingAddress().getId())).count();
+					long shippingCount = RegistryOldDAO.getRAddressStream(ctx, f -> f.getIdProperty().eq(sales.getShippingAddress().getId())).count();
 					if (sales.getShippingAddress() != null
 							&& sales.getShippingAddress().getId() != null
 							&& shippingCount<=0) {
@@ -222,17 +222,17 @@ public class IngenetSalesManager {
 		int scope = IngenetContext.getUdapaMainScopeId();
 
 		RegistryAddress raddress = wp.getAddress();
-		long addressCount = RegistryDAO.getRAddressStream(ctx, f -> f.getIdProperty().eq(raddress.getId())).count();
+		long addressCount = RegistryOldDAO.getRAddressStream(ctx, f -> f.getIdProperty().eq(raddress.getId())).count();
 		if (raddress != null && raddress.getId() != null
 				&& addressCount<=0 ) {
-			Integer registryId = RegistryDAO.getRegistry(ctx, f -> f.getIdProperty().eq(raddress.getRegistry().getId())).getId();
+			Integer registryId = RegistryOldDAO.getRegistry(ctx, f -> f.getIdProperty().eq(raddress.getRegistry().getId())).getId();
 			if (registryId==null) {
 				createRegistry(ctx, domain, raddress.getRegistry());	
 			}
 			createRegistryAddress(ctx, domain, raddress);
 		}
 		Customer customer = wp.getCustomer();
-		Integer customerId = RegistryDAO.getRegistry(ctx, f -> f.getIdProperty().eq(customer.getRegistry().getId())).getId();
+		Integer customerId = RegistryOldDAO.getRegistry(ctx, f -> f.getIdProperty().eq(customer.getRegistry().getId())).getId();
 		if (customer != null && customer.getId() != null
 				&& customerId==null ) {
 			createRegistry(ctx, domain, customer.getRegistry());
