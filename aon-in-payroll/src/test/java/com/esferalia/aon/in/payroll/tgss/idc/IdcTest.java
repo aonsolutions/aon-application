@@ -571,7 +571,6 @@ public class IdcTest extends AbstractSQLTestCase {
 			calendar.set(Calendar.MINUTE, 0);
 			calendar.set(Calendar.SECOND, 0);
 			calendar.set(Calendar.MILLISECOND, 0);
-			calendar.set(Calendar.AM_PM, 1);
 			Date _01122020 = calendar.getTime();
 			
 			calendar.set(Calendar.DAY_OF_MONTH,10);
