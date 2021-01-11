@@ -56,10 +56,9 @@ export class AonSign extends AonElement {
 		button.innerHTML = 'ENTRADA';
 		button.addEventListener('click', () => {
       getPosition().then(position => {
-        let signin = {
-          status: 'in',
-          coordinates: position.latitude + ',' + position.longitude
-        };
+        let signin = {status: 'in'};
+        if(position)
+          signin.coordinates = position.latitude + ',' + position.longitude;
         saveTimeControl(signin).then(r => this.buildSignin(r));
       });
 		});
@@ -79,10 +78,9 @@ export class AonSign extends AonElement {
 		button.innerHTML = 'SALIDA';
 		button.addEventListener('click', () => {
       getPosition().then(position => {
-        let signin = {
-          status: 'out',
-          coordinates: position.latitude + ',' + position.longitude
-        };
+        let signin = {status: 'out'};
+        if(position)
+          signin.coordinates = position.latitude + ',' + position.longitude;
         saveTimeControl(signin).then(r => this.buildSignin(r));
       });
 		});
@@ -97,10 +95,9 @@ export class AonSign extends AonElement {
 		button2.innerHTML = 'PAUSA';
 		button2.addEventListener('click', () => {
       getPosition().then(position => {
-        let signin = {
-          status: 'pause',
-          coordinates: position.latitude + ',' + position.longitude
-        };
+        let signin = {status: 'pause'};
+        if(position)
+          signin.coordinates = position.latitude + ',' + position.longitude;
         saveTimeControl(signin).then(r => this.buildSignin(r));
       });
 		});
@@ -120,10 +117,9 @@ export class AonSign extends AonElement {
 		button.innerHTML = 'VUELTA';
 		button.addEventListener('click', () => {
       getPosition().then(position => {
-        let signin = {
-          status: 'in',
-          coordinates: position.latitude + ',' + position.longitude
-        };
+        let signin = {status: 'in'};
+        if(position)
+          signin.coordinates = position.latitude + ',' + position.longitude;
         saveTimeControl(signin).then(r => this.buildSignin(r));
       });
 		});

@@ -19,7 +19,7 @@ public class TimeControl {
 	private LinkedList<TimeControlDetail> detail;
 	
 	public TimeControl() {
-	
+		this.time = 0L;
 	}
 	
 	public Long getTime() {

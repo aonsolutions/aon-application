@@ -203,7 +203,9 @@ export class AonHeader extends AonElement {
 
 	aonFichar(signin) {
 		getPosition().then(position => {
-			signin.coordinates = position.latitude + ',' + position.longitude;
+			if(position) {
+				signin.coordinates = position.latitude + ',' + position.longitude;
+			}
 			saveTimeControl(signin).then(r => {
 				let aonSign = this.getElement('aonSign');
 				if(aonSign) {

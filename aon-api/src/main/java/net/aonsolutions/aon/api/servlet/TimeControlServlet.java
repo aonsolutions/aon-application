@@ -36,9 +36,9 @@ public class TimeControlServlet extends HttpServlet{
 		
 		AonToken aonToken = SECURITY.getAonToken(token);
 		TaskHolder taskHolder = AON_SOLUTIONS.getTaskHolder(aonToken);
-			
+
 		JSONObject responseObject = getTimeControl(taskHolder); 
-		
+
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, responseObject, new JSONObject());	
 	}
@@ -65,7 +65,10 @@ public class TimeControlServlet extends HttpServlet{
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 		
-		TimeControl tc = AON_SOLUTIONS.getTaskHolderTimeControl(taskHolder.getDomain(), "", taskHolder.getId(), startDate, endDate);
+		TimeControl tc = new TimeControl();
+		if(taskHolder != null && taskHolder.getId() != null) {
+			AON_SOLUTIONS.getTaskHolderTimeControl(taskHolder.getDomain(), "", taskHolder.getId(), startDate, endDate);
+		}
 		return tc.toJSON();
 	}
 	

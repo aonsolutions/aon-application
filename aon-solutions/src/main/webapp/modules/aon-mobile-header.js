@@ -108,20 +108,22 @@ export class AonMobileHeader extends AonElement {
 		}
 	}
 
+
 	aonFichar(signin) {
-		let position = getPosition();
-		signin.coordinates = position.latitude + ',' + position.longitude;
-
-		saveTimeControl(signin).then(r => {
-			let aonSign = this.getElement('aonSign');
-			if(aonSign) {
-				aonSign.buildSignin();
+		getPosition().then(position => {
+			if(position) {
+				signin.coordinates = position.latitude + ',' + position.longitude;
 			}
+			saveTimeControl(signin).then(r => {
+				let aonSign = this.getElement('aonSign');
+				if(aonSign) {
+					aonSign.buildSignin();
+				}
 
-			this.timeControlStatus(signin);
+				this.timeControlStatus(r);
+			});
 		});
 	}
-
 
 	aonConfiguration() {
 		rootPanel('<aon-configuration id="aon-configuration"></aon-configuration>');
