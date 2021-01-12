@@ -12,17 +12,66 @@ public class Registry implements Serializable{
 	
 	private static final long serialVersionUID = 9114564405091033572L;
 	
-	private String alias;
-	private String document;
-	private Country documentCountry;
-	private DocumentType documentType;
-	private Domain domain;
 	private Integer id;
+	private Domain domain;
+	private String document;
+	private DocumentType documentType;
+	private Country documentCountry;
 	private String name;
+	private String alias;
+	private boolean legalPerson;
 	private Country nationality;
 	private SecurityLevel securityLevel;
-	private boolean legalPerson;
+	
 	private RAddress mainAddress;
+	
+	public Integer getId() {
+		return id;
+	}
+	public Registry setId(Integer id) {
+		this.id = id;
+		return this;
+	}
+	
+	public Domain getDomain() {
+		return domain;
+	}
+	public Registry setDomain(Domain domain) {
+		this.domain = domain;
+		return this;
+	}
+	
+	public String getDocument() {
+		return document;
+	}
+	public Registry setDocument(String document) {
+		this.document = document;
+		return this;
+	}
+
+	public DocumentType getDocumentType() {
+		return documentType;
+	}
+	public Registry setDocumentType(DocumentType documentType) {
+		this.documentType = documentType;
+		return this;
+	}
+	
+	public Country getDocumentCountry() {
+		return documentCountry;
+	}
+	public Registry setDocumentCountry(Country documentCountry) {
+		this.documentCountry = documentCountry;
+		return this;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	public Registry setName(String name) {
+		this.name = name;
+		return this;
+	}
 	
 	public String getAlias() {
 		return alias;
@@ -31,48 +80,15 @@ public class Registry implements Serializable{
 		this.alias = alias;
 		return this;
 	}
-	public String getDocument() {
-		return document;
+
+	public boolean isLegalPerson() {
+		return legalPerson;
 	}
-	public Registry setDocument(String document) {
-		this.document = document;
+	public Registry setLegalPerson(boolean legalPerson) {
+		this.legalPerson = legalPerson;
 		return this;
 	}
-	public Country getDocumentCountry() {
-		return documentCountry;
-	}
-	public Registry setDocumentCountry(Country documentCountry) {
-		this.documentCountry = documentCountry;
-		return this;
-	}
-	public DocumentType getDocumentType() {
-		return documentType;
-	}
-	public Registry setDocumentType(DocumentType documentType) {
-		this.documentType = documentType;
-		return this;
-	}
-	public Domain getDomain() {
-		return domain;
-	}
-	public Registry setDomain(Domain domain) {
-		this.domain = domain;
-		return this;
-	}
-	public Integer getId() {
-		return id;
-	}
-	public Registry setId(Integer id) {
-		this.id = id;
-		return this;
-	}
-	public String getName() {
-		return name;
-	}
-	public Registry setName(String name) {
-		this.name = name;
-		return this;
-	}
+
 	public Country getNationality() {
 		return nationality;
 	}
@@ -80,6 +96,7 @@ public class Registry implements Serializable{
 		this.nationality = nationality;
 		return this;
 	}
+	
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -94,14 +111,7 @@ public class Registry implements Serializable{
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 		return this;
 	}
-	public boolean isLegalPerson() {
-		return legalPerson;
-	}
-	public Registry setLegalPerson(boolean legalPerson) {
-		this.legalPerson = legalPerson;
-		return this;
-	}
-	
+
 	public RAddress getMainAddress() {
 		return mainAddress;
 	}
@@ -126,6 +136,4 @@ public class Registry implements Serializable{
 					:AonStringUtils.EMPTY)
 				;
 	}
-	
-
 }

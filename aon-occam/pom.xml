@@ -27,50 +27,20 @@
 			</plugin>
 <!-- 	
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>sql-maven-plugin</artifactId>
-				<version>1.5</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.mariadb.jdbc</groupId>
-						<artifactId>mariadb-java-client</artifactId>
-						<version>2.3.0</version>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<driver>org.mariadb.jdbc.Driver</driver>
-					<url>jdbc:mariadb://localhost:3306</url>
-					<username>aonsolutions</username>
-					<password>40ns0lut10ns</password>
-					<settingsKey>sensibleKey</settingsKey>
-					<encoding>UTF-8</encoding>
-					<skip>${maven.test.skip}</skip>
-				</configuration>
-
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>create-schema</id>
-						<phase>generate-test-resources</phase>
 						<goals>
-							<goal>execute</goal>
+							<goal>test-jar</goal>
 						</goals>
-						<configuration>
-							<url>jdbc:mariadb://localhost:3306</url>
-							<autocommit>true</autocommit>
-							<srcFiles>
-								<srcFile>src/test/resuorces/com/esferalia/aon/occam/test/sql/create.database.sql</srcFile>
-								<srcFile>src/test/resuorces/com/esferalia/aon/occam/test/sql/standalone-domain.sql</srcFile>
-							</srcFiles>
-							<encoding>UTF-8</encoding>
-						</configuration>
 					</execution>
-
 				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.3</version>
+				<version>0.8.6</version>
 				<executions>
 					<execution>
 						<id>coverage-initialize</id>

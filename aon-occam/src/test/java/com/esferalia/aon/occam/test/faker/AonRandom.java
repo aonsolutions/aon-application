@@ -14,7 +14,11 @@ import com.github.javafaker.Faker;
 public class AonRandom {
 	private static Faker faker = new Faker(new Locale("es"));
 	
-	public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
+    public static boolean b( int threshold ) {
+    	return faker.random().nextInt(0, 100) <= threshold;
+    }
+
+    public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
         int x = faker.random().nextInt(clazz.getEnumConstants().length);
         return clazz.getEnumConstants()[x];
     }	

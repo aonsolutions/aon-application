@@ -5,15 +5,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.esferalia.aon.occam.test.accounting.AccountingTestSuite;
-import com.esferalia.aon.occam.test.accounting.analytical.AnalyticalAccountingTestSuite;
-import com.esferalia.aon.occam.test.finance.FinanceTestSuite;
+import com.esferalia.aon.occam.test.registry.RegistryTestSuite;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	FinanceTestSuite.class,
-	AccountingTestSuite.class,
-	AnalyticalAccountingTestSuite.class,
+	RegistryTestSuite.class,
+//	FinanceTestSuite.class,
+//	AccountingTestSuite.class,
+//	AnalyticalAccountingTestSuite.class,
 })
 public class OccamTestSuite {
 

@@ -6,12 +6,16 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.validation.RegistryAutoComplete;
+import com.esferalia.aon.occam.impl.jooq.validation.RegistryValidation;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
-class RegistryDAO {
+public class RegistryDAO {
 
-	protected static Registry insert(AONContext ctx, Registry registry) {
+	public static Registry insert(AONContext ctx, Registry registry) {
 		ctx.checkWrite();
+		RegistryAutoComplete.autoComplete(ctx, registry);
+		RegistryValidation.validate(ctx, registry); 
 		Integer id = ctx.getDslContext().insertInto(REGISTRY)
 			.set(REGISTRY.DOMAIN, registry.getDomain().getId())
 			.set(REGISTRY.DOCUMENT,registry.getDocument())

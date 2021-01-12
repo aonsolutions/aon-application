@@ -44,6 +44,11 @@ public enum AonError implements Serializable{
 	,ACCOUNT_ENTRY_TYPE_INVALID("Valor incorrecto para el enumerado 'Tipo de asiento' ({0})")
 	
 	// -----------------------------------------------------------
+	// --------------------- REGISTRY --------------------------
+	// -----------------------------------------------------------
+	,REGISTRY_OVERFLOW_DOCUMENT("El documento no puede tener m\u00E1s de 16 caracteres.")
+	
+	// -----------------------------------------------------------
 	// --------------------- ACCOUNTING --------------------------
 	// -----------------------------------------------------------
 	
@@ -180,7 +185,7 @@ public enum AonError implements Serializable{
 	// --------------------------------------------- RAWDOC
 	,EMPTY_RAWDOC_NATURE("La naturaleza del documento es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_RAWDOC_TYPE("La naturaleza del documento es un dato obligatorio, no puede estar vac\u00EDo")
-	,EMPTY_RAWDOC_STATUS("La naturaleza del documento es un dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_RAWDOC_STATUS("La naturaleza del documento es un dato obligatorio, no puede estar vac\u00EDo") 
 	;
 	
 	
