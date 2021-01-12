@@ -1517,6 +1517,7 @@ CREATE TABLE `agreement` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `calendar` int(4) DEFAULT NULL COMMENT 'Calendario',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
+  `ss_number` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de convenio',
   PRIMARY KEY (`id`),
   KEY `IDX_AGREEMENT_CALENDAR` (`calendar`),
   KEY `IDX_AGREEMENT_DOMAIN` (`domain`),
