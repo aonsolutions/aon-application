@@ -13,7 +13,7 @@ import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
 import com.esferalia.aon.occam.impl.jooq.dao.AnalyticalAccountingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.accounting.analytical.ANALYTICAL;
 import com.esferalia.aon.occam.impl.jooq.dao.accounting.analytical.JAXBAnalytical;
-import com.esferalia.aon.occam.jooq.test.AbstractOccamTest;
+import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 

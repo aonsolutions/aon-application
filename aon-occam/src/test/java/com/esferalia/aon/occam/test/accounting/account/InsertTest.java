@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.jooq.test.AbstractOccamTest;
+import com.esferalia.aon.occam.test.AbstractOccamTest;
 
 public class InsertTest extends AbstractOccamTest {
 

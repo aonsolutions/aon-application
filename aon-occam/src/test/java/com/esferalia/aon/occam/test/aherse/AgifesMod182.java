@@ -35,6 +35,7 @@ public class AgifesMod182 {
 			this.name = name;
 			return this;
 		}
+		@SuppressWarnings("unused")
 		public String getCity() {
 			return city;
 		}
@@ -42,6 +43,7 @@ public class AgifesMod182 {
 			this.city = city;
 			return this;
 		}
+		@SuppressWarnings("unused")
 		public String getZip() {
 			return zip;
 		}

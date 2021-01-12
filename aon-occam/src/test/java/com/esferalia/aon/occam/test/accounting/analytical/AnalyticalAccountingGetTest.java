@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
 import com.esferalia.aon.occam.impl.jooq.dao.AnalyticalAccountingDAO;
-import com.esferalia.aon.occam.jooq.test.AbstractOccamTest;
+import com.esferalia.aon.occam.test.AbstractOccamTest;
 
 
 public class AnalyticalAccountingGetTest extends AbstractOccamTest {

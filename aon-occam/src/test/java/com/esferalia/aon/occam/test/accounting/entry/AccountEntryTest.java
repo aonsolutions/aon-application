@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.stream.Stream;
 
 import org.junit.Ignore;
-import org.junit.Test;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -13,8 +12,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
-import com.esferalia.aon.occam.jooq.test.AbstractOccamTest;
-import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 

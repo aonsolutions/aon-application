@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
-import com.esferalia.aon.occam.jooq.test.AbstractOccamTest;
+import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.RegistryFaker;
 
 public class ValidationSaveEmptyNationality extends AbstractOccamTest {

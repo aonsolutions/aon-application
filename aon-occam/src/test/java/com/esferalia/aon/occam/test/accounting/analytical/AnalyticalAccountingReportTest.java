@@ -17,7 +17,7 @@ import com.esferalia.aon.occam.api.model.AccountingAnalyticalReport;
 import com.esferalia.aon.occam.api.model.AccountingAnalyticalStatement;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.impl.jooq.dao.AnalyticalAccountingDAO;
-import com.esferalia.aon.occam.jooq.test.AbstractOccamTest;
+import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.watson.util.AonConsoleUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
