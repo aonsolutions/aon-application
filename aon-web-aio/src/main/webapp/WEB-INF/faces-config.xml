@@ -81,6 +81,15 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!--  **** SEARCH CONTROLLER **** -->
+	<managed-bean>
+		<managed-bean-name>search</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.aio.controller.SearchController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 
 	<navigation-rule>

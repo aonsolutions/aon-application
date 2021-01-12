@@ -260,7 +260,9 @@
 	}	
 	
 	.aon-input-search {
-		border:none;
+		width: 75%;
+		padding: 4px; 
+		border: 1px solid #ddd;
 	}
 	
 	.aon-input-search:focus {
@@ -273,13 +275,47 @@
 	}
 	
 	.search-results-popup td,
-	.search-results-popup th {
+	.search-results-popup th,
+	.search-results-popup table {
 		border:none;
 	}
 
 	.search-results-popup table {
+		padding-left : 20px;
+	}
+
+	.search-results-popup td {
+		padding-top: 5px;
+		padding-left: 10px;
+		padding-bottom: 5px;
+	}
+
+	.search-results-popup > div {
+		padding: 5px;
+		background-color: white;
 		box-shadow: 2px 2px 5px 1px #ddd;
 	}
+
+	.search-results-popup div {
+	}
+	
+	.search-results-popup-filter
+	 {
+		padding-top: 20px;
+		padding-left: 10px;
+		padding-bottom: 10px;
+		background-color: white;
+	}
+	
+	.search-results-popup-title
+	 {
+		color: black;
+		padding: 10px;
+		font-size: 15px;
+		background-color: white;
+		border-bottom : 1px solid #ddd;
+	}
+
 	</style>
 		
 	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 1px solid #ddd;" >
@@ -320,7 +356,7 @@
 					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" >
 						<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
 					</aon:commandLink>
-					<aon:inputText id="smartFilter" size="60" value="#{domainSwitcher.filter}" placeholder="Buscar" styleClass="aon-input-search"  autocomplete="off" >
+					<aon:inputText id="smartFilter" size="60" value="#{search.filter}" placeholder="Buscar" styleClass="aon-input-search"  autocomplete="off" >
 						<a4j:support 
 						event="onkeyup"
 						reRender="smartFilterTableContainer"
@@ -346,57 +382,44 @@
 					
 					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%">
 						<aon:if test="#{aonConfiguration.properties.showSearchResults}">
-						<aon:methodParam name="rowSelectorAction" value="start" />
-						<aon:methodParam name="rowSelectorActionListener" value="#{domains.onSelectChildDomain}" type="actionListener" />
-						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+						<aon:div>
+							<aon:div styleClass="search-results-popup-filter" >
+								<aon:outputText value="Resultados de búsqueda de '#{search.filter}'"
+								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+							</aon:div>
+						
+							<aon:div styleClass="search-results-popup-title" >
+								<aon:outputText value="#{domainSwitcher.model.rowCount} Empresas encontradas"
+								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+							</aon:div>
+						
+							<aon:methodParam name="rowSelectorAction" value="start" />
+							<aon:methodParam name="rowSelectorActionListener" value="#{domains.onSelectChildDomain}" type="actionListener" />
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 							
-							<ui:param name="skipSelectButton" value="#{true}" />
-							<ui:param name="showDataScroller" value="#{false}" />
+								<ui:param name="skipSelectButton" value="#{true}" />
+								<ui:param name="showDataScroller" value="#{false}" />
 							
-							<ui:param name="controller" value="#{domainSwitcher}" />
-							<ui:param name="skipFocusFirst" value="true" />
+								<ui:param name="controller" value="#{domainSwitcher}" />
+								<ui:param name="skipFocusFirst" value="true" />
 							
-							<ui:define name="columns">
+								<ui:define name="columns">
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-									<f:facet name="header">
-										<aon:outputText value="Empresas" />
-									</f:facet>							
-									<aon:outputText value="#{to.description}"
+									<aon:outputText value="#{to.getDisplay(search.filter)}"
 										title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
-										style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"/>					
+										style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"  escape="false" />					
 								</aon:column>
-								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-									<aon:outputText value="#{to.document}"
-										title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
-										style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"/>					
-								</aon:column>
-								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-									<aon:outputText value="#{to.cccs}"
-										title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
-										style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"/>					
-								</aon:column>
-
-								<aon:column styleClass="aon-width-40">
-									<aon:outputText 
-										rendered="#{to.enableHeredity}"
-										title="#{bundle.aon_domian_enableHeredity}"
-										styleClass="aon-icon2 aon-icon-index" />														
-									<aon:outputText 
-										rendered="#{!to.enableHeredity}"
-										title="#{bundle.aon_domian_disableHeredity}"
-										styleClass="aon-icon2 aon-icon-disableHeredity" />
-									<aon:div onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
-										onmouseout="enableRowSelector();" layout="inline" >										
-										<h:outputLink 
-											value="https://#{domainSwitcher.currentDomainURL}" target="_blank"
-											title="https://#{to.name}"
-											styleClass="aon-icon"
-											style="background: url('#{to.logo}') no-repeat scroll left center transparent; display: inline-block; height: 21px;vertical-align: middle;}" >
-										</h:outputLink>
-									</aon:div>
-								</aon:column>
-							</ui:define>
-						</ui:decorate>
+								</ui:define>
+							</ui:decorate>
+							
+							<!--
+							<aon:div styleClass="search-results-popup-title" >
+								<aon:outputText value="#{domainSwitcher.model.rowCount} Trabajadores encontrados"
+								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+							</aon:div>
+							-->
+						
+						</aon:div>
 						</aon:if>
 					</aon:div>
 	
