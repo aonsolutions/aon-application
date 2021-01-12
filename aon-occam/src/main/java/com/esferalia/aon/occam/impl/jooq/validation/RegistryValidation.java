@@ -39,6 +39,10 @@ public class RegistryValidation {
 		.andThen(OVERFLOW_ALIAS)
 		.accept(reg, ctx);
 	}
+
+	public static void validateDeletion(AONContext ctx, Integer id) {
+		// TODO Auto-generated method stub
+	}
 	
 	
 }

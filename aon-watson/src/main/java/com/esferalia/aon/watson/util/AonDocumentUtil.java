@@ -45,6 +45,10 @@ public class AonDocumentUtil {
 		return false;
 	}
 	
+	public static boolean isValidNIE(String doc ) {
+		return (doc == null) ? false : isValidNIE(doc.toCharArray()); 
+	}
+
 	public static boolean isValidNIE(char[] doc) {
 		if (doc.length != 9) {
 			return false;
@@ -58,7 +62,11 @@ public class AonDocumentUtil {
 		}
 		return (doc[8] == DNI_LETTERS[(Integer.parseInt(numbers) % 23)]);
 	}
-
+	
+	public static boolean isValidDNI(String doc ) {
+		return (doc == null) ? false : isValidNIF(doc.toCharArray()); 
+	}
+	
 	public static boolean isValidNIF(char[] doc) {
 		if (doc.length != 9) {
 			return false;
@@ -69,6 +77,10 @@ public class AonDocumentUtil {
 			return false;
 		}
 		return (doc[8] == DNI_LETTERS[(Integer.parseInt(numbers) % 23)]);
+	}
+
+	public static boolean isValidCIF(String doc ) {
+		return (doc == null) ? false : isValidCIF(doc.toCharArray()); 
 	}
 
 	public static boolean isValidCIF(char[] doc) {

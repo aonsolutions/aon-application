@@ -230,12 +230,19 @@ public class RegistryOldDAO {
 			.stream().map(new FullRegistryFiller());
 	}
 	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.getRegistryStream(AONContext ctx, RegistryFilter filter)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Stream<Registry> getRegistryStream(AONContext ctx, RegistryFilter filter){
 		return ctx.getDslContext().select().from(REGISTRY)
 				.where(REGISTRY_PROPERTIES.getConditions(filter)).fetch()
 			.stream().map(new RegistryFiller());
 	}
 	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.getRegistry(AONContext ctx, Integer id)
+	 */
 	public static Registry getRegistry(AONContext ctx, RegistryFilter filter){
 		return getRegistryStream(ctx, filter).findFirst().orElse(new Registry());
 	}
@@ -380,6 +387,10 @@ public class RegistryOldDAO {
 	ctx.log().info("ACCOUNT " + account + " LINKED TO SUPPLIER " + registry);
 	}
 	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.insert(AONContext ctx, Registry reg)
+	 */
+	@Deprecated(forRemoval = true )
 	protected static Integer insert(AONContext ctx, Registry reg) {
 		ctx.checkWrite();
 		return ctx.getDslContext().insertInto(REGISTRY)
@@ -537,6 +548,10 @@ public class RegistryOldDAO {
 			.fetch().stream().map(new RAddressFiller2()).findFirst().orElse(new RAddress());
 	}
 	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.insert(AONContext ctx, Registry reg)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Registry insertRegistry(AONContext ctx, Registry registry){
 		String nationality = registry.getNationality() != null ? registry.getNationality().getIso2() : "ES";
 		String documentCountry = registry.getDocumentCountry() != null ? registry.getDocumentCountry().getIso2() : "ES";
@@ -548,6 +563,10 @@ public class RegistryOldDAO {
 			.fetch().stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
 	}
 	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.update(AONContext ctx, Registry reg)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Registry updateRegistry(AONContext ctx, Registry registry){
 		return ctx.getDslContext().update(REGISTRY)
 			.set(REGISTRY.ALIAS, registry.getAlias()).set(REGISTRY.NAME, registry.getName())
@@ -555,6 +574,10 @@ public class RegistryOldDAO {
 			.returning().fetch().stream().map(new RegistryFiller()).findFirst().orElse(new Registry());		
 	}
 	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.delete(AONContext ctx, Integer id)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Registry deleteRegistry(AONContext ctx, Integer registry){
 		return ctx.getDslContext().delete(REGISTRY).where(REGISTRY.ID.eq(registry))
 			.returning().fetch().stream().map(new RegistryFiller()).findFirst().orElse(new Registry());

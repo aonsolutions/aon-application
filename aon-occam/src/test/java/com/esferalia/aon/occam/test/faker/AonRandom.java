@@ -18,6 +18,10 @@ public class AonRandom {
     	return faker.random().nextInt(0, 100) <= threshold;
     }
 
+    public static int number( int from, int to) {
+    	return faker.random().nextInt(from, to);
+    }
+
     public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
         int x = faker.random().nextInt(clazz.getEnumConstants().length);
         return clazz.getEnumConstants()[x];
