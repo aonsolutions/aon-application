@@ -17,14 +17,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class ValidationSaveOverflowDocument extends AbstractOccamTest {
 
 	@Test
-	public void testOverflowDocument() {
+	public void test() {
 		Registry registry = RegistryFaker.get( ctx );
 		registry.setDocument( AonStringUtils.repeat('X', REGISTRY.DOCUMENT.getDataType().length() + 1) );
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryDAO.insert(ctx, registry) );
-		assertEquals(
-			 AonStringUtils.substring(AonError.REGISTRY_OVERFLOW_DOCUMENT.getMessage(), 0,15)
-			,AonStringUtils.substring(e.getMessage(), 0,15)
-			);
+		assertEquals(AonError.REGISTRY_OVERFLOW_DOCUMENT.getMessage(),e.getMessage());
 	}
 
 }

@@ -23,12 +23,12 @@ public class RegistryValidation {
 	};
 	
 	public static BiConsumer<Registry,AONContext> OVERFLOW_NAME = (reg,ctx) -> {
-		if (AonStringUtils.length(reg.getDocument()) > REGISTRY.NAME.getDataType().length() )
-			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Nombre o razón social", REGISTRY.NAME.getDataType().length() ));
+		if (AonStringUtils.length(reg.getName()) > REGISTRY.NAME.getDataType().length() )
+			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Nombre o raz\u00F3n social", REGISTRY.NAME.getDataType().length() ));
 	};
 	
 	public static BiConsumer<Registry,AONContext> OVERFLOW_ALIAS = (reg,ctx) -> {
-		if (AonStringUtils.length(reg.getDocument()) > REGISTRY.ALIAS.getDataType().length() )
+		if (AonStringUtils.length(reg.getAlias()) > REGISTRY.ALIAS.getDataType().length() )
 			throw new AonCoreException(AonError.INVALID_LENGTH.format( "Alias", REGISTRY.ALIAS.getDataType().length() ));
 	};
 	
@@ -36,6 +36,7 @@ public class RegistryValidation {
 		EMPTY_DOMAIN
 		.andThen(OVERFLOW_DOCUMENT)
 		.andThen(OVERFLOW_NAME)
+		.andThen(OVERFLOW_ALIAS)
 		.accept(reg, ctx);
 	}
 	

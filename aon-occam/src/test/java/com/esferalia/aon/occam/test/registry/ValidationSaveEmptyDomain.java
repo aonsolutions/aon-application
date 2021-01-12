@@ -15,7 +15,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 public class ValidationSaveEmptyDomain extends AbstractOccamTest {
 
 	@Test
-	public void testEpmtyDomain() {
+	public void test() {
 		Registry registry = RegistryFaker.get( ctx );
 		registry.setDomain(null);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryDAO.insert(ctx, registry) );

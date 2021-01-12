@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.test.registry;
 
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
@@ -11,15 +12,16 @@ import com.esferalia.aon.occam.jooq.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.RegistryFaker;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class ValidationSaveEmptyDomainId extends AbstractOccamTest {
+public class ValidationSaveOverflowAlias extends AbstractOccamTest {
 
 	@Test
 	public void test() {
 		Registry registry = RegistryFaker.get( ctx );
-		registry.getDomain().setId(null);
+		registry.setAlias( AonStringUtils.repeat('X', REGISTRY.ALIAS.getDataType().length() + 1) );
 		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryDAO.insert(ctx, registry) );
-		assertEquals(AonError.EMPTY_DOMAIN.getMessage(),e.getMessage());
+		assertEquals(AonError.INVALID_LENGTH.format( "Alias", REGISTRY.ALIAS.getDataType().length() ),e.getMessage());
 	}
-	
+
 }

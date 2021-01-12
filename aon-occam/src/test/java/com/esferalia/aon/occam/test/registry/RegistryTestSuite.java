@@ -10,9 +10,13 @@ import org.junit.runners.Suite.SuiteClasses;
 	ValidationSaveEmptyDomain.class,
 	ValidationSaveEmptyDomainId.class,
 	ValidationSaveOverflowDocument.class,
+	ValidationSaveOverflowName.class,
+	ValidationSaveOverflowAlias.class,
+	ValidationSaveEmptyDocumentCountry.class,
+	ValidationSaveEmptyNationality.class,
+	ValidationSaveLegalEntity.class,
 	InsertTest.class,
 })
 public class RegistryTestSuite {
-
 	
 }

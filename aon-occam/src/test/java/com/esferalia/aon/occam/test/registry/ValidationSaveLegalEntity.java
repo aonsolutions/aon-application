@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.test.registry;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 
@@ -9,17 +8,17 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.jooq.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.RegistryFaker;
-import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 
-public class ValidationSaveEmptyDomainId extends AbstractOccamTest {
+public class ValidationSaveLegalEntity extends AbstractOccamTest {
 
 	@Test
 	public void test() {
 		Registry registry = RegistryFaker.get( ctx );
-		registry.getDomain().setId(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryDAO.insert(ctx, registry) );
-		assertEquals(AonError.EMPTY_DOMAIN.getMessage(),e.getMessage());
+		boolean entity = AonDocumentUtil.isEntity( registry.getDocument() );
+		registry.setLegalPerson( !entity );
+		registry = RegistryDAO.insert(ctx, registry);
+		assertEquals(entity, registry.isLegalPerson() );
 	}
-	
+
 }
