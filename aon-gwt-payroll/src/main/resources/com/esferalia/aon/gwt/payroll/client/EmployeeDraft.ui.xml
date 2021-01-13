@@ -117,7 +117,7 @@
 		</g:north>
 		<g:center> 
 		    <g:ScrollPanel>
-		    	<g:VerticalPanel ui:field="scrolledPanel" >
+		    	<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
 		    	<!-- g:HTMLPanel styleName="aon-height-all" debugId="paymetDialogHTMLPanel" -->
 		    		<g:DeckPanel ui:field="deckPanel">
 		    			<e:Employee ui:field="employee"/>
