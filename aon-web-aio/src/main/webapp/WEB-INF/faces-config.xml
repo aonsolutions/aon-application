@@ -227,6 +227,10 @@
 			<from-outcome>home_favorite</from-outcome>
 			<to-view-id>/facelet/homepage/favorite.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>home_employee</from-outcome>
+			<to-view-id>/facelet/homepage/employee.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 
    	<!-- ************************************************** -->

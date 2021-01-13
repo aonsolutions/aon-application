@@ -396,6 +396,7 @@
 							<aon:methodParam name="rowSelectorAction" value="start" />
 							<aon:methodParam name="rowSelectorActionListener" value="#{domains.onSelectChildDomain}" type="actionListener" />
 							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+								<ui:param name="rows" value="10" />
 							
 								<ui:param name="skipSelectButton" value="#{true}" />
 								<ui:param name="showDataScroller" value="#{false}" />
@@ -412,12 +413,37 @@
 								</ui:define>
 							</ui:decorate>
 							
-							<!--
+							<aon:div></aon:div>
+
 							<aon:div styleClass="search-results-popup-title" >
-								<aon:outputText value="#{domainSwitcher.model.rowCount} Trabajadores encontrados"
+								<aon:outputText value="#{contractSwitcher.model.rowCount} Trabajadores encontrados"
 								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
 							</aon:div>
-							-->
+							<aon:methodParam name="rowSelectorAction" value="home_employee" />
+							<aon:methodParam name="rowSelectorActionListener" value="#{domains.onSelectContractDomain}" type="actionListener" />
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+								<ui:param name="rows" value="10" />
+							
+								<ui:param name="skipSelectButton" value="#{true}" />
+								<ui:param name="showDataScroller" value="#{false}" />
+							
+								<ui:param name="controller" value="#{contractSwitcher}" />
+								<ui:param name="skipFocusFirst" value="true" />
+							
+								<ui:define name="columns">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<aon:outputText value="#{to.getDisplay(search.filter)}"
+										title="#{(!to.active)?bundle.admin_domain_inactive:''}"
+										style="#{(!to.active)?'color:gray;font-style:italic;':''}"  escape="false" />					
+								</aon:column>
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="text-align: right;">
+									<aon:outputText value="#{to.domainDescription}"
+										title="#{(!to.active)?bundle.admin_domain_inactive:''}"
+										style="#{(!to.active)?'color:gray;font-style:italic;':''}" />					
+								</aon:column>
+								</ui:define>
+							</ui:decorate>
+							
 						
 						</aon:div>
 						</aon:if>

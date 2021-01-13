@@ -343,8 +343,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			
 			.leftOuterJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.DOMAIN.eq(DOMAIN.ID))
 			
-			.leftOuterJoin(APP_PARAM).on(APP_PARAM.DOMAIN.eq(DOMAIN.ID).and(APP_PARAM.NAME.eq(AppParam.AON_CUSTOMIZE_ID.getValue())))
-			.leftOuterJoin(RATTACH).on(DSL.cast(APP_PARAM.VALUE, Integer.class).eq(RATTACH.REGISTRY).and(RATTACH.DESCRIPTION.eq(ICommonConstants.TOOLBAR_LOGO_NAME)))
+//			.leftOuterJoin(APP_PARAM).on(APP_PARAM.DOMAIN.eq(DOMAIN.ID).and(APP_PARAM.NAME.eq(AppParam.AON_CUSTOMIZE_ID.getValue())))
+//			.leftOuterJoin(RATTACH).on(DSL.cast(APP_PARAM.VALUE, Integer.class).eq(RATTACH.REGISTRY).and(RATTACH.DESCRIPTION.eq(ICommonConstants.TOOLBAR_LOGO_NAME)))
 			
 			.where(getDomainCondition())
 
@@ -374,16 +374,17 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 				domainData.setDocument(r.get(REGISTRY.DOCUMENT));
 				
 				
-				byte logo [] = r.get(RATTACH.DATA);
-				if ( logo == null || ArrayUtils.isEmpty(logo) ) {
-					domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
-				}
-				else {
-					MimeType mimeType = AonEnumUtils.enumValue(r.get(RATTACH.MIMETYPE),
-							MimeType.MIME_PNG);
-					domainData.setLogo(String.format("data:%s;base64,%s", mimeType.getName(),
-							Base64.getEncoder().encodeToString(logo)));
-				}
+				domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
+//				byte logo [] = r.get(RATTACH.DATA);
+//				if ( logo == null || ArrayUtils.isEmpty(logo) ) {
+//					domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
+//				}
+//				else {
+//					MimeType mimeType = AonEnumUtils.enumValue(r.get(RATTACH.MIMETYPE),
+//							MimeType.MIME_PNG);
+//					domainData.setLogo(String.format("data:%s;base64,%s", mimeType.getName(),
+//							Base64.getEncoder().encodeToString(logo)));
+//				}
 				
 				domains.add(domainData);
 				

@@ -35,6 +35,20 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!--  *************** CONTRACT SWITCHER ***************** -->
+	<managed-bean>
+		<managed-bean-name>contractSwitcher</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.ContractSwitcher
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractSwitcher</value>
+		</managed-property>		
+	</managed-bean>
+	
+
 	<!--  *************** PARENT DOMAIN ***************** -->
 	<managed-bean>
 		<managed-bean-name>parentDomain</managed-bean-name>

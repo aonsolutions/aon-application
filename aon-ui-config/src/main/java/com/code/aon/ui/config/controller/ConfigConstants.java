@@ -19,4 +19,5 @@ public class ConfigConstants {
 	public static final String SERIES = "series";
 	public static final String PUBLISH_PARAMETER = "publishParameter";	
 	
+	public static final String CONTRACT_SWITCHER = "contractSwitcher";
 }
