@@ -442,6 +442,7 @@ public class AgreementParser {
 		AgreementRecord agreementRecord = dslContext.insertInto(AGREEMENT)
 			.set(AGREEMENT.DOMAIN, DOMAIN)
 			.set(AGREEMENT.DESCRIPTION, parseDescription(agreement.getAgreementDescription()))
+			.set(AGREEMENT.SS_NUMBER, agreement.getSSCode())
 			.returning(AGREEMENT.ID)
 			.fetchOne();
 		
