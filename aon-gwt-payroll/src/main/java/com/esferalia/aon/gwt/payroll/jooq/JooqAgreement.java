@@ -390,6 +390,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			agreement.setId(record.getId()); // Not NULL
 			agreement.setDomain(record.getDomain());
 			agreement.setDescription(record.getDescription());
+			agreement.setSSNumber(record.getSsNumber());
 			
 			agreement.setLevels(Collections.emptySet());
 			//agreement.setLevels(getAgreementLevel(dslContext, record.getId(), agreement));
@@ -421,6 +422,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		agreement.setId(record.getId()); // Not NULL
 		agreement.setDomain(record.getDomain());
 		agreement.setDescription(record.getDescription());
+		agreement.setSSNumber(record.getSsNumber());
 		
 		agreement.setLevels(getAgreementLevel(dslContext, record.getId(), agreement));
 
@@ -975,6 +977,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 					+ agreementRecord.getValue(AGREEMENT.DESCRIPTION);
 			String description = (aux.length() > lenght) ? aux.substring(0,
 					lenght) : aux;
+			String ssNumber = agreementRecord.getValue(AGREEMENT.SS_NUMBER);
 
 			int newAgreementId = dslContext
 					.insertInto(AGREEMENT)
@@ -987,6 +990,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			Agreement agreement = new Agreement();
 			agreement.setId(newAgreementId);
 			agreement.setDescription(description);
+			agreement.setSSNumber(ssNumber);
 			agreement.setDomain(domain);
 			agreement.setHasContract(false);
 

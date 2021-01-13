@@ -4669,6 +4669,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				agreement.setId((Integer) agreementId);
 				agreement.setDescription(rs.getString(tableCol(AGREEMENT,
 						AgreementColumns.DESCRIPTION)));
+				agreement.setSSNumber(rs.getString(tableCol(AGREEMENT,
+						AgreementColumns.SS_NUMBER)));
 				agreement.setDomain((Integer)rs.getObject(tableCol(AGREEMENT,
 						AgreementColumns.DOMAIN)));
 				workplace.setAgreement(agreement);

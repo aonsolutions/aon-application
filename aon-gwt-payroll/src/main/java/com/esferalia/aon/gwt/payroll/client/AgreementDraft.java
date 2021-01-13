@@ -1095,6 +1095,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	@UiField
 	ScrollPanel draftScrollPane;
+	
+	@UiField
+	TextBox ssNumberTextBox;
 
 	@UiField
 	TextBox descriptionTextBox;
@@ -1839,6 +1842,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		enableUndoRedoButtons();
 		this.agreementDraftObject.addListener(undoListener);
 
+		setSSNumber();
 		setDescription();
 		
 		fxButton.setEnabled(false);
@@ -1862,6 +1866,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		loadAvailablePayments();
 
+		setSSNumber();
 		setDescription();
 
 		if ( agreementDraftObject.getDatesWithChanges().isEmpty() /*&& isOnCategoryTab*/ )
@@ -1921,6 +1926,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiHandler("descriptionTextBox")
 	void onDescriptionValueChange(ValueChangeEvent<String> event) {
 		agreementDraftObject.setDescription(event.getValue());
+	}
+	
+	@UiHandler("ssNumberTextBox")
+	void onSSNumberValueChange(ValueChangeEvent<String> event) {
+		agreementDraftObject.setSSNumber(event.getValue());
 	}
 
 	@UiHandler("salaryTableScrollPane")
@@ -2027,6 +2037,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			deckPanelPayPeriod.showWidget(0);
 			
 		descriptionTextBox.setReadOnly(readOnly);
+		ssNumberTextBox.setReadOnly(readOnly);
 
 		setReadOnly(salaryTableFirstColumn, readOnly);
 	}
@@ -2144,6 +2155,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		// TODO: When null it will be desirable warn user.
 		String description = this.agreementDraftObject.getDescription();
 		descriptionTextBox.setText(description == null ? "" : description);
+		// descriptionTextBox.setEnabled(isEditable());
+
+	}
+	
+	private void setSSNumber() {
+		// TODO: When null it will be desirable warn user.
+		String ssNumber = this.agreementDraftObject.getSSNumber();
+		ssNumberTextBox.setText(ssNumber == null ? "" : ssNumber);
 		// descriptionTextBox.setEnabled(isEditable());
 
 	}

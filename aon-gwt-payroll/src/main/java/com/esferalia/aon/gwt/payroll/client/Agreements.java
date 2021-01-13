@@ -160,6 +160,7 @@ public class Agreements extends ResizeComposite implements
 		int newId = newsIdCounter--;
 		agreement.setId(newsIdCounter);
 		agreement.setDescription("CONVENIO NO GUARDADO " + -newId);
+		agreement.setSSNumber(null);
 		agreement.setDomain(getDomain());
 
 		return agreement;

@@ -358,6 +358,15 @@
 							<g:Grid width="100%">
 								<g:row>
 									<g:customCell styleName="{style.label}">
+										<g:Label>C&oacute;digo SS
+										</g:Label>
+									</g:customCell>
+									<g:customCell styleName="{style.field}">
+										<g:TextBox width="100%" debugId='ssNumberTextBox' ui:field='ssNumberTextBox' maxLength="{DESCRIPTION_MAX_LENGTH}"/>
+									</g:customCell>
+								</g:row>
+								<g:row>
+									<g:customCell styleName="{style.label}">
 										<g:Label>Descripci&oacute;n
 										</g:Label>
 									</g:customCell>

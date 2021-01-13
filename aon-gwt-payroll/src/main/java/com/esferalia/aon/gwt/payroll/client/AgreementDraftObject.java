@@ -34,7 +34,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -150,6 +149,29 @@ public class AgreementDraftObject {
 		@Override
 		public void undo() {
 			agreementDraft.setDescription(oldDescription);
+		}
+
+	}
+	
+	private class UndoableSSNumberEdit implements Undoable {
+
+		private String newSSNumber, oldSSNumber;
+
+		public UndoableSSNumberEdit(String oldSSNumber,
+				String newSSNumber) {
+			this.newSSNumber = newSSNumber;
+			this.oldSSNumber = oldSSNumber;
+
+		}
+
+		@Override
+		public void redo() {
+			agreementDraft.setSSNumber(newSSNumber);
+		}
+
+		@Override
+		public void undo() {
+			agreementDraft.setSSNumber(oldSSNumber);
 		}
 
 	}
@@ -344,6 +366,10 @@ public class AgreementDraftObject {
 	public String getDescription() {
 		return agreementDraft.getDescription();
 	}
+	
+	public String getSSNumber() {
+		return agreementDraft.getSSNumber();
+	}
 
 	public Date getStartDate() {
 		return agreementDraft.getStartDate();
@@ -492,6 +518,12 @@ public class AgreementDraftObject {
 		String old = agreementDraft.getDescription();
 		agreementDraft.setDescription(description);
 		undoManager.add(new UndoableDescriptionEdit(old, description));
+	}
+	
+	public void setSSNumber(String ssNumber) {
+		String old = agreementDraft.getSSNumber();
+		agreementDraft.setSSNumber(ssNumber);
+		undoManager.add(new UndoableSSNumberEdit(old, ssNumber));
 	}
 
 	public void addDraftExtra(Extra extra) {

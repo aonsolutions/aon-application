@@ -409,6 +409,7 @@ public class MainTrash extends MainEntryPoint implements
 			draft.setId(agreement.getId());
 			draft.setDomain(agreement.getDomain());
 			draft.setDescription(agreement.getDescription());
+			draft.setSSNumber(agreement.getSSNumber());
 
 			draft.setStartDate(DateUtils.getFirstDayOfMonth());
 			draft.setEndDate(DateUtils.getLastDayOfMonth());

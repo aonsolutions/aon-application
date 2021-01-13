@@ -55,6 +55,7 @@ public class Agreement implements Serializable, HasId<Integer>, HasDomain<Intege
 
 	private int id;
 	private Integer domain;
+	private String ssNumber;
 	private String description;
 
 	private int redefined;
@@ -82,6 +83,14 @@ public class Agreement implements Serializable, HasId<Integer>, HasDomain<Intege
 	
 	public void setDomain(Integer domain) {
 		this.domain = domain;
+	}
+	
+	public String getSSNumber() {
+		return ssNumber;
+	}
+
+	public void setSSNumber(String ssNumber) {
+		this.ssNumber = ssNumber;
 	}
 	
 	public String getDescription() {
