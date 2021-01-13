@@ -359,8 +359,9 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.category);
 				return;
 			}
-			
-			Integer agreementId =  Integer.valueOf(this.agreement.getSelectedValue()); 
+			Integer agreementId = Integer.valueOf(this.agreement.getSelectedValue().split("/")[0]); 
+			String ssNumber = this.agreement.getSelectedValue().split("/")[1];
+			employeeDialogObject.setAgreementSSNumber(ssNumber);
 			getAgreementLevels(agreementId);
 			
 		}
@@ -787,7 +788,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		this.employee.agreement.addItem("-", "-1");
 		List<Agreement> agreements = employeeDialogObject.getActiveAgreements();
 		for (Agreement agreement : agreements)
-			this.employee.agreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
+			this.employee.agreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()) + "/" + agreement.getSSNumber());
 	}
 	
 	private void initPayMethods() {

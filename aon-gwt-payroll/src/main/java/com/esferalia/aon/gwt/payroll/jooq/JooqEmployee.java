@@ -748,6 +748,7 @@ public class JooqEmployee {
 					.fetchOne();
 			
 			contractData.setAgreementId(agreementTable.get(AGREEMENT.ID));
+			contractData.setAgreementColective(agreementTable.get(AGREEMENT.SS_NUMBER));
 			//employee.setAgreement(agreementTable.get(AGREEMENT.DESCRIPTION)); //Can be null
 			} catch ( Throwable t ) {
 				contractData.setAgreementLevelId(null);
@@ -1705,6 +1706,13 @@ public class JooqEmployee {
 			.and(CONTRACT_PAYMENT.END_DATE.eq(oldEndDate))
 			.execute();
 			
+		//UPDATE AGREEMENT SS NUMBER
+		Integer agreementId = employeeContractInfo.getContractInfo().getAgreementId();
+		if(null != agreementId) {
+			String agreementSSNumber = dslContext.select(AGREEMENT.SS_NUMBER).from(AGREEMENT).where(AGREEMENT.ID.eq(agreementId)).fetchOne(AGREEMENT.SS_NUMBER);
+			employeeContractInfo.getContractInfo().setAgreementColective(agreementSSNumber);
+		}
+		
 		employeeContractInfo.setEmployeeInfo(employeeData);
 		return employeeContractInfo;
 	}

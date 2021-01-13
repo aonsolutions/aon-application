@@ -949,6 +949,7 @@ public class JooqContrataContract {
 							.fetchOne();
 					
 					contractData.setAgreementId(agreementTable.get(AGREEMENT.ID));
+					contractData.setAgreementColective(agreementTable.get(AGREEMENT.SS_NUMBER));
 				} catch ( Throwable t ) {
 					contractData.setAgreementLevelId(null);
 					contractData.setAgreementId(null);

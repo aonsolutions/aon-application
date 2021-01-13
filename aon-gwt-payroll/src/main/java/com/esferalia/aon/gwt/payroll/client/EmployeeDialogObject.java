@@ -490,6 +490,10 @@ public class EmployeeDialogObject {
 		contractData.setAgreementId(agreement_table_id);
 	}
 	
+	public void setAgreementSSNumber(String colectiveAgreement) {
+		contractData.setAgreementColective(colectiveAgreement);
+	}
+	
 	public void setContractAgreementLevelId(Integer agreement_level_table_id) {
 		contractData.setAgreementLevelId(agreement_level_table_id);
 	}

@@ -808,6 +808,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			agreementDraft.setId(agreement.getId());
 			agreementDraft.setDomain(agreement.getDomain());
 			agreementDraft.setDescription(agreement.getDescription());
+			agreementDraft.setSSNumber(agreement.getSSNumber());
 			agreementDraft.setStartDate(DateUtils.getFirstDayOfMonth());
 			agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
 			final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
@@ -1526,6 +1527,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			categoryDraft.setDomain(agreement.getDomain());
 			categoryDraft.setLevelId(category.getLevelId());
 			categoryDraft.setDescription(agreement.getDescription());
+			categoryDraft.setSSNumber(agreement.getSSNumber());
 			categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
 			categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
 			final CategoryDraftObject categoryDraftObject = new CategoryDraftObject(

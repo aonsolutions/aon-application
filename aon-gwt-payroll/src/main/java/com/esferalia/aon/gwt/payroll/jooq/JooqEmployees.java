@@ -409,6 +409,8 @@ public class JooqEmployees {
 					.getValue(AGREEMENT.DOMAIN));
 			agreement.setDescription(record
 					.getValue(AGREEMENT.DESCRIPTION));
+			agreement.setSSNumber(record
+					.getValue(AGREEMENT.SS_NUMBER));
 
 			category.setAgreement(agreement);
 			employee.setCategory(category);
@@ -492,6 +494,7 @@ public class JooqEmployees {
 					agreement.setId(record.getValue(AGREEMENT.ID));
 					agreement.setDescription(record
 							.getValue(AGREEMENT.DESCRIPTION));
+					agreement.setSSNumber(record.getValue(AGREEMENT.SS_NUMBER));
 
 					category.setAgreement(agreement);
 					employee.setCategory(category);
@@ -655,6 +658,7 @@ public class JooqEmployees {
 			agreement.setId(contractRecord.getValue(AGREEMENT.ID));
 			agreement.setDescription(contractRecord
 					.getValue(AGREEMENT.DESCRIPTION));
+			agreement.setSSNumber(contractRecord.getValue(AGREEMENT.SS_NUMBER));
 
 			category.setAgreement(agreement);
 			employee.setCategory(category);
