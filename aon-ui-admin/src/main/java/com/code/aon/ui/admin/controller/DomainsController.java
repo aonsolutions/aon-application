@@ -2,6 +2,7 @@ package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.NEW_DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.REMOVE_DOMAIN_CONTROLLER_NAME;
+import static com.code.aon.ui.config.controller.ConfigConstants.CONTRACT_SWITCHER;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.net.IDN;
@@ -25,7 +26,10 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
+import com.code.aon.ui.config.ContractData;
 import com.code.aon.ui.config.DomainData;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.ContractSwitcher;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -148,6 +152,19 @@ public class DomainsController extends BasicController {
 			DomainData domainData = (DomainData) ds.getModel().getRowData();
 			ds.select(domainData.getId(), domainData.getDescription());
 			if ( ds.isAdminDomain() ) {
+				setConfigurationMenu();
+			}
+		}
+	}
+
+	public void onSelectContractDomain( ActionEvent event) throws ManagerBeanException {
+		ContractSwitcher contractSwitcher = (ContractSwitcher) AonUtil.getRegisteredBean(CONTRACT_SWITCHER);
+		if ( contractSwitcher.getModel().isRowAvailable() ) {
+			ContractData contractData = (ContractData) contractSwitcher.getModel().getRowData();
+			DomainSwitcher domainSwitcher = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+
+			domainSwitcher.select(contractData.getDomainId(), contractData.getDomainDescription());
+			if ( domainSwitcher.isAdminDomain() ) {
 				setConfigurationMenu();
 			}
 		}
