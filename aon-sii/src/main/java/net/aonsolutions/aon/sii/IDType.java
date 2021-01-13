@@ -51,4 +51,12 @@ public enum IDType {
 		return OTRO;
 	}
 	
+	public static IDType safeValueOf(String str) {
+		for (IDType t : IDType.values()) {
+			if(t.getName().equalsIgnoreCase(str)) 
+				return t;
+		}
+		return OTRO;
+	}
+	
 }

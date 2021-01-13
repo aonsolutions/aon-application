@@ -273,10 +273,14 @@ public class FacturasRecibidas extends SIIBuilt {
 			frt.setBaseImponibleACoste(Double.toString(AonMathUtils.round(base)));
 		}
 		System.out.println("SII FR GENERANDO XML - CUOTA");
+		
 		// CUOTA DEDUCIBLE
 		frt.setCuotaDeducible(AonMathUtils.round(contextList.stream().filter(a -> a.getInvoice().equals(invoiceId))
 				.mapToDouble(a -> a.getDeductibleQuota()).sum()) + ""); // TODO
-
+		
+		if(isCuotaDeducible0(emisor)) {
+			frt.setCuotaDeducible("0"); // TODO
+		}
 			// DESCRIPCION OPERACION
 		AccountingInvoice ai = ACCOUNTING.getAccountingInvoiceFromInvoice(domain.getName(), domain.getId(), login, invoiceId);
 		String str = "";
@@ -659,6 +663,15 @@ public class FacturasRecibidas extends SIIBuilt {
 			contraparte.setIDOtro(otro);
 		}	
 		return contraparte;
+	}
+	
+	private Boolean isCuotaDeducible0(IDEmisorFactura emisor) {
+		if(emisor != null && emisor.getIDOtro() != null && emisor.getIDOtro().getIDType() != null) {
+			IDType idtype = IDType.safeValueOf(emisor.getIDOtro().getIDType());
+			return IDType.PASAPORTE.equals(idtype) || IDType.DOCUMENTO_OFICIAL_PAIS.equals(idtype)
+					|| IDType.CERTIFICADO_RESIDENCIA.equals(idtype) || IDType.OTRO.equals(idtype);
+		}
+		return false;
 	}
 	
 	private Boolean isPersonaFisica(String document){
