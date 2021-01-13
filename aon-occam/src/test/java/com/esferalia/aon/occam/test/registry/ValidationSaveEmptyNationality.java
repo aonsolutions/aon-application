@@ -17,7 +17,7 @@ public class ValidationSaveEmptyNationality extends AbstractOccamTest {
 		Registry registry = RegistryFaker.get( ctx );
 		registry.setNationality(null);
 		registry = RegistryDAO.insert(ctx, registry);
-		assertEquals(registry.getDocumentCountry(), Country.ES);
+		assertEquals(registry.getNationality(), Country.ES);
 	}
 
 }
