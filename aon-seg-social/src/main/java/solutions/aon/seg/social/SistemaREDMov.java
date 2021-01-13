@@ -210,8 +210,6 @@ public class SistemaREDMov {
 			htmlPage = btnSubmit1.click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
-			System.out.println(htmlPage.asXml());
-			
 			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
 			if(msg1!=null && msg1.getTextContent().trim().indexOf("LA MECANIZACION DE ESTE TIPO DE REGISTROS PUEDE IMPLICAR") !=-1) {
 				HtmlInput btnSubmit2 = htmlPage.querySelector("input[value=\"Continuar\"]");

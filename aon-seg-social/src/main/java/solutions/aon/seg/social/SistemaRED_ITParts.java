@@ -1,13 +1,14 @@
 package solutions.aon.seg.social;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
-import com.gargoylesoftware.htmlunit.util.Cookie;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDateException;
+import solutions.aon.seg.social.exceptions.invalidData.NoQueryData;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.ITPart;
@@ -23,6 +24,8 @@ import java.util.*;
 
 public class SistemaRED_ITParts {
 		
+	private static String URL_BASE = "https://w2.seg-social.es/isincaA/inicio.do";
+
 	//GET ITs
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc, Date from, Date to)throws SegSocialException{
@@ -43,7 +46,6 @@ public class SistemaRED_ITParts {
 				orderedItParts.put(id, list);
 			}
 		}
-		
 		ItBuilder builder = new ItBuilder();
 		Set<ItPartId> partIds = orderedItParts.keySet(); 
 		for(ItPartId id :partIds) {
@@ -56,7 +58,7 @@ public class SistemaRED_ITParts {
 			for(ITPart itp : itParts) {
 				if(itp.getPartType().toLowerCase().equals("alta")) end = itp;
 				if(itp.getPartType().toLowerCase().equals("baja")) start = itp;
-				if(itp.getPartType().toLowerCase().equals("confirmaciï¿½n") && !confirmations.contains(itp)) confirmations.add(itp);
+				if(itp.getPartType().toLowerCase().equals("confirmaci\u00F3n") && !confirmations.contains(itp)) confirmations.add(itp);
 			}
 			
 			its.add(builder.setStart(start)
@@ -99,7 +101,7 @@ public class SistemaRED_ITParts {
 			
 			while(!last) {
 				HtmlPage origen = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
-				HtmlPage document = HtmlUnitToolkit.wait4(origen, p -> p.getAnchorByHref("https://w2.seg-social.es/isincaA/inicio.do")).orElseThrow().click();
+				HtmlPage document = HtmlUnitToolkit.wait4(origen, p -> p.getAnchorByHref(URL_BASE)).orElseThrow().click();
 				document = document.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
 				
 				HtmlForm formularioPartes = document.getFormByName("BuscaPartesForm");
@@ -169,9 +171,8 @@ public class SistemaRED_ITParts {
 
 	//HANDLE IT PART ERRORS
 	private static void handleItPartErrors(HtmlPage htmlPage) throws InvalidDataException {
-		DomNode errors = htmlPage.querySelector("#errores");
-		if(errors != null) throw new InvalidDataException();
-		
+		DomNode errors = htmlPage.querySelector("#errores > ul");
+		if(errors != null) throw new InvalidDataException(errors.getVisibleText());
 	}	
 
 	//CONTINGENCIES 
@@ -181,6 +182,12 @@ public class SistemaRED_ITParts {
 		ACCIDENT_LABORAL,
 		ENFERMEDAD_PROFESIONAL,
 		PERIODOS_OBSERVACION
+	}
+	
+	public enum TypeAccident {
+		LEVE,
+		GRAVE,
+		MUY_GRAVE
 	}
 	
 	//PART TYPE 
@@ -196,143 +203,290 @@ public class SistemaRED_ITParts {
 		RESTO_Y_AUTONOMOS
 	}
 	
+	public enum SituationEmployee {
+		ACTIVO,
+		PERCEPTOR_DE_DESEMPLEO
+	}
+	
 	//REGISTER IT START HANDLE EXCEPTIONS
 	public static void registerItBaja(InputStream certificateInputStream, String certificatePassword,String certificateType,
-			String regime, String ccc, String naf, Contingencies contingency, Optional<String> licenseNumber, Optional<String> cias, Date startdate,
-			ContractType contractType,  float baseCot , int cotDays) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException {
+			String regime, String ccc, String naf, Contingencies contingency, SituationEmployee situation_employee, Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation, Date startdate,
+			ContractType contractType,  float baseCot , int cotDays, Optional<Date> fATEP, Optional<TypeAccident> typeAccident) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException, InterruptedException {
 		
-		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency, licenseNumber, cias, startdate, contractType,baseCot,cotDays});
+		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, startdate, contractType, baseCot, cotDays});
 		
-		try{ registerItBajaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency,licenseNumber, cias, startdate, contractType, baseCot, cotDays);}
+		try{ registerItBajaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, occupation, startdate, contractType, baseCot, cotDays, fATEP, typeAccident);}
 		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
 	}
 	
 	//REGISTER IT START
 	private static void registerItBajaImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc,
-									   String naf, Contingencies contingency, Optional<String> licenseNumber, Optional<String> cias, Date startdate, ContractType contractType, float base_cot , int cotDays) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException {
+									   String naf, Contingencies contingency, SituationEmployee situation_employee, Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation, Date startdate, 
+									   ContractType contractType, float base_cot , int cotDays, Optional<Date> fATEP, Optional<TypeAccident> typeAccident) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException, InterruptedException {
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 
-//			if(licenseNumber.isEmpty() && cias.isEmpty()) throw new InvalidDataException("Rellena cias o nÃºmero de colegiado");
+			HtmlPage htmlPage = webClient.getPage(URL_BASE);
 
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
-			HtmlOption type = htmlPage.querySelector("#tipoParte option:nth-child(2)");
-			htmlPage = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.BAJA);
+			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situation_employee, PartType.BAJA);
+			
+			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("BajaPartesForm")).orElseThrow();
 
-//			HtmlInput n_coleg_1_in = document.querySelector("#ncol_0");
-//			HtmlInput n_coleg_2_in = document.querySelector("#ncol_1");
-//			HtmlInput n_coleg_3_in = document.querySelector("#ncol_2");
-//			HtmlInput cias_in = document.querySelector("#cias");
-			HtmlInput startDate_dd_in = htmlPage.querySelector("#fechaBaja_dd");			
-			HtmlInput startDate_mm_in = htmlPage.querySelector("#fechaBaja_mm");			
-			HtmlInput startDate_aa_in = htmlPage.querySelector("#fechaBaja_aa");
-
+			//Data Contract
 			HtmlOption contract_type_opt = null;
 			HtmlInput cot_base_in_1 = null;
 			HtmlInput cot_base_in_2 = null;
 			HtmlInput cot_days_in = null;
 
-			Integer[] arr_startDate = Toolkit.getDateArray(startdate);
+			String[] arr_startDate = Toolkit.dateString(startdate);
 			String[] arr_base_cot = Toolkit.splitDecimal(base_cot,2);
 
 			switch (contractType) {
 				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL: 	
-					contract_type_opt = htmlPage.querySelector("#tipoContrato option:nth-child(2)");	
-					cot_base_in_1 = htmlPage.querySelector("#sumaBC1");
-					cot_base_in_2 = htmlPage.querySelector("#sumaBC2");
-					cot_days_in = htmlPage.querySelector("#sumaDias");
+					contract_type_opt = form.querySelector("#tipoContrato option:nth-child(2)");	
+					cot_base_in_1 = form.getInputByName("sumaBC1");
+					cot_base_in_2 = form.getInputByName("sumaBC2");
+					cot_days_in = form.getInputByName("sumaDias");
 					break;
 				case RESTO_Y_AUTONOMOS:						
-					contract_type_opt = htmlPage.querySelector("#tipoContrato option:nth-child(3)");	
-					cot_base_in_1 = htmlPage.querySelector("#baseCotizacion1");
-					cot_base_in_2 = htmlPage.querySelector("#baseCotizacion2");
-					cot_days_in = htmlPage.querySelector("#diasCot");
+					contract_type_opt = form.querySelector("#tipoContrato option:nth-child(3)");	
+					cot_base_in_1 = form.getInputByName("baseCotizacion1");
+					cot_base_in_2 = form.getInputByName("baseCotizacion2");
+					cot_days_in = form.getInputByName("diasCot");
 					break;
 			}
+			contract_type_opt.click();
+		
+			form.getInputByName("fechaBaja_dd").setValueAttribute(arr_startDate[0]); 
+			form.getInputByName("fechaBaja_mm").setValueAttribute(arr_startDate[1]); 
+			form.getInputByName("fechaBaja_aa").setValueAttribute(arr_startDate[2]); 
 			
-			startDate_dd_in.setValueAttribute(arr_startDate[0] + "");
-			startDate_mm_in.setValueAttribute(arr_startDate[1] + "");
-			startDate_aa_in.setValueAttribute(arr_startDate[2] + "");
+
 			cot_base_in_1.setValueAttribute(arr_base_cot[0]);
 			cot_base_in_2.setValueAttribute(arr_base_cot[1]);
 			cot_days_in.setValueAttribute(cotDays + "");
 
-//			HtmlSelect ocup = document.querySelector("#ocupacion");
-//			ocup.setSelectedAttribute("9490", true); //.setValueAttribute("9490");
+			if(occupation.isPresent()){
+				HtmlSelect ocup = form.querySelector("#ocupacion");
+				ocup.setSelectedAttribute(occupation.get(), true);
+			}
+		
+			if(licenseNumber.isPresent()){
+				ArrayList<String> n_coleg_arr_ls = Toolkit.splitString_m(licenseNumber.get(), new int[]{2,4});
+				form.getInputByName("ncol_0").setValueAttribute(n_coleg_arr_ls.get(0)); 
+				form.getInputByName("ncol_1").setValueAttribute(n_coleg_arr_ls.get(1)); 
+				form.getInputByName("ncol_2").setValueAttribute(n_coleg_arr_ls.get(2)); 
+				form.getInputByName("cias").setValueAttribute(cias.get()); 
+			}
+			//Data Contract END
 			
-			htmlPage = contract_type_opt.click();
-
-//			if(licenseNumber.isPresent()){
-//				ArrayList<String> n_coleg_arr_ls = Toolkit.splitString_m(licenseNumber.get(), new int[]{2,4});
-//				n_coleg_1_in.setValueAttribute(n_coleg_arr_ls.get(0));
-//				n_coleg_2_in.setValueAttribute(n_coleg_arr_ls.get(1));
-//				n_coleg_3_in.setValueAttribute(n_coleg_arr_ls.get(2));
-//				cias_in.setValueAttribute(cias.get());
-//			}
+			//Data professional contigencies
+			if(fATEP.isPresent()){
+				String[] fATEP_string = Toolkit.dateString(fATEP.get());
+				form.getInputByName("fechaATEP_dd").setValueAttribute(fATEP_string[0]); 
+				form.getInputByName("fechaATEP_mm").setValueAttribute(fATEP_string[1]); 
+				form.getInputByName("fechaATEP_aa").setValueAttribute(fATEP_string[2]); 
+			}
 			
-			HtmlSubmitInput validate = htmlPage.querySelector("#Validar");
+			if(typeAccident.isPresent()) {
+				HtmlOption type_accident_opt = null;
+				switch (typeAccident.get()) {
+					case LEVE: 	
+						type_accident_opt = form.querySelector("#tipoAccidente option:nth-child(2)");	
+					break;
+					case GRAVE:		
+						type_accident_opt = form.querySelector("#tipoAccidente option:nth-child(3)");	
+					break;
+					case MUY_GRAVE:				
+						type_accident_opt = form.querySelector("#tipoAccidente option:nth-child(4)");	
+					break;
+				}
+				type_accident_opt.click();
+			}
+			//Data professional contigencies END
+			
+			HtmlSubmitInput validate = form.querySelector("input[value=Validar]");
 			htmlPage = validate.click();
+			handleItPartErrors(htmlPage);
 
 			HtmlSubmitInput confim = htmlPage.querySelector("#botones input[value=Confirmar]");
 			htmlPage = confim.click();
-
+			handleItPartErrors(htmlPage);
 			
-			Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testIt.html");
-			
+			String message = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo").asText();
+			System.out.println(message);
 		} 
 	}
+	
 	//REGISTER IT CONFIRMATION HANDLE EXCEPTIONS
-	public static void addItConfirmation(InputStream certificateInputStream, String certificatePassword,String certificateType,
-								  String regime, String ccc, String naf, Contingencies contingency) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException {
+	public static void registerItConfirmation(InputStream certificateInputStream, String certificatePassword,String certificateType,
+								  String regime, String ccc, String naf, Contingencies contingency, SituationEmployee situation_employee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja, Date fconfirmation, Optional<String> npartConfimation) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException, InterruptedException {
 
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency});
-		try{ addItConfirmationImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency);}
+		try{ registerItConfirmationImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, fconfirmation, npartConfimation);}
 		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
 	}
 
 	//REGISTER IT CONFIRMATION
-	private static void addItConfirmationImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, Contingencies contingency) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException {
+	private static void registerItConfirmationImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, 
+			String naf, Contingencies contingency, SituationEmployee situation_employee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja, Date fconfirmation, Optional<String> npartConfimation) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException, InterruptedException {
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
-			HtmlPage document = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
-			HtmlOption type = document.querySelector("#tipoParte option:nth-child(3)");
-			document = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.CONFIRMACION);
+			HtmlPage htmlPage = webClient.getPage(URL_BASE);
+			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situation_employee, PartType.CONFIRMACION);
+			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("ConfirmacionPartesForm")).orElseThrow();
+			
+			String[] fbajaString = Toolkit.dateString(fbaja);
+			String[] fconfirmationString = Toolkit.dateString(fconfirmation);
+			
+			form.getInputByName("fechaBaja_dd").setValueAttribute(fbajaString[0]); 
+			form.getInputByName("fechaBaja_mm").setValueAttribute(fbajaString[1]);
+			form.getInputByName("fechaBaja_aa").setValueAttribute(fbajaString[2]);
+			
+			form.getInputByName("fechaParte_dd").setValueAttribute(fconfirmationString[0]); 
+			form.getInputByName("fechaParte_mm").setValueAttribute(fconfirmationString[1]);
+			form.getInputByName("fechaParte_aa").setValueAttribute(fconfirmationString[2]);
+			
+			if(npartConfimation.isPresent()) {
+				form.getInputByName("numParte").setValueAttribute(npartConfimation.get());
+			}
+			
+			HtmlSubmitInput validate = form.querySelector("input[value=Validar]");
+			htmlPage = validate.click();
+			handleItPartErrors(htmlPage);
+//			
+//			//-----test------
+			HtmlSubmitInput confim = htmlPage.querySelector("#botones input[value=Confirmar]");
+			htmlPage = confim.click();
+			handleItPartErrors(htmlPage);
+			
+			String message = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo").asText();
+			System.out.println(message);
+			
+			Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testIt.html");
 		}
 	}
 
 	//REGISTER IT END HANDLE EXCEPTIONS
-	public static void addItEnd(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, Contingencies contingency) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException {
+	public static void registerItAlta(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, 
+			Contingencies contingency, SituationEmployee situation_employee, Optional<String> licenseNumber, Optional<String> cias, 
+			Date fbaja, Date falta, Optional<Date> fATEP, Optional<TypeAccident> typeAccident, String causa) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException, InterruptedException {
 
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency});
-		try{ addItEndImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency);}
+		try{ registerItAltaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, 
+				licenseNumber, cias, fbaja, falta, fATEP, typeAccident, causa);}
 		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
 	}
 
 	//REGISTER IT
-	private static void addItEndImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, Contingencies contingency) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException {
+	private static void registerItAltaImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, 
+			String regime, String ccc, String naf, Contingencies contingency, SituationEmployee situation_employee, 
+			Optional<String> licenseNumber, Optional<String> cias, Date fbaja, Date falta, Optional<Date> fATEP, Optional<TypeAccident> typeAccident, String causa) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException, InterruptedException {
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
-			HtmlPage document = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
-			HtmlOption type = document.querySelector("#tipoParte option:nth-child(4)");
-			document = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.ALTA);
+			HtmlPage htmlPage = webClient.getPage(URL_BASE);
+			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situation_employee, PartType.ALTA);
+			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("AltaPartesForm")).orElseThrow();
+			
+			String[] faltaString = Toolkit.dateString(falta);
+			String[] fbajaString = Toolkit.dateString(fbaja);
+			
+			form.getInputByName("fechaBaja_dd").setValueAttribute(faltaString[0]); 
+			form.getInputByName("fechaBaja_mm").setValueAttribute(faltaString[1]); 
+			form.getInputByName("fechaBaja_aa").setValueAttribute(faltaString[2]); 
+			
+			form.getInputByName("fechaAlta_dd").setValueAttribute(fbajaString[0]); 
+			form.getInputByName("fechaAlta_mm").setValueAttribute(fbajaString[1]); 
+			form.getInputByName("fechaAlta_aa").setValueAttribute(fbajaString[2]); 
+			
+			if(fATEP.isPresent()){
+				String[] fATEP_string = Toolkit.dateString(fATEP.get());
+				form.getInputByName("fechaAtEp_dd").setValueAttribute(fATEP_string[0]); 
+				form.getInputByName("fechaAtEp_mm").setValueAttribute(fATEP_string[1]); 
+				form.getInputByName("fechaAtEp_aa").setValueAttribute(fATEP_string[2]); 
+			}
+			
+			if(typeAccident.isPresent()) {
+				HtmlOption type_accident_opt = null;
+				switch (typeAccident.get()) {
+					case LEVE: 	
+						type_accident_opt = form.querySelector("#tipoAccidente option:nth-child(2)");	
+					break;
+					case GRAVE:		
+						type_accident_opt = form.querySelector("#tipoAccidente option:nth-child(3)");	
+					break;
+					case MUY_GRAVE:				
+						type_accident_opt = form.querySelector("#tipoAccidente option:nth-child(4)");	
+					break;
+				}
+				type_accident_opt.click();
+			}
+			
+			HtmlSelect cause = form.querySelector("#causaAlta");
+			cause.setSelectedAttribute("01", true);
+			
+			HtmlSubmitInput validate = form.querySelector("input[value=Validar]");
+			htmlPage = validate.click();
+			handleItPartErrors(htmlPage);
+
+			HtmlSubmitInput confim = htmlPage.querySelector("#botones input[value=Confirmar]");
+			htmlPage = confim.click();
+			handleItPartErrors(htmlPage);
+			
+			String message = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo").asText();
+			System.out.println(message);
+			
+			//Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testIt.html");
 		}
 	}
 
-	//COMMON DATA FILLING
-	private static HtmlPage fillCommonData(HtmlPage document,String regime, String ccc, String naf, Contingencies contingency,PartType type) throws IOException, InvalidDataException {
-		HtmlInput regime_in = document.querySelector("#regimen");
-		HtmlInput ccc_1_in = document.querySelector("#ccc1");
-		HtmlInput ccc_2_in = document.querySelector("#ccc2");
-		HtmlInput naf_1_in = document.querySelector("#naf1");
-		HtmlInput naf_2_in = document.querySelector("#naf2");
+	private static HtmlPage fillGeneralData(HtmlPage htmlPage, String regime, String ccc, String naf, Contingencies contingency, SituationEmployee situation_employee, PartType type) throws IOException, InvalidDataException {
+		HtmlInput regime_in = htmlPage.querySelector("#regimen");
+		HtmlInput ccc_1_in =  htmlPage.querySelector("#ccc1");
+		HtmlInput ccc_2_in =  htmlPage.querySelector("#ccc2");
+		HtmlInput naf_1_in =  htmlPage.querySelector("#naf1");
+		HtmlInput naf_2_in =  htmlPage.querySelector("#naf2");
+		HtmlOption type_opt = null;
 		HtmlOption contingency_opt = null;
-		HtmlSubmitInput accept = (HtmlSubmitInput) document.querySelector("#situacionTrabajador").getNextSibling().getNextSibling();
+		HtmlOption situation_opt = null;
+
+		switch(type) {
+			case BAJA:                 
+				type_opt = htmlPage.querySelector("#tipoParte option:nth-child(2)");
+			break;
+			case CONFIRMACION: 
+				type_opt = htmlPage.querySelector("#tipoParte option:nth-child(3)");
+			break;
+			case ALTA: 
+				type_opt = htmlPage.querySelector("#tipoParte option:nth-child(4)");
+			break;
+		}
+		type_opt.click();
+		
+		switch(situation_employee) {
+			case ACTIVO:                 
+				situation_opt = htmlPage.querySelector("#situacionTrabajador option:nth-child(2)"); 
+			break;
+			case PERCEPTOR_DE_DESEMPLEO: 
+				situation_opt = htmlPage.querySelector("#situacionTrabajador option:nth-child(3)"); 
+			break;
+		}
+		situation_opt.click();
 		
 		switch(contingency) {
-			case ENFERMEDAD_COMUN: 			contingency_opt = document.querySelector("#contingencia option:nth-child(2)");	break;
-			case ACCIDENTE_NO_LABORAL: 		contingency_opt = document.querySelector("#contingencia option:nth-child(3)");	break;
-			case ACCIDENT_LABORAL: 			contingency_opt = document.querySelector("#contingencia option:nth-child(4)"); 	break;
-			case ENFERMEDAD_PROFESIONAL: 	contingency_opt = document.querySelector("#contingencia option:nth-child(5)"); 	break;
-			case PERIODOS_OBSERVACION: 		contingency_opt = document.querySelector("#contingencia option:nth-child(6)"); 	break;
+			case ENFERMEDAD_COMUN: 			
+				contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(2)"); 
+			break;
+			case ACCIDENTE_NO_LABORAL: 		
+				contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(3)");	
+			break;
+			case ACCIDENT_LABORAL: 			
+				contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(4)"); 
+			break;
+			case ENFERMEDAD_PROFESIONAL: 	
+				contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(5)"); 	
+			break;
+			case PERIODOS_OBSERVACION: 		
+				contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(6)"); 	
+			break;
 		}
-		
 		contingency_opt.click();
 		
 		String[] ccc_arr =  Toolkit.SplitString(ccc, 2);
@@ -345,34 +499,36 @@ public class SistemaRED_ITParts {
 		naf_1_in.setValueAttribute(naf_arr[0]);
 		naf_2_in.setValueAttribute(naf_arr[1]);
 		
-		document = accept.click();		
-		return document;
+		HtmlSubmitInput accept = (HtmlSubmitInput) htmlPage.querySelector("#datos input[type=submit]");
+		htmlPage = accept.click();		
+		handleItPartErrors(htmlPage);
+		return htmlPage;
 	}
 	
-	//Cancel IT
-	public static void removeIt(InputStream certificateInputStream, String certificatePassword,String certificateType,String regime, String ccc, String naf, Date startdate)
+	//remove IT
+	public static void removeIt(InputStream certificateInputStream, String certificatePassword,String certificateType,String regime, String ccc, String naf, 
+			PartType partType, Date dateBj, Date dateProcess)
 		throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException, InterruptedException {
-		Toolkit.verifyData(new Object[]{regime, ccc, naf, startdate});
-		try{ removeItImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, startdate);}
+		Toolkit.verifyData(new Object[]{regime, ccc, naf, dateBj});
+		try{ removeItImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);}
 		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
 	}
 
-
-
-	//remove it
-	private static void removeItImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, Date startdate)
+	//remove IT
+	private static void removeItImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, 
+			PartType partType, Date dateBj, Date dateProcess)
 			throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InterruptedException, InvalidDataException {
-	
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
-//			webClient.getOptions().setThrowExceptionOnScriptError(false);
-//			webClient.getOptions().setRedirectEnabled(true); 
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
+
+			HtmlPage htmlPage = webClient.getPage(URL_BASE);
 
 			htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=A").click(); 
 			
 			String[] ccc_arr =  Toolkit.SplitString(ccc, 2);
 			String[] naf_arr =  Toolkit.SplitString(naf, 2);
-			String[] arr_startDate = Toolkit.dateString(startdate);
+			String[] arr_dateMedical = Toolkit.dateString(dateBj);
+			
+			String[] arr_dateProcess = Toolkit.dateString(dateProcess);
 			
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("BuscaPartesForm")).orElseThrow();
 			form.getInputByName("regimen").setValueAttribute(regime);
@@ -380,59 +536,138 @@ public class SistemaRED_ITParts {
 			form.getInputByName("ccc2").setValueAttribute(ccc_arr[1]);
 			form.getInputByName("naf1").setValueAttribute(naf_arr[0]);
 			form.getInputByName("naf2").setValueAttribute(naf_arr[1]);
-			form.getInputByName("fechaBaja_dd").setValueAttribute(arr_startDate[0]);
-			form.getInputByName("fechaBaja_mm").setValueAttribute(arr_startDate[1]);
-			form.getInputByName("fechaBaja_aa").setValueAttribute(arr_startDate[2]);
+			form.getInputByName("fechaBaja_dd").setValueAttribute(arr_dateMedical[0]);
+			form.getInputByName("fechaBaja_mm").setValueAttribute(arr_dateMedical[1]);
+			form.getInputByName("fechaBaja_aa").setValueAttribute(arr_dateMedical[2]);
 
-			HtmlSubmitInput  continue_in = htmlPage.querySelector("#botonesANULAR input[value=Continuar]");
+			HtmlSubmitInput  continue_in = form.querySelector("#botonesANULAR input[value=Continuar]");
 			htmlPage = continue_in.click();
-
-			String fbaja = arr_startDate[0]+"/"+arr_startDate[1]+"/"+arr_startDate[2];
-		
-			HtmlTable table = (HtmlTable) htmlPage.querySelector("#datos2 > fieldset > table");
-		
-			HtmlAnchor firstColumn = null;
-			for (final HtmlTableRow row : table.getRows()) {
-				HtmlTableCell cell = row.getCell(2);
-				if(cell.getVisibleText().indexOf(fbaja)>= 0) {
-					firstColumn = row.getCell(0).querySelector("a");
-					break;
-				}
-			}
-	
-			  Set<Cookie> cookies = htmlPage.getWebClient().getCookieManager().getCookies();
-			  StringBuilder cookieHeader = new StringBuilder();
-			  for (int index = 0; index < cookies.size(); index++){
-		            String cookie = cookies.toArray()[index].toString();
-		            String cookieNameValue =cookie.substring(0, cookie.indexOf(";"));
-		            String name = cookieNameValue.substring(0, cookieNameValue.indexOf("="));
-		            String value = cookieNameValue.substring(cookieNameValue.indexOf("=") + 1);
-
-		            if (index == 0){
-		                cookieHeader.append(name + "=" +value);
-		            } else {
-		                cookieHeader.append("; "+ name + "=" +value);
-		            }
-
-	        }
-
-			String newUrl = htmlPage.getFullyQualifiedUrl(firstColumn.getHrefAttribute()).toString().replaceAll("\\s","");
-			firstColumn.setAttribute("href", newUrl);
-			htmlPage = firstColumn.click();
+			handleItPartErrors(htmlPage);
 			
+			String str_dateProcess = arr_dateProcess[0]+"/"+arr_dateProcess[1]+"/"+arr_dateProcess[2];
+	
+			HtmlAnchor firstColumn = getOneAnchorPaginate(htmlPage, partType, str_dateProcess);
+	
+			if(firstColumn == null) {throw new NoQueryData("Sin datos de consulta");}
+			
+			htmlPage = HtmlUnitToolkit.setUrlParse(htmlPage, firstColumn).click();
+
 			HtmlSubmitInput  anular = htmlPage.querySelector("#botones input[value=Anular]");
 			htmlPage = anular.click();
 			
-			//confirmar
+			//confirm
 			HtmlSubmitInput  confirm = htmlPage.querySelector("#general > form input[value=Confirmar]");
 			htmlPage = confirm.click();
-			
-			//message exito
+	
+			//message success
 			String message = htmlPage.querySelector("#miForm > div.importante > div.indent > span.TextoMensaje").asText();
-//			output->   Parte anulado con éxito.
-
-		
-			Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testItRemove.html");
+			System.out.println(message);
+			//Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testItRemove.html");
 		}
 	}
+	
+	//report IT
+	public static byte[] pdfIt(InputStream certificateInputStream, String certificatePassword,String certificateType,String regime, String ccc, String naf, PartType partType, 
+			Date dateBj, Date dateProcess)
+		throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException, InterruptedException {
+		Toolkit.verifyData(new Object[]{regime, ccc, naf, dateBj});
+		try{ return pdfItImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);}
+		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
+		return null;
+	}
+
+	//report IT
+	private static byte[] pdfItImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, 
+			PartType partType, Date dateBj, Date dateProcess)
+			throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InterruptedException, InvalidDataException {
+		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+
+			HtmlPage htmlPage = webClient.getPage(URL_BASE);
+
+
+			htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=E").click(); 
+			
+			String[] ccc_arr =  Toolkit.SplitString(ccc, 2);
+			String[] naf_arr =  Toolkit.SplitString(naf, 2);
+			String[] arr_dateBj = Toolkit.dateString(dateBj);
+			
+			String[] arr_dateProcess = Toolkit.dateString(dateBj);
+		
+			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("BuscaPartesForm")).orElseThrow();
+			form.getInputByName("regimen").setValueAttribute(regime);
+			form.getInputByName("ccc1").setValueAttribute(ccc_arr[0]);
+			form.getInputByName("ccc2").setValueAttribute(ccc_arr[1]);
+			form.getInputByName("naf1").setValueAttribute(naf_arr[0]);
+			form.getInputByName("naf2").setValueAttribute(naf_arr[1]);
+			form.getInputByName("fechaBaja_dd").setValueAttribute(arr_dateBj[0]);
+			form.getInputByName("fechaBaja_mm").setValueAttribute(arr_dateBj[1]);
+			form.getInputByName("fechaBaja_aa").setValueAttribute(arr_dateBj[2]);
+
+			HtmlSubmitInput  continue_in = form.querySelector("#botonesANULAR input[value=Continuar]");
+			htmlPage = continue_in.click();
+			handleItPartErrors(htmlPage);
+			
+			String str_dateProcess =  arr_dateProcess[0]+"/"+arr_dateProcess[1]+"/"+arr_dateProcess[2];
+
+			HtmlAnchor firstColumn = getOneAnchorPaginate(htmlPage, partType, str_dateProcess);
+	
+			if(firstColumn == null) {throw new NoQueryData("Sin datos de consulta");}
+			
+			htmlPage =  HtmlUnitToolkit.setUrlParse(htmlPage, firstColumn).click();
+			
+	        UnexpectedPage document =  HtmlUnitToolkit.setUrlParse(htmlPage, (HtmlAnchor) htmlPage.querySelector("#botones > p > a")).click();
+			InputStream inp = document.getWebResponse().getContentAsStream();
+			byte[] pdf = inp.readAllBytes();
+			inp.close();
+			return pdf;
+		}
+	}
+	
+	private static HtmlAnchor getOneAnchorPaginate(HtmlPage htmlPage, PartType partType, String fecha) throws IOException {
+		String anulado = "No";
+		HtmlAnchor next = null;
+		boolean last = false;
+		HtmlAnchor firstColumn = null;
+		HtmlTable table = (HtmlTable) htmlPage.querySelector("#datos2 > fieldset > table");
+		int numberCell = 0;
+		String partTypeStr = null;
+		switch (partType) {
+			case BAJA:						
+				numberCell  = 2;
+				partTypeStr = "Baja";
+			break;
+			case ALTA: 	
+				numberCell  = 3;
+				partTypeStr = "Alta";
+			break;
+			case CONFIRMACION:						
+				numberCell  = 4;
+				partTypeStr = "Confirmaci\u00F3n";
+			break;
+		}
+		if(table!=null) {
+			while(!last) {
+				next = (HtmlAnchor) HtmlUnitToolkit.getElConstains(htmlPage, "#datos2 > fieldset > div > a", "Siguiente");
+				for (final HtmlTableRow row : table.getRows()) {
+					HtmlTableCell fCell = row.getCell(numberCell);
+					HtmlTableCell typeCell = row.getCell(6);
+					HtmlTableCell anulCell = row.getCell(7);	
+
+					if(fCell.getVisibleText().equalsIgnoreCase(fecha) && typeCell.getVisibleText().equalsIgnoreCase(partTypeStr) && anulCell.getVisibleText().equalsIgnoreCase(anulado)) {
+						firstColumn = row.getCell(0).querySelector("a");
+						break;
+					}
+				}
+				
+				if(firstColumn == null && next!=null) {
+					htmlPage = HtmlUnitToolkit.setUrlParse(htmlPage, next).click();
+				} else {
+					last = true;
+				}
+			}
+		}
+		return firstColumn;
+	}
+	
 }
+    

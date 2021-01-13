@@ -1,6 +1,8 @@
 package solutions.aon.seg.social.toolkit;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -129,5 +131,22 @@ public class HtmlUnitToolkit {
 		catch(CSSException e){ throw new CSSParseException();}
 		catch(Exception e){ throw new InternalException();}
 	}
-
+	
+	public static HtmlAnchor setUrlParse(HtmlPage htmlPage, HtmlAnchor anchor) throws IOException {
+		String newUrl = htmlPage.getFullyQualifiedUrl(anchor.getHrefAttribute()).toString().replaceAll("\\s","");
+		anchor.setAttribute("href", newUrl);
+		return anchor;
+	}
+	
+	public static DomNode getElConstains(HtmlPage htmlPage, String selector, String text) {
+		DomNodeList<DomNode> els =  htmlPage.querySelectorAll(selector);
+		DomNode elem = null;
+		for (DomNode el : els) {
+			 if(el.asText().toString().indexOf(text) >= 0) {
+				 elem = el;
+				 break;
+			 }
+		}
+		return elem;
+	}
 }
