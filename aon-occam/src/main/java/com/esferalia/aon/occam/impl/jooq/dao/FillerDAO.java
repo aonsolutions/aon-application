@@ -379,8 +379,6 @@ public class FillerDAO {
 					.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
 					.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
 					.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED) == 1)
-					// TODO QUITAR!!! 
-					.setRegistry(new Registry().setId(r.getValue(CUSTOMER.REGISTRY)).setName(r.getValue(REGISTRY.NAME)))
 					.setScope(r.getValue(CUSTOMER.SCOPE))
 					.setStatus(RegistryStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)))
 					.setSurcharge(r.getValue(CUSTOMER.STATUS)==1)

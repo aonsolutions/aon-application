@@ -11,8 +11,6 @@ public class Customer  extends Registry implements Serializable, HasAudit {
 
 	private static final long serialVersionUID = -1763053163676341615L;
 	
-	private Registry registry;
-	
 	private Integer tariff;
 	private boolean surcharge;
 	private boolean withholding;
@@ -37,6 +35,20 @@ public class Customer  extends Registry implements Serializable, HasAudit {
 		projectGrouped = true;
 		deliveryGrouped = true;
 		deliveryValuated = true;
+	}
+	
+	public Customer setRegistryData(Registry registry) {
+		setId(registry.getId());
+		setDomain(registry.getDomain());
+		setDocument(registry.getDocument());
+		setDocumentType(registry.getDocumentType());
+		setDocumentCountry(registry.getDocumentCountry());
+		setName(registry.getName());
+		setAlias(registry.getAlias());
+		setLegalPerson(registry.isLegalPerson());
+		setNationality(registry.getNationality());
+		setSecurityLevel(registry.getSecurityLevel());
+		return this;
 	}
 	
 	public Integer getTariff() {
@@ -164,16 +176,6 @@ public class Customer  extends Registry implements Serializable, HasAudit {
 	}
 	public Customer setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
-		return this;
-	}
-	
-	// **
-	
-	public Registry getRegistry() {
-		return registry;
-	}
-	public Customer setRegistry(Registry registry) {
-		this.registry = registry;
 		return this;
 	}
 	

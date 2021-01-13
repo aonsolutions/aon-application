@@ -102,7 +102,7 @@ public class Mod347MergeMail extends HttpServlet {
 				Integer registryId = null;
 				if (Mod347Key.B == declared.getType()) {
 					Customer customer = AON.getCustomer(domainName, domainId, user, p-> p.getDomainProperty().eq(domainId).and(p.getDocumentProperty().eq(declared.getDocument())));
-					registryId = (customer != null && customer.getRegistry() != null )?customer.getRegistry().getId():null;
+					registryId = (customer != null)?customer.getId():null;
 					tipo = "Cliente";
 				} 
 				if (Mod347Key.A == declared.getType()) {

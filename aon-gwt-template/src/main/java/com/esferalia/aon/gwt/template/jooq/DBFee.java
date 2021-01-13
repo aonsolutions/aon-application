@@ -204,7 +204,7 @@ public class DBFee {
 						.setAlias(result.get(index).getValue(REGISTRY.ALIAS))
 						.setDocument(result.get(index).getValue(REGISTRY.DOCUMENT))
 						.setName(result.get(index).getValue(REGISTRY.NAME));
-				customer.setRegistry(registry);
+				customer.setRegistryData(registry);
 				customer.setStatus(RegistryStatus.values()[result.get(index).value5()]);
 			
 				return customer;
@@ -236,7 +236,7 @@ public class DBFee {
 				registry.setAlias(r.value2());
 				registry.setDocument(r.value3());
 				registry.setName(r.value4());
-				customer.setRegistry(registry);
+				customer.setRegistryData(registry);
 
 				v.add(customer);
 			}

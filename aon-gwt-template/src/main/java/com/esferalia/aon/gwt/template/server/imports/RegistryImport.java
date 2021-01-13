@@ -531,7 +531,7 @@ public class RegistryImport {
 				if(customer == null || customer.getId() == null) {
 					Customer c = new Customer()
 							.setAccount(acc.getId())
-							.setRegistry(reg)
+							.setRegistryData(reg)
 							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
 							.setStatus(RegistryStatus.ACTIVE);
 					c.setDomain(domain);

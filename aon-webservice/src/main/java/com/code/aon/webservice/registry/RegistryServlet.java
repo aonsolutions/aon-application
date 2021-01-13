@@ -218,7 +218,7 @@ public class RegistryServlet extends HttpServlet{
     		.forEach(customer -> {
 				JSONObject json = new JSONObject();
 				json.put("id", customer.getId());
-				json.put("name", customer.getRegistry().getName());
+				json.put("name", customer.getName());
 				array.put(json);
     	});
     	return array;    	

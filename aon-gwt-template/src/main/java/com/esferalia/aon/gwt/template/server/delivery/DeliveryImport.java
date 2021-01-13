@@ -1073,7 +1073,7 @@ public class DeliveryImport {
 					account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), r.getCuenta()).getId();
 				}
 				customer = new Customer()
-						.setRegistry(registry)
+						.setRegistryData(registry)
 						.setScope(scope)
 						.setStatus(RegistryStatus.ACTIVE)
 						.setTransaction( r.getTransaccion()!= null ? InvoiceTransactionType.safeValueOf(r.getTransaccion()) : InvoiceTransactionType.NATIONAL)
@@ -1180,7 +1180,7 @@ public class DeliveryImport {
 				}
 			}
 
-			map.put(r.getDocumento(), customer.getRegistry().getId());
+			map.put(r.getDocumento(), customer.getId());
 		});
 		return map;
 	}

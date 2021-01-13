@@ -675,7 +675,7 @@ public class RegistryOldDAO {
 					,AonEnumUtils.getByte(customer.isEInvoice())
 					,customer.getInvoicingGroup()
 					,AonEnumUtils.getByte(customer.isProjectGrouped())
-					,customer.getRegistry().getId()
+					,customer.getId()
 					,customer.getScope(), customer.getStatus().value()
 					,AonEnumUtils.getByte(customer.isSurcharge())
 					,customer.getTariff()
