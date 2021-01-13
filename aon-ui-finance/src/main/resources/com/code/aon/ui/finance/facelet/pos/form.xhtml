@@ -44,7 +44,7 @@
 						value="#{pos.to.name}" 
 						size="32" maxlength="32" required="true" />
 
-					<aon:if test="#{pos.to.series != null or pos.workPlaceSeriesCount > 1}">
+					<aon:if test="#{pos.to.series != null or pos.workPlaceSeriesCount >= 1}">
 						<aon:outputLabel for="Pos_series" value="#{bundle.aon_series}" />
 						<aon:div>
 							<aon:selectOneMenu id="Pos_series"
