@@ -1,0 +1,69 @@
+package com.esferalia.aon.occam.test.faker;
+
+import java.util.Locale;
+
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.product.Tariff;
+import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.github.javafaker.Faker;
+
+public class AonFaker {
+	private static Faker faker = new Faker(new Locale("es"));
+	private static String documentRegexp = "(\\d|[XYZ])\\d{7}[A-Z]";
+	
+	public static Registry getRegistry( AONContext ctx ) {
+		Registry registry = new Registry();
+		registry.setDomain(new Domain().setId(ctx.getDomainId()));
+		registry.setDocument(faker.regexify(documentRegexp));
+		registry.setDocumentType( AonRandom.randomEnum(DocumentType.class) );
+		registry.setDocumentCountry( AonRandom.b(95) ? Country.ES: AonRandom.randomEnum(Country.class));
+		registry.setName( faker.company().name() );
+		registry.setAlias( faker.company().profession() );
+		registry.setNationality( AonRandom.b(95) ? Country.ES: AonRandom.randomEnum(Country.class));
+		registry.setConfidential( !AonRandom.b(98) );
+		return registry;
+	}
+	
+	public static Customer getCustomer( AONContext ctx ) {
+		Customer customer = new Customer();
+		customer.setRegistryData(getRegistry(ctx));
+		Tariff tariff = AonRandom.getTariff(ctx);
+		customer.setTariff( tariff == null? null : tariff.getId() );
+		customer.setSurcharge( AonRandom.b(10) );
+		customer.setWithholding( AonRandom.b(10) );
+		customer.setTransaction( AonRandom.b(90) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class));
+		Scope scope = AonRandom.random( SecurityDAO.getAvailableScopes (ctx) );
+		customer.setStatus( AonRandom.b(90) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class));
+		customer.setScope( scope == null ? null : scope.getId() );
+		customer.setEInvoice( AonRandom.b(40) );
+		// TODO
+		customer.setInvoicingGroup( null );
+		customer.setProjectGrouped( AonRandom.b(4) );
+		customer.setDeliveryGrouped( AonRandom.b(90) );
+		customer.setDeliveryValuated( AonRandom.b(90) );
+		// TODO
+		customer.setAccount( null );
+		return customer;
+	}
+	
+	public static Tariff getTariff( AONContext ctx ) {
+		Tariff tariff = new Tariff();
+		tariff.setDomain(ctx.getDomainId());
+		tariff.setCode( faker.number().digits( 6) );
+		tariff.setName( faker.commerce().productName());
+		tariff.setPurchase( AonRandom.b(10) );
+		tariff.setDiscount( AonRandom.getDouble(0, 100, 2));
+		tariff.setActive( !AonRandom.b(98) );
+		return tariff;
+	}
+	
+}
+

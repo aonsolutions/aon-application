@@ -10,13 +10,13 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.AonRandom;
-import com.esferalia.aon.occam.test.faker.RegistryFaker;
+import com.esferalia.aon.occam.test.faker.AonFaker;
 
 public class ValidationSaveDocumentType extends AbstractOccamTest {
 
 	@Test
 	public void testOtherCountry() {
-		Registry registry = RegistryFaker.get( ctx );
+		Registry registry = AonFaker.getRegistry( ctx );
 		DocumentType documentType = registry.getDocumentType();
 		registry.setDocumentCountry(Country.FR);
 		registry = RegistryDAO.insert(ctx, registry);
@@ -25,7 +25,7 @@ public class ValidationSaveDocumentType extends AbstractOccamTest {
 
 	@Test
 	public void testNullDocumentType() {
-		Registry registry = RegistryFaker.get( ctx );
+		Registry registry = AonFaker.getRegistry( ctx );
 		registry.setDocument("23049210J");
 		registry.setDocumentCountry(Country.ES);
 		registry.setDocumentType(DocumentType.values()[AonRandom.number(DocumentType.NIF.ordinal(), DocumentType.NIE.ordinal())]);		
@@ -35,7 +35,7 @@ public class ValidationSaveDocumentType extends AbstractOccamTest {
 	
 	@Test
 	public void testAutocompleteDNI() {
-		Registry registry = RegistryFaker.get( ctx );
+		Registry registry = AonFaker.getRegistry( ctx );
 		registry.setDocument("23049210J");
 		registry.setDocumentCountry(Country.ES);
 		registry.setDocumentType(DocumentType.values()[AonRandom.number(DocumentType.NIF.ordinal(), DocumentType.NIE.ordinal())]);		
@@ -45,7 +45,7 @@ public class ValidationSaveDocumentType extends AbstractOccamTest {
 
 	@Test
 	public void testAutocompleteCIF() {
-		Registry registry = RegistryFaker.get( ctx );
+		Registry registry = AonFaker.getRegistry( ctx );
 		registry.setDocument("D08078115");
 		registry.setDocumentCountry(Country.ES);
 		registry.setDocumentType(DocumentType.values()[AonRandom.number(DocumentType.NIF.ordinal(), DocumentType.NIE.ordinal())]);		
@@ -55,7 +55,7 @@ public class ValidationSaveDocumentType extends AbstractOccamTest {
 
 	@Test
 	public void testAutocompleteNIE() {
-		Registry registry = RegistryFaker.get( ctx );
+		Registry registry = AonFaker.getRegistry( ctx );
 		registry.setDocument("X1291539C");
 		registry.setDocumentCountry(Country.ES);
 		registry.setDocumentType(DocumentType.values()[AonRandom.number(DocumentType.NIF.ordinal(), DocumentType.NIE.ordinal())]);

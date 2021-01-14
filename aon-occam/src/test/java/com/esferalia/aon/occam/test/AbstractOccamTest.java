@@ -77,8 +77,9 @@ public class AbstractOccamTest {
 	}
 	
 	protected static boolean mustShutUp() {
-		String mustShutUp = System.getProperty("mustShutUp", "true");
-		return "true".equalsIgnoreCase(mustShutUp);
+		return false;
+//		String mustShutUp = System.getProperty("mustShutUp", "true");
+//		return "true".equalsIgnoreCase(mustShutUp);
 	}
 
 	

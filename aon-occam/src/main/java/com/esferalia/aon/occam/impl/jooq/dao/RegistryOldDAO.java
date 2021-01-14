@@ -656,6 +656,9 @@ public class RegistryOldDAO {
 
 	// ------------------- CUSTOMER
 	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.getStream(AONContext ctx, CustomerFilter filter)
+	 */
 	public static Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter){
 		return ctx.getDslContext().select().from(CUSTOMER)
 				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
@@ -663,6 +666,10 @@ public class RegistryOldDAO {
 				.fetch().stream().map(new CustomerFiller());
 	}
 	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.insert(AONContext ctx, Customer customer)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Customer insertCustomer(AONContext ctx, Customer customer){
 		ctx.getDslContext().insertInto(CUSTOMER, CUSTOMER.ACCOUNT, CUSTOMER.DELIVERY_GROUPED, CUSTOMER.DELIVERY_VALUATED,
 				CUSTOMER.DOMAIN, CUSTOMER.E_INVOICE, CUSTOMER.INVOICING_GROUP, CUSTOMER.PROJECT_GROUPED, CUSTOMER.REGISTRY,

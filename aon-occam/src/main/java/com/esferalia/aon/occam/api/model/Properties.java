@@ -1287,4 +1287,14 @@ public interface Properties {
 		Property<String> getModificationUserProperty();
 	}
 	
+	public interface TariffProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getCodeProperty();
+		Property<String> getNameProperty();
+		Property<Byte> getPurchaseProperty();
+		Property<Double> getDiscountProperty();
+		Property<Byte> getActiveProperty();
+		
+	}
 }
