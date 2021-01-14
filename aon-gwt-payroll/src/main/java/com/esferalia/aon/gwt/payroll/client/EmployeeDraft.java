@@ -729,7 +729,7 @@ public class EmployeeDraft extends Composite {
 				this.employeeDraftObject.getWorkplaceId()
 				){
 					@Override
-					protected void onAcceptCb() {}
+					protected void onAcceptCb(boolean notifyMov) {}
 				};
 			
 		dialog.center();

@@ -1800,7 +1800,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				this.contrataEmployeeObject.getContractData().getWorkplaceId()
 				){
 					@Override
-					protected void onAcceptCb() {
+					protected void onAcceptCb(boolean notifyMov) {
 						contrataEmployeeObject.getEmployeeContract(s -> {
 							setContrataEmployeeObject(contrataEmployeeObject, s);
 						}, f -> {});

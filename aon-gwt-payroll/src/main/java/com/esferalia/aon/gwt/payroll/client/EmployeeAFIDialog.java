@@ -955,9 +955,9 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	private void onAcceptDialog(ClickEvent event) {
 		onAccept();
 		hide();
-		onAcceptCb();
+		onAcceptCb(isActiveToggleButton(notifyMovTB));
 	}
 	
-	protected abstract void onAcceptCb();
+	protected abstract void onAcceptCb(boolean notifyMov);
 
 }
