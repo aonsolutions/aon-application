@@ -12,6 +12,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Optional;
 
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
+
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
 import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
 
@@ -199,6 +202,17 @@ public class Toolkit {
 		StringBuilder strBuilder = new StringBuilder(str);
 		while (strBuilder.length() < max) strBuilder.insert(0, append);
 		return strBuilder.toString();
+	}
+	
+	public static DomNode getNextSibling(DomNode dt) {
+		return dt.getNextElementSibling() instanceof HtmlDefinitionTerm 
+		? dt.getNextElementSibling().getNextElementSibling() 
+		: dt.getNextElementSibling();
+	}
+	
+	public static Float parseStringToFloat(String d) {
+		String newValue = removeNBSP( d.trim().replace(".", "").replace(',', '.') );
+		return Float.parseFloat(removeNBSP(newValue));
 	}
 
 }
