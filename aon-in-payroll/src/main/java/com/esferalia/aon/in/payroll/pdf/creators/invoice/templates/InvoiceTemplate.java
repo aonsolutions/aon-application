@@ -1,10 +1,10 @@
-package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.templates;
+package com.esferalia.aon.in.payroll.pdf.creators.invoice.templates;
 
-import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans.EnterpriseBill;
-import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans.EnterpriseBillEntry;
-import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans.EnterpriseBillFinance;
-import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans.EnterpriseBillTax;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.Invoice;
+import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceEntry;
+import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceFinance;
+import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceTax;
 import com.esferalia.aon.in.payroll.pdf.toolkits.PDFToolkit;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -15,7 +15,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import java.io.*;
 import java.util.ArrayList;
 
-public class EnterpriseBillTemplate {
+public class InvoiceTemplate {
 
 	String filename = "./EnterpriseBill.pdf";
 	float height;
@@ -32,15 +32,15 @@ public class EnterpriseBillTemplate {
 
 	boolean adapt;
 	PDPageContentStream contents;
-	EnterpriseBill bill;
+	Invoice bill;
 
 
 	//THE PDF DOCUMENT
-	public static void create(String name, EnterpriseBill bill_obj, boolean adapt_background) throws IOException, CanNotCreatePdfException {
+	public static void create(String name, Invoice bill_obj, boolean adapt_background) throws IOException, CanNotCreatePdfException {
 		try (PDDocument doc = new PDDocument()) {
 			
 
-			EnterpriseBillTemplate template = new EnterpriseBillTemplate();
+			InvoiceTemplate template = new InvoiceTemplate();
 			
 			
 			if (name != null) 		template.filename = name;
@@ -95,7 +95,7 @@ public class EnterpriseBillTemplate {
 	//DRAW DETAILED ENTRIES
 	public void draw_detailed_entries(PDDocument doc) throws IOException {
 		if (bill.getEntries() != null) {
-			for (EnterpriseBillEntry entry : bill.getEntries()) {
+			for (InvoiceEntry entry : bill.getEntries()) {
 				x = 50;
 				if (y <= limit) {
 					contents.close();
@@ -139,7 +139,7 @@ public class EnterpriseBillTemplate {
 	//DRAW SIMPLIFIED ENTRIES
 	public void draw_simplified_entries(PDDocument doc) throws IOException {
 		if (bill.getEntries() != null) {
-			for (EnterpriseBillEntry entry : bill.getEntries()) {
+			for (InvoiceEntry entry : bill.getEntries()) {
 				x = 50;
 				if (y <= limit) {
 					contents.close();
@@ -268,7 +268,7 @@ public class EnterpriseBillTemplate {
 		PDFToolkit.drawTextCenter(contents, new PDRectangle(x, y, 69, 15), "Total factura", PDFToolkit.WHITE, PDFToolkit.HELVETICA_BOLD, 9, 4.5f);
 
 		double sum = 0;
-		for (EnterpriseBillTax tax : bill.getTaxes()) {
+		for (InvoiceTax tax : bill.getTaxes()) {
 			x = 240;
 			PDFToolkit.drawTextRight(contents, new PDRectangle(x, y, 79, 15), PDFToolkit.to_latin_number(tax.getBase()), PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, -12);
 			x += 80;
@@ -312,7 +312,7 @@ public class EnterpriseBillTemplate {
 		PDFToolkit.drawTextRight(contents, new PDRectangle(x, y, 69, 15), "Importe", PDFToolkit.WHITE, PDFToolkit.HELVETICA, 9, 5, 4.5f);
 
 
-		for (EnterpriseBillFinance finance : bill.getFinances()) {
+		for (InvoiceFinance finance : bill.getFinances()) {
 			x = 180;
 			PDFToolkit.drawText(contents, PDFToolkit.formatDate(finance.getDue_date(), "dd/MM/yyyy").get(), x + 5f, y - 12, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
 			x += 60;

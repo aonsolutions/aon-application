@@ -1,13 +1,13 @@
-package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans;
+package com.esferalia.aon.in.payroll.pdf.creators.invoice.beans;
 
-public class EnterpriseBillTax {
+public class InvoiceTax {
 
 	private double base;
 	private double percentage;
 	private String type;
 	private double quota;
 
-	public EnterpriseBillTax(double base, double percentage, String type, double quota) {
+	public InvoiceTax(double base, double percentage, String type, double quota) {
 		this.base = base;
 		this.percentage = percentage;
 		this.type = type;

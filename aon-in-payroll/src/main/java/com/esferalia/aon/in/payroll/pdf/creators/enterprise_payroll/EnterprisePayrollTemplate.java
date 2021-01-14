@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.creators.enterprisePayroll;
+package com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;

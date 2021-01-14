@@ -1,10 +1,10 @@
-package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans;
+package com.esferalia.aon.in.payroll.pdf.creators.invoice.beans;
 
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
-public class EnterpriseBill {
+public class Invoice {
 	private InputStream background;
 	private boolean detailed;
 
@@ -17,18 +17,18 @@ public class EnterpriseBill {
 	private String address;
 	private String zip_city_province;
 
-	private List<EnterpriseBillEntry> entries;
-	private List<EnterpriseBillTax> taxes;
-	private List<EnterpriseBillFinance> finances;
+	private List<InvoiceEntry> entries;
+	private List<InvoiceTax> taxes;
+	private List<InvoiceFinance> finances;
 
 	private double bottom_px;
 	private double top_px;
 	private InputStream qr_code;
 
-	public EnterpriseBill(InputStream background, boolean detailed, String reference,
+	public Invoice(InputStream background, boolean detailed, String reference,
 						  Date date, String document, String name, String address,
-						  String zip_city_province, List<EnterpriseBillEntry> entries,
-						  List<EnterpriseBillTax> taxes, List<EnterpriseBillFinance> finances,
+						  String zip_city_province, List<InvoiceEntry> entries,
+						  List<InvoiceTax> taxes, List<InvoiceFinance> finances,
 						  double bottom_px, double top_px, InputStream qr_code) {
 
 		this.background = background;
@@ -79,15 +79,15 @@ public class EnterpriseBill {
 		return zip_city_province;
 	}
 
-	public List<EnterpriseBillEntry> getEntries() {
+	public List<InvoiceEntry> getEntries() {
 		return entries;
 	}
 
-	public List<EnterpriseBillTax> getTaxes() {
+	public List<InvoiceTax> getTaxes() {
 		return taxes;
 	}
 
-	public List<EnterpriseBillFinance> getFinances() {
+	public List<InvoiceFinance> getFinances() {
 		return finances;
 	}
 

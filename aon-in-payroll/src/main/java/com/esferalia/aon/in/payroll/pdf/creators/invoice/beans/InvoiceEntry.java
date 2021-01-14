@@ -1,6 +1,6 @@
-package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans;
+package com.esferalia.aon.in.payroll.pdf.creators.invoice.beans;
 
-public class EnterpriseBillEntry
+public class InvoiceEntry
 {
 	private String description;
 	private double quantity;
@@ -8,7 +8,7 @@ public class EnterpriseBillEntry
 	private double percent;
 	private double amount;
 
-	public EnterpriseBillEntry(String description, double quantity, double price, double percent, double amount) {
+	public InvoiceEntry(String description, double quantity, double price, double percent, double amount) {
 		this.description = description;
 		this.quantity = quantity;
 		this.price = price;

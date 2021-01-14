@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.creators.enterprisePayroll;
+package com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll;
 
 import java.util.Objects;
 

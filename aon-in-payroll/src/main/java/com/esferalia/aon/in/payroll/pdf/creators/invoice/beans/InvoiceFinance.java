@@ -1,15 +1,15 @@
-package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans;
+package com.esferalia.aon.in.payroll.pdf.creators.invoice.beans;
 
 import java.util.Date;
 
-public class EnterpriseBillFinance {
+public class InvoiceFinance {
 
 	private Date due_date;
 	private String paymethod;
 	private String iban;
 	private double amount;
 
-	public EnterpriseBillFinance(Date due_date, String paymethod, String iban, double amount) {
+	public InvoiceFinance(Date due_date, String paymethod, String iban, double amount) {
 		this.due_date = due_date;
 		this.paymethod = paymethod;
 		this.iban = split_iban(iban);

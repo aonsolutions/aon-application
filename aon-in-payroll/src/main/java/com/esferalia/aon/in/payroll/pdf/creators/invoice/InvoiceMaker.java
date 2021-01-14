@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill;
+package com.esferalia.aon.in.payroll.pdf.creators.invoice;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,17 +13,17 @@ import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 
-import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans.EnterpriseBill;
-import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans.EnterpriseBillEntry;
-import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans.EnterpriseBillFinance;
-import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.beans.EnterpriseBillTax;
-import com.esferalia.aon.in.payroll.pdf.creators.enterpriseBill.templates.EnterpriseBillTemplate;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.JsonParseException;
+import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.Invoice;
+import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceEntry;
+import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceFinance;
+import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceTax;
+import com.esferalia.aon.in.payroll.pdf.creators.invoice.templates.InvoiceTemplate;
 import com.esferalia.aon.in.payroll.pdf.toolkits.PDFToolkit;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 
-public class EnterpriseBillMaker {
+public class InvoiceMaker {
 	
 	//CREATE THE PDF WITH A JSON
 	public static void create_with_json(InputStream json, PrintInvoiceConfiguration config, InputStream qr_code) throws CanNotCreatePdfException, JsonParseException {
@@ -50,9 +50,9 @@ public class EnterpriseBillMaker {
 			String address = (String) address_info.get("address");
 			String address_ln_2 = address_info.get("zip") + " " + address_info.get("city") + " " + address_info.get("province");
 
-			ArrayList<EnterpriseBillTax> taxes = new ArrayList<>();
-			ArrayList<EnterpriseBillFinance> finances = new ArrayList<>();
-			ArrayList<EnterpriseBillEntry> entries = new ArrayList<>();
+			ArrayList<InvoiceTax> taxes = new ArrayList<>();
+			ArrayList<InvoiceFinance> finances = new ArrayList<>();
+			ArrayList<InvoiceEntry> entries = new ArrayList<>();
 
 			for (Object tax : taxes_info) {
 				JSONObject tax_obj = (JSONObject) tax;
@@ -62,7 +62,7 @@ public class EnterpriseBillMaker {
 				String type = (String) tax_obj.get("type");
 				double quota = Double.parseDouble("" + tax_obj.get("quota"));
 
-				taxes.add(new EnterpriseBillTax(base, percent, type, quota));
+				taxes.add(new InvoiceTax(base, percent, type, quota));
 			}
 			for (Object finance : finances_info) {
 				JSONObject finance_obj = (JSONObject) finance;
@@ -72,7 +72,7 @@ public class EnterpriseBillMaker {
 				String iban = (String) finance_obj.get("iban");
 				double amount = Double.parseDouble("" + finance_obj.get("amount"));
 
-				finances.add(new EnterpriseBillFinance(due_date, pay_method, iban, amount));
+				finances.add(new InvoiceFinance(due_date, pay_method, iban, amount));
 			}
 			for (Object entry : entries_info) {
 				JSONObject entry_obj = (JSONObject) entry;
@@ -83,10 +83,10 @@ public class EnterpriseBillMaker {
 				double discount = Double.parseDouble("" + entry_obj.get("discount"));
 				double amount = Double.parseDouble("" + entry_obj.get("amount"));
 
-				entries.add(new EnterpriseBillEntry(description, quantity, price, discount, amount));
+				entries.add(new InvoiceEntry(description, quantity, price, discount, amount));
 			}
 
-			EnterpriseBill bill_obj = new EnterpriseBill(
+			Invoice bill_obj = new Invoice(
 					config.getBackgroundImage(),
 					config.getDetailed(),
 					reference,
@@ -103,16 +103,17 @@ public class EnterpriseBillMaker {
 					qr_code
 			);
 			
-			EnterpriseBillTemplate.create("Invoice.pdf", bill_obj, config.getAdjustImage());
+			InvoiceTemplate.create("Invoice.pdf", bill_obj, config.getAdjustImage());
 		} catch (CanNotCreatePdfException e) {throw e;}
 		catch (Exception e) {
+			e.printStackTrace();
 			throw new JsonParseException(e);
 		}
 	}
 	
 	//CREATE DEMO
 	public static void demoPdf(PrintInvoiceConfiguration config, InputStream qr_code) throws IOException, CanNotCreatePdfException {
-		EnterpriseBill bill_obj = new EnterpriseBill(
+		Invoice bill_obj = new Invoice(
 				config.getBackgroundImage(),
 				config.getDetailed(),
 				"",
@@ -129,12 +130,12 @@ public class EnterpriseBillMaker {
 				qr_code
 		);
 
-		EnterpriseBillTemplate.create("demo_bill.pdf", bill_obj, config.getAdjustImage());
+		InvoiceTemplate.create("demo_bill.pdf", bill_obj, config.getAdjustImage());
 	}
 	
 	//CREATE PDF WITH OBJECT
-	public static void create(String name, EnterpriseBill bill_obj, boolean adapt_background) throws IOException, CanNotCreatePdfException {
-		EnterpriseBillTemplate.create(name, bill_obj, adapt_background);
+	public static void create(String name, Invoice bill_obj, boolean adapt_background) throws IOException, CanNotCreatePdfException {
+		InvoiceTemplate.create(name, bill_obj, adapt_background);
 	}
 	
 }
