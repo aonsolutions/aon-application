@@ -70,7 +70,7 @@ public class TimeControlServlet extends HttpServlet{
 		
 		TimeControl tc = new TimeControl();
 		if(taskHolder != null && taskHolder.getId() != null) {
-			AON_SOLUTIONS.getTaskHolderTimeControl(taskHolder.getDomain(), "", taskHolder.getId(), startDate, endDate);
+			tc = AON_SOLUTIONS.getTaskHolderTimeControl(taskHolder.getDomain(), "", taskHolder.getId(), startDate, endDate);
 		}
 		return tc.toJSON();
 	}

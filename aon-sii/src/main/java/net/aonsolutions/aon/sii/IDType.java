@@ -47,7 +47,7 @@ public enum IDType {
 	
 	public static IDType valueOf(DocumentType documentType) {
 		if(DocumentType.PASSPORT.equals(documentType)) return PASAPORTE;
-	
+		if(DocumentType.NOT_CENSUSED.equals(documentType)) return NO_CENSADO;
 		return OTRO;
 	}
 	
