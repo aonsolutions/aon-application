@@ -250,5 +250,18 @@ public class Toolkit {
 		}
 		return identity;
 	}
+	
+	public static String[] dateString(Date fecha) {
+		String dia="";
+		String mes="";
+		GregorianCalendar calendar = new GregorianCalendar();
+		calendar.setTime(fecha);
+		String anio = ""+(calendar.get(Calendar.YEAR));
+		if(calendar.get(Calendar.DATE)<10) dia="0"+calendar.get(Calendar.DATE);
+		else dia=""+calendar.get(Calendar.DATE);
+		if((calendar.get(Calendar.MONTH)+1)<10) mes="0"+(calendar.get(Calendar.MONTH)+1);
+		else mes=""+(calendar.get(Calendar.MONTH)+1);
+		return new String[] {dia, mes , anio};
+	}
 
 }

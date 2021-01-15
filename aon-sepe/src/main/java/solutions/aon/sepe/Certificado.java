@@ -3,7 +3,10 @@ package solutions.aon.sepe;
 //import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.Date;
+
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -15,6 +18,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import solutions.aon.sepe.exceptions.SepeException;
+import solutions.aon.sepe.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.sepe.toolkit.HtmlUnitToolkit;
 import solutions.aon.sepe.toolkit.Toolkit;
 
@@ -24,9 +28,12 @@ public class Certificado {
 			final String certificatePassword, final String certificateType, String nif, Date fecha) throws SepeException {
 			try {
 				return certEnterprisePdfImpl(certificateInputStream, certificatePassword, certificateType, nif, fecha);
-			} catch (IOException | SepeException | InterruptedException e) {
-				throw new SepeException(e);
-			}
+			} 
+			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
+			catch (MalformedURLException e) {throw new SepeException(e);} 
+			catch (IOException e) {throw new CertificateNotFoundException();} 
+			catch (InterruptedException e) {throw new SepeException(e);}
+			catch (Exception e) {throw new SepeException(e);}
 	}
 	
 	
@@ -37,8 +44,11 @@ public class Certificado {
 	    	
 			if(fecha==null) fecha = new Date();
 			String[] fra = Toolkit.formatDate(fecha);
-			
+
 			HtmlPage htmlPage = first_page_sepe_cert(webClient);
+  
+			HtmlAnchor hrefButton = HtmlUnitToolkit.wait4(htmlPage, p -> p.getAnchorByHref("https://sede.sepe.gob.es/ConsultasCertificadosRTWEB/ActionEntradaConsultas.do")).orElseThrow();
+			htmlPage = (HtmlPage) hrefButton.click();
 			
 			HtmlForm formDatos1 =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#contenido > form")).orElseThrow();
 			formDatos1.getInputByName("nif").setValueAttribute(nif);
@@ -73,15 +83,13 @@ public class Certificado {
 			InputStream inp = document.getWebResponse().getContentAsStream();
 			byte[] pdf = inp.readAllBytes();
 			inp.close();
-			
-		    //System.out.println(Base64.encode(pdf));
-			
+
 			return pdf;
 		} 
 	}
 	
 	private static HtmlPage first_page_sepe_cert(WebClient webClient)  throws IOException, SepeException, InterruptedException{
-		 webClient.getOptions().setJavaScriptEnabled(true);
+		  webClient.getOptions().setJavaScriptEnabled(true);
 		  webClient.getOptions().setThrowExceptionOnScriptError(false);
 		  webClient.setJavaScriptErrorListener(HtmlUnitToolkit.jascriptFunctionExceptionError());
 	      HtmlPage htmlPage = webClient.getPage("https://isweb.sepe.gob.es/GetAccess/Saml/SSO/Init?GAURI=https%3A%2F%2Fsede.sepe.gob.es%2FDCertificadosWeb%2FActionNavegacion.do%3FaccesoGA%3Dempresas%26accion%3Dnavegacion&GA_SAML_AC_COMPARISON=minimum&GA_SAML_IS_PASSIVE=false&GA_SAML_AC_CLASS_REF=http%3A%2F%2Feidas.europa.eu%2FLoA%2Flow&GA_SAML_PROVIDER=Q2819009H_E00142804&GA_SAML_IDP=https%3A%2F%2Fpasarela.clave.gob.es%2FProxy2");
@@ -94,9 +102,6 @@ public class Certificado {
 	      formDatos.appendChild(button);
 		  htmlPage = button.click();
 		  HtmlUnitToolkit.manageStatusCode(htmlPage); 
-		  
-		  HtmlAnchor hrefButton = HtmlUnitToolkit.wait4(htmlPage, p -> p.getAnchorByHref("https://sede.sepe.gob.es/ConsultasCertificadosRTWEB/ActionEntradaConsultas.do")).orElseThrow();
-		  htmlPage = (HtmlPage) hrefButton.click();
 		  return htmlPage;
 	}
 	
@@ -107,23 +112,4 @@ public class Certificado {
 				throw new SepeException(error);
 		} catch (NullPointerException e) {}
 	}
-	
-//	public static void main(String[] args)   {
-//		try(final FileInputStream certificateInputStream =  new FileInputStream("src/test/resources/solutions/aon/SEPE.p12")){
-//				String certificatePassword = "aon@FNMT";
-//				String certificateType = "pkcs12";
-////				String regimen = "0111";
-////		     	String ctaCti = "01105360062";
-////		     	String nss = "291136796369";
-////				String ipf = "Y7514970X";
-////				String grup_ctz = "01";
-//				String nif = "72740703Y";
-//				Date fecha = Toolkit.parseDate("06-05-2016", "dd-MM-yyyy");
-//				certEnterprisePdfImpl(certificateInputStream, certificatePassword, certificateType, nif, fecha);
-//		} catch(Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//	}
-
 }

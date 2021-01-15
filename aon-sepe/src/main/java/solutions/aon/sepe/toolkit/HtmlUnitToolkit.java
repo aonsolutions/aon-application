@@ -117,8 +117,7 @@ public class HtmlUnitToolkit {
 	//MANAGES THE EXCEPTIONS
 	public static void manageStatusCode(HtmlPage htmlPage) throws SepeException {
 		Integer code = htmlPage.getWebResponse().getStatusCode();
-        String msg = null; //getSSmessage(htmlPage); 
-//		System.out.println("StatusCode: "+code);
+        String msg = null; 
 		InvalidDataException.checkCode(code, msg);
 	}
 

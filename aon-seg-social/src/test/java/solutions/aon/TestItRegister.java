@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import solutions.aon.seg.social.SistemaRED_ITParts;
 import solutions.aon.seg.social.SistemaRED_ITParts.Contingencies;
 import solutions.aon.seg.social.SistemaRED_ITParts.ContractType;
@@ -97,7 +96,7 @@ public class TestItRegister {
 	}
 	
 	@Test
-//	@Ignore
+	@Ignore
 	public void getDataIt() {
 //		 new Date("2016/04/23")
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){

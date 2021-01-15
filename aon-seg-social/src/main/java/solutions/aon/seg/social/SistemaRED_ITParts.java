@@ -5,6 +5,7 @@ import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDateException;
@@ -15,12 +16,12 @@ import solutions.aon.seg.social.objects.ITPart;
 import solutions.aon.seg.social.objects.ITPart.ITPartBuilder;
 import solutions.aon.seg.social.objects.It;
 import solutions.aon.seg.social.objects.It.ItBuilder;
-import solutions.aon.seg.social.objects.PaternityCertificate.PaternityCertificateBuilder;
 import solutions.aon.seg.social.objects.ItPartId;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.*;
 
 public class SistemaRED_ITParts {
@@ -212,12 +213,16 @@ public class SistemaRED_ITParts {
 	//REGISTER IT START HANDLE EXCEPTIONS
 	public static void registerItBaja(InputStream certificateInputStream, String certificatePassword,String certificateType,
 			String regime, String ccc, String naf, Contingencies contingency, SituationEmployee situation_employee, Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation, Date startdate,
-			ContractType contractType,  float baseCot , int cotDays, Optional<Date> fATEP, Optional<TypeAccident> typeAccident) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException, InterruptedException {
+			ContractType contractType,  float baseCot , int cotDays, Optional<Date> fATEP, Optional<TypeAccident> typeAccident) throws SegSocialException {
 		
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, startdate, contractType, baseCot, cotDays});
 		
 		try{ registerItBajaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, occupation, startdate, contractType, baseCot, cotDays, fATEP, typeAccident);}
-		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e);}
 	}
 	
 	//REGISTER IT START
@@ -320,11 +325,15 @@ public class SistemaRED_ITParts {
 	
 	//REGISTER IT CONFIRMATION HANDLE EXCEPTIONS
 	public static void registerItConfirmation(InputStream certificateInputStream, String certificatePassword,String certificateType,
-								  String regime, String ccc, String naf, Contingencies contingency, SituationEmployee situation_employee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja, Date fconfirmation, Optional<String> npartConfimation) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException, InterruptedException {
+								  String regime, String ccc, String naf, Contingencies contingency, SituationEmployee situation_employee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja, Date fconfirmation, Optional<String> npartConfimation) throws SegSocialException {
 
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency});
 		try{ registerItConfirmationImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, fconfirmation, npartConfimation);}
-		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e);}
 	}
 
 	//REGISTER IT CONFIRMATION
@@ -369,12 +378,16 @@ public class SistemaRED_ITParts {
 	//REGISTER IT END HANDLE EXCEPTIONS
 	public static void registerItAlta(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, 
 			Contingencies contingency, SituationEmployee situation_employee, Optional<String> licenseNumber, Optional<String> cias, 
-			Date fbaja, Date falta, Optional<Date> fATEP, Optional<TypeAccident> typeAccident, String causa) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException, InterruptedException {
+			Date fbaja, Date falta, Optional<Date> fATEP, Optional<TypeAccident> typeAccident, String causa) throws SegSocialException {
 
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency});
 		try{ registerItAltaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, 
 				licenseNumber, cias, fbaja, falta, fATEP, typeAccident, causa);}
-		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e);}
 	}
 
 	//REGISTER IT
@@ -509,10 +522,14 @@ public class SistemaRED_ITParts {
 	//remove IT
 	public static void removeIt(InputStream certificateInputStream, String certificatePassword,String certificateType,String regime, String ccc, String naf, 
 			PartType partType, Date dateBj, Date dateProcess)
-		throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException, InterruptedException {
+		throws IOException, InterruptedException, SegSocialException {
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, dateBj});
 		try{ removeItImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);}
-		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e);}
 	}
 
 	//remove IT
@@ -626,11 +643,15 @@ public class SistemaRED_ITParts {
 	
 	//report IT
 	public static ITPart getDataIt(InputStream certificateInputStream, String certificatePassword,String certificateType,String regime, String ccc, String naf, PartType partType, 
-			Date dateBj, Date dateProcess)
-		throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException, InterruptedException {
+			Date dateBj, Date dateProcess) throws SegSocialException
+		{
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, dateBj});
 		try{ return getDataItImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);}
-		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e);}
 		return null;
 	}
 
