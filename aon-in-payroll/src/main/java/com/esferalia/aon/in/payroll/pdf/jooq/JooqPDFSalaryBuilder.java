@@ -314,7 +314,9 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 			.select()
 			.from(ENTERPRISE)
 			.innerJoin(REGISTRY).onKey()
+			.innerJoin(DOMAIN).onKey(REGISTRY.DOMAIN)
 			.where(REGISTRY.DOCUMENT.eq(contract.getCif()))
+			.and(DOMAIN.PARENT.eq(parentDomain.getId()))
 			.fetchOptionalInto(ENTERPRISE)
 			;
 		} catch ( TooManyRowsException  e) {

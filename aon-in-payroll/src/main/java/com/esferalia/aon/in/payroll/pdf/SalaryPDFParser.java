@@ -68,8 +68,10 @@ public class SalaryPDFParser {
 				try {
 					return template.parse(text, salaryBuilder);
 				} catch ( SalaryPDFException e ) {
+					System.err.println(text);
 					return template;
 				} catch ( UnknownPDFException e ) {
+					System.err.println(text);
 				}
 			}
 			throw new UnknownPDFException("Formato de nómina desconocido");
@@ -78,6 +80,7 @@ public class SalaryPDFParser {
 			try {
 				return pdfTemplate.parse(text, salaryBuilder);
 			} catch ( SalaryPDFException e ) {
+				System.err.println(text);
 				return pdfTemplate;
 			}
 		}

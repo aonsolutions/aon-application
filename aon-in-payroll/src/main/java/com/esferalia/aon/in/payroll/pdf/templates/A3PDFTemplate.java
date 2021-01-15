@@ -30,7 +30,7 @@ import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class A3PDFTemplate implements SalaryPDFTemplate {
-	//public static int cont = 1;
+	public static int cont = 1;
 
 	public static final A3PDFTemplate A3_PDF_TEMPLATE = new A3PDFTemplate();
 	
@@ -134,6 +134,9 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			salaryBuilder.setEmployeeDocument(dni);
 			
 			matcher = find(reader, SS_INFO);
+			//Pattern.compile("\\s*(?<affnum>\\d+/\\d+-\\d+)\\s*(?<tarifa>\\d*)\\s*(?<codct>\\d*)\\s*(?<section>.*?)?\\s*(?<nro>\\d*)\\s*(?<period>.*\\s*a\\s*.*?)?\\s{2,}(?<days>\\d*)\\s*"
+
+			
 			String naf =AonStringUtils.trimToNull(matcher.group("affnum")).replaceAll("[/]","").replaceAll("[-]", "");
 			salaryBuilder.setSocialSecurityNumber(naf);
 			String quoteGroup=AonStringUtils.trimToNull(matcher.group("tarifa"));
@@ -143,6 +146,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			
 			Pattern period=Pattern.compile("\\s*(?<type>\\w*)\\s*(?<from>\\d{1,2}\\s*\\w+\\s*\\d+)\\s*a\\s*(?<to>\\d{1,2}\\s*\\w+\\s*\\d+)\\s*", Pattern.CASE_INSENSITIVE);
 			String periodo=matcher.group("period");
+			//System.out.println(periodo);
 			Matcher subMatcher=period.matcher(periodo);
 			Date dTo=null;
 			Date dFrom=null;
@@ -160,7 +164,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 				per=new Period(dFrom, dTo);
 			}
 			try {
-				int timeUnits = Integer.parseInt(matcher.group("days"));
+				Integer timeUnits = Integer.parseInt(matcher.group("days"));
 				salaryBuilder.setTimeUnits(timeUnits);
 				salaryBuilder.addData("DIAS_NOMINA", new TimedObject<Integer>(timeUnits, per));
 				
@@ -183,141 +187,173 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			
 			matcher = find(reader, CONCEPT_HEADER);
 			String concept_line = reader.readLine();
-			matcher=CONCEPT.matcher(concept_line);
+			matcher=TOTAL_HEADER.matcher(concept_line);
 			//\\s*(?<cuantia>\\d+[,]\\d*)?\\s*(?<price>\\d+[,]\\d*)?\\s*(?<unknownnumber>\\d+)?\\s*(?<concept>\\*?.+?)\\s{1,2}(?<tipo>\\d+[,]\\d*)?\\s*(?<devengos>\\d+[,]\\d*)?\\s{19}?(?<deducciones>\\d+[,]\\d*)?\\s*$
 			
 			Double totalSS=0d;
+			Integer payrollType = null;
 			
-			while(matcher.matches()) {
-				if(matcher.group("devengos")!=null) {
-					Double amount=a3DoubleParser(AonStringUtils.trimToNull(matcher.group("devengos")));
-					String description=AonStringUtils.trimToNull(matcher.group("concept"));
-					description=removeSpace(description, 19);	
-					if(description.charAt(0)=='*') {
-						description=description.substring(1);
-					}
-					String context=description;
-					context=context.toUpperCase();
-					context = context.replaceAll("\\s", "_");
-					context = (context.length()>25)?context.substring(0, 24):context;
-					PaymentType pt=PaymentType.CRA_0001;
-					
-					if(context.equalsIgnoreCase("P.P.EXTRAS")) {
-						pt=PaymentType.CRA_0004;
-						context="PAGA_EXTRA";
-					}
-					else if(context.equalsIgnoreCase("H.H.EXTRAS")) {
-						pt=PaymentType.CRA_0002;
-						context="HORAS_EXTRAS";
-					}
-					salaryBuilder.addPayment(
-							amount,
-							amount,
-							amount,
-							description,
-							dFrom,
-							dTo,
-							(IPayment) new Payment().setType(pt).setName(context),
-							Collections.emptyMap());
-					
-				}
-				else if(matcher.group("deducciones")!=null) {
-					//public void addDeduction(Double amount, String description,
-					//Date start, Date end, IDeduction deduction, Map<String, ITimedVariable<?>> context);
-					Double amount=a3DoubleParser(AonStringUtils.trimToNull(matcher.group("deducciones")));
-					String description=AonStringUtils.trimToNull(matcher.group("concept"));
-					description=removeSpace(description, 19);
-					DeductionType dt=null;
-					String context=null;
-					Double type=null;
-					try {
-						type = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("tipo")));
-					} catch (NullPointerException e) {}
-					if(description.contains("COTIZACION CONT.COMU")) {
-						dt=DeductionType.COMMON_CONTINGENCY;
-						description=dt.getName(new Locale("es", "ES"));
-						totalSS+=amount;
-						context="CGC";
-						if (type!=null) {
-							salaryBuilder.addData("PORCENTAJE_CGC", new TimedObject<Double>(type, per ));
+			while(!matcher.matches()) {
+				matcher = CONCEPT.matcher(concept_line);
+				if(matcher.matches()) {
+					if(matcher.group("devengos")!=null) {
+						Double amount=a3DoubleParser(AonStringUtils.trimToNull(matcher.group("devengos")));
+						String description=AonStringUtils.trimToNull(matcher.group("concept"));
+						description=removeSpace(description, 19);	
+						if(description.charAt(0)=='*' || description.charAt(0)=='-') {
+							description=description.substring(1).trim();
 						}
-					}
-					else if (description.contains("COTIZACION FORMACION")) {
-						dt=DeductionType.JOB_TRAINING;
-						description=dt.getName(new Locale("es", "ES"));
-						totalSS+=amount;
-						context="FP";
-						if (type!=null) {
-							salaryBuilder.addData("PORCENTAJE_FP", new TimedObject<Double>(type, per ));
+						String context=description;
+						context=context.toUpperCase();
+						context = context.replaceAll("\\s", "_");
+						context = (context.length()>25)?context.substring(0, 24):context;
+						PaymentType pt=null;
+						if (payrollType ==null) {
+							
+							//NO FUNCIONA EL MÉTODO CONTAINSIGNORECASE
+							
+							pt=PaymentType.CRA_0001;
+							if (AonStringUtils.containsIgnoreCase(description, "p.p.extras")
+									|| AonStringUtils.containsIgnoreCase(description, "P.Pagas")) {
+								//System.err.println("\t"+description);
+								pt=PaymentType.CRA_0004;
+								context="PAGA_EXTRA";
+								salaryBuilder.setProExtBase(amount);
+							}
+							else if (AonStringUtils.containsIgnoreCase(description, "horas extras")) {
+								pt=PaymentType.CRA_0002;
+								context="HORAS_EXTRAS";
+							}
+							else if (AonStringUtils.containsIgnoreCase(description, "ESPECIE TRAB")) {
+								pt=PaymentType.CRA_0013;
+							}
+							else if (AonStringUtils.containsIgnoreCase(description, "RETRI ESPECIE VEHICULO")) {
+								pt=PaymentType.CRA_0016;
+							}
+							else if (AonStringUtils.containsIgnoreCase(description, "ATRASOS")) {
+								pt = PaymentType.CRA_0008;
+							}
+							else if (AonStringUtils.containsIgnoreCase(description, "vacaciones")) {
+								if (payrollType == 1) {
+									pt = PaymentType.CRA_0006;
+								}
+								else {
+									pt = PaymentType.CRA_0060;
+								}
+							}
+							else if (AonStringUtils.containsIgnoreCase(description, "estudio")) {
+								pt = PaymentType.CRA_0025;
+							}
+							else if (AonStringUtils.containsIgnoreCase(description, "complemento i.t.")
+									|| AonStringUtils.containsIgnoreCase(description,"Accidente")
+									|| AonStringUtils.containsIgnoreCase(description, "enfermedad")) {
+								pt = PaymentType.CRA_0000;
+							}
+							else if (AonStringUtils.containsIgnoreCase(description, "objetivo productividad")
+									|| AonStringUtils.containsIgnoreCase(description, "INCENT PRODUCTIVIDAD 1T")
+									|| AonStringUtils.containsIgnoreCase(description, "INCENT PRODUCTIVIDAD 2T")
+									|| AonStringUtils.containsIgnoreCase(description, "INCENT PRODUCTIVIDAD 3T")
+									|| AonStringUtils.containsIgnoreCase(description,"INCENT PRODUCTIVIDAD 4T")) {
+								pt = PaymentType.CRA_0005;
+							}
 						}
-					}
-					else if(description.contains("COTIZACION DESEMPLEO")) {
-						dt=DeductionType.UNEMPLOYMENT;
-						description=dt.getName(new Locale("es", "ES"));
-						totalSS+=amount;
-						context="DESMPL";
-						if (type!=null) {
-							salaryBuilder.addData("PORCENTAJE_DESMPL", new TimedObject<Double>(type, per ));
+						else if (payrollType==2) {
+							pt=PaymentType.CRA_0009;
 						}
-					}
-					else if (description.contains("TRIBUTACION I.R.P.F.")) {
-						dt=DeductionType.IRPF;
-						description=dt.getName(new Locale("es", "ES"));
-						context="IRPF";
-						if (type!=null) {
-							salaryBuilder.addData("PORCENTAJE_IRPF", new TimedObject<Double>(type, per ));
-						}
-					}
-					
-					
-					
-					
-					/*switch(desc) {
-					case "COTIZACION CONT.COMU":
-						//"CGC"
-						//"CGC_E"
-						dt=DeductionType.COMMON_CONTINGENCY;
-						description=dt.getName(new Locale("es", "ES"));
-						totalSS+=amount;
-						context="CGC";
-						break;
-					
-					case "COTIZACION FORMACION":
-						//"FP"
-						dt=DeductionType.JOB_TRAINING;
-						description=dt.getName(new Locale("es", "ES"));
-						totalSS+=amount;
-						context="FP";
-						break;
 						
-					case "COTIZACION DESEMPLEO":
-						//"DESMPL"
-						dt=DeductionType.UNEMPLOYMENT;
-						description=dt.getName(new Locale("es", "ES"));
-						totalSS+=amount;
-						context="DESMPL";
-						break;
-					
-					case "TRIBUTACION I.R.P.F.":
-						//"IRPF"
-						dt=DeductionType.IRPF;
-						description=dt.getName(new Locale("es", "ES"));
-						context="IRPF";
-						break;
-					default:
-						//totalSS+=amount;
-					}*/
+						
+						
+						//añadir payment con prorr. paga
+						salaryBuilder.addPayment(
+								amount,
+								amount,
+								amount,
+								description,
+								dFrom,
+								dTo,
+								(IPayment) new Payment().setType(pt).setName(context),
+								Collections.emptyMap());
+						
+					}
+					else if(matcher.group("deducciones")!=null) {
+						//public void addDeduction(Double amount, String description,
+						//Date start, Date end, IDeduction deduction, Map<String, ITimedVariable<?>> context);
+						Double amount=a3DoubleParser(AonStringUtils.trimToNull(matcher.group("deducciones")));
+						String description=AonStringUtils.trimToNull(matcher.group("concept"));
+						description=removeSpace(description, 19);
+						DeductionType dt=null;
+						String context=null;
+						Double type=null;
+						try {
+							type = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("tipo")));
+						} catch (NullPointerException e) {}
+						if(description.contains("COTIZACION CONT.COMU")) {
+							dt=DeductionType.COMMON_CONTINGENCY;
+							description=dt.getName(new Locale("es", "ES"));
+							totalSS+=amount;
+							context="CGC";
+							if (type!=null) {
+								salaryBuilder.addData("PORCENTAJE_CGC", new TimedObject<Double>(type, per ));
+							}
+						}
+						else if (description.contains("COTIZACION FORMACION")) {
+							dt=DeductionType.JOB_TRAINING;
+							description=dt.getName(new Locale("es", "ES"));
+							totalSS+=amount;
+							context="FP";
+							if (type!=null) {
+								salaryBuilder.addData("PORCENTAJE_FP", new TimedObject<Double>(type, per ));
+							}
+						}
+						else if(description.contains("COTIZACION DESEMPLEO")) {
+							dt=DeductionType.UNEMPLOYMENT;
+							description=dt.getName(new Locale("es", "ES"));
+							totalSS+=amount;
+							context="DESMPL";
+							if (type!=null) {
+								salaryBuilder.addData("PORCENTAJE_DESMPL", new TimedObject<Double>(type, per ));
+							}
+						}
+						else if (description.contains("TRIBUTACION I.R.P.F.")) {
+							dt=DeductionType.IRPF;
+							description=dt.getName(new Locale("es", "ES"));
+							context="IRPF";
+							if (type!=null) {
+								salaryBuilder.addData("PORCENTAJE_IRPF", new TimedObject<Double>(type, per ));
+							}
+						}
+						
 
-					salaryBuilder.addDeduction(
-							amount,
-							description,
-							dFrom,
-							dTo,
-							new Deduction().setType(dt).setName(context),
-							Collections.emptyMap());
-					
-					
+						salaryBuilder.addDeduction(
+								amount,
+								description,
+								dFrom,
+								dTo,
+								new Deduction().setType(dt).setName(context),
+								Collections.emptyMap());
+						
+						
+					} else {
+						matcher = SETTLEMENT.matcher(concept_line);
+						if(matcher.matches()) {
+							salaryBuilder.setType(SalaryType.SETTLE);
+							payrollType=1;
+							
+						}
+						else {
+							matcher = ATRASOS_CONV.matcher(concept_line);
+							if(matcher.matches()) {
+								salaryBuilder.setType(SalaryType.DELAY);
+								payrollType=2;
+							}
+							else {
+								
+							}
+						}
+						
+					}
 				}
+				
 				
 				
 				
@@ -325,7 +361,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 				
 				
 				concept_line = reader.readLine();
-				matcher=CONCEPT.matcher(concept_line);
+				matcher=TOTAL_HEADER.matcher(concept_line);
 			}
 			
 			//matcher = find(reader, TOTAL_HEADER);
@@ -346,9 +382,11 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			}
 			
 			try {
-				salaryBuilder.setProExtBase(Double.parseDouble(AonStringUtils.trimToNull(remnbases.get(1)).replaceAll("\\.", "").replaceAll("[,]", ".")));
+				Double amount = Double.parseDouble(AonStringUtils.trimToNull(remnbases.get(1)).replaceAll("\\.", "").replaceAll("[,]", "."));
+				salaryBuilder.setProExtBase(amount);
+				salaryBuilder.addPayment(0d, amount, 0d, "PAGA_EXTRA", dFrom, dTo, new Payment().setType(PaymentType.CRA_0004), Collections.EMPTY_MAP);
 			}catch (NullPointerException e) {
-				salaryBuilder.setProExtBase(null);
+				salaryBuilder.setProExtBase(0d);
 			}
 			
 			try {
@@ -356,7 +394,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 				salaryBuilder.setCgcBase(cgcBase);
 				salaryBuilder.addData(ContextVariable.CGC_BASE.getName(), new TimedObject<Double>(cgcBase, per ));
 			}catch (NullPointerException e) {
-				salaryBuilder.setCgcBase(null);
+				salaryBuilder.setCgcBase(0d);
 			}
 			
 			try {
@@ -372,7 +410,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 				salaryBuilder.setCgpBase(cgpBase);
 				salaryBuilder.addData(ContextVariable.CGP_BASE.getName(), new TimedObject<Double>(cgpBase, per ));
 			}catch (NullPointerException e) {
-				salaryBuilder.setCgpBase(null);
+				salaryBuilder.setCgpBase(0d);
 			}
 			
 			try {
@@ -380,7 +418,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 				salaryBuilder.setTotalIrpf(totalIrpf);
 				salaryBuilder.addData(ContextVariable.IRPF_BASE.getName(), new TimedObject<Double>(totalIrpf, per ));
 			}catch (NullPointerException e) {
-				salaryBuilder.setTotalIrpf(null);
+				salaryBuilder.setTotalIrpf(0d);
 			}
 			
 			try {
@@ -388,14 +426,14 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 				salaryBuilder.setTotalPayment(totalPayment);
 				salaryBuilder.addData(ContextVariable.TOTAL_PAYMENT.getName(), new TimedObject<Double>(totalPayment, per ));
 			}catch (NullPointerException e) {
-				salaryBuilder.setTotalPayment(null);
+				salaryBuilder.setTotalPayment(0d);
 			}
 			
 			try {
 				Double totalDeduction=Double.parseDouble(removeSpace(AonStringUtils.trimToNull(remnbases.get(6)).replaceAll("\\.", "").replaceAll("[,]", "."), -1));
 				salaryBuilder.setTotalDeduction(totalDeduction);
 			}catch (NullPointerException e) {
-				salaryBuilder.setTotalDeduction(null);
+				salaryBuilder.setTotalDeduction(0d);
 			}
 			
 			
@@ -473,8 +511,12 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 					salaryBuilder.addData("PORCENTAJE_CGP_E", new TimedObject<Double>(type, per ));
 				}
 			}
-			if(apportBase!=null)
+			if(apportBase!=null) {
 				salaryBuilder.addData(ContextVariable.IT_ENTERPRISE.getName(), new TimedObject<Double>(apportBase, per ));
+				salaryBuilder.addData(ContextVariable.IMS_ENTERPRISE.getName(), new TimedObject<Double>(0d, per ));
+				Deduction imsDeduction=new Deduction().setType(DeductionType.PROFESSIONAL_CONTINGENCY).setName("IMS_E");
+				salaryBuilder.addCost(0d, "IMS_E", dFrom, dTo, imsDeduction, Collections.emptyMap());
+			}
 			costDeduction=new Deduction().setType(DeductionType.PROFESSIONAL_CONTINGENCY).setName("IT_E");
 			if(individualApport!=null) {
 				salaryBuilder.addCost(individualApport, description, dFrom, dTo, costDeduction, Collections.emptyMap());
@@ -542,79 +584,18 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			}
 			
 			
-//			while(apprt!=null) {
-//				if(matcher.matches()) {
-//					if(matcher.group("apport")!=null) {
-//						Double individualApport = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("apport")));
-//						Double apportBase = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("base")));
-//						totalEnterprise+=individualApport;
-//						String conceptName=AonStringUtils.trimToNull(matcher.group("concept"));
-//						System.out.println(matcher.group());
-//						String description="";
-//						Deduction costDeduction=null;
-//						//SWITCH PARA LAS DESCRIPCIONES
-//						switch (conceptName) {
-//							case "Contingencias comunes":
-//								description=COMMON_CONTINGENCY.getName(new Locale("es", "ES"));
-//								costDeduction=new Deduction().setType(COMMON_CONTINGENCY).setName("CGC_E");
-//								salaryBuilder.addData(ContextVariable.CGC_ENTERPRISE.getName(), new TimedObject<Double>(apportBase, per ));
-//								break;
-//							case "AT y EP":
-//								description=DeductionType.PROFESSIONAL_CONTINGENCY.getName(new Locale("es", "ES"));
-//								costDeduction=new Deduction().setType(DeductionType.PROFESSIONAL_CONTINGENCY).setName("IT_E");
-//								salaryBuilder.addData(ContextVariable.IT_ENTERPRISE.getName(), new TimedObject<Double>(apportBase, per ));
-//								break;
-//							case "Desempleo":
-//								description=DeductionType.UNEMPLOYMENT.getName(new Locale("es", "ES"));
-//								costDeduction=new Deduction().setType(DeductionType.UNEMPLOYMENT).setName("DESEMPL_E");
-//								salaryBuilder.addData(ContextVariable.UNEMPLOY_ENTERPRISE.getName(), new TimedObject<Double>(apportBase, per ));
-//								break;
-//							case "Formación Profesional":
-//								description=DeductionType.JOB_TRAINING.getName(new Locale("es", "ES"));
-//								costDeduction=new Deduction().setType(DeductionType.JOB_TRAINING).setName("FP_E");
-//								salaryBuilder.addData(ContextVariable.FP_ENTERPRISE.getName(), new TimedObject<Double>(apportBase, per ));
-//								break;
-//							case "Fondo Garantía Salarial":
-//								description=DeductionType.FOGASA.getName(new Locale("es", "ES"));
-//								costDeduction=new Deduction().setType(DeductionType.FOGASA).setName("FOGASA");
-//								salaryBuilder.addData(ContextVariable.FOGASA_ENTERPRISE.getName(), new TimedObject<Double>(apportBase, per ));
-//								break;
-//							default:
-//								description=DeductionType.OTHER.getName(new Locale("es", "ES"));
-//								costDeduction=new Deduction().setType(DeductionType.OTHER).setName("OTHER");
-//								
-//						}
-//						
-//						
-//						
-//						salaryBuilder.addCost(individualApport, description, dFrom, dTo, costDeduction, Collections.emptyMap());
-//					}	
-//					
-//					
-//				}
-//				else {
-//					matcher = APPORT_FP.matcher(apprt);
-//					if(matcher.matches())
-//						System.out.println(matcher.group());
-//				}
-//				
-//				
-//				apprt = reader.readLine();
-//				matcher = APPORT.matcher(apprt);
-//			}
-			
-			
 
+			
 			totalEnterprise=Math.round(totalEnterprise*100.0)/100.0;
 			salaryBuilder.setTotalEnterprise(totalEnterprise);
-			totalSS+=totalEnterprise;
+			//totalSS+=totalEnterprise;
 			totalSS=Math.round(totalSS*100.0)/100.0;
 			salaryBuilder.setTotalSS(totalSS);
 			salaryBuilder.getSalary();
 		}
 		
-		//System.err.println(cont);
-		//cont++;
+		System.err.println(cont);
+		cont++;
 		return this;
 	
 	}
@@ -862,8 +843,11 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	Pattern.compile("\\s*Nº AFILIACION\\.\\s*S\\.S\\.\\s*TARIFA\\s*COD\\.CT\\s*seccion\\s*NRO\\.\\s*PERIODO\\s*TOT\\.\\s*DIAS\\s*",
 	Pattern.CASE_INSENSITIVE);
 	//48/10454983-40     7  200              4  MENS 01 ENE 20 a 31 ENE 20          30  
+	//04/10543848-78     7  189  0102        2  MENS 01 ENE 20 a 31 ENE 20          30  
+	//14/10284281-20                       191  MENS 01 ENE 20 a 31 ENE 20          30  
 	private static final Pattern SS_INFO =
-	Pattern.compile("\\s*(?<affnum>\\d+/\\d+-\\d+)\\s*(?<tarifa>\\d*)\\s*(?<codct>\\d*)\\s*(?<section>.*?)?\\s*(?<nro>\\d*)\\s*(?<period>.*\\s*a\\s*.*?)?\\s{2,}(?<days>\\d*)\\s*"
+	//Pattern.compile("\\s*(?<affnum>\\d+/\\d+-\\d+)\\s*(?<tarifa>\\d*)\\s*(?<codct>\\d*)\\s*(?<section>.*?)?\\s*(?<nro>\\d*)\\s*(?<period>.*\\s*a\\s*.*?)?\\s{2,}(?<days>\\d*)\\s*"
+			Pattern.compile("\\s*(?<affnum>\\d+/\\d+-\\d+)\\s{4,5}(?<tarifa>\\d{1,2})?\\s*(?<codct>\\d{1,3})?\\s*((?<section>[^\\s]+?)\\s+)?(?<nro>\\d+)?\\s{2}(?<period>.*\\s*a\\s*.*?)?\\s{2,}(?<days>\\d*)\\s*"
 	, Pattern.CASE_INSENSITIVE);
 	//CUANTIA PRECIO CONCEPTO DEVENGOS DEDUCCIONES
 	private static final Pattern CONCEPT_HEADER=
@@ -873,6 +857,14 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	private static final Pattern CONCEPT =
 	Pattern.compile("\\s*(?<cuantia>(\\d[\\d\\s]*\\.)?[\\s\\d]{1,4}[,]\\d+)?\\s*(?<price>(\\d[\\d\\s]*\\.)?[\\s\\d]{1,4}[,]\\d+)?\\s*(?<unknownnumber>\\d+)?\\s*(?<concept>\\*?.+?)\\s{1,2}(?<tipo>\\d+[,]\\d*)?\\s*(?<devengos>\\d+[,]\\d*)?\\s{19}?(?<deducciones>(\\d[\\d\\s]*\\.)?[\\s\\d]{1,4}[,]\\d+)?\\s*$"
 	, Pattern.CASE_INSENSITIVE);
+	//                                FINIQUITO ....................:                                     
+	private static final Pattern SETTLEMENT =
+	Pattern.compile("\\s*FINIQUITO\\s*\\.+:\\s*"
+	, Pattern.CASE_INSENSITIVE);
+	
+	private static final Pattern ATRASOS_CONV =
+			Pattern.compile("\\s*PAGA\\s*ATRASOS\\s*DE\\s*CONVENIO\\s*\\.+:\\s*"
+			, Pattern.CASE_INSENSITIVE);
 	//REM. TOTAL P.P.EXTRAS BASE S.S. BASE A.T. Y DES. BASE I.R.P.F. T. DEVENGADO T.  A DEDUCIR
 	private static final Pattern TOTAL_HEADER =
 	Pattern.compile("REM\\.\\s*TOTAL\\s*P\\.P\\.EXTRAS\\s*BASE\\s*S\\.S\\.\\s*BASE\\s*A\\.T\\.\\s*Y\\s*DES\\.\\s*BASE\\s*I\\.R\\.P\\.F\\.\\s*T\\.\\s*DEVENGADO\\s*T\\.\\s*A\\s*DEDUCIR"
@@ -1008,218 +1000,218 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 		return matcher;		
 	}
 	
-	/*public static void main(String[] args) {
-		Matcher matcher = check(EMPLOYEE_NAME, "    IVANOV , PETAR GEORGIEV                                     ");
-		System.out.println("name : "+matcher.group("name"));
-
-		matcher = check(EMPLOYEE_ADDRESS, "   CL    ALFONSO VI             30       3  DC                 ");
-		System.out.println("tipo : "+ matcher.group("tipo"));
-		System.out.println("address : " + matcher.group("address"));
-		
-		
-		
-		matcher = check(PC_AND_MUNICIPALITY, "    09000  MIRANDA DE EBRO ");
-		System.out.println("Post code: "+matcher.group("postcode"));
-		System.out.println("Municipality: "+ matcher.group("municipality"));
-		
-		matcher = check(PROVINCE, "    BURGOS                                                      ");
-		System.out.println("Province: "+matcher.group("province"));
-		
-		matcher = check(NIF, "NIF. J01409838                                                      8052                        ");
-		System.out.println("NIF: "+matcher.group("nif"));
-		System.out.println("Enterprise code: "+matcher.group("enterprisecode"));
-		
-		matcher = check(HOME_HEADER, "EMPRESA DOMICILIO Nº INS. S.S.");
-		System.out.println(matcher.group());
-		
-		matcher = check(ENTERPRISE_HOME, "RESTAURANTE EL VISO, S.C          CL REAL 32 BJ                     01/1034816-96               ");
-		System.out.println("Enterprise name: "+matcher.group("enterprisename"));
-		System.out.println("Enterprise address: "+matcher.group("address"));
-		System.out.println("NSS: "+matcher.group("nss"));
-		
-		matcher = check(WORKER_HEADER, "TRABAJADOR/A CATEGORIA NºMATRIC ANTIGUEDAD D.N.I.");
-		System.out.println(matcher.group());
-		
-		matcher = check(WORKER, "IVANOV , PETAR GEORGIEV           FREGADOR                  1 OCT 08   X8865220P   ");
-		System.out.println("surname:"+matcher.group("surname"));
-		System.out.println("name:"+matcher.group("name"));
-		System.out.println("job:"+matcher.group("job"));
-		System.out.println("old:"+matcher.group("old"));
-		System.out.println("NIF:"+matcher.group("nif"));
-		System.out.println("Num. matric: "+matcher.group("nummatric"));
-		
-		matcher = check(SS_INFO_HEADER, "Nº AFILIACION. S.S. TARIFA COD.CT SECCION NRO. PERIODO TOT. DIAS");
-		System.out.println(matcher.group());
-		
-		matcher = check(SS_INFO, "48/10454983-40     7  200              4  MENS 01 ENE 20 a 31 ENE 20          30  ");
-		System.out.println("Affnum: "+matcher.group("affnum"));
-		System.out.println("Fee: "+matcher.group("tarifa"));
-		System.out.println("codct: "+matcher.group("codct"));
-		System.out.println("Section: "+matcher.group("section"));
-		System.out.println("Number: "+matcher.group("nro"));
-		System.out.println("Period: "+matcher.group("period"));
-		System.out.println("Tot. days: "+matcher.group("days"));
-		
-		matcher = check(CONCEPT_HEADER, "CUANTIA PRECIO CONCEPTO DEVENGOS DEDUCCIONES");
-		System.out.println(matcher.group());
-		System.out.println();
-		matcher = check(CONCEPT, "30,00     26,741     1  *Salario Base                               802,24                   ");
-		System.out.println("Cuantía: "+matcher.group("cuantia"));
-		System.out.println("Precio: "+matcher.group("price"));
-		System.out.println("No idea: "+matcher.group("unknownnumber"));
-		System.out.println("Concepto: "+matcher.group("concept"));
-		System.out.println("Tipo: "+matcher.group("tipo"));
-		System.out.println("Devengos: "+matcher.group("devengos"));
-		System.out.println("Deducciones: "+matcher.group("deducciones"));
-		
-		System.out.println();
-		
-		matcher = check(CONCEPT, "4  *Antigüedad                                 128,36                   ");
-		System.out.println("Cuantía: "+matcher.group("cuantia"));
-		System.out.println("Precio: "+matcher.group("price"));
-		System.out.println("No idea: "+matcher.group("unknownnumber"));
-		System.out.println("Concepto: "+matcher.group("concept"));
-		System.out.println("Tipo: "+matcher.group("tipo"));
-		System.out.println("Devengos: "+matcher.group("devengos"));
-		System.out.println("Deducciones: "+matcher.group("deducciones"));
-		
-		System.out.println();
-
-		matcher = check(CONCEPT, "30,00      1,039    95  *Plus Manutención                            31,17                   ");
-		System.out.println("Cuantía: "+matcher.group("cuantia"));
-		System.out.println("Precio: "+matcher.group("price"));
-		System.out.println("No idea: "+matcher.group("unknownnumber"));
-		System.out.println("Concepto: "+matcher.group("concept"));
-		System.out.println("Tipo: "+matcher.group("tipo"));
-		System.out.println("Devengos: "+matcher.group("devengos"));
-		System.out.println("Deducciones: "+matcher.group("deducciones"));
-		
-		System.out.println();
-		
-		matcher = check(CONCEPT, "124  *P.p.extras                                 169,00                   ");
-		System.out.println("Cuantía: "+matcher.group("cuantia"));
-		System.out.println("Precio: "+matcher.group("price"));
-		System.out.println("No idea: "+matcher.group("unknownnumber"));
-		System.out.println("Concepto: "+matcher.group("concept"));
-		System.out.println("Tipo: "+matcher.group("tipo"));
-		System.out.println("Devengos: "+matcher.group("devengos"));
-		System.out.println("Deducciones: "+matcher.group("deducciones"));
-		
-		System.out.println();
-		
-		matcher = check(CONCEPT, "147  *Bonus octubre                               78,20                   ");
-		System.out.println("Cuantía: "+matcher.group("cuantia"));
-		System.out.println("Precio: "+matcher.group("price"));
-		System.out.println("No idea: "+matcher.group("unknownnumber"));
-		System.out.println("Concepto: "+matcher.group("concept"));
-		System.out.println("Tipo: "+matcher.group("tipo"));
-		System.out.println("Devengos: "+matcher.group("devengos"));
-		System.out.println("Deducciones: "+matcher.group("deducciones"));
-		
-		System.out.println();
-		
-		matcher = check(CONCEPT, "240  *Domingos-festiv                             51,34                   ");
-		System.out.println("Cuantía: "+matcher.group("cuantia"));
-		System.out.println("Precio: "+matcher.group("price"));
-		System.out.println("No idea: "+matcher.group("unknownnumber"));
-		System.out.println("Concepto: "+matcher.group("concept"));
-		System.out.println("Tipo: "+matcher.group("tipo"));
-		System.out.println("Devengos: "+matcher.group("devengos"));
-		System.out.println("Deducciones: "+matcher.group("deducciones"));
-		
-		System.out.println();
-		
-		matcher = check(CONCEPT, "789   Dcto.Conceptos en Especie                                 31,17     ");
-		System.out.println("Cuantía: "+matcher.group("cuantia"));
-		System.out.println("Precio: "+matcher.group("price"));
-		System.out.println("No idea: "+matcher.group("unknownnumber"));
-		System.out.println("Concepto: "+matcher.group("concept"));
-		System.out.println("Tipo: "+matcher.group("tipo"));
-		System.out.println("Devengos: "+matcher.group("devengos"));
-		System.out.println("Deducciones: "+matcher.group("deducciones"));
-		
-		System.out.println();
-		
-		matcher = check(CONCEPT, "995   COTIZACION CONT.COMU 4,70                                 59,23     ");
-		System.out.println("Cuantía: "+matcher.group("cuantia"));
-		System.out.println("Precio: "+matcher.group("price"));
-		System.out.println("No idea: "+matcher.group("unknownnumber"));
-		System.out.println("Concepto: "+matcher.group("concept"));
-		System.out.println("Tipo: "+matcher.group("tipo"));
-		System.out.println("Devengos: "+matcher.group("devengos"));
-		System.out.println("Deducciones: "+matcher.group("deducciones"));
-		
-		System.out.println();
-		
-		matcher = check(CONCEPT, "996   COTIZACION FORMACION 0,10                                  1,26     ");
-		System.out.println("Cuantía: "+matcher.group("cuantia"));
-		System.out.println("Precio: "+matcher.group("price"));
-		System.out.println("No idea: "+matcher.group("unknownnumber"));
-		System.out.println("Concepto: "+matcher.group("concept"));
-		System.out.println("Tipo: "+matcher.group("tipo"));
-		System.out.println("Devengos: "+matcher.group("devengos"));
-		System.out.println("Deducciones: "+matcher.group("deducciones"));
-		
-		System.out.println();
-		
-		matcher = check(CONCEPT, "997   COTIZACION DESEMPLEO 1,55                                 19,53     ");
-		System.out.println("Cuantía: "+matcher.group("cuantia"));
-		System.out.println("Precio: "+matcher.group("price"));
-		System.out.println("No idea: "+matcher.group("unknownnumber"));
-		System.out.println("Concepto: "+matcher.group("concept"));
-		System.out.println("Tipo: "+matcher.group("tipo"));
-		System.out.println("Devengos: "+matcher.group("devengos"));
-		System.out.println("Deducciones: "+matcher.group("deducciones"));
-		
-		System.out.println();
-		
-		matcher = check(CONCEPT, "999   TRIBUTACION I.R.P.F. 4,00                                 50,42     ");
-		System.out.println("Cuantía: "+matcher.group("cuantia"));
-		System.out.println("Precio: "+matcher.group("price"));
-		System.out.println("No idea: "+matcher.group("unknownnumber"));
-		System.out.println("Concepto: "+matcher.group("concept"));
-		System.out.println("Tipo: "+matcher.group("tipo"));
-		System.out.println("Devengos: "+matcher.group("devengos"));
-		System.out.println("Deducciones: "+matcher.group("deducciones"));
-		
-		System.out.println();
-		
-		matcher = check(CONCEPT, "Horas en Alta a Tiempo Parcial: 105,00                              ");
-		System.out.println("Cuantía: "+matcher.group("cuantia"));
-		System.out.println("Precio: "+matcher.group("price"));
-		System.out.println("No idea: "+matcher.group("unknownnumber"));
-		System.out.println("Concepto: "+matcher.group("concept"));
-		System.out.println("Tipo: "+matcher.group("tipo"));
-		System.out.println("Devengos: "+matcher.group("devengos"));
-		System.out.println("Deducciones: "+matcher.group("deducciones"));
-		
-		System.out.println();
-		
-		matcher = check(TOTAL_HEADER, "REM. TOTAL P.P.EXTRAS BASE S.S. BASE A.T. Y DES. BASE I.R.P.F. T. DEVENGADO T.  A DEDUCIR");
-		System.out.println(matcher.group());
-		
-		matcher = find(TOTAL, "1.260,31                  1.260,31        1.260,31     1.260,31    1.260,31        161,61     ");
-		System.out.println(matcher.group(0));
-		while ( matcher.find()) 
-			System.out.println(matcher.group(0));
-
-	
-		matcher = check(LEYENDA, "* Percepciones Salariales  sujetas a Cot. S.S. - Percepciones no Salariales excluídas Cot. S.S.");
-		System.out.println(matcher.group(0));
-		
-		
-		matcher = check(FECHASELLO, "FECHA                                                        SELLO EMPRESA RECIBI");
-		System.out.println(matcher.group());
-		
-		
-		matcher = check(DATE, "31 ENERO      2020                                                              ");
-		System.out.println("Day: "+matcher.group("day"));
-		System.out.println("Month: "+matcher.group("month"));
-		System.out.println("Year: "+matcher.group("year"));
-		
-		
-		
-	}*/
+//	public static void main(String[] args) {
+//		Matcher matcher = check(EMPLOYEE_NAME, "    IVANOV , PETAR GEORGIEV                                     ");
+//		System.out.println("name : "+matcher.group("name"));
+//
+//		matcher = check(EMPLOYEE_ADDRESS, "   CL    ALFONSO VI             30       3  DC                 ");
+//		System.out.println("tipo : "+ matcher.group("tipo"));
+//		System.out.println("address : " + matcher.group("address"));
+//		
+//		
+//		
+//		matcher = check(PC_AND_MUNICIPALITY, "    09000  MIRANDA DE EBRO ");
+//		System.out.println("Post code: "+matcher.group("postcode"));
+//		System.out.println("Municipality: "+ matcher.group("municipality"));
+//		
+//		matcher = check(PROVINCE, "    BURGOS                                                      ");
+//		System.out.println("Province: "+matcher.group("province"));
+//		
+//		matcher = check(NIF, "NIF. J01409838                                                      8052                        ");
+//		System.out.println("NIF: "+matcher.group("nif"));
+//		System.out.println("Enterprise code: "+matcher.group("enterprisecode"));
+//		
+//		matcher = check(HOME_HEADER, "EMPRESA DOMICILIO Nº INS. S.S.");
+//		System.out.println(matcher.group());
+//		
+//		matcher = check(ENTERPRISE_HOME, "RESTAURANTE EL VISO, S.C          CL REAL 32 BJ                     01/1034816-96               ");
+//		System.out.println("Enterprise name: "+matcher.group("enterprisename"));
+//		System.out.println("Enterprise address: "+matcher.group("address"));
+//		System.out.println("NSS: "+matcher.group("nss"));
+//		
+//		matcher = check(WORKER_HEADER, "TRABAJADOR/A CATEGORIA NºMATRIC ANTIGUEDAD D.N.I.");
+//		System.out.println(matcher.group());
+//		
+//		matcher = check(WORKER, "IVANOV , PETAR GEORGIEV           FREGADOR                  1 OCT 08   X8865220P   ");
+//		System.out.println("surname:"+matcher.group("surname"));
+//		System.out.println("name:"+matcher.group("name"));
+//		System.out.println("job:"+matcher.group("job"));
+//		System.out.println("old:"+matcher.group("old"));
+//		System.out.println("NIF:"+matcher.group("nif"));
+//		System.out.println("Num. matric: "+matcher.group("nummatric"));
+//		
+//		matcher = check(SS_INFO_HEADER, "Nº AFILIACION. S.S. TARIFA COD.CT SECCION NRO. PERIODO TOT. DIAS");
+//		System.out.println(matcher.group());
+//		
+//		matcher = check(SS_INFO, "48/10454983-40     7  200              4  MENS 01 ENE 20 a 31 ENE 20          30  ");
+//		System.out.println("Affnum: "+matcher.group("affnum"));
+//		System.out.println("Fee: "+matcher.group("tarifa"));
+//		System.out.println("codct: "+matcher.group("codct"));
+//		System.out.println("Section: "+matcher.group("section"));
+//		System.out.println("Number: "+matcher.group("nro"));
+//		System.out.println("Period: "+matcher.group("period"));
+//		System.out.println("Tot. days: "+matcher.group("days"));
+//		
+//		matcher = check(CONCEPT_HEADER, "CUANTIA PRECIO CONCEPTO DEVENGOS DEDUCCIONES");
+//		System.out.println(matcher.group());
+//		System.out.println();
+//		matcher = check(CONCEPT, "30,00     26,741     1  *Salario Base                               802,24                   ");
+//		System.out.println("Cuantía: "+matcher.group("cuantia"));
+//		System.out.println("Precio: "+matcher.group("price"));
+//		System.out.println("No idea: "+matcher.group("unknownnumber"));
+//		System.out.println("Concepto: "+matcher.group("concept"));
+//		System.out.println("Tipo: "+matcher.group("tipo"));
+//		System.out.println("Devengos: "+matcher.group("devengos"));
+//		System.out.println("Deducciones: "+matcher.group("deducciones"));
+//		
+//		System.out.println();
+//		
+//		matcher = check(CONCEPT, "4  *Antigüedad                                 128,36                   ");
+//		System.out.println("Cuantía: "+matcher.group("cuantia"));
+//		System.out.println("Precio: "+matcher.group("price"));
+//		System.out.println("No idea: "+matcher.group("unknownnumber"));
+//		System.out.println("Concepto: "+matcher.group("concept"));
+//		System.out.println("Tipo: "+matcher.group("tipo"));
+//		System.out.println("Devengos: "+matcher.group("devengos"));
+//		System.out.println("Deducciones: "+matcher.group("deducciones"));
+//		
+//		System.out.println();
+//
+//		matcher = check(CONCEPT, "30,00      1,039    95  *Plus Manutención                            31,17                   ");
+//		System.out.println("Cuantía: "+matcher.group("cuantia"));
+//		System.out.println("Precio: "+matcher.group("price"));
+//		System.out.println("No idea: "+matcher.group("unknownnumber"));
+//		System.out.println("Concepto: "+matcher.group("concept"));
+//		System.out.println("Tipo: "+matcher.group("tipo"));
+//		System.out.println("Devengos: "+matcher.group("devengos"));
+//		System.out.println("Deducciones: "+matcher.group("deducciones"));
+//		
+//		System.out.println();
+//		
+//		matcher = check(CONCEPT, "124  *P.p.extras                                 169,00                   ");
+//		System.out.println("Cuantía: "+matcher.group("cuantia"));
+//		System.out.println("Precio: "+matcher.group("price"));
+//		System.out.println("No idea: "+matcher.group("unknownnumber"));
+//		System.out.println("Concepto: "+matcher.group("concept"));
+//		System.out.println("Tipo: "+matcher.group("tipo"));
+//		System.out.println("Devengos: "+matcher.group("devengos"));
+//		System.out.println("Deducciones: "+matcher.group("deducciones"));
+//		
+//		System.out.println();
+//		
+//		matcher = check(CONCEPT, "147  *Bonus octubre                               78,20                   ");
+//		System.out.println("Cuantía: "+matcher.group("cuantia"));
+//		System.out.println("Precio: "+matcher.group("price"));
+//		System.out.println("No idea: "+matcher.group("unknownnumber"));
+//		System.out.println("Concepto: "+matcher.group("concept"));
+//		System.out.println("Tipo: "+matcher.group("tipo"));
+//		System.out.println("Devengos: "+matcher.group("devengos"));
+//		System.out.println("Deducciones: "+matcher.group("deducciones"));
+//		
+//		System.out.println();
+//		
+//		matcher = check(CONCEPT, "240  *Domingos-festiv                             51,34                   ");
+//		System.out.println("Cuantía: "+matcher.group("cuantia"));
+//		System.out.println("Precio: "+matcher.group("price"));
+//		System.out.println("No idea: "+matcher.group("unknownnumber"));
+//		System.out.println("Concepto: "+matcher.group("concept"));
+//		System.out.println("Tipo: "+matcher.group("tipo"));
+//		System.out.println("Devengos: "+matcher.group("devengos"));
+//		System.out.println("Deducciones: "+matcher.group("deducciones"));
+//		
+//		System.out.println();
+//		
+//		matcher = check(CONCEPT, "789   Dcto.Conceptos en Especie                                 31,17     ");
+//		System.out.println("Cuantía: "+matcher.group("cuantia"));
+//		System.out.println("Precio: "+matcher.group("price"));
+//		System.out.println("No idea: "+matcher.group("unknownnumber"));
+//		System.out.println("Concepto: "+matcher.group("concept"));
+//		System.out.println("Tipo: "+matcher.group("tipo"));
+//		System.out.println("Devengos: "+matcher.group("devengos"));
+//		System.out.println("Deducciones: "+matcher.group("deducciones"));
+//		
+//		System.out.println();
+//		
+//		matcher = check(CONCEPT, "995   COTIZACION CONT.COMU 4,70                                 59,23     ");
+//		System.out.println("Cuantía: "+matcher.group("cuantia"));
+//		System.out.println("Precio: "+matcher.group("price"));
+//		System.out.println("No idea: "+matcher.group("unknownnumber"));
+//		System.out.println("Concepto: "+matcher.group("concept"));
+//		System.out.println("Tipo: "+matcher.group("tipo"));
+//		System.out.println("Devengos: "+matcher.group("devengos"));
+//		System.out.println("Deducciones: "+matcher.group("deducciones"));
+//		
+//		System.out.println();
+//		
+//		matcher = check(CONCEPT, "996   COTIZACION FORMACION 0,10                                  1,26     ");
+//		System.out.println("Cuantía: "+matcher.group("cuantia"));
+//		System.out.println("Precio: "+matcher.group("price"));
+//		System.out.println("No idea: "+matcher.group("unknownnumber"));
+//		System.out.println("Concepto: "+matcher.group("concept"));
+//		System.out.println("Tipo: "+matcher.group("tipo"));
+//		System.out.println("Devengos: "+matcher.group("devengos"));
+//		System.out.println("Deducciones: "+matcher.group("deducciones"));
+//		
+//		System.out.println();
+//		
+//		matcher = check(CONCEPT, "997   COTIZACION DESEMPLEO 1,55                                 19,53     ");
+//		System.out.println("Cuantía: "+matcher.group("cuantia"));
+//		System.out.println("Precio: "+matcher.group("price"));
+//		System.out.println("No idea: "+matcher.group("unknownnumber"));
+//		System.out.println("Concepto: "+matcher.group("concept"));
+//		System.out.println("Tipo: "+matcher.group("tipo"));
+//		System.out.println("Devengos: "+matcher.group("devengos"));
+//		System.out.println("Deducciones: "+matcher.group("deducciones"));
+//		
+//		System.out.println();
+//		
+//		matcher = check(CONCEPT, "999   TRIBUTACION I.R.P.F. 4,00                                 50,42     ");
+//		System.out.println("Cuantía: "+matcher.group("cuantia"));
+//		System.out.println("Precio: "+matcher.group("price"));
+//		System.out.println("No idea: "+matcher.group("unknownnumber"));
+//		System.out.println("Concepto: "+matcher.group("concept"));
+//		System.out.println("Tipo: "+matcher.group("tipo"));
+//		System.out.println("Devengos: "+matcher.group("devengos"));
+//		System.out.println("Deducciones: "+matcher.group("deducciones"));
+//		
+//		System.out.println();
+//		
+//		matcher = check(CONCEPT, "Horas en Alta a Tiempo Parcial: 105,00                              ");
+//		System.out.println("Cuantía: "+matcher.group("cuantia"));
+//		System.out.println("Precio: "+matcher.group("price"));
+//		System.out.println("No idea: "+matcher.group("unknownnumber"));
+//		System.out.println("Concepto: "+matcher.group("concept"));
+//		System.out.println("Tipo: "+matcher.group("tipo"));
+//		System.out.println("Devengos: "+matcher.group("devengos"));
+//		System.out.println("Deducciones: "+matcher.group("deducciones"));
+//		
+//		System.out.println();
+//		
+//		matcher = check(TOTAL_HEADER, "REM. TOTAL P.P.EXTRAS BASE S.S. BASE A.T. Y DES. BASE I.R.P.F. T. DEVENGADO T.  A DEDUCIR");
+//		System.out.println(matcher.group());
+//		
+//		matcher = find(TOTAL, "1.260,31                  1.260,31        1.260,31     1.260,31    1.260,31        161,61     ");
+//		System.out.println(matcher.group(0));
+//		while ( matcher.find()) 
+//			System.out.println(matcher.group(0));
+//
+//	
+//		matcher = check(LEYENDA, "* Percepciones Salariales  sujetas a Cot. S.S. - Percepciones no Salariales excluídas Cot. S.S.");
+//		System.out.println(matcher.group(0));
+//		
+//		
+//		matcher = check(FECHASELLO, "FECHA                                                        SELLO EMPRESA RECIBI");
+//		System.out.println(matcher.group());
+//		
+//		
+//		matcher = check(DATE, "31 ENERO      2020                                                              ");
+//		System.out.println("Day: "+matcher.group("day"));
+//		System.out.println("Month: "+matcher.group("month"));
+//		System.out.println("Year: "+matcher.group("year"));
+//		
+//		
+//		
+//	}
 
 
 	//ARMIÑON                                                                         

@@ -20,7 +20,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
-
+@Ignore
 public class PdfTest {
 	
 	
@@ -1208,6 +1208,40 @@ public class PdfTest {
 					}
 					cont++;
 				}
+				
+			});
+		}
+	}
+	
+	@Test
+	//@Ignore
+	public void testA3Demasiados() throws IOException, UnknownPDFException {
+		try ( InputStream is = PdfTest.class.getResourceAsStream("NOMINAS UN LUGAR 2020.pdf") ){
+			SalaryPDFParser.parse(is, new SalaryBuilder() {
+				public int contIrpf = 1;
+
+				@Override
+				public void setProExtBase(Double extraPayProration) {
+					System.out.println(extraPayProration);
+				}
+
+				
+			});
+		}
+	}
+	
+	@Test
+	@Ignore
+	public void testA3Excessive() throws IOException, UnknownPDFException {
+		try ( InputStream is = PdfTest.class.getResourceAsStream("NOMINAS ATSP 2020.pdf") ){
+			SalaryPDFParser.parse(is, new SalaryBuilder() {
+//				public int contIrpf = 1;
+//
+//				@Override
+//				public void setProExtBase(Double extraPayProration) {
+//					System.out.println(extraPayProration);
+//				}
+				
 				
 			});
 		}
