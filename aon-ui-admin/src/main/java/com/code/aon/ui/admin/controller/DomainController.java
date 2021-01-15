@@ -151,6 +151,8 @@ public class DomainController extends BasicController {
 	protected void accept() {
 		OCRConfigurationController ocr = (OCRConfigurationController) AonUtil.getRegisteredBean("ocrConfiguration");
 		ocr.contract();
+		MarketplaceController marketplace = (MarketplaceController) AonUtil.getRegisteredBean("marketplace");
+		marketplace.contract();
 		super.accept();
 	}
 	
@@ -197,6 +199,8 @@ public class DomainController extends BasicController {
 			}
 			OCRConfigurationController ocr = (OCRConfigurationController) AonUtil.getRegisteredBean("ocrConfiguration");
 			ocr.init();
+			MarketplaceController marketplace = (MarketplaceController) AonUtil.getRegisteredBean("marketplace");
+			marketplace.init();
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				

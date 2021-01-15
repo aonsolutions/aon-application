@@ -4,11 +4,14 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
@@ -19,8 +22,8 @@ public class DomainUserSearchListener extends ControllerSearchListener {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private Enterprise enterprise; 
-	
+	private Enterprise enterprise;
+	private Boolean portal;
 	private Registry registry;
 
 	public Enterprise getEnterprise() {
@@ -31,6 +34,18 @@ public class DomainUserSearchListener extends ControllerSearchListener {
 		this.enterprise = enterprise;
 	}
 	
+	public Boolean getPortal() {
+		return portal;
+	}
+	
+	public void setPortal(Boolean portal) {
+		if(portal) {
+			this.enterprise.setId(getEnterpriseId());
+		} else this.enterprise.setId(null);
+
+		this.portal = portal;
+	}
+	
 	public Registry getRegistry() {
 		return registry;
 	}
@@ -38,11 +53,18 @@ public class DomainUserSearchListener extends ControllerSearchListener {
 	public void setRegistry(Registry registry) {
 		this.registry = registry;
 	}
-
+	
+	private Integer getEnterpriseId() {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		Company company = controller.obtainCompany();
+		return company.getId();
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
 		setEnterprise((Enterprise) enterpriseBean.createNewTo());
+		setPortal(false);
 		IManagerBean registryBean = BeanManager.getManagerBean(Registry.class);
 		setRegistry((Registry) registryBean.createNewTo());
 	}
@@ -56,7 +78,7 @@ public class DomainUserSearchListener extends ControllerSearchListener {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.USER_REGISTRY), getRegistry().getId());			
 		}
 		if (! AonUtil.getRoleManager().isSysAdmin() ) {
-			criteria.addNullExpression(getFieldName(IEntityAlias.USER_ENTERPRISE));
+//			criteria.addNullExpression(getFieldName(IEntityAlias.USER_ENTERPRISE));
 		}
 	}
 	
@@ -92,7 +114,7 @@ public class DomainUserSearchListener extends ControllerSearchListener {
 				enterprise = (Enterprise) enterpriseBean.createNewTo(); 
 			}
 			setEnterprise( enterprise );
-			
+			setPortal(user.getEnterprise() != null);
 			IManagerBean registryBean = BeanManager.getManagerBean(Registry.class);
 			Registry registry = null;
 			if ( user.getRegistry() != null ) {

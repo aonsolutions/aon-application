@@ -52,6 +52,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.PortalInfo;
+import com.code.aon.ui.admin.controller.MarketplaceController;
 import com.code.aon.ui.admin.controller.OCRConfigurationController;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
@@ -121,6 +122,7 @@ public class DesktopState implements Serializable {
 		User user = UserUtils.getInstance().getLoggedUser();
 		initPortal(user, ds);
 		initOCR(user, ds);
+		initMarketplace();
 		initUser(user);
 		initSupport();
 		checkSerialization();
@@ -212,6 +214,26 @@ public class DesktopState implements Serializable {
 	public boolean isOCR() {
 		OCRConfigurationController ocr = (OCRConfigurationController) AonUtil.getRegisteredBean("ocrConfiguration");
 		return ocr.isActive();
+	}
+	
+	public boolean isComunica() {
+		MarketplaceController marketplace = (MarketplaceController) AonUtil.getRegisteredBean("marketplace");
+		return marketplace.isComunicaActive();
+	}
+	
+	public boolean isConvenios() {
+		MarketplaceController marketplace = (MarketplaceController) AonUtil.getRegisteredBean("marketplace");
+		return marketplace.isConveniosActive();
+	}
+	
+	public boolean isBank() {
+		MarketplaceController marketplace = (MarketplaceController) AonUtil.getRegisteredBean("marketplace");
+		return marketplace.isBankActive();
+	}
+	
+	public boolean isTimecontrol() {
+		MarketplaceController marketplace = (MarketplaceController) AonUtil.getRegisteredBean("marketplace");
+		return marketplace.isTimecontrolActive();
 	}
 
 	private boolean calculateAdminRole() {
@@ -359,6 +381,11 @@ public class DesktopState implements Serializable {
 	private void initOCR(User user, DomainSwitcher ds) {
 		OCRConfigurationController ocr = (OCRConfigurationController) AonUtil.getRegisteredBean("ocrConfiguration");
 		ocr.init();
+	}
+	
+	private void initMarketplace() {
+		MarketplaceController marketplace = (MarketplaceController) AonUtil.getRegisteredBean("marketplace");
+		marketplace.init();
 	}
 
 	private void initHotel() {

@@ -12,6 +12,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +31,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
+import com.code.aon.company.Company;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
@@ -49,6 +51,8 @@ import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.admin.util.UserIdCheckUtil;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.common.ICommonMessages;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -73,7 +77,7 @@ public class DomainUserController extends BasicController {
 	private String confirmPassword;	
 
 	private String selectedTab;
-	
+		
 	private UserIdCheckUtil idCheck;
 	
 	private List<UserApplicationInfo> applicationInfos;
@@ -81,6 +85,8 @@ public class DomainUserController extends BasicController {
 	private boolean skipDomain;
 	
 	private boolean showFavorites;
+	
+	private boolean portal = false;
 	
 	public DomainUserController() {
 		this.idCheck = new UserIdCheckUtil();
@@ -112,6 +118,20 @@ public class DomainUserController extends BasicController {
 		criteria.addEqualExpression(getFieldName(IEntityAlias.USER_ACTIVE), Boolean.TRUE);
 		return (List) getManagerBean().getList(criteria);
 	}	
+	
+	@Override
+	public void onSearch(ActionEvent event) {
+		if(!portal) {
+			try {
+				getCriteria().addNullExpression(getFieldName(IEntityAlias.USER_ENTERPRISE));
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+		} else portal = false;
+		
+		super.onSearch(event);
+	}
+	
 	
 	public User getDomainUser() {
 		return (User) getTo();
@@ -376,6 +396,30 @@ public class DomainUserController extends BasicController {
 			((TaskHolder) to).setUser(null);
 			bean.update(to);
 		}
+	}
+	
+	public void addPortalExpression(ValueChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null) {
+			String value = event.getNewValue().toString();
+			if (! StringUtils.isBlank(value) && "true".equalsIgnoreCase(value)) {
+				this.portal = true;
+				IManagerBean bean = BeanManager.getManagerBean(User.class);
+				getCriteria().addEqualExpression(bean.getFieldName(IEntityAlias.USER_ENTERPRISE), getEnterpriseId());
+			} else this.portal = false;
+		}
+	} 
+	
+	@Override
+	protected void accept() {
+		User user2 = (User) getTo();
+		System.out.println( user2.getEnterprise());
+		super.accept();
+	}
+	
+	private Integer getEnterpriseId() {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		Company company = controller.obtainCompany();
+		return company.getId();
 	}
 	
 	@Override
