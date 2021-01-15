@@ -302,19 +302,29 @@
 						</aon:if>	
 																		
 					</rich:panelBarItem>
+
+					<aon:if test="#{userUtils.newAONTheme and (domainSwitcher.betaEnabled or domainSwitcher.alphaEnabled)}">
+						<rich:panelBarItem id="new_suite"
+							label="#{bundle.new_suite}">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="new_suite_users"
+									action="new_suite_users"
+									value="#{bundle.admin_users}" />
+							</aon:div>					
+						</rich:panelBarItem>
+ 					</aon:if>
 					
 					<aon:if test="#{serviceAccount.console}">
-					<rich:panelBarItem id="service_account"
-						label="#{bundle.admin_global_panel_service_accounts}">
-						<aon:if test="#{aonRole.sysAdmin or (!domainSwitcher.disableDomainManagement)}">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="adminGoogle"
-									action="adminGoogle_form"
-									value="#{bundle.admin_domain_google}" />
-							</aon:div>
-						</aon:if>		
-														
-					</rich:panelBarItem>
+						<rich:panelBarItem id="service_account"
+							label="#{bundle.admin_global_panel_service_accounts}">
+							<aon:if test="#{aonRole.sysAdmin or (!domainSwitcher.disableDomainManagement)}">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="adminGoogle"
+										action="adminGoogle_form"
+										value="#{bundle.admin_domain_google}" />
+								</aon:div>
+							</aon:if>									
+						</rich:panelBarItem>
 					</aon:if>
 				</aon:if>
 			</aon:componentGroup>

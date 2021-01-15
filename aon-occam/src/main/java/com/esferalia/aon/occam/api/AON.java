@@ -2314,6 +2314,13 @@ public class AON {
 		} 
 	}
 	
+	public static Stream<User> getDomainUserStream(String domainName, Integer domainId, String userName) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, userName)){
+			return getSecurity().getDomainUserStream(ctx);
+		} 
+	}
+	
+	
 	public static List<User> getUsers(Integer domainId, String domainName, String userName) {
 		AONContext ctx = null;
 		try {

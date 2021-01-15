@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
+
+	<ui:define name="configContent">
+	
+			<meta name="gwt:property" content="locale=es_ES" />
+
+
+	<style>
+	//<![CDATA[
+	
+	body {
+		margin: 0px;
+	}
+	
+	a:hover {
+  		color: black !important;
+  		text-decoration: none !important;
+  	}
+	
+	.aonContent > div {
+		position: initial !important;
+	}
+	
+	//]]>
+	
+	</style>
+
+	<script type="text/javascript">
+        //<![CDATA[
+        
+      	delete Array.prototype.toJSON;
+         
+        function getCurrentUser() {
+        	return '#{domainSwitcher.currentUser}';
+        }
+
+        function getCurrentDomainNameURL() {
+        	return '#{domainSwitcher.currentDomainNameURL}';
+        }
+        
+        function loadDocumentalPanel(el) {
+			el.innerHTML='<aon-user-panel></aon-user-panel>';
+       	} 
+       	
+       	function loadStylesSheet( stylesheet ) {
+			var link = document.createElement( "link" );
+			link.type = "text/css";
+			link.rel = "stylesheet";
+			link.media = "screen,print";
+			link.href = stylesheet; 
+
+			document.getElementsByTagName( "head" )[0].appendChild( link );
+       	}
+       	
+       	function unLoadStylesSheet( stylesheet ) {
+			var links = document.getElementsByTagName( "link" );
+			for (var i = links.length; i>=0; i--)  {  //search backwards within nodelist for matching elements to remov
+				var link = links[i];
+				if (link && link.href && link.href == stylesheet )
+					link.parentNode.removeChild(link);
+			}       
+		}
+
+       	loadStylesSheet('https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css');
+       	loadStylesSheet('https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined');
+       	loadStylesSheet('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap');
+       	
+       	loadStylesSheet('css/aon.css');
+       	loadStylesSheet('css/aon-toast.css');
+       	loadStylesSheet('css/aon-grid.css');
+       	loadStylesSheet('css/aon-input.css');
+       	loadStylesSheet('css/aon-switch.css');
+       	loadStylesSheet('css/aon-input-loading.css');
+       	
+		localStorage.setItem('aon_domain_id', #{domainSwitcher.domainId});
+		localStorage.setItem('aon_domain_name', '#{domainSwitcher.currentDomainNameURL}');
+		localStorage.setItem('aon_domain_login', '#{domainSwitcher.currentUser}');
+
+        //]]>
+    </script>
+    
+    
+	<script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
+
+	<script type="module" src="modules/user/aon-user-panel.js"></script>
+
+	<div id="rootPanel"
+		style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;" >
+		
+	</div>
+
+
+	<script type="text/javascript">
+		//<![CDATA[ 
+		loadDocumentalPanel(document.getElementById('rootPanel'));
+		//]]>
+	</script>
+	</ui:define>
+</ui:composition>

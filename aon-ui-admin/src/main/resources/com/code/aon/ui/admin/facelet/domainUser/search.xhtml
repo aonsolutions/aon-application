@@ -39,6 +39,11 @@
 						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 					</aon:selectOneMenu>
 					
+					<aon:if test="#{userUtils.newAONTheme and (domainSwitcher.betaEnabled or domainSwitcher.alphaEnabled)}">
+						<aon:outputLabel for="User_portal" value="Portal" />
+						<aon:selectBooleanCheckbox id="User_portal" valueChangeListener="#{controller.addPortalExpression}" />
+					</aon:if>
+					
 					<aon:outputText value="#{bundle.admin_domain_lastAccess}" />
 					<aon:div>
 						<aon:outputLabel for="User_lastAccess-From" styleClass="aon-form-date-label"

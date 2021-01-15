@@ -40,6 +40,10 @@ public class DomainApp {
 		return this;
 	}
 
+	public Boolean isActive() {
+		return active;
+	}
+	
 	public Boolean getActive() {
 		return active;
 	}

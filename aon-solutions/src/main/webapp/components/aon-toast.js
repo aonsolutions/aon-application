@@ -2,6 +2,7 @@ import { AonElement } from './AonElement.js';
 
 export class AonToast extends AonElement {
 
+	DIV;
 
 	get id() {
 		return this.getAttribute('id');
@@ -13,16 +14,18 @@ export class AonToast extends AonElement {
 
 	constructor() {
 		super();
+		this.id = this.id || 'aonToast';
+		this.DIV = this.id + 'Div';
 	}
 
 	connectedCallback() {
 		this.innerHTML = `
-			<div id="aonToast" class="aonToast"></div>
+			<div id="${this.DIV}" class="aonToast"></div>
 		`;
 	}
 
 	start(options) {
-		let toast = this.getElement('aonToast');
+		let toast = this.getElement(this.DIV);
 		let { message, delay, type } = options;
 		let color = '#333';
 
@@ -31,11 +34,11 @@ export class AonToast extends AonElement {
 		else if (type === 'success') color = '#4CAF6E';
 		else if (type === 'primary') color = '#2196f3';
 
-		toast.className = "show";
+		toast.classList.add("aonToastShow");
 		toast.innerHTML = message;
 		toast.style.background = color;
 
-		setTimeout(() => toast.className = toast.className.replace("show", ""), delay);
+		setTimeout(() => toast.classList.remove('aonToastShow'), delay);
 	}
 
 }

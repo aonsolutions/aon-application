@@ -87,9 +87,11 @@ public class LoginServlet extends HttpServlet{
 	    if(auth.getUuid() == null) {
 	    	resp.setStatus(401);
 	    	response.put("message", "El Usuario No existe.");
+	    	response.put("type", "error");
     	} else if(!ok) {
 	    	resp.setStatus(401);
 	    	response.put("message", "La Contraseña no coincide.");
+	    	response.put("type", "error");
     	} else {
 	    	String token = "";
 	    	try {

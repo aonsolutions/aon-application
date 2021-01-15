@@ -34,11 +34,14 @@ public class TimeControlServlet extends HttpServlet{
 		LOGGER.info("AON API TIMECONTROL SERVLET - GET METHOD");
 		String token = req.getHeader("session_id");
 		
-		AonToken aonToken = SECURITY.getAonToken(token);
-		TaskHolder taskHolder = AON_SOLUTIONS.getTaskHolder(aonToken);
+		JSONObject responseObject = new JSONObject();
+		try {
+			AonToken aonToken = SECURITY.getAonToken(token);
+			TaskHolder taskHolder = AON_SOLUTIONS.getTaskHolder(aonToken);
+			responseObject = getTimeControl(taskHolder); 
+		}catch (Exception e) {
 
-		JSONObject responseObject = getTimeControl(taskHolder); 
-
+		}
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, responseObject, new JSONObject());	
 	}

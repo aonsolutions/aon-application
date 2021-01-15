@@ -9,8 +9,11 @@ import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 
 export class AonUser extends AonElement {
+
 	SWITCH;
 	SELECT;
+
+	_user;
 
 	static get observedAttributes() {
 		return ['user', 'company', 'apps'];
@@ -66,6 +69,8 @@ export class AonUser extends AonElement {
 		this.id = this.id || 'aonUser';
 		this.SWITCH = this.id + 'Switch';
 		this.SELECT = this.id + 'Select';
+
+		this._user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
 	}
 
 	connectedCallback () {
@@ -88,24 +93,21 @@ export class AonUser extends AonElement {
 		});
 	}
 	initUser() {
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
+		this._user = user;
 		let aonUserName = document.getElementById('aonConfigurationUserCardName');
-		aonUserName.setVisible(!this.isNew());
 		aonUserName.setAttribute('value', user && user.name ? user.name : '');
 		let aonUserSurname = document.getElementById('aonConfigurationUserCardSurname');
-		aonUserSurname.setVisible(!this.isNew());
 		aonUserSurname.setAttribute('value', user && user.surname ? user.surname : '');
 		let aonUserDocument = document.getElementById('aonConfigurationUserCardDocument');
-		aonUserDocument.setVisible(!this.isNew());
 		aonUserDocument.setAttribute('value', user && user.document ? user.document : '');
 		let aonUserPhone = document.getElementById('aonConfigurationUserCardPhone');
-		aonUserPhone.setVisible(!this.isNew());
 		aonUserPhone.setAttribute('value', user && user.phone ? user.phone : '');
 		let aonUserEmail = document.getElementById('aonConfigurationUserCardEmail');
 		aonUserEmail.setAttribute('value', user && user.email ? user.email : '');
 
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
-		card2.setVisible(!this.isNew() && this.hasAttribute('showApps'));
+		card2.setVisible(this.hasSecurity());
 		if(user && !this.hasAttribute('apps') && this.hasAttribute('showApps')) {
 			getDomainApps().then(apps => {
 				this.setAttribute('apps', JSON.stringify(apps));
@@ -133,58 +135,38 @@ export class AonUser extends AonElement {
 		`);
 
 		let name = document.getElementById('aonConfigurationUserCardName');
-		name.setVisible(!this.isNew());
 		name.onChange(() => {
-			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
-			user.name = name.getAttribute('value');
-			setUser(user).then(r => {
-				this.setAttribute('user', JSON.stringify(r));
-			});
+			this._user.name = name.value;
+			this.save();
 		});
 
 		let surname = document.getElementById('aonConfigurationUserCardSurname');
-		surname.setVisible(!this.isNew());
 		surname.onChange(() => {
-			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
-			user.surname= surname.getAttribute('value');
-			setUser(user).then(r => {
-				this.setAttribute('user', JSON.stringify(r));
-			});
+			this._user.surname= surname.value;
+			this.save();
 		});
 
 		let doc = document.getElementById('aonConfigurationUserCardDocument');
-		doc.setVisible(!this.isNew());
 		doc.onChange(() => {
-			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
-			user.document= doc.getAttribute('value');
-			setUser(user).then(r => {
-				this.setAttribute('user', JSON.stringify(r));
-			});
+			this._user.document= doc.getAttribute('value');
+			this.save();
 		});
 
 		let phone = document.getElementById('aonConfigurationUserCardPhone');
-		phone.setVisible(!this.isNew());
 		phone.onChange(() => {
-			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
-			user.phone= phone.getAttribute('value');
-			console.log(JSON.stringify(user));
-			setUser(user).then(r => {
-				this.setAttribute('user', JSON.stringify(r));
-			});
+			this._user.phone= phone.getAttribute('value');
+			this.save();
 		});
 
 		let email = document.getElementById('aonConfigurationUserCardEmail');
 		email.onChange(() => {
-			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
-			user.email = email.getAttribute('value');
-			user.share = this.hasAttribute('share');
-			setUser(user).then(r => {
-				this.setAttribute('user', JSON.stringify(r));
-			});
+			this._user.email = email.getAttribute('value');
+			this._user.share = this.hasAttribute('share');
+			this.save();
 		});
 
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
-		card2.setVisible(!this.isNew());
+		card2.setVisible(this.hasSecurity());
 
 		let table = document.createElement('table');
 		table.setAttribute('id', 'aonUserRoleTable')
@@ -197,6 +179,16 @@ export class AonUser extends AonElement {
 		}
 	}
 
+	save() {
+		setUser(this._user).then(r => {
+			this.setAttribute('user', JSON.stringify(r));
+			this._user = r;
+		}).catch(e => {
+			let aonApplication = document.querySelector('aon-application');
+			let toast = this.getElement(aonApplication.TOAST);
+			toast.start(JSON.parse(e));
+		});
+	}
 
 	buildAppSelect(app) {
 		let table = this.getElement('aonUserRoleTable');
@@ -265,6 +257,7 @@ export class AonUser extends AonElement {
 			setUserAppRole(role).then(() => {
 				getUserAppRole({user:user.id}).then(r => {
 					user.roles = r;
+					this._user.roles = r;
 					this.setAttribute('user', JSON.stringify(user));
 					if(!app) {
 						this.initApps();
@@ -350,14 +343,16 @@ export class AonUser extends AonElement {
 	}
 
 	isAdmin() {
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-		return user.roles && user.roles.includes('ADMIN');
+		return this._user.roles && this._user.roles.includes('ADMIN');
 	}
 
-	isNew() {
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-		return user === undefined;
+	hasSecurity() {
+		return this.hasAttribute('showApps') && this._user != null
+				&& this._user.email != null && !this._user.email.isEmpty()
+				&& this._user.id != null;
 	}
+
+
 
 }
 

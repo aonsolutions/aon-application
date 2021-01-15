@@ -144,6 +144,20 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Auth insertAuth(Auth auth) { 
+		List<String> schemas = AONContext.getSchemas();
+		Boolean inserted = false;
+		Integer index = 0;
+		while(!inserted && index < schemas.size()) {
+			if(!schemas.get(index).contains("global")) {
+				String domain = AONContext.getSchemaFirstDomain(schemas.get(index));
+				insertAuth(domain, 0, auth);
+			}
+			index++;
+		}
+		return auth;
+	}
+	
 	public static void assignAuthToUser(String domainName, Integer domainId, User user, String uuid) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			byte[] auth = getSecurity().unHexUuid(ctx, uuid);

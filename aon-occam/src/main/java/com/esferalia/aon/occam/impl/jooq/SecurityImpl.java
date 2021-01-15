@@ -69,6 +69,13 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	
+
+	@Override
+	public Stream<User> getDomainUserStream(AONContext ctx) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getDomainUserStream(ctx));
+	}
+	
 	@Override
 	public Stream<User> getUserStream(AONContext ctx, UserFilter filter) {
 		return ctx.getDslContext().transactionResult( 
