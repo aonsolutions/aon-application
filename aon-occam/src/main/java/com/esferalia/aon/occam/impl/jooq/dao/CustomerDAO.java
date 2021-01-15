@@ -59,7 +59,7 @@ public class CustomerDAO {
 				.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
 				.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED) == 1)
 				.setScope(r.getValue(CUSTOMER.SCOPE))
-				.setSurcharge(r.getValue(CUSTOMER.STATUS)==1)
+				.setSurcharge(r.getValue(CUSTOMER.SURCHARGE)==1)
 				.setTariff(r.getValue(CUSTOMER.TARIFF))
 				.setTransaction(InvoiceTransactionType.safeValueOf( r.getValue(CUSTOMER.TRANSACTION)))
 				.setWithholding(r.getValue(CUSTOMER.WITHHOLDING)==1)
