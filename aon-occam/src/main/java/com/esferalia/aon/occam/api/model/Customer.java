@@ -38,16 +38,16 @@ public class Customer  extends Registry implements Serializable, HasAudit {
 	}
 	
 	public Customer setRegistryData(Registry registry) {
-		setId(registry.getId());
-		setDomain(registry.getDomain());
-		setDocument(registry.getDocument());
-		setDocumentType(registry.getDocumentType());
-		setDocumentCountry(registry.getDocumentCountry());
-		setName(registry.getName());
-		setAlias(registry.getAlias());
-		setLegalPerson(registry.isLegalPerson());
-		setNationality(registry.getNationality());
-		setSecurityLevel(registry.getSecurityLevel());
+		this.setId(registry.getId());
+		this.setDomain(registry.getDomain());
+		this.setDocument(registry.getDocument());
+		this.setDocumentType(registry.getDocumentType());
+		this.setDocumentCountry(registry.getDocumentCountry());
+		this.setName(registry.getName());
+		this.setAlias(registry.getAlias());
+		this.setLegalPerson(registry.isLegalPerson());
+		this.setNationality(registry.getNationality());
+		this.setSecurityLevel(registry.getSecurityLevel());
 		return this;
 	}
 	

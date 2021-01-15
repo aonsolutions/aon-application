@@ -46,7 +46,7 @@ public class CustomerDAO {
 					.setName(r.getValue(REGISTRY.NAME))
 					.setAlias(r.getValue(REGISTRY.ALIAS))
 					.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)))
-					.setNationality(Country.safeValueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)) )
+					.setNationality(Country.safeValueOf(r.getValue(REGISTRY.NATIONALITY)) )
 					.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL))))
 				.setAccount(r.getValue(CUSTOMER.ACCOUNT))
 				.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
