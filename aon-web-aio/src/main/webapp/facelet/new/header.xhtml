@@ -394,7 +394,8 @@
 							</aon:div>
 						
 							<aon:methodParam name="rowSelectorAction" value="start" />
-							<aon:methodParam name="rowSelectorActionListener" value="#{domains.onSelectChildDomain}" type="actionListener" />
+							<aon:methodParam name="rowSelectorReRender" value="smartFilterForm" />
+							<aon:methodParam name="rowSelectorActionListener" value="#{search.onSelectChildDomain}" type="actionListener" />
 							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 								<ui:param name="rows" value="10" />
 							
@@ -420,7 +421,7 @@
 								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
 							</aon:div>
 							<aon:methodParam name="rowSelectorAction" value="home_employee" />
-							<aon:methodParam name="rowSelectorActionListener" value="#{domains.onSelectContractDomain}" type="actionListener" />
+							<aon:methodParam name="rowSelectorActionListener" value="#{search.onSelectContractDomain}" type="actionListener" />
 							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 								<ui:param name="rows" value="10" />
 							
