@@ -545,8 +545,8 @@ public class Cra {
 			//GET Settlements SALARY from DB (employees) use ISSUE_DATE cause settlement can have OLD startDate...
 			salaryRecords = dslContext.select().from(SALARY)
 					.where(SALARY.CCC.eq(ccc))
-						.and(SALARY.ISSUE_DATE.between(startDateSQL, endDateSQL)
-								.or(SALARY.END_DATE.between(startDateSQL, endDateSQL)))
+						.and(SALARY.ISSUE_DATE.between(startDateSQL, endDateSQL))
+//								.or(SALARY.END_DATE.between(startDateSQL, endDateSQL)))
 						.and(SALARY.TYPE.eq((byte)2))
 						.and(SALARY.SS_REGIME.notEqual((byte)3))
 						.and(SALARY.TOTAL_PAYMENT.gt(0.00))
@@ -581,7 +581,7 @@ public class Cra {
 					Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
 							.where(SALARY_DATA.SALARY.eq(salaryId))
 							.and(SALARY_DATA.NAME.eq("BASE_CGC"))
-							.and(SALARY_DATA.START_DATE.between(startDateSQL, endDateSQL))
+//							.and(SALARY_DATA.START_DATE.between(startDateSQL, endDateSQL))
 							.fetch();
 					
 //					Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)

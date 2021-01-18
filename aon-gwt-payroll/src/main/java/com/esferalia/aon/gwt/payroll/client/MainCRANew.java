@@ -1124,7 +1124,13 @@ public class MainCRANew extends MainEntryPoint {
 													cccInfo.getCRADates().add(findingDate);
 												}
 												showCRAS();
-												initCRATable();
+												mainCRAObjectNew.getCRAs(findingDate.getTime(),
+														s -> {
+															initCRATable();
+														}, 
+														f -> {});
+												
+//												initCRATable();
 											} else {
 												WarningDialog warning = new WarningDialog("ERROR", v);
 												warning.center();
@@ -1144,7 +1150,13 @@ public class MainCRANew extends MainEntryPoint {
 															cccInfo.getCRADates().add(findingDate);
 														}
 														showCRAS();
-														initCRATable();
+														mainCRAObjectNew.getCRAs(findingDate.getTime(),
+																s -> {
+																	initCRATable();
+																}, 
+																f -> {});
+//														showCRAS();
+//														initCRATable();
 													} else {
 														WarningDialog warning = new WarningDialog("ERROR", v);
 														warning.center();
@@ -1174,9 +1186,14 @@ public class MainCRANew extends MainEntryPoint {
 										for(CCCInfo cccInfo : cccsSelected) {
 											cccInfo.getCRADates().add(findingDate);
 										}
-										
 										showCRAS();
-										initCRATable();
+										mainCRAObjectNew.getCRAs(findingDate.getTime(),
+												s -> {
+													initCRATable();
+												}, 
+												f -> {});
+//										showCRAS();
+//										initCRATable();
 									} else {
 										WarningDialog warning = new WarningDialog("ERROR", v);
 										warning.center();
