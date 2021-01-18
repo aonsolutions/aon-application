@@ -45,23 +45,20 @@ public class UserServlet extends AonApiHttpServlet {
 				String user = req.getParameter("user");
 				Integer userId = AonNumberUtils.toInteger(user);
 				JSONArray json = getDomainUserRoles(getDomain(), getToken(), userId);
-				Utils.addCorsHeader(resp);
-				Utils.giveBack(req, resp, json, new JSONObject());
+				response(req, resp, json);
 			} else if("notice".equalsIgnoreCase(pathInfo[1])) {
 				List<String> schemas = AONContext.getSchemas();
 				RawdocUserData rawdocUserData = new RawdocUserData();
 				for(String schema : schemas) {
 					rawdocUserData.append(AON.getRawdocUserData(getToken(), schema));
 				}
-				Utils.addCorsHeader(resp);
-				Utils.giveBack(req, resp, rawdocUserData.toJSON(), new JSONObject());
-			} if("info".equalsIgnoreCase(pathInfo[1])) {
+				response(req, resp, rawdocUserData.toJSON());
+			} else if("info".equalsIgnoreCase(pathInfo[1])) {
 				String user = req.getParameter("user");
 				Integer userId = AonNumberUtils.toInteger(user);
 				JSONObject json = getDomainUser(getDomain(), getToken(), userId);
 				response(req, resp, json);
 			}
-
 		} else {
 			JSONArray jsArray = new JSONArray();
 			

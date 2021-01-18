@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,11 +38,15 @@ public class AonApiHttpServlet extends HttpServlet{
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		doPost(req, resp);
+		initialize(req, resp);
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+		initialize(req, resp);
+	}
+	
+	private void initialize(HttpServletRequest req, HttpServletResponse resp) {
 		setToken(req.getHeader("session_id"));
 		
 		String domainName = req.getHeader("domain_name");
@@ -91,9 +94,17 @@ public class AonApiHttpServlet extends HttpServlet{
 		giveBack(req, resp, json, new JSONObject());
 	}
 	
+	public void response(HttpServletRequest req, HttpServletResponse resp) {
+		response(req, resp, new JSONObject());
+	}
+	
 	public void response(HttpServletRequest req, HttpServletResponse resp, Object object) {
+		response(req, resp, object, new JSONObject());
+	}
+	
+	public void response(HttpServletRequest req, HttpServletResponse resp, Object object, JSONObject meta) {
 		addCorsHeader(resp);
-		giveBack(req, resp, object, new JSONObject());
+		giveBack(req, resp, object, meta);
 	}
 	
     protected void addCorsHeader(HttpServletResponse response){
