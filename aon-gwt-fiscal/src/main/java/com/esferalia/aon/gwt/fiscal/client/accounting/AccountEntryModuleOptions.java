@@ -19,11 +19,14 @@ public class AccountEntryModuleOptions extends  ModuleOptions<AccountEntryModule
 	private boolean backButtonVisible = true;
 	private boolean errorLogTabVisible = true;
 	private boolean sessionLogTabVisible = true;
-	private boolean previewSectionVisible = true;
-	private boolean balancesSectionVisible = true;
-	private boolean statementTabVisible = true;
+	private boolean previewTabVisible = true;
+	private boolean trialBalanceFromPreviewEnabled = true;
 	private boolean journalTabVisible = true;
 	private boolean extraInfoTabVisible = true;
+	@Deprecated
+	private boolean balancesSectionVisible = true;
+	@Deprecated
+	private boolean statementTabVisible = true;
 
 	public Integer getAccountEntryId() {
 		return accountEntryId;
@@ -99,32 +102,52 @@ public class AccountEntryModuleOptions extends  ModuleOptions<AccountEntryModule
 		return this;
 	}
 
+	@Deprecated
 	public boolean isBalancesTabVisible() {
 		return isPreviewSectionVisible() || isBalancesSectionVisible();
 	}
-
+	@Deprecated
 	public boolean isPreviewSectionVisible() {
-		return previewSectionVisible;
+		return previewTabVisible;
 	}
-
+	@Deprecated
 	public AccountEntryModuleOptions setPreviewSectionVisible(boolean previewSectionVisible) {
-		this.previewSectionVisible = previewSectionVisible;
+		this.previewTabVisible = previewSectionVisible;
+		return this;
+	}
+	
+	public boolean isTrialBalanceFromPreviewEnabled() {
+		return trialBalanceFromPreviewEnabled;
+	}
+	public AccountEntryModuleOptions setTrialBalanceFromPreviewEnabled(boolean trialBalanceFromPreviewEnabled) {
+		this.trialBalanceFromPreviewEnabled = trialBalanceFromPreviewEnabled;
 		return this;
 	}
 
+	public boolean isPreviewTabVisible() {
+		return previewTabVisible;
+	}
+
+	public AccountEntryModuleOptions setPreviewTabVisible(boolean previewTabVisible) {
+		this.previewTabVisible = previewTabVisible;
+		return this;
+	}
+
+	@Deprecated
 	public boolean isBalancesSectionVisible() {
 		return balancesSectionVisible;
 	}
 
+	@Deprecated
 	public AccountEntryModuleOptions setBalancesSectionVisible(boolean balancesSectionVisible) {
 		this.balancesSectionVisible = balancesSectionVisible;
 		return this;
 	}
-
+	@Deprecated
 	public boolean isStatementTabVisible() {
 		return statementTabVisible;
 	}
-
+	@Deprecated
 	public AccountEntryModuleOptions setStatementTabVisible(boolean statementTabVisible) {
 		this.statementTabVisible = statementTabVisible;
 		return this;

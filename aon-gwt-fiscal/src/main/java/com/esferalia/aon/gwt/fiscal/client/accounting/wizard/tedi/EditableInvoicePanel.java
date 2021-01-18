@@ -621,10 +621,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 							account.setId(ar.getAccountId());
 							account.setCode(ar.getAccountCode());
 							account.setDescription(ar.getAccountDescription());
-							if (ar.getAccountId() != null) {
-								invoiceCallback.getModule().onBalance(account);
-							}
-							
 							invoiceCallback.paintEntry();
 							invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
 						}
@@ -658,10 +654,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 							account.setId(ar.getAccountId());
 							account.setCode(ar.getAccountCode());
 							account.setDescription(ar.getAccountDescription());
-							if (ar.getAccountId() != null) {
-								invoiceCallback.getModule().onBalance(account);
-							}
-							
 							invoiceCallback.paintEntry();
 							invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
 						}
@@ -698,10 +690,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 						account.setId(ar.getAccountId());
 						account.setCode(ar.getAccountCode());
 						account.setDescription(ar.getAccountDescription());
-						if (ar.getAccountId() != null) {
-							invoiceCallback.getModule().onBalance(account);
-						}
-						
 						invoiceCallback.paintEntry();
 						invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
 					}
@@ -1581,7 +1569,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		vatPanel.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
-				invoiceCallback.getModule().onBalance(event.getSelectedItem());
 				invoiceCallback.paintEntry();
 				invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
 				invoiceCallback.getModule().refreshIdLabel();
@@ -1616,7 +1603,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		withholdingPanel.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
-				invoiceCallback.getModule().onBalance(event.getSelectedItem());
 				invoiceCallback.paintEntry();
 				invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
 				invoiceCallback.getModule().refreshIdLabel();

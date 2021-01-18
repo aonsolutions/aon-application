@@ -195,6 +195,8 @@
 .aon_icon_wizard { background-image: iconWizard;}
 @url iconMinus aonIconMinus;
 .aon_icon_minus { background-image: iconMinus;}
+@url iconPreview aonIconPreview;
+.aon_icon_preview { background-image: iconPreview;}
 
 /* BASICS */
 .aon_selector {

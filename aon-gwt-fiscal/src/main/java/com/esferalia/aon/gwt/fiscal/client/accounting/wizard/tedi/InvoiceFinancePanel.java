@@ -150,12 +150,6 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			payAccount.addSelectionHandler(new SelectionHandler<Account>() {
 				@Override
 				public void onSelection(SelectionEvent<Account> event) {
-					callback.getModule().onBalance(event.getSelectedItem());
-				}
-			});
-			payAccount.addSelectionHandler(new SelectionHandler<Account>() {
-				@Override
-				public void onSelection(SelectionEvent<Account> event) {
 						if (event.getSelectedItem() != null) {
 							for (Finance f : callback.getInvoice().getInvoice().getFinances()) {
 								f.setRecordable(true);

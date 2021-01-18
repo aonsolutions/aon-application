@@ -294,6 +294,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_minus")
 	String aonIconMinus();
 
+	@ClassName("aon_icon_preview")
+	String aonIconPreview();
+
 	/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();
@@ -711,7 +714,6 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_suggest_box_popup")
 	String aonSuggestBoxPopup();
-
 
 }
 

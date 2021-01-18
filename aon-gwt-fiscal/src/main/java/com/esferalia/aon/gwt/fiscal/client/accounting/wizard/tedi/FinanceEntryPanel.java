@@ -99,11 +99,6 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 				if (event.getSelectedItem().isSelected()) {
 					Finance finance = event.getSelectedItem(); 
 					financeEntry.add(finance);
-					Account acc = new Account()
-						.setId(finance.getRegistryAccountId())
-						.setCode(finance.getRegistryAccountCode())
-						.setDescription(finance.getRegistryAccountDescription());
-					getCallback().getModule().onBalance(acc);
 				} else {
 					financeEntry.remove(event.getSelectedItem());	
 				}
@@ -219,7 +214,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		tab.getColumnFormatter().setWidth(0, "100px");
 		tab.getColumnFormatter().setWidth(1, "auto");
 		
-		bankAccount = createAccountBox();
+		bankAccount = new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
 		bankAccount.addKeyUpHandler(f9KeyHandler);
 		bankAccount.addSelectionHandler( new SelectionHandler<Account>() {
 			@Override
@@ -257,7 +252,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		aa.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		expensesPanel.add(aa);
 
-		expensesAccount = createAccountBox();
+		expensesAccount = new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
 		expensesAccount.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		expensesAccount.setRequired(false);
 		expensesAccount.addKeyUpHandler(f9KeyHandler);
@@ -362,7 +357,6 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 	}
 	public void select(FinanceEntry fe,final ISelectionCallback cbk) {
 		setWrapper( fe );
-		getCallback().getModule().onBalance(getWrapper());
 		getCallback().getModule().onPreview(getWrapper());
 		populate();
 		refreshTable();
@@ -377,20 +371,6 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		}
 	}
 
-		
-
-	private AccountBox createAccountBox() {
-		AccountBox ab = new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
-		ab.addSelectionHandler(new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				Account acc = event.getSelectedItem();
-				getCallback().getModule().onBalance(acc);
-			}
-		});
-		return ab;
-	}
-	
 	private void populate() {
 		setAccount(bankAccount,getWrapper().getBankAccount());
 		bankAccount.setEnabled( isUpdatable() );

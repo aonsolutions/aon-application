@@ -185,8 +185,8 @@ public class AccountOperatingReport extends MainEntryPoint {
 			.setSessionLogTabVisible(false)
 			.setJournalTabVisible(false)
 			.setExtraInfoTabVisible(false)
-			.setBalancesSectionVisible(false)
-			.setStatementTabVisible(false)
+			.setPreviewTabVisible(true)
+			.setTrialBalanceFromPreviewEnabled(false)
 			.setExternalCallback(new ModuleCallback() {
 			
 				@Override

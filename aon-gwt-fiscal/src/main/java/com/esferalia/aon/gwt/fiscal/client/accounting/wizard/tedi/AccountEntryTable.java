@@ -646,12 +646,14 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 			newDetail.setDebit(AonMathUtils.absRounded(balance));
 			newDetail.setCredit(0);
 		}
-		
 		wizardContent.getMainEntry().getDetails().add(newDetail);
 		paintRow( (getRowCount() - 1), newDetail);
 		paintFooter();
 		if (wizardContent.isUpdatable()) {
 			paintAddButton();
+		}
+		if (newDetail.getAccount() != null) {
+			ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 		}
 	}
 

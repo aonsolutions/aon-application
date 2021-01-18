@@ -129,7 +129,6 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 								ai.getWithholdingData().setAccountId(taxAccount.getId());
 								ai.getWithholdingData().setAccountCode(taxAccount.getCode());
 								ai.getWithholdingData().setAccountDescription(taxAccount.getDescription());
-								callback.getModule().onBalance(taxAccount);
 							} else {
 								ai.getWithholdingData().setAccountId(null);
 								ai.getWithholdingData().setAccountCode(null);
