@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 
@@ -92,6 +93,7 @@ public interface ICommon {
 	
 	public Domain insertDomain(AONContext ctx, Integer parentDomain,
 			String document, String name, List<String> messages);
+	public Domain insertDomain(AONContext ctx, Domain domain, Registry registry) throws Exception;
 	
 	public void updateDomainScope(AONContext ctx, Domain domain);
 

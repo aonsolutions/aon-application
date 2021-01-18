@@ -166,6 +166,10 @@ public class SecurityDAO {
 			.set(AUTH.ID, unHexUuid(ctx, uuid))
 			.set(AUTH.EMAIL, auth.getEmail())
 			.set(AUTH.PASSWORD, auth.getPassword())
+			.set(AUTH.NAME, auth.getName())
+			.set(AUTH.SURNAME, auth.getSurname())
+			.set(AUTH.DOCUMENT, auth.getDocument())
+			.set(AUTH.PHONE, auth.getPhone())
 			.execute();
 		
 		return getAuth(ctx, auth.getEmail());

@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
@@ -148,14 +149,37 @@ public class AON_SOLUTIONS {
 		List<String> schemas = AONContext.getSchemas();
 		Boolean inserted = false;
 		Integer index = 0;
+		Boolean pro = schemas.contains("pro-aonsolutions-net");
+
 		while(!inserted && index < schemas.size()) {
-			if(!schemas.get(index).contains("global")) {
+			if(pro) {
+				if(schemas.get(index).equalsIgnoreCase("pro-aonsolutions-net")) {
+					String domain = AONContext.getSchemaFirstDomain(schemas.get(index));
+					auth = insertAuth(domain, 0, auth);			
+					auth.setSchema(schemas.get(index));
+					inserted = true;
+				}
+			} else if(!schemas.get(index).contains("global")) {
 				String domain = AONContext.getSchemaFirstDomain(schemas.get(index));
-				insertAuth(domain, 0, auth);
+				auth = insertAuth(domain, 0, auth);
+				auth.setSchema(schemas.get(index));
+				inserted = true;
 			}
 			index++;
 		}
+		
 		return auth;
+	}
+	
+	public static Domain insertDomain(String schema, Domain domain, Registry registry) throws Exception { 
+		String domainName = AONContext.getSchemaFirstDomain(schema);
+		return insertDomain(domainName, 0, domain,  registry);
+	}
+
+	public static Domain insertDomain(String domainName, Integer domainId, Domain domain, Registry registry) throws Exception{ 
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+			return getCommon().insertDomain(ctx, domain, registry);
+		}
 	}
 	
 	public static void assignAuthToUser(String domainName, Integer domainId, User user, String uuid) {

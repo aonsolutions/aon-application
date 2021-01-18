@@ -30,6 +30,10 @@ export const getCompanies = () => {
   });
 };
 
+export const clearCompanies = () => {
+  companies = undefined;
+}
+
 export const getCompany = () => {
   return new Promise((resolve, reject) => {
     if (!company && localStorage.getItem("aon_domain_id")) {

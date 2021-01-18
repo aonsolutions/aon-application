@@ -11,6 +11,7 @@ public class Domain implements Serializable {
 	private Integer id;
 	private String name;
 	private String description;
+	private String owner;
 	private Integer parentId;
 	private DomainType domainType;
 	private boolean enableHeredity;
@@ -109,4 +110,12 @@ public class Domain implements Serializable {
 		return this;
 	}
 
+	public String getOwner() {
+		return owner;
+	}
+	
+	public Domain setOwner(String owner) {
+		this.owner = owner;
+		return this;
+	}
 }

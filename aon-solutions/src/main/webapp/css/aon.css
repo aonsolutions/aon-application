@@ -140,6 +140,10 @@ form {
   cursor: pointer;
 }
 
+.aonRegisterLogo {
+  margin-top: 25px;
+}
+
 .aonLogo {
   position: absolute;
   margin-left: 10px;
