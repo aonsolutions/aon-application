@@ -1113,100 +1113,206 @@ public class MainCRANew extends MainEntryPoint {
 			Date findingDate = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
 			DateUtils.resetTime(findingDate);
 			
-			if(checkRectificavo()) {
-				mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
-						p -> {
-							if(StringUtils.isBlank(p)) {
-								mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
-										v -> {
-											if(null == v) {
-												for(CCCInfo cccInfo : cccsSelected) {
-													cccInfo.getCRADates().add(findingDate);
-												}
-												showCRAS();
-												mainCRAObjectNew.getCRAs(findingDate.getTime(),
-														s -> {
-															initCRATable();
-														}, 
-														f -> {});
-												
-//												initCRATable();
-											} else {
-												WarningDialog warning = new WarningDialog("ERROR", v);
-												warning.center();
-												warning.show();
-											}
-										}, 
-										f -> {});
-							}else {
-								AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", p) {
-									
-									@Override
-									protected void onAccept() {
-										mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
-												v -> {
-													if(null == v) {
-														for(CCCInfo cccInfo : cccsSelected) {
-															cccInfo.getCRADates().add(findingDate);
-														}
-														showCRAS();
-														mainCRAObjectNew.getCRAs(findingDate.getTime(),
-																s -> {
-																	initCRATable();
-																}, 
-																f -> {});
-//														showCRAS();
-//														initCRATable();
-													} else {
-														WarningDialog warning = new WarningDialog("ERROR", v);
-														warning.center();
-														warning.show();
-													}
-												}, 
-												f -> {});
-									}
-								};
-								dialog.center();
-								dialog.show();
-							}
-						}, f ->{});
-			} else {
-				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", "Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?") {
-					
-					@Override
-					protected void onAccept() {
-						mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
-								v -> {
-									if(null == v){
-										WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
-												+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : \n\n 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
-										warning.center();
-										warning.show();
-										
-										for(CCCInfo cccInfo : cccsSelected) {
-											cccInfo.getCRADates().add(findingDate);
-										}
-										showCRAS();
-										mainCRAObjectNew.getCRAs(findingDate.getTime(),
-												s -> {
-													initCRATable();
-												}, 
-												f -> {});
-//										showCRAS();
-//										initCRATable();
-									} else {
-										WarningDialog warning = new WarningDialog("ERROR", v);
-										warning.center();
-										warning.show();
-									}
-								}, 
-								f -> {});
-					}
-				};
-				
-				dialog.center();
-				dialog.show();
+			// -------------------------
+			
+			ArrayList<Integer> selectedCCCIdList = new ArrayList<Integer>();
+			for(CCCInfo cccInfo : selectionCCCInfoModel.getSelectedSet()) {
+				selectedCCCIdList.add(cccInfo.getCccId());	
 			}
+			
+			mainCRAObjectNew.checkIfRectificative(findingDate, selectedCCCIdList, s -> {
+				if(s) {
+					AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", "Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?") {
+						
+						@Override
+						protected void onAccept() {
+							mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
+									v -> {
+										if(null == v){
+											WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
+													+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : \n\n 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
+											warning.center();
+											warning.show();
+											
+											for(CCCInfo cccInfo : cccsSelected) {
+												cccInfo.getCRADates().add(findingDate);
+											}
+											showCRAS();
+											mainCRAObjectNew.getCRAs(findingDate.getTime(),
+													s -> {
+														initCRATable();
+													}, 
+													f -> {});
+//											showCRAS();
+//											initCRATable();
+										} else {
+											WarningDialog warning = new WarningDialog("ERROR", v);
+											warning.center();
+											warning.show();
+										}
+									}, 
+									f -> {});
+						}
+					};
+					
+					dialog.center();
+					dialog.show();
+				} else {
+					mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
+							p -> {
+								if(StringUtils.isBlank(p)) {
+									mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
+											v -> {
+												if(null == v) {
+													for(CCCInfo cccInfo : cccsSelected) {
+														cccInfo.getCRADates().add(findingDate);
+													}
+													showCRAS();
+													mainCRAObjectNew.getCRAs(findingDate.getTime(),
+															a -> {
+																initCRATable();
+															}, 
+															b -> {});
+													
+//													initCRATable();
+												} else {
+													WarningDialog warning = new WarningDialog("ERROR", v);
+													warning.center();
+													warning.show();
+												}
+											}, 
+											f -> {});
+								}else {
+									AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", p) {
+										
+										@Override
+										protected void onAccept() {
+											mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
+													v -> {
+														if(null == v) {
+															for(CCCInfo cccInfo : cccsSelected) {
+																cccInfo.getCRADates().add(findingDate);
+															}
+															showCRAS();
+															mainCRAObjectNew.getCRAs(findingDate.getTime(),
+																	s -> {
+																		initCRATable();
+																	}, 
+																	f -> {});
+//															showCRAS();
+//															initCRATable();
+														} else {
+															WarningDialog warning = new WarningDialog("ERROR", v);
+															warning.center();
+															warning.show();
+														}
+													}, 
+													f -> {});
+										}
+									};
+									dialog.center();
+									dialog.show();
+								}
+							}, f ->{});
+				}
+			}, f -> {});
+			
+			// -------------------------
+			
+//			if(checkRectificavo()) {
+//				mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
+//						p -> {
+//							if(StringUtils.isBlank(p)) {
+//								mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
+//										v -> {
+//											if(null == v) {
+//												for(CCCInfo cccInfo : cccsSelected) {
+//													cccInfo.getCRADates().add(findingDate);
+//												}
+//												showCRAS();
+//												mainCRAObjectNew.getCRAs(findingDate.getTime(),
+//														s -> {
+//															initCRATable();
+//														}, 
+//														f -> {});
+//												
+////												initCRATable();
+//											} else {
+//												WarningDialog warning = new WarningDialog("ERROR", v);
+//												warning.center();
+//												warning.show();
+//											}
+//										}, 
+//										f -> {});
+//							}else {
+//								AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", p) {
+//									
+//									@Override
+//									protected void onAccept() {
+//										mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
+//												v -> {
+//													if(null == v) {
+//														for(CCCInfo cccInfo : cccsSelected) {
+//															cccInfo.getCRADates().add(findingDate);
+//														}
+//														showCRAS();
+//														mainCRAObjectNew.getCRAs(findingDate.getTime(),
+//																s -> {
+//																	initCRATable();
+//																}, 
+//																f -> {});
+////														showCRAS();
+////														initCRATable();
+//													} else {
+//														WarningDialog warning = new WarningDialog("ERROR", v);
+//														warning.center();
+//														warning.show();
+//													}
+//												}, 
+//												f -> {});
+//									}
+//								};
+//								dialog.center();
+//								dialog.show();
+//							}
+//						}, f ->{});
+//			} else {
+//				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", "Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?") {
+//					
+//					@Override
+//					protected void onAccept() {
+//						mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
+//								v -> {
+//									if(null == v){
+//										WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
+//												+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : \n\n 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
+//										warning.center();
+//										warning.show();
+//										
+//										for(CCCInfo cccInfo : cccsSelected) {
+//											cccInfo.getCRADates().add(findingDate);
+//										}
+//										showCRAS();
+//										mainCRAObjectNew.getCRAs(findingDate.getTime(),
+//												s -> {
+//													initCRATable();
+//												}, 
+//												f -> {});
+////										showCRAS();
+////										initCRATable();
+//									} else {
+//										WarningDialog warning = new WarningDialog("ERROR", v);
+//										warning.center();
+//										warning.show();
+//									}
+//								}, 
+//								f -> {});
+//					}
+//				};
+//				
+//				dialog.center();
+//				dialog.show();
+//			}
 		}
 	}
 	
@@ -1454,7 +1560,7 @@ public class MainCRANew extends MainEntryPoint {
 		
 		ArrayList<Integer> cccIdList = new ArrayList<Integer>();
 		for(CCCInfo cccInfo : selectionCCCInfoModel.getSelectedSet()) {
-			cccIdList.add(cccInfo.getCccId());
+			cccIdList.add(cccInfo.getCccId());	
 		}
 		
 		for(CRA cra : mainCRAObjectNew.getAllCRAs()) {
@@ -1464,10 +1570,16 @@ public class MainCRANew extends MainEntryPoint {
 			Date creationDate = DateUtils.copyDateOnly(cra.getCreationDate());
 			DateUtils.resetTime(creationDate);
 			
-			for(CCCInfo ccc : cra.getIncludeCCCs()) {
-				if(cccIdList.contains(ccc.getCccId()) && (creationDate.equals(findingDate) || creationDate.getTime() == findingDate.getTime()))
-					return false;
+			Window.alert("CreationDate ( " + creationDate + " ) == findingDate ( " + findingDate + " ) -> " + creationDate.equals(findingDate) + " , " + (creationDate.getTime() == findingDate.getTime()));
+			
+			if (creationDate.equals(findingDate) || creationDate.getTime() == findingDate.getTime()) {
+				for(CCCInfo ccc : cra.getIncludeCCCs()) {
+					Window.alert("CCC List contains ccc : " + cccIdList.contains(ccc.getCccId()));
+					if(cccIdList.contains(ccc.getCccId()))
+						return false;
+				}
 			}
+			
 			
 //			if(cccList.contains(cra.getCcc().substring(4)) && creationDate.equals(findDate)) {
 //				return false;

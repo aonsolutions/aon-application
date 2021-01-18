@@ -204,6 +204,19 @@ public class MainCRAObjectNew {
 		});
 	}
 	
+	public void checkIfRectificative(Date findingDate, ArrayList<Integer> selectedCCCList, Consumer<Boolean> success,
+			Consumer<Throwable> failure) {
+		impl.checkIfRectificative(findingDate, selectedCCCList, new AsyncCallback<Boolean>() {
+			@Override
+			public void onFailure(Throwable caught) { }
+
+			@Override
+			public void onSuccess(Boolean result) {
+				success.accept(result);
+			}
+		});
+	}
+	
 	private void initEnterpriseMap(List<CCCInfo> enterprisesCCCInfo) {
 		this.enterprisesMap.clear();
 		

@@ -688,4 +688,11 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.getServiAgreement(currentDomainName, serviAgreementCode, new AsyncCallbackWrapper<Void>(callback));
 	}
 
+	@Override
+	public void checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList,
+			AsyncCallback<Boolean> callback) {
+		AON.start();
+		enterprisesServiceAsync.checkIfRectificative(currentDomainName, findingDate, selectedCCCList, new AsyncCallbackWrapper<Boolean>(callback));
+	}
+
 }
