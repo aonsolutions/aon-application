@@ -4,15 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
-
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -23,6 +20,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
 
 import aon.sepe.objects.Contract;
 import solutions.aon.sepe.exceptions.SepeException;
@@ -33,27 +31,28 @@ import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Contrato {
 	
-	public static void contrato(final InputStream certificateInputStream,
+	public static String contrato(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, Contract cto) throws SepeException {
 			try {
-				contratoImpl(certificateInputStream, certificatePassword, certificateType, cto);
+				return contratoImpl(certificateInputStream, certificatePassword, certificateType, cto);
 			} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
 			catch (IOException e) {throw new CertificateNotFoundException();} 
 			catch (InterruptedException e) {throw new SepeException(e);}
 			catch (Exception e) {throw new SepeException(e);}
+			return null;
 	}
 	
-	private static void contratoImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, Contract cto) 
+	private static String contratoImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, Contract cto) 
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			HtmlPage htmlPage = first_page_sepe_contrata(webClient);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click(); 
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp").click();
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/atraves_comunicacion.jsp").click();
-	        
-	        htmlPage = contractPage(htmlPage);
+
+	        htmlPage = contractPage(htmlPage, cto.getCodContract());
 			HtmlSelect codcto = htmlPage.querySelector("select[name=codcontrato]");
 			
 			codcto.setSelectedAttribute(cto.getCodContract(), true);
@@ -64,35 +63,39 @@ public class Contrato {
 			// DATA ENTERPRISE
 			{
 				String ctaCti = cto.getCtaCti();
-				form.getInputByName("cifnif").setValueAttribute(cto.getCifEnterprise());
-				form.getInputByName("regimen").setValueAttribute(cto.getRegimen());
+				String regimen = cto.getRegimen();
+				if(cto.getCifEnterprise()!=null) {
+					form.getInputByName("cifnif").setValueAttribute(cto.getCifEnterprise());
+				}
+				
+				form.getInputByName("regimen").setValueAttribute(regimen);
 				form.getInputByName("numsecprov").setValueAttribute(ctaCti.substring(0,2));
 				form.getInputByName("numsec").setValueAttribute(ctaCti.substring(2,9));
 				form.getInputByName("digcont").setValueAttribute(ctaCti.substring(9));
-				System.out.println(ctaCti.substring(0,2));
-				System.out.println(ctaCti.substring(2,9));
-				System.out.println(ctaCti.substring(9));
+				form.getInputByName("cuentacotizacion").setValueAttribute(regimen+ctaCti);
 			}
 
 			//DATA EMPLOYEE
 			{
-				//DATA EMPLOYEE
 				String tipodoc =  "D";
-				if(identity(cto.getIpf()).equals("6")) tipodoc = "E"; // NIE
+				if(Toolkit.identity(cto.getIpf()).equals("6")) tipodoc = "E"; // NIE
 			
 				String nss = cto.getNss();
 				((HtmlSelect)form.querySelector("select[name=tipodoc]")).setSelectedAttribute(tipodoc, true);
+				form.getInputByName("nif").setValueAttribute(cto.getIpf());
+				form.getInputByName("nifnie").setValueAttribute(tipodoc+"  "+cto.getIpf());
+	
 				form.getInputByName("nombre").setValueAttribute(cto.getName());
 				form.getInputByName("apellido1").setValueAttribute(cto.getSurname());
 				if(cto.getLastSurname()!=null)form.getInputByName("apellido2").setValueAttribute(cto.getLastSurname());
 				if(cto.getSex() > 0)((HtmlSelect)form.querySelector("select[name=codsexo]")).setSelectedAttribute(cto.getSex().toString(), true);//SELECT  ("-1"=>"","1"=>"HOMBRE","2"=>"MUJER")
 				
-				if(cto.getDateBirth()!=null) {
-					String[] dateBirth = Toolkit.dateString(cto.getDateBirth());
-					form.getInputByName("diafechanac").setValueAttribute(dateBirth[0]);
-					form.getInputByName("mesfechanac").setValueAttribute(dateBirth[1]);
-					form.getInputByName("anniofechanac").setValueAttribute(dateBirth[2]);
-				}
+
+				String[] dateBirth = Toolkit.dateString(cto.getDateBirth());
+				form.getInputByName("diafechanac").setValueAttribute(dateBirth[0]);
+				form.getInputByName("mesfechanac").setValueAttribute(dateBirth[1]);
+				form.getInputByName("anniofechanac").setValueAttribute(dateBirth[2]);
+
 				((HtmlSelect)form.querySelector("select[name=nacionalidad]")).setSelectedAttribute(cto.getCodNationality().toString(), true);
 				((HtmlSelect)form.querySelector("select[name=codpaisdomicilio]")).setSelectedAttribute(cto.getCodPaisDom().toString(), true);
 				form.getInputByName("municipio").setValueAttribute(cto.getCodMunDom().toString());
@@ -149,13 +152,76 @@ public class Contrato {
 			}
 			
 			form.getInputByName("contratoEscrito").setValueAttribute("N"); //  contratoEscrito si la fecha fin es menor a 28 
-		
+
 			HtmlSubmitInput accept = form.querySelector("[name=aceptar]");
 			htmlPage = accept.click();
-			
 			handleSepeExceptions(htmlPage);
 			
-	        Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testContrato.html");
+			String ide = null;
+			String message = getSuccessMessage(htmlPage);
+			if(message!=null) {
+				String[] parts = message.split(":");
+				if(parts.length > 0) 
+					ide = (parts[1]).trim().replaceAll("-", "").substring(1);
+			}
+//	        Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testContrato.html");
+	        return ide;
+		} 
+	}
+	
+	public static String contratoCopyBasic(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String ipf, Date fini, Date ffin, TypeFirm typeFirm, String workAddress, String restContract) throws SepeException {
+			try {
+				return contratoCopyBasicImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin, typeFirm, workAddress, restContract);
+			} 
+			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+			catch (MalformedURLException e) {throw new SepeException(e);} 
+			catch (IOException e) {throw new CertificateNotFoundException();} 
+			catch (InterruptedException e) {throw new SepeException(e);}
+			catch (Exception e) {throw new SepeException(e);}
+			return null;
+	}
+	
+	private static String contratoCopyBasicImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, 
+			String ipf, Date fini, Date ffin, TypeFirm typeFirm, String workAddress, String restContract) 
+			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			HtmlPage htmlPage = first_page_sepe_contrata(webClient);
+	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=copiabasica").click(); 
+			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_comunica_copiaBasicaContrato.jsp?origen=copiabasica").click();
+			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaEmpresa?pagina=idtrabajador&origen=copiabasica").click(); 
+ 
+	        HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+	        
+	        htmlPage = page_contrac_or_cbasic(htmlPage, fini, ffin, ipf);
+	        
+	        form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+	        Integer nFirm = 0;
+	        switch (typeFirm) {
+				case FIRMADA_REPRESENTANTES_LEGALES:
+					nFirm = 1;
+				break;
+				case NO_EXISTE_REPRESENTACION:
+					nFirm = 2;
+				break;
+				case NO_FACILITADO_COPIA:
+					nFirm = 3;
+				break;
+				case REHUSAN_FIRMAR:
+					nFirm = 4;
+				break;
+			}
+	      
+	        ((HtmlSelect)form.querySelector("select[name=codtipofirma]")).setSelectedAttribute(nFirm.toString(), true);
+	        ((HtmlTextArea)form.querySelector("[name=areadeDomicilio]")).setText(workAddress);
+	        ((HtmlTextArea)form.querySelector("[name=areadeTexto]")).setText(restContract);
+	        
+	        htmlPage = ((HtmlSubmitInput)form.querySelector("[name=enviar]")).click();
+	        handleSepeExceptions(htmlPage);
+	        
+	        String message = getSuccessMessage(htmlPage);
+	        System.out.println(message);
+	        return message;
 		} 
 	}
 	
@@ -183,28 +249,24 @@ public class Contrato {
 			catch (Exception e) {throw new SepeException(e);}
 	}
 	
-	public static void anulacionContrato(final InputStream certificateInputStream, final String certificatePassword, 
+	public static void removeContrato(final InputStream certificateInputStream, final String certificatePassword, 
 			final String certificateType, String ide) throws SepeException {
-		  try {
-			anulacionContratoImpl(certificateInputStream, certificatePassword, certificateType, ide);
-		  }
-			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
-			catch (MalformedURLException e) {throw new SepeException(e);} 
-			catch (IOException e) {throw new CertificateNotFoundException();} 
-			catch (InterruptedException e) {throw new SepeException(e);}
-			catch (Exception e) {throw new SepeException(e);}
+		 try { removeContratoImpl(certificateInputStream, certificatePassword, certificateType, ide); }
+		catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
+		catch (MalformedURLException e) {throw new SepeException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SepeException(e);}
+		catch (Exception e) {throw new SepeException(e);}
 	}
 	
-	public static void anulacionTransformation(final InputStream certificateInputStream, final String certificatePassword, 
+	public static void removeTransformation(final InputStream certificateInputStream, final String certificatePassword, 
 			final String certificateType, String ide) throws SepeException{
-		try {
-			anulacionTransformationImpl(certificateInputStream, certificatePassword, certificateType, ide);
-		}
-			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
-			catch (MalformedURLException e) {throw new SepeException(e);} 
-			catch (IOException e) {throw new CertificateNotFoundException();} 
-			catch (InterruptedException e) {throw new SepeException(e);}
-			catch (Exception e) {throw new SepeException(e);}
+		try { removeTransformationImpl(certificateInputStream, certificatePassword, certificateType, ide); }
+		catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
+		catch (MalformedURLException e) {throw new SepeException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SepeException(e);}
+		catch (Exception e) {throw new SepeException(e);}
 	}
 	
 	public static byte[] transformacionsPdf(final InputStream certificateInputStream, final String certificatePassword,
@@ -221,7 +283,6 @@ public class Contrato {
 	
 	private static byte[] contratoPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
-		byte[] pdf= null;
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
 			
@@ -230,14 +291,18 @@ public class Contrato {
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletRegresar?ruta=menu_consultasgeneral&origen=").click();
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaEmpresa?pagina=idtrabajador&origen=").click();//por identificador del trabajador
 
-	        pdf = page_contrac_or_cbasic(htmlPage, fini, fend, ipf);
+	        htmlPage = page_contrac_or_cbasic(htmlPage, fini, fend, ipf);
+	        HtmlForm formDatos1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+	        UnexpectedPage document = formDatos1.getInputByName("Boton_imprimir").click();
+	        InputStream inp = document.getWebResponse().getContentAsStream();
+	        byte[] pdf = inp.readAllBytes();
+	        inp.close();
 	        return pdf;
 		} 
 	}
 	
 	private static byte[] getCopyBasicPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
-		byte[] pdf = null;
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 		    
 	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
@@ -247,12 +312,17 @@ public class Contrato {
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaImpresionCB?pagina=entrada").click();
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletRegresar?ruta=menu_consultaImpCB&origen=consultaImpresionCB").click();
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaImpresionCB?pagina=idtrabajador&origen=consultaImpresionCB").click();//por identificador del trabajador
-	        pdf = page_contrac_or_cbasic(htmlPage, fini, fend, ipf);
+	        htmlPage = page_contrac_or_cbasic(htmlPage, fini, fend, ipf);
+	        HtmlForm formDatos1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+	        UnexpectedPage document = formDatos1.getInputByName("Boton_imprimir").click();
+	        InputStream inp = document.getWebResponse().getContentAsStream();
+	        byte[] pdf = inp.readAllBytes();
+	        inp.close();
 	        return pdf;
 		}
 	}
 	
-	private static void anulacionContratoImpl(final InputStream certificateInputStream, final String certificatePassword,
+	private static void removeContratoImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ide)  throws SepeException, FailingHttpStatusCodeException, MalformedURLException, IOException, ElementNotFoundException, InterruptedException {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
@@ -260,11 +330,12 @@ public class Contrato {
 	    	htmlPage = first_page_anulacion(htmlPage);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletAnulComunic?pagina=initC").click(); 
 	        htmlPage = last_page_anulacion(htmlPage, ide);
-	        
+	        String message = getSuccessMessage(htmlPage);
+	        System.out.println(message);
 		} 
 	}
 	
-	private static void anulacionTransformationImpl(final InputStream certificateInputStream, final String certificatePassword,
+	private static void removeTransformationImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ide) throws SepeException, FailingHttpStatusCodeException, MalformedURLException, IOException, ElementNotFoundException, InterruptedException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
@@ -272,6 +343,8 @@ public class Contrato {
 	    	htmlPage = first_page_anulacion(htmlPage);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletAnulComunic?pagina=initT").click(); 
 	        htmlPage = last_page_anulacion(htmlPage, ide);
+	        String message = getSuccessMessage(htmlPage);
+	        System.out.println(message);
 		} 
 	}
 	
@@ -291,24 +364,25 @@ public class Contrato {
 		formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
 		formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
 		
-	
+		
 		HtmlElement inputSubmit = formDatos.querySelector("input[value=aceptar]");
 		htmlPage = (HtmlPage)inputSubmit.click();
 		handleSepeExceptions(htmlPage);
-		
-		//TESTIIIIIIIIINNN (errors)
+	
 		formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-	    inputSubmit = formDatos.querySelector("input[value=aceptar]");
+	    inputSubmit = formDatos.querySelector("#anular");
+	   
 		htmlPage = (HtmlPage)inputSubmit.click();
 		handleSepeExceptions(htmlPage);
 		
-	    inputSubmit = htmlPage.querySelector("form [value=enviar]");
+	    inputSubmit = htmlPage.querySelector("form input[name=enviar]");
 		htmlPage = (HtmlPage)inputSubmit.click();
 		handleSepeExceptions(htmlPage);
+	
         return htmlPage;
 	}
 	
-	private static byte[] page_contrac_or_cbasic(HtmlPage htmlPage, Date fini, Date fend, String ipf) throws InterruptedException, IOException, SepeException  {
+	private static HtmlPage page_contrac_or_cbasic(HtmlPage htmlPage, Date fini, Date fend, String ipf) throws InterruptedException, IOException, SepeException  {
     	String[] fri = Toolkit.formatDate(fini);
     	String[] fre = Toolkit.formatDate(fend);
 	    Integer ident  = 0; //NIF DEFAULT
@@ -343,15 +417,9 @@ public class Contrato {
 			}
 		}
 
-        HtmlCheckBoxInput checkBox = htmlPage.querySelector("form[name=datos] input[value="+columnCheck+"]");
-        htmlPage = (HtmlPage) checkBox.click();
+        htmlPage = ((HtmlCheckBoxInput)htmlPage.querySelector("form[name=datos] input[value="+columnCheck+"]")).click();
         handleSepeExceptions(htmlPage);
-    	HtmlForm formDatos1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-        UnexpectedPage document = formDatos1.getInputByName("Boton_imprimir").click();
-		InputStream inp = document.getWebResponse().getContentAsStream();
-		byte[] pdf = inp.readAllBytes();
-		inp.close();
-        return pdf;
+        return htmlPage;
 	}
 	
 	private static byte[] transformacionsPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
@@ -397,101 +465,60 @@ public class Contrato {
 		  return htmlPage;
 	}
 	
-	
 	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
 		try {
 			String error = htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText();
+			System.out.println(error);
 			if(!error.isEmpty()) 
 				throw new SepeException(error);
 		} catch (NullPointerException e) {}
 	}
 	
-	private static HtmlPage contractPage(HtmlPage htmlPage) throws ElementNotFoundException, IOException {
+	private static HtmlPage contractPage(HtmlPage htmlPage, String codCto) throws ElementNotFoundException, IOException {
 		String href = null;
-		TypeContract typeContract= TypeContract.TEMPORAL_TIEMPO_COMPLETO; //change
-        switch (typeContract) {
-			case INDEFINIDO_TIEMPO_COMPLETO:
+        String oneCodCto = codCto.substring(0,1);
+        switch (oneCodCto) {
+			case "1": //INDEFINIDO_TIEMPO_COMPLETO
 				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=1";
 			break;
-			case INDEFINIDO_TIEMPO_PARCIAL:
+			case "2": // INDEFINIDO_TIEMPO_PARCIAL
 				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=2";
 			break;
-			case FIJO_CONTINUO:
-				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=3";
-			break;
-			case TEMPORAL_TIEMPO_COMPLETO:
+			case "4": // TEMPORAL_TIEMPO_COMPLETO
 				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=4";
 			break;
-			case TEMPORAL_TIEMPO_PARCIAL:
+			case "5": // TEMPORAL_TIEMPO_PARCIAL
 				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=5";
-			break;
-			case FORMACION_APRENDIZAJE:
-				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=6";
-			break;
-			case PRACTICA_TIEMPO_COMPLETO:
-				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=7";
-			break;
-			case PRACTICA_TIEMPO_PARCIAL:
-				 href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=8";
 			break;
 		}
         htmlPage = htmlPage.getAnchorByHref(href).click();
         return htmlPage;
 	}
 	
-	public enum TypeContract {
-		INDEFINIDO_TIEMPO_COMPLETO,
-		INDEFINIDO_TIEMPO_PARCIAL,
-		FIJO_CONTINUO,
-		TEMPORAL_TIEMPO_COMPLETO,
-		TEMPORAL_TIEMPO_PARCIAL,
-		FORMACION_APRENDIZAJE,
-		PRACTICA_TIEMPO_COMPLETO,
-		PRACTICA_TIEMPO_PARCIAL
+	private static String getSuccessMessage(HtmlPage htmlPage) {
+		DomNodeList<DomNode> texts = htmlPage.querySelectorAll("#contIzq p");
+		String msg = null;
+		for( DomNode p: texts) {
+			String pStr = Toolkit.removeNBSP(p.getVisibleText()).trim();
+			Integer pInt = pStr.length();
+			if(pInt > 0) {
+				if(pStr.indexOf("Identificador de la Comunicaci\u00F3n :")>=0) {
+					msg = pStr;
+					break;
+				} else if(pStr.indexOf("se ha realizado correctamente")>=0) {
+					msg = pStr;
+					break;
+				}
+			}
+		}
+		return msg;
 	}
 	
-	private static String identity(String ipf) {
-		ipf = Toolkit.removeExtraZeros(ipf);
-		Pattern nif  = Pattern.compile(
-				//  -------- LEGAL_PERSON_NIF PATTERN  
-				// -------- (1) --> X00000000
-					"^[A-JUV]"
-					+"[\\s-_/]?"
-					+"[0-9]{2}"
-					+"[-_/\\.]?"
-					+"[0-9]{3}"
-					+"[-_/\\.]?"
-					+"[0-9]{3}$"
-					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
-		Pattern dni  = Pattern.compile(
-					"[0-9]?"
-					+"[0-9]"
-					+"[\\s-_/\\.]?"
-					+"[0-9]{3}"
-					+"[\\s-_/\\.]?"
-					+"[0-9]{3}"
-					+"[\\s-_/]?"
-					+"[A-Z]"
-					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
-				//  -------- NIE PATTERN 
-				// -------- (1) --> X0000000X
-		Pattern nie  = Pattern.compile(
-					"[XYZ]"
-					+"[\\s-_/]?"
-					+"[0-9]{7}"
-					+"[\\s-_/]?"
-					+"[A-HJ-NP-TV-Z]"
-				, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
-		
-		Map<Pattern, Integer> patterns = new HashMap<Pattern, Integer>();
-		patterns.put(nif, 1);
-		patterns.put(dni, 1);
-		patterns.put(nie, 6);
-		
-		String identity = "";
-		for (Entry<Pattern, Integer> entry : patterns.entrySet()) {
-			if ( entry.getKey().matcher(ipf).matches()) { identity = entry.getValue().toString(); break; }
-		}
-		return identity;
+	public enum TypeFirm{
+		FIRMADA_REPRESENTANTES_LEGALES, 
+		NO_EXISTE_REPRESENTACION,
+		NO_FACILITADO_COPIA,
+		REHUSAN_FIRMAR
 	}
+	
 }

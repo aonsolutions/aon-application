@@ -52,7 +52,7 @@
 
 
 
-<HEAD>
+<HEAD>    
 	
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1"> 
 <META name="language" content="es">
@@ -83,16 +83,30 @@
 <link rel="stylesheet" href="/ccomunicacto/comunicacto/jsp/publico/estilos/contrataAA.css"  type="text/css">
 
 
-</HEAD>
+	<!------------------------------------------------------------------------------------------>
+<!-- En esta pagina estan las rutas de los ficheros de los mensajes de javascript y las   -->
+<!-- funciones comunes                                                                    -->
+<!------------------------------------------------------------------------------------------>
 
 
 
-<BODY> 
+<SCRIPT type="text/javascript" src="/ccomunicacto/comunicacto/jsp/validaciones.js"></SCRIPT>
+<SCRIPT type="text/javascript" src="/ccomunicacto/comunicacto/jsp/ayudas.js"></SCRIPT>
+<SCRIPT type="text/javascript" src="/ccomunicacto/comunicacto/jsp/maneja_campos.js"></SCRIPT>
+<SCRIPT type="text/javascript" src="/ccomunicacto/comunicacto/jsp/14/mensajesAlert.js"></SCRIPT>
 
-	<div id="wrapper">
-		
-	 	<!-- cabecera ESTATAL y de APLICACION -->
-			<!-- CABECERAS DE LA APLICACION: CABECERA ESTATAL Y CABECERA DE APLICACION AMBAS OBLIGATORIAS 
+
+
+
+
+    	
+</HEAD>  
+
+<BODY >
+
+<div id="wrapper">
+	<!-- cabecera ESTATAL y de APLICACION -->
+		<!-- CABECERAS DE LA APLICACION: CABECERA ESTATAL Y CABECERA DE APLICACION AMBAS OBLIGATORIAS 
 	
 	Estas cabeceras hacen uso de de imagenes e includes del proyecto de presentacion del SPE denominado inem. 	
 	A este proyecto se accede con dirección absoluta. 															
@@ -120,61 +134,27 @@
 	
 	
 
+
+	<div id="contIzq" class="secCiu entero">
+  	<!-- Seccion de la aplicacion en la que nos encontramos -->
 		
-		<div id="contIzq" class="secCiu entero">
-	
-	 		<!-- Seccion de la aplicacion en la que nos encontramos -->
-	 		
-	 		
-				
-	 		
-	 		<!-- Hilo de ARIADNA-->
-			 
-				<!--  Los tabindex empiezan en la numeracion 14 -->
+ 
+ 		<!-- Hilo de ARIADNA-->
+		 
+ 			<!--  Los tabindex empiezan en la numeracion 14 -->
 
 	<!-- Hilo de ARIADNA-->
 	<h3 class="ocultar">Hilo de Ariadna<a href="#hilo" tabindex="10">Saltar Menú</a></h3>
 	<div id="menuSup" class="entero">
 		<p>	 
 
-			<!-- Tipo usuario conectado P rm CB nv 1010000000000<br> -->
+			<!-- Tipo usuario conectado P rm AC nv 0<br> -->
 			
 				<a href="/ccomunicacto/servlet/ServletHilosAriadna?r=inicio" target="_blank" title=" Portal del Servicio Público de Empleo Estatal - SPEE.Cierra Sesión de Contrat@.Abre ventana nueva." tabindex="11">Inicio</a> &raquo; 
 				
 			 
-				<a href="/ccomunicacto/servlet/ServletHilosAriadna?r=CB&n=99" tabindex="13"> <acronym title="Comunicación de la Contratación Laboral ">Contrat@</acronym> </a> &raquo;
+				<a href="/ccomunicacto/servlet/ServletHilosAriadna?r=AC&n=99" tabindex="13"> <acronym title="Comunicación de la Contratación Laboral ">Contrat@</acronym> </a> &raquo;
 			
-				
-				
-			
-					
-					
-				<!--       HILOS GENERICOS  -->
-				
-					
-					
-					
-					
-					
-					
-						<!-- Hilo de Ariadna COPIA BASICA -->
-	<a href="/ccomunicacto/servlet/ServletHilosAriadna?r=CB&n=0" tabindex="14">Comunicación de la copia básica</a> &raquo;
-
-	<!-- CB contratos iniciales -->					
-	 
-		<a href="/ccomunicacto/servlet/ServletHilosAriadna?r=CB&n=1000000000000" tabindex="15"> Copia básica de contratos iniciales</a> &raquo;
-		
-	
-	
-
-
-
-
-					
-					
-					
-				
-					
 				
 			
 			
@@ -182,9 +162,8 @@
 	</div>
  	<!-- Fin de ARIADNA -->
  	<a name="hilo" class="ocultar" tabindex="18"></a> 
-
-			<div class="contIzqc">
-			
+ 		 	
+	  	<div class="contIzqc">
 					<!--  Informamos del entorno -->
 	
 
@@ -286,10 +265,10 @@
 			  
    		  	<li>
    		  		<a href="/ccomunicacto/actionLogin.do?pagina=copiabasica" tabindex="25">			
-   		  			  	
-	    	   			<span class="azneg">Comunicación de la copia básica</span>
-		    	   			
-					
+   		  					
+					  	
+	    	   			Comunicación de la copia básica
+		    	   	
 		    	</a> | 
    		  	</li>
    		  	
@@ -306,10 +285,10 @@
      		</li> 
    		  	<li>
    		  		<a href="/ccomunicacto/actionLogin.do?pagina=anulacioncomunicacion" tabindex="25">			
-   		  					
-					  	
-	    	   			Anulación y consulta de comunicaciones
-		    	   	
+   		  			  	
+	    	   			<span class="azneg">Anulación y consulta de comunicaciones</span>
+		    	   			
+					
 		    	</a> |
    		  	</li>
    		  	   
@@ -320,22 +299,30 @@
 
 	 	
 	</div>
-		
-				<h3 class="titulo5">Comunicación de la copia básica</h3> 
-				
-				
-				
-				<p class="titulo5b tac azul2">La comunicación de la Copia Básica se ha realizado correctamente</p> 
-				
-				<div class="botonera">				
-					<a href="/ccomunicacto/comunicacto/jsp/menu_comuncopiabasica.jsp" class="btn_falso" tabindex="200">volver</a>
-				</div>
-				
-			</div>  	<!-- id="contIzq" -->
+		<br>		 	
+    	<form  name="datos">
+			<p class="tac">
+				<p class="tac azneg"> 
+					La anulación del contrato se ha realizado correctamente				
+					
+					
+					
+					
+					
+				</p>	
+ 			</p>
+ 			
+		 	<div class="botonera">
+				<a class="btn_falso" id="volver" name="volver" href="/ccomunicacto/comunicacto/jsp/menu_anulacioncomunicacion.jsp" title="volver " tabindex="33">
+							volver
+						</a>
+			</div>
 	
-		</div> 	<!-- id="contIzq" class="secCiu entero" -->
- 	
- 			<!-- COPYRIGHT para todas las paginas de la aplicacion. PROYECTO de presentacion del SPE -->
+ 		</form>
+		</div>
+	</div> 	<!-- id="contIzq" class="secCiu entero" -->
+	
+ 		<!-- COPYRIGHT para todas las paginas de la aplicacion. PROYECTO de presentacion del SPE -->
 	<div class="fila">
 		<a class="colRR sinSubrayar" href="/ccomunicacto/comunicacto/jsp/consultaDatosConexion.jsp" target="_blank" onclick="abrirVentana2(this,800,550,10,10);return false;" onkeypress="abrirVentana2(this,800,550,10,10);return false;">&nbsp;</a> 
 	</div>
@@ -344,7 +331,7 @@
 	
 
   	
-	</div> 	<!-- "wrapper" -->
-	
+</div> 	<!-- "wrapper" -->
+
 </BODY>
 </HTML>
