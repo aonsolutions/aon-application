@@ -30,7 +30,6 @@ import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class A3PDFTemplate implements SalaryPDFTemplate {
-	public static int cont = 1;
 
 	public static final A3PDFTemplate A3_PDF_TEMPLATE = new A3PDFTemplate();
 	
@@ -234,12 +233,12 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 								pt = PaymentType.CRA_0008;
 							}
 							else if (AonStringUtils.containsIgnoreCase(description, "vacaciones")) {
-								if (payrollType == 1) {
-									pt = PaymentType.CRA_0006;
-								}
-								else {
+//								if (payrollType == 1) {
+//									pt = PaymentType.CRA_0006;
+//								}
+//								else {
 									pt = PaymentType.CRA_0060;
-								}
+//								}
 							}
 							else if (AonStringUtils.containsIgnoreCase(description, "estudio")) {
 								pt = PaymentType.CRA_0025;
@@ -594,8 +593,6 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			salaryBuilder.getSalary();
 		}
 		
-		System.err.println(cont);
-		cont++;
 		return this;
 	
 	}

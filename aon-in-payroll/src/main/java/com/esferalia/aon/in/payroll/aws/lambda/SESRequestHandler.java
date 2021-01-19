@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -25,11 +26,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.activation.MimetypesFileTypeMap;
+import javax.mail.Address;
 import javax.mail.BodyPart;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -103,9 +105,10 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 	    		String key = String.format("laboral@aon.solutions/%s", messageId);
 	    		MimeCallback callback = new MimeCallback();
 	    		JooqPDFSalaryBuilder  salaryBuilder = 
-	    		new JooqPDFSalaryBuilder(dslContext, "ayudat-aonsolutions-net");
+	    		new JooqPDFSalaryBuilder(dslContext, "ayudat.aonsolutions.net");
 	    		
-	    		dslContext.transaction((c)->{			
+	    		dslContext.transaction((c)->{	
+	    			Optional<MimeMessage> mimeMessage =
 		    		handleMessage(
 							bucket, 
 							key, 
@@ -116,7 +119,9 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		 					);
 		    		salaryBuilder.execute();
 		    		try {
-		    			SESSMTPSender.send(salaryBuilder.getInserted());
+		    			
+		    			Address[] to = mimeMessage.map( SESRequestHandler::getTo ).orElse( new Address[] {});		    			
+		    			SESSMTPSender.send(to, salaryBuilder.getInserted());
 		    		} catch ( Exception e ) {
 		    			System.out.println("ERROR:" + e.getMessage());
 		    		}
@@ -130,6 +135,14 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 
         return "That's all Folks!";
     }
+
+	private static Address[] getTo(MimeMessage mimeMessage) {
+		try {
+			return mimeMessage.getFrom();
+		} catch (MessagingException e) {
+			return new Address[] {};
+		} 
+	}
     
     @SuppressWarnings("unchecked")
 	private static List<String> getMessageIds(Object input) {
@@ -172,18 +185,19 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 //    }
     
     
-    private static void handleMessage(String bucket, String key, Callback callback, Handler ...handlers ) {
+    private static Optional<MimeMessage> handleMessage(String bucket, String key, Callback callback, Handler ...handlers ) {
+    	MimeMessage mimeMessage = null;
     	AmazonS3 s3 = AmazonS3ClientBuilder.standard().build();  
         S3Object s3Object = s3.getObject(new GetObjectRequest(bucket, key));
         try ( InputStream is = s3Object.getObjectContent()) {
-        	handleMIME(is , callback, handlers );
+        	mimeMessage = handleMIME(is , callback, handlers );
         } catch ( Exception e ) {
         	
         }
-        
+        return Optional.ofNullable(mimeMessage);
     }
     
-    private static void handleMIME( InputStream is, Callback callback, Handler ...handlers ) throws Exception {
+    private static MimeMessage handleMIME( InputStream is, Callback callback, Handler ...handlers ) throws Exception {
 		Session session = Session.getInstance(System.getProperties());
 		MimeMessage mimeMessage = new MimeMessage(session, is);
 		Multipart multipart = (Multipart ) mimeMessage.getContent() ;
@@ -197,6 +211,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 				callback.exception(bodyPart.getFileName(), e);
 			}
 		}
+		return mimeMessage;
     }
     
     private static void handle ( String contentType, InputStream is, Callback callback, Handler handlers []) {
@@ -359,14 +374,15 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		Connection connection = getConnection();
 		DSLContext dslContext = getDSLContext(connection);
 //		FileInputStream is = new FileInputStream("/Users/aonsolutions/Documents/pdf.mime");
-		FileInputStream is = new FileInputStream("/Users/aonsolutions/Documents/zip.mime");
+		FileInputStream is = new FileInputStream(args[0]);
 		){	
 		
 		JooqPDFSalaryBuilder  salaryBuilder = 
 //		new CheckSalaryPDFBuilder<ISalary>()
-		new JooqPDFSalaryBuilder(dslContext, "ayudat-aonsolutions-net")
+		new JooqPDFSalaryBuilder(dslContext, "ayudat.aonsolutions.net")
 		;
 		dslContext.transaction((c)->{			
+			MimeMessage mimeMessage =
 			handleMIME(
 					is, 
 					new MimeCallback(),
@@ -374,7 +390,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     				SESRequestHandler.handlePDF(salaryBuilder)
 					);
 		salaryBuilder.execute();
-		SESSMTPSender.send(salaryBuilder.getInserted());
+		SESSMTPSender.send(getTo(mimeMessage), salaryBuilder.getInserted());
 		//throw new RuntimeException();
 		});
 	} catch (Exception e) {

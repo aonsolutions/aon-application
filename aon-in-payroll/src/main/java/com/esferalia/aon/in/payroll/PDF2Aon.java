@@ -95,14 +95,6 @@ public class PDF2Aon {
 	         .create("?");
 
 		@SuppressWarnings("static-access")
-		Option pdfsOption = OptionBuilder
-		     .hasArg()
-		     .withLongOpt("pdfs")
-		     .withArgName("directory")
-		     .withDescription("PDFs directory.")
-		     .create();
-
-		@SuppressWarnings("static-access")
 		Option skipOption = OptionBuilder
 		     .hasArg()
 		     .withLongOpt("skip")
@@ -164,7 +156,6 @@ public class PDF2Aon {
 		options.addOption(userOption);
 		options.addOption(databaseOption);
 		options.addOption(passwordOption);
-		options.addOption(pdfsOption);
 		options.addOption(dateOption);
 		options.addOption(whereOption);
 		options.addOption(checkOption);
@@ -194,11 +185,11 @@ public class PDF2Aon {
 		String domain = commandLine.getOptionValue(domainOption.getLongOpt(), "ayudat.aonsolutions.net");
 		String preffix = commandLine.getOptionValue(preffixOption.getLongOpt(), "altai");
 		String where = commandLine.getOptionValue(whereOption.getLongOpt(), "`domain`.`name` LIKE 'altai%'");
-		String pdfsPaths [] = Optional.ofNullable(commandLine.getOptionValues(pdfsOption.getLongOpt())).orElse(new String[] {});;
 		String skipCifs [] = Optional.ofNullable(commandLine.getOptionValues(skipOption.getLongOpt())).orElse(new String[] {});;
 		String includeCifs [] = Optional.ofNullable(commandLine.getOptionValues(includeOption.getLongOpt())).orElse(new String[] {});;
 		Date date = Optional.ofNullable(commandLine.getOptionValue(dateOption.getLongOpt())).map(s -> parse(s)).orElse(null);
 		Boolean check = commandLine.hasOption(checkOption.getLongOpt());
+		String leftOverArgs []  = commandLine.getArgs();
 
 		Properties properties = new Properties();
 		properties.setProperty("user", user);
@@ -238,17 +229,20 @@ public class PDF2Aon {
 						}
 					});
 					
-					for (String calculosPath : pdfsPaths) {
-						Arrays.stream(new File(calculosPath).listFiles(f-> f.isFile() ))
-						.forEach(f -> {
-							try {
-								SalaryPDFParser.parse(f, salaryBuilder);
-							} catch (IOException | UnknownPDFException e) {
-								System.err.printf("Error: '%s' %s \r\n", f.getPath(), e.getMessage());
-							}
-										
-						});
+					
+					for ( String arg : leftOverArgs  ) {
+						try {
+							SalaryPDFParser.parse(new File(arg), salaryBuilder);
+						} catch (IOException | UnknownPDFException e) {
+							System.err.printf("Error: %s \r\n", e.getMessage());
+						}
 					}
+					
+//					try {
+//						SalaryPDFParser.parse(System.in, salaryBuilder);
+//					} catch (IOException | UnknownPDFException e) {
+//						System.err.printf("Error: %s \r\n", e.getMessage());
+//					}
 					
 					salaryBuilder.execute();
 //					throw new RollbackException();				
