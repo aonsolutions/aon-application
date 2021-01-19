@@ -82,8 +82,6 @@ public class SessionLog extends ScrollPanel
 
 		FlowPanel panel = new FlowPanel("pre");
 		panel.setStyleName(AON.CSS.aonClickableBlock());		
-		panel.addStyleName(AON.CSS.aonFixedFont());
-		panel.addStyleName(AON.CSS.aonFontMedium());
 		
 		// ------------------------------------- CABECERA DEL ASIENTO
 		Label header = new Label(AonStringUtils.center( toString(entry, status),160));

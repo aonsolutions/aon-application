@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
+package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import java.util.LinkedHashSet;
 
@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.TrialBalancePanelReport;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
