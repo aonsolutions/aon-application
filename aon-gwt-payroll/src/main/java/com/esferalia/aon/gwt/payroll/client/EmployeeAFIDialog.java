@@ -793,19 +793,19 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	}
 	
 	public boolean isChangeContract() {
-		return afiChangesMap.hasChange("TC2");
+		return afiChangesMap.hasChange("TC2", tc2Original);
 	}
 	
 	public boolean isQuoteContract() {
-		return afiChangesMap.hasChange("GRUPO_COTIZACION");
+		return afiChangesMap.hasChange("GRUPO_COTIZACION", quoteGroupOriginal);
 	}
 	
 	public boolean isOcupationContract() {
-		return afiChangesMap.hasChange("OCUPACION");
+		return afiChangesMap.hasChange("OCUPACION", ocupationOriginal);
 	}
 	
 	public boolean isPartialityCoefContract() {
-		return afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD");
+		return afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD", partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString());
 	}
 	
 	public boolean isGenerationAFI() {
@@ -955,9 +955,22 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	private void onAcceptDialog(ClickEvent event) {
 		onAccept();
 		hide();
-		onAcceptCb(isActiveToggleButton(notifyMovTB));
+		if(isActiveToggleButton(notifyMovTB)) {
+			if(isStartContract()) onStartContract();
+			if(isEndContract()) onEndContract();
+			if(isChangeContract()) onChangeContract(afiChangesMap.getChangeValue("TC2"), afiChangesMap.getChangeDate());
+			if(isQuoteContract()) onQuoteContract(afiChangesMap.getChangeValue("GRUPO_COTIZACION"),  afiChangesMap.getChangeDate());
+			if(isOcupationContract()) onOcupationContract(afiChangesMap.getChangeValue("OCUPACION"),  afiChangesMap.getChangeDate());
+			if(isPartialityCoefContract()) onPartialityCoefContract(afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());
+		}
+		onAcceptCB();
 	}
 	
-	protected abstract void onAcceptCb(boolean notifyMov);
-
+	protected abstract void onAcceptCB();
+	protected abstract void onPartialityCoefContract(String partialityCoef, Date date);
+	protected abstract void onOcupationContract(String ocupation, Date date);
+	protected abstract void onQuoteContract(String quoteGroup, Date date);
+	protected abstract void onChangeContract(String contract, Date date);
+	protected abstract void onEndContract();
+	protected abstract void onStartContract();
 }

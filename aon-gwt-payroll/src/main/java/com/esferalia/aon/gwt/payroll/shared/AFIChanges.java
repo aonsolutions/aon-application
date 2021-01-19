@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.Window;
 
 @SuppressWarnings("serial")
 public class AFIChanges implements Serializable {
@@ -109,19 +110,39 @@ public class AFIChanges implements Serializable {
 		}
 	}
 
-	public boolean hasChange(String type) {
+	public boolean hasChange(String type, String value) {
 		ArrayList<Date> datesList = new ArrayList<Date>();
 		datesList.addAll(afiChanges.keySet());
 		
-		if(!datesList.isEmpty()) {
+		if(!datesList.isEmpty() && datesList.size() > 1) {
+			Date date = datesList.get(datesList.size() - 1);
+			for(AFIChange afiChange : afiChanges.get(date)) {
+				if(afiChange.getName().equals(type) && (null != afiChange.getValue() && afiChange.getValue() != value))
+					return true;
+			}		
+		}
+		return false;
+	}
+	
+	public String getChangeValue(String type) {
+		ArrayList<Date> datesList = new ArrayList<Date>();
+		datesList.addAll(afiChanges.keySet());
+		
+		if(!datesList.isEmpty() && datesList.size() > 1) {
 			Date date = datesList.get(datesList.size() - 1);
 			for(AFIChange afiChange : afiChanges.get(date)) {
 				if(afiChange.getName().equals(type))
-					return true;
-			}
-					
+					return afiChange.getValue();
+			}		
 		}
-		return false;
+		return null;
+	}
+	
+	public Date getChangeDate() {
+		ArrayList<Date> datesList = new ArrayList<Date>();
+		datesList.addAll(afiChanges.keySet());
+		Date date = datesList.get(datesList.size() - 1);
+		return date;
 	}
 	
 		
