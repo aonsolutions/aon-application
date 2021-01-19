@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class Coordinates {
 
 	private Double latitude;
@@ -11,9 +13,11 @@ public class Coordinates {
 	}
 	
 	public Coordinates(String coordinates) {
-		String[] c = coordinates.split(",");
-		this.latitude = Double.parseDouble(c[0]);
-		this.longitude = Double.parseDouble(c[1]);
+		if(!AonStringUtils.isEmpty(coordinates)) {
+			String[] c = coordinates.split(",");
+			this.latitude = Double.parseDouble(c[0]);
+			this.longitude = Double.parseDouble(c[1]);
+		}
 	}
 	
 	public Coordinates(Double latitude, Double longitude) {
