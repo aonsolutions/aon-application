@@ -878,3 +878,8 @@ form {
     border-color: transparent;
     background-color: currentColor;
 }
+
+.aonListMoreVert { 
+  position: absolute; 
+  right: 3%; 
+}

@@ -34,7 +34,7 @@ public class TestContrato {
 			.setSex(1)
 			.setCodNationality(862)
 			.setCodPaisDom(724)
-			.setCodMunDom("01059") //review
+			.setCodMunDom("01059") 
 			.setNss("291136796369")
 //			.setTypeJnd("M")
 			.setCodContract("401")
@@ -125,7 +125,7 @@ public class TestContrato {
 	
 	@Test
 	@Ignore
-	public void anulacionContrato() {
+	public void removeContrato() {
 		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
 			String certificatePassword = "aon@FNMT";
 			String certificateType = "pkcs12";

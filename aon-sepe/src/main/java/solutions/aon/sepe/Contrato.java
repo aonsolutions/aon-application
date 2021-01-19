@@ -21,7 +21,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
-
 import aon.sepe.objects.Contract;
 import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.exceptions.certificate.CertificateNotFoundException;
@@ -152,18 +151,24 @@ public class Contrato {
 			}
 			
 			form.getInputByName("contratoEscrito").setValueAttribute("N"); //  contratoEscrito si la fecha fin es menor a 28 
-
-			HtmlSubmitInput accept = form.querySelector("[name=aceptar]");
-			htmlPage = accept.click();
-			handleSepeExceptions(htmlPage);
+			
+			htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
+			
 			
 			String ide = null;
 			String message = getSuccessMessage(htmlPage);
-			if(message!=null) {
-				String[] parts = message.split(":");
-				if(parts.length > 0) 
-					ide = (parts[1]).trim().replaceAll("-", "").substring(1);
+			
+			if(message!=null && message.indexOf("returnInit")>=0) {
+				htmlPage = sepe_return_init(htmlPage, cto); 
+				message = getSuccessMessage(htmlPage); // message overwrite
 			}
+			
+			if(message!=null && message.indexOf("E")>=0) {
+				ide =  message.substring(1);
+			}
+			
+			handleSepeExceptions(htmlPage);
+			
 //	        Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testContrato.html");
 	        return ide;
 		} 
@@ -272,7 +277,7 @@ public class Contrato {
 	public static byte[] transformacionsPdf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini) throws SepeException {
 			try {
-				return transformacionsPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini);
+				return transformationsPdfImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini);
 			}
 			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
@@ -327,7 +332,7 @@ public class Contrato {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
 	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
-	    	htmlPage = first_page_anulacion(htmlPage);
+	    	htmlPage = first_page_remove(htmlPage);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletAnulComunic?pagina=initC").click(); 
 	        htmlPage = last_page_anulacion(htmlPage, ide);
 	        String message = getSuccessMessage(htmlPage);
@@ -340,7 +345,7 @@ public class Contrato {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
 	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
-	    	htmlPage = first_page_anulacion(htmlPage);
+	    	htmlPage = first_page_remove(htmlPage);
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletAnulComunic?pagina=initT").click(); 
 	        htmlPage = last_page_anulacion(htmlPage, ide);
 	        String message = getSuccessMessage(htmlPage);
@@ -348,7 +353,7 @@ public class Contrato {
 		} 
 	}
 	
-	private static HtmlPage first_page_anulacion(HtmlPage htmlPage) throws SepeException, ElementNotFoundException, IOException  {
+	private static HtmlPage first_page_remove(HtmlPage htmlPage) throws SepeException, ElementNotFoundException, IOException  {
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=anulacioncomunicacion").click(); 
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/menu_anulacion_bajas.jsp?origen=anulacioncomunicacion").click();
 	        return htmlPage;
@@ -422,7 +427,7 @@ public class Contrato {
         return htmlPage;
 	}
 	
-	private static byte[] transformacionsPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
+	private static byte[] transformationsPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException, InterruptedException {
 		byte[] pdf= null;
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
@@ -468,7 +473,6 @@ public class Contrato {
 	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
 		try {
 			String error = htmlPage.querySelector("#avisos > div > p:last-child").getVisibleText();
-			System.out.println(error);
 			if(!error.isEmpty()) 
 				throw new SepeException(error);
 		} catch (NullPointerException e) {}
@@ -503,10 +507,19 @@ public class Contrato {
 			Integer pInt = pStr.length();
 			if(pInt > 0) {
 				if(pStr.indexOf("Identificador de la Comunicaci\u00F3n :")>=0) {
-					msg = pStr;
+					String[] parts = pStr.split(":");
+					if(parts.length > 0) {
+						msg = (parts[1]).trim().replaceAll("-", "");
+					}
 					break;
 				} else if(pStr.indexOf("se ha realizado correctamente")>=0) {
 					msg = pStr;
+					break;
+				} else if(pStr.indexOf("sin fecha de t\u00E9rmino")>=0) {
+					msg = "returnInit";
+					break;
+				} else if(pStr.indexOf("F\u00EDsica en la base de datos no coinciden")>=0) {
+					msg = "returnInit";
 					break;
 				}
 			}
@@ -514,11 +527,20 @@ public class Contrato {
 		return msg;
 	}
 	
-	public enum TypeFirm{
+	private static HtmlPage sepe_return_init(HtmlPage htmlPage, Contract cto) throws IOException, InterruptedException {
+		htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("#volver")).click();
+		HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+		form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation().toString());// repeat cod contract
+		form.getInputByName("contratoEscrito").setValueAttribute("N"); //  contratoEscrito si la fecha fin es menor a 28 
+		form.getInputByName("nass").setValueAttribute(cto.getNss()); 
+		htmlPage = ((HtmlSubmitInput)form.querySelector("[name=aceptar]")).click();
+		return htmlPage;
+	}
+	
+	public enum TypeFirm {
 		FIRMADA_REPRESENTANTES_LEGALES, 
 		NO_EXISTE_REPRESENTACION,
 		NO_FACILITADO_COPIA,
 		REHUSAN_FIRMAR
 	}
-	
 }
