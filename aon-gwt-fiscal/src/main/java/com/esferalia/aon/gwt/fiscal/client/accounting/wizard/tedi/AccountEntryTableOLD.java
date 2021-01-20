@@ -1,25 +1,18 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import java.util.LinkedList;
-import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.IWizardContent;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -40,9 +33,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.ui.ComplexPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -51,15 +42,12 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandlers, Focusable
+public class AccountEntryTableOLD extends FlexTable implements HasErrorHandlers, Focusable
  , HasSelectionHandlers<Account>, HasValueChangeHandlers<AccountEntryDetail> {
 	
-	private static final Logger LOGGER = Logger.getLogger(AccountEntryTable.class.getName());
-	static {
-		LOGGER.addHandler( new ConsoleLogHandler() );
-	}
-
-	private Focusable focusable;
+	private String domainName;
+	private int domainId;
+	private String user;
 	
 	private IWizardContent wizardContent;
 	private Label sumDebit;
@@ -67,7 +55,6 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 	
 	private boolean confirmConceptChange;
 	private boolean confirmDocumentChange;
-	private FlowPanel footerRow = new FlowPanel();
 	
 	private MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 		
@@ -86,16 +73,18 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 				}
 				callback.onSuggestionsReady(request, new Response(suggestions));
 			}
+			
+		    
 		}
 		
 	};
 	
 	private static enum COLS {
-		  NUM("#"						,"20px" ,AON.CSS.aonTextCenter())
+		  NUM(AonStringUtils.EMPTY		,"20px" ,AON.CSS.aonTextCenter())
 		, ACC(AON.MSG.account()			,"auto" ,null)
 		, CON(AON.MSG.concept()			,"250px",AON.CSS.aonTextCenter())
-		, DEB(AON.MSG.debit()			,"120px",AON.CSS.aonTextCenter())
-		, CRE(AON.MSG.credit()			,"120px",AON.CSS.aonTextCenter())
+		, DEB(AON.MSG.debit()			,"120px",AON.CSS.aonTextRight())
+		, CRE(AON.MSG.credit()			,"120px",AON.CSS.aonTextRight())
 		, BAL(AON.MSG.balancingAccount(),"105px",AON.CSS.aonTextCenter())
 		, DOC(AON.MSG.document()		,"190px",AON.CSS.aonTextCenter())
 		, BUT(AonStringUtils.EMPTY		, "20px",AON.CSS.aonTextCenter())
@@ -105,58 +94,51 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 		String colWidth;
 		String cellStyleClass;
 
+		private COLS(String headerLabel,String colWidth) {
+			this(headerLabel, colWidth, null);
+		}
+
 		private COLS(String headerLabel,String colWidth,String cellStyleClass) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
 			this.cellStyleClass = cellStyleClass;
 		}
-		public String getColWidth()    		{return colWidth;}
-		public String getHeaderLabel() 		{return headerLabel;}
-		public String getCellStyleClass() 	{return cellStyleClass;		}
+		public String getColWidth() {
+			return colWidth;
+		}
+		public String getHeaderLabel() {
+			return headerLabel;
+		}
+		public String getCellStyleClass() {
+			return cellStyleClass;
+		}
 	}
 	
-	public AccountEntryTable( AccountEntryModuleOptions options, IWizardContent wizardContent) {
-		addStyleName(AON.CSS.aonBlockCenter());
-		addStyleName(AON.CSS.aonWidthAlmostAll());
+	public AccountEntryTableOLD(String domainName, String user, int domainId, IWizardContent wizardContent) {
 		this.wizardContent = wizardContent;
+		this.domainName = domainName; 
+		this.domainId = domainId;
+		this.user = user; 
+
 		setConfirmConceptChange(true);
 		setConfirmDocumentChange(true);
+
 		sumDebit = new Label();
 		sumDebit.setStyleName(AON.CSS.aonBold());
 		sumCredit = new Label();
 		sumCredit.setStyleName(AON.CSS.aonBold());
-		
-		// ******************************************  
-		// ***************** HEADER *****************  
-		// ******************************************  
-		AonDisplayGridHeaderRow headerRow = this.addHeaderRow();
-		for ( COLS col : COLS.values()) {
-			AonDisplayGridCell headerCell = headerRow.addCell();
-			headerCell.add(new Label( col.getHeaderLabel() ));
-			headerCell.setWidth(col.getColWidth());
-			if ( col.getCellStyleClass() != null) {
-				headerCell.addStyleName(col.getCellStyleClass());
-			}
-		}
-
-		// ******************************************  
-		// ***************** DETAILS *****************  
-		// ******************************************  
-		if ( wizardContent.getMainEntry().getDetails().isEmpty() ) {
-			AccountEntryDetail newDetail = new AccountEntryDetail();
-			newDetail.setLine(1);
-			wizardContent.getMainEntry().getDetails().add( newDetail );
-		}
-		for (AccountEntryDetail aed : wizardContent.getMainEntry().getDetails()) {
-			paintRow(options, aed);
-		}
-
-		// ******************************************  
-		// ***************** FOOTER *****************  
-		// ******************************************
-		paintFooter(options);
+		setStyleName(AON.CSS.aonGrid());
 	}
 	
+	public String getDomainName() {
+		return domainName;
+	}
+	public int getDomainId() {
+		return domainId;
+	}
+	public String getUser() {
+		return user;
+	}
 	public boolean isConfirmConceptChange() {
 		return confirmConceptChange;
 	}
@@ -170,99 +152,174 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 		this.confirmDocumentChange = confirmDocumentChange;
 	}
 
-	private void paintFooter(AccountEntryModuleOptions options) {
-		final AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd() );
-		addButton.setAccessKey( 'L' );
-		addButton.addFocusHandler(new FocusHandler() {
-			@Override
-			public void onFocus(FocusEvent event) {
-				if (canAddLine()) {
-					addLine(options);
-					paintFooter(options);
-				}
-			}
-		});
-		addButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				addLine( options);
-				paintFooter(options);
-			}
-		});
-		if (footerRow !=null) {
-			remove(footerRow);
-		}
-		footerRow = addFooterRow()
-			.addCell( (wizardContent.isUpdatable()? addButton : new Label()) )
-			.addCell( new Label() )
-			.addCell( new Label() )
-			.addCell( sumDebit , AON.CSS.aonTextRight() )
-			.addCell( sumCredit , AON.CSS.aonTextRight() )
-			.addCell( new Label())
-			.addCell( new Label())
-			.addCell( new Label())
-			;
+
+
+	public void paintTable() {
+		paintHeader();
+		paintDetails();
+		paintFooter();
+		paintAddButton();
 	}
 
+	private void paintHeader() {
+		for ( COLS col : COLS.values()) {
+			setWidget(0, col.ordinal(), new Label( col.getHeaderLabel() ));
+			getFlexCellFormatter().setWidth(0, col.ordinal(), col.getColWidth());
+			getFlexCellFormatter().addStyleName(0, col.ordinal(),AON.CSS.aonGridHeader());
+			if ( col.getCellStyleClass() != null) {
+				getFlexCellFormatter().addStyleName(0, col.ordinal(),col.getCellStyleClass());
+			}
+		}
+	}
 
-	private void paintRow(AccountEntryModuleOptions options, final AccountEntryDetail aed) {
+	private void paintFooter() {
+		int row = getRowCount();
+		setWidget(row, COLS.NUM.ordinal(), new Label(AonStringUtils.EMPTY));
+		setWidget(row, COLS.ACC.ordinal(), new Label(AonStringUtils.EMPTY));
+		setWidget(row, COLS.CON.ordinal(), new Label(AonStringUtils.EMPTY));
+		setWidget(row, COLS.DEB.ordinal(), sumDebit);
+		getFlexCellFormatter().addStyleName(row, COLS.DEB.ordinal(),AON.CSS.aonTextRight());
+		setWidget(row, COLS.CRE.ordinal(), sumCredit );
+		getFlexCellFormatter().addStyleName(row, COLS.CRE.ordinal(),AON.CSS.aonTextRight());
+		setWidget(row, COLS.BAL.ordinal(), new Label(AonStringUtils.EMPTY));
+		setWidget(row, COLS.DOC.ordinal(), new Label(AonStringUtils.EMPTY));
+		refreshTotals();
+	}
+	
+	private double getSumDif(boolean fillWidget) {
+		double sumD = 0.0;
+		double sumC = 0.0;
+		for (AccountEntryDetail aed : wizardContent.getMainEntry().getDetails()) {
+			if (!aed.isDeleted()) {
+				sumD = AonMathUtils.sum(sumD, aed.getDebit());	
+				sumC = AonMathUtils.sum(sumC, aed.getCredit());
+			}
+		}
+		if (fillWidget) {
+			sumDebit.setText(AON.FMT.format(sumD));
+			sumCredit.setText(AON.FMT.format(sumC));
+		}
+		return AonMathUtils.round(sumD - sumC);
+	}
+
+	private void refreshTotals() {
+		boolean equals = AonMathUtils.isZero( getSumDif(true) );
+		sumDebit.setStyleName(equals?AON.CSS.aonColorGreen():AON.CSS.aonColorRed());
+		sumCredit.setStyleName(equals?AON.CSS.aonColorGreen():AON.CSS.aonColorRed());
+	}
+	
+	private void paintDetails() {
+		if ( wizardContent.getMainEntry().getDetails().isEmpty() ) {
+			wizardContent.getMainEntry().getDetails().add(new AccountEntryDetail());
+		}
+		int row = 1;
+		for (AccountEntryDetail aed : wizardContent.getMainEntry().getDetails()) {
+			paintRow(row,aed);
+			++row;
+		}
+	}
+
+	private void paintRow(int row, final AccountEntryDetail aed) {
 		if (wizardContent.isUpdatable()) {
 			if (aed.isDeleted()) {
-				paintDeletedRow(options, addRow(), aed);		
+				paintDeletedRow(row, aed);		
 			} else {
-				paintActiveRow(options, addRow(), aed);
+				paintActiveRow(row, aed);
 			}
 		} else {
-			paintUnmodifiableRow(addRow(), aed);
+			paintUnmodifiableRow(row, aed);
 		}
 	}
-	
-	
-	private Focusable paintActiveRow(final AccountEntryModuleOptions options,AonDisplayGridRow row,final AccountEntryDetail aed) {
+	private Label getUnmodifiableLabel(String text) {
+		Label label = new Label(text);
+		return label;
+	}
+	private Label getDeletedLabel(String text) {
+		Label label = new Label(text);
+		label.setStyleName(AON.CSS.aonItalic());
+		label.addStyleName(AON.CSS.aonTextLineThrough());
+		return label;
+	}
+	private void paintDeletedRow(int row, final AccountEntryDetail aed) {
+		setWidget(row, COLS.NUM.ordinal(), new Label()  );
+		setWidget(row, COLS.ACC.ordinal(), getDeletedLabel(
+			AonStringUtils.abbreviate( aed.getAccountCode() + " " + aed.getAccountDescription() , 50)));
 		
-		final AonAccountBox detailAccountBox = new AonAccountBox(options.getDomainName(),options.getDomain(),options.getUser());
+		setWidget(row, COLS.CON.ordinal(), getDeletedLabel(aed.getConcept() ));
+		setWidget(row, COLS.DEB.ordinal(), getDeletedLabel(AON.FMT.format( aed.getDebit()) ));
+		getFlexCellFormatter().addStyleName(row, COLS.DEB.ordinal(),AON.CSS.aonTextRight());
+		setWidget(row, COLS.CRE.ordinal(), getDeletedLabel(AON.FMT.format( aed.getCredit()) ));
+		getFlexCellFormatter().addStyleName(row, COLS.CRE.ordinal(),AON.CSS.aonTextRight());
+		setWidget(row, COLS.BAL.ordinal(), getDeletedLabel(aed.getBalancingAccountCode()));
+		setWidget(row, COLS.DOC.ordinal(), getDeletedLabel(aed.getDocumentNumber() ));
+		final int curRow = row;
+		AonTableButton restoreButton = new AonTableButton(AON.MSG.undo(), AON.CSS.aonIconUndo() );
+		restoreButton.setTabIndex(Integer.MAX_VALUE);
+		restoreButton.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				aed.setId( aed.getId() * -1 );
+				paintActiveRow(curRow, aed);
+				refreshTotals();
+			}
+		});
+		setWidget(row, COLS.BUT.ordinal(), restoreButton);
+	}
+	
+	private void paintUnmodifiableRow(int row, final AccountEntryDetail aed) {
+		setWidget(row, COLS.NUM.ordinal(), new Label()  );
+		setWidget(row, COLS.ACC.ordinal(), getUnmodifiableLabel(
+				AonStringUtils.abbreviate( aed.getAccountCode() + " " + aed.getAccountDescription() , 50)));
+		setWidget(row, COLS.CON.ordinal(), getUnmodifiableLabel(aed.getConcept() ));
+		setWidget(row, COLS.DEB.ordinal(), getUnmodifiableLabel(AON.FMT.format( aed.getDebit()) ));
+		getFlexCellFormatter().addStyleName(row, COLS.DEB.ordinal(),AON.CSS.aonTextRight());
+		setWidget(row, COLS.CRE.ordinal(), getUnmodifiableLabel(AON.FMT.format( aed.getCredit()) ));
+		getFlexCellFormatter().addStyleName(row, COLS.CRE.ordinal(),AON.CSS.aonTextRight());
+		setWidget(row, COLS.BAL.ordinal(), getUnmodifiableLabel(aed.getBalancingAccountCode()));
+		setWidget(row, COLS.DOC.ordinal(), getUnmodifiableLabel(aed.getDocumentNumber() ));
+		setWidget(row, COLS.BUT.ordinal(), new Label());
+	}
+	
+	private void paintActiveRow(int row, final AccountEntryDetail aed) {
+		setWidget(row, COLS.NUM.ordinal(), new Label()  );
+		
+		final AonAccountBox detailAccountBox = new AonAccountBox(getDomainName(),getDomainId(),getUser());
 		detailAccountBox.setValue(aed.getAccount(), aed.getAccountCode(),aed.getAccountDescription());
-		focusable = detailAccountBox;
 
+		setWidget(row, COLS.ACC.ordinal(), detailAccountBox );
+		
 		final TextBox conceptBox = new TextBox();
 		final SuggestBox conceptSuggestBox = new SuggestBox(oracle,conceptBox);
 		conceptBox.setVisibleLength(30);
 		conceptBox.setMaxLength(64);
 		conceptBox.setStyleName(AON.CSS.aonInputText());
 		conceptBox.setValue(aed.getConcept());
+		setWidget(row, COLS.CON.ordinal(), conceptSuggestBox );
 		
 		final AonDoubleBox debitBox = new AonDoubleBox();
 		debitBox.setValue(aed.getDebit());
+		setWidget(row, COLS.DEB.ordinal(), debitBox );
+		getFlexCellFormatter().addStyleName(row, COLS.DEB.ordinal(),AON.CSS.aonTextRight());
 		
 		final AonDoubleBox creditBox = new AonDoubleBox();
 		creditBox.setValue(aed.getCredit());
+		setWidget(row, COLS.CRE.ordinal(), creditBox );
+		getFlexCellFormatter().addStyleName(row, COLS.CRE.ordinal(),AON.CSS.aonTextRight());
 		
-		final AonAccountBox balancingAccountBox = new AonAccountBox(options.getDomainName(),options.getDomain(),options.getUser(), false);
+		final AonAccountBox balancingAccountBox = new AonAccountBox(getDomainName(),getDomainId(),getUser(), false);
 		balancingAccountBox.setValue(aed.getBalancingAccount(), aed.getBalancingAccountCode(),
 				aed.getBalancingAccountDescription());
 		balancingAccountBox.setRequired(false);
-		
+		setWidget(row, COLS.BAL.ordinal(), balancingAccountBox);
+
 		final TextBox documentBox = new TextBox();
 		documentBox.setVisibleLength(20);
 		documentBox.setMaxLength(32);
 		documentBox.setValue(aed.getDocumentNumber());
 		documentBox.setStyleName(AON.CSS.aonInputText());
+		setWidget(row, COLS.DOC.ordinal(), documentBox );
 
-		AonTableButton removeButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
-		removeButton.setTabIndex(-2);
-		Label line = new Label( aed.getLine() ==null?"":AonNumberUtils.toString( aed.getLine()));
-		line.setStyleName(AON.CSS.aonFontSmall());
-		line.addStyleName(AON.CSS.aonItalic());
-		row.addCell( line )
-			.addCell( detailAccountBox )
-			.addCell( conceptSuggestBox )
-			.addCell( debitBox, AON.CSS.aonTextRight() )
-			.addCell( creditBox, AON.CSS.aonTextRight() )
-			.addCell( balancingAccountBox) 
-			.addCell( documentBox )
-			.addCell( removeButton )
-		;
-		
 		// -------------------------------------------------------------- EVENTS
 		// ---------------------------------------------------- [DETAIL ACCOUNT]
 		detailAccountBox.addSelectionHandler( new SelectionHandler<Account>() {
@@ -277,24 +334,32 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 					aed.setAccountCode(null);
 					aed.setAccountDescription(null);
 				}
-				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
+				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTableOLD.this, aed);
 			}
 		});
 		detailAccountBox.addSelectionHandler( new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
 				if (event.getSelectedItem() != null) {
-					SelectionEvent.<Account>fire(AccountEntryTable.this, event.getSelectedItem());
+					SelectionEvent.<Account>fire(AccountEntryTableOLD.this, event.getSelectedItem());
 				}
 			}
 		});
 		// ----------------------------------------------------------- [CONCEPT]
+//		conceptSuggestBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+//			
+//			@Override
+//			public void onSelection(SelectionEvent<Suggestion> event) {
+//				ValueChangeEvent.<String>fire(conceptSuggestBox, event.getSelectedItem().getReplacementString());
+//			}
+//		});
+		
 		conceptSuggestBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(final ValueChangeEvent<String> event) {
 				aed.setConcept(event.getValue());
-				if (wizardContent.getMainEntry().getDetails().size() > 3 &&  isConfirmConceptChange()) {
+				if (getRowCount() > 3 &&  isConfirmConceptChange()) {
 					AonConfirmDialog cd = new AonConfirmDialog();
 					cd.confirm(AON.MSG.changeConcept(),new AonConfirmDialogCallback() {
 						
@@ -309,36 +374,22 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 						
 						@Override
 						public void onAccept() {
-							for (int i = 0; i < wizardContent.getMainEntry().getDetails().size() ; i++ ) {
-								Widget r = getWidget( i + 1 );
-								if (r != null) {
-									if (r instanceof ComplexPanel) {
-										ComplexPanel row = (ComplexPanel) r;
-										Widget c = (ComplexPanel) row.getWidget( COLS.CON.ordinal() );;
-										if (c != null) {
-											if (c instanceof ComplexPanel) {
-												ComplexPanel cell = (ComplexPanel) c;		
-												Widget box = cell.getWidget( 0 );
-												if (box != null) {
-													if (box instanceof SuggestBox) {
-														SuggestBox db = (SuggestBox) box;
-														db.setValue(event.getValue());
-													}
-												}
-											}
-										}
-									}
+							for (int i = 1; i < getRowCount() ; i++ ) {
+								Widget w = getWidget( i , COLS.CON.ordinal());
+								if (w instanceof SuggestBox) {
+									SuggestBox cb = (SuggestBox) w;
+									cb.getValueBox().setValue(conceptBox.getValue(), false);
 								}
 							}
 							for (AccountEntryDetail aed : wizardContent.getMainEntry().getDetails() ) {
 								aed.setConcept(conceptBox.getValue());
 							}
 							debitBox.setFocus(true);
-							ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
+							ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTableOLD.this, aed);
 						}
 					});
 				} else {
-					ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
+					ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTableOLD.this, aed);
 				}
 			}
 		});
@@ -348,7 +399,7 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 			public void onError(ErrorEvent event) {
 				NativeEvent event2 = Document.get().createErrorEvent();
 				debitBox.getElement().setAttribute("ERROR", AON.MSG.arithmeticExpressionError(debitBox.getText()));
-				DomEvent.fireNativeEvent(event2, AccountEntryTable.this, debitBox.getElement());
+				DomEvent.fireNativeEvent(event2, AccountEntryTableOLD.this, debitBox.getElement());
 			}
 		});
 		debitBox.addValueChangeHandler(new ValueChangeHandler<Double>() {
@@ -367,7 +418,7 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 				aed.setDebit( d );
 				debitBox.setValue(d,false);
 				refreshTotals();
-				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
+				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTableOLD.this, aed);
 			}
 		});
 		debitBox.addKeyUpHandler(new KeyUpHandler() {
@@ -389,7 +440,7 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 					}
 					refreshTotals();
 					balancingAccountBox.setFocus(true);
-					ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
+					ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTableOLD.this, aed);
 				}
 			}
 		});
@@ -399,7 +450,7 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 			public void onError(ErrorEvent event) {
 				NativeEvent event2 = Document.get().createErrorEvent();
 				creditBox.getElement().setAttribute("ERROR", AON.MSG.arithmeticExpressionError(creditBox.getText()));
-				DomEvent.fireNativeEvent(event2, AccountEntryTable.this, creditBox.getElement());
+				DomEvent.fireNativeEvent(event2, AccountEntryTableOLD.this, creditBox.getElement());
 			}
 		});
 		creditBox.addValueChangeHandler(new ValueChangeHandler<Double>() {
@@ -417,10 +468,10 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 				aed.setCredit( d );
 				creditBox.setValue(d,false);
 				refreshTotals();
-				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
+				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTableOLD.this, aed);
 			}
 		});
-		
+		final int curRow = row;
 		creditBox.addKeyUpHandler(new KeyUpHandler() {
 			
 			@Override
@@ -440,7 +491,7 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 					}
 					refreshTotals();
 					balancingAccountBox.setFocus(true);
-					ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
+					ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTableOLD.this, aed);
 				}
 			}
 		});
@@ -457,14 +508,14 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 					aed.setBalancingAccountCode(null);
 					aed.setBalancingAccountDescription(null);
 				}
-				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
+				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTableOLD.this, aed);
 			}
 		});
 		balancingAccountBox.addSelectionHandler( new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
 				if (event.getSelectedItem() != null) {
-					SelectionEvent.<Account>fire(AccountEntryTable.this, event.getSelectedItem());
+					SelectionEvent.<Account>fire(AccountEntryTableOLD.this, event.getSelectedItem());
 				}
 			}
 		});
@@ -474,7 +525,7 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 			@Override
 			public void onValueChange(final ValueChangeEvent<String> event) {
 				aed.setDocumentNumber(documentBox.getValue());
-				if (wizardContent.getMainEntry().getDetails().size() > 3 && isConfirmDocumentChange()) {
+				if (getRowCount() > 3 && isConfirmDocumentChange()) {
 					AonConfirmDialog cd = new AonConfirmDialog();
 					cd.confirm(AON.MSG.changeDocument(),new AonConfirmDialogCallback() {
 						
@@ -484,140 +535,51 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 						}
 						@Override
 						public void onClose() {
-							documentBox.setFocus(true);
+							AccountEntryTableOLD.this.setFocus(true);
 						}
 						@Override
 						public void onAccept() {
-							for (int i = 0; i < wizardContent.getMainEntry().getDetails().size() ; i++ ) {
-								Widget r = getWidget( i + 1 );
-								if (r != null) {
-									if (r instanceof ComplexPanel) {
-										ComplexPanel row = (ComplexPanel) r;
-										Widget c = (ComplexPanel) row.getWidget( COLS.DOC.ordinal() );;
-										if (c != null) {
-											if (c instanceof ComplexPanel) {
-												ComplexPanel cell = (ComplexPanel) c;		
-												Widget box = cell.getWidget( 0 );
-												if (box != null) {
-													if (box instanceof TextBox) {
-														TextBox db = (TextBox) box;
-														db.setValue(event.getValue());
-													}
-												}
-											}
-										}
-									}
+							for (int i = 1; i < getRowCount() ; i++ ) {
+								Widget w = getWidget( i , COLS.DOC.ordinal());
+								if (w instanceof TextBox) {
+									TextBox db = (TextBox) w;
+									db.setValue(event.getValue());
 								}
 							}
 							for (AccountEntryDetail aed : wizardContent.getMainEntry().getDetails() ) {
 								aed.setDocumentNumber(event.getValue());
 							}
-							documentBox.setFocus(true);
-							ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
+							AccountEntryTableOLD.this.setFocus(true);
 						}
 					});
 				}
-				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
+				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTableOLD.this, aed);
 			}
 		});
 		
 		// --------------------------------------------------- [DETAIL REMOVE]
+		AonTableButton removeButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
+		removeButton.setTabIndex(Integer.MAX_VALUE);
 		removeButton.addClickHandler( new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				if (aed.getId() == null) {
-					if (wizardContent.getMainEntry().getDetails().size() > 1) {
-						wizardContent.getMainEntry().getDetails().remove(aed);
-						remove( row );
-						refreshTotals();
-					} else {
-						AonMessageDialog.error("No es posible borrar, al menos debe haber una l\u00EDnea");
-					}
+					wizardContent.getMainEntry().getDetails().remove(aed);
+					removeRow(curRow);
+					removeRow(getRowCount() - 1);
+					paintFooter();
+					paintAddButton();
 				} else {
 					aed.setId( aed.getId() * -1 );
-					row.clear();
-					paintDeletedRow(options,row, aed);
+					paintDeletedRow(curRow, aed);
 					refreshTotals();
 				}
 			}
 		});
-		return detailAccountBox;
-	}
-	
-	private void paintDeletedRow(AccountEntryModuleOptions options, AonDisplayGridRow row, final AccountEntryDetail aed) {
-		AonTableButton restoreButton = new AonTableButton(AON.MSG.undo(), AON.CSS.aonIconUndo() );
-		restoreButton.setTabIndex(Integer.MAX_VALUE);
-		restoreButton.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				aed.setId( aed.getId() * -1 );
-				row.clear();
-				paintActiveRow(options , row, aed);
-				refreshTotals();
-			}
-		});
-		row.addCell(new Label())
-		   .addCell(getDeletedLabel(AonStringUtils.abbreviate( aed.getAccountCode() + " " + aed.getAccountDescription() , 50)))
-		   .addCell(getDeletedLabel(aed.getConcept() ))
-		   .addCell(getDeletedLabel(AON.FMT.format( aed.getDebit())), AON.CSS.aonTextRight())
-		   .addCell(getDeletedLabel(AON.FMT.format( aed.getCredit())), AON.CSS.aonTextRight())
-		   .addCell(getDeletedLabel(aed.getBalancingAccountCode()))
-		   .addCell(getDeletedLabel(aed.getDocumentNumber()))
-		   .addCell(restoreButton)
-		;
+		setWidget(row, COLS.BUT.ordinal(), removeButton);
 	}
 
-	private void refreshTotals() {
-		boolean equals = AonMathUtils.isZero( getSumDif(true) );
-		sumDebit.setStyleName(equals?AON.CSS.aonColorGreen():AON.CSS.aonColorRed());
-		sumCredit.setStyleName(equals?AON.CSS.aonColorGreen():AON.CSS.aonColorRed());
-	}
-	
-	private double getSumDif(boolean fillWidget) {
-		double sumD = 0.0;
-		double sumC = 0.0;
-		for (AccountEntryDetail aed : wizardContent.getMainEntry().getDetails()) {
-			if (!aed.isDeleted()) {
-				sumD = AonMathUtils.sum(sumD, aed.getDebit());	
-				sumC = AonMathUtils.sum(sumC, aed.getCredit());
-			}
-		}
-		if (fillWidget) {
-			sumDebit.setText(AON.FMT.format(sumD));
-			sumCredit.setText(AON.FMT.format(sumC));
-		}
-		return AonMathUtils.round(sumD - sumC);
-	}
-	
-	private Label getDeletedLabel(String text) {
-		Label label = new Label(text);
-		label.setStyleName(AON.CSS.aonItalic());
-		label.addStyleName(AON.CSS.aonTextLineThrough());
-		return label;
-	}
-	
-	private Label getUnmodifiableLabel(String text) {
-		Label label = new Label(text);
-		return label;
-	}
-	
-	private void paintUnmodifiableRow(AonDisplayGridRow row, final AccountEntryDetail aed) {
-		Label line = new Label( aed.getLine() ==null?"":AonNumberUtils.toString( aed.getLine()));
-		line.setStyleName(AON.CSS.aonFontSmall());
-		line.addStyleName(AON.CSS.aonItalic());
-		row.addCell( line )
-			.addCell( getUnmodifiableLabel(AonStringUtils.abbreviate( aed.getAccountCode() + " " + aed.getAccountDescription() , 50)))
-			.addCell( getUnmodifiableLabel(aed.getConcept() ))
-			.addCell( getUnmodifiableLabel(AON.FMT.format( aed.getDebit()) ), AON.CSS.aonTextRight())
-			.addCell( getUnmodifiableLabel(AON.FMT.format( aed.getCredit()) ), AON.CSS.aonTextRight())
-			.addCell( getUnmodifiableLabel(aed.getBalancingAccountCode()))
-			.addCell( getUnmodifiableLabel(aed.getDocumentNumber() ))
-			.addCell( new Label())
-		;
-	}
-	
 	private boolean canAddLine() {
 		if (!wizardContent.isUpdatable()) return false; 
 		if (wizardContent.getMainEntry().getDetails() == null || wizardContent.getMainEntry().getDetails().isEmpty()) return false;
@@ -625,18 +587,44 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 		return AonMathUtils.isNotZero( getSumDif(false) );
 	}
 
-	private void addLine( AccountEntryModuleOptions options) {
+	private void paintAddButton() {
+		if ( wizardContent.isUpdatable()) {
+			final AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd() );
+			addButton.setAccessKey( 'L' );
+			addButton.addFocusHandler(new FocusHandler() {
+				@Override
+				public void onFocus(FocusEvent event) {
+					if (canAddLine()) {
+						addLine();
+						remove(addButton);
+						setFocus(true);
+					}
+				}
+			});
+			
+			addButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					addLine();
+					remove(addButton);
+					Focusable focusable = (Focusable) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
+					focusable.setFocus(true);
+				}
+			});
+			setWidget(getRowCount() - 1, COLS.NUM.ordinal(),  addButton );
+		} else {
+			setWidget(getRowCount() - 1, COLS.NUM.ordinal(),  new Label());
+		}
+
+	}
+
+	private void addLine() {
 		AccountEntryDetail aed = wizardContent.getMainEntry().getLastDetail();
 		AccountEntryDetail newDetail = new AccountEntryDetail();
 		if (aed != null) {
 			newDetail.setConcept(aed.getConcept());
 			newDetail.setDocumentNumber(aed.getDocumentNumber());
-			int line = -1;
-			for ( AccountEntryDetail d : wizardContent.getMainEntry().getDetails()) {
-				line = (line > d.getLine()) ? line : d.getLine(); 
-			}
-			newDetail.setLine(++line);
-			
+	
 			if ( wizardContent.getMainEntry().getDetailsSize() == 1) {
 				newDetail.setAccount(aed.getBalancingAccount());
 				newDetail.setAccountCode(aed.getBalancingAccountCode());
@@ -659,15 +647,14 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 			newDetail.setCredit(0);
 		}
 		wizardContent.getMainEntry().getDetails().add(newDetail);
-		paintRow(options, newDetail);
-		if (newDetail.getAccount() != null) {
-			ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
+		paintRow( (getRowCount() - 1), newDetail);
+		paintFooter();
+		if (wizardContent.isUpdatable()) {
+			paintAddButton();
 		}
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			public void execute() {
-				AccountEntryTable.this.setFocus(true);
-			}
-		});
+		if (newDetail.getAccount() != null) {
+			ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTableOLD.this, aed);
+		}
 	}
 
 	@Override
@@ -677,35 +664,28 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 
 	@Override
 	public int getTabIndex() {
-//		Focusable focusable = (Focusable) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
-		return focusable == null? -1 : focusable.getTabIndex();
+		Focusable focusable = (Focusable) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
+		return focusable.getTabIndex();
 	}
 
 	@Override
 	public void setAccessKey(char key) {
-//		Focusable focusable = (Focusable) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
-		if (focusable != null) {
-			focusable.setAccessKey(key);
-		}
+		Focusable focusable = (Focusable) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
+		focusable.setAccessKey(key);
 	}
 
 	@Override
 	public void setFocus(boolean focused) {
-		if (focusable != null) {
-			focusable.setFocus(true);
+		if (wizardContent.isUpdatable()) {
+			AonAccountBox ab = (AonAccountBox) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
+			ab.setFocus(true);
 		}
-//		if (wizardContent.isUpdatable()) {
-//			AonAccountBox ab = (AonAccountBox) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
-//			ab.setFocus(true);
-//		}
 	}
 
 	@Override
 	public void setTabIndex(int index) {
-//		Focusable focusable = (Focusable) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
-		if (focusable != null) {
-			focusable.setTabIndex(index);
-		}
+		Focusable focusable = (Focusable) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
+		focusable.setTabIndex(index);
 	}
 
 	@Override

@@ -77,8 +77,27 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 		
 	private void select(IAccountEntryWrapper wrp,ISelectionCallback cbk) {
 		setWrapper((AccountEntryWrapper) wrp);
-		paint();
-		table.paintTable();
+		tableContainer.setStyleName(AON.AON_CSS.aonScrollArea());
+		tableInnerContainer = new VerticalPanel();
+		tableInnerContainer.addStyleName(AON.AON_CSS.aonWidthAll());
+		
+		table = new AccountEntryTable(getCallback().getModuleOptions(),this);
+		table.addErrorHandler(new ErrorHandler() {
+
+			@Override
+			public void onError(ErrorEvent event) {
+				getCallback().getModule().onError(event.getRelativeElement().getAttribute("ERROR"));
+			}
+			
+		});
+		table.addValueChangeHandler(new ValueChangeHandler<AccountEntryDetail>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<AccountEntryDetail> event) {
+				getCallback().getModule().refreshIdLabel();
+				getCallback().getModule().onPreview(getWrapper());
+			}
+		});
 		tableInnerContainer.add(table);
 		tableContainer.setWidget(tableInnerContainer);
 		getCallback().getModule().refreshIdLabel();
@@ -134,30 +153,6 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 				.setEntryDate(base.getEntryDate())
 				.setActivity(base.getActivity())
 				.setJournal(null));
-	}
-	
-	private void paint() {
-		tableContainer.setStyleName(AON.AON_CSS.aonScrollArea());
-		tableInnerContainer = new VerticalPanel();
-		tableInnerContainer.addStyleName(AON.AON_CSS.aonWidthAll());
-		
-		table = new AccountEntryTable(getCallback().getCurrentDomainName(),getCallback().getCurrentUser(),getCallback().getCurrentDomainId(),this);
-		table.addErrorHandler(new ErrorHandler() {
-
-			@Override
-			public void onError(ErrorEvent event) {
-				getCallback().getModule().onError(event.getRelativeElement().getAttribute("ERROR"));
-			}
-			
-		});
-		table.addValueChangeHandler(new ValueChangeHandler<AccountEntryDetail>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<AccountEntryDetail> event) {
-				getCallback().getModule().refreshIdLabel();
-				getCallback().getModule().onPreview(getWrapper());
-			}
-		});
 	}
 	
 	@Override

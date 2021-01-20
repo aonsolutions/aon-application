@@ -109,8 +109,6 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	private int journalTabIndex;
 	private int extraInfoTabIndex;
 	
-	public final static int JOURNAL_PANEL_TAB_OFFSET = 1000000;
-
 	static AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
 	static FiscalServiceAsync FISCAL_SERVICE;
 	static CommonServiceAsync COMMON_SERVICE;
