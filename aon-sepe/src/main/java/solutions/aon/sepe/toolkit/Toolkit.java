@@ -209,40 +209,24 @@ public class Toolkit {
 	public static String identity(String ipf) {
 		ipf = removeExtraZeros(ipf);
 		Pattern nif  = Pattern.compile(
-				//  -------- LEGAL_PERSON_NIF PATTERN  
-				// -------- (1) --> X00000000
-					"^[A-JUV]"
-					+"[\\s-_/]?"
-					+"[0-9]{2}"
-					+"[-_/\\.]?"
-					+"[0-9]{3}"
-					+"[-_/\\.]?"
-					+"[0-9]{3}$"
+					"^\\d{8}[a-zA-Z]{1}$"
 					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
-		Pattern dni  = Pattern.compile(
-					"[0-9]?"
-					+"[0-9]"
-					+"[\\s-_/\\.]?"
-					+"[0-9]{3}"
-					+"[\\s-_/\\.]?"
-					+"[0-9]{3}"
-					+"[\\s-_/]?"
-					+"[A-Z]"
-					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		
+		Pattern nie  = Pattern.compile(
+				"^[XxTtYyZz]{1}\\d{7}[a-zA-Z]{1}$"
+			, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		
+		Pattern cif  = Pattern.compile(
+				"^[a-zA-Z]{1}\\d{7}[0-9]{1}$"
+				, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
 				//  -------- NIE PATTERN 
 				// -------- (1) --> X0000000X
-		Pattern nie  = Pattern.compile(
-					"[XYZ]"
-					+"[\\s-_/]?"
-					+"[0-9]{7}"
-					+"[\\s-_/]?"
-					+"[A-HJ-NP-TV-Z]"
-				, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		
 		
 		Map<Pattern, Integer> patterns = new HashMap<Pattern, Integer>();
 		patterns.put(nif, 1);
-		patterns.put(dni, 1);
 		patterns.put(nie, 6);
+		patterns.put(cif, 4);
 		
 		String identity = "";
 		for (Entry<Pattern, Integer> entry : patterns.entrySet()) {

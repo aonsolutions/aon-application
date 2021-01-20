@@ -135,4 +135,11 @@ public class TestContrato {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	@Ignore
+	public void testValues() {
+		TypeFirm value = TypeFirm.REHUSAN_FIRMAR;
+		System.out.println(value.getValue());
+	}
 }

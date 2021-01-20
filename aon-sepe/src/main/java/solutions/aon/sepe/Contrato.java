@@ -136,18 +136,12 @@ public class Contrato {
 				if(cto.getDurationTypeJndMin()!=null)
 					form.getInputByName("minutosduracionjornada").setValueAttribute(cto.getDurationTypeJndMin());
 				
+				//TIEMPO PARCIAL
 				if(cto.getDurationTypeCvnHour()!=null)
 					form.getInputByName("horasduracionconvenio").setValueAttribute(cto.getDurationTypeCvnHour());
 			
 				if(cto.getDurationTypeCvnMin()!=null)
 					form.getInputByName("minutosduracionconvenio").setValueAttribute(cto.getDurationTypeCvnMin());
-				/*
-				 	//TIEMPO PARCIAL
-
-					//OPTIONAL
-					form.getInputByName("horasduracionconvenio").setValueAttribute("");
-					form.getInputByName("minutosduracionconvenio").setValueAttribute("");
-				*/
 			}
 			
 			form.getInputByName("contratoEscrito").setValueAttribute("N"); //  contratoEscrito si la fecha fin es menor a 28 
@@ -201,23 +195,8 @@ public class Contrato {
 	        htmlPage = page_contrac_or_cbasic(htmlPage, fini, ffin, ipf);
 	        
 	        form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-	        Integer nFirm = 0;
-	        switch (typeFirm) {
-				case FIRMADA_REPRESENTANTES_LEGALES:
-					nFirm = 1;
-				break;
-				case NO_EXISTE_REPRESENTACION:
-					nFirm = 2;
-				break;
-				case NO_FACILITADO_COPIA:
-					nFirm = 3;
-				break;
-				case REHUSAN_FIRMAR:
-					nFirm = 4;
-				break;
-			}
 	      
-	        ((HtmlSelect)form.querySelector("select[name=codtipofirma]")).setSelectedAttribute(nFirm.toString(), true);
+	        ((HtmlSelect)form.querySelector("select[name=codtipofirma]")).setSelectedAttribute(typeFirm.getValue().toString(), true);
 	        ((HtmlTextArea)form.querySelector("[name=areadeDomicilio]")).setText(workAddress);
 	        ((HtmlTextArea)form.querySelector("[name=areadeTexto]")).setText(restContract);
 	        
@@ -515,13 +494,10 @@ public class Contrato {
 				} else if(pStr.indexOf("se ha realizado correctamente")>=0) {
 					msg = pStr;
 					break;
-				} else if(pStr.indexOf("sin fecha de t\u00E9rmino")>=0) {
+				} else if(pStr.indexOf("sin fecha de t\u00E9rmino")>=0 || pStr.indexOf("F\u00EDsica en la base de datos no coinciden")>=0) {
 					msg = "returnInit";
 					break;
-				} else if(pStr.indexOf("F\u00EDsica en la base de datos no coinciden")>=0) {
-					msg = "returnInit";
-					break;
-				}
+				} 
 			}
 		}
 		return msg;
@@ -538,9 +514,20 @@ public class Contrato {
 	}
 	
 	public enum TypeFirm {
-		FIRMADA_REPRESENTANTES_LEGALES, 
-		NO_EXISTE_REPRESENTACION,
-		NO_FACILITADO_COPIA,
-		REHUSAN_FIRMAR
+		FIRMADA_REPRESENTANTES_LEGALES(1), 
+		NO_EXISTE_REPRESENTACION(2),
+		NO_FACILITADO_COPIA(3),
+		REHUSAN_FIRMAR(4);
+		
+		private Integer value;
+		
+		private TypeFirm(Integer value) {
+			this.value = value;
+		}
+		
+		public Integer getValue() {
+			return value;
+		}
+
 	}
 }

@@ -104,16 +104,16 @@ public class HtmlUnitToolkit {
 	}
 
 	//GETS THE SS STATUS CODE
-	public static String getSSmessage(HtmlPage htmlPage) throws SepeException {
-		try { return HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL"); }
-		catch (ElementNotFoundException e) {return "";}
-		catch(NumberFormatException e) {throw new SepeException (e);}
+	public static String getSSmessage(HtmlPage htmlPage) {
+		try { return HtmlUnitToolkit.getTrimmedById(htmlPage, "inicial"); }
+		catch (Exception e) {}		
+		return "";
 	}
 
 	//MANAGES THE EXCEPTIONS
 	public static void manageStatusCode(HtmlPage htmlPage) throws SepeException {
 		Integer code = htmlPage.getWebResponse().getStatusCode();
-        String msg = null; 
+		String msg = null;
 		InvalidDataException.checkCode(code, msg);
 	}
 
@@ -137,6 +137,8 @@ public class HtmlUnitToolkit {
 		 String s = "submit";
 		 el.setTextContent(s);
 		 el.setAttribute("type", s);
+		 el.setAttribute("value", s);
+		 el.setAttribute("name", "submitCustom");
 	     return el;
 	}
 
