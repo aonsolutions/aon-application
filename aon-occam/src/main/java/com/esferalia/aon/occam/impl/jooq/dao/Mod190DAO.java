@@ -1109,9 +1109,13 @@ public class Mod190DAO {
 						double irpfQuota = ( AonMathUtils.isZero( irpfBase) )
 								?0.0
 								:(irpfBase * totalIrpf / totalIrpfBase);
-						Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"05");
-						detail.setPerception(AonMathUtils.round(detail.getPerception() + amount ));
-						detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
+						if ( AonMathUtils.isGreatherThanZero(irpfBase )) {
+							visitAKey();		
+						} else {
+							Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"05");
+							detail.setPerception(AonMathUtils.round(detail.getPerception() + amount ));
+							detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
+						}
 					}
 					
 					private void visitAKey() {
