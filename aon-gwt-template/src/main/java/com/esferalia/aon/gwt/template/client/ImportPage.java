@@ -93,7 +93,8 @@ public class ImportPage extends AonTemplate2{
 				+ "?type=diary", "_blank",null);
 		Window.open( GWT.getModuleBaseURL()+ "/gwt_download_template"
 				+ "?type=pgc", "_blank",null);
-		
+		Window.open( GWT.getModuleBaseURL()+ "/gwt_download_template"
+				+ "?type=fee", "_blank",null);		
 	}
 	
 	private void info() {

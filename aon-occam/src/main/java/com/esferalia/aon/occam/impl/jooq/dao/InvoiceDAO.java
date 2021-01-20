@@ -845,6 +845,39 @@ public class InvoiceDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	private static InvoicingGroup insert(AONContext ctx, InvoicingGroup invoicingGroup) {
+		Integer id = ctx.getDslContext()
+			.insertInto(INVOICING_GROUP)
+			.set(INVOICING_GROUP.DOMAIN, invoicingGroup.getDomain())
+			.set(INVOICING_GROUP.CUSTOMER, invoicingGroup.getCustomer())
+			.set(INVOICING_GROUP.CUSTOMER_GROUPED, invoicingGroup.getCustomerGrouped())
+			.set(INVOICING_GROUP.DESCRIPTION, invoicingGroup.getDescription())
+			.set(INVOICING_GROUP.CREATION_DATE,  new Timestamp(new Date().getTime()))
+			.set(INVOICING_GROUP.CREATION_USER, ctx.getUser())
+			.set(INVOICING_GROUP.MODIFICATION_DATE,  new Timestamp(new Date().getTime()))
+			.set(INVOICING_GROUP.MODIFICATION_USER, ctx.getUser())
+			.returning(INVOICING_GROUP.ID).fetchOne().getValue(INVOICING_GROUP.ID);
+		return invoicingGroup.setId(id);
+	}
+	
+	private static InvoicingGroup update(AONContext ctx, InvoicingGroup invoicingGroup) {
+		ctx.getDslContext()
+			.update(INVOICING_GROUP)
+			.set(INVOICING_GROUP.DESCRIPTION, invoicingGroup.getDescription())
+			.set(INVOICING_GROUP.MODIFICATION_DATE,  new Timestamp(new Date().getTime()))
+			.set(INVOICING_GROUP.MODIFICATION_USER, ctx.getUser())
+			.where(INVOICING_GROUP.ID.eq(invoicingGroup.getId()))
+			.execute();
+		return invoicingGroup;
+	}
+	
+	public static InvoicingGroup save(AONContext ctx, InvoicingGroup invoicingGroup) {
+		return invoicingGroup.getId() != null 
+				? update(ctx, invoicingGroup) 
+				: insert(ctx, invoicingGroup) ;
+	}
+	
+	
 	public static LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate){
 		Field<Integer> orderedType = getOrderedType();
 		AggregateFunction<Integer> min = DSL.min(INVOICE.NUMBER);

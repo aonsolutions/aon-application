@@ -32,38 +32,42 @@ public class CustomerDAO {
 	
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
 
-	private static class CustomerFiller  implements Function<Record, Customer> {
+	protected static class CustomerFiller  implements Function<Record, Customer> {
 
 		@Override
 		public Customer apply(Record r) {
+			return buildCustomer(r);
+		}
+		
+		public static Customer buildCustomer(Record r) {
 			return new Customer()
-				.setRegistryData( new Registry() 
-					.setId(r.getValue(REGISTRY.ID))
-					.setDomain(new Domain().setId(r.getValue(CUSTOMER.DOMAIN)))
-					.setDocument(r.getValue(REGISTRY.DOCUMENT))
-					.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
-					.setDocumentCountry(Country.safeValueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)) )
-					.setName(r.getValue(REGISTRY.NAME))
-					.setAlias(r.getValue(REGISTRY.ALIAS))
-					.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)))
-					.setNationality(Country.safeValueOf(r.getValue(REGISTRY.NATIONALITY)) )
-					.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL))))
-				.setAccount(r.getValue(CUSTOMER.ACCOUNT))
-				.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
-				.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))
-				.setDeliveryGrouped(r.getValue(CUSTOMER.DELIVERY_GROUPED) == 1)
-				.setDeliveryValuated(r.getValue(CUSTOMER.DELIVERY_VALUATED) == 1)
-				.setEInvoice(r.getValue(CUSTOMER.E_INVOICE) == 1)
-				.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
-				.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
-				.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
-				.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED) == 1)
-				.setScope(r.getValue(CUSTOMER.SCOPE))
-				.setSurcharge(r.getValue(CUSTOMER.SURCHARGE)==1)
-				.setTariff(r.getValue(CUSTOMER.TARIFF))
-				.setTransaction(InvoiceTransactionType.safeValueOf( r.getValue(CUSTOMER.TRANSACTION)))
-				.setWithholding(r.getValue(CUSTOMER.WITHHOLDING)==1)
-				.setStatus(RegistryStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)));
+					.setRegistryData( new Registry() 
+						.setId(r.getValue(REGISTRY.ID))
+						.setDomain(new Domain().setId(r.getValue(CUSTOMER.DOMAIN)))
+						.setDocument(r.getValue(REGISTRY.DOCUMENT))
+						.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
+						.setDocumentCountry(Country.safeValueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)) )
+						.setName(r.getValue(REGISTRY.NAME))
+						.setAlias(r.getValue(REGISTRY.ALIAS))
+						.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)))
+						.setNationality(Country.safeValueOf(r.getValue(REGISTRY.NATIONALITY)) )
+						.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL))))
+					.setAccount(r.getValue(CUSTOMER.ACCOUNT))
+					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
+					.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))
+					.setDeliveryGrouped(r.getValue(CUSTOMER.DELIVERY_GROUPED) == 1)
+					.setDeliveryValuated(r.getValue(CUSTOMER.DELIVERY_VALUATED) == 1)
+					.setEInvoice(r.getValue(CUSTOMER.E_INVOICE) == 1)
+					.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
+					.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
+					.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED) == 1)
+					.setScope(r.getValue(CUSTOMER.SCOPE))
+					.setSurcharge(r.getValue(CUSTOMER.SURCHARGE)==1)
+					.setTariff(r.getValue(CUSTOMER.TARIFF))
+					.setTransaction(InvoiceTransactionType.safeValueOf( r.getValue(CUSTOMER.TRANSACTION)))
+					.setWithholding(r.getValue(CUSTOMER.WITHHOLDING)==1)
+					.setStatus(RegistryStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)));
 		}
 	}
 	

@@ -47,13 +47,14 @@ import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryImport;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryInfo;
 import com.esferalia.aon.gwt.template.server.imports.DiaryImport;
+import com.esferalia.aon.gwt.template.server.imports.DiaryImport.AccountEntryImportClass;
+import com.esferalia.aon.gwt.template.server.imports.FeeImport;
+import com.esferalia.aon.gwt.template.server.imports.ImportFixer;
 import com.esferalia.aon.gwt.template.server.imports.InvoiceImport;
 import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass;
 import com.esferalia.aon.gwt.template.server.imports.PGCImport;
-import com.esferalia.aon.gwt.template.server.imports.RegistryImport;
-import com.esferalia.aon.gwt.template.server.imports.DiaryImport.AccountEntryImportClass;
-import com.esferalia.aon.gwt.template.server.imports.ImportFixer;
 import com.esferalia.aon.gwt.template.server.imports.PGCImport.AccountImportClass;
+import com.esferalia.aon.gwt.template.server.imports.RegistryImport;
 import com.esferalia.aon.gwt.template.server.imports.RegistryImport.RegistryImportClass;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.server.projectCommercial.CustomerIban;
@@ -223,8 +224,8 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		return DBStock.getInstance().getWarehouse(domain, user);
 	}
 
-
 	//-------------------- IMPORTAR
+	HashMap<String,LinkedList<FeeInfo>> fis = new HashMap<String, LinkedList<FeeInfo>>();
 	HashMap<String, LinkedList<ProjectCommercial>> pcs = new HashMap<String, LinkedList<ProjectCommercial>>();
 	HashMap<String,LinkedList<CustomerIban>> cis = new HashMap<String, LinkedList<CustomerIban>>();
 	HashMap<String,LinkedList<InvoiceImportClass>> ivs = new HashMap<String, LinkedList<InvoiceImportClass>>();
@@ -269,8 +270,11 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 			if(importType.equals(ImportType.PRODUCT))
 				executeExcelProduct(domain, user, rowIterator, error, evaluator);
-			else if(importType.equals(ImportType.FEE))
-				executeExcelFee(domain, user, rowIterator, error, ignoreInactiveClient, evaluator);
+			else if(importType.equals(ImportType.FEE)) {
+				fis.put(hashId, FeeImport.getInstance().importation(domain, user.getLogin(), data));
+				rowCount = fis.get(hashId).size();
+				//executeExcelFee(domain, user, rowIterator, error, ignoreInactiveClient, evaluator);
+			}
 			else if(importType.equals(ImportType.PROPOSAL))
 				executeExcelProposal(domain, user, rowIterator, error);
 			else if(importType.equals(ImportType.STOCK))
@@ -324,8 +328,11 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 				if(importType.equals(ImportType.PRODUCT))
 					executeExcelProduct(domain, user,  rowIterator, error, evaluator);
-				else if(importType.equals(ImportType.FEE))
-					executeExcelFee(domain, user, rowIterator, error, ignoreInactiveClient, evaluator);
+				else if(importType.equals(ImportType.FEE)) {
+					fis.put(hashId, FeeImport.getInstance().importationX(domain, user.getLogin(), data));
+					rowCount = fis.get(hashId).size();
+					//executeExcelFee(domain, user, rowIterator, error, ignoreInactiveClient, evaluator);
+				}
 				else if(importType.equals(ImportType.PROPOSAL))
 					executeExcelProposal(domain, user, rowIterator, error);
 				else if(importType.equals(ImportType.STOCK))
@@ -2731,6 +2738,12 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	public Error insertPGC(Domain domain, User user, Integer index) {
 		String hashId = Base64.encode(domain.getName() + user.getLogin());
 		return PGCImport.insertPGC(domain, user, index, accounts.get(hashId));			
+	}
+	
+	@Override
+	public Error insertFee(Domain domain, User user, Integer index) {
+		String hashId = Base64.encode(domain.getName() + user.getLogin());
+		return FeeImport.insertFees(domain, user, index, fis.get(hashId));			
 	}
 
 	@Override

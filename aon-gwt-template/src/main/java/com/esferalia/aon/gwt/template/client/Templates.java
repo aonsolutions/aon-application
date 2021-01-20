@@ -188,12 +188,15 @@ public class Templates extends Composite implements EntryPoint {
 	}	
 	
 //------------------------------ Utils	
-	Boolean ignoreInactiveClientAux;
-	private void importFee(){
-		Dialog d = new Dialog("Importar Cuotas","Importar",true,"Cancelar",true,"importFee");
+
+	LinkedList<String> verror = new LinkedList<>();
+	LinkedList<String> werror = new LinkedList<>();
+	
+	private void importation(ImportType type){		
+		Dialog d = new Dialog("Importar " + type.getName(),"Importar",true,"Cancelar",true,"importOnly");
 		d.setUrl(GWT.getModuleBaseURL());
-		d.setTemplateList(templateList);
-		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
+		TemplatesDialog popup = new TemplatesDialog(aonData, d) {
+			
 			@Override
 			protected void onCancel() {
 				hide();
@@ -201,80 +204,97 @@ public class Templates extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onAccept() {
-				ListBox lb = (ListBox) flex_table.getWidget(0, 1);
-				String template = lb.getItemText(lb.getSelectedIndex());
-				TemplateInfo ti = new TemplateInfo();
-				
-				for(TemplateInfo t : tlist) {
-					if(t.getName().equals(template) && t.getType().equals("Cuota")){
-						ti = t;
-					}
-				}
-				
-				CheckBox cb = (CheckBox) flex_table.getWidget(2, 0);
-				Boolean ignoreInactiveClient = cb.getValue();
-				
 				hide();
-				tiAux = ti;
-				ignoreInactiveClientAux = ignoreInactiveClient;
-				item.excelRowNumber(getDomain(), getUser(), new AsyncCallback<Integer>() {
-					TemplateInfo ti = tiAux;
-					Boolean ignoreInactiveClient = ignoreInactiveClientAux;
+				pbd = new ProgressBarDialog("Procesando Excel...") {};
+				pbd.addStyleName("gwt-PopupPanel-template");
+				pbd.setGlassEnabled(true);
+				pbd.show();
+						
+				item.executeExcel(getDomain(), getUser(), null, type, null, null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
+							
 					@Override
 					public void onSuccess(Integer result) {
-						hide();
-						pbd = new ProgressBarDialog(result.doubleValue(), 0.86) {
-					
-						};
+						pbd.completed();
+						pbd.hide();
+						pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();
-						item.executeExcel(getDomain(), getUser(), ti, ImportType.FEE, ignoreInactiveClient,
-								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
-							@Override
-							public void onSuccess(Integer result) {
-								item.insertFee(getDomain(), getUser(), new AsyncCallback<Error>() {
-									@Override
-									public void onSuccess(Error result) {
-										pbd.completed();
-										pbd.hide();
-										Dialog d2 = new Dialog("Importar Cuotas","Aceptar",true,"Cancelar",false,"importResponse");
-										d2.setError(result);
-										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
-
-											@Override
-											protected void onAccept() {
-												hide();			
-											}
-										
-											@Override
-											protected void onCancel() {
-												hide();
-											}
-										};
-										popup2.addStyleName("gwt-PopupPanel-template");
-										popup2.setGlassEnabled(true);
-										popup2.show();
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {}
-								});
-							}	
-					
-							@Override
-							public void onFailure(Throwable caught) {}
-						});
+						insert(type, 0, result);
 					}
-			
+						
 					@Override
 					public void onFailure(Throwable caught) {}
-				});
+				});	
 			}
 		};
 		popup.addStyleName("gwt-PopupPanel-template");
 		popup.setGlassEnabled(true);
-		popup.show();
+		popup.center();
+	}
+
+	private void insert(ImportType type, Integer index, Integer lines) {
+		AsyncCallback<Error> callback = new AsyncCallback<Error>() {
+			@Override
+			public void onSuccess(Error result) {
+				Double progress = (result.getLine().doubleValue() / lines.doubleValue()) * 100.0;
+				if(!result.getError()) {
+					verror.add(result.getTextError().getFirst());
+				}
+				if(result.getTextWarning() != null && result.getTextWarning().size() > 0) {
+					werror.addAll(result.getTextWarning());
+				}
+				pbd.updateProgress(progress.intValue());
+				if(result.getLine() < lines - 1) {
+					insert(type, result.getLine() + 1, lines);
+				} else {
+					pbd.completed();
+					pbd.hide();
+					Error error = new Error();
+					error.setError(verror.size() == 0);
+					error.setTextError(verror);
+					error.setTextWarning(werror);
+					Dialog dialog = new Dialog("Importar " + type.getName(),"Aceptar",true,"Cancelar",false,"importResponse");
+					dialog.setError(error);
+					TemplatesDialog popup2 = new TemplatesDialog(getAonData(), dialog){
+
+						@Override
+						protected void onAccept() {
+							verror = new LinkedList<>();
+							werror = new LinkedList<>();
+							hide();			
+						}
+
+						@Override
+						protected void onCancel() {
+							verror = new LinkedList<>();
+							werror = new LinkedList<>();
+							hide();
+						}
+					};
+					popup2.addStyleName("gwt-PopupPanel-template");
+					popup2.setGlassEnabled(true);
+					popup2.center();
+				}
+			}
+				
+			@Override public void onFailure(Throwable caught) {
+				pbd.completed();
+				pbd.hide();
+			}
+		};
+		
+		if (ImportType.INVOICE.equals(type)) {
+			item.insertInvoices(getDomain(), getUser(), index, callback);
+		} else if(ImportType.DIARY.equals(type)) {
+			item.insertDiary(getDomain(), getUser(), index, callback);
+		} else if(ImportType.PGC.equals(type)) {
+			item.insertPGC(getDomain(), getUser(), index, callback);
+		} else if(ImportType.REGISTRY.equals(type)) {
+			item.insertRegistries(getDomain(), getUser(), index, callback);
+		} else if(ImportType.FEE.equals(type)) {
+			item.insertFee(getDomain(), getUser(), index, callback);
+		}
 	}
 	
 	private void exportFee(){
@@ -1572,7 +1592,7 @@ public class Templates extends Composite implements EntryPoint {
 	}-*/;
 	
 	public void fee(){
-		importFee();
+		importation(ImportType.FEE);
 	}
 
 	public static native void exportFee(Templates thiz) /*-{

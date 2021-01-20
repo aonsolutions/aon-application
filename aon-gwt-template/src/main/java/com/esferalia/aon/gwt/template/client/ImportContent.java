@@ -35,6 +35,7 @@ public class ImportContent extends Composite {
 	AonData aonData;	
 	ProgressBarDialog pbd;
 	LinkedList<String> verror = new LinkedList<>();
+	LinkedList<String> werror = new LinkedList<>();
 
 	private AonData getAonData() {
 		return aonData;
@@ -61,6 +62,7 @@ public class ImportContent extends Composite {
 		typeList.addItem("Clientes, Proveedores y Acreedores", ImportType.REGISTRY.name());
 		typeList.addItem("Plan General Contable",ImportType.PGC.name());
 		typeList.addItem("Libro Diario", ImportType.DIARY.name());
+		typeList.addItem("Cuotas", ImportType.FEE.name());
 		typeList.setSelectedIndex(0);
 	}
 	
@@ -119,6 +121,9 @@ public class ImportContent extends Composite {
 				if(!result.getError()) {
 					verror.add(result.getTextError().getFirst());
 				}
+				if(result.getTextWarning() != null && result.getTextWarning().size() > 0) {
+					werror.addAll(result.getTextWarning());
+				}
 				pbd.updateProgress(progress.intValue());
 				if(result.getLine() < lines - 1) {
 					insert(type, result.getLine() + 1, lines);
@@ -128,6 +133,7 @@ public class ImportContent extends Composite {
 					Error error = new Error();
 					error.setError(verror.size() == 0);
 					error.setTextError(verror);
+					error.setTextWarning(werror);
 					Dialog dialog = new Dialog("Importar " + type.getName(),"Aceptar",true,"Cancelar",false,"importResponse");
 					dialog.setError(error);
 					TemplatesDialog popup2 = new TemplatesDialog(getAonData(), dialog){
@@ -135,18 +141,20 @@ public class ImportContent extends Composite {
 						@Override
 						protected void onAccept() {
 							verror = new LinkedList<>();
+							werror = new LinkedList<>();
 							hide();			
 						}
 
 						@Override
 						protected void onCancel() {
 							verror = new LinkedList<>();
+							werror = new LinkedList<>();
 							hide();
 						}
 					};
 					popup2.addStyleName("gwt-PopupPanel-template");
 					popup2.setGlassEnabled(true);
-					popup2.show();
+					popup2.center();
 				}
 			}
 				
@@ -164,6 +172,8 @@ public class ImportContent extends Composite {
 			item.insertPGC(getDomain(), getUser(), index, callback);
 		} else if(ImportType.REGISTRY.equals(type)) {
 			item.insertRegistries(getDomain(), getUser(), index, callback);
+		} else if(ImportType.FEE.equals(type)) {
+			item.insertFee(getDomain(), getUser(), index, callback);
 		}
 	}
 	

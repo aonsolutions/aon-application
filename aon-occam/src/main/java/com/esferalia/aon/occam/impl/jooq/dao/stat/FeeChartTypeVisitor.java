@@ -10,7 +10,6 @@ import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.stat.fee.IFeeChartTypeVisitor;
-import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -46,7 +45,7 @@ public class FeeChartTypeVisitor implements IFeeChartTypeVisitor {
 			.filter(r -> {
 				int fromMonth = AonDateUtils.getMonth(date) + 1;
 				int billingMonth = AonDateUtils.getMonth(r.getBillingDate()) +1;
-				int period = BillingPeriod.values()[r.getPeriod()].getValue();
+				int period = r.getPeriod().getValue();
 				Boolean endDate = r.getEndDate() == null || (r.getEndDate() != null && date.compareTo(r.getEndDate()) <= 0);
 				if(period == 0) return endDate && fromMonth == billingMonth && 
 						AonDateUtils.getYear(r.getBillingDate()) == AonDateUtils.getYear(date);
@@ -54,7 +53,7 @@ public class FeeChartTypeVisitor implements IFeeChartTypeVisitor {
 						&& (fromMonth % period) == (billingMonth % period);
 			})
 			.mapToDouble(r -> r.getPrice() * r.getQuantity() * (r.getDiscount() != null ? ((100 - r.getDiscount())/100) :1.0)
-				* getPercent(r.getStartDate(), r.getEndDate(), date, BillingPeriod.values()[r.getPeriod()].getValue())).sum();						
+				* getPercent(r.getStartDate(), r.getEndDate(), date, r.getPeriod().getValue())).sum();						
 			map.put(monthKey, d);
 		}
 		map.keySet().stream().sorted((n1,n2)-> n1.compareTo(n2))

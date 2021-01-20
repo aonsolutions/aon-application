@@ -69,6 +69,7 @@ public interface IFinance {
 	// 	***********************************************
 
 	LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter);
+	InvoicingGroup save(AONContext ctx, InvoicingGroup invoicingGroup);
 	
 	// 	***********************************************
 	// 	**************************** INVOICE SERIES ***
@@ -80,9 +81,7 @@ public interface IFinance {
 	// 	***********************************************
 	public Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter);
 	
-	public void insertFee(AONContext ctx, Fee f);
-	public void insertFee(AONContext ctx, Stream<Fee> fs);	
-	public void updateFee(AONContext ctx,Fee f);
+	public Fee save(AONContext ctx, Fee fee);
 	public void deleteFee(AONContext ctx,Fee f);
 	public void deleteFee(AONContext ctx,Stream<Fee> fs);
 	

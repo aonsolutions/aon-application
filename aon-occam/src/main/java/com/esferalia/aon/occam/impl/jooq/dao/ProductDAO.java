@@ -1073,4 +1073,81 @@ public class ProductDAO {
 					.setTag(new Tag().setId(r.getValue(PRODUCT_TAG.TAG)));
 		}
 	}
+	
+	protected static class ItemFiller implements Function<Record, Item> {
+		
+		@Override
+		public Item apply(Record r) {
+			return buildItem(r);
+		}
+		
+		public static Item buildItem(Record r) {
+			return new Item()
+				.setId(r.getValue(ITEM.ID))
+				.setBarcode(r.getValue(ITEM.BARCODE))
+				.setCreationDate(r.getValue(ITEM.CREATION_DATE))
+				.setCreationUser(r.getValue(ITEM.CREATION_USER))
+				.setDescription(r.getValue(ITEM.DESCRIPTION))
+				.setDetail(r.getValue(ITEM.DETAIL))
+				.setDetail2(r.getValue(ITEM.DETAIL2))
+				.setDetail3(r.getValue(ITEM.DETAIL3))
+				.setDomain(r.getValue(ITEM.DOMAIN))
+				.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
+				.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
+				.setInternet(r.getValue(ITEM.INTERNET) == 1)
+				.setModificationDate(r.getValue(ITEM.MODIFICATION_DATE))
+				.setModificationUser(r.getValue(ITEM.MODIFICATION_USER))
+				.setPackFormatTag(new Tag().setId(r.getValue(ITEM.PACK_FORMAT_TAG)))
+				.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
+				.setPackMeasurementTag(new Tag().setId(r.getValue(ITEM.PACK_MEASUREMENT_TAG)))
+				.setPackUnits(r.getValue(ITEM.PACK_UNITS).doubleValue())
+				.setPackUnitsTag(new Tag().setId(r.getValue(ITEM.PACK_UNITS_TAG)))
+				.setStockUnitTag(new Tag().setId(r.getValue(ITEM.STOCK_UNIT_TAG)))
+				.setPrice(r.getValue(ITEM.PRICE))
+				.setProduct(r.get(PRODUCT.ID) != null 
+						? ProductFiller.buildProduct(r) 
+						: new Product().setId(r.getValue(ITEM.PRODUCT)))
+				.setProductId(r.getValue(ITEM.PRODUCT))
+				.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
+				.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
+				.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
+				.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
+				.setStatus(r.getValue(ITEM.STATUS));
+		}	
+	}
+	
+	protected static class ProductFiller implements Function<Record, Product> {
+		@Override
+		public Product apply(Record r) {
+			return buildProduct(r);			
+		}
+		
+		public static Product buildProduct(Record r) {
+			return new Product().setId(r.getValue(PRODUCT.ID))
+					.setName(r.getValue(PRODUCT.NAME))
+					.setDomain(r.getValue(PRODUCT.DOMAIN))
+					.setBrand(r.getValue(PRODUCT.BRAND))
+					.setCategory(r.getValue(PRODUCT.CATEGORY))
+					.setCode(r.getValue(PRODUCT.CODE))
+					.setComposition(r.getValue(PRODUCT.COMPOSITION))
+					.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE))
+					.setCreationDate(r.getValue(PRODUCT.CREATION_DATE))
+					.setCreationUser(r.getValue(PRODUCT.CREATION_USER))
+					.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE))
+					.setKind(r.getValue(PRODUCT.KIND))
+					.setLotable(r.getValue(PRODUCT.LOTABLE))
+					.setManufactured(r.getValue(PRODUCT.MANUFACTURED))
+					.setModificationDate(r.getValue(PRODUCT.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(PRODUCT.MODIFICATION_USER))
+					.setPackaged(r.getValue(PRODUCT.PACKAGED) == 1)
+					.setPurchaseAccount(r.getValue(PRODUCT.PURCHASE_ACCOUNT))
+					.setRetention(r.getValue(PRODUCT.RETENTION))
+					.setSalesAccount(r.getValue(PRODUCT.SALES_ACCOUNT))
+					.setSerializable(r.getValue(PRODUCT.SERIALIZABLE))
+					.setStatus(r.getValue(PRODUCT.STATUS))
+					.setType(r.getValue(PRODUCT.TYPE))
+					.setVat(r.getValue(PRODUCT.VAT));
+		}
+		
+	}
 }

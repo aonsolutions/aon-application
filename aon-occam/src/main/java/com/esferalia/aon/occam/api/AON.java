@@ -1705,6 +1705,24 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static InvoicingGroup getInvoicingGroup(String domainName, Integer domainId, String login, InvoicingGroupFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			LinkedList<InvoicingGroup> list = getFinance().getInvoicingGroupList(ctx, filter);
+			return list.size() > 0 ? list.getFirst() : new InvoicingGroup();
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static InvoicingGroup save(String domainName, Integer domainId, String login, InvoicingGroup invoicingGroup) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().save(ctx, invoicingGroup);
+		}
+	}
 
 	public static Integer getInvoiceNextNumber(
 			String domainName, Integer domainId, String login,
@@ -2275,16 +2293,10 @@ public class AON {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
-	public static void insertFee(AONContext ctx, Fee f) {
-		getFinance().insertFee(ctx, f);
-	}
-
-	public static void insertFee(AONContext ctx, Stream<Fee> fs) {
-		getFinance().insertFee(ctx, fs);
-	}
-
-	public static void updateFee(AONContext ctx, Fee f) {
-		getFinance().updateFee(ctx, f);
+	public static Fee save(String domainName, Integer domainId, String login, Fee fee) {
+		try(AONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().save(ctx, fee);
+		}
 	}
 
 	public static void deleteFee(AONContext ctx, Fee f) {

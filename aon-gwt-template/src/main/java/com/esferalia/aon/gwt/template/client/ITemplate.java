@@ -104,4 +104,6 @@ public interface ITemplate extends RemoteService{
 
 	public void importFix(Domain domain, User user);
 
+	public Error insertFee(Domain domain, User user, Integer index);
+
 }

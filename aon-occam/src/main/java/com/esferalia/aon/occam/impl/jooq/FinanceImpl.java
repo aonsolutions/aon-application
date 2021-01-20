@@ -116,6 +116,12 @@ public class FinanceImpl implements IFinance {
 		return InvoiceDAO.getInvoicingGroupList(ctx, filter);
 	}
 
+	@Override
+	public InvoicingGroup save(AONContext ctx, InvoicingGroup invoicingGroup) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> InvoiceDAO.save(ctx, invoicingGroup));
+	}
+	
 	// ------------------------------------- INVOICE SERIES
 	@Override
 	public LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate) {
@@ -131,24 +137,9 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
-	public void insertFee(AONContext ctx, Fee f) {
-		ctx.getDslContext().transaction(configuration -> {
-			FeeDAO.insert(ctx, f);
-		} );		
-	}
-
-	@Override
-	public void insertFee(AONContext ctx, Stream<Fee> fs) {
-		ctx.getDslContext().transaction(configuration -> {
-			FeeDAO.insert(ctx, fs);
-		} );			
-	}
-
-	@Override
-	public void updateFee(AONContext ctx, Fee f) {
-		ctx.getDslContext().transaction(configuration -> {
-			FeeDAO.update(ctx, f);
-		} );			
+	public Fee save(AONContext ctx, Fee fee) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.save(ctx, fee));
 	}
 
 	@Override
