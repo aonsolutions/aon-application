@@ -29,10 +29,10 @@ public class PDFToolkit {
 	public final static PDFont HELVETICA_BOLD = PDType1Font.HELVETICA_BOLD;
 
 	public final static Color WHITE = new Color(0xffffff);
-	public final static Color BLACK = new Color(0x000000);
+	public final static Color BLACK = new Color(0x404040);
 	public final static Color BLUE = new Color(0x3a5b9e);
 	public final static Color RED = new Color(0xf44336);
-	public final static Color GREEN = new Color(0x228b22);
+	public final static Color GREEN = new Color(0xf2f2f2);
 	public final static Color LIGHT_GRAY = new Color(0xf8f8f8);
 
 	public final static DecimalFormat df = new DecimalFormat("0.00");
@@ -117,6 +117,14 @@ public class PDFToolkit {
 		contents.setNonStrokingColor(color);
 		contents.addRect(x, y, width, height);
 		contents.fill();
+	}
+	
+	//DRAW A BOX
+	public static void drawBorderedBox(PDPageContentStream contents, float x, float y, float width, float height, Color color) throws IOException {
+		contents.setStrokingColor(color);
+		contents.addRect(x, y, width, height);
+		contents.setLineWidth(2);
+		contents.stroke();
 	}
 
 	//FORMAT DATE TO STRING IN A SPECIFIC FORMAT

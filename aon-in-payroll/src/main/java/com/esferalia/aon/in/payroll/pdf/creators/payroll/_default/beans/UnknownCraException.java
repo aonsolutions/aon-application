@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.creators.payroll.complete.beans;
+package com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans;
 
 public class UnknownCraException extends Exception{
 

@@ -85,7 +85,7 @@ public class InvoiceTest {
 		catch (IOException e) {fail("Can not access test resources");}
 	}
 
-	//RANDOM BETWEEN X AND Y
+	//RANDOM BETWEEN 0 AND Y
 	public double random(double x, double y){
 		return Math.random()*y;
 	}

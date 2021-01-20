@@ -51,7 +51,7 @@ public class InvoiceTemplate {
 			template.top = 		(float) template.bill.getTop_px();
 			template.bottom = 	(float) template.bill.getBottom_px();
 
-			if (template.bill.getBackground() != null) 	template.background = template.bill.getBackground().readAllBytes();
+			if (template.bill.getBackground() != null) 		template.background = template.bill.getBackground().readAllBytes();
 			if (template.bill.getQr_code() != null) 		template.qr_code = template.bill.getQr_code().readAllBytes();
 
 			template.contents = template.draw_page(doc);

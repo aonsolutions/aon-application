@@ -2,6 +2,7 @@ package com.esferalia.aon.in.payroll.pdf.creators;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayrollTemplate;
@@ -9,6 +10,8 @@ import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfExcep
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.JsonParseException;
 import com.esferalia.aon.in.payroll.pdf.creators.invoice.InvoiceMaker;
 import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.Invoice;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.DefaultPayrollTemplate;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 
 
@@ -34,8 +37,9 @@ public class PdfMaker {
 		EnterprisePayrollTemplate.createAonPdf(payroll, name);
 	}
 	
-	//CREATE SIMPLE PAYROLL
-	
-	
-	//CREATE DETAILED PAYROLL	
+	//CREATE PAYROLL
+	public static void print_default_payroll(String out, DefaultPayroll payroll, Optional<InputStream> logo) throws CanNotCreatePdfException {
+		DefaultPayrollTemplate.print(out, payroll, logo);
+	}
+
 }
