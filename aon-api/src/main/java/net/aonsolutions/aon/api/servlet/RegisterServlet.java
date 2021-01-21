@@ -6,8 +6,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Company;
@@ -57,7 +55,7 @@ public class RegisterServlet extends AonApiHttpServlet{
 	private Domain createDomain(String schema) throws Exception{
 		Domain domain = new Domain()
 				.setDescription(getData().getString("company_name"))
-				.setName(getData().getString("company_document") + "aonsolutions.net")
+				.setName(getData().getString("company_document") + ".aonsolutions.net")
 				.setOwner(getData().getString("email"))
 				.setActive(true)
 				.setDomainType(DomainType.ENTERPRISE)

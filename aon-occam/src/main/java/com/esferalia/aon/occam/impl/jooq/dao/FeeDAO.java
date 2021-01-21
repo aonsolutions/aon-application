@@ -172,6 +172,10 @@ public class FeeDAO {
 //	}
 
 	private static Fee update(AONContext ctx, Fee f) {
+		Date startDate = f.getStartDate() != null ? new Date(f.getStartDate().getTime()) : null;
+		Date endDate = f.getEndDate() != null ? new Date(f.getEndDate().getTime()) : null;
+		Date billingDate = f.getBillingDate() != null ? new Date(f.getBillingDate().getTime()) : null;
+		
 		ctx.getDslContext()
 			.update(CUSTOMER_FEE)
 				.set(CUSTOMER_FEE.DOMAIN, f.getDomain().getId())
@@ -183,9 +187,9 @@ public class FeeDAO {
 				.set(CUSTOMER_FEE.QUANTITY, f.getQuantity())
 				.set(CUSTOMER_FEE.PRICE, f.getPrice())
 				.set(CUSTOMER_FEE.DISCOUNT_EXPR, f.getDiscountExpr())
-				.set(CUSTOMER_FEE.INITIAL_DATE, new Date(f.getStartDate().getTime()))
-				.set(CUSTOMER_FEE.FINAL_DATE, new  Date(f.getEndDate().getTime()))
-				.set(CUSTOMER_FEE.BILLING_DATE, new  Date(f.getBillingDate().getTime()))
+				.set(CUSTOMER_FEE.INITIAL_DATE, startDate)
+				.set(CUSTOMER_FEE.FINAL_DATE, endDate)
+				.set(CUSTOMER_FEE.BILLING_DATE, billingDate)
 				.set(CUSTOMER_FEE.PERIOD, (short) f.getPeriod().value())
 				.set(CUSTOMER_FEE.SECURITY_LEVEL, f.getSecurityLevel().value())
 				.set(CUSTOMER_FEE.INVOICING_GROUP, f.getInvoicingGroup().getId())

@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -287,6 +288,7 @@ public class FeeImport extends Import {
 					.setCode(fee.getItem().getProduct().getCode())
 					.setVat(tax.getId())
 					.setKind(ProductKind.SALE.value())
+					.setType(ProductType.SERVICE.value())
 					.setInventoriable(false));
 			AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), new Item()
 					.setDomain(domain.getId())

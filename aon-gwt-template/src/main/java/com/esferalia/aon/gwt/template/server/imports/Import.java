@@ -81,7 +81,8 @@ public class Import {
 	public static Short parseShort(String value) {
 		try {
 			if (!AonStringUtils.isBlank(value)) {
-				return Short.parseShort(value);
+				Double d = Double.parseDouble(value);
+				return d.shortValue();
 			}
 		} catch (Exception e) {}
 		return null;

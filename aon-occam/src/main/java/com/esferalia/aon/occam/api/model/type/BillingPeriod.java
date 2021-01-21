@@ -22,7 +22,7 @@ public enum BillingPeriod implements Serializable{
 	   return this.toString();
    }
    
-   public int getValue(){
+   public Integer getValue(){
 	   return this.value;
    }
    
@@ -33,7 +33,7 @@ public enum BillingPeriod implements Serializable{
 	public static BillingPeriod safeValueOf( String value ) {
 		if(value == null) return BillingPeriod.NO_PERIOD;
 		for(BillingPeriod p : BillingPeriod.values()) {
-			if(p.name().equalsIgnoreCase(value) || Integer.toString(p.getValue()).equals(value)) {
+			if(p.name().equalsIgnoreCase(value) || Integer.toString(p.getValue()).equals(value) || Double.toString(p.getValue().doubleValue()).equals(value)) {
 				return p;
 			}
 		}
