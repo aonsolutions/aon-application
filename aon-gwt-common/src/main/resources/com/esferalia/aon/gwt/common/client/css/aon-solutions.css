@@ -109,6 +109,8 @@
 .aon_icon_delete_forever { background-image: iconDeleteForever;}
 @url iconTgss aonIconTgss;
 .aon_icon_tgss { background-image: iconTgss;}
+@url iconTgssCra aonIconTgssCra;
+.aon_icon_tgss_cra { background-image: iconTgssCra;}
 @url iconTgssIdc aonIconTgssIdc;
 .aon_icon_tgss_idc { background-image: iconTgssIdc;}
 @url iconTgssAfi aonIconTgssAfi;
@@ -530,6 +532,12 @@
 .aon_confirm_dialog {
 	background: white none repeat scroll 0 0;
 	box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4);
+}
+
+.aon_custom_confirm_dialog {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
 }
 
 .aon_confirm_dialog_msg {

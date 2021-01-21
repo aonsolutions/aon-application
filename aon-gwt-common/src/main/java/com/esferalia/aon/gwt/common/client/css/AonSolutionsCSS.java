@@ -165,6 +165,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_tgss")
 	String aonIconTgss();
 	
+	@ClassName("aon_icon_tgss_cra")
+	String aonIconTgssCra();
+	
 	@ClassName("aon_icon_tgss_idc")
 	String aonIconTgssIdc();
 	
@@ -566,6 +569,9 @@ public interface AonSolutionsCSS extends CssResource {
 	/* CONFIRM DIALOG*/
 	@ClassName("aon_confirm_dialog")
 	String aonConfirmDialog();
+	
+	@ClassName("aon_custom_confirm_dialog")
+	String aonCustomConfirmDialog();
 
 	@ClassName("aon_confirm_dialog_msg")
 	String aonConfirmDialogMsg();
