@@ -213,10 +213,10 @@ public class RegistryImport extends Import {
 							.setMedia(MediaType.EMAIL.value())
 							.setDomain(domain.getId())
 							.setValue(mails[i])
-							.setAdministrative((byte) 0)
+							.setAdministrative((byte) 1)
 							.setComment("")
-							.setCommercial((byte) 0)
-							.setTechnical((byte) 0);
+							.setCommercial((byte) 1)
+							.setTechnical((byte) 1);
 					reg.getRmediaList().add(rm);
 				}
 			}
@@ -232,10 +232,10 @@ public class RegistryImport extends Import {
 						.setMedia(p.charAt(0) == '6' || p.charAt(0) == '7' ? MediaType.CELLULAR.value() : MediaType.FIXED_PHONE.value())
 						.setDomain(domain.getId())
 						.setValue(p)
-						.setAdministrative((byte) 0)
+						.setAdministrative((byte) 1)
 						.setComment("")
-						.setCommercial((byte) 0)
-						.setTechnical((byte) 0);
+						.setCommercial((byte) 1)
+						.setTechnical((byte) 1);
 					reg.getRmediaList().add(rm);
 				}
 			}
