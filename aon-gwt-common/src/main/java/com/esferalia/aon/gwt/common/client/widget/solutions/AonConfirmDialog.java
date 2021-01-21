@@ -32,7 +32,7 @@ public class AonConfirmDialog extends AonCustomDialog {
 		addStyleName(AON.CSS.aonConfirmDialog());
 		root = new SimpleLayoutPanel();
 		root.setWidth("500px");
-		root.setHeight("90px");
+		root.setHeight("120px");
 		root.setStyleName(AON.CSS.aonPadding());
 		this.setWidget(root);
 	}
@@ -44,6 +44,7 @@ public class AonConfirmDialog extends AonCustomDialog {
 	public void confirm(String header,String msg, final AonConfirmDialogCallback callback) {
     	setCaption(header);
     	FlowPanel panel = new FlowPanel();
+    	panel.setStyleName(AON.CSS.aonCustomConfirmDialog());
     	Label label = new Label(msg);
     	label.setStyleName(AON.CSS.aonConfirmDialogMsg());
     	panel.add(label);
@@ -123,6 +124,7 @@ public class AonConfirmDialog extends AonCustomDialog {
 	public void info(String header,String msg) {
     	setCaption(header);
     	FlowPanel panel = new FlowPanel();
+    	panel.setStyleName(AON.CSS.aonCustomConfirmDialog());
     	Label label = new Label(msg);
     	label.setStyleName(AON.CSS.aonConfirmDialogMsg());
     	panel.add(label);
