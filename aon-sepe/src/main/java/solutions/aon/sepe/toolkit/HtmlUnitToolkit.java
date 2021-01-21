@@ -50,32 +50,20 @@ public class HtmlUnitToolkit {
 	
 	public static JavaScriptErrorListener jascriptFunctionExceptionError() {
 		return new JavaScriptErrorListener() {
+			@Override
+			public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {}
 			
 			@Override
-			public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {
-				System.out.println("warn");
-			}
+			public void timeoutError(HtmlPage page, long allowedTime, long executionTime) {}
 			
 			@Override
-			public void timeoutError(HtmlPage page, long allowedTime, long executionTime) {
-				System.out.println("timeoutError");
-			}
+			public void scriptException(HtmlPage page, ScriptException scriptException) {}
 			
 			@Override
-			public void scriptException(HtmlPage page, ScriptException scriptException) {
-				System.out.println("scriptException");
-			}
+			public void malformedScriptURL(HtmlPage page, String url, MalformedURLException malformedURLException) {}
 			
 			@Override
-			public void malformedScriptURL(HtmlPage page, String url,
-					MalformedURLException malformedURLException) {
-				System.out.println("malformedScriptURL");
-			}
-			
-			@Override
-			public void loadScriptError(HtmlPage page, URL scriptUrl, Exception exception) {
-				System.out.println("loadScriptError");
-			}
+			public void loadScriptError(HtmlPage page, URL scriptUrl, Exception exception) {}
 		};
 	}
 	

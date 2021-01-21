@@ -74,8 +74,7 @@ public class Contrato {
 				form.getInputByName("cuentacotizacion").setValueAttribute(regimen+ctaCti);
 			}
 
-			//DATA EMPLOYEE
-			{
+			{//DATA EMPLOYEE
 				String tipodoc =  "D";
 				if(Toolkit.identity(cto.getIpf()).equals("6")) tipodoc = "E"; // NIE
 			
@@ -103,8 +102,7 @@ public class Contrato {
 				form.getInputByName("nass3").setValueAttribute(nss.substring(10));
 			}
 
-			//DATA CONTRACT
-			{
+			{//DATA CONTRACT
 				String[] dateInitContract = Toolkit.dateString(cto.getDateIniContract());
 				form.getInputByName("diafechaini").setValueAttribute(dateInitContract[0]);
 				form.getInputByName("mesfechaini").setValueAttribute(dateInitContract[1]);
@@ -118,8 +116,7 @@ public class Contrato {
  				((HtmlSelect)form.querySelector("select[name=procedeDeOfertaEmpleo]")).setSelectedAttribute(offerStr, true);
 			}
 			
-			//OTHERS DATA CONTRACT (OPTIONAL)
-			{
+			{//OTHERS DATA CONTRACT (OPTIONAL)
 				if(cto.getDateFinContract()!=null) {
 					String[] dateFinContract = Toolkit.dateString(cto.getDateFinContract());
 					form.getInputByName("diafechafin").setValueAttribute(dateFinContract[0]);
@@ -432,7 +429,6 @@ public class Contrato {
 			htmlPage = formDatos.getInputByName("aceptar").click();
 			handleSepeExceptions(htmlPage);
 			
-			//Developing!
 		    UnexpectedPage document = htmlPage.getElementByName("Boton_imprimir").click();
 			InputStream inp = document.getWebResponse().getContentAsStream();
 			pdf = inp.readAllBytes();

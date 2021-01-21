@@ -13,7 +13,6 @@ import solutions.aon.seg.social.SistemaRED_ITParts.Contingencies;
 import solutions.aon.seg.social.SistemaRED_ITParts.ContractType;
 import solutions.aon.seg.social.SistemaRED_ITParts.PartType;
 import solutions.aon.seg.social.SistemaRED_ITParts.SituationEmployee;
-//import solutions.aon.seg.social.SistemaRED_ITParts.TypeAccident;
 import solutions.aon.seg.social.objects.ITPart;
 
 public class TestItRegister {
@@ -87,6 +86,7 @@ public class TestItRegister {
 	@Ignore
 	public void pdfIt() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
+			@SuppressWarnings("deprecation")
 			byte[] pdf = SistemaRED_ITParts.pdfIt(certificateInputStream,"jg@FNMT","pkcs12", 
 					"0111", "01105360062", "291136796369", PartType.BAJA, new Date("2021/01/12"), new Date("2021/01/12"));
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
@@ -100,8 +100,10 @@ public class TestItRegister {
 	public void getDataIt() {
 //		 new Date("2016/04/23")
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			 Date fecha_baja = new Date("2016/04/20");
-			 Date fecha_proceso = new Date("2016/04/20");
+			 @SuppressWarnings("deprecation")
+			Date fecha_baja = new Date("2016/04/20");
+			 @SuppressWarnings("deprecation")
+			Date fecha_proceso = new Date("2016/04/20");
 			 ITPart itPart = SistemaRED_ITParts.getDataIt(certificateInputStream,"jg@FNMT","pkcs12", 
 					"0111", "01105360062", "011011187190", PartType.BAJA, fecha_baja, fecha_proceso);
 			 System.out.println(itPart);

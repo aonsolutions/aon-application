@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -20,7 +22,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
-
 import aon.sepe.objects.Certificates;
 import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.exceptions.certificate.CertificateNotFoundException;
@@ -109,39 +110,20 @@ public class Certificado {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
-	    	String regimen = "0111";
-	    	String ctaCti = "01105360062";
-	    	String ipf = "Y9999999X";
-	    	String ipf_rep = "Y9999999X";
-	    	String name = "NOMBRE";
-	    	String surname = "PRIMER APELLIDO";
-	    	String lastSurname = "SEGUNDO APELLIDO";
-	    	String tipodoc =  "NIF";
-	    	String cargo = "Cargo de la empresa";
-	    	String typeContract = "501";
-	    	String gz = "06"; //01-12
-	    	String durationContract = "30";
-	    	TypeDuration typeDuration = TypeDuration.DIAS;
-	    	String catProfessional = "2722";
-	    	String causeSuspension = "33"; //01 - 33
-	    	
-	    	String officePublic = null;
-	    	String dedicationPer =  null;
-	    	
-	    	//data cot vac
-			String srDiasCotizacion = "12";
-			String srBaseContingenciasComunes = "000001200";
-			String srBaseContingenciasDesempleo = "000001200";
-	    	
-			@SuppressWarnings("deprecation")
-			Date fAEd =  new Date("2020/01/01"); // fecha de alta de empresa
-			Date fSTd =  new Date(); // fecha de extension 
+	    	String ctaCti = certificates.getCtaCti();
+	    	String ipf_rep = certificates.getIpf_rep();
+			String tipodoc =  "NIF";
+	    	String cargo = certificates.getCargo();
+	    	String typeContract = certificates.getTypeContract();
+
+	    	Integer dedicationPer = certificates.getDedicationPer();
+	    	List<Map<String, String>> dataCtz = certificates.getDataCtz();
 
 	    	if(Toolkit.identity(ipf_rep).equals("4")) tipodoc = "CIF";
 	    	else if(Toolkit.identity(ipf_rep).equals("6")) tipodoc = "NIE"; 
 	    	
-	    	String[] fAE = Toolkit.formatDate(fAEd);
-	    	String[] fST = Toolkit.formatDate(fSTd);
+	    	String[] fAE = Toolkit.formatDate(certificates.getfAEd());
+	    	String[] fST = Toolkit.formatDate(certificates.getfSTd());
 	    	
 			HtmlPage htmlPage = first_page_sepe_cert(webClient);
 			HtmlAnchor hrefButton = HtmlUnitToolkit.wait4(htmlPage, p -> p.getAnchorByHref("https://sede.sepe.gob.es/CertificadosRedTrabajaWEB/ActionMecanizacionEntradaEmpresa.do")).orElseThrow();
@@ -149,13 +131,12 @@ public class Certificado {
 			
 			HtmlForm form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 			
-			//DATA ENTERPRISE
-			{
-				form.getInputByName("orDatosEmpresa.srCCCRegimenCot").setValueAttribute(regimen);
+			{//DATA ENTERPRISE
+				form.getInputByName("orDatosEmpresa.srCCCRegimenCot").setValueAttribute(certificates.getRegimen());
 				form.getInputByName("orDatosEmpresa.srCCCProvincia").setValueAttribute(ctaCti.substring(0,2));
 				form.getInputByName("orDatosEmpresa.srCCCSecuencial").setValueAttribute(ctaCti.substring(2,9));
 				form.getInputByName("orDatosEmpresa.srCCCDC").setValueAttribute(ctaCti.substring(9));
-				form.getInputByName("stDniNie").setValueAttribute(ipf);
+				form.getInputByName("stDniNie").setValueAttribute(certificates.getIpf());
 			}
 			
 			htmlPage = form.getInputByName("btBuscar").click();
@@ -164,46 +145,41 @@ public class Certificado {
 			htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 			handleSepeExceptions(htmlPage);
 			
-			//DATA REPRESENTATIVE
-			{
+			{//DATA REPRESENTATIVE
 				form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-				form.getInputByName("orDatosRepresentante.srNombreRepresentante").setValueAttribute(name);
-				form.getInputByName("orDatosRepresentante.srPrimerApellidoRepresentante").setValueAttribute(surname);
-				if(lastSurname!=null) form.getInputByName("orDatosRepresentante.srSegundoApellidoRepresentante").setValueAttribute(lastSurname);
+				form.getInputByName("orDatosRepresentante.srNombreRepresentante").setValueAttribute(certificates.getName());
+				form.getInputByName("orDatosRepresentante.srPrimerApellidoRepresentante").setValueAttribute(certificates.getSurname());
+				if(certificates.getLastSurname()!=null) form.getInputByName("orDatosRepresentante.srSegundoApellidoRepresentante").setValueAttribute(certificates.getLastSurname());
 				((HtmlSelect)form.querySelector("select[name=\"orDatosRepresentante.srTipoDocRepresentante\"]")).setSelectedAttribute(tipodoc, true);
 				form.getInputByName("orDatosRepresentante.srNifRepresentante").setValueAttribute(ipf_rep);
-				form.getInputByName("orDatosRepresentante.srCargoRepresentante").setValueAttribute(cargo);
+				if(cargo!=null) form.getInputByName("orDatosRepresentante.srCargoRepresentante").setValueAttribute(cargo);
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
 			}
 			
-			
-			//DATA EMPLOYEE
-			{
+			{//DATA EMPLOYEE
 				form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csGrupoCotizacion.valor\"]")).setSelectedAttribute(gz, true);
+				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csGrupoCotizacion.valor\"]")).setSelectedAttribute(certificates.getGz(), true);
 				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csTipoContrato.valor\"]")).setSelectedAttribute(typeContract, true);
-				form.getInputByName("orDatosTrabajador.srDuracionContratoTrab").setValueAttribute(durationContract);
-				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csIndicadorDuracionContrato.valor\"]")).setSelectedAttribute(typeDuration.getValue(), true);
-				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csTipoProfesion.valor\"]")).setSelectedAttribute(catProfessional, true);
+				form.getInputByName("orDatosTrabajador.srDuracionContratoTrab").setValueAttribute(certificates.getDurationContract().toString());
+				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csIndicadorDuracionContrato.valor\"]")).setSelectedAttribute(certificates.getTypeDuration().getValue(), true);
+				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csTipoProfesion.valor\"]")).setSelectedAttribute(certificates.getCatProfessional(), true);
 				if(typeContract.substring(0,1).equalsIgnoreCase("2") || typeContract.substring(0,1).equalsIgnoreCase("5")) {
 					form.getInputByName("orDatosTrabajador.existenDetalles").setChecked(true);
 				}
-
-				if(officePublic!=null) {
-					((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csTipoCargoPublicoOSindical.valor\"]")).setSelectedAttribute(officePublic, true);
+				if(certificates.getTypeAppointment()!=null) {
+					((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csTipoCargoPublicoOSindical.valor\"]")).setSelectedAttribute(certificates.getTypeAppointment().getValue().toString(), true);
 					if(dedicationPer!=null) {
-						form.getInputByName("orDatosTrabajador.srPorcentualDedicacion").setValueAttribute(dedicationPer);
+						form.getInputByName("orDatosTrabajador.srPorcentualDedicacion").setValueAttribute(dedicationPer.toString());
 					} 
 				}
-				
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
 			}
-			//DATA SUSPENSION OR TERMINATION
-			{
+			
+			{//DATA SUSPENSION OR TERMINATION
 				form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csCausaSuspension.valor\"]")).setSelectedAttribute(causeSuspension, true);
+				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csCausaSuspension.valor\"]")).setSelectedAttribute(certificates.getCauseSuspension(), true);
 				form.getInputByName("orDatosTrabajador.srDiaFechaAlta").setValueAttribute(fAE[0]);
 				form.getInputByName("orDatosTrabajador.srMesFechaAlta").setValueAttribute(fAE[1]);
 				form.getInputByName("orDatosTrabajador.srAnyoFechaAlta").setValueAttribute(fAE[2]);
@@ -214,67 +190,76 @@ public class Certificado {
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
 			}
-				
-			//DATA COTINGENCIES
-			{
-				//DATA CTZ
-				{
-					//FOR
-//					for (int i = 0; i < 2; i++) {
+			
+			{//DATA COTINGENCIES
+				{//DATA CTZ
+					for(Map<String, String> ctz: dataCtz) {
 						form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srAnyoCotizacion").setValueAttribute("2021");
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srMesCotizacion").setValueAttribute("01");
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srDiasCotizacion").setValueAttribute("12");
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasComunes").setValueAttribute("000001200");
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasDesempleo").setValueAttribute("000001200");
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srAnyoCotizacion").setValueAttribute(ctz.get("anioCtz"));
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srMesCotizacion").setValueAttribute(ctz.get("monthCtz"));
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srDiasCotizacion").setValueAttribute(ctz.get("daysCtz"));
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasComunes").setValueAttribute(ctz.get("bccc"));
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasDesempleo").setValueAttribute(ctz.get("bcd"));
 						htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btAnadir]")).click();
-//					}
-						
+					}
 					handleSepeExceptions(htmlPage);
 				}
 				
-				//DATA VACATION
-				{
-
+				{//DATA VACATION
 					form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-					if(srDiasCotizacion!=null)
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srDiasCotizacion").setValueAttribute(srDiasCotizacion);
-					if(srBaseContingenciasComunes!=null)
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes").setValueAttribute(srBaseContingenciasComunes);
-					if(srBaseContingenciasDesempleo!=null)
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo").setValueAttribute(srBaseContingenciasDesempleo);
+					if(certificates.getDaysCtzVc()!=null)
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srDiasCotizacion").setValueAttribute(certificates.getDaysCtzVc().toString());
+					if(certificates.getBcccVc()!=null)
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes").setValueAttribute(certificates.getBcccVc());
+					if(certificates.getBcdVc()!=null)
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo").setValueAttribute(certificates.getBcdVc());
 					htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btActualizarTotales]")).click();
 					handleSepeExceptions(htmlPage);
 				}
-				
+
 //				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
-//				handleSepeExceptions(htmlPage);
-				
+				handleSepeExceptions(htmlPage);
 			}
 
-
 	        Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testCertificates.html");
+	        System.out.println("END " + htmlPage);
 			return null;
 		} 
 	}
 	
-	private static HtmlPage first_page_sepe_cert(WebClient webClient)  throws IOException, SepeException, InterruptedException{
+	private static HtmlPage first_page_sepe_cert(WebClient webClient)  throws SepeException , IOException, InterruptedException{
 		  webClient.getOptions().setJavaScriptEnabled(true);
 		  webClient.getOptions().setThrowExceptionOnScriptError(false);
 		  webClient.setJavaScriptErrorListener(HtmlUnitToolkit.jascriptFunctionExceptionError());
-	      HtmlPage htmlPage = webClient.getPage("https://isweb.sepe.gob.es/GetAccess/Saml/SSO/Init?GAURI=https%3A%2F%2Fsede.sepe.gob.es%2FDCertificadosWeb%2FActionNavegacion.do%3FaccesoGA%3Dempresas%26accion%3Dnavegacion&GA_SAML_AC_COMPARISON=minimum&GA_SAML_IS_PASSIVE=false&GA_SAML_AC_CLASS_REF=http%3A%2F%2Feidas.europa.eu%2FLoA%2Flow&GA_SAML_PROVIDER=Q2819009H_E00142804&GA_SAML_IDP=https%3A%2F%2Fpasarela.clave.gob.es%2FProxy2");
+		  Page page = null;
+	      Integer MAX_ATTEMPS = 10;
+	      Integer i = 0;
+	      while(!(page instanceof HtmlPage) &&  i < MAX_ATTEMPS) {
+	    	  System.out.println("attempt " + (i+1));
+		      try {
+		    	  page = page_first_process(webClient);  
+		      } catch (FailingHttpStatusCodeException e) { System.out.println("I do not load the page, retrying!");  }
+	    	  i++;
+	    	  Thread.sleep(1000);
+	      }
+		  HtmlPage htmlPage = (HtmlPage) page;
+		  
 		  HtmlUnitToolkit.manageStatusCode(htmlPage); 
+		  return htmlPage;
+	}
+	
+	private static Page page_first_process(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException, InterruptedException{
+
+	      HtmlPage htmlPage = webClient.getPage("https://isweb.sepe.gob.es/GetAccess/Saml/SSO/Init?GAURI=https%3A%2F%2Fsede.sepe.gob.es%2FDCertificadosWeb%2FActionNavegacion.do%3FaccesoGA%3Dempresas%26accion%3Dnavegacion&GA_SAML_AC_COMPARISON=minimum&GA_SAML_IS_PASSIVE=false&GA_SAML_AC_CLASS_REF=http%3A%2F%2Feidas.europa.eu%2FLoA%2Flow&GA_SAML_PROVIDER=Q2819009H_E00142804&GA_SAML_IDP=https%3A%2F%2Fpasarela.clave.gob.es%2FProxy2");
+
+	      HtmlUnitToolkit.manageStatusCode(htmlPage); 
 	      HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("idpRedirect")).orElseThrow();
-	     
 	      formDatos.getInputByName("SelectedIdP").setValueAttribute("AFIRMA");
 	      //create submit 
 	      HtmlElement button =  (HtmlElement) HtmlUnitToolkit.createButton(htmlPage);
 	      formDatos.appendChild(button);
-	      
-		  htmlPage = (HtmlPage) HtmlUnitToolkit.wait4(formDatos, p -> p.getButtonByName("submitCustom")).orElseThrow().click();
-		  
-		  HtmlUnitToolkit.manageStatusCode(htmlPage); 
-		  return htmlPage;
+	      Page newPage = button.click();
+	      return newPage;
 	}
 	
 	private static void handleSepeExceptions(HtmlPage htmlPage) throws SepeException{
@@ -285,19 +270,4 @@ public class Certificado {
 		} catch (NullPointerException e) {}
 	}
 	
-	public enum TypeDuration {
-		DIAS("D"), 
-		MESES("M"),
-		ANIOS("A");
-		
-		private String value;
-		
-		public String getValue() {
-			return value;
-		}
-		
-		private TypeDuration(String value) {
-			this.value = value;
-		}
-	}
 }

@@ -26,16 +26,16 @@ public class TestContrato {
 			bd.setRegimen("0111")
 			.setCtaCti("01105360062")
 			.setCifEnterprise("B01487271")
-			.setIpf("Y7514970X")
-			.setName("RAY")
-			.setSurname("VASQUEZ")
-			.setLastSurname("BEAUPERTHUY")
+			.setIpf("16262835H")
+			.setName("JULIO")
+			.setSurname("GARCIA")
+			.setLastSurname("PEREZ")
 			.setDateBirth(fnac)
 			.setSex(1)
 			.setCodNationality(862)
 			.setCodPaisDom(724)
 			.setCodMunDom("01059") 
-			.setNss("291136796369")
+			.setNss("010022757387")
 //			.setTypeJnd("M")
 			.setCodContract("401")
 			.setDateIniContract(fini)
@@ -59,7 +59,7 @@ public class TestContrato {
 		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
 			String certificatePassword = "aon@FNMT";
 			String certificateType = "pkcs12";
-			String ipf = "Y7514970X";
+			String ipf = "16262835H";
 			@SuppressWarnings("deprecation")
 			Date fini = new Date("2021/01/28");
 			Date ffin = fini;
@@ -81,7 +81,7 @@ public class TestContrato {
 			Date fini =  new Date("2021/01/28");
 			@SuppressWarnings("deprecation")
 			Date ffin =  new Date("2021/01/28");
-			String ipf = "Y7514970X";
+			String ipf = "16262835H";
 			byte[] pdf = Contrato.contratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
@@ -99,7 +99,7 @@ public class TestContrato {
 			Date fini =  new Date("2020/09/09");
 			@SuppressWarnings("deprecation")
 			Date ffin =  new Date("2021/01/01");
-			String ipf = "Y7514970X";
+			String ipf = "16262835H";
 			byte[] pdf = Contrato.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
@@ -115,7 +115,7 @@ public class TestContrato {
 			String certificateType = "pkcs12";
 			@SuppressWarnings("deprecation")
 			Date fecha =  new Date("2016/05/06");
-			String ipf = "Y7514970X";
+			String ipf = "16262835H";
 			byte[] pdf = Contrato.transformacionsPdf(certificateInputStream, certificatePassword, certificateType, ipf, fecha);
 			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
