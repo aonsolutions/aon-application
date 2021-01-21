@@ -52,8 +52,6 @@ public class MainCRAObjectNew {
 		this.domainId = -1;
 		
 		defaultLiquidDate = new Date();
-		defaultLiquidDate = DateUtils.addMonths2Date(defaultLiquidDate, -2);
-		defaultLiquidDate = DateUtils.getLastDayOfMonth(defaultLiquidDate);
 		
 	}
 	
@@ -471,6 +469,11 @@ public class MainCRAObjectNew {
 				}
 			}
 		}
+	}
+	
+	public void setDefaultLiquidDate(Date date) {
+		DateUtils.resetTime(date);
+		defaultLiquidDate = DateUtils.copyDateOnly(date);
 	}
 		
 }

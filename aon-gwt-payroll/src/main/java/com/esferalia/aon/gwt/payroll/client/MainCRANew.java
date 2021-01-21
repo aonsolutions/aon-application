@@ -9,22 +9,27 @@ import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -40,9 +45,10 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -70,13 +76,10 @@ public class MainCRANew extends MainEntryPoint {
 	}
 	
 	@UiField
-	Button exportButton;
+	DeckPanel deckPanel;
 	
 	@UiField
-	Button listButton;
-	
-	@UiField
-	Button newCRAButton;
+	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
 	ListBox month;
@@ -135,27 +138,39 @@ public class MainCRANew extends MainEntryPoint {
 	@UiField(provided = true)
 	DataGrid<CRA> crasDataGrid;
 	
+	private AonToolbar toolbar;
+	private AonToolbarButton exportButton;
+	private AonToolbarButton listButton;
+	private AonToolbarButton newCRAButton;
+	
 	private List<CCCInfo> cccs = Collections.emptyList();
 	private List<CRA> cras = Collections.emptyList();
 	private Integer enterprisesSelectedCount = 0;
 	
 	public MainCRANew() {
+		// Provide DataGrid
 		provideCCCDataGrid();
 		provideCRAsDataGrid();
 		
 		// Add style to table header
 	    addStyleToHeader();
 		
+	    // Inject Styles
+	    GWT.<AonResources>create(AonResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 	
+		// Init UiBinder
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
+		
+		// Create toolbar
+		toolbar = getToolbarPanel();
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		
 		// Init view and listboxes
 		initPreView();
 		initListBoxes();
-		
 	}
 	
 	private void initListBoxes() {
@@ -171,13 +186,13 @@ public class MainCRANew extends MainEntryPoint {
 			monthTillT.addItem(months[i], i+"");
 		}
 		
-		Integer yearInt = new Date().getYear();
+		Integer yearInt = DateUtils.getYear();
 		
-		year.addItem((yearInt + 1900) + "", yearInt + "");
-		year.addItem((yearInt + 1900 - 1) + "", (yearInt - 1) + "");
+		year.addItem(yearInt +"", yearInt + "");
+		year.addItem((yearInt - 1) + "", (yearInt - 1) + "");
 		
-		yearTillT.addItem((yearInt + 1900) + "", yearInt + "");
-		yearTillT.addItem((yearInt + 1900 - 1) + "", (yearInt - 1) + "");
+		yearTillT.addItem(yearInt + "", yearInt + "");
+		yearTillT.addItem((yearInt - 1) + "", (yearInt - 1) + "");
 		
 		// Type List
 		typeList.clear();
@@ -201,7 +216,6 @@ public class MainCRANew extends MainEntryPoint {
 		for(Entry<String, String> province : ProvinceContract.getProvinces().entrySet()) {
 			geozoneList.addItem(province.getValue(), province.getKey());
 		}
-		
 		
 	}
 
@@ -329,7 +343,6 @@ public class MainCRANew extends MainEntryPoint {
 	      @Override
 	      public String getValue(CCCInfo cccInfo) {
 	    	  return getCCCType(cccInfo.getType());
-//	    	  return parseCCCType(cccInfo.getTypeStr());
 	      }
 
 	    };
@@ -498,7 +511,7 @@ public class MainCRANew extends MainEntryPoint {
 			public void render(Context context, CRA object, SafeHtmlBuilder sb) {
 				if(null != object) {
 					if(object.getIncludeCCCs().size() > 1)
-						sb.appendHtmlConstant("<button type=\"button\" title=\"Ver CCCs\" class=\"aon-finding-toolbar-item aon-icon-info\" style=\"border: none !important;\"></button>");
+						sb.appendHtmlConstant("<button type=\"button\" title=\"Ver CCCs\" class=\"aon_button aon_icon_info aon_table_button\" style=\"border: none !important;\"></button>");
 				}
 			}
 		};
@@ -528,7 +541,7 @@ public class MainCRANew extends MainEntryPoint {
 			@Override
 			public void render(Context context, CRA object, SafeHtmlBuilder sb) {
 				if(null != object) {
-					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-mail-save\" style=\"border: none !important; height: 20px;\"></button>");
+					sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_icon_download aon_table_button\" style=\"border: none !important; height: 20px;\"></button>");
 				}
 			}
 		};
@@ -540,6 +553,7 @@ public class MainCRANew extends MainEntryPoint {
 
 			@Override
 			public void execute(CRA cra) {
+				mainCRAObjectNew.setDefaultLiquidDate(findingDateCRA);
 				mainCRAObjectNew.deteleCRA(cra.getCode(), 
 						s -> {
 							mainCRAObjectNew.removeCCCCRADate(cra);
@@ -561,7 +575,7 @@ public class MainCRANew extends MainEntryPoint {
 			public void render(Context context, CRA object, SafeHtmlBuilder sb) {
 				if(null != object) {
 //					if(object.getDomain() == mainCRAObjectNew.getDomainId() || object.getDomain().equals(mainCRAObjectNew.getDomainId()))
-						sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-delete\" style=\"border: none !important; height: 20px;\"></button>");
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_icon_delete aon_table_button\" style=\"border: none !important; height: 20px;\"></button>");
 				}
 			}
 		};
@@ -613,7 +627,6 @@ public class MainCRANew extends MainEntryPoint {
 	
 	private void initPreView() {
 		collapsePanel.setOpen(false);
-//		filterTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
 		enterprisesSelected.setText(enterprisesSelectedCount.toString());
 	}
 	
@@ -626,6 +639,8 @@ public class MainCRANew extends MainEntryPoint {
 	private MultiSelectionModel<CRA> selectionCraModel;
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("MM/yyyy");
 	private DateTimeFormat formatFullDateHour = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");
+	private Date findingDate = new Date();
+	private Date findingDateCRA = new Date();
 	
 	// --------------------------------------------------------------------------------------------
 	// 										ON MODULE LOAD
@@ -638,34 +653,38 @@ public class MainCRANew extends MainEntryPoint {
 		showCCCs();
 		
 		// Create findPeriod, first day of previus month
-		Date initialDate = createInitialDate();
+		createInitialDate();
 		
-		Integer initialYear = initialDate.getYear();
-		Integer initialMonth = initialDate.getMonth();
-		
-		Date findPeriod = DateUtils.copyDateOnly(initialDate);
-
-		this.mainCRAObjectNew.getEnterprisesCCCInfo(findPeriod.getTime(),
+		this.mainCRAObjectNew.getEnterprisesCCCInfo(findingDate.getTime(),
 				s -> {
 					initEnterpriseSB();
-//					clearSelectionModel();
-//					initListBox();
-//					initCCCsTable();
-//					initCRATable();
-					setInitialLBAndCBSelected(initialYear, initialMonth);
+					setInitialLBAndCBSelected();
 					peddingCCCsCB.setValue(true, true);
 					setTableHeights();			
 				}, 
 				f -> {}
 		);
+		
+		selectionCCCInfoModel.addSelectionChangeHandler(new Handler() {
+			
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				if(selectionCCCInfoModel.getSelectedSet().size() == 0)
+					exportButton.setVisible(false);
+				else
+					exportButton.setVisible(true);
+			}
+		});
+		
+		exportButton.setVisible(false);
 	}
 
-	private Date createInitialDate() {
+	private void createInitialDate() {
 		// Get first day of previus month
-		Date actualDate = new Date();
-		actualDate.setDate(1);
-		actualDate = DateUtils.addMonths2Date(actualDate, -1);
-		return actualDate;
+		findingDate = DateUtils.addMonths2Date(findingDate, -1);
+		findingDate = DateUtils.getFirstDayOfMonth(findingDate);
+		findingDateCRA = DateUtils.addMonths2Date(findingDateCRA, -1);
+		findingDateCRA = DateUtils.getFirstDayOfMonth(findingDateCRA);
 	}
 	
 	private void initEnterpriseSB() {
@@ -681,7 +700,7 @@ public class MainCRANew extends MainEntryPoint {
 		
 		enterpriseSB.addKeyUpHandler(e-> {
 			String value = enterpriseSB.getValue();
-			if(StringUtils.isBlank(value) || value.length() < 3) {
+			if(AonStringUtils.isBlank(value) || value.length() < 3) {
 				mainCRAObjectNew.resetEnterpriseCCCList();
 			} else {
 				List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
@@ -698,11 +717,11 @@ public class MainCRANew extends MainEntryPoint {
 		});
 	}
 	
-	private void setInitialLBAndCBSelected(Integer initialYear, Integer initialMonth) {
-		setSelectedValueLB(this.year, initialYear+"");
-		setSelectedValueLB(this.month, initialMonth+"");
-		setSelectedValueLB(this.yearTillT, initialYear+"");
-		setSelectedValueLB(this.monthTillT, initialMonth+"");
+	private void setInitialLBAndCBSelected() {
+		setSelectedValueLB(this.year, DateUtils.getYear(findingDate) +"");
+		setSelectedValueLB(this.month, DateUtils.getMonth(findingDate) +"");
+		setSelectedValueLB(this.yearTillT, DateUtils.getYear(findingDateCRA) +"");
+		setSelectedValueLB(this.monthTillT,  DateUtils.getMonth(findingDateCRA) +"");
 		
 		this.allCCCsCB.setValue(false);
 		this.emitCCCsCB.setValue(false);
@@ -722,9 +741,6 @@ public class MainCRANew extends MainEntryPoint {
 	// --------------------------------------------------------------------------------------------
 
 	private void initCCCsTable() {		
-		//Reset Selection Model 
-		//selectionCCCInfoModel.clear();
-				
 		//Show buttons
 		this.exportButton.setVisible(true);
 		
@@ -836,9 +852,6 @@ public class MainCRANew extends MainEntryPoint {
 	// --------------------------------------------------------------------------------------------
 
 	private void initCRATable() {		
-		//Reset Selection Model 
-		//selectionCraModel.clear();
-				
 		// Create a data provider.
 	    ListDataProvider<CRA> dataProvider = new ListDataProvider<CRA>();
 
@@ -960,32 +973,12 @@ public class MainCRANew extends MainEntryPoint {
 	          }
 	        });
 	    
-	    
 	    crasDataGrid.addColumnSortHandler(columnSortHandler);
-	    
-	    // We know that the data is sorted alphabetically by default.
-//	    Column<CRA, ?> creationColumn = crasDataGrid.getColumn(0);
-//	    creationColumn.setDefaultSortAscending(false);
-//	    crasDataGrid.getColumnSortList().push(creationColumn);
-//	    crasDataGrid.getColumnSortList().push(creationColumn);
 	}
 	
 	// --------------------------------------------------------------------------------------------
 	// 										UI HANDLERS
 	// --------------------------------------------------------------------------------------------
-	
-	@UiHandler("listButton")
-	public void onListButton(ClickEvent event) {
-//		mainCRAObjectNew.getCRAs(
-//				s -> {
-//					showCRAS();
-//					initCRATable();
-//				}, 
-//				f -> {}
-//		);
-		showCRAS();
-		initCRATable();
-	}
 	
 	@UiHandler("allCCCsCB")
 	public void onAllCCCsCB(ValueChangeEvent<Boolean> event) {
@@ -996,10 +989,8 @@ public class MainCRANew extends MainEntryPoint {
 			this.mainCRAObjectNew.resetEnterpriseCCCList();
 			enterpriseSB.setText("");
 			
-//			showCCCs();
 			clearSelectionModel();
 			initCCCsTable();
-//			initCRATable();
 		}
 	}
 	
@@ -1009,14 +1000,11 @@ public class MainCRANew extends MainEntryPoint {
 			this.allCCCsCB.setValue(false);
 			this.peddingCCCsCB.setValue(false);
 			
-			Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
-			this.mainCRAObjectNew.filterEmitedCCC(findPeriod);
+			this.mainCRAObjectNew.filterEmitedCCC(findingDate);
 			enterpriseSB.setText("");
 			
-//			showCCCs();
 			clearSelectionModel();
 			initCCCsTable();
-//			initCRATable();
 		}
 		
 	}
@@ -1026,294 +1014,31 @@ public class MainCRANew extends MainEntryPoint {
 		if(event.getValue()) {
 			this.allCCCsCB.setValue(false);
 			this.emitCCCsCB.setValue(false);
+			
+			this.mainCRAObjectNew.filterPenddingCCC(findingDate);
 			enterpriseSB.setText("");
 			
-			Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
-			this.mainCRAObjectNew.filterPenddingCCC(findPeriod);
-			
-//			showCCCs();
 			clearSelectionModel();
 			initCCCsTable();
-//			initCRATable();
 		}
 	}
 	
-	@UiHandler("month")
+	@UiHandler({"month","year"})
 	public void onMonthChange(ChangeEvent event) {
-//		showCCCs();
+		findingDate = DateUtils.getDate(Integer.parseInt(month.getSelectedValue()), Integer.parseInt(year.getSelectedValue()));
 		
-		Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
-		
-		this.mainCRAObjectNew.getEnterprisesCCCInfo(findPeriod.getTime(),
+		this.mainCRAObjectNew.getEnterprisesCCCInfo(findingDate.getTime(),
 				s -> {
 					clearSelectionModel();
-//					initListBox();
 					initCCCsTable();
-//					initCRATable();
 					
-					int initialYear = findPeriod.getYear();
-					int initialMonth = findPeriod.getMonth();
-					setInitialLBAndCBSelected(initialYear, initialMonth);
+					setInitialLBAndCBSelected();
 					setTableHeights();		
 					
 				}, 
 				f -> {}
 		);
 
-	}
-	
-	@UiHandler("year")
-	public void onYearChange(ChangeEvent event) {
-//		showCCCs();
-		
-		Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
-		
-		this.mainCRAObjectNew.getEnterprisesCCCInfo(findPeriod.getTime(),
-				s -> {
-					clearSelectionModel();
-//					initListBox();
-					initCCCsTable();
-//					initCRATable();
-					
-					int initialYear = findPeriod.getYear();
-					int initialMonth = findPeriod.getMonth();
-					setInitialLBAndCBSelected(initialYear, initialMonth);
-					setTableHeights();
-				}, 
-				f -> {}
-		);
-
-	}
-	
-	@UiHandler("newCRAButton")
-	public void onNewCRAButton(ClickEvent event) {
-//		this.mainCRAObjectNew.resetEnterpriseCCCList();
-		
-		showCCCs();
-		clearSelectionModel();
-		initCCCsTable();
-//		initCRATable();
-	}
-	
-	@UiHandler("exportButton")
-	public void onExportButton(ClickEvent event) {
-		if(selectionCCCInfoModel.getSelectedSet().size() > 0) {
-			ArrayList<String> cccList = new ArrayList<String>();
-			ArrayList<Integer> cccIdList = new ArrayList<Integer>();
-			
-			for(CCCInfo cccInfo : selectionCCCInfoModel.getSelectedSet()) {
-				cccList.add(cccInfo.getCcc());
-				cccIdList.add(cccInfo.getCccId());
-			}
-			
-			ArrayList<CCCInfo>  cccsSelected = new ArrayList<CCCInfo>();
-			cccsSelected.addAll(selectionCCCInfoModel.getSelectedSet());
-			Integer cccId = cccsSelected.get(0).getCccId();
-			
-			Date findingDate = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
-			DateUtils.resetTime(findingDate);
-			
-			// -------------------------
-			
-			ArrayList<Integer> selectedCCCIdList = new ArrayList<Integer>();
-			for(CCCInfo cccInfo : selectionCCCInfoModel.getSelectedSet()) {
-				selectedCCCIdList.add(cccInfo.getCccId());	
-			}
-			
-			mainCRAObjectNew.checkIfRectificative(findingDate, selectedCCCIdList, s -> {
-				if(s) {
-					AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", "Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?") {
-						
-						@Override
-						protected void onAccept() {
-							mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
-									v -> {
-										if(null == v){
-											WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
-													+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : \n\n 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
-											warning.center();
-											warning.show();
-											
-											for(CCCInfo cccInfo : cccsSelected) {
-												cccInfo.getCRADates().add(findingDate);
-											}
-											showCRAS();
-											mainCRAObjectNew.getCRAs(findingDate.getTime(),
-													s -> {
-														initCRATable();
-													}, 
-													f -> {});
-//											showCRAS();
-//											initCRATable();
-										} else {
-											WarningDialog warning = new WarningDialog("ERROR", v);
-											warning.center();
-											warning.show();
-										}
-									}, 
-									f -> {});
-						}
-					};
-					
-					dialog.center();
-					dialog.show();
-				} else {
-					mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
-							p -> {
-								if(StringUtils.isBlank(p)) {
-									mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
-											v -> {
-												if(null == v) {
-													for(CCCInfo cccInfo : cccsSelected) {
-														cccInfo.getCRADates().add(findingDate);
-													}
-													showCRAS();
-													mainCRAObjectNew.getCRAs(findingDate.getTime(),
-															a -> {
-																initCRATable();
-															}, 
-															b -> {});
-													
-//													initCRATable();
-												} else {
-													WarningDialog warning = new WarningDialog("ERROR", v);
-													warning.center();
-													warning.show();
-												}
-											}, 
-											f -> {});
-								}else {
-									AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", p) {
-										
-										@Override
-										protected void onAccept() {
-											mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
-													v -> {
-														if(null == v) {
-															for(CCCInfo cccInfo : cccsSelected) {
-																cccInfo.getCRADates().add(findingDate);
-															}
-															showCRAS();
-															mainCRAObjectNew.getCRAs(findingDate.getTime(),
-																	s -> {
-																		initCRATable();
-																	}, 
-																	f -> {});
-//															showCRAS();
-//															initCRATable();
-														} else {
-															WarningDialog warning = new WarningDialog("ERROR", v);
-															warning.center();
-															warning.show();
-														}
-													}, 
-													f -> {});
-										}
-									};
-									dialog.center();
-									dialog.show();
-								}
-							}, f ->{});
-				}
-			}, f -> {});
-			
-			// -------------------------
-			
-//			if(checkRectificavo()) {
-//				mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
-//						p -> {
-//							if(StringUtils.isBlank(p)) {
-//								mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
-//										v -> {
-//											if(null == v) {
-//												for(CCCInfo cccInfo : cccsSelected) {
-//													cccInfo.getCRADates().add(findingDate);
-//												}
-//												showCRAS();
-//												mainCRAObjectNew.getCRAs(findingDate.getTime(),
-//														s -> {
-//															initCRATable();
-//														}, 
-//														f -> {});
-//												
-////												initCRATable();
-//											} else {
-//												WarningDialog warning = new WarningDialog("ERROR", v);
-//												warning.center();
-//												warning.show();
-//											}
-//										}, 
-//										f -> {});
-//							}else {
-//								AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", p) {
-//									
-//									@Override
-//									protected void onAccept() {
-//										mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
-//												v -> {
-//													if(null == v) {
-//														for(CCCInfo cccInfo : cccsSelected) {
-//															cccInfo.getCRADates().add(findingDate);
-//														}
-//														showCRAS();
-//														mainCRAObjectNew.getCRAs(findingDate.getTime(),
-//																s -> {
-//																	initCRATable();
-//																}, 
-//																f -> {});
-////														showCRAS();
-////														initCRATable();
-//													} else {
-//														WarningDialog warning = new WarningDialog("ERROR", v);
-//														warning.center();
-//														warning.show();
-//													}
-//												}, 
-//												f -> {});
-//									}
-//								};
-//								dialog.center();
-//								dialog.show();
-//							}
-//						}, f ->{});
-//			} else {
-//				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", "Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?") {
-//					
-//					@Override
-//					protected void onAccept() {
-//						mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
-//								v -> {
-//									if(null == v){
-//										WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
-//												+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : \n\n 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
-//										warning.center();
-//										warning.show();
-//										
-//										for(CCCInfo cccInfo : cccsSelected) {
-//											cccInfo.getCRADates().add(findingDate);
-//										}
-//										showCRAS();
-//										mainCRAObjectNew.getCRAs(findingDate.getTime(),
-//												s -> {
-//													initCRATable();
-//												}, 
-//												f -> {});
-////										showCRAS();
-////										initCRATable();
-//									} else {
-//										WarningDialog warning = new WarningDialog("ERROR", v);
-//										warning.center();
-//										warning.show();
-//									}
-//								}, 
-//								f -> {});
-//					}
-//				};
-//				
-//				dialog.center();
-//				dialog.show();
-//			}
-		}
 	}
 	
 	@UiHandler("typeList")
@@ -1337,31 +1062,7 @@ public class MainCRANew extends MainEntryPoint {
 		}
 		initCRATable();
 	}
-//	
-//	@UiHandler({"monthTillT", "yearTillT", "monthTTo", "yearTTo"})
-//	public void onFilterDatesChange(ChangeEvent event) {
-//		Date date1 = new Date(Integer.parseInt(yearTillT.getSelectedValue()), Integer.parseInt(monthTillT.getSelectedValue()), 1);
-//		Date date2 = new Date(Integer.parseInt(yearTTo.getSelectedValue()), Integer.parseInt(monthTTo.getSelectedValue()), 1);
-//		
-//		Date startDate = null;
-//		Date endDate = null;
-//		
-//		if(date1.before(date2) || date1.equals(date2)) {
-//			startDate = DateUtils.copyDateOnly(date1);
-//			
-//			endDate = DateUtils.copyDateOnly(date2);
-//			endDate = DateUtils.getLastDayOfMonth(endDate);
-//		} else {
-//			startDate = DateUtils.copyDateOnly(date2);
-//			
-//			endDate = DateUtils.copyDateOnly(date1);
-//			endDate = DateUtils.getLastDayOfMonth(endDate);
-//		}
-//		
-//		mainCRAObjectNew.filterCrasByDates(startDate, endDate);
-//		initCRATable();
-//	}
-	
+
 	@UiHandler({"geozoneList", "typeList"})
 	public void onFilterChange(ChangeEvent event) {
 		// GEOZONE
@@ -1380,10 +1081,9 @@ public class MainCRANew extends MainEntryPoint {
 	
 	@UiHandler({"monthTillT", "yearTillT"})
 	public void onFilterDatesChange(ChangeEvent event) {
-		// DATES
-		Date liquidDate = new Date(Integer.parseInt(yearTillT.getSelectedValue()), Integer.parseInt(monthTillT.getSelectedValue()), 1);
-		
-		mainCRAObjectNew.getCRAs(liquidDate.getTime(),
+		findingDateCRA = DateUtils.getDate(Integer.parseInt(monthTillT.getSelectedValue()), Integer.parseInt(yearTillT.getSelectedValue()));
+
+		mainCRAObjectNew.getCRAs(findingDateCRA.getTime(),
 				s -> {
 					initCRATable();
 				}, 
@@ -1406,97 +1106,6 @@ public class MainCRANew extends MainEntryPoint {
 	// 										AUX METHODS
 	// --------------------------------------------------------------------------------------------
 	
-//	private void initListBox() {
-//		//Month
-//		month.clear();
-//		month.addItem("Enero", "0");
-//		month.addItem("Febrero", "1");
-//		month.addItem("Marzo", "2");
-//		month.addItem("Abril", "3");
-//		month.addItem("Mayo", "4");
-//		month.addItem("Junio", "5");
-//		month.addItem("Julio", "6");
-//		month.addItem("Agosto", "7");
-//		month.addItem("Septiembre", "8");
-//		month.addItem("Octubre", "9");
-//		month.addItem("Noviembre", "10");
-//		month.addItem("Diciembre", "11");
-//		
-//		
-//		// Year
-//		Integer actualYear = new Date().getYear() + 1900;
-//		year.clear();
-//		year.addItem((actualYear)+"", (actualYear-1900)+"");
-//		year.addItem((actualYear-1)+"", (actualYear-1-1900)+"");
-//		year.addItem((actualYear-2)+"", (actualYear-2-1900)+"");
-//		
-//		// Type List
-//		typeList.clear();
-//		typeList.addItem("-", "-1");
-//		typeList.addItem("Principal", "0");
-//		typeList.addItem("Formacion y aprendizaje", "1");
-//		typeList.addItem("Aprendizaje", "2");
-//		typeList.addItem("Representantes de comercio", "3");
-//		typeList.addItem("Asimilados R.General", "4");
-//		typeList.addItem("Becarios", "5");
-//		typeList.addItem("Emploead@s de hogar", "6");
-//		typeList.addItem("Trabajadores cuenta ajena agrarios", "7");
-//		typeList.addItem("Artistas", "8");
-//		typeList.getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
-//		typeList.addStyleName("aon-selectOneMenu");
-//		
-//		// Enteprise List
-//		List<String> enterprises = new ArrayList<>(mainCRAObjectNew.getEnterprisesMap().values());
-//		List<String> enterprisesSuggest = new ArrayList<String>();
-//		for(String enterprise : enterprises)
-//			enterprisesSuggest.add(enterprise+"");
-//		
-////		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) enterpriseSB.getSuggestOracle();
-////		orclEnterprise.addAll(enterprisesSuggest);
-////		enterpriseSB.setAutoSelectEnabled(false);
-////		
-////		enterpriseSB.addKeyUpHandler(e-> {
-////			String value = enterpriseSB.getValue();
-////			if(StringUtils.isBlank(value) || value.length() < 3) {
-////				mainCRAObjectNew.resetEnterpriseCCCList();
-////			} else {
-////				List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
-////				mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
-////			}
-////			initCCCsTable();
-////		});
-////		
-////		enterpriseSB.addSelectionHandler(e -> {
-////			String value = enterpriseSB.getValue();
-////			List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
-////			mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
-////			initCCCsTable();
-////		});
-//		
-//		//Geozone
-//		geozoneList.clear();
-//		geozoneList.addItem("-", "-1");
-//		for(Entry<String, String> province : ProvinceContract.getProvinces().entrySet()) {
-//			geozoneList.addItem(province.getValue(), province.getKey());
-//		}
-//		
-//	}
-
-//	private String parseCCCType(String typeStr) {
-//		switch (typeStr) {
-//			case "0111":
-//				return "Principal";
-//			case "0138":
-//				return "Emploead@s de hogar";
-//			case "0163":
-//				return "Trabajadores cuenta ajena agrarios";
-//			case "0112":
-//				return "Artistas";
-//			default:
-//				return "Principal";
-//		}
-//	}
-	
 	private void setSelectedValueLB(ListBox lBox, String str) {
 	    String text = str;
 	    int indexToFind = 0;
@@ -1510,8 +1119,7 @@ public class MainCRANew extends MainEntryPoint {
 	}
 	
 	private void showCCCs() {
-		mainContainer.getElement().getStyle().clearDisplay();
-		crasContainer.getElement().getStyle().setDisplay(Display.NONE);
+		deckPanel.showWidget(0);
 		
 		exportButton.setEnabled(false);
 		exportButton.setVisible(true);
@@ -1524,8 +1132,7 @@ public class MainCRANew extends MainEntryPoint {
 	}
 	
 	private void showCRAS() {
-		crasContainer.getElement().getStyle().clearDisplay();
-		mainContainer.getElement().getStyle().setDisplay(Display.NONE);
+		deckPanel.showWidget(1);
 		
 		exportButton.setEnabled(false);
 		exportButton.setVisible(false);
@@ -1552,43 +1159,6 @@ public class MainCRANew extends MainEntryPoint {
 		this.selectionCraModel.clear();
 	}
 	
-	private boolean checkRectificavo() {
-		Integer yearInt = Integer.parseInt(year.getSelectedValue());
-		Integer monthInt = Integer.parseInt(month.getSelectedValue());
-		Date findingDate = new Date(yearInt, monthInt, 1);
-		DateUtils.resetTime(findingDate);
-		
-		ArrayList<Integer> cccIdList = new ArrayList<Integer>();
-		for(CCCInfo cccInfo : selectionCCCInfoModel.getSelectedSet()) {
-			cccIdList.add(cccInfo.getCccId());	
-		}
-		
-		for(CRA cra : mainCRAObjectNew.getAllCRAs()) {
-			if(null == cra.getCreationDate())
-				continue;
-			
-			Date creationDate = DateUtils.copyDateOnly(cra.getCreationDate());
-			DateUtils.resetTime(creationDate);
-			
-			Window.alert("CreationDate ( " + creationDate + " ) == findingDate ( " + findingDate + " ) -> " + creationDate.equals(findingDate) + " , " + (creationDate.getTime() == findingDate.getTime()));
-			
-			if (creationDate.equals(findingDate) || creationDate.getTime() == findingDate.getTime()) {
-				for(CCCInfo ccc : cra.getIncludeCCCs()) {
-					Window.alert("CCC List contains ccc : " + cccIdList.contains(ccc.getCccId()));
-					if(cccIdList.contains(ccc.getCccId()))
-						return false;
-				}
-			}
-			
-			
-//			if(cccList.contains(cra.getCcc().substring(4)) && creationDate.equals(findDate)) {
-//				return false;
-//			}
-			
-		}
-		return true;
-	}
-	
 	private String getCCCType(Byte type) {
 		switch (type) {
 			case (byte) 0:
@@ -1610,6 +1180,171 @@ public class MainCRANew extends MainEntryPoint {
 			default:
 				return "-";
 		}
+	}
+	
+	private AonToolbar getToolbarPanel() {
+		
+		AonToolbar toolbar = new AonToolbar("CRA - Conceptos Retributivos Abonados");
+		
+		listButton = new AonToolbarButton( "Listar CRAs", AON.CSS.aonIconList() );
+		listButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onListButton(event);
+			}
+		});
+		toolbar.add(listButton);
+		
+		exportButton = new AonToolbarButton( "Generar CRA", AON.CSS.aonIconTgssCra() );
+		exportButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onExportButton(event);
+			}
+		});
+		toolbar.add(exportButton);
+		
+		newCRAButton = new AonToolbarButton( "Nuevo CRA", AON.CSS.aonIconAdd() );
+		newCRAButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onNewCRAButton(event);
+			}
+		});
+		toolbar.add(newCRAButton);
+
+		return toolbar;
+
+	}
+	
+	private void onListButton(ClickEvent event) {
+		showCRAS();
+		initCRATable();
+	}
+	
+	private void onNewCRAButton(ClickEvent event) {
+		showCCCs();
+		initCCCsTable();
+		clearSelectionModel();
+	}
+	
+	private void onExportButton(ClickEvent event) {
+		if(selectionCCCInfoModel.getSelectedSet().size() > 0) {
+			ArrayList<String> cccList = new ArrayList<String>();
+			ArrayList<Integer> cccIdList = new ArrayList<Integer>();
+			
+			for(CCCInfo cccInfo : selectionCCCInfoModel.getSelectedSet()) {
+				cccList.add(cccInfo.getCcc());
+				cccIdList.add(cccInfo.getCccId());
+			}
+			
+			ArrayList<CCCInfo>  cccsSelected = new ArrayList<CCCInfo>();
+			cccsSelected.addAll(selectionCCCInfoModel.getSelectedSet());
+			Integer cccId = cccsSelected.get(0).getCccId();
+			
+			findingDate = DateUtils.getDate(Integer.parseInt(month.getSelectedValue()), Integer.parseInt(year.getSelectedValue()));
+			findingDateCRA = DateUtils.copyDateOnly(findingDate);
+			// -------------------------
+			
+			ArrayList<Integer> selectedCCCIdList = new ArrayList<Integer>();
+			for(CCCInfo cccInfo : selectionCCCInfoModel.getSelectedSet()) {
+				selectedCCCIdList.add(cccInfo.getCccId());	
+			}
+			
+			mainCRAObjectNew.checkIfRectificative(findingDate, selectedCCCIdList, s -> {
+				if(s) {
+					AonConfirmDialog confirmDialog = new AonConfirmDialog();
+					confirmDialog.confirm(
+							"AVISO: Rectificativo", 
+							"Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?",
+							new AonConfirmDialogCallback() {
+
+								@Override
+								public void onAccept() {
+									createNewCRARectificative(cccsSelected, cccList, selectedCCCIdList, cccId);
+								}
+
+								@Override
+								public void onCancel() {
+									// TODO Auto-generated method stub
+								}});
+					
+				} else {
+					mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
+							p -> {
+								if(AonStringUtils.isBlank(p)) {
+									createNewCRA(cccsSelected, cccList, cccIdList, cccId);
+								}else {
+									AonConfirmDialog confirmDialog = new AonConfirmDialog();
+									confirmDialog.confirm(
+											"AVISO", 
+											p,
+											new AonConfirmDialogCallback() {
+
+												@Override
+												public void onAccept() {
+													createNewCRA(cccsSelected, cccList, cccIdList, cccId);
+												}
+
+												@Override
+												public void onCancel() {
+													// TODO Auto-generated method stub
+												}});
+								}
+							}, f ->{});
+				}
+			}, f -> {});
+		}
+	}
+	
+	public void createNewCRA(ArrayList<CCCInfo> cccsSelected, ArrayList<String> cccList, ArrayList<Integer> cccIdList, Integer cccId) {
+		mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
+				v -> {
+					if(null == v) {
+						for(CCCInfo cccInfo : cccsSelected) {
+							cccInfo.getCRADates().add(findingDate);
+						}
+						showCRAS();
+						mainCRAObjectNew.getCRAs(findingDate.getTime(),
+								a -> {
+									initCRATable();
+									setInitialLBAndCBSelected();
+								}, 
+								b -> {});
+						
+					} else {
+						AonConfirmDialog dialog = new AonConfirmDialog();
+						dialog.info("ERROR", v);
+					}
+				}, 
+				f -> {});
+	}
+	
+	public void createNewCRARectificative(ArrayList<CCCInfo> cccsSelected, ArrayList<String> cccList, ArrayList<Integer> cccIdList, Integer cccId) {
+		mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
+				v -> {
+					if(null == v){
+						AonConfirmDialog dialog = new AonConfirmDialog();
+						dialog.info("INTRUCCIONES: CRA Rectificativo", "Debe enviar el CRA rectificativo que se ha generado en el historial de CRAs rectificativos, para anular el anterior y actualizar la informacion.");
+					
+						for(CCCInfo cccInfo : cccsSelected) {
+							cccInfo.getCRADates().add(findingDate);
+						}
+						
+						showCRAS();
+						mainCRAObjectNew.getCRAs(findingDate.getTime(),
+								s -> {
+									initCRATable();
+									setInitialLBAndCBSelected();
+								}, 
+								f -> {});
+					} else {
+						AonConfirmDialog dialog = new AonConfirmDialog();
+						dialog.info("ERROR", v);
+					
+					}
+				}, 
+				f -> {});
 	}
 
 }
