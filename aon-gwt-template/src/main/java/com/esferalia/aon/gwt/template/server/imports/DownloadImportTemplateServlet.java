@@ -41,6 +41,8 @@ public class DownloadImportTemplateServlet extends HttpServlet {
 			return getDiaryColumnList();
 		} else if("pgc".equalsIgnoreCase(type)) {
 			return getPgcColumnList();
+		} else if("fee".equalsIgnoreCase(type)) {
+			return getFeeColumnList();
 		}
 		return new LinkedList<>();
 	}
@@ -115,6 +117,33 @@ public class DownloadImportTemplateServlet extends HttpServlet {
         columnList.add("ALIAS");   
         return columnList;
 	}
+	
+	private LinkedList<String> getFeeColumnList() {
+		LinkedList<String> columnList = new LinkedList<String>();
+		columnList.add("CLIENTE");
+		columnList.add("LINEA");
+		columnList.add("PRODUCTO");
+		columnList.add("CANTIDAD");
+		columnList.add("PRECIO");
+		columnList.add("DESCUENTO");
+		columnList.add("FECHA_INICIO");
+		columnList.add("FECHA FIN");
+		columnList.add("FECHA FACTURACION");
+		columnList.add("PERIODO");
+		columnList.add("COMERCIAL");
+		columnList.add("CENTRO DE TRABAJO");
+		columnList.add("GRUPO FACTURACION");
+		columnList.add("CONFIDENCIAL");
+		columnList.add("DESCRIPCION");
+		columnList.add("EXPEDIENTE");
+		columnList.add("DETALLE1");
+		columnList.add("DETALLE2");
+		columnList.add("DETALLE3");
+		columnList.add("CODIGO DE BARRAS");
+		columnList.add("NUMERO DE SERIE");
+        return columnList;
+	}
+	
 	
 	@Override
     protected void doGet(HttpServletRequest p_request, HttpServletResponse p_response)throws ServletException, IOException{        

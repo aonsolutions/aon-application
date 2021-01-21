@@ -29,6 +29,8 @@ public enum AonError implements Serializable{
 	,EMPTY_DATE_FROM("No se ha indicado una fecha 'desde'.")
 	,EMPTY_DATE_TO("No se ha indicado una fecha 'hasta'.")
 	,EMPTY_DOMAIN("El dominio es un dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_SCOPE("El \u00E1mbito es un dato obligatorio, no puede estar vac\u00EDa")
+	,EMPTY_NAME("El nombre es un dato obligatorio, no puede estar vac\u00EDa")
 	,EMPTY_YEAR("El ejercicio es un dato obligatorio, no puede estar vac\u00EDo")
 	,INVALID_YEAR("El ejercicio debe tener un valor real")
 	,EMPTY_PERIOD("El periodo es un dato obligatorio, no puede estar vac\u00EDo")

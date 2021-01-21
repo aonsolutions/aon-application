@@ -5,24 +5,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.function.Function;
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
-
 import aon.sepe.exceptions.invalidData.InvalidDataException;
 import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.exceptions.certificate.InvalidCertificateException;
 
-
 public class HtmlUnitToolkit {
 
 	//WAIT FOR A SPECIFIC HTML ELEMENT
+
 	public static <HtmlPage, R> Optional<R> wait4(HtmlPage htmlPage, Function<HtmlPage, R> function)
 			throws InterruptedException {
 		// try 20 times to wait .5 second each for filling the page.
@@ -83,7 +80,6 @@ public class HtmlUnitToolkit {
 	}
 	
 
-	
 	//GET TRIMMED STRING FROM HTML ELEMENT
 	public static String getTrimmedById(HtmlPage htmlPage, String id) {
 		return Toolkit.removeNBSP(htmlPage.getElementById(id).getTextContent());
@@ -108,17 +104,16 @@ public class HtmlUnitToolkit {
 	}
 
 	//GETS THE SS STATUS CODE
-	public static String getSSmessage(HtmlPage htmlPage) throws SepeException {
-		try { return HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL"); }
-		catch (ElementNotFoundException e) {return "";}
-		catch(NumberFormatException e) {throw new SepeException (e);}
+	public static String getSSmessage(HtmlPage htmlPage) {
+		try { return HtmlUnitToolkit.getTrimmedById(htmlPage, "inicial"); }
+		catch (Exception e) {}		
+		return "";
 	}
 
 	//MANAGES THE EXCEPTIONS
 	public static void manageStatusCode(HtmlPage htmlPage) throws SepeException {
 		Integer code = htmlPage.getWebResponse().getStatusCode();
-        String msg = null; //getSSmessage(htmlPage); 
-//		System.out.println("StatusCode: "+code);
+		String msg = null;
 		InvalidDataException.checkCode(code, msg);
 	}
 
@@ -142,6 +137,8 @@ public class HtmlUnitToolkit {
 		 String s = "submit";
 		 el.setTextContent(s);
 		 el.setAttribute("type", s);
+		 el.setAttribute("value", s);
+		 el.setAttribute("name", "submitCustom");
 	     return el;
 	}
 

@@ -8,11 +8,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	InsertTest.class,
-//	ValidationSaveEmptyDateTest.class,
-//	ValidationSaveEmptyDomainTest.class,
-//	ValidationSaveEmptyPeriodTest.class,
-//	ValidationSaveEmptyTypeTest.class,
-//	ValidationSaveWrongDomainTest.class
 })
 public class AccountTestSuite {
 

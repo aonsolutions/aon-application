@@ -535,15 +535,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 	}
 
 	private AccountBox createAccountBox() {
-		AccountBox ab = new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
-		ab.addSelectionHandler(new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				Account acc = event.getSelectedItem();
-				getCallback().getModule().onBalance(acc);
-			}
-		});
-		return ab;
+		 return new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
 	}
 
 	@Override
@@ -599,7 +591,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		wrp.setCompanySocialInsuranceAccount(getWrapper().getCompanySocialInsuranceAccount());
 		wrp.setNetSalaryAccount(getWrapper().getNetSalaryAccount());
 		setWrapper( (SalaryEntry) wrp);
-		getCallback().getModule().onBalance(getWrapper().getAccountEntry());
 		populate();
 		valueChanged();
 	}
@@ -612,7 +603,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		} else {
 			if (wrp != null) {
 				setWrapper( (SalaryEntry) wrp);
-				getCallback().getModule().onBalance(getWrapper());
 				getCallback().getModule().onPreview(getWrapper());
 				populate();
 				if (cbk != null) {

@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
@@ -564,6 +565,128 @@ public class ContrataEmployeeObject {
 				 success.accept(result);
 			}
 		});
+	}
+	
+	public void sendEmployeeAlta(Consumer<Void> success, Consumer<Throwable> failure) {
+		
+		employeesService.sendEmployeeAlta(employeeContractData, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+		});
+	}
+	
+	public void sendEmployeeBaja(Consumer<Void> success, Consumer<Throwable> failure) {
+		
+		employeesService.sendEmployeeBaja(employeeContractData, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+		});
+	}
+	
+	public void cambioGrupCtz(String quoteGroup, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		enterprisesService.getNafxIpf(employeeContractData.getEmployeeInfo().getDocument(), employeeContractData.getEmployeeInfo().getSurName(), 
+				employeeContractData.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
+					
+					@Override
+					public void onSuccess(EmployeeSegSocial result) {
+						String ipf = employeeContractData.getEmployeeInfo().getDocument();
+						String nss = result.getNss();
+						String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+						String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+						
+						employeesService.cambioGrupCtz(ipf, regimen, ctaCti, nss, quoteGroup, date, new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void result) {
+								success.accept(result);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub	
+							}
+						});
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+	}
+	
+	public void cambioOcupacion(String ocupation, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		enterprisesService.getNafxIpf(employeeContractData.getEmployeeInfo().getDocument(), employeeContractData.getEmployeeInfo().getSurName(), 
+				employeeContractData.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
+					
+					@Override
+					public void onSuccess(EmployeeSegSocial result) {
+						String ipf = employeeContractData.getEmployeeInfo().getDocument();
+						String nss = result.getNss();
+						String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+						String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+						
+						employeesService.cambioOcupacion(ipf, regimen, ctaCti, nss, ocupation, date, new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void result) {
+								success.accept(result);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub	
+							}
+						});
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});		
+	}
+	
+	public void cambioCatProf(String contract, Date date, Consumer<Void> success, Consumer<Throwable> failure) {
+		enterprisesService.getNafxIpf(employeeContractData.getEmployeeInfo().getDocument(), employeeContractData.getEmployeeInfo().getSurName(), 
+				employeeContractData.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
+					
+					@Override
+					public void onSuccess(EmployeeSegSocial result) {
+						String ipf = employeeContractData.getEmployeeInfo().getDocument();
+						String nss = result.getNss();
+						String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+						String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+						
+						employeesService.cambioCatProf(ipf, regimen, ctaCti, nss, contract, date, new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void result) {
+								success.accept(result);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub	
+							}
+						});
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});	
 	}
 		
 	// ---------------------------------------------- GETTERS  -------------------------------------------------

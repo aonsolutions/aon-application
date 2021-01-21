@@ -3,276 +3,247 @@ package com.esferalia.aon.occam.api.model.fee;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+
 public class Fee implements Serializable{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1524715028531794556L;
-	
+	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
-	private String client;
-	private Integer clientId;
-	private Integer domain;
-	private Integer customer;
-	private String customerName;
-	private String product;
-	private String productCode;
+	private Domain domain;
+	private Project project;
+	private Customer customer;
+	private Short line;
+	private Item item;
+	private String description;
 	private Double quantity;
+	private Double price;
+	private String discountExpr;
 	private Date startDate;
 	private Date endDate;
 	private Date billingDate;
-	private Short period;
-	private Double price;
-	private Double discount;
-	private String discountExpr;
-	private String seller;
-	private Integer sellerId;
-	private String workplace;
-	private Integer workplaceId;
-	private Integer billingGroup;
-	private Boolean confidential;
-	private String project;
-	private Integer projectId;
-	private String detail;
-	private String detail2;
-	private String detail3;
-	private Integer row;
-	private String description;
-	private Short line;
-	private Integer itemId;
-	private Byte securityLevel;
+	private BillingPeriod period;
+	private SecurityLevel securityLevel;
+	private InvoicingGroup invoicingGroup;
+	private Seller seller;
+	private Workplace workplace;
 	
-	public String getClient() {
-		return client;
-	}
-	public Fee setClient(String client) {
-		this.client = client;
-		return this;
-	}
-	public String getProduct() {
-		return product;
-	}
-	public Fee setProduct(String product) {
-		this.product = product;
-		return this;
-	}
-	public String getProductCode() {
-		return productCode;
-	}
-	public Fee setProductCode(String productCode) {
-		this.productCode = productCode;
-		return this;
-	}
+		
 	public Double getQuantity() {
 		return quantity;
 	}
+	
 	public Fee setQuantity(Double quantity) {
 		this.quantity = quantity;
 		return this;
 	}
+	
 	public Date getStartDate() {
 		return startDate;
 	}
+	
 	public Fee setStartDate(Date startDate) {
 		this.startDate = startDate;
 		return this;
 	}
+	
 	public Date getEndDate() {
 		return endDate;
 	}
+	
 	public Fee setEndDate(Date endDate) {
 		this.endDate = endDate;
 		return this;
 	}
+	
 	public Date getBillingDate() {
 		return billingDate;
 	}
+	
 	public Fee setBillingDate(Date billingDate) {
 		this.billingDate = billingDate;
 		return this;
 	}
-	public Short getPeriod() {
+	
+	public BillingPeriod getPeriod() {
 		return period;
 	}
-	public Fee setPeriod(Short period) {
+	
+	public Fee setPeriod(BillingPeriod period) {
 		this.period = period;
 		return this;
 	}
+	
 	public Double getPrice() {
 		return price;
 	}
+	
 	public Fee setPrice(Double price) {
 		this.price = price;
 		return this;
 	}
+	
 	public Double getDiscount() {
-		return Double.parseDouble(getDiscountExpr());
+		return AonNumberUtils.toDouble(getDiscountExpr());
 	}
+
 	public Fee setDiscount(Double discount) {
-		this.discount = discount;
+		this.discountExpr = discount.toString();
 		return this;
 	}
-	public String getSeller() {
+	
+	public Seller getSeller() {
+		if(seller == null) {
+			this.seller = new Seller();
+		}
 		return seller;
 	}
-	public Fee setSeller(String seller) {
+	
+	public Fee setSeller(Seller seller) {
 		this.seller = seller;
 		return this;
 	}
-	public Integer getSellerId() {
-		return sellerId;
-	}
-	public Fee setSellerId(Integer sellerId) {
-		this.sellerId = sellerId;
-		return this;
-	}
-	public String getWorkplace() {
+
+	public Workplace getWorkplace() {
+		if(workplace == null) {
+			this.workplace = new Workplace();
+		}
 		return workplace;
 	}
-	public Fee setWorkplace(String workplace) {
+	
+	public Fee setWorkplace(Workplace workplace) {
 		this.workplace = workplace;
 		return this;
 	}
-	public Integer getWorkplaceId() {
-		return workplaceId;
+	
+	public InvoicingGroup getInvoicingGroup() {
+		if(invoicingGroup == null) {
+			invoicingGroup = new InvoicingGroup();
+		}
+		return invoicingGroup;
 	}
-	public Fee setWorkplaceId(Integer workplaceId) {
-		this.workplaceId = workplaceId;
+	
+	public Fee setInvoicingGroup(InvoicingGroup invoicingGroup) {
+		this.invoicingGroup = invoicingGroup;
 		return this;
 	}
-	public Integer getBillingGroup() {
-		return billingGroup;
+	
+	public Boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL.equals(getSecurityLevel());
 	}
-	public Fee setBillingGroup(Integer billingGroup) {
-		this.billingGroup = billingGroup;
-		return this;
-	}
-	public Boolean getConfidential() {
-		return confidential;
-	}
+	
 	public Fee setConfidential(Boolean confidential) {
-		this.confidential = confidential;
+		this.securityLevel = confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL;
 		return this;
 	}
-	public String getProject() {
+	
+	public Project getProject() {
+		if(project == null) {
+			project = new Project();
+		}
 		return project;
 	}
-	public Fee setProject(String project) {
+	
+	public Fee setProject(Project project) {
 		this.project = project;
 		return this;
 	}
-	public Integer getProjectId() {
-		return projectId;
-	}
-	public Fee setProjectId(Integer projectId) {
-		this.projectId = projectId;
-		return this;
-	}
-	public String getDetail() {
-		return detail;
-	}
-	public Fee setDetail(String detail) {
-		this.detail = detail;
-		return this;
-	}
-	public String getDetail2() {
-		return detail2;
-	}
-	public Fee setDetail2(String detail2) {
-		this.detail2 = detail2;
-		return this;
-	}
-	public String getDetail3() {
-		return detail3;
-	}
-	public Fee setDetail3(String detail3) {
-		this.detail3 = detail3;
-		return this;
-	}
-	public Integer getRow() {
-		return row;
-	}
-	public Fee setRow(Integer row) {
-		this.row = row;
-		return this;
-	}
-	public Integer getClientId() {
-		return clientId;
-	}
-	public Fee setClientId(Integer clientId) {
-		this.clientId = clientId;
-		return this;
-	}
+	
 	public String getDescription() {
 		return description;
 	}
+	
 	public Fee setDescription(String description) {
 		this.description = description;
 		return this;
 	}
+	
 	public Short getLine() {
 		return line;
 	}
+	
 	public Fee setLine(Short line) {
 		this.line = line;
 		return this;
 	}
+	
 	public Fee setLine(Double line) {
 		this.line = line.shortValue();
 		return this;
 	}
-	public Integer getDomain() {
+
+	public Domain getDomain() {
+		if(domain == null) {
+			domain = new Domain();
+		}
 		return domain;
 	}
-	public Fee setDomain(Integer domain) {
+	
+	public Fee setDomain(Domain domain) {
 		this.domain = domain;
 		return this;
 	}
+	
 	public Integer getId() {
 		return id;
 	}
+	
 	public Fee setId(Integer id) {
 		this.id = id;
 		return this;
 	}
-	public Integer getItemId() {
-		return itemId;
+	
+	public Item getItem() {
+		if(item == null) {
+			item = new Item();
+		}
+		return item;
 	}
-	public Fee setItemId(Integer itemId) {
-		this.itemId = itemId;
+	
+	public Fee setItem(Item item) {
+		this.item = item;
 		return this;
 	}
+	
 	public String getDiscountExpr() {
 		return discountExpr;
 	}
+	
 	public Fee setDiscountExpr(String discountExpr) {
 		this.discountExpr = discountExpr;
 		return this;
 	}
-	public Byte getSecurityLevel() {
+	
+	public SecurityLevel getSecurityLevel() {
+		if(securityLevel == null) {
+			securityLevel = SecurityLevel.OFFICIAL;
+		}
 		return securityLevel;
 	}
-	public Fee setSecurityLevel(Byte securityLevel){
+	
+	public Fee setSecurityLevel(SecurityLevel securityLevel){
 		this.securityLevel = securityLevel;
 		return this;
 	}
-	public Integer getCustomer() {
+	
+	public Customer getCustomer() {
+		if(customer == null) {
+			customer = new Customer();
+		}
 		return customer;
 	}
-	public Fee setCustomer(Integer customer) {
+	
+	public Fee setCustomer(Customer customer) {
 		this.customer = customer;
 		return this;
 	}
-	public String getCustomerName() {
-		return customerName;
-	}
-	public Fee setCustomerName(String customerName) {
-		this.customerName = customerName;
-		return this;
-	}
-	
-	
-	
 }

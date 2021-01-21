@@ -41,7 +41,7 @@ public class InvoiceFaker {
 			
 			@Override
 			public void visitSales(Invoice invoice) {
-				Customer customer = AonRandom.getRandomCustomer( ctx );
+				Customer customer = AonRandom.getCustomer( ctx );
 				fillRegistryData(invoice, customer);
 				invoice.setScope(new Scope().setId( customer.getScope() ));
 				invoice.setTransaction( customer.getTransaction() );

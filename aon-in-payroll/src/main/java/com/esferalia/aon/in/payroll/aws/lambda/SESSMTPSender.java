@@ -1,8 +1,12 @@
 package com.esferalia.aon.in.payroll.aws.lambda;
 
+import java.util.Arrays;
 import java.util.Properties;
 
+import javax.mail.Address;
+import javax.mail.IllegalWriteException;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -53,7 +57,7 @@ public class SESSMTPSender {
     	    " for <a href='https://www.java.com'>Java</a>."
     	);
 
-    public static void send(Object ...args) throws Exception {
+    public static void send(Address to [], Object ...args) throws Exception {
 
         // Create a Properties object to contain connection configuration information.
     	Properties props = System.getProperties();
@@ -68,8 +72,15 @@ public class SESSMTPSender {
         // Create a message with the specified information. 
         MimeMessage msg = new MimeMessage(session);
         msg.setFrom(new InternetAddress(FROM,FROMNAME));
-        msg.addRecipient(Message.RecipientType.TO, new InternetAddress(TO1));
-        msg.addRecipient(Message.RecipientType.TO, new InternetAddress(TO2));
+        for ( Address address : to ) {
+        	try {
+        		msg.addRecipient(Message.RecipientType.TO, address);
+        	} catch ( MessagingException  e ) {
+        		System.err.println( address.toString() + ":" + e.getMessage());
+        	}
+        }
+        msg.addRecipient(Message.RecipientType.CC, new InternetAddress(TO1));
+        msg.addRecipient(Message.RecipientType.CC, new InternetAddress(TO2));
         msg.setSubject(SUBJECT);
         msg.setContent(String.format(BODY_FORMAT, args),"text/html");
         
@@ -118,7 +129,7 @@ public class SESSMTPSender {
     "<tbody>\n" + 
     "<tr>\n" + 
     "<td width=\"50%%\">\n" + 
-    "<div><a href=\"http://www.aonsolutions.es/\" target=\"_blank\" ><img style=\"width: 120\" src=\"https://www.aonsolutions.es/wp-content/uploads/2015/10/aon-logo.png\" border=\"0\" alt=\"Aon Solutions\" class=\"CToWUd\"></a></div>\n" + 
+    "<div><a href=\"http://www.aonsolutions.es/\" target=\"_blank\" ><img style=\"width: 120\" src=\"https://aonsolutions.es/wp-content/uploads/2020/11/logo-aons-footer.svg\" border=\"0\" alt=\"Aon Solutions\" class=\"CToWUd\"></a></div>\n" + 
     "</td>\n" + 
     "<td style=\"padding-right:10px;color:#36579a;font-family:Arial,Helvetica,sans-serif;font-size:18px;text-align:center\" valign=\"bottom\">\n" + 
     "<div style=\"font-family:Arial,Helvetica,sans-serif\"><strong>\n" + 

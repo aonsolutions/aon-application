@@ -140,6 +140,10 @@ form {
   cursor: pointer;
 }
 
+.aonRegisterLogo {
+  margin-top: 25px;
+}
+
 .aonLogo {
   position: absolute;
   margin-left: 10px;
@@ -873,4 +877,9 @@ form {
 .pure-material-checkbox > input:indeterminate:disabled + span::before {
     border-color: transparent;
     background-color: currentColor;
+}
+
+.aonListMoreVert { 
+  position: absolute; 
+  right: 3%; 
 }

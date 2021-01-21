@@ -35,6 +35,7 @@ public interface ISecurity {
 	
 	public User getUser(AONContext ctx, UserFilter filter);
 	public User insertUser(AONContext ctx, User user);
+	public Stream<User> getDomainUserStream(AONContext ctx);
 	public Stream<User> getUserStream(AONContext ctx, UserFilter filter);
 	public User getUser(AONContext ctx, String login);
 	public LinkedList<User> getUsersByEmail(AONContext ctx, String email);

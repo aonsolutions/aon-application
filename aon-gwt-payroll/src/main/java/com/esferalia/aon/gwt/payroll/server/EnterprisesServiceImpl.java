@@ -2719,4 +2719,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Override
+	public boolean checkIfRectificative(String domainName, java.util.Date findingDate,
+			ArrayList<Integer> selectedCCCList) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			AONContext ctx = new AONContext(connection);
+			DSLContext dslContext = ctx.getDslContext();
+			
+			return JooqCRA.checkIfRectificative(dslContext, findingDate, selectedCCCList);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

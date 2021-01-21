@@ -354,6 +354,9 @@ public class FillerDAO {
 		}
 	}
 	
+	/**
+	 * @deprecated  Use CustomerDAO to get Customers.
+	 */
 	public static class CustomerFiller  implements Function<Record, Customer> {
 
 		@Override

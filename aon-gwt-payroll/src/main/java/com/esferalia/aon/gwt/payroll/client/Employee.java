@@ -723,6 +723,8 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		
 		this.contractDataTable.getRows().getItem(14).getStyle().clearDisplay();
+		
+		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void hideElementsFreelancerTable() {
@@ -738,14 +740,15 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
 		
 		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showElementsPartialTimeContract() {
-		this.contractDataTable.getRows().getItem(14).getStyle().clearDisplay();	
+		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();	
 	}
 	
 	public void showElementsFullTimeContract() {
-		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showMdCtzContract() {

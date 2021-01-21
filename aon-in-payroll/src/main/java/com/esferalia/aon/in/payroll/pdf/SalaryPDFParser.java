@@ -6,11 +6,12 @@ import java.io.InputStream;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
-import org.apache.pdfbox.text.PDFTextStripper;
+//import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.esferalia.aon.in.payroll.pdf.templates.A3PDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.templates.AltaiPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.templates.DSIPDFTemplate;
+import com.esferalia.aon.in.payroll.pdf.util.PDFTextStripper;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -41,7 +42,8 @@ public class SalaryPDFParser {
 		}
 		
 		PDFTextStripper stripper= new PDFTextStripper();
-		stripper.setSortByPosition(true);
+		stripper.setWordSeparator("    ");
+		//stripper.setSortByPosition(true);
 		
 		SalaryPDFTemplate template = null;
 		
@@ -55,7 +57,7 @@ public class SalaryPDFParser {
 			if ( AonStringUtils.isBlank(text) ) 
 				continue;
 			
-			//System.out.println(text);
+//			System.out.println(text);
 			
 			template = parse(template, text, salaryBuilder);
 			
@@ -68,8 +70,10 @@ public class SalaryPDFParser {
 				try {
 					return template.parse(text, salaryBuilder);
 				} catch ( SalaryPDFException e ) {
+					//System.err.println(e.getMessage());
 					return template;
 				} catch ( UnknownPDFException e ) {
+					//System.err.println(e.getMessage());
 				}
 			}
 			throw new UnknownPDFException("Formato de nómina desconocido");
@@ -78,6 +82,7 @@ public class SalaryPDFParser {
 			try {
 				return pdfTemplate.parse(text, salaryBuilder);
 			} catch ( SalaryPDFException e ) {
+				//System.err.println(text);
 				return pdfTemplate;
 			}
 		}

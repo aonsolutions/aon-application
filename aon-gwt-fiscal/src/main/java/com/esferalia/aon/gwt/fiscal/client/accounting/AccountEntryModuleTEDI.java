@@ -23,29 +23,25 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.Min
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountBalancePanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanelReport;
-import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
-import com.esferalia.aon.gwt.fiscal.client.accounting.panel.StatementPanelReport;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AccountPreviewPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.FinanceEntryPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoicePanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.Manual;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.SalaryEntryPanel;
-import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.SessionLog;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryTypeVisitorAdapter;
 import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
-import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
@@ -109,13 +105,10 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	}
 
 	private int sessionLogTabIndex;
-	private int balancesTabIndex;
-	private int statementTabIndex;
+	private int previewTabIndex;
 	private int journalTabIndex;
 	private int extraInfoTabIndex;
 	
-	public final static int JOURNAL_PANEL_TAB_OFFSET = 1000000;
-
 	static AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
 	static FiscalServiceAsync FISCAL_SERVICE;
 	static CommonServiceAsync COMMON_SERVICE;
@@ -199,8 +192,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	private TabLayoutPanel tabLayout;
 	private SessionLog sessionLog;
 	private JournalPanelReport journalPanel;
-	private AccountBalancePanel balancePanel;
-	private SimpleLayoutPanel statementPanelContainer;
+	private AccountPreviewPanel previewPanel;
 	private ScrollPanel extraInfoContainer;
 	// Toolbar
 	private AonToolbar toolbar;
@@ -364,11 +356,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	private int getSessionLogTabIndex(){
 		return sessionLogTabIndex;
 	}
-	private int getBalancesTabIndex(){
-		return balancesTabIndex;
-	}
-	private int getStatementTabIndex(){
-		return statementTabIndex;
+	private int getPreviewTabIndex(){
+		return previewTabIndex;
 	}
 	private int getJournalTabIndex(){
 		return journalTabIndex;
@@ -819,9 +808,10 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		if (isDirty() && !newAndEmpty && getOptions().isSessionLogTabVisible()) { 
 			sessionLog.addSuspended(wizardContent.getEntryWrapper());
 		}
-		if (getOptions().isBalancesTabVisible()) {
-			balancePanel.clearBalances();
+		if (getOptions().isPreviewTabVisible()) {
+			previewPanel.clearPreview();;
 		}
+		
 		selectWizardContent(id,wrp); 
 	}
 	
@@ -898,8 +888,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	
 	// ---------------------------------------------------------------- ACTION
 	private void reset() {
-		if (getOptions().isBalancesTabVisible()) {
-			balancePanel.clearBalances();
+		if (getOptions().isPreviewTabVisible()) {
+			previewPanel.clearPreview();
 		}
 		final MutableInt first = new MutableInt(0);
 		ISelectionCallback selectionCallback = new ISelectionCallback() {
@@ -991,43 +981,6 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 					.setDirty(false);
 		}
 		return base;
-	}
-
-	private void showFullStatement(Integer selectedItem) {
-		tabLayout.selectTab(getStatementTabIndex());
-		COMMON_SERVICE.getAccount(getOptions().getDomainName()
-				, getOptions().getDomain()
-				, getOptions().getUser()
-				, selectedItem
-				, new AsyncCallback<Account>() {
-			
-			@Override
-			public void onSuccess(Account result) {
-				StatementPanelReport statementPanel = new  StatementPanelReport(
-						new AccountingReportModuleOptions()
-						 	.setDomainName( getOptions().getDomainName() )
-						 	.setUser( getOptions().getUser() )
-						 	.setDomain( getOptions().getDomain() )
-						 	.setConfiguration( getOptions().getConfiguration() )
-						,new AccountingReportParams()
-							.setAccount(result)
-							.setPeriod(period.getValue())
-							.setToDate(entryDate.getValue())
-						,false);
-					statementPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
-						@Override
-						public void onSelection(AccountEntrySelectionEvent event) {
-							selectEntry(event.getSelectedItem().getId());
-						}
-					});
-					statementPanelContainer.setWidget(statementPanel);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				showError(caught.getMessage());
-			}
-		});
 	}
 
 	private void selectWizardContent( final Integer id, final IAccountEntryWrapper wrp) {
@@ -1138,64 +1091,39 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		return list.toArray(new AccountEntryWrapper[list.size()]);
 	}
 
-	private void ensureBalanceTab() {
+	private void ensurePreviewTab() {
 		openFootPanelIfNeeded();
-		tabLayout.selectTab(getBalancesTabIndex());
+		tabLayout.selectTab(getPreviewTabIndex());
 	}
 
-	public void onBalance(Account account) {
-		if (getOptions().isBalancesTabVisible()) {
-			if (account != null && account.getId() != null) {
-				ensureBalanceTab();
-				Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
-				balancePanel.add(account, from, entryDate.getValue());
-			}
-		}
-	}
-
-	public void onBalance(AccountEntry entry) {
-		if (getOptions().isBalancesTabVisible()) {
-			if (entry.getDetails() != null 
-				&& !entry.getDetails().isEmpty() 
-				&& entry.getDetails().get(0).getAccount() != null) {
-				ensureBalanceTab();
-				balancePanel.add(entry);
-			}
-		}
-	}
-	public void onBalance(IAccountEntryWrapper wrp) {
-		if (getOptions().isBalancesTabVisible()) {
-			onBalance(wrp.getAccountEntry());
-		}
-	}
-	
-	public void onPreview(IAccountEntryWrapper wrp) {
-		if (getOptions().isPreviewSectionVisible()) {
+	public void onPreview(IAccountEntryWrapper wrp ) {
+		if (getOptions().isPreviewTabVisible()) {
 			if (wrp.getAccountEntry() != null 
 					&& wrp.getAccountEntry().getDetails() != null 
 					&& !wrp.getAccountEntry().getDetails().isEmpty() 
 					&& AonStringUtils.isNotBlank(wrp.getAccountEntry().getDetails().get(0).getAccountCode()) ) {
-				ensureBalanceTab();
-				balancePanel.preview( wrp );
+				ensurePreviewTab();
+				previewPanel.preview( wrp );
 			}
 		}
 	}
-	public void onPreview(IAccountEntryWrapper[] wrapperArray) {
-		if (getOptions().isBalancesTabVisible()) {
-			if (wrapperArray != null 
-					&& wrapperArray.length > 0
-					&& wrapperArray[0].getAccountEntry() != null 
-					&& wrapperArray[0].getAccountEntry().getDetails() != null 
-					&& !wrapperArray[0].getAccountEntry().getDetails().isEmpty() 
-					&& AonStringUtils.isNotBlank(wrapperArray[0].getAccountEntry().getDetails().get(0).getAccountCode()) ) {
-				ensureBalanceTab();
-				balancePanel.preview( wrapperArray );
+
+	public void onPreview(IAccountEntryWrapper ... wrapper ) {
+		if (getOptions().isPreviewTabVisible()) {
+			if (wrapper != null 
+					&& wrapper.length > 0
+					&& wrapper[0].getAccountEntry() != null 
+					&& wrapper[0].getAccountEntry().getDetails() != null 
+					&& !wrapper[0].getAccountEntry().getDetails().isEmpty() 
+					&& AonStringUtils.isNotBlank(wrapper[0].getAccountEntry().getDetails().get(0).getAccountCode()) ) {
+				ensurePreviewTab();
+				previewPanel.preview( wrapper );
 			}
 		}
 	}
 	public void onClearSessionLog() {
-		if (getOptions().isBalancesTabVisible()) {
-			balancePanel.clearBalances();
+		if (getOptions().isPreviewTabVisible()) {
+			previewPanel.clearPreview();
 		}
 	}
 	
@@ -1422,30 +1350,13 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			tabIndex++;
 		}
 
-		
-		if (getOptions().isBalancesTabVisible()) {
-			balancePanel = new AccountBalancePanel( getOptions().isPreviewSectionVisible(), getOptions().isBalancesSectionVisible());
-			if (getOptions().isStatementTabVisible()) {
-				balancePanel.addSelectionHandler(new SelectionHandler<Integer>() {
-					
-					@Override
-					public void onSelection(SelectionEvent<Integer> event) {
-						showFullStatement(event.getSelectedItem());
-					}
-				});
-			}
-			tabLayout.add(balancePanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.accountBalances(), AON.CSS.aonIconEuro()));
-			balancesTabIndex = tabIndex;
+		if (getOptions().isPreviewTabVisible()) {
+			previewPanel = new AccountPreviewPanel( getOptions() );
+			tabLayout.add(previewPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.previewAccountEntry(), AON.CSS.aonIconPreview()));
+			previewTabIndex = tabIndex;
 			tabIndex++;
 		}
-		
-		if (getOptions().isStatementTabVisible()) {
-			statementPanelContainer = new SimpleLayoutPanel();
-			tabLayout.add(statementPanelContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.accountStatetement(), AON.CSS.aonIconList()));
-			statementTabIndex = tabIndex;
-			tabIndex++;
-		}
-		
+
 		if (getOptions().isJournalTabVisible()) {
 			SimpleLayoutPanel journalPanelContainer = new SimpleLayoutPanel();
 			journalPanel = new JournalPanelReport(getOptions().getDomainName(), getOptions().getUser()
@@ -1659,115 +1570,3 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	}
 	
 }
-/*		
-	entryHeader = new FlowPanel();
-	
-	
-	entryHeader.setStyleName(AON.CSS.aonScrollArea());
-	
-	FlexTable tab = new FlexTable();
-	tab.setStyleName(AON.CSS.aonTable());
-	tab.addStyleName(AON.CSS.aonWidthAll());
-	tab.getColumnFormatter().setWidth(0, "65px");
-	tab.getColumnFormatter().setWidth(1, "65px");
-	tab.getColumnFormatter().setWidth(2, "65px");
-	tab.getColumnFormatter().setWidth(3, "90px");
-	tab.getColumnFormatter().setWidth(4, "65px");
-	tab.getColumnFormatter().setWidth(5, "auto");
-	tab.getColumnFormatter().setWidth(6, "200px");
-	tab.getColumnFormatter().setWidth(7, "100px");
-	tab.getColumnFormatter().setWidth(8, "100px");
-	tab.getColumnFormatter().setWidth(9, "30px");
-	
-	tab.setWidget(0, 0, new InlineLabel(AON.MSG.fiscalYear()));
-	tab.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
-	
-	period = new AccountPeriodBox();
-	period.setTabIndex(1);
-	period.addChangeHandler( new ChangeHandler() {
-		@Override
-		public void onChange(ChangeEvent event) {
-			onChangeAccountPeriod(event);
-		}
-	});
-	tab.setWidget(0, 1, period);
-	
-	tab.setWidget(0, 2, new InlineLabel(AON.MSG.date()));
-	tab.getCellFormatter().setStyleName(0, 2, AON.CSS.aonTableLabel());
-	
-	entryDate = new AonDateBox();
-	entryDate.setTabIndex(2);
-	entryDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-		
-		@Override
-		public void onValueChange(ValueChangeEvent<Date> event) {
-			onChangeEntryDate(event);
-		}
-	});
-	
-	tab.setWidget(0, 3, entryDate);
-	
-	tab.setWidget(0, 4, new InlineLabel(AON.MSG.type()));
-	tab.getCellFormatter().setStyleName(0, 4, AON.CSS.aonTableLabel());
-	
-	entryType = new ListBox();
-	entryType.setTabIndex(3);
-	entryType.addChangeHandler(new ChangeHandler() {
-		
-		@Override
-		public void onChange(ChangeEvent event) {
-			onTypeChanged(event);
-		}
-	});
-	tab.setWidget(0, 5, entryType);
-	
-	FlowPanel idsContainer = new FlowPanel();
-	journal = new InlineLabel();
-	journal.setStyleName(AON.CSS.aonNowrap());
-	id = new InlineLabel();
-	id.setStyleName(AON.CSS.aonNowrap());
-	id.addStyleName(AON.CSS.aonMarginLeft());
-	idsContainer.add( journal );
-	idsContainer.add( id );
-	tab.setWidget(0, 6, idsContainer);		
-	tab.getCellFormatter().setStyleName(0, 6, AON.CSS.aonTextCenter());
-	tab.getCellFormatter().addStyleName(0, 6, AON.CSS.aonNowrap());
-	tab.getCellFormatter().addStyleName(0, 6, AON.CSS.aonTableLabel());
-	
-	activity = new ListBox();
-	activity.addChangeHandler( new ChangeHandler() {
-		
-		@Override
-		public void onChange(ChangeEvent event) {
-			onChangeActivity(event);
-		}
-	});
-	
-	activity.setWidth("120px");
-	activity.setVisible(false);
-	tab.setWidget(0, 7, activity);
-	
-	confidential = new CheckBox( AON.MSG.confidential());
-	confidential.addClickHandler(new ClickHandler() {
-		
-		@Override
-		public void onClick(ClickEvent event) {
-			onChangeConfidential(event);
-		}
-	});
-	tab.setWidget(0, 8, confidential);
-	tab.getCellFormatter().addStyleName(0, 8, AON.CSS.aonNowrap());
-	
-	commentsButton = new AonTableButton(AON.MSG.comments(), AON.CSS.aonIconComments() );
-	commentsButton.addClickHandler(new ClickHandler() {
-		
-		@Override
-		public void onClick(ClickEvent event) {
-			onComments(event);
-		}
-	});
-	tab.setWidget(0, 9, commentsButton);
-	
-	entryHeader.add(tab);
-	return entryHeader;
- */		

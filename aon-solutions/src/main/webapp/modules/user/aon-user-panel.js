@@ -1,0 +1,61 @@
+import {AonElement} from '../../components/AonElement.js';
+
+import '../../components/aon-application.js';
+import '../../components/aon-card.js';
+import '../../components/aon-input.js';
+import '../user/aon-user-list.js';
+import '../user/aon-user.js';
+
+
+import * as CONSTANT from "../../environments/constants.js";
+import * as MSG from "../../environments/msg.js";
+import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+
+export class AonUserPanel extends AonElement {
+
+	AON_USER_PANEL;
+	get id() {
+		return this.getAttribute('id');
+	}
+
+	set id(id) {
+		this.setAttribute('id', id);
+	}
+
+	constructor () {
+		super();
+		this.AON_USER_PANEL = 'aonUserPanel';
+	}
+
+	connectedCallback () {
+		this.innerHTML = `
+			<aon-application id="${this.AON_USER_PANEL}" title="${MSG.AON_MSG_USERS}" sidenav="block"></aon-application>
+		`;
+		this.build();
+  }
+
+	build() {
+		this.buildUser()
+	}
+
+	buildUser() {
+		let aonUserPanel = this.getElement(this.AON_USER_PANEL);
+		aonUserPanel.removeToolbarOptions();
+
+		aonUserPanel.addToolbarOption('UserShare', 'share', () => this.buildCreateUser(true));
+		aonUserPanel.addToolbarOption('UserAdd', 'add', () => this.buildCreateUser(true));
+
+		aonUserPanel.setContentHTML('<aon-user-list> </aon-user-list>');
+	}
+
+	buildCreateUser(share) {
+		let content = document.getElementById('aonUserPanelContent');
+		content.innerHTML = '<aon-user id="aonUserCreate" showApps="true" ><aon-user>';
+		let aonUser = document.getElementById('aonUserCreate');
+		aonUser.style.display = "flex";
+		aonUser.style.width = "100%";
+		if(share)	aonUser.setAttribute('share', share);
+	}
+}
+
+window.customElements.define('aon-user-panel', AonUserPanel);

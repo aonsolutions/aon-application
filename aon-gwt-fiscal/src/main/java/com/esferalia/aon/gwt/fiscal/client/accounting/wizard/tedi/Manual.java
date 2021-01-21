@@ -5,7 +5,6 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
@@ -13,8 +12,6 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -80,12 +77,30 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 		
 	private void select(IAccountEntryWrapper wrp,ISelectionCallback cbk) {
 		setWrapper((AccountEntryWrapper) wrp);
-		paint();
-		table.paintTable();
+		tableContainer.setStyleName(AON.AON_CSS.aonScrollArea());
+		tableInnerContainer = new VerticalPanel();
+		tableInnerContainer.addStyleName(AON.AON_CSS.aonWidthAll());
+		
+		table = new AccountEntryTable(getCallback().getModuleOptions(),this);
+		table.addErrorHandler(new ErrorHandler() {
+
+			@Override
+			public void onError(ErrorEvent event) {
+				getCallback().getModule().onError(event.getRelativeElement().getAttribute("ERROR"));
+			}
+			
+		});
+		table.addValueChangeHandler(new ValueChangeHandler<AccountEntryDetail>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<AccountEntryDetail> event) {
+				getCallback().getModule().refreshIdLabel();
+				getCallback().getModule().onPreview(getWrapper());
+			}
+		});
 		tableInnerContainer.add(table);
 		tableContainer.setWidget(tableInnerContainer);
 		getCallback().getModule().refreshIdLabel();
-		getCallback().getModule().onBalance(getWrapper());
 		getCallback().getModule().onPreview(getWrapper());
 		if (cbk != null) cbk.onSuccess();
 	}
@@ -138,37 +153,6 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 				.setEntryDate(base.getEntryDate())
 				.setActivity(base.getActivity())
 				.setJournal(null));
-	}
-	
-	private void paint() {
-		tableContainer.setStyleName(AON.AON_CSS.aonScrollArea());
-		tableInnerContainer = new VerticalPanel();
-		tableInnerContainer.addStyleName(AON.AON_CSS.aonWidthAll());
-		
-		table = new AccountEntryTable(getCallback().getCurrentDomainName(),getCallback().getCurrentUser(),getCallback().getCurrentDomainId(),this);
-		table.addErrorHandler(new ErrorHandler() {
-
-			@Override
-			public void onError(ErrorEvent event) {
-				getCallback().getModule().onError(event.getRelativeElement().getAttribute("ERROR"));
-			}
-			
-		});
-		table.addSelectionHandler(new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				Account account = event.getSelectedItem();
-				if (account != null) getCallback().getModule().onBalance(account);
-			}
-		});
-		table.addValueChangeHandler(new ValueChangeHandler<AccountEntryDetail>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<AccountEntryDetail> event) {
-				getCallback().getModule().refreshIdLabel();
-				getCallback().getModule().onPreview(getWrapper());
-			}
-		});
 	}
 	
 	@Override

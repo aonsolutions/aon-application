@@ -1705,6 +1705,24 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static InvoicingGroup getInvoicingGroup(String domainName, Integer domainId, String login, InvoicingGroupFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			LinkedList<InvoicingGroup> list = getFinance().getInvoicingGroupList(ctx, filter);
+			return list.size() > 0 ? list.getFirst() : new InvoicingGroup();
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static InvoicingGroup save(String domainName, Integer domainId, String login, InvoicingGroup invoicingGroup) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().save(ctx, invoicingGroup);
+		}
+	}
 
 	public static Integer getInvoiceNextNumber(
 			String domainName, Integer domainId, String login,
@@ -2275,16 +2293,10 @@ public class AON {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
-	public static void insertFee(AONContext ctx, Fee f) {
-		getFinance().insertFee(ctx, f);
-	}
-
-	public static void insertFee(AONContext ctx, Stream<Fee> fs) {
-		getFinance().insertFee(ctx, fs);
-	}
-
-	public static void updateFee(AONContext ctx, Fee f) {
-		getFinance().updateFee(ctx, f);
+	public static Fee save(String domainName, Integer domainId, String login, Fee fee) {
+		try(AONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().save(ctx, fee);
+		}
 	}
 
 	public static void deleteFee(AONContext ctx, Fee f) {
@@ -2313,6 +2325,13 @@ public class AON {
 			return getSecurity().getUserStream(ctx, filter);
 		} 
 	}
+	
+	public static Stream<User> getDomainUserStream(String domainName, Integer domainId, String userName) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, userName)){
+			return getSecurity().getDomainUserStream(ctx);
+		} 
+	}
+	
 	
 	public static List<User> getUsers(Integer domainId, String domainName, String userName) {
 		AONContext ctx = null;
@@ -4132,33 +4151,35 @@ public class AON {
 	// ******************************** Registry **
 	// ********************************************
 	
+	public static Registry save(String domainName, Integer domainId, String login, Registry registry){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().save(ctx, registry);
+		}
+	}
+	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.api.AON.save(String domainName, Integer domainId, String login, Registry registry)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Registry insertRegistry(String domainName, Integer domainId, String login, Registry registry){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertRegistry(ctx, registry);
-		} finally {
-			if (ctx != null) ctx.close();
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().save(ctx, registry);
 		}
 	}
-	
+
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.api.AON.save(String domainName, Integer domainId, String login, Registry registry)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Registry updateRegistry(String domainName, Integer domainId, String login, Registry registry){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().updateRegistry(ctx, registry);
-		} finally {
-			if (ctx != null) ctx.close();
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().save(ctx, registry);
 		}
 	}
 	
-	public static Registry deleteRegistry(String domainName, Integer domainId, String login, Integer registry){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().deleteRegistry(ctx, registry);
-		} finally {
-			if (ctx != null) ctx.close();
+	public static void deleteRegistry(String domainName, Integer domainId, String login, Integer registry){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getRegistry().deleteRegistry(ctx, registry);
 		}
 	}
 	

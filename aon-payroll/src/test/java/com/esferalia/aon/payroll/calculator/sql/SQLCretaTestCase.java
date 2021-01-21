@@ -2606,6 +2606,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		.filter(d -> d.getCodigo().equals("01")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
+		cleanSalaries(aonContext);
+
 		PaymentConceptRecord h02Concept = addConcept(aonContext, "HORAS_COMPL", PaymentType.CRA_0057);
 		addPayment(aonContext, contract, h02Concept, String.format("%s * 66.66", ContextVariable.ADDITIONAL_HOURS.getName()));
 		addData(aonContext, contract, startDate, endDate, ContextVariable.ADDITIONAL_HOURS.getName(), "11");
@@ -2684,6 +2686,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		tramo.getDatosTramo().getDato().stream()
 		.filter(d -> d.getCodigo().equals("01")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
+
+		cleanSalaries(aonContext);
 
 		addPayment(aonContext, contract, "Horas Complementarias", String.format("%s * 66.66", ContextVariable.ADDITIONAL_HOURS.getName()), "_P", "_P", PaymentType.CRA_0057);
 		addData(aonContext, contract, startDate, endDate, ContextVariable.ADDITIONAL_HOURS.getName(), "11");

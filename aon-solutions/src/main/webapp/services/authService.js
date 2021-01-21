@@ -1,4 +1,5 @@
 import { request, post, get } from "./request.js";
+import { clearCompanies } from "./companyService.js"
 import { API_URL } from "../environments/environments.js";
 
 export const login = (data) => {
@@ -20,6 +21,7 @@ export const closeSession = () => {
   localStorage.clear();
   document.getElementById("aonLogin").style.display = "block";
   document.getElementById("aonHome").style.display = "none";
+  clearCompanies();
 };
 
 export const rememberPassword = (email) => post(`${API_URL}/remember`, {email});
@@ -28,4 +30,4 @@ export const getManifest = (data) => get(`${API_URL}/manifest`, data);
 
 export const getAuth = (data) => get(`${API_URL}/auth`, data);
 
-export const registerUser = (user) => post(`${API_URL}/register/user`, user);
+export const registerUser = (data) => post(`${API_URL}/register`, data);

@@ -209,8 +209,8 @@ public class AccountTrialBalanceReport extends MainEntryPoint {
 			.setSessionLogTabVisible(false)
 			.setJournalTabVisible(false)
 			.setExtraInfoTabVisible(false)
-			.setBalancesSectionVisible(false)
-			.setStatementTabVisible(false)
+			.setPreviewTabVisible(true)
+			.setTrialBalanceFromPreviewEnabled(false)
 			.setExternalCallback(new ModuleCallback() {
 				@Override
 				public void onRemove(IAccountEntryWrapper removed) {

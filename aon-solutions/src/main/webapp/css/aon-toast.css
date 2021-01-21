@@ -1,4 +1,4 @@
-#aonToast {
+.aonToast {
     visibility: hidden;
     min-width: 250px;
     margin-left: -125px;
@@ -14,14 +14,14 @@
     font-size: 17px;
 }
 
-#aonToast.show {
+.aonToastShow {
     visibility: visible;
     -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
     animation: fadein 0.5s, fadeout 0.5s 2.5s;
 }
 
 @-webkit-keyframes fadein {
-    from {bottom: 0; opacity: 0;} 
+    from {bottom: 0; opacity: 0;}
     to {bottom: 30px; opacity: 0.8;}
 }
 
@@ -31,7 +31,7 @@
 }
 
 @-webkit-keyframes fadeout {
-    from {bottom: 30px; opacity: 0.8;} 
+    from {bottom: 30px; opacity: 0.8;}
     to {bottom: 0; opacity: 0;}
 }
 

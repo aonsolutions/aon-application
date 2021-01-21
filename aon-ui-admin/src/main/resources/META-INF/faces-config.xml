@@ -11,7 +11,24 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
-	
+
+
+	<!-- *************  ***************** -->
+	<!-- *************  ***************** -->
+	<!-- *************  ***************** -->
+	<!-- ************* MarketplaceController ***************** -->
+	<managed-bean>
+		<managed-bean-name>marketplace</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.admin.controller.MarketplaceController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	<!-- *************  ***************** -->
+	<!-- *************  ***************** -->
+	<!-- *************  ***************** -->
+	<!-- *************  ***************** -->
+
 	<!-- ************* ADMIN MAIN ***************** -->
 	<managed-bean>
 		<managed-bean-name>adminMain</managed-bean-name>
@@ -690,6 +707,14 @@
 		<navigation-case>
 			<from-outcome>portalAccess_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/admin/facelet/portalAccess/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+	
+	<!-- =================== New Suite Users ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>new_suite_users</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/newSuite/users.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 	

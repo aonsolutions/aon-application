@@ -228,6 +228,14 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 	
 		// ***********************************************************************  EJERCICIO
 		period.fill(options.getConfiguration().getPeriods(),true);
+		if (params != null && params.getPeriod() != null) {
+			for (int i = 0; i < period.getItemCount(); i++) {
+				if (params.getPeriod() == AonNumberUtils.toInteger( period.getValue(i))) {
+					period.setSelectedIndex(i);
+					break;
+				}
+			}
+		}
 		dateTab.setWidget(0, 0, period);
 		period.addStyleName(AON.CSS.aonMarginRight());
 		
@@ -241,7 +249,11 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		from.addStyleName(AON.CSS.aonMarginRight());
 		from.addStyleName(AON.CSS.aonMarginLeft());
 		dateTab.setWidget(0, 2, from);
+		if (params != null && params.getFromDate() != null) {
+			fromDate.setValue(params.getFromDate());
+		}
 		dateTab.setWidget(0, 3, fromDate);
+		
 		
 		// **********************************************************************  TO DATE
 		InlineLabel to = new InlineLabel(AON.MSG.to());
@@ -249,6 +261,9 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		to.addStyleName(AON.CSS.aonMarginRight());
 		to.addStyleName(AON.CSS.aonMarginLeft());
 		dateTab.setWidget(0, 4, to);
+		if (params != null && params.getToDate() != null) {
+			toDate.setValue(params.getToDate());
+		}
 		dateTab.setWidget(0, 5, toDate);
 
 		tab.setWidget(0, 1, dateTab);
@@ -291,6 +306,9 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		account.setStyleName(AON.CSS.aonInputText());
 		account.setVisibleLength(10);
 		FlexTable accountContainer = new FlexTable();
+		if (params != null && params.getAccount() != null && params.getAccount().getCode() != null) {
+			account.setValue(params.getAccount().getCode());
+		}
 		accountContainer.setWidget(0, 0, account);
 		FlowPanel accountHelpPanel = new FlowPanel();
 		
@@ -387,9 +405,19 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		level.addItem( "Cuentas a 4 d\u00EDgitos","4");
 		level.addItem( "Cuentas a 9 d\u00EDgitos","9");
 		level.setSelectedIndex(4);
+		if (params != null) {
+			if (params.getLevel() == 1) level.setSelectedIndex(0);
+			else if (params.getLevel() == 2) level.setSelectedIndex(1);
+			else if (params.getLevel() == 3) level.setSelectedIndex(2);
+			else if (params.getLevel() == 4) level.setSelectedIndex(3);
+		}
 		tab.setWidget(2, 1, level);
 		
 		// ************************************************************  LOW LEVEL VISIBLE
+		if (params != null) {
+			lowLevelAccountVisible.setValue(params.isLowLevelAccountVisible());
+			noActivityAccountVisible.setValue(params.isNoActivityAccountVisible());
+		}
 		VerticalPanel checks1 = new VerticalPanel();
 		checks1.add(lowLevelAccountVisible);
 		checks1.add(noActivityAccountVisible);
@@ -397,6 +425,10 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		tab.getFlexCellFormatter().setColSpan(2, 2, 2);
 		
 		// ************************************************************  NO ACTIVITY ACCOUNT
+		if (params != null) {
+			operatingEntriesExcluded.setValue(params.areOperatingEntriesExcluded() );
+			closingEntriesExcluded.setValue(params.areClosingEntriesExcluded());
+		}
 		VerticalPanel checks2 = new VerticalPanel();
 		checks2.add(operatingEntriesExcluded);
 		checks2.add(closingEntriesExcluded);

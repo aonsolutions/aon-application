@@ -76,6 +76,9 @@ public class Product implements Serializable{
 		return this;
 	}
 	public Byte getInventoriable() {
+		if(inventoriable == null) {
+			inventoriable = 0;
+		}
 		return inventoriable;
 	}
 	public Boolean isInventoriable(){

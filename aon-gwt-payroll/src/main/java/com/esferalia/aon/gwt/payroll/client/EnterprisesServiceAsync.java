@@ -155,5 +155,7 @@ public interface EnterprisesServiceAsync {
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it,
 			AsyncCallback<Void> asyncCallback);
 	void getServiAgreement(String currentDomainName, String serviAgreementCode, AsyncCallback<Void> asyncCallback);
+	void checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList,
+			AsyncCallback<Boolean> asyncCallback);
 	
 }

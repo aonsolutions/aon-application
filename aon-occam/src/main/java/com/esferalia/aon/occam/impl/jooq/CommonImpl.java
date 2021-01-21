@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -165,6 +166,12 @@ public class CommonImpl implements ICommon {
 	public Domain insertDomain(AONContext ctx, Integer parentDomain,
 			String document, String name, List<String> messages) {
 		return DomainDAO.insertDomain(ctx, parentDomain, document, name, messages);
+
+	}
+	
+	@Override
+	public Domain insertDomain(AONContext ctx, Domain domain, Registry registry) throws Exception {
+		return DomainDAO.insertDomain(ctx, domain, registry);
 
 	}
 

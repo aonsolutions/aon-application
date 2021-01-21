@@ -1,8 +1,8 @@
 package com.esferalia.aon.in.payroll.pdf.creators;
 
-import com.esferalia.aon.in.payroll.pdf.creators.enterprisePayroll.EnterprisePayroll;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprisePayroll.EnterprisePayrollEntry;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprisePayroll.EnterprisePayrollTemplate;
+import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayroll;
+import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayrollEntry;
+import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayrollTemplate;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;

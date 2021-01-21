@@ -34,6 +34,7 @@ public class EmployeeAFIServlet extends HttpServlet {
 		Boolean _isChangeContract = request.getParameter("isChangeContract").equals("1") ? true : false;
 		Boolean _isQuoteContract = request.getParameter("isQuoteContract").equals("1") ? true : false;
 		Boolean _isOcupationContract = request.getParameter("isOcupationContract").equals("1") ? true : false;
+		Boolean _isPartialityCoefContract = request.getParameter("isPartialityCoefContract").equals("1") ? true : false;
 		
 		//Get domain Name
 		String _domainName = request.getServerName();
@@ -57,7 +58,7 @@ public class EmployeeAFIServlet extends HttpServlet {
 			
 //			output.write("Generando AFI Employee".getBytes());
 			
-			employeeJSON = JooqEmployeeAFI.getEmployeeAFIInfo(_domainId, _domainName, _contractId, _workplaceId, _isStartContract, _isEndContract, _isChangeContract, _isQuoteContract, _isOcupationContract);
+			employeeJSON = JooqEmployeeAFI.getEmployeeAFIInfo(_domainId, _domainName, _contractId, _workplaceId, _isStartContract, _isEndContract, _isChangeContract, _isQuoteContract, _isOcupationContract, _isPartialityCoefContract);
 			String employeeAFI = EmployeeAFIGeneration.generateEmployeeAFI(employeeJSON);
 			output.write(employeeAFI.getBytes());
 			

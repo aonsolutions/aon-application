@@ -5,11 +5,16 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.esferalia.aon.occam.test.customer.CustomerTestSuite;
+import com.esferalia.aon.occam.test.product.TariffTestSuite;
 import com.esferalia.aon.occam.test.registry.RegistryTestSuite;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+//	AccountTestSuite.class,
+	TariffTestSuite.class,
 	RegistryTestSuite.class,
+	CustomerTestSuite.class,
 //	FinanceTestSuite.class,
 //	AccountingTestSuite.class,
 //	AnalyticalAccountingTestSuite.class,

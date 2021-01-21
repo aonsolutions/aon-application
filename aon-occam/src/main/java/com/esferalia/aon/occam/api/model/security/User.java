@@ -16,6 +16,7 @@ public class User implements Serializable {
 	private boolean active;
 	private boolean shared;
 	private Integer registry;
+	private Integer enterprise;
 	private AonRole[] userRoles;
 	private byte[] auth;
 	
@@ -78,6 +79,15 @@ public class User implements Serializable {
 		this.registry = registry;
 		return this;
 	}	
+	
+	public Integer getEnterprise() {
+		return enterprise;
+	}
+	
+	public User setEnterprise(Integer enterprise) {
+		this.enterprise = enterprise;
+		return this;
+	}
 	
 	public byte[] getAuth() {
 		return auth;
@@ -167,5 +177,9 @@ public class User implements Serializable {
 			}
 		}
 		return false;
+	}
+	
+	public boolean isPortal() {
+		return getEnterprise() != null;
 	}
 }

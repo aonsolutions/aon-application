@@ -535,6 +535,20 @@ public class JooqCRA {
 		} catch ( Throwable t){
 			return SSRegimeType.GENERAL;
 		}
+	}
+
+	public static boolean checkIfRectificative(DSLContext dslContext, Date findingDate,
+			ArrayList<Integer> selectedCCCList) {
+		
+		Result<Record> craRecords = dslContext.select().from(CRA_BATCH)
+			.where(CRA_BATCH.OUTCOME_FILE_DATE.eq(new Timestamp(findingDate.getTime())))
+			.and(CRA_BATCH.ID.in(
+					dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
+						.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.in(selectedCCCList))
+						.fetch(CRA_BATCH_DETAIL.CRA_BATCH)
+			)).fetch();
+		
+		return craRecords.isNotEmpty();
 	}	
 	
 }

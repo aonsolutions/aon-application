@@ -638,8 +638,11 @@ public class AltaiPDFTemplate implements SalaryPDFTemplate {
 			
 			matcher = find(reader, ISSUE);
 			Date issueDate = date(matcher, "date", "dd' de 'MMMM' de 'yyyy");
-			salaryBuilder.setIssueDate(issueDate);
-			salaryBuilder.setChargeDate(issueDate);
+			//salaryBuilder.setIssueDate(issueDate);
+			//salaryBuilder.setChargeDate(issueDate);
+			salaryBuilder.setIssueDate(endDate);
+			salaryBuilder.setChargeDate(endDate);
+			
 			
 			matcher = find(reader, REMUNERATION);
 			salaryBuilder.setRemuneration(number(matcher, "base", 0.00));

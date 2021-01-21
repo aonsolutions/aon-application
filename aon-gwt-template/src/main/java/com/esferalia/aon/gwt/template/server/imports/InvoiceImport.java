@@ -103,7 +103,7 @@ public class InvoiceImport {
 						check(domain, login, title, cell);			
 					}
 				});
-				if(row.getRowNum() != 0 && !inv.isEmpty()) {	
+				if(row.getRowNum() != 0 && !inv.isEmpty()) {
 					list.add(inv);
 				}
 			});
@@ -508,11 +508,11 @@ public class InvoiceImport {
 				if(expAccount == null) {
 					expAccount = new Account()
 						.setCode(ivs.get(j).getAccount())
-						.setDescription(ivs.get(i).getAccountDescription() != null 
-								? ivs.get(i).getAccountDescription()
+						.setDescription(ivs.get(j).getAccountDescription() != null 
+								? ivs.get(j).getAccountDescription()
 								: "SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE FACTURAS)")
-						.setAlias(ivs.get(i).getAccountDescription() != null 
-								? ivs.get(i).getAccountDescription()
+						.setAlias(ivs.get(j).getAccountDescription() != null 
+								? ivs.get(j).getAccountDescription()
 								:"SIN DESCRIPCIÓN")
 						.setDomain(domain.getId())
 						.setActive(true);

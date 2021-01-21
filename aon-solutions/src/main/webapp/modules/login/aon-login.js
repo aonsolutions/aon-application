@@ -9,6 +9,7 @@ import { rootPanel } from "../../services/gwtLoader.js";
 import "../../components/aon-input.js";
 import "../../components/aon-loader.js";
 import "../../components/aon-dialog.js";
+import "../../components/aon-toast.js";
 
 import "../company/aon-mobile-desktop.js";
 import "../company/aon-parent.js";
@@ -75,12 +76,14 @@ export class AonLogin extends AonElement {
 							<div>
 								<aon-input id="aonLoginPassword" description="Contraseña" type="password" filled="true"></aon-input>
 							</div>
-							<div style="padding-bottom: 20px;">
-							No tienes cuenta? <a id="aonBtnRegister" class="aonLink aonColorSecondary"> click aquí</a>
-							</div>
-							<div style="padding-bottom: 20px;">
+
+							<div style="padding-bottom: 10px;">
 								Si olvidaste tus datos de acceso haz <a id="aonLoginRemember" class="aonLink aonColorSecondary">click aquí</a>
 							</div>
+
+              <div style="padding-bottom: 20px;">
+                Si no tienes cuenta <a id="aonBtnRegister" class="aonLink aonColorSecondary"> Registrate </a>
+              </div>
 
 							<div style="position:relative;">
 								<button class="aonButton" id="aonLoginSignin" type="submit" style="width:100%">Iniciar Sesión</button>
@@ -102,6 +105,7 @@ export class AonLogin extends AonElement {
 			</div>
 
 			<aon-dialog id="aonDialogLogin" width="400px"></aon-dialog>
+			<aon-toast id="aonLoginToast"></aon-toast>
 			`;
 
     this.buildLogo();
@@ -179,8 +183,9 @@ export class AonLogin extends AonElement {
             : '<aon-parent id="aonParent"></aon-parent>'
         );
       })
-      .catch((error) => {
+      .catch((e) => {
         loader.stop();
+        let error = JSON.parse(e);
         let aonLoginError = document.getElementById("aonLoginError");
         aonLoginError.style.display = "block";
 
@@ -188,6 +193,8 @@ export class AonLogin extends AonElement {
           "aonLoginErrorMessage"
         );
         aonLoginErrorMessage.innerHTML = error.message;
+        let toast = this.getElement('aonLoginToast');
+        toast.start(error);
       });
   }
 

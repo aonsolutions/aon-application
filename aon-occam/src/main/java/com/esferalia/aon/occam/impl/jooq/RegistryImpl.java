@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 
 public class RegistryImpl implements IRegistry{
@@ -172,21 +173,15 @@ public class RegistryImpl implements IRegistry{
 	}
 
 	@Override
-	public Registry insertRegistry(AONContext ctx, Registry registry) {
+	public Registry save(AONContext ctx, Registry registry) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.insertRegistry(ctx, registry));
+				configuration -> RegistryDAO.save(ctx, registry));
 	}
 
 	@Override
-	public Registry updateRegistry(AONContext ctx, Registry registry) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.updateRegistry(ctx, registry));
-	}
-
-	@Override
-	public Registry deleteRegistry(AONContext ctx, Integer registry) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.deleteRegistry(ctx, registry));
+	public void deleteRegistry(AONContext ctx, Integer registry) {
+		ctx.getDslContext().transaction(
+				configuration -> RegistryDAO.delete(ctx, registry));
 	}
 
 	@Override

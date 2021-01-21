@@ -7,6 +7,9 @@ import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVIC
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
+import java.io.IOException;
+import java.net.URL;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -16,12 +19,16 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record10;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
+import com.code.aon.master.IConstants;
+import com.code.aon.master.VersionManager;
 import com.esferalia.aon.jooq.tables.records.DomainGserviceaccountRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
@@ -34,10 +41,17 @@ import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.DomainGserviceaccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+
+import net.aonsolutions.core.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLFile;
+import net.aonsolutions.core.dbutils.AonSQLScript;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class DomainDAO {
 	private static final DomainPropertiesDAO DOMAIN_PROPERTIES = new DomainPropertiesDAO();
@@ -240,9 +254,100 @@ public class DomainDAO {
 		domain.setId(newDomainId);
 		domain.setName(lowerDocument);
 		domain.setParentId(parent.getValue(DOMAIN.ID));
-
+		
 		return domain;
 	}
+	
+	public static Domain insertDomain(AONContext ctx, Domain domain, Registry registry) throws Exception {
+		Domain d = getDomain(ctx, f -> f.getNameProperty().eq(domain.getName()));
+		if (d.getId() != null) {
+			throw new Exception("Ya existe el dominio");
+		}
+
+		int newDomainId = ctx
+				.getDslContext()
+				.insertInto(DOMAIN)
+				.set(DOMAIN.CREATION_USER, ctx.getUser())
+				.set(DOMAIN.CREATION_DATE, new java.sql.Timestamp(System.currentTimeMillis()))
+				.set(DOMAIN.MODIFICATION_USER, ctx.getUser())
+				.set(DOMAIN.MODIFICATION_DATE, new java.sql.Timestamp(System.currentTimeMillis()))
+				.set(DOMAIN.DOMAINMANAGEMENT, (byte) 0)
+				.set(DOMAIN.TYPE, (byte) 0)
+				.set(DOMAIN.PARENT, domain.getParentId())
+				.set(DOMAIN.OWNER, domain.getOwner())
+				.set(DOMAIN.NAME, domain.getName())
+				.set(DOMAIN.DESCRIPTION, domain.getDescription())
+				.set(DOMAIN.ENABLEHEREDITY, domain.isEnableHeredity()? (byte) 1 : (byte) 0)
+				.set(DOMAIN.MAXDEFINEDUSERS, 0)
+				.set(DOMAIN.MAXDOCUMENTSIZE, 1)
+				.set(DOMAIN.MAXTOTALDOCUMENTSIZE, 16)
+				.returning(DOMAIN.ID)
+				.fetchOne().getId();
+		domain.setId(newDomainId);
+		
+		ctx.getDslContext().insertInto(DOMAIN_APPLICATION)
+				.set(DOMAIN_APPLICATION.DOMAIN, newDomainId)
+				.set(DOMAIN_APPLICATION.APPLICATION, 28)
+				.set(DOMAIN_APPLICATION.ACTIVE, (byte) 1)
+				.set(DOMAIN_APPLICATION.AUDIT_LEVEL, (byte) 0).execute();
+
+
+		try {
+			if (!domain.isEnableHeredity()) {
+				insertScript(domain.getId(), domain.getName(), IConstants.INSERT_DOMAIN_DEFAULTS_SCRIPT);	
+			}
+			if (DomainType.GARAGE.equals(domain.getDomainType())) {
+				insertScript(domain.getId(), domain.getName(), IConstants.INSERT_DOMAIN_GARAGE_DEFAULTS_SCRIPT);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		int newRegistryId = ctx.getDslContext().insertInto(REGISTRY)
+				.set(REGISTRY.DOMAIN, newDomainId)
+				.set(REGISTRY.DOCUMENT, registry.getDocument())
+				.set(REGISTRY.DOCUMENT_TYPE, (byte) 0)
+				.set(REGISTRY.NAME, registry.getName())
+				.set(REGISTRY.TYPE, (byte) 1)
+				.returning(REGISTRY.ID).fetchOne()
+				.getId();
+		
+		Integer[] domainsParent = {domain.getId(), domain.getParentId()};
+		Integer[] domainOnly = {domain.getId()};
+		Integer[] domains = domain.getParentId() != null ? domainsParent : domainOnly;
+		Scope scope = AON.getScopeStream(domain.getName(), domain.getId(), ctx.getUser(), f -> f.getDomainProperty().in(domains)).findFirst().orElse(new Scope());
+		
+
+		ctx.getDslContext().insertInto(COMPANY)
+				.set(COMPANY.REGISTRY, newRegistryId)
+				.set(COMPANY.DOMAIN, newDomainId).execute();
+
+
+		ctx.getDslContext()
+				.insertInto(ENTERPRISE)
+				.set(ENTERPRISE.REGISTRY, newRegistryId)
+				.set(ENTERPRISE.DOMAIN, newDomainId)
+				.set(ENTERPRISE.SCOPE, scope.getId())
+				.execute();
+		
+		return domain;
+	}
+	protected static void insertScript( Integer domain, String domainName, String scriptPath ) throws AonSQLException, IOException {
+		Connection connection = null;
+		try {			
+			URL script = VersionManager.getScript(scriptPath);
+			AonSQLFile file = new AonSQLFile(script.openStream(), CharEncoding.ISO_8859_1);
+			file.setFileName(scriptPath);
+			connection = DatabaseUtil.getConnection(domainName);
+			AonSQLScript sqlScript = new AonSQLScript(file, connection);
+			sqlScript.setDomain(domain);
+			sqlScript.execute();
+		} catch (AonConnectionException e) {
+			throw new AonSQLException(e.getMessage(),e);
+		} finally {
+			DbUtils.closeQuietly(connection);
+		}
+	}	
 
 	public static DomainRecord getParentDomain(AONContext ctx, Integer domain) {
 		return ctx.getDslContext().selectFrom(DOMAIN)

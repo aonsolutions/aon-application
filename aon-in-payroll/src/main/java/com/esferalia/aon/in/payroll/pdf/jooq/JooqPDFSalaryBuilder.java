@@ -314,7 +314,9 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 			.select()
 			.from(ENTERPRISE)
 			.innerJoin(REGISTRY).onKey()
+			.innerJoin(DOMAIN).onKey(REGISTRY.DOMAIN)
 			.where(REGISTRY.DOCUMENT.eq(contract.getCif()))
+			.and(DOMAIN.PARENT.eq(parentDomain.getId()))
 			.fetchOptionalInto(ENTERPRISE)
 			;
 		} catch ( TooManyRowsException  e) {
@@ -329,7 +331,9 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 			.select()
 			.from(ENTERPRISE)
 			.innerJoin(REGISTRY).onKey()
+			.innerJoin(DOMAIN).onKey(REGISTRY.DOMAIN)
 			.where(REGISTRY.DOCUMENT.eq(contract.getCif()))
+			.and(DOMAIN.PARENT.eq(parentDomain.getId()))
 			.fetchOptionalInto(ENTERPRISE)
 			.orElseGet(() -> {
 								
@@ -339,7 +343,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 				domain.setParent(parentDomain.getId());
 				domain.setOwner(parentDomain.getOwner());
 				domain.setEnableheredity(enableHeredity);
-				domain.setScope(3535/*parentDomain.getScope()*/);
+				domain.setScope(parentDomain.getScope());
 				domain.setDescription(contract.getEnterpriseName());
 				domain.setCreationDate(new Timestamp(System.currentTimeMillis()));
 				domain.setName(String.format("%s-%s-%s", domainNamePreffix, contract.getCif(), parentDomainName));
@@ -364,7 +368,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 				getDSLContext().newRecord(ENTERPRISE);
 				enterprise.setDomain(domain.getId());
 				enterprise.setRegistry(r3gistry.getId());
-				enterprise.setScope(3535/*parentDomain.getScope()*/);
+				enterprise.setScope(parentDomain.getScope());
 				enterprise.insert();
 				
 				return enterprise;

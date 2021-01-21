@@ -34,7 +34,12 @@
 				</aon:if>
 				<aon:div styleClass="aon-width-all">
 					<aon:if test="#{domainSwitcher.childDomain}">
-						<ui:include src="/facelet/homepage/portlet/parentDomainInfoPortlet.xhtml" />
+	  					<aon:if test="#{!userUtils.newAONTheme}">				
+							<ui:include src="/facelet/homepage/portlet/parentDomainInfoPortlet.xhtml" />
+						</aon:if>
+	  					<aon:if test="#{userUtils.newAONTheme}">				
+							<ui:include src="/facelet/new/portlet/parentDomainInfoPortlet.xhtml" />
+						</aon:if>
 						
 						<aon:if test="#{desktop.showGraphicsPortlet}">
 							<aon:if test="#{desktop.state.fiscalEnabled and !desktop.state.fiscalInfoVisibleForPortal}">

@@ -136,7 +136,14 @@
 						disabled="#{!domainUser.userActivable}" 
 						value="#{domainUser.to.active}" />
 				</aon:if>
-
+				
+				<aon:if test="#{userUtils.newAONTheme and (domainSwitcher.betaEnabled or domainSwitcher.alphaEnabled)}">
+					<aon:outputLabel for="User_portal"
+						value="Portal" />
+					<aon:selectBooleanCheckbox id="User_portal"
+						value="#{domainUserSearch.portal}" />
+				</aon:if>
+				
 				<aon:if test="#{aonRole.sysAdmin or (domainSwitcher.type == 'ADMIN')}" >						
 					<aon:outputLabel for="User_passwordExpiration"
 						value="#{bundle.admin_password_expiration}" />

@@ -434,6 +434,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getServiAgreement(getCurrentDomainName(), serviAgreementCode, asyncCallback);
 	}
 	
+	public void checkIfRectificative(Date findingDate, ArrayList<Integer> selectedCCCList, AsyncCallback<Boolean> asyncCallback) {
+		enterprisesServiceAsync.checkIfRectificative(getCurrentDomainName(), findingDate, selectedCCCList, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {
@@ -447,5 +451,7 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
+	
 
 }

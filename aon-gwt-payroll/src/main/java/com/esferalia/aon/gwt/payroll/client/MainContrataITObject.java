@@ -198,27 +198,6 @@ public class MainContrataITObject {
 					@Override
 					public void onFailure(Throwable caught) {}
 				});
-		
-		String affiliationNumber = itEmployee.getEmployeeInfo().getSsNumber();
-		String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
-		String contributionAccount = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-		Date dateFrom = it.getComunicationDate();
-		Date dateTo = it.getComunicationDate();
-		Date startDate = it.getStartDate();
-		
-		
-		impl.deleteComunicateIT(affiliationNumber, regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallback<Void>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				success.accept(result);
-			}});
 	}
 	
 	public String checkITType(Byte maternityType) {

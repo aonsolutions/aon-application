@@ -106,11 +106,13 @@ export class AonConfiguration extends AonElement {
 					fn: () => this.buildCompany()
 				});
 			}
-			companyOptions.push({
-				name: 'Contratación',
-				icon: 'store_mall_directory',
-				fn: () => this.buildStore()
-			});
+			if(!this.isMobile()) {
+				companyOptions.push({
+					name: 'Contratación',
+					icon: 'store_mall_directory',
+					fn: () => this.buildStore()
+				});
+			}
 
 			aonConfiguration.addSidenavOptions('EMPRESA', companyOptions);
 		}

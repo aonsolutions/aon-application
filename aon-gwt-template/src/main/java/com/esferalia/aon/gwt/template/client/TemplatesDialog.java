@@ -612,7 +612,6 @@ public abstract class TemplatesDialog extends CustomDialogB {
 			Label label = new Label(MSG.importOk());
 			vp.add(label);
 		}
-		
 		if(error.getTextWarning() != null) {
 			error.getTextWarning().stream().forEach( w -> {
 				Label l = new Label(w);
@@ -620,6 +619,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				vp.add(l);
 			});
 		}
+		
+		scroll.setHeight("50px");
 		if(error.getTextError().size() > 0 || error.getTextWarning().size() > 0) {
 			scroll.setHeight("200px");
 		}
@@ -759,18 +760,18 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		flex_table.setBorderWidth(1);
 		flex_table.setCellSpacing(0);
 		
-		ListBox lb = new ListBox();
-		lb.addItem("-");
-		for(TemplateInfo ti : templates){
-			if(ti.getType().equals(MSG.fee()))
-				lb.addItem(ti.getName());
-		}
-		flex_table.setWidget(0, 0, new Label(MSG.template()));
-		flex_table.setWidget(0, 1, lb);
-		
+//		ListBox lb = new ListBox();
+//		lb.addItem("-");
+//		for(TemplateInfo ti : templates){
+//			if(ti.getType().equals(MSG.fee()))
+//				lb.addItem(ti.getName());
+//		}
+//		flex_table.setWidget(0, 0, new Label(MSG.template()));
+//		flex_table.setWidget(0, 1, lb);
+//		
 		SingleUploader upload = newUploader(null, url, 1);
-		flex_table.setWidget(1, 0, new Label(MSG.file()));
-		flex_table.setWidget(1, 1, upload);
+		flex_table.setWidget(0, 0, new Label(MSG.file()));
+		flex_table.setWidget(0, 1, upload);
 		
 		CheckBox cb = new CheckBox();
 		cb.setValue(true);

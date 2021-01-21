@@ -334,7 +334,7 @@ public class CertificadosWriter implements Serializable {
 						double factor = Double.parseDouble(d.getExpression());
 						double factor1 = Double.parseDouble(d1.getExpression());
 						if ( factor != factor1 )
-							return d;
+							return d1;
 						
 						
 						Date end = d.getEndDate();
@@ -343,7 +343,7 @@ public class CertificadosWriter implements Serializable {
 						Date start = d1.getStartDate();
 						
 						if ( days(end, start) > 3 ) // ???
-							return d ;
+							return d1 ;
 						
 						d.setEndDate(d1.getEndDate());
 						
@@ -353,7 +353,6 @@ public class CertificadosWriter implements Serializable {
 					Date startDate = data.getStartDate();
 					endDate = AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1);
 					ereFactor = data;
-					break;
 					
 				} catch (Exception e) {
 				}

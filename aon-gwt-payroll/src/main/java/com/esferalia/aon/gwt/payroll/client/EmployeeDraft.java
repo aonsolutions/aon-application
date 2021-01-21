@@ -728,9 +728,29 @@ public class EmployeeDraft extends Composite {
 				this.employeeDraftObject.getDomainId(),
 				this.employeeDraftObject.getWorkplaceId()
 				){
+
 					@Override
-					protected void onAcceptCb() {}
-				};
+					protected void onAcceptCB() {}
+
+					@Override
+					protected void onPartialityCoefContract(String partialityCoef, Date date) {}
+
+					@Override
+					protected void onOcupationContract(String ocupation, Date date) {}
+
+					@Override
+					protected void onQuoteContract(String quoteGroup, Date date) {}
+
+					@Override
+					protected void onChangeContract(String contract, Date date) {}
+
+					@Override
+					protected void onEndContract() {}
+
+					@Override
+					protected void onStartContract() {}
+		
+		};
 			
 		dialog.center();
 		dialog.show();

@@ -285,6 +285,11 @@ public class DomainBookingController extends DataScrollerState {
 		}
 		OCRConfigurationController ocr = (OCRConfigurationController) AonUtil.getRegisteredBean("ocrConfiguration");
 		if(ocr.isActive()) modules.add("OCR");
+		MarketplaceController marketplace = (MarketplaceController) AonUtil.getRegisteredBean("marketplace");
+		if(marketplace.isComunicaActive()) modules.add("COMUNIC@");
+		if(marketplace.isConveniosActive()) modules.add("CONVENIOS");
+		if(marketplace.isBankActive()) modules.add("BANK");
+		if(marketplace.isTimecontrolActive()) modules.add("HORARIO");
 		return StringUtils.join(modules, ", ");					
 	}
 

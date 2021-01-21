@@ -244,5 +244,7 @@ public interface EnterprisesService extends RemoteService {
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it);
 
 	void getServiAgreement(String currentDomainName, String serviAgreementCode);
+
+	boolean checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList);
 	
 }

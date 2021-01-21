@@ -8,11 +8,18 @@
 	
 	<style>
 	.aon-menuBar {
-		border-bottom: none;
+		border-bottom: 1px #ddd solid;
+		background-image: none !important;
+		background-color: #f6f6f6 !important;
 	}
 	
 	.aon-top-menu-item-select {
     	background-color: #fff !important;
+	}
+	.aon-header-search {
+		padding: 14px 20px;
+		border-radius: 50%;
+		background: transparent url(css/images/aon-icon/aon-icon-search.svg) no-repeat scroll center center;
 	}
 	.aon-header-logout {
 		padding: 14px 20px;
@@ -243,12 +250,79 @@
 		box-shadow: 2px 2px 5px 1px #ddd;
 	}
 	
+	.aon-portlet-body,
+	.aon-portlet-title {
+		border: none;
+	}
+	
+	.aon-dataTable td {
+    	padding-left: 1.0em;
+	}	
+	
+	.aon-input-search {
+		width: 75%;
+		padding: 4px; 
+		border: 1px solid #ddd;
+	}
+	
+	.aon-input-search:focus {
+		outline:none;
+		background-color:white;
+	}
+
+	.search-results-popup {
+		
+	}
+	
+	.search-results-popup td,
+	.search-results-popup th,
+	.search-results-popup table {
+		border:none;
+	}
+
+	.search-results-popup table {
+		padding-left : 20px;
+	}
+
+	.search-results-popup td {
+		padding-top: 5px;
+		padding-left: 10px;
+		padding-bottom: 5px;
+	}
+
+	.search-results-popup > div {
+		padding: 5px;
+		background-color: white;
+		box-shadow: 2px 2px 5px 1px #ddd;
+	}
+
+	.search-results-popup div {
+	}
+	
+	.search-results-popup-filter
+	 {
+		padding-top: 20px;
+		padding-left: 10px;
+		padding-bottom: 10px;
+		background-color: white;
+	}
+	
+	.search-results-popup-title
+	 {
+		color: black;
+		padding: 10px;
+		font-size: 15px;
+		background-color: white;
+		border-bottom : 1px solid #ddd;
+	}
+
 	</style>
 		
 	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 1px solid #ddd;" >
-		<aon:panelGrid columns="3" width="100%" 
-			columnClasses="aon-header-name aon-vertical-align-middle,aon-header-options aon-width-300" style="height:60px;" >
+		<aon:panelGrid columns="4" width="100%" 
+			columnClasses="aon-header-name aon-vertical-align-middle,aon-header-name  aon-width-all, aon-header-options aon-width-300" style="height:60px;" >
 			
+
 			<aon:panelGroup>
 
 				<aon:outputConnectionStatus id="aonStatus" layout="block"
@@ -276,9 +350,115 @@
 				</aon:div>
 			</aon:panelGroup>
 			
-			<aon:div styleClass="aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
+		
+			<aon:panelGroup style="text-align:left" >
+				<aon:form id="smartFilterForm">
+					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" >
+						<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
+					</aon:commandLink>
+					<aon:inputText id="smartFilter" size="60" value="#{search.filter}" placeholder="Buscar" styleClass="aon-input-search"  autocomplete="off" >
+						<a4j:support 
+						event="onkeyup"
+						reRender="smartFilterTableContainer"
+						eventsQueue="domainSwitcherFilterKeyUp"
+						requestDelay="500"
+						ajaxSingle="true"
+						ignoreDupResponses="true"
+						limitToList="true">
+							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
+						</a4j:support> 
+						
+						<a4j:support 
+						event="onblur"
+						reRender="smartFilterTableContainer"
+						eventsQueue="domainSwitcherFilterKeyUp"
+						requestDelay="500"
+						ajaxSingle="true"
+						bypassUpdates="true"
+						ignoreDupResponses="true"
+						limitToList="true">
+							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{false}" />
+						</a4j:support> 
+					</aon:inputText>
+					
+					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%">
+						<aon:if test="#{aonConfiguration.properties.showSearchResults}">
+						<aon:div>
+							<aon:div styleClass="search-results-popup-filter" >
+								<aon:outputText value="Resultados de búsqueda de '#{search.filter}'"
+								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+							</aon:div>
+						
+							<aon:div styleClass="search-results-popup-title" >
+								<aon:outputText value="#{domainSwitcher.model.rowCount} Empresas encontradas"
+								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+							</aon:div>
+						
+							<aon:methodParam name="rowSelectorAction" value="start" />
+							<aon:methodParam name="rowSelectorReRender" value="smartFilterForm" />
+							<aon:methodParam name="rowSelectorActionListener" value="#{search.onSelectChildDomain}" type="actionListener" />
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+								<ui:param name="rows" value="10" />
+							
+								<ui:param name="skipSelectButton" value="#{true}" />
+								<ui:param name="showDataScroller" value="#{false}" />
+							
+								<ui:param name="controller" value="#{domainSwitcher}" />
+								<ui:param name="skipFocusFirst" value="true" />
+							
+								<ui:define name="columns">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<aon:outputText value="#{to.getDisplay(search.filter)}"
+										title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
+										style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"  escape="false" />					
+								</aon:column>
+								</ui:define>
+							</ui:decorate>
+							
+							<aon:div></aon:div>
+
+							<aon:div styleClass="search-results-popup-title" >
+								<aon:outputText value="#{contractSwitcher.model.rowCount} Trabajadores encontrados"
+								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
+							</aon:div>
+							<aon:methodParam name="rowSelectorAction" value="home_employee" />
+							<aon:methodParam name="rowSelectorActionListener" value="#{search.onSelectContractDomain}" type="actionListener" />
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+								<ui:param name="rows" value="10" />
+							
+								<ui:param name="skipSelectButton" value="#{true}" />
+								<ui:param name="showDataScroller" value="#{false}" />
+							
+								<ui:param name="controller" value="#{contractSwitcher}" />
+								<ui:param name="skipFocusFirst" value="true" />
+							
+								<ui:define name="columns">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<aon:outputText value="#{to.getDisplay(search.filter)}"
+										title="#{(!to.active)?bundle.admin_domain_inactive:''}"
+										style="#{(!to.active)?'color:gray;font-style:italic;':''}"  escape="false" />					
+								</aon:column>
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="text-align: right;">
+									<aon:outputText value="#{to.domainDescription}"
+										title="#{(!to.active)?bundle.admin_domain_inactive:''}"
+										style="#{(!to.active)?'color:gray;font-style:italic;':''}" />					
+								</aon:column>
+								</ui:define>
+							</ui:decorate>
+							
+						
+						</aon:div>
+						</aon:if>
+					</aon:div>
+	
+				</aon:form>
+			</aon:panelGroup>
+					
+			<aon:div styleClass="aon-width-all aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
 				style="color:#999;">
-				<aon:form id="headerOptionsForm">
+
+					<aon:form id="headerOptionsForm">
+					
 					<aon:panelGroup style="display:inline;">
 						<aon:outputText value="#{domainSwitcher.domainName}"
 							style="vertical-align: middle; color: #5f6368;"
@@ -377,7 +557,7 @@
 							actionListener="#{aonConfiguration.logout}" >
 						</aon:commandLink>
 					</aon:panelGroup> 
-				</aon:form>
+					</aon:form>
 			</aon:div>
 		</aon:panelGrid>
 	</aon:div>

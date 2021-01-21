@@ -29,7 +29,6 @@ import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fee.Fee;
-import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.AonMonth;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -100,7 +99,7 @@ public class FeeProjectionDownload extends HttpServlet{
 		rowIndex = printTitle(workbook, sheet, from, isPdf);
 		AON.getFeeStream(domain.getName(), domain.getId(), login, 
 				f -> StatDAO.getFeeFilter(from, to, domain.getId(), filterMap, f))
-		.sorted((c1,c2) -> c1.getCustomerName().compareTo(c2.getCustomerName()))
+		.sorted((c1,c2) -> c1.getCustomer().getName().compareTo(c2.getCustomer().getName()))
 		.forEach(fee -> rowIndex = printValues(workbook, sheet, domain, fee, from, rowIndex, isPdf, valueStyle, doubleStyle));			
 
  
@@ -145,13 +144,13 @@ public class FeeProjectionDownload extends HttpServlet{
 	
 	private Integer printValues(HSSFWorkbook workbook, HSSFSheet sheet, Domain domain, Fee fee, Date from, Integer rowIndex, Boolean isPdf,CellStyle style, CellStyle doubleStyle ){
 		Row row = sheet.createRow(rowIndex);
-		createCell(row, style, fee.getCustomerName(), 0);
+		createCell(row, style, fee.getCustomer().getName(), 0);
 		createCell(row, style, fee.getDescription(), 1);
-		createCell(row, style, fee.getProductCode(), 2);
+		createCell(row, style, fee.getItem().getProduct().getCode(), 2);
 		
 		int bMonth = AonDateUtils.getMonth(fee.getBillingDate()); 
 		int bYear = AonDateUtils.getYear(fee.getBillingDate()); 
-		int period = BillingPeriod.values()[fee.getPeriod()].getValue();
+		int period = fee.getPeriod().getValue();
     
 		for(Integer i = 0 ; i < 12; i++){
 			Date date  = AonDateUtils.addMonths(from, i);

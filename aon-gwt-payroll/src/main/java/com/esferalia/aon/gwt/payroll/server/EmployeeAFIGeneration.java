@@ -315,11 +315,11 @@ public final class EmployeeAFIGeneration {
 		
 	}
 	
-	public static class SDC{
+	public static class MA{
 		FAB fab;
 		OTD otd;
 		
-		public SDC(FAB fab, OTD otd) {
+		public MA(FAB fab, OTD otd) {
 			super();
 			this.fab = fab;
 			this.otd = otd;
@@ -340,11 +340,11 @@ public final class EmployeeAFIGeneration {
 		
 	}
 	
-	public static class EDC{
+	public static class MB{
 		FAB fab;
 		DAM dam;
 		
-		public EDC(FAB fab, DAM dam) {
+		public MB(FAB fab, DAM dam) {
 			super();
 			this.fab = fab;
 			this.dam = dam;
@@ -365,61 +365,11 @@ public final class EmployeeAFIGeneration {
 		
 	}
 	
-	public static class CHC{
+	public static class MC{
 		FAB fab;
 		DAM dam;
 		
-		public CHC(FAB fab, DAM dam) {
-			super();
-			this.fab = fab;
-			this.dam = dam;
-		}
-
-		public FAB getFab() {
-			return fab;
-		}
-		public void setFab(FAB fab) {
-			this.fab = fab;
-		}
-		public DAM getDam() {
-			return dam;
-		}
-		public void setDam(DAM dam) {
-			this.dam = dam;
-		}
-		
-	}
-	
-	public static class QGC{
-		FAB fab;
-		DAM dam;
-		
-		public QGC(FAB fab, DAM dam) {
-			super();
-			this.fab = fab;
-			this.dam = dam;
-		}
-
-		public FAB getFab() {
-			return fab;
-		}
-		public void setFab(FAB fab) {
-			this.fab = fab;
-		}
-		public DAM getDam() {
-			return dam;
-		}
-		public void setDam(DAM dam) {
-			this.dam = dam;
-		}
-		
-	}
-	
-	public static class OCC{
-		FAB fab;
-		DAM dam;
-		
-		public OCC(FAB fab, DAM dam) {
+		public MC(FAB fab, DAM dam) {
 			super();
 			this.fab = fab;
 			this.dam = dam;
@@ -453,7 +403,8 @@ public final class EmployeeAFIGeneration {
 		String tc2;
 		String reserved1;
 		String subWomen;
-		String reserved6;
+		String partialityCoef;
+		String reserved3;
 		String printInd;
 		String reserved15;
 		String gender;
@@ -467,7 +418,7 @@ public final class EmployeeAFIGeneration {
 		String actualYear;
 		String reserved2N;
 		
-		public FAB(String action, String situation, String day, String month, String year, String quoteGroup, String tc2, String gender ) {
+		public FAB(String action, String situation, String day, String month, String year, String quoteGroup, String tc2, String partialityCoef, String gender ) {
 			super();
 			this.fabHeader = "FAB";
 			this.action = StringUtils.rightPad(action, 3, ' ');
@@ -481,7 +432,8 @@ public final class EmployeeAFIGeneration {
 			this.tc2 = tc2;
 			this.reserved1 = StringUtils.leftPad("", 1, ' ');
 			this.subWomen = "N";
-			this.reserved6 = StringUtils.leftPad("", 6, '0');
+			this.partialityCoef = StringUtils.leftPad(partialityCoef, 3, '0');
+			this.reserved3 = StringUtils.leftPad("", 3, '0');
 			this.printInd = "C";
 			this.reserved15 = StringUtils.leftPad("", 15, '0');
 			this.gender = gender;
@@ -533,8 +485,11 @@ public final class EmployeeAFIGeneration {
 		public String getSubWomen() {
 			return subWomen;
 		}
-		public String getReserved6() {
-			return reserved6;
+		public String getPartialityCoef() {
+			return partialityCoef;
+		}
+		public String getReserved3() {
+			return reserved3;
 		}
 		public String getPrintInd() {
 			return printInd;
@@ -618,28 +573,14 @@ public final class EmployeeAFIGeneration {
 		String damHeader;
 		String reserved8;
 		String fic;
-		String reserved21;
-		String reserved6;
-		String reserved2;
-		String reserved1;
-		String reserved7;
-		String reservedW2;
-		String reserved4;
-		String family;
+		String reserved48;
 		String ocupation;
 		
 		public DAM ( String ocupation ) {
 			this.damHeader = "DAM";
 			this.reserved8 = StringUtils.leftPad("", 8, '0');
 			this.fic = "N";
-			this.reserved21 = StringUtils.leftPad("", 21, '0');
-			this.reserved6 = StringUtils.leftPad("", 6, ' ');
-			this.reserved2 = StringUtils.leftPad("", 2, '0');
-			this.reserved1 = StringUtils.leftPad("", 1, ' ');
-			this.reserved7 = StringUtils.leftPad("", 7, '0');
-			this.reservedW2 = StringUtils.leftPad("", 2, ' ');
-			this.reserved4 = StringUtils.leftPad("", 4, '0');
-			this.family = " ";
+			this.reserved48 = StringUtils.leftPad("", 48, '0');
 			this.ocupation = StringUtils.leftPad(ocupation, 2, ' ');
 		}
 		
@@ -652,29 +593,8 @@ public final class EmployeeAFIGeneration {
 		public String getFic() {
 			return fic;
 		}
-		public String getReserved21() {
-			return reserved21;
-		}
-		public String getReserved6() {
-			return reserved6;
-		}
-		public String getReserved2() {
-			return reserved2;
-		}
-		public String getReserved1() {
-			return reserved1;
-		}
-		public String getReserved7() {
-			return reserved7;
-		}
-		public String getReservedW2() {
-			return reservedW2;
-		}
-		public String getReserved4() {
-			return reserved4;
-		}
-		public String getFamily() {
-			return family;
+		public String getReserved48() {
+			return reserved48;
 		}
 		public String getOcupation() {
 			return ocupation;
@@ -832,8 +752,8 @@ public final class EmployeeAFIGeneration {
 				aynJson.get("name").toString());
 		
 		//SDC
-		JSONObject sdcJson = (JSONObject) employeeData.get("SDC");
-		SDC sdc = null;
+		JSONObject sdcJson = (JSONObject) employeeData.get("MA");
+		MA ma = null;
 		if(null != sdcJson) {
 			JSONObject fabJson = (JSONObject) sdcJson.get("FAB");
 			FAB fab = new FAB(
@@ -844,18 +764,19 @@ public final class EmployeeAFIGeneration {
 					fabJson.get("year").toString(),
 					fabJson.get("quoteGroup").toString(),
 					fabJson.get("tc2").toString(),
+					fabJson.get("partialityCoef").toString(),
 					fabJson.get("gender").toString());
 			
 			JSONObject otdJson = (JSONObject) sdcJson.get("OTD");
 			OTD otd = new OTD(
 					otdJson.get("convCollective").toString());
 			
-			sdc = new SDC(fab, otd);
+			ma = new MA(fab, otd);
 		}
 		
 		//EDC
-		JSONObject edcJson = (JSONObject) employeeData.get("EDC");
-		EDC edc = null;
+		JSONObject edcJson = (JSONObject) employeeData.get("MB");
+		MB mb = null;
 		if(null != edcJson) {
 			JSONObject fabJson = (JSONObject) edcJson.get("FAB");
 			FAB fab = new FAB(
@@ -866,17 +787,18 @@ public final class EmployeeAFIGeneration {
 					fabJson.get("year").toString(),
 					fabJson.get("quoteGroup").toString(),
 					fabJson.get("tc2").toString(),
+					fabJson.get("partialityCoef").toString(),
 					fabJson.get("gender").toString());
 			
 			JSONObject damJson = (JSONObject) edcJson.get("DAM");
 			DAM dam = new DAM("");
 			
-			edc = new EDC(fab, dam);
+			mb = new MB(fab, dam);
 		}
 		
 		//CHC
-		JSONObject chcJson = (JSONObject) employeeData.get("CHC");
-		CHC chc = null;
+		JSONObject chcJson = (JSONObject) employeeData.get("MC");
+		MC mc = null;
 		if(null != chcJson) {
 			JSONObject fabJson = (JSONObject) chcJson.get("FAB");
 			FAB fab = new FAB(
@@ -887,55 +809,13 @@ public final class EmployeeAFIGeneration {
 					fabJson.get("year").toString(),
 					fabJson.get("quoteGroup").toString(),
 					fabJson.get("tc2").toString(),
+					fabJson.get("partialityCoef").toString(),
 					fabJson.get("gender").toString());
 			
 			JSONObject damJson = (JSONObject) chcJson.get("DAM");
-			DAM dam = new DAM("");
+			DAM dam = new DAM(damJson.get("ocupation").toString());
 			
-			chc = new CHC(fab, dam);
-		}
-		
-		//QGC
-		JSONObject qgcJson = (JSONObject) employeeData.get("QGC");
-		QGC qgc = null;
-		if(null != qgcJson) {
-			JSONObject fabJson = (JSONObject) qgcJson.get("FAB");
-			FAB fab = new FAB(
-					fabJson.get("action").toString(), 
-					fabJson.get("situation").toString(),
-					fabJson.get("day").toString(),
-					fabJson.get("month").toString(),
-					fabJson.get("year").toString(),
-					fabJson.get("quoteGroup").toString(),
-					fabJson.get("tc2").toString(),
-					fabJson.get("gender").toString());
-			
-			JSONObject damJson = (JSONObject) qgcJson.get("DAM");
-			DAM dam = new DAM("");
-			
-			qgc = new QGC(fab, dam);
-		}
-
-		//QGC
-		JSONObject occJson = (JSONObject) employeeData.get("OCC");
-		OCC occ = null;
-		if(null != occJson) {
-			JSONObject fabJson = (JSONObject) occJson.get("FAB");
-			FAB fab = new FAB(
-					fabJson.get("action").toString(), 
-					fabJson.get("situation").toString(),
-					fabJson.get("day").toString(),
-					fabJson.get("month").toString(),
-					fabJson.get("year").toString(),
-					fabJson.get("quoteGroup").toString(),
-					fabJson.get("tc2").toString(),
-					fabJson.get("gender").toString());
-			
-			JSONObject damJson = (JSONObject) occJson.get("DAM");
-			DAM dam = new DAM(
-					damJson.get("ocupation").toString());
-			
-			occ = new OCC(fab, dam);
+			mc = new MC(fab, dam);
 		}
 	
 		//CONF
@@ -955,14 +835,13 @@ public final class EmployeeAFIGeneration {
 				numEmployees+"",
 				totalLines+"");
 		
-		employeeAFI = createEmployeeAFI(eti, emp, rzs, tra, ayn, sdc, edc, chc, qgc, occ, etf);
+		employeeAFI = createEmployeeAFI(eti, emp, rzs, tra, ayn, ma, mb, mc, etf);
 		
 		return employeeAFI;
 		
 	}
 	
-	private static String createEmployeeAFI(ETI eti, EMP emp, RZS rzs, TRA tra, AYN ayn, SDC sdc, EDC edc, CHC chc,
-			QGC qgc, OCC occ, ETF etf) {
+	private static String createEmployeeAFI(ETI eti, EMP emp, RZS rzs, TRA tra, AYN ayn, MA ma, MB mb, MC mc, ETF etf) {
 		
 		String employeeAFI = "";
 		
@@ -1012,7 +891,7 @@ public final class EmployeeAFIGeneration {
 				rzs.getReserved2() +
 				"\r\n";
 		
-		if(null != sdc) {
+		if(null != ma) {
 			employeeAFI +=
 					tra.getTraHeader() +
 					tra.getNumAfilicion() +
@@ -1035,44 +914,45 @@ public final class EmployeeAFIGeneration {
 					"\r\n";
 			
 			employeeAFI +=
-					sdc.getFab().getFabHeader() +
-					sdc.getFab().getAction() +
-					sdc.getFab().getSituation() +
-					sdc.getFab().getYear() +
-					sdc.getFab().getMonth() +
-					sdc.getFab().getDay() +
-					sdc.getFab().getQuoteGroup() +
-					sdc.getFab().getDaylyQG() +
-					sdc.getFab().getDisability() +
-					sdc.getFab().getTc2() +
-					sdc.getFab().getReserved1() +
-					sdc.getFab().getSubWomen() +
-					sdc.getFab().getReserved6() +
-					sdc.getFab().getPrintInd() +
-					sdc.getFab().getReserved15() +
-					sdc.getFab().getGender() +
-					sdc.getFab().getReserved5() +
-					sdc.getFab().getReWomen() +
-					sdc.getFab().getReserved2N() +
-					sdc.getFab().getReserved2() +
-					sdc.getFab().getActualYear() +
-					sdc.getFab().getActualMonth() +
-					sdc.getFab().getActualDay() +
-					sdc.getFab().getReserved1() +
-					sdc.getFab().getReserved2N() +
+					ma.getFab().getFabHeader() +
+					ma.getFab().getAction() +
+					ma.getFab().getSituation() +
+					ma.getFab().getYear() +
+					ma.getFab().getMonth() +
+					ma.getFab().getDay() +
+					ma.getFab().getQuoteGroup() +
+					ma.getFab().getDaylyQG() +
+					ma.getFab().getDisability() +
+					ma.getFab().getTc2() +
+					ma.getFab().getReserved1() +
+					ma.getFab().getSubWomen() +
+					ma.getFab().getPartialityCoef() +
+					ma.getFab().getReserved3() +
+					ma.getFab().getPrintInd() +
+					ma.getFab().getReserved15() +
+					ma.getFab().getGender() +
+					ma.getFab().getReserved5() +
+					ma.getFab().getReWomen() +
+					ma.getFab().getReserved2N() +
+					ma.getFab().getReserved2() +
+					ma.getFab().getActualYear() +
+					ma.getFab().getActualMonth() +
+					ma.getFab().getActualDay() +
+					ma.getFab().getReserved1() +
+					ma.getFab().getReserved2N() +
 					"\r\n";
 			
 			employeeAFI +=
-					sdc.getOtd().getOtdHeader() +
-					sdc.getOtd().getConvCollective() +
-					sdc.getOtd().getReserved31() +
-					sdc.getOtd().getReAdmited() +
-					sdc.getOtd().getReserved8() +
-					sdc.getOtd().getReserved13() +
+					ma.getOtd().getOtdHeader() +
+					ma.getOtd().getConvCollective() +
+					ma.getOtd().getReserved31() +
+					ma.getOtd().getReAdmited() +
+					ma.getOtd().getReserved8() +
+					ma.getOtd().getReserved13() +
 					"\r\n";
 		}
 			
-		if(null != edc) {
+		if(null != mb) {
 			employeeAFI +=
 					tra.getTraHeader() +
 					tra.getNumAfilicion() +
@@ -1095,53 +975,46 @@ public final class EmployeeAFIGeneration {
 					"\r\n";
 			
 			employeeAFI +=
-					edc.getFab().getFabHeader() +
-					edc.getFab().getAction() +
-					edc.getFab().getSituation() +
-					edc.getFab().getYear() +
-					edc.getFab().getMonth() +
-					edc.getFab().getDay() +
-					edc.getFab().getQuoteGroup() +
-					edc.getFab().getDaylyQG() +
-					edc.getFab().getDisability() +
-					edc.getFab().getTc2() +
-					edc.getFab().getReserved1() +
-					edc.getFab().getSubWomen() +
-					edc.getFab().getReserved6() +
-					edc.getFab().getPrintInd() +
-					edc.getFab().getReserved15() +
-					edc.getFab().getGender() +
-					edc.getFab().getReserved5() +
-					edc.getFab().getReWomen() +
-					edc.getFab().getReserved2N() +
-					edc.getFab().getReserved2() +
-					edc.getFab().getActualYear() +
-					edc.getFab().getActualMonth() +
-					edc.getFab().getActualDay() +
-					edc.getFab().getReserved1() +
-					edc.getFab().getReserved2N() +
+					mb.getFab().getFabHeader() +
+					mb.getFab().getAction() +
+					mb.getFab().getSituation() +
+					mb.getFab().getYear() +
+					mb.getFab().getMonth() +
+					mb.getFab().getDay() +
+					mb.getFab().getQuoteGroup() +
+					mb.getFab().getDaylyQG() +
+					mb.getFab().getDisability() +
+					mb.getFab().getTc2() +
+					mb.getFab().getReserved1() +
+					mb.getFab().getSubWomen() +
+					mb.getFab().getPartialityCoef() +
+					mb.getFab().getReserved3() +
+					mb.getFab().getPrintInd() +
+					mb.getFab().getReserved15() +
+					mb.getFab().getGender() +
+					mb.getFab().getReserved5() +
+					mb.getFab().getReWomen() +
+					mb.getFab().getReserved2N() +
+					mb.getFab().getReserved2() +
+					mb.getFab().getActualYear() +
+					mb.getFab().getActualMonth() +
+					mb.getFab().getActualDay() +
+					mb.getFab().getReserved1() +
+					mb.getFab().getReserved2N() +
 					"\r\n";
 			
 			employeeAFI +=
-					edc.getDam().getDamHeader() +
-					edc.getDam().getReserved8() +
-					edc.getDam().getFic() +
-					edc.getDam().getReserved21() +
-					edc.getDam().getReserved6() +
-					edc.getDam().getReserved2() +
-					edc.getDam().getReserved1() +
-					edc.getDam().getReserved7() +
-					edc.getDam().getReservedW2() +
-					edc.getDam().getReserved4() +
-					edc.getDam().getFamily() +
-					edc.getDam().getReserved4() +
-					edc.getDam().getOcupation() +
-					edc.getDam().getReserved8() +
+					mb.getDam().getDamHeader() +
+					mb.getDam().getReserved8() +
+					mb.getDam().getFic() +
+					mb.getDam().getReserved48() +
+					mb.getDam().getOcupation() +
+					mb.getDam().getReserved8() +
 					"\r\n";
 
 		}
 			
-		if(null != chc) {
+		if(null != mc) {
 			employeeAFI +=
 					tra.getTraHeader() +
 					tra.getNumAfilicion() +
@@ -1164,186 +1037,41 @@ public final class EmployeeAFIGeneration {
 					"\r\n";
 			
 			employeeAFI +=
-					chc.getFab().getFabHeader() +
-					chc.getFab().getAction() +
-					chc.getFab().getSituation() +
-					chc.getFab().getYear() +
-					chc.getFab().getMonth() +
-					chc.getFab().getDay() +
-					chc.getFab().getQuoteGroup() +
-					chc.getFab().getDaylyQG() +
-					chc.getFab().getDisability() +
-					chc.getFab().getTc2() +
-					chc.getFab().getReserved1() +
-					chc.getFab().getSubWomen() +
-					chc.getFab().getReserved6() +
-					chc.getFab().getPrintInd() +
-					chc.getFab().getReserved15() +
-					chc.getFab().getGender() +
-					chc.getFab().getReserved5() +
-					chc.getFab().getReWomen() +
-					chc.getFab().getReserved2N() +
-					chc.getFab().getReserved2() +
-					chc.getFab().getActualYear() +
-					chc.getFab().getActualMonth() +
-					chc.getFab().getActualDay() +
-					chc.getFab().getReserved1() +
-					chc.getFab().getReserved2N() +
+					mc.getFab().getFabHeader() +
+					mc.getFab().getAction() +
+					mc.getFab().getSituation() +
+					mc.getFab().getYear() +
+					mc.getFab().getMonth() +
+					mc.getFab().getDay() +
+					mc.getFab().getQuoteGroup() +
+					mc.getFab().getDaylyQG() +
+					mc.getFab().getDisability() +
+					mc.getFab().getTc2() +
+					mc.getFab().getReserved1() +
+					mc.getFab().getSubWomen() +
+					mc.getFab().getPartialityCoef() +
+					mc.getFab().getReserved3() +
+					mc.getFab().getPrintInd() +
+					mc.getFab().getReserved15() +
+					mc.getFab().getGender() +
+					mc.getFab().getReserved5() +
+					mc.getFab().getReWomen() +
+					mc.getFab().getReserved2N() +
+					mc.getFab().getReserved2() +
+					mc.getFab().getActualYear() +
+					mc.getFab().getActualMonth() +
+					mc.getFab().getActualDay() +
+					mc.getFab().getReserved1() +
+					mc.getFab().getReserved2N() +
 					"\r\n";
 			
 			employeeAFI +=
-					chc.getDam().getDamHeader() +
-					chc.getDam().getReserved8() +
-					chc.getDam().getFic() +
-					chc.getDam().getReserved21() +
-					chc.getDam().getReserved6() +
-					chc.getDam().getReserved2() +
-					chc.getDam().getReserved1() +
-					chc.getDam().getReserved7() +
-					chc.getDam().getReservedW2() +
-					chc.getDam().getReserved4() +
-					chc.getDam().getFamily() +
-					chc.getDam().getReserved4() +
-					chc.getDam().getOcupation() +
-					chc.getDam().getReserved8() +
-					"\r\n";
-
-		}
-		
-		if(null != qgc) {
-			employeeAFI +=
-					tra.getTraHeader() +
-					tra.getNumAfilicion() +
-					tra.getDocumentType() +
-					tra.getDocumentCountry() +
-					tra.getDocument() +
-					tra.getReserved3() +
-					tra.getDecodeControl() +
-					tra.getNationality() +
-					tra.getEmployeeIndic() +
-					tra.getReserved5() +
-					"\r\n";
-			
-			employeeAFI +=
-					ayn.getAynHeader() +
-					ayn.getFirstSurname() +
-					ayn.getSecondSurname() +
-					ayn.getName() +
-					ayn.getReserved12() +
-					"\r\n";
-			
-			employeeAFI +=
-					qgc.getFab().getFabHeader() +
-					qgc.getFab().getAction() +
-					qgc.getFab().getSituation() +
-					qgc.getFab().getYear() +
-					qgc.getFab().getMonth() +
-					qgc.getFab().getDay() +
-					qgc.getFab().getQuoteGroup() +
-					qgc.getFab().getDaylyQG() +
-					qgc.getFab().getDisability() +
-					qgc.getFab().getTc2() +
-					qgc.getFab().getReserved1() +
-					qgc.getFab().getSubWomen() +
-					qgc.getFab().getReserved6() +
-					qgc.getFab().getPrintInd() +
-					qgc.getFab().getReserved15() +
-					qgc.getFab().getGender() +
-					qgc.getFab().getReserved5() +
-					qgc.getFab().getReWomen() +
-					qgc.getFab().getReserved2N() +
-					qgc.getFab().getReserved2() +
-					qgc.getFab().getActualYear() +
-					qgc.getFab().getActualMonth() +
-					qgc.getFab().getActualDay() +
-					qgc.getFab().getReserved1() +
-					qgc.getFab().getReserved2N() +
-					"\r\n";
-			
-			employeeAFI +=
-					qgc.getDam().getDamHeader() +
-					qgc.getDam().getReserved8() +
-					qgc.getDam().getFic() +
-					qgc.getDam().getReserved21() +
-					qgc.getDam().getReserved6() +
-					qgc.getDam().getReserved2() +
-					qgc.getDam().getReserved1() +
-					qgc.getDam().getReserved7() +
-					qgc.getDam().getReservedW2() +
-					qgc.getDam().getReserved4() +
-					qgc.getDam().getFamily() +
-					qgc.getDam().getReserved4() +
-					qgc.getDam().getOcupation() +
-					qgc.getDam().getReserved8() +
-					"\r\n";
-
-		}
-
-		if(null != occ) {
-			employeeAFI +=
-					tra.getTraHeader() +
-					tra.getNumAfilicion() +
-					tra.getDocumentType() +
-					tra.getDocumentCountry() +
-					tra.getDocument() +
-					tra.getReserved3() +
-					tra.getDecodeControl() +
-					tra.getNationality() +
-					tra.getEmployeeIndic() +
-					tra.getReserved5() +
-					"\r\n";
-			
-			employeeAFI +=
-					ayn.getAynHeader() +
-					ayn.getFirstSurname() +
-					ayn.getSecondSurname() +
-					ayn.getName() +
-					ayn.getReserved12() +
-					"\r\n";
-			
-			employeeAFI +=
-					occ.getFab().getFabHeader() +
-					occ.getFab().getAction() +
-					occ.getFab().getSituation() +
-					occ.getFab().getYear() +
-					occ.getFab().getMonth() +
-					occ.getFab().getDay() +
-					occ.getFab().getQuoteGroup() +
-					occ.getFab().getDaylyQG() +
-					occ.getFab().getDisability() +
-					occ.getFab().getTc2() +
-					occ.getFab().getReserved1() +
-					occ.getFab().getSubWomen() +
-					occ.getFab().getReserved6() +
-					occ.getFab().getPrintInd() +
-					occ.getFab().getReserved15() +
-					occ.getFab().getGender() +
-					occ.getFab().getReserved5() +
-					occ.getFab().getReWomen() +
-					occ.getFab().getReserved2N() +
-					occ.getFab().getReserved2() +
-					occ.getFab().getActualYear() +
-					occ.getFab().getActualMonth() +
-					occ.getFab().getActualDay() +
-					occ.getFab().getReserved1() +
-					occ.getFab().getReserved2N() +
-					"\r\n";
-			
-			employeeAFI +=
-					occ.getDam().getDamHeader() +
-					occ.getDam().getReserved8() +
-					occ.getDam().getFic() +
-					occ.getDam().getReserved21() +
-					occ.getDam().getReserved6() +
-					occ.getDam().getReserved2() +
-					occ.getDam().getReserved1() +
-					occ.getDam().getReserved7() +
-					occ.getDam().getReservedW2() +
-					occ.getDam().getReserved4() +
-					occ.getDam().getFamily() +
-					occ.getDam().getReserved4() +
-					occ.getDam().getOcupation() +
-					occ.getDam().getReserved8() +
+					mc.getDam().getDamHeader() +
+					mc.getDam().getReserved8() +
+					mc.getDam().getFic() +
+					mc.getDam().getReserved48() +
+					mc.getDam().getOcupation() +
+					mc.getDam().getReserved8() +
 					"\r\n";
 
 		}

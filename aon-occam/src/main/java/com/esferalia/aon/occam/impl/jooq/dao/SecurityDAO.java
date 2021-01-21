@@ -45,6 +45,7 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record6;
 import org.jooq.Record8;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
@@ -165,6 +166,10 @@ public class SecurityDAO {
 			.set(AUTH.ID, unHexUuid(ctx, uuid))
 			.set(AUTH.EMAIL, auth.getEmail())
 			.set(AUTH.PASSWORD, auth.getPassword())
+			.set(AUTH.NAME, auth.getName())
+			.set(AUTH.SURNAME, auth.getSurname())
+			.set(AUTH.DOCUMENT, auth.getDocument())
+			.set(AUTH.PHONE, auth.getPhone())
 			.execute();
 		
 		return getAuth(ctx, auth.getEmail());
@@ -301,6 +306,7 @@ public class SecurityDAO {
 			.set(USER.DOMAIN, user.getDomain())
 			.set(USER.AUTH, user.getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
+			.set(USER.ENTERPRISE, user.getEnterprise())
 			.execute();
 		
 		return user.setId(id);
@@ -363,6 +369,26 @@ public class SecurityDAO {
 				//.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
 		}
 		
+	}
+
+	private static Field<?>[] USER_FIELDS = new Field[]{
+			USER.ID, USER.DOMAIN, USER.NAME, USER.LOGIN, USER.ENTERPRISE, USER.REGISTRY, USER.ACTIVE,
+			USER.ALLOWCONCURRENT, USER.PASSWORDEXPIRATION, USER.TOOLBAR, USER.LOCALE, USER.PAGELIMIT,
+			USER.LINESPAGELIMIT, USER.INITACTION, USER.LASTACCESS, USER.AUTH, USER.SHARED
+		}; 
+	
+	public static Stream<User> getDomainUserStream(AONContext ctx) {
+		return ctx.getDslContext()
+				.selectDistinct(USER_FIELDS)
+				.from(USER)
+				.join(DOMAIN).on(USER.DOMAIN.eq(DOMAIN.ID).or(USER.DOMAIN.eq(DOMAIN.PARENT)))
+				.leftOuterJoin(USER_SCOPE).on(USER_SCOPE.USER_ID.eq(USER.ID))
+				.where(DOMAIN.ID.eq(ctx.getDomainId()).and( 
+							DOMAIN.SCOPE.isNull().or(USER.DOMAIN.eq(ctx.getDomainId())).or( 
+									DOMAIN.SCOPE.eq(USER_SCOPE.SCOPE)
+							)
+						))
+				.fetch().stream().map(new UserFiller());
 	}
 	
 	public static Stream<User> getUserStream(AONContext ctx, UserFilter filter) {

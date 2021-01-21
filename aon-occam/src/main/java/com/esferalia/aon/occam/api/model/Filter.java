@@ -70,6 +70,7 @@ import com.esferalia.aon.occam.api.model.Properties.StockProperties;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.Properties.TagProperties;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
+import com.esferalia.aon.occam.api.model.Properties.TariffProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskCommentProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskEventProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
@@ -552,4 +553,8 @@ public interface Filter {
 		Filter filter(RawdocProperties properties);
 	}
 	
+	@FunctionalInterface
+	public interface TariffFilter{
+		Filter filter(TariffProperties properties);
+	}
 }

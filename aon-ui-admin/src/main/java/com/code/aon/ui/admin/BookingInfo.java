@@ -26,6 +26,7 @@ import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ui.admin.controller.DomainController;
+import com.code.aon.ui.admin.controller.MarketplaceController;
 import com.code.aon.ui.admin.controller.OCRConfigurationController;
 import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.common.ICommonMessages;
@@ -332,6 +333,26 @@ public class BookingInfo implements Serializable {
 	public boolean isOCR() {
 		OCRConfigurationController ocr = (OCRConfigurationController) AonUtil.getRegisteredBean("ocrConfiguration");
 		return ocr.isActive();
+	}
+	
+	public boolean isComunica() {
+		MarketplaceController marketplace = (MarketplaceController) AonUtil.getRegisteredBean("marketplace");
+		return marketplace.isComunicaActive();
+	}
+	
+	public boolean isConvenios() {
+		MarketplaceController marketplace = (MarketplaceController) AonUtil.getRegisteredBean("marketplace");
+		return marketplace.isConveniosActive();
+	}
+	
+	public boolean isBank() {
+		MarketplaceController marketplace = (MarketplaceController) AonUtil.getRegisteredBean("marketplace");
+		return marketplace.isBankActive();
+	}
+	
+	public boolean isTimecontrol() {
+		MarketplaceController marketplace = (MarketplaceController) AonUtil.getRegisteredBean("marketplace");
+		return marketplace.isTimecontrolActive();
 	}
 	
 	private List<DomainModuleInfo> calculateDisplayModules() throws ManagerBeanException {

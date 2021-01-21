@@ -8,13 +8,13 @@ import java.util.Optional;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import solutions.aon.seg.social.SistemaRED_ITParts;
 import solutions.aon.seg.social.SistemaRED_ITParts.Contingencies;
 import solutions.aon.seg.social.SistemaRED_ITParts.ContractType;
 import solutions.aon.seg.social.SistemaRED_ITParts.PartType;
 import solutions.aon.seg.social.SistemaRED_ITParts.SituationEmployee;
 //import solutions.aon.seg.social.SistemaRED_ITParts.TypeAccident;
+import solutions.aon.seg.social.objects.ITPart;
 
 public class TestItRegister {
 	@Test
@@ -94,6 +94,22 @@ public class TestItRegister {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	@Ignore
+	public void getDataIt() {
+//		 new Date("2016/04/23")
+		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
+			 Date fecha_baja = new Date("2016/04/20");
+			 Date fecha_proceso = new Date("2016/04/20");
+			 ITPart itPart = SistemaRED_ITParts.getDataIt(certificateInputStream,"jg@FNMT","pkcs12", 
+					"0111", "01105360062", "011011187190", PartType.BAJA, fecha_baja, fecha_proceso);
+			 System.out.println(itPart);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	@Test
 	@Ignore

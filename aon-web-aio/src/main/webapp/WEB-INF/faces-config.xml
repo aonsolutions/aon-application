@@ -88,6 +88,10 @@
 			com.code.aon.aio.controller.SearchController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>searchController</value>
+		</managed-property>
 	</managed-bean>
 
 	<!-- =================== Application Menu Navigation Rules ================= -->	

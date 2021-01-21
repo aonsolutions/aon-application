@@ -171,7 +171,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			}
 			paintAttach( false );
 		}
-		getCallback().getModule().onBalance(getWrapper());
 		getCallback().getModule().onPreview(getWrapper());
 		if (cbk != null) {
 			cbk.onSuccess();
@@ -579,7 +578,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	getCallback().getModule().syncCurrent();
 		if (result.isImportable()) {
 			editInvoice();
-			getCallback().getModule().onBalance(getWrapper());
 			getCallback().getModule().onPreview(getWrapper());
 		} else {
 			paintProblemsWidget(centerContainer, result);

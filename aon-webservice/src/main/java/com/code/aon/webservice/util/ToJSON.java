@@ -236,8 +236,8 @@ public class ToJSON {
 	public static JSONObject feeToJSON(Fee fee) {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, fee.getId());
-		json.put(MSG.DOMAIN, fee.getDomain());
-		json.put("customer", fee.getCustomer());
+		json.put(MSG.DOMAIN, fee.getDomain().getId());
+		json.put("customer", fee.getCustomer().getId());
 		json.put(MSG.DESCRIPTION, fee.getDescription());
 		json.put("start_date", fee.getStartDate() != null ?
 				AonDateUtils.simpleFormat(fee.getStartDate()) : "");
@@ -245,7 +245,7 @@ public class ToJSON {
 				AonDateUtils.simpleFormat(fee.getEndDate()) : "");
 		json.put("billing_month", getMonth(fee.getBillingDate()));
 		json.put("billing_year", AonDateUtils.getYear(fee.getBillingDate()));
-		json.put("period", getPeriod(BillingPeriod.values()[fee.getPeriod()]));
+		json.put("period", getPeriod(fee.getPeriod()));
 		return json;
 	}
 

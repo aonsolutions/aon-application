@@ -52,4 +52,11 @@ public class Error implements IsSerializable{
 		this.textWarning = textWarning;
 		return this;
 	}
+	public Error setTextWarning(String textWarning) {
+		if(getTextWarning() == null) {
+			this.textWarning = new LinkedList<>();
+		}
+		getTextWarning().add(textWarning);
+		return this;
+	}
 }
