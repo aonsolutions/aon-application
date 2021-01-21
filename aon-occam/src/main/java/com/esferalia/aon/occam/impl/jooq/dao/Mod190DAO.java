@@ -671,6 +671,9 @@ public class Mod190DAO {
 				.and(CONTRACT.PERSON.equal(person))
 				.orderBy(IRPF_DATA.END_DATE.desc(),IRPF_DATA.START_DATE.asc())
 				.fetchInto(IrpfDataRecord.class);
+		
+		detail.setContract((byte) 1);
+		
 		if (list != null && list.size() > 0) { 
 			IrpfDataRecord record = list.get(0);
 			detail.setCeutaMelilla(AonEnumUtils.getBoolean(record.getCeutaMelilla()));
