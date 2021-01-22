@@ -9,6 +9,10 @@ import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
@@ -17,23 +21,23 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AgrarianAFI extends MainEntryPoint {
@@ -41,8 +45,7 @@ public class AgrarianAFI extends MainEntryPoint {
 	//Starting Service
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	
-	interface Binder extends UiBinder<Widget, AgrarianAFI> {
-	}
+	interface Binder extends UiBinder<Widget, AgrarianAFI> {}
 	
 	private static final Binder binder = GWT.create(Binder.class);
 	
@@ -51,20 +54,17 @@ public class AgrarianAFI extends MainEntryPoint {
 
 	interface MyStyle extends CssResource {
 		String bold();
-		String hide();
 		String paddingDays();
 		String widthDays();
-		String widthName();
 		String textCenter();
 		String widthFirstColumn();
 		String paddingText();
+		String headerStyle();
+		String cellStyle();
 	}
 	
 	@UiField
-	Button exportButton;
-	
-	@UiField
-	TableElement dataTable;
+	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
 	Label enterprise;
@@ -88,13 +88,12 @@ public class AgrarianAFI extends MainEntryPoint {
 	ListBox yearList;
 	
 	@UiField
-	Button searchAgrarian;
-	
-	@UiField
-	VerticalPanel employeePanel;
+	HTMLPanel mainTablePanel;
 	
 	@UiField
 	Grid employeeTable;
+	
+	private DateTimeFormat formatDayDate = DateTimeFormat.getFormat("dd");
 	
 	private Map<Integer, List<AgrarianJourney>> agrarianJourney = new HashMap<>();
 	private ArrayList<Integer> selectedEmployees = new ArrayList<>();
@@ -115,48 +114,51 @@ public class AgrarianAFI extends MainEntryPoint {
 	private Date startDate = null;
 	
 	// CCC Id we are going to generate AFI of
-	private Integer cccId = 0;
 	
-	@SuppressWarnings("deprecation")
-	@Override
+	private AonToolbar toolbar;
+	private AonToolbarButton searchButton;
+	private AonToolbarButton exportButton;
+	
 	public void onModuleLoad() {
+		// Inject style
+		GWT.<AonResources>create(AonResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 	
+		// Create UiBinder
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
-		//Add Months
-		monthList.addItem("Enero");
-		monthList.addItem("Febrero");
-		monthList.addItem("Marzo");
-		monthList.addItem("Abril");
-		monthList.addItem("Mayo");
-		monthList.addItem("Junio");
-		monthList.addItem("Julio");
-		monthList.addItem("Agosto");
-		monthList.addItem("Septiembre");
-		monthList.addItem("Octubre");
-		monthList.addItem("Noviembre");
-		monthList.addItem("Diciembre");
-		
-		//Add Years
-		Date currentDate = new Date();
-		Integer currentYear = currentDate.getYear();
-		Integer currentParseYear = currentYear + 1900;
-		Integer previusYear = currentParseYear -1;
-		
-		yearList.addItem(currentParseYear+"");
-		yearList.addItem(previusYear+"");
-		
-		//Style Data Table
-		dataTable.getStyle().setMargin(5, Unit.PX);
+		// Create toolbar
+		toolbar = getToolbarPanel();
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		exportButton.setVisible(false);
 		
 		//Hide EmployeePanel
-		employeePanel.addStyleName(style.hide());
+		setVisible(mainTablePanel, false);
 		
-		initLogic();
-				
+		initListBoxes();
+		initLogic();	
+	}
+	
+	// ---------------------------------------------------------------------------------------------
+	//										LOAD PREVIEW
+	// ---------------------------------------------------------------------------------------------
+	
+	private void initListBoxes() {
+		// Set list box for filter by dates
+		monthList.clear();
+		yearList.clear();
+		
+		String[] months = new String[]{"Enero", "Frebero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+		for(int i=0; i<months.length; i++) {
+			monthList.addItem(months[i], i+"");
+		}
+		
+		Integer yearInt = DateUtils.getYear();
+		
+		yearList.addItem(yearInt +"", yearInt + "");
+		yearList.addItem((yearInt - 1) + "", (yearInt - 1) + "");
 	}
 
 	private void initLogic() {
@@ -171,11 +173,11 @@ public class AgrarianAFI extends MainEntryPoint {
 				enterprisesList = enterprises;
 				
 				if(enterprises.size() == 1){
-					enterpriseList.addStyleName(style.hide());
-					enterprise.removeStyleName(style.hide());
+					setVisible(enterpriseList, false);
+					setVisible(enterprise, true);
 				} else {
-					enterpriseList.removeStyleName(style.hide());
-					enterprise.addStyleName(style.hide());
+					setVisible(enterpriseList, true);
+					setVisible(enterprise, false);
 					
 					// Fill enterprise list box
 					for (Enterprise enterprise: enterprises)
@@ -197,136 +199,40 @@ public class AgrarianAFI extends MainEntryPoint {
 			
 		});
 	}
-
-	@SuppressWarnings("deprecation")
-	private HorizontalPanel createMonthPanel() {
-		HorizontalPanel hPanel = new HorizontalPanel();
-		Integer maxDays = DateUtils.getLastDayOfMonth(new Date(Integer.parseInt(yearList.getSelectedItemText())-1900, monthList.getSelectedIndex(), 1)).getDate();
-		for(int i = 0; i < maxDays; i++) {
-			Label day = new Label((i+1)+"");
-			day.addStyleName(style.widthDays());
-			day.addStyleName(style.paddingDays());
-			day.addStyleName(style.bold());
-			day.addStyleName(style.textCenter());
-			hPanel.add(day);
-		}
-		return hPanel;
-	}
 	
-	private Label createTotalDays(Integer contractId) {
-		Label newLabel = new Label();
-		Integer totalDays = getTotalDaysByContract(contractId);
-		newLabel.setText(totalDays+"");
-		return newLabel;
-	}
-	
-	private Integer getTotalDaysByContract(Integer contractId) {
-		Integer totalDays = 0;
-		List<AgrarianJourney> journiesList = this.agrarianJourney.get(contractId);
-		for(AgrarianJourney journey : journiesList){
-			totalDays += journey.getTotalDays();
-		}
-		return totalDays;
-	}
-	
-	@SuppressWarnings("deprecation")
-	private HorizontalPanel createAgrarianMonthPanel(Integer contractId) {
-		HorizontalPanel hPanel = new HorizontalPanel();
-		Integer maxDays = DateUtils.getLastDayOfMonth(new Date(Integer.parseInt(yearList.getSelectedItemText())-1900, monthList.getSelectedIndex(), 1)).getDate();
-		for(int i = 0; i < maxDays; i++) {
-			Label day = new Label();
-			if(checkDateAgraria(contractId, new Date(Integer.parseInt(yearList.getSelectedItemText())-1900, monthList.getSelectedIndex(), i+1)))
-				day.setText("S");
-			else
-				day.setText("-");
-			
-			day.addStyleName(style.widthDays());
-			day.addStyleName(style.paddingDays());
-			day.addStyleName(style.textCenter());
-			hPanel.add(day);
-		}
-		return hPanel;
-	}
-	
-	private boolean checkDateAgraria(Integer contractId, Date date) {
-		List<AgrarianJourney> journiesList = this.agrarianJourney.get(contractId);
-		for(AgrarianJourney journey : journiesList){
-			if((journey.getStartDate().before(date) || journey.getStartDate().equals(date)) &&
-			   (journey.getEndDate().after(date) || journey.getEndDate().equals(date)))
-			   return true;
-		}
-		return false;
-	}
-
-	// ------------------------------------------------------------------------
-	//						Initialize Logic Window
-	// ------------------------------------------------------------------------
-	
-	
-
-	// ------------------------------------------------------------------------
-	//							UiHandler Accept/Cancel
-	// ------------------------------------------------------------------------
-	
-	@UiHandler("exportButton")
-	void exportButton(ClickEvent event){
-		String fileDownloadURL = GWT.getModuleBaseURL()+ "/agrarian_afi/"
-            + "?findingDate=" + startDate.getTime()
-            + "&selectedCCCs="+cccList.size();
+	private void initializeView(){
+		//Enterprise Name
+		enterprise.setText(this.selectedEnterprise.getName());
+		allCCCsLabel.setText(" Todos los CCCs de " + this.selectedEnterprise.getName());
+		enterprise.addStyleName(style.bold());
 		
-		for(int i=0; i<cccList.size(); i++) {
-			fileDownloadURL += "&ccc"+i+"Code=" + cccList.get(i);
-		}
-		
-		fileDownloadURL += "&selectedEmployees=" + selectedEmployees.size();
-		
-		for(int i=0; i<selectedEmployees.size(); i++) {
-			fileDownloadURL += "&employee"+i+"Id=" + selectedEmployees.get(i);
-		}
-		
-//		Window.alert(fileDownloadURL);
-		
-		Window.open(fileDownloadURL, "_blank", null);
-	}
-	
-	@SuppressWarnings("deprecation")
-	@UiHandler("searchAgrarian")
-	void onSearchAgrariantButtonClick(ClickEvent clickEvent) {
-		//CheckDate for searching
-		if(checkDate()){
-			//Set Dates to find
-			Integer selectedMonth = this.monthList.getSelectedIndex();
-			Integer selectedYear = Integer.parseInt(this.yearList.getSelectedItemText()) - 1900;
-			Date selectedDate = new Date(selectedYear, selectedMonth, 1);
-			this.startDate = selectedDate;
-			
-			//Get Journies
-			impl.getEmployeeAgrarianJourney(this.startDate.getTime(), this.cccList, new AsyncCallback<Map<Integer, List<AgrarianJourney>>>() {
-				
-				@Override
-				public void onSuccess(Map<Integer, List<AgrarianJourney>> result) {
-					agrarianJourney = result;
-					selectedEmployees.clear();
-					initializeTableJourney();
-				}
-				
-				@Override
-				public void onFailure(Throwable caught) {
-				}
-			});
-			
+		if(this.agrarianCCCs.isEmpty()){
+			this.cccs.setEnabled(false);
+			this.monthList.setEnabled(false);
+			this.yearList.setEnabled(false);
+			this.searchButton.setEnabled(false);
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.info("AVISO", "No existe ninguna cuenta de cotizaci"+String.valueOf("\u00F3")+"n de tipo agrario.");
 		}else{
-			WarningDialog warning = new WarningDialog("Error", "No se puede generar el fichero AFI para el mismo mes o posteriores.");
-			warning.center();
-			warning.show();
+			for(Entry<String, List<CCC>> entry : this.agrarianCCCs.entrySet()){
+				for(CCC ccc : entry.getValue()) {
+					this.cccs.addItem(entry.getKey() + " - " + getRegimeName(ccc.getRegime()) + " - " 
+							+ ccc.getCode() + " - (" + ProvinceContract.getName(ccc.getGeozone()) +")", ccc.getCode());
+				}
+			}
+			
+			setFindingCCC(this.cccs.getSelectedValue(), false);
 		}
 	}
+
+	// ---------------------------------------------------------------------------------------------
+	//									PAINT AGRARIAN TABLE
+	// ---------------------------------------------------------------------------------------------
 	
 	private void initializeTableJourney() {
 		if(this.agrarianJourney.entrySet().size() == 0){
-			WarningDialog warning = new WarningDialog("Aviso", "No hay contratos con peonadas para estas fechas.");
-			warning.center();
-			warning.show();
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.info("AVISO", "No hay contratos con peonadas para estas fechas.");
 		}else{
 			initializeHeader();
 			for(Entry<Integer, List<AgrarianJourney>> entry :this.agrarianJourney.entrySet()){
@@ -339,27 +245,31 @@ public class AgrarianAFI extends MainEntryPoint {
 					public void onClick(ClickEvent event) {
 						if(select.getValue()){
 							selectedEmployees.add(entry.getKey());
+							enableDisableExportBtn();
 						}else {
 							selectedEmployees.remove(entry.getKey());
+							enableDisableExportBtn();
 						}
 					}
 				});
 				employeeTable.setWidget(newRow, 0, select);
 				Label employeeName = new Label(entry.getValue().get(0).getSurname() + ", " + entry.getValue().get(0).getName());
-				employeeName.addStyleName(style.widthName());
 				employeeTable.setWidget(newRow, 1, employeeName);
 				Label totalDays = createTotalDays(entry.getKey());
-				totalDays.addStyleName(style.textCenter());
 				employeeTable.setWidget(newRow, 2, totalDays);
 				HorizontalPanel agrarianMonth = createAgrarianMonthPanel(entry.getKey());
+				agrarianMonth.getElement().getStyle().setWidth(100, Unit.PCT);
 				employeeTable.setWidget(newRow, 3, agrarianMonth);
+				
+				for(int i=0; i < employeeTable.getColumnCount(); i++)
+					employeeTable.getCellFormatter().addStyleName(newRow, i, style.cellStyle());
 			}
 		}	
 	}
-
+	
 	private void initializeHeader() {
 		//Remove hide
-		employeePanel.removeStyleName(style.hide());
+		setVisible(mainTablePanel, true);
 		
 		//Header Grid
 		employeeTable.resize(0,4);
@@ -378,6 +288,7 @@ public class AgrarianAFI extends MainEntryPoint {
 					selectedEmployees.clear();
 					for(Integer contractId : agrarianJourney.keySet())
 						selectedEmployees.add(contractId);
+					enableDisableExportBtn();
 					
 				}else{
 					Integer rows = employeeTable.getRowCount();
@@ -386,6 +297,7 @@ public class AgrarianAFI extends MainEntryPoint {
 						checkBox.setValue(false);
 					}
 					selectedEmployees.clear();
+					enableDisableExportBtn();
 				}
 			}
 		});
@@ -399,8 +311,58 @@ public class AgrarianAFI extends MainEntryPoint {
 		totalDaysLabel.addStyleName(style.bold());
 		employeeTable.setWidget(newRow, 2, totalDaysLabel);
 		HorizontalPanel month = createMonthPanel();
+		month.getElement().getStyle().setWidth(100, Unit.PCT);
 		employeeTable.setWidget(newRow, 3, month);
+		
+		for(int i=0; i < employeeTable.getColumnCount(); i++)
+			employeeTable.getCellFormatter().addStyleName(0, i, style.headerStyle());
 	}
+	
+	private HorizontalPanel createMonthPanel() {
+		HorizontalPanel hPanel = new HorizontalPanel();
+		
+		Date findingDate = DateUtils.getDate(Integer.parseInt(monthList.getSelectedValue()), Integer.parseInt(yearList.getSelectedValue()));
+		Date lastDayOfMonth = DateUtils.getLastDayOfMonth(findingDate);
+		Integer maxDays = Integer.parseInt(formatDayDate.format(lastDayOfMonth));
+		
+		for(int i = 0; i < maxDays; i++) {
+			Label day = new Label((i+1)+"");
+			day.addStyleName(style.bold());
+			day.addStyleName(style.widthDays());
+			day.addStyleName(style.paddingDays());
+			day.addStyleName(style.textCenter());
+			hPanel.add(day);
+		}
+		return hPanel;
+	}
+	
+	private HorizontalPanel createAgrarianMonthPanel(Integer contractId) {
+		HorizontalPanel hPanel = new HorizontalPanel();
+
+		Date findingDate = DateUtils.getDate(Integer.parseInt(monthList.getSelectedValue()), Integer.parseInt(yearList.getSelectedValue()));
+		Date lastDayOfMonth = DateUtils.getLastDayOfMonth(findingDate);
+		Integer maxDays = Integer.parseInt(formatDayDate.format(lastDayOfMonth));
+		
+		for(int i = 0; i < maxDays; i++) {
+			Label day = new Label();
+			Date findingDateCopy = DateUtils.copyDateOnly(findingDate);
+			Date findingDateIterator = DateUtils.copyDateOnly(DateUtils.addDays2Date(findingDateCopy, i));
+			if(checkDateAgraria(contractId, findingDateIterator))
+				day.setText("S");
+			else
+				day.setText("-");
+			
+			day.addStyleName(style.widthDays());
+			day.addStyleName(style.paddingDays());
+			day.addStyleName(style.textCenter());
+			hPanel.add(day);
+		}
+		return hPanel;
+	}
+
+	// ---------------------------------------------------------------------------------------------
+	//										UI HANDLERS
+	// ---------------------------------------------------------------------------------------------
 	
 	@UiHandler("enterpriseList")
 	void changeEnterpriseList(ChangeEvent event){
@@ -432,15 +394,14 @@ public class AgrarianAFI extends MainEntryPoint {
 			this.cccs.setEnabled(false);
 			this.monthList.setEnabled(false);
 			this.yearList.setEnabled(false);
-			this.searchAgrarian.setEnabled(false);
-			WarningDialog warning = new WarningDialog("Aviso", "No existe ninguna cuenta de cotizaci"+String.valueOf("\u00F3")+"n de tipo agrario.");
-			warning.center();
-			warning.show();
+			this.searchButton.setEnabled(false);
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.info("AVISO", "No existe ninguna cuenta de cotizaci"+String.valueOf("\u00F3")+"n de tipo agrario.");
 		}else{
 			this.cccs.setEnabled(true);
 			this.monthList.setEnabled(true);
 			this.yearList.setEnabled(true);
-			this.searchAgrarian.setEnabled(true);
+			this.searchButton.setEnabled(true);
 			
 			setFindingCCC(this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0], false);
 		}
@@ -464,8 +425,55 @@ public class AgrarianAFI extends MainEntryPoint {
 		}
 	}
 
+	// ---------------------------------------------------------------------------------------------
+	//										AUXILIAR METHODS
+	// ---------------------------------------------------------------------------------------------
+	
+	private void enableDisableExportBtn() {
+		this.exportButton.setVisible(this.selectedEmployees.size() != 0);
+	}
+	
+	private void setVisible(Widget widget, boolean isVisible) {
+		widget.setVisible(isVisible);
+	}
+	
+	private void addCCCToActivity(String activityDescription, CCC ccc) {
+		if(agrarianCCCs.get(activityDescription) == null) {
+			List<CCC> cccs = new ArrayList<CCC>();
+			cccs.add(ccc);
+			agrarianCCCs.put(activityDescription, cccs);
+		} else {
+			agrarianCCCs.get(activityDescription).add(ccc);
+		}
+	}
+	
+	private Label createTotalDays(Integer contractId) {
+		Label newLabel = new Label();
+		Integer totalDays = getTotalDaysByContract(contractId);
+		newLabel.setText(totalDays+"");
+		return newLabel;
+	}
+	
+	private Integer getTotalDaysByContract(Integer contractId) {
+		Integer totalDays = 0;
+		List<AgrarianJourney> journiesList = this.agrarianJourney.get(contractId);
+		for(AgrarianJourney journey : journiesList){
+			totalDays += journey.getTotalDays();
+		}
+		return totalDays;
+	}
+	
+	private boolean checkDateAgraria(Integer contractId, Date date) {
+		List<AgrarianJourney> journiesList = this.agrarianJourney.get(contractId);
+		for(AgrarianJourney journey : journiesList){
+			if((journey.getStartDate().before(date) || journey.getStartDate().equals(date)) &&
+			   (journey.getEndDate().after(date) || journey.getEndDate().equals(date)))
+			   return true;
+		}
+		return false;
+	}
+	
 	private void setFindingCCC(String selectedCCC, Boolean all) {
-		
 		if(all) {
 			this.cccList.clear();
 			for(Activity activity : this.selectedEnterprise.getActivities()) {
@@ -476,7 +484,6 @@ public class AgrarianAFI extends MainEntryPoint {
 			}
 			
 			this.enterprise.setText(this.selectedEnterprise.getName());
-			this.cccId = this.selectedEnterprise.getActivities().get(0).getCccs().get(0).getId();
 			
 		} else {
 			this.cccList.clear();
@@ -484,7 +491,6 @@ public class AgrarianAFI extends MainEntryPoint {
 				for(Activity activity : enterprise.getActivities())
 					for(CCC ccc : activity.getCccs())
 						if(ccc.getCode().equals(selectedCCC)) {
-							this.cccId = ccc.getId();
 							selectedEnterprise = enterprise;
 							continue;
 						}
@@ -492,52 +498,13 @@ public class AgrarianAFI extends MainEntryPoint {
 			this.enterprise.setText(this.selectedEnterprise.getName());
 			this.cccList.add(selectedCCC);
 		}
-
-	}
-
-	// ------------------------------------------------------------------------
-	//
-	// ------------------------------------------------------------------------
-	
-	private void initializeView(){
-		//Enterprise Name
-		enterprise.setText(this.selectedEnterprise.getName());
-		allCCCsLabel.setText(" Todos los CCCs de " + this.selectedEnterprise.getName());
-		enterprise.addStyleName(style.bold());
-		enterprise.addStyleName(style.paddingText());
-		
-		if(this.agrarianCCCs.isEmpty()){
-			this.cccs.setEnabled(false);
-			this.monthList.setEnabled(false);
-			this.yearList.setEnabled(false);
-			this.searchAgrarian.setEnabled(false);
-			WarningDialog warning = new WarningDialog("Aviso", "No existe ninguna cuenta de cotizaci"+String.valueOf("\u00F3")+"n de tipo agrario.");
-			warning.center();
-			warning.show();
-		}else{
-			for(Entry<String, List<CCC>> entry : this.agrarianCCCs.entrySet()){
-				for(CCC ccc : entry.getValue()) {
-					this.cccs.addItem(entry.getKey() + " - " + getRegimeName(ccc.getRegime()) + " - " 
-							+ ccc.getCode() + " - (" + ProvinceContract.getName(ccc.getGeozone()) +")");
-				}
-			}
-			
-			setFindingCCC(this.cccs.getSelectedItemText().split("- ")[2].split(" ")[0], false);
-		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	private boolean checkDate() {
-		Date currentDate = new Date(new Date().getYear(), new Date().getMonth(), 1);
+		Date currentDate = DateUtils.getFirstDayOfMonth();
+		Date selectedDate = DateUtils.getDate(Integer.parseInt(monthList.getSelectedValue()), Integer.parseInt(yearList.getSelectedValue()));
 		
-		Integer selectedMonth = this.monthList.getSelectedIndex();
-		Integer selectedYear = Integer.parseInt(this.yearList.getSelectedItemText()) - 1900;
-		Date selectedDate = new Date(selectedYear, selectedMonth, 1);
-		
-		if (currentDate.after(selectedDate))
-			return true;
-		else
-			return false;
+		return currentDate.after(selectedDate);
 	}
 	
 	private String getRegimeName( String regimeCode ){
@@ -553,14 +520,81 @@ public class AgrarianAFI extends MainEntryPoint {
 		}
 	}
 	
-	private void addCCCToActivity(String activityDescription, CCC ccc) {
-		if(agrarianCCCs.get(activityDescription) == null) {
-			List<CCC> cccs = new ArrayList<CCC>();
-			cccs.add(ccc);
-			agrarianCCCs.put(activityDescription, cccs);
-		} else {
-			agrarianCCCs.get(activityDescription).add(ccc);
+	// ---------------------------------------------------------------------------------------------
+	//										TOOLBAR
+	// ---------------------------------------------------------------------------------------------
+	
+	private AonToolbar getToolbarPanel() {
+		
+		AonToolbar toolbar = new AonToolbar("AFI - Regimen Especial Agrario Jornadas");
+		
+		searchButton = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
+		searchButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onSearchButton(event);
+			}
+		});
+		toolbar.add(searchButton);
+		
+		exportButton = new AonToolbarButton( "Generar AFI", AON.CSS.aonIconTgssAfi() );
+		exportButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onExportButton(event);
+			}
+		});
+		toolbar.add(exportButton);
+
+		return toolbar;
+	}
+	
+	private void onSearchButton(ClickEvent event) {
+		//CheckDate for searching
+		if(checkDate()){
+			//Set Dates to find
+			Date selectedDate = DateUtils.getDate(Integer.parseInt(monthList.getSelectedValue()), Integer.parseInt(yearList.getSelectedValue()));
+			this.startDate = DateUtils.copyDateOnly(selectedDate);
+			
+			//Get Journies
+			impl.getEmployeeAgrarianJourney(this.startDate.getTime(), this.cccList, new AsyncCallback<Map<Integer, List<AgrarianJourney>>>() {
+				
+				@Override
+				public void onSuccess(Map<Integer, List<AgrarianJourney>> result) {
+					exportButton.setVisible(true);
+					agrarianJourney = result;
+					selectedEmployees.clear();
+					initializeTableJourney();
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+				}
+			});
+			
+		}else{
+			exportButton.setVisible(false);
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.info("ERROR", "No se puede generar el fichero AFI para el mismo mes o posteriores.");
 		}
+	}
+	
+	private void onExportButton(ClickEvent event) {
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "/agrarian_afi/"
+	            + "?findingDate=" + startDate.getTime()
+	            + "&selectedCCCs="+cccList.size();
+			
+		for(int i=0; i<cccList.size(); i++) {
+			fileDownloadURL += "&ccc"+i+"Code=" + cccList.get(i);
+		}
+		
+		fileDownloadURL += "&selectedEmployees=" + selectedEmployees.size();
+		
+		for(int i=0; i<selectedEmployees.size(); i++) {
+			fileDownloadURL += "&employee"+i+"Id=" + selectedEmployees.get(i);
+		}
+		
+		Window.open(fileDownloadURL, "_blank", null);
 	}
 
 }

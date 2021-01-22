@@ -3,36 +3,9 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 
 	<ui:Style type="com.esferalia.aon.gwt.payroll.client.AgrarianAFI.MyStyle">
-	
-		.styleBorder{
-			border-style: solid;
-			border-width: 1px; 
-			margin: 15px 2px 15px 0px;
-			width: 99%;
-		}
-		
-		.headerStyle{
-			top: -0.5em;
-			font-size: 12px;
-			margin-left: 10px;
-		}
-		
+			
 		.bold{
 			font-weight: bold;
-		}
-		
-		.hide{
-			display: none;
-		}
-		
-		.paddingText2{
-			padding: 3px 5px;
-		}
-		
-		.widthName{
-			width: intrinsic;           /* Safari/WebKit uses a non-standard name */
-  			width: -moz-max-content;    /* Firefox/Gecko */
-  			width: -webkit-max-content; /* Chrome */	
 		}
 		
 		.paddingDays{
@@ -47,17 +20,8 @@
 			text-align: center;
 		}
 		
-		.paddingTable{
-			padding: 0px 0px 0px 10px;
-		}
-		
 		.paddingText{
 			padding: 0px 0px 0px 5px;
-		}
-		
-		.margingListBox{
-			margin: 0px 0px 0px 5px;
-			width: 600px;
 		}
 		
 		.widthFirstColumn{
@@ -67,102 +31,119 @@
 		.m5{
 			margin: 5px;
 		}
+		
+		.panelGridSearch{
+			margin-top: 40px !important;
+		}
+	    
+	    .tableStylePanel{
+			height: 100%;
+		    width: 100%;
+		}
+		
+		.widthAll{
+			width: 100%
+		}
+		
+		.p5{
+			padding: 5px;
+		}
+		
+		.mt10{
+			margin-top: 15px;
+		}
+		
+		.p10{
+			padding: 10px;
+		}
+		
+		.subTitleSearch{
+			min-width: 100px;
+			text-align: left;
+			margin-left: 20px;
+			font-size: 14px;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			margin-right: 10px;
+		}
+		
+		.ml115{
+			margin-left: 115px;
+		}
+		
+		.ml10{
+			margin-left: 10px;
+		}
 	
+		.headerStyle{
+			background: none;
+			background-color: #f6f6f6;
+			border-bottom: #ddd 1px solid;
+			padding: 5px 1em;
+			height: 14.4px;
+			font-weight: bold;
+			font-size: 0.8em;
+			text-transform: uppercase;
+			border-right: 1px solid #c4c0c9;
+			overflow: hidden;
+			width: auto;
+		}
+		
+		.cellStyle{
+			background: none;
+			border-bottom: #ddd 1px solid;
+			padding: 5px 1em;
+			height: 14.4px;
+			font-size: 0.9em;
+			text-transform: uppercase;
+			overflow: hidden;
+			width: auto;
+		}
+		
 	</ui:Style>
 
-	<g:DockLayoutPanel unit="EM" styleName="aondockLayoutPanel-template">
-		<g:north size="2">
-			<g:FlowPanel styleName="aon-finding-title-toolbar">
-				<g:HorizontalPanel  visible="true">
-					<g:HTMLPanel styleName="aon-finding-title">
-						<g:HTMLPanel styleName="aon-finding-title-internal">
-							<g:Label styleName="aon-outputText" text="AFI - Régimen Especial Agrario Jornadas" />
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HorizontalPanel  styleName="aon-finding-toolbar">
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-							<g:Label styleName="aon-outputText" text="" />
-							<g:Button ui:field="exportButton" visible="true" styleName='aon-finding-toolbar-item aon-icon-accept'>GENERAR AFI</g:Button>
-						</g:HTMLPanel>
-					</g:HorizontalPanel>
-				</g:HorizontalPanel>
-			</g:FlowPanel>
-		</g:north>
+	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
-			<g:DockLayoutPanel unit="EM" styleName="aondockLayoutPanel-template">
-				<g:north size="16">
-					<g:HTMLPanel styleName="aon-width-all aon-height-all {style.paddingTable}"> 
-						<table class="aon-width-all aon-height-all">
-							<tr>
-								<td>
-									<g:HTMLPanel>
-										<g:VerticalPanel styleName="{style.styleBorder}">
-											<g:Label styleName="aon-group-title {style.headerStyle}">Datos Jonada</g:Label>
-											<g:HTMLPanel>
-												<table class="aon-width-all aon-height-all" ui:field="dataTable">
-													<tr>
-														<td style="background-color: #eaeaea; width: 100px; height: 22px;">
-															<g:Label>Empresa:</g:Label>
-														</td>
-														<td>
-															<g:Label ui:field="enterprise"></g:Label>
-															<g:ListBox ui:field="enterpriseList" styleName="{style.margingListBox}"></g:ListBox>
-														</td>
-													</tr>
-													<tr>
-														<td rowspan="2" style="background-color: #eaeaea; width: 100px; height: 22px;">
-															<g:Label>CCC:</g:Label>
-														</td>
-														<td>
-															<g:ListBox ui:field="cccs" styleName="{style.margingListBox}"></g:ListBox>
-														</td>
-													</tr>
-													<tr>
-														<td>
-															<g:HorizontalPanel>
-																<g:CheckBox ui:field="allCCCs" styleName="{style.m5}"></g:CheckBox>
-																<g:Label ui:field="allCCCsLabel" styleName="{style.m5}"> Todos los CCCs</g:Label>
-															</g:HorizontalPanel>
-														</td>
-													</tr>
-													<tr>
-														<td style="background-color: #eaeaea; width: 100px;  height: 22px;">
-															<g:Label>Mes documento</g:Label>
-														</td>
-														<td>
-															<g:HorizontalPanel>
-																<g:Label styleName="{style.paddingText2}">Mes:</g:Label>
-																<g:ListBox ui:field="monthList" styleName="aon-selectOneMenu"></g:ListBox>
-																<g:Label styleName="{style.paddingText2}">Año:</g:Label>
-																<g:ListBox ui:field="yearList" styleName="aon-selectOneMenu"></g:ListBox>
-																<g:Button ui:field="searchAgrarian" styleName="aon-lookupButton"></g:Button>
-															</g:HorizontalPanel>
-														</td>
-													</tr>
-												</table>
-											</g:HTMLPanel>
-										</g:VerticalPanel>
-									</g:HTMLPanel>
-								</td>
-							</tr>
-						</table>
-					</g:HTMLPanel>
-				</g:north>
-				<g:center>
-					<g:HTMLPanel styleName="aon-width-all {style.paddingTable}"> 
-						<table class="aon-width-all">
-							<tr>
-								<td>
-									<g:VerticalPanel ui:field="employeePanel" styleName="{style.styleBorder}">
-										<g:Label styleName="aon-group-title {style.headerStyle}">Empleados</g:Label>
-										<g:Grid ui:field="employeeTable"></g:Grid>
-									</g:VerticalPanel>
-								</td>
-							</tr>
-						</table>
-					</g:HTMLPanel>
-				</g:center>
-			</g:DockLayoutPanel>
+		
+			<g:HTMLPanel ui:field="mainContainer" styleName="{style.widthAll}">
+				<g:ScrollPanel height="100%" styleName="{style.p5}">
+					<g:VerticalPanel styleName="{style.tableStylePanel} {style.p10}">
+					
+						<g:HTMLPanel styleName="aon-panelGrid-search {style.panelGridSearch}">
+							<g:HTMLPanel styleName="aon-panelGrid-search-info">
+								<g:Label styleName="aon-panelGrid-search-info-internal">DATOS JORNADA AGRARIA</g:Label>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="{style.flex}">
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">Empresa</g:Label>
+								<g:Label ui:field="enterprise"></g:Label>
+								<g:ListBox ui:field="enterpriseList"></g:ListBox>						
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">CCC</g:Label>
+								<g:ListBox ui:field="cccs"></g:ListBox>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
+								<g:CheckBox ui:field="allCCCs" styleName="{style.ml115}"></g:CheckBox>
+								<g:Label ui:field="allCCCsLabel" styleName="{style.m5}"> Todos los CCCs</g:Label>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="{style.flex} {style.mt10}">
+								<g:Label styleName="aon-outputLabel {style.subTitleSearch}">P. Liquidación</g:Label>
+								<g:ListBox ui:field="monthList" styleName="aon-selectOneMenu"></g:ListBox>
+								<g:ListBox ui:field="yearList" styleName="aon-selectOneMenu {style.ml10}"></g:ListBox>					
+							</g:HTMLPanel>
+						</g:HTMLPanel>
+					
+					 	<g:HTMLPanel ui:field="mainTablePanel" styleName="{style.mt10}">
+					 		<g:Grid ui:field="employeeTable" styleName="{style.widthAll}"></g:Grid>
+					 	</g:HTMLPanel>
+				 		
+					</g:VerticalPanel>
+				</g:ScrollPanel>
+			</g:HTMLPanel>
+		
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder>
