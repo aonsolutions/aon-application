@@ -68,7 +68,9 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(1, "300px");
 		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
 		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
-
+		
+		paintTextBox(table, Mod390Key.GP_I000, 9, true);
+		
 		paintWithoutActivityCheck(table);	// Sin actividad
 
 		paintCheck(Mod390Key.GP_A000,table);	// Gran empresa

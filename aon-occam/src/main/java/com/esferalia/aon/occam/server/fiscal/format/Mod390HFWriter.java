@@ -878,7 +878,7 @@ public class Mod390HFWriter {
 // 			Los campos de Importes con signo, serán: Signo (0 o -) + X enteros + 2 decimales, excepto
 //			el Porcentaje de Gipuzkoa, que se compone de 3 posiciones enteras y 4 posiciones decimales			
 
-			 (wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))      					// Nif presentador AN9
+			 (wr, mod) -> wr.append(AonFiscalFileUtils.text(AonStringUtils.defaultString(mod.getDescription(Mod390Key.GP_I000), mod.getDocument()),9))      					// Nif presentador AN9
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))      					// Nif declarante AN9
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))   					// Ejercicio N4
 			,(wr, mod) -> wr.append("390") 																// Modelo 390

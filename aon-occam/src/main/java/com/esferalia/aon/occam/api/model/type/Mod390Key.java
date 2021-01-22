@@ -21,6 +21,7 @@ public enum Mod390Key implements IFiscalModelKey  {
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  GIPUZKOA ---
 	// 	----------------------------------------------------------------------------------
+	,GP_I000("390-GPI00",null,"NIF del Presentador telem\u00E1tico (en caso de ser diferente del declarante)")
 	,GP_A000("390-GPA00",null,"Gran empresa.")
 	,GP_A001("390-GPA01",null,"Autoliquidaci\u00F3n concursal. PRE")
 	,GP_A002("390-GPA02",null,"Autoliquidaci\u00F3n concursal. POST")
