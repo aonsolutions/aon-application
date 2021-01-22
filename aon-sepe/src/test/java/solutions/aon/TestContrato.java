@@ -7,8 +7,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import aon.sepe.objects.Contract;
 import aon.sepe.objects.Contract.ContractBuilder;
+import aon.sepe.objects.Contract.OfferType;
+import aon.sepe.objects.Contract.SexType;
 import solutions.aon.sepe.Contrato;
-import solutions.aon.sepe.Contrato.TypeFirm;
+import solutions.aon.sepe.Contrato.FirmType;
 
 public class TestContrato {
 	
@@ -31,19 +33,19 @@ public class TestContrato {
 			.setSurname("GARCIA")
 			.setLastSurname("PEREZ")
 			.setDateBirth(fnac)
-			.setSex(1)
+			.setSex(SexType.HOMBRE)
 			.setCodNationality(862)
 			.setCodPaisDom(724)
 			.setCodMunDom("01059") 
 			.setNss("010022757387")
-//			.setTypeJnd("M")
+//			.setTypeJnd()
 			.setCodContract("401")
 			.setDateIniContract(fini)
 			.setCodFormativo(59)//review
 			.setCodOccupation(1311)//review
 			.setCodPaisWork(724)
 			.setCodMunWork("01059")
-			.setOffer(false) //review
+			.setOffer(OfferType.NO) //review
 			;
 			Contract cto = bd.build();
 			String ide = Contrato.contrato(certificateInputStream, certificatePassword, certificateType,  cto);
@@ -65,7 +67,7 @@ public class TestContrato {
 			Date ffin = fini;
 			String workAddress = "CALLE WELLINGM, ALAVA";
 			String restContract = "segun convenio";
-			Contrato.contratoCopyBasic(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin, TypeFirm.NO_FACILITADO_COPIA, workAddress, restContract);
+			Contrato.contratoCopyBasic(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin, FirmType.NO_FACILITADO_COPIA, workAddress, restContract);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -138,8 +140,20 @@ public class TestContrato {
 	
 	@Test
 	@Ignore
-	public void testValues() {
-		TypeFirm value = TypeFirm.REHUSAN_FIRMAR;
-		System.out.println(value.getValue());
+	public void testGetContratoID() {
+		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
+			String certificatePassword = "aon@FNMT";
+			String certificateType = "pkcs12";
+			@SuppressWarnings("deprecation")
+			Date fini =  new Date("2020/01/09");
+			@SuppressWarnings("deprecation")
+			Date fend =  new Date("2020/09/09");
+			String ipf = "16262835H";
+			String ide = Contrato.getContratoId(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+			System.out.println( ide );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+	
 }

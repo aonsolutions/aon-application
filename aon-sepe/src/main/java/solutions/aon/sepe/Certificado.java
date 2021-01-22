@@ -1,13 +1,11 @@
 package solutions.aon.sepe;
 
-//import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
@@ -111,16 +109,16 @@ public class Certificado {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	
 	    	String ctaCti = certificates.getCtaCti();
-	    	String ipf_rep = certificates.getIpf_rep();
-			String tipodoc =  "NIF";
-	    	String cargo = certificates.getCargo();
+	    	String ipfManager= certificates.getIpfManager();
+			String tipodocManager =  "NIF";
+	    	String cargoManager = certificates.getCargoManager();
 	    	String typeContract = certificates.getTypeContract();
 
 	    	Integer dedicationPer = certificates.getDedicationPer();
 	    	List<Map<String, String>> dataCtz = certificates.getDataCtz();
 
-	    	if(Toolkit.identity(ipf_rep).equals("4")) tipodoc = "CIF";
-	    	else if(Toolkit.identity(ipf_rep).equals("6")) tipodoc = "NIE"; 
+	    	if(Toolkit.identity(ipfManager).equals("4")) tipodocManager = "CIF";
+	    	else if(Toolkit.identity(ipfManager).equals("6")) tipodocManager = "NIE"; 
 	    	
 	    	String[] fAE = Toolkit.formatDate(certificates.getfAEd());
 	    	String[] fST = Toolkit.formatDate(certificates.getfSTd());
@@ -147,12 +145,12 @@ public class Certificado {
 			
 			{//DATA REPRESENTATIVE
 				form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-				form.getInputByName("orDatosRepresentante.srNombreRepresentante").setValueAttribute(certificates.getName());
-				form.getInputByName("orDatosRepresentante.srPrimerApellidoRepresentante").setValueAttribute(certificates.getSurname());
+				form.getInputByName("orDatosRepresentante.srNombreRepresentante").setValueAttribute(certificates.getNameManager());
+				form.getInputByName("orDatosRepresentante.srPrimerApellidoRepresentante").setValueAttribute(certificates.getSurnameManager());
 				if(certificates.getLastSurname()!=null) form.getInputByName("orDatosRepresentante.srSegundoApellidoRepresentante").setValueAttribute(certificates.getLastSurname());
-				((HtmlSelect)form.querySelector("select[name=\"orDatosRepresentante.srTipoDocRepresentante\"]")).setSelectedAttribute(tipodoc, true);
-				form.getInputByName("orDatosRepresentante.srNifRepresentante").setValueAttribute(ipf_rep);
-				if(cargo!=null) form.getInputByName("orDatosRepresentante.srCargoRepresentante").setValueAttribute(cargo);
+				((HtmlSelect)form.querySelector("select[name=\"orDatosRepresentante.srTipoDocRepresentante\"]")).setSelectedAttribute(tipodocManager, true);
+				form.getInputByName("orDatosRepresentante.srNifRepresentante").setValueAttribute(ipfManager);
+				if(cargoManager!=null) form.getInputByName("orDatosRepresentante.srCargoRepresentante").setValueAttribute(cargoManager);
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
 			}
@@ -167,8 +165,8 @@ public class Certificado {
 				if(typeContract.substring(0,1).equalsIgnoreCase("2") || typeContract.substring(0,1).equalsIgnoreCase("5")) {
 					form.getInputByName("orDatosTrabajador.existenDetalles").setChecked(true);
 				}
-				if(certificates.getTypeAppointment()!=null) {
-					((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csTipoCargoPublicoOSindical.valor\"]")).setSelectedAttribute(certificates.getTypeAppointment().getValue().toString(), true);
+				if(certificates.getPublicPosition()!=null) {
+					((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csTipoCargoPublicoOSindical.valor\"]")).setSelectedAttribute(certificates.getPublicPosition().getValue().toString(), true);
 					if(dedicationPer!=null) {
 						form.getInputByName("orDatosTrabajador.srPorcentualDedicacion").setValueAttribute(dedicationPer.toString());
 					} 
@@ -217,11 +215,11 @@ public class Certificado {
 					handleSepeExceptions(htmlPage);
 				}
 
-//				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
+				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
 			}
 
-	        Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testCertificates.html");
+//	        Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testCertificates.html");
 	        System.out.println("END " + htmlPage);
 			return null;
 		} 

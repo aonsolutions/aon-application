@@ -6,7 +6,7 @@ import java.net.MalformedURLException;
 import java.util.Date;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import aon.sepe.objects.Contract;
-import solutions.aon.sepe.Contrato.TypeFirm;
+import solutions.aon.sepe.Contrato.FirmType;
 import solutions.aon.sepe.exceptions.SepeException;
 
 public class Sepe {
@@ -37,7 +37,7 @@ public class Sepe {
 	}
 	
 	public static String sendContratoCopyBasic(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType,  String ipf, Date fini, Date ffin, TypeFirm typeFirm, String workAddress, String restContract) throws SepeException  {
+			final String certificateType,  String ipf, Date fini, Date ffin, FirmType typeFirm, String workAddress, String restContract) throws SepeException  {
 		return Contrato.contratoCopyBasic(certificateInputStream, certificatePassword, certificateType, ipf, fini, ffin, typeFirm, workAddress, restContract);
 	}
 	
@@ -49,6 +49,11 @@ public class Sepe {
 	public static void removeTransformation(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType,  String ide) throws SepeException  {
 		Contrato.removeTransformation(certificateInputStream, certificatePassword, certificateType, ide);
+	}
+	
+	public static String getCi(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
+		return Contrato.getContratoId(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 	}
 	
 	public static void main(String[] args)

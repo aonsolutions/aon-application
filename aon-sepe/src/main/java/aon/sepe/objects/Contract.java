@@ -9,7 +9,7 @@ public class Contract {
 	private String nss;
 	private String ipf;
 	private String name;
-	private Integer sex;
+	private SexType sex;
 	private String surname;
 	private String lastSurname;
 	private Integer codNationality;
@@ -23,8 +23,8 @@ public class Contract {
 	private Date dateIniContract;
 	private Date dateFinContract;
 	private Date dateBirth;
-	private Boolean offer;
-	private String typeJnd;
+	private OfferType offer;
+	private JndType jndType;
 	private String durationTypeJndHour;
 	private String durationTypeJndMin;
 	private String durationTypeCvnHour;
@@ -74,7 +74,7 @@ public class Contract {
 		return codNationality;
 	}
 
-	public Integer getSex() {
+	public SexType getSex() {
 		return sex;
 	}
 
@@ -110,12 +110,12 @@ public class Contract {
 		return dateFinContract;
 	}
 
-	public Boolean getOffer() {
+	public OfferType getOffer() {
 		return offer;
 	}
 
-	public String getTypeJnd() {
-		return typeJnd;
+	public JndType getJndType() {
+		return jndType;
 	}
 
 	public String getDurationTypeJndHour() {
@@ -147,7 +147,7 @@ public class Contract {
 		private String name;
 		private String surname;
 		private String lastSurname;
-		private Integer sex;
+		private SexType sex;
 		private Integer codNationality;
 		private Integer codPaisDom;
 		private String codMunDom;
@@ -159,8 +159,8 @@ public class Contract {
 		private Date dateIniContract;
 		private Date dateFinContract;
 		private Date dateBirth;
-		private Boolean offer;
-		private String typeJnd;
+		private OfferType offer;
+		private JndType jndType;
 		private String durationTypeJndHour;
 		private String durationTypeJndMin;
 		private String durationTypeCvnHour;
@@ -186,7 +186,7 @@ public class Contract {
 			return this;
 		}
 
-		public ContractBuilder setSex(Integer sex) {
+		public ContractBuilder setSex(SexType sex) {
 			this.sex = sex;
 			return this;
 		}
@@ -266,13 +266,13 @@ public class Contract {
 			return this;
 		}
 	
-		public ContractBuilder setOffer(Boolean offer) {
+		public ContractBuilder setOffer(OfferType offer) {
 			this.offer = offer;
 			return this;
 		}
 
-		public ContractBuilder setTypeJnd(String typeJnd) {
-			this.typeJnd = typeJnd;
+		public ContractBuilder setJndType(JndType jndType) {
+			this.jndType = jndType;
 			return this;
 		}
 
@@ -322,14 +322,59 @@ public class Contract {
 			contract.dateFinContract = this.dateFinContract;
 			contract.codContract = this.codContract;
 			contract.offer = this.offer;
-			contract.typeJnd = this.typeJnd;
+			contract.jndType = this.jndType;
 			contract.durationTypeJndHour = this.durationTypeJndHour;
 			contract.durationTypeJndMin = this.durationTypeJndMin;
 			contract.durationTypeCvnHour = this.durationTypeCvnHour;
 			contract.durationTypeCvnMin = this.durationTypeCvnMin;
 			return contract;
 		}
-
 	}
-
+	
+	public enum SexType {
+		HOMBRE(1), 
+		MUJER(2);
+		private Integer value;
+		
+		private SexType(Integer value) {
+			this.value = value;
+		}
+	
+		public Integer getValue() {
+			return value;
+		}
+	}
+	
+	  /**
+	    * TIPO DE JORNADA
+	  */
+	public enum JndType {
+		JORNADA_DIARIA("D"), 
+		JORNADA_SEMANAL("S"),
+		JORNADA_MENSUAL("M"), 
+		JORNADA_ANUAL("A");
+	
+		private String value;
+		private JndType(String value) {
+			this.value = value;
+		}
+		public String getValue() {
+			return value;
+		}
+	}
+	
+	  /**
+	    * PROCEDE DE OFERTA DE EMPLEO?
+	  */
+	public enum OfferType{
+		SI("S"), 
+		NO("N");
+		private String value;
+		private OfferType(String value) {
+			this.value = value;
+		}
+		public String getValue() {
+			return value;
+		}
+	}
 }

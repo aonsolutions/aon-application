@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.junit.Ignore;
 import org.junit.Test;
 import solutions.aon.seg.social.SistemaRED_ITParts;
+import solutions.aon.seg.social.SistemaRED_ITParts.CauseType;
 import solutions.aon.seg.social.SistemaRED_ITParts.Contingencies;
 import solutions.aon.seg.social.SistemaRED_ITParts.ContractType;
 import solutions.aon.seg.social.SistemaRED_ITParts.PartType;
@@ -56,27 +57,11 @@ public class TestItRegister {
 	@Test
 	@Ignore
 	public void registerItAlta() {
-//		CAUSA POSIBLES VALORES
-//		value: 01 Text: 1 Curación
-//		value: 02 Text: 2 Fallecimiento
-//		value: 03 Text: 3 Inspección médica
-//		value: 04 Text: 4 Propuesta invalidez
-//		value: 05 Text: 5 Agotamiento plazo
-//		value: 06 Text: 6 Mejoría permite trabajar
-//		value: 07 Text: 7 Incomparecencia
-//		value: 10 Text: 10 Control INSS - 12 Meses
-//		value: 17 Text: 17 Recup. Capacidad prof.
-//		value: 18 Text: 18 Incomp. (Ctos. form.)
-//		value: 20 Text: 20 Inicio de Maternidad
-//		value: 53 Text: 53 Alta médica inspección INSS
-//		value: 55 Text: 55 Propuesta de IP en INSS
-//		value: 56 Text: 56 Fallecimiento comunicado desde el INSS
-		String causa = "01";
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
 			SistemaRED_ITParts.registerItAlta(certificateInputStream,"jg@FNMT","pkcs12", 
 					"0111", "01105360062", "291136796369", 
 					Contingencies.ENFERMEDAD_COMUN, SituationEmployee.ACTIVO, Optional.empty(), Optional.empty(),
-					new Date(), new Date(), Optional.empty(), Optional.empty(),  causa);
+					new Date(), new Date(), Optional.empty(), Optional.empty(),  CauseType.CURACION);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

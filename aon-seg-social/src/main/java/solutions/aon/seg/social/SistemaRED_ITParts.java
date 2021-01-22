@@ -186,7 +186,7 @@ public class SistemaRED_ITParts {
 		PERIODOS_OBSERVACION
 	}
 	
-	public enum TypeAccident {
+	public enum AccidentType {
 		LEVE,
 		GRAVE,
 		MUY_GRAVE
@@ -210,14 +210,40 @@ public class SistemaRED_ITParts {
 		PERCEPTOR_DE_DESEMPLEO
 	}
 	
+	public enum CauseType {
+		CURACION("01"),
+		FALLECIMIENTO("02"),
+		INSPECCION_MEDICA("03"),
+		PROPUESTA_INVALIDEZ("04"),
+		AGOTAMIENTO_PLAZO("05"),
+		MEJORIA_PERMITE_TRABAJAR("06"),
+		INCOMPARECENCIA("07"),
+		CONTROL_INSS_12_MESES("10"),
+		RECUP_CAPACIDAD_PROF("17"),
+		INCOMP_CTOS_FORM("18"),
+		INICIO_DE_MATERNIDAD("20"),
+		ALTA_MEDICA_INSPECCION_INSS("53"),
+		PROPUESTA_DE_IP_EN_INSS("55"),
+		FALLECIMIENTO_COMUNICADO_DESDE_EL_INSS("56"),
+		ALTA_MATEPSS_ARTICULO_128("57");
+		
+		private String value;
+		private CauseType(String value) {
+			this.value = value;
+		}
+		public String getValue() {
+			return value;
+		}
+	}
+	
 	//REGISTER IT START HANDLE EXCEPTIONS
 	public static void registerItBaja(InputStream certificateInputStream, String certificatePassword,String certificateType,
 			String regime, String ccc, String naf, Contingencies contingency, SituationEmployee situation_employee, Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation, Date startdate,
-			ContractType contractType,  float baseCot , int cotDays, Optional<Date> fATEP, Optional<TypeAccident> typeAccident) throws SegSocialException {
+			ContractType contractType,  float baseCot , int cotDays, Optional<Date> fATEP, Optional<AccidentType> accidentType) throws SegSocialException {
 		
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, startdate, contractType, baseCot, cotDays});
 		
-		try{ registerItBajaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, occupation, startdate, contractType, baseCot, cotDays, fATEP, typeAccident);}
+		try{ registerItBajaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, occupation, startdate, contractType, baseCot, cotDays, fATEP, accidentType);}
 		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
@@ -228,7 +254,7 @@ public class SistemaRED_ITParts {
 	//REGISTER IT START
 	private static void registerItBajaImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc,
 									   String naf, Contingencies contingency, SituationEmployee situation_employee, Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation, Date startdate, 
-									   ContractType contractType, float base_cot , int cotDays, Optional<Date> fATEP, Optional<TypeAccident> typeAccident) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException, InterruptedException {
+									   ContractType contractType, float base_cot , int cotDays, Optional<Date> fATEP, Optional<AccidentType> accidentType) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException, InterruptedException {
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 
 			HtmlPage htmlPage = webClient.getPage(URL_BASE);
@@ -293,9 +319,9 @@ public class SistemaRED_ITParts {
 				form.getInputByName("fechaATEP_aa").setValueAttribute(fATEP_string[2]); 
 			}
 			
-			if(typeAccident.isPresent()) {
+			if(accidentType.isPresent()) {
 				HtmlOption type_accident_opt = null;
-				switch (typeAccident.get()) {
+				switch ( accidentType.get()) {
 					case LEVE: 	
 						type_accident_opt = form.querySelector("#tipoAccidente option:nth-child(2)");	
 					break;
@@ -378,11 +404,11 @@ public class SistemaRED_ITParts {
 	//REGISTER IT END HANDLE EXCEPTIONS
 	public static void registerItAlta(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, 
 			Contingencies contingency, SituationEmployee situation_employee, Optional<String> licenseNumber, Optional<String> cias, 
-			Date fbaja, Date falta, Optional<Date> fATEP, Optional<TypeAccident> typeAccident, String causa) throws SegSocialException {
+			Date fbaja, Date falta, Optional<Date> fATEP, Optional<AccidentType> accidentType, CauseType causeType) throws SegSocialException {
 
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency});
 		try{ registerItAltaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, 
-				licenseNumber, cias, fbaja, falta, fATEP, typeAccident, causa);}
+				licenseNumber, cias, fbaja, falta, fATEP, accidentType, causeType);}
 		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
@@ -393,7 +419,7 @@ public class SistemaRED_ITParts {
 	//REGISTER IT
 	private static void registerItAltaImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, 
 			String regime, String ccc, String naf, Contingencies contingency, SituationEmployee situation_employee, 
-			Optional<String> licenseNumber, Optional<String> cias, Date fbaja, Date falta, Optional<Date> fATEP, Optional<TypeAccident> typeAccident, String causa) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException, InterruptedException {
+			Optional<String> licenseNumber, Optional<String> cias, Date fbaja, Date falta, Optional<Date> fATEP, Optional<AccidentType> accidentType,  CauseType causeType) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException, InterruptedException {
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			HtmlPage htmlPage = webClient.getPage(URL_BASE);
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situation_employee, PartType.ALTA);
@@ -417,9 +443,9 @@ public class SistemaRED_ITParts {
 				form.getInputByName("fechaAtEp_aa").setValueAttribute(fATEP_string[2]); 
 			}
 			
-			if(typeAccident.isPresent()) {
+			if(accidentType.isPresent()) {
 				HtmlOption type_accident_opt = null;
-				switch (typeAccident.get()) {
+				switch (accidentType.get()) {
 					case LEVE: 	
 						type_accident_opt = form.querySelector("#tipoAccidente option:nth-child(2)");	
 					break;
@@ -434,7 +460,7 @@ public class SistemaRED_ITParts {
 			}
 			
 			HtmlSelect cause = form.querySelector("#causaAlta");
-			cause.setSelectedAttribute("01", true);
+			cause.setSelectedAttribute(causeType.getValue(), true);
 			
 			HtmlSubmitInput validate = form.querySelector("input[value=Validar]");
 			htmlPage = validate.click();
@@ -446,8 +472,6 @@ public class SistemaRED_ITParts {
 			
 			String message = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo").asText();
 			System.out.println(message);
-			
-			//Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testIt.html");
 		}
 	}
 
@@ -580,7 +604,6 @@ public class SistemaRED_ITParts {
 			//message success
 			String message = htmlPage.querySelector("#miForm > div.importante > div.indent > span.TextoMensaje").asText();
 			System.out.println(message);
-			//Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testItRemove.html");
 		}
 	}
 	

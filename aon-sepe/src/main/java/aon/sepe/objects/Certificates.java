@@ -9,15 +9,15 @@ public class Certificates {
 	private String regimen;
 	private String ctaCti;
 	private String ipf;
-	private String ipf_rep;
-	private String name ;
-	private String surname;
-	private String lastSurname;
-	private String cargo;
+	private String ipfManager;
+	private String nameManager;
+	private String surnameManager;
+	private String lastSurnameManager;
+	private String cargoManager;
 	private String typeContract;
 	private String gz;
 	private TypeDuration typeDuration;
-	private TypeAppointment typeAppointment;
+	private PublicPosition publicPosition;
 	private String catProfessional;
 	private String causeSuspension; //01 - 33
 	private String officePublic;
@@ -47,24 +47,24 @@ public class Certificates {
 		return ipf;
 	}
 
-	public String getIpf_rep() {
-		return ipf_rep;
+	public String getIpfManager() {
+		return ipfManager;
 	}
 
-	public String getName() {
-		return name;
+	public String getNameManager() {
+		return nameManager;
 	}
 
-	public String getSurname() {
-		return surname;
+	public String getSurnameManager() {
+		return surnameManager;
 	}
 
 	public String getLastSurname() {
-		return lastSurname;
+		return lastSurnameManager;
 	}
 
-	public String getCargo() {
-		return cargo;
+	public String getCargoManager() {
+		return cargoManager;
 	}
 
 	public String getTypeContract() {
@@ -79,8 +79,8 @@ public class Certificates {
 		return typeDuration;
 	}
 
-	public TypeAppointment getTypeAppointment() {
-		return typeAppointment;
+	public PublicPosition getPublicPosition() {
+		return publicPosition;
 	}
 
 	public String getCatProfessional() {
@@ -128,15 +128,15 @@ public class Certificates {
 		private String regimen;
 		private String ctaCti;
 		private String ipf;
-		private String ipf_rep;
-		private String name ;
-		private String surname;
-		private String lastSurname;
-		private String cargo;
+		private String ipfManager;
+		private String nameManager;
+		private String surnameManager;
+		private String lastSurnameManager;
+		private String cargoManager;
 		private String typeContract;
 		private String gz;
 		private TypeDuration typeDuration;
-		private TypeAppointment typeAppointment;
+		private PublicPosition publicPosition;
 		private String catProfessional;
 		private String causeSuspension; //01 - 33
 		private String officePublic;
@@ -175,28 +175,28 @@ public class Certificates {
 			return this;
 		}
 
-		public CertificatesBuilder setIpf_rep(String ipf_rep) {
-			this.ipf_rep = ipf_rep;
+		public CertificatesBuilder setIpfManager(String ipfManager) {
+			this.ipfManager = ipfManager;
 			return this;
 		}
 
-		public CertificatesBuilder setName(String name) {
-			this.name = name;
+		public CertificatesBuilder setName(String nameManager) {
+			this.nameManager = nameManager;
 			return this;
 		}
 
-		public CertificatesBuilder setSurname(String surname) {
-			this.surname = surname;
+		public CertificatesBuilder setSurname(String surnameManager) {
+			this.surnameManager = surnameManager;
 			return this;
 		}
 
-		public CertificatesBuilder setLastSurname(String lastSurname) {
-			this.lastSurname = lastSurname;
+		public CertificatesBuilder setLastSurname(String lastSurnameManager) {
+			this.lastSurnameManager = lastSurnameManager;
 			return this;
 		}
 
-		public CertificatesBuilder setCargo(String cargo) {
-			this.cargo = cargo;
+		public CertificatesBuilder setCargo(String cargoManager) {
+			this.cargoManager = cargoManager;
 			return this;
 		}
 
@@ -215,8 +215,8 @@ public class Certificates {
 			return this;
 		}
 
-		public CertificatesBuilder setTypeAppointment(TypeAppointment typeAppointment) {
-			this.typeAppointment = typeAppointment;
+		public CertificatesBuilder setPublicPosition(PublicPosition publicPosition) {
+			this.publicPosition = publicPosition;
 			return this;
 		}
 
@@ -273,15 +273,15 @@ public class Certificates {
 			ct.regimen = this.regimen;
 			ct.ctaCti = this.ctaCti;
 			ct.ipf = this.ipf;
-			ct.ipf_rep = this.ipf_rep;
-			ct.name  = this.name;
-			ct.surname = this.surname;
-			ct.lastSurname = this.lastSurname;
-			ct.cargo = this.cargo;
+			ct.ipfManager = this.ipfManager;
+			ct.nameManager  = this.nameManager;
+			ct.surnameManager = this.surnameManager;
+			ct.lastSurnameManager = this.lastSurnameManager;
+			ct.cargoManager = this.cargoManager;
 			ct.typeContract = this.typeContract;
 			ct.gz = this.gz;
 			ct.typeDuration = this.typeDuration;
-			ct.typeAppointment = this.typeAppointment;
+			ct.publicPosition = this.publicPosition;
 			ct.catProfessional = this.catProfessional;
 			ct.causeSuspension = this.causeSuspension; 
 			ct.officePublic = this.officePublic;
@@ -312,8 +312,12 @@ public class Certificates {
 			this.value = value;
 		}
 	}
-	
-	public enum TypeAppointment {
+	/**
+	 * 
+	 * Cargo publico o sindical
+	 *
+	 */
+	public enum PublicPosition {
 		ALTO_CARGO_ADM(1), 
 		CARGO_REPRESENTANTE(2),
 		MIEMBRO_DE_CORPORACION(3);
@@ -324,7 +328,7 @@ public class Certificates {
 			return value;
 		}
 		
-		private TypeAppointment(Integer value) {
+		private PublicPosition(Integer value) {
 			this.value = value;
 		}
 	}
