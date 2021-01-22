@@ -3700,13 +3700,12 @@ public class AON {
 	}
 	
 	public static Target insertTarget(String domainName, Integer domainId, String login, Target target) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertTarget(ctx, target);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		return save(domainName, domainId, login, target);
+	}
+	
+	public static Target save(String domainName, Integer domainId, String login, Target target) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().save(ctx, target);
 		}
 	}
 	

@@ -41,6 +41,13 @@ public class BankAccount implements Serializable {
 		setBban8(AonStringUtils.substring(value, 32, 34));
 	}
 	
+	public BankAccount(String value, Boolean ccc) {
+		if(ccc ) {
+			value = calculateIbanControlDigit(value, Country.ES) + value;
+		}
+		new BankAccount(value);
+	}
+	
 	public BankAccount() {
 		setCountry(Country.ES);
 		setCheck(AonStringUtils.EMPTY);
@@ -357,6 +364,13 @@ public class BankAccount implements Serializable {
 
 	public String calculateIbanControlDigit() {
 		String iban = getIbanAsNumber(getBban().toUpperCase() + getCountry().getIso2() + "00");
+		BigInteger control = new BigInteger(iban);
+		control = control.mod(BigInteger.valueOf(97));
+		return AonStringUtils.leftPad("" + (98 - control.intValue()), 2, "0");
+	}
+	
+	public String calculateIbanControlDigit(String bban, Country country) {
+		String iban = getIbanAsNumber(bban.toUpperCase() + country.getIso2() + "00");
 		BigInteger control = new BigInteger(iban);
 		control = control.mod(BigInteger.valueOf(97));
 		return AonStringUtils.leftPad("" + (98 - control.intValue()), 2, "0");

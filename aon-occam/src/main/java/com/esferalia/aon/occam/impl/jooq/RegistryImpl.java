@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
 
 public class RegistryImpl implements IRegistry{
 	
@@ -316,9 +317,9 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	@Override
-	public Target insertTarget(AONContext ctx, Target target) {
+	public Target save(AONContext ctx, Target target) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.insertTarget(ctx, target));
+				configuration -> TargetDAO.save(ctx, target));
 	}
 	
 	// -------------------- PERSON

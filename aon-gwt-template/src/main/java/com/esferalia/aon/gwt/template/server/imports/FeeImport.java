@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -289,11 +290,13 @@ public class FeeImport extends Import {
 					.setVat(tax.getId())
 					.setKind(ProductKind.SALE.value())
 					.setType(ProductType.SERVICE.value())
+					.setStatus(ProductStatus.ACTIVE.value())
 					.setInventoriable(false));
 			AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), new Item()
 					.setDomain(domain.getId())
 					.setProduct(product)
 					.setProductId(product.getId())
+					.setStatus(ProductStatus.ACTIVE.value())
 					.setPrice(fee.getPrice() != null ? fee.getPrice() : 0.0));
 			
 			error.setTextWarning("Línea " + feeInfo.getLine() + ": El producto introducido no existe. Se ha creado un nuevo producto con código " + product.getCode() + ".");

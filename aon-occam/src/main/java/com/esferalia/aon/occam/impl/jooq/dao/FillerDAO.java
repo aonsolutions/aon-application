@@ -304,18 +304,20 @@ public class FillerDAO {
 		@Override
 		public Target apply(Record r) {
 			Target target = new Target();
-			target.setAlias(r.getValue(REGISTRY.ALIAS));
-			target.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			target.setDocument(r.getValue(REGISTRY.DOCUMENT));
-			target.setDocumentCountry(null); // TODO
-			target.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			target.setDomain(new Domain().setId(r.getValue(REGISTRY.DOMAIN)));
-			target.setId(r.getValue(REGISTRY.ID));
-			target.setName(r.getValue(REGISTRY.NAME));
-			target.setNationality(null); // TODO
-			target.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			target.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));
-			return target.setScope(r.getValue(TARGET.SCOPE))
+
+			return new Target()
+					.setRegistryData( new Registry() 
+							.setId(r.getValue(REGISTRY.ID))
+							.setDomain(new Domain().setId(r.getValue(CUSTOMER.DOMAIN)))
+							.setDocument(r.getValue(REGISTRY.DOCUMENT))
+							.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
+							.setDocumentCountry(Country.safeValueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)) )
+							.setName(r.getValue(REGISTRY.NAME))
+							.setAlias(r.getValue(REGISTRY.ALIAS))
+							.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)))
+							.setNationality(Country.safeValueOf(r.getValue(REGISTRY.NATIONALITY)) )
+							.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL))))
+					.setScope(r.getValue(TARGET.SCOPE))
 					.setAdvertising(r.getValue(TARGET.ADVERTISING).shortValue())
 					.setSurcharge(r.getValue(TARGET.SURCHARGE).shortValue())
 					.setTariff(r.getValue(TARGET.TARIFF))

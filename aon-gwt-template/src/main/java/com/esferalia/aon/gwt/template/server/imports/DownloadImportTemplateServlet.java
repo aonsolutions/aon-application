@@ -49,15 +49,20 @@ public class DownloadImportTemplateServlet extends HttpServlet {
 	
 	private LinkedList<String> getRegistryColumnList() {
 		LinkedList<String> columnList = new LinkedList<String>();
-        columnList.add("TIPO");
-        columnList.add("CUENTA CONTABLE");
-        columnList.add("CIF");
-        columnList.add("NOMBRE");
-        columnList.add("DIRECCIÓN");
-        columnList.add("CÓDIGO POSTAL");
-        columnList.add("CIUDAD");
-        columnList.add("PROVINCIA");
-        columnList.add("PAÍS");
+        columnList.add(IConstants.TIPO);
+        columnList.add(IConstants.CUENTA_CONTABLE);
+        columnList.add(IConstants.CIF);
+        columnList.add(IConstants.NOMBRE);
+        columnList.add(IConstants.DIRECCIÓN);
+        columnList.add(IConstants.CÓDIGO_POSTAL);
+        columnList.add(IConstants.CIUDAD);
+        columnList.add(IConstants.PROVINCIA);
+        columnList.add(IConstants.PAÍS);
+        columnList.add(IConstants.IBAN);
+        columnList.add(IConstants.CCC);
+        columnList.add(IConstants.FORMA_DE_PAGO);
+        columnList.add(IConstants.EMAIL);
+        columnList.add(IConstants.TELÉFONO);
         return columnList;
 	}
 	

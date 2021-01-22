@@ -6,7 +6,7 @@ public interface IConstants {
 		IConstants.DIRECCION, IConstants.DIRECCIÓN, IConstants.CP, IConstants.CODIGO_POSTAL, IConstants.CÓDIGO_POSTAL, IConstants.POBLACIÓN,
 		IConstants.POBLACION, IConstants.CIUDAD, IConstants.PROVINCIA, IConstants.IBAN, IConstants.PAÍS, IConstants.PAIS,
 		IConstants.TELEFONO, IConstants.TELÉFONO, IConstants.EMAIL, IConstants.MAIL, IConstants.CORREO_ELECTRONICO, IConstants.CORREO_ELECTRÓNICO,
-		IConstants.FORMA_DE_PAGO, IConstants.MOVIL, IConstants.MÓVIL, IConstants.BIC, IConstants.BIC_SWIFT
+		IConstants.FORMA_DE_PAGO, IConstants.MOVIL, IConstants.MÓVIL, IConstants.BIC, IConstants.BIC_SWIFT, IConstants.BBAN, IConstants.CCC
 	};
 	
 	String[] DIARY_TITLES = {
@@ -60,7 +60,9 @@ public interface IConstants {
 	String TIPO_DE_PAGO = "TIPO DE PAGO";
 	String TIPO_PAGO = "TIPO PAGO";
 	String HABER = "HABER";
-	String IBAN = "IBAN";
+	String IBAN = "IBAN";	
+	String BBAN = "BBAN";
+	String CCC = "CCC";
 	String N_ASIENTO = "Nº ASIENTO";
 	String N_APUNTE = "Nº APUNTE";
 	String N_DIARIO = "Nº DIARIO";

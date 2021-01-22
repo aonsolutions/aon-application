@@ -104,7 +104,7 @@ public interface IRegistry {
 
 	// ------------------- TARGET
 	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter);
-	public Target insertTarget(AONContext ctx, Target target);
+	public Target save(AONContext ctx, Target target);
 
 
 	// ------------------- RECORD DATA

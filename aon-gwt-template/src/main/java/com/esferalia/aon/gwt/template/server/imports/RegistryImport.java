@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.NumberToTextConverter;
 
+import com.esferalia.aon.gwt.template.server.projectCommercial.BankBic11;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
@@ -32,6 +33,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -194,6 +196,11 @@ public class RegistryImport extends Import {
 			return;
 		}
 		
+		if(IConstants.BBAN.equalsIgnoreCase(title) || IConstants.CCC.equalsIgnoreCase(title)) {
+			reg.setCcc(o.toString().replace(" ", "").replace(".", ""));
+			return;
+		}
+		
 		if(IConstants.BIC.equalsIgnoreCase(title) || IConstants.BIC_SWIFT.equalsIgnoreCase(title)) {
 			reg.setBic(o.toString().trim());
 			return;
@@ -275,66 +282,94 @@ public class RegistryImport extends Import {
 			} else if(regList.stream().filter(f -> f.getDomain().getId().equals(0)).count() > 0) {
 				reg = regList.stream().filter(f -> f.getDomain().getId().equals(0)).findFirst().get();
 			} else {
+				DocumentType d = getDocumentType(r.getRegistry().getDocument());
 				r.getRegistry()
 					.setDomain(domain)
-					.setDocumentType(getDocumentType(r.getRegistry().getDocument()));
+					.setDocumentType(getDocumentType(r.getRegistry().getDocument()))
+					.setLegalPerson(DocumentType.CIF.equals(d));
 				reg = AON.save(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry());
 				r.getRegistry().getMainAddress()
 					.setType((byte) 0)
 					.setDomain(domain.getId())
 					.setRegistry(reg.getId());
 				AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry().getMainAddress());
+			}
+			Integer registryId = reg.getId();
+			for(RegistryMedia rm : r.getRmediaList()) {
+				rm.setRegistry(reg);
+				RegistryMedia rm2 = AON.getRMedia(domain.getName(), domain.getId(), user.getLogin(), f -> 
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getMediaProperty().eq(rm.getMedia()))
+					.and(f.getValueProperty().eq(rm.getValue())));
 				
-				for(RegistryMedia rm : r.getRmediaList()) {
-					rm.setRegistry(reg);
+				if(rm2 == null || rm2.getId() == null) {
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
 				}
-
-				RegistryBank rbank = new RegistryBank();
-				if(!AonStringUtils.isBlank(r.getIban())) {
-					BankAccount ba = new BankAccount(r.getIban());
-					if(!ba.isValidIban()) {
-						error.setTextWarning("Línea " + r.getLine() + ": El IBAN introducido no es correcto. se ha omitido");
-					} else {
+			}
+			
+			RegistryBank rbank = new RegistryBank();
+			if(!AonStringUtils.isBlank(r.getIban()) || !AonStringUtils.isBlank(r.getCcc())) {
+				BankAccount ba = !AonStringUtils.isBlank(r.getIban())
+						? new BankAccount(r.getIban())
+						: new BankAccount(r.getCcc(), true);
+				
+				if(!ba.isValidIban() && !ba.isValidBban()) {
+					error.setTextWarning("Línea " + r.getLine() + ": El IBAN o CCC introducido no es correcto. se ha omitido");
+				} else {
+					rbank = AON.getRBank(domain.getName(), domain.getId(), user.getLogin(), f -> 
+						f.getDomainProperty().eq(domain.getId())
+						.and(f.getRegistryProperty().eq(registryId))
+						.and(f.getBankAccountProperty().eq(ba.getIban())));
+					if(rbank == null || rbank.getId() == null) {
+						BankBic11 bb = BankBic11.getBankBic11(ba.getBankCode());
 						rbank = new RegistryBank()
 							.setDomain(domain.getId())
 							.setRegistry(reg.getId())
 							.setActive(true)
 							.setBankAccount(ba)
-							.setBic(r.getBic());
+							.setBic(bb.getBic())
+							.setAlias(bb.getDescription());
 						rbank = AON.insertRBank(domain.getName(), domain.getId(), user.getLogin(), rbank);
 					}
 				}
-				
-				if(r.getPaymethod().getName() != null || r.getPaymethod().getType() != null) {
-					PayMethod p = new PayMethod();
-					if(!AonStringUtils.isEmpty(r.getPaymethod().getName())) {
-						p = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod().getName());
-						if(p == null || p.getId() == null) {
-							r.getPaymethod().setDomain(domain.getId());
-							if(r.getPaymethod().getType() == null) r.getPaymethod().setType(PayMethodType.OTHER);
-							p =AON.insertPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod());
-						}
-					} else if(r.getPaymethod().getType() != null) {
-						p = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod().getType().getDescription().toUpperCase());
-						if(p == null || p.getId() == null) {
-							r.getPaymethod().setDomain(domain.getId());
-							r.getPaymethod().setName(r.getPaymethod().getType().getDescription().toUpperCase());
-							p = AON.insertPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod());
-						}
-					}	
-					RegistryPayMethod rpaymethod = new RegistryPayMethod()
-							.setDomain(domain.getId())
-							.setRegistry(reg.getId())
-							.setPayMethod(p.getId())
-							.setRbank(rbank.getId())
-							.setNumberOfPymnts((short) 1)
-							.setDaysToFirstPymnt((short) 0)
-							.setDaysBetwenPymnts((short) 0)
-							.setPymnt_days("");
+			}
+			
+			if(r.getPaymethod().getName() != null || r.getPaymethod().getType() != null) {
+				PayMethod p = new PayMethod();
+				if(!AonStringUtils.isEmpty(r.getPaymethod().getName())) {
+					p = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod().getName());
+					if(p == null || p.getId() == null) {
+						r.getPaymethod().setDomain(domain.getId());
+						if(r.getPaymethod().getType() == null) r.getPaymethod().setType(PayMethodType.OTHER);
+						p = AON.insertPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod());
+					}
+				} else if(r.getPaymethod().getType() != null) {
+					p = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod().getType().getDescription().toUpperCase());
+					if(p == null || p.getId() == null) {
+						r.getPaymethod().setDomain(domain.getId());
+						r.getPaymethod().setName(r.getPaymethod().getType().getDescription().toUpperCase());
+						p = AON.insertPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod());
+					}
+				}	
+				Integer pId = p.getId();
+				RegistryPayMethod rpaymethod = AON.getRPayMethod(domain.getName(), domain.getId(),	user.getLogin(), f -> 
+						f.getDomainProperty().eq(domain.getId())
+						.and(f.getRegistryProperty().eq(registryId))
+						.and(f.getPayMethodProperty().eq(pId)));
+				if(rpaymethod == null || rpaymethod.getId() == null) {
+					rpaymethod = new RegistryPayMethod()
+						.setDomain(domain.getId())
+						.setRegistry(reg.getId())
+						.setPayMethod(pId)
+						.setRbank(rbank.getId())
+						.setNumberOfPymnts((short) 1)
+						.setDaysToFirstPymnt((short) 0)
+						.setDaysBetwenPymnts((short) 0)
+						.setPymnt_days("");
 					AON.insertRPayMethod(domain.getName(), domain.getId(), user.getLogin(), rpaymethod);
 				}
 			}
+			
 			if(r.getAccountPrefix() != null && (r.getAccount().getCode() == null || r.getAccount().getCode().isBlank())) {
 				String code = ACCOUNTING.getAccountNextCode(domain.getName(), domain.getId(), user.getLogin(), r.getAccountPrefix());
 				r.getAccount().setCode(code);
@@ -347,11 +382,10 @@ public class RegistryImport extends Import {
 					.setActive(true);
 			}
 
-			Integer registryId = reg.getId();
-			Scope s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f ->
-				f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Scope());
+			Scope s = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), f -> 
+					f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Scope());
 			if(s.getId() == null && domain.isEnableHeredity() && domain.getParentId() != null) {
-				s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f ->
+				s = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), f -> 
 					f.getDomainProperty().eq(domain.getParentId())).findFirst().orElse(new Scope());
 			}
 
@@ -367,6 +401,17 @@ public class RegistryImport extends Import {
 							.setStatus(RegistryStatus.ACTIVE);
 					c.setDomain(domain);
 					AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
+				}
+				Optional<Target> target = AON.getTarget(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(registryId));
+				if(target.isEmpty()) {
+					Target t = new Target().setRegistryData(reg)
+							.setScope(s.getId());
+					t.setScope(s.getId());
+					AON.insertTarget(domain.getName(), domain.getId(), user.getLogin(), 
+							new Target()
+								.setRegistryData(reg)
+								.setScope(s.getId())
+							);
 				}
 			}
 
@@ -467,6 +512,7 @@ public class RegistryImport extends Import {
 		private Registry registry;
 		private Account account;
 		private String iban;
+		private String ccc;
 		private String bic;
 		private String type;
 		private Integer line;
@@ -512,7 +558,15 @@ public class RegistryImport extends Import {
 		public void setBic(String bic) {
 			this.bic = bic;
 		}
-
+		
+		public String getCcc( ) {
+			return ccc;
+		}
+		
+		public void setCcc(String ccc) {
+			this.ccc = ccc;
+		}
+		
 		public String getType() {
 			return type;
 		}

@@ -25,6 +25,29 @@ public class Target extends Registry implements Serializable{
 	private String modificationUser;
 	private Date modificationDate;
 
+	
+	public Target() {
+		setAdvertising((short) 0);
+		setSurcharge((short) 0);
+		setWithholding((short) 0);
+		setTransaction((short) 0);
+		setStatus(TargetStatus.ACTIVE);
+	}
+	
+	public Target setRegistryData(Registry registry) {
+		this.setId(registry.getId());
+		this.setDomain(registry.getDomain());
+		this.setDocument(registry.getDocument());
+		this.setDocumentType(registry.getDocumentType());
+		this.setDocumentCountry(registry.getDocumentCountry());
+		this.setName(registry.getName());
+		this.setAlias(registry.getAlias());
+		this.setLegalPerson(registry.isLegalPerson());
+		this.setNationality(registry.getNationality());
+		this.setSecurityLevel(registry.getSecurityLevel());
+		return this;
+	}
+	
 	public Integer getTariff() {
 		return tariff;
 	}

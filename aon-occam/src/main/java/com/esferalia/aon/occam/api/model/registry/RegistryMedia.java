@@ -54,7 +54,7 @@ public class RegistryMedia implements Serializable {
 		return this;
 	}
 	
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 	public int getDomain() {
