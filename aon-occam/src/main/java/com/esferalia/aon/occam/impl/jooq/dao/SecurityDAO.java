@@ -45,7 +45,6 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record6;
 import org.jooq.Record8;
-import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
@@ -1104,13 +1103,16 @@ public class SecurityDAO {
 	}
 
 	public static boolean isOCRActive(AONContext ctx, int domain) {
-		return getDomainAppStream(ctx, p -> 
-		 	p.getDomainProperty().eq(domain)
-		 	.and(p.getAppProperty().eq( AonApp.OCR.value()))
-		 	.and(p.getActiveProperty().eq( (byte) 1 ))
-			)
-		.findFirst()
-		.isPresent();
+		User user = getUser(ctx);
+		if (user != null) {
+			return getDomainAppStream(ctx, p -> 
+				p.getDomainProperty().eq(user.getDomain())
+					.and(p.getAppProperty().eq( AonApp.OCR.value()))
+					.and(p.getActiveProperty().eq( (byte) 1 )))
+				.findFirst()
+				.isPresent();
+		}
+		return false;
 	}
 	
 }
