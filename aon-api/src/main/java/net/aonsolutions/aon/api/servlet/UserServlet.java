@@ -23,8 +23,10 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 @SuppressWarnings("serial")
@@ -227,6 +229,24 @@ public class UserServlet extends AonApiHttpServlet {
 						.setUser(user);
 					uar = AON_SOLUTIONS.insertUserAppRole(domain.getName(), domain.getId(), "", uar);
 				}
+				if(AonApp.TIMECONTROL.equals(uar.getApp())) {
+					TaskHolder th = AON.getTaskHolder(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(user)));
+					if(th == null || th.getId() == null) {
+						User u = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(user));
+						Auth a = AON_SOLUTIONS.getAuth(domain.getName(), domain.getId(), u.getAuth());
+						Registry r = new Registry()
+								.setDocument(a.getDocument())
+								.setName(a.getName()+ " "+ a.getSurname())
+								.setAlias(a.getName())
+								.setDomain(domain);
+						th = (TaskHolder) r;
+						th.setActive(true).setUserId(user);
+						AON.insertTaskHolder(domain.getName(), domain.getId(), "", th);
+					} else if(!th.isActive()) {
+						th.setActive(true);
+						AON.updateTaskHolder(domain.getName(), domain.getId(), "", th);
+					}
+				}
 //				else {
 //					uar.setRole(aonRole);
 //					AON_SOLUTIONS.updateUserAppRole(domain.getName(), domain.getId(), "", uar);
@@ -235,6 +255,14 @@ public class UserServlet extends AonApiHttpServlet {
 				if(uar.getId() != null) {
 					Integer id = uar.getId();
 					AON_SOLUTIONS.deleteUserAppRole(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(id));
+				}
+				
+				if(AonApp.TIMECONTROL.equals(uar.getApp())) {
+					TaskHolder th = AON.getTaskHolder(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(user)));
+					if(th != null && th.getId() != null) {
+						th.setActive(false);
+						AON.updateTaskHolder(domain.getName(), domain.getId(), "", th);
+					}
 				}
 			}
 		}
