@@ -59,6 +59,7 @@ EOF
 CATALINA_OPTS="-Duser.language=es \
 -Duser.country=ES \
 -Djava.security.auth.login.config=$TOMCAT_CONFDIR/login.config \
+-Djava.util.logging.config.file=$TOMCAT_CONFDIR/logging.properties \
 -Djavax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema=com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory"
 EOF
 	echo
