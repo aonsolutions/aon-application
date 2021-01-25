@@ -98,7 +98,7 @@ public class Import {
 				return AonMathUtils.round(Double.parseDouble(value.replace(",", ".")));
 			}
 		} catch (Exception e) {}
-		return null;
+		return 0.0;
 	}
 	
 	public static Boolean parseBoolean(Object object) {

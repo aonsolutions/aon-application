@@ -178,9 +178,10 @@ public class RegistryImport extends Import {
 		}
 		if(IConstants.PROVINCIA.equalsIgnoreCase(title)) {
 			Provinces pr = Provinces.getProvince(o.toString());
-			if(pr == null && reg.getRegistry().getMainAddress().getZip() != null ) {
+			if(pr == null && reg.getRegistry().getMainAddress().getZip() != null
+					&& reg.getRegistry().getMainAddress().getZip().length() > 2) {
 				pr = Provinces.getProvinceById(reg.getRegistry().getMainAddress().getZip().substring(0,2));
- 			}
+			}
 			for(GeoZone gz : aonCtx.getGeozones()) {
 				if(pr != null && pr.getId() != null && gz.getCode().equals(pr.getId())) {
 					reg.getRegistry().getMainAddress().setGeozone(gz.getId());
@@ -270,6 +271,9 @@ public class RegistryImport extends Import {
 			return error;
 		}
 		RegistryImportClass r = rvs.get(index);
+		if(r.getLine() == 141 || r.getLine() == 114) {
+			System.out.println("AAA");
+		}
 		try {
 			LinkedList<Registry> regList = AON.getRegistryStream(domain.getName(), domain.getId(), user.getLogin(), f ->
 				f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(r.getRegistry().getDocument()))).collect(Collectors.toCollection(LinkedList::new));
@@ -322,22 +326,34 @@ public class RegistryImport extends Import {
 						.and(f.getBankAccountProperty().eq(ba.getIban())));
 					if(rbank == null || rbank.getId() == null) {
 						BankBic11 bb = BankBic11.getBankBic11(ba.getBankCode());
+						if(bb == null) {
+							bb = new BankBic11(ba.getBankCode(), r.getBic(), "");
+						}
+						String alias = bb.getDescription().length() > 24
+								? bb.getDescription().substring(0, 24)
+								: bb.getDescription();
 						rbank = new RegistryBank()
 							.setDomain(domain.getId())
 							.setRegistry(reg.getId())
 							.setActive(true)
 							.setBankAccount(ba)
 							.setBic(bb.getBic())
-							.setAlias(bb.getDescription());
+							.setAlias(alias);
+						
 						rbank = AON.insertRBank(domain.getName(), domain.getId(), user.getLogin(), rbank);
 					}
 				}
 			}
 			
-			if(r.getPaymethod().getName() != null || r.getPaymethod().getType() != null) {
+			if(!AonStringUtils.isEmpty(r.getPaymethod().getName()) || r.getPaymethod().getType() != null) {
 				PayMethod p = new PayMethod();
 				if(!AonStringUtils.isEmpty(r.getPaymethod().getName())) {
 					p = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod().getName());
+					
+					if(domain.isEnableHeredity() && (p == null || p.getId() == null)) {
+						p = AON.getPayMethod(domain.getName(), domain.getParentId(), user.getLogin(), r.getPaymethod().getName());
+					}
+					
 					if(p == null || p.getId() == null) {
 						r.getPaymethod().setDomain(domain.getId());
 						if(r.getPaymethod().getType() == null) r.getPaymethod().setType(PayMethodType.OTHER);
@@ -360,7 +376,7 @@ public class RegistryImport extends Import {
 					rpaymethod = new RegistryPayMethod()
 						.setDomain(domain.getId())
 						.setRegistry(reg.getId())
-						.setPayMethod(pId)
+						.setPayMethod(p.getId())
 						.setRbank(rbank.getId())
 						.setNumberOfPymnts((short) 1)
 						.setDaysToFirstPymnt((short) 0)
@@ -377,16 +393,28 @@ public class RegistryImport extends Import {
 
 			Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), r.getAccount().getCode());
 			if(acc == null) {
+				String rdocument = reg.getDocument();
+				acc = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), user.getLogin(), f -> 
+					f.getDomainProperty().eq(domain.getId()).and(f.getAliasProperty().eq(rdocument)))
+					.findFirst().orElse(null);
+			}
+			
+			if(acc == null) {
 				acc = r.getAccount()
 					.setDomain(domain.getId())
 					.setActive(true);
 			}
-
+			
 			Scope s = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), f -> 
 					f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Scope());
 			if(s.getId() == null && domain.isEnableHeredity() && domain.getParentId() != null) {
 				s = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), f -> 
 					f.getDomainProperty().eq(domain.getParentId())).findFirst().orElse(new Scope());
+			}
+			
+			if(s.getId() == null && !domain.isEnableHeredity() && domain.getId() != null) {
+				s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f -> 
+					f.getDomainProperty().eq(domain.getId())).findFirst().orElse(new Scope());
 			}
 
 			if(r.isCustomer()) {
