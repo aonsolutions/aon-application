@@ -561,9 +561,9 @@ public class AgrarianAFI extends MainEntryPoint {
 				
 				@Override
 				public void onSuccess(Map<Integer, List<AgrarianJourney>> result) {
-					exportButton.setVisible(true);
 					agrarianJourney = result;
 					selectedEmployees.clear();
+					enableDisableExportBtn();
 					initializeTableJourney();
 				}
 				
