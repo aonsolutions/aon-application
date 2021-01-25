@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
 import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
 import static com.esferalia.aon.jooq.tables.FsVat.FS_VAT;
 import static com.esferalia.aon.jooq.tables.FsVatDetail.FS_VAT_DETAIL;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
 import java.io.Serializable;
 import java.io.StringReader;
@@ -15,6 +16,7 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -22,12 +24,16 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.jooq.Record1;
+import org.jooq.Record2;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel390Record;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
@@ -486,9 +492,25 @@ public class Mod3902018DAO {
 		mod390.setModificationDate(model.getModificationDate());
 		
 		int year = mod390.getYear();
-		if (year == 2018 || year == 2019) {
+		boolean found = false;
+		if (year == 2018 || year == 2019 || year == 2020) {
 			LinkedList<Mod390> mod390s = Mod390DAO.getByDomain(ctx, ctx.getDomainId());
 			for (Mod390 m390 : mod390s) {
+				if ( m390.getYear() == 2018 || m390.getYear() == 2019) {
+					Mod3902018 mod3902018 = Mod3902018DAO.getById(ctx, m390.getId());
+					mod390.setMainActivity(mod3902018.getMainActivity());
+					mod390.setActivity1(mod3902018.getActivity1());
+					mod390.setActivity2(mod3902018.getActivity2());
+					mod390.setActivity3(mod3902018.getActivity3());
+					mod390.setActivity4(mod3902018.getActivity4());
+					mod390.setActivity5(mod3902018.getActivity5());
+					mod390.setAddress(mod3902018.getAddress());
+					mod390.setLegalRepr1(mod3902018.getLegalRepr1());
+					mod390.setLegalRepr2(mod3902018.getLegalRepr2());
+					mod390.setLegalRepr3(mod3902018.getLegalRepr3());
+					found = true;
+					break;
+				}
 				if ( m390.getYear() == 2015 || m390.getYear() == 2016 || m390.getYear() == 2017) {
 					Mod3902015 mod3902015 = Mod3902015DAO.getById(ctx, m390.getId());
 					mod390.setMainActivity(mod3902015.getMainActivity());
@@ -501,9 +523,13 @@ public class Mod3902018DAO {
 					mod390.setLegalRepr1(mod3902015.getLegalRepr1());
 					mod390.setLegalRepr2(mod3902015.getLegalRepr2());
 					mod390.setLegalRepr3(mod3902015.getLegalRepr3());
+					found = true;
 					break;
 				}
 			}
+		}
+		if (!found) {
+			fillFromnConfiguration(ctx, mod390);	
 		}
 		fillSimplifedRegimeData(ctx, mod390);
 		fillGeneralRegimeData(ctx, mod390);
@@ -514,6 +540,44 @@ public class Mod3902018DAO {
 		}
 		mod390.calculate();
 		return mod390;	
+	}
+
+	private static void fillFromnConfiguration(AONContext ctx, Mod3902018 mod390) {
+		Company company = CompanyDAO.getCompany(ctx, mod390.getDomain());
+		if (company != null) {
+			LinkedList<Record2<String,String>> list = ctx.getDslContext().
+				select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME)
+					.from(RDIR_STAFF)
+					.where(RDIR_STAFF.DOMAIN.eq(mod390.getDomain()))
+					.and(RDIR_STAFF.REGISTRY.eq(company.getId()))
+					.and(RDIR_STAFF.REPRESENTATIVE.eq( (byte) 1))
+					.fetch()
+					.stream()
+					.collect(Collectors.toCollection(LinkedList::new));
+			for (Record2<String,String> record : list ) {
+						String document = record.getValue(RDIR_STAFF.DOCUMENT);
+						String name = record.getValue(RDIR_STAFF.NAME);
+						
+						if (mod390.isLegalEntity()) {
+							LegalRepresentative legalRepr = new LegalRepresentative();
+							legalRepr.setDocument(document);
+							legalRepr.setName(name);
+							mod390.setLegalRepr1(legalRepr);
+							if (mod390.getLegalRepr1() == null) mod390.setLegalRepr1(legalRepr); 
+							else if (mod390.getLegalRepr2() == null) mod390.setLegalRepr2(legalRepr);
+							else if (mod390.getLegalRepr3() == null) mod390.setLegalRepr3(legalRepr);
+						} else {
+							Address address = new Address();
+							address.setRdocument(document);
+							address.setRname(name);
+							mod390.setAddress(address);
+							break;
+						}
+			}
+		}
+		
+		
+		
 	}
 
 	public static Mod3902018 getMod3902018(AONContext ctx, Mod390 m390) {

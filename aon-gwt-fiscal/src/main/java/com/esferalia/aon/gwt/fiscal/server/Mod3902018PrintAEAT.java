@@ -85,7 +85,7 @@ public class Mod3902018PrintAEAT extends ModPrintAEAT {
 	}
 	
 	public String getUrlParameters(Mod3902018 mod390, String encodedFile){
-		if (mod390.getYear() == 2018 || mod390.getYear() == 2019) {
+		if (mod390.getYear() == 2018 || mod390.getYear() == 2019 || mod390.getYear() == 2020) {
 			return "&IDI=ES"
 				+ "&FIC=" + encodedFile 
 				+ "&RUT=" 
