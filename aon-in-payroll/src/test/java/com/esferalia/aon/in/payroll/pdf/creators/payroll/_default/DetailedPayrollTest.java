@@ -22,7 +22,6 @@ import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultP
 public class DetailedPayrollTest {
 
 	@Test
-	@Ignore
 	public void printTest() {
 		DefaultPayrollBuilder builder = new DefaultPayrollBuilder();
 		
@@ -34,13 +33,11 @@ public class DetailedPayrollTest {
 		ac.put(2,new ArrayList<DefaultPayrollAccrual>());
 		ac.put(4,new ArrayList<DefaultPayrollAccrual>());
 		
-		for (int i = 0; i <5; i++) {
-			
+		for (int i = 0; i < 5; i++) {
 			DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(Optional.of(999999999.99),Optional.of("Descripcion por defecto."));
 			ac.get(1).add(accrual);
 			ac.get(2).add(accrual);
 			ac.get(4).add(accrual);
-			
 		}
 		
 		///CREATE DEDUCTIONS
@@ -90,8 +87,9 @@ public class DetailedPayrollTest {
 		.setNo_struct_base(Optional.of(999999999.99))
 		.setNo_struct_type(Optional.of(99.99))
 		.setNo_struct_ap_enterprise(Optional.of(999999999.99))
-		.setIrpf_esp(Optional.of(999999999.99))
-		.setIrpf_retrib_diner(Optional.of(999999999.99));
+		.setIrpf_esp(Optional.of(99999.99))
+		.setIrpf_retrib_diner(Optional.of(99999.99))
+		.setTotal(Optional.of(99999.99));
 	
 		//BUILD PAYROLL
 		builder
@@ -116,7 +114,7 @@ public class DetailedPayrollTest {
 		.setPayroll_total(Optional.of(999999999.99))
 		.setContingencies(Optional.of(con_builder.build()));
 		
-		try { PdfMaker.print_default_payroll("payroll.pdf", builder.build(), Optional.empty());} 
+		try { PdfMaker.print_default_payroll("payroll.pdf", builder.build(), Optional.of(DetailedPayrollTest.class.getResourceAsStream("logo.png")));} 
 		catch (CanNotCreatePdfException e) {
 			e.printStackTrace(); 
 			fail("Can not create the payroll");

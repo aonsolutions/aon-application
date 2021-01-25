@@ -12,6 +12,8 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -20,6 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
+
+import javax.imageio.ImageIO;
+
 import java.util.List;
 
 public class PDFToolkit {
@@ -112,6 +117,10 @@ public class PDFToolkit {
 		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo.readAllBytes(), "image"), x, y, width, height);
 	}
 
+	public static void drawImage(PDDocument doc, PDPageContentStream contents, InputStream logo, float x, float y) throws IOException {
+		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo.readAllBytes(), "image"), x, y);
+	}
+	
 	//DRAW A BOX
 	public static void drawBox(PDPageContentStream contents, float x, float y, float width, float height, Color color) throws IOException {
 		contents.setNonStrokingColor(color);
@@ -245,6 +254,38 @@ public class PDFToolkit {
 	//FORMAT A DOUBLE
 	public static String format(double num) {
 		return df.format(num);
+	}
+	
+	
+	//REESCALE
+	public static float[] reescale(float width, float height, float maxWidth, float maxHeight) {
+		
+		float rel = width / height;
+		
+		while(width > maxWidth || height > maxHeight) {
+			width--;
+			height = width / rel;
+		}
+		
+		return new float[] {width,height};
+	}
+	
+	public static void main(String[] args) {
+		
+		float[] size = reescale(1920, 1080, 800, 600);
+		System.out.print(size[0] + " / " + size[1]);
+		
+	}
+	
+	//BYTE ARRAY TO IMAGE
+	public static BufferedImage create_image_from_bytes(byte[] imageData) {
+	    ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
+	    try {
+	        return ImageIO.read(bais);
+	    } catch (IOException e) {
+	        
+	    }
+		return null;
 	}
 
 }

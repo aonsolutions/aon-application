@@ -35,6 +35,7 @@ public class Contingency_bases {
 	
 	private Optional<Double> irpf_esp;
 	private Optional<Double> irpf_retrib_diner;
+	private Optional<Double> total;
 	
 	private Contingency_bases() {}
 
@@ -60,6 +61,8 @@ public class Contingency_bases {
 	public Optional<Double> getNo_struct_ap_enterprise() {return no_struct_ap_enterprise;}
 	public Optional<Double> getIrpf_esp() {return irpf_esp;}
 	public Optional<Double> getIrpf_retrib_diner() {return irpf_retrib_diner;}
+	public Optional<Double> getTotal() {return total;}
+	
 
 	
 	public static class Contingency_bases_builder{
@@ -95,6 +98,7 @@ public class Contingency_bases {
 		
 		private Optional<Double> irpf_esp;
 		private Optional<Double> irpf_retrib_diner;
+		private Optional<Double> total;
 		
 		public Contingency_bases_builder setMonthly_amount(Optional<Double> monthly_amount) {
 			this.monthly_amount = monthly_amount; 
@@ -184,6 +188,10 @@ public class Contingency_bases {
 			this.irpf_retrib_diner = irpf_retrib_diner;
 			return this;
 		}
+		public Contingency_bases_builder setTotal(Optional<Double> total) {
+			this.total = total;
+			return this;
+		}
 		
 		public Contingency_bases build() {
 			
@@ -211,6 +219,7 @@ public class Contingency_bases {
 			c.no_struct_type =				this.no_struct_type;
 			c.irpf_esp =					this.irpf_esp;
 			c.irpf_retrib_diner = 			this.irpf_retrib_diner;
+			c.total =						this.total;
 			
 			return c;
 		}
