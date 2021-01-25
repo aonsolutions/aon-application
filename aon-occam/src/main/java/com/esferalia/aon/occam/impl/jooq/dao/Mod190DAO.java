@@ -1074,7 +1074,7 @@ public class Mod190DAO {
 							double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
 							double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
 							double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
-							double irpfQuota = ( AonMathUtils.isZero( irpfBase) )
+							double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase) )
 									?0.0
 									:(irpfBase * totalIrpf / totalIrpfBase);
 							Mod190Detail detail = getDetail(document,person,Mod1902016Key.E,"01");
@@ -1109,7 +1109,7 @@ public class Mod190DAO {
 						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
 						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
 						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
-						double irpfQuota = ( AonMathUtils.isZero( irpfBase) )
+						double irpfQuota = ( AonMathUtils.isZero( irpfBase) ||  AonMathUtils.isZero( totalIrpfBase) )
 								?0.0
 								:(irpfBase * totalIrpf / totalIrpfBase);
 						if ( AonMathUtils.isGreatherThanZero(irpfBase )) {
@@ -1125,7 +1125,7 @@ public class Mod190DAO {
 						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
 						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
 						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
-						double irpfQuota = ( AonMathUtils.isZero( irpfBase) )
+						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase) )
 								?0.0
 								:(irpfBase * totalIrpf / totalIrpfBase);
 						Mod190Detail detail = getDetail(document,person,Mod1902016Key.A,null);
@@ -1149,7 +1149,7 @@ public class Mod190DAO {
 						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
 						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
 						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
-						double irpfQuota = ( AonMathUtils.isZero( irpfBase) )
+						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase ) )
 								?0.0
 								:(irpfBase * totalIrpf / totalIrpfBase);
 						Mod190Detail detail = getDetail(document,person,Mod1902016Key.A,null);
