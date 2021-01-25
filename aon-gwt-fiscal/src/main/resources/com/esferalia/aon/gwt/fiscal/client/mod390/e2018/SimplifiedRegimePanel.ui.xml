@@ -150,6 +150,18 @@
 		
 			<tr>
 				<td colspan="2">
+					<g:Label text="{msg.reductions}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<aon:BoxLabel text="&nbsp;&nbsp;&nbsp;"/>
+				</td>
+				<td>
+					<aon:DoubleBox ui:field="boxC1"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="2">
 					<g:Label text="{msg.page6D}" styleName="{aonResources.css.aonFiscalBorderBottom}"/>
 				</td>
 				<td class="{aonResources.css.aonTextCenter}">

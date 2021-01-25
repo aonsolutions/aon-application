@@ -777,6 +777,7 @@ public class AEATIVA2018toMod390 {
 			sra.setAmount7(ensureBigDecimal(modulos.get(6).getImporte()));
 		}
 		sra.setBoxC(ensureBigDecimal(act.getCuotaDevengada()));
+		sra.setBoxC1(ensureBigDecimal(act.getLorca2013()));
 		sra.setBoxD(ensureBigDecimal(act.getCuotaSoportada()));
 		sra.setBoxE(ensureBigDecimal(act.getIndiceCorrector()));
 		sra.setBoxF(ensureBigDecimal(act.getResultado()));

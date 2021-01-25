@@ -164,6 +164,7 @@ public class Mod3902018 extends Mod390  {
 	    private double unit7;
 	    private double amount7;
 	    private double boxC;
+	    private double boxC1;
 	    private double boxD;
 	    private double boxE;
 	    private double boxF;
@@ -273,6 +274,12 @@ public class Mod3902018 extends Mod390  {
 		}
 		public void setBoxC(double boxC) {
 			this.boxC = boxC;
+		}
+		public double getBoxC1() {
+			return boxC1;
+		}
+		public void setBoxC1(double boxC1) {
+			this.boxC1 = boxC1;
 		}
 		public double getBoxD() {
 			return boxD;

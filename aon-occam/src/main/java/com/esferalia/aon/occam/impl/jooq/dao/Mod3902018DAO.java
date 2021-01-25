@@ -121,6 +121,7 @@ public class Mod3902018DAO {
 			CAC1_M7U ("303-AC1M7U" ),
 			CAC1_M7I ("303-AC1M7I" ),
 			CAC1_C   ("303-AC1C"   ),
+			CAC1_C1  ("303-AC1C1"  ),
 			CAC1_D   ("303-AC1D"   ),
 			CAC1_Z   ("303-AC1Z"   ),
 			CAC1_ZA  ("303-AC1ZA"  ),
@@ -154,6 +155,7 @@ public class Mod3902018DAO {
 			CAC2_M7U ("303-AC2M7U" ),
 			CAC2_M7I ("303-AC2M7I" ),
 			CAC2_C   ("303-AC2C"   ),
+			CAC2_C1  ("303-AC2C1"  ),
 			CAC2_D   ("303-AC2D"   ),
 			CAC2_Z   ("303-AC2Z"   ),
 			CAC2_ZA  ("303-AC2ZA"  ),
@@ -188,6 +190,7 @@ public class Mod3902018DAO {
 			CAC3_M7I ("303-AC3M7I" ),
 			CAC3_C   ("303-AC3C"   ),
 			CAC3_D   ("303-AC3D"   ),
+			CAC3_C1  ("303-AC3C1"  ),
 			CAC3_Z   ("303-AC3Z"   ),
 			CAC3_ZA  ("303-AC3ZA"  ),
 			CAC3_ZD  ("303-AC3ZD"  ),
@@ -220,6 +223,7 @@ public class Mod3902018DAO {
 			CAC4_M7U ("303-AC4M7U" ),
 			CAC4_M7I ("303-AC4M7I" ),
 			CAC4_C   ("303-AC4C"   ),
+			CAC4_C1  ("303-AC4C1"  ),
 			CAC4_D   ("303-AC4D"   ),
 			CAC4_Z   ("303-AC4Z"   ),
 			CAC4_ZA  ("303-AC4ZA"  ),
@@ -1023,6 +1027,7 @@ public class Mod3902018DAO {
 				mod390.setBox74( AonMathUtils.round(mod390.getBox74() + src.getAmount()));
 				return true;
 													}),
+		CAC1_C1  (Mod303Key.CAC1_C1 , (src,mod390) -> {mod390.getSimpRegime1().setBoxC1(src.getAmount());return true;}),
 		CAC1_D   (Mod303Key.CAC1_D  , null),
 		CAC1_Z   (Mod303Key.CAC1_Z  , null),
 		CAC1_ZA  (Mod303Key.CAC1_ZA , null),
@@ -1067,6 +1072,7 @@ public class Mod3902018DAO {
 				mod390.setBox74( AonMathUtils.round(mod390.getBox74() + src.getAmount()));
 				return true;
 														}),
+		CAC2_C1  (Mod303Key.CAC2_C1 , (src,mod390) -> {mod390.getSimpRegime2().setBoxC1(src.getAmount());return true;}),
 		CAC2_D   (Mod303Key.CAC2_D  , null),
 		CAC2_Z   (Mod303Key.CAC2_Z  , null),
 		CAC2_ZA  (Mod303Key.CAC2_ZA , null),

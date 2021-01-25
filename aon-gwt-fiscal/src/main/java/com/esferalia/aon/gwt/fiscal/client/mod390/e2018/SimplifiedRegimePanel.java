@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.mod390.e2018;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018.SimpliedRegimeActivity;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -59,6 +58,8 @@ public class SimplifiedRegimePanel extends ResizeComposite {
 	@UiField
     DoubleBox boxC;
 	@UiField
+    DoubleBox boxC1;
+	@UiField
     DoubleBox boxD;
 	@UiField
 	DoubleBox boxE;
@@ -81,34 +82,6 @@ public class SimplifiedRegimePanel extends ResizeComposite {
 		initWidget(ui);
 	}
 
-
-	public void setValue(Mod311Results mod311Results) {
-	    epigrafe.setValue(mod311Results.getEpigrafe());
-	    unit1.setValue(mod311Results.getUnit1());
-	    amount1.setValue(mod311Results.getAmount1());
-	    unit2.setValue(mod311Results.getUnit2());
-	    amount2.setValue(mod311Results.getAmount2());
-	    unit3.setValue(mod311Results.getUnit3());
-	    amount3.setValue(mod311Results.getAmount3());
-	    unit4.setValue(mod311Results.getUnit4());
-	    amount4.setValue(mod311Results.getAmount4());
-	    unit5.setValue(mod311Results.getUnit5());
-	    amount5.setValue(mod311Results.getAmount5());
-	    unit6.setValue(mod311Results.getUnit6());
-	    amount6.setValue(mod311Results.getAmount6());
-	    unit7.setValue(mod311Results.getUnit7());
-	    amount7.setValue(mod311Results.getAmount7());
-	    boxC.setValue(mod311Results.getBoxC());
-	    boxD.setValue(mod311Results.getBoxD());
-		boxE.setValue(mod311Results.getBoxE());
-		boxF.setValue(mod311Results.getBoxF());
-		boxG.setValue(mod311Results.getBoxG());
-		boxH.setValue(mod311Results.getBoxH());
-		boxI.setValue(mod311Results.getBoxI());
-		boxJ.setValue(mod311Results.getBoxJ());
-	}
-
-
 	public void setValue(SimpliedRegimeActivity regime) {
 	    epigrafe.setValue(regime.getEpigrafe());
 	    unit1.setValue(regime.getUnit1());
@@ -126,6 +99,7 @@ public class SimplifiedRegimePanel extends ResizeComposite {
 	    unit7.setValue(regime.getUnit7());
 	    amount7.setValue(regime.getAmount7());
 	    boxC.setValue(regime.getBoxC());
+	    boxC1.setValue(regime.getBoxC1());
 	    boxD.setValue(regime.getBoxD());
 		boxE.setValue(regime.getBoxE());
 		boxF.setValue(regime.getBoxF());
@@ -156,6 +130,7 @@ public class SimplifiedRegimePanel extends ResizeComposite {
 		    reg.setUnit7(unit7.getValue());
 		    reg.setAmount7(amount7.getValue());
 		    reg.setBoxC(boxC.getValue());
+		    reg.setBoxC1(boxC1.getValue());
 		    reg.setBoxD(boxD.getValue());
 			reg.setBoxE(boxE.getValue());
 			reg.setBoxF(boxF.getValue());
@@ -185,6 +160,7 @@ public class SimplifiedRegimePanel extends ResizeComposite {
 	    unit7.setValue(0.0);
 	    amount7.setValue(0.0);
 	    boxC.setValue(0.0);
+	    boxC1.setValue(0.0);
 	    boxD.setValue(0.0);
 		boxE.setValue(0.0);
 		boxF.setValue(0.0);

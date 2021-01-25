@@ -373,6 +373,9 @@ public class Mod390toAEATIVA2018 {
 		if ( sr.getBoxC() != 0.00 ) {
 			actividad.setCuotaDevengada(ensureBigDecimal(sr.getBoxC()));
 		}
+		if ( sr.getBoxC1() != 0.00 ) {
+			actividad.setLorca2013(ensureBigDecimal(sr.getBoxC1()));
+		}
 		if ( sr.getBoxD() != 0.00 ) {
 			actividad.setCuotaSoportada(ensureBigDecimal(sr.getBoxD()));
 		}
