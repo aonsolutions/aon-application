@@ -587,6 +587,10 @@ public class EmployeeDialogObject {
 	public void setEmployeeBIC(String bic) {
 		employeeData.setBic(bic);
 	}
+	
+	public void setEmployeeBankAlias(String bankAlias) {
+		employeeData.setBankAlias(bankAlias);
+	}
 
 	public void setEmployeeAccount(String rbankAccount) {
 		employeeData.setAccount(rbankAccount);

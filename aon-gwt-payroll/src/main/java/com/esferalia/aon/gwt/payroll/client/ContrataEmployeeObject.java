@@ -1073,6 +1073,10 @@ public class ContrataEmployeeObject {
 	public void setEmployeeAccount(String rbankAccount) {
 		employeeData.setAccount(rbankAccount);
 	}
+	
+	public void setEmployeeBankAlias(String bankAlias) {
+		employeeData.setBankAlias(bankAlias);
+	}
 
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 	// --------------------------------------------------------- AUXILIAR METHODS --------------------------------------------------------------

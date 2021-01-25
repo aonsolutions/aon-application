@@ -839,7 +839,7 @@ public class JooqContrataContract {
 					.fetch();
 			
 			for(Record r: rbankRecords) {
-				employeeData.addRbank(r.get(RBANK.ID), r.get(RBANK.BANK_ACCOUNT), r.get(RBANK.BIC));
+				employeeData.addRbank(r.get(RBANK.ID), r.get(RBANK.BANK_ACCOUNT), r.get(RBANK.BIC), r.get(RBANK.ALIAS));
 			}
 			
 			// --------------------------------------------- Contract Info

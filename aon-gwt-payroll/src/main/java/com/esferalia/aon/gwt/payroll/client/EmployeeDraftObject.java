@@ -825,6 +825,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		
 		employeeData.setAccount(rbankAccount);
 	}
+	
+	public void setEmployeeBankAlias(String bankAlias) {
+		add(employeeData::setBankAlias, 
+				employeeData.getBankAlias(), 
+				bankAlias );
+		
+		employeeData.setBankAlias(bankAlias);
+	}
 
 	public void setEmployeeBIC(String rbankBIC) {
 		add(employeeData::setBic, 

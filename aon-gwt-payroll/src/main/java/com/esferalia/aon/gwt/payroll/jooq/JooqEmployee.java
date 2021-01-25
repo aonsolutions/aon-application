@@ -47,6 +47,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.BankEntities;
+import com.esferalia.aon.gwt.payroll.shared.BankSwift;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -265,8 +266,8 @@ public class JooqEmployee {
 					account.trim();
 					account.replaceAll(" ", "");
 					
-					String alias = "CUENTA";
-					if(account.length() > 8) {
+					String alias = AonStringUtils.isNotBlank(employeeData.getBankAlias()) ? employeeData.getBankAlias() : "CUENTA";
+					if(account.length() > 8 && AonStringUtils.isBlank(employeeData.getBankAlias())) {
 						String codeBank = account.substring(4, 8);
 						alias = BankEntities.getBankEntity(codeBank);
 					}
@@ -293,8 +294,8 @@ public class JooqEmployee {
 					account.trim();
 					account.replaceAll(" ", "");
 					
-					String alias = "CUENTA";
-					if(account.length() > 8) {
+					String alias = AonStringUtils.isNotBlank(employeeData.getBankAlias()) ? employeeData.getBankAlias() : "CUENTA";
+					if(account.length() > 8 && AonStringUtils.isBlank(employeeData.getBankAlias())) {
 						String codeBank = account.substring(4, 8);
 						alias = BankEntities.getBankEntity(codeBank);
 					}
@@ -653,7 +654,7 @@ public class JooqEmployee {
 				.fetch();
 		
 		for(Record r: rbankRecords) {
-			employeeData.addRbank(r.get(RBANK.ID), r.get(RBANK.BANK_ACCOUNT), r.get(RBANK.BIC));
+			employeeData.addRbank(r.get(RBANK.ID), r.get(RBANK.BANK_ACCOUNT), r.get(RBANK.BIC), r.get(RBANK.ALIAS));
 		}
 		
 		
@@ -1161,17 +1162,22 @@ public class JooqEmployee {
 					.and(RBANK.DOMAIN.eq(domain))
 					.fetch();
 			
+			String alias = AonStringUtils.isNotBlank(account) ? employeeData.getBankAlias() : "CUENTA";
+			
+			if(null != account && account.length() > 8 && AonStringUtils.isBlank(alias)) {
+				String codeBank = account.substring(4, 8);
+				alias = BankEntities.getBankEntity(codeBank);
+			}
+			
 			if(!findRBankRecord.isEmpty()) {
 				rbankTableId = findRBankRecord.get(0).get(RBANK.ID); 
+				
+				dslContext.update(RBANK)
+					.set(RBANK.BIC, employeeData.getBic())
+					.set(RBANK.ALIAS, alias)
+					.where(RBANK.ID.eq(rbankTableId))
+					.execute();
 			} else {
-				
-				String alias = "CUENTA";
-				
-				if(null != account && account.length() > 8) {
-					String codeBank = account.substring(4, 8);
-					alias = BankEntities.getBankEntity(codeBank);
-				}
-				
 				RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 						.set(RBANK.DOMAIN, domain)
 						.set(RBANK.REGISTRY, registryId)

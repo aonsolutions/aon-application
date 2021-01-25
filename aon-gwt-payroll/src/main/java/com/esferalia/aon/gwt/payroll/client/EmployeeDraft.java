@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.BankSwift;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
@@ -38,6 +39,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -619,8 +621,31 @@ public class EmployeeDraft extends Composite {
 				
 				
 				employeeDraftObject.setEmployeeAccount(value);
+				String bankAlias = getBankAlias(value);
+				if(AonStringUtils.isNotBlank(bankAlias))
+					employeeDraftObject.setEmployeeBankAlias(bankAlias);
+				String bankSwift = getBankSwift(value);
+				if(AonStringUtils.isNotBlank(bankSwift))
+					employeeDraftObject.setEmployeeBIC(bankSwift);
+				this.bic.setValue(bankSwift);
 				saving();
 			}
+		}
+			
+		private String getBankSwift(String account) {
+			if(AonStringUtils.isNotBlank(account)) {
+				BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
+				return bankSwiftEntry.getSwift();
+			}
+			return null;
+		}
+
+		private String getBankAlias(String account) {
+			if(AonStringUtils.isNotBlank(account)) {
+				BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
+				return bankSwiftEntry.getBankName();
+			}
+			return null;
 		}
 		
 	}

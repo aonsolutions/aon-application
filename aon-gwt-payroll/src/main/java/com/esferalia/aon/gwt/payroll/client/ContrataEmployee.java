@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.BankSwift;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
@@ -543,6 +544,27 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			}
 			
 			contrataEmployeeObject.setEmployeeAccount(account);
+			String bankAlias = getBankAlias(account);
+			contrataEmployeeObject.setEmployeeBankAlias(bankAlias);
+			String bankSwift = getBankSwift(account);
+			contrataEmployeeObject.setEmployeeBIC(bankSwift);
+			this.bic.setValue(bankSwift);
+		}
+
+		private String getBankSwift(String account) {
+			if(AonStringUtils.isNotBlank(account)) {
+				BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
+				return bankSwiftEntry.getSwift();
+			}
+			return null;
+		}
+
+		private String getBankAlias(String account) {
+			if(AonStringUtils.isNotBlank(account)) {
+				BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
+				return bankSwiftEntry.getBankName();
+			}
+			return null;
 		}
 		
 	}	

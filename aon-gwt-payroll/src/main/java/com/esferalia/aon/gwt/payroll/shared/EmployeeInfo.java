@@ -62,6 +62,7 @@ public class EmployeeInfo implements Serializable{
 	private Integer rbankId;
 	private String account;
 	private String bic;
+	private String bankAlias;
 	
 	//Rbanks 
 	private ArrayList<Rbank> rbanks;
@@ -103,6 +104,7 @@ public class EmployeeInfo implements Serializable{
 		this.rbankId = null;
 		this.account = null;
 		this.bic = null;
+		this.bankAlias = null;
 		this.rbanks = new ArrayList<Rbank>();
 	}
 
@@ -323,9 +325,17 @@ public class EmployeeInfo implements Serializable{
 	public String getBic() {
 		return bic;
 	}
+	
+	public String getBankAlias() {
+		return bankAlias;
+	}
 
 	public void setBic(String bic) {
 		this.bic = bic;
+	}
+	
+	public void setBankAlias(String bankAlias) {
+		this.bankAlias = bankAlias;
 	}
 
 	public void setEmployeeId(Integer employeeId) {
@@ -418,8 +428,8 @@ public class EmployeeInfo implements Serializable{
 		getName();
 	}
 	
-	public void addRbank(Integer id, String iban, String bic) {
-		this.rbanks.add(new Rbank(id, iban, bic));
+	public void addRbank(Integer id, String iban, String bic, String bankAlias) {
+		this.rbanks.add(new Rbank(id, iban, bic, bankAlias));
 	}
 	
 	public ArrayList<Rbank> getRbanks() {

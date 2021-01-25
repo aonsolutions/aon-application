@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.BankSwift;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
@@ -27,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
@@ -41,6 +43,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
@@ -579,6 +582,28 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 			}
 			
 			employeeDialogObject.setEmployeeAccount(account);
+			String bankAlias = getBankAlias(account);
+			employeeDialogObject.setEmployeeBankAlias(bankAlias);
+			String bankSwift = getBankSwift(account);
+			employeeDialogObject.setEmployeeBIC(bankSwift);
+			this.bic.setValue(bankSwift);
+			
+		}
+
+		private String getBankSwift(String account) {
+			if(AonStringUtils.isNotBlank(account)) {
+				BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
+				return bankSwiftEntry.getSwift();
+			}
+			return null;
+		}
+
+		private String getBankAlias(String account) {
+			if(AonStringUtils.isNotBlank(account)) {
+				BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
+				return bankSwiftEntry.getBankName();
+			}
+			return null;
 		}
 
 		

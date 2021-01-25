@@ -10,15 +10,17 @@ public class Rbank implements Serializable{
 	private Integer id;
 	private String iban;
 	private String bic;
+	private String bankAlias;
 	
 	public Rbank() {
 		super();
 	}
 	
-	public Rbank(Integer id, String iban, String bic) {
+	public Rbank(Integer id, String iban, String bic, String bankAlias) {
 		this.id = id;
 		this.iban = iban;
 		this.bic = bic;
+		this.bankAlias = bankAlias;
 	}
 
 	public Integer getId() {
@@ -31,6 +33,10 @@ public class Rbank implements Serializable{
 
 	public String getBic() {
 		return bic;
+	}
+	
+	public String getBankAlias() {
+		return bankAlias;
 	}
 
 }
