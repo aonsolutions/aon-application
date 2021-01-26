@@ -1,6 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getTimeControl, saveTimeControl} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
+import { timePaser } from '../../services/utils.js';
 
 export class AonSign extends AonElement {
 
@@ -138,19 +139,19 @@ export class AonSign extends AonElement {
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#F39F1D';
       this.vuelta();
       this.timeStop();
-      this.getElement(this.TIME).innerHTML = this.timePaser(signin.time);
+      this.getElement(this.TIME).innerHTML = timePaser(signin.time);
     } else {
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#DC4D30';
       this.entrada();
       this.timeStop();
-      this.getElement(this.TIME).innerHTML = this.timePaser(signin.time);
+      this.getElement(this.TIME).innerHTML = timePaser(signin.time);
     }
   }
 
   timeAction(time) {
     let timeDiv = document.getElementById(this.TIME);
     if(timeDiv){
-      timeDiv.innerHTML = this.timePaser(time);
+      timeDiv.innerHTML = timePaser(time);
     } else this.timeStop();
     this._timeAction = setTimeout( () => this.timeAction(time + 1000), 1000);
   }
@@ -158,25 +159,6 @@ export class AonSign extends AonElement {
   timeStop() {
     clearTimeout(this._timeAction);
   }
-
-  timePaser(time) {
-    let msecPerMinute = 1000 * 60;
-    let msecPerHour = msecPerMinute * 60;
-
-    // Calcular las horas , minutos y segundos
-    let hours = Math.floor(time / msecPerHour );
-    time = time - (hours * msecPerHour );
-
-    var minutes = Math.floor(time / msecPerMinute );
-    time = time - (minutes * msecPerMinute );
-
-    var seconds = Math.floor(time / 1000 );
-
-    return (hours < 10 ? '0' : '') + hours + ':'
-      + (minutes < 10 ? '0' : '') + minutes + ':'
-      + (seconds < 10 ? '0' : '') + seconds;
-  }
-
 
 }
 window.customElements.define('aon-sign', AonSign);

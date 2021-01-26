@@ -7,6 +7,7 @@ import '../../components/aon-toast.js';
 import '../../components/aon-application.js';
 import './cta/aon-cta-list.js';
 import './contrato/aon-contrato-list.js';
+import './time-control/aon-time-control.js';
 
 export class AonComunica extends AonElement {
 
@@ -87,17 +88,29 @@ export class AonComunica extends AonElement {
 			delete options[1]; 
 			delete options[3]; 
 		}
-		this.aonComunicaEl.addSidenavOptions('OPCIONES', options);
+		this.aonComunicaEl.addSidenavOptions('TGSS/SEPE', options);
+		
+
+		const options2 = [
+			{
+				name: 'Presencia',
+				icon: 'account_box',
+				fn: () => this.aonComunicaEl.setContentHTML(`<aon-time-control id="aonTimeControl"></aon-time-control>`)
+			}
+		];
+		this.aonComunicaEl.addSidenavOptions('Control de horario', options2);
 	}
 
 
 	paintViewContrato(){
 		this.aonComunicaEl.removeToolbarOptions();
-		if(this.isMobile())
-			this.aonComunicaEl.setContentHTML(`<aon-contrato-list id="aonContratoList" ></aon-contrato-list>`)
-		else {
-			startModule('aon_gwt_payroll', 'MainContrata', this.aonComunicaEl.CONTENT);
-		}
+		// if(this.isMobile())
+		// 	this.aonComunicaEl.setContentHTML(`<aon-contrato-list id="aonContratoList" ></aon-contrato-list>`)
+		// else {
+		// 	startModule('aon_gwt_payroll', 'MainContrata', this.aonComunicaEl.CONTENT);
+		// }
+
+		this.aonComunicaEl.setContentHTML(`<aon-time-control id="aonTimeControl"></aon-time-control>`)
 	}
 
 	async deleteMov(data, el) {
@@ -163,4 +176,3 @@ export class AonComunica extends AonElement {
 	}
 }
 window.customElements.define('aon-comunica', AonComunica);
-// aonComunicaMovementsList
