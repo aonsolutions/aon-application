@@ -420,6 +420,8 @@ public class GIPUZKOA_2017_Declaration extends Mod390HFDeclaration {
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales())
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C086,mod,vat.getBase())
 			,null,null,null)
+		// OPERACIONES EXENTAS SIN DERECHO A DEDUCCI\u00D3N
+		,GP_C087  	(Mod390Key.GP_C087)
 		// OPERACIONES QUE DAN LUGAR A LA INVERSI\u00D3N DEL SUJETO PASIVO
 		,GP_C088  	(Mod390Key.GP_C088
 			,(mod,vat) -> vat.isOtherISPSales() 
@@ -436,7 +438,7 @@ public class GIPUZKOA_2017_Declaration extends Mod390HFDeclaration {
 		// ENTREGAS DE BIENES DE INVERSI\u00D3N
 		,GP_C093  	(Mod390Key.GP_C093)
 		// TOTAL VOLUMEN DE OPERACIONES
-		,GP_C095  	(Mod390Key.GP_C095)
+		,GP_C095	(Mod390Key.GP_C095,null,null,null,"GP_C082+GP_C083+GP_C084+GP_C085+GP_C086+GP_C087+GP_C088+GP_C089+GP_C090+GP_C091+GP_C092+GP_C093",null)
 		// ENTREGAS INTERIORES DE BIENES DEVENGADAS POR INVERSI\u00D3N DEL SUJETO PASIVO COMO CONSECUENCIA DE OPERACIONES TRIANGULARES
 		,GP_C096  	(Mod390Key.GP_C096)
 		// ADQUISICIONES INTERIORES EXENTAS

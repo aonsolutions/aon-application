@@ -70,15 +70,15 @@ public class Mod390HF extends FiscalModel implements Serializable {
 	}
 
 	public boolean isToCompensate() {
-		return isFinished() && getDeclarationType() == FiscalModelDeclarationType.COMPENSATE;
+		return (isFinished() || isSent()) && getDeclarationType() == FiscalModelDeclarationType.COMPENSATE;
 	}
 	public boolean isToDeposit() {
-		return isFinished() && (getDeclarationType() == FiscalModelDeclarationType.DEPOSIT
+		return (isFinished() || isSent()) && (getDeclarationType() == FiscalModelDeclarationType.DEPOSIT
 				|| getDeclarationType() == FiscalModelDeclarationType.BANK
 				|| getDeclarationType() == FiscalModelDeclarationType.DEPOSIT_CCT);
 	}
 	public boolean isToPayback() {
-		return isFinished() && (getDeclarationType() == FiscalModelDeclarationType.PAYBACK
+		return (isFinished() || isSent()) && (getDeclarationType() == FiscalModelDeclarationType.PAYBACK
 				|| getDeclarationType() == FiscalModelDeclarationType.PAYBACK_CCT);
 	}
 	
