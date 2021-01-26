@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.PayrollTypes;
+
 
 
 public class DefaultPayroll {
@@ -29,6 +31,7 @@ public class DefaultPayroll {
  	private Optional <Double> deduction_total;
  	private Optional <Double> payroll_total;
  	private Optional <Contingency_bases> contingencies;
+ 	private Optional <PayrollTypes.Type> payroll_type;
  	
  	private DefaultPayroll() {}
  	 	
@@ -52,7 +55,8 @@ public class DefaultPayroll {
 	public Optional<Double> 	getDeduction_total() {return deduction_total;}
 	public Optional<Double> 	getPayroll_total() {return payroll_total;}
 	public Optional<Contingency_bases> getContingencies() {return contingencies;}
-
+	public Optional<PayrollTypes.Type> getPayrollType(){return payroll_type;}
+	
 	//BUILDER
  	public static class DefaultPayrollBuilder{
  		
@@ -75,6 +79,7 @@ public class DefaultPayroll {
  	 	private Optional <Double> accrual_total;
  	 	private Optional <Double> deduction_total;
  	 	private Optional <Double> payroll_total;
+ 	 	private Optional <PayrollTypes.Type> payroll_type;
  	 	
  	 	private Optional <Contingency_bases> contingencies;
 
@@ -158,7 +163,10 @@ public class DefaultPayroll {
 			this.contingencies = contingencies; 
 			return this;
 		}
-		
+		public DefaultPayrollBuilder setPayrollType(Optional<PayrollTypes.Type> payroll_type) {
+			this.payroll_type = payroll_type;
+			return this;
+		}
 		
 		//BUILD A DEFAULT PAYROLL
 		public DefaultPayroll build() {

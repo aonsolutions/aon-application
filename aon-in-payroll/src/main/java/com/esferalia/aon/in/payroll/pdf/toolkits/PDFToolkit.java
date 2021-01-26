@@ -38,7 +38,7 @@ public class PDFToolkit {
 	public final static Color BLUE = new Color(0x3a5b9e);
 	public final static Color RED = new Color(0xf44336);
 	public final static Color GREEN = new Color(0xf2f2f2);
-	public final static Color LIGHT_GRAY = new Color(0xf8f8f8);
+	public final static Color LIGHT_GRAY = new Color(0xf1f1f1);
 
 	public final static DecimalFormat df = new DecimalFormat("0.00");
 
@@ -268,13 +268,6 @@ public class PDFToolkit {
 		}
 		
 		return new float[] {width,height};
-	}
-	
-	public static void main(String[] args) {
-		
-		float[] size = reescale(1920, 1080, 800, 600);
-		System.out.print(size[0] + " / " + size[1]);
-		
 	}
 	
 	//BYTE ARRAY TO IMAGE

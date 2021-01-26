@@ -39,7 +39,7 @@ public class PayrollBundle  extends ListResourceBundle{
 	        { "CONTINGENCIAS COMUNES", "Contingencias comunes" },
 	        { "IMPORTE DE REMUNERACION MENSUAL", "Importe de remuneración mensual" },
 	        { "IMPORTE PRORRATA DE PAGA EXTRAORDINARIA", "Importe prorrata de paga extraordinaria" },
-	        { "CONTINGENCIAS PROFESIONALES Y CONCEPTOS DE RECAUDACION CONJUNTA", "Contingencias_profesionales_y_conceptos_recaudación_conjunta" },
+	        { "CONTINGENCIAS PROFESIONALES Y CONCEPTOS DE RECAUDACION CONJUNTA", "Contingencias profesionales y conceptos recaudación conjunta" },
 	        { "AT Y EP", "AT y EP" },
 	        { "DESEMPLEO", "Desempleo" },
 	        { "FORMACION PROFESIONAL", "Formación profesional" },

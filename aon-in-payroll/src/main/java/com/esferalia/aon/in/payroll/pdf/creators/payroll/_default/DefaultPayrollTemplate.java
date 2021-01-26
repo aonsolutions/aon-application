@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -29,6 +30,8 @@ import com.esferalia.aon.in.payroll.pdf.toolkits.PDFToolkit;
 
 public class DefaultPayrollTemplate {
 
+	static float fontSize = 9f;
+	
 	String filename = "./payroll.pdf";
 	float limit;
 	PDPageContentStream contents;
@@ -36,18 +39,21 @@ public class DefaultPayrollTemplate {
 	PDDocument doc;
 	DefaultPayroll payroll;
 	Optional<InputStream> logo;
-
+	Locale lang;
+	
 	float x;
 	float y;
 	ResourceBundle words;
 
 	// PRINT THE PDF
-	public static void print(String out, DefaultPayroll payroll, Optional<InputStream> logo)
-			throws CanNotCreatePdfException {
+	public static void print(String out, DefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException {
 		try (PDDocument doc = new PDDocument()) {
 
+			
+			
 			DefaultPayrollTemplate template = new DefaultPayrollTemplate();
-			template.words = ResourceBundle.getBundle("com.esferalia.aon.in.payroll.pdf.creators.payroll._default.bundles.PayrollBundle",new Locale("Es"));
+			template.lang = language.orElse(new Locale("Es"));
+			template.words = ResourceBundle.getBundle("com.esferalia.aon.in.payroll.pdf.creators.payroll._default.bundles.PayrollBundle",template.lang);
 
 			template.filename = out;
 			template.limit = 800;
@@ -69,7 +75,7 @@ public class DefaultPayrollTemplate {
 
 			if (jump) {
 				draw_accruals(template);
-				PDFToolkit.drawBorderedBox(template.contents, 22, 20, 550, 678, PDFToolkit.LIGHT_GRAY);
+				PDFToolkit.drawBorderedBox(template.contents, 10, 10, 575, 695, PDFToolkit.LIGHT_GRAY);
 				template.contents.close();
 
 				page = PDFToolkit.createVerticalPage();
@@ -77,14 +83,14 @@ public class DefaultPayrollTemplate {
 				template.contents = new PDPageContentStream(doc, page);
 
 				draw_header(template);
-				PDFToolkit.drawBorderedBox(template.contents, 22, 220, 550, 478, PDFToolkit.LIGHT_GRAY);
+				PDFToolkit.drawBorderedBox(template.contents, 10, 220, 575, 483, PDFToolkit.LIGHT_GRAY);
 				template.y -= 15;
 
 				draw_deductions(template);
 				draw_footer(template);
 
 			} else {
-				PDFToolkit.drawBorderedBox(template.contents, 22, 220, 550, 480, PDFToolkit.LIGHT_GRAY);
+				PDFToolkit.drawBorderedBox(template.contents, 10, 220, 575, 480, PDFToolkit.LIGHT_GRAY);
 				draw_accruals(template);
 				draw_deductions(template);
 				draw_footer(template);
@@ -92,15 +98,14 @@ public class DefaultPayrollTemplate {
 
 			template.contents.close();
 			doc.save(new File(template.filename));
-
 		} catch (Exception e) {throw new CanNotCreatePdfException(e);}
 	}
 
 	// DRAW THE HEADER
 	public static void draw_header(DefaultPayrollTemplate template) throws IOException {
 
-		template.x = 32;
-		template.y = 780;
+		template.x = 20;
+		template.y = 795;
 		String date_format = template.words.getString("FORMATO FECHA");
 		
 		//HEADER CONTENT
@@ -122,42 +127,42 @@ public class DefaultPayrollTemplate {
 		
 		
 		//BUILDING THE HEADER
-		PDFToolkit.drawBorderedBox(template.contents,template.x - 10,template.y - 75, 550, 110,PDFToolkit.LIGHT_GRAY);
-		PDFToolkit.drawTextCenter(template.contents,new PDRectangle(template.x, template.y, 530, 100),title, PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, 12, 12);
+		PDFToolkit.drawBorderedBox(template.contents,template.x - 10,template.y - 85, 575, 120,PDFToolkit.LIGHT_GRAY);
+		PDFToolkit.drawTextCenter(template.contents,new PDRectangle(template.x, template.y + 4, 530, 100),title, PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, 12, 12);
 
-		template.y -= 55;
-		PDFToolkit.drawBox(template.contents, template.x, template.y, 260, 55, PDFToolkit.LIGHT_GRAY);
-		PDFToolkit.drawBox(template.contents, template.x + 270, template.y, 260, 55, PDFToolkit.LIGHT_GRAY);
+		template.y -= 60;
+		PDFToolkit.drawBox(template.contents, template.x, template.y, 275, 65, PDFToolkit.LIGHT_GRAY);
+		PDFToolkit.drawBox(template.contents, template.x + 282, template.y, 275, 65, PDFToolkit.LIGHT_GRAY);
 
-		template.y += 42.5;
+		template.y += 50;
 		template.x += 10;
-		PDFToolkit.drawText(template.contents,enterprise, template.x,template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
-		PDFToolkit.drawText(template.contents,employee,template.x + 270, template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
+		PDFToolkit.drawText(template.contents,enterprise, template.x,template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize);
+		PDFToolkit.drawText(template.contents,employee,template.x + 280, template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize);
 
-		template.y -= 12;
-		PDFToolkit.drawText(template.contents, address, template.x,template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
-		PDFToolkit.drawText(template.contents,nif, template.x + 270,template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
+		template.y -= 13.5;
+		PDFToolkit.drawText(template.contents, address, template.x,template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize);
+		PDFToolkit.drawText(template.contents,nif, template.x + 280,template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize);
 		
-		PDFToolkit.drawText(template.contents,nss,template.x + 370, template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
+		PDFToolkit.drawText(template.contents,nss,template.x + 380, template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize);
 
-		template.y -= 12;
-		PDFToolkit.drawText(template.contents, template.payroll.getAddress_2().orElse(""), template.x, template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
-		PDFToolkit.drawText(template.contents, profes_group,template.x + 270, template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
+		template.y -= 13.5;
+		PDFToolkit.drawText(template.contents, template.payroll.getAddress_2().orElse(""), template.x, template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize);
+		PDFToolkit.drawText(template.contents, profes_group,template.x + 280, template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize);
 
-		template.y -= 12;
-		PDFToolkit.drawText(template.contents,cif,template.x,template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
-		PDFToolkit.drawText(template.contents,cotiz_group,template.x + 270, template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
+		template.y -= 13.5;
+		PDFToolkit.drawText(template.contents,cif,template.x,template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize);
+		PDFToolkit.drawText(template.contents,cotiz_group,template.x + 280, template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize);
 	
 
 		template.x += 100;
-		PDFToolkit.drawText(template.contents,ccc,template.x,template.y,PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7);
-		PDFToolkit.drawText(template.contents,antiqu_date,template.x+270, template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
+		PDFToolkit.drawText(template.contents,ccc,template.x,template.y,PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize);
+		PDFToolkit.drawText(template.contents,antiqu_date,template.x+280, template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize);
 		
 
-		template.y -= 18;
+		template.y -= 25;
 		template.x -= 100;
-		PDFToolkit.drawText(template.contents, liquid_period, template.x, template.y, PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7);
-		PDFToolkit.drawText(template.contents,day_total,template.x + 270, template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
+		PDFToolkit.drawText(template.contents, liquid_period, template.x, template.y, PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize);
+		PDFToolkit.drawText(template.contents,day_total,template.x + 280, template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize);
 	}
 
 	// CHECK IF JUMPS
@@ -170,11 +175,11 @@ public class DefaultPayrollTemplate {
 
 		double sum = 0;
 
-		sum += 25;
+		sum += 20;
 		sum += accruals.get().entrySet().size() * 12;
 		sum += accruals.get().entrySet().stream().mapToDouble(entry -> entry.getValue().stream().count()).sum() * 12;
 
-		sum += 25;
+		sum += 20;
 		sum += deductions.get().entrySet().size() * 12;
 		sum += deductions.get().entrySet().stream().mapToDouble(entry -> entry.getValue().stream().count()).sum() * 12;
 
@@ -184,7 +189,7 @@ public class DefaultPayrollTemplate {
 	// DRAW ACCRUALS
 	public static void draw_accruals(DefaultPayrollTemplate template) throws IOException {
 
-		template.x = 40;
+		template.x = 25;
 		template.y = 675;
 
 		//ACCRUAL CONTENT
@@ -194,33 +199,32 @@ public class DefaultPayrollTemplate {
 		String accrual_total = PDFToolkit.to_latin_number(template.payroll.getAccrual_total().orElse(0.00));
 		
 		//BUILD THE ACCRUALS
-		PDFToolkit.drawText(template.contents, title, template.x,template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, 10);
-		PDFToolkit.drawBox(template.contents, template.x + 420, template.y - 7, 100, 20, PDFToolkit.LIGHT_GRAY);
-		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 420, template.y - 7 ,100,20), totals, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 8, 7, 7);
+		PDFToolkit.drawText(template.contents, title, template.x,template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, fontSize + 3);
+		PDFToolkit.drawBox(template.contents, template.x + 470, template.y - 7, 80, 20, PDFToolkit.LIGHT_GRAY);
+		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 450, template.y - 7 ,100,20), totals, PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize, 7, 7);
 		template.y -= 20;
 
 		Optional<Map<Integer, ArrayList<DefaultPayrollAccrual>>> accruals = template.payroll.getAccruals();
-
 		// FOR EACH ACCRUAL
-		accruals.get().entrySet().stream().forEach(m -> {
+		accruals.get().entrySet().stream().sorted(Map.Entry.<Integer, ArrayList<DefaultPayrollAccrual>>comparingByKey()).forEach(m -> {
 			try {
 				//CONTENT
 				double local_total = m.getValue().stream().mapToDouble(accrual -> accrual.getAmount().orElse(0.00)).sum();
-				String accrual_txt = m.getKey() + ". " + CraTypes.get_type(m.getKey());
+				String accrual_txt = m.getKey() + ". " + CraTypes.get_type(m.getKey(),template.lang);
 				String accrual_total_txt = PDFToolkit.to_latin_number(local_total);
 				
 				//BUILD 
-				PDFToolkit.drawText(template.contents, accrual_txt, template.x,template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, 6);
-				PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 300, template.y - 5, 100, 10), accrual_total_txt, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 6, 5, 5);
-				PDFToolkit.drawBox(template.contents, template.x, template.y - 2, 400, .2f, PDFToolkit.BLACK);
+				PDFToolkit.drawText(template.contents, accrual_txt, template.x,template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, fontSize-1);
+				PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 355, template.y - 5, 100, 10), accrual_total_txt, PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 5);
+				PDFToolkit.drawBox(template.contents, template.x, template.y - 2, 455, .2f, PDFToolkit.BLACK);
 				template.y -= 10;
 
 				m.getValue().stream().forEach(n -> {
 					try {
 						String entry_txt = PDFToolkit.to_latin_number(n.getAmount().orElse(0.00)) + " en " + n.getDescription().orElse("");
-						PDFToolkit.drawText(template.contents,entry_txt,template.x + 9, template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, 6);
+						PDFToolkit.drawText(template.contents,entry_txt,template.x + 9, template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-2);
 					} catch (IOException e) {e.printStackTrace();}
-					template.y -= 10;
+					template.y -= 10.5f;
 				});
 
 			} catch (IOException | UnknownCraException e) {e.printStackTrace();}
@@ -229,8 +233,8 @@ public class DefaultPayrollTemplate {
 		});
 
 		template.y -= 5;
-		PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 315, template.y, 200, 25),accrual_total, PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, 5);
-		PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 225, template.y, 200, 25),accrual_total_title, PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, 5);
+		PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 355, template.y, 200, 25),accrual_total, PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize, 7, 5);
+		PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 265, template.y, 200, 25),accrual_total_title, PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize, 5, 5);
 	}
 
 	// DRAW DEDUCTIONS
@@ -245,24 +249,25 @@ public class DefaultPayrollTemplate {
 		String enterprise_sign = template.words.getString("FIRMA EMPRESA").toUpperCase();
 		String employee_sign = PDFToolkit.formatDate(new Date(),template.words.getString("FIRMA TRABAJADOR")).get();
 		
+		template.x =  23.5f;
+		
 		//BUILD DEDUCTIONS
 		Optional<Map<Integer, ArrayList<DefaultPayrollDeduction>>> deductions = template.payroll.getDeductions();		
-		PDFToolkit.drawText(template.contents, title, template.x, template.y-20 ,PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, 10);
+		PDFToolkit.drawText(template.contents, title, template.x, template.y-20 ,PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, fontSize+3);
 		template.y -= 40;
 		
 		//FOR EACH DEDUCTION
-		deductions.get().entrySet().stream().forEach(m -> {	
+		deductions.get().entrySet().stream().sorted(Map.Entry.<Integer, ArrayList<DefaultPayrollDeduction>>comparingByKey()).forEach(m -> {	
 			try {
-				
 				//CONTENT
 				double local_total = m.getValue().stream().mapToDouble(accrual->accrual.getAmount().orElse(0.00)).sum();
 				String deduction_txt = m.getKey() + ". " + DeductionTypes.getType(m.getKey());
 				String deduction_total_txt = PDFToolkit.to_latin_number(local_total);
 					
 				//BUILD 
-				PDFToolkit.drawText(template.contents,deduction_txt, template.x, template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, 6);
-				PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 300, template.y - 5, 100, 10),deduction_total_txt,PDFToolkit.BLACK,PDFToolkit.HELVETICA,6,5,5);
-				PDFToolkit.drawBox(template.contents,template.x, template.y -2, 400, .2f, PDFToolkit.BLACK);
+				PDFToolkit.drawText(template.contents,deduction_txt, template.x, template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, fontSize-1);
+				PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 355, template.y - 5, 100, 10),deduction_total_txt,PDFToolkit.BLACK,PDFToolkit.HELVETICA,fontSize-2,2,5);
+				PDFToolkit.drawBox(template.contents,template.x, template.y -2, 455, .2f, PDFToolkit.BLACK);
 				
 				template.y -= 10;
 				m.getValue().stream().forEach(
@@ -271,8 +276,8 @@ public class DefaultPayrollTemplate {
 								String entry_txt =  PDFToolkit.to_latin_number(n.getAmount().orElse(0.00))+ " por " + n.getDescription().orElse("");
 								String entry_percent = PDFToolkit.to_latin_number(n.getPercent().orElse(0.00))+ " % " ;
 								
-								PDFToolkit.drawText(template.contents,entry_txt, template.x + 9, template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 6);
-								PDFToolkit.drawText(template.contents, entry_percent, template.x + 265, template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 6);
+								PDFToolkit.drawText(template.contents,entry_txt, template.x + 9, template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-2);
+								PDFToolkit.drawText(template.contents,entry_percent, template.x + 265, template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-2);
 							} catch (IOException e) {e.printStackTrace();}
 							template.y -= 10;
 						}
@@ -283,25 +288,25 @@ public class DefaultPayrollTemplate {
 			template.y -= 5;
 		});
 		
-		template.y -= 5;
-		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 315, template.y, 200, 25),deduction_total,PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, 5);
-		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 225,template.y, 200, 25),deduction_total_title,PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, 5);
+		template.y -= 8;
+		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 355, template.y, 200, 25),deduction_total,PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize, 5, 5);
+		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 265,template.y, 200, 25),deduction_total_title,PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize, 5, 5);
 		
 		if(template.logo.isPresent()) {
 			byte[] bytes =  template.logo.get().readAllBytes();
 			BufferedImage img = PDFToolkit.create_image_from_bytes(bytes);
 			float[] scales = PDFToolkit.reescale(img.getWidth(), img.getHeight(), 150, 50);
-			PDFToolkit.drawImage(template.doc, template.contents, new ByteArrayInputStream(bytes), template.x+10, template.y - 30, scales[0], scales[1]);
+			PDFToolkit.drawImage(template.doc, template.contents, new ByteArrayInputStream(bytes), template.x+5, template.y - scales[1]/2 - 10, scales[0], scales[1]);
 		}
 		
 		
-		template.y -= 30;
-		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 315, template.y, 200, 25),payroll_total,PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, 5);
-		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 225,template.y, 200, 25),payroll_total_title,PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, 5);
+		template.y -= 20;
+		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 355,template.y, 200, 25),payroll_total,PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize, 5, 5);
+		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 265,template.y, 200, 25),payroll_total_title,PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize, 5, 5);
 		
 		template.y -= 15;
-		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 315,template.y, 100, 25),enterprise_sign,PDFToolkit.BLACK,PDFToolkit.HELVETICA, 6, 5, 5);
-		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 415,template.y, 100, 25),employee_sign,PDFToolkit.BLACK,PDFToolkit.HELVETICA, 6, 5, 5);
+		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 355,template.y, 100, 25),enterprise_sign,PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize-2, 0, 5);
+		PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 455,template.y, 100, 25),employee_sign,PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize-2, 5, 5);
 	}
 
 	// DRAW FOOTER
@@ -310,7 +315,7 @@ public class DefaultPayrollTemplate {
 		Optional<Contingency_bases> contigencies = template.payroll.getContingencies();
 		if (contigencies.isPresent()) {
 			template.y = 195;
-			template.x = 37;
+			template.x = 25;
 
 			//FOOTER CONTENT
 			String title = 						template.words.getString("TITULO PIE");
@@ -363,85 +368,86 @@ public class DefaultPayrollTemplate {
 			if(irpf_esp != 0) irpf_title += PDFToolkit.to_latin_number(irpf_esp) + "\u20ac " + template.words.getString("EN ESPECIE") + " ";
 			if(irpf_ret_din != 0) irpf_title += PDFToolkit.to_latin_number(irpf_ret_din) + "\u20ac " + template.words.getString("EN RETRIBUCIONES DINERARIAS");
 			
-			PDFToolkit.drawBorderedBox(template.contents, 22, 18, 550, 195, PDFToolkit.LIGHT_GRAY);
-			PDFToolkit.drawText(template.contents,title,template.x,template.y,PDFToolkit.BLACK,PDFToolkit.HELVETICA_BOLD,8);
+			PDFToolkit.drawBorderedBox(template.contents, 10, 18, 575, 195, PDFToolkit.LIGHT_GRAY);
+			PDFToolkit.drawText(template.contents,title,template.x,template.y,PDFToolkit.BLACK,PDFToolkit.HELVETICA_BOLD,fontSize-1);
 
 			template.y -= 10;
-			PDFToolkit.drawText(template.contents,title_2,template.x,template.y,PDFToolkit.BLACK,PDFToolkit.HELVETICA_BOLD,8);
+			PDFToolkit.drawText(template.contents,title_2,template.x,template.y,PDFToolkit.BLACK,PDFToolkit.HELVETICA_BOLD,fontSize-1);
 
 			template.y -= 27;
-			PDFToolkit.drawBox(template.contents,template.x + 450,template.y,70,20,PDFToolkit.LIGHT_GRAY);
-			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 450,template.y, 70,20),ap_ent,PDFToolkit.BLACK,PDFToolkit.HELVETICA,7,5,7);
+			PDFToolkit.drawBox(template.contents,template.x + 480,template.y,70,20,PDFToolkit.LIGHT_GRAY);
+			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 480,template.y, 70,20),ap_ent,PDFToolkit.BLACK,PDFToolkit.HELVETICA,fontSize-1,5,7);
 
-			PDFToolkit.drawBox(template.contents,template.x + 378,template.y,70,20,PDFToolkit.LIGHT_GRAY);
-			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 378,template.y, 70,20),type,PDFToolkit.BLACK,PDFToolkit.HELVETICA,7,5,7);
+			PDFToolkit.drawBox(template.contents,template.x + 408,template.y,70,20,PDFToolkit.LIGHT_GRAY);
+			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 408,template.y, 70,20),type,PDFToolkit.BLACK,PDFToolkit.HELVETICA,fontSize-1,5,7);
 
-			PDFToolkit.drawBox(template.contents,template.x + 306,template.y,70,20,PDFToolkit.LIGHT_GRAY);
-			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 306,template.y, 70,20),base,PDFToolkit.BLACK,PDFToolkit.HELVETICA,7,5,7);
+			PDFToolkit.drawBox(template.contents,template.x + 336,template.y,70,20,PDFToolkit.LIGHT_GRAY);
+			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 336,template.y, 70,20),base,PDFToolkit.BLACK,PDFToolkit.HELVETICA,fontSize-1,5,7);
 			
-			PDFToolkit.drawText(template.contents,common_contingencies_title,template.x,template.y,PDFToolkit.BLACK,PDFToolkit.HELVETICA_BOLD, 7);
+			PDFToolkit.drawText(template.contents,common_contingencies_title,template.x,template.y,PDFToolkit.BLACK,PDFToolkit.HELVETICA_BOLD, fontSize-1);
 
 			template.y -= 12;
 			template.x += 15;
-			PDFToolkit.drawText(template.contents,monthly_ammount_title, template.x,template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA,7);
-			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 215,template.y, 70, 70),monthly_ammount,PDFToolkit.BLACK,PDFToolkit.HELVETICA,7,5,1);
+			PDFToolkit.drawText(template.contents,monthly_ammount_title, template.x,template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA,fontSize-1);
+			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 215,template.y, 70, 70),monthly_ammount,PDFToolkit.BLACK,PDFToolkit.HELVETICA,fontSize-1,5,1);
 			
-			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 290,template.y - 5, 70, 70),comm_cont_base,PDFToolkit.BLACK,PDFToolkit.HELVETICA,7,5,1);
-			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 362,template.y - 5, 70, 70),comm_cont_type,PDFToolkit.BLACK,PDFToolkit.HELVETICA,7,5,1);
-			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 434,template.y - 5, 70, 70),comm_cont_ap_ent,PDFToolkit.BLACK,PDFToolkit.HELVETICA,7,5,1);
+			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 322,template.y - 5, 70, 70),comm_cont_base,PDFToolkit.BLACK,PDFToolkit.HELVETICA,fontSize-1,5,1);
+			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 396,template.y - 5, 70, 70),comm_cont_type,PDFToolkit.BLACK,PDFToolkit.HELVETICA,fontSize-1,5,1);
+			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 465,template.y - 5, 70, 70),comm_cont_ap_ent,PDFToolkit.BLACK,PDFToolkit.HELVETICA,fontSize-1,5,1);
 
 			template.y -= 10;
-			PDFToolkit.drawText(template.contents,extra_h_prorration_title,template.x, template.y,PDFToolkit.BLACK,PDFToolkit.HELVETICA,7);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 215, template.y, 70, 70),extra_prorration_amount,PDFToolkit.BLACK,PDFToolkit.HELVETICA,7,5,1);
+			PDFToolkit.drawText(template.contents,extra_h_prorration_title,template.x, template.y,PDFToolkit.BLACK,PDFToolkit.HELVETICA,fontSize-1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 215, template.y, 70, 70),extra_prorration_amount,PDFToolkit.BLACK,PDFToolkit.HELVETICA,fontSize-1,5,1);
 
 			template.y -= 12;
 			PDFToolkit.drawText(template.contents,prof_contingencies_title,template.x-15,template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, 7);
 
 			template.y -= 12;
-			PDFToolkit.drawText(template.contents,at_ep_title,template.x,template.y, PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 362, template.y - 5, 70, 70),at_ep_type, PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7, 5, 1);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 434, template.y - 5, 70, 70),at_ep_ap_ent,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
+			PDFToolkit.drawText(template.contents,at_ep_title,template.x,template.y, PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize-1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 396, template.y - 5, 70, 70),at_ep_type, PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize-1, 5, 1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 465, template.y - 5, 70, 70),at_ep_ap_ent,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
 
 			template.y -= 10;
-			PDFToolkit.drawText(template.contents,unemployment_title, template.x, template.y, PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 362, template.y - 5, 70, 70),unemployment_type,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 434, template.y - 5, 70, 70),unemployment_ap_ent,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
+			PDFToolkit.drawText(template.contents,unemployment_title, template.x, template.y, PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize-1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 396, template.y - 5, 70, 70),unemployment_type,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 465, template.y - 5, 70, 70),unemployment_ap_ent,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
 
 			template.y -= 10;
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 290, template.y, 70, 70),prof_contingencies_base,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
-			PDFToolkit.drawText(template.contents,profes_form_title, template.x, template.y, PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 362, template.y - 5, 70, 70),profes_form_type,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 434, template.y - 5, 70, 70),profes_form_ap_ent,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 322, template.y, 70, 70),prof_contingencies_base,PDFToolkit.BLACK, PDFToolkit.HELVETICA,fontSize-1, 5, 1);
+			PDFToolkit.drawText(template.contents,profes_form_title, template.x, template.y, PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize-1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 396, template.y - 5, 70, 70),profes_form_type,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 465, template.y - 5, 70, 70),profes_form_ap_ent,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
 
 			template.y -= 10;
-			PDFToolkit.drawText(template.contents,fogasa_title, template.x, template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 362, template.y - 5, 70, 70),fogasa_type,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 434, template.y - 5, 70, 70),fogasa_ap_ent,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
+			PDFToolkit.drawText(template.contents,fogasa_title, template.x, template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 396, template.y - 5, 70, 70),fogasa_type,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 465, template.y - 5, 70, 70),fogasa_ap_ent,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
 
 			template.y -= 12;
-			PDFToolkit.drawText(template.contents,extra_hours_title, template.x-15,template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, 7);
+			PDFToolkit.drawText(template.contents,extra_hours_title, template.x-15,template.y, PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, fontSize-1);
 
 			template.y -= 12;
-			PDFToolkit.drawText(template.contents, force_majeure_title, template.x, template.y, PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 290, template.y - 5, 70, 70),force_majeure_base,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 362, template.y - 5, 70, 70),force_majeure_type,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 434, template.y - 5, 70, 70),force_majeure_ap_ent,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
+			PDFToolkit.drawText(template.contents, force_majeure_title, template.x, template.y, PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize-1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 322, template.y - 5, 70, 70),force_majeure_base,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 396, template.y - 5, 70, 70),force_majeure_type,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 465, template.y - 5, 70, 70),force_majeure_ap_ent,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
 
 			template.y -= 10;
-			PDFToolkit.drawText(template.contents,no_struct_title, template.x, template.y, PDFToolkit.BLACK,PDFToolkit.HELVETICA, 7);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 290, template.y - 5, 70, 70),no_struct_base,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 362, template.y - 5, 70, 70),no_struct_type,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
-			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 434, template.y - 5, 70, 70),no_struct_ap_ent,PDFToolkit.BLACK, PDFToolkit.HELVETICA, 7, 5, 1);
+			PDFToolkit.drawText(template.contents,no_struct_title, template.x, template.y, PDFToolkit.BLACK,PDFToolkit.HELVETICA, fontSize-1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 322, template.y - 5, 70, 70),no_struct_base,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 396, template.y - 5, 70, 70),no_struct_type,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
+			PDFToolkit.drawTextRight(template.contents, new PDRectangle(template.x + 465, template.y - 5, 70, 70),no_struct_ap_ent,PDFToolkit.BLACK, PDFToolkit.HELVETICA, fontSize-1, 5, 1);
 
 			template.y -= 20;
 			template.x -= 15;
-			PDFToolkit.drawText(template.contents,irpf_title,template.x,template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, 6.5f);
-			PDFToolkit.drawBox(template.contents,template.x, template.y -2, 372, .2f, PDFToolkit.BLACK);
-			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 275, template.y - 5, 100, 10),total_irpf,PDFToolkit.BLACK,PDFToolkit.HELVETICA,6,5,5);
-			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 417, template.y - 5, 30, 10),total_contingencies_title,PDFToolkit.BLACK,PDFToolkit.HELVETICA_BOLD,6.5f,5,5);
-			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 487, template.y - 5, 30, 10),total_contingencies_amount,PDFToolkit.BLACK,PDFToolkit.HELVETICA_BOLD,6.5f,3,5);
+			PDFToolkit.drawText(template.contents,irpf_title,template.x,template.y,PDFToolkit.BLACK, PDFToolkit.HELVETICA_BOLD, fontSize-2);
+			PDFToolkit.drawBox(template.contents,template.x, template.y -2, 405, .2f, PDFToolkit.BLACK);
+			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 308, template.y - 5, 100, 10),total_irpf,PDFToolkit.BLACK,PDFToolkit.HELVETICA,fontSize-2,5,5);
+			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 451, template.y - 5, 30, 10),total_contingencies_title,PDFToolkit.BLACK,PDFToolkit.HELVETICA_BOLD,6.5f,5,5);
+			PDFToolkit.drawTextRight(template.contents,new PDRectangle(template.x + 517, template.y - 5, 30, 10),total_contingencies_amount,PDFToolkit.BLACK,PDFToolkit.HELVETICA_BOLD,6.5f,3,5);
 			
 
 		}
 	}
+
 }

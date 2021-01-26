@@ -5,8 +5,10 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -21,24 +23,24 @@ import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultP
 
 public class DetailedPayrollTest {
 
+	
 	@Test
-	public void printTest() {
+	public void random_print_test() {
 		DefaultPayrollBuilder builder = new DefaultPayrollBuilder();
-		
 		
 		//CREATE ACCRUALS
 		Map<Integer,ArrayList<DefaultPayrollAccrual>> ac = new HashMap<Integer,ArrayList<DefaultPayrollAccrual>>();
 		
-		ac.put(1,new ArrayList<DefaultPayrollAccrual>());
-		ac.put(2,new ArrayList<DefaultPayrollAccrual>());
-		ac.put(4,new ArrayList<DefaultPayrollAccrual>());
+		for(int i = 0; i < random(5); i++) ac.put((int) random(61),new ArrayList<DefaultPayrollAccrual>());
+		Set<Integer> keys = ac.keySet();
 		
-		for (int i = 0; i < 5; i++) {
-			DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(Optional.of(999999999.99),Optional.of("Descripcion por defecto."));
-			ac.get(1).add(accrual);
-			ac.get(2).add(accrual);
-			ac.get(4).add(accrual);
+		for(Integer key : keys) {
+			for (int i = 0; i < random(10); i++) {
+				DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(Optional.of(999999999.99),Optional.of("Descripcion por defecto."));
+				ac.get(key).add(accrual);
+			}
 		}
+		
 		
 		///CREATE DEDUCTIONS
 		Map<Integer,ArrayList<DefaultPayrollDeduction>> de = new HashMap<Integer,ArrayList<DefaultPayrollDeduction>>();
@@ -49,20 +51,19 @@ public class DetailedPayrollTest {
 		de.put(4,new ArrayList<DefaultPayrollDeduction>());
 		de.put(5,new ArrayList<DefaultPayrollDeduction>());
 		
-		for (int i = 0; i < 2; i++) {
-			
-			DefaultPayrollDeduction deduction =
-					new DefaultPayrollDeduction(
-							Optional.of(999999999.99),
-							Optional.of("Descripcion por defecto"),
-							Optional.of(99.99)
-					);
-			de.get(1).add(deduction);
-			de.get(2).add(deduction);
-			de.get(3).add(deduction);
-			de.get(4).add(deduction);
-			
+		keys = de.keySet();
+		for(Integer key : keys) {
+			for (int i = 0; i < random(3); i++) {
+				DefaultPayrollDeduction deduction =
+						new DefaultPayrollDeduction(
+								Optional.of(999999999.99),
+								Optional.of("Descripcion por defecto"),
+								Optional.of(99.99)
+						);
+				de.get(key).add(deduction);
+			}
 		}
+		
 		
 		//CREATE CONTIGENCIES
 		Contingency_bases_builder con_builder = new Contingency_bases_builder();
@@ -114,13 +115,14 @@ public class DetailedPayrollTest {
 		.setPayroll_total(Optional.of(999999999.99))
 		.setContingencies(Optional.of(con_builder.build()));
 		
-		try { PdfMaker.print_default_payroll("payroll.pdf", builder.build(), Optional.of(DetailedPayrollTest.class.getResourceAsStream("logo.png")));} 
+		try { PdfMaker.print_default_payroll("payrollRandom.pdf", builder.build(), Optional.of(DetailedPayrollTest.class.getResourceAsStream("logo.png")),Optional.of(new Locale("Es")));} 
 		catch (CanNotCreatePdfException e) {
 			e.printStackTrace(); 
 			fail("Can not create the payroll");
 		}
 		
 	}
+	
 
 	//RANDOM BETWEEN 0 AND Y
 	public double random(double y){
