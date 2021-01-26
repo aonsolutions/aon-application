@@ -2007,8 +2007,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			}
 			
 			AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
-			AgreementDraft.this.calculate();
 		}
+		AgreementDraft.this.calculate();
 	}
 
 	// ------------------------------------------------------------------------
@@ -3005,7 +3005,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 						public void onValueChange(ValueChangeEvent<String> event) {
 							if(event.getValue().length() == 0) {
 								extra.setIssueDate("REMOVE()");
+								payment.setMonth(null);
 								AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
+								AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
 								AgreementDraft.this.calculate();
 							}else {
 								extra.setIssueDate(event.getValue());
