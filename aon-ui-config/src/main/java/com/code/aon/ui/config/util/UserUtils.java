@@ -52,6 +52,10 @@ public class UserUtils implements Serializable {
 	}
 
 
+	public boolean isWithOutTopSearch() {
+		return getLoggedUser().getToolbar() == Toolbar.ACENS;
+	}
+
 	public boolean isNewAONTheme() {
 		return getLoggedUser().getToolbar() == Toolbar.AON_SOLUTIONS;
 	}

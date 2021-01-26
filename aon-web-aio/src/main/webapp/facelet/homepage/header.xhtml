@@ -352,6 +352,7 @@
 			
 		
 			<aon:panelGroup style="text-align:left" >
+				<aon:if test="#{!userUtils.withOutTopSearch}">
 				<aon:form id="smartFilterForm">
 					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" >
 						<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
@@ -452,6 +453,7 @@
 					</aon:div>
 	
 				</aon:form>
+				</aon:if>
 			</aon:panelGroup>
 					
 			<aon:div styleClass="aon-width-all aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
