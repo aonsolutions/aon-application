@@ -3,10 +3,10 @@ package com.esferalia.aon.gwt.fiscal.client.finance;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.PayMethodListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -40,16 +40,16 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 	
 	private FlowPanel paymentPanel; 
 	
-	private DateBoxEx fromInvoiceDate;
-	private DateBoxEx toInvoiceDate;
+	private AonDateBox fromInvoiceDate;
+	private AonDateBox toInvoiceDate;
 	
-	private DateBoxEx fromDueDate;
-	private DateBoxEx toDueDate;
+	private AonDateBox fromDueDate;
+	private AonDateBox toDueDate;
 	
 	private ListBox confidential;
 	private ListBox payment;
-	private AccountingRegistryBox registryBox;
-	private DoubleBox amount;
+	private AonAccountingRegistryBox registryBox;
+	private AonDoubleBox amount;
 	private CheckBox nearbyNumbers;
 	private TextBox concept;
 	private TextBox referenceCode;
@@ -77,7 +77,7 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 		addStyleName(AON.CSS.aonMarginRight());
 		addStyleName(AON.CSS.aonBlockCenter());
 
-		amount = new DoubleBox();
+		amount = new AonDoubleBox();
 		amount.setVisibleLength(6);
 		amount.setValue(null,false);
 		amount.addValueChangeHandler(new ValueChangeHandler<Double>() {
@@ -108,7 +108,7 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 			}
 		});
 
-		fromInvoiceDate = new DateBoxEx();
+		fromInvoiceDate = new AonDateBox();
 		fromInvoiceDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
@@ -117,7 +117,7 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 			}
 		});
 		
-		toInvoiceDate = new DateBoxEx();
+		toInvoiceDate = new AonDateBox();
 		toInvoiceDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
@@ -126,7 +126,7 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 			}
 		});
 		
-		fromDueDate = new DateBoxEx();
+		fromDueDate = new AonDateBox();
 		fromDueDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
@@ -135,7 +135,7 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 			}
 		});
 		
-		toDueDate = new DateBoxEx();
+		toDueDate = new AonDateBox();
 		toDueDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
@@ -224,7 +224,7 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 		});
 		
 
-		registryBox = new AccountingRegistryBox(opt.getDomainName(),opt.getDomain(),opt.getUser(), opt.getConfiguration(), true);
+		registryBox = new AonAccountingRegistryBox(opt.getDomainName(),opt.getDomain(),opt.getUser(), opt.getConfiguration(), true);
 		registryBox.setRequired(false);
 		
 		registryBox.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
