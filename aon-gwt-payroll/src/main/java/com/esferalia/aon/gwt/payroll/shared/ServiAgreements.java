@@ -11,6 +11,7 @@ public class ServiAgreements implements Serializable {
 	static {
 		Map<String, String> serviAgreementsMap = new HashMap<String, String>();
 		
+		serviAgreementsMap.put("00000000000000 - AON SOLUTIONS CONVENIO GENERAL",  "c0000000");
 		serviAgreementsMap.put("28001055011982 - CONVENIO COLECTIVO DE CONSTRUCCION Y OBRAS PUBLICAS DE MADRID",  "c0000001");
 		serviAgreementsMap.put("28001175011982 - CONVENIO COLECTIVO DE DERIVADOS DEL CEMENTO DE MADRID",  "c0000002");
 		serviAgreementsMap.put("99004975011981 - CONVENIO COLECTIVO GENERAL DE LA INDUSTRIA TEXTIL Y DE LA CONFECCION",  "c0000023");

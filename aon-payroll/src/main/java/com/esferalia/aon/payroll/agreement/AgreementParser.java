@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -57,12 +58,14 @@ import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.agreement.Agreement.AgreementLevel;
 import com.esferalia.aon.payroll.agreement.Agreement.AgreementLevelData;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AgreementParser {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 	private static Integer DOMAIN = 0;
 	
 	private static List<String> agreementCodes = new ArrayList<String>() {{
+		add("c0000000");
 		add("c0000001");
 		add("c0000002");
 		add("c0000023");
@@ -96,21 +99,27 @@ public class AgreementParser {
 		put("SALARIO_BASE_ANUAL_ANUAL", "SALARIO_ANUAL");
 		put("SALARIO_CONVENIO_MENSUAL", "SALARIO_MENSUAL");
 		put("SALARIO_BASE_MENSUAL", "SALARIO_MENSUAL");
-		put("SALARIO_CONVENIO_HORAS", "SALARIO_DIARIO");
-		put("SALARIO_HORA_HORAS", "SALARIO_DIARIO");
-		put("SALARIO_BASE_HORAS", "SALARIO_DIARIO");
+		put("SALARIO_CONVENIO_HORAS", "SALARIO_HORA");
+		put("SALARIO_HORA_HORAS", "SALARIO_HORA");
+		put("SALARIO_BASE_HORAS", "SALARIO_HORA");
 		put("SALARIO_CONVENIO_DIARIO", "SALARIO_DIARIO");
 		put("SALARIO_BASE_DIARIO", "SALARIO_DIARIO");
+		put("SALARIO_BASE_MINIMO", "PORC_SALARIO");
 		put("PLUS_CONVENIO_ANUAL", "PLUS_CONVENIO_ANUAL");
-		put("PLUS_CONVENIO_MENSUAL", "PLUS_CONVENIO_MENSUAL");
+		put("PLUS_CONVENIO_MENSUAL", "PLUS_CONVENIO");
 		put("COMPLEMENTO_CONVENIO_MENSUAL", "PLUS_CONVENIO_MENSUAL");
 		put("PLUS_CONVENIO_HORAS", "PLUS_CONVENIO_HORAS");
 		put("COMPLEMENTO_CONVENIO_DIARIO", "PLUS_CONVENIO_DIARIO");
+		put("PLUS_SALARIAL_DIARIO", "PLUS_DIARIO");
+		put("PLUS_SALARIAL_DIARIO_LABORAL", "PLUS_LABORABLES");
+		put("PLUS_SALARIAL_FIJO", "PLUS_FIJO");
 		put("PLUS_EXTRA_CATEGORIA_ANUAL", "PLUS_EXTRA_CATEGORIA_A");
 		put("PLUS_ACTIVIDAD_MENSUAL", "PLUS_ACTIVIDAD_MENSUAL");
 		put("PLUS_ACTIVIDAD_DIARIO", "PLUS_ACTIVIDAD_DIARIO");
-		put("PLUS_EXTRASALARIAL_MENSUAL", "PLUS_EXTRA_SALARIAL");
-		put("PLUS_EXTRASALARIAL_DIARIO", "PLUS_EXTRA_SALARIAL");
+		put("PLUS_EXTRASALARIAL_MENSUAL", "PLUS_XS_MENSUAL");
+		put("PLUS_EXTRASALARIAL_DIARIO", "PLUS_XS_DIARIO");
+		put("PLUS_EXTRASALARIAL_DIARIO_LABORAL", "PLUS_XS_LABORABLES");
+		put("PLUS_EXTRASALARIAL_FIJO", "PLUS_XS_FIJO");
 		put("PLUS_VESTUARIO_MENSUAL", "PLUS_VESTUARIO");
 		put("PLUS_ROTACION_MENSUAL", "PLUS_ROTACION");
 		put("PLUS_DISTANCIA_MENSUAL", "PLUS_DISTANCIA_M");
@@ -146,6 +155,9 @@ public class AgreementParser {
 		put("HORA_EXTRA_3_QUINQUENIO_HORAS", "H_E_3_QUINQUENIO");
 		put("HORA_EXTRA_4_QUINQUENIO_HORAS", "H_E_4_QUINQUENIO");
 		put("VACACIONES_MENSUAL", "VACACIONES_MENSUAL");
+		put("GASTOS_PECNORTA_DIARIO", "IMPORTE_PERNOCTA");
+		put("GASTOS_MANUTENCION_DIARIO", "IMPORTE_MANUTENCION");
+		put("GASTOS_LOCOMOCION_SIN_JUSTIFICANTE", "IMPORTE_KM");
 		put("DIETA_COMPLETA_DIARIO", "DIETA_COMPLETA");
 		put("DIETA_COMPLETA_DESPL_MAS_100KMS_DIARIO", "DIETA_COMPLETA_G_100");
 		put("DIETA_COMPLETA_DESPL_MENOS_100KMS_DIARIO", "DIETA_COMPLETA_L_100");
@@ -169,11 +181,14 @@ public class AgreementParser {
 		put("BIENIOS_MENSUAL", "BIENIOS_MENSUAL");
 		put("P_C_I__MENSUAL", "PCI_MENUSAL");
 		put("DIETA_KILOMETRAJE_HORAS", "DIETA_KILOMETRAJE_H");
+		put("RETRIBUCION_ESPECIE", "RETRIBUCION_ESPECIE");
+		put("COMPLEMENTO_PERSONAL_ANTIGUEDAD", "IMPORTE_ANTIGUEDAD");
 	}};
 	
 	public static String getAgreement(DSLContext dslContext, String agreementCode, Integer domainId) {
 		DOMAIN = domainId;
 		String log = "";
+		Map<String, String> varNotInsertMap = new HashMap<String, String>();
 		InputStream is = AgreementParser.class.getResourceAsStream(agreementCode + ".xml");
 		
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -195,16 +210,23 @@ public class AgreementParser {
 			// Agreement levels data
 			getAgreementLevelData(dslContext, document, agreement);
 			
-//			System.out.println(agreement.toString());
-			
 			// Insert Agreement to DataBase
-			Map<String, String> varNotInsertMap = insertAgreementDB(dslContext, agreement);
+			varNotInsertMap = insertAgreementDB(dslContext, agreement);
 			
 //			System.out.println("serviAgreementsMap.put(\"" + agreement.getSSCode() + " - " + agreement.getAgreementDescription().toUpperCase() + "\",  \"" + agreement.getServiAgreementCode() + "\");"  );
-			
-//			PrintWriter out = new PrintWriter(new File("/Users/sergio/Desktop/ParseAgreement_NotValidVars.txt"));
+//			
+//			PrintWriter out = new PrintWriter(new File("/Users/sergio/Desktop/ParseAgreement.txt"));
 //			out.write(agreement.toString());
 //			out.close();
+			
+			if(!varNotInsertMap.isEmpty()) {
+				log += agreement.getSSCode() + " - " + agreement.getAgreementDescription().toUpperCase() + "\",  \"" + agreement.getServiAgreementCode() + "\n";
+				log += "---------------------------------- VAR NOT INSERT ---------------------------------- \n";
+				for(Entry<String, String> entry: varNotInsertMap.entrySet())
+					log += entry.getKey() + " -- " + entry.getValue() + "\n";
+				
+				return log;
+			}
 			
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -402,7 +424,7 @@ public class AgreementParser {
 				   	    	            AgreementLevel agreementLevel = agreement.getAgreementLevel(description, category);
 			   	    	            	
 			   	    	            	Node nodeConcept = elementCPI.getElementsByTagName("CONCEPTOS").item(0);
-			   	    	            	if (nodeConcept.getNodeType() == Node.ELEMENT_NODE) {
+			   	    	            	if (null != nodeConcept && nodeConcept.getNodeType() == Node.ELEMENT_NODE) {
 			   	    	            		Element elementConcept = (Element) nodeConcept;
 			   	    	            		
 			   	    	            		NodeList listCPTO = elementConcept.getElementsByTagName("CPTO_IT");
@@ -563,7 +585,7 @@ public class AgreementParser {
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 			.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
 			.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE+PLUS_SALARIAL")
-			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[92] PAGA VERANO")
+			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[90] PAGA VERANO")
 			.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(agreement.getStartDate()))
 			.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
@@ -589,7 +611,7 @@ public class AgreementParser {
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 			.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
 			.set(AGREEMENT_PAYMENT.EXPRESSION, "SALARIO_BASE+PLUS_SALARIAL")
-			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[93] PAGA NAVIDAD")
+			.set(AGREEMENT_PAYMENT.DESCRIPTION, "[91] PAGA NAVIDAD")
 			.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(agreement.getStartDate()))
 			.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 			.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
@@ -742,12 +764,16 @@ public class AgreementParser {
 //			getAgreement(dslContext, agreementCode);
 			
 			String log = "";
-			for(String agreementCodeAux : agreementCodes)
-				log += getAgreement(dslContext, agreementCodeAux, Integer.parseInt(domainIdStr));
+			log += getAgreement(dslContext, agreementCode, Integer.parseInt(domainIdStr));
+//			for(String agreementCodeAux : agreementCodes)
+//				log += getAgreement(dslContext, agreementCodeAux, Integer.parseInt(domainIdStr));
 			
-			PrintWriter out = new PrintWriter(new File("/Users/sergio/Desktop/ParseAgreement_NotValidVars.txt"));
-			out.write(log);
-			out.close();
+			if(AonStringUtils.isNotBlank(log)) {
+				PrintWriter out = new PrintWriter(new File("/Users/sergio/Desktop/ParseAgreement_NotValidVars.txt"));
+				out.write(log);
+				out.close();
+			}
+			
 
 		} catch (ClassNotFoundException | SQLException | org.apache.commons.cli.ParseException | FileNotFoundException e) {
 			System.err.println("Parsing failed.  Reason: " + e.getMessage());
