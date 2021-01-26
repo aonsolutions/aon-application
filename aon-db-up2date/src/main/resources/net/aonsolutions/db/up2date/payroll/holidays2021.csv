@@ -1,0 +1,180 @@
+ description                     ,Año,Mes,Día, description                                            
+ Fiestas ESTATALES               ,2021,1,1, Año Nuevo                                              
+ Fiestas ESTATALES               ,2021,1,6, Epifanía del Señor                                     
+ Fiestas ESTATALES               ,2021,4,2, Viernes Santo                                          
+ Fiestas ESTATALES,2021,5,1,Fiesta del Trabajo
+ Fiestas ESTATALES               ,2021,10,12, Fiesta Nacional de España                              
+ Fiestas ESTATALES               ,2021,11,1, Todos los Santos                                       
+ Fiestas ESTATALES               ,2021,12,6, Día de la Constitución Española                        
+ Fiestas ESTATALES               ,2021,12,8, La Inmaculada Concepción                               
+ Fiestas ESTATALES,2021,12,25,Natividad del Señor
+ Festivos ANDALUCIA              ,2021,5,1,Día del trabajo
+ Festivos ANDALUCIA              ,2021,3,1, Día de Andalucía                                       
+ Festivos ANDALUCIA              ,2021,4,1, Jueves Santo                                           
+ Festivos ANDALUCIA              ,2021,8,16,Asunción de la Virgen
+ Festivos PAÍS VASCO             ,2021,3,19,San José
+ Festivos PAÍS VASCO             ,2021,4,1,Jueves Santo
+ Festivos PAÍS VASCO             ,2021,4,5,Lunes de Pascua
+ Festivos ARAGÓN                 ,2021,5,1,Fiesta del Trabajo
+ Festivos ARAGÓN              ,2021,4,1, Jueves Santo                                           
+ Festivos ARAGÓN                 ,2021,4,23," San Jorge,  Día de Aragón       "
+ Festivos ARAGÓN                 ,2021,8,16,15 de agosto
+ Festivos ASTURIAS               ,2021,5,1,Fiesta del Trabajo
+ Festivos ASTURIAS            ,2021,4,1, Jueves Santo                                           
+ Festivos ASTURIAS               ,2021,9,8, Día de Asturias                                        
+ Festivos ASTURIAS               ,2021,8,16,Asunción de la Virgen
+ Festivos VITORIA-GASTEIZ        ,2021,4,28, San Prudencio                                          
+ Festivos VITORIA-GASTEIZ        ,2021,8,5,Virgen Blanca
+ Festivos BALEARES               ,2021,3,1,Dia de las Islas Baleares
+ Festivos BALEARES               ,2021,3,24, Jueves Santo                                           
+ Festivos BALEARES               ,2021,3,29, Lunes de Pascua                                        
+ Festivos BALEARES               ,2021,4,1,Jueves Santo
+ Festivos CANARIAS               ,2021,6,24,San Juan
+ Festivos CANARIAS               ,2021,4,1,Jueves Santo
+ Festivos CANARIAS               ,2021,5,1,Fiesta del Trabajo
+ Festivos CANTABRIA              ,2021,4,1, Jueves Santo                                           
+ Festivos CANTABRIA              ,2021,5,1,Fiesta del Trabajo
+ Festivos CANTABRIA              ,2021,7,28,Día de las Instituciones
+ Festivos CANTABRIA              ,2021,9,15,Día de la Bienaparecida
+ Festivos CASTILLA - LA MANCHA   ,2021,4,1, Jueves Santo                                           
+ Festivos CASTILLA - LA MANCHA   ,2021,5,31,Dia de la región de Castilla la Mancha
+ Festivos CASTILLA - LA MANCHA   ,2021,6,3, Corpus Christi                                         
+ Festivos CASTILLA Y LEÓN        ,2021,4,1, Jueves Santo                                           
+ Festivos CASTILLA Y LEÓN        ,2021,4,23, Día de Castilla y León
+ Festivos CASTILLA Y LEÓN        ,2021,8,16,Asunción de la Virgen
+ Festivos CATALUÑA               ,2021,4,5, Lunes de Pascua                                        
+ Festivos CATALUÑA               ,2021,6,24, San Juan                                               
+ Festivos CATALUÑA               ,2021,9,11, Fiesta Nacional de Cataluña
+ Festivos COMUNIDAD VALENCIANA   ,2021,3,19,San José
+ Festivos COMUNIDAD VALENCIANA   ,2021,4,5, Lunes de Pascua                                        
+ Festivos COMUNIDAD VALENCIANA   ,2021,5,1,Fiesta del Trabajo
+ Festivos COMUNIDAD VALENCIANA   ,2021,10,9,Día de la Comunitat Valenciana
+ Festivos EXTREMADURA            ,2021,3,19,San José
+ Festivos EXTREMADURA            ,2021,4,1, Jueves Santo                                           
+ Festivos EXTREMADURA            ,2021,5,1,Fiesta del Trabajo
+ Festivos EXTREMADURA            ,2021,9,8,Dia de Extremadura
+ Festivos GALICIA                ,2021,3,19,San José
+ Festivos GALICIA                ,2021,4,1,Jueves Santo
+ Festivos GALICIA                ,2021,5,17,Día de las letras gallegas
+ Festivos COMUNIDAD DE MADRID    ,2021,3,19,San Isidro
+ Festivos COMUNIDAD DE MADRID    ,2021,4,1, Jueves Santo                                           
+ Festivos COMUNIDAD DE MADRID    ,2021,5,3, Fiesta de la Comunidad de Madrid
+ Festivos REGIÓN DE MURCIA       ,2021,4,1, Jueves Santo                                           
+ Festivos REGIÓN DE MURCIA       ,2021,6,9, Día de la Región de Murcia                             
+ Festivos REGIÓN DE MURCIA       ,2021,3,19,San José
+ Festivos NAVARRA                ,2021,4,1,Jueves Santo
+ Festivos NAVARRA                ,2021,4,5,Lunes de Pascua
+ Festivos NAVARRA                ,2021,3,19,San José
+ Festivos LA RIOJA               ,2021,4,1, Jueves Santo                                           
+ Festivos LA RIOJA               ,2021,4,5, Lunes de Pascua                                        
+ Festivos LA RIOJA               ,2021,6,9, Día de La Rioja                                        
+ Festivos CIUDAD DE CEUTA        ,2021,4,1,Jueves Santo
+ Festivos CIUDAD DE CEUTA        ,2021,5,1,Fiesta del Trabajo
+ Festivos CIUDAD DE MELILLA      ,2021,7,21,Fiesta del sacrificio
+ Festivos CIUDAD DE MELILLA      ,2021,4,1, Jueves Santo                                           
+ Festivos CIUDAD DE MELILLA      ,2021,3,19,San Jose
+ Festivos A CORUÑA               ,2021,2,16,Martes de Carnaval
+ Festivos A CORUÑA               ,2021,6,24,San Juan
+ Festivos ALBACETE               ,2021,6,24, San Juan                                               
+ Festivos ALBACETE               ,2021,9,8, Virgen de los Llanos                                   
+ Festivos ALICANTE               ,2021,4,15, Santa Faz                                              
+ Festivos ALICANTE               ,2021,6,23,San Juan
+ Festivos ALMERÍA                ,2021,6,24,San Juan
+ Festivos ALMERÍA                ,2021,8,28,La Virgen del Mar
+ Festivos ÁVILA                  ,2021,5,3, San Segundo                              
+ Festivos ÁVILA                  ,2021,10,15, Santa Teresa de Jesús                                  
+ Festivos BADAJOZ                ,2021,2,16, Martes de Carnaval                                     
+ Festivos BADAJOZ                ,2021,6,24, San Juan                                               
+ Festivos BARCELONA              ,2021,5,24,Segunda Pascua
+ Festivos BARCELONA              ,2021,9,24, Día de la Mercé                                     
+ Festivos BILBAO                 ,2021,7,31, San Ignacio                             
+ Festivos BILBAO                 ,2021,8,27, Viernes de la Semana Grande                            
+ Festivos BURGOS                 ,2021,6,19, Curpillos                                              
+ Festivos BURGOS                 ,2021,6,29, San Pedro y San Pablo                                  
+ Festivos CÁCERES                ,2021,4,23, San Jorge                                              
+ Festivos CÁCERES                ,2021,5,28, San Fernando                                           
+ Festivos CÁDIZ                  ,2021,2,15, Lunes de Carnaval                                      
+ Festivos CÁDIZ                  ,2021,10,7, Virgen del Rosario                                     
+ Festivos CASTELLÓN              ,2021,3,8,Lunes de la Magdalena                                     
+ Festivos CASTELLÓN              ,2021,6,29, San Pedro y San Pablo                                  
+ Festivos CEUTA                  ,2021,6,14, San Antonio                                            
+ Festivos CEUTA                  ,2021,7,20,Pascua del Sacrificio
+ Festivos CEUTA                  ,2021,9,2,Dia de Ceuta
+ Festivos CEUTA                  ,2021,8,5, Virgen de África                                       
+ Festivos CIUDAD REAL            ,2021,5,24,Día de Alarcos
+ Festivos CIUDAD REAL            ,2021,7,30,Antesala de la Pandorga
+ Festivos CÓRDOBA                ,2021,9,8, Virgen de Guadalupe                                 
+ Festivos CÓRDOBA                ,2021,10,25, San Rafael                                             
+Festivos CUENCA,2021,6,1,Virgen de la Luz
+ Festivos CUENCA                 ,2021,9,21, San Mateo                                         
+ Festivos GIRONA                 ,2021,7,26,Lunes de Pascua Granada
+ Festivos GIRONA                 ,2021,10,29,Sant Narcis
+ Festivos GRANADA                ,2021,1,2,Toma de Granada
+ Festivos GRANADA                ,2021,6,3,Corpus Christi
+ Festivos GUADALAJARA            ,2021,9,8,Virgen de la Antigua
+ Festivos GUADALAJARA            ,2021,9,17, Viernes de la Semana de Feria                          
+ Festivos HUELVA                 ,2021,8,3, Fiestas Colombinas                                     
+ Festivos HUELVA                 ,2021,9,8, Virgen de la Cinta                                     
+ Festivos HUESCA                 ,2021,1,22, San Vicente                                            
+ Festivos HUESCA                 ,2021,8,10, San Lorenzo                                            
+ Festivos JAÉN                   ,2021,6,11,Virgen de la Capilla
+ Festivos JAÉN                   ,2021,10,18,San Lucas
+ Festivos LAS PALMAS             ,2021,2,16, Martes de Carnaval                                     
+ Festivos LAS PALMAS             ,2021,8,16,Lunes siguiente a la Asunción de la Virgen
+ Festivos LAS PALMAS             ,2021,8,5,Nuestra Señora de las Nieves
+ Festivos LEÓN                   ,2021,6,24, San Juan                                               
+ Festivos LEÓN                   ,2021,10,4, San Froilán                                            
+Festivos LLEIDA,2021,5,11,San Anastasi
+ Festivos LLEIDA                 ,2021,9,29, San Miguel                                             
+ Festivos LOGROÑO                ,2021,9,21,San Mateo
+ Festivos LOGROÑO                ,2021,6,11, San Bernabé                                            
+ Festivos LUGO                   ,2021,2,16, Martes de Carnaval                                     
+ Festivos LUGO                   ,2021,10,5, San Froilán                                            
+ Festivos MADRID                 ,2021,5,15, San Isidro                           
+ Festivos MADRID                 ,2021,11,9, Nuestra Señora de la Almudena                          
+ Festivos MÁLAGA                 ,2021,8,19, Reconquista de Málaga para la Corona de Castilla       
+ Festivos MÁLAGA                 ,2021,9,8, Virgen de la Victoria                                  
+ Festivos MELILLA                ,2021,9,8,Virgen de la Victoria                                        
+ Festivos MELILLA                ,2021,9,17,Día de Melilla                                      
+ Festivos MURCIA                 ,2021,4,6,Martes de Pascua
+ Festivos MURCIA                 ,2021,9,13,La Bienaparecida
+ Festivos OURENSE                ,2021,2,16, Martes de Carnaval                                     
+ Festivos OURENSE                ,2021,11,11, San Martiño                                            
+ Festivos OVIEDO                 ,2021,5,25, Martes de Campo                                        
+ Festivos OVIEDO                 ,2021,9,21, San Mateo                                              
+ Festivos PALENCIA               ,2021,2,2,Las Candelas
+ Festivos PALENCIA               ,2021,9,2, San Antolín                                            
+ Festivos PALMA DE MALLORCA      ,2021,1,20,SanSebastián
+ Festivos PALMA DE MALLORCA      ,2021,6,24,San Juan
+ Festivos PAMPLONA               ,2021,11,29,San Saturnino
+ Festivos PAMPLONA               ,2021,12,3, San Francisco Javier                                   
+ Festivos PONTEVEDRA             ,2021,2,17, Miércoles de Ceniza                                    
+ Festivos PONTEVEDRA             ,2021,4,5,San Cibrán
+ Festivos SALAMANCA              ,2021,6,12, San Juan de Sahagún                  
+ Festivos SALAMANCA              ,2021,9,8, Virgen de la Vega                                      
+ Festivos SAN SEBASTIÁN          ,2021,1,20, Día de San Sebastián                                   
+ Festivos SANTA CRUZ DE TENERIFE ,2021,2,2,Virgen de la Candelaria
+ Festivos SANTA CRUZ DE TENERIFE ,2021,5,3,Día de la Cruz
+Festivos SANTA CRUZ DE TENERIFE,2021,8,16,Lunes siguiente a la Asunción de la Virgen
+ Festivos SANTANDER              ,2021,5,24,Virgen del Mar
+ Festivos SANTANDER              ,2021,8,30,Santos Mártires
+ Festivos SEGOVIA                ,2021,6,29,San Pedro
+ Festivos SEGOVIA                ,2021,10,25, San Frutos                                             
+ Festivos SEVILLA                ,2021,4,21,Miércoles de Feria
+ Festivos SEVILLA                ,2021,6,3, Corpus Christi                                         
+ Festivos SORIA                  ,2021,6,24,San Juan
+ Festivos SORIA                  ,2021,10,2,San Saturio                          
+ Festivos TARRAGONA              ,2021,8,19, Sant Magí                                              
+ Festivos TARRAGONA              ,2021,9,23,La Mercé                                            
+ Festivos TERUEL                 ,2021,4,6,El Sermón de las Tortillas
+ Festivos TERUEL                 ,2021,7,12, Lunes de Vaquillas                                     
+ Festivos TOLEDO                 ,2021,1,23, San Ildefonso                                          
+ Festivos TOLEDO                 ,2021,4,5,Lunes de Pascua
+ Festivos VALENCIA               ,2021,1,22,San Vicente Mártir
+ Festivos VALENCIA               ,2021,4,12, San Vicente Ferrer                                     
+ Festivos VALLADOLID             ,2021,5,13, San Pedro Regalado                                     
+ Festivos VALLADOLID             ,2021,9,8, Nuestra Sra. de San Lorenzo                            
+ Festivos ZAMORA                 ,2021,5,24, La Hiniesta                                            
+ Festivos ZAMORA                 ,2021,6,29, San Pedro                                              
+ Festivos ZARAGOZA               ,2021,3,5,Cincomarzada                                            
+ Festivos ZARAGOZA               ,2021,1,29,San Valero
