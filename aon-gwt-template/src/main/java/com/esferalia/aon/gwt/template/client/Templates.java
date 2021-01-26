@@ -297,8 +297,14 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}
 	
-	private void exportFee(){
-		//TODO
+	private void exportFee(String filter){		
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "/ms/gwt_download_fee/"
+            	+ "?filter=" + filter
+            	+ "&domain_name=" + getDomain().getName()
+            	+ "&domain_id=" + getDomain().getId()
+				+ "&username="+ getUser().getLogin();
+	
+		Window.open( fileDownloadURL, "_blank",null);
 	}
 
 	private void importDelivery(){
@@ -1601,13 +1607,13 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}-*/;
 
-	public void feex(){
-		exportFee();
+	public void feex(String filter){
+		exportFee(filter);
 	}
 	
 	public static native void exportFeex(Templates thiz) /*-{
-		$wnd.feex = function() {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::feex(*)();
+		$wnd.feex = function(filter) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::feex(*)(filter);
 		}
 	}-*/;
 	
@@ -1627,7 +1633,7 @@ public class Templates extends Composite implements EntryPoint {
 
 	public static native void exportTransferStock(Templates thiz) /*-{
 		$wnd.transferStock = function(source,target,serie, number) {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::transferStock(*)(source,target,serie,number);
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::transferStock(*)(source, target, serie, number);
 		}
 	}-*/;
 	

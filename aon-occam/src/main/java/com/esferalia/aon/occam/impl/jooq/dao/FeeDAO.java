@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 
 import java.sql.Date;
 import java.util.function.Function;
@@ -36,6 +37,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ItemFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
 
 public class FeeDAO {
@@ -66,15 +68,21 @@ public class FeeDAO {
 		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.SELLER);}
 		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.WORKPLACE);}
 		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.CATEGORY);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.SCOPE);}
 	}
 	
 	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
+		com.esferalia.aon.jooq.tables.Registry sellerRegistry = REGISTRY.as("sellerRegistry");
+		com.esferalia.aon.jooq.tables.Registry customerRegistry = REGISTRY.as("customerRegistry");
 		return ctx.getDslContext().select().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
-				.join(REGISTRY).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
+				.join(customerRegistry).on(CUSTOMER.REGISTRY.eq(customerRegistry.ID))
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
+				.leftOuterJoin(sellerRegistry).on(SELLER.REGISTRY.eq(sellerRegistry.ID))
 				.where(FEE_PROPERTIES.getConditions(filter))
 				.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
 				.orderBy(CUSTOMER_FEE.LINE)
@@ -90,13 +98,16 @@ public class FeeDAO {
 		}
 		
 		public static Fee buildFee(Record r) {
+			com.esferalia.aon.jooq.tables.Registry sellerRegistry = REGISTRY.as("sellerRegistry");
+			com.esferalia.aon.jooq.tables.Registry customerRegistry = REGISTRY.as("customerRegistry");
+			
 			return new Fee()
 					.setId(r.getValue(CUSTOMER_FEE.ID))
 					.setDomain(r.get(DOMAIN.ID) != null 
 						? DomainFiller.buildDomain(r) 
 						: new Domain().setId(r.getValue(CUSTOMER_FEE.DOMAIN)) )
 					.setCustomer(r.get(CUSTOMER.REGISTRY) != null
-						? CustomerFiller.buildCustomer(r)
+						? CustomerFiller.buildCustomer(r, customerRegistry)
 						: new Customer().setRegistryData(new Registry().setId(r.getValue(CUSTOMER_FEE.CUSTOMER))))
 					.setItem(r.get(ITEM.ID) != null
 						? ItemFiller.buildItem(r)
@@ -114,6 +125,9 @@ public class FeeDAO {
 					.setProject(new Project().setId(r.getValue(CUSTOMER_FEE.PROJECT)))
 					.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
 					.setSeller(new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
+					.setSeller(r.get(SELLER.REGISTRY) != null
+						? SellerFiller.buildSeller(r, sellerRegistry)
+						: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 					.setWorkplace(new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)));
 		}
 	}

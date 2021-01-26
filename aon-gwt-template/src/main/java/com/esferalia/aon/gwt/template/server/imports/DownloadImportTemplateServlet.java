@@ -123,29 +123,29 @@ public class DownloadImportTemplateServlet extends HttpServlet {
         return columnList;
 	}
 	
-	private LinkedList<String> getFeeColumnList() {
+	public static LinkedList<String> getFeeColumnList() {
 		LinkedList<String> columnList = new LinkedList<String>();
-		columnList.add("CLIENTE");
-		columnList.add("LINEA");
-		columnList.add("PRODUCTO");
-		columnList.add("CANTIDAD");
-		columnList.add("PRECIO");
-		columnList.add("DESCUENTO");
-		columnList.add("FECHA_INICIO");
-		columnList.add("FECHA FIN");
-		columnList.add("FECHA FACTURACION");
-		columnList.add("PERIODO");
-		columnList.add("COMERCIAL");
-		columnList.add("CENTRO DE TRABAJO");
-		columnList.add("GRUPO FACTURACION");
-		columnList.add("CONFIDENCIAL");
-		columnList.add("DESCRIPCION");
-		columnList.add("EXPEDIENTE");
-		columnList.add("DETALLE1");
-		columnList.add("DETALLE2");
-		columnList.add("DETALLE3");
-		columnList.add("CODIGO DE BARRAS");
-		columnList.add("NUMERO DE SERIE");
+		columnList.add(IConstants.CLIENTE);
+		columnList.add(IConstants.LINEA);
+		columnList.add(IConstants.PRODUCTO);
+		columnList.add(IConstants.CANTIDAD);
+		columnList.add(IConstants.PRECIO);
+		columnList.add(IConstants.DESCUENTO);
+		columnList.add(IConstants.FECHA_INICIO);
+		columnList.add(IConstants.FECHA_FIN);
+		columnList.add(IConstants.FECHA_FACTURACION);
+		columnList.add(IConstants.PERIODO);
+		columnList.add(IConstants.COMERCIAL);
+		columnList.add(IConstants.CENTRO_DE_TRABAJO);
+		columnList.add(IConstants.GRUPO_FACTURACION);
+		columnList.add(IConstants.CONFIDENCIAL);
+		columnList.add(IConstants.DESCRIPCION);
+		columnList.add(IConstants.EXPEDIENTE);
+		columnList.add(IConstants.DETALLE1);
+		columnList.add(IConstants.DETALLE2);
+		columnList.add(IConstants.DETALLE3);
+		columnList.add(IConstants.CODIGO_DE_BARRAS);
+		columnList.add(IConstants.NUMERO_DE_SERIE);
         return columnList;
 	}
 	

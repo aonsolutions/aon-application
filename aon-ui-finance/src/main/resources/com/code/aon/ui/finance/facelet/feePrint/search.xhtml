@@ -7,17 +7,25 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
-	<ui:define name="content">
+	<ui:define name="content">		
 		<aon:form id="feePrintSearch">
 
 			<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
 
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.finance_fee_print_module}" />
 				<ui:param name="controller" value="#{feePrint}" />
-				<ui:param name="skipResetButton" value="true" />
-			</ui:include>
+				<ui:param name="skipResetButton" value="#{true}" />
+
+				<ui:define name="additionalToolbarContent">
+					<ui:include src="/net/aonsolutions/aon/gwt/aio/facelet/templates/silent.xhtml" />
+					
+					<aon:commandLink id="customer-fee-import" value="#{bundle.aon_import}"
+						onclick="fee()" styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+					</aon:commandLink>
+				</ui:define>
+			</ui:decorate>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
@@ -48,7 +56,7 @@
 						value="#{bundle.aon_status}" />
 					<aon:selectOneMenu id="CustomerFee_customer_status"
 						converter="aon.EnumConverter"
-						valueChangeListener="#{feePrint.addEqualExpression}">						
+						valueChangeListener="#{feePrint.changeStatus}">						
 						<f:selectItem itemLabel="-" value="#{null}"/> 
 						<f:selectItems value="#{customerCollections.customerStatuses}" />
 					</aon:selectOneMenu>
@@ -58,7 +66,7 @@
 							value="#{bundle.aon_scope}" />
 						<aon:selectOneMenu id="CustomerFee_customer_scope_id"
 							value="#{configCollections.scope}"
-							valueChangeListener="#{feePrint.addIdEqualExpression}">
+							valueChangeListener="#{feePrint.changeScope}">
 							<f:selectItem itemLabel="-" value="#{null}"/> 
 							<f:selectItems value="#{currentUserScopes}" />
 						</aon:selectOneMenu>

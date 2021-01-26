@@ -41,7 +41,6 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.CategoryRecord;
-import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.SegmentRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -122,6 +121,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistrySellerPropert
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SellerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SupplierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class RegistryOldDAO {
@@ -505,20 +505,10 @@ public class RegistryOldDAO {
 	
 	public static Stream<Seller> getRSellerStream(AONContext ctx, RegistrySellerFilter filter){
 		return ctx.getDslContext().select().from(RSELLER)
-				.join(REGISTRY).on(RSELLER.SELLER.eq(REGISTRY.ID))
+				.join(SELLER).on(RSELLER.SELLER.eq(SELLER.REGISTRY))
+				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
 				.where(RSELLER_PROPERTIES.getConditions(filter))
 				.fetchInto(REGISTRY).stream().map(new SellerFiller());
-	}
-	
-	public static class SellerFiller  implements Function<RegistryRecord,Seller> {
-
-		@Override
-		public Seller apply(RegistryRecord r) {
-			return new Seller()
-					.setId(r.getId())
-					.setDomain(r.getDomain())
-					.setRegistryName(r.getName());
-		}
 	}
 	
 	public static Stream<RAddress> getRAddressStream(AONContext ctx, Integer registryId){

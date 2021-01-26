@@ -1305,6 +1305,12 @@
 		</managed-property>
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>feeExport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.FeeExportGwtController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
 	<!-- ************ FEE PRE-INVOICING ************* -->
 	<managed-bean>
 		<managed-bean-name>preInvoicing</managed-bean-name>

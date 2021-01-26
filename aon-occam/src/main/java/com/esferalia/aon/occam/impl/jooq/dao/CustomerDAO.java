@@ -36,22 +36,24 @@ public class CustomerDAO {
 
 		@Override
 		public Customer apply(Record r) {
-			return buildCustomer(r);
+			return buildCustomer(r, REGISTRY);
 		}
 		
-		public static Customer buildCustomer(Record r) {
+		public static Customer buildCustomer(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
+			if(registry == null) 
+				registry = REGISTRY;
 			return new Customer()
 					.setRegistryData( new Registry() 
-						.setId(r.getValue(REGISTRY.ID))
+						.setId(r.getValue(registry.ID))
 						.setDomain(new Domain().setId(r.getValue(CUSTOMER.DOMAIN)))
-						.setDocument(r.getValue(REGISTRY.DOCUMENT))
-						.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
-						.setDocumentCountry(Country.safeValueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)) )
-						.setName(r.getValue(REGISTRY.NAME))
-						.setAlias(r.getValue(REGISTRY.ALIAS))
-						.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)))
-						.setNationality(Country.safeValueOf(r.getValue(REGISTRY.NATIONALITY)) )
-						.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL))))
+						.setDocument(r.getValue(registry.DOCUMENT))
+						.setDocumentType(DocumentType.safeValueOf(r.getValue(registry.DOCUMENT_TYPE)))
+						.setDocumentCountry(Country.safeValueOf(r.getValue(registry.DOCUMENT_COUNTRY)) )
+						.setName(r.getValue(registry.NAME))
+						.setAlias(r.getValue(registry.ALIAS))
+						.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(registry.TYPE)))
+						.setNationality(Country.safeValueOf(r.getValue(registry.NATIONALITY)) )
+						.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(registry.SECURITY_LEVEL))))
 					.setAccount(r.getValue(CUSTOMER.ACCOUNT))
 					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
 					.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))

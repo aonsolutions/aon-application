@@ -13,6 +13,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.finance.controller.FeeExportGwtController;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -79,6 +80,9 @@ public class FeePrinterSearchListener extends ControllerSearchListener {
 			Expression finalExp2 = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.CUSTOMER_FEE_FINAL_DATE));
 			criteria.addExpression(ExpressionUtilities.getOrExpression(finalExp1, finalExp2));
 		}		
+		FeeExportGwtController.setFrom(obtainFromDate());
+		FeeExportGwtController.setTo(obtainToDate());
+		FeeExportGwtController.setItem(getItem().getId());
 	}	
 
 	private Date obtainFromDate() {

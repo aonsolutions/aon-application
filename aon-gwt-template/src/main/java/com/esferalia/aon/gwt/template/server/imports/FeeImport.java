@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.template.server.imports;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.stream.Stream;
@@ -232,7 +233,7 @@ public class FeeImport extends Import {
 		
 		// SELLER
 		if(fee.getSeller().getRegistryAlias() != null) {
-			AON.getSeller(domain.getName(), domain.getId(), user.getLogin(), f -> sellerFilter(domain, user, feeInfo.getFee().getSeller(), f));
+			fee.setSeller(AON.getSeller(domain.getName(), domain.getId(), user.getLogin(), f -> sellerFilter(domain, user, feeInfo.getFee().getSeller(), f)));
 			if(fee.getSeller().getId() == null) {
 				error.setError(false);
 				error.setTextError("Línea " + feeInfo.getLine() + ": El comercial introducido no existe.");
@@ -365,6 +366,14 @@ public class FeeImport extends Import {
 			fee.setPrice(fee.getItem().getPrice());
 		}
 		
+		if(fee.getStartDate() == null) {
+			fee.setStartDate(fee.getBillingDate() != null ? fee.getBillingDate() : new Date());
+		}
+
+		if(fee.getBillingDate() == null) {
+			fee.setBillingDate(fee.getStartDate() != null ? fee.getStartDate() : new Date());
+		}
+
 		fee = AON.save(domain.getName(), domain.getId(), user.getLogin(), fee);
 		
 		return error;
