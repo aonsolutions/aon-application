@@ -34,6 +34,17 @@ jdbcUrl=jdbc:mysql://$DB_HOST:$DB_PORT
 user=$DB_USER
 password=$DB_PASSWD
 EOF
+	: ${AWS_REGION:=eu-west-1}
+        cat << EOF > $AWS_HOME/config
+[default]
+region = $AWS_REGION
+EOF
+
+        cat << EOF > $AWS_HOME/credentials
+[default]
+aws_access_key_id = $AWS_ACCESS_KEY_ID \
+aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
+EOF
 
 	CLASSPATH=`find $TOMCAT_LIBDIR -name 'mysql-connector-java-*.jar'`
 	CLASSPATH=$CLASSPATH:`find $AON_SOLUTIONS_HOME -name 'dbutils-*.jar'`

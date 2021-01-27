@@ -2,6 +2,8 @@ FROM tomcat:9.0-jdk14
 
 ARG AON_VERSION=9.23-SNAPSHOT
 
+ENV AWS_HOME /root/.aws
+
 ENV CATALINA_HOME /usr/local/tomcat
 
 ENV AON_SOLUTIONS_HOME $CATALINA_HOME/webapps/ROOT
@@ -79,6 +81,7 @@ RUN set -x \
 	&& unzip aon-solutions.war \
 	&& rm aon-solutions.war 
 
+RUN mkdir -p "$AWS_HOME"
 
 RUN mkdir -p "$AON_SOLUTIONS_CONF"
 
