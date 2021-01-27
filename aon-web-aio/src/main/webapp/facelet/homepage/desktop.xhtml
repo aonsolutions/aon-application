@@ -45,23 +45,87 @@
 							<aon:if test="#{desktop.state.fiscalEnabled and !desktop.state.fiscalInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
 							</aon:if>
-	
+	<!-- 
 							<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal or desktop.state.accountingInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/fiscalPortalDashboardPortlet.xhtml" />
 							</aon:if>
 							
-							<aon:if test="#{desktop.state.payrollEnabled and !desktop.state.payrollInfoVisibleForPortal}">
-								<ui:include	src="/facelet/homepage/portlet/payrollDashboardPortlet.xhtml" />
-							</aon:if>
- 							
-<!-- 							<aon:if test="#{desktop.state.documentalEnabled and !desktop.state.documentalInfoVisibleForPortal and !desktop.state.documentalManagementVisibleForPortal}">
-								<ui:include	src="/facelet/homepage/portlet/documentalDashboardPortlet.xhtml" />
-							</aon:if>
- -->
-							<!-- payroll portal -->
 							<aon:if test="#{desktop.state.payrollInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/payrollPortalDashboardPortlet.xhtml" />
 							</aon:if>
+							
+	 -->
+							
+							<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal or desktop.state.accountingInfoVisibleForPortal or desktop.state.payrollInfoVisibleForPortal}">
+								<aon:div styleClass="aon-portlet">
+									<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+									
+									<aon:div styleClass="aon-portlet-title">								
+										<aon:div styleClass="aon-portlet-title-buttons">
+										</aon:div>
+										<aon:outputText value="#{bundle.menu_enterprise_site} - #{bundle.finance_fiscal_account_information} XXXX" 
+											styleClass="aon-portlet-title-text aon-icon aon-icon-stat"/>
+									</aon:div>
+									
+									<aon:div styleClass="aon-portlet-body">
+										<aon:panelTabSet id="fiscalPortletTab" selectedTab="#{dashboard.fiscalPortal.selectedTab}">
+										
+											<aon:panelTab id="fiscalPortletTabY" label="#{bundle.account_year_evolution}"
+												rendered="#{desktop.state.accountingInfoVisibleForPortal}"
+												actionListener="#{dashboard.fiscalPortal.onYearPygGraph}">
+												<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabY'}">
+													<ui:include	src="/facelet/homepage/portlet/yearPygGraphic.xhtml" />
+												</aon:if>
+											</aon:panelTab>
+						
+											<aon:panelTab id="fiscalPortletTabM" label="#{bundle.account_month_evolution}"
+												rendered="#{desktop.state.accountingInfoVisibleForPortal}"
+												actionListener="#{dashboard.fiscalPortal.onPygGraph}">
+												<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabM'}">
+													<ui:include	src="/facelet/homepage/portlet/monthPygGraphic.xhtml" />
+												</aon:if>
+											</aon:panelTab>
+						
+											<aon:panelTab id="fiscalPortletTabE" label="#{bundle.accounting_expense_breakdown}"
+												rendered="#{desktop.state.accountingInfoVisibleForPortal}"													
+												actionListener="#{dashboard.fiscalPortal.onExpenseGraph}">
+												<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabE'}">
+													<ui:include	src="/facelet/homepage/portlet/accountExpenseGraphic.xhtml" />
+												</aon:if>
+											</aon:panelTab>
+						
+											<aon:panelTab id="fiscalPortletTabF" label="#{bundle.finance_fiscal_information}"
+												rendered="#{desktop.state.fiscalInfoVisibleForPortal}">
+												<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabF'}">
+													<ui:include	src="/facelet/homepage/portlet/fiscalInfo.xhtml" />
+												</aon:if>
+											</aon:panelTab>
+											
+											<aon:panelTab id="fiscalPortletTabP" label="#{bundle.admin_portal_salary_info}"
+												rendered="#{desktop.state.payrollInfoVisibleForPortal}">
+												<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabP'}">
+													<ui:include	src="/facelet/homepage/portlet/payrollPortalDashboardPortlet.xhtml" />
+												</aon:if>
+											</aon:panelTab>
+											
+										</aon:panelTabSet>						
+									</aon:div>
+								</aon:div>
+							</aon:if>							
+							
+							<aon:if test="#{desktop.state.payrollEnabled and !desktop.state.payrollInfoVisibleForPortal}">
+								<ui:include	src="/facelet/homepage/portlet/payrollDashboardPortlet.xhtml" />
+							</aon:if>
+							
+ 							
+<!--
+							<aon:if test="#{desktop.state.payrollInfoVisibleForPortal}">
+								<ui:include	src="/facelet/homepage/portlet/payrollPortalDashboardPortlet.xhtml" />
+							</aon:if>
+ 							<aon:if test="#{desktop.state.documentalEnabled and !desktop.state.documentalInfoVisibleForPortal and !desktop.state.documentalManagementVisibleForPortal}">
+								<ui:include	src="/facelet/homepage/portlet/documentalDashboardPortlet.xhtml" />
+							</aon:if>
+ -->
 							<!-- docs -->
  							
 <!-- 							<aon:if test="#{desktop.state.documentalInfoVisibleForPortal}">

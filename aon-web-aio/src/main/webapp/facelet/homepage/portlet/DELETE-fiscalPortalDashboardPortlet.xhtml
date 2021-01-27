@@ -1,0 +1,55 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+		<aon:div styleClass="aon-portlet">
+			<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+			<aon:div styleClass="aon-portlet-title">								
+				<aon:div styleClass="aon-portlet-title-buttons">
+				</aon:div>
+				<aon:outputText value="#{bundle.menu_enterprise_site} - #{bundle.finance_fiscal_account_information}" 
+					styleClass="aon-portlet-title-text aon-icon aon-icon-stat"/>
+			</aon:div>
+			
+			<aon:div styleClass="aon-portlet-body">
+				<aon:panelTabSet id="fiscalPortletTab" selectedTab="#{dashboard.fiscalPortal.selectedTab}">
+
+					<aon:panelTab id="fiscalPortletTabY" label="#{bundle.account_year_evolution}"
+						rendered="#{desktop.state.accountingInfoVisibleForPortal}"
+						actionListener="#{dashboard.fiscalPortal.onYearPygGraph}">
+						<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabY'}">
+							<ui:include	src="/facelet/homepage/portlet/yearPygGraphic.xhtml" />
+						</aon:if>
+					</aon:panelTab>
+
+					<aon:panelTab id="fiscalPortletTabM" label="#{bundle.account_month_evolution}"
+						rendered="#{desktop.state.accountingInfoVisibleForPortal}"
+						actionListener="#{dashboard.fiscalPortal.onPygGraph}">
+						<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabM'}">
+							<ui:include	src="/facelet/homepage/portlet/monthPygGraphic.xhtml" />
+						</aon:if>
+					</aon:panelTab>
+
+					<aon:panelTab id="fiscalPortletTabE" label="#{bundle.accounting_expense_breakdown}"
+						rendered="#{desktop.state.accountingInfoVisibleForPortal}"
+						actionListener="#{dashboard.fiscalPortal.onExpenseGraph}">
+						<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabE'}">
+							<ui:include	src="/facelet/homepage/portlet/accountExpenseGraphic.xhtml" />
+						</aon:if>
+					</aon:panelTab>
+
+					<aon:panelTab id="fiscalPortletTabF" label="#{bundle.finance_fiscal_information}"
+						rendered="#{desktop.state.fiscalInfoVisibleForPortal}">
+						<aon:if test="#{dashboard.fiscalPortal.selectedTab == 'fiscalPortletTabF'}">
+							<ui:include	src="/facelet/homepage/portlet/fiscalInfo.xhtml" />
+						</aon:if>
+					</aon:panelTab>
+				</aon:panelTabSet>						
+			</aon:div>
+		</aon:div>
+</ui:composition>
