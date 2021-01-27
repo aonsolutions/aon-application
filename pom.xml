@@ -263,7 +263,7 @@
 				<updatePolicy>never</updatePolicy>
 			</releases>
 			<snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</repository>
