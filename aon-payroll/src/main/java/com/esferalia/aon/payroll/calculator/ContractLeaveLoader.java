@@ -591,7 +591,7 @@ public class ContractLeaveLoader {
 		} catch (Exception e) {
 		}
 
-		//		try {
+//		try {
 //			Number paternityFactor =  ctx.getVariable(PATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
 //			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
 //				return days;
@@ -643,7 +643,7 @@ public class ContractLeaveLoader {
 		return directPayStart;
 	}
 	
-	private static Date getStartDate(LeaveType type, Date startDate) {
+	protected static Date getStartDate(LeaveType type, Date startDate) {
 		return type.accept(new LeaveTypeVisitor<Date>() {
 
 			@Override

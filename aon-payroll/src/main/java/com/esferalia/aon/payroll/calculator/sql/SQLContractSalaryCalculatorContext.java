@@ -178,6 +178,7 @@ import com.esferalia.aon.payroll.calculator.CompositeCollection;
 import com.esferalia.aon.payroll.calculator.CompositeCosts;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
+import com.esferalia.aon.payroll.calculator.ContractLeaveLoader;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.DelegateSystemPayment;
@@ -725,6 +726,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				@Override
 				public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd, long parentDays,
 						LeaveType type, Double dailyRegBase, ExpressionContext exprCtx) throws ExpressionException {
+					
+					Date itStart = ContractLeaveLoader.getStartDate(type, leaveStart);
 
 					if (start < 0)
 						return;
@@ -732,14 +735,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					Date leaveEnd4Length = leaveEnd == null ? Period.max(endDate, new Date()) : leaveEnd;
 					leaveEnd = Period.min(endDate, leaveEnd);
 					
-					Period leavePeriod = new Period(leaveStart, leaveEnd);
+					Period leavePeriod = new Period(itStart, leaveEnd);
 
 					Calendar leaveCalendar = Calendar.getInstance();
-					leaveCalendar.setTime(leaveStart);
+					leaveCalendar.setTime(itStart);
 //					leaveCalendar.add(Calendar.DATE, start /*- (int) parentDays*/);
 					
-					if ( leaveStart.compareTo(startDate) < 0 )
-						parentDays = Math.max(parentDays - getDaysBetweenDates(leaveStart, startDate), 0);
+					if ( itStart.compareTo(startDate) < 0 )
+						parentDays = Math.max(parentDays - getDaysBetweenDates(itStart, startDate), 0);
 					
 					leaveCalendar.add(Calendar.DATE, Math.max(start - (int) parentDays, 0));
 					Date guarenteeStart = leaveCalendar.getTime();
@@ -768,14 +771,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					for (Period p : leavePeriods) {
 						if ( startDate.after(p.getEnd() ))
 							continue;
-						long leaveParentDays = CommonUtil.getDaysBetweenDates(leaveStart, p.getStart());
+						long leaveParentDays = CommonUtil.getDaysBetweenDates(itStart, p.getStart());
 						super.loadContractLeave(id, p.getStart(), p.getEnd(), parentDays + leaveParentDays, type,
 								dailyRegBase, exprCtx);
 					}
 
 					// Adds 'BASE_REGULADORA' variable for guaranteed period
-					exprCtx.setVariable(IT_START, leaveStart, guarenteeStart, guarenteeEnd);
-					exprCtx.setVariable(IT_LENGTH, new Period(leaveStart, leaveEnd4Length), guarenteeStart, guarenteeEnd);
+					exprCtx.setVariable(IT_START, itStart, guarenteeStart, guarenteeEnd);
+					exprCtx.setVariable(IT_LENGTH, new Period(itStart, leaveEnd4Length), guarenteeStart, guarenteeEnd);
 					if ( leaveEnd4End != null ) exprCtx.setVariable(IT_END, leaveEnd4End, guarenteeStart, guarenteeEnd);
 					
 					Period period = new Period(Period.max(guarenteeStart, startDate), guarenteeEnd);
@@ -813,7 +816,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						@Override
 						public Object getValue(Period period) {
 							try {
-								return SQLNoItContractSalaryCalculatorContext.this.br(leaveStart);
+								return SQLNoItContractSalaryCalculatorContext.this.br(itStart);
 							} catch (ExpressionException | SalaryException | SQLException e) {
 								return 0.00;
 							}
