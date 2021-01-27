@@ -37,9 +37,6 @@ public class ContrataEmployeeObject {
 	private EmployeeInfo employeeData;
 	private ContractInfo contractData;
 	
-	private DomainEmployeesServiceAsync employeesService;
-	private DomainEnterprisesServiceAsync enterprisesService;
-	
 	private List<Agreement> agreements;
 	private WorkplaceEmployees workplaceEmployees;
 	
@@ -48,15 +45,16 @@ public class ContrataEmployeeObject {
 	
 	private Map<String, String> payMethodsMap;
 	
+	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+	
+	
+	
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------
 	
-	public ContrataEmployeeObject(Workplace workplace, DomainEmployeesServiceAsync employeesService,
-			DomainEnterprisesServiceAsync enterprisesService) {
+	public ContrataEmployeeObject() {
 		
 		super();
-		this.workplace = workplace;
-		this.employeesService = employeesService;
-		this.enterprisesService = enterprisesService;
 		this.workplaces = new ArrayList<>();
 		this.payMethodsMap = new HashMap<String, String>();
 		

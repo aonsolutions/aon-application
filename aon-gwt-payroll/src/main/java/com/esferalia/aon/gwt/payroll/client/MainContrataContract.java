@@ -202,15 +202,16 @@ public class MainContrataContract extends MainEntryPoint {
 	        
 	        @Override
 	        public void onSelectionChange(SelectionChangeEvent event) {
-	        	EmployeeContractInfo employeeContractInfo = selectionCCCInfoModel.getLastSelectedObject();
+	        	EmployeeContractInfo employeeContractInfoSelected = selectionCCCInfoModel.getLastSelectedObject();
+	        	Integer contractId = employeeContractInfoSelected.getContractInfo().getContractId();
 	        	
-	        	DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
-	    		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-	    		
-	    		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject(null, employeesService, enterprisesService);
-	    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
+	        	mainContrataContractObject.getEmployeeInfo(contractId, employeeContractInfo -> {
+	        		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
+		    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
+		        	
+		    		deckPanel.showWidget(1);
+	        	}, f -> {});
 	        	
-	    		deckPanel.showWidget(1);
 	        }
 	    });
 	    
@@ -363,7 +364,6 @@ public class MainContrataContract extends MainEntryPoint {
 				mainContrataContractObject.resetEmployeesList();
 			else {
 				List<Integer> employeesContractIds = mainContrataContractObject.getEmployeesContractIdsByWorkplace(workplaceId);
-				Window.alert("employeesContractIds size : " + employeesContractIds.size());
 				mainContrataContractObject.filterEmployeesList(employeesContractIds);
 			}
 			
@@ -569,6 +569,7 @@ public class MainContrataContract extends MainEntryPoint {
 	
 	private void redrawTable() {
 		this.inactiveContractsCB.setValue(false);
+		this.workplaceLB.setSelectedIndex(0);
 		this.mainContrataContractObject.getEmployeesInfo(false,
 				s -> {
 					initContractTable();

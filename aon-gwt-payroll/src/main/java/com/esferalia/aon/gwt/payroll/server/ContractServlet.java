@@ -41,7 +41,7 @@ public class ContractServlet extends HttpServlet {
 		
 			Connection conn = AonServletUtils.getConnection(domainName);
 			boolean allEmployees = Boolean.parseBoolean(req.getParameter("allEmployees"));  
-			content = gjson.toJson(JooqContrataContract.getEmployeesInfo(conn, domainId, allEmployees)).getBytes();
+			content = gjson.toJson(JooqContrataContract.getAllEmployeesInfo(conn, domainId, allEmployees)).getBytes();
 			
 		} catch (Exception e) {
 			e.printStackTrace();

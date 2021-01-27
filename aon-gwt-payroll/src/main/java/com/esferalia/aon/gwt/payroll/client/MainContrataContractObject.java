@@ -61,6 +61,21 @@ public class MainContrataContractObject {
 		
 	}
 	
+	public void getEmployeeInfo(Integer contractId, Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
+		
+		impl.getEmployeeInfo(contractId, new AsyncCallback<EmployeeContractInfo>() {
+			
+			@Override
+			public void onSuccess(EmployeeContractInfo employeeContractInfo) {
+				success.accept(employeeContractInfo);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) { }
+		});
+		
+	}
+	
 	public void checkStatus(Consumer<EnterpriseStatus> success, Consumer<Throwable> failure) {
 		
 		impl.getEnterpriseStatus(null, new AsyncCallback<EnterpriseStatus>() {
