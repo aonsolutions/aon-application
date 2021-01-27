@@ -45,16 +45,6 @@
 							<aon:if test="#{desktop.state.fiscalEnabled and !desktop.state.fiscalInfoVisibleForPortal}">
 								<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
 							</aon:if>
-	<!-- 
-							<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal or desktop.state.accountingInfoVisibleForPortal}">
-								<ui:include	src="/facelet/homepage/portlet/fiscalPortalDashboardPortlet.xhtml" />
-							</aon:if>
-							
-							<aon:if test="#{desktop.state.payrollInfoVisibleForPortal}">
-								<ui:include	src="/facelet/homepage/portlet/payrollPortalDashboardPortlet.xhtml" />
-							</aon:if>
-							
-	 -->
 							
 							<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal or desktop.state.accountingInfoVisibleForPortal or desktop.state.payrollInfoVisibleForPortal}">
 								<aon:div styleClass="aon-portlet">

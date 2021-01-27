@@ -1429,7 +1429,6 @@ public class DashboardController implements Serializable {
 	
 	public void onYearChanged(ActionEvent event) {
 		
-		
 	}
 	
 	public void onOptionChanged(ActionEvent event) {
@@ -1459,8 +1458,14 @@ public class DashboardController implements Serializable {
 		for (Integer salary: salaries.keySet()) {
 			SelectItem si = new SelectItem(salary, salary.toString());
 			list.add(si);
-			
-		}	
+		}
+		if (list.size() > 0 ) {
+			try {
+				this.year = Integer.parseInt( list.get(0).getLabel() );	
+			} catch ( Throwable t) {
+				
+			}
+		}
 		return list;
 	}
 	
