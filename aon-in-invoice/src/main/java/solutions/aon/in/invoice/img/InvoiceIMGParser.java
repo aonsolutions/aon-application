@@ -50,6 +50,7 @@ public class InvoiceIMGParser {
 	private static void parser(Document doc , InvoiceBuilder<?> handler) throws InvoiceIMGException, IOException, UnknownInvoiceException {
 		String text = extract(doc);
 		Templates.parse(text, handler);		
+		handler.finalizeParse();
 	}
 
 
