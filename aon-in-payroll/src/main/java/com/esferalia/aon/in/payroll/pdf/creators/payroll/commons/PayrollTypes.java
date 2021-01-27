@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.creators.payroll;
+package com.esferalia.aon.in.payroll.pdf.creators.payroll.commons;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

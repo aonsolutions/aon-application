@@ -19,13 +19,14 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.CraTypes;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.DeductionTypes;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollAccrual;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollDeduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.UnknownCraException;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.CraTypes;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.DeductionTypes;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.toolkits.PDFToolkit;
 
 public class DefaultPayrollTemplate {
@@ -107,9 +108,10 @@ public class DefaultPayrollTemplate {
 		template.x = 20;
 		template.y = 795;
 		String date_format = template.words.getString("FORMATO FECHA");
+		String replace = PayrollTypes.toString(template.payroll.getPayrollType().orElse(PayrollTypes.Type.SALARY),template.lang); 
 		
 		//HEADER CONTENT
-		String title = template.words.getString("TITULO").toUpperCase();
+		String title = template.words.getString("TITULO").replace("*",replace).toUpperCase();
 		String enterprise = template.words.getString("EMPRESA") + ": " + template.payroll.getEnterprise().orElse("");
 		String employee = template.words.getString("TRABAJADOR") + ": " + template.payroll.getEmployee().orElse("");
 		String address = template.words.getString("DOMICILIO") + ": " + template.payroll.getAddress().orElse("");

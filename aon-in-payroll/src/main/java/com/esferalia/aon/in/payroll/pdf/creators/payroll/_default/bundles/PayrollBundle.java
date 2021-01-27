@@ -10,7 +10,7 @@ public class PayrollBundle  extends ListResourceBundle{
 
 	    private Object[][] contents = {
 	    	{ "FORMATO FECHA", "dd/MM/yyyy"},
-	        { "TITULO","Recibo individual justificativo del pago de salario" },
+	        { "TITULO","Recibo individual justificativo del pago de *" },
 	        { "EMPRESA", "Empresa" },
 	        { "DOMICILIO", "Domicilio" },
 	        { "CIF", "CCC" },

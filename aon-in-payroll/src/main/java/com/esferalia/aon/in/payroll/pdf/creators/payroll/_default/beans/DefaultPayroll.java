@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.PayrollTypes;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
 
 
 
@@ -193,6 +193,7 @@ public class DefaultPayroll {
 			p.deduction_total = 	this.deduction_total;
 			p.payroll_total = 		this.payroll_total;
 			p.contingencies = 		this.contingencies;
+			p.payroll_type = 		this.payroll_type;
 			
 			return p;
 		}

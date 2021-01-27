@@ -7,7 +7,7 @@ public class PayrollTypesBundle extends ListResourceBundle{
 		        { "SALARIO","Salario" },
 		        { "ATRASOS", "Atrasos" },
 		        { "FINIQUITO", "Finiquito" },
-		        { "HORAS EXTRAS", "Horas extras" },
+		        { "HORAS EXTRA", "Horas extras" },
 		    };
 	
 	@Override

@@ -19,6 +19,7 @@ import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultP
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollDeduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases.Contingency_bases_builder;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll.DefaultPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
 
 
 public class DetailedPayrollTest {
@@ -40,7 +41,6 @@ public class DetailedPayrollTest {
 				ac.get(key).add(accrual);
 			}
 		}
-		
 		
 		///CREATE DEDUCTIONS
 		Map<Integer,ArrayList<DefaultPayrollDeduction>> de = new HashMap<Integer,ArrayList<DefaultPayrollDeduction>>();
@@ -91,7 +91,8 @@ public class DetailedPayrollTest {
 		.setIrpf_esp(Optional.of(99999.99))
 		.setIrpf_retrib_diner(Optional.of(99999.99))
 		.setTotal(Optional.of(99999.99));
-	
+
+		
 		//BUILD PAYROLL
 		builder
 		.setEnterprise(Optional.of("DEMO EMPRESA S.L"))
@@ -113,9 +114,10 @@ public class DetailedPayrollTest {
 		.setAccrual_total(Optional.of(999999999.99))
 		.setDeduction_total(Optional.of(999999999.99))
 		.setPayroll_total(Optional.of(999999999.99))
+		.setPayrollType(Optional.of(PayrollTypes.Type.EXTRA_HOURS))
 		.setContingencies(Optional.of(con_builder.build()));
 		
-		try { PdfMaker.print_default_payroll("payrollRandom.pdf", builder.build(), Optional.of(DetailedPayrollTest.class.getResourceAsStream("logo.png")),Optional.of(new Locale("Es")));} 
+		try { PdfMaker.print_default_payroll("payrollRandom.pdf", builder.build(), Optional.of(DetailedPayrollTest.class.getResourceAsStream("HOR.png")),Optional.of(new Locale("Es")));} 
 		catch (CanNotCreatePdfException e) {
 			e.printStackTrace(); 
 			fail("Can not create the payroll");

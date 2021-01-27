@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.creators.payroll;
+package com.esferalia.aon.in.payroll.pdf.creators.payroll.commons;
 
 public class DeductionTypes {
 	
