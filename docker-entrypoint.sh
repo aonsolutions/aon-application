@@ -37,6 +37,17 @@ password=$DB_PASSWD
 timezone=$DB_TIMEZONE
 useSSL=false
 EOF
+	: ${AWS_REGION:=eu-west-1}
+        cat << EOF > $AWS_HOME/config
+[default]
+region = $AWS_REGION
+EOF
+
+        cat << EOF > $AWS_HOME/credentials
+[default]
+aws_access_key_id = $AWS_ACCESS_KEY_ID \
+aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
+EOF
 
 	CLASSPATH=`find $TOMCAT_LIBDIR -name 'mysql-connector-java-*.jar'`
 	CLASSPATH=$CLASSPATH:`find $AON_AIO_HOME -name 'dbutils-*.jar'`
@@ -61,6 +72,7 @@ CATALINA_OPTS="-Duser.language=es \
 -Djava.security.auth.login.config=$TOMCAT_CONFDIR/login.config \
 -Djavax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema=com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory"
 EOF
+
 	echo
 	echo $(date)
 	echo

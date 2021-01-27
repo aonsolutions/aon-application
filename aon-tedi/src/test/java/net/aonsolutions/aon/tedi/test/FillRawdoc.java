@@ -161,7 +161,7 @@ public class FillRawdoc {
 						.setStatus( randomStatus() )
 						.setMimeType( mimetype )
 						.setData(output.toByteArray())
-						.setJson( (mimetype != MimeType.PDF) ? null :TediInvoiceJSON.toJSON(TEDI.parse(tctx, new FileInputStream(file)).getTedi()).toString());
+						.setJson( (mimetype != MimeType.PDF) ? null :TediInvoiceJSON.toJSON(TEDI.parse(tctx, new FileInputStream(file), mimetype ).getTedi()).toString());
 				System.out.println( );
 				RawdocDAO.insert(ctx, rawdoc);
 			}

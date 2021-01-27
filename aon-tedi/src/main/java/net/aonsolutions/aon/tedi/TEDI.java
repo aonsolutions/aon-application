@@ -9,10 +9,12 @@ import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import solutions.aon.in.invoice.img.InvoiceIMGParser;
 import solutions.aon.in.invoice.pdf.InvoicePDFException;
 import solutions.aon.in.invoice.pdf.InvoicePDFParser;
 
@@ -44,7 +46,7 @@ public class TEDI {
 		return result;
 	}
 
-	public static TediResult parse(TediContext tctx, InputStream input) throws TediException {
+	public static TediResult parse(TediContext tctx, InputStream input, MimeType mimeType) throws TediException {
 		if (tctx == null) throw new IllegalArgumentException("TediContext can not be null");
 		boolean mustCloseCtx =  tctx.getAONContext() == null; 
 		try {
@@ -63,7 +65,16 @@ public class TEDI {
 			}
 			LOGGER.info("[TEDI] Attempt to parse document for [" + tctx.getDomainName() + "]");
 			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( tctx );
-			InvoicePDFParser.parse(input, tediInvoiceBuilder);
+			
+			if ( mimeType == null )
+				throw new TediException( String.format("Formato desconocido") ); 
+			if ( mimeType.isPDF() )
+				InvoicePDFParser.parse(input, tediInvoiceBuilder);
+			else if ( mimeType.isImage() )
+				InvoiceIMGParser.parse(input, tediInvoiceBuilder);
+			else
+				throw new TediException( String.format("Formato, '%s' no soportado", mimeType.getName() ) ); 
+			
 			TediResultBuilder.build( tediInvoiceBuilder.get() );
 			TediResult result = TediParser.toFullInvoice(tctx.getAONContext(), tctx.getAonConfiguration(), tediInvoiceBuilder.get()); 
 			return result;
@@ -104,7 +115,7 @@ public class TEDI {
 			TediResult result = null;
 			if ( AonStringUtils.isBlank( rawdoc.getJson() )) {
 				rawdoc = RawdocDAO.getFull(ctx, rawdocId);
-				result = parse(tctx, new ByteArrayInputStream(rawdoc.getData()));
+				result = parse(tctx, new ByteArrayInputStream(rawdoc.getData()), rawdoc.getMimeType());
 			} else {
 				result = TediParser.toFullInvoice(ctx, tctx.getAonConfiguration(), rawdoc.getTediInvoice());
 			}

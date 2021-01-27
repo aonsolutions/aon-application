@@ -8,10 +8,12 @@ import javax.servlet.annotation.WebServlet;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediService;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.io.DataUrl;
 import com.esferalia.aon.watson.server.io.DataUrlSerializer;
 import com.esferalia.aon.watson.server.io.IDataUrlSerializer;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
@@ -28,7 +30,8 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 			IDataUrlSerializer serializer = new DataUrlSerializer();
 			DataUrl unserialized = serializer.unserialize(content);
 			ByteArrayInputStream input = new ByteArrayInputStream(unserialized.getData());
-			TediResult result = TEDI.parse(new TediContext().setDomainName(domainName).setDomain(domain).setUser(user), input);
+			String extension = AonStringUtils.substringAfterLast(fileName, ".");
+			TediResult result = TEDI.parse(new TediContext().setDomainName(domainName).setDomain(domain).setUser(user), input, MimeType.getByExtension(extension));
 			result.getAccountingInvoice()
 				.setFromRawdoc(false)
 				.setTediParsed(true);

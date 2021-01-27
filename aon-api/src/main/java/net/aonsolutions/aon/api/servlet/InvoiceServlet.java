@@ -350,7 +350,7 @@ public class InvoiceServlet extends HttpServlet{
 		    		.setDomain(domain.getId())
 		    		.setUser(login);
 			try {
-		    	TediResult r = TEDI.parse(tctx, input);
+		    	TediResult r = TEDI.parse(tctx, input, MimeType.get(contentType));
 		    	json = TediInvoiceJSON.toJSON(r.getTedi());
 			} catch (TediException e) {
 				e.printStackTrace();
