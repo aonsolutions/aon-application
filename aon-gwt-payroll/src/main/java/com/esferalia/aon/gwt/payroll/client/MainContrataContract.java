@@ -22,6 +22,8 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -44,6 +46,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -136,6 +139,7 @@ public class MainContrataContract extends MainEntryPoint {
 	
 	private SuggestBox employeeSB;
 	private CheckBox inactiveContractsCB;
+	private ListBox workplaceLB;
 	
 	public MainContrataContract() {
 		contrataEmployee = new ContrataEmployeeImpl();
@@ -264,6 +268,18 @@ public class MainContrataContract extends MainEntryPoint {
 	    contractTypeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	    employeeDataGrid.setColumnWidth(contractTypeColumn, 10, Unit.PCT);
 	    
+	    TextColumn<EmployeeContractInfo> workplaceColumn = new TextColumn<EmployeeContractInfo>() {
+	      @Override
+	      public String getValue(EmployeeContractInfo employeeContractInfo) {
+	    	  return employeeContractInfo.getContractInfo().getWorkplaceName();
+	      }
+
+	    };
+
+	    workplaceColumn.setSortable(true);
+	    workplaceColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    employeeDataGrid.setColumnWidth(workplaceColumn, 15, Unit.PCT);
+	    
 	    TextColumn<EmployeeContractInfo> startDateColumn = new TextColumn<EmployeeContractInfo>() {
 	      @Override
 	      public String getValue(EmployeeContractInfo employeeContractInfo) {
@@ -294,6 +310,7 @@ public class MainContrataContract extends MainEntryPoint {
 	    employeeDataGrid.addColumn(documentColumn, "Documento");
 	    employeeDataGrid.addColumn(ssNumberColumn, "N" + String.valueOf("\u00B0") + " SS");
 	    employeeDataGrid.addColumn(contractTypeColumn, "Tipo Contrato");
+	    employeeDataGrid.addColumn(workplaceColumn, "Centro Trabajo");
 	    employeeDataGrid.addColumn(startDateColumn, "Fecha Inicio");
 	    employeeDataGrid.addColumn(endDateColumn, "Fecha Fin");
 	      
@@ -310,6 +327,7 @@ public class MainContrataContract extends MainEntryPoint {
 		employeeDataGrid.getHeader(3).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		employeeDataGrid.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		employeeDataGrid.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		employeeDataGrid.getHeader(6).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -321,6 +339,7 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		this.mainContrataContractObject.getEmployeesInfo(false,
 				s -> {
+					initWorkplaceLB();
 					initEnterpriseSB();
 					initContractTable();
 					setTableHeights();
@@ -329,6 +348,29 @@ public class MainContrataContract extends MainEntryPoint {
 		);
 		
 		checkStatus(this.mainContrataContractObject);
+	}
+	
+	private void initWorkplaceLB() {
+		workplaceLB.clear();
+		workplaceLB.addItem("-", "");
+		for (Workplace workplace : this.mainContrataContractObject.getWorkplaces()) {
+			workplaceLB.addItem(workplace.getDescription(), workplace.getId().toString());
+		}
+		
+		workplaceLB.addChangeHandler(e -> {
+			String workplaceId = workplaceLB.getSelectedValue();
+			if(AonStringUtils.isBlank(workplaceId))
+				mainContrataContractObject.resetEmployeesList();
+			else {
+				List<Integer> employeesContractIds = mainContrataContractObject.getEmployeesContractIdsByWorkplace(workplaceId);
+				Window.alert("employeesContractIds size : " + employeesContractIds.size());
+				mainContrataContractObject.filterEmployeesList(employeesContractIds);
+			}
+			
+			initContractTable();
+			employeeDataGrid.redraw();
+				
+		});
 	}
 	
 	private void initEnterpriseSB() {
@@ -451,12 +493,12 @@ public class MainContrataContract extends MainEntryPoint {
 	    
 	    columnSortHandler.setComparator(employeeDataGrid.getColumn(3), new Comparator<EmployeeContractInfo>() {
 	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
-		            if (o1 == o2) {
+		            if (o1.getContractInfo().getContractType() == o2.getContractInfo().getContractType()) {
 		              return 0;
 		            }
 	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getContractInfo().getContractType().compareTo(o2.getContractInfo().getContractType()) : 1;
+		            if (o1.getContractInfo().getContractType() != null) {
+		              return (o2.getContractInfo().getContractType() != null) ? o1.getContractInfo().getContractType().compareTo(o2.getContractInfo().getContractType()) : 1;
 		            }
 		            
 		            return -1;
@@ -470,6 +512,20 @@ public class MainContrataContract extends MainEntryPoint {
 		            }
 	
 		            if (o1 != null) {
+		              return (o2 != null) ? o1.getContractInfo().getWorkplaceName().compareTo(o2.getContractInfo().getWorkplaceName()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+	    
+	    columnSortHandler.setComparator(employeeDataGrid.getColumn(5), new Comparator<EmployeeContractInfo>() {
+	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
+		            if (o1 != null) {
 		              return (o2 != null) ? o1.getContractInfo().getStartDate().compareTo(o2.getContractInfo().getStartDate()) : 1;
 		            }
 		            
@@ -477,7 +533,7 @@ public class MainContrataContract extends MainEntryPoint {
 	         }
 	    });
 	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(5), new Comparator<EmployeeContractInfo>() {
+	    columnSortHandler.setComparator(employeeDataGrid.getColumn(6), new Comparator<EmployeeContractInfo>() {
 	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
 		            if (o1.getContractInfo().getEndDate() == o2.getContractInfo().getEndDate()) {
 		              return 0;
@@ -740,22 +796,6 @@ public class MainContrataContract extends MainEntryPoint {
 		EmployeeDialog employeeDialog = new EmployeeDialog(true) {
 			@Override
 			protected void onAccept() {
-//				AonConfirmDialog confirmDialog = new AonConfirmDialog();
-//				confirmDialog.confirm(
-//						"COMUNIC" + String.valueOf("\u0040"), 
-//						String.valueOf("\u00BF") + "Desea dar de alta el contrato?",
-//						new AonConfirmDialogCallback() {
-//
-//							@Override
-//							public void onAccept() {
-//								// TODO Auto-generated method stub
-//							}
-//
-//							@Override
-//							public void onCancel() {
-//								// TODO Auto-generated method stub
-//							}});
-				
 				redrawTable();
 			}
 		};
@@ -823,9 +863,17 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		HTMLPanel showPanel = new HTMLPanel("");
 		showPanel.addStyleName(style.flexPanel());
-		Label showL = new Label("Mostrar Empleados : ");
-		showL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		showL.getElement().getStyle().setMarginRight(5, Unit.PX);
+		Label workplaceL = new Label("Centro Trabajo : ");
+		workplaceL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		workplaceL.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		workplaceLB = new ListBox();
+		workplaceLB.setStyleName("aon-selectOneMenu");
+		workplaceLB.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		workplaceLB.getElement().getStyle().setMarginRight(5, Unit.PX);
+		
+		Label inactiveL = new Label("Empleados Inactivos");
+		inactiveL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		inactiveL.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		inactiveContractsCB = new CheckBox();
 		inactiveContractsCB.addValueChangeHandler(e -> {
 			this.mainContrataContractObject.getEmployeesInfo(e.getValue(),
@@ -837,12 +885,11 @@ public class MainContrataContract extends MainEntryPoint {
 					f -> {}
 			);
 		});
-		Label inactiveL = new Label("Inactivos");
-		inactiveL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		inactiveL.getElement().getStyle().setMarginLeft(5, Unit.PX);
-		showPanel.add(showL);
-		showPanel.add(inactiveContractsCB);
+		
+		showPanel.add(workplaceL);
+		showPanel.add(workplaceLB);
 		showPanel.add(inactiveL);
+		showPanel.add(inactiveContractsCB);
 		
 		filterPanel.add(employeePanel);
 		filterPanel.add(showPanel);

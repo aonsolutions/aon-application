@@ -10,6 +10,7 @@ public class ContractInfo implements Serializable{
 	//Contract Table
 	private Integer contractId;
 	private Integer workplaceId;
+	private String workplaceName;
 	private String workplaceZIP;
 	private String workplaceFullAddress;
 	private Integer cccId;
@@ -65,6 +66,7 @@ public class ContractInfo implements Serializable{
 		super();
 		this.contractId = null;
 		this.workplaceId = null;
+		this.workplaceName = null;
 		this.workplaceFullAddress = null;
 		this.workplaceZIP = null;
 		this.cccId = null;
@@ -149,6 +151,14 @@ public class ContractInfo implements Serializable{
 
 	public void setWorkplaceId(Integer workplaceId) {
 		this.workplaceId = workplaceId;
+	}
+	
+	public String getWorkplaceName() {
+		return workplaceName;
+	}
+
+	public void setWorkplaceName(String workplaceName) {
+		this.workplaceName = workplaceName;
 	}
 
 	public String getWorkplaceZIP() {

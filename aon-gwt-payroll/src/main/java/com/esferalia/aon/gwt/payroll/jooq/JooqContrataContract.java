@@ -879,6 +879,10 @@ public class JooqContrataContract {
 			// WORKPLACE TABLE		
 			contractData.setWorkplaceId(employe_workplace_table_id);
 			
+			Record workplaceRecord = dslContext.select().from(WORKPLACE).where(WORKPLACE.ID.eq(employe_workplace_table_id)).fetchOne();
+			
+			contractData.setWorkplaceName(workplaceRecord.get(WORKPLACE.DESCRIPTION));
+			
 			Record raddressRecord = dslContext.select().from(RADDRESS)
 					.where(RADDRESS.ID.eq(
 							dslContext.select(WORKPLACE.ADDRESS).from(WORKPLACE)

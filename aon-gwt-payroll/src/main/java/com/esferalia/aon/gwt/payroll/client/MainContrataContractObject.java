@@ -10,8 +10,8 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainContrataContractObject {
@@ -24,11 +24,14 @@ public class MainContrataContractObject {
 	
 	private Map<String, Integer> employeesFilterMap;
 	
+	private List<Workplace> workplaces;
+	
 	public MainContrataContractObject() {
 		super();
 		this.allEmployeesList = new ArrayList<EmployeeContractInfo>();
 		this.employeesList = new ArrayList<EmployeeContractInfo>();
 		this.employeesFilterMap = new HashMap<String, Integer>();
+		this.workplaces = new ArrayList<Workplace>();
 	}
 	
 	public void getEmployeesInfo(Boolean allEmployees, Consumer<List<EmployeeContractInfo>> success, Consumer<Throwable> failure){
@@ -37,8 +40,19 @@ public class MainContrataContractObject {
 			
 			@Override
 			public void onSuccess(List<EmployeeContractInfo> employeesInfoList) {
-				initEmployeeList(employeesInfoList);	
-				success.accept(employeesInfoList);	
+				initEmployeeList(employeesInfoList);
+				impl.getWorkplaces(null, new AsyncCallback<List<Workplace>>() {
+					
+					@Override
+					public void onSuccess(List<Workplace> result) {
+						workplaces.clear();
+						workplaces.addAll(result);
+						success.accept(employeesInfoList);	
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
 			}
 
 			@Override
@@ -91,6 +105,10 @@ public class MainContrataContractObject {
 		return employeesList;
 	}
 	
+	public List<Workplace> getWorkplaces(){
+		return this.workplaces;
+	}
+	
 	public Map<String, Integer> getEmployeesMap(){
 		return employeesFilterMap;
 	}
@@ -111,6 +129,18 @@ public class MainContrataContractObject {
 				
 				contractIds.add(entry.getValue());
 			}
+		}
+		
+		return contractIds;
+	}
+	
+	public List<Integer> getEmployeesContractIdsByWorkplace(String workplaceIdStr) {
+		List<Integer> contractIds = new ArrayList<Integer>();
+		Integer workplaceId = Integer.parseInt(workplaceIdStr);
+		
+		for(EmployeeContractInfo employee : allEmployeesList) {
+			if(employee.getContractInfo().getWorkplaceId() == workplaceId || employee.getContractInfo().getWorkplaceId().equals(workplaceId))
+				contractIds.add(employee.getContractInfo().getContractId());
 		}
 		
 		return contractIds;
