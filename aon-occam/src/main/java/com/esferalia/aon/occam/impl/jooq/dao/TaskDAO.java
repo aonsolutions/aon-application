@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
@@ -10,9 +11,8 @@ import static com.esferalia.aon.jooq.tables.TaskEvent.TASK_EVENT;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
-import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import static com.esferalia.aon.jooq.tables.User.USER;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
@@ -840,19 +841,20 @@ public class TaskDAO {
 	private static class TaskHolderFiller implements Function<Record, TaskHolder> {
 		@Override
 		public TaskHolder apply(Record t) {
-			TaskHolder taskHolder = new TaskHolder();
-			taskHolder.setId(t.getValue(REGISTRY.ID));
-			taskHolder.setAlias(t.getValue(REGISTRY.ALIAS));
-			taskHolder.setName(t.getValue(REGISTRY.NAME));
-			taskHolder.setDocument(t.getValue(REGISTRY.DOCUMENT));
-			taskHolder.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(t.getValue(REGISTRY.SECURITY_LEVEL)));
-			taskHolder.setDocumentCountry(Country.safeValueOf(t.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
-			taskHolder.setDocumentType(DocumentType.values()[t.getValue(REGISTRY.DOCUMENT_TYPE)]);
-			taskHolder.setNationality(Country.safeValueOf(t.getValue(REGISTRY.NATIONALITY))); // TODO
-			taskHolder.setSecurityLevel(SecurityLevel.values()[t.getValue(REGISTRY.SECURITY_LEVEL)]);
-			taskHolder.setLegalPerson(AonEnumUtils.getBoolean(t.getValue(REGISTRY.TYPE)));
-			taskHolder.setDomain(DomainFiller.buildDomain(t));
-			return taskHolder
+			return new TaskHolder()
+					.setRegistryData( new Registry() 
+						.setId(t.getValue(REGISTRY.ID))
+						.setDomain(t.get(DOMAIN.ID) != null 
+							? DomainFiller.buildDomain(t) 
+							: new Domain().setId(t.getValue(REGISTRY.DOMAIN)))
+						.setDocument(t.getValue(REGISTRY.DOCUMENT))
+						.setDocumentType(DocumentType.safeValueOf(t.getValue(REGISTRY.DOCUMENT_TYPE)))
+						.setDocumentCountry(Country.safeValueOf(t.getValue(REGISTRY.DOCUMENT_COUNTRY)) )
+						.setName(t.getValue(REGISTRY.NAME))
+						.setAlias(t.getValue(REGISTRY.ALIAS))
+						.setLegalPerson(AonEnumUtils.getBoolean(t.getValue(REGISTRY.TYPE)))
+						.setNationality(Country.safeValueOf(t.getValue(REGISTRY.NATIONALITY)) )
+						.setSecurityLevel(SecurityLevel.safeValueOf(t.getValue(REGISTRY.SECURITY_LEVEL))))
 					.setActive(t.getValue(TASK_HOLDER.ACTIVE) == 1)
 					.setCostProfile(t.getValue(TASK_HOLDER.COST_PROFILE))
 					.setTaskHolderType(TaskHolderType.valueOf(t.getValue(TASK_HOLDER.TYPE)))

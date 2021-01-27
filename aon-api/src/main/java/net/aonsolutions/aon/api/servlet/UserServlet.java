@@ -87,14 +87,15 @@ public class UserServlet extends AonApiHttpServlet {
 	}
 
 	private JSONArray getDomainUserRoles(Domain domain, String token, Integer userId) {
-		AonToken aonToken = SECURITY.getAonToken(token);
 		User user = new User();
 		if(userId != null) {
 			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(userId));
-		} else user = AON.getUser(domain.getName(), domain.getId(), "", f -> 
+		} else {
+			AonToken aonToken = SECURITY.getAonToken(token);
+			user = AON.getUser(domain.getName(), domain.getId(), "", f -> 
 				(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 				.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
-		
+		}
 		return getUserRoles(domain, user);
 	}
 	
@@ -169,7 +170,7 @@ public class UserServlet extends AonApiHttpServlet {
 			JSONObject json = new JSONObject();
 			if(pathInfo != null) {
 				if("app".equalsIgnoreCase(pathInfo[1])) {
-					setUserAppRole(json);
+					setUserAppRole();
 				}
 			} else {
 				json = setUser();
@@ -203,12 +204,12 @@ public class UserServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private void setUserAppRole(JSONObject json){
-		String domainName = json.optString("domain");
-		String app = json.optString("app");
-		JSONArray roles = json.optJSONArray("roles");
-		Integer user = json.optInt("user");
-		Boolean active = json.optBoolean("active"); 
+	private void setUserAppRole(){
+		String domainName = getData().optString("domain");
+		String app = getData().optString("app");
+		JSONArray roles = getData().optJSONArray("roles");
+		Integer user = getData().optInt("user");
+		Boolean active = getData().optBoolean("active"); 
 
 		AonApp aonApp = AonApp.safeValueOf(app);
 		Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
@@ -234,23 +235,25 @@ public class UserServlet extends AonApiHttpServlet {
 					if(th == null || th.getId() == null) {
 						User u = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(user));
 						Auth a = AON_SOLUTIONS.getAuth(domain.getName(), domain.getId(), u.getAuth());
-						Registry r = new Registry()
-								.setDocument(a.getDocument())
-								.setName(a.getName()+ " "+ a.getSurname())
-								.setAlias(a.getName())
-								.setDomain(domain);
-						th = (TaskHolder) r;
-						th.setActive(true).setUserId(user);
+
+						Registry r = AON.getRegistry(getDomain().getName(), getDomain().getId(), "", f -> f.getDocumentProperty().eq(a.getDocument()));
+						if(r == null || r.getId() == null) {
+							r = AON.save(getDomain().getName(), getDomain().getId(), "", new Registry()
+									.setDocument(a.getDocument())
+									.setName(a.getName()+ " "+ a.getSurname())
+									.setAlias(a.getName())
+									.setDomain(domain));
+						}
+						th = new TaskHolder()
+							.setRegistryData(r)
+							.setActive(true)
+							.setUserId(user);
 						AON.insertTaskHolder(domain.getName(), domain.getId(), "", th);
 					} else if(!th.isActive()) {
 						th.setActive(true);
 						AON.updateTaskHolder(domain.getName(), domain.getId(), "", th);
 					}
 				}
-//				else {
-//					uar.setRole(aonRole);
-//					AON_SOLUTIONS.updateUserAppRole(domain.getName(), domain.getId(), "", uar);
-//				}
 			} else {
 				if(uar.getId() != null) {
 					Integer id = uar.getId();
@@ -279,7 +282,10 @@ public class UserServlet extends AonApiHttpServlet {
 			} else updateAuth(auth, getData());
 			
 			byte[] a = auth.getAuth();
-			User user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getAuthProperty().eq(a));
+
+			User user = AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), "", f -> 
+					f.getAuthProperty().eq(a)).findFirst().orElse(new User());
+					
 			if((user == null || user.getId() == null) && getData().opt("id") != null) {
 				user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(getData().getInt("id")));
 			} 

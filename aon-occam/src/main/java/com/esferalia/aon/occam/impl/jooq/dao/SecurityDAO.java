@@ -390,6 +390,21 @@ public class SecurityDAO {
 				.fetch().stream().map(new UserFiller());
 	}
 	
+	public static Stream<User> getDomainUserStream(AONContext ctx, UserFilter filter) {
+		return ctx.getDslContext()
+				.selectDistinct(USER_FIELDS)
+				.from(USER)
+				.join(DOMAIN).on(USER.DOMAIN.eq(DOMAIN.ID).or(USER.DOMAIN.eq(DOMAIN.PARENT)))
+				.leftOuterJoin(USER_SCOPE).on(USER_SCOPE.USER_ID.eq(USER.ID))
+				.where(USER_PROPERTIES.getConditions(filter))
+				.and(DOMAIN.ID.eq(ctx.getDomainId()).and( 
+							DOMAIN.SCOPE.isNull().or(USER.DOMAIN.eq(ctx.getDomainId())).or( 
+									DOMAIN.SCOPE.eq(USER_SCOPE.SCOPE)
+							)
+						))
+				.fetch().stream().map(new UserFiller());
+	}
+	
 	public static Stream<User> getUserStream(AONContext ctx, UserFilter filter) {
 		return USER_PROPERTIES.build(ctx.getDslContext().select().from(USER), filter)
 				.fetch().stream().map(new UserFiller());

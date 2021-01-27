@@ -14,6 +14,20 @@ public class TaskHolder extends Registry implements Serializable{
 	
 	public TaskHolder() {}
 	
+	public TaskHolder setRegistryData(Registry registry) {
+		this.setId(registry.getId());
+		this.setDomain(registry.getDomain());
+		this.setDocument(registry.getDocument());
+		this.setDocumentType(registry.getDocumentType());
+		this.setDocumentCountry(registry.getDocumentCountry());
+		this.setName(registry.getName());
+		this.setAlias(registry.getAlias());
+		this.setLegalPerson(registry.isLegalPerson());
+		this.setNationality(registry.getNationality());
+		this.setSecurityLevel(registry.getSecurityLevel());
+		return this;
+	}
+	
 	public TaskHolderType getTaskHolderType() {
 		return taskHolderType;
 	}
