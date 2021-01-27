@@ -1292,7 +1292,6 @@ public class DashboardController implements Serializable {
 	}
 	
 	public void onGraficSelectionChanged(ActionEvent event){
-		//System.out.println(graficSelection.getValue() + " " + graficSelection.getLabel() );
 		if (graficSelection.equals(1)){
 			pieChart=true;
 			columnChart=false;
@@ -1464,7 +1463,7 @@ public class DashboardController implements Serializable {
 			}
 			list.add(si);
 		}
-		System.out.println( found );
+		
 		if (!found && list.size() > 0 ) {
 			try {
 				this.year = salaries.keySet().iterator().next();	

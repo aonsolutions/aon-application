@@ -15,9 +15,9 @@
 		
 		<script type="text/javascript">
 		 	google.charts.load('current', {'packages':['corechart'], 'language': 'es'});
-		    google.charts.setOnLoadCallback(drawChartsYearPygGraphContainer);
+		    google.charts.setOnLoadCallback(drawChartsYearPygGraph);
 		    
-			function drawChartsYearPygGraphContainer(){
+			function drawChartsYearPygGraph(){
 				var data = google.visualization.arrayToDataTable([
 					['Año','Ingresos','Compras','Gastos','Amortizaciones','Margen Bruto','EBITDA','Resultado'],
 					<c:forEach var="entry" items="#{dashboard.fiscalPortal.yearPygEntries}">

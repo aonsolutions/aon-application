@@ -26,9 +26,9 @@
 		<aon:div id="month_pyg_chart_div" style="width: 100%; min-height: 280px;"/>
 			<script type="text/javascript">
 			 	google.charts.load('current', {'packages':['corechart'], 'language': 'es'});
-			    google.charts.setOnLoadCallback(drawCharts2);
+			    google.charts.setOnLoadCallback(drawChartsMonthPygGraph);
 			    
-				function drawCharts2(){
+				function drawChartsMonthPygGraph(){
 					var data = new google.visualization.DataTable();
 					data.addColumn('string', 'Mes');
 					data.addColumn('number', 'Ingresos');

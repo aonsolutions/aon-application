@@ -27,9 +27,9 @@
 		
 		<script type="text/javascript">
 		 	google.charts.load('current', {'packages':['corechart'], 'language': 'es'});
-		    google.charts.setOnLoadCallback(drawCharts3);
+		    google.charts.setOnLoadCallback(drawChartsAccountExpenseGraph);
 
-			function drawCharts3(){
+			function drawChartsAccountExpenseGraph(){
 				var data = google.visualization.arrayToDataTable([
 					['Gasto','Importe'],
 				<c:forEach var="entry" items="#{dashboard.fiscalPortal.expensesEntries}">
