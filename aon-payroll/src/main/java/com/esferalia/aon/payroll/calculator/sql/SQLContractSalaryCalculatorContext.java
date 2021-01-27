@@ -4520,6 +4520,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				@Override
 				public Double getValue(Period p) {
 					Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
+					
+					if ( !isWholeMonth())
+						return availableDays.doubleValue();
+					
 					double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
 					double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
 					return ctxMonthDays == monthDays ? availableDays : (30 - (monthDays - availableDays));
@@ -5673,6 +5677,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		return currentEreFactor < startEreFactor;
 	}
+
+	private boolean isWholeMonth() {
+		return isWholeMonth(new Period(this.contractStartDate,this.contractEndDate));
+	}
+
 	
 	// ------------------------------------------------------------------------
 

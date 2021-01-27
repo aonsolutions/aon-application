@@ -20,6 +20,7 @@ import static com.esferalia.aon.payroll.enumeration.ContractCode.C430;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C441;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C450;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C452;
+import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.lang.String.format;
@@ -307,6 +308,172 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 	}
 	
+	@Test
+	public void testDropDaysAdjustI() throws ExpressionException, SQLException,
+			SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		addSystemData(
+				aonContext, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				null, 
+				new HashMap<String,String>(){
+					{
+						put("BASE_CGC_MIN", "[\"04\":1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)][GRUPO_COTIZACION]");
+					}
+				});
+		
+		
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfMonth(getToday()),
+				add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH,1),
+				new HashMap<String,String>(){
+					{
+						put("GRUPO_COTIZACION","'04'");
+						put("DIAS_MES", "30");
+						put(TC2.getName(), format("\"%s\"", FULL_TIME[0].getValue()));
+					}
+				}
+				, new String[] { 
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {}, 
+				null);
+		
+		addPayment(aonContext, contract, "DIAS DE AUSENCIA", "DIAS_AUSENCIA * 0.00", "_P", "BASE_CGC_MIN", PaymentType.CRA_0000, SalaryType.SALARY);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		// Calculate Salary for all month without dropdays
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				new java.sql.Date(startDate.getTime()), 
+				new java.sql.Date(endDate.getTime()), 
+				new java.sql.Date(endDate.getTime()),
+				contract);
+		
+		SalaryBuilder builder = new SalaryBuilder();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator(builder);
+		
+		Salary salary = calculator.calculate(ctx);
+		
+		Assert.assertEquals(1500.00 /30 * get(contract.getEndDate(), Calendar.DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		
+		addDropContractData(aonContext, contract, getFirstDayOfMonth(getToday()), contract.getEndDate());
+		
+		// Calculate Salary for all month with drop
+		ctx = getContractSalaryCalculatorContext(
+				connection, 
+				new java.sql.Date(startDate.getTime()), 
+				new java.sql.Date(endDate.getTime()), 
+				new java.sql.Date(endDate.getTime()),
+				contract);
+		
+		builder = new SalaryBuilder();
+		calculator = new SmartContractSalaryCalculator<Salary>(builder);
+		
+		salary = calculator.calculate(ctx);
+		
+		for(SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getDescription() + " = " + p.getAmount() + " = " + p.getQuote());
+		
+		int activeDays = 0;
+		int dropDays = AonDateUtils.get(contract.getEndDate(), Calendar.DAY_OF_MONTH); // not adjust
+
+		Assert.assertEquals(1500.00 * activeDays / 30, salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(1, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("BASE_CGC")).count(), DELTA);
+		Assert.assertEquals(1500.00 * activeDays / 30 + 35.00 * dropDays, salary.getCommonBase(), DELTA);
+		
+	}
+	
+	@Test
+	public void testDropDaysAdjustII() throws ExpressionException, SQLException,
+			SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		addSystemData(
+				aonContext, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				null, 
+				new HashMap<String,String>(){
+					{
+						put("BASE_CGC_MIN", "[\"04\":1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)][GRUPO_COTIZACION]");
+					}
+				});
+		
+		
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfMonth(getToday()),
+				add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH,14),
+				new HashMap<String,String>(){
+					{
+						put("GRUPO_COTIZACION","'04'");
+						put("DIAS_MES", "30");
+						put(TC2.getName(), format("\"%s\"", FULL_TIME[0].getValue()));
+					}
+				}
+				, new String[] { 
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {}, 
+				null);
+		
+		addPayment(aonContext, contract, "DIAS DE AUSENCIA", "DIAS_AUSENCIA * 0.00", "_P", "BASE_CGC_MIN", PaymentType.CRA_0000, SalaryType.SALARY);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		// Calculate Salary for all month without dropdays
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				new java.sql.Date(startDate.getTime()), 
+				new java.sql.Date(endDate.getTime()), 
+				new java.sql.Date(endDate.getTime()),
+				contract);
+		
+		SalaryBuilder builder = new SalaryBuilder();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator(builder);
+		
+		Salary salary = calculator.calculate(ctx);
+		
+		Assert.assertEquals(1500.00 /30 * get(contract.getEndDate(), Calendar.DAY_OF_MONTH), salary.getTotalPayment(), DELTA);
+		
+		addDropContractData(aonContext, contract, getFirstDayOfMonth(getToday()), add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH,1) );
+		
+		// Calculate Salary for all month with drop
+		ctx = getContractSalaryCalculatorContext(
+				connection, 
+				new java.sql.Date(startDate.getTime()), 
+				new java.sql.Date(endDate.getTime()), 
+				new java.sql.Date(endDate.getTime()),
+				contract);
+		
+		builder = new SalaryBuilder();
+		calculator = new SmartContractSalaryCalculator<Salary>(builder);
+		
+		salary = calculator.calculate(ctx);
+		
+		for(SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getDescription() + " = " + p.getAmount() + " = " + p.getQuote());
+		
+		int dropDays = 2; // not adjust
+		int activeDays = 15 -dropDays;
+
+		Assert.assertEquals(1500.00 * activeDays / 30, salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(2, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("BASE_CGC")).count(), DELTA);
+		Assert.assertEquals(1500.00 * activeDays / 30 + 35.00 * dropDays, salary.getCommonBase(), DELTA);
+		
+	}
+
 	// --------------------------------------------------------------------------------------------------------------------------
 	// --------------------------------------------------------------------------------------------------------------------------
 
