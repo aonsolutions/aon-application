@@ -9,8 +9,8 @@ public class RegistryMedia implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private int id;
-	private int domain;
+	private Integer id;
+	private Integer domain;
 	private Registry registry;
 	private byte media;
 	private String value;
@@ -24,12 +24,12 @@ public class RegistryMedia implements Serializable {
 	
 	}
 	
-	public RegistryMedia setId(int id) {
+	public RegistryMedia setId(Integer id) {
 		this.id = id;
 		return this;
 	}
 	
-	public RegistryMedia setDomain(int domain) {
+	public RegistryMedia setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -57,7 +57,7 @@ public class RegistryMedia implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	public int getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
 	

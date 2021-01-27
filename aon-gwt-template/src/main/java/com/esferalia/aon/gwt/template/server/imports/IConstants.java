@@ -56,7 +56,7 @@ public interface IConstants {
 	String FACTURA = "FACTURA";
 	String FECHA = "FECHA";
 	String FORMA_DE_PAGO = "FORMA DE PAGO";
-	String FORMA_PAGO = "FORMA DE PAGO";
+	String FORMA_PAGO = "FORMA PAGO";
 	String TIPO_DE_PAGO = "TIPO DE PAGO";
 	String TIPO_PAGO = "TIPO PAGO";
 	String HABER = "HABER";
