@@ -34,8 +34,7 @@ export class AonComunica extends AonElement {
 		this.aonComunicaEl = this.getElement(this.AON_COMUNICA);
 
 		this.buildToolbar();
-
-		this.paintViewContrato();
+		this.paintViewCtz();
 	}
 
 	buildToolbar(){
@@ -59,10 +58,7 @@ export class AonComunica extends AonElement {
 			{
 				name: 'CCC',
 				icon: 'account_balance',
-				fn: () => {
-					this.getElement(this.aonComunicaEl.TOOLBAR).setAttribute('option', 'Cuentas de cotización');
-					this.aonComunicaEl.setContentHTML(`<aon-cta-list id="aonCtaList" ></aon-cta-list>`)
-				}
+				fn: () => this.paintViewCtz()
 			},
 			{
 				name: 'Certificados',
@@ -90,7 +86,6 @@ export class AonComunica extends AonElement {
 		}
 		this.aonComunicaEl.addSidenavOptions('TGSS/SEPE', options);
 		
-
 		const options2 = [
 			{
 				name: 'Presencia',
@@ -104,13 +99,16 @@ export class AonComunica extends AonElement {
 
 	paintViewContrato(){
 		this.aonComunicaEl.removeToolbarOptions();
-		// if(this.isMobile())
-		// 	this.aonComunicaEl.setContentHTML(`<aon-contrato-list id="aonContratoList" ></aon-contrato-list>`)
-		// else {
-		// 	startModule('aon_gwt_payroll', 'MainContrata', this.aonComunicaEl.CONTENT);
-		// }
+		if(this.isMobile())
+			this.aonComunicaEl.setContentHTML(`<aon-contrato-list id="aonContratoList" ></aon-contrato-list>`)
+		else {
+			startModule('aon_gwt_payroll', 'MainContrata', this.aonComunicaEl.CONTENT);
+		}
+	}
 
-		this.aonComunicaEl.setContentHTML(`<aon-time-control id="aonTimeControl"></aon-time-control>`)
+	paintViewCtz(){
+		this.getElement(this.aonComunicaEl.TOOLBAR).setAttribute('option', 'Cuentas de cotización');
+		this.aonComunicaEl.setContentHTML(`<aon-cta-list id="aonCtaList" ></aon-cta-list>`)
 	}
 
 	async deleteMov(data, el) {

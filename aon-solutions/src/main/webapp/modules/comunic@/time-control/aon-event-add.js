@@ -109,7 +109,7 @@ export class AonEventAdd extends AonElement {
              <aon-input name="name" id="name" description="Nombre" type="text"></aon-input>
             </div>
             <div class="aonCol-sm-6 aonCol-md-2">
-                <aon-select name="status" id="status" title="Estatus"></aon-select>
+                <aon-select name="status" id="status" title="Estado"></aon-select>
             </div>
             <div class="aonCol-sm-6 aonCol-md-3">
                 <aon-select name="location" id="location" title="Ubicación"></aon-select>
@@ -118,7 +118,7 @@ export class AonEventAdd extends AonElement {
                 <aon-date name="date" id="date" title="Fecha"></aon-date>
             </div>
             <div class="aonCol-sm-6 aonCol-md-2">
-             <aon-input name="time" id="time" description="Hora" type="time"></aon-input>
+              <aon-input name="time" id="time" description="Hora" type="time"></aon-input>
             </div>
             ${buttonSubmit}
         `);
@@ -152,6 +152,14 @@ export class AonEventAdd extends AonElement {
 
     toolbar.addButton2(
       {
+        id: "Delete",
+        name: "Eliminar",
+        icon: "delete_forever",
+      },
+      () => this.removeData()
+    );
+    toolbar.addButton2(
+      {
         id: "Save",
         name: "Comunicar",
         icon: "send",
@@ -167,22 +175,8 @@ export class AonEventAdd extends AonElement {
       },
       () => this.back()
     );
-
-    this.hiddenButtonToolbar({ Delete: true, Idc: true, Ta: true });
   }
 
-  hiddenButtonToolbar(buttonToolbar) {
-    let toolbarSection = this.getElement(this.TOOLBAR);
-    if (toolbarSection) {
-      toolbarSection = toolbarSection.TOOL_SECTION;
-      for (const button in buttonToolbar) {
-        const deleteToolbar = this.getElement(
-          toolbarSection + button + "Button"
-        );
-        if (deleteToolbar) deleteToolbar.hidden = buttonToolbar[button];
-      }
-    }
-  }
 
   getFormValues() {
     const form = this.getElement(`${this.id}Form`);
@@ -235,6 +229,22 @@ export class AonEventAdd extends AonElement {
       for (const property in obj) {
         setValueName(property, obj[property]);
       }
+      this.getElement("name").disabled = "disabled";
+    }
+  }
+
+  removeData(){
+    const data = this.getFormValues();
+    if (confirm(`Estas seguro de eliminarlo?`)) {
+      this.aonComunicaEl.startLoader();
+      try {
+        // await postDeleteData(data);
+        this.TOAST.start({ message: `Datos eliminados!` });
+        this.back();
+      } catch (error) {
+        this.TOAST.start({ message: error, type: 'error' });
+      }
+      this.aonComunicaEl.stopLoader();
     }
   }
 
@@ -288,7 +298,7 @@ export class AonEventAdd extends AonElement {
   }
 
   back() {
-    this.aonComunicaEl.setContentHTML(`<aon-event-list></aon-event-list>`);
+    this.aonComunicaEl.setContentHTML(`<aon-time-control></aon-time-control>`);
   }
 }
 

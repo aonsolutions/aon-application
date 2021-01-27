@@ -67,6 +67,11 @@ export class AonDialogMenu extends AonElement {
 		dialog.style.display = 'none';
 	}
 
+	setContentHTML(html) {
+		let content = this.getElement(this.CONTENT);
+		content.innerHTML = html;
+	}
+
 	setMenuOptions(options, top, left) {
 		let dialog = this.getElement(this.DIALOG);
 		let content = this.getElement(this.CONTENT);

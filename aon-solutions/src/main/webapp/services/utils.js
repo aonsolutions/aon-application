@@ -58,16 +58,6 @@ export const setValueName = (name, value) => {
   return el;
 }
 
-const formatDate = (d) => {
-  let date = new Date(d);
-  let day = date.getDate();
-  if (day <= 9) day = '0' + day;
-  let month = date.getMonth() + 1;
-  if (month <= 9) month = '0' + month;
-  let year = date.getFullYear();
-  return day + '/' + month + '/' + year;
-}
-
 export const timePaser = (time) =>{
   let msecPerMinute = 1000 * 60;
   let msecPerHour = msecPerMinute * 60;
@@ -84,6 +74,16 @@ export const timePaser = (time) =>{
   return (hours < 10 ? '0' : '') + hours + ':'
     + (minutes < 10 ? '0' : '') + minutes + ':'
     + (seconds < 10 ? '0' : '') + seconds;
+}
+
+const formatDate = (d) => {
+  let date = new Date(d);
+  let day = date.getDate();
+  if (day <= 9) day = '0' + day;
+  let month = date.getMonth() + 1;
+  if (month <= 9) month = '0' + month;
+  let year = date.getFullYear();
+  return day + '/' + month + '/' + year;
 }
 
 export const setDate = (date) => formatDate(date);

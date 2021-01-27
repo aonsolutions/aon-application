@@ -19,6 +19,7 @@ export class AonTimeControl extends AonElement {
 
   constructor() {
     super();
+    this.id = this.id || 'aonTimeControl';
     this.aonComunicaEl = this.getElement("aonComunica");
     this.aonComunicaToolbar = this.getElement("aonComunicaToolbar");
   }

@@ -314,19 +314,24 @@ export class AonDate extends AonElement {
       this.day = this.date.getDate();
       this.month = this.date.getMonth();
       this.year = this.date.getFullYear();
-      this.value = this.year + '-' + (this.month + 1) + '-' + this.day;
-      this.getElement(this.INPUT).value = this.day + '/' + (this.month + 1) + '/' + this.year;
+      this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
+      this.getElement(this.INPUT).value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
       this.buildCalendar();
     } else if(date){
       this.date = new Date(Date.parse(date));
       this.day = this.date.getDate();
       this.month = this.date.getMonth();
       this.year = this.date.getFullYear();
-      this.value = this.year + '-' + (this.month + 1) + '-' + this.day;
-      this.getElement(this.INPUT).value = this.day + '/' + (this.month + 1) + '/' + this.year;
+      this.value = this.year + '-' + (this.addZero(this.month + 1)) + '-' + this.addZero(this.day);
+      this.getElement(this.INPUT).value = this.addZero(this.day) + '/' + (this.addZero(this.month + 1)) + '/' + this.year;
       this.buildCalendar();
     }
     this.dispatchEvent(new CustomEvent('change', {detail: this.date}));
+  }
+
+  addZero(d){
+    if (d <= 9) d = d.toString().padStart(2, "0");
+    return d;
   }
 }
 

@@ -205,7 +205,7 @@ export class AonDialog extends AonElement {
 	}
 
 	addAcceptAction(fn) {
-		let accept = this.createElement('button');
+		let accept = this.getElement(this.ACCEPT) || this.createElement('button');
 		accept.id = this.ACCEPT;
 		accept.className = 'aonButton';
 		accept.innerHTML = MSG.AON_MSG_ACCEPT;

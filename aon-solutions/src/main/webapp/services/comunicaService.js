@@ -275,25 +275,3 @@ export const getTipoCtz = (data) =>
     resolve(json.find((r) => r.value == data));
   });
 
-//DELETE DATA TEST
-
-
-export const getLocation = (data) =>
-  new Promise((resolve) => {
-    let jsonValues = [
-      {
-        id: 1,
-        name: "VITORIA",
-      },
-      {
-        id: 2,
-        name: "MADRID",
-      },
-      {
-        id: 3,
-        name: "BARCELONA",
-      },
-    ];
-
-    resolve(jsonValues);
-  });

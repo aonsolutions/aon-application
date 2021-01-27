@@ -1,16 +1,9 @@
 import { AonElement } from "../../../components/AonElement.js";
-import {
-  getTimeControlList,
-  getTaskHolderTimeControl,
-} from "../../../services/service.js";
-import {
-  serializeForm,
-  setDateTimestamp,
-  setValueName,
-  timePaser,
-} from "../../../services/utils.js";
+import { getGroups, getTimeControlList } from "../../../services/service.js";
+import { setDateTimestamp, timePaser } from "../../../services/utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
+import "../../../components/aon-filter.js";
 import "./aon-event-list.js";
 
 export class AonPresenceList extends AonElement {
@@ -50,12 +43,19 @@ export class AonPresenceList extends AonElement {
     this.paintView();
     this.build();
     this.buildToolbar();
+    this.eventListener();
   }
+  eventListener() {}
 
   paintView() {
-    if (this.isMobile())
-      this.innerHTML = ` <aon-mobile-list id='${this.TABLE_ID}' />`;
-    else this.innerHTML = ` <aon-table id='${this.TABLE_ID}' />`;
+    let innerHTML = `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
+    if (this.isMobile()) {
+      innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
+    } else {
+      innerHTML = innerHTML + `<aon-table id='${this.TABLE_ID}' />`;
+    }
+
+    this.innerHTML = innerHTML;
   }
 
   async build() {
@@ -68,49 +68,44 @@ export class AonPresenceList extends AonElement {
 
   buildToolbar() {
     this.aonComunicaEl.removeToolbarOptions();
-
-    // if (this.isMobile()) {
-    //     let floatButton = this.getElement(`${this.aonComunicaEl.id}FloatSpan`);
-    //     if (!floatButton) {
-    //         this.aonComunicaEl.addFloatOption({
-    //             id: 'AddAlta',
-    //             name: 'addalta',
-    //             icon: 'add'
-    //         }, () => this.openDialogFilter());
-    //     }
-    // } else {
-    this.aonComunicaEl.addToolbarOption("Filter", "tune", () =>
-      this.openDialogFilter()
+    this.buildFilter();
+    const filterEl = this.getElement(`${this.id}Filter`);
+    this.aonComunicaEl.addToolbarOption("Filter", "tune", (e) =>
+      filterEl.openFilter()
     );
-    // }
   }
 
-  openDialogFilter() {
-    let d = document.getElementById(this.aonComunicaEl.DIALOG);
-    d.clear();
-    if (!this.isMobile()) d.width = "400px";
-    d.setTitle("Filtros");
-    let htmlContent = `
-        <form id="filterForm">
-          <aon-select name="group" id="group" title="Agrupar"></aon-select>
-          <aon-date name="startDate" id="startDate" title="Fecha inicio"></aon-date>
-          <aon-date name="endDate" id="endDate" title="Fecha fin"></aon-date>
-        </form>
-      `;
-    d.setContentHTML(htmlContent);
-    d.addAcceptAction(() => this.sendFilter());
-    d.open();
-
-    this.getElement("group").options = JSON.stringify(this.getGroups());
-
-    if (this.filter) {
-      for (const property in this.filter) setValueName(property, this.filter[property]);
-    }
+  buildFilter() {
+    let aonFilter = this.getElement(`${this.id}Filter`);
+    let inputs = [
+      {
+        type: "select",
+        id: "group",
+        name: "group",
+        title: "Agrupar por",
+      },
+      {
+        type: "date",
+        name: "startDate",
+        id: "startDate",
+        title: "Desde",
+      },
+      {
+        type: "date",
+        name: "endDate",
+        id: "endDate",
+        title: "Hasta",
+      },
+    ];
+    aonFilter.setInputs(inputs);
+    aonFilter.addEventListener("applyFilter", ({ detail }) => {
+      if (detail) this.filter = detail;
+    });
+    this.getOptionsGroup();
   }
 
-  sendFilter() {
-    const form = this.getElement(`filterForm`);
-    this.filter = serializeForm(form);
+  async getOptionsGroup() {
+    this.getElement("group").options = JSON.stringify(await getGroups());
   }
 
   async getTableDesk() {
@@ -152,8 +147,8 @@ export class AonPresenceList extends AonElement {
         resp.map((res, idx) => {
           let options = {
             iconHtmlCustom: `${res.lettersHtml}`,
-            title: `${res.name}`,
-            subtitle: `${res.location} <div style="float: right;">${res.date} <div class="timeControl ${res.status}" style="float: right;margin-left: 10px; margin-top: 3px;"></div></div> `,
+            title: `${res.name} <div style="font-size: 14px;float: right; color: rgba(0,0,0,.54);">${res.duration}<div style="float: right;margin-left: 15px;"></div>`,
+            subtitle: `${res.date} <div style="float: right;">${res.location} <div class="timeControl ${res.status}" style="float: right;margin-left: 4px; margin-top: -8%;"></div></div> `,
           };
           if (res.contractType) options.option = this.getOptions(res);
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
@@ -165,28 +160,29 @@ export class AonPresenceList extends AonElement {
   }
 
   async getData() {
+    this.aonComunicaEl.startLoader();
     let data = [];
     try {
       const datos = await getTimeControlList(this.filter);
       datos.map(
         ({
-          date,
-          department,
-          name,
-          last_name1,
+          time,
+          in_date:date,
           status,
           location,
-          taskHolderId,
-          time,
+          task_holder:{
+            id:taskHolderId,
+            name
+          }
         }) => {
-          const lettersName = `${name.substr(0, 1)}${last_name1.substr(0, 1)}`;
-          let lettersHtml = `<div class="profile-letters">${lettersName}</div>`;
-          //status = out, in, pause
-          let newStatus = status.toLowerCase();
+          const nameArray = name.split(" ");
+          const lettersName = `${nameArray[0].substr(0, 1)}${nameArray[1].substr(0, 1)}`;
+          const lettersHtml = `<div class="profile-letters">${lettersName}</div>`;
+          const newStatus = status.toLowerCase();
           const obj = {
             lettersHtml,
             status: newStatus,
-            name: `${name} ${last_name1}`,
+            name: `${name}`,
             date: setDateTimestamp(date),
             duration: timePaser(Number(time)),
             location,
@@ -198,47 +194,19 @@ export class AonPresenceList extends AonElement {
     } catch (e) {
       console.log(e);
     }
-
+    this.aonComunicaEl.stopLoader();
     return data;
   }
 
-  async aonEvent({ target: el }, { taskHolderId }) {
-    let id = "aonEvent";
-    this.aonComunicaEl.startLoader();
+  async aonEvent({ target: el }, {taskHolderId}) {
+    let id = "aonEventList";
     this.aonComunicaEl.setContentHTML(
       `<aon-event-list id="${id}"></aon-event-list>`
     );
-    try {
-      let resp = await getTaskHolderTimeControl({ taskHolderId });
-      const aonEvent = this.getElement(id);
-      if (resp && aonEvent) {
-        aonEvent.data = resp;
-      }
-    } catch (error) {
-      console.log(error);
+    const aonEventEl = this.getElement(id);
+    if (aonEventEl) {
+      aonEventEl.data = { taskHolderId };
     }
-    this.aonComunicaEl.stopLoader();
-  }
-
-  getGroups() {
-    return [
-      {
-        name: "DIA",
-        value: "DAY",
-      },
-      {
-        name: "SEMANA",
-        value: "WEEK",
-      },
-      {
-        name: "MES",
-        value: "MONTH",
-      },
-      {
-        name: "AÑO",
-        value: "YEAR",
-      },
-    ];
   }
 }
 window.customElements.define("aon-presence-list", AonPresenceList);

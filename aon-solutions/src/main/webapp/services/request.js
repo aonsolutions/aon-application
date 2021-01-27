@@ -7,7 +7,6 @@ const formatParams = (params) => {
   );
 };
 
-
 export const request = (method, url, token, sendData, fn) => {
   let xhr = new XMLHttpRequest();
   if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
@@ -15,11 +14,15 @@ export const request = (method, url, token, sendData, fn) => {
   xhr.setRequestHeader("session_id", token);
   const domainId = localStorage.getItem("aon_domain_id")
     ? localStorage.getItem("aon_domain_id")
-    : (localStorage.getItem("company") ? JSON.parse(localStorage.getItem("company")).id : '');
+    : localStorage.getItem("company")
+    ? JSON.parse(localStorage.getItem("company")).id
+    : "";
   xhr.setRequestHeader("domain_id", domainId);
   const domainName = localStorage.getItem("aon_domain_name")
     ? localStorage.getItem("aon_domain_name")
-    : (localStorage.getItem("company") ? JSON.parse(localStorage.getItem("company")).domain : '');
+    : localStorage.getItem("company")
+    ? JSON.parse(localStorage.getItem("company")).domain
+    : "";
   xhr.setRequestHeader("domain_name", domainName);
   xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
@@ -85,19 +88,21 @@ export const requestFile = (method, url, fn) => {
   xhr.open(method, url);
   xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.responseType = 'blob';
+  xhr.responseType = "blob";
   xhr.send();
   xhr.onload = () => {
     xhr.status != 200 ? fn(undefined, xhr.response) : fn(xhr.response);
   };
-  xhr.onerror = () => { };
+  xhr.onerror = () => {};
 };
 
 export const get = (url, data) => {
   return new Promise((resolve, reject) => {
     request("GET", url, getToken(), data, (result, error) => {
-      if (error) reject(error);
-      else resolve(JSON.parse(result));
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
     });
   });
 };
@@ -105,8 +110,10 @@ export const get = (url, data) => {
 export const post = (url, data) => {
   return new Promise((resolve, reject) => {
     request("POST", url, getToken(), data, (result, error) => {
-      if (error) reject(error);
-      else resolve(JSON.parse(result));
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
     });
   });
 };
@@ -114,8 +121,10 @@ export const post = (url, data) => {
 export const remove = (url, data) => {
   return new Promise((resolve, reject) => {
     request("DELETE", url, getToken(), data, (result, error) => {
-      if (error) reject(error);
-      else resolve(JSON.parse(result));
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
     });
   });
 };
@@ -130,42 +139,46 @@ export const openPDF = async (url, data) => {
     ...data,
     domain_name: domainName,
     session_id: token,
-    domain_id: domainId
-  }
+    domain_id: domainId,
+  };
   const json = btoa(JSON.stringify(datos));
   const newUrl = `${url}?json=${json}`;
 
   if (webkitRequestMobile())
-    await openFileMobile(newUrl).then(async (obj) => await actionRequestMobile(obj)).catch(e => null);
-  else
-    openFileDesktop(newUrl);
+    await openFileMobile(newUrl)
+      .then(async (obj) => await actionRequestMobile(obj))
+      .catch((e) => null);
+  else openFileDesktop(newUrl);
 
   return;
-}
+};
 
-const openFileMobile = async (url) => new Promise((resolve, reject) => {
-  requestFile("GET", url, (result, error) => {
-    if (error) reject(error);
-    else {
-      const contentType = "application/pdf";
-      const reader = new FileReader();
-      reader.readAsDataURL(result);
-      reader.onload = function () {
-        const base64Str = reader.result.toString().replace(/^data:.+;base64,/, '');
-        const obj = {
-          fileBase64: base64Str,
-          fileName: "document.pdf",
-          contentType,
-          action: "fileDownload"
-        }
-        resolve(obj);
+const openFileMobile = async (url) =>
+  new Promise((resolve, reject) => {
+    requestFile("GET", url, (result, error) => {
+      if (error) reject(error);
+      else {
+        const contentType = "application/pdf";
+        const reader = new FileReader();
+        reader.readAsDataURL(result);
+        reader.onload = function () {
+          const base64Str = reader.result
+            .toString()
+            .replace(/^data:.+;base64,/, "");
+          const obj = {
+            fileBase64: base64Str,
+            fileName: "document.pdf",
+            contentType,
+            action: "fileDownload",
+          };
+          resolve(obj);
+        };
+        reader.onerror = function () {
+          reject(true);
+        };
       }
-      reader.onerror = function () {
-        reject(true);
-      }
-    }
+    });
   });
-});
 
 const openFileDesktop = (url) => open(url);
 
@@ -176,9 +189,9 @@ export const webkitRequestMobile = () => {
     if ("undefined" !== typeof webkit && webkit.messageHandlers.cordova_iab) {
       result = true;
     }
-  } catch (e) { }
+  } catch (e) {}
   return result;
-}
+};
 
 export const actionRequestMobile = (data) => {
   return new Promise((resolve) => {
@@ -186,10 +199,12 @@ export const actionRequestMobile = (data) => {
     try {
       if (webkitRequestMobile()) {
         let _webkit = webkit.messageHandlers.cordova_iab;
-        if(data) _webkit.postMessage(JSON.stringify(data));
+        if (data) _webkit.postMessage(JSON.stringify(data));
         result = true;
       }
-    } catch (e) {console.log(e)}
-    resolve(result)
+    } catch (e) {
+      console.log(e);
+    }
+    resolve(result);
   });
-}
+};
