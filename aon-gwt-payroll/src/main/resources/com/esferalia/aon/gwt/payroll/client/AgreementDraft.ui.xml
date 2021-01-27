@@ -375,7 +375,7 @@
 										</g:Label>
 									</g:customCell>
 									<g:customCell styleName="{style.field}">
-										<g:TextBox debugId='ssNumberTextBox' ui:field='ssNumberTextBox' styleName="{style.textCenter}"/>
+										<g:TextBox debugId='ssNumberTextBox' ui:field='ssNumberTextBox' styleName="gwt-TextBox {style.textCenter}"/>
 									</g:customCell>
 								</g:row>
 							</g:Grid>
