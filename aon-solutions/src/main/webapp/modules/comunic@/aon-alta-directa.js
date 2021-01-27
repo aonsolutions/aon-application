@@ -211,16 +211,6 @@ export class AonAltaDirecta extends AonElement {
         this.initLists();
     }
 
-    initLists() {
-        this.suggestionDni();
-        this.listCentroTrabajo();
-        this.listTipoContrato();
-        this.listTipoJornada();
-        this.listGrupoCotizacion();
-        this.listOcupacion();
-        this.listConvenios();
-    }
-    
     eventListener() {
         let aonAltaDirectaSubmit = this.getElement(`${this.id}Submit`);
         if (aonAltaDirectaSubmit) aonAltaDirectaSubmit.addEventListener('click', () => this.formSubmit());
@@ -397,6 +387,16 @@ export class AonAltaDirecta extends AonElement {
         span.innerHTML = '0,';
         span.classList = 'coefParcilD';
         coefparcialInput.parentNode.insertBefore(span, coefparcialInput);
+    }
+
+    initLists() {
+        this.suggestionDni();
+        this.listCentroTrabajo();
+        this.listTipoContrato();
+        this.listTipoJornada();
+        this.listGrupoCotizacion();
+        this.listOcupacion();
+        this.listConvenios();
     }
 
     selectTipojornada({ detail }) {

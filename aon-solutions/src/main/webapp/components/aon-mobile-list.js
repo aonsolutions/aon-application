@@ -1,13 +1,14 @@
-import { AonElement } from "./AonElement.js";
+import { AonElement } from './AonElement.js';
 
-import "./aon-icon.js";
-import "./aon-icon-button.js";
-import "./aon-dialog-menu.js";
+import './aon-icon.js';
+import './aon-icon-button.js';
+import './aon-dialog-menu.js';
 
 import * as CONSTANT from "../environments/constants.js";
 import * as MSG from "../environments/msg.js";
 
 export class AonMobileList extends AonElement {
+
   UL;
 
   static get observedAttributes() {
@@ -30,12 +31,14 @@ export class AonMobileList extends AonElement {
     this.setAttribute(CONSTANT.FILTER, filter);
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {}
+  attributeChangedCallback(name, oldValue, newValue) {
+
+  }
 
   constructor() {
     super();
-    this.id = this.id || "aonMobileList";
-    this.UL = this.id + "UL";
+    this.id = this.id || 'aonMobileList';
+    this.UL = this.id + 'UL';
   }
 
   connectedCallback() {
@@ -43,50 +46,43 @@ export class AonMobileList extends AonElement {
   }
 
   build() {
-    this.innerHTML = "";
-    let ul = this.createElement("ul");
+    this.innerHTML = '';
+    let ul = this.createElement('ul');
     ul.id = this.UL;
-    ul.style.overflow = "auto";
-    ul.className = "list-group";
+    ul.style.overflow = 'auto';
+    ul.className = 'list-group';
     this.appendChild(ul);
 
-    let content = this.getElement("aonDocumentalContent");
-    if (content)
-      content.addEventListener("scroll", () => {
-        let scrollTop = content.scrollTop;
-        let offsetHeight = content.offsetHeight;
-        let physicalSize = content.scrollHeight;
-        let maxScrollPosition = physicalSize - offsetHeight;
-        if (scrollTop >= maxScrollPosition) {
-          this.dispatchEvent(new CustomEvent("more"));
-        }
-      });
+    let content = this.getElement('aonDocumentalContent');
+    if(content) content.addEventListener('scroll', () => {
+      let scrollTop = content.scrollTop;
+      let offsetHeight = content.offsetHeight;
+      let physicalSize = content.scrollHeight;
+      let maxScrollPosition = physicalSize - offsetHeight;
+      if (scrollTop >= maxScrollPosition) {
+        this.dispatchEvent(new CustomEvent('more'));
+      }
+    });
   }
 
   addLi(data, index, fn) {
-    let li = document.createElement("li");
-    li.className = "aonLi aonAppLi";
+    let li = document.createElement('li');
+    li.className = 'aonLi aonAppLi';
 
-    li.addEventListener("click", fn);
+    li.addEventListener('click', fn);
 
-    let span = document.createElement("span");
-    span.className = "aonLiSpan";
-    let spanHtml = null;
-    if (data.aonIcon) {
-      spanHtml = `<aon-icon class="aonAvatar" icon="${data.aonIcon}" size="24"></aon-icon>`;
-    } else if (data.icon) {
-      spanHtml = `<i class="material-icons aonAvatar"> ${data.icon} </i>`;
-    } else if (data.iconHtmlCustom) {
-      spanHtml = `${data.iconHtmlCustom}`;
-    }
-    span.innerHTML = spanHtml;
+    let span = document.createElement('span');
+    span.className = 'aonLiSpan';
+    span.innerHTML = data.aonIcon
+      ? `<aon-icon class="aonAvatar" icon="${data.aonIcon}" size="24"></aon-icon>`
+      : `<i class="material-icons aonAvatar"> ${data.icon} </i>`;
 
-    let div = document.createElement("div");
-    div.className = "aonListText";
+    let div = document.createElement('div');
+    div.className = 'aonListText';
     div.innerHTML = data.title;
 
-    let span3 = document.createElement("span");
-    span3.className = "aonLiSpanSubtitle";
+    let span3 = document.createElement('span');
+    span3.className = 'aonLiSpanSubtitle';
     span3.innerHTML = data.subtitle;
 
     span.appendChild(div);
@@ -95,27 +91,28 @@ export class AonMobileList extends AonElement {
 
     ///OPTIONS
     if (data.option) {
-      let span4 = document.createElement("span");
-      span4.className = "aonListMoreVert";
+      let span4 = document.createElement('span');
+      span4.className = 'aonListMoreVert';
       span4.innerHTML = `<aon-icon-button id="${this.id}IconOption" icon="more_vert"></aon-icon-button>`;
-      span4.addEventListener("click", (e) => {
+      span4.addEventListener('click', (e) => {
         e.stopPropagation();
         this.getOptions(span4, data.option);
       });
       li.appendChild(span4);
     }
 
+
     this.getElement(this.UL).appendChild(li);
   }
 
   removeAllLi() {
-    let url = this.getElement(this.id + "UL");
-    if (url) url.innerHTML = "";
+    let url = this.getElement(this.id + 'UL');
+    if (url) url.innerHTML = '';
   }
 
   createAonDialog() {
-    const id = this.id + "aonDialogAddOption";
-    let div = document.createElement("div");
+    const id = this.id + 'aonDialogAddOption';
+    let div = document.createElement('div');
     div.innerHTML = `<aon-dialog-menu id="${id}" ></aon-dialog-menu>`;
     if (this) this.appendChild(div);
   }
@@ -123,28 +120,31 @@ export class AonMobileList extends AonElement {
   getOptions(el, options) {
     const top = el.getBoundingClientRect().top;
     const left = el.getBoundingClientRect().left;
-    let d = this.getElement(this.id + "aonDialogAddOption");
+    let d = this.getElement(this.id + 'aonDialogAddOption');
     options = options.map(({ aonIcon, icon, name, fn }) => {
       return {
         aonIcon,
         icon,
         name,
-        fn: () => fn(el),
+        fn: () => fn(el)
       };
-    });
+    })
 
     d.setMenuOptions(options, top, left);
     d.open();
   }
 
+
   getFilter() {
-    return this.hasAttribute("filter")
-      ? JSON.parse(this.getAttribute("filter"))
+    return this.hasAttribute('filter')
+      ? JSON.parse(this.getAttribute('filter'))
       : {};
   }
 
   setFilter(filter) {
-    return this.setAttribute("filter", JSON.stringify(filter));
+    return this.setAttribute('filter', JSON.stringify(filter));
   }
+
+
 }
-window.customElements.define("aon-mobile-list", AonMobileList);
+window.customElements.define('aon-mobile-list', AonMobileList);

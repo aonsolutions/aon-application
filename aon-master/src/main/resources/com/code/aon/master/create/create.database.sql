@@ -2739,7 +2739,6 @@ CREATE TABLE `contract` (
   `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion del Contrato',
   `calendar` int(4) DEFAULT NULL COMMENT 'Calendario',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
-  `sepe_id` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Identificador de contracto del SEPE',
   `sepe_status` tinyint(2) DEFAULT '0' COMMENT 'Estado de notificacion del contrato al SEPE',
   `registration` int(4) DEFAULT NULL COMMENT 'N�mero libro de matricula',
   `seniority_date` date DEFAULT NULL COMMENT 'Fecha de antiguedad',

@@ -48,7 +48,7 @@ export const serializeForm = (form) => {
     ...form.querySelectorAll(INPUTS_ALL)
   ];
   let obj = {}
-  inputs.filter(({name, value})=> value && value!= "undefined" && name!=null).map(({ name, value }) => obj[name] = value);
+  inputs.filter(el => el.value).map(({ name, value }) => obj[name] = value);
   return obj;
 }
 
@@ -59,58 +59,20 @@ export const setValueName = (name, value) => {
 }
 
 const formatDate = (d) => {
-  let date = new Date(d);
-  let day = date.getDate();
+  let day = d.getDate();
   if (day <= 9) day = '0' + day;
-  let month = date.getMonth() + 1;
+  let month = d.getMonth() + 1;
   if (month <= 9) month = '0' + month;
-  let year = date.getFullYear();
+  let year = d.getFullYear();
   return day + '/' + month + '/' + year;
 }
 
-export const timePaser = (time) =>{
-  let msecPerMinute = 1000 * 60;
-  let msecPerHour = msecPerMinute * 60;
-
-  // Calcular las horas , minutos y segundos
-  let hours = Math.floor(time / msecPerHour );
-  time = time - (hours * msecPerHour );
-
-  var minutes = Math.floor(time / msecPerMinute );
-  time = time - (minutes * msecPerMinute );
-
-  var seconds = Math.floor(time / 1000 );
-
-  return (hours < 10 ? '0' : '') + hours + ':'
-    + (minutes < 10 ? '0' : '') + minutes + ':'
-    + (seconds < 10 ? '0' : '') + seconds;
-}
-
-export const setDate = (date) => formatDate(date);
+export const setDate = (date) => formatDate(new Date(date));
 
 export const addDays = (date, days) => {
   let result = new Date(date);
   result.setDate(result.getDate() + days);
   return result;
-}
-
-export const setDateTimestamp = (d) => {
-  let date = new Date(d);
-  let day = date.getDate();
-  if (day <= 9) day = '0' + day;
-  let month = date.getMonth() + 1;
-  if (month <= 9) month = '0' + month;
-  let year = date.getFullYear();
-
-  return day + '/' + month + '/' + year + " " + setTime(date);
-}
-
-export const setTime = (date)=> {
-  let hour = date.getHours();
-  if (hour <= 9) hour = '0' + hour;
-  let min  = date.getMinutes();
-  if (min <= 9) min = '0' + min;
-  return hour+":"+min;
 }
 
 
