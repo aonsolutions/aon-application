@@ -7,55 +7,49 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 	
-		<aon:div id="yearPygGraphContainer" 
-			style="width: 98%; min-height: 300px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
-			<aon:div id="pyg_chart_div" style="width: 100%; min-height: 280px;"/>
-			
-			<script type="text/javascript">
-			 	google.charts.load('current', {'packages':['corechart','table'], 'language': 'es'});
-			    google.charts.setOnLoadCallback(drawCharts1);
-				function drawCharts1(){
-					var data = new google.visualization.DataTable();
-					data.addColumn('string', 'Año');
-					data.addColumn('number', 'Ingresos');
-					data.addColumn('number', 'Compras');
-					data.addColumn('number', 'Gastos');
-					data.addColumn('number', 'Amortizaciones');
-					data.addColumn('number', 'Margen Bruto');
-					data.addColumn('number', 'EBITDA');
-					data.addColumn('number', 'Resultado');
-					
-					<c:forEach var="entry" items="#{dashboard.fiscalPortal.yearPygEntries}">
-						data.addRow(['#{entry.period}',
-						             #{entry.income},
-						             #{entry.purchase}, 
-						             #{entry.expense},
-						             #{entry.amortization},
-						             #{entry.income - entry.purchase},
-						             #{entry.income - entry.purchase - entry.expense},
-						             #{entry.income - entry.purchase - entry.expense - entry.amortization}
-						             ]);
-					</c:forEach>
-					var options = {
-						chartArea:{right:5,top:15,width:"80%",height:"60%"},
-						legend: {position: 'bottom'},
-						tooltip: {isHtml: true},
-						series: { 4: {type: 'bars'},
-							      5: {type: 'bars'},
-						          6: {type: 'bars'},
-						        },
-				    };
-					var formatter = new google.visualization.NumberFormat({suffix: '€'});
-					formatter.format(data, 1);
-					formatter.format(data, 2);
-					formatter.format(data, 3);
-					formatter.format(data, 4);
-					formatter.format(data, 5);
-					formatter.format(data, 6);
-					formatter.format(data, 7);
-					var chart = new google.visualization.ComboChart(document.getElementById('aonContent:mainForm:yearPygGraphContainer'));
-					chart.draw(data, options);
-				}
-		   </script>
+	<aon:div id="yearPygGraphContainer" style="width: 100%;border:solid #BBB 1px;">
+		<aon:div styleClass="aon-text-center aon-padding-bottom aon-padding-top">
+			<aon:outputText value="#{bundle.account_year_evolution}" styleClass="aon-margin-right aon-bold"/>
 		</aon:div>
+		<aon:div id="pyg_chart_div" style="width: 100%; min-height: 280px;"/>
+		
+		<script type="text/javascript">
+		 	google.charts.load('current', {'packages':['corechart'], 'language': 'es'});
+		    google.charts.setOnLoadCallback(drawChartsYearPygGraphContainer);
+		    
+			function drawChartsYearPygGraphContainer(){
+				var data = google.visualization.arrayToDataTable([
+					['Año','Ingresos','Compras','Gastos','Amortizaciones','Margen Bruto','EBITDA','Resultado'],
+					<c:forEach var="entry" items="#{dashboard.fiscalPortal.yearPygEntries}">
+					['#{entry.period}',#{entry.income},#{entry.purchase},#{entry.expense},#{entry.amortization},
+						#{entry.income - entry.purchase},
+						#{entry.income - entry.purchase - entry.expense},
+						#{entry.income - entry.purchase - entry.expense - entry.amortization}
+					],
+				</c:forEach>
+			    ]);
+				
+				var options = {
+					chartArea:{width:"85%",height:"60%"},
+					legend: {position: 'bottom'},
+					tooltip: {isHtml: true},
+					series: { 4: {type: 'bars'},
+						      5: {type: 'bars'},
+					          6: {type: 'bars'},
+					        },
+			    };
+				var formatter = new google.visualization.NumberFormat({suffix: '€'});
+				formatter.format(data, 1);
+				formatter.format(data, 2);
+				formatter.format(data, 3);
+				formatter.format(data, 4);
+				formatter.format(data, 5);
+				formatter.format(data, 6);
+				formatter.format(data, 7);
+				var chart = new google.visualization.ComboChart(document.getElementById('aonContent:mainForm:pyg_chart_div'));
+				chart.draw(data, options);
+			}
+	   </script>
+	</aon:div>
+	
 </ui:composition>

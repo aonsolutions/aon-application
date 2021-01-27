@@ -7,33 +7,30 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-		
+<!-- 		
 	<script type="text/javascript">
 			window.onload= function{
 				var aux =  "#{dashboard.initialize}"
 			}
 	</script>
-	<aon:div id="payrollPortalGraphContainer" 
-		style="width: 98%; min-height: 300px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
-		
-		<aon:div styleClass="aon-bold">
-			<aon:outputText value="#{bundle.payroll_agreementLevel_payment}" />
+ -->
+	<aon:div id="payrollPortalGraphContainer" style="width: 100%;border:solid #BBB 1px;">
+		<aon:div styleClass="aon-text-center aon-padding-bottom aon-padding-top">
+			<aon:outputText value="#{bundle.payroll_agreementLevel_payment}"  styleClass="aon-margin-right aon-bold"/>
 			<aon:selectOneMenu id="Dashboard_payrollPortalPeriod"
 				style="border: none;margin-left: 10px;" value="#{dashboard.option}">
 				<a4j:support event="onchange"
 					actionListener="#{dashboard.onOptionChanged}"
-					reRender="payrollPortalGraphContainer,messageList" ajaxSingle="true" />
+					reRender="payrollPortalGraphContainer" ajaxSingle="true" />
 				<f:selectItems value="#{dashboard.options}" />
 			</aon:selectOneMenu>
-			<!-- c:if test="#{dashboard.meses}"-->
 			<aon:selectOneMenu id="Dashboard_payrollPortalPeriod2"
 				style="border: none;margin-left: 10px;" value="#{dashboard.year}" rendered="#{dashboard.meses}">
 				<a4j:support event="onchange"
 					actionListener="#{dashboard.onYearChanged}"
-					reRender="payrollPortalGraphContainer,messageList" ajaxSingle="true" />
+					reRender="payrollPortalGraphContainer" ajaxSingle="true" />
 				<f:selectItems value="#{dashboard.years}" />
 			</aon:selectOneMenu>
-			<!-- /c:if-->
 		</aon:div>
 		
 		<aon:div id="payroll_portal_chart_div" style="width: 100%; min-height: 280px;"/>
@@ -69,8 +66,8 @@
 			</script>
 		</aon:if>
 					
-			<aon:if test="#{dashboard.años}">
-				<script type="text/javascript">
+		<aon:if test="#{dashboard.años}">
+			<script type="text/javascript">
 		 		google.charts.load('current', {'packages':['corechart']});
 		    	google.charts.setOnLoadCallback(drawChartYears);
 			    	
@@ -81,7 +78,7 @@
 			      	data.addColumn('number','IRPF');
 					data.addColumn('number','OTROS');
 			      	data.addColumn('number','SALARIO');
-
+	
 			      	<c:forEach var="sal" items="#{dashboard.payrollAno}">		
 			    		data.addRow(['#{sal.ano}', #{sal.ss}, #{sal.irpf}, #{sal.otros}, #{sal.neto}]);										
 					</c:forEach>
@@ -97,7 +94,7 @@
 				  	var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:payroll_portal_chart_div'));
 				  	chart.draw(data, options);
 				}
- 				</script>
+			</script>
 		</aon:if>
 	</aon:div>
 	

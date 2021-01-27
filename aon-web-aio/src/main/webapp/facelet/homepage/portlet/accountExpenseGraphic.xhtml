@@ -7,48 +7,48 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 	
-	<aon:div styleClass="aon-bold">
-		<aon:outputText value="Ejercicio"/>
-		<aon:selectOneMenu id="Dashboard_expenseGraphAccountPeriod"
-			style="border: none; margin-left: 5px;"
-			value="#{dashboard.fiscalPortal.expensesPeriod}">
-			<a4j:support event="onchange"
-				actionListener="#{dashboard.fiscalPortal.onExpenseGraph}" 
-				reRender="Dashboard_expenseGraphAccountPeriod,expenseGraphContainer"
-				ajaxSingle="true" limitToList="true"/>
-			<f:selectItem itemLabel="-" itemValue="" />
-			<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
-		</aon:selectOneMenu>
-	</aon:div>
-	<aon:panelGrid id="expenseGraphContainer" columns="1" 
-		styleClass="aon-width-all aon-margin-top" columnClasses="aon-width-all">
-		<aon:div style="width: 98%; min-height: 300px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
-			<aon:div id="expense_chart_div" style="width: 100%; min-height: 280px;"/>
-				<script type="text/javascript">
-				 	google.charts.load('current', {'packages':['corechart'], 'language': 'es'});
-				    google.charts.setOnLoadCallback(drawCharts3);
-
-					function drawCharts3(){
-						var data = google.visualization.arrayToDataTable([
-							['Gasto','Importe'],
-						<c:forEach var="entry" items="#{dashboard.fiscalPortal.expensesEntries}">
-							['#{entry.name}',#{entry.value},],
-						</c:forEach>
-					    ]);
-						var options = {
-							chartArea:{left:30,right:5,top:15,width:"90%",height:"90%"},
-							tooltip: {showColorCode: true},
-							pieSliceText: 'percentage',
-							pieHole: 0.4,
-							sliceVisibilityThreshold: 1/600,
-					    };
-						var formatter = new google.visualization.NumberFormat({suffix: '€'});
-						formatter.format(data, 1);
-						var chart = new google.visualization.PieChart(document.getElementById('aonContent:mainForm:expense_chart_div'));
-						chart.draw(data, options);
-					}
-		   </script>
+	<aon:div id="expenseGraphContainer" style="width: 100%;border:solid #BBB 1px;">
+	
+		<aon:div styleClass="aon-text-center aon-padding-bottom aon-padding-top">
+			<aon:outputText value="#{bundle.accounting_expense_breakdown}" styleClass="aon-margin-right aon-bold"/>
+			<aon:selectOneMenu id="Dashboard_expenseGraphAccountPeriod"
+				style="border: none; margin-left: 5px;"
+				value="#{dashboard.fiscalPortal.expensesPeriod}">
+				<a4j:support event="onchange"
+					actionListener="#{dashboard.fiscalPortal.onExpenseGraph}" 
+					reRender="Dashboard_expenseGraphAccountPeriod,expenseGraphContainer"
+					ajaxSingle="true" limitToList="true"/>
+				<f:selectItem itemLabel="-" itemValue="" />
+				<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
+			</aon:selectOneMenu>
 		</aon:div>
-	</aon:panelGrid>
+		
+		<aon:div id="expense_chart_div" style="width: 100%; min-height: 280px;"/>
+		
+		<script type="text/javascript">
+		 	google.charts.load('current', {'packages':['corechart'], 'language': 'es'});
+		    google.charts.setOnLoadCallback(drawCharts3);
+
+			function drawCharts3(){
+				var data = google.visualization.arrayToDataTable([
+					['Gasto','Importe'],
+				<c:forEach var="entry" items="#{dashboard.fiscalPortal.expensesEntries}">
+					['#{entry.name}',#{entry.value},],
+				</c:forEach>
+			    ]);
+				var options = {
+					chartArea:{width:"85%",height:"60%"},
+					tooltip: {showColorCode: true},
+					pieSliceText: 'percentage',
+					pieHole: 0.4,
+					sliceVisibilityThreshold: 1/600,
+			    };
+				var formatter = new google.visualization.NumberFormat({suffix: '€'});
+				formatter.format(data, 1);
+				var chart = new google.visualization.PieChart(document.getElementById('aonContent:mainForm:expense_chart_div'));
+				chart.draw(data, options);
+			}
+		</script>
+	</aon:div>
 
 </ui:composition>

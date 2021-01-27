@@ -7,9 +7,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 	
-	<aon:div id="fiscal_status_div">
-		<aon:div styleClass="aon-bold">
-			<aon:outputText value="Tabla fiscal del ejercicio "/>
+	<aon:div id="fiscal_status_div" style="width: 100%;border:solid #BBB 1px;">
+		<aon:div styleClass="aon-text-center aon-padding-bottom aon-padding-top">
+			<aon:outputText value="Tabla fiscal del ejercicio " styleClass="aon-margin-right aon-bold"/>
 			<aon:selectOneMenu id="Dashboard_fiscalYear"
 				style="border: none; margin-left: 5px;"
 				value="#{dashboard.fiscalYear}">
@@ -26,10 +26,15 @@
 				<f:selectItem itemLabel="2017" itemValue="2017" />
 				<f:selectItem itemLabel="2018" itemValue="2018" />
 				<f:selectItem itemLabel="2019" itemValue="2019" />
-				<f:selectItem itemLabel="2020" itemValue="2021" />
+				<f:selectItem itemLabel="2020" itemValue="2020" />
+				<f:selectItem itemLabel="2021" itemValue="2021" />
+				<f:selectItem itemLabel="2022" itemValue="2022" />
+				<f:selectItem itemLabel="2023" itemValue="2023" />
+				<f:selectItem itemLabel="2024" itemValue="2024" />
+				<f:selectItem itemLabel="2025" itemValue="2025" />
 			</aon:selectOneMenu>
 		</aon:div>
-		<aon:div id="fiscal_status_div_inner">
+		<aon:div id="fiscal_status_div_inner" styleClass="aon-text-center">
 			<aon:if test="#{empty dashboard.fiscalInfo}">
 					<aon:div style="padding-top: 10px;">
 						<aon:outputText value="No se encontraron resultados"/>
