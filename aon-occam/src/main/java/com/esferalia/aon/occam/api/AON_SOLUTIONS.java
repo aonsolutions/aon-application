@@ -324,6 +324,8 @@ public class AON_SOLUTIONS {
 					String domain = AONContext.getSchemaFirstDomain(schema);
 					try (AONContext ctx = AONContext.getAONContext(domain, 0, "")){
 						taskHolder = getTask().getTaskHolderStream(ctx, aonToken.getAuth()).findFirst().orElse(null);
+					}catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 			}

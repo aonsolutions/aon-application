@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {closeSession, getUserAppRole, getCompanies, getUserNotice, getUser} from  '../../services/service.js';
+import {closeSession, getUserAppRole, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 
 import '../../components/aon-application.js';
@@ -14,10 +14,16 @@ export class AonParent extends AonElement {
 
 	companies;
 	selected;
+	activeTimecontrol;
 
 	constructor () {
 		super();
 		this.id = 'aonParent';
+		getTimeControl().then(r => {
+			this.activeTimecontrol = true;
+		}).catch(e => {
+			this.activeTimecontrol = false;
+		});
 	}
 
 	connectedCallback () {
@@ -88,10 +94,10 @@ export class AonParent extends AonElement {
 			}
 		];
 		aonParent.addSidenavOptions('TAREAS PENDIENTES', taskOptions);
-
-		aonParent.addSidenavWidgetHTML('CONTROL DE HORARIO',
+		if(this.activeTimecontrol) {
+			aonParent.addSidenavWidgetHTML('CONTROL DE HORARIO',
 		 		'<aon-sign></aon-sign>');
-
+		}
 		let filterOptions = [{
 				name: 'Activas',
 				icon: 'domain',
@@ -115,7 +121,6 @@ export class AonParent extends AonElement {
 			}
 		];
 		aonParent.addSidenavOptions('FILTROS', filterOptions);
-
 	}
 
 	init(filter) {

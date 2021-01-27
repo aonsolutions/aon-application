@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getCompanies, getDomainNotice, getUserNotice, getUser} from  '../../services/service.js';
+import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 
 import '../../components/aon-icon.js';
@@ -180,10 +180,13 @@ export class AonMobileDesktop extends AonElement {
 
 		this.appendChild(div2);
 
-		let div3 = document.createElement('div');
-		div3.style.marginLeft = '25px';
-		div3.innerHTML = '<aon-sign></aon-sign>'
-		this.appendChild(div3);
+		getTimeControl().then(r => {
+			let div3 = document.createElement('div');
+			div3.style.marginLeft = '25px';
+			div3.innerHTML = '<aon-sign></aon-sign>'
+			this.appendChild(div3);
+		});
+
 	}
 
 	buildNotificationsLi(name, icon, count, fn) {

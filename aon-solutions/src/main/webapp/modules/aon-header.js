@@ -19,6 +19,7 @@ import './messenger/aon-messenger.js';
 export class AonHeader extends AonElement {
 
 	BASE_ID;
+	activeTimecontrol;
 
 	get id() {
 		return this.getAttribute('id');
@@ -39,6 +40,12 @@ export class AonHeader extends AonElement {
 	constructor () {
 		super();
 		this.BASE_ID = 'aonHeader';
+		getTimeControl().then(r => {
+			this.activeTimecontrol = true;
+			this.timeControlStatus(r);
+		}).catch(e => {
+			this.activeTimecontrol = false;
+		});
 	}
 
 	connectedCallback () {
@@ -147,37 +154,55 @@ export class AonHeader extends AonElement {
 
 			rootPanel('<aon-parent id="aonParent"></aon-parent>');
 		});
-
-		getTimeControl().then(r => {
-			this.timeControlStatus(r);
-		});
-
-		let aonHeaderUserButton = document.getElementById('aonHeaderUserButton');
-		aonHeaderUserButton.addEventListener('click', () => {
+		if(this.activeTimecontrol) {
 			getTimeControl().then(r => {
 				this.timeControlStatus(r);
-				const top  = aonHeaderUserButton.getBoundingClientRect().top;
-				const left = aonHeaderUserButton.getBoundingClientRect().left;
-				let d = document.getElementById('aonHeaderDialogUserOption');
+			});;
+		}
+		let aonHeaderUserButton = document.getElementById('aonHeaderUserButton');
+		aonHeaderUserButton.addEventListener('click', () => {
+			if(this.activeTimecontrol) {
+				getTimeControl().then(r => {
+					this.timeControlStatus(r);
+					const top  = aonHeaderUserButton.getBoundingClientRect().top;
+					const left = aonHeaderUserButton.getBoundingClientRect().left;
+					let d = document.getElementById('aonHeaderDialogUserOption');
 
-				let fichajeText = r.status === 'in' ? 'Marcar Salida': 'Marcar Entrada';
-				let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
-				let options = [{
-						name: fichajeText,
-						icon: 'alarm',
-						fn: () => this.aonFichar(signin)
-					}, {
-						name: 'Configuración',
-						icon: 'settings',
-						fn: () => this.aonConfiguration()
-					}, {
-						name: 'Cerrar Sesión',
-						icon: 'input',
-						fn: () => closeSession()
-					}];
-				d.setMenuOptions(options, top, left);
-				d.open();
-			});
+					let fichajeText = r.status === 'in' ? 'Marcar Salida': 'Marcar Entrada';
+					let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
+					let options = [{
+							name: fichajeText,
+							icon: 'alarm',
+							fn: () => this.aonFichar(signin)
+						}, {
+							name: 'Configuración',
+							icon: 'settings',
+							fn: () => this.aonConfiguration()
+						}, {
+							name: 'Cerrar Sesión',
+							icon: 'input',
+							fn: () => closeSession()
+						}];
+						d.setMenuOptions(options, top, left);
+						d.open();
+					});
+				} else {
+					const top  = aonHeaderUserButton.getBoundingClientRect().top;
+					const left = aonHeaderUserButton.getBoundingClientRect().left;
+					let d = document.getElementById('aonHeaderDialogUserOption');
+
+					let options = [{
+							name: 'Configuración',
+							icon: 'settings',
+							fn: () => this.aonConfiguration()
+						}, {
+							name: 'Cerrar Sesión',
+							icon: 'input',
+							fn: () => closeSession()
+						}];
+						d.setMenuOptions(options, top, left);
+						d.open();
+				}
 		});
 	}
 

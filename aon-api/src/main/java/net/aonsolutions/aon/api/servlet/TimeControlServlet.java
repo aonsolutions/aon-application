@@ -34,18 +34,15 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API TIMECONTROL SERVLET - GET METHOD");
-		
 		try {
 			super.doGet(req, resp);
 		
 			Object responseObject = new JSONObject();		
 			String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-			try {
-				AonToken aonToken = SECURITY.getAonToken(getToken());
-				responseObject = routerGet(pathInfo, aonToken); 
-			}catch (Exception e) {
-				e.printStackTrace();
-			}
+			
+			AonToken aonToken = SECURITY.getAonToken(getToken());
+			responseObject = routerGet(pathInfo, aonToken); 
+		
 			response(req, resp, responseObject);
 		} catch (Exception e) {
 			error(req, resp, e);
