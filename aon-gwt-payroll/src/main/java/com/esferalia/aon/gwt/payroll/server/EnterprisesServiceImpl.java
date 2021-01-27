@@ -126,6 +126,12 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.SistemaRED_ITParts.AccidentType;
+import solutions.aon.seg.social.SistemaRED_ITParts.CauseType;
+import solutions.aon.seg.social.SistemaRED_ITParts.Contingencies;
+import solutions.aon.seg.social.SistemaRED_ITParts.ContractType;
+import solutions.aon.seg.social.SistemaRED_ITParts.PartType;
+import solutions.aon.seg.social.SistemaRED_ITParts.SituationEmployee;
 import solutions.aon.seg.social.SistemaRED_Secondary_User;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
@@ -2136,6 +2142,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public EmployeeContractInfo getEmployeeInfo(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.getEmployeeInfo(connection, domainId, contractId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public List<ITEmployee> getEmployeesITInfo(String domainName, Boolean allEmployees) {
@@ -2729,6 +2745,138 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return JooqCRA.checkIfRectificative(dslContext, findingDate, selectedCCCList);
 		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf,
+			String contingency, String situation_employee, String licenseNumber,
+			String cias, String occupation, java.util.Date startdate, String contractType,
+			float baseCot, int cotDays, java.util.Date fATEP, String accidentType) {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			SistemaRED.registerITBaja(
+					certificate.getCertificate(), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					regime, 
+					ccc, 
+					naf, 
+					Contingencies.valueOf(contingency), 
+					SituationEmployee.valueOf(situation_employee), 
+					Optional.of(licenseNumber), 
+					Optional.of(cias), 
+					Optional.of(occupation), 
+					startdate, 
+					ContractType.valueOf(contractType), 
+					baseCot, 
+					cotDays, 
+					Optional.of(fATEP), 
+					Optional.of(AccidentType.valueOf(accidentType)));
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf,
+			String contingency, String situation_employee, String licenseNumber,
+			String cias, java.util.Date fbaja, java.util.Date fconfirmation,
+			String npartConfimation) {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			SistemaRED.registerITConfirmation(
+					certificate.getCertificate(), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					regime, 
+					ccc, 
+					naf, 
+					Contingencies.values()[Integer.parseInt(contingency)], 
+					SituationEmployee.values()[Integer.parseInt(situation_employee)], 
+					Optional.of(licenseNumber), 
+					Optional.of(cias), 
+					fbaja, 
+					fconfirmation, 
+					Optional.of(npartConfimation));
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf,
+			String contingency, String situation_employee, String licenseNumber,
+			String cias, java.util.Date fbaja, java.util.Date falta, java.util.Date fATEP,
+			String accidentType, String causeType) {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			SistemaRED.registerITAlta(
+					certificate.getCertificate(), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					regime, 
+					ccc, 
+					naf, 
+					Contingencies.values()[Integer.parseInt(contingency)], 
+					SituationEmployee.values()[Integer.parseInt(situation_employee)], 
+					Optional.of(licenseNumber), 
+					Optional.of(cias), 
+					fbaja, 
+					falta, 
+					Optional.of(fATEP), 
+					Optional.of(AccidentType.values()[Integer.parseInt(accidentType)]), 
+					CauseType.values()[Integer.parseInt(causeType)]);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void removeIT(String domainName, String userLogin, String regime, String ccc, String naf, String partType,
+			java.util.Date dateBj, java.util.Date dateProcess) {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			SistemaRED.removeIT(
+					certificate.getCertificate(), 
+					certificate.getPassword(),
+					certificate.getType(), 
+					regime, 
+					ccc, 
+					naf, 
+					PartType.values()[Integer.parseInt(partType)], 
+					dateBj, 
+					dateProcess);
+			
+		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
 		}
 	}

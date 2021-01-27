@@ -467,6 +467,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
+	public void getEmployeeInfo(String currentDomainName, Integer contractId, AsyncCallback<EmployeeContractInfo> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEmployeeInfo(currentDomainName, contractId, new AsyncCallbackWrapper<EmployeeContractInfo>(callback));
+	}
+	
+	@Override
 	public void getEnterpriseStatus(String domain, String user, Integer enterpriseId,
 			AsyncCallback<EnterpriseStatus> callback) {
 		AON.start();
@@ -693,6 +699,44 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<Boolean> callback) {
 		AON.start();
 		enterprisesServiceAsync.checkIfRectificative(currentDomainName, findingDate, selectedCCCList, new AsyncCallbackWrapper<Boolean>(callback));
+	}
+
+	@Override
+	public void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf,
+			String contingency, String situation_employee, String licenseNumber,
+			String cias, String occupation, Date startdate, String contractType,
+			float baseCot, int cotDays, Date fATEP, String accidentType,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.registerITBaja(domainName, userLogin, regime, ccc, naf, contingency, situation_employee, licenseNumber,
+				cias, occupation, startdate, contractType, baseCot, cotDays, fATEP, accidentType, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf,
+			String contingency, String situation_employee, String licenseNumber,
+			String cias, Date fbaja, Date fconfirmation, String npartConfimation,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.registerITConfirmation(domainName, userLogin, regime, ccc, naf,
+				contingency, situation_employee, licenseNumber, cias, fbaja, fconfirmation, npartConfimation, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf,
+			String contingency, String situation_employee, String licenseNumber,
+			String cias, Date fbaja, Date falta, Date fATEP, String accidentType,
+			String causeType, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.registerITAlta(domainName, userLogin, regime, ccc, naf, contingency, situation_employee, licenseNumber,
+				cias, fbaja, falta, fATEP, accidentType, causeType, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void removeIT(String domainName, String userLogin, String regime, String ccc, String naf, String partType,
+			Date dateBj, Date dateProcess, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.removeIT(domainName, userLogin, regime, ccc, naf, partType, dateBj, dateProcess, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 }

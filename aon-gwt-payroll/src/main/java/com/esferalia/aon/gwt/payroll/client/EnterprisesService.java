@@ -246,5 +246,21 @@ public interface EnterprisesService extends RemoteService {
 	void getServiAgreement(String currentDomainName, String serviAgreementCode);
 
 	boolean checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList);
+
+	void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
+			String situation_employee, String licenseNumber, String cias, String occupation, Date startdate,
+			String contractType, float baseCot, int cotDays, Date fATEP, String accidentType);
+
+	void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
+			String situation_employee, String licenseNumber, String cias, Date fbaja,
+			Date fconfirmation, String npartConfimation);
+
+	void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
+			String situation_employee, String licenseNumber, String cias, Date fbaja,
+			Date falta, Date fATEP, String accidentType, String causeType);
+
+	void removeIT(String domainName, String userLogin, String regime, String ccc, String naf, String partType, Date dateBj, Date dateProcess);
+
+	EmployeeContractInfo getEmployeeInfo(String currentDomainName, Integer contractId);
 	
 }

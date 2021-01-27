@@ -442,6 +442,30 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.checkIfRectificative(getCurrentDomainName(), findingDate, selectedCCCList, asyncCallback);
 	}
 	
+	public void registerITBaja(String regime, String ccc, String naf, String contingency, String situation_employee, 
+			String licenseNumber, String cias, String occupation, Date startdate,
+			String contractType, float baseCot , int cotDays, Date fATEP, String accidentType, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.registerITBaja(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, contingency, situation_employee,  licenseNumber, cias, 
+				occupation, startdate, contractType, baseCot , cotDays, fATEP, accidentType, asyncCallback);
+	}
+	
+	public void registerITConfirmation(String regime, String ccc, String naf, String contingency, String situation_employee, 
+			String licenseNumber, String cias, Date fbaja, Date fconfirmation, String npartConfimation, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.registerITConfirmation(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, 
+				fconfirmation, npartConfimation, asyncCallback);
+	}
+	
+	public void registerITAlta(String regime, String ccc, String naf, String contingency, String situation_employee, 
+			String licenseNumber, String cias, Date fbaja, Date falta, Date fATEP, 
+			String accidentType, String causeType, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.registerITAlta(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, contingency, situation_employee, 
+				licenseNumber, cias, fbaja, falta, fATEP, accidentType, causeType, asyncCallback);
+	}
+	
+	public void removeIT(String regime, String ccc, String naf, String partType, Date dateBj, Date dateProcess, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.removeIT(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, partType, dateBj, dateProcess, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {
@@ -455,7 +479,5 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
-	
 
 }

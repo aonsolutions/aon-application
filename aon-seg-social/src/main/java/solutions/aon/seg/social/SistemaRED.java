@@ -15,6 +15,12 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import solutions.aon.seg.social.SistemaRED_I.LiquidationOrigin;
 import solutions.aon.seg.social.SistemaRED_I.LiquidationType;
 import solutions.aon.seg.social.SistemaRED_I.Regime;
+import solutions.aon.seg.social.SistemaRED_ITParts.AccidentType;
+import solutions.aon.seg.social.SistemaRED_ITParts.CauseType;
+import solutions.aon.seg.social.SistemaRED_ITParts.Contingencies;
+import solutions.aon.seg.social.SistemaRED_ITParts.ContractType;
+import solutions.aon.seg.social.SistemaRED_ITParts.PartType;
+import solutions.aon.seg.social.SistemaRED_ITParts.SituationEmployee;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
@@ -351,9 +357,67 @@ public class SistemaRED {
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
-
 	}
+	
+	// --------------------------------------------------------------------------------------------------------------
+	//												IT PARTS
+	// --------------------------------------------------------------------------------------------------------------
 
+	public static void registerITBaja(final byte[] certificateData, final String certificatePassword, final String certificateType,
+			final String regime, final String ccc, final String naf, final Contingencies contingency, final SituationEmployee situation_employee, 
+			final Optional<String> licenseNumber, final Optional<String> cias, final Optional<String> occupation, final Date startdate,
+			final ContractType contractType, final float baseCot , final int cotDays, final Optional<Date> fATEP, final Optional<AccidentType> accidentType) throws SegSocialException {
+		
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			SistemaRED_ITParts.registerItBaja(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, occupation, startdate, contractType, baseCot, cotDays, fATEP, accidentType);
+		} catch (IOException | SegSocialException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
+	public static void registerITConfirmation(final byte[] certificateData, final String certificatePassword, final String certificateType,
+			final String regime, final String ccc, final String naf, final Contingencies contingency, final SituationEmployee situation_employee, 
+			final Optional<String> licenseNumber, final Optional<String> cias, final Date fbaja, final Date fconfirmation, final Optional<String> npartConfimation) throws SegSocialException {
+		
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			SistemaRED_ITParts.registerItConfirmation(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, fconfirmation, npartConfimation);
+		} catch (IOException | SegSocialException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
+	public static void registerITAlta(final byte[] certificateData, final String certificatePassword, final String certificateType, 
+			final String regime, final String ccc, final String naf, final Contingencies contingency, final SituationEmployee situation_employee, 
+			final Optional<String> licenseNumber, final Optional<String> cias, final Date fbaja, final Date falta, final Optional<Date> fATEP, 
+			final Optional<AccidentType> accidentType, final CauseType causeType) throws SegSocialException {
+		
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			SistemaRED_ITParts.registerItAlta(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, falta, fATEP, accidentType, causeType);
+		} catch (IOException | SegSocialException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
+	public static void removeIT(final byte[] certificateData, final String certificatePassword, final String certificateType,
+			final String regime, final String ccc, final String naf, final PartType partType, final Date dateBj, final Date dateProcess) throws SegSocialException {
+		
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			SistemaRED_ITParts.removeIt(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);
+		} catch (IOException | SegSocialException | InterruptedException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
+	public static byte[] pdfIT(final byte[] certificateData, final String certificatePassword, final String certificateType,
+			final String regime, final String ccc, final String naf, final PartType partType, final Date dateBj, final Date dateProcess) throws SegSocialException {
+		
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return SistemaRED_ITParts.pdfIt(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);
+		} catch (IOException | SegSocialException | InterruptedException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
 	public static void main(String[] args)
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 

@@ -21,6 +21,7 @@ import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.*;
 
@@ -186,7 +187,7 @@ public class SistemaRED_ITParts {
 		PERIODOS_OBSERVACION
 	}
 	
-	public enum AccidentType {
+	public enum AccidentType{
 		LEVE,
 		GRAVE,
 		MUY_GRAVE
@@ -205,7 +206,7 @@ public class SistemaRED_ITParts {
 		RESTO_Y_AUTONOMOS
 	}
 	
-	public enum SituationEmployee {
+	public enum SituationEmployee{
 		ACTIVO,
 		PERCEPTOR_DE_DESEMPLEO
 	}

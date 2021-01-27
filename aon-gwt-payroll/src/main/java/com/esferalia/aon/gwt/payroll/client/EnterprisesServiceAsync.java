@@ -157,5 +157,20 @@ public interface EnterprisesServiceAsync {
 	void getServiAgreement(String currentDomainName, String serviAgreementCode, AsyncCallback<Void> asyncCallback);
 	void checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList,
 			AsyncCallback<Boolean> asyncCallback);
+	void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
+			String situation_employee, String licenseNumber, String cias,
+			String occupation, Date startdate, String contractType, float baseCot, int cotDays,
+			Date fATEP, String accidentType, AsyncCallback<Void> asyncCallback);
+	void registerITConfirmation(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
+			String situation_employee, String licenseNumber, String cias, Date fbaja,
+			Date fconfirmation, String npartConfimation, AsyncCallback<Void> asyncCallback);
+	void registerITAlta(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
+			String situation_employee, String licenseNumber, String cias, Date fbaja,
+			Date falta, Date fATEP, String accidentType, String causeType,
+			AsyncCallback<Void> asyncCallback);
+	void removeIT(String domainName, String userLogin, String regime, String ccc, String naf, String partType, Date dateBj, Date dateProcess,
+			AsyncCallback<Void> asyncCallback);
+	void getEmployeeInfo(String currentDomainName, Integer contractId,
+			AsyncCallback<EmployeeContractInfo> asyncCallback);
 	
 }
