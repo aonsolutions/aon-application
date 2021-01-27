@@ -3,9 +3,11 @@ package net.aonsolutions.aon.api.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +33,7 @@ public class AonApiHttpServlet extends HttpServlet{
 	private String token;
 	private Domain domain;
 	private JSONObject data;
+	private JSONObject params;
 	
 	public AonApiHttpServlet() {
 	
@@ -58,6 +61,7 @@ public class AonApiHttpServlet extends HttpServlet{
 				: AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
 		setDomain(domain);
 		
+		setParams(getParamsJSON(req));
 		setData(getRequestJSON(req));
 	}
 	
@@ -85,7 +89,16 @@ public class AonApiHttpServlet extends HttpServlet{
 		this.data = data;
 	}
 	
+	public JSONObject getParams() {
+		return params;
+	}
+	
+	public void setParams(JSONObject params) {
+		this.params = params;
+	}
+	
 	public void error(HttpServletRequest req, HttpServletResponse resp, Exception e) {
+		e.printStackTrace();
 		resp.setStatus(400);
 		JSONObject json = new JSONObject();
 		json.put("message", e.getMessage());
@@ -150,6 +163,18 @@ public class AonApiHttpServlet extends HttpServlet{
 			s = "{}";
 		}
 		return new JSONObject(s);
+	}
+	
+	public static JSONObject getParamsJSON(ServletRequest req) {
+	    JSONObject jsonObj = new JSONObject();
+	    @SuppressWarnings("unchecked")
+		Map<String,String[]> params = req.getParameterMap();
+	    for (Map.Entry<String,String[]> entry : params.entrySet()) {
+	      String v[] = entry.getValue();
+	      Object o = (v.length == 1) ? v[0] : v;
+	      jsonObj.put(entry.getKey(), o);
+	    }
+	    return jsonObj;
 	}
 	
 	public String checkString(String str){
