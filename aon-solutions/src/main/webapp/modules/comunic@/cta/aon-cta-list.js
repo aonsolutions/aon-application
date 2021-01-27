@@ -51,11 +51,11 @@ export class AonCtaList extends AonElement {
 
 	async getTableDesk() {
 		const aonCtaTable = this.getElement(this.ID);
-		aonCtaTable.addColumn('Tipo', 'string', 'tipo', '20%');
-		aonCtaTable.addColumn('Cuenta de cotización', 'string', 'ccc', '40%');
-		aonCtaTable.addColumn('Provincia', 'string', 'geozone', '35%');
-		aonCtaTable.addColumn('Opción', 'fn', 'option', '5%');
 		if (aonCtaTable) {
+			aonCtaTable.addColumn('Tipo', 'string', 'tipo', '20%');
+			aonCtaTable.addColumn('Cuenta de cotización', 'string', 'ccc', '40%');
+			aonCtaTable.addColumn('Provincia', 'string', 'geozone', '35%');
+			aonCtaTable.addColumn('Opción', 'fn', 'option', '5%');
 			try {
 				const resp = await this.getData();
 				aonCtaTable.removeRows();

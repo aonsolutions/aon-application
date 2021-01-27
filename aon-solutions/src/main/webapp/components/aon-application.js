@@ -458,7 +458,6 @@ export class AonApplication extends AonElement {
 	}
 	removeFloatOption() {
 		let el = this.getElement(this.id + 'FloatSpan');
-		console.log("removeFloat");
 		if (el) el.remove();
 	}
 

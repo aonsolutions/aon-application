@@ -732,7 +732,7 @@ form {
 }
 
 .aonListText {
-  width: 80%;
+  /* width: 80%; */
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -882,4 +882,50 @@ form {
 .aonListMoreVert { 
   position: absolute; 
   right: 3%; 
+}
+
+.timeControl {
+  width: 10px; 
+  height: 10px; 
+  -moz-border-radius: 50%; 
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+}
+
+.timeControl.in{
+  background: #5cb85c;
+}
+
+.timeControl.out{
+  background: #FF2D00;
+}
+
+.timeControl.pause{
+  background: #FF9002;
+}
+
+.profile-letters{
+  border: 1px solid #949393;
+  color: #949393;
+  border-radius: 19.98px;
+  height: 30px;
+  line-height: 30px;
+  width: 30px;
+  display: block;
+  font-size: 15px;
+  text-align: center;
+  float: left;
+  margin-right: 10px;
+}
+
+.profile-letters.in{
+  background: #5cb85c;
+}
+
+.profile-letters.out{
+  background: #FF2D00;
+}
+
+.profile-letters.pause{
+  background: #FF9002;
 }
