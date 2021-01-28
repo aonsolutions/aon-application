@@ -57,7 +57,7 @@ public class EnterprisePayrolltest {
 		}
 
 		EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "Nomina de empresa", "Aon Solutions", aon_system, ss_system);
-		EnterprisePayrollTemplate.createAonPdf(payroll, "./Test1.pdf");
+		PdfMaker.print_enterprise_payroll(payroll, "./Test1.pdf");
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class EnterprisePayrolltest {
 		}
 
 		EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "Nomina de empresa", "Aon Solutions", aon_system, aon_system);
-		EnterprisePayrollTemplate.createAonPdf(payroll, "./Test2.pdf");
+		PdfMaker.print_enterprise_payroll(payroll, "./Test2.pdf");
 	}
 
 	@Test
@@ -113,7 +113,7 @@ public class EnterprisePayrolltest {
 		}
 
 		EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "Nomina de empresa", "Aon Solutions", null, aon_system);
-		EnterprisePayrollTemplate.createAonPdf(payroll, "./Test3.pdf");
+		PdfMaker.print_enterprise_payroll(payroll, "./Test3.pdf");
 	}
 
 	private EnterprisePayrollEntry createEnterprisePayroll(Salary salary, boolean segSocial) {

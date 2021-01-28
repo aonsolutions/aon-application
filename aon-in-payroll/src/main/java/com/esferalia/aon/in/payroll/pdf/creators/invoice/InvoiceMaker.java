@@ -13,6 +13,7 @@ import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.JsonParseException;
 import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.Invoice;
@@ -20,13 +21,12 @@ import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceEntry;
 import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceFinance;
 import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceTax;
 import com.esferalia.aon.in.payroll.pdf.creators.invoice.templates.InvoiceTemplate;
-import com.esferalia.aon.in.payroll.pdf.toolkits.PDFToolkit;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 
 public class InvoiceMaker {
 	
 	//CREATE THE PDF WITH A JSON
-	public static void create_with_json(InputStream json, PrintInvoiceConfiguration config, InputStream qr_code) throws CanNotCreatePdfException, JsonParseException {
+	public void create_with_json(InputStream json, PrintInvoiceConfiguration config, InputStream qr_code) throws CanNotCreatePdfException, JsonParseException {
 
 		JSONParser parser = new JSONParser();
 		try {
@@ -112,7 +112,7 @@ public class InvoiceMaker {
 	}
 	
 	//CREATE DEMO
-	public static void demoPdf(PrintInvoiceConfiguration config, InputStream qr_code) throws IOException, CanNotCreatePdfException {
+	public void demoPdf(PrintInvoiceConfiguration config, InputStream qr_code) throws IOException, CanNotCreatePdfException {
 		Invoice bill_obj = new Invoice(
 				config.getBackgroundImage(),
 				config.getDetailed(),
@@ -134,7 +134,7 @@ public class InvoiceMaker {
 	}
 	
 	//CREATE PDF WITH OBJECT
-	public static void create(String name, Invoice bill_obj, boolean adapt_background) throws IOException, CanNotCreatePdfException {
+	public void create(String name, Invoice bill_obj, boolean adapt_background) throws IOException, CanNotCreatePdfException {
 		InvoiceTemplate.create(name, bill_obj, adapt_background);
 	}
 	

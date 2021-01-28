@@ -5,7 +5,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
-import com.esferalia.aon.in.payroll.pdf.toolkits.PDFToolkit;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 
 import java.awt.*;
 import java.io.*;
@@ -30,7 +30,7 @@ public class EnterprisePayrollTemplate {
 	private static double[] totalEmpresa = new double[8];
 	private static double[] totalEmpresaSS = new double[8];
 
-	public static void createAonPdf(EnterprisePayroll payroll, String name) throws IOException {
+	public void print_enterprise_payroll(EnterprisePayroll payroll, String name) throws IOException {
 		try (PDDocument doc = new PDDocument()) {
 
 			if(name != null) filename = name;

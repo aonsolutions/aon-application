@@ -80,7 +80,7 @@ public class InvoiceTest {
 				.setHeader(105)
 				.setFooter(75);
 
-		try {InvoiceMaker.demoPdf(config, InvoiceTest.class.getResourceAsStream("qrcode.png"));}
+		try {PdfMaker.print_demo_invoice(config, InvoiceTest.class.getResourceAsStream("qrcode.png"));}
 		catch (CanNotCreatePdfException e) {fail("Can not create pdf" );}
 		catch (IOException e) {fail("Can not access test resources");}
 	}

@@ -20,7 +20,7 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDFieldTree;
 import org.apache.pdfbox.pdmodel.interactive.form.PDRadioButton;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
-import com.esferalia.aon.in.payroll.pdf.toolkits.PDFToolkit;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 
 public class PdfFieldDisplayer {
 
