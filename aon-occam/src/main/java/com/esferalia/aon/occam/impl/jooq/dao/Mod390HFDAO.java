@@ -205,6 +205,12 @@ public class Mod390HFDAO extends FiscalModelDAO {
 			}
 		}
 		dec.specificInitialization(ctx, mod);
+		// Redondeos
+		for (IMod390KeyDAO key : dec.getKeys()) {
+			FiscalModelDetail det = mod.ensureDetail(key.getKey());
+			det.setAmount(AonMathUtils.round(det.getAmount()));
+		}
+		
 		calculateMod390HF(ctx, mod);		
 		return mod; 
 	}
