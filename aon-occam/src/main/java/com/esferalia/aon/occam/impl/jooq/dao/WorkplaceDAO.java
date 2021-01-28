@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.Condition;
+import org.jooq.Record;
 
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -79,6 +80,27 @@ public class WorkplaceDAO {
 					.setEnterprise(r.getEnterprise())
 					.setId(r.getId())
 					.setScope(r.getScope());
+		}
+	}
+	
+	protected static class WorkplaceFiller implements Function<Record, Workplace> {
+		
+		@Override
+		public Workplace apply(Record r) {
+			return buildWorkplace(r);
+		}
+		
+		public static Workplace buildWorkplace(Record r) {
+			return new Workplace()
+					.setId(r.getValue(WORKPLACE.ID))
+					.setDomain(r.getValue(WORKPLACE.DOMAIN))
+					.setActive(r.getValue(WORKPLACE.ACTIVE))
+					.setAddress(r.getValue(WORKPLACE.ADDRESS))
+					.setCustomer(r.getValue(WORKPLACE.CUSTOMER))
+					.setDescription(r.getValue(WORKPLACE.DESCRIPTION))
+					.setEconomicagreement(r.getValue(WORKPLACE.ECONOMICAGREEMENT))
+					.setEnterprise(r.getValue(WORKPLACE.ENTERPRISE))
+					.setScope(r.getValue(WORKPLACE.SCOPE));
 		}
 	}
 	

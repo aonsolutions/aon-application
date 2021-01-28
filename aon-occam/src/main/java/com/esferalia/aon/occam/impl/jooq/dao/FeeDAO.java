@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Date;
 import java.util.function.Function;
@@ -38,6 +39,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
 
 public class FeeDAO {
@@ -81,6 +83,7 @@ public class FeeDAO {
 				.join(customerRegistry).on(CUSTOMER.REGISTRY.eq(customerRegistry.ID))
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
 				.leftOuterJoin(sellerRegistry).on(SELLER.REGISTRY.eq(sellerRegistry.ID))
 				.where(FEE_PROPERTIES.getConditions(filter))
@@ -128,7 +131,9 @@ public class FeeDAO {
 					.setSeller(r.get(SELLER.REGISTRY) != null
 						? SellerFiller.buildSeller(r, sellerRegistry)
 						: new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
-					.setWorkplace(new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)));
+					.setWorkplace(r.get(WORKPLACE.ID) != null
+							? WorkplaceFiller.buildWorkplace(r)
+							: new Workplace().setId(r.getValue(CUSTOMER_FEE.WORKPLACE)));
 		}
 	}
 
