@@ -142,7 +142,13 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 	public static void removePayment(DSLContext dslContext, Payment payment)
 			throws SQLException {
-
+		
+		// Try to remove extra, only remove if extra agreement_payment
+		dslContext.delete(AGREEMENT_EXTRA)
+			.where(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(payment.getId())).execute();
+		
+		tryToModifyOtherExtra(dslContext, payment);
+		
 		dslContext.delete(AGREEMENT_PAYMENT)
 				.where(AGREEMENT_PAYMENT.ID.eq(payment.getId())).execute();
 
@@ -191,6 +197,34 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 					.where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId()))
 					.execute();
 		}
+	}
+
+	private static void tryToModifyOtherExtra(DSLContext dslContext, Payment payment) {
+		Result<Record> agreementExtraRecords = dslContext.select().from(AGREEMENT_EXTRA)
+			.where(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.in(
+				dslContext.select(AGREEMENT_PAYMENT.ID).from(AGREEMENT_PAYMENT)
+					.where(AGREEMENT_PAYMENT.PAYMENT_CONCEPT.eq(payment.getConceptId()))
+					.and(AGREEMENT_PAYMENT.AGREEMENT.eq(
+							dslContext.select(AGREEMENT_PAYMENT.AGREEMENT).from(AGREEMENT_PAYMENT)
+								.where(AGREEMENT_PAYMENT.ID.eq(payment.getId()))
+					))
+			)).fetch();
+		
+		if(agreementExtraRecords.isNotEmpty()) {
+			Record agreementExtraRecord = agreementExtraRecords.get(0);
+			String startDate = agreementExtraRecord.get(AGREEMENT_EXTRA.START_DATE);
+			String newStartDte = startDate;
+			if(AonStringUtils.equalsIgnoreCase(startDate, "1/7"))
+				newStartDte = "1/1";
+			if(AonStringUtils.equalsIgnoreCase(startDate, "1/1"))
+				newStartDte = "1/7 -1";
+			
+			dslContext.update(AGREEMENT_EXTRA)
+				.set(AGREEMENT_EXTRA.START_DATE, newStartDte)
+				.where(AGREEMENT_EXTRA.ID.eq(agreementExtraRecord.get(AGREEMENT_EXTRA.ID)))
+				.execute();
+		}
+	
 	}
 
 	public static int insertPayment(Connection conn, Integer domainId,
@@ -315,7 +349,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		dslContext.delete(AGREEMENT_EXTRA)
 				.where(AGREEMENT_EXTRA.ID.eq(extra.getId())).execute();
 		// @formatter:on
-
+		
 		// @formatter:off
 		dslContext
 				.update(AGREEMENT_PAYMENT)
@@ -326,6 +360,11 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.and(AGREEMENT_PAYMENT.ID.notIn(DSL.select(AGREEMENT_EXTRA.AGREEMENT_PAYMENT).from(AGREEMENT_EXTRA).where(AGREEMENT_EXTRA.AGREEMENT.eq(agreementId))))
 				.execute();
 		// @formatter:on
+		
+		// @formatter:off
+		dslContext.delete(AGREEMENT_PAYMENT)
+				.where(AGREEMENT_PAYMENT.ID.eq(extra.getPaymentId())).execute();
+		// @formatter:on		
 	}
 
 	public static List<Extra> getDomainsExtras(Connection conn, Integer... domains) throws SQLException {
