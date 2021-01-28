@@ -120,6 +120,7 @@ import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramos;
 
 public class SQLCretaTestCase extends AbstractSQLTestCase {
 
@@ -4390,7 +4391,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				contract.getEndDate(), 
 				concept, 
 				"HORAS COMPLEMENTARIAS PACTADAS", 
-				"/*read-only*/HORAS_COMPLEMENTARIAS * IMPORTE_HORA_COMPLEMENTARIA/**/", 
+				"/*read-only*/(HORAS_COMPLEMENTARIAS=FRACCIONAR(HORAS_COMPLEMENTARIAS)) * IMPORTE_HORA_COMPLEMENTARIA/**/", 
 				"_P", 
 				"_P", 
 				PaymentType.CRA_0057);
@@ -4430,6 +4431,212 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
 		Assert.assertEquals("10" ,_2.getValor() );
 
+	}
+
+	@Test
+	public void testCretaAdditionalHoursIT()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "08");
+		
+		addData(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.MONDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.TUESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.WEDNESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.THURSDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.FRIDAY_HOURS.getName(), "2.00");
+					}
+				}
+				);
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		PaymentConceptRecord concept = addConcept(aonContext, "HORAS_COMPL");
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				concept, 
+				"HORAS COMPLEMENTARIAS PACTADAS", 
+				"/*read-only*/(HORAS_COMPLEMENTARIAS=FRACCIONAR(HORAS_COMPLEMENTARIAS)) * IMPORTE_HORA_COMPLEMENTARIA/**/", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0057);
+		
+		
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				endDate, 
+				new HashMap<String, String>() {
+					{
+						put("DIAS_MES", "30.00");
+						put("HORAS_COMPLEMENTARIAS", "10.00");
+						put("IMPORTE_HORA_COMPLEMENTARIA", "69.00");
+					}
+				}
+				);
+		
+		Date startIt = add(startDate, Calendar.DAY_OF_MONTH, 9); 
+		Date endIt = add(startIt, Calendar.DAY_OF_MONTH, 9); 
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, endIt, null);
+		
+		
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
+		getTrabajadoresTramos(connection, startDate, endDate, ccc, contract);
+		
+		List<Tramo> tramosTrabajadores = trabajadoresTramos.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0).getTramos().getTramo();
+		
+		assertEquals(3, tramosTrabajadores.size() );
+		
+		assertTramoActivoNormal(tramosTrabajadores.get(0));
+		assertTramoIT15PrimerosDiasDiario(tramosTrabajadores.get(1));
+		assertTramoActivoNormal(tramosTrabajadores.get(0));
+
+//		List<Tramo> tramos = 
+//		getTramos(connection, contract, startDate, endDate, ccc);
+//		for ( Tramo tramo: tramos ) {
+//			assertTramoActivoNormalTiempoParcial(tramo);
+//		}
+		
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = 
+		getBases(connection, startDate, endDate, ccc, contract);
+		
+		assertEquals(3, tramosBases.size() );
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+		int activeDays = monthDays - 10;
+		
+		Dato _2 = 
+		tramosBases.get(0).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("02"))
+		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
+		Assert.assertEquals( Integer.toString(( int ) ( 10.00 /  activeDays * 9 ) ) ,_2.getValor() );
+
+
+		Dato _537 = tramosBases.get(0).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("537"))
+		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
+		;
+		Assert.assertEquals(Integer.toString(( int ) (6900 * 10.00 / activeDays * 9 ) )    ,_537.getValor() );
+		
+		_2 = 
+		tramosBases.get(2).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("02"))
+		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
+		Assert.assertEquals( Integer.toString(( int ) ( 10.00 /  activeDays * ( monthDays - 19 ) ) ) ,_2.getValor() );
+
+
+		_537 = tramosBases.get(2).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("537"))
+		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
+		;
+		Assert.assertEquals(Integer.toString(( int ) (6900 * 10.00 / activeDays * ( monthDays - 19 ) ) )    ,_537.getValor() );
+
+	}
+
+	@Test
+	public void testCretaAdditionalHoursSection()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "08");
+		
+		addData(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.MONDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.TUESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.WEDNESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.THURSDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.FRIDAY_HOURS.getName(), "2.00");
+					}
+				}
+				);
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		PaymentConceptRecord concept = addConcept(aonContext, "HORAS_COMPL");
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				concept, 
+				"HORAS COMPLEMENTARIAS PACTADAS", 
+				"/*read-only*/(HORAS_COMPLEMENTARIAS=FRACCIONAR(HORAS_COMPLEMENTARIAS)) * IMPORTE_HORA_COMPLEMENTARIA/**/", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0057);
+		
+		
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				endDate, 
+				new HashMap<String, String>() {
+					{
+						put("HORAS_COMPLEMENTARIAS", "10.00");
+						put("IMPORTE_HORA_COMPLEMENTARIA", "69.00");
+					}
+				}
+				);
+
+//		List<Tramo> tramos = 
+//		getTramos(connection, contract, startDate, endDate, ccc);
+//		for ( Tramo tramo: tramos ) {
+//			assertTramoActivoNormalTiempoParcial(tramo);
+//		}
+		
+		addBonus(aonContext, contract, startDate, endDate, String.format("TRAMO(FECHA(%d,%d,%d));0.00", get(startDate, Calendar.YEAR), get(startDate, Calendar.MONTH)+1, 12), "AJUSTE");
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = 
+		getBases(connection, startDate, endDate, ccc, contract);
+		
+		assertEquals(2, tramosBases.size());
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+
+		Dato _2 = 
+		tramosBases.get(0).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("02"))
+		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
+		Assert.assertEquals(Integer.toString(( int ) (10.00 / monthDays * 12 ) ) ,_2.getValor() );
+
+
+		Dato _537 = tramosBases.get(0).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("537"))
+		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
+		;
+		Assert.assertEquals(Integer.toString(( int ) (6900 * (int) ( 10.00 / monthDays * 12 )) )    ,_537.getValor() );
+		
 	}
 
 	@Test

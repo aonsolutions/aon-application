@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.AdditionalHoursUpdate;
 import net.aonsolutions.db.up2date.payroll.AlterAgreement4SSNumber;
 import net.aonsolutions.db.up2date.payroll.Holidays2021Insert;
 import net.aonsolutions.db.up2date.timecontrol.CoordinatesUpdate;
@@ -143,7 +144,8 @@ public class Up2Date {
     		//TimeControlCreation.TIMECONTROL_CREATION,
     		//CoordinatesUpdate.COORDINATES_UPDATE,
     		AlterAgreement4SSNumber.ALTER_AGREEMENT_SSNUM,
-    		Holidays2021Insert.HOLIDAYS2021INSERT
+    		Holidays2021Insert.HOLIDAYS2021INSERT,
+    		AdditionalHoursUpdate.ADDITIONALHOURSUPDATE
     };
 
 

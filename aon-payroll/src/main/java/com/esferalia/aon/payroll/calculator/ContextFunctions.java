@@ -229,6 +229,8 @@ public class ContextFunctions {
 				ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName(),
 				ContextVariable.SALARY_HOURS.getName(),
 				ContextVariable.WORKED_HOURS.getName(),
+				ContextVariable.ADDITIONAL_HOURS.getName(),
+				ContextVariable.ADDITIONAL_BASE.getName(),
 				
 				// Cuotas
 //				ContextVariable.CGC_EMPLOYEE.getName(), 
