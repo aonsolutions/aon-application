@@ -3077,6 +3077,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 						newExtra.setPaymentDescription(payment.getDescription());
 						newExtra.setAgreementDescription(descriptionTextBox.getValue());
 						
+						if(monthIssue != 3) {
+							payment.setMonth(Short.parseShort((monthIssue -1) + ""));
+							AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+						}
+						
 						AgreementDraft.this.agreementDraftObject.addDraftExtra(newExtra);
 						AgreementDraft.this.calculate();
 					}
