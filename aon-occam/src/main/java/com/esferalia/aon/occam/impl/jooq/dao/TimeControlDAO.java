@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Location.LOCATION;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
 
@@ -22,8 +23,8 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
-import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TimeControlPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO.TaskHolderFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class TimeControlDAO {	
@@ -37,6 +38,7 @@ public class TimeControlDAO {
 			.select()
 			.from(TIMECONTROL)
 			.join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TIMECONTROL.TASK_HOLDER))
+			.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 			.leftOuterJoin(LOCATION).on(LOCATION.ID.eq(TIMECONTROL.LOCATION))
 			.where(TIMECONTROL_PROPERTIES.getConditions(filter))
 			.fetch().stream().map(new TimeControlDetailFiller());
@@ -165,6 +167,7 @@ public class TimeControlDAO {
 	private static TimeControl buildTimeControl(Stream<TimeControlDetail> details) {
 		TimeControl tc = new TimeControl().setTime(0L);
 		details.forEach(r -> {
+			tc.setLastDate(AonDateUtils.getDateWithoutTime(r.getDate()));
 			if(tc.getStatus() == null) {
 				tc.setInDate(AonDateUtils.getDateWithoutTime(r.getDate()));
 			}
@@ -176,7 +179,12 @@ public class TimeControlDAO {
 				tc.setInDate(null);
 				tc.setStatus(r.getStatus());
 			}
-		});			
+
+			if(tc.getTaskHolder() == null || tc.getTaskHolder().getId() == null) {
+				tc.setTaskHolder(r.getTaskHolder());
+			}
+			tc.getDetail().add(r);
+		});
 		return tc;
 	}
 
@@ -184,9 +192,6 @@ public class TimeControlDAO {
 
 		@Override
 		public TimeControlDetail apply(Record record) {
-			TaskHolder taskHolder = new TaskHolder();
-			taskHolder.setId(record.getValue(TASK_HOLDER.REGISTRY));
-			taskHolder.setDomain(new Domain().setId(record.getValue(TASK_HOLDER.DOMAIN)));
 			Location location = new Location()
 					.setId(record.getValue(LOCATION.ID))
 					.setDomain(new Domain().setId(record.getValue(LOCATION.DOMAIN)))
@@ -199,10 +204,11 @@ public class TimeControlDAO {
 					.setDomain(new Domain().setId(record.getValue(TIMECONTROL.DOMAIN)))
 					.setDate(record.getValue(TIMECONTROL.DATE))
 					.setStatus(TimeControlStatus.safeValueOf(record.getValue(TIMECONTROL.STATUS)))
-					.setTaskHolder(taskHolder)
+					.setTaskHolder(TaskHolderFiller.buildTaskHolder(record))
 					.setLocation(location)
 					.setComments(record.getValue(TIMECONTROL.COMMENTS))
 					.setCoordinates(new Coordinates(record.getValue(TIMECONTROL.LATITUDE),record.getValue(TIMECONTROL.LONGITUDE)));
+					
 		}
 		
 	}

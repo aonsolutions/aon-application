@@ -838,27 +838,31 @@ public class TaskDAO {
 		}
 	}
 	
-	private static class TaskHolderFiller implements Function<Record, TaskHolder> {
+	protected static class TaskHolderFiller implements Function<Record, TaskHolder> {
 		@Override
-		public TaskHolder apply(Record t) {
+		public TaskHolder apply(Record r) {
+			return buildTaskHolder(r);
+		}
+		
+		public static TaskHolder buildTaskHolder(Record r) {
 			return new TaskHolder()
 					.setRegistryData( new Registry() 
-						.setId(t.getValue(REGISTRY.ID))
-						.setDomain(t.get(DOMAIN.ID) != null 
-							? DomainFiller.buildDomain(t) 
-							: new Domain().setId(t.getValue(REGISTRY.DOMAIN)))
-						.setDocument(t.getValue(REGISTRY.DOCUMENT))
-						.setDocumentType(DocumentType.safeValueOf(t.getValue(REGISTRY.DOCUMENT_TYPE)))
-						.setDocumentCountry(Country.safeValueOf(t.getValue(REGISTRY.DOCUMENT_COUNTRY)) )
-						.setName(t.getValue(REGISTRY.NAME))
-						.setAlias(t.getValue(REGISTRY.ALIAS))
-						.setLegalPerson(AonEnumUtils.getBoolean(t.getValue(REGISTRY.TYPE)))
-						.setNationality(Country.safeValueOf(t.getValue(REGISTRY.NATIONALITY)) )
-						.setSecurityLevel(SecurityLevel.safeValueOf(t.getValue(REGISTRY.SECURITY_LEVEL))))
-					.setActive(t.getValue(TASK_HOLDER.ACTIVE) == 1)
-					.setCostProfile(t.getValue(TASK_HOLDER.COST_PROFILE))
-					.setTaskHolderType(TaskHolderType.valueOf(t.getValue(TASK_HOLDER.TYPE)))
-					.setUserId(t.getValue(TASK_HOLDER.USER_ID));
+						.setId(r.getValue(REGISTRY.ID))
+						.setDomain(r.get(DOMAIN.ID) != null 
+							? DomainFiller.buildDomain(r) 
+							: new Domain().setId(r.getValue(REGISTRY.DOMAIN)))
+						.setDocument(r.getValue(REGISTRY.DOCUMENT))
+						.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
+						.setDocumentCountry(Country.safeValueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)) )
+						.setName(r.getValue(REGISTRY.NAME))
+						.setAlias(r.getValue(REGISTRY.ALIAS))
+						.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)))
+						.setNationality(Country.safeValueOf(r.getValue(REGISTRY.NATIONALITY)) )
+						.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL))))
+					.setActive(r.getValue(TASK_HOLDER.ACTIVE) == 1)
+					.setCostProfile(r.getValue(TASK_HOLDER.COST_PROFILE))
+					.setTaskHolderType(TaskHolderType.valueOf(r.getValue(TASK_HOLDER.TYPE)))
+					.setUserId(r.getValue(TASK_HOLDER.USER_ID));
 		}
 	}
 	

@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.util.Date;
 
+import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
@@ -89,6 +91,34 @@ public class TimeControlDetail {
 	public TimeControlDetail setCoordinates(Coordinates coordinates) {
 		this.coordinates = coordinates;
 		return this;
+	}
+	
+	public JSONObject toJSON() {
+		JSONObject json = new JSONObject();
+		json.put("id", getId());
+		json.put("domain", getDomain().getId());
+		json.put("status", getStatus() != null ? getStatus().name().toLowerCase() : TimeControlStatus.OUT);
+		json.put("status", getStatus() != null ? getStatus().name().toLowerCase() : TimeControlStatus.OUT);
+		
+		if(getCoordinates() != null) {
+			json.put("coordinates", getCoordinates().toJSON());
+		}
+
+		
+		if(getLocation() != null) {
+			JSONObject locationJson = new JSONObject();
+			locationJson.put("id", getLocation().getId());
+			locationJson.put("name", getLocation().getDescription());
+			json.put("location", locationJson);
+		}
+		
+		if(getTaskHolder() != null) {
+			JSONObject taskHolderJson = new JSONObject();
+			taskHolderJson.put("id", getTaskHolder().getId());
+			taskHolderJson.put("name", getTaskHolder().getName());
+			json.put("task_holder", taskHolderJson);
+		}
+		return json;
 	}
 	
 }

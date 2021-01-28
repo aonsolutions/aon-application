@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import org.json.JSONObject;
+
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Coordinates {
@@ -52,6 +54,13 @@ public class Coordinates {
 	public Coordinates setLongitude(Double longitude) {
 		this.longitude = longitude;
 		return this;
+	}
+	
+	public JSONObject toJSON() {
+		JSONObject json = new JSONObject();
+		json.put("latitude", getLatitude());
+		json.put("longitude", getLongitude());
+		return json;
 	}
 	
 }
