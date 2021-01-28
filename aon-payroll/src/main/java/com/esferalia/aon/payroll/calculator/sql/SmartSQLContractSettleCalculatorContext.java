@@ -120,6 +120,19 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		AONContext aonCtx = new AONContext(connection);
 		DSLContext dslCtx = aonCtx.getDslContext();
 		
+		boolean redefined = 
+		dslCtx.fetchCount(
+		DSL
+		.select(CONTRACT_PAYMENT.ID)
+		.from(CONTRACT_PAYMENT)
+		.innerJoin(PAYMENT_CONCEPT).onKey()
+		.where(CONTRACT_PAYMENT.CONTRACT.eq(getId()))
+		.and(CONTRACT_PAYMENT.TYPE.eq((byte)4)
+		.or(CONTRACT_PAYMENT.TYPE.isNull().and(PAYMENT_CONCEPT.TYPE.eq((byte)4))))
+		) > 0 ;
+		if ( redefined )
+			return Collections.emptyList();
+
 		Result<AgreementExtraRecord> extras = dslCtx
 		.select()
 		.from(CONTRACT)
