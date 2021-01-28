@@ -236,7 +236,9 @@ public class UserServlet extends AonApiHttpServlet {
 						User u = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(user));
 						Auth a = AON_SOLUTIONS.getAuth(domain.getName(), domain.getId(), u.getAuth());
 
-						Registry r = AON.getRegistry(getDomain().getName(), getDomain().getId(), "", f -> f.getDocumentProperty().eq(a.getDocument()));
+						Registry r = AON.getRegistry(getDomain().getName(), getDomain().getId(), "", f -> 
+							f.getDomainProperty().eq(domain.getId())
+							.and(f.getDocumentProperty().eq(a.getDocument())));
 						if(r == null || r.getId() == null) {
 							r = AON.save(getDomain().getName(), getDomain().getId(), "", new Registry()
 									.setDocument(a.getDocument())
