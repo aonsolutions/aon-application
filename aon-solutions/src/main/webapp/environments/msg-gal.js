@@ -126,3 +126,8 @@ export const AON_MSG_SIZE = 'Tamaño';
 
 export const AON_MSG_CONFIDENTIAL = 'Confidencial';
 export const AON_MSG_SCOPE = 'Ámbito';
+
+export const AON_MSG_HEADER = 'Cabeceira';
+export const AON_MSG_FOOTER = 'Pé';
+export const AON_MSG_BACKGROUND_ADJUST = 'Axustar Fondo';
+export const AON_MSG_DETAILED = 'Detallado';

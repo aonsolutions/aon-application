@@ -126,3 +126,8 @@ export const AON_MSG_SIZE = 'Neurria';
 
 export const AON_MSG_CONFIDENTIAL = 'Konfidentziala';
 export const AON_MSG_SCOPE = 'Esparrua';
+
+export const AON_MSG_HEADER = 'Goiburu';
+export const AON_MSG_FOOTER = 'Oina';
+export const AON_MSG_BACKGROUND_ADJUST = 'Atzealdea Estutu';
+export const AON_MSG_DETAILED = 'Xehatua';

@@ -8,6 +8,7 @@ import './aon-invoice.js';
 import './aon-mobile-invoice.js';
 import './aon-invoice-list.js';
 import './aon-mobile-invoice-list.js';
+import './aon-invoice-print.js';
 
 import '../../components/aon-application.js';
 import '../../components/aon-dialog-menu.js';
@@ -116,7 +117,7 @@ export class AonInvoicePanel extends AonElement {
 			{
 				name: MSG.AON_MSG_PRINTING_INVOICES,
 				icon: 'print',
-				fn: () => {}
+				fn: () => {this.aonInvoicePrint()}
 			}
 		];
 		aonInvoice.addSidenavOptions(MSG.AON_MSG_SETTING.toUpperCase(), settingOptions);
@@ -159,6 +160,10 @@ export class AonInvoicePanel extends AonElement {
 					: `<aon-invoice-list id="aonInvoiceList"></aon-invoice-list>`);
 			}
 		}
+	}
+
+	aonInvoicePrint() {
+		aonInvoice.setContentHTML(`<aon-invoice-print></aon-invoice-print>`)
 	}
 
 	addInvoice() {

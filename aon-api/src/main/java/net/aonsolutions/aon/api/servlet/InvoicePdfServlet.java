@@ -1,16 +1,13 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,7 +15,6 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -40,11 +36,11 @@ import es.translogia.tedi.json.TediInvoiceJSON;
 @SuppressWarnings("serial")
 @WebServlet(name = "DownloadInvoicePdf", urlPatterns = {"/ms/api/download_invoice_pdf/*",
 														"/aon_gwt_aio/download_invoice_pdf/*"})
-public class InvoicePdfServlet extends HttpServlet {
+public class InvoicePdfServlet extends AonApiHttpServlet {
 
 	
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		// TODO Auto-generated method stub
 		String param = req.getParameter("json");
 		param = new String(Base64.getDecoder().decode(param));
@@ -52,18 +48,15 @@ public class InvoicePdfServlet extends HttpServlet {
 		TediInvoice invoice = TediInvoiceJSON.fromJSON(json);
 		File file = createPdf(invoice);
 		
-		addCorsHeader(resp);
-        resp.setContentType(MimeType.PDF.getName());
-		resp.setHeader("Content-disposition", "inline; filename=\"" + file.getName() + ".pdf\";");
-		FileInputStream fileInpurOs =  new FileInputStream(file);
-		AonIOUtils.copy(fileInpurOs, resp.getOutputStream());
-		resp.flushBuffer();
-
-		fileInpurOs.close();
+		try {
+			responseFile(req, resp, file, MimeType.PDF);
+		} catch (IOException e) {
+			error(req, resp, e);
+		}
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		doGet(req, resp);
 	}
 	
@@ -72,8 +65,6 @@ public class InvoicePdfServlet extends HttpServlet {
 	public InvoicePdfServlet() {
 
 	}
-	
-	private static final BaseColor DARK_BLUE = new BaseColor(0,0,140);
 	
 	public static File createPdf(TediInvoice invoice) {
 		File archivoPDF = null;
@@ -492,11 +483,4 @@ public class InvoicePdfServlet extends HttpServlet {
 		font2.setColor(color);
 		return font2;
 	}
-	
-    public static void addCorsHeader(HttpServletResponse response){
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
-        response.addHeader("Access-Control-Allow-Headers", "*");
-        response.addHeader("Access-Control-Max-Age", "1728000");
-    }
 }

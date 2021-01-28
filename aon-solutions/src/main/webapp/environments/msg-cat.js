@@ -126,3 +126,8 @@ export const AON_MSG_SIZE = 'Mida';
 
 export const AON_MSG_CONFIDENTIAL = 'Confidencial';
 export const AON_MSG_SCOPE = 'Àmbit';
+
+export const AON_MSG_HEADER = 'Capçalera';
+export const AON_MSG_FOOTER = 'Peu';
+export const AON_MSG_BACKGROUND_ADJUST = 'Ajustar Fons';
+export const AON_MSG_DETAILED = 'Detallat';

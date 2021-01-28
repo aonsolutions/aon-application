@@ -127,3 +127,8 @@ export const AON_MSG_SIZE = 'Size';
 
 export const AON_MSG_CONFIDENTIAL = 'Confidential';
 export const AON_MSG_SCOPE = 'Scope';
+
+export const AON_MSG_HEADER = 'Header';
+export const AON_MSG_FOOTER = 'Footer';
+export const AON_MSG_BACKGROUND_ADJUST = 'Background Adjust';
+export const AON_MSG_DETAILED = 'Detailed';

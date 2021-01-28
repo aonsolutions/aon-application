@@ -1,5 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
@@ -16,6 +18,8 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -118,6 +122,16 @@ public class AonApiHttpServlet extends HttpServlet{
 	public void response(HttpServletRequest req, HttpServletResponse resp, Object object, JSONObject meta) {
 		addCorsHeader(resp);
 		giveBack(req, resp, object, meta);
+	}
+	
+	public void responseFile(HttpServletRequest req, HttpServletResponse resp, File file, MimeType mimetype ) throws IOException {
+		addCorsHeader(resp);
+        resp.setContentType(mimetype.getName());
+		resp.setHeader("Content-disposition", "inline; filename=\"" + file.getName() + "." + mimetype.getExtension() +"\";");
+		FileInputStream fileInpurOs =  new FileInputStream(file);
+		AonIOUtils.copy(fileInpurOs, resp.getOutputStream());
+		resp.flushBuffer();
+		fileInpurOs.close();
 	}
 	
     protected void addCorsHeader(HttpServletResponse response){
