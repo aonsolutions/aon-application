@@ -425,7 +425,7 @@ public class Mod3902018DAO {
 		 ,K36	 (Mod3902018DetailKey.C0064, null)
 		 ,K37	 (Mod3902018DetailKey.C0065, null)
 		 
-		 ,B099	 (Mod3902018DetailKey.C0099, (vc -> (vc.isNationalSales() && !vc.isRectification())))
+		 ,B099	 (Mod3902018DetailKey.C0099, (vc -> (vc.isNationalSales())))
 		 ,B653	 (Mod3902018DetailKey.C0653, (vc -> (vc.isSales() && vc.isVatAccrualRegime() )))
 		 ,B103	 (Mod3902018DetailKey.C0103, (vc -> (vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
 		 ,B104	 (Mod3902018DetailKey.C0104, (vc -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isExtracommunity() || vc.isCanCeuMel()) )))
