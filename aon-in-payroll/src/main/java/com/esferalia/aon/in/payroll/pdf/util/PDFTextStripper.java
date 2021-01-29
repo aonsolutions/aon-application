@@ -8,13 +8,14 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.graphics.form.PDTransparencyGroup;
 import org.apache.pdfbox.text.TextPosition;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PDFTextStripper extends org.apache.pdfbox.text.PDFTextStripper
 {
-	private static class TextPositionComparator implements Comparator<TextPosition>
+	private class TextPositionComparator implements Comparator<TextPosition>
 	{
 	    @Override
 	    public int compare(TextPosition pos1, TextPosition pos2)
@@ -36,7 +37,7 @@ public class PDFTextStripper extends org.apache.pdfbox.text.PDFTextStripper
 	        float yDifference = Math.abs(pos1YBottom - pos2YBottom);
 
 	        // we will do a simple tolerance comparison
-	        if (yDifference < .5 )
+	        if (yDifference < minHeight/2.00 )
 	        {
 	            return Float.compare(x1, x2);
 	        }
@@ -47,7 +48,7 @@ public class PDFTextStripper extends org.apache.pdfbox.text.PDFTextStripper
 	    }
 	}
 	
-	
+	private float minHeight = Float.MAX_VALUE;
 
     public PDFTextStripper() throws IOException {
 		super();
@@ -59,6 +60,12 @@ public class PDFTextStripper extends org.apache.pdfbox.text.PDFTextStripper
     	sort();
     	super.writePage();
     }
+	
+	@Override
+	@Deprecated
+	public void setSortByPosition(boolean newSortByPosition) {
+		throw new UnsupportedOperationException();
+	}
     
     
     private void sort() {
@@ -66,6 +73,12 @@ public class PDFTextStripper extends org.apache.pdfbox.text.PDFTextStripper
     	charactersByArticle.forEach( l -> Collections.sort(l, comparator));
     }
     
+    @Override
+    protected void processTextPosition(TextPosition text) {
+    	super.processTextPosition(text);
+    	minHeight = Math.min(minHeight, text.getHeightDir());
+    	
+    }
     /**
      * This will print the usage for this document.
      */

@@ -10,6 +10,7 @@ import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 
 import com.esferalia.aon.in.payroll.pdf.templates.A3PDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.templates.AltaiPDFTemplate;
+import com.esferalia.aon.in.payroll.pdf.templates.AplifisaPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.templates.DSIPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.util.PDFTextStripper;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -17,7 +18,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryPDFParser {
 	
-	private static final SalaryPDFTemplate PDF_TEMPLATES [] = {AltaiPDFTemplate.ALTAI_PDF_TEMPLATE, A3PDFTemplate.A3_PDF_TEMPLATE, DSIPDFTemplate.DSI_PDF_TEMPLATE};
+	private static final SalaryPDFTemplate PDF_TEMPLATES [] = {AltaiPDFTemplate.ALTAI_PDF_TEMPLATE, A3PDFTemplate.A3_PDF_TEMPLATE, DSIPDFTemplate.DSI_PDF_TEMPLATE, AplifisaPDFTemplate.APLIFISA_PDF_TEMPLATE};
 	
 	
 	public static void parse( File file , ISalaryBuilder<?> salaryBuilder) throws IOException, UnknownPDFException {
@@ -57,7 +58,7 @@ public class SalaryPDFParser {
 			if ( AonStringUtils.isBlank(text) ) 
 				continue;
 			
-//			System.out.println(text);
+			System.out.println(text);
 			
 			template = parse(template, text, salaryBuilder);
 			

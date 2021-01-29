@@ -30,7 +30,7 @@ import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class A3PDFTemplate implements SalaryPDFTemplate {
-
+	
 	public static final A3PDFTemplate A3_PDF_TEMPLATE = new A3PDFTemplate();
 	
 	/*salaryBuilder.setContract(
@@ -84,6 +84,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 		
 
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
+			boolean isProExtBaseSet = false;
 			Matcher matcher = find(reader, EMPLOYEE_NAME);
 			String empName=AonStringUtils.trimToNull(matcher.group("name"));
 			empName=removeSpace(empName, 13);
@@ -209,7 +210,6 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 						PaymentType pt=null;
 						if (payrollType ==null) {
 							
-							//NO FUNCIONA EL MÉTODO CONTAINSIGNORECASE
 							
 							pt=PaymentType.CRA_0001;
 							if (AonStringUtils.containsIgnoreCase(description, "p.p.extras")
@@ -218,6 +218,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 								pt=PaymentType.CRA_0004;
 								context="PAGA_EXTRA";
 								salaryBuilder.setProExtBase(amount);
+								isProExtBaseSet = true;
 							}
 							else if (AonStringUtils.containsIgnoreCase(description, "horas extras")) {
 								pt=PaymentType.CRA_0002;
@@ -262,7 +263,6 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 						
 						
 						
-						//añadir payment con prorr. paga
 						salaryBuilder.addPayment(
 								amount,
 								amount,
@@ -385,7 +385,8 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 				salaryBuilder.setProExtBase(amount);
 				salaryBuilder.addPayment(0d, amount, 0d, "PAGA_EXTRA", dFrom, dTo, new Payment().setType(PaymentType.CRA_0004), Collections.EMPTY_MAP);
 			}catch (NullPointerException e) {
-				salaryBuilder.setProExtBase(0d);
+				if (!isProExtBaseSet)
+					salaryBuilder.setProExtBase(0d);
 			}
 			
 			try {
@@ -476,6 +477,8 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 			//.. ... .    1.260,31           0,60             7,56           
 			//Fondo Garantía Salarial......... .. .. .    1.260,31           0,20             2,52           
 			//3. Cotización adicional horas extraordinarias........................ .. .. .                                                       
+			
+			
 			
 			matcher = find(reader, APPORT_CC);
 			Double apportBase = a3DoubleParser(AonStringUtils.trimToNull(matcher.group("base")));
@@ -909,7 +912,7 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	, Pattern.CASE_INSENSITIVE);
 	//SWIFT/BIC:                                                                                                     COSTE EMPRESA:        1.656,05   
 	private static final Pattern COSTE_EMPRESA =
-	Pattern.compile("\\s*SWIFT/BIC:\\s*(?<swift>[^\\s]+.*[^\\s])?\\s*COSTE\\s*EMPRESA:\\s*(?<cost>[\\d\\.,]+)?\\s*"
+	Pattern.compile("\\s*SWIFT/BIC:\\s*(?<swift>[^\\s]+.*[^\\s])?\\s*C\\s*O\\s*STE\\s*EMPRESA:\\s*(?<cost>[\\d\\.,]+)?\\s*"
 	, Pattern.CASE_INSENSITIVE);
 	//DETERMINACIÓN DE LAS B. DE COTIZACIÓN A LA S.S. Y CONCEPTOS DE RECAUDACIÓN CONJUNTA Y APORTACIÓN DE LA EMPRESA
 	private static final Pattern APPORT_HEADER_TOP =
@@ -927,6 +930,16 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	//.. ... .    1.260,31           0,60             7,56           
 	//Fondo Garantía Salarial......... .. .. .    1.260,31           0,20             2,52           
 	//3. Cotización adicional horas extraordinarias........................ .. .. .                                                       
+	
+	
+	//1. Contingencias comunes.................................................... .. .. ..    1.108,33          23,60           261,57          
+	//AT y EP................................. .. .. ..    1.108,33           1,50            16,63           
+	//2. Contingencias profe-    Desempleo............................ .. .. ..    1.108,33           6,70            74,26          
+	//sionales y conceptos de
+	//Formación Profesional.......... .. ... .    1.108,33           0,60             6,65           recaudación conjunta
+	//Fondo Garantía Salarial......... .. .. .    1.108,33           0,20             2,22           
+	//3. Cotización adicional horas extraordinarias........................ .. .. .                
+	
 	private static final Pattern APPORT =
 	Pattern.compile("\\s*(?:.+?)(?<concept>[\\w\\d\\s])[\\.\\s]{2,}\\s*(?<base>\\d[\\d\\.,]+)?\\s*(?<type>\\d[\\d\\.,]+)?\\s*(?<apport>\\d[\\d\\.,]+)?\\s*"
 	, Pattern.CASE_INSENSITIVE);
@@ -942,11 +955,11 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	private static final Pattern APPORT_UNEMPLOYMENT =
 	Pattern.compile("\\s*2\\.\\s*Contingencias\\s*profe-\\s*Desempleo[\\.\\s]*(?<base>\\d[\\d\\.,]+)?\\s*(?<type>\\d[\\d\\.,]+)?\\s*(?<apport>\\d[\\d\\.,]+)?\\s*"
 	, Pattern.CASE_INSENSITIVE);
-	
+	//Formación Profesional.......... .. ... .    1.108,33           0,60             6,65           recaudación conjunta
 	private static final Pattern APPORT_FP =
-	Pattern.compile("[\\.\\s]{2,}\\s*(?<base>\\d[\\d\\.,]+)?\\s*(?<type>\\d[\\d\\.,]+)?\\s*(?<apport>\\d[\\d\\.,]+)?\\s*"
+	Pattern.compile("\\s*Formación\\s*Profesional[\\.\\s]{2,}\\s*(?<base>\\d[\\d\\.,]+)?\\s*(?<type>\\d[\\d\\.,]+)?\\s*(?<apport>\\d[\\d\\.,]+)?\\s*(recaudación\\s*conjunta\\s*)?"
 	, Pattern.CASE_INSENSITIVE);
-	
+	//Fondo Garantía Salarial......... .. .. .    1.108,33           0,20             2,22           
 	private static final Pattern APPORT_FOGASA =
 	Pattern.compile("\\s*Fondo\\s*Garantía\\s*Salarial[\\s\\.]*(?<base>\\d[\\d\\.,]+)?\\s*(?<type>\\d[\\d\\.,]+)?\\s*(?<apport>\\d[\\d\\.,]+)?\\s*"
 	, Pattern.CASE_INSENSITIVE);
