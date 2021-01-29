@@ -1334,13 +1334,13 @@ public class SQLAgreementDraft {
 	private static void updatePayment(Connection conn, Integer domainId,
 			Integer agreementId, Payment payment) throws SQLException {
 
-		JooqAgreement.updatePayment(conn, payment);
+		JooqAgreement.updatePayment(conn, agreementId, payment);
 	}
 
 	private static void removePayment(Connection conn, Integer domainId,
 			Integer agreementId, Payment payment) throws SQLException {
 
-		JooqAgreement.removePayment(conn, payment);
+		JooqAgreement.removePayment(conn, agreementId, payment);
 
 	}
 

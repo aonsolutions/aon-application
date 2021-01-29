@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.hibernate.cfg.FkSecondPass;
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Cursor;
@@ -55,7 +54,6 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
-import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.jooq.tables.records.AgreementDataRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -63,9 +61,8 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelDataRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
-import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -115,12 +112,12 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 	}
 
-	public static void updatePayment(Connection conn, Payment payment)
+	public static void updatePayment(Connection conn, Integer agreementId, Payment payment)
 			throws SQLException {
-		updatePayment(DSL.using(conn, getDefaultSettings()), payment);
+		updatePayment(DSL.using(conn, getDefaultSettings()), agreementId, payment);
 	}
 
-	public static void updatePayment(DSLContext dslContext, Payment payment)
+	public static void updatePayment(DSLContext dslContext, Integer agreementId, Payment payment)
 			throws SQLException {
 		if (payment.getConceptId() != null && payment.getConceptId() < 0) {
 			updatePaymentConcept(dslContext, payment);
@@ -133,14 +130,67 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		} else {
 			updateAgreementPayment(dslContext, payment);
 		}
+		
+		updateContractPayments(dslContext, agreementId, payment);
 	}
 
-	public static void removePayment(Connection conn, Payment payment)
+	private static void updateContractPayments(DSLContext dslContext, Integer agreementId, Payment payment) {
+		
+		/**
+		 * SELECT * FROM contract_payment 
+		 * INNER JOIN contract ON ( contract_payment.contract = contract.id ) 
+		 * INNER JOIN payment_concept ON ( contract_payment.payment_concept = payment_concept.id ) 
+		 * INNER JOIN agreement_level ON ( contract.agreement_level = agreement_level.id ) 
+		 * WHERE agreement_level.agreement = 212 AND payment_concept = 1;
+		 * */
+		
+		// Get all contract associated to an agreement
+		List<Integer> agreementContractIds = dslContext.select(CONTRACT.ID).from(CONTRACT)
+				.where(CONTRACT.AGREEMENT_LEVEL.in(
+						dslContext.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+							.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId))
+				)).fetch(CONTRACT.ID);
+		
+		// Contract payments expressions associated to an paymentConcept and same expression
+		List<Record> contractPaymentExpressionRecords = dslContext.select().from(CONTRACT_PAYMENT)
+			.where(CONTRACT_PAYMENT.CONTRACT.in(agreementContractIds))
+			.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(payment.getConceptId()))
+			.and(CONTRACT_PAYMENT.EXPRESSION.eq(
+					dslContext.select(PAYMENT_CONCEPT.EXPRESSION).from(PAYMENT_CONCEPT)
+						.where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId()))
+						.fetchOne(PAYMENT_CONCEPT.EXPRESSION)
+			)).fetch();
+		
+		contractPaymentExpressionRecords.forEach(r -> {
+			ContractPaymentRecord contractPaymentR = r.into(CONTRACT_PAYMENT);
+			contractPaymentR.setExpression(payment.getExpression());
+			contractPaymentR.update();
+		});
+		
+		// Contract payments description associated to an paymentConcept and same description
+		List<Record> contractPaymentDescriptionRecords = dslContext.select().from(CONTRACT_PAYMENT)
+			.where(CONTRACT_PAYMENT.CONTRACT.in(agreementContractIds))
+			.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(payment.getConceptId()))
+			.and(CONTRACT_PAYMENT.DESCRIPTION.eq(
+					dslContext.select(PAYMENT_CONCEPT.DESCRIPTION).from(PAYMENT_CONCEPT)
+						.where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId()))
+						.fetchOne(PAYMENT_CONCEPT.DESCRIPTION)
+			)).fetch();
+		
+		contractPaymentDescriptionRecords.forEach(r -> {
+			ContractPaymentRecord contractPaymentR = r.into(CONTRACT_PAYMENT);
+			contractPaymentR.setDescription(payment.getDescription());
+			contractPaymentR.update();
+		});
+		
+	}
+
+	public static void removePayment(Connection conn, Integer agreementId, Payment payment)
 			throws SQLException {
-		removePayment(DSL.using(conn, getDefaultSettings()), payment);
+		removePayment(DSL.using(conn, getDefaultSettings()), agreementId, payment);
 	}
 
-	public static void removePayment(DSLContext dslContext, Payment payment)
+	public static void removePayment(DSLContext dslContext, Integer agreementId, Payment payment)
 			throws SQLException {
 		
 		// Try to remove extra, only remove if extra agreement_payment
