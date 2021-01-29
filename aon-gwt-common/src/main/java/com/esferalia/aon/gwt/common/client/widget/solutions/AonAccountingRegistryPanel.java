@@ -791,6 +791,10 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
     	updateButton.setText( AON.MSG.accept());
     	updateButton.setEnabled(reg.getId() != null);
     	updateButton.setVisible(reg.getId() != null);
+    	// TODO Remove whe working
+    	updateButton.setEnabled(false);
+    	updateButton.setVisible(false);
+    	// -----------------------
     	updateButton.addKeyUpHandler( keyUpHandler);
     	updateButton.addClickHandler(new ClickHandler() {
 			
