@@ -9,7 +9,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Scope;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
@@ -35,6 +37,10 @@ public class FeePrinterSearchListener extends RegistrySearchListener  { //Contro
 	private Boolean anual;
 	private WorkPlace workPlace;
 	private BillingPeriod period;
+	private CustomerStatus status;
+	private Scope scope;
+	
+	FeeExportGwtController feeGwtExport;
 	
 	public Boolean getAnual() {
 		return anual;
@@ -108,6 +114,30 @@ public class FeePrinterSearchListener extends RegistrySearchListener  { //Contro
 		this.period = period;
 	}
 	
+	public CustomerStatus getStatus() {
+		return status;
+	}
+	
+	public void setStatus(CustomerStatus status) {
+		this.status = status;
+	}
+	
+	public Scope getScope() {
+		return scope;
+	}
+	
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+	
+	public FeeExportGwtController getFeeGwtExport() {
+		return feeGwtExport;
+	}
+	
+	public void setFeeGwtExport(FeeExportGwtController feeGwtExport) {
+		this.feeGwtExport = feeGwtExport;
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
@@ -116,6 +146,9 @@ public class FeePrinterSearchListener extends RegistrySearchListener  { //Contro
 		setWorkPlace((WorkPlace)BeanManager.getManagerBean(WorkPlace.class).createNewTo());
 		setCategory((ProductCategory)BeanManager.getManagerBean(ProductCategory.class).createNewTo());
 		setPeriod(null);
+		setStatus(null);
+		setScope((Scope)BeanManager.getManagerBean(Scope.class).createNewTo());
+		setFeeGwtExport(new FeeExportGwtController());
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(new Date());
 		setBillingDateMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
@@ -162,26 +195,43 @@ public class FeePrinterSearchListener extends RegistrySearchListener  { //Contro
 			String field = getController().getFieldName(IEntityAlias.CUSTOMER_FEE_PERIOD);
 			criteria.addEqualExpression(field, getPeriod());
 		}
+		
+		if(getStatus() != null) {
+			String field = getController().getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_STATUS);
+			criteria.addEqualExpression(field, getStatus());
+		}
+		
+		if(getScope() != null && getScope().getId() != null) {
+			String field = getController().getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_SCOPE_ID);
+			criteria.addEqualExpression(field, getScope().getId());
+		}
 
 		String segment = "CustomerFee.customer.registry.segments.segment.id";
 		addEnumToCriteria(criteria, segment, getSegmentsIds().toArray());
 
-		FeeExportGwtController.setItem((getItem() != null) && (getItem().getId() != null) 
+		getFeeGwtExport().setItem((getItem() != null) && (getItem().getId() != null) 
 				? getItem().getId() : null);
-		FeeExportGwtController.setCategory((getCategory() != null) && (getCategory().getId() != null)
+		getFeeGwtExport().setCategory((getCategory() != null) && (getCategory().getId() != null)
 				? getCategory().getId() : null);
-		FeeExportGwtController.setCustomer((getCustomer() != null) && (getCustomer().getId() != null)
+		getFeeGwtExport().setCustomer((getCustomer() != null) && (getCustomer().getId() != null)
 				? getCustomer().getId() : null);
-		FeeExportGwtController.setSeller((getSeller() != null) && (getSeller().getId() != null)
+		getFeeGwtExport().setSeller((getSeller() != null) && (getSeller().getId() != null)
 				? getSeller().getId() : null);
-		FeeExportGwtController.setWorkplace((getWorkPlace() != null) && (getWorkPlace().getId() != null)
+		getFeeGwtExport().setWorkplace((getWorkPlace() != null) && (getWorkPlace().getId() != null)
 				? getWorkPlace().getId() : null);
-		FeeExportGwtController.setFrom(getBillingDateMonth() != null ? obtainFromDate() : null);
-		FeeExportGwtController.setTo(getBillingDateMonth() != null ? obtainToDate() : null);
-		FeeExportGwtController.setPeriod(getPeriod() != null ? getPeriod().ordinal() : null);
-		FeeExportGwtController.setSegment(getSegmentsIds());
+		getFeeGwtExport().setFrom(getBillingDateMonth() != null ? obtainFromDate() : null);
+		getFeeGwtExport().setTo(getBillingDateMonth() != null ? obtainToDate() : null);
+		getFeeGwtExport().setPeriod(getPeriod() != null ? getPeriod().ordinal() : null);
+		getFeeGwtExport().setScope(getScope() != null ? getScope().getId() : null);
+		getFeeGwtExport().setStatus(getStatus() != null ? getStatus().ordinal() : null);
+
+		getFeeGwtExport().setSegment(getSegmentsIds());
 
 	}	
+	
+	public String getFilter() {
+		return getFeeGwtExport().getFilter();
+	}
 
 	private Date obtainFromDate() {
 		Calendar calendar = new GregorianCalendar();

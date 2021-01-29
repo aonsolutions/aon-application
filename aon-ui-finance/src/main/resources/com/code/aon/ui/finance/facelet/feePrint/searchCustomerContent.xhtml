@@ -14,8 +14,7 @@
 	<aon:outputLabel for="CustomerFee_customer_status"
 		value="#{bundle.aon_status}" />
 	<aon:selectOneMenu id="CustomerFee_customer_status"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{feePrint.changeStatus}">						
+		value="#{feePrintSearch.status}">						
 		<f:selectItem itemLabel="-" value="#{null}"/> 
 		<f:selectItems value="#{customerCollections.customerStatuses}" />
 	</aon:selectOneMenu>
@@ -24,8 +23,7 @@
 		<aon:outputLabel for="CustomerFee_customer_scope_id"
 			value="#{bundle.aon_scope}" />
 			<aon:selectOneMenu id="CustomerFee_customer_scope_id"
-				value="#{configCollections.scope}"
-				valueChangeListener="#{feePrint.changeScope}">
+				value="#{feePrintSearch.scope}">
 				<f:selectItem itemLabel="-" value="#{null}"/> 
 				<f:selectItems value="#{currentUserScopes}" />
 		</aon:selectOneMenu>

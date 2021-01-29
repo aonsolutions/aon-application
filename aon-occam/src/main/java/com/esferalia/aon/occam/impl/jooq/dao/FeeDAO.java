@@ -34,7 +34,6 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
-import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
@@ -76,7 +75,9 @@ public class FeeDAO {
 		@Override public Property<Integer> getSegmentProperty() {return new FilterDAO.PropertyDAO<Integer>(RSEGMENT.SEGMENT);}
 	}
 	
+	
 	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
+		
 		com.esferalia.aon.jooq.tables.Registry sellerRegistry = REGISTRY.as("sellerRegistry");
 		com.esferalia.aon.jooq.tables.Registry customerRegistry = REGISTRY.as("customerRegistry");
 		return ctx.getDslContext().select().from(CUSTOMER_FEE)
@@ -88,10 +89,8 @@ public class FeeDAO {
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
 				.leftOuterJoin(sellerRegistry).on(SELLER.REGISTRY.eq(sellerRegistry.ID))
-				.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY))
 				.where(FEE_PROPERTIES.getConditions(filter))
-				.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
-				.orderBy(CUSTOMER_FEE.LINE)
+				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 			.fetch().stream().map(new FeeFiller());
 	}
 	

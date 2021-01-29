@@ -457,6 +457,14 @@ public interface Properties {
 		Property<String> getMunicipalityCodeProperty();
 	}
 	
+	public interface RegistrySegmentProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Integer> getSegmentProperty();
+	}
+	
+	
 	public interface RegistrySellerProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

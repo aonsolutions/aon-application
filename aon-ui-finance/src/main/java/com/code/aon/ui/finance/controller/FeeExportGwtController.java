@@ -17,18 +17,18 @@ public class FeeExportGwtController extends AuditableSearchController {
 
 	//-------------------- PRODUCT FILTER
 	
-	public static Date from;
-	public static Date to;
-	public static Integer item;
-	public static Integer status;
-	public static Integer scope;
+	public Date from;
+	public Date to;
+	public Integer item;
+	public Integer status;
+	public Integer scope;
 	
-	public static List<Integer> segment;
-	public static Integer customer;
-	public static Integer seller;
-	public static Integer workplace;
-	public static Integer category;
-	public static Integer period;
+	public List<Integer> segment;
+	public Integer customer;
+	public Integer seller;
+	public Integer workplace;
+	public Integer category;
+	public Integer period;
 
 	public FeeExportGwtController() {
 	
@@ -83,92 +83,92 @@ public class FeeExportGwtController extends AuditableSearchController {
 		return Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
 	}
 
-	public static Date getFrom() {
+	public Date getFrom() {
 		return from;
 	}
 
-	public static void setFrom(Date from) {
-		FeeExportGwtController.from = from;
+	public void setFrom(Date from) {
+		this.from = from;
 	}
 
-	public static Date getTo() {
+	public Date getTo() {
 		return to;
 	}
 
-	public static void setTo(Date to) {
-		FeeExportGwtController.to = to;
+	public void setTo(Date to) {
+		this.to = to;
 	}
 
-	public static Integer getItem() {
+	public Integer getItem() {
 		return item;
 	}
 
-	public static void setItem(Integer item) {
-		FeeExportGwtController.item = item;
+	public void setItem(Integer item) {
+		this.item = item;
 	}
 
-	public static Integer getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public static void setStatus(Integer status) {
-		FeeExportGwtController.status = status;
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
-	public static Integer getScope() {
+	public Integer getScope() {
 		return scope;
 	}
 
-	public static void setScope(Integer scope) {
-		FeeExportGwtController.scope = scope;
+	public void setScope(Integer scope) {
+		this.scope = scope;
 	}
 	
-	public static List<Integer> getSegment() {
+	public List<Integer> getSegment() {
 		return segment;
 	}
 	
-	public static void setSegment(List<Integer> segment) {
-		FeeExportGwtController.segment = segment;
+	public void setSegment(List<Integer> segment) {
+		this.segment = segment;
 	}
 	
-	public static Integer getCustomer() {
+	public Integer getCustomer() {
 		return customer;
 	}
 	
-	public static void setCustomer(Integer customer) {
-		FeeExportGwtController.customer = customer;
+	public void setCustomer(Integer customer) {
+		this.customer = customer;
 	}
 	
-	public static Integer getSeller() {
+	public Integer getSeller() {
 		return seller;
 	}
 	
-	public static void setSeller(Integer seller) {
-		FeeExportGwtController.seller = seller;
+	public void setSeller(Integer seller) {
+		this.seller = seller;
 	}
 	
-	public static Integer getWorkplace() {
+	public Integer getWorkplace() {
 		return workplace;
 	}
 	
-	public static void setWorkplace(Integer workplace) {
-		FeeExportGwtController.workplace = workplace;
+	public void setWorkplace(Integer workplace) {
+		this.workplace = workplace;
 	}
 	
-	public static Integer getCategory() {
+	public Integer getCategory() {
 		return category;
 	}
 	
-	public static void setCategory(Integer category) {
-		FeeExportGwtController.category = category;
+	public void setCategory(Integer category) {
+		this.category = category;
 	}
 	
-	public static Integer getPeriod() {
+	public Integer getPeriod() {
 		return period;
 	}
 	
-	public static void setPeriod(Integer period) {
-		FeeExportGwtController.period = period;
+	public void setPeriod(Integer period) {
+		this.period = period;
 	}
 	
 }

@@ -86,6 +86,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
@@ -4547,6 +4548,18 @@ public class AON {
 				ctx.close();
 		}		
 	}
+
+	public static Integer[] getRSegmentStream(String domainName, Integer domainId, String login, RegistrySegmentFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRSegmentStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}		
+	}
+	
 	
 	public static Stream<Seller> getRSellerStream(String domainName, Integer domainId, String login, Integer registryId){
 		return getRSellerStream(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId).and(f.getRegistryProperty().eq(registryId)));

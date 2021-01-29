@@ -62,6 +62,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
@@ -69,6 +70,7 @@ import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
+import com.esferalia.aon.occam.api.model.Properties.RegistrySegmentProperties;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
@@ -166,6 +168,20 @@ public class RegistryOldDAO {
 		@Override public Property<Integer> getGeozoneProperty() {return new FilterDAO.PropertyDAO<Integer>(RADDRESS.GEOZONE);}
 		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.ALIAS);}
 		@Override public Property<String> getMunicipalityCodeProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.MUNICIPALITY_CODE);}
+	}
+	
+	private static final RegistrySegmentPropertiesDAO RSEGMENT_PROPERTIES = new RegistrySegmentPropertiesDAO();
+	private static class RegistrySegmentPropertiesDAO implements RegistrySegmentProperties {
+		private Condition[] getConditions(RegistrySegmentFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RSEGMENT.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RSEGMENT.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(RSEGMENT.REGISTRY);}
+		@Override public Property<Integer> getSegmentProperty() {return new FilterDAO.PropertyDAO<Integer>(RSEGMENT.SEGMENT);}
+
 	}
 	
 	public static Category getCategory(AONContext ctx, Integer categoryId){
@@ -490,6 +506,12 @@ public class RegistryOldDAO {
 				.join(SEGMENT).on(RSEGMENT.SEGMENT.eq(SEGMENT.ID))
 				.where(RSEGMENT.REGISTRY.eq(registryId))
 				.fetchInto(SEGMENT).stream().map(new SegmentFiller());
+	}
+	
+	public static Integer[] getRSegmentStream(AONContext ctx, RegistrySegmentFilter filter){
+ 		return ctx.getDslContext().select().from(RSEGMENT)
+			.where(RSEGMENT_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(r -> r.getValue(RSEGMENT.REGISTRY)).toArray(Integer[]::new);
 	}
 
 	public static class SegmentFiller  implements Function<SegmentRecord,Segment> {

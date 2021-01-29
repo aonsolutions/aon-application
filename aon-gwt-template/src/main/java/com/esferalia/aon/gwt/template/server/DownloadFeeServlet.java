@@ -98,7 +98,20 @@ public class DownloadFeeServlet extends HttpServlet {
         Cell celdaf = fila.createCell(columns);
         celdaf.setCellStyle(style);
    
-        LinkedList<Fee> fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f));
+
+        
+        LinkedList<Fee> fees;
+        if(filterJSON.opt("segment") != null) {
+			JSONArray segment = filterJSON.optJSONArray("segment");
+			if(segment.length() > 0) {
+				Integer[] segments = new Integer[segment.length()];
+				for (Integer i = 0; i < segment.length(); i++) {
+					segments[i] = segment.getInt(i);
+				}
+				Integer[] cIDs = AON.getRSegmentStream(domain.getName(), domain.getId(), login, f -> f.getSegmentProperty().in(segments));
+				fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, cIDs));
+			}else  fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, null));
+		} else  fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, null));
         for(Integer i = 0; i < fees.size(); i++) {
         	Row row = hoja.createRow(i+1);
         	for(Integer j = 0; j < columnList.size(); j++) {
@@ -195,17 +208,20 @@ public class DownloadFeeServlet extends HttpServlet {
 	}
 	
 	
-	private Filter feeFilter(Domain domain, JSONObject filterJSON, FeeProperties f) {
+	private Filter feeFilter(Domain domain, JSONObject filterJSON, FeeProperties f, Integer[]  a) {
 		Filter filter =  f.getDomainProperty().eq(domain.getId());
 
 		if(filterJSON.opt("from") != null) { // FECHA FACTURACIÓN
 			java.sql.Date from = new java.sql.Date(filterJSON.optLong("from"));
-			filter = filter.and(f.getBillingDateProperty().ge(from));
+			filter = filter.and(f.getBillingDateProperty().ge(from))
+					.and(f.getFinalDateProperty().ge(from).or(f.getFinalDateProperty().isNull()));	
 		}
 		
 		if(filterJSON.opt("to") != null) { // FECHA FACTURACIÓN
 			java.sql.Date to = new java.sql.Date(filterJSON.optLong("to"));
-			filter = filter.and(f.getBillingDateProperty().le(to));			
+			filter = filter.and(f.getBillingDateProperty().le(to))
+					.and(f.getInitialDateProperty().le(to));
+			
 		}
 		
 		if(filterJSON.opt("item") != null) {
@@ -223,16 +239,20 @@ public class DownloadFeeServlet extends HttpServlet {
 			filter = filter.and(f.getScopeProperty().eq(scope));
 		}
 		
-		if(filterJSON.opt("segment") != null) {
-			JSONArray segment = filterJSON.optJSONArray("segment");
-			if(segment.length() > 0) {
-				Integer[] segments = new Integer[segment.length()];
-				for (Integer i = 0; i < segment.length(); i++) {
-					segments[i] = segment.getInt(i);
-				}
-				filter = filter.and(f.getSegmentProperty().in(segments));
-			}
+		if(a != null) {
+			filter = filter.and(f.getCustomerProperty().in(a));
 		}
+		
+//		if(filterJSON.opt("segment") != null) {
+//			JSONArray segment = filterJSON.optJSONArray("segment");
+//			if(segment.length() > 0) {
+//				Integer[] segments = new Integer[segment.length()];
+//				for (Integer i = 0; i < segment.length(); i++) {
+//					segments[i] = segment.getInt(i);
+//				}
+//				filter = filter.and(f.getSegmentProperty().in(segments));
+//			}
+//		}
 		
 		if(filterJSON.opt("seller") != null) {
 			Integer seller = filterJSON.optInt("seller");
