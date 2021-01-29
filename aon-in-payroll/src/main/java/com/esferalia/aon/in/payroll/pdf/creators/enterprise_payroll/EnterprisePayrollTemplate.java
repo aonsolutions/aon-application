@@ -5,6 +5,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 
 import java.awt.*;
@@ -41,7 +42,7 @@ public class EnterprisePayrollTemplate {
 
 			//PRINT PDF
 			PDPageContentStream contents = drawHeader(doc, payroll);
-			String month_str = PDFToolkit.formatDate(payroll.getMonth(), "MMMM, yyyy").get();
+			String month_str = PdfFormats.formatDate(payroll.getMonth(), "MMMM, yyyy").get();
 			month_str = String.valueOf(month_str.charAt(0)).toUpperCase() + month_str.substring(1);
 
 			float x = 30; float y = 480f;
@@ -177,7 +178,7 @@ public class EnterprisePayrollTemplate {
 
 		String fileTitle = "Nómina de la empresa";
 		String enterprise = "EMPRESA:";
-		String date = PDFToolkit.formatDate(new Date(),"dd/MM/yyyy").get();
+		String date = PdfFormats.formatDate(new Date(),"dd/MM/yyyy").get();
 
 		PDPage page = PDFToolkit.createHorizontalPage();
 		doc.addPage(page);

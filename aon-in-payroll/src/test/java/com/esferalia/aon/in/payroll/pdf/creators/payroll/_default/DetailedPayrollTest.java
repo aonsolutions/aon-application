@@ -114,7 +114,7 @@ public class DetailedPayrollTest {
 		.setAccrual_total(Optional.of(999999999.99))
 		.setDeduction_total(Optional.of(999999999.99))
 		.setPayroll_total(Optional.of(999999999.99))
-		.setPayrollType(Optional.of(PayrollTypes.Type.EXTRA_HOURS))
+		.setPayrollType(Optional.of(PayrollTypes.Type.EXTRAS))
 		.setContingencies(Optional.of(con_builder.build()));
 		
 		try { PdfMaker.print_default_payroll("payrollRandom.pdf", builder.build(), Optional.of(DetailedPayrollTest.class.getResourceAsStream("HOR.png")),Optional.of(new Locale("Es")));} 
@@ -128,6 +128,6 @@ public class DetailedPayrollTest {
 
 	//RANDOM BETWEEN 0 AND Y
 	public double random(double y){
-		return Math.random()*y;
+		return 1 + Math.random()*(y-1);
 	}
 }

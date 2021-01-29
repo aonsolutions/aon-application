@@ -11,6 +11,10 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -29,18 +33,8 @@ import java.util.List;
 
 public class PDFToolkit {
 
-	public final static Color AON_BLUE = new Color(0x3a5b9e);
-	public final static PDFont HELVETICA = PDType1Font.HELVETICA;
-	public final static PDFont HELVETICA_BOLD = PDType1Font.HELVETICA_BOLD;
 
-	public final static Color WHITE = new Color(0xffffff);
-	public final static Color BLACK = new Color(0x404040);
-	public final static Color BLUE = new Color(0x3a5b9e);
-	public final static Color RED = new Color(0xf44336);
-	public final static Color GREEN = new Color(0xf2f2f2);
-	public final static Color LIGHT_GRAY = new Color(0xf1f1f1);
-
-	public final static DecimalFormat df = new DecimalFormat("0.00");
+	public final static DecimalFormat df = PdfFormats.two_digit_decimal;
 
 	//CREATE AN HORIZONTAL PAGE
 	public static PDPage createHorizontalPage() {
@@ -128,20 +122,12 @@ public class PDFToolkit {
 		contents.fill();
 	}
 	
-	//DRAW A BOX
+	//DRAW A BORDERED BOX
 	public static void drawBorderedBox(PDPageContentStream contents, float x, float y, float width, float height, Color color) throws IOException {
 		contents.setStrokingColor(color);
 		contents.addRect(x, y, width, height);
 		contents.setLineWidth(2);
 		contents.stroke();
-	}
-
-	//FORMAT DATE TO STRING IN A SPECIFIC FORMAT
-	public static Optional<String> formatDate(Date date, String format) {
-		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
-		Optional<String> formattedDate;
-		formattedDate = Optional.of(dateFormatter.format(date));
-		return formattedDate;
 	}
 
 	//GET PDF FORM FIELDS
@@ -199,24 +185,6 @@ public class PDFToolkit {
 		}
 	}
 	
-	//RETURN LATIN VERSION OF A NUMBER WITH . AND , (STRING)
-	public static String to_latin_number(double number){
-		DecimalFormat formater = new DecimalFormat("###,###.##");
-		return formater.format(number);
-	}
-	
-	//PARSE A DATE WITH AN SPECIFIC FORMAT
-	public static Date parseDate(String dateStr, String format) {
-		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
-		Date formattedDate;
-
-		try {
-			formattedDate = dateFormatter.parse(dateStr);
-			return formattedDate;
-		} catch (ParseException e) {
-			return null;
-		}
-	}
 
 	//DIVIDE A STRING TO FIT A WIDTH
 	public static List<String> divide_string_to_fit(String text, float max, PDFont font, float fontSize) throws IOException{
@@ -250,13 +218,7 @@ public class PDFToolkit {
 
 		return  (txt.equals(text))? text : text + "..." ;
 	}	
-	
-	//FORMAT A DOUBLE
-	public static String format(double num) {
-		return df.format(num);
-	}
-	
-	
+		
 	//REESCALE
 	public static float[] reescale(float width, float height, float maxWidth, float maxHeight) {
 		
@@ -273,11 +235,8 @@ public class PDFToolkit {
 	//BYTE ARRAY TO IMAGE
 	public static BufferedImage create_image_from_bytes(byte[] imageData) {
 	    ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
-	    try {
-	        return ImageIO.read(bais);
-	    } catch (IOException e) {
-	        
-	    }
+	    try {return ImageIO.read(bais);} 
+	    catch (IOException e) {}
 		return null;
 	}
 

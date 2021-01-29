@@ -41,8 +41,8 @@ public class PdfMaker {
 	}
 	
 	//CREATE PAYROLL
-	public static void print_default_payroll(String out, DefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException {
-		new DefaultPayrollTemplate().print(out, payroll, logo, language);
+	public static void print_default_payroll(String out, DefaultPayroll payroll,InputStream logo, Locale language) throws CanNotCreatePdfException {
+		new DefaultPayrollTemplate().print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
 	}
 
 	//CREATE BUDGET

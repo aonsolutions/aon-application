@@ -20,6 +20,8 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDFieldTree;
 import org.apache.pdfbox.pdmodel.interactive.form.PDRadioButton;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 
 public class PdfFieldDisplayer {
@@ -75,8 +77,8 @@ public class PdfFieldDisplayer {
 						PDPage current_page = new_doc.getPage(page_index.get());
 						PDPageContentStream contents = PDFToolkit.open_in_append_mode(doc, current_page);
 
-						PDFToolkit.drawBox(contents, x, y, w, h, PDFToolkit.WHITE);
-						PDFToolkit.drawText(contents, name, x + 3, y + h / 2 - 1.5f, PDFToolkit.BLUE, PDFToolkit.HELVETICA_BOLD, 4f);
+						PDFToolkit.drawBox(contents, x, y, w, h, PdfColors.WHITE);
+						PDFToolkit.drawText(contents, name, x + 3, y + h / 2 - 1.5f, PdfColors.BLUE, PdfFonts.HELVETICA_BOLD, 4f);
 
 						contents.close();
 					}

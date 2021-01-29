@@ -32,4 +32,26 @@ public class PdfPage{
 		catch (IOException e) {e.printStackTrace();}
 		return null;
 	}
+
+
+	public PAGE_TYPE getType() {
+		return type;
+	}
+
+
+	public void setType(PAGE_TYPE type) {
+		this.type = type;
+	}
+
+
+	public PDPage getPage() {
+		return page;
+	}
+
+
+	public void setPage(PDPage page) {
+		this.page = page;
+	}
+	
+	
 }

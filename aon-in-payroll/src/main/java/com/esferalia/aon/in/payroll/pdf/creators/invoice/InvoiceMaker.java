@@ -13,6 +13,7 @@ import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.JsonParseException;
@@ -44,7 +45,7 @@ public class InvoiceMaker {
 			JSONArray entries_info = (JSONArray) jsonObj.get("details");
 
 			String reference = (String) jsonObj.get("reference");
-			Date date = PDFToolkit.parseDate("" + jsonObj.get("date"), "yyyy-MM-dd");
+			Date date = PdfFormats.parseDate("" + jsonObj.get("date"), "yyyy-MM-dd");
 			String document = (String) receiver.get("document");
 			String name = (String) receiver.get("name");
 			String address = (String) address_info.get("address");
@@ -67,7 +68,7 @@ public class InvoiceMaker {
 			for (Object finance : finances_info) {
 				JSONObject finance_obj = (JSONObject) finance;
 
-				Date due_date = PDFToolkit.parseDate("" + finance_obj.get("due_date"), "yyyy-MM-dd");
+				Date due_date = PdfFormats.parseDate("" + finance_obj.get("due_date"), "yyyy-MM-dd");
 				String pay_method = (String) finance_obj.get("paymethod");
 				String iban = (String) finance_obj.get("iban");
 				double amount = Double.parseDouble("" + finance_obj.get("amount"));

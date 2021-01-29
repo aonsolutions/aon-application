@@ -9,7 +9,7 @@ public class PayrollTypes {
 	    SALARY,
 	    ARREARS_WAGE,
 	    SETTLEMENT,
-	    EXTRA_HOURS;
+	    EXTRAS;
 	}
 	 
 	public static String toString(Type type,Locale lang) {
@@ -19,7 +19,7 @@ public class PayrollTypes {
 			case SALARY: return words.getString("SALARIO");
 			case ARREARS_WAGE: return words.getString("ATRASOS");
 			case SETTLEMENT: return words.getString("FINIQUITO");
-			case EXTRA_HOURS: return words.getString("HORAS EXTRA");
+			case EXTRAS: return words.getString("PAGAS EXTRAS");
 			default: break;
 		}
 		

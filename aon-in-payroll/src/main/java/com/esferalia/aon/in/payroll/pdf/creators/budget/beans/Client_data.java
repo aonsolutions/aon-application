@@ -15,19 +15,18 @@ public class Client_data {
 	private Optional<String> email;
 	private Optional<String> contact;
 	
-	public Client_data(Optional<String> business_name, Optional<String> address, Optional<String> nif, Optional<String> city, Optional<String> postal_code,
-			Optional<String> province, Optional<String> phone, Optional<String> mobile, Optional<String> email, Optional<String> contact) {
+	public Client_data(String business_name,String address,String nif,String city,String postal_code,String province, String phone, String mobile, String email, String contact) {
 		super();
-		this.business_name = business_name;
-		this.address = address;
-		this.nif = nif;
-		this.city = city;
-		this.postal_code = postal_code;
-		this.province = province;
-		this.phone = phone;
-		this.mobile = mobile;
-		this.email = email;
-		this.contact = contact;
+		this.business_name = 	Optional.ofNullable(business_name);
+		this.address = 			Optional.ofNullable(address);
+		this.nif = 				Optional.ofNullable(nif);
+		this.city = 			Optional.ofNullable(city);
+		this.postal_code = 		Optional.ofNullable(postal_code);
+		this.province = 		Optional.ofNullable(province);
+		this.phone = 			Optional.ofNullable(phone);
+		this.mobile = 			Optional.ofNullable(mobile);
+		this.email = 			Optional.ofNullable(email);
+		this.contact = 			Optional.ofNullable(contact);
 	}
 
 	public Optional<String> getBusiness_name() {return business_name;}
