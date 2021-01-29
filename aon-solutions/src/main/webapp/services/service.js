@@ -21,3 +21,5 @@ export * from './contratoService.js';
 export * from './actionMobile.js';
 
 export * from './timeControlService.js';
+
+export * from './locationService.js';

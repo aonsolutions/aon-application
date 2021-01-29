@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.model.Domain;
 
 public class Location {
@@ -58,4 +60,19 @@ public class Location {
 		this.radio = radio;
 		return this;
 	}	
+	
+	public JSONObject toJSON() {
+		JSONObject json = new JSONObject();
+		json.put("id", getId());
+		json.put("radio", getRadio());
+		json.put("description", getDescription());
+
+		if(getCoordinates() != null) {
+			JSONObject coordinates = getCoordinates().toJSON();
+			coordinates.put("latitude", getCoordinates().getLatitude());
+			coordinates.put("longitude", getCoordinates().getLongitude());
+			json.put("coordinates", coordinates);
+		}
+		return json;
+	}
 }

@@ -7,7 +7,6 @@ import '../../components/aon-toast.js';
 import '../../components/aon-application.js';
 import './cta/aon-cta-list.js';
 import './contrato/aon-contrato-list.js';
-import './time-control/aon-time-control.js';
 
 export class AonComunica extends AonElement {
 
@@ -85,15 +84,6 @@ export class AonComunica extends AonElement {
 			delete options[3]; 
 		}
 		this.aonComunicaEl.addSidenavOptions('TGSS/SEPE', options);
-		
-		const options2 = [
-			{
-				name: 'Presencia',
-				icon: 'account_box',
-				fn: () => this.aonComunicaEl.setContentHTML(`<aon-time-control id="aonTimeControl"></aon-time-control>`)
-			}
-		];
-		this.aonComunicaEl.addSidenavOptions('Control de horario', options2);
 	}
 
 

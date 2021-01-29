@@ -1,22 +1,21 @@
-import { AonElement } from "../../../components/AonElement.js";
+import { AonElement } from "../../../../components/AonElement.js";
 import {
   setValueName,
   serializeForm,
   setTime,
-} from "../../../services/utils.js";
-import { getLocation, getStatus } from "../../../services/service.js";
-import "../../../components/aon-card.js";
-import "../../../components/aon-input.js";
-import "../../../components/aon-number.js";
-import "../../../components/aon-date.js";
-import "../../../components/aon-suggestion.js";
-import "../../../components/aon-select.js";
-import "../../../components/aon-switch.js";
-import "../../../components/aon-icon-button.js";
+} from "../../../../services/utils.js";
+import { getLocation, getStatus } from "../../../../services/service.js";
+import "../../../../components/aon-card.js";
+import "../../../../components/aon-input.js";
+import "../../../../components/aon-number.js";
+import "../../../../components/aon-date.js";
+import "../../../../components/aon-suggestion.js";
+import "../../../../components/aon-select.js";
+import "../../../../components/aon-switch.js";
+import "../../../../components/aon-icon-button.js";
 import "./aon-event-list.js";
 
 export class AonEventAdd extends AonElement {
-  _contrato;
   ACTION;
   TOAST;
   static get observedAttributes() {
@@ -44,12 +43,12 @@ export class AonEventAdd extends AonElement {
     this.ACTION = "CREATE";
     this.id = this.id || "aonEventAdd";
     this.TOOLBAR = this.id + "Toolbar";
-    this.aonComunicaEl = this.getElement("aonComunica");
-    this.aonComunicaToolbar = this.getElement(
-      `${this.aonComunicaEl.id}Toolbar`
+    this.aonSigninEl = this.getElement("aonSignin");
+    this.aonSigninToolbar = this.getElement(
+      `${this.aonSigninEl.id}Toolbar`
     );
-    this.aonComunicaToolbar.setAttribute("option", "Registrar evento");
-    this.TOAST = this.getElement(`${this.aonComunicaEl.id}Toast`);
+    this.aonSigninToolbar.setAttribute("option", "Registrar evento");
+    this.TOAST = this.getElement(`${this.aonSigninEl.id}Toast`);
   }
 
   connectedCallback() {
@@ -58,9 +57,7 @@ export class AonEventAdd extends AonElement {
     this.eventListener();
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    // if ("data" == name && newValue) {}
-  }
+  attributeChangedCallback(name, oldValue, newValue) {}
 
   paintView() {
     const toolbarMobile = !this.isMobile()
@@ -96,7 +93,7 @@ export class AonEventAdd extends AonElement {
 
     this.innerHTML = initHtml + form;
 
-    this.aonComunicaEl.removeToolbarOptions();
+    this.aonSigninEl.removeToolbarOptions();
 
     const buttonSubmit = this.isMobile()
       ? `<div class="aonCol-sm-12 aonCol-md-12"><br/> <div class="offset-4" id="${this.id}DivSubmit"> 
@@ -138,7 +135,7 @@ export class AonEventAdd extends AonElement {
   async initLists() {
     await this.listStatus();
     await this.listLocation();
-    if (this.data) this.edit();
+    if (this.data) this.setValues();
   }
 
   eventListener() {
@@ -154,15 +151,15 @@ export class AonEventAdd extends AonElement {
       {
         id: "Delete",
         name: "Eliminar",
-        icon: "delete_forever",
+        icon: "delete",
       },
       () => this.removeData()
     );
     toolbar.addButton2(
       {
         id: "Save",
-        name: "Comunicar",
-        icon: "send",
+        name: "Guardar",
+        icon: "save",
       },
       () => this.formSubmit()
     );
@@ -176,7 +173,6 @@ export class AonEventAdd extends AonElement {
       () => this.back()
     );
   }
-
 
   getFormValues() {
     const form = this.getElement(`${this.id}Form`);
@@ -207,44 +203,36 @@ export class AonEventAdd extends AonElement {
         resp.map((r) => {
           return {
             ...r,
-            name: `${r.name}`,
-            value: `${r.name}`,
+            name: `${r.description}`,
+            value: `${r.id}`,
           };
         })
       );
     } catch (error) {}
   }
 
-  edit() {
+  setValues() {
     const data = this.data;
     if (data) {
       this.ACTION = "UPDATE";
-      this.aonComunicaToolbar.setAttribute("option", "Modificar evento");
-      const newTime = setTime(new Date(data.date));
+      this.aonSigninToolbar.setAttribute("option", "Modificar evento");
+
+      let  date = new Date(data.date);
+      if(!date.isValid()){
+        date = new Date();
+      }
+      
+      const newTime = setTime(date);
       let obj = {
         ...data,
         time: newTime,
+        date:date
       };
 
       for (const property in obj) {
         setValueName(property, obj[property]);
       }
       this.getElement("name").disabled = "disabled";
-    }
-  }
-
-  removeData(){
-    const data = this.getFormValues();
-    if (confirm(`Estas seguro de eliminarlo?`)) {
-      this.aonComunicaEl.startLoader();
-      try {
-        // await postDeleteData(data);
-        this.TOAST.start({ message: `Datos eliminados!` });
-        this.back();
-      } catch (error) {
-        this.TOAST.start({ message: error, type: 'error' });
-      }
-      this.aonComunicaEl.stopLoader();
     }
   }
 
@@ -262,8 +250,7 @@ export class AonEventAdd extends AonElement {
   }
 
   async save() {
-    this.aonComunicaEl.startLoading();
-    console.log("save");
+    this.aonSigninEl.startLoading();
     console.table(this.getFormValues());
     try {
       //   await postData(this.getFormValues());
@@ -276,11 +263,11 @@ export class AonEventAdd extends AonElement {
     } catch (error) {
       this.TOAST.start({ message: error, type: "error" });
     }
-    this.aonComunicaEl.stopLoading();
+    this.aonSigninEl.stopLoading();
   }
 
   async update() {
-    this.aonComunicaEl.startLoading();
+    this.aonSigninEl.startLoading();
     console.log("update");
     console.table(this.getFormValues());
     try {
@@ -294,11 +281,26 @@ export class AonEventAdd extends AonElement {
     } catch (error) {
       this.TOAST.start({ message: error, type: "error" });
     }
-    this.aonComunicaEl.stopLoading();
+    this.aonSigninEl.stopLoading();
+  }
+
+  async removeData() {
+    const data = this.getFormValues();
+    if (confirm(`Estas seguro de eliminarlo?`)) {
+      this.aonSigninEl.startLoader();
+      try {
+        // await postDeleteData(data);
+        this.TOAST.start({ message: `En desarrollo!` });
+        this.back();
+      } catch (error) {
+        this.TOAST.start({ message: error, type: "error" });
+      }
+      this.aonSigninEl.stopLoader();
+    }
   }
 
   back() {
-    this.aonComunicaEl.setContentHTML(`<aon-time-control></aon-time-control>`);
+    this.aonSigninEl.setContentHTML(`<aon-presence-list></aon-presence-list>`);
   }
 }
 

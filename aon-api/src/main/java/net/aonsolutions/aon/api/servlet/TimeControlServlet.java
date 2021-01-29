@@ -68,7 +68,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	//router
 	private Object routerGet(String[] pathInfo, AonToken aonToken) throws Exception {
 		Object obj = new Object();
-		String route = "default";
+		String route = "default" ;
 		if(pathInfo!=null) {
 			route = pathInfo[1];
 		}
@@ -76,15 +76,15 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			case "list":
 				LOGGER.info("TIMECONTROL SERVLET - GET TIME-CONTROL-LIST");
 				obj = getTimeControlList(aonToken, getParams());
-				break;
+			break;
 			case "list-holder":
 				LOGGER.info("TIMECONTROL SERVLET - GET-TASK-HOLDER-TIME-CONTROL");
 				obj = getTaskHolderTimeControlStream(aonToken, getParams());
-				break;
+			break;
 			default:
 				LOGGER.info("TIMECONTROL SERVLET - GET TIME-CONTROL");
 				obj = getTimeControl(aonToken);
-				break;
+			break;
 		}
 		return obj;
 	}
@@ -131,7 +131,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 
 		JSONArray array = new JSONArray();
 		TimeControlGroup timeCG = TimeControlGroup.safeValueOf(json.optString("group"));
-		AON_SOLUTIONS.getTaskHolderTimeControlStream(getDomain(), "", Integer.parseInt(json.optString("taskHolderId")), startDate, endDate, timeCG)
+		AON_SOLUTIONS.getTaskHolderTimeControlStream(getDomain(), "", json.optInt("taskHolderId"), startDate, endDate, timeCG)
 		.forEach(tc -> {
 			array.put(tc.toJSON());
 		});

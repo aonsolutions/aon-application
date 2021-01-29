@@ -10,7 +10,7 @@ import { Invoice } from "./invoice/Invoice.js";
 import "../components/aon-icon-button.js";
 import "./comunic@/aon-comunica.js";
 import "./documental/aon-documental.js";
-import "./messenger/aon-messenger.js";
+import "./signin/aon-signin.js";
 import "./invoice/aon-invoice-panel.js";
 import "../components/aon-dialog-menu.js";
 
@@ -59,7 +59,7 @@ export class AonMobileMenu extends AonElement {
 				</span>
 
 				<span id="aonMobileMenuAdd"  style="top: 10px; position: relative;">
-					<aon-icon-button id="aonMobileMenuAddButton" icon="assignment"></aon-icon-button>
+					<aon-icon-button id="aonMobileMenuAddButton" icon="alarm_on"></aon-icon-button>
 				</span>
 
 				<span id="aonMobileMenuInvoice"  style="top: 10px; position: relative;">
@@ -99,7 +99,7 @@ export class AonMobileMenu extends AonElement {
     aonMobileMenuAdd.style.marginLeft = n;
     aonMobileMenuAdd.style.marginRight = n;
     aonMobileMenuAdd.addEventListener("click", () => {
-      rootPanel("<aon-messenger></aon-messenger>");
+      rootPanel("<aon-signin></aon-signin>");
     });
 
     let aonMobileMenuInvoice = this.getElement("aonMobileMenuInvoice");

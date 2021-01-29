@@ -1,78 +1,57 @@
-import {AonElement} from '../../components/AonElement.js';
-import '../../components/aon-application.js';
+import { AonElement } from "../../components/AonElement.js";
+import "../../components/aon-toast.js";
+import "../../components/aon-application.js";
+import "./time-control/aon-presence-list.js";
+import "./time-control/location/aon-location-list.js";
 
-class AonSignin extends AonElement {
+export class AonSignin extends AonElement {
+  AON_SIGNIN;
 
-	constructor() {
-		super();
-	}
+  constructor() {
+    super();
+    this.AON_SIGNIN = "aonSignin";
+  }
 
-	connectedCallback() {
-		this.innerHTML = `
-			<aon-application id="aonSignin" title="CONTROL DE HORARIO"></aon-application>
-		`;
-		this.build();
-	}
+  connectedCallback() {
+    this.paintView();
+    this.build();
+  }
+  disconnectedCallback() {}
+  paintView() {
+    this.innerHTML = `
+			<aon-toast id="${this.AON_SIGNIN}Toast"></aon-toast>
+			<aon-application id="${this.AON_SIGNIN}" title="Control de Horario"></aon-application>
+    `;
+  }
+  build() {
+    this.aonSigninEl = this.getElement("aonSignin");
+    this.buildToolbar();
+    this.paintViewPresenceList();
+  }
 
-	build() {
-		let aonSignin = document.getElementById('aonSignin');
+  buildToolbar() {
+    const options = [
+      {
+        name: "Presencia",
+        icon: "account_box",
+        fn: () => this.paintViewPresenceList()
+      },
+      {
+        name: "Ubicaciones",
+        icon: "location_on",
+        fn: () =>
+          this.aonSigninEl.setContentHTML(
+            `<aon-location-list id="aonLocationList"></aon-location-list>`
+          ),
+      },
+    ];
+    this.aonSigninEl.addSidenavOptions("Control de horario", options);
+  }
 
-		aonSignin.addToolbarOption('Add', 'add', () => { alert('Add Example') });
-
-		let options = [
-			{
-				name: 'Marcaje de empleado',
-				icon: 'people',
-				fn: () => this.loadEmployee()
-			},
-			{
-				name: 'Marcaje desde administrador',
-				icon: 'admin_panel_settings',
-				fn: () => this.loadAdmin()
-			},
-			{
-				name: 'Historial de marcajes',
-				icon: 'history',
-				fn: () => this.loadHistory()
-			},
-			{
-				name: 'Solicitud de vacaciones',
-				icon: 'flight_takeoff',
-				fn: () => this.loadSolicitarVacaciones()
-			},
-			{
-				name: 'Historial de solicitudes',
-				icon: 'history',
-				fn: () => this.loadHistorialSolicitudes()
-			}
-		];
-		aonSignin.addSidenavOptions('OPCIONES', options);
-		this.loadEmployee();
-	}
-
-	loadAdmin() {
-		let aonSignin = document.getElementById('aonSignin');
-		aonSignin.setContentHTML('<iframe src="../../aon-suite/public/marcaje/administrador.html" style="width:100%;height:100%;border:none;"></iframe>');
-	}
-
-	loadEmployee() {
-		let aonSignin = document.getElementById('aonSignin');
-		aonSignin.setContentHTML('<iframe src="../../aon-suite/public/marcaje/empleado.html" style="width:100%;height:100%;border:none;"></iframe>');
-	}
-
-	loadHistory() {
-		let aonSignin = document.getElementById('aonSignin');
-		aonSignin.setContentHTML('<iframe src="../../aon-suite/public/marcaje/historial.html" style="width:100%;height:100%;border:none;"></iframe>');
-	}
-
-	loadSolicitarVacaciones() {
-		let aonSignin = document.getElementById('aonSignin');
-		aonSignin.setContentHTML('<iframe src="../../aon-suite/public/marcaje/solicitar-vacaciones.html" style="width:100%;height:100%;border:none;"></iframe>');
-	}
-
-	loadHistorialSolicitudes() {
-		let aonSignin = document.getElementById('aonSignin');
-		aonSignin.setContentHTML('<iframe src="../../aon-suite/public/marcaje/historial-solicitudes.html" style="width:100%;height:100%;border:none;"></iframe>');
+  paintViewPresenceList(){
+    this.aonSigninEl.setContentHTML(
+      `<aon-presence-list></aon-presence-list>`
+    );
 	}
 }
-window.customElements.define('aon-signin', AonSignin);
+window.customElements.define("aon-signin", AonSignin);

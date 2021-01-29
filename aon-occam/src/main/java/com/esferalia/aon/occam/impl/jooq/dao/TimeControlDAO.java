@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Location.LOCATION;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -39,6 +40,7 @@ public class TimeControlDAO {
 			.from(TIMECONTROL)
 			.join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TIMECONTROL.TASK_HOLDER))
 			.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+			.join(DOMAIN).on(TIMECONTROL.DOMAIN.eq(DOMAIN.ID))
 			.leftOuterJoin(LOCATION).on(LOCATION.ID.eq(TIMECONTROL.LOCATION))
 			.where(TIMECONTROL_PROPERTIES.getConditions(filter))
 			.fetch().stream().map(new TimeControlDetailFiller());
@@ -62,8 +64,8 @@ public class TimeControlDAO {
 			.and(f.getDateProperty().ge(startTimestamp))
 			.and(f.getDateProperty().le(endTimestamp)));
 		
-		list.stream().map(r -> r.getTaskHolder()).distinct().forEach(th -> {
-			TimeControl tc = buildTimeControl(list.stream().filter(f -> f.getTaskHolder().getId().equals(th.getId())));
+		list.stream().map(r -> r.getTaskHolder().getId()).distinct().forEach(thId -> {
+			TimeControl tc = buildTimeControl(list.stream().filter(f -> f.getTaskHolder().getId().equals(thId)));
 			tcList.add(tc);
 		});
 		return tcList.stream();

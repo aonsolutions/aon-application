@@ -6,10 +6,13 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ITimeControl;
+import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
+import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
+import com.esferalia.aon.occam.impl.jooq.dao.LocationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TimeControlDAO;
 
 public class TimeControlImpl implements ITimeControl {
@@ -49,4 +52,17 @@ public class TimeControlImpl implements ITimeControl {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TimeControlDAO.saveTimeControlDetail(ctx, tcd));
 	}
+	
+	@Override
+	public Location saveLocation(AONContext ctx, Location lc) {
+		return  ctx.getDslContext().transactionResult(
+				configuration -> LocationDAO.saveLocation(ctx, lc));
+	}
+
+	@Override
+	public Stream<Location> getLocationStream(AONContext ctx, LocationFilter filter) {
+		return  ctx.getDslContext().transactionResult(
+				configuration -> LocationDAO.getLocationStream(ctx, filter));
+	}
+	
 }

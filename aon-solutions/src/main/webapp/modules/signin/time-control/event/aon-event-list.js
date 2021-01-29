@@ -1,14 +1,15 @@
-import { AonElement } from "../../../components/AonElement.js";
-import { setDateTimestamp, timePaser } from "../../../services/utils.js";
-import "../../../components/aon-table.js";
-import "../../../components/aon-mobile-list.js";
+import { AonElement } from "../../../../components/AonElement.js";
+import { setDateTimestamp, timePaser } from "../../../../services/utils.js";
+import "../../../../components/aon-table.js";
+import "../../../../components/aon-mobile-list.js";
 import {
   getGroups,
   getStatus,
   getTaskHolderTimeControl,
-} from "../../../services/service.js";
+} from "../../../../services/service.js";
 
-import "./aon-event-add.js";
+import "./aon-event-detail-list.js";
+import { StringTwoLetters } from "../utils.js";
 
 export class AonEventList extends AonElement {
   TABLE_ID;
@@ -41,16 +42,19 @@ export class AonEventList extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name) this.getTable();
-    else if ("data" == name && newValue) {
-      this.edit(this.data);
+    if ("filter" === name) {
+      this.data = { ...this.data, ...this.filter };
+    } else if ("data" == name && newValue) {
+      this.getTable();
     }
   }
 
   constructor() {
     super();
-    this.aonComunicaEl = this.getElement("aonComunica");
-    this.aonComunicaToolbar = this.getElement("aonComunicaToolbar");
+    this.aonSigninEl = this.getElement("aonSignin");
+    this.aonSigninToolbar = this.getElement(
+      `${this.aonSigninEl.id}Toolbar`
+    );
     this.id = this.id || "aonEvent";
     this.TABLE_ID = this.id + "Table";
   }
@@ -61,15 +65,13 @@ export class AonEventList extends AonElement {
     this.buildToolbar();
   }
 
-  disconnectedCallback() {
-    if (this.aonComunicaEl) this.aonComunicaEl.removeFloatOption();
-  }
+  disconnectedCallback() {}
 
   buildToolbar() {
-    this.aonComunicaEl.removeToolbarOptions();
+    this.aonSigninEl.removeToolbarOptions();
     this.buildFilter();
     const filterEl = this.getElement(`${this.id}Filter`);
-    this.aonComunicaEl.addToolbarOption("Filter", "tune", (e) =>
+    this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
       filterEl.openFilter()
     );
   }
@@ -104,7 +106,11 @@ export class AonEventList extends AonElement {
   }
 
   async getOptionsGroup() {
-    this.getElement("group").options = JSON.stringify(await getGroups());
+    let groupEl = this.getElement("group");
+    groupEl.options = JSON.stringify(await getGroups());
+    if (this.data && this.data.group) {
+      groupEl.value = this.data.group;
+    }
   }
 
   paintView() {
@@ -119,30 +125,17 @@ export class AonEventList extends AonElement {
   }
 
   async getTable() {
-    this.aonComunicaToolbar.setAttribute("option", "Eventos");
-    this.aonComunicaEl.startLoader();
-    if (this.isMobile()) await this.getTableMobile();
-    else await this.getTableDesk();
-    this.aonComunicaEl.stopLoader();
+    this.aonSigninToolbar.setAttribute("option", "Eventos");
+    this.aonSigninEl.startLoader();
+    if (this.isMobile()) {
+      await this.getTableMobile();
+    } else {
+      await this.getTableDesk();
+    }
+    this.aonSigninEl.stopLoader();
   }
 
-  async build() {
-    if (this.isMobile()) {
-      let floatButton = this.getElement(`${aonComunica.id}FloatSpan`);
-      if (!floatButton) {
-        aonComunica.addFloatOption(
-          {
-            id: "AddEvent",
-            name: "addevent",
-            icon: "add",
-          },
-          () => this.addEventAdd()
-        );
-      }
-    } else {
-      aonComunica.addToolbarOption("Add", "add", () => this.addEventAdd());
-    }
-  }
+  async build() {}
 
   async getTableDesk() {
     const aonTable = this.getElement(this.TABLE_ID);
@@ -186,7 +179,6 @@ export class AonEventList extends AonElement {
             title: `${res.name} <div style="float: right;">${res.duration}</div>`,
             subtitle: `(${res.textStatus}) ${res.location} <div style="float: right;">${res.dateParse}</div> `,
           };
-          if (res.contractType) options.option = this.getOptions(res);
           aonTable.addLi(options, idx, (el) => this.addEventAdd(el, res));
         });
       } catch (e) {
@@ -196,20 +188,14 @@ export class AonEventList extends AonElement {
   }
 
   async getData() {
-    this.aonComunicaEl.startLoader();
+    this.aonSigninEl.startLoader();
     let data = [];
     try {
       let resp = await getTaskHolderTimeControl(this.data);
       resp.map(
-        async ({
-          time,
-          in_date: date,
-          status,
-          location,
-          task_holder: { id: taskHolderId, name },
-        }) => {
-          const nameArray = name.split(" ");
-          const lettersName = `${nameArray[0].substr(0,1)}${nameArray[1].substr(0,1)}`;
+        async ({ time, last_date, status, location, detail, task_holder }) => {
+          const name = task_holder.name;
+          const lettersName = StringTwoLetters(name);
           const newStatus = status.toLowerCase();
           const textStatus = await getStatus(newStatus);
           const obj = {
@@ -217,10 +203,12 @@ export class AonEventList extends AonElement {
             textStatus: textStatus.name,
             status: newStatus,
             name: `${name}`,
-            date,
-            dateParse: setDateTimestamp(date),
-            location,
+            last_date,
+            dateParse: setDateTimestamp(last_date),
             duration: timePaser(Number(time)),
+            task_holder,
+            detail,
+            location: 'LOCATION'
           };
           data.push(obj);
         }
@@ -228,18 +216,14 @@ export class AonEventList extends AonElement {
     } catch (e) {
       console.log(e);
     }
-    this.aonComunicaEl.stopLoader();
+    this.aonSigninEl.stopLoader();
     return data;
   }
 
-  edit(data) {
-    this.getTable();
-  }
-
   addEventAdd(el, data) {
-    let id = "aonEventAdd";
-    this.aonComunicaEl.setContentHTML(
-      `<aon-event-add id="${id}"></aon-event-add>`
+    let id = "aonEventDetailList";
+    this.aonSigninEl.setContentHTML(
+      `<aon-event-detail-list id="${id}"></aon-event-detail-list>`
     );
     const aonEventEl = this.getElement(id);
     if (data && aonEventEl) {

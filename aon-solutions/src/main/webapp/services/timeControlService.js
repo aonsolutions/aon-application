@@ -26,81 +26,9 @@ export const getStatus = (data) =>
     resolve(jsonValues);
   });
 
-//
-//delete test
-let dataJsonTimeControl = [
-  {
-    time: "16116",
-    in_date: new Date(),
-    status: "in",
-    location: "VITORIA",
-    task_holder: {
-      id: 1,
-      name: "NOMBRE APELLIDO",
-    },
-  },
-  {
-    time: "16116",
-    in_date: new Date(),
-    status: "out",
-    location: "MADRID",
-    task_holder: {
-      id: 2,
-      name: "NOMBRE APELLIDO",
-    },
-  },
-  {
-    time: "16116",
-    in_date: new Date(),
-    status: "pause",
-    location: "BARCELONA",
-    task_holder: {
-      id: 3,
-      name: "NOMBRE APELLIDO",
-    },
-  },
-  {
-    time: "16116",
-    in_date: new Date(),
-    status: "in",
-    location: "MI CASA",
-    task_holder: {
-      id: 4,
-      name: "NOMBRE APELLIDO",
-    },
-  },
-  {
-    time: "16116",
-    in_date: new Date(),
-    status: "out",
-    location: "MADRID",
-    task_holder: {
-      id: 5,
-      name: "NOMBRE APELLIDO",
-    },
-  },
-];
-// export const getTimeControlList = (data) => get(`${API_URL}/timecontrol/list`, data);
-export const getTimeControlList = (data) =>
-  new Promise((resolve) => {
-    let jsonValues = dataJsonTimeControl;
-    resolve(jsonValues);
-  });
+export const getTimeControlList = (data) => get(`${API_URL}/timecontrol/list`, data);
 
-// export const getTaskHolderTimeControl = (data) => get(`${API_URL}/timecontrol/list-holder`, data);
-
-export const getTaskHolderTimeControl = ({ taskHolderId }) =>
-  new Promise((resolve) => {
-    let jsonValues = dataJsonTimeControl;
-    let filters = jsonValues
-      .filter(({ task_holder }) => {
-        return task_holder.id.toString().indexOf(taskHolderId) >= 0;
-      })
-      .map((m) => {
-        return { ...m };
-      });
-    resolve(filters);
-  });
+export const getTaskHolderTimeControl = (data) => get(`${API_URL}/timecontrol/list-holder`, data);
 
 export const getGroups = (data) =>
   new Promise((resolve) => {
@@ -124,24 +52,4 @@ export const getGroups = (data) =>
     ];
 
     resolve(jsonValues);
-  });
-
-export const getLocation = (data) =>
-  new Promise((resolve) => {
-    let jsonValues = [
-      {
-        id: 1,
-        name: "VITORIA",
-      },
-      {
-        id: 2,
-        name: "MADRID",
-      },
-      {
-        id: 3,
-        name: "BARCELONA",
-      },
-    ];
-
-    resolve(jsonValues);
-  });
+});

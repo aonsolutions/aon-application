@@ -56,6 +56,7 @@ import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
+import static com.esferalia.aon.jooq.tables.Location.LOCATION;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -93,6 +94,7 @@ import com.esferalia.aon.occam.api.model.Filter.InventoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
+import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
@@ -144,6 +146,7 @@ import com.esferalia.aon.occam.api.model.Properties.InventoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemAddInfoProperties;
+import com.esferalia.aon.occam.api.model.Properties.LocationProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailTemplateProperties;
 import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
@@ -1627,6 +1630,28 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.DOMAIN);}
 		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.DATE);}
 		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.TASK_HOLDER);}		
+	}
+	
+	protected static class LocationPropertiesDAO implements LocationProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, LocationFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+
+		protected Condition[] getConditions(LocationFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.DOMAIN);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.DESCRIPTION);}
+		@Override public Property<Integer> getRadioProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.RADIO);}
+		@Override public Property<Double> getLatitudeProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.LATITUDE);}
+		@Override public Property<Double> getLongitudeProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.LONGITUDE);}
 	}
 
 	protected static class TariffPropertiesDAO implements TariffProperties {

@@ -1287,6 +1287,15 @@ public interface Properties {
 		Property<Timestamp> getDateProperty();
 		Property<Integer> getTaskHolderProperty();
 	}
+
+	public interface LocationProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Integer> getRadioProperty();
+		Property<Double> getLatitudeProperty();
+		Property<Double> getLongitudeProperty();
+	}
 	
 	public interface RawdocProperties{
 		Property<Integer> getIdProperty();

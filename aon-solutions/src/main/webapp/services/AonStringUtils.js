@@ -5,3 +5,11 @@ String.prototype.initCap = function () {
 String.prototype.isEmpty = function() {
     return (this.length === 0 || !this.trim());
 };
+
+Date.prototype.isValid = function () { 
+              
+  // If the date object is invalid it 
+  // will return 'NaN' on getTime()  
+  // and NaN is never equal to itself. 
+  return this.getTime() === this.getTime(); 
+}; 
