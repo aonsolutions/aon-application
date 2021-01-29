@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
@@ -72,6 +73,7 @@ public class FeeDAO {
 		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.CATEGORY);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.STATUS);}
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.SCOPE);}
+		@Override public Property<Integer> getSegmentProperty() {return new FilterDAO.PropertyDAO<Integer>(RSEGMENT.SEGMENT);}
 	}
 	
 	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
@@ -86,6 +88,7 @@ public class FeeDAO {
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
 				.leftOuterJoin(sellerRegistry).on(SELLER.REGISTRY.eq(sellerRegistry.ID))
+				.leftOuterJoin(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY))
 				.where(FEE_PROPERTIES.getConditions(filter))
 				.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
 				.orderBy(CUSTOMER_FEE.LINE)

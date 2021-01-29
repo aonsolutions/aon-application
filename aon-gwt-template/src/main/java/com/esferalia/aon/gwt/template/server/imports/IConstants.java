@@ -67,6 +67,8 @@ public interface IConstants {
 	String N_APUNTE = "Nº APUNTE";
 	String N_DIARIO = "Nº DIARIO";
 	String NOMBRE = "NOMBRE";
+	String RAZON_SOCIAL = "RAZON SOCIAL";
+	String RAZÓN_SOCIAL = "RAZÓN SOCIAL";
 	String MAIL = "MAIL";	
 	String MÓVIL = "MÓVIL";
 	String MOVIL = "MOVIL";
@@ -98,6 +100,7 @@ public interface IConstants {
 	String FECHA_FACTURACIÓN = "FECHA FACTURACIÓN";
 	String PERIODO = "PERIODO";
 	String COMERCIAL = "COMERCIAL";
+	String NOMBRE_COMERCIAL = "NOMBRE COMERCIAL";
 	String CENTRO_DE_TRABAJO = "CENTRO DE TRABAJO";
 	String CENTRO_TRABAJO = "CENTRO TRABAJO";
 	String GRUPO = "GRUPO";
@@ -128,6 +131,7 @@ public interface IConstants {
 	String SERIAL_NUMBER = "SERIAL NUMBER";
 	String LINEA = "LINEA";
 	String LÍNEA = "LÍNEA";
+	String SEGMENTO = "SEGMENTO";
 
 
 	

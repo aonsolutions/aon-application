@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.template.server.imports.DownloadImportTemplateServlet;
@@ -52,7 +53,7 @@ public class DownloadFeeServlet extends HttpServlet {
 		Domain domain = AON.getDomain(domain_name, domainId, login);
 		JSONObject filterJSON = new JSONObject(decode(req.getParameter("filter")));
 	
-		LinkedList<String> columnList = DownloadImportTemplateServlet.getFeeColumnList();
+		LinkedList<String> columnList = DownloadImportTemplateServlet.getExportFeeColumnList();
 		
 		HSSFWorkbook libro = new HSSFWorkbook();
         ByteArrayOutputStream archivo = new ByteArrayOutputStream();
@@ -106,6 +107,8 @@ public class DownloadFeeServlet extends HttpServlet {
         		Fee fee = fees.get(i);
         		if(IConstants.CLIENTE.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getCustomer().getDocument());
+        		} else if(IConstants.RAZON_SOCIAL.equalsIgnoreCase(title)) {
+        			cell.setCellValue(fee.getCustomer().getName());
         		} else if(IConstants.PRODUCTO.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getItem().getProduct().getCode());
         		} else if(IConstants.CANTIDAD.equalsIgnoreCase(title)) {
@@ -127,6 +130,8 @@ public class DownloadFeeServlet extends HttpServlet {
         			cell.setCellValue(fee.getPeriod().getValue());
         		} else if(IConstants.COMERCIAL.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getSeller().getRegistryDocument());
+        		} else if(IConstants.NOMBRE_COMERCIAL.equalsIgnoreCase(title)) {
+        			cell.setCellValue(fee.getSeller().getRegistryName());
         		} else if(IConstants.CENTRO_DE_TRABAJO.equalsIgnoreCase(title) || IConstants.CENTRO_TRABAJO.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getWorkplace().getDescription());
         		} else if(IConstants.GRUPO_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_FACTURACIÓN.equalsIgnoreCase(title) || IConstants.GRUPO.equalsIgnoreCase(title)
@@ -218,6 +223,41 @@ public class DownloadFeeServlet extends HttpServlet {
 			filter = filter.and(f.getScopeProperty().eq(scope));
 		}
 		
+		if(filterJSON.opt("segment") != null) {
+			JSONArray segment = filterJSON.optJSONArray("segment");
+			if(segment.length() > 0) {
+				Integer[] segments = new Integer[segment.length()];
+				for (Integer i = 0; i < segment.length(); i++) {
+					segments[i] = segment.getInt(i);
+				}
+				filter = filter.and(f.getSegmentProperty().in(segments));
+			}
+		}
+		
+		if(filterJSON.opt("seller") != null) {
+			Integer seller = filterJSON.optInt("seller");
+			filter = filter.and(f.getSellerProperty().eq(seller));
+		}
+		
+		if(filterJSON.opt("customer") != null) {
+			Integer customer = filterJSON.optInt("customer");
+			filter = filter.and(f.getCustomerProperty().eq(customer));
+		}
+		
+		if(filterJSON.opt("workplace") != null) {
+			Integer workplace = filterJSON.optInt("workplace");
+			filter = filter.and(f.getWorkplaceProperty().eq(workplace));
+		}
+		
+		if(filterJSON.opt("category") != null) {
+			Integer category = filterJSON.optInt("category");
+			filter = filter.and(f.getCategoryProperty().eq(category));
+		}
+		
+		if(filterJSON.opt("period") != null) {
+			Integer period = filterJSON.optInt("period");
+			filter = filter.and(f.getPeriodProperty().eq(period.shortValue()));
+		}
 		return filter;
 	
 	}

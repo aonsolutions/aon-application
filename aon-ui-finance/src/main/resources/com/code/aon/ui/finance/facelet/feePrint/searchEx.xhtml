@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="feePrintSearch">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{bundle.finance_fee_print_module}" />
+				<ui:param name="controller" value="#{feePrint}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+				
+				<ui:define name="additionalToolbarContent">
+					<ui:include src="/net/aonsolutions/aon/gwt/aio/facelet/templates/silent.xhtml" />
+					
+					<aon:commandLink id="customer-fee-import" value="#{bundle.aon_import}"
+						onclick="fee()" styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
+					</aon:commandLink>
+				</ui:define>
+			</ui:decorate>
+			
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{feePrint}" />
+				<ui:define name="searchContent">
+					<ui:include src="/com/code/aon/ui/finance/facelet/feePrint/searchContent.xhtml" >
+						<ui:param name="searchController" value="#{feePrintSearch}" />
+					</ui:include>
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+
+		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+
+	</ui:define>
+</ui:composition>

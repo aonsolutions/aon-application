@@ -3,7 +3,9 @@ package com.code.aon.ui.finance.controller;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
+import org.jooq.tools.json.JSONArray;
 import org.json.JSONObject;
 
 import com.code.aon.AonVersion;
@@ -20,6 +22,13 @@ public class FeeExportGwtController extends AuditableSearchController {
 	public static Integer item;
 	public static Integer status;
 	public static Integer scope;
+	
+	public static List<Integer> segment;
+	public static Integer customer;
+	public static Integer seller;
+	public static Integer workplace;
+	public static Integer category;
+	public static Integer period;
 
 	public FeeExportGwtController() {
 	
@@ -45,6 +54,30 @@ public class FeeExportGwtController extends AuditableSearchController {
 		
 		if(scope != null) {
 			json.put("scope", scope);
+		}
+		
+		if(segment != null) {
+			json.put("segment", new JSONArray(segment));
+		}
+		
+		if(seller != null) {
+			json.put("seller", seller);
+		}
+		
+		if(customer != null) {
+			json.put("customer", customer);
+		}
+		
+		if(workplace != null) {
+			json.put("workplace", workplace);
+		}
+		
+		if(category != null) {
+			json.put("category", category);
+		}
+		
+		if(period != null) {
+			json.put("period", period);
 		}
 		
 		return Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
@@ -89,4 +122,53 @@ public class FeeExportGwtController extends AuditableSearchController {
 	public static void setScope(Integer scope) {
 		FeeExportGwtController.scope = scope;
 	}
+	
+	public static List<Integer> getSegment() {
+		return segment;
+	}
+	
+	public static void setSegment(List<Integer> segment) {
+		FeeExportGwtController.segment = segment;
+	}
+	
+	public static Integer getCustomer() {
+		return customer;
+	}
+	
+	public static void setCustomer(Integer customer) {
+		FeeExportGwtController.customer = customer;
+	}
+	
+	public static Integer getSeller() {
+		return seller;
+	}
+	
+	public static void setSeller(Integer seller) {
+		FeeExportGwtController.seller = seller;
+	}
+	
+	public static Integer getWorkplace() {
+		return workplace;
+	}
+	
+	public static void setWorkplace(Integer workplace) {
+		FeeExportGwtController.workplace = workplace;
+	}
+	
+	public static Integer getCategory() {
+		return category;
+	}
+	
+	public static void setCategory(Integer category) {
+		FeeExportGwtController.category = category;
+	}
+	
+	public static Integer getPeriod() {
+		return period;
+	}
+	
+	public static void setPeriod(Integer period) {
+		FeeExportGwtController.period = period;
+	}
+	
 }

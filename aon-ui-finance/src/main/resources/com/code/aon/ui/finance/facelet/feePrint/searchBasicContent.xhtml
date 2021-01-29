@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputLabel styleClass="aon-form-input-text-label"
+		value="#{bundle.finance_fee_billing_date2}" />
+	<aon:div>
+		<aon:selectOneMenu value="#{feePrintSearch.billingDateMonth}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItems value="#{commonCollections.months}" />
+		</aon:selectOneMenu>
+		
+		<aon:outputLabel for="BillingDate_Year-Edit" styleClass="aon-form-date-label aon-padding-right"
+			value="#{bundle.aon_year}" />
+		<aon:inputText id="BillingDate_Year-Edit" 
+			size="5" value="#{feePrintSearch.billingDateYear}" />
+	</aon:div>
+					
+	<aon:outputLabel for="CustomerFee_period"
+		value="#{bundle.aon_period}" />
+	<aon:selectOneMenu id="CustomerFee_period"
+		value="#{feePrintSearch.period}">
+		<f:selectItem itemLabel="-" value="#{null}" />		
+		<f:selectItems value="#{financeCollections.billingPeriods}" />
+	</aon:selectOneMenu>
+ 					
+	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{feePrintSearch.seller}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
+					
+	<aon:outputLabel for="CustomerFee_workPlace"
+		value="#{bundle.purchase_workplace}" />
+	<aon:selectOneMenu id="CustomerFee_workPlace"
+		value="#{feePrintSearch.workPlace}">
+		<f:selectItem itemLabel="-" value="#{null}" />		
+		<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+	</aon:selectOneMenu>
+
+</ui:composition>

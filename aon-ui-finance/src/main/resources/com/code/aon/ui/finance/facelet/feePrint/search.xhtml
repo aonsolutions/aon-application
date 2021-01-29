@@ -1,81 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<ui:decorate template="/com/code/aon/ui/finance/facelet/feePrint/searchEx.xhtml" >
+		<ui:define name="moreSearchBasicContent">
 
-	<ui:define name="content">		
-		<aon:form id="feePrintSearch">
-
-			<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
-
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{bundle.finance_fee_print_module}" />
-				<ui:param name="controller" value="#{feePrint}" />
-				<ui:param name="skipResetButton" value="#{true}" />
-
-				<ui:define name="additionalToolbarContent">
-					<ui:include src="/net/aonsolutions/aon/gwt/aio/facelet/templates/silent.xhtml" />
-					
-					<aon:commandLink id="customer-fee-import" value="#{bundle.aon_import}"
-						onclick="fee()" styleClass="aon-finding-toolbar-item aon-icon-import-excel-trans">
-					</aon:commandLink>
-				</ui:define>
-			</ui:decorate>
-
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{feePrint}" />
-				<ui:define name="searchContent">
-						
-					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
-						<ui:param name="lookupBean" value="#{saleItemLookup}" />
-						<ui:param name="lookupTo" value="#{feePrintSearch.item}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
-					</ui:include>
-
-					<aon:outputLabel styleClass="aon-form-input-text-label"
-						value="#{bundle.finance_fee_billing_date2}" />
-					<aon:div>
-						<aon:selectOneMenu value="#{feePrintSearch.billingDateMonth}">
-							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{commonCollections.months}" />
-						</aon:selectOneMenu>
-						<aon:outputLabel for="BillingDate_Year-Edit" styleClass="aon-form-date-label aon-padding-right"
-							value="#{bundle.aon_year}" />
-						<aon:inputText id="BillingDate_Year-Edit" 
-							size="5" value="#{feePrintSearch.billingDateYear}" />
-					</aon:div>
-					
-					<aon:outputLabel for="CustomerFee_customer_status"
-						value="#{bundle.aon_status}" />
-					<aon:selectOneMenu id="CustomerFee_customer_status"
-						converter="aon.EnumConverter"
-						valueChangeListener="#{feePrint.changeStatus}">						
-						<f:selectItem itemLabel="-" value="#{null}"/> 
-						<f:selectItems value="#{customerCollections.customerStatuses}" />
-					</aon:selectOneMenu>
-
-					<aon:if test="#{currentUserScopes[1] != null}">
-						<aon:outputLabel for="CustomerFee_customer_scope_id"
-							value="#{bundle.aon_scope}" />
-						<aon:selectOneMenu id="CustomerFee_customer_scope_id"
-							value="#{configCollections.scope}"
-							valueChangeListener="#{feePrint.changeScope}">
-							<f:selectItem itemLabel="-" value="#{null}"/> 
-							<f:selectItems value="#{currentUserScopes}" />
-						</aon:selectOneMenu>
-					</aon:if>
-				
-				</ui:define>
-			</ui:decorate>
-		</aon:form>
-		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />
-	</ui:define>
+		</ui:define>
+	</ui:decorate>
 	
 </ui:composition>

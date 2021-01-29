@@ -8,23 +8,33 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.company.WorkPlace;
+import com.code.aon.customer.Customer;
+import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.product.Item;
+import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.seller.Seller;
 import com.code.aon.ui.finance.controller.FeeExportGwtController;
-import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class FeePrinterSearchListener extends ControllerSearchListener {
+public class FeePrinterSearchListener extends RegistrySearchListener  { //ControllerSearchListener {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private Item item;
+	private ProductCategory category;
+	private Customer customer;
+	private Seller seller;
 	private Month billingDateMonth;
 	private Integer billingDateYear;
 	private Boolean anual;
+	private WorkPlace workPlace;
+	private BillingPeriod period;
 	
 	public Boolean getAnual() {
 		return anual;
@@ -34,12 +44,36 @@ public class FeePrinterSearchListener extends ControllerSearchListener {
 		this.anual = anual;
 	}
 
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+	
+	public Seller getSeller() {
+		return seller;
+	}
+	
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+	
 	public Item getItem() {
 		return item;
 	}
 
 	public void setItem(Item item) {
 		this.item = item;
+	}
+	
+	public ProductCategory getCategory() {
+		return category;
+	}
+	
+	public void setCategory(ProductCategory category) {
+		this.category = category;
 	}
 
 	public Month getBillingDateMonth() {
@@ -58,13 +92,35 @@ public class FeePrinterSearchListener extends ControllerSearchListener {
 		this.billingDateYear = billingDateYear;
 	}
 	
+	public WorkPlace getWorkPlace() {
+		return workPlace;
+	}
+	
+	public void setWorkPlace(WorkPlace workPlace) {
+		this.workPlace = workPlace;
+	}
+	
+	public BillingPeriod getPeriod() {
+		return period;
+	}
+	
+	public void setPeriod(BillingPeriod period) {
+		this.period = period;
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+		setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
+		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
+		setWorkPlace((WorkPlace)BeanManager.getManagerBean(WorkPlace.class).createNewTo());
+		setCategory((ProductCategory)BeanManager.getManagerBean(ProductCategory.class).createNewTo());
+		setPeriod(null);
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(new Date());
 		setBillingDateMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
 		setBillingDateYear(calendar.get(Calendar.YEAR));
+		super.init();
 	}
 	
 	@Override
@@ -73,6 +129,27 @@ public class FeePrinterSearchListener extends ControllerSearchListener {
 			String field = getController().getFieldName(IEntityAlias.CUSTOMER_FEE_ITEM_ID);
 			criteria.addEqualExpression(field, getItem().getId());
 		}
+		
+		if ( (getCategory() != null) && (getCategory().getId() != null) ) {
+			String field = "CustomerFee.item.product.category.id";
+			criteria.addEqualExpression(field, getCategory().getId());
+		}
+		
+		if ( (getCustomer() != null) && (getCustomer().getId() != null) ) {
+			String field = getController().getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_ID);
+			criteria.addEqualExpression(field, getCustomer().getId());
+		}
+		
+		if ( (getSeller() != null) && (getSeller().getId() != null) ) {
+			String field = getController().getFieldName(IEntityAlias.CUSTOMER_FEE_SELLER_ID);
+			criteria.addEqualExpression(field, getSeller().getId());
+		}
+		
+		if ( (getWorkPlace() != null) && (getWorkPlace().getId() != null) ) {
+			String field = getController().getFieldName(IEntityAlias.CUSTOMER_FEE_WORK_PLACE_ID);
+			criteria.addEqualExpression(field, getWorkPlace().getId());
+		}
+		
 		if (getBillingDateMonth() != null) {
 			criteria.addBetweenExpression(getFieldName(IEntityAlias.CUSTOMER_FEE_BILLING_DATE), obtainFromDate(), obtainToDate());
 			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.CUSTOMER_FEE_INITIAL_DATE), obtainToDate());
@@ -80,9 +157,30 @@ public class FeePrinterSearchListener extends ControllerSearchListener {
 			Expression finalExp2 = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.CUSTOMER_FEE_FINAL_DATE));
 			criteria.addExpression(ExpressionUtilities.getOrExpression(finalExp1, finalExp2));
 		}		
-		FeeExportGwtController.setFrom(obtainFromDate());
-		FeeExportGwtController.setTo(obtainToDate());
-		FeeExportGwtController.setItem(getItem().getId());
+		
+		if(getPeriod() != null) {
+			String field = getController().getFieldName(IEntityAlias.CUSTOMER_FEE_PERIOD);
+			criteria.addEqualExpression(field, getPeriod());
+		}
+
+		String segment = "CustomerFee.customer.registry.segments.segment.id";
+		addEnumToCriteria(criteria, segment, getSegmentsIds().toArray());
+
+		FeeExportGwtController.setItem((getItem() != null) && (getItem().getId() != null) 
+				? getItem().getId() : null);
+		FeeExportGwtController.setCategory((getCategory() != null) && (getCategory().getId() != null)
+				? getCategory().getId() : null);
+		FeeExportGwtController.setCustomer((getCustomer() != null) && (getCustomer().getId() != null)
+				? getCustomer().getId() : null);
+		FeeExportGwtController.setSeller((getSeller() != null) && (getSeller().getId() != null)
+				? getSeller().getId() : null);
+		FeeExportGwtController.setWorkplace((getWorkPlace() != null) && (getWorkPlace().getId() != null)
+				? getWorkPlace().getId() : null);
+		FeeExportGwtController.setFrom(getBillingDateMonth() != null ? obtainFromDate() : null);
+		FeeExportGwtController.setTo(getBillingDateMonth() != null ? obtainToDate() : null);
+		FeeExportGwtController.setPeriod(getPeriod() != null ? getPeriod().ordinal() : null);
+		FeeExportGwtController.setSegment(getSegmentsIds());
+
 	}	
 
 	private Date obtainFromDate() {

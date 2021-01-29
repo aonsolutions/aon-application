@@ -149,6 +149,34 @@ public class DownloadImportTemplateServlet extends HttpServlet {
         return columnList;
 	}
 	
+	public static LinkedList<String> getExportFeeColumnList() {
+		LinkedList<String> columnList = new LinkedList<String>();
+		columnList.add(IConstants.CLIENTE);
+		columnList.add(IConstants.RAZON_SOCIAL);
+		columnList.add(IConstants.LINEA);
+		columnList.add(IConstants.PRODUCTO);
+		columnList.add(IConstants.DESCRIPCION);
+		columnList.add(IConstants.CANTIDAD);
+		columnList.add(IConstants.PRECIO);
+		columnList.add(IConstants.DESCUENTO);
+		columnList.add(IConstants.FECHA_INICIO);
+		columnList.add(IConstants.FECHA_FIN);
+		columnList.add(IConstants.FECHA_FACTURACION);
+		columnList.add(IConstants.PERIODO);
+		columnList.add(IConstants.COMERCIAL);
+		columnList.add(IConstants.NOMBRE_COMERCIAL);
+		columnList.add(IConstants.CENTRO_DE_TRABAJO);
+		columnList.add(IConstants.GRUPO_FACTURACION);
+		columnList.add(IConstants.CONFIDENCIAL);
+		columnList.add(IConstants.EXPEDIENTE);
+		columnList.add(IConstants.DETALLE1);
+		columnList.add(IConstants.DETALLE2);
+		columnList.add(IConstants.DETALLE3);
+		columnList.add(IConstants.CODIGO_DE_BARRAS);
+		columnList.add(IConstants.NUMERO_DE_SERIE);
+        return columnList;
+	}
+	
 	
 	@Override
     protected void doGet(HttpServletRequest p_request, HttpServletResponse p_response)throws ServletException, IOException{        

@@ -167,9 +167,11 @@ public interface Properties {
 		Property<Integer> getWorkplaceProperty();
 		
 		Property<Integer> getCategoryProperty();
-		
+	
 		Property<Byte> getStatusProperty(); // CUSTOMER
 		Property<Integer> getScopeProperty(); // CUSTOMER
+		Property<Integer> getSegmentProperty(); // RSEGMENT
+		
 	}
 	
 	public interface DepartmentProperties {

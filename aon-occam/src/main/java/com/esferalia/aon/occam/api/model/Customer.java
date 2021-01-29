@@ -7,7 +7,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
-public class Customer  extends Registry implements Serializable, HasAudit {
+public class Customer extends Registry implements Serializable, HasAudit {
 
 	private static final long serialVersionUID = -1763053163676341615L;
 	
