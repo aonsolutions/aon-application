@@ -204,7 +204,24 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 		if (payment.getConceptId() != null && payment.getConceptId() < 0) {
 			int conceptId = payment.getConceptId();
+			
+			// Get all contract associated to an agreement
+			List<Integer> agreementContractIds = dslContext.select(CONTRACT.ID).from(CONTRACT)
+					.where(CONTRACT.AGREEMENT_LEVEL.in(
+							dslContext.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+								.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId))
+					)).fetch(CONTRACT.ID);
+			
+			
+			// Delete contract_payment associated to an payment_concept and contract in agreement contracts
+			dslContext.delete(CONTRACT_PAYMENT)
+				.where(CONTRACT_PAYMENT.CONTRACT.in(agreementContractIds))
+				.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(conceptId))
+				.execute();
+			
+			
 			// @formatter:on
+			/*
 			dslContext
 					.update(CONTRACT_PAYMENT)
 					.set(CONTRACT_PAYMENT.TYPE,
@@ -246,7 +263,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			dslContext.delete(PAYMENT_CONCEPT)
 					.where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId()))
 					.execute();
-		}
+			*/
+		} 
 	}
 
 	private static void tryToModifyOtherExtra(DSLContext dslContext, Payment payment) {
