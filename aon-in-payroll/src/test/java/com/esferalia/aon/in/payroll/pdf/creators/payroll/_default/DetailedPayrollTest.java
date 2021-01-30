@@ -117,7 +117,7 @@ public class DetailedPayrollTest {
 		.setPayrollType(Optional.of(PayrollTypes.Type.EXTRAS))
 		.setContingencies(Optional.of(con_builder.build()));
 		
-		try { PdfMaker.print_default_payroll("payrollRandom.pdf", builder.build(), Optional.of(DetailedPayrollTest.class.getResourceAsStream("HOR.png")),Optional.of(new Locale("Es")));} 
+		try { PdfMaker.print_default_payroll("payrollRandom.pdf", builder.build(), DetailedPayrollTest.class.getResourceAsStream("HOR.png"),new Locale("Es"));} 
 		catch (CanNotCreatePdfException e) {
 			e.printStackTrace(); 
 			fail("Can not create the payroll");
