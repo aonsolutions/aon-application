@@ -9,6 +9,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
@@ -71,6 +72,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 
@@ -646,8 +648,12 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
 
-		List<ITimedVariable<Object>> workedHours = ctx.getExpressionContext()
-				.getVariables(WORKED_HOURS);
+//		ctx.getExpressionContext().getVariables(TC2).forEach(v -> System.out.println(v.getValue(v.getPeriod())));
+		
+		List<ITimedResult<Object>> workedHours = ctx.getExpressionContext().eval(WORKED_HOURS.toString(), getToday(), endDate);
+
+//		List<ITimedVariable<Object>> workedHours = ctx.getExpressionContext()
+//				.getVariables(WORKED_HOURS);
 
 		double hours = 0.00;
 		for (ITimedVariable<Object> workedHour : workedHours)
@@ -661,8 +667,8 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 								|| day.get(DAY_OF_WEEK) == Calendar.SUNDAY
 								|| day.get(DAY_OF_WEEK) == Calendar.SATURDAY)
 										? 0.00 : 8.00));
-		if (expected == 0 ) 
-			expected =  ( get(endDate, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1 ) * 8 /*40/7.00*/; 
+//		if (expected == 0 ) 
+//			expected =  ( get(endDate, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1 ) * 8 /*40/7.00*/; 
 			
 		
 		Assert.assertEquals(WORKED_HOURS.getName(), expected, hours);
@@ -690,8 +696,8 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 								|| day.get(DAY_OF_WEEK) == Calendar.SUNDAY
 								|| day.get(DAY_OF_WEEK) == Calendar.SATURDAY)
 										? 0.00 : 8.00));
-		if (expected == 0 ) 
-			expected =  ( get(endDate, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1 ) * 8 /*40/7.00*/; 
+//		if (expected == 0 ) 
+//			expected =  ( get(endDate, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1 ) * 8 /*40/7.00*/; 
 
 		Assert.assertEquals(WORKED_HOURS.getName(), expected, hours);
 		
