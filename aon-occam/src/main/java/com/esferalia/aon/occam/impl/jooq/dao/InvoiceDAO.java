@@ -52,7 +52,6 @@ import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.InvoiceDetailRecord;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
 import com.esferalia.aon.jooq.tables.records.InvoiceTaxRecord;
-import com.esferalia.aon.jooq.tables.records.InvoicingGroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
@@ -841,7 +840,7 @@ public class InvoiceDAO {
 	public static LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter){
 		return ctx.getDslContext().select(INVOICING_GROUP.ID,INVOICING_GROUP.DESCRIPTION)
 				.from(INVOICING_GROUP).where(INVOICING_GROUP_PROPERTIES.getConditions(filter))
-				.fetchInto(INVOICING_GROUP).stream().map(new FullInvoicingGroupFiller())
+				.fetchInto(INVOICING_GROUP).stream().map(new InvoicingGroupFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -944,18 +943,24 @@ public class InvoiceDAO {
 
 	}
 	
-	private static class FullInvoicingGroupFiller implements Function<InvoicingGroupRecord, InvoicingGroup> {
+	public static class InvoicingGroupFiller implements Function<Record, InvoicingGroup> {
+
 		@Override
-		public InvoicingGroup apply(InvoicingGroupRecord r) {
+		public InvoicingGroup apply(Record r) {
+			return buildInvoicingGroup(r);			
+		}
+		
+		public static InvoicingGroup buildInvoicingGroup(Record r) {
 			return new InvoicingGroup()
-					.setCreationDate(r.getCreationDate())
-					.setCreationUser(r.getCreationUser())
-					.setCustomer(r.getCustomer())
-					.setCustomerGrouped(r.getCustomerGrouped())
-					.setDomain(r.getDomain())
-					.setId(r.getId())
-					.setModificationDate(r.getModificationDate())
-					.setModificationUser(r.getModificationUser());			
+					.setId(r.getValue(INVOICING_GROUP.ID))
+					.setDomain(r.getValue(INVOICING_GROUP.DOMAIN))
+					.setCustomer(r.getValue(INVOICING_GROUP.CUSTOMER))
+					.setCustomerGrouped(r.getValue(INVOICING_GROUP.CUSTOMER_GROUPED))
+					.setDescription(r.getValue(INVOICING_GROUP.DESCRIPTION))
+					.setCreationDate(r.getValue(INVOICING_GROUP.CREATION_DATE))
+					.setCreationUser(r.getValue(INVOICING_GROUP.CREATION_USER))
+					.setModificationDate(r.getValue(INVOICING_GROUP.MODIFICATION_DATE))
+					.setModificationUser(r.getValue(INVOICING_GROUP.MODIFICATION_USER));		
 		}
 	}
 

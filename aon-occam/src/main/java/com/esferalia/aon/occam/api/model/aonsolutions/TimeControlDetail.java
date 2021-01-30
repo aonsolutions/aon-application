@@ -98,7 +98,7 @@ public class TimeControlDetail {
 		json.put("id", getId());
 		json.put("domain", getDomain().getId());
 		json.put("status", getStatus() != null ? getStatus().name().toLowerCase() : TimeControlStatus.OUT);
-		json.put("status", getStatus() != null ? getStatus().name().toLowerCase() : TimeControlStatus.OUT);
+		json.put("date", getDate().getTime());
 		
 		if(getCoordinates() != null) {
 			json.put("coordinates", getCoordinates().toJSON());

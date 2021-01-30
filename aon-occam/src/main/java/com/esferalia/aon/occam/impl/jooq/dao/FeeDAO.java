@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 
 import java.sql.Date;
 import java.util.function.Function;
@@ -37,6 +38,7 @@ import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoicingGroupFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
@@ -89,6 +91,7 @@ public class FeeDAO {
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
 				.leftOuterJoin(sellerRegistry).on(SELLER.REGISTRY.eq(sellerRegistry.ID))
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
 				.where(FEE_PROPERTIES.getConditions(filter))
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 			.fetch().stream().map(new FeeFiller());
@@ -122,7 +125,9 @@ public class FeeDAO {
 					.setStartDate(r.getValue(CUSTOMER_FEE.INITIAL_DATE))
 					.setEndDate(r.getValue(CUSTOMER_FEE.FINAL_DATE))
 					.setBillingDate(r.getValue(CUSTOMER_FEE.BILLING_DATE))
-					.setInvoicingGroup(new InvoicingGroup().setId(r.getValue(CUSTOMER_FEE.INVOICING_GROUP)))
+					.setInvoicingGroup(r.get(INVOICING_GROUP.ID) != null
+							? InvoicingGroupFiller.buildInvoicingGroup(r)
+							: new InvoicingGroup().setId(r.getValue(CUSTOMER_FEE.INVOICING_GROUP)))
 					.setDiscountExpr(r.getValue(CUSTOMER_FEE.DISCOUNT_EXPR))
 					.setLine(r.getValue(CUSTOMER_FEE.LINE))
 					.setPeriod(BillingPeriod.values()[r.getValue(CUSTOMER_FEE.PERIOD)])

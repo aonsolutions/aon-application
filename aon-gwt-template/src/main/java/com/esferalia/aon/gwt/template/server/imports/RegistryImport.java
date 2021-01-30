@@ -232,7 +232,11 @@ public class RegistryImport extends Import {
 		}
 		if(IConstants.TELEFONO.equalsIgnoreCase(title) || IConstants.TELÉFONO.equalsIgnoreCase(title)
 				|| IConstants.MOVIL.equalsIgnoreCase(title) || IConstants.MÓVIL.equalsIgnoreCase(title)) {
-			String[] phones = o.toString().split(",");
+			String telephones = o.toString();
+			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+				telephones = NumberToTextConverter.toText(cell.getNumericCellValue());
+			}
+			String[] phones = telephones.split(",");
 			for(int i = 0; i < phones.length; i++) {
 				if(!AonStringUtils.isBlank(phones[i])) {
 					String p = phones[i].trim().replace("-", "");
@@ -303,6 +307,7 @@ public class RegistryImport extends Import {
 				rm.setRegistry(reg);
 				RegistryMedia rm2 = AON.getRMedia(domain.getName(), domain.getId(), user.getLogin(), f -> 
 					f.getDomainProperty().eq(domain.getId())
+					.and(f.getRegistryProperty().eq(registryId))
 					.and(f.getMediaProperty().eq(rm.getMedia()))
 					.and(f.getValueProperty().eq(rm.getValue())));
 				

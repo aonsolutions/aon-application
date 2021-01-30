@@ -19,7 +19,8 @@ public class TimeControl {
 	private Date inDate;
 	private LinkedList<TimeControlDetail> detail;
 	private Date lastDate;
-	
+	private Location lastLocation;
+
 	public TimeControl() {
 		this.time = 0L;
 	}
@@ -80,6 +81,15 @@ public class TimeControl {
 		this.lastDate = lastDate;
 		return this;
 	}
+	
+	public Location getLastLocation() {
+		return lastLocation;
+	}
+	
+	public TimeControl setLastLocation(Location lastLocation) {
+		this.lastLocation = lastLocation;
+		return this;
+	}
 
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
@@ -87,6 +97,14 @@ public class TimeControl {
 		json.put("in_date", getInDate() != null ? getInDate().getTime() : null);
 		json.put("status", getStatus() != null ? getStatus().name().toLowerCase() : TimeControlStatus.OUT);
 		json.put("last_date", getLastDate() != null ? getLastDate().getTime() : null);
+
+		if(getLastLocation() != null) {
+			JSONObject locationJson = new JSONObject();
+			locationJson.put("id", getLastLocation().getId());
+			locationJson.put("name", getLastLocation().getDescription());
+			json.put("last_location", locationJson);
+		}
+		
 		if(getTaskHolder() != null) {
 			JSONObject taskHolderJson = new JSONObject();
 			taskHolderJson.put("id", getTaskHolder().getId());
