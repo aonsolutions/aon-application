@@ -84,7 +84,7 @@ export const Apps = {
     title: 'Horario',
     description: 'Control de Horario.',
     icon: 'aon_app',
-    color: '#B50061',
+    color: '#9966cc',
     access: [{
         value: 'Asesor',
         name: 'Asesor'

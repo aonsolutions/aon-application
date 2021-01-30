@@ -41,6 +41,11 @@ html, body {
 	background: transparent url(images/aon-icon/aon-icon-app.png) scroll left center no-repeat;
 }
 
+.aon-icon-old-logo{
+	background: transparent url(images/aon-icon/aon-application-logo.png) scroll left center no-repeat;
+}
+
+
 .aon-icon-documental:hover{
 	background: transparent url(images/aon-icon/aon-icon-comunica.png) scroll left center no-repeat;
 }

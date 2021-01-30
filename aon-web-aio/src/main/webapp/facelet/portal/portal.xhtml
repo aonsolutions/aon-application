@@ -15,8 +15,9 @@
 		</h:form>
 	</a4j:region>
 	
-	<ui:include	src="/facelet/shared/array.prototype.js.xhtml" />
+	<script type="module" src="components/aon-icon.js"></script>
 
+	<ui:include	src="/facelet/shared/array.prototype.js.xhtml" />
 	<aon:form id="mainForm">
 
 		<aon:div styleClass="aon-height-all">
@@ -55,7 +56,11 @@
 								title="Documental"
 								styleClass="aon-menu-icon aon-icon-documental"
 								value="Documental" />
-
+							<aon:div styleClass="aon-padding-top" />						
+							<aon:commandLink id="left-timecontrol" action="portal_timecontrol"
+								title="Control de Horario"
+								styleClass="aon-menu-icon aon-icon-documental"
+								value="Control de Horario" />
 							</aon:div>							
 						</aon:div>
 					</aon:div>
@@ -68,6 +73,11 @@
 								styleClass="aon-portlet-title-text"/>
 							</aon:div>
 							<aon:div styleClass="aon-portlet-body">
+							
+							<aon:commandLink id="left-aon-management" action="menu_finance_portal"
+								title="aonGestion"
+								styleClass="aon-menu-icon aon-icon-old-logo"
+								value="aonGestión" />
 							</aon:div>							
 						</aon:div>
 					</aon:div>
@@ -173,10 +183,9 @@
 									style="border-bottom: 1px solid #ddd;"
 									columnClasses="aon-width-50 aon-text-center ,aon-text-left ,aon-width-50 aon-text-center" >
 									
-									<h:graphicImage styleClass="aon-vertical-align-middle"
-									title="Facturas"
-									url="#{aonResource.resolve['/images/aon-invoice.png']}" />								
-								
+									<div> 
+										<aon-icon icon="aon_app" color="#B50061" size="30px"></aon-icon>	
+									</div>
 									<aon:commandLink id="center-invoice" action="portal_invoice"
 										title="Facturas"
 										style="padding-bottom: 1px;padding-top: 1px; display: inline-block;"
@@ -188,9 +197,9 @@
 									url="#{aonResource.resolve['/images/aon-right-arrow.png']}" />		
 									
 									<!-- Comunic@ -->
-									<h:graphicImage styleClass="aon-vertical-align-middle"
-									title="Comunic@"
-									url="#{aonResource.resolve['/images/aon-comunica.png']}" />								
+									<div> 
+										<aon-icon icon="aon_app" color="#6C75AB" size="30px"></aon-icon>	
+									</div>								
 								
 									<aon:commandLink id="center-comunica" action="portal_comunica"
 										title="Comunic@"
@@ -203,15 +212,30 @@
 									url="#{aonResource.resolve['/images/aon-right-arrow.png']}" />		
 						
 									<!-- Documental	-->							
-									<h:graphicImage styleClass="aon-vertical-align-middle"
-									title="Documental"
-									url="#{aonResource.resolve['/images/aon-doc.png']}" />								
+									<div> 
+										<aon-icon icon="aon_app" color="#6986BB" size="30px"></aon-icon>	
+									</div>
 								
 									<aon:commandLink id="center-document" action="portal_documental"
 										title="Documental"
 										style="padding-bottom: 1px;padding-top: 1px; display: inline-block;"
 										styleClass="aon-portlet-title-text aon-bold aon-width-all"
 										value="Documental" />
+
+									<h:graphicImage styleClass="aon-vertical-align-middle"
+									title="Documental"
+									url="#{aonResource.resolve['/images/aon-right-arrow.png']}" />	
+									
+									<!-- Control de Horario -->							
+									<div> 
+										<aon-icon icon="aon_app" color="#9966cc" size="30px"></aon-icon>	
+									</div>
+								
+									<aon:commandLink id="center-timecontrol" action="portal_timecontrol"
+										title="Control de Horario"
+										style="padding-bottom: 1px;padding-top: 1px; display: inline-block;"
+										styleClass="aon-portlet-title-text aon-bold aon-width-all"
+										value="Control de Horario" />
 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
 									title="Documental"
@@ -230,12 +254,12 @@
 									styleClass="aon-disabled aon-select-row"
 									columnClasses="aon-width-50 aon-text-center ,aon-text-left ,aon-width-100 aon-text-center, aon-width-50 aon-text-center" >
 									
-									<!-- Horario -->									
+									<!-- Panel Contable -->									
 									<h:graphicImage styleClass="aon-vertical-align-middle"
-									title="Horario"
+									title="Panel Contable"
 									url="#{aonResource.resolve['/images/aon-disabled.png']}" />								
 								
-									<aon:outputText value="Horario"
+									<aon:outputText value="Panel Contable"
 									style="padding-bottom: 1px;padding-top: 1px;"
 									styleClass="aon-portlet-title-text aon-bold"/>
 
@@ -244,15 +268,14 @@
 									styleClass="aon-portlet-title-text aon-bold"/>
 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
-									url="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />								
-
-
-									<!-- Documental									
+									url="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />
+									
+									<!-- Panel Fiscal -->									
 									<h:graphicImage styleClass="aon-vertical-align-middle"
-									title="Documental"
+									title="Panel Fiscal"
 									url="#{aonResource.resolve['/images/aon-disabled.png']}" />								
 								
-									<aon:outputText value="Documental"
+									<aon:outputText value="Panel Fiscal"
 									style="padding-bottom: 1px;padding-top: 1px;"
 									styleClass="aon-portlet-title-text aon-bold"/>
 
@@ -261,15 +284,14 @@
 									styleClass="aon-portlet-title-text aon-bold"/>
 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
-									url="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />								
-									-->
-
-									<!-- Comunic@ 
+									url="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />	
+									
+									<!-- Panel Laboral -->									
 									<h:graphicImage styleClass="aon-vertical-align-middle"
-									title=" Comunic@"
+									title="Panel Laboral"
 									url="#{aonResource.resolve['/images/aon-disabled.png']}" />								
 								
-									<aon:outputText value=" Comunic@ "
+									<aon:outputText value="Panel Laboral"
 									style="padding-bottom: 1px;padding-top: 1px;"
 									styleClass="aon-portlet-title-text aon-bold"/>
 
@@ -278,11 +300,10 @@
 									styleClass="aon-portlet-title-text aon-bold"/>
 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
-									url="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />								
-									-->
+									url="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />	
 									
 									<!-- Convenios -->
-									<h:graphicImage styleClass="aon-vertical-align-middle"
+									<!-- <h:graphicImage styleClass="aon-vertical-align-middle"
 									title="Convenios"
 									url="#{aonResource.resolve['/images/aon-disabled.png']}" />								
 								
@@ -295,7 +316,7 @@
 									styleClass="aon-portlet-title-text aon-bold"/>
 
 									<h:graphicImage styleClass="aon-vertical-align-middle"
-									url="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" />								
+									url="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" /> -->								
 								</aon:panelGrid>
 							</aon:div>							
 						</aon:div>

@@ -129,7 +129,7 @@ public class InvoiceServlet extends HttpServlet{
 					if(acc.getCode().length() > 5) {
 						JSONObject json = new JSONObject();
 						json.put("code", acc.getCode());
-						json.put("name", acc.getFullName());
+						json.put("name", acc.getDescription());
 						array.put(json);
 					}
 				});
