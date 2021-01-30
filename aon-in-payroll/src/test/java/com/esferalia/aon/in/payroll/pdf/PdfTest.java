@@ -23,7 +23,8 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
-//@Ignore
+
+@Ignore
 public class PdfTest {
 	
 	
