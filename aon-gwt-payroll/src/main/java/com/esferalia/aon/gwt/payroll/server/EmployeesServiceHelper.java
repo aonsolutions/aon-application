@@ -119,7 +119,6 @@ import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.objects.Idc;
-import sun.security.acl.WorldGroupImpl;
 
 public class EmployeesServiceHelper {
 
