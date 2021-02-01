@@ -15,7 +15,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS_FORCE_OFF;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR_FORCE_OFF;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
@@ -83,12 +82,10 @@ import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
-import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
-import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -120,7 +117,6 @@ import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
-import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramos;
 
 public class SQLCretaTestCase extends AbstractSQLTestCase {
 
@@ -3870,7 +3866,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		addData(aonContext, contract, startDate, endDate, ContextVariable.ERE_FACTOR_FORCE, 0.50);
 		
 		Date startIt = add(startDate, Calendar.DAY_OF_MONTH, 14);
-		Date endIT = add(startDate, Calendar.DAY_OF_MONTH, 27);
+		Date endIT = add(startDate, Calendar.DAY_OF_MONTH, 24);
 		
 		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startIt, endIT, null);
 		addData(aonContext, contract, startDate, endDate, ContextVariable.REGULATORY_BASE, 35.00);
@@ -3892,12 +3888,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 		Tramo tramo1 = tramos.get(1); 
 		Assert.assertEquals("15", tramo1.getFechaDesde().getDia());
-		Assert.assertEquals("28", tramo1.getFechaHasta().getDia());
+		Assert.assertEquals("25", tramo1.getFechaHasta().getDia());
 		assertTramoITATEPPagoDelegado(tramo1);;
 		assertTramoExpedienteRegulacionEmpleoParcial(tramo1);
 		
 		Tramo tramo2 = tramos.get(2); 
-		Assert.assertEquals("29", tramo2.getFechaDesde().getDia());
+		Assert.assertEquals("26", tramo2.getFechaDesde().getDia());
 		assertTramoExpedienteRegulacionEmpleoParcialActivo(tramo2);
 		
 
@@ -4520,8 +4516,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		assertEquals(3, tramosBases.size() );
 		
+		int activeDays1 = 9;
+		int activeDays2 = get(endDate, Calendar.DAY_OF_MONTH) - get(endIt, Calendar.DAY_OF_MONTH);
+
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
-		int activeDays = monthDays - 10;
+		int activeDays = 9 + activeDays2;
+		
 		
 		Dato _2 = 
 		tramosBases.get(0).getDatosTramo().
@@ -4540,14 +4540,14 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		tramosBases.get(2).getDatosTramo().
 		getDato().stream().filter(d -> d.getCodigo().equals("02"))
 		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
-		Assert.assertEquals( Integer.toString(( int ) ( 10.00 /  activeDays * ( monthDays - 19 ) ) ) ,_2.getValor() );
+		Assert.assertEquals( Integer.toString(( int ) ( 10.00 /  activeDays * ( activeDays2 ) ) ) ,_2.getValor() );
 
 
 		_537 = tramosBases.get(2).getDatosTramo().
 		getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
 		;
-		Assert.assertEquals(Integer.toString(( int ) (6900 * 10.00 / activeDays * ( monthDays - 19 ) ) )    ,_537.getValor() );
+		Assert.assertEquals(Integer.toString(( int ) Math.round((6900 * 10.00 / activeDays * ( activeDays2 ) ) ))    ,_537.getValor() );
 
 	}
 
@@ -4558,6 +4558,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		AONContext aonContext = new AONContext(connection);
 
 		cleanSalaries(aonContext);
+		cleanSystemData(aonContext);
 		cleanSystemPayments(aonContext);
 
 
@@ -4622,7 +4623,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		assertEquals(2, tramosBases.size());
 		
-		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+		int monthDays = 30; //get(endDate, Calendar.DAY_OF_MONTH);
 
 		Dato _2 = 
 		tramosBases.get(0).getDatosTramo().

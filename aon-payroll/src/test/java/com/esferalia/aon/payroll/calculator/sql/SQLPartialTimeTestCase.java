@@ -215,6 +215,8 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		Date issueDate = endDate;
 		
 		int workedDays = Math.min(30, ( get(endDate, Calendar.DAY_OF_MONTH) - get(startDate, Calendar.DAY_OF_MONTH) )+1);
+		if ( workedDays ==  get(endDate, Calendar.DAY_OF_MONTH) )
+			workedDays = 30;
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
@@ -264,6 +266,8 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		Date issueDate = endDate;
 		
 		int workedDays = Math.min(30, ( get(endDate, Calendar.DAY_OF_MONTH) - get(startDate, Calendar.DAY_OF_MONTH) )+1);
+		if ( workedDays ==  get(endDate, Calendar.DAY_OF_MONTH) )
+			workedDays = 30;
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
@@ -902,6 +906,82 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 			
 		}
 	}
+
+	
+	@Test
+	public void testPartialWeekI()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, 
+				add(getFirstDayOfYear(getToday()), Calendar.MONTH, -6),
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								random(PARTIAL_TIME).getValue()));
+						put(MONTH_DAYS.getName(), format("%f", 30.00));
+					}
+				},
+
+				new String[] { 
+//						"250.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"1750.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+						"TRACE('COEFICIENTE : %f \r\n', COEFICIENTE_PARCIALIDAD);0.00"
+				},
+
+				new String[] { 
+//						"BASE_CGC * 0.10", 
+//						"BASE_CGP * 0.05",
+//						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+						},
+				null);
+
+
+	
+		Date startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date _15HoursEndDate = add(startDate, Calendar.DAY_OF_MONTH, 9);
+		addData(aonContext, contract, contract.getStartDate(), _15HoursEndDate, new HashMap<String, String>() {
+					{
+						put(MONDAY_HOURS.getName(), format("%d", 3));
+						put(TUESDAY_HOURS.getName(), format("%d", 3));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 3));
+						put(THURSDAY_HOURS.getName(), format("%d", 3));
+						put(FRIDAY_HOURS.getName(), format("%d", 3));
+					}
+				});
+		
+		Date _20HoursStartDate = add(startDate, Calendar.DAY_OF_MONTH, 10);
+		addData(aonContext, contract, _20HoursStartDate, null, new HashMap<String, String>() {
+			{
+				put(MONDAY_HOURS.getName(), format("%d", 4));
+				put(TUESDAY_HOURS.getName(), format("%d", 4));
+				put(WEDNESDAY_HOURS.getName(), format("%d", 4));
+				put(THURSDAY_HOURS.getName(), format("%d", 4));
+				put(FRIDAY_HOURS.getName(), format("%d", 4));
+			}
+		});
+ 
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+		connection, startDate, endDate, endDate, contract);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment payment: salary.getSalaryPayments() ) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()  + ", " + payment.getQuote() );
+		}
+		
+		int monthDays = 30 ; //get(endDate, Calendar.DAY_OF_MONTH );
+		
+		org.junit.Assert.assertEquals( 
+		1750.00 / monthDays * 10  * ( 15.00 / 40.00) +
+		1750.00 / monthDays * (monthDays-10)  * ( 20.00 / 40.00) 
+		,  salary.getTotalPayment() , DELTA );
+
+	}
+
 	// ------------------------------------------------------------------------
 
 	protected static <T> T random(T arr[]) {

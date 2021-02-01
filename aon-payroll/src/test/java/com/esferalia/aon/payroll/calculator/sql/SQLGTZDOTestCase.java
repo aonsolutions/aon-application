@@ -2405,9 +2405,9 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
-		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS), String.format("1000.00/30 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS), String.format("1000.00/30 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.75 * %s_21",  COMMON_DISEASE_DAYS), String.format("1000.00/30 * %s_21",  COMMON_DISEASE_DAYS));
+		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS), String.format("1000.00/30 * %s",  ContextVariable.QUOTE_DAYS));
+		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS), String.format("1000.00/30 * %s",  ContextVariable.QUOTE_DAYS));
+		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.75 * %s_21",  COMMON_DISEASE_DAYS), String.format("1000.00/30 * %s",  ContextVariable.QUOTE_DAYS));
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -2439,9 +2439,17 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
 		
-		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
-		for ( SalaryPayment p: salary.getSalaryPayments())
-			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote() );
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println(description + " = " + amount + "," + quote  +  ", " + startDate + ".." + endDate );
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		}).calculate(ctx);
+//		for ( SalaryPayment p: salary.getSalaryPayments())
+//			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote() );
 				
 		//@formatter:off
 		Assert.assertEquals(
