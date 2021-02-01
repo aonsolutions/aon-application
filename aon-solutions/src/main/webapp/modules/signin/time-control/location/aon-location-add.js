@@ -1,9 +1,6 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { setValueName, serializeForm } from "../../../../services/utils.js";
-import {
-  deleteLocation,
-  saveLocation
-} from "../../../../services/service.js";
+import { deleteLocation, saveLocation } from "../../../../services/service.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-number.js";
@@ -43,9 +40,7 @@ export class AonLocationAdd extends AonElement {
     this.id = this.id || "aonLocationAdd";
     this.TOOLBAR = this.id + "Toolbar";
     this.aonSigninEl = this.getElement("aonSignin");
-    this.aonSigninToolbar = this.getElement(
-      `${this.aonSigninEl.id}Toolbar`
-    );
+    this.aonSigninToolbar = this.getElement(`${this.aonSigninEl.id}Toolbar`);
     this.aonSigninToolbar.setAttribute("option", "Registrar" + this.NAME);
     this.TOAST = this.getElement(`${this.aonSigninEl.id}Toast`);
   }
@@ -66,7 +61,8 @@ export class AonLocationAdd extends AonElement {
     const toolbarMobile = !this.isMobile()
       ? `<aon-toolbar id="${this.TOOLBAR}" type="secondary" title="${this.NAME}"> </aon-toolbar>`
       : "";
-    const initHtml = `
+
+    let initHtml = `
             <style>
               .aonCard{
                 position: relative;
@@ -91,6 +87,9 @@ export class AonLocationAdd extends AonElement {
                 <div class="aonCol-sm-12">
                     <aon-card id="${this.id}Card" title="Datos de la ${this.NAME}"></aon-card>
                 </div>
+                <div class="aonCol-sm-12">
+                  <aon-card id="${this.id}CardMap" title="Mapa" hidden></aon-card>
+                 </div>
             </div>
         </form>`;
 
@@ -100,19 +99,19 @@ export class AonLocationAdd extends AonElement {
 
     let aonCard = this.getElement(`${this.id}Card`);
     aonCard.setContentHTML(`
-            <div class="aonCol-sm-12 aonCol-md-3">
-              <aon-input name="id" id="id" type="text"  visible="false"></aon-input>
+            <div class="aonCol-xs-10">
               <aon-input name="description" id="description" description="Nombre" type="text"></aon-input>
             </div>
-            <div class="aonCol-sm-12 aonCol-md-3">
+            <div class="aonCol-xs-2">
+              <aon-number name="radio" id="radio" description="Radio" type="text"></aon-number>
+            </div>
+            <div class="aonCol-xs-6">
               <aon-input name="latitude" id="latitude" description="Latitud" type="text"></aon-input>
             </div>
-            <div class="aonCol-sm-12 aonCol-md-3">
+            <div class="aonCol-xs-6">
               <aon-input name="longitude" id="longitude" description="Longitud" type="text"></aon-input>
             </div>
-            <div class="aonCol-sm-12 aonCol-md-3">
-             <aon-number name="radio" id="radio" description="Radio" type="text"></aon-number>
-            </div>
+            <aon-input name="id" id="id" type="text" visible="false"></aon-input>
         `);
 
     if (!this.isMobile()) this.buildToolbar();
@@ -149,6 +148,16 @@ export class AonLocationAdd extends AonElement {
     );
   }
 
+  paintViewMap(data){
+    let aonMap = this.getElement(`${this.id}CardMap`);
+    if(data && data.latitude && data.longitude){
+      aonMap.setContentHTML(`<iframe src="https://maps.google.es/maps?q=${data.latitude},${data.longitude}&z=16&output=embed" id="iframeMap" frameborder="0" style="border:0;height: 400px;width: 100%;" allowfullscreen></iframe>`);
+      aonMap.hidden = false;
+    } else {
+      aonMap.hidden = true;
+    }
+  }
+  
   getFormValues() {
     const form = this.getElement(`${this.id}Form`);
     return serializeForm(form);
@@ -177,7 +186,11 @@ export class AonLocationAdd extends AonElement {
       const obj = { ...data };
       for (const property in obj) {
         setValueName(property, obj[property]);
+        if (property.includes("latitude") || property.includes("longitude")) {
+          this.getElement(property).setAttribute("disabled", "disabled");
+        }
       }
+      this.paintViewMap(data);
     }
   }
 
@@ -187,17 +200,20 @@ export class AonLocationAdd extends AonElement {
 
   async save() {
     const data = this.getFormValues();
-    try {
-      const {id}  = await saveLocation({
-        ...data,
-        coordinates: `${data.latitude},${data.longitude}`,
-      });
-      if(id){
-        setValueName('id', id);
-      }
-    } catch (error) {}
+    let count = Object.keys(data).length;
+    if (count > 3) {
+      try {
+        const { id } = await saveLocation({
+          ...data,
+          coordinates: `${data.latitude},${data.longitude}`,
+        });
+        if (id) {
+          setValueName("id", id);
+          this.paintViewMap(data);
+        }
+      } catch (error) {}
+    }
   }
-
 
   async removeData() {
     const data = this.getFormValues();
@@ -215,9 +231,7 @@ export class AonLocationAdd extends AonElement {
   }
 
   back() {
-    this.aonSigninEl.setContentHTML(
-      `<aon-location-list></aon-location-list>`
-    );
+    this.aonSigninEl.setContentHTML(`<aon-location-list></aon-location-list>`);
   }
 }
 

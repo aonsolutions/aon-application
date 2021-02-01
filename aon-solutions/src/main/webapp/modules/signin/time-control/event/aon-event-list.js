@@ -146,7 +146,7 @@ export class AonEventList extends AonElement {
       aonTable.addColumn("Estado", "", "status", "15%");
       aonTable.addColumn("Duración", "", "duration", "5%");
       aonTable.addColumn("Fecha", "date", "dateParse", "20%");
-      aonTable.addColumn("Ubicación", "string", "location", "20%");
+      aonTable.addColumn("Ubicación", "string", "textCoordinates", "20%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -177,7 +177,7 @@ export class AonEventList extends AonElement {
         resp.map((res, idx) => {
           let options = {
             title: `${res.name} <div style="float: right;">${res.duration}</div>`,
-            subtitle: `(${res.textStatus}) ${res.location} <div style="float: right;">${res.dateParse}</div> `,
+            subtitle: `(${res.textStatus}) ${res.textCoordinates} <div style="float: right;">${res.dateParse}</div> `,
           };
           aonTable.addLi(options, idx, (el) => this.addEventAdd(el, res));
         });
@@ -193,22 +193,20 @@ export class AonEventList extends AonElement {
     try {
       let resp = await getTaskHolderTimeControl(this.data);
       resp.map(
-        async ({ time, last_date, status, location, detail, task_holder }) => {
-          const name = task_holder.name;
+        async (r) => {
+          const name = r.task_holder.name;
           const lettersName = StringTwoLetters(name);
-          const newStatus = status.toLowerCase();
+          const newStatus = r.status.toLowerCase();
           const textStatus = await getStatus(newStatus);
           const obj = {
+            ...r,
             letters_name: lettersName,
             textStatus: textStatus.name,
             status: newStatus,
             name: `${name}`,
-            last_date,
-            dateParse: setDateTimestamp(last_date),
-            duration: timePaser(Number(time)),
-            task_holder,
-            detail,
-            location: 'LOCATION'
+            textCoordinates: undefined,
+            dateParse: setDateTimestamp(r.last_date),
+            duration: timePaser(Number(r.time)),
           };
           data.push(obj);
         }

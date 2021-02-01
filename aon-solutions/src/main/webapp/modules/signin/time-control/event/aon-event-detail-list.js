@@ -1,11 +1,9 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { setDateTimestamp, timePaser } from "../../../../services/utils.js";
+import { setDateTimestamp } from "../../../../services/utils.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import {
-  getGroups,
   getStatus,
-  getTaskHolderTimeControl,
 } from "../../../../services/service.js";
 
 import "./aon-event-add.js";
@@ -123,7 +121,7 @@ export class AonEventDetailList extends AonElement {
       aonTable.addColumn("Nombre", "string", "name", "35%");
       aonTable.addColumn("Estado", "", "status", "15%");
       aonTable.addColumn("Fecha", "date", "dateParse", "25%");
-      aonTable.addColumn("Ubicación", "string", "location", "20%");
+      aonTable.addColumn("Ubicación", "string", "textCoordinates", "20%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -152,7 +150,7 @@ export class AonEventDetailList extends AonElement {
         resp.map((res, idx) => {
           let options = {
             title: `${res.name} <div style="float: right;">${res.textStatus}</div>`,
-            subtitle: `${res.location} <div style="float: right;">${res.dateParse}</div> `,
+            subtitle: `${res.textCoordinates} <div style="float: right;">${res.dateParse}</div> `,
           };
           aonTable.addLi(options, idx, (el) => this.addEventAdd(el, res));
         });
@@ -167,19 +165,20 @@ export class AonEventDetailList extends AonElement {
     let data = [];
     if (this.data && this.data.detail) {
       this.data.detail.forEach(
-        async ({ date, status, location, task_holder }) => {
-          const name = task_holder.name;
+        async (resp) => {
+          const name = resp.task_holder.name;
           const lettersName = StringTwoLetters(name);
           const lettersHtml = `<div class="profile-letters">${lettersName}</div>`;
-          const newStatus = status.toLowerCase();
+          const newStatus = resp.status.toLowerCase();
           const textStatus = await getStatus(newStatus);
           const obj = {
+            ...resp,
             lettersHtml,
             textStatus: textStatus.name,
             status: newStatus,
             name: `${name}`,
-            date: setDateTimestamp(date),
-            location: 'LOCATION'
+            textCoordinates: undefined,
+            dateParse: setDateTimestamp(resp.date)
           };
           data.push(obj);
         }

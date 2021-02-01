@@ -3,6 +3,8 @@ import "../../components/aon-toast.js";
 import "../../components/aon-application.js";
 import "./time-control/aon-presence-list.js";
 import "./time-control/location/aon-location-list.js";
+import "./time-control/event/aon-event-add.js";
+import "./time-control/location/aon-location-add.js";
 
 export class AonSignin extends AonElement {
   AON_SIGNIN;
@@ -52,6 +54,29 @@ export class AonSignin extends AonElement {
     this.aonSigninEl.setContentHTML(
       `<aon-presence-list></aon-presence-list>`
     );
-	}
+  }
+
+  async openLocationOrEvent(el, data) {
+
+    let id = undefined;
+    let contentHtml = undefined;
+    let obj = {};
+    const {coordinates} = data;
+    if( coordinates && coordinates.latitude && coordinates.longitude) {
+      id = "aonLocationAdd";
+      contentHtml =  `<aon-location-add id="${id}"></aon-location-add>`;
+      obj = { ...data, latitude:coordinates.latitude, longitude: coordinates.longitude};
+    } else {
+      id = "aonEventList";
+      contentHtml = `<aon-event-list id="${id}"></aon-event-list>`;
+      obj = { ...data , group: this.GROUP_DEFAULT };
+    }
+    console.warn(id);
+    this.aonSigninEl.setContentHTML(contentHtml);
+    const aonEventEl = this.getElement(id);
+    if (aonEventEl) {
+      aonEventEl.data = obj;
+    }
+  }
 }
 window.customElements.define("aon-signin", AonSignin);

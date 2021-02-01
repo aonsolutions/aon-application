@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.FullInvoiceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.LocationPropertiesDAO;
 
 
@@ -22,6 +23,7 @@ public class LocationDAO {
 			.select()
 			.from(LOCATION)
 			.where(LOCATION_PROPERTIES.getConditions(filter))
+			.orderBy(LOCATION.ID.desc())
 			.fetch().stream().map(new LocationFiller());
 	}
 	
@@ -50,6 +52,24 @@ public class LocationDAO {
 			.where(LOCATION.ID.eq(lc.getId()))
 			.execute();		
 		return lc;
+	}
+	
+	
+	public static void deleteLocation(AONContext ctx, Location lc) {
+		ctx.checkWrite();
+		ctx.getDslContext().delete(LOCATION).where(LOCATION.ID.eq(lc.getId())).execute();	
+	}
+	
+	public static Location getLocation(AONContext ctx, Integer id) {
+		ctx.checkRead();
+		return  ctx.getDslContext()
+				.select()
+				.from(LOCATION)
+				.where(LOCATION.ID.eq(id))
+				.stream()
+				.map( new LocationFiller() )
+				.findFirst()
+				.orElse(null);
 	}
 	
 	public static class LocationFiller  implements Function<Record, Location> {

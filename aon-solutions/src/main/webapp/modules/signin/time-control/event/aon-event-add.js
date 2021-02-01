@@ -3,8 +3,13 @@ import {
   setValueName,
   serializeForm,
   setTime,
+  formatDateOrigin,
 } from "../../../../services/utils.js";
-import { getLocation, getStatus } from "../../../../services/service.js";
+import {
+  getLocation,
+  getStatus,
+  saveTimeControl,
+} from "../../../../services/service.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-number.js";
@@ -40,13 +45,10 @@ export class AonEventAdd extends AonElement {
 
   constructor() {
     super();
-    this.ACTION = "CREATE";
     this.id = this.id || "aonEventAdd";
     this.TOOLBAR = this.id + "Toolbar";
     this.aonSigninEl = this.getElement("aonSignin");
-    this.aonSigninToolbar = this.getElement(
-      `${this.aonSigninEl.id}Toolbar`
-    );
+    this.aonSigninToolbar = this.getElement(`${this.aonSigninEl.id}Toolbar`);
     this.aonSigninToolbar.setAttribute("option", "Registrar evento");
     this.TOAST = this.getElement(`${this.aonSigninEl.id}Toast`);
   }
@@ -117,6 +119,8 @@ export class AonEventAdd extends AonElement {
             <div class="aonCol-sm-6 aonCol-md-2">
               <aon-input name="time" id="time" description="Hora" type="time"></aon-input>
             </div>
+            <aon-input name="id" id="id" type="text" visible="false"></aon-input>
+            <aon-input name="coordinates" id="coordinates" type="text" visible="false"></aon-input>
             ${buttonSubmit}
         `);
 
@@ -140,7 +144,16 @@ export class AonEventAdd extends AonElement {
 
   eventListener() {
     let aonSubmit = this.getElement(`${this.id}Submit`);
+
     if (aonSubmit) aonSubmit.addEventListener("click", () => this.formSubmit());
+
+    let location = this.getElement("location");
+    location.addEventListener("change", ({ detail }) => {
+      if(detail && detail.coordinates){
+        const coordinates = detail.coordinates;
+        setValueName('coordinates', `${coordinates.latitude},${coordinates.longitude}`);
+      }
+    });
   }
 
   buildToolbar() {
@@ -213,22 +226,23 @@ export class AonEventAdd extends AonElement {
 
   setValues() {
     const data = this.data;
-    if (data) {
-      this.ACTION = "UPDATE";
+    if (data && data.id) {
       this.aonSigninToolbar.setAttribute("option", "Modificar evento");
 
-      let  date = new Date(data.date);
-      if(!date.isValid()){
+      let date = new Date(data.date);
+      if (!date.isValid()) {
         date = new Date();
       }
-      
       const newTime = setTime(date);
       let obj = {
         ...data,
         time: newTime,
-        date:date
+        date: date,
+        coordinates: `${data.coordinates.latitude},${data.coordinates.longitude}`
       };
-
+      if(data.location && data.location.id){
+        obj["location"] = data.location.id;
+      }
       for (const property in obj) {
         setValueName(property, obj[property]);
       }
@@ -237,44 +251,26 @@ export class AonEventAdd extends AonElement {
   }
 
   formSubmit() {
-    switch (this.ACTION) {
-      case "CREATE":
-        this.save();
-        break;
-      case "UPDATE":
-        this.update();
-        break;
-      default:
-        break;
-    }
+    this.save();
   }
 
   async save() {
     this.aonSigninEl.startLoading();
-    console.table(this.getFormValues());
+    let formValues = this.getFormValues();
+    const data = {
+      ...this.data,
+      ...formValues,
+      date: formatDateOrigin(formValues.date) + " " + formValues.time,
+    };
+    console.log(data);
     try {
-      //   await postData(this.getFormValues());
+      const { id } = await saveTimeControl(data);
+      if (id) {
+        setValueName("id", id);
+      }
       this.TOAST.start({
         message: "Datos registrados!",
         type: "success",
-        delay: 3000,
-      });
-      //   this.back();
-    } catch (error) {
-      this.TOAST.start({ message: error, type: "error" });
-    }
-    this.aonSigninEl.stopLoading();
-  }
-
-  async update() {
-    this.aonSigninEl.startLoading();
-    console.log("update");
-    console.table(this.getFormValues());
-    try {
-      //   await postUpdateData(this.getFormValues());
-      this.TOAST.start({
-        message: "Datos Actualizados!",
-        type: "primary",
         delay: 3000,
       });
       // this.back();

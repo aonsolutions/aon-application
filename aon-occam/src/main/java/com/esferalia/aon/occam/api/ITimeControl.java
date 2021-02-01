@@ -25,4 +25,8 @@ public interface ITimeControl {
 	public Location saveLocation(AONContext ctx, Location lc);
 	public Stream<Location> getLocationStream(AONContext ctx, LocationFilter filter);
 	
+	public void deleteLocation(AONContext ctx, Location lc);
+	
+	public Location getLocation(AONContext ctx, Integer id);
+	
 }

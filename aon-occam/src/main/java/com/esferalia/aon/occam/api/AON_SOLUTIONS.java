@@ -376,10 +376,21 @@ public class AON_SOLUTIONS {
 			return getTimeControl().saveLocation(ctx, lc);
 		}
 	}
+	public static Location getLocation(Domain domain, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().getLocation(ctx, id);
+		}
+	}
 	
 	public static Stream<Location> getLocationStream(Domain domain, String login, LocationFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getLocationStream(ctx, filter);
+		}
+	}
+	
+	public static void deleteLocation(Domain domain, String login, Location lc) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getTimeControl().deleteLocation(ctx, lc);
 		}
 	}
 }

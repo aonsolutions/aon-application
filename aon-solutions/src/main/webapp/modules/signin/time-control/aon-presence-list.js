@@ -4,13 +4,11 @@ import { setDateTimestamp, timePaser } from "../../../services/utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
-import "./event/aon-event-list.js";
 import { StringTwoLetters } from "./utils.js";
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
   GROUP_DEFAULT;
-  DIALOG;
   static get observedAttributes() {
     return ["filter"];
   }
@@ -37,10 +35,9 @@ export class AonPresenceList extends AonElement {
 
   constructor() {
     super();
-    this.id = this.id || 'aonPresenceList';
+    this.id = this.id || "aonPresenceList";
     this.TABLE_ID = this.id + "Table";
     this.GROUP_DEFAULT = "DAY";
-    this.DIALOG = this.id+'Dialog';
   }
 
   connectedCallback() {
@@ -53,7 +50,6 @@ export class AonPresenceList extends AonElement {
 
   paintView() {
     let innerHTML = `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
-    innerHTML = innerHTML + `<aon-dialog id="${this.DIALOG}"> </aon-dialog>`;
     if (this.isMobile()) {
       innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
     } else {
@@ -132,7 +128,7 @@ export class AonPresenceList extends AonElement {
       aonTable.addColumn("Nombre", "string", "name", "40%");
       aonTable.addColumn("Duración", "string", "duration", "5%");
       aonTable.addColumn("Fecha", "date", "last_date", "20%");
-      aonTable.addColumn("Ubicación", "string", "location", "25%");
+      aonTable.addColumn("Ubicación", "string", "textCoordinates", "25%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -143,30 +139,13 @@ export class AonPresenceList extends AonElement {
               ...res,
               statusHtml,
             },
-            (el) =>this.eventClick(el,res) 
+            (el) => this.aonEvent(el, res)
           );
         });
       } catch (e) {
         console.log(e);
       }
     }
-  }
-
-  eventClick(el, res){
-    console.log(el.target);
-    // if("LOCATION"===el.target.textContent){
-      let d = this.getElement(this.DIALOG);
-            
-      const latitude = 42.8649459;
-      const longitude = -2.6961458;
-      const iframeMaps = `
-      <iframe src="https://maps.google.es/maps?q=${latitude},${longitude}&z=17&output=embed"  frameborder="0" style="border:0;height: 400px;width: 100%;"></iframe>
-      `;
-      d.setContentHTML(iframeMaps);
-      d.open();
-    // } else {
-    //   this.aonEvent(el, res);
-    // }
   }
 
   async getTableMobile() {
@@ -180,7 +159,7 @@ export class AonPresenceList extends AonElement {
           let options = {
             iconHtmlCustom: `${res.lettersHtml}`,
             title: `${res.name} <div style="font-size: 14px;float: right; color: rgba(0,0,0,.54);">${res.duration}<div style="float: right;margin-left: 15px;"></div>`,
-            subtitle: `${res.last_date} <div style="float: right;">${res.location} <div class="timeControl ${res.status}" style="float: right;margin-left: 4px; margin-top: -8%;"></div></div> `,
+            subtitle: `${res.last_date} <div style="float: right;">${res.textCoordinates} <div class="timeControl ${res.status}" style="float: right;margin-left: 4px; margin-top: -8%;"></div></div> `,
           };
           if (res.contractType) options.option = this.getOptions(res);
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
@@ -201,19 +180,25 @@ export class AonPresenceList extends AonElement {
           time,
           last_date,
           status,
-          location,
+          coordinates,
           task_holder: { id: taskHolderId, name },
         }) => {
           const lettersName = StringTwoLetters(name);
           const lettersHtml = `<div class="profile-letters">${lettersName}</div>`;
           const newStatus = status.toLowerCase();
+          let newCoordinates = undefined;
+          if (coordinates && coordinates.longitude && coordinates.latitude) {
+            newCoordinates = coordinates.description;
+          } else {
+            newCoordinates = `<aon-icon-button id="iconLocation" icon="add_location" noHover="true"></aon-icon-button>`;
+          }
           const obj = {
             lettersHtml,
             status: newStatus,
             name: `${name}`,
             last_date: setDateTimestamp(last_date),
             duration: timePaser(Number(time)),
-            location: undefined,
+            textCoordinates: newCoordinates,
             taskHolderId,
           };
           data.push(obj);
@@ -226,15 +211,10 @@ export class AonPresenceList extends AonElement {
     return data;
   }
 
-  async aonEvent({ target: el }, { taskHolderId }) {
-    let id = "aonEventList";
-    this.aonSigninEl.setContentHTML(
-      `<aon-event-list id="${id}"></aon-event-list>`
-    );
-    const aonEventEl = this.getElement(id);
-    if (aonEventEl) {
-      let obj = { taskHolderId, group: this.GROUP_DEFAULT };
-      aonEventEl.data = obj;
+  async aonEvent(el, data) {
+    let aonSigninEl = document.querySelector("aon-signin");
+    if (aonSigninEl) {
+      aonSigninEl.openLocationOrEvent(el, data);
     }
   }
 }
