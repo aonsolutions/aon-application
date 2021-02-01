@@ -204,7 +204,11 @@ public class EnterpriseParamsController implements Serializable {
 			if(StringUtils.isBlank(getAgreementData().getExpression())){
 				setAgreement((Agreement) agreementBean.createNewTo());
 			} else {
-				Agreement agreement = (Agreement) agreementBean.get(Integer.parseInt(getAgreementData().getExpression()));
+				Agreement agreement = null;
+				try {
+					agreement = (Agreement) agreementBean.get(Integer.parseInt(getAgreementData().getExpression()));
+				} catch ( NumberFormatException e ) {
+				}
 				if(agreement!=null && agreement.getId()!=null){
 					setAgreement((Agreement) agreementBean.get(Integer.parseInt(getAgreementData().getExpression())));
 				} else {
