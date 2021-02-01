@@ -220,6 +220,14 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
+	public String getCostReceiptPDF(String domain, Cost cost, Type[] types)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
+		return null;
+	}
+
+	@Override
 	public String getCostReceiptHTML(String domain, Cost cost, Type[] types, int zoom)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
