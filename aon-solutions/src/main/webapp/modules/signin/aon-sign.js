@@ -21,13 +21,13 @@ export class AonSign extends AonElement {
 
   constructor () {
     super();
+  }
+
+  connectedCallback () {
     this.AON_SIGN = 'aonSign';
     this.id = this.id || this.AON_SIGN;
     this.CONTENT = this.id + 'Content';
     this.TIME = this.id + 'Time';
-  }
-
-  connectedCallback () {
     this.build();
   }
 

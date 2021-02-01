@@ -20,6 +20,7 @@ public class TimeControl {
 	private LinkedList<TimeControlDetail> detail;
 	private Date lastDate;
 	private Location lastLocation;
+	private Coordinates lastCoordinates;
 
 	public TimeControl() {
 		this.time = 0L;
@@ -90,6 +91,14 @@ public class TimeControl {
 		this.lastLocation = lastLocation;
 		return this;
 	}
+	
+	public Coordinates getLastCoordinates() {
+		return lastCoordinates;
+	}
+	
+	public void setLastCoordinates(Coordinates lastCoordinates) {
+		this.lastCoordinates = lastCoordinates;
+	}
 
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
@@ -103,6 +112,10 @@ public class TimeControl {
 			locationJson.put("id", getLastLocation().getId());
 			locationJson.put("name", getLastLocation().getDescription());
 			json.put("last_location", locationJson);
+		}
+		
+		if(getLastLocation() != null) {
+			json.put("coordinates", getLastCoordinates().toJSON());
 		}
 		
 		if(getTaskHolder() != null) {

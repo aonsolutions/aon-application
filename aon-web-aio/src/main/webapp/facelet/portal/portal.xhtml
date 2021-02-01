@@ -14,8 +14,27 @@
 				actionListener="#{desktop.onRefresh}" reRender="desktopDiv1" />
 		</h:form>
 	</a4j:region>
+
+	<script type="text/javascript">
+		function loadStylesSheet( stylesheet ) {
+			var link = document.createElement( "link" );
+			link.type = "text/css";
+			link.rel = "stylesheet";
+			link.media = "screen,print";
+			link.href = stylesheet; 
+
+			document.getElementsByTagName( "head" )[0].appendChild( link );
+   		}
+	
+		localStorage.setItem('aon_domain_id', #{domainSwitcher.domainId});
+		localStorage.setItem('aon_domain_name', '#{domainSwitcher.currentDomainNameURL}');
+		localStorage.setItem('aon_domain_login', '#{domainSwitcher.currentUser}');
+		
+       	loadStylesSheet('css/aon.css');
+    </script>
 	
 	<script type="module" src="components/aon-icon.js"></script>
+	<script type="module" src="modules/signin/aon-sign.js"></script>
 
 	<ui:include	src="/facelet/shared/array.prototype.js.xhtml" />
 	<aon:form id="mainForm">
@@ -78,6 +97,19 @@
 								title="aonGestion"
 								styleClass="aon-menu-icon aon-icon-old-logo"
 								value="aonGestión" />
+							</aon:div>							
+						</aon:div>
+					</aon:div>
+					<aon:div  style="border-top: 1px solid #ddd; height:10px" />	
+					<aon:div>
+						<aon:div styleClass="aon-portlet">
+							<aon:div styleClass="aon-portlet-title">								
+								<aon:outputText value="Control de Horario"
+								style="padding-bottom: 1px;padding-top: 1px;"
+								styleClass="aon-portlet-title-text"/>
+							</aon:div>
+							<aon:div styleClass="aon-portlet-body">
+								<aon-sign></aon-sign>
 							</aon:div>							
 						</aon:div>
 					</aon:div>

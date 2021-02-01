@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -36,6 +37,7 @@ public class AonApiHttpServlet extends HttpServlet{
 	
 	private String token;
 	private Domain domain;
+	private User user;
 	private JSONObject data;
 	private JSONObject params;
 	
@@ -54,7 +56,8 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
 	private void initialize(HttpServletRequest req, HttpServletResponse resp) {
-		setToken(req.getHeader("session_id"));
+		setToken((AonStringUtils.isEmpty(req.getHeader("session_id")) || "null".equalsIgnoreCase(req.getHeader("session_id"))) 
+				? "" : req.getHeader("session_id"));
 		
 		String domainName = req.getHeader("domain_name");
 		Integer domainId = !"null".equalsIgnoreCase(req.getHeader("domain_id")) && AonNumberUtils.toInteger(req.getHeader("domain_id")) != null 
@@ -64,6 +67,12 @@ public class AonApiHttpServlet extends HttpServlet{
 				? new Domain().setName(domainName).setId(domainId)
 				: AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
 		setDomain(domain);
+		
+		String domainLogin = req.getHeader("domain_login");
+		User user = AonStringUtils.isBlank(domainLogin)
+				? new User()
+				: AON.getUser(getDomain().getName(), getDomain().getId(), domainLogin);
+		setUser(user);
 		
 		setParams(getParamsJSON(req));
 		setData(getRequestJSON(req));
@@ -99,6 +108,14 @@ public class AonApiHttpServlet extends HttpServlet{
 	
 	public void setParams(JSONObject params) {
 		this.params = params;
+	}
+	
+	public User getUser() {
+		return user;
+	}
+	
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
 	public void error(HttpServletRequest req, HttpServletResponse resp, Exception e) {

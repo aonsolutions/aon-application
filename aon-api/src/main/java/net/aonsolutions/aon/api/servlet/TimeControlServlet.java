@@ -10,8 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
@@ -19,8 +21,10 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import solutions.aon.seg.social.toolkit.Toolkit;
 
@@ -28,7 +32,6 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 @WebServlet(name = "AonTimeControlServlet", urlPatterns = {"/ms/api/timecontrol/*"})
 public class TimeControlServlet extends AonApiHttpServlet{
 
-	
 	private static final Logger LOGGER  = Logger.getLogger(TimeControlServlet.class.getName());
 	
 	@Override
@@ -39,10 +42,8 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		
 			Object responseObject = new JSONObject();		
 			String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-			
-			AonToken aonToken = SECURITY.getAonToken(getToken());
-			responseObject = routerGet(pathInfo, aonToken); 
-		
+
+			responseObject = routerGet(pathInfo); 
 			response(req, resp, responseObject);
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -54,11 +55,16 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		LOGGER.info("AON API TIMECONTROL SERVLET - POST METHOD");
 		try {
 			super.doPost(req, resp);
-		
-			AonToken aonToken = SECURITY.getAonToken(getToken());
-			save(aonToken);
-			Object responseObject = getTimeControl(aonToken); 
-		
+			Object responseObject = null;
+			if(AonStringUtils.isEmpty(getToken())) {
+				save(getDomain(), getUser());
+				responseObject = getTimeControl(getDomain(), getUser());
+			} else {
+				AonToken aonToken = SECURITY.getAonToken(getToken());
+				save(aonToken);
+				responseObject = getTimeControl(aonToken);
+			}
+			
 			response(req, resp, responseObject);
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -66,7 +72,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	}
 
 	//router
-	private Object routerGet(String[] pathInfo, AonToken aonToken) throws Exception {
+	private Object routerGet(String[] pathInfo) throws Exception {
 		Object obj = new Object();
 		String route = "default" ;
 		if(pathInfo!=null) {
@@ -75,22 +81,43 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		switch (route) {
 			case "list":
 				LOGGER.info("TIMECONTROL SERVLET - GET TIME-CONTROL-LIST");
-				obj = getTimeControlList(aonToken, getParams());
+				obj = getTimeControlList(getParams());
 			break;
 			case "list-holder":
 				LOGGER.info("TIMECONTROL SERVLET - GET-TASK-HOLDER-TIME-CONTROL");
-				obj = getTaskHolderTimeControlStream(aonToken, getParams());
+				obj = getTaskHolderTimeControlStream(getParams());
 			break;
 			default:
 				LOGGER.info("TIMECONTROL SERVLET - GET TIME-CONTROL");
-				obj = getTimeControl(aonToken);
+				if(AonStringUtils.isEmpty(getToken())) {
+					obj = getTimeControl(getDomain(), getUser());
+				} else {
+					AonToken aonToken = SECURITY.getAonToken(getToken());
+					obj = getTimeControl(aonToken);
+				}
 			break;
 		}
 		return obj;
 	}
 	
+	private Object getTimeControl(Domain domain, User user) throws Exception {
+		TaskHolder taskHolder = AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getUserIdProperty().eq(user.getId())));
+		return getTimeControl(taskHolder);
+	}
+	
 	private Object getTimeControl(AonToken aonToken) throws Exception{
 		TaskHolder taskHolder = AON_SOLUTIONS.getTaskHolder(aonToken);
+		if(taskHolder == null || taskHolder.getId() == null) {
+			taskHolder = AON.getTaskHolder(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+				f.getDomainProperty().eq(getDomain().getId())
+				.and(f.getUserIdProperty().eq(getUser().getId())));
+		}
+		return getTimeControl(taskHolder);
+	}
+	
+	private Object getTimeControl(TaskHolder taskHolder) throws Exception{
 		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
@@ -104,7 +131,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return tc.toJSON();
 	}
 	
-	private Object getTimeControlList(AonToken aonToken, JSONObject json) {
+	private Object getTimeControlList(JSONObject json) {
 		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
@@ -121,7 +148,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return array;
 	}
 	
-	private Object getTaskHolderTimeControlStream(AonToken aonToken, JSONObject json) {		
+	private Object getTaskHolderTimeControlStream(JSONObject json) {		
 		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
@@ -139,8 +166,19 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return array;
 	}
 	
+	private void save(Domain domain, User user) {
+		TaskHolder taskHolder = AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getUserIdProperty().eq(user.getId())));
+		save(taskHolder);
+	}
+	
 	private void save(AonToken aonToken) {
 		TaskHolder taskHolder = AON_SOLUTIONS.getTaskHolder(aonToken);
+		save(taskHolder);
+	}
+	
+	private void save(TaskHolder taskHolder) {
 		Coordinates coordinates = new Coordinates(getData().optString("coordinates"));
 		TimeControlDetail tcd = new TimeControlDetail()
 				.setDomain(taskHolder.getDomain())

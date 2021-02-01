@@ -186,6 +186,9 @@ public class TimeControlDAO {
 				tc.setTaskHolder(r.getTaskHolder());
 			}
 			tc.getDetail().add(r);
+			
+			tc.setLastLocation(r.getLocation());
+			tc.setLastCoordinates(r.getCoordinates());
 		});
 		return tc;
 	}

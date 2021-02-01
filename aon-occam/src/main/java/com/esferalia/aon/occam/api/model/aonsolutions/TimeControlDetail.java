@@ -104,7 +104,6 @@ public class TimeControlDetail {
 			json.put("coordinates", getCoordinates().toJSON());
 		}
 
-		
 		if(getLocation() != null) {
 			JSONObject locationJson = new JSONObject();
 			locationJson.put("id", getLocation().getId());

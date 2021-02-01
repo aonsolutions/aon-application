@@ -24,6 +24,8 @@ export const request = (method, url, token, sendData, fn) => {
     ? JSON.parse(localStorage.getItem("company")).domain
     : "";
   xhr.setRequestHeader("domain_name", domainName);
+  const domainLogin = localStorage.getItem("aon_domain_login") || "";
+  xhr.setRequestHeader("domain_login", domainLogin);
   xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
   xhr.send(JSON.stringify(sendData));
