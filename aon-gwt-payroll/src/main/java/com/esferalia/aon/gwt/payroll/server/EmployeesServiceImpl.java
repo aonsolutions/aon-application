@@ -6,7 +6,6 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCom
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
-import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTIVE_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
@@ -32,6 +31,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
@@ -39,7 +39,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -68,7 +67,6 @@ import javax.servlet.annotation.WebServlet;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.SortField;
-import org.jooq.impl.DSL;
 import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
@@ -166,11 +164,14 @@ import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
+import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
+import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayroll;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
@@ -778,6 +779,33 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 		return html;
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public String getCostReceiptPDF(String domain, Cost cost, Salary.Type types[])
+			throws IllegalArgumentException {
+		try ( ByteArrayOutputStream os = new ByteArrayOutputStream() ){
+			printCostReceiptPDF(domain, cost, types, os);
+			
+			byte data[] = os.toByteArray();
+	
+			ByteArrayInputStream is = new ByteArrayInputStream(
+					data);
+	
+			Writer writer = new StringWriter();
+			encodeURIComponent(MimeType.PDF.getName(), is, writer);
+	
+			is.close();
+			writer.flush();
+			String dataUri = writer.toString();
+			writer.close();
+	
+			return dataUri;
+		} catch ( IOException e ) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2391,7 +2419,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	// Note that below methods can be moved to another place safely.
 
-	private ICollectionProvider getSalariesProvider(String domain, Cost cost,
+	private static ICollectionProvider getSalariesProvider(String domain, Cost cost,
 			SalaryType types[]) throws ManagerBeanException {
 		boolean asEnterpriseSite = notAtEnterpriseSite();
 		boolean calc = !notAtEnterpriseSite();
@@ -2399,7 +2427,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return getSalariesProvider(domain, cost, types, filter, calc);
 	}
 
-	private ICollectionProvider getSalariesProvider(String domain, Cost cost,
+	private static ICollectionProvider getSalariesProvider(String domain, Cost cost,
 			SalaryType types[], boolean calc) throws ManagerBeanException {
 		boolean asEnterpriseSite = notAtEnterpriseSite();
 		SalaryFilter filter = asEnterpriseSite ? new SiteFilter() : null;
@@ -5808,5 +5836,31 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		
 		return builder.build();
 	}
+	
+	public static void printCostReceiptPDF(String domain, Cost cost, Salary.Type[] types, OutputStream os) {
+		try {
+			SalaryType salaryTypes[] = new SalaryType[types.length];
+			for (int i = 0; i < types.length; i++)
+				salaryTypes[i] = SalaryType.values()[types[i].ordinal()];
+			
+			ICollectionProvider salariesProvider =  
+			getSalariesProvider(
+					domain,
+					cost,
+					salaryTypes,
+					false);
+			
+			EnterprisePayroll enterprisePayroll = EmployeesServiceHelper.geteEnterprisePayroll("N\u00D3MINA DE EMPRESA", null, getDate(cost).getTime(), salariesProvider);
+			
+			PdfMaker.print_enterprise_payroll(enterprisePayroll, os);
+
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
+		} catch (ManagerBeanException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+
 
 }

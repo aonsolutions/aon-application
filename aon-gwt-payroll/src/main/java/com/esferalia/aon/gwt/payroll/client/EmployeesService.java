@@ -65,6 +65,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	List<Extra> getExtras(String domain, List<Employee> employees) throws IllegalArgumentException;
 
+	String getCostReceiptPDF(String domain, Cost cost, Salary.Type types[])
+			throws IllegalArgumentException;
+
 	String getCostReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException;
 

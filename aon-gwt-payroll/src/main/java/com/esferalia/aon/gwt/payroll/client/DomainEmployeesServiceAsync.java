@@ -209,6 +209,11 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getExtras(getCurrentDomainName(), employees, callback);
 	}
 
+	public void getCostReceiptPDF(Cost cost, Type[] types, AsyncCallback<String> callback)
+			throws IllegalArgumentException {
+		employeesServiceAsync.getCostReceiptPDF(getCurrentDomainName(), cost, types, callback);
+	}
+
 	public void getCostReceiptHTML(Cost cost, Type[] types, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException {
 		employeesServiceAsync.getCostReceiptHTML(getCurrentDomainName(), cost, types, zoom, callback);

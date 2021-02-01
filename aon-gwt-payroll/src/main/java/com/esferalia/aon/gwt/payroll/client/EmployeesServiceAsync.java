@@ -70,6 +70,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getExtras(String domain, List<Employee> employees, AsyncCallback<List<Extra>> callback)
 			throws IllegalArgumentException;
 
+	void getCostReceiptPDF(String domain, Cost cost, Salary.Type types[],
+			AsyncCallback<String> callback) throws IllegalArgumentException;
+
 	void getCostReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 

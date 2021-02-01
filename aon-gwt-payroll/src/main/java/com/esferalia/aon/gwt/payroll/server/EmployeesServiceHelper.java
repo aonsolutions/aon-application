@@ -6,7 +6,10 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,10 +22,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -30,6 +35,8 @@ import org.mvel2.CompileException;
 import org.mvel2.MVEL;
 
 import com.code.aon.common.AonException;
+import com.code.aon.common.ICollectionProvider;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -51,6 +58,8 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
+import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayroll;
+import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayrollEntry;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -107,10 +116,10 @@ import com.esferalia.aon.watson.util.AonUtils;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.objects.Idc;
+import sun.security.acl.WorldGroupImpl;
 
 public class EmployeesServiceHelper {
 
@@ -362,7 +371,7 @@ public class EmployeesServiceHelper {
 		
 		Date endDate = null;
 		for (Date startDate : dates) {				
-			byte data[];
+			byte data[] = null;
 			try {
 				data = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, nss, startDate);
 				Map<ContextVariable, Object> contractData = com.esferalia.aon.in.payroll.tgss.idc.Idc.getContractData(data);
@@ -391,6 +400,11 @@ public class EmployeesServiceHelper {
 				endDate = AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1);
 				
 			} catch (Exception e) {
+				try (OutputStream os = new FileOutputStream( File.createTempFile("IDC", "pdf")) )  {
+					os.write(data);
+				} catch ( IOException ioException ) {
+				}
+				
 				e.printStackTrace();
 			}
 		}
@@ -1464,6 +1478,42 @@ public class EmployeesServiceHelper {
 					}
 				});
 	}
+	
+	
+	public static EnterprisePayroll geteEnterprisePayroll(String title, String logo, Date month, ICollectionProvider salariesProvider) throws ManagerBeanException {
+		
+		Map<String, Map<String, EnterprisePayrollEntry>> entries = new HashMap<String, Map<String,EnterprisePayrollEntry>>();
+		Collection<com.esferalia.aon.payroll.Salary> salaries = salariesProvider.getCollection(true);
+		
+		String enterprise = "";
+		
+		for ( com.esferalia.aon.payroll.Salary salary : salaries ) {
+			
+			String workplace = salary.getContract().getWorkPlace().getDescription();
+			
+			Map<String, EnterprisePayrollEntry> workplace_entries = 
+			entries.computeIfAbsent(workplace, s -> new TreeMap<String, EnterprisePayrollEntry>());
+			
+			
+			String employee = String.format("%s_%s", salary.getEmployeeName(),workplace_entries.size());//salary.getEmployeeName();
+			EnterprisePayrollEntry enterprisePayrollEntry = 
+			salary2EnterprisePayrollEntry(salary );
+			workplace_entries.put(employee, enterprisePayrollEntry);
+			
+			enterprise = salary.getEnterpriseName();
+			
+		}
+		
+		
+		Map<String, Map<String, EnterprisePayrollEntry>> ss_entries = Collections.emptyMap();
+		
+		
+		
+		EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, month, title , enterprise, entries, ss_entries);
+		
+		return enterprisePayroll;
+	}
+	
 
 	static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
 			Connection conn, SalaryDraft draft, T salaryBuilder, L draftBuilder, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> calculator) {
@@ -1485,6 +1535,21 @@ public class EmployeesServiceHelper {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		} 
+	}
+	
+	private static EnterprisePayrollEntry salary2EnterprisePayrollEntry(ISalary salary) {
+		return  new EnterprisePayrollEntry(
+				EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM,
+				salary.getEmployeeName(),
+				salary.getType().getName(new Locale("es")),
+				salary.getTotalPayment(),
+				salary.getSocialSecurityContributions(),
+				salary.getTotalIrpf(),
+				salary.getTotalDeduction(),
+				salary.getTotalLiquid(),
+				salary.getTotalEnterprise(),
+				salary.getTotalPayment() + salary.getTotalEnterprise(),
+				salary.getSocialSecurityContributions() + salary.getTotalEnterprise());
 	}
 
 

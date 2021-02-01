@@ -179,6 +179,13 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
+	public void getCostReceiptPDF(String domain, Cost cost, Type[] types, AsyncCallback<String> callback)
+			throws IllegalArgumentException {
+		failure(callback);
+
+	}
+
+	@Override
 	public void getCostReceiptHTML(String domain, Cost cost, Type[] types, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException {
 		failure(callback);
