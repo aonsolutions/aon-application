@@ -83,6 +83,92 @@ public class DefaultPayroll {
  	 	
  	 	private Optional <Contingency_bases> contingencies;
 
+		public DefaultPayrollBuilder setEnterprise(String enterprise) { 
+			this.enterprise =Optional.ofNullable(enterprise );
+			return this;
+		}
+		public DefaultPayrollBuilder setAddress(String address) {
+			this.address =Optional.ofNullable(address );
+			return this;
+		}
+		public DefaultPayrollBuilder setAddress_2(String address_2) {
+			this.address_2 =Optional.ofNullable(address_2 );
+			return this;
+		}
+		public DefaultPayrollBuilder setCif(String cif) {
+			this.cif =Optional.ofNullable(cif );
+			return this;
+		}
+		public DefaultPayrollBuilder setCcc(String ccc) {
+			this.ccc =Optional.ofNullable(ccc );
+			return this;
+		}
+		public DefaultPayrollBuilder setEmployee(String employee) {
+			this.employee =Optional.ofNullable(employee );
+			return this;
+		}
+		public DefaultPayrollBuilder setNif(String nif) {
+			this.nif =Optional.ofNullable(nif );
+			return this;
+		}
+		public DefaultPayrollBuilder setNss(String nss) {
+			this.nss =Optional.ofNullable(nss );
+			return this;
+		}
+		public DefaultPayrollBuilder setProfessional_group(String professional_group) {
+			this.professional_group =Optional.ofNullable(professional_group );
+			return this;
+		}
+		public DefaultPayrollBuilder setQuotation_group(String quotation_group) {
+			this.quotation_group =Optional.ofNullable(quotation_group );
+			return this;
+		}
+
+		public DefaultPayrollBuilder setAntiquity(Date antiquity) {
+			this.antiquity =Optional.ofNullable(antiquity );
+			return this;
+		}
+		public DefaultPayrollBuilder setLiquid_period_start(Date liquid_period_start) {
+			this.liquid_period_start =Optional.ofNullable(liquid_period_start );
+			return this;
+		}
+		public DefaultPayrollBuilder setLiquid_period_end(Date liquid_period_end) {
+			this.liquid_period_end =Optional.ofNullable(liquid_period_end );
+			return this;
+		}
+		public DefaultPayrollBuilder setTotal_days(Integer total_days) {
+			this.total_days =Optional.ofNullable(total_days );
+			return this;
+		}
+		public DefaultPayrollBuilder setAccruals(Map<Integer, ArrayList<DefaultPayrollAccrual>> accruals) {
+			this.accruals =Optional.ofNullable(accruals );
+			return this;
+		}
+		public DefaultPayrollBuilder setDeductions(Map<Integer, ArrayList<DefaultPayrollDeduction>> deductions) {
+			this.deductions =Optional.ofNullable(deductions );
+			return this;
+		}
+		public DefaultPayrollBuilder setAccrual_total(Double accrual_total) {
+			this.accrual_total =Optional.ofNullable(accrual_total );
+			return this;
+		}
+		public DefaultPayrollBuilder setDeduction_total(Double deduction_total) {
+			this.deduction_total =Optional.ofNullable(deduction_total );
+			return this;
+		}
+		public DefaultPayrollBuilder setPayroll_total(Double payroll_total) {
+			this.payroll_total =Optional.ofNullable(payroll_total );
+			return this;
+		}
+		public DefaultPayrollBuilder setContingencies(Contingency_bases contingencies) {
+			this.contingencies =Optional.ofNullable(contingencies );
+			return this;
+		}
+		public DefaultPayrollBuilder setPayrollType(PayrollTypes.Type payroll_type) {
+			this.payroll_type =Optional.ofNullable(payroll_type );
+			return this;
+		}
+ 	 	
 		public DefaultPayrollBuilder setEnterprise(Optional<String> enterprise) { 
 			this.enterprise = enterprise; 
 			return this;

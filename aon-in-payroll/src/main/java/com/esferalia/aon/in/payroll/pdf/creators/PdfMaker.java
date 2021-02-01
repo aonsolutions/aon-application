@@ -2,6 +2,7 @@ package com.esferalia.aon.in.payroll.pdf.creators;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -39,8 +40,15 @@ public class PdfMaker {
 	public static void print_enterprise_payroll(EnterprisePayroll payroll, String name) throws IOException {
 		new EnterprisePayrollTemplate().print_enterprise_payroll(payroll, name);
 	}
+
+	public static void print_enterprise_payroll(EnterprisePayroll payroll, OutputStream os) throws IOException {
+		new EnterprisePayrollTemplate().print_enterprise_payroll(payroll, os);
+	}
 	
 	//CREATE PAYROLL
+	public static void print_default_payroll(OutputStream os, DefaultPayroll payroll,InputStream logo, Locale language) throws CanNotCreatePdfException {
+		new DefaultPayrollTemplate().print(os, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
+	}
 	public static void print_default_payroll(String out, DefaultPayroll payroll,InputStream logo, Locale language) throws CanNotCreatePdfException {
 		new DefaultPayrollTemplate().print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
 	}

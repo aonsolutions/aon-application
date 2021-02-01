@@ -32,67 +32,76 @@ public class EnterprisePayrollTemplate {
 	private static double[] totalEmpresaSS = new double[8];
 
 	public void print_enterprise_payroll(EnterprisePayroll payroll, String name) throws IOException {
-		try (PDDocument doc = new PDDocument()) {
+		try (PDDocument doc = print_enterprise_payroll(payroll);) {
+			doc.save(filename);
+		}
+	}
 
-			if(name != null) filename = name;
+	public void print_enterprise_payroll(EnterprisePayroll payroll, OutputStream os) throws IOException {
+		try (PDDocument doc = print_enterprise_payroll(payroll);) {
+			doc.save(os);
+		}
+	}
 
-			//CREATE COMMON DATA MAP
-			Map<String, Map<String, EnterprisePayrollEntry>> category_entries = payroll.getEntries();
-			Set<String> categories = category_entries.keySet();
+	public PDDocument print_enterprise_payroll(EnterprisePayroll payroll) throws IOException {
+		PDDocument doc = new PDDocument();
 
-			//PRINT PDF
-			PDPageContentStream contents = drawHeader(doc, payroll);
-			String month_str = PdfFormats.formatDate(payroll.getMonth(), "MMMM, yyyy").get();
-			month_str = String.valueOf(month_str.charAt(0)).toUpperCase() + month_str.substring(1);
+		//CREATE COMMON DATA MAP
+		Map<String, Map<String, EnterprisePayrollEntry>> category_entries = payroll.getEntries();
+		Set<String> categories = category_entries.keySet();
 
-			float x = 30; float y = 480f;
+		//PRINT PDF
+		PDPageContentStream contents = drawHeader(doc, payroll);
+		String month_str = PdfFormats.formatDate(payroll.getMonth(), "MMMM, yyyy").get();
+		month_str = String.valueOf(month_str.charAt(0)).toUpperCase() + month_str.substring(1);
 
-			for (String category : categories) {
-				if(y < y_limit || y - y_limit < 50){
+		float x = 30; float y = 480f;
+
+		for (String category : categories) {
+			if(y < y_limit || y - y_limit < 50){
+				contents = newPage(payroll,doc,contents);
+				y = 480f;
+			}
+			PDFToolkit.drawText(contents, month_str, x, y, black, helvetica_bold,7);
+			PDFToolkit.drawText(contents, category, x + 115, y, black, helvetica_bold,7);
+
+			double[] totales_ss = new double[8];
+			double[] totales_aon = new double[8];
+
+			Map<String, EnterprisePayrollEntry> employe_entries = category_entries.get(category);
+			Set<String> employees = employe_entries.keySet();
+
+			y-=20;
+			for (String employee: employees) {
+
+				EnterprisePayrollEntry emp = employe_entries.get(employee);
+				add_to_total(totales_aon,totales_ss,emp);
+
+				if(y < y_limit){
 					contents = newPage(payroll,doc,contents);
 					y = 480f;
 				}
-				PDFToolkit.drawText(contents, month_str, x, y, black, helvetica_bold,7);
-				PDFToolkit.drawText(contents, category, x + 115, y, black, helvetica_bold,7);
-
-				double[] totales_ss = new double[8];
-				double[] totales_aon = new double[8];
-
-				Map<String, EnterprisePayrollEntry> employe_entries = category_entries.get(category);
-				Set<String> employees = employe_entries.keySet();
-
-				y-=20;
-				for (String employee: employees) {
-
-					EnterprisePayrollEntry emp = employe_entries.get(employee);
-					add_to_total(totales_aon,totales_ss,emp);
-
-					if(y < y_limit){
-						contents = newPage(payroll,doc,contents);
-						y = 480f;
-					}
-					if(employe_entries.get(employee).has_aon){
-						draw_entry(contents,x,y,emp);
-						y-=10;
-					}
-					if(y < y_limit){
-						contents = newPage(payroll,doc,contents);
-						y = 480f;
-					}
-					if(employe_entries.get(employee).has_ss){
-						if(draw_ss_entry(contents,x,y,emp)) y-= 10;
-					}
-					y-= 5;
+				if(employe_entries.get(employee).has_aon){
+					draw_entry(contents,x,y,emp);
+					y-=10;
 				}
-				y = draw_subtotals(contents,x,y,totales_aon,totales_ss);
+				if(y < y_limit){
+					contents = newPage(payroll,doc,contents);
+					y = 480f;
+				}
+				if(employe_entries.get(employee).has_ss){
+					if(draw_ss_entry(contents,x,y,emp)) y-= 10;
+				}
+				y-= 5;
 			}
-
-			y = draw_totals(contents,x,y);
-			contents.close();
-			doc.save(filename);
-
+			y = draw_subtotals(contents,x,y,totales_aon,totales_ss);
 		}
+
+		y = draw_totals(contents,x,y);
+		contents.close();
+		return doc;
 	}
+
 
 	//ADDS ENTRY VALUES INTO GENERAL TOTALS
 	private static void add_to_total(double[] totales_aon, double[] totales_ss, EnterprisePayrollEntry emp) {
@@ -176,8 +185,8 @@ public class EnterprisePayrollTemplate {
 	private static PDPageContentStream drawHeader(PDDocument doc, EnterprisePayroll payroll) throws IOException {
 		final String[] tableHeaders = {"Trabajador", "Tipo", "Devengado", "S.S. Trab.", "I.R.P.F", "Deducciones", "Liquido", "S.S. Empr", "CosteTotal", "Total S.S"};
 
-		String fileTitle = "Nómina de la empresa";
-		String enterprise = "EMPRESA:";
+		String fileTitle = payroll.getHeader();
+		String enterprise = payroll.getSubheader();
 		String date = PdfFormats.formatDate(new Date(),"dd/MM/yyyy").get();
 
 		PDPage page = PDFToolkit.createHorizontalPage();

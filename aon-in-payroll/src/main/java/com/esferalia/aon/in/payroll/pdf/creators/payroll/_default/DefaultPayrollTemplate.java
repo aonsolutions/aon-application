@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -47,16 +48,30 @@ public class DefaultPayrollTemplate {
 	float x;
 	float y;
 	ResourceBundle words;
+	
+	
 
 	// PRINT THE PDF
-	public void print(String out, DefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException {
-		try (PDDocument doc = new PDDocument()) {
+	public void print(OutputStream os, DefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException {
+		try (PDDocument doc = print(payroll, logo, language)) {
+			doc.save(os);
+		} catch (Exception e) {throw new CanNotCreatePdfException(e);}
+	}
+
+	public void print(String filename, DefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException {
+		try (PDDocument doc = print(payroll, logo, language)) {
+			doc.save(filename);
+		} catch (Exception e) {throw new CanNotCreatePdfException(e);}
+	}
+
+	// PRINT THE PDF
+	private PDDocument print(DefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException, IOException {
+			PDDocument doc = new PDDocument();
 
 			
 			lang = language.orElse(new Locale("Es"));
 			words = ResourceBundle.getBundle("com.esferalia.aon.in.payroll.pdf.creators.payroll._default.bundles.PayrollBundle",lang);
 
-			filename = out;
 			limit = 800;
 			this.payroll = payroll;
 
@@ -98,10 +113,9 @@ public class DefaultPayrollTemplate {
 			}
 
 			contents.close();
-			doc.save(new File(filename));
-		} catch (Exception e) {throw new CanNotCreatePdfException(e);}
+			return doc;
 	}
-
+	
 	// DRAW THE HEADER
 	private void draw_header() throws IOException {
 
