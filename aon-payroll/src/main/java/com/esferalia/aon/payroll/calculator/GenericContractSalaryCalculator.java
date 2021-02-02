@@ -1550,27 +1550,70 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			Double resultValue) {
 		if (StringUtils.isEmpty(name))
 			return;
+		long resultDays = getDays(resultStart, resultEnd);
+		
 		Date valueStart = resultStart;
-		List<ITimedVariable<Number>> prevs = expressionContext.getVariables(name, resultStart, resultEnd);
+		List<ITimedVariable<Number>> prevs = getVariables(expressionContext, name, resultStart, resultEnd);
 		for (ITimedVariable<Number> prev : prevs) {
 			Date prevStart = prev.getPeriod().getStart();
 			Date prevEnd = prev.getPeriod().getEnd();
+			
+			long prevDays = getDays(prevStart, prevEnd);
+			
 			try {
 				Number prevValue = prev.getValue(prev.getPeriod());
-				if (valueStart.compareTo(prevStart) < 0)
-					expressionContext.setVariable(name, resultValue, valueStart, prev(prevStart));
-				if (prev instanceof IExpressionVariable<?>)
-					expressionContext.setVariable(name, resultValue, prevStart, prevEnd);
-				else
-					expressionContext.setVariable(name, resultValue + prevValue.doubleValue(), prevStart, prevEnd);
-				valueStart = next(prevEnd);
+				if (valueStart.compareTo(prevStart) < 0) {
+					Date valueEnd = prev(prevStart);
+					long valueDays = getDays(valueStart, valueEnd);
+					expressionContext.setVariable(name, resultValue / resultDays * valueDays, valueStart,valueEnd);
+				} 
+				valueStart = Period.max(valueStart, prevStart);
+				Date valueEnd = Period.min(prevEnd, resultEnd);
+				long valueDays = getDays(valueStart, valueEnd);
+				if (prev instanceof IExpressionVariable<?>) {
+					expressionContext.setVariable(name, resultValue / resultDays * valueDays, valueStart, valueEnd);
+				}
+				else {
+					expressionContext.setVariable(name, ( resultValue  / resultDays + prevValue.doubleValue() / prevDays )  * valueDays, valueStart, valueEnd);
+				}
+				
+				valueStart = next(valueEnd);
+				if ( Period.compare(prevEnd, valueEnd) > 0 ) {					
+					valueDays = getDays(valueStart, prevEnd);
+					expressionContext.setVariable(name, prevValue.doubleValue() / prevDays * valueDays, valueStart,prevEnd);
+				}
 			} catch (Exception e) {
 				System.err.println(String.format("ERROR [%s]: %s", name, e.getLocalizedMessage()));
 			}
 		}
 		if (valueStart.compareTo(resultEnd) <= 0) {
-			expressionContext.setVariable(name, resultValue, valueStart, resultEnd);
+			expressionContext.setVariable(name, resultValue / resultDays * getDays(valueStart, resultEnd), valueStart, resultEnd);
 		}
+	}
+
+	private static <T> List<ITimedVariable<T>> getVariables(ExpressionContext expressionContext, String name,
+			Date startDate, Date endDate) {
+		List<ITimedVariable<Object>> values = expressionContext.getVariables(name);
+		if (values == null)
+			return Collections.emptyList();
+
+		Period period = new Period(startDate, endDate);
+		List<ITimedVariable<T>> ret = new ArrayList<ITimedVariable<T>>();
+
+		for (ITimedVariable<?> var : values) {
+			Period intersect = var.getPeriod().intersect( period );
+			if (intersect == null)
+				continue;
+			
+			ret.add((ITimedVariable<T>) var);
+		}
+
+		return ret;
+
+	}
+
+	private static long getDays(Date valueStart, Date valueEnd) {
+		return new Period(valueStart, valueEnd ).daysStream().count();
 	}
 
 	private static void copyResults(ExpressionContext expressionContext, ContextVariable dest, ContextVariable ...srcs ) {
