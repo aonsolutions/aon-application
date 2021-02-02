@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ITimeControl;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
+import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
@@ -61,9 +62,9 @@ public class TimeControlImpl implements ITimeControl {
 	
 	
 	@Override
-	public Location getLocation(AONContext ctx, Integer id) {
+	public Location getLocation(AONContext ctx, LocationFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> LocationDAO.getLocation(ctx, id));
+				configuration -> LocationDAO.getLocation(ctx, filter));
 	}
 
 
@@ -79,5 +80,13 @@ public class TimeControlImpl implements ITimeControl {
 				configuration -> LocationDAO.deleteLocation(ctx, lc)
 		);
 	}
+	
+	@Override
+	public Location getLocation(AONContext ctx, Coordinates c) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> LocationDAO.getLocation(ctx, c));
+	}
+
+	
 	
 }

@@ -61,10 +61,22 @@ export class AonEventDetailList extends AonElement {
     this.paintView();
     this.build();
     this.buildToolbar();
+    this.eventListener();
   }
 
   disconnectedCallback() {
     if (this.aonSigninEl) this.aonSigninEl.removeFloatOption();
+  }
+
+  eventListener(){
+    // let iconLocationAllEl = document.querySelectorAll('#iconLocation');
+    // [...iconLocationAllEl].map(icon=>{
+    //   console.log(icon);
+    //   icon.addEventListener('click', (ev)=>{
+    //     ev.stopProgration();
+    //     console.log(ev);
+    //   })
+    // })
   }
 
   buildToolbar() {
@@ -79,12 +91,12 @@ export class AonEventDetailList extends AonElement {
             name: "addevent",
             icon: "add",
           },
-          () => this.addEventAdd()
+          () => this.aonEvent()
         );
       }
     } else {
       this.aonSigninEl.addToolbarOption("Add", "add", () =>
-        this.addEventAdd()
+        this.aonEvent()
       );
     }
   }
@@ -121,7 +133,7 @@ export class AonEventDetailList extends AonElement {
       aonTable.addColumn("Nombre", "string", "name", "35%");
       aonTable.addColumn("Estado", "", "status", "15%");
       aonTable.addColumn("Fecha", "date", "dateParse", "25%");
-      aonTable.addColumn("Ubicación", "string", "textCoordinates", "20%");
+      aonTable.addColumn("Ubicación", "string", "nameLocation", "20%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -131,7 +143,7 @@ export class AonEventDetailList extends AonElement {
               ...res,
               status: res.textStatus,
             },
-            (el) => this.addEventAdd(el, res)
+            (el) => this.aonEvent(el, res)
           );
         });
       } catch (e) {
@@ -150,9 +162,9 @@ export class AonEventDetailList extends AonElement {
         resp.map((res, idx) => {
           let options = {
             title: `${res.name} <div style="float: right;">${res.textStatus}</div>`,
-            subtitle: `${res.textCoordinates} <div style="float: right;">${res.dateParse}</div> `,
+            subtitle: `${res.nameLocation} <div style="float: right;">${res.dateParse}</div> `,
           };
-          aonTable.addLi(options, idx, (el) => this.addEventAdd(el, res));
+          aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
         });
       } catch (e) {
         console.log(e);
@@ -171,13 +183,19 @@ export class AonEventDetailList extends AonElement {
           const lettersHtml = `<div class="profile-letters">${lettersName}</div>`;
           const newStatus = resp.status.toLowerCase();
           const textStatus = await getStatus(newStatus);
+          let nameLocation = undefined;
+          if (resp.location && resp.location.name) {
+            nameLocation = resp.location.name;
+          } else {
+            nameLocation = `<aon-icon-button id="iconLocation" icon="add_location" noHover="true"></aon-icon-button>`;
+          }
           const obj = {
             ...resp,
             lettersHtml,
             textStatus: textStatus.name,
             status: newStatus,
             name: `${name}`,
-            textCoordinates: undefined,
+            nameLocation,
             dateParse: setDateTimestamp(resp.date)
           };
           data.push(obj);
@@ -187,16 +205,20 @@ export class AonEventDetailList extends AonElement {
     return data;
   }
 
-  addEventAdd(el, data) {
-    let id = "aonEventAdd";
-    this.aonSigninEl.setContentHTML(
-      `<aon-event-add id="${id}"></aon-event-add>`
-    );
-    const aonEventEl = this.getElement(id);
-    if (!data) {
-      data = this.data;
+  aonEvent(el, data) {
+    if("add_location" === el.target.textContent){
+      this.aonSigninEl.getParent().openLocationAdd(el, data);
+    } else {
+      let id = "aonEventAdd";
+      this.aonSigninEl.setContentHTML(
+        `<aon-event-add id="${id}"></aon-event-add>`
+      );
+      const aonEventEl = this.getElement(id);
+      if (!data) {
+        data = this.data;
+      }
+      aonEventEl.data = data;
     }
-    aonEventEl.data = data;
   }
 }
 window.customElements.define("aon-event-detail-list", AonEventDetailList);

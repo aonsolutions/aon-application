@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
+import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
@@ -27,6 +28,8 @@ public interface ITimeControl {
 	
 	public void deleteLocation(AONContext ctx, Location lc);
 	
-	public Location getLocation(AONContext ctx, Integer id);
+	public Location getLocation(AONContext ctx, LocationFilter filter);
+	
+	public Location getLocation(AONContext ctx, Coordinates c);
 	
 }

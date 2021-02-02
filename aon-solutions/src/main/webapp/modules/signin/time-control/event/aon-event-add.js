@@ -262,7 +262,6 @@ export class AonEventAdd extends AonElement {
       ...formValues,
       date: formatDateOrigin(formValues.date) + " " + formValues.time,
     };
-    console.log(data);
     try {
       const { id } = await saveTimeControl(data);
       if (id) {

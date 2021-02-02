@@ -6,23 +6,7 @@ String.prototype.isEmpty = function() {
     return (this.length === 0 || !this.trim());
 };
 
-Date.prototype.isValid = function () { 
-              
-  // If the date object is invalid it 
-  // will return 'NaN' on getTime()  
-  // and NaN is never equal to itself. 
+//date isValid true or false
+Date.prototype.isValid = function () {          
   return this.getTime() === this.getTime(); 
 }; 
-
-function initialize(element_id, lat, lng, zoom) {
-  zoom  = zoom || 10;
-
-  var mapLocation = new google.maps.LatLng(lat, lng);
-  var mapOptions = 
-  {
-      center: mapLocation,
-      zoom: zoom
-  };
-
-  var map = new google.maps.Map(document.getElementById(element_id), mapOptions);
-}

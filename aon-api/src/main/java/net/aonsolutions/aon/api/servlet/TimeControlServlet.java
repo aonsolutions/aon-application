@@ -81,11 +81,11 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		switch (route) {
 			case "list":
 				LOGGER.info("TIMECONTROL SERVLET - GET TIME-CONTROL-LIST");
-				obj = getTimeControlList(getParams());
+				obj = getTimeControlList();
 			break;
 			case "list-holder":
 				LOGGER.info("TIMECONTROL SERVLET - GET-TASK-HOLDER-TIME-CONTROL");
-				obj = getTaskHolderTimeControlStream(getParams());
+				obj = getTaskHolderTimeControlStream();
 			break;
 			default:
 				LOGGER.info("TIMECONTROL SERVLET - GET TIME-CONTROL");
@@ -131,13 +131,13 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return tc.toJSON();
 	}
 	
-	private Object getTimeControlList(JSONObject json) {
+	private Object getTimeControlList() {
 		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 
-		if(!json.optString("startDate").isEmpty()) startDate = Toolkit.parseDate(json.optString("startDate"), "yyyy-MM-dd");
-		if(!json.optString("endDate").isEmpty()) endDate = Toolkit.parseDate(json.optString("endDate"), "yyyy-MM-dd");
+		if(!getParams().optString("startDate").isEmpty()) startDate = Toolkit.parseDate(getParams().optString("startDate"), "yyyy-MM-dd");
+		if(!getParams().optString("endDate").isEmpty()) endDate = Toolkit.parseDate(getParams().optString("endDate"), "yyyy-MM-dd");
 
 		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getTimeControlStream(getDomain(), "", startDate, endDate)
@@ -148,17 +148,17 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return array;
 	}
 	
-	private Object getTaskHolderTimeControlStream(JSONObject json) {		
+	private Object getTaskHolderTimeControlStream() {		
 		Date startDate = AonDateUtils.getDateWithoutTime(new Date());
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 		
-		if(!json.optString("startDate").isEmpty()) startDate = Toolkit.parseDate(json.optString("startDate"), "yyyy-MM-dd");
-		if(!json.optString("endDate").isEmpty()) endDate = Toolkit.parseDate(json.optString("endDate"), "yyyy-MM-dd");
+		if(!getParams().optString("startDate").isEmpty()) startDate = Toolkit.parseDate(getParams().optString("startDate"), "yyyy-MM-dd");
+		if(!getParams().optString("endDate").isEmpty()) endDate = Toolkit.parseDate(getParams().optString("endDate"), "yyyy-MM-dd");
 
 		JSONArray array = new JSONArray();
-		TimeControlGroup timeCG = TimeControlGroup.safeValueOf(json.optString("group"));
-		AON_SOLUTIONS.getTaskHolderTimeControlStream(getDomain(), "", json.optInt("taskHolderId"), startDate, endDate, timeCG)
+		TimeControlGroup timeCG = TimeControlGroup.safeValueOf(getParams().optString("group"));
+		AON_SOLUTIONS.getTaskHolderTimeControlStream(getDomain(), "", getParams().optInt("taskHolderId"), startDate, endDate, timeCG)
 		.forEach(tc -> {
 			array.put(tc.toJSON());
 		});
@@ -179,14 +179,19 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	}
 	
 	private void save(TaskHolder taskHolder) {
-		Coordinates coordinates = new Coordinates(getData().optString("coordinates"));
+//		Coordinates coordinates = new Coordinates(getData().optString("coordinates"));
+		Coordinates coordinates = new Coordinates().setLatitude(42.867856824038334).setLongitude(-2.6972596099868706);
+		Date fecha = !getData().optString("date").isEmpty() ?  Toolkit.parseDate(getData().optString("date"), "yyyy-MM-dd HH:mm") : new Date();
+		Location lc =  !getData().optString("location").isEmpty() 
+				? AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  f -> f.getIdProperty().ge(getData().optInt("location")) )
+				: AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  coordinates);
 		TimeControlDetail tcd = new TimeControlDetail()
 				.setDomain(taskHolder.getDomain())
 				.setTaskHolder(taskHolder)
 				.setComments(getData().optString("comments"))
 				.setCoordinates(coordinates)
-				.setDate(new Date())
-				.setLocation(new Location())
+				.setDate(fecha)
+				.setLocation(lc)
 				.setStatus(TimeControlStatus.safeValueOf(getData().optString("status")));
 		
 		AON_SOLUTIONS.saveTimeControlDetail(tcd.getDomain(), "", tcd);

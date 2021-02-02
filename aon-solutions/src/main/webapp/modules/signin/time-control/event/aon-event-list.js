@@ -146,7 +146,7 @@ export class AonEventList extends AonElement {
       aonTable.addColumn("Estado", "", "status", "15%");
       aonTable.addColumn("Duración", "", "duration", "5%");
       aonTable.addColumn("Fecha", "date", "dateParse", "20%");
-      aonTable.addColumn("Ubicación", "string", "textCoordinates", "20%");
+      aonTable.addColumn("Ubicación", "string", "nameLocation", "20%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -158,7 +158,7 @@ export class AonEventList extends AonElement {
               status: res.textStatus,
               lettersHtml,
             },
-            (el) => this.addEventAdd(el, res)
+            (el) => this.aonEvent(el, res)
           );
         });
       } catch (e) {
@@ -177,9 +177,9 @@ export class AonEventList extends AonElement {
         resp.map((res, idx) => {
           let options = {
             title: `${res.name} <div style="float: right;">${res.duration}</div>`,
-            subtitle: `(${res.textStatus}) ${res.textCoordinates} <div style="float: right;">${res.dateParse}</div> `,
+            subtitle: `(${res.textStatus}) ${res.nameLocation} <div style="float: right;">${res.dateParse}</div> `,
           };
-          aonTable.addLi(options, idx, (el) => this.addEventAdd(el, res));
+          aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
         });
       } catch (e) {
         console.log(e);
@@ -198,13 +198,20 @@ export class AonEventList extends AonElement {
           const lettersName = StringTwoLetters(name);
           const newStatus = r.status.toLowerCase();
           const textStatus = await getStatus(newStatus);
+          let nameLocation = undefined;
+          if (r.last_location && r.last_location.name) {
+            nameLocation = r.last_location.name;
+          } else {
+            nameLocation = `<aon-icon-button id="iconLocation" icon="add_location" noHover="true"></aon-icon-button>`;
+          }
           const obj = {
             ...r,
             letters_name: lettersName,
             textStatus: textStatus.name,
             status: newStatus,
             name: `${name}`,
-            textCoordinates: undefined,
+            last_location: r.last_location,
+            nameLocation,
             dateParse: setDateTimestamp(r.last_date),
             duration: timePaser(Number(r.time)),
           };
@@ -218,14 +225,18 @@ export class AonEventList extends AonElement {
     return data;
   }
 
-  addEventAdd(el, data) {
-    let id = "aonEventDetailList";
-    this.aonSigninEl.setContentHTML(
-      `<aon-event-detail-list id="${id}"></aon-event-detail-list>`
-    );
-    const aonEventEl = this.getElement(id);
-    if (data && aonEventEl) {
-      aonEventEl.data = data;
+  aonEvent({target}, data) {
+    if("add_location" === target.textContent){
+      this.aonSigninEl.getParent().openLocationAdd(undefined, data);
+    } else {
+      let id = "aonEventDetailList";
+      this.aonSigninEl.setContentHTML(
+        `<aon-event-detail-list id="${id}"></aon-event-detail-list>`
+      );
+      const aonEventEl = this.getElement(id);
+      if (data && aonEventEl) {
+        aonEventEl.data = data;
+      }
     }
   }
 }

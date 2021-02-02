@@ -68,7 +68,7 @@ public class LocationServlet extends AonApiHttpServlet{
 				break;
 			case "save":
 				LOGGER.info("TIMECONTROL SERVLET - LOCATION-SAVE");
-				obj = saveLocation(aonToken, getParams());
+				obj = saveLocation(aonToken);
 			break;
 			case "delete":
 				LOGGER.info("TIMECONTROL SERVLET - LOCATION-DELETE");
@@ -90,7 +90,7 @@ public class LocationServlet extends AonApiHttpServlet{
 	}
 
 	
-	private Object saveLocation(AonToken aonToken, JSONObject json) {
+	private Object saveLocation(AonToken aonToken) {
 		TaskHolder taskHolder = AON_SOLUTIONS.getTaskHolder(aonToken);
 		Coordinates coordinates = new Coordinates(getData().optString("coordinates"));
 		Location location = new Location()
@@ -107,9 +107,9 @@ public class LocationServlet extends AonApiHttpServlet{
 	}
 
 	private Object deleteLocation(AonToken aonToken) {
-		JSONArray respObject = new JSONArray();
-		System.out.println("deleteLocation");
-		return respObject;
+		Location location = new Location().setId(getData().optInt("id"));
+		AON_SOLUTIONS.deleteLocation(getDomain(), "", location);
+		return new JSONArray();
 	}
 	
 }

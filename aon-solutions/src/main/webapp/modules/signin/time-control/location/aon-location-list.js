@@ -129,7 +129,7 @@ export class AonLocationList extends AonElement {
           let options = {
             icon: 'location_on',
             title: `${res.description}`,
-            subtitle: `${res.radio}`,
+            subtitle: `Radio (${res.radio})`,
           };
           aonTable.addLi(options, idx, (el) => this.add(el, res));
         });
@@ -169,6 +169,8 @@ export class AonLocationList extends AonElement {
     const aonEl = this.getElement(id);
     if (data && aonEl) {
       aonEl.data = data;
+    } else if(!data) {
+      aonEl.add = true;
     }
   }
 }

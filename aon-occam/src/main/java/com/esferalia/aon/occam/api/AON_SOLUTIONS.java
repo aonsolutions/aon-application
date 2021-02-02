@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
@@ -376,9 +377,14 @@ public class AON_SOLUTIONS {
 			return getTimeControl().saveLocation(ctx, lc);
 		}
 	}
-	public static Location getLocation(Domain domain, String login, Integer id) {
+	public static Location getLocation(Domain domain, String login, LocationFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			return getTimeControl().getLocation(ctx, id);
+			return getTimeControl().getLocation(ctx, filter);
+		}
+	}
+	public static Location getLocation(Domain domain, String login, Coordinates c) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().getLocation(ctx, c);
 		}
 	}
 	
