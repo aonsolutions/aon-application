@@ -4080,6 +4080,64 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 //		List<Tramo> bases = SQLCretaTestCase.getBases(connection, startDate, endDate, ccc, contract);
 	}
 
+	
+	
+	@Test
+	public void testPartialEREAdjustI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+//		Date firstDayOfYear = getFirstDayOfYear(getToday());
+//		Date contractStart = add(firstDayOfYear, C) 
+		
+		
+
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String, String>(){
+					{
+						put("DIAS_MES", "30.00");
+					}
+				});
+
+		Date ereDay = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH, 10);
+
+		addData(aonContext, contract, ereDay, ereDay,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Double>> workDays = ctx.getExpressionContext().eval(
+				"DIAS_TRABAJADOS", startDate, endDate, Double.class);
+
+		Assert.assertEquals(2, workDays.size());
+
+		Assert.assertEquals((double)get(ereDay, DAY_OF_MONTH)-1, workDays.get(0).getValue());
+		Assert.assertEquals(
+				workDays.get(0).getPeriod(),
+				new Period(getFirstDayOfMonth(ereDay), add(ereDay,
+						DAY_OF_MONTH, -1)));
+
+		Assert.assertEquals(
+				workDays.get(1).getValue(),
+				(double) (getMax(ereDay, DAY_OF_MONTH) - get(ereDay,
+						DAY_OF_MONTH)));
+		Assert.assertEquals(workDays.get(1).getPeriod(),
+				new Period(add(ereDay, DAY_OF_MONTH, +1),
+						getLastDayOfMonth(getToday())));
+
+	}
+	
 
 	protected ISalary calculate (ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
 		return new SmartContractSalaryCalculator<Salary>(
