@@ -1195,6 +1195,8 @@ public class EmployeeDraft extends Composite {
 		this.employee.level.clear();
 		this.employee.category.setValue("");
 		
+		this.employee.partiality_coef.setValue(null);
+		
 		this.employee.birth_date.setValue(null);
 		
 		this.employee.address.setValue("");
@@ -1366,6 +1368,10 @@ public class EmployeeDraft extends Composite {
 		}
 
 		this.employee.category.setValue(employeeDraftObject.getContractAgreementCategory());
+		
+		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600 || contractTypeId == 0)) {
+			this.employee.partiality_coef.setValue(employeeDraftObject.getPartalityCoef());
+		}
 		
 		this.employee.quote_group.setSelectedIndex(employeeDraftObject.getContractQuoteGroup());
 		this.employee.occupation.setSelectedIndex(employeeDraftObject.getContractOcupation());

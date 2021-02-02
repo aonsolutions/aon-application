@@ -975,5 +975,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		// TODO Auto-generated method stub
 		return contractData.getMdctz();
 	}
+
+	public Double getPartalityCoef() {
+		// TODO Auto-generated method stub
+		return contractData.getPartialityCoef();
+	}
 	
 }

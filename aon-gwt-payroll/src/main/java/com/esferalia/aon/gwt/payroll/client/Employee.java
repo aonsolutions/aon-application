@@ -557,6 +557,7 @@ public abstract class Employee extends ResizeComposite {
 		this.quote_group.clear();
 		this.occupation.clear();
 		this.journeyType.clear();
+		this.partiality_coef.setValue(null);
 		this.journeyDuration.setText("");
 
 		// TABLA DATOS EMPLEADO
