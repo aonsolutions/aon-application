@@ -97,12 +97,12 @@ export class AonSelect extends AonElement {
 
 	constructor () {
 		super();
-    this.INPUT = this.id + 'Input';
-    this.OPTIONS = this.id + 'Options'
   }
 
 	connectedCallback () {
-		this.innerHTML = `
+    this.INPUT = this.id + 'Input';
+    this.OPTIONS = this.id + 'Options'
+    this.innerHTML = `
       <aon-input id="${this.INPUT}"  description="${this.title}"></aon-input>
 		`;
     this.build();

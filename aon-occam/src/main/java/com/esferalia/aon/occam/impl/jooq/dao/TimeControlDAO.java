@@ -169,7 +169,7 @@ public class TimeControlDAO {
 	private static TimeControl buildTimeControl(Stream<TimeControlDetail> details) {
 		TimeControl tc = new TimeControl().setTime(0L);
 		details.forEach(r -> {
-			tc.setLastDate(AonDateUtils.getDateWithoutTime(r.getDate()));
+			tc.setLastDate(r.getDate());
 			if(tc.getStatus() == null) {
 				tc.setInDate(AonDateUtils.getDateWithoutTime(r.getDate()));
 			}

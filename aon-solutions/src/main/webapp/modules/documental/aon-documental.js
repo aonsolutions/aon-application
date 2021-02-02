@@ -1,7 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
 import {DocumentalAction, DocumentalSidenav} from './DocumentalEnums.js';
 import {getCategories, getTags, createTag, createCategory, editCategory,
-   deleteCategory, editTag, deleteTag, uploadFileDocumental} from '../../services/service.js';
+   deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes} from '../../services/service.js';
+import {AonSelect} from '../../components/aon-select.js';
 
 import './aon-documental-list.js';
 import './aon-document.js';
@@ -19,6 +20,9 @@ import * as MSG from "../../environments/msg.js";
 export class AonDocumental extends AonElement {
 
     _filter;
+    _tags;
+    _categories;
+    _scopes;
 
     DOCUMENTAL;
   	INPUTFILE;
@@ -66,7 +70,7 @@ export class AonDocumental extends AonElement {
       this.addDocumentOptions();
       this.addCategoryOptions();
       this.addTagOptions();
-
+      this.loadScopes();
   		this.aonDocumentalList();
     }
 
@@ -103,6 +107,12 @@ export class AonDocumental extends AonElement {
     loadCategories() {
       let aonDocumental = this.getElement(this.DOCUMENTAL);
       getCategories({domain: localStorage.getItem('aon_domain_id')}).then( categories => {
+        this._categories = categories.map(c => {
+          return {
+            value: c.id,
+            name: c.name
+          }
+        });
         this.clearElement(aonDocumental.SIDENAV + DocumentalSidenav.CATEGORIES.id + 'List');
         categories.forEach((item, i) => {
           let option = {
@@ -125,6 +135,18 @@ export class AonDocumental extends AonElement {
             ]
           };
           aonDocumental.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
+        });
+      });
+    }
+
+    loadScopes() {
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      getScopes({domain: localStorage.getItem('aon_domain_id')}).then( scopes => {
+        this._scopes = scopes.map(s => {
+          return {
+            value: s.id,
+            name: s.name
+          }
         });
       });
     }
@@ -190,6 +212,12 @@ export class AonDocumental extends AonElement {
     loadTags() {
       let aonDocumental = this.getElement(this.DOCUMENTAL);
       getTags({domain: localStorage.getItem('aon_domain_id')}).then( tags => {
+        this._tags = tags.map(t => {
+          return {
+            value: t.id,
+            name: t.name
+          }
+        });
         this.clearElement(aonDocumental.SIDENAV + DocumentalSidenav.TAGS.id + 'List');
         tags.forEach((item, i) => {
           let option = {
@@ -309,16 +337,92 @@ export class AonDocumental extends AonElement {
     }
 
     upload(files) {
-      for(let i = 0; i < files.length; i++) {
-        const READER = new FileReader();
-        READER.readAsDataURL(files[i]);
-        READER.onload = (_event) => {
-          this.attach(READER.result, files[i]);
-        };
-      }
+      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      let d = document.getElementById(aonDocumental.DIALOG);
+      d.clear();
+      if(!this.isMobile()) d.width = '400px';
+      d.setTitle(MSG.AON_MSG_UPLOAD_FILE);
+      d.setContent(this.uploadOption(files.length === 1));
+      d.addAcceptAction(() => {
+        let data = {
+          category: this.getElement("aonDocumentalUploadCategory").value,
+          scope: this.getElement("aonDocumentalUploadScope").value,
+          tag: this.getElement("aonDocumentalUploadTag").value,
+        }
+        for(let i = 0; i < files.length; i++) {
+          const READER = new FileReader();
+          READER.readAsDataURL(files[i]);
+          READER.onload = (_event) => {
+            this.attach(READER.result, files[i], data);
+          };
+        }
+      });
+      d.open();
     }
 
-    attach(fileDataUri,  file){
+    uploadOption(one){
+      let table = document.createElement('table');
+      table.style.width = '100%';
+
+      // if(one) {
+      //   let tr1 = document.createElement('tr');
+      //   table.appendChild(tr2);
+      //
+      //   let tdName = document.createElement('td');
+      //   tdName.setAttribute('colspan', '1');
+  		//   tdName.innerHTML = `<aon-input id="name" description="${MSG.AON_MSG_NAME}"></aon-input>`;
+  		//   tr1.appendChild(tdName);
+  		//   let name = this.getElement('name');
+      //   name.value = this.document.title;
+      // }
+      let tr2 = document.createElement('tr');
+      table.appendChild(tr2);
+
+      // CATEGORY
+      let tdCategory = document.createElement('td');
+      tdCategory.setAttribute('colspan', '1');
+
+      let selCat = new AonSelect();
+      selCat.id = "aonDocumentalUploadCategory";
+      selCat.title = MSG.AON_MSG_CATEGORY;
+      selCat.options = JSON.stringify(this._categories);
+      tdCategory.appendChild(selCat);
+
+      tr2.appendChild(tdCategory);
+
+      let tr3 = document.createElement('tr');
+      table.appendChild(tr3);
+      // SCOPE
+      let tdScope = document.createElement('td');
+      tdScope.setAttribute('colspan', '1');
+
+      let selScp = new AonSelect();
+      selScp.id = "aonDocumentalUploadScope";
+      selScp.title = MSG.AON_MSG_SCOPE;
+      selScp.options = JSON.stringify(this._scopes);
+      tdScope.appendChild(selScp);
+
+      tr3.appendChild(tdScope);
+
+      let tr4 = document.createElement('tr');
+      table.appendChild(tr4);
+
+      // TAG
+
+      let tdTag = document.createElement('td');
+      tdTag.setAttribute('colspan', '1');
+      let selTag = new AonSelect();
+      selTag.id = "aonDocumentalUploadTag";
+      selTag.title = MSG.AON_MSG_TAG;
+      selTag.options = JSON.stringify(this._tags);
+      tdTag.appendChild(selTag);
+
+      tr4.appendChild(tdTag);
+
+      return table;
+    }
+
+    attach(fileDataUri,  file, d){
       if (fileDataUri.length > 0) {
         const base64File = fileDataUri.split(',')[1];
         const data = {
@@ -326,10 +430,15 @@ export class AonDocumental extends AonElement {
           contentType: file.type,
           contentEncoding: 'base64',
           contentName: file.name,
-          contentSize: file.size
+          contentSize: file.size,
+          category: d.category,
+          tag: d.tag,
+          scope: d.scope
         };
+
         let aonDocumental = this.getElement(this.DOCUMENTAL);
         aonDocumental.startLoader();
+
         uploadFileDocumental(data).then((r) => {
           aonDocumental.stopLoader();
           this.aonDocumentalList()

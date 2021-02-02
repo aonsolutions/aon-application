@@ -40,6 +40,7 @@ public class AonApiHttpServlet extends HttpServlet{
 	private User user;
 	private JSONObject data;
 	private JSONObject params;
+	private String path;
 	
 	public AonApiHttpServlet() {
 	
@@ -76,6 +77,8 @@ public class AonApiHttpServlet extends HttpServlet{
 		
 		setParams(getParamsJSON(req));
 		setData(getRequestJSON(req));
+		
+		setPath(req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo() : "/");
 	}
 	
 	public String getToken() {
@@ -116,6 +119,14 @@ public class AonApiHttpServlet extends HttpServlet{
 	
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+	public String getPath() {
+		return path;
+	}
+	
+	public void setPath(String path) {
+		this.path = path;
 	}
 	
 	public void error(HttpServletRequest req, HttpServletResponse resp, Exception e) {

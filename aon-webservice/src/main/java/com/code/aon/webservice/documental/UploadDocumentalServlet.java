@@ -1,7 +1,6 @@
 package com.code.aon.webservice.documental;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Base64;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -18,15 +17,11 @@ import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.google.api.services.drive.Drive;
-
-import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "UploadDocumentalServlet", urlPatterns = { "/ms/api/attachment_upload/*",
@@ -66,8 +61,10 @@ public class UploadDocumentalServlet extends HttpServlet{
 		Long size = json.optLong("contenSize");
 		byte[] fileData = Base64.getDecoder().decode(base64);
 		Company cp = AON.getCompany(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()));
+		Integer scopeId = json.opt("scope") != null && !AonStringUtils.isEmpty(json.optString("scope"))? json.optInt("scope") : null;
+		Integer categoryId = json.opt("category") != null && !AonStringUtils.isEmpty(json.optString("category"))? json.optInt("category") : null;
 
-    	Attach attach = new Attach()
+		Attach attach = new Attach()
     			.setAttachModule(cp.getId()) // TODO
     			.setAttachType(AttachType.REGISTRY)
     			.setData(fileData)
@@ -76,11 +73,17 @@ public class UploadDocumentalServlet extends HttpServlet{
     			.setDomain(domain)
     			.setType(RegistryAttachmentType.CORPORATE_IDENTITY.value())
     			.setDate(new Date())
-    			.setScope(null)
+    			.setScope(scopeId)
+    			.setCategory(categoryId)
     			.setConfidential(false)
     			.setDparentId(Long.toString(size));
     	Integer attachId = AON.insertAttach(domain.getName(), domain.getId(), login, attach);
-   	
+    	
+    	if(json.opt("tag") != null && !AonStringUtils.isEmpty(json.optString("tag"))) {
+        	AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attachId, json.optInt("tag"));
+    	}
+
+    	
 //    	attach.setId(attachId);
 //		                   	
 //    	DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);

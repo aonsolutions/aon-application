@@ -27,7 +27,6 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonUserServlet", urlPatterns = {"/ms/api/user/*"})
@@ -38,74 +37,81 @@ public class UserServlet extends AonApiHttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON USER SERVLET - GET METHOD");
-		super.doGet(req, resp);
+		try {
+			super.doGet(req, resp);
 		
-		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-		
-		if(pathInfo != null) {
-			if("app".equalsIgnoreCase(pathInfo[1])) {
-				String user = req.getParameter("user");
-				Integer userId = AonNumberUtils.toInteger(user);
-				JSONArray json = getDomainUserRoles(getDomain(), getToken(), userId);
-				response(req, resp, json);
-			} else if("notice".equalsIgnoreCase(pathInfo[1])) {
+			switch (getPath()) {
+			case "/":
+				response(req, resp, getDomainUsers());
+				break;
+			case "/app":
+				response(req, resp, getDomainUserRoles());
+				break;
+			case "/notice":
 				List<String> schemas = AONContext.getSchemas();
 				RawdocUserData rawdocUserData = new RawdocUserData();
 				for(String schema : schemas) {
 					rawdocUserData.append(AON.getRawdocUserData(getToken(), schema));
 				}
 				response(req, resp, rawdocUserData.toJSON());
-			} else if("info".equalsIgnoreCase(pathInfo[1])) {
-				String user = req.getParameter("user");
-				Integer userId = AonNumberUtils.toInteger(user);
-				JSONObject json = getDomainUser(getDomain(), getToken(), userId);
-				response(req, resp, json);
+				break;
+			case "/info":
+				response(req, resp, getDomainUser());
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
 			}
-		} else {
-			JSONArray jsArray = new JSONArray();
-			
-			AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), "").forEach(r -> {
-				JSONObject json = new JSONObject();
-				if(r.getAuth() != null) {
-					Auth auth = AON_SOLUTIONS.getAuth(getDomain().getName(), getDomain().getId(), r.getAuth());
-					if(auth.getEmail() == null) {
-						auth = AON_SOLUTIONS.getAuth(r.getAuth());
-					}
-					json.put("id", r.getId());
-					json.put("email", auth.getEmail());
-					json.put("uuid", auth.getUuid());
-					json.put("name", auth.getName() != null ? auth.getName() : r.getName());
-					json.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
-					json.put("document", auth.getDocument() != null ? auth.getDocument() : "");
-					json.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
-					json.put("roles", getUserRoles(getDomain(), r));
-					jsArray.put(json);
-				} else jsArray.put(userToJSON(r, json));
-			});
-			response(req, resp, jsArray);
+		} catch (Exception e) {
+			error(req, resp, e);
 		}
 	}
 
-	private JSONArray getDomainUserRoles(Domain domain, String token, Integer userId) {
+	private JSONArray getDomainUserRoles() {
+		Integer userId = getParams().opt("user") != null ? getParams().optInt("user") : null;
 		User user = new User();
 		if(userId != null) {
-			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(userId));
+			user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(userId));
 		} else {
-			AonToken aonToken = SECURITY.getAonToken(token);
-			user = AON.getUser(domain.getName(), domain.getId(), "", f -> 
-				(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+			AonToken aonToken = SECURITY.getAonToken(getToken());
+			user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> 
+				(f.getDomainProperty().eq(getDomain().getId()).or(f.getDomainProperty().eq(getDomain().getParentId())))
 				.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
 		}
-		return getUserRoles(domain, user);
+		return getUserRoles(getDomain(), user);
 	}
 	
-	private JSONObject getDomainUser(Domain domain, String token, Integer userId) {
-		AonToken aonToken = SECURITY.getAonToken(token);
+	private JSONArray getDomainUsers() {
+		JSONArray jsArray = new JSONArray();
+		
+		AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), "").forEach(r -> {
+			JSONObject json = new JSONObject();
+			if(r.getAuth() != null) {
+				Auth auth = AON_SOLUTIONS.getAuth(getDomain().getName(), getDomain().getId(), r.getAuth());
+				if(auth.getEmail() == null) {
+					auth = AON_SOLUTIONS.getAuth(r.getAuth());
+				}
+				json.put("id", r.getId());
+				json.put("email", auth.getEmail());
+				json.put("uuid", auth.getUuid());
+				json.put("name", auth.getName() != null ? auth.getName() : r.getName());
+				json.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
+				json.put("document", auth.getDocument() != null ? auth.getDocument() : "");
+				json.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
+				json.put("roles", getUserRoles(getDomain(), r));
+				jsArray.put(json);
+			} else jsArray.put(userToJSON(r, json));
+		});
+		return jsArray;
+	}
+	
+	private JSONObject getDomainUser() {
+		Integer userId = getParams().opt("user") != null ? getParams().optInt("user") : null;
+		AonToken aonToken = SECURITY.getAonToken(getToken());
 		User user = new User();
 		if(userId != null) {
-			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(userId));
-		} else user = AON.getUser(domain.getName(), domain.getId(), "", f -> 
-				(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+			user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(userId));
+		} else user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> 
+				(f.getDomainProperty().eq(getDomain().getId()).or(f.getDomainProperty().eq(getDomain().getParentId())))
 				.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
 
 		JSONObject json = new JSONObject();
@@ -161,21 +167,19 @@ public class UserServlet extends AonApiHttpServlet {
 	}
 	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp){
-		LOGGER.info("USER SERVLET - POST METHOD");
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
 		try {
-			super.doPost(req, resp);
-			String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-	
-			JSONObject json = new JSONObject();
-			if(pathInfo != null) {
-				if("app".equalsIgnoreCase(pathInfo[1])) {
-					setUserAppRole();
-				}
-			} else {
-				json = setUser();
+			switch (getPath()) {
+			case "/":
+				response(req, resp, setUser());
+				break;
+			case "/app":
+				response(req, resp, setUserAppRole());
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
 			}
-			response(req, resp, json);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -204,7 +208,7 @@ public class UserServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private void setUserAppRole(){
+	private JSONObject setUserAppRole(){
 		String domainName = getData().optString("domain");
 		String app = getData().optString("app");
 		JSONArray roles = getData().optJSONArray("roles");
@@ -271,6 +275,8 @@ public class UserServlet extends AonApiHttpServlet {
 				}
 			}
 		}
+		
+		return new JSONObject();
 	}
 	
 	private JSONObject setUser() throws Exception {
