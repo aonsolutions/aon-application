@@ -361,7 +361,8 @@ public class CalendarDaysType implements Serializable {
 					// Si la fecha fin del nuevo es posterior al analizado, no se añade
 					}else if(afterOrEqual(newCalendarDayType.getEndDate(), calendarDayType.getEndDate())) {
 						continue;
-					} else if(newCalendarDayType.getEndDate().before(calendarDayType.getEndDate()) && newCalendarDayType.getEndDate().after(calendarDayType.getStartDate())) {
+					} else if(before(newCalendarDayType.getEndDate(),calendarDayType.getEndDate()) 
+							&& after(newCalendarDayType.getEndDate(),calendarDayType.getStartDate())) {
 						Date newStartDate = DateUtils.copyDateOnly(newCalendarDayType.getEndDate());
 						DateUtils.addDays2Date(newStartDate, 1);
 						DateUtils.resetTime(newStartDate);
@@ -408,13 +409,13 @@ public class CalendarDaysType implements Serializable {
 							continue;
 						}
 					// Si el elemento a añadir es el mismo tramo de la lista
-					} else if(calendarDayType.getEndDate().equals(newCalendarDayType.getEndDate()) &&
-							calendarDayType.getStartDate().equals(newCalendarDayType.getStartDate())) {
+					} else if(equals(calendarDayType.getEndDate(),newCalendarDayType.getEndDate()) &&
+							equals(calendarDayType.getStartDate(),newCalendarDayType.getStartDate())) {
 						newDayTypeList.add(newCalendarDayType);
 						added = true;
 						continue; 
 					// Si el elemento a añadir es posterior al tramo de la lista
-					} else if(calendarDayType.getEndDate().before(newCalendarDayType.getStartDate()) &&
+					} else if(before(calendarDayType.getEndDate(),newCalendarDayType.getStartDate()) &&
 							!isBetween(calendarDayType, newCalendarDayType)) {
 						newDayTypeList.add(calendarDayType);
 						continue;
@@ -429,15 +430,15 @@ public class CalendarDaysType implements Serializable {
 							postNewCalendarDayType = new CalendarDayType(newStartDate, calendarDayType.getEndDate(), calendarDayType.getDayType(), calendarDayType.getExpession());
 						}
 						
-						if(!newCalendarDayType.getStartDate().equals(calendarDayType.getStartDate()) &&
-							!newCalendarDayType.getEndDate().equals(calendarDayType.getEndDate()) &&
+						if(!equals(newCalendarDayType.getStartDate(),calendarDayType.getStartDate()) &&
+							!equals(newCalendarDayType.getEndDate(),calendarDayType.getEndDate()) &&
 							!isBetween(calendarDayType, newCalendarDayType)) {
 							Date newEndDate = DateUtils.copyDateOnly(newCalendarDayType.getStartDate());
 							newEndDate = DateUtils.deleteDays2Date(newEndDate, 1);
 							calendarDayType.setEndDate(newEndDate);
 							
 							newDayTypeList.add(calendarDayType);
-						} else if(newCalendarDayType.getEndDate().equals(calendarDayType.getEndDate())) {
+						} else if(equals(newCalendarDayType.getEndDate(),calendarDayType.getEndDate())) {
 							Date newEndDate = DateUtils.copyDateOnly(newCalendarDayType.getStartDate());
 							newEndDate = DateUtils.deleteDays2Date(newEndDate, 1);
 							calendarDayType.setEndDate(newEndDate);
@@ -460,7 +461,7 @@ public class CalendarDaysType implements Serializable {
 						added = true;
 						continue;
 					} else if (beforeOrEqual(newCalendarDayType.getEndDate(), calendarDayType.getStartDate())) {
-						if(newCalendarDayType.getEndDate().equals(calendarDayType.getStartDate())) {
+						if(equals(newCalendarDayType.getEndDate(),calendarDayType.getStartDate())) {
 							Date newStartDate = DateUtils.copyDateOnly(calendarDayType.getStartDate());
 							DateUtils.addDays2Date(newStartDate, 1);
 							calendarDayType.setStartDate(newStartDate);
@@ -779,14 +780,7 @@ public class CalendarDaysType implements Serializable {
 		return day + "/" + month + "/" + year;
 	}
 	
-	private boolean beforeOrEqual(Date date1, Date date2) {
-		return date1.before(date2) || date1.equals(date2);
-	}
-	
-	private boolean afterOrEqual(Date date1, Date date2) {
-		return date1.after(date2) || date1.equals(date2);
-	}
-	
+
 	private boolean isNullOrEndContract(Date date) {
 		return null == date || date.equals(getContractEndDate());
 	}
@@ -815,6 +809,52 @@ public class CalendarDaysType implements Serializable {
 			result += " DayType : " + calendarDayType.getDayType() + "\n";
 		}
 		return result + "\n";
+	}
+	
+	private static boolean equals(Object obj1, Object obj2 ) {
+		if (obj1 == obj2) {
+			return true;
+		}
+		if (obj1 == null || obj2 == null) {
+			return false;
+		}
+		return obj1.equals(obj2);		
+	}
+	
+	private static boolean before(Date date1, Date date2) {
+		if (date1 == date2) {
+			return false;
+		}
+		if (date2 == null) {
+			return true;
+		}
+		if (date1 == null) {
+			return false;
+		}
+		
+		return date1.before(date2) ;
+	}
+
+	private static boolean after(Date date1, Date date2) {
+		if (date1 == date2) {
+			return false;
+		}
+		if (date2 == null) {
+			return false;
+		}
+		if (date1 == null) {
+			return true;
+		}
+		
+		return date1.after(date2) ;
+	}
+
+	private static boolean beforeOrEqual(Date date1, Date date2) {
+		return before(date1, date2) || equals(date1, date2);
+	}
+	
+	private static boolean afterOrEqual(Date date1, Date date2) {
+		return after(date1, date2) || equals(date1, date2);
 	}
 	
 	// -----------------------------------------------------
