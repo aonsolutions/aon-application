@@ -9,10 +9,11 @@ import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -116,7 +117,7 @@ public class MainContrataITObject {
 				});
 	}
 	
-	public void comunicateIT(ITEmployee itEmployee, IT it, Consumer<Boolean> success, Consumer<Throwable> failure) {
+	public void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Boolean> success, Consumer<Throwable> failure) {
 		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
 				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
 					
@@ -163,6 +164,164 @@ public class MainContrataITObject {
 						});
 					}
 					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+	}
+	
+	public void comunicateITBaja(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
+				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
+					
+					@Override
+					public void onSuccess(EmployeeSegSocial result) {
+						String naf = result.getNss();
+						String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
+						String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
+							
+						float baseCC = it.getDailyCGCBase().floatValue();
+						int days = 	30;
+
+						impl.registerITBaja(
+								regime, 
+								ccc, 
+								naf, 
+								getContingency(it.getTypeLowPart()), 
+								"ACTIVO", 
+								getLicenseNumber(it), 
+								getCias(it), 
+								itEmployee.getContractInfo().getOcupation(), 
+								it.getStartDate(), 
+								getContractType(itEmployee.getContractInfo().getContractType()), 
+								baseCC, 
+								days, 
+								it.getStartDate(), 
+								null, 
+								new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {
+										success.accept(result);
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {}
+								});
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+	}
+	
+	public void comunicateITConfirmation(ITEmployee itEmployee, IT it, ITPart confirmationPart, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
+				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
+					
+					@Override
+					public void onSuccess(EmployeeSegSocial result) {
+						String naf = result.getNss();
+						String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
+						String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
+							
+						impl.registerITConfirmation(
+								regime, 
+								ccc, 
+								naf, 
+								getContingency(it.getTypeLowPart()), 
+								"ACTIVO", 
+								confirmationPart.getCollegeNumber(), 
+								confirmationPart.getCias(), 
+								confirmationPart.getDate(), 
+								confirmationPart.getDate(), 
+								null, new AsyncCallback<Void>() {
+
+									@Override
+									public void onFailure(Throwable caught) {}
+
+									@Override
+									public void onSuccess(Void result) {
+										success.accept(result);
+									}
+								});
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+	}
+	
+	public void comunicateITAlta(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
+				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
+					
+					@Override
+					public void onSuccess(EmployeeSegSocial result) {
+						String naf = result.getNss();
+						String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
+						String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
+						
+						impl.registerITAlta(
+								regime, 
+								ccc, 
+								naf, 
+								getContingency(it.getTypeLowPart()), 
+								"ACTIVO", 
+								getLicenseNumberAlta(it), 
+								getCiasAlta(it), 
+								it.getStartDate(), 
+								it.getEndDate(), 
+								null, 
+								null, 
+								getCauseType(it.getTypeHighPart()), 
+								new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {
+										success.accept(result);
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {}
+								});
+						
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+	}
+	
+	public void removeIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
+				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
+					
+					@Override
+					public void onSuccess(EmployeeSegSocial result) {
+						String naf = result.getNss();
+						String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
+						String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
+						
+						impl.removeIT(
+								regime, 
+								ccc, 
+								naf, 
+								"ALTA", 
+								it.getStartDate(), 
+								it.getStartDate(), 
+								new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void result) {
+								success.accept(result);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {}
+						});
+						
+					}
+
 					@Override
 					public void onFailure(Throwable caught) {}
 				});
@@ -269,7 +428,7 @@ public class MainContrataITObject {
 				allITsList.add(it);
 				if(it.getEndDate() == null || it.getEndDate().after(currentDate)) {
 					itsList.add(it);
-					String description = fullName + (StringUtils.isBlank(it.getDescription()) ? "" : " " + it.getDescription())
+					String description = fullName + (AonStringUtils.isBlank(it.getDescription()) ? "" : " " + it.getDescription())
 							+ " " + parseShortLowCauseByte(it.getTypeLowPart()) + " (" + formatFullDate.format(it.getStartDate()) + ")" ;
 					itsFilterMap.put(description, it.getId());
 				}
@@ -311,10 +470,10 @@ public class MainContrataITObject {
 		List<Integer> contractIds = new ArrayList<Integer>();
 		
 		for(Entry<String, Integer> entry : employeesFilterMap.entrySet()) {
-			if(StringUtils.containsIgnoreCase(entry.getKey(), value) ||
-			   StringUtils.contains(entry.getKey(), value) ||
-			   StringUtils.equals(entry.getKey(), value) ||
-			   StringUtils.equalsIgnoreCase(entry.getKey(), value)) {
+			if(AonStringUtils.containsIgnoreCase(entry.getKey(), value) ||
+					AonStringUtils.contains(entry.getKey(), value) ||
+					AonStringUtils.equals(entry.getKey(), value) ||
+					AonStringUtils.equalsIgnoreCase(entry.getKey(), value)) {
 				
 				contractIds.add(entry.getValue());
 			}
@@ -336,10 +495,10 @@ public class MainContrataITObject {
 		List<Integer> itIds = new ArrayList<Integer>();
 		
 		for(Entry<String, Integer> entry : itsFilterMap.entrySet()) {
-			if(StringUtils.containsIgnoreCase(entry.getKey(), value) ||
-			   StringUtils.contains(entry.getKey(), value) ||
-			   StringUtils.equals(entry.getKey(), value) ||
-			   StringUtils.equalsIgnoreCase(entry.getKey(), value)) {
+			if(AonStringUtils.containsIgnoreCase(entry.getKey(), value) ||
+					AonStringUtils.contains(entry.getKey(), value) ||
+					AonStringUtils.equals(entry.getKey(), value) ||
+					AonStringUtils.equalsIgnoreCase(entry.getKey(), value)) {
 				
 				itIds.add(entry.getValue());
 			}
@@ -427,6 +586,91 @@ public class MainContrataITObject {
 			return "NIF";
 		else
 			return "NIE";
+	}
+	
+
+	
+	private String getContractType(String contractType) {
+		Integer contractTypeInt = Integer.parseInt(contractType);
+		
+		if((contractTypeInt >= 200 && contractTypeInt < 300) || (contractTypeInt >= 500 && contractTypeInt< 600 || contractTypeInt == 0))
+			return "FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL";
+		else
+			return "RESTO_Y_AUTONOMOS";
+	}
+
+	private String getLicenseNumber(IT it) {
+		for( ITPart itPart : it.getITParts()) {
+			if(itPart.getType() == (byte)0)
+				return itPart.getCollegeNumber();
+		}
+		return "";
+	}
+	
+	private String getCias(IT it) {
+		for( ITPart itPart : it.getITParts()) {
+			if(itPart.getType() == (byte)0)
+				return itPart.getCias();
+		}
+		return "";
+	}
+	
+	private String getLicenseNumberAlta(IT it) {
+		for( ITPart itPart : it.getITParts()) {
+			if(itPart.getType() == (byte)2)
+				return itPart.getCollegeNumber();
+		}
+		return "";
+	}
+	
+	private String getCiasAlta(IT it) {
+		for( ITPart itPart : it.getITParts()) {
+			if(itPart.getType() == (byte)2)
+				return itPart.getCias();
+		}
+		return "";
+	}
+
+	private String getContingency(Byte typeLowPart) {
+		switch (typeLowPart) {
+		case (byte) 0:
+			return "ENFERMEDAD_COMUN";
+		case (byte) 1:
+			return "ACCIDENT_LABORAL";
+		case (byte) 6:
+			return "ACCIDENTE_NO_LABORAL";
+		case (byte) 7:
+			return "PERIODOS_OBSERVACION";
+		case (byte) 8:
+			return "ENFERMEDAD_PROFESIONAL";
+		default:
+			return "ENFERMEDAD_COMUN";
+		}
+	}
+	
+	private String getCauseType(Byte typeHihgPart) {
+		switch (typeHihgPart) {
+		case (byte) 0:
+			return "CURACION";
+		case (byte) 1:
+			return "FALLECIMIENTO";
+		case (byte) 2:
+			return "INSPECCION_MEDICA";
+		case (byte) 3:
+			return "PROPUESTA_INVALIDEZ";
+		case (byte) 4:
+			return "AGOTAMIENTO_PLAZO";
+		case (byte) 5:
+			return "MEJORIA_PERMITE_TRABAJAR";
+		case (byte) 6:
+			return "INCOMPARECENCIA";
+		case (byte) 7:
+			return "CONTROL_INSS_12_MESES";
+		case (byte) 8:
+			return "RECUP_CAPACIDAD_PROF";
+		default:
+			return "INCOMP_CTOS_FORM";
+		}
 	}
 		
 }

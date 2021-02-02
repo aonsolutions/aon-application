@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 
 import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.SistemaRED_ITParts.PartType;
 import solutions.aon.seg.social.exceptions.SegSocialException; 
 
 @MultipartConfig
@@ -43,6 +44,8 @@ public class ITPDFServlet extends HttpServlet {
 		String dateFromStr = req.getParameter("dateFromStr");
 		String dateToStr = req.getParameter("dateToStr");
 		String startDateStr = req.getParameter("startDateStr");
+		
+		Byte itType = Byte.parseByte(req.getParameter("itType"));
 		
 		Date dateFrom = null;
 		Date dateTo = null;
@@ -73,12 +76,23 @@ public class ITPDFServlet extends HttpServlet {
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 	        
 	        ServletOutputStream output = res.getOutputStream();
-	        byte[] certificatePDF = SistemaRED.getCertificatePdf(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, optionalStartDate);
-			output.write(certificatePDF);
+	        
+	        byte[] certificatePDF = null;
+	        
+	        if(isPartenityPart(itType))
+	        	certificatePDF = SistemaRED.getCertificatePdf(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, optionalStartDate);
+	        else
+	        	certificatePDF = SistemaRED.pdfIT(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, contributionAccount, affiliationNumber, PartType.BAJA, dateFrom, dateFrom);
+	        
+	        output.write(certificatePDF);
 			res.flushBuffer();
 		} catch (SQLException | SegSocialException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private boolean isPartenityPart(Byte itType) {
+		return itType == (byte)2 || itType == (byte)3;
 	}
 
 }

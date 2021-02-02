@@ -13,13 +13,10 @@ public class ITDialogObject {
 	
 	private ITEmployee itEmployee;
 	
-	// ---------------------------------------------------- CONSTRUCTOR
 	public ITDialogObject(ITEmployee itEmployee) {
 		this.itEmployee = itEmployee;
 	}
 
-	// ---------------------------------------------------- ITEmployee METHODS
-	
 	public List<IT> getITList() {
 		return itEmployee.getIts();
 	}
@@ -59,9 +56,10 @@ public class ITDialogObject {
 		return null;
 	}
 	
-	// ---------------------------------------------------- AUXILIAR METHODS
-	
-	// Return true if alta else baja
+	/**
+	 * 
+	 * @return true if ALTA else BAJA
+	 */
 	public boolean getEmployeeStatus() {
 		return this.itEmployee.getStatus() == (byte)0 ? true : false;
 	}

@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.FIEService;
@@ -24,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.FIEService.JsIT;
 import com.esferalia.aon.gwt.payroll.shared.FIEService.JsITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -135,7 +135,6 @@ public class MainContrataIT extends MainEntryPoint {
 	
 	public MainContrataIT() {
 		
-		
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 
@@ -162,7 +161,7 @@ public class MainContrataIT extends MainEntryPoint {
 	}
 
 	// --------------------------------------------------------------------------------------------
-	// 									PROVIDE SALARY DATA GRID
+	// 								PROVIDE EMPLOYEE IT DATA GRID
 	// --------------------------------------------------------------------------------------------
 
 	private void provideEmployeesDataGrid() {
@@ -197,7 +196,6 @@ public class MainContrataIT extends MainEntryPoint {
 
 	}
 	
-
 	private void addEmployeeInfoColumns(NoSelectionModel<ITEmployee> selectionCCCInfoModel) {
 		selectionCCCInfoModel.addSelectionChangeHandler(new Handler() {
 	        
@@ -208,37 +206,25 @@ public class MainContrataIT extends MainEntryPoint {
 	        	
 	        	ITDialog itDialog = new ITDialog(fullName, true) {
 
-					@Override
-					protected void onDelete(IT it) {
-						mainContrataITObject.deleteIT(it,
+	        		@Override
+					protected void onAccept() {
+						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
 								s -> {
 									AonConfirmDialog dialog = new AonConfirmDialog();
-									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 									
-									if(it.isComunicate())
-										mainContrataITObject.deleteComunicateIT(employeeITInfo, it, t -> {
-											mainContrataITObject.getEmployeesInfo(false,
-													a -> {
-														initContractTable();
-														setTableHeights();
-													},
-													b -> {}
-											);
-										}, d -> {});
-									else
-										mainContrataITObject.getEmployeesInfo(false,
-												t -> {
-													initContractTable();
-													setTableHeights();
-												},
-												d -> {}
-										);
-									
+									mainContrataITObject.getEmployeesInfo(false,
+											t -> {
+												initContractTable();
+												setTableHeights();
+											},
+											d -> {}
+									);
 								},
 								f -> {});
 					}
-
-					@Override
+	        		
+	        		@Override
 					protected void onAcceptIT(IT it) {
 						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
 								s -> {
@@ -253,7 +239,51 @@ public class MainContrataIT extends MainEntryPoint {
 						
 												@Override
 												public void onAccept() {
-													mainContrataITObject.comunicateIT(employeeITInfo, it, t -> {
+													mainContrataITObject.comunicateITBaja(employeeITInfo, it, t -> {
+														AonConfirmDialog dialog = new AonConfirmDialog();
+														dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+														
+														getITCertificatePDF(employeeITInfo, it);
+														
+														refreshTableIT();
+														
+													}, d -> {});
+												}
+						
+												private void refreshTableIT() {
+													mainContrataITObject.getEmployeesInfo(false,
+															a -> {
+																initContractTable();
+																initITTable();
+															},
+															b -> {}
+													);
+												}
+
+												@Override
+												public void onCancel() {
+													refreshTableIT();
+												}});	
+								},
+								f -> {});
+					}
+	        		
+	        		@Override
+					protected void onAcceptPaternityIT(IT it) {
+						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
+								s -> {
+									AonConfirmDialog dialog = new AonConfirmDialog();
+									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
+									
+									AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+									comunicateDialog.confirm(
+											"COMUNIC" + String.valueOf("\u0040"), 
+											String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+											new AonConfirmDialogCallback() {
+						
+												@Override
+												public void onAccept() {
+													mainContrataITObject.comunicatePaternityIT(employeeITInfo, it, t -> {
 														AonConfirmDialog dialog = new AonConfirmDialog();
 														dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
 														
@@ -282,28 +312,70 @@ public class MainContrataIT extends MainEntryPoint {
 								},
 								f -> {});
 					}
+	        		
+	        		@Override
+					protected void onDelete(IT it) {
+						mainContrataITObject.removeIT(employeeITInfo, it,
+								s -> {
+									AonConfirmDialog dialog = new AonConfirmDialog();
+									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+									
+									if(it.isComunicate())
+										mainContrataITObject.deleteComunicateIT(employeeITInfo, it, t -> {
+											mainContrataITObject.getEmployeesInfo(false,
+													a -> {
+														initContractTable();
+														setTableHeights();
+													},
+													b -> {}
+											);
+										}, d -> {});
+									else
+										mainContrataITObject.getEmployeesInfo(false,
+												t -> {
+													initContractTable();
+													setTableHeights();
+												},
+												d -> {}
+										);
+									
+								},
+								f -> {});
+					}
+	        		
+					@Override
+					protected void onDeletePaternity(IT it) {
+						mainContrataITObject.deleteIT(it,
+								s -> {
+									AonConfirmDialog dialog = new AonConfirmDialog();
+									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+									
+									if(it.isComunicate())
+										mainContrataITObject.deleteComunicateIT(employeeITInfo, it, t -> {
+											mainContrataITObject.getEmployeesInfo(false,
+													a -> {
+														initContractTable();
+														setTableHeights();
+													},
+													b -> {}
+											);
+										}, d -> {});
+									else
+										mainContrataITObject.getEmployeesInfo(false,
+												t -> {
+													initContractTable();
+													setTableHeights();
+												},
+												d -> {}
+										);
+									
+								},
+								f -> {});
+					}
 					
 					@Override
 					protected void onShowCertitificateIT(IT it) {
 						getITCertificatePDF(employeeITInfo, it);
-					}
-
-					@Override
-					protected void onAccept() {
-						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
-								s -> {
-									AonConfirmDialog dialog = new AonConfirmDialog();
-									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
-									
-									mainContrataITObject.getEmployeesInfo(false,
-											t -> {
-												initContractTable();
-												setTableHeights();
-											},
-											d -> {}
-									);
-								},
-								f -> {});
 					}
 	        		
 	        	};
@@ -431,7 +503,7 @@ public class MainContrataIT extends MainEntryPoint {
 	}
 
 	// --------------------------------------------------------------------------------------------
-	// 									PROVIDE SALARY DATA GRID
+	// 									PROVIDE IT DATA GRID
 	// --------------------------------------------------------------------------------------------
 
 	private void provideITsDataGrid() {
@@ -469,39 +541,32 @@ public class MainContrataIT extends MainEntryPoint {
 	        	ITEmployee itEmployee = mainContrataITObject.getEmployeeITInfo(itInfo.getId());
 	        	
 	        	ITDialog itDialog = new ITDialog(fullName, false) {
-
-					@Override
-					protected void onDelete(IT it) {
-						mainContrataITObject.deleteIT(it,
+	        		
+	        		@Override
+					protected void onAccept() {
+						mainContrataITObject.createUpdateITEmployee(itEmployee,
 								s -> {
 									AonConfirmDialog dialog = new AonConfirmDialog();
-									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 									
-									if(it.isComunicate())
-										mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
-											mainContrataITObject.getEmployeesInfo(false,
-													a -> {
-														initContractTable();
-														initITTable();
-													},
-													b -> {}
-											);
-										}, d -> {});
-									else
-										mainContrataITObject.getEmployeesInfo(false,
-												t -> {
-													initContractTable();
-													initITTable();
-												},
-												d -> {}
-										);
-									
+									mainContrataITObject.getEmployeesInfo(false,
+											t -> {
+												initContractTable();
+												setTableHeights();
+											},
+											d -> {}
+									);
 								},
 								f -> {});
 					}
+	        		
+	        		@Override
+					protected void onAcceptIT(IT it) {
+						
+					}
 
 					@Override
-					protected void onAcceptIT(IT it) {
+					protected void onAcceptPaternityIT(IT it) {
 						mainContrataITObject.createUpdateITEmployee(itEmployee,
 								s -> {
 									AonConfirmDialog dialog = new AonConfirmDialog();
@@ -515,7 +580,7 @@ public class MainContrataIT extends MainEntryPoint {
 						
 												@Override
 												public void onAccept() {
-													mainContrataITObject.comunicateIT(itEmployee, it, t -> {
+													mainContrataITObject.comunicatePaternityIT(itEmployee, it, t -> {
 														AonConfirmDialog dialog = new AonConfirmDialog();
 														dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
 														
@@ -544,30 +609,72 @@ public class MainContrataIT extends MainEntryPoint {
 								},
 								f -> {});
 					}
+					
+					@Override
+					protected void onDelete(IT it) {
+						mainContrataITObject.removeIT(itEmployee, it,
+								s -> {
+									AonConfirmDialog dialog = new AonConfirmDialog();
+									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+									
+									if(it.isComunicate())
+										mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
+											mainContrataITObject.getEmployeesInfo(false,
+													a -> {
+														initContractTable();
+														setTableHeights();
+													},
+													b -> {}
+											);
+										}, d -> {});
+									else
+										mainContrataITObject.getEmployeesInfo(false,
+												t -> {
+													initContractTable();
+													setTableHeights();
+												},
+												d -> {}
+										);
+									
+								},
+								f -> {});
+					}
 
+					@Override
+					protected void onDeletePaternity(IT it) {
+						mainContrataITObject.deleteIT(it,
+								s -> {
+									AonConfirmDialog dialog = new AonConfirmDialog();
+									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+									
+									if(it.isComunicate())
+										mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
+											mainContrataITObject.getEmployeesInfo(false,
+													a -> {
+														initContractTable();
+														initITTable();
+													},
+													b -> {}
+											);
+										}, d -> {});
+									else
+										mainContrataITObject.getEmployeesInfo(false,
+												t -> {
+													initContractTable();
+													initITTable();
+												},
+												d -> {}
+										);
+									
+								},
+								f -> {});
+					}
+					
 					@Override
 					protected void onShowCertitificateIT(IT it) {
 						getITCertificatePDF(itEmployee, it);
 					}
 					
-					@Override
-					protected void onAccept() {
-						mainContrataITObject.createUpdateITEmployee(itEmployee,
-								s -> {
-									AonConfirmDialog dialog = new AonConfirmDialog();
-									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
-									
-									mainContrataITObject.getEmployeesInfo(false,
-											t -> {
-												initContractTable();
-												setTableHeights();
-											},
-											d -> {}
-									);
-								},
-								f -> {});
-					}
-	        		
 	        	};
 	        	
 	        	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
@@ -692,6 +799,14 @@ public class MainContrataIT extends MainEntryPoint {
 		itDataGrid.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 	}
 	
+	private void setTableHeights() {
+		employeeDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+		mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
+		
+		itDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+		mainITTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
+	}
+	
 	// --------------------------------------------------------------------------------------------
 	// 										ON MODULE LOAD
 	// --------------------------------------------------------------------------------------------
@@ -725,7 +840,7 @@ public class MainContrataIT extends MainEntryPoint {
 		
 		employeeSB.addKeyUpHandler(e-> {
 			String value = employeeSB.getValue();
-			if(StringUtils.isBlank(value) || value.length() < 3) {
+			if(AonStringUtils.isBlank(value) || value.length() < 3) {
 				mainContrataITObject.resetEmployeesList();
 			} else {
 				List<Integer> employeesContractIds = mainContrataITObject.getEmployeesContractIds(value);
@@ -758,7 +873,7 @@ public class MainContrataIT extends MainEntryPoint {
 		
 		itSB.addKeyUpHandler(e-> {
 			String value = itSB.getValue();
-			if(StringUtils.isBlank(value) || value.length() < 3) {
+			if(AonStringUtils.isBlank(value) || value.length() < 3) {
 				mainContrataITObject.resetITsList();
 			} else {
 				List<Integer> itIds = mainContrataITObject.getITsContractIds(value);
@@ -776,14 +891,6 @@ public class MainContrataIT extends MainEntryPoint {
 			initITTable();
 			itDataGrid.redraw();
 		});
-	}
-
-	private void setTableHeights() {
-		employeeDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-		mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
-		
-		itDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-		mainITTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -1053,11 +1160,6 @@ public class MainContrataIT extends MainEntryPoint {
 	    itDataGrid.getColumnSortList().push(itDataGrid.getColumn(1));    
 	}
 
-	
-	// --------------------------------------------------------------------------------------------
-	// 										UI HANDLERS
-	// --------------------------------------------------------------------------------------------
-	
 	// --------------------------------------------------------------------------------------------
 	// 										AUXILIAR METHODS
 	// --------------------------------------------------------------------------------------------
@@ -1240,7 +1342,6 @@ public class MainContrataIT extends MainEntryPoint {
 		contractInfo.setJourneytypeId(jsContractInfo.getJourneytypeId());
 		contractInfo.setContractmodelId(jsContractInfo.getContractmodelId());
 		contractInfo.setRetaId(jsContractInfo.getRetaId());
-//		contractInfo.setContractJourneyDuration(jsContractInfo.getContractJourneyDuration());
 		contractInfo.setOldStartDate(parseDate(jsContractInfo.getOldStartDate()));
 		contractInfo.setOldEndDate(parseDate(jsContractInfo.getOldEndDate()));
 		contractInfo.setHasPayroll(jsContractInfo.getHasPayroll());
@@ -1518,7 +1619,8 @@ public class MainContrataIT extends MainEntryPoint {
 		            + "&contributionAccount=" + contributionAccount
 		            + "&dateFromStr=" + dateFromStr
 					+ "&dateToStr=" + dateToStr
-					+ "&startDateStr=" + startDateStr;
+					+ "&startDateStr=" + startDateStr
+					+ "&itType=" + it.getTypeLowPart();
 			
 			Window.open(fileDownloadURL+query, "ITExporter", "resizable=yes,scrollbars=yes,status=yes");
 		}, f -> {});
