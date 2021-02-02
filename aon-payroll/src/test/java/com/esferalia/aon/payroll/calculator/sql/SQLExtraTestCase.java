@@ -2466,7 +2466,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 		Assert.assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getTotalPayment());
 		Assert.assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getIrpfBase());
-		Assert.assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase());
+		Assert.assertEquals((900.00/2.00) * ( 1.00 + 1.00/6.00 ), salary.getCommonBase(),DELTA);
 	}
 
 	@Test
