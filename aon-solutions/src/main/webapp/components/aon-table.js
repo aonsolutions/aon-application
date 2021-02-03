@@ -114,6 +114,7 @@ export class AonTable extends AonElement {
     if (!body) return true;
     let tr = document.createElement("tr");
     tr.style.cursor = "pointer";
+
     body.appendChild(tr);
     let checkBoxId = `aaa${body.children.length}`;
     if (this.hasAttribute("selectable")) {
@@ -142,6 +143,10 @@ export class AonTable extends AonElement {
     this.columns.forEach((item, i) => {
       let td = document.createElement("td");
       td.style.width = item.width;
+      // if("number" === item.type) {
+      //   td.style.textAlign = "right";
+      //   td.style.paddingRight = "2%";
+      // }
       let id = item.id;
       if ("option" === id) {
         td.innerHTML = `<aon-icon-button id="${this.getId()}IconOption" icon="more_vert"></aon-icon-button>`;

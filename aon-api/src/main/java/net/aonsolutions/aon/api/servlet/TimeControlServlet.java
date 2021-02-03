@@ -179,8 +179,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	}
 	
 	private void save(TaskHolder taskHolder) {
-//		Coordinates coordinates = new Coordinates(getData().optString("coordinates"));
-		Coordinates coordinates = new Coordinates().setLatitude(42.867856824038334).setLongitude(-2.6972596099868706);
+		Coordinates coordinates = new Coordinates(getData().optString("coordinates"));
 		Date fecha = !getData().optString("date").isEmpty() ?  Toolkit.parseDate(getData().optString("date"), "yyyy-MM-dd HH:mm") : new Date();
 		Location lc =  !getData().optString("location").isEmpty() 
 				? AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  f -> f.getIdProperty().ge(getData().optInt("location")) )

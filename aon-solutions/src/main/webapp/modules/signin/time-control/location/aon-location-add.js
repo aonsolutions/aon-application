@@ -170,6 +170,7 @@ export class AonLocationAdd extends AonElement {
     let iframe = this.createElement("iframe");
     iframe.id = iframeId;
     iframe.frameborder = 0;
+    // max-width:640px;
     iframe.style = "border:0;height: 400px;width: 100%;";
     if (data && data.latitude && data.longitude) {
       iframe.src = `https://maps.google.es/maps?q=${data.latitude},${data.longitude}&z=${zoom}&output=embed&hl=es`;

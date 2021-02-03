@@ -64,7 +64,7 @@ public class LocationServlet extends AonApiHttpServlet{
 		switch (route) {
 			case "list":
 				LOGGER.info("TIMECONTROL SERVLET - LOCATION-LIST");
-				obj = getLocationList(aonToken, getParams());
+				obj = getLocationList(aonToken);
 				break;
 			case "save":
 				LOGGER.info("TIMECONTROL SERVLET - LOCATION-SAVE");
@@ -80,7 +80,7 @@ public class LocationServlet extends AonApiHttpServlet{
 		return obj;
 	}
 	
-	private Object getLocationList(AonToken aonToken, JSONObject json) {
+	private Object getLocationList(AonToken aonToken) {
 		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getLocationStream(getDomain(), "", f -> f.getDomainProperty().eq(getDomain().getId()))
 		.forEach(lc -> {
@@ -98,8 +98,7 @@ public class LocationServlet extends AonApiHttpServlet{
 				.setDescription(getData().optString("description"))
 				.setCoordinates(coordinates)
 				.setRadio(getData().optInt("radio"))
-				.setId(getData().optInt("id"))
-				;
+				.setId(getData().optInt("id"));
 
 		location = AON_SOLUTIONS.saveLocation(getDomain(), "", location);
 		JSONObject respObject = location.toJSON();

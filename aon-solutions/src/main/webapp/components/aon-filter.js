@@ -55,7 +55,7 @@ export class AonFilter extends AonElement {
     let d = this.getElement(this.DIALOG);
     d.setTitle(this.title);
     if (!this.isMobile()) d.width = "400px";
-    let htmlContent = `<form id="${this.id}Form">`;
+    let htmlContent = `<form id="${this.id}Form" action="#">`;
     inputs.forEach((attribute) => {
       htmlContent = htmlContent + this.getInput(attribute);
     });

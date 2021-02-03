@@ -103,9 +103,9 @@ export class AonLocationList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumn("Nombre", "string", "description", "40%");
-      aonTable.addColumn("Latitud", "string", "latitude", "20%");
-      aonTable.addColumn("Longitud", "string", "longitude", "20%");
-      aonTable.addColumn("Radio", "string", "radio", "10%");
+      aonTable.addColumn("Latitud", "number", "latitude", "20%");
+      aonTable.addColumn("Longitud", "number", "longitude", "20%");
+      aonTable.addColumn("Radio", "number", "radio", "10%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();

@@ -130,7 +130,8 @@ export class AonDate extends AonElement {
     previous.style.position = 'absolute';
     previous.style.left = '0px';
     previous.style.top = '5px';
-    previous.addEventListener('click', () => {
+    previous.addEventListener('click', (ev) => {
+      ev.preventDefault();
       this.previousMonth();
     });
 
@@ -149,7 +150,8 @@ export class AonDate extends AonElement {
     next.style.position = 'absolute';
     next.style.right = '0px';
     next.style.top = '5px';
-    next.addEventListener('click', () => {
+    next.addEventListener('click', (ev) => {
+      ev.stopPropagation();
       this.nextMonth();
     });
 

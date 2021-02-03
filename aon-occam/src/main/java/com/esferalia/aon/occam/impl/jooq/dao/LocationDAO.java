@@ -5,20 +5,15 @@ import static com.esferalia.aon.jooq.tables.Location.LOCATION;
 import java.math.BigDecimal;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import org.jooq.DSLContext;
-import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.Param;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.FullInvoiceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.LocationPropertiesDAO;
 
 
@@ -86,20 +81,17 @@ public class LocationDAO {
 		Param<Double> lt = DSL.val(coordinates.getLatitude());
 		Param<Double> lg = DSL.val(coordinates.getLongitude());
 		Field<BigDecimal> pi = DSL.pi();
-		Field<BigDecimal> distance = DSL.acos(
-		DSL.sin( lt.mul(pi).div(180) )
-		.mul( DSL.sin(LOCATION.LATITUDE.mul(pi).div(180) ) )
-		.add(
-				DSL.cos(lt.mul(pi).div(180))
-				.mul(DSL.cos(LOCATION.LATITUDE.mul(pi).div(180) ) )
-				.mul(lg.sub(LOCATION.LONGITUDE).mul(pi).div(180))
-				.mul(DSL.val(180).div(pi))	
-		)
-		.mul(180).div(pi))
-		.mul(60)
-		.mul(1.1515)
-		.mul(1609.344)
-		.as("distance");
+		
+		Field<BigDecimal> f1 = DSL.sin(lt.mul(pi).div(180))
+				.mul(DSL.sin(LOCATION.LATITUDE.mul(pi).div(180)));
+		
+		Field<BigDecimal> f2 = DSL.cos(lt.mul(pi).div(180))
+				.mul(DSL.cos(LOCATION.LATITUDE.mul(pi).div(180)))
+				.mul(DSL.cos(lg.sub(LOCATION.LONGITUDE).mul(pi.div(180))));
+		
+		Field<BigDecimal> f3 = DSL.acos( f1.add(f2)).mul(DSL.val(180).div(pi));
+
+		Field<BigDecimal> distance = f3.mul(DSL.val(60).mul(1.1515).mul(1609.344)).as("distance");
 		
 		return ctx.getDslContext().select(
 				LOCATION.ID, LOCATION.DOMAIN, LOCATION.RADIO, LOCATION.DESCRIPTION, 
@@ -107,15 +99,9 @@ public class LocationDAO {
 		.from(LOCATION)
 		.where(LOCATION.DOMAIN.eq(ctx.getDomainId()))
 		.having(distance.le(LOCATION.RADIO.cast(BigDecimal.class)))
-		.orderBy(distance.asc()).limit(1)
-		.fetch().stream().map( new LocationFiller() )
+		.orderBy(distance.asc()).limit(1).fetch().stream().map( new LocationFiller() )
 		.findFirst().orElse(new Location());
-		
 	}
-	
-	
-	
-	
 	
 	public static class LocationFiller  implements Function<Record, Location> {
 		@Override
