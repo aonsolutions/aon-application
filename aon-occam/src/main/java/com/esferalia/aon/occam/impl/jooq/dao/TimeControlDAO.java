@@ -1,10 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Location.LOCATION;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TimeControlPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO.TaskHolderFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -43,7 +44,22 @@ public class TimeControlDAO {
 			.join(DOMAIN).on(TIMECONTROL.DOMAIN.eq(DOMAIN.ID))
 			.leftOuterJoin(LOCATION).on(LOCATION.ID.eq(TIMECONTROL.LOCATION))
 			.where(TIMECONTROL_PROPERTIES.getConditions(filter))
+			.orderBy(TIMECONTROL.DATE.asc())
 			.fetch().stream().map(new TimeControlDetailFiller());
+	}
+	
+	public static TimeControlDetail getLastTimeControlDetail(AONContext ctx, TimeControlFilter filter) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+			.select()
+			.from(TIMECONTROL)
+			.join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TIMECONTROL.TASK_HOLDER))
+			.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+			.join(DOMAIN).on(TIMECONTROL.DOMAIN.eq(DOMAIN.ID))
+			.leftOuterJoin(LOCATION).on(LOCATION.ID.eq(TIMECONTROL.LOCATION))
+			.where(TIMECONTROL_PROPERTIES.getConditions(filter))
+			.orderBy(TIMECONTROL.DATE.desc()).limit(1)
+			.fetch().stream().map(new TimeControlDetailFiller()).findFirst().orElse(new TimeControlDetail());
 	}
 	
 	public static LinkedList<TimeControlDetail> getTimeControlDetailList(AONContext ctx, TimeControlFilter filter) {
@@ -64,10 +80,11 @@ public class TimeControlDAO {
 			.and(f.getDateProperty().ge(startTimestamp))
 			.and(f.getDateProperty().le(endTimestamp)));
 		
-		list.stream().map(r -> r.getTaskHolder().getId()).distinct().forEach(thId -> {
-			TimeControl tc = buildTimeControl(list.stream().filter(f -> f.getTaskHolder().getId().equals(thId)));
-			tcList.add(tc);
-		});
+		TaskDAO.getTaskHolderStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getUserIdProperty().isNotNull())).forEach(th -> {
+				TimeControl tc = buildTimeControl(ctx, th.getId(), list.stream().filter(f -> f.getTaskHolder().getId().equals(th.getId())));
+				tcList.add(tc);
+			});
 		return tcList.stream();
 	}
 	
@@ -92,27 +109,27 @@ public class TimeControlDAO {
 				Date aDate = AonDateUtils.getDateWithoutTime(date);
 				Date bDate = AonDateUtils.addDays(aDate, 1);
 				Date cDate = AonDateUtils.addSeconds(bDate, -1);
-				TimeControl tc = buildTimeControl(list.stream().filter(f -> (f.getDate().compareTo(aDate) >= 0 && f.getDate().compareTo(cDate) <= 0)));
+				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (f.getDate().compareTo(aDate) >= 0 && f.getDate().compareTo(cDate) <= 0)));
 				tcList.add(tc);
 			});
 		} else if(TimeControlGroup.WEEK.equals(group)) {
 			list.stream().map(r -> AonDateUtils.getFirstDayOfWeek(AonDateUtils.getDateWithoutTime(r.getDate()))).distinct().forEach(date -> {
 				Date bDate = AonDateUtils.addDays(date, 7);
 				Date cDate = AonDateUtils.addSeconds(bDate, -1);
-				TimeControl tc = buildTimeControl(list.stream().filter(f -> (f.getDate().compareTo(date) >= 0 && f.getDate().compareTo(cDate) <= 0)));
+				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (f.getDate().compareTo(date) >= 0 && f.getDate().compareTo(cDate) <= 0)));
 				tcList.add(tc);
 			});
 		} else if(TimeControlGroup.MONTH.equals(group)) {
 			list.stream().map(r -> AonDateUtils.getMonth(r.getDate()) +"/"+ AonDateUtils.getYear(r.getDate())).distinct().forEach(date -> {
 				String[] a = date.split("/");
-				TimeControl tc = buildTimeControl(list.stream().filter(f -> (
+				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (
 						AonDateUtils.getMonth(f.getDate()) == Integer.parseInt(a[0])
 						&& AonDateUtils.getYear(f.getDate()) == Integer.parseInt(a[1]))));
 				tcList.add(tc);
 			});
 		} else if(TimeControlGroup.YEAR.equals(group)) {
 			list.stream().map(r -> AonDateUtils.getYear(r.getDate())).distinct().forEach(year -> {
-				TimeControl tc = buildTimeControl(list.stream().filter(f -> AonDateUtils.getYear(f.getDate()) == year));
+				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> AonDateUtils.getYear(f.getDate()) == year));
 				tcList.add(tc);
 			});
 		}
@@ -128,7 +145,7 @@ public class TimeControlDAO {
 		Timestamp startTimestamp = new Timestamp(startDate.getTime());
 		Timestamp endTimestamp = new Timestamp(endDate.getTime());
 		
-		return buildTimeControl(getTimeControlDetailStream(ctx, f -> 
+		return buildTimeControl(ctx, taskHolderId, getTimeControlDetailStream(ctx, f -> 
 			f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getDateProperty().ge(startTimestamp))
 				.and(f.getDateProperty().le(endTimestamp))
@@ -166,8 +183,9 @@ public class TimeControlDAO {
 		return tcd;
 	}
 	
-	private static TimeControl buildTimeControl(Stream<TimeControlDetail> details) {
+	private static TimeControl buildTimeControl(AONContext ctx, Integer taskHolderId, Stream<TimeControlDetail> details) {
 		TimeControl tc = new TimeControl().setTime(0L);
+		
 		details.forEach(r -> {
 			tc.setLastDate(r.getDate());
 			if(tc.getStatus() == null) {
@@ -190,6 +208,16 @@ public class TimeControlDAO {
 			tc.setLastLocation(r.getLocation());
 			tc.setLastCoordinates(r.getCoordinates());
 		});
+		
+		if(tc.getDetail().isEmpty()) {
+			TimeControlDetail tcd = getLastTimeControlDetail(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getTaskHolderProperty().eq(taskHolderId)));
+
+			tc.setLastCoordinates(tcd.getCoordinates());
+			tc.setLastDate(tcd.getDate());
+			tc.setLastLocation(tcd.getLocation());
+			tc.setTaskHolder(TaskDAO.getTaskHolderStream(ctx, f -> f.getIdProperty().eq(taskHolderId)).findFirst().orElse(new TaskHolder()));
+		}
 		return tc;
 	}
 

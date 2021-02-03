@@ -769,7 +769,8 @@ public class TaskDAO {
 		return ctx.getDslContext().select()
 				.from(TASK_HOLDER).join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 				.join(DOMAIN).on(DOMAIN.ID.eq(TASK_HOLDER.DOMAIN))
-				.join(USER).on(USER.AUTH.eq(auth))
+				.join(USER).on(USER.ID.eq(TASK_HOLDER.USER_ID))
+				.where(USER.AUTH.eq(auth))
 				.fetch().stream().map(new TaskHolderFiller());
 	}
 

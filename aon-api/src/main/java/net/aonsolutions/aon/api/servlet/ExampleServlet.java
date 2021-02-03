@@ -37,6 +37,7 @@ public class ExampleServlet extends AonApiHttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
 		try {
+			super.doPost(req, resp);
 			switch (getPath()) {
 			case "/":
 				response(req, resp, getResponseObject());
