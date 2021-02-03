@@ -3,6 +3,7 @@ package aon.sepe.objects;
 import java.util.Date;
 
 public class Contract {
+	private String sepeId;
 	private String cifEnterprise;
 	private String regimen;
 	private String ctaCti;
@@ -23,19 +24,29 @@ public class Contract {
 	private Date dateIniContract;
 	private Date dateFinContract;
 	private Date dateBirth;
+	private Date dateComContract;
 	private OfferType offer;
 	private JndType jndType;
 	private String durationTypeJndHour;
 	private String durationTypeJndMin;
 	private String durationTypeCvnHour;
 	private String durationTypeCvnMin;
-
+	
+	
+	public String getSepeId() {
+		return sepeId;
+	}
+	
 	public String getCtaCti() {
 		return ctaCti;
 	}
 	
 	public Date getDateBirth() {
 		return dateBirth;
+	}
+	
+	public Date getDateComContract() {
+		return dateComContract;
 	}
 
 	public String getNss() {
@@ -138,7 +149,7 @@ public class Contract {
 	}
 
 	public static class ContractBuilder {
-		
+		private String sepeId;
 		private String cifEnterprise;
 		private String regimen;
 		private String ctaCti;
@@ -159,6 +170,7 @@ public class Contract {
 		private Date dateIniContract;
 		private Date dateFinContract;
 		private Date dateBirth;
+		private Date dateComContract;
 		private OfferType offer;
 		private JndType jndType;
 		private String durationTypeJndHour;
@@ -175,6 +187,12 @@ public class Contract {
 			this.ctaCti = ctaCti;
 			return this;
 		}
+		
+		public ContractBuilder setSepeId(String sepeId) {
+			this.sepeId = sepeId;
+			return this;
+		}
+
 
 		public ContractBuilder setNss(String nss) {
 			this.nss = nss;
@@ -265,6 +283,11 @@ public class Contract {
 			this.dateBirth = dateBirth;
 			return this;
 		}
+		
+		public ContractBuilder setDateComContract(Date dateComContract) {
+			this.dateComContract = dateComContract;
+			return this;
+		}
 	
 		public ContractBuilder setOffer(OfferType offer) {
 			this.offer = offer;
@@ -319,6 +342,7 @@ public class Contract {
 			contract.codPaisWork = this.codPaisWork;
 			contract.codMunWork = this.codMunWork;
 			contract.dateIniContract = this.dateIniContract;
+			contract.dateComContract = this.dateComContract;
 			contract.dateFinContract = this.dateFinContract;
 			contract.codContract = this.codContract;
 			contract.offer = this.offer;
@@ -327,6 +351,7 @@ public class Contract {
 			contract.durationTypeJndMin = this.durationTypeJndMin;
 			contract.durationTypeCvnHour = this.durationTypeCvnHour;
 			contract.durationTypeCvnMin = this.durationTypeCvnMin;
+			contract.sepeId = this.sepeId;
 			return contract;
 		}
 	}

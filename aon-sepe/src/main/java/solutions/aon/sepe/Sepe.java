@@ -51,9 +51,9 @@ public class Sepe {
 		Contrato.removeTransformation(certificateInputStream, certificatePassword, certificateType, ide);
 	}
 	
-	public static String getCi(final InputStream certificateInputStream, final String certificatePassword,
+	public static Contract getCi(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
-		return Contrato.getContratoId(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+		return Contrato.getContratoData(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 	}
 	
 	public static void main(String[] args)

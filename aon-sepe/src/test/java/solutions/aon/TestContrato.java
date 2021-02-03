@@ -140,7 +140,7 @@ public class TestContrato {
 	
 	@Test
 	@Ignore
-	public void testGetContratoID() {
+	public void testGetContratoData() {
 		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
 			String certificatePassword = "aon@FNMT";
 			String certificateType = "pkcs12";
@@ -148,12 +148,13 @@ public class TestContrato {
 			Date fini =  new Date("2020/01/09");
 			@SuppressWarnings("deprecation")
 			Date fend =  new Date("2020/09/09");
-			String ipf = "16262835H";
-			String ide = Contrato.getContratoId(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
-			System.out.println( ide );
+			String ipf = "Y7514970X";
+			Contract contract = Contrato.getContratoData(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+			System.out.println(contract.getSepeId());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
 	
 }

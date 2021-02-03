@@ -16,6 +16,9 @@ import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
+
 import solutions.aon.sepe.exceptions.SepeException;
 
 
@@ -233,6 +236,12 @@ public class Toolkit {
 			if ( entry.getKey().matcher(ipf).matches()) { identity = entry.getValue().toString(); break; }
 		}
 		return identity;
+	}
+	
+	public static DomNode getNextSibling(DomNode dt) {
+		return dt.getNextElementSibling() instanceof HtmlDefinitionTerm 
+		? dt.getNextElementSibling().getNextElementSibling() 
+		: dt.getNextElementSibling();
 	}
 	
 	public static String[] dateString(Date fecha) {

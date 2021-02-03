@@ -22,6 +22,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
 import aon.sepe.objects.Contract;
+import aon.sepe.objects.Contract.ContractBuilder;
+import aon.sepe.objects.Contract.SexType;
 import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.sepe.exceptions.statusCode.StatusCodeException;
@@ -165,10 +167,10 @@ public class Contrato {
 		} 
 	}
 	
-	public static String getContratoId(final InputStream certificateInputStream,
+	public static Contract getContratoData(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
 			try {
-				return getContratoIdImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
+				return getContratoDataImpl(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 			} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
@@ -178,7 +180,7 @@ public class Contrato {
 			return null;
 	}
 	
-	private static String getContratoIdImpl(final InputStream certificateInputStream, final String certificatePassword,
+	private static Contract getContratoDataImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date fini, Date fend ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SepeException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	HtmlPage htmlPage = first_page_sepe_contrata(webClient);
@@ -189,16 +191,43 @@ public class Contrato {
 	        htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletConsultaEmpresa?pagina=idtrabajador&origen=").click();
 
 	        htmlPage = page_contrac_or_cbasic(htmlPage, fini, fend, ipf);
-	    	DomNodeList<DomNode> data = htmlPage.querySelectorAll("form[name=datos] fieldset div");
-	    	String ide = null;
-	    	for(DomNode el: data) {
-	    		String elStr = Toolkit.removeNBSP(el.getVisibleText()).trim();
-	    		if(elStr.length() > 0 && elStr.matches("^E-\\d{1,2}-\\d{4}-\\d+" ) ) {
-	    			ide = elStr.trim().replaceAll("-", "").substring(1);
-					break;
+	    	HtmlForm form = htmlPage.querySelector("form[name=datos]");
+	    	DomNodeList<DomNode> data =form.querySelectorAll("fieldset > div > div[class*=titulo]");
+	    	
+			ContractBuilder builder = new ContractBuilder();
+			//DATOS DE CONSULTA
+			data.forEach(title->{
+				String titleStr = Toolkit.removeNBSP(title.getVisibleText()).trim();
+				String valueStr = Toolkit.removeNBSP(Toolkit.getNextSibling(title).getVisibleText().trim());
+				Integer valueInt = valueStr.length();
+				if(valueInt > 0) {
+					if(titleStr.indexOf("CIF")>=0) { builder.setCifEnterprise(valueStr); }
+					else if(titleStr.indexOf("Cuenta de Cotizaci\u00F3n :")>=0) { 
+						String newStr = Toolkit.noSpaces(valueStr);
+						builder.setRegimen(newStr.substring(0,4));
+						builder.setCtaCti(newStr.substring(4));
+					}
+					else if(titleStr.indexOf("NIF/NIE :")>=0) { builder.setIpf(valueStr); }
+					else if(titleStr.indexOf("Fecha de Nacimiento :")>=0) { builder.setDateBirth(Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); }
+					else if(titleStr.indexOf("Nombre / Apellidos :")>=0) { builder.setName(valueStr); }
+					else if(titleStr.indexOf("Sexo :")>=0) {
+						if(valueStr.indexOf("HOM")>=0) {
+							builder.setSex(SexType.HOMBRE);
+						} else if(valueStr.indexOf("MUJ")>=0) {
+							builder.setSex(SexType.MUJER);
+						}
+					}
+					else if(titleStr.indexOf("N\u00FCmero de afiliación SS :")>=0) { builder.setNss(valueStr); }
+					else if(titleStr.indexOf("Identificador del contrato :")>=0) {
+						builder.setSepeId(valueStr.trim().replaceAll("-", "").substring(1)); 
+					}
+					else if(titleStr.indexOf("Fecha de inicio del contrato :")>=0) { builder.setDateIniContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); }
+					else if(titleStr.indexOf("Fecha Fin del Contrato :")>=0) { builder.setDateFinContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); }
+					else if(titleStr.indexOf("Fecha en que se comunica :")>=0) { builder.setDateComContract( Toolkit.parseDate(valueStr, "dd/MM/yyyy") ); }
 				}
-	    	}
-	        return ide;
+			});
+			
+	        return builder.build();
 		} 
 	}
 	
