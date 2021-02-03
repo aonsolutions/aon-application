@@ -58,7 +58,7 @@ public class SalaryPDFParser {
 			if ( AonStringUtils.isBlank(text) ) 
 				continue;
 			
-			System.out.println(text);
+//			System.out.println(text);
 			
 			template = parse(template, text, salaryBuilder);
 			
@@ -71,10 +71,12 @@ public class SalaryPDFParser {
 				try {
 					return template.parse(text, salaryBuilder);
 				} catch ( SalaryPDFException e ) {
-					//System.err.println(e.getMessage());
+					System.err.println(e.getMessage());
+					System.out.println(text);
 					return template;
 				} catch ( UnknownPDFException e ) {
-					//System.err.println(e.getMessage());
+					System.err.println(e.getMessage());
+					System.err.println(text);
 				}
 			}
 			throw new UnknownPDFException("Formato de nómina desconocido");

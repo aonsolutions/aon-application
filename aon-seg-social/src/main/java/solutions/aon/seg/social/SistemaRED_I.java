@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -29,6 +31,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
@@ -36,6 +39,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLLabelElement;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.app_issues.OutOfServiceException;
+import solutions.aon.seg.social.exceptions.app_issues.OutOfServiceMotivation;
 import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
@@ -894,7 +899,8 @@ public class SistemaRED_I {
 	
 	private static HtmlPage liquidationPageFill(HtmlPage htmlPage, final String ccc,
 			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
-			final LiquidationOrigin liqOrigin) throws ElementNotFoundException, IOException {
+			final LiquidationOrigin liqOrigin) throws ElementNotFoundException, IOException, OutOfServiceException {
+		
 		HtmlForm formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
 		formDatos.getInputByName("CCC").setValueAttribute(ccc);
 		HtmlSelect selectRegime=formDatos.getSelectByName("REGIMEN");
@@ -989,38 +995,7 @@ public class SistemaRED_I {
 				webClient.getOptions().setJavaScriptEnabled(false);
 				HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
 				htmlPage=liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
-//				HtmlForm formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
-//				formDatos.getInputByName("CCC").setValueAttribute(ccc);
-//				HtmlSelect selectRegime=formDatos.getSelectByName("REGIMEN");
-//				selectRegime.setSelectedIndex(selectRegime.getOptionByValue(regime.getValue()).getIndex());
-//				Calendar cFrom=Calendar.getInstance();
-//				cFrom.setTime(dateFrom);
-//				Calendar cTo=Calendar.getInstance();
-//				cTo.setTime(dateTo);
-//				String sFrom;
-//				String sTo;
-//				if(cFrom.get(Calendar.MONTH)+1<10) {
-//					sFrom="0"+(cFrom.get(Calendar.MONTH)+1);
-//				}
-//				else
-//					sFrom=""+(cFrom.get(Calendar.MONTH)+1);
-//				if(cTo.get(Calendar.MONTH)+1<10) {
-//					sTo="0"+(cTo.get(Calendar.MONTH)+1);
-//				}
-//				else
-//					sTo=""+(cTo.get(Calendar.MONTH)+1);
-//				HtmlSelect selectMFrom=formDatos.getSelectByName("MES_DESDE");
-//				selectMFrom.setSelectedIndex(selectMFrom.getOptionByValue(sFrom).getIndex());
-//				HtmlSelect selectYFrom=formDatos.getSelectByName("ANNIO_DESDE");
-//				selectYFrom.setSelectedIndex(selectYFrom.getOptionByValue(""+cFrom.get(Calendar.YEAR)).getIndex());
-//				HtmlSelect selectMTo=formDatos.getSelectByName("MES_HASTA");
-//				selectMTo.setSelectedIndex(selectMTo.getOptionByValue(sTo).getIndex());
-//				HtmlSelect selectYTo=formDatos.getSelectByName("ANNIO_HASTA");
-//				selectYTo.setSelectedIndex(selectYTo.getOptionByValue(""+cTo.get(Calendar.YEAR)).getIndex());
-//				HtmlSelect selectLiqType=formDatos.getSelectByName("TIPO_LIQUIDACION");
-//				selectLiqType.setSelectedIndex(selectLiqType.getOptionByValue(liqType.getValue()).getIndex());
-//				formDatos.getInputByValue(liqOrigin.getValue()).setChecked(true);
-//				htmlPage=formDatos.getInputByValue("Aceptar").click();
+
 				try {
 					checkLiquidationExceptions(htmlPage);
 				}catch(NullPointerException | ElementNotFoundException e) {
@@ -1070,7 +1045,24 @@ public class SistemaRED_I {
 				}
 				
 			} catch (FailingHttpStatusCodeException e) {
-				StatusCodeException.HandleStatusCodeException(e);
+				String response = e.getResponse().getContentAsString();
+				//response = response.replaceAll("\n", " ");
+				Pattern pattern = Pattern.compile("\\s*<p\\s*class=\"p2\">(?<mensaje>.+?)</p>\\s*", Pattern.DOTALL);
+				Matcher matcher = pattern.matcher(response);
+				ArrayList<String> list = new ArrayList<String>();
+				while(matcher.find()) {
+					list.add(matcher.group("mensaje"));
+				}
+				
+				for(String match : list) {
+					System.out.println(match);
+				}
+				if(list.get(0).equalsIgnoreCase("Aplicación Cerrada temporalmente.")) {
+					throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
+				} else {
+					System.out.println(e.getStatusMessage());
+					StatusCodeException.HandleStatusCodeException(e);
+				}
 			} catch (MalformedURLException e) {
 				throw new SegSocialException(e);
 			} catch (IOException e) {
@@ -1128,7 +1120,24 @@ public class SistemaRED_I {
 				throw new DataDoesNotExist();
 			}
 		} catch (FailingHttpStatusCodeException e) {
-			StatusCodeException.HandleStatusCodeException(e);
+			String response = e.getResponse().getContentAsString();
+			//response = response.replaceAll("\n", " ");
+			Pattern pattern = Pattern.compile("\\s*<p\\s*class=\"p2\">(?<mensaje>.+?)</p>\\s*", Pattern.DOTALL);
+			Matcher matcher = pattern.matcher(response);
+			ArrayList<String> list = new ArrayList<String>();
+			while(matcher.find()) {
+				list.add(matcher.group("mensaje"));
+			}
+			
+			for(String match : list) {
+				System.out.println(match);
+			}
+			if(list.get(0).equalsIgnoreCase("Aplicación Cerrada temporalmente.")) {
+				throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
+			} else {
+				System.out.println(e.getStatusMessage());
+				StatusCodeException.HandleStatusCodeException(e);
+			}
 		} catch (MalformedURLException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
@@ -1206,7 +1215,24 @@ public class SistemaRED_I {
 					return ret;
 			}
 		} catch (FailingHttpStatusCodeException e) {
-			StatusCodeException.HandleStatusCodeException(e);
+			String response = e.getResponse().getContentAsString();
+			//response = response.replaceAll("\n", " ");
+			Pattern pattern = Pattern.compile("\\s*<p\\s*class=\"p2\">(?<mensaje>.+?)</p>\\s*", Pattern.DOTALL);
+			Matcher matcher = pattern.matcher(response);
+			ArrayList<String> list = new ArrayList<String>();
+			while(matcher.find()) {
+				list.add(matcher.group("mensaje"));
+			}
+			
+			for(String match : list) {
+				System.out.println(match);
+			}
+			if(list.get(0).equalsIgnoreCase("Aplicación Cerrada temporalmente.")) {
+				throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
+			} else {
+				System.out.println(e.getStatusMessage());
+				StatusCodeException.HandleStatusCodeException(e);
+			}
 		} catch (MalformedURLException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {

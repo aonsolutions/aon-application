@@ -8,7 +8,6 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -1266,7 +1265,7 @@ public class PdfTest {
 	@Test
 	//@Ignore
 	public void testAplifisa() throws IOException, UnknownPDFException {
-		try ( InputStream is = PdfTest.class.getResourceAsStream("nomina.pdf") ){
+		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nomina.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
 				@Override
 				public void setEnterpriseName(String enterpriseName) {
@@ -1639,11 +1638,10 @@ public class PdfTest {
 			
 		}
 	}
-	
 	@Test
 	//@Ignore
 	public void testAplifisa2() throws IOException, UnknownPDFException {
-		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa_para_probar.pdf") ){
+		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/aplifisa_para_probar.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
 				@Override
 				public void setEnterpriseName(String enterpriseName) {
@@ -1770,7 +1768,7 @@ public class PdfTest {
 	@Test
 	//@Ignore
 	public void testAplifisa3() throws IOException, UnknownPDFException {
-		try ( InputStream is = PdfTest.class.getResourceAsStream("1-Nominas otra asesoria capital en20.pdf") ){
+		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/1-Nominas otra asesoria capital en20.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
 	
 			});
@@ -1780,7 +1778,7 @@ public class PdfTest {
 	@Test
 	//@Ignore
 	public void testAplifisa2000() throws IOException, UnknownPDFException {
-		try ( InputStream is = PdfTest.class.getResourceAsStream("nominas 2020.pdf") ){
+		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nominas 2020.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
 	
 			});
@@ -1791,7 +1789,7 @@ public class PdfTest {
 	@Test
 	//@Ignore
 	public void testAplifisaOmar() throws IOException, UnknownPDFException {
-		try ( InputStream is = PdfTest.class.getResourceAsStream("nominaOmar.pdf") ){
+		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nominaOmar.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
 				@Override
 				public void setEnterpriseName(String enterpriseName) {
@@ -2074,7 +2072,7 @@ public class PdfTest {
 	@Test
 	//@Ignore
 	public void testNPE() throws IOException, UnknownPDFException {
-		try ( InputStream is = PdfTest.class.getResourceAsStream("nominaNullPointer.pdf") ){
+		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nominaNullPointer.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
 				@Override
 				public void setEnterpriseName(String enterpriseName) {
@@ -2477,7 +2475,7 @@ public class PdfTest {
 	@Test
 	//@Ignore
 	public void testAplifisaSettle() throws IOException, UnknownPDFException {
-		try ( InputStream is = PdfTest.class.getResourceAsStream("nomrec.pdf") ){
+		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nomrec.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
 				@Override
 				public void setEnterpriseName(String enterpriseName) {
@@ -2602,12 +2600,139 @@ public class PdfTest {
 	}
 	
 	
+	@Test
+	//@Ignore
+	public void testIRPF() throws IOException, UnknownPDFException {
+		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nomina_testeo.pdf") ){
+			SalaryPDFParser.parse(is, new SalaryBuilder() {
+				@Override
+				public void setEnterpriseName(String enterpriseName) {
+					System.out.println("Ent. name:\t"+enterpriseName);
+				}
+				@Override
+				public void setEmployeeName(String employeeName) {
+					System.out.println("Emp. name:\t"+employeeName);
+					
+				}
+				
+				
+				@Override
+				public void setEnterpriseAddress(String enterpriseAddress) {
+					System.out.println("Ent. address:\t"+enterpriseAddress);
+				}
+				@Override
+				public void setEmployeeDocument(String employeeDocument) {
+					System.out.println("Emp. doc:\t"+employeeDocument);
+				}
+				
+				
+				@Override
+				public void setEnterpriseCity(String enterpriseCity) {
+					System.out.println("Ent. city:\t"+enterpriseCity);
+				}
+				@Override
+				public void setSocialSecurityNumber(String socialSecurityNumber) {
+					System.out.println("NSS:\t"+socialSecurityNumber);
+				}
+				
+				
+				@Override
+				public void setEnterpriseDocument(String enterpriseDocument) {
+					System.out.println("Ent. cod:\t"+enterpriseDocument);
+				}
+				@Override
+				public void setCategory(String category) {
+					System.out.println("Category:\t"+category);
+				}
+				
+				
+				@Override
+				public void setCcc(String ccc) {
+					System.out.println("CCC:\t"+ccc);
+				}
+				@Override
+				public void setQuoteGroup(String quoteGroup) {
+					System.out.println("Quote group:\t"+quoteGroup);
+				}
+				@Override
+				public void setSeniorityDate(Date seniorityDate) {
+					System.out.println("Seniority date:\t"+seniorityDate);
+				}
+				
+				
+				@Override
+				public void setStartDate(Date startDate) {
+					System.out.println("Start date:\t"+startDate);
+				}
+				@Override
+				public void setEndDate(Date endDate) {
+					System.out.println("End. name:\t"+endDate);
+				}
+				
+				@Override
+				public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
+						Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+					System.out.println("PAYMENT:\tAmount: "+amount+", Description: "+description+", Start Date: "+startDate+", End date: "+endDate+"Payment: "+payment.getName());
+				}
+				
+				@Override
+				public void addDeduction(Double amount, String description, Date start, Date end, IDeduction deduction,
+						Map<String, ITimedVariable<?>> context) {
+					System.out.println("DEDUCTION:\tAmount: "+amount+", description: "+description+", start date: "+start+", end date: "+end+", payment type: "+deduction.getType()+", payment name: "+deduction.getName());
+				}
+				
+				@Override
+				public void addData(String name, ITimedVariable<?> data) {
+					System.out.println("DATA:\t"+name+", "+data.getValue(data.getPeriod()));
+				}
+				
+				
+				@Override
+				public void setTotalDeduction(Double totalDeduction) {
+					System.out.println("Total deduction:\t"+totalDeduction);
+				}
+				@Override
+				public void setTotalLiquid(Double totalLiquid) {
+					System.out.println("Total liquid:\t"+totalLiquid);
+				}
+				@Override
+				public void setIssueDate(Date issueDate) {
+					System.out.println("Issue date:\t"+issueDate);
+				}
+				
+				@Override
+				public void setRemuneration(Double remuneration) {
+					System.out.println("Remuneration:\t"+remuneration);
+				}
+				@Override
+				public void setProExtBase(Double extraPayProration) {
+					System.out.println("Extra pro:\t"+extraPayProration);
+				}
+				
+				@Override
+				public void addCost(Double amount, String description, Date start, Date end, IDeduction cost,
+						Map<String, ITimedVariable<?>> context) {
+					System.out.println("COST:\t"+amount+", "+description+", "+start+", "+end+", cost: "+cost.getType());
+					
+				}
+				@Override
+				public void setTotalSS(Double socialSecurityContributions) {
+					System.out.println("Total SS:\t"+socialSecurityContributions);
+				}
+				@Override
+				public void setTotalEnterprise(Double totalEnterprise) {
+					System.out.println("Total enterprise:\t"+totalEnterprise);
+				}
+			});
+		}
+	}
+	
 	
 
 	@Test
 	@Ignore
 	public void testAltai() throws IOException, UnknownPDFException {
-		try ( InputStream is = PdfTest.class.getResourceAsStream("EXTRA DIC.pdf") ){
+		try ( InputStream is = PdfTest.class.getResourceAsStream("aplifisa/EXTRA DIC.pdf") ){
 			SalaryPDFParser.parse(is, new SalaryBuilder() {
 				@Override
 				public void setEmployeeName(String employeeName) {
@@ -2617,6 +2742,142 @@ public class PdfTest {
 			});
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Test
+	//@Ignore
+	public void test260() throws IOException, UnknownPDFException {
+		try ( InputStream is = PdfTest.class.getResourceAsStream("nomina260.pdf") ){
+			SalaryPDFParser.parse(is, new SalaryBuilder() {
+				@Override
+				public void setEnterpriseName(String enterpriseName) {
+					System.out.println("Ent. name:\t"+enterpriseName);
+				}
+				@Override
+				public void setEmployeeName(String employeeName) {
+					System.out.println("Emp. name:\t"+employeeName);
+					
+				}
+				
+				
+				@Override
+				public void setEnterpriseAddress(String enterpriseAddress) {
+					System.out.println("Ent. address:\t"+enterpriseAddress);
+				}
+				@Override
+				public void setEmployeeDocument(String employeeDocument) {
+					System.out.println("Emp. doc:\t"+employeeDocument);
+				}
+				
+				
+				@Override
+				public void setEnterpriseCity(String enterpriseCity) {
+					System.out.println("Ent. city:\t"+enterpriseCity);
+				}
+				@Override
+				public void setSocialSecurityNumber(String socialSecurityNumber) {
+					System.out.println("NSS:\t"+socialSecurityNumber);
+				}
+				
+				
+				@Override
+				public void setEnterpriseDocument(String enterpriseDocument) {
+					System.out.println("Ent. cod:\t"+enterpriseDocument);
+				}
+				@Override
+				public void setCategory(String category) {
+					System.out.println("Category:\t"+category);
+				}
+				
+				
+				@Override
+				public void setCcc(String ccc) {
+					System.out.println("CCC:\t"+ccc);
+				}
+				@Override
+				public void setQuoteGroup(String quoteGroup) {
+					System.out.println("Quote group:\t"+quoteGroup);
+				}
+				@Override
+				public void setSeniorityDate(Date seniorityDate) {
+					System.out.println("Seniority date:\t"+seniorityDate);
+				}
+				
+				
+				@Override
+				public void setStartDate(Date startDate) {
+					System.out.println("Start date:\t"+startDate);
+				}
+				@Override
+				public void setEndDate(Date endDate) {
+					System.out.println("End. name:\t"+endDate);
+				}
+				
+				@Override
+				public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
+						Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+					System.out.println("PAYMENT:\tAmount: "+amount+", Description: "+description+", Start Date: "+startDate+", End date: "+endDate+"Payment: "+payment.getName());
+				}
+				
+				@Override
+				public void addDeduction(Double amount, String description, Date start, Date end, IDeduction deduction,
+						Map<String, ITimedVariable<?>> context) {
+					System.out.println("DEDUCTION:\tAmount: "+amount+", description: "+description+", start date: "+start+", end date: "+end+", payment type: "+deduction.getType()+", payment name: "+deduction.getName());
+				}
+				
+				@Override
+				public void addData(String name, ITimedVariable<?> data) {
+					System.out.println("DATA:\t"+name+", "+data.getValue(data.getPeriod()));
+				}
+				
+				
+				@Override
+				public void setTotalDeduction(Double totalDeduction) {
+					System.out.println("Total deduction:\t"+totalDeduction);
+				}
+				@Override
+				public void setTotalLiquid(Double totalLiquid) {
+					System.out.println("Total liquid:\t"+totalLiquid);
+				}
+				@Override
+				public void setIssueDate(Date issueDate) {
+					System.out.println("Issue date:\t"+issueDate);
+				}
+				
+				@Override
+				public void setRemuneration(Double remuneration) {
+					System.out.println("Remuneration:\t"+remuneration);
+				}
+				@Override
+				public void setProExtBase(Double extraPayProration) {
+					System.out.println("Extra pro:\t"+extraPayProration);
+				}
+				
+				@Override
+				public void addCost(Double amount, String description, Date start, Date end, IDeduction cost,
+						Map<String, ITimedVariable<?>> context) {
+					System.out.println("COST:\t"+amount+", "+description+", "+start+", "+end+", cost: "+cost.getType());
+					
+				}
+				@Override
+				public void setTotalSS(Double socialSecurityContributions) {
+					System.out.println("Total SS:\t"+socialSecurityContributions);
+				}
+				@Override
+				public void setTotalEnterprise(Double totalEnterprise) {
+					System.out.println("Total enterprise:\t"+totalEnterprise);
+				}
+			});
+		}
+	}
+	
 	
 	
 }

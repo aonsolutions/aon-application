@@ -65,6 +65,7 @@ import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.api.services.calendar.Calendar.Freebusy.Query;
 
 public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalaryBuilder<Salary>> implements SalaryPDFBuilder<Salary>  {
 	
@@ -301,6 +302,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 			;
 		}
 		catch ( DataAccessException e) {
+			System.err.println(e.getMessage());
 			throw new SalaryPDFException("ERROR: [UNEXPECTED NAF] %s", getMessage(contract));
 		}
 		

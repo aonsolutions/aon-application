@@ -1755,4 +1755,61 @@ public class JooqPdfTest {
 			builder.execute();
 		}
 	}
+	
+	
+	@Test
+	//@Ignore
+	public void testAplifisaMassive() throws IOException, UnknownPDFException, SQLException {
+		try (InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nominas 2020.pdf");
+				Connection connection = DriverManager
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
+				AONContext aonContext = new AONContext(connection)) {
+			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
+					"ayudat.aonsolutions.net");
+			SalaryPDFParser.parse(is, builder);
+			builder.execute();
+		}
+	}
+	
+	@Test
+	//@Ignore
+	public void testAplifisa584() throws IOException, UnknownPDFException, SQLException {
+		try (InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nomina584.pdf");
+				Connection connection = DriverManager
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
+				AONContext aonContext = new AONContext(connection)) {
+			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
+					"ayudat.aonsolutions.net");
+			SalaryPDFParser.parse(is, builder);
+			builder.execute();
+		}
+	}
+	
+	@Test
+	//@Ignore
+	public void testAplifisa1424() throws IOException, UnknownPDFException, SQLException {
+		try (InputStream is = PdfTest.class.getResourceAsStream("aplifisa/1424.pdf");
+				Connection connection = DriverManager
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
+				AONContext aonContext = new AONContext(connection)) {
+			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
+					"ayudat.aonsolutions.net");
+			SalaryPDFParser.parse(is, builder);
+			builder.execute();
+		}
+	}
+	
+	@Test
+	//@Ignore
+	public void testAplifisaIRPF() throws IOException, UnknownPDFException, SQLException {
+		try (InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nomina_testeo.pdf");
+				Connection connection = DriverManager
+						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root");
+				AONContext aonContext = new AONContext(connection)) {
+			JooqPDFSalaryBuilder builder = new JooqPDFSalaryBuilder(aonContext.getDslContext(),
+					"ayudat.aonsolutions.net");
+			SalaryPDFParser.parse(is, builder);
+			builder.execute();
+		}
+	}
 }

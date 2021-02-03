@@ -17,6 +17,7 @@ import solutions.aon.seg.social.SistemaRED_I.LiquidationOrigin;
 import solutions.aon.seg.social.SistemaRED_I.LiquidationType;
 import solutions.aon.seg.social.SistemaRED_I.Regime;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.app_issues.OutOfServiceException;
 import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
@@ -240,6 +241,8 @@ public class TestCalculationQuery {
 					System.out.println(map.get(it.next()));
 				}
 			}
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
 		} catch (FailingHttpStatusCodeException e) {
 			
 		} catch (IOException e) {
@@ -343,5 +346,15 @@ public class TestCalculationQuery {
 //			fail("Test date fails");
 //		}
 //	}
+	
+	public static void main(String[] args) {
+		try {
+		throw new SegSocialException("Aplicación Cerrada temporalmente.", new SegSocialException("La aplicación SLD Cotización se encuentra en estado cerrado. Motivo : La aplicación estará fuera de servicio hasta el día 03/02/2021 a las 12 horas. La fecha prevista para la próxima apertura es: 03/02/2021 12:00."));
+		} catch ( Exception  e ) {
+			
+			System.out.println(e.getMessage() + e.getCause().getMessage());
+			
+		}
+	}
 
 }
