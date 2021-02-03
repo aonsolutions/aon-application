@@ -143,7 +143,7 @@ public class AplifisaPDFTemplate implements SalaryPDFTemplate {
 						.setCcc(ccc)
 						.setNaf(naf)
 						.setNif(nif)
-						.setCif(nif)
+						.setCif(cif)
 						.setEndDate(dateTo)
 						.setStartDate(dateFrom)
 						.setEmployeeName(empName)
