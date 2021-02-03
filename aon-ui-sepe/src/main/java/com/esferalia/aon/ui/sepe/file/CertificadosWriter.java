@@ -311,54 +311,44 @@ public class CertificadosWriter implements Serializable {
 		//C17=Suspensión del contrato ERE or C18=Reducción temporal de jornada ERE		
 		if ( batchDetail.getSuspensionCause() == SuspensionCause.C17 
 			|| batchDetail.getSuspensionCause() == SuspensionCause.C18  ) {
-//			Map<String, ContractData> dataMap = utils.getContractDataMap(contract, null, null );
-//			for (ContextVariable var : ContextVariable.ERE_FACTORS) {
-//				if (dataMap.containsKey(var.getName())) {
-//					ereFactor = dataMap.get(var.getName());
-//					Date startDate = ereFactor.getStartDate();
-//					endDate = AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1);
-//					break;
-//				}
-//			}
 			
+			List<ITransferObject> objects = new LinkedList<ITransferObject>();
 			for (ContextVariable var : ContextVariable.ERE_FACTORS) {
 				try {
-					List<ITransferObject> objects = 
-					utils.getContractData(contract, null, null, var.getName(), false);
-					ContractData data = 
-					objects.stream()
-					.map(o -> (ContractData)o )
-					.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
-					.reduce((d,d1) -> {
-						
-						double factor = Double.parseDouble(d.getExpression());
-						double factor1 = Double.parseDouble(d1.getExpression());
-						if ( factor != factor1 )
-							return d1;
-						
-						
-						Date end = d.getEndDate();
-						if ( end == null ) 
-							return d;
-						Date start = d1.getStartDate();
-						
-						if ( days(end, start) > 3 ) // ???
-							return d1 ;
-						
-						d.setEndDate(d1.getEndDate());
-						
-						return d;
-					} ).orElseThrow();
-					
-					Date startDate = data.getStartDate();
-					endDate = AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1);
-					ereFactor = data;
-					
-				} catch (Exception e) {
+					objects.addAll(
+					utils.getContractData(contract, null, null, var.getName(), false));
+				} catch (ManagerBeanException e) {
 				}
 			}
+
+			ContractData data = 
+			objects.stream()
+			.map(o -> (ContractData)o )
+			.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+			.reduce((d,d1) -> {
+				
+				double factor = Double.parseDouble(d.getExpression());
+				double factor1 = Double.parseDouble(d1.getExpression());
+				if ( factor != factor1 )
+					return d1;
+				
+				
+				Date end = d.getEndDate();
+				if ( end == null ) 
+					return d;
+				Date start = d1.getStartDate();
+				
+				if ( days(end, start) > 3 ) // ???
+					return d1 ;
+				
+				d.setEndDate(d1.getEndDate());
+				
+				return d;
+			} ).orElseThrow();
 			
-			
+			Date startDate = data.getStartDate();
+			endDate = AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1);
+			ereFactor = data;
 
 		}
 		
