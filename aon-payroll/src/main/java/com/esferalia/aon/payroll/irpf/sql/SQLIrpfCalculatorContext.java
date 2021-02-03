@@ -64,6 +64,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -686,6 +687,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	@Override
 	public Contrato getContrato() {
+		
+		if ( isTemporary()) 
+			return Contrato.DOS;
+			
+		
 		Date endDate = ctx.getDate(SQLConstants.CONTRACT,
 				ContractColumns.END_DATE);
 		if (endDate == null)
@@ -696,6 +702,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		long contractDays = CommonUtil.getDaysBetweenDates(startDate, endDate) + 1;
 		if (contractDays == 1)
 			return Contrato.CUATRO;
+		
 
 		Calendar startCalendar = Calendar.getInstance();
 		startCalendar.setTimeInMillis(startDate.getTime());
@@ -1267,6 +1274,20 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				ctxs.add(getExtraContext(startDate, endDate, issueDate, criteria));
 		}
 		return ctxs;
+	}
+	
+	private boolean isTemporary() {
+		try {
+			return
+			ctx.getExpressionContext().eval(ContextVariable.TC2.getName(), ctx.getStartDate(), ctx.getEndDate(), String.class)
+			.stream()
+			.map(v -> v.getValue(v.getPeriod()) )
+			.map ( s -> Integer.parseInt(s))
+			.anyMatch( n -> n >= 400 )
+			;
+		} catch (ExpressionException e) {
+			return false;
+		}
 	}
 
 	// ------------------------------------------------------------------------
