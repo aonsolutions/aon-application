@@ -76,6 +76,12 @@ export const updateFile = (data) => {
   return post(`${API_URL}/attachment/${domainName}/${user}/file/${data.id}`, data);
 }
 
+export const updateFiles = (data) => {
+  let domainName = localStorage.getItem("aon_domain_name");
+  let user = localStorage.getItem('aon_domain_login');
+  return post(`${API_URL}/attachment/${domainName}/${user}/files`, data);
+}
+
 export const deleteFile = (data) => {
   let domainName = localStorage.getItem("aon_domain_name");
   let user = localStorage.getItem('aon_domain_login');

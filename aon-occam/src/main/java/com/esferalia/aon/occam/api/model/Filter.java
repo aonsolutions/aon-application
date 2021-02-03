@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.api.model.Properties.ProjectReservationProperties
 import com.esferalia.aon.occam.api.model.Properties.PurchaseDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
 import com.esferalia.aon.occam.api.model.Properties.RDirStaffProperties;
+import com.esferalia.aon.occam.api.model.Properties.RattachTagProperties;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
 import com.esferalia.aon.occam.api.model.Properties.RecordDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddInfoProperties;
@@ -570,4 +571,9 @@ public interface Filter {
 	public interface TariffFilter{
 		Filter filter(TariffProperties properties);
 	}
+	@FunctionalInterface
+	public interface RattachTagFilter{
+		Filter filter(RattachTagProperties properties);
+	}
+	
 }

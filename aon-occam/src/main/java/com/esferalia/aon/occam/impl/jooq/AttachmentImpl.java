@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAttachment;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 
@@ -351,9 +352,9 @@ public class AttachmentImpl implements IAttachment{
 	}	
 	
 	@Override
-	public Integer insertRegistryAttachTag(AONContext ctx, Integer rattachId, Integer tagId){
+	public RattachTag save(AONContext ctx, RattachTag rattachTag){
 		return ctx.getDslContext().transactionResult(configuration -> 
-			AttachmentDAO.insertRegistryAttachTag(ctx, rattachId, tagId));
+			AttachmentDAO.save(ctx, rattachTag));
 	}
 
 	@Override

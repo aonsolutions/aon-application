@@ -22,7 +22,9 @@ import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.RattachTagFilter;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
+import com.esferalia.aon.occam.api.model.Properties.RattachTagProperties;
 
 public class AttachPropertiesDAO {
 
@@ -353,5 +355,22 @@ public class AttachPropertiesDAO {
 		@Override public Property<Byte> getSourceTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(DATA_ATTACH.SOURCE);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(DATA_ATTACH.DESCRIPTION);}
 		@Override public Property<Integer> getTagProperty() {return null;}
+	}
+	
+	protected static class RattachTagPropertiesDAO implements RattachTagProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, RattachTagFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(RattachTagFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH_TAG.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH_TAG.DOMAIN);}
+		@Override public Property<Integer> getRattachProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH_TAG.RATTACH);}
+		@Override public Property<Integer> getTagProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH_TAG.TAG);}
 	}
 }

@@ -1,7 +1,9 @@
 import {AonElement} from '../../components/AonElement.js';
 import {DocumentalAction, DocumentalSidenav} from './DocumentalEnums.js';
 import {getCategories, getTags, createTag, createCategory, editCategory,
-   deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes} from '../../services/service.js';
+    deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes} from '../../services/service.js';
+import {requestBidoq} from '../../services/request.js';
+import {bidoq} from  '../../services/bidoq.js';
 import {AonSelect} from '../../components/aon-select.js';
 
 import './aon-documental-list.js';
@@ -45,6 +47,7 @@ export class AonDocumental extends AonElement {
         <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
       `;
       this.build();
+      //this.buildBidoq();
     }
 
     build(){
@@ -446,5 +449,107 @@ export class AonDocumental extends AonElement {
         });
       }
     }
+
+    // BIDOQ
+
+    async buildBidoq() {
+        const aonDocumental = document.getElementById('aonDocumental');
+
+        const folders = await this.getFolders();
+        console.log("folders" + folders);
+        aonDocumental.dataset['folders'] = JSON.stringify(folders);
+
+        // const tags = await this.getTags();
+        // aonDocumental.dataset['tags'] = JSON.stringify(tags);
+        this.addBidoqOptions(aonDocumental, folders);
+
+    }
+
+    async getFolders() {
+        try {
+            const data = await this.bidoq({
+                "method": "carpetas"
+            });
+            const folders = JSON.parse(data).datos;
+
+            return new Promise((resolve, reject) => {
+                if (typeof folders !== 'undefined') {
+                    resolve(folders);
+                } else {
+                    reject('Ocurrió un error al intentar obtener las carpetas');
+                }
+            });
+        } catch (error) {
+            console.error('Ocurrió un error: ' + error.message);
+        }
+    }
+
+    addBidoqOptions(aonDocumental, folders) {
+        const categoryOptions = folders.map((folder) => {
+            const option = {
+                name: folder.carpeta,
+                icon: 'folder',
+                fn: () => this.showBidoqFiles({folder: folder.carpetaID})
+            };
+
+            return option;
+        });
+
+        aonDocumental.addSidenavOptions('BIDOQ', categoryOptions);
+    }
+
+    showBidoqFiles(data) {
+      let aonDocumental = this.getElement('aonDocumental');
+      let d = document.getElementById(aonDocumental.DIALOG);
+      d.clear();
+      if(!this.isMobile()) d.width = '400px';
+      d.setTitle("BIDOQ");
+      d.setContentHTML('Esta opción está en desarrollo...');
+      d.addAcceptAction(() => {});
+      d.open();
+    }
+
+    async bidoq(additionalData){
+
+      bidoq().then(r => {
+        let data2 = JSON.parse(r);
+        console.log(JSON.stringify(data2));
+        let BIDOQ_SESSION_ID = data2.datos.respuesta.split("session_id=")[1];
+
+
+      const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
+
+      // Local
+      // const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
+      // const BIDOQ_SESSION_ID = 'b3RJRmU5SHBYelpVUi1sMw==';
+
+      // DEV
+      const BIDOQ_URL = 'https://dev.mispapeles.es/api/v2/index.php';
+      //const BIDOQ_SESSION_ID = 'c2d3Y3lRUzExdFBxckxlTQ==';
+        // Unimos en un objeto los datos genéricos necesarios en todas las peticiones con los datos específicos de esta petición
+        const data = {
+            "device_info": "phone",
+            "app_code": "1",
+            "operating_system_version": "4.2",
+            "clienteID":BIDOQ_CLIENTE_ID,
+            "sessionID":BIDOQ_SESSION_ID,
+            "app_version": "1.0",
+            ...additionalData
+        };
+
+        // Codificamos el objeto a una query string de URL
+        const sendData = new URLSearchParams(data).toString();
+
+        return new Promise( (resolve, reject) => {
+            requestBidoq('POST', BIDOQ_URL, sendData, (result, error) => {
+                if(error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    });
+  }
 }
 window.customElements.define('aon-documental', AonDocumental);

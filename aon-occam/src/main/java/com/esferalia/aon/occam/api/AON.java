@@ -130,6 +130,7 @@ import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.commission.Commission;
 import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
 import com.esferalia.aon.occam.api.model.commission.CommissionItem;
@@ -2779,17 +2780,19 @@ public class AON {
 		}
 	}
 	
-	public static Integer insertRegistryAttachTag(String domainName,
-			Integer domainId, String login, Integer rattachId, Integer tagId) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getAttachment().insertRegistryAttachTag(ctx, rattachId,
-					tagId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static RattachTag save(Domain domain, String login, RattachTag rattachTag) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)){
+			return getAttachment().save(ctx, rattachTag);
 		}
+	}
+	
+	@Deprecated
+	public static RattachTag insertRegistryAttachTag(String domainName, Integer domainId, String login, Integer rattachId, Integer tagId) {
+		RattachTag rt = new RattachTag()
+				.setDomain(domainId)
+				.setRattach(rattachId)
+				.setTag(new Tag().setId(tagId));
+		return save(new Domain().setName(domainName).setId(domainId), login, rt);
 	}
 
 	public static void deleteRegistryAttachTag(String domainName,

@@ -1319,4 +1319,11 @@ public interface Properties {
 		Property<Byte> getActiveProperty();
 		
 	}
+	
+	public interface RattachTagProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRattachProperty();
+		Property<Integer> getTagProperty();		
+	}
 }

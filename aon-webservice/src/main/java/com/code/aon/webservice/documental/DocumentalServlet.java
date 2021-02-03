@@ -23,12 +23,14 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.CategoryType;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "DocumentalServlet", urlPatterns = { "/ms/api/attachment/*",
@@ -101,6 +103,9 @@ public class DocumentalServlet extends HttpServlet{
 			case "file":
 				object = updateAttachJSON(domain, userName, Integer.parseInt(pathInfo[4]), json);
 				break;
+			case "files":
+				object = updateFiles(domain, userName, json);
+				break;
 			case "category":
 				if("create".equals(pathInfo[4])) {
 					object = createCategory(domain, userName, json);
@@ -161,6 +166,32 @@ public class DocumentalServlet extends HttpServlet{
 		return ToJSON.attachToJSON(AON.getDocumentalAttachStream(domain.getName(), domain.getId(), login,
 				f -> f.getIdProperty().eq(id), AttachType.REGISTRY, false).findFirst().orElse(new Attach()));
 	}
+	
+	private JSONObject updateFiles(Domain domain, String login, JSONObject json) {
+		JSONArray documentArray = json.getJSONArray("documents");
+		Integer scopeId = json.opt("scope") != null && !AonStringUtils.isEmpty(json.optString("scope"))? json.optInt("scope") : null;
+		Integer categoryId = json.opt("category") != null && !AonStringUtils.isEmpty(json.optString("category"))? json.optInt("category") : null;
+		for (int i = 0; i < documentArray.length(); i++) {
+			JSONObject doc = documentArray.getJSONObject(i);
+			Integer attachId = doc.getInt("id");
+			if(scopeId != null || categoryId != null) {
+				Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(attachId), AttachType.REGISTRY, true);
+				attach.setCategory(categoryId);
+				attach.setScope(scopeId);
+				AON.updateAttach(domain.getName(), domain.getId(), login, attach);				
+			}
+			
+			if(json.opt("tag") != null && !AonStringUtils.isEmpty(json.optString("tag"))) {
+				Integer tagId = json.optInt("tag");
+	        	AON.save(domain, login, new RattachTag()
+	        			.setDomain(domain.getId())
+	        			.setRattach(attachId)
+	        			.setTag(new Tag().setId(tagId)));
+			}
+		}
+		return new JSONObject();
+	}
+
 
 	private JSONObject updateAttachJSON(Domain domain, String login, Integer id, JSONObject json) {
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(id), AttachType.REGISTRY, true);

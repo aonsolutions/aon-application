@@ -10,8 +10,8 @@ import static com.esferalia.aon.jooq.tables.PayrollBatchAttach.PAYROLL_BATCH_ATT
 import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
-import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
+import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -40,11 +40,14 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
+import com.esferalia.aon.occam.api.model.Filter.RattachTagFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.AttachPropertiesDAO.RattachTagPropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
@@ -59,6 +62,8 @@ public class AttachmentDAO {
 	private static final AttachPropertiesDAO.ProjectAttachPropertiesDAO PROJECT_ATTACH_PROPERTIES = new AttachPropertiesDAO.ProjectAttachPropertiesDAO();
 	private static final AttachPropertiesDAO.SepeAttachPropertiesDAO SEPE_ATTACH_PROPERTIES = new AttachPropertiesDAO.SepeAttachPropertiesDAO();
 	private static final AttachPropertiesDAO.DataAttachPropertiesDAO DATA_ATTACH_PROPERTIES = new AttachPropertiesDAO.DataAttachPropertiesDAO();
+	private static final RattachTagPropertiesDAO RATTACH_TAG_PROPERTIES = new RattachTagPropertiesDAO();
+
 
 	//-------------------- GETS 
 	
@@ -322,10 +327,46 @@ public class AttachmentDAO {
 		.returning(DATA_ATTACH.ID).fetchOne().getId();
 	}
 	
-	public static Integer insertRegistryAttachTag(AONContext ctx, Integer rattachId, Integer tagId){
+	
+	
+	
+	//-------------------- RATTACH TAG
+	
+	
+	public static Stream<RattachTag> get(AONContext ctx, RattachTagFilter filter){
+		return ctx.getDslContext()
+			.select()
+			.from(TAG).join(RATTACH_TAG).on(TAG.ID.eq(RATTACH_TAG.TAG))
+			.where(RATTACH_TAG_PROPERTIES.getConditions(filter))
+			.fetch().stream().map(new RattachTagFiller());
+	}
+	
+	public static RattachTag save(AONContext ctx, RattachTag rattachTag){
 		ctx.checkWrite();
-		return ctx.getDslContext().insertInto(RATTACH_TAG, RATTACH_TAG.DOMAIN, RATTACH_TAG.RATTACH, RATTACH_TAG.TAG)
-				.values(ctx.getDomainId(), rattachId, tagId).returning(RATTACH_TAG.ID).fetchOne().getId();
+		RattachTag rt = get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getRattachProperty().eq(rattachTag.getRattach()))
+			.and(f.getTagProperty().eq(rattachTag.getTag().getId()))).findFirst().orElse(new RattachTag());
+		if(rt == null || rt.getId() == null) {
+			return insert(ctx, rattachTag);
+		}
+		return rt;
+	}
+	
+	public static RattachTag insert(AONContext ctx, RattachTag rattachTag){
+		ctx.checkWrite();
+		Integer id = ctx.getDslContext().insertInto(RATTACH_TAG, RATTACH_TAG.DOMAIN, RATTACH_TAG.RATTACH, RATTACH_TAG.TAG)
+				.values(rattachTag.getDomain(), rattachTag.getRattach(), rattachTag.getTag().getId())
+				.returning(RATTACH_TAG.ID).fetchOne().getId();
+		return rattachTag.setId(id);
+	}
+	
+	@Deprecated
+	public static Integer insertRegistryAttachTag(AONContext ctx, Integer rattachId, Integer tagId){
+		RattachTag rattachTag = new RattachTag()
+				.setDomain(ctx.getDomainId())
+				.setRattach(rattachId)
+				.setTag(new Tag().setId(tagId));
+		return save(ctx, rattachTag).getId();
 	}
 	
 	//-------------------- FULL UPDATE
@@ -956,11 +997,32 @@ public class AttachmentDAO {
 		
 		@Override
 		public Tag apply(Record r) {
+			return buildTag(r);
+		}
+		
+		public static Tag buildTag(Record r) {
 			return new Tag().setId(r.getValue(TAG.ID))
 					.setColor(r.getValue(TAG.COLOR))
 					.setDomain(r.getValue(TAG.DOMAIN))
 					.setName(r.getValue(TAG.NAME))
 					.setType(r.getValue(TAG.TYPE));
+		}
+	}
+	
+	
+	private static class RattachTagFiller implements Function<Record, RattachTag> {
+		
+		@Override
+		public RattachTag apply(Record r) {
+			return buildRattachTag(r);
+		}
+		
+		public static RattachTag buildRattachTag(Record r) {
+			return new RattachTag()
+					.setId(r.getValue(RATTACH_TAG.ID))
+					.setDomain(r.getValue(RATTACH_TAG.DOMAIN))
+					.setRattach(r.getValue(RATTACH_TAG.RATTACH))
+					.setTag(TagFiller.buildTag(r));
 		}
 	}
 	

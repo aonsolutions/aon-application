@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {DocumentalAction} from './DocumentalEnums.js';
-import {getDocuments, downloadDocuments, sendDocumentMail} from '../../services/service.js';
+import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles} from '../../services/service.js';
 
 import '../../components/aon-table.js';
 
@@ -118,12 +118,22 @@ export class AonDocumentalList extends AonElement {
 
 	editFiles() {
 		let aonDocumental = this.getElement('aonDocumental');
+		let parent = document.querySelector('aon-documental');
 		let d = document.getElementById(aonDocumental.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.AON_MSG_EDIT_FILES);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
+		d.setContent(parent.uploadOption());
+		// d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {
+			let data = {
+				category: this.getElement("aonDocumentalUploadCategory").value,
+				scope: this.getElement("aonDocumentalUploadScope").value,
+				tag: this.getElement("aonDocumentalUploadTag").value,
+				documents: aonDocumentalTable.selected
+			}
+	    updateFiles(data);
+		});
 		d.open();
 	}
 
