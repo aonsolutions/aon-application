@@ -163,7 +163,16 @@ export class AonMobileMenu extends AonElement {
 
   async openCamera(type) {
     this.TYPE_IMG = type;
-    const isApp = await actionMobile({ action: "camera" });
+    const isApp = await actionMobile({ 
+      action: "camera", 
+      options:{
+        type: "CAMERA",
+        cameraQuality: 100,
+        // resizeWidth: 1280,
+        // resizeHeight: 1280,
+        // resizeQuality: 85
+      } 
+  });
     if (!isApp) this.getElement("aonMobileMenuCameraInput").click();
   }
 
