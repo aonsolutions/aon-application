@@ -297,7 +297,7 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{aonRole.config}">
-									<aon:if  test="#{!domainSwitcher.parentDomain}">
+									<aon:if  test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable  }">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="template-import-configuration"
 													action="gwt_import" title="Importar Excel">
