@@ -1743,7 +1743,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		Date startDate = getFirstDayOfYear(getToday());
 		for ( int i = 0; i < 12 ; i++ ) {
 			Date endDate = getLastDayOfMonth(startDate);
-			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+			ISQLContractSalaryCalculatorContext ctx = super.getContractSalaryCalculatorContext(
 					connection, startDate, endDate, endDate, contract);
 			ctx.setListener( new Listener() {
 				@Override
