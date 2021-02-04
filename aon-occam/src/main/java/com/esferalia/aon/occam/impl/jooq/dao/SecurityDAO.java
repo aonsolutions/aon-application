@@ -53,6 +53,7 @@ import com.esferalia.aon.jooq.tables.records.ContactRecord;
 import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -74,6 +75,7 @@ import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
@@ -1115,6 +1117,29 @@ public class SecurityDAO {
 		.setCertificate(r.get(RATTACH.DATA))
 		);
 		
+	}
+	
+	public static DomainUserRoles getDomainUserRoles(AONContext ctx, Integer userId) {
+		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
+		User user = getUser(ctx, userId);
+		
+		LinkedList<DomainApp> domainApps = getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getId())).collect(Collectors.toCollection(LinkedList::new));
+		LinkedList<DomainApp> parentDomainApps = domain.getParentId() != null  && user.getDomain().equals(domain.getParentId())
+				? getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getId())).collect(Collectors.toCollection(LinkedList::new))
+				: new LinkedList<>();
+		LinkedList<UserAppRole> domainUserRoles = getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getUserIdProperty().eq(userId)))
+				.collect(Collectors.toCollection(LinkedList::new));	
+		LinkedList<UserAppRole> parentDomainUserRoles = domain.getParentId() != null && user.getDomain().equals(domain.getParentId())
+				? getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getUserIdProperty().eq(userId)))
+						.collect(Collectors.toCollection(LinkedList::new))
+				: new LinkedList<>();	
+		return new DomainUserRoles()
+				.setDomain(domain)
+				.setUser(user)
+				.setDomainApps(domainApps)
+				.setParentDomainApps(parentDomainApps)
+				.setDomainUserRoles(domainUserRoles)
+				.setParentDomainUserRoles(parentDomainUserRoles);
 	}
 
 	public static boolean isOCRActive(AONContext ctx, int domain) {

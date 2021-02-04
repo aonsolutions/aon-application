@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
@@ -300,6 +301,12 @@ public class SecurityImpl implements ISecurity {
 		return ctx.getDslContext().transactionResult(
 				configuration -> SecurityDAO.getCertificateSEPE(ctx, domainId))
 		.orElseThrow(CertificateNotFoundException::new);
+	}
+
+	@Override
+	public DomainUserRoles getDomainUserRoles(AONContext ctx, Integer userId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SecurityDAO.getDomainUserRoles(ctx, userId));
 	}
 
 }

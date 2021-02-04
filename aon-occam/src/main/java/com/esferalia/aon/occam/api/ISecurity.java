@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
@@ -32,6 +33,8 @@ public interface ISecurity {
 	public Auth insertAuth(AONContext ctx, Auth auth);
 	public Auth updateAuth(AONContext ctx, Auth auth);
 	public Auth updateAuthPassword(AONContext ctx, Auth auth);
+	
+	public DomainUserRoles getDomainUserRoles(AONContext ctx, Integer userId);
 	
 	public User getUser(AONContext ctx, UserFilter filter);
 	public User insertUser(AONContext ctx, User user);
