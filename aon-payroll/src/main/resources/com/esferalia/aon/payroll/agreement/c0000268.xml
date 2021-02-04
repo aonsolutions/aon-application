@@ -1,0 +1,728 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000268</FICHEROS>
+    <AMBITO>PROVINCIAL</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO DE COMERCIO DEL METAL DE BARCELONA</NOMBRE>
+    <CODIGO_SS>08000765011993</CODIGO_SS>
+    <INFO_BOE>ACUERDO SALARIAL (BOP 22-2-2019)</INFO_BOE>
+    <FECHA_ULT_ACT>07-10-2020</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2018</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2019</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>GRUPO 1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <NOMBRE>GRUPO 2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>GRUPO 3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <NOMBRE>GRUPO 4</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>GRUPO 5</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <NOMBRE>GRUPO 6</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <NOMBRE>GRUPO 7</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <GRUPO>GRUPO 8</GRUPO>
+      <NOMBRE>ASPIRANTE 16 I 17 AÑOS</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>9</CODIGO>
+      <GRUPO>GRUPO 8</GRUPO>
+      <NOMBRE>CONTR. FORMACION 1º AÑO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>10</CODIGO>
+      <GRUPO>GRUPO 8</GRUPO>
+      <NOMBRE>CONTR. FORMACION 2º AÑO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>11</CODIGO>
+      <GRUPO>GRUPO 8</GRUPO>
+      <NOMBRE>CONTR. FORMACION 3º AÑO</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>SALARIO BASE</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>1119</CODIGO>
+      <NOMBRE>PAGAS EXTRA</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>700</CODIGO>
+      <NOMBRE>HORA EXTRA</NOMBRE>
+      <TIPO_AMDH>H</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2018</AÑO>
+      <INFO_BOE>ACUERDO SALARIAL (BOP 22-2-2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1780</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>GRUPO 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1599.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1599.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23994.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>15.88</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GRUPO 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1554</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1554</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23310.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>15.65</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>GRUPO 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1418.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1418.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21274.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>13.72</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>GRUPO 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1325.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1325.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19889.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>12.59</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>GRUPO 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1292.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1292.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19387.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>11.84</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <NOMBRE>GRUPO 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1213.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1213.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18205.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>10.7</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <NOMBRE>GRUPO 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1185.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1185.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17778.57</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>10.49</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>ASPIRANTE 16 I 17 AÑOS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>857.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>857.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12866.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>CONTR. FORMACION 1º AÑO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>735.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>735.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>11038.5</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>CONTR. FORMACION 2º AÑO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>746.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>746.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>11198.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>CONTR. FORMACION 3º AÑO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>838.68</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>838.68</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12580.13</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>ACUERDO SALARIAL (BOP 22-2-2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1780</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>GRUPO 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1639.64</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1639.64</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>24594.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>16.28</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GRUPO 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1592.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1592.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23892.79</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>16.04</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>GRUPO 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1453.77</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1453.77</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21806.56</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>14.07</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>GRUPO 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1359.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1359.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20386.96</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>12.9</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>GRUPO 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1324.8</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1324.8</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19871.94</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>12.13</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <NOMBRE>GRUPO 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1244.01</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1244.01</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18660.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>10.97</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <NOMBRE>GRUPO 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1214.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>1214.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18223.04</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>700</CODIGO>
+              <NOMBRE>HORA EXTRA</NOMBRE>
+              <IMPORTE>10.75</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>ASPIRANTE 16 I 17 AÑOS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>879.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>879.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>13188.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>CONTR. FORMACION 1º AÑO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>840</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>840</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12600</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>CONTR. FORMACION 2º AÑO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>840</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>840</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12600</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO 8</GRUPO>
+          <NOMBRE>CONTR. FORMACION 3º AÑO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>859.64</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1119</CODIGO>
+              <NOMBRE>PAGAS EXTRA</NOMBRE>
+              <IMPORTE>859.64</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12894.64</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

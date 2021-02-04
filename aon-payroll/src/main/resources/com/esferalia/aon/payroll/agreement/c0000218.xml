@@ -1,0 +1,1947 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000218</FICHEROS>
+    <AMBITO>PROVINCIAL</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO DE COMERCIO TEXTIL DE BARCELONA</NOMBRE>
+    <CODIGO_SS>08000795011994</CODIGO_SS>
+    <INFO_BOE>CONVENIO COLECTIVO (BOP 18-11-2019)</INFO_BOE>
+    <FECHA_ULT_ACT>10-12-2019</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2019</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2021</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>AYUDANTE DE 1ª O AYUDANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>AYUDANTE DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>ENCARGADO DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>ENCARGADO DE ESTABLECIMIENTO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>JEFE DE ALMACEN</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>JEFE DE COMPRAS</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>JEFE DE PERSONAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>9</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>JEFE DE SECCION</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>10</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>JEFE DE VENTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>11</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>VENDEDOR DE 1ª O VENDEDOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>12</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>VENDEDOR DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>13</CODIGO>
+      <GRUPO>GRUPO I</GRUPO>
+      <NOMBRE>VIAJANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>14</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>ANALISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>15</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>PREPARADOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>16</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>PROGRAMADOR DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>17</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>PROGRAMADOR DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>18</CODIGO>
+      <GRUPO>GRUPO II</GRUPO>
+      <NOMBRE>TECNICO DE SISTEMAS</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>19</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>ASPIRANTE ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>20</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>AUXILIAR ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>21</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>AUXILIAR DE CAJA DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>22</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>AUXILIAR DE CAJA DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>23</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>CONTABLE-CAJERO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>24</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>JEFE ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>25</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>JEFE DE SECCION</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>26</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>OFICIAL ADMINISTRATIVO DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>27</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>OFICIAL ADMINISTRATIVO DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>28</CODIGO>
+      <GRUPO>GRUPO III</GRUPO>
+      <NOMBRE>OFICIAL DE CAJA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>29</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>CHOFER</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>30</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>CONSERJE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>31</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>DIBUJANTE</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>32</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>ESCAPARATISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>33</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>JEFE DE EQUIPO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>34</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>MOZO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>35</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>MOZO ESPECIALIZADO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>36</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>MOZO TORISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>37</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>OFICIAL DE MANTENIMIENTO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>38</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>PERSONAL DE LIMPIEZA  (MES)</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>39</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>PROFESIONAL DE OFICIO DE 1ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>40</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>PROFESIONAL DE OFICIO DE 2ª</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>41</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>ROTULISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>42</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>TELEFONISTA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>43</CODIGO>
+      <GRUPO>GRUPO IV</GRUPO>
+      <NOMBRE>VIGILANTE</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>SALARIO CONVENIO</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOP 18-11-2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>AYUDANTE DE 1ª O AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>987.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>AYUDANTE DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>856.1</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>ENCARGADO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1254.64</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>ENCARGADO DE ESTABLECIMIENTO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1362.89</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1505.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE ALMACEN</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1362.89</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE COMPRAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1505.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE PERSONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1505.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1362.89</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE VENTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1505.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>VENDEDOR DE 1ª O VENDEDOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1192.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>VENDEDOR DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1114.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>VIAJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1211.23</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>ANALISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1413.73</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>PREPARADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1099.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>PROGRAMADOR DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1362.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>PROGRAMADOR DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1227.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>TECNICO DE SISTEMAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1601.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ASPIRANTE ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>840</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>AUXILIAR ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1039.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>AUXILIAR DE CAJA DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1039.27</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>AUXILIAR DE CAJA DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>840</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>CONTABLE-CAJERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1362.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1601.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>JEFE DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1362.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>OFICIAL ADMINISTRATIVO DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1205.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>OFICIAL ADMINISTRATIVO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1141.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>OFICIAL DE CAJA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1205.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CHOFER</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1162.61</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CONSERJE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1064.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>DIBUJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1362.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ESCAPARATISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1362.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>JEFE DE EQUIPO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1079.64</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>MOZO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1024.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>MOZO ESPECIALIZADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1060.05</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>MOZO TORISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1162.61</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>OFICIAL DE MANTENIMIENTO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1274.61</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PERSONAL DE LIMPIEZA  (MES)</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>840</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PROFESIONAL DE OFICIO DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1162.61</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PROFESIONAL DE OFICIO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1050.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ROTULISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1362.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>950.58</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>950.58</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOP 18-11-2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>AYUDANTE DE 1ª O AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1009.18</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>AYUDANTE DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>874.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>ENCARGADO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1282.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>ENCARGADO DE ESTABLECIMIENTO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1392.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1538.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE ALMACEN</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1392.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE COMPRAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1538.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE PERSONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1538.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1392.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE VENTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1538.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>VENDEDOR DE 1ª O VENDEDOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1218.78</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>VENDEDOR DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1138.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>VIAJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1237.88</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>ANALISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1444.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>PREPARADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1123.56</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>PROGRAMADOR DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1392.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>PROGRAMADOR DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1254.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>TECNICO DE SISTEMAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1636.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ASPIRANTE ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>858.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>AUXILIAR ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1062.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>AUXILIAR DE CAJA DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1062.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>AUXILIAR DE CAJA DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>858.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>CONTABLE-CAJERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1392.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1636.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>JEFE DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1392.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>OFICIAL ADMINISTRATIVO DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1231.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>OFICIAL ADMINISTRATIVO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1166.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>OFICIAL DE CAJA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1231.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CHOFER</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1188.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CONSERJE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1088.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>DIBUJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1392.91</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ESCAPARATISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1392.91</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>JEFE DE EQUIPO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1103.39</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>MOZO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1046.97</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>MOZO ESPECIALIZADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1083.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>MOZO TORISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1188.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>OFICIAL DE MANTENIMIENTO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1302.65</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PERSONAL DE LIMPIEZA  (MES)</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>858.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PROFESIONAL DE OFICIO DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1188.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PROFESIONAL DE OFICIO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1073.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ROTULISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1392.91</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>971.49</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>971.49</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2021</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOP 18-11-2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>AYUDANTE DE 1ª O AYUDANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1031.38</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>AYUDANTE DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>894.18</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>ENCARGADO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1310.45</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>ENCARGADO DE ESTABLECIMIENTO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1423.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>ENCARGADO GENERAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1572.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE ALMACEN</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1423.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE COMPRAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1572.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE PERSONAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1572.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1423.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>JEFE DE VENTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1572.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>VENDEDOR DE 1ª O VENDEDOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1245.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>VENDEDOR DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1163.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>GRUPO I</GRUPO>
+          <NOMBRE>VIAJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1265.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>ANALISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1476.62</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>PREPARADOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1148.28</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>PROGRAMADOR DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1423.49</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>PROGRAMADOR DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1282.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>GRUPO II</GRUPO>
+          <NOMBRE>TECNICO DE SISTEMAS</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1672.88</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>ASPIRANTE ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>877.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>AUXILIAR ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1085.5</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>AUXILIAR DE CAJA DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1085.5</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>AUXILIAR DE CAJA DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>877.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>CONTABLE-CAJERO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1423.49</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>JEFE ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1672.88</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>JEFE DE SECCION</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1423.49</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>OFICIAL ADMINISTRATIVO DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1258.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>OFICIAL ADMINISTRATIVO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1192.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>GRUPO III</GRUPO>
+          <NOMBRE>OFICIAL DE CAJA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1258.94</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CHOFER</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1214.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>CONSERJE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1112.01</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>DIBUJANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1423.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ESCAPARATISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1423.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>JEFE DE EQUIPO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1127.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>MOZO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1070</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>MOZO ESPECIALIZADO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1107.2</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>MOZO TORISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1214.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>OFICIAL DE MANTENIMIENTO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1331.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PERSONAL DE LIMPIEZA  (MES)</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>877.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PROFESIONAL DE OFICIO DE 1ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1214.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>PROFESIONAL DE OFICIO DE 2ª</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1097.58</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>ROTULISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1423.55</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>TELEFONISTA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>992.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>GRUPO IV</GRUPO>
+          <NOMBRE>VIGILANTE</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>992.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

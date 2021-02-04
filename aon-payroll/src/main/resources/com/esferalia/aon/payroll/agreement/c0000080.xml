@@ -1,0 +1,1042 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000080</FICHEROS>
+    <AMBITO>NACIONAL</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO ESTATAL PARA LAS INDUSTRIAS EXTRACTIVAS, INDUSTRIAS DEL VIDRIO, INDUSTRIAS CERAMICAS Y PARA LAS DEL COMERCIO EXCLUSIVISTA DE LOS MISMOS MATERIALES</NOMBRE>
+    <CODIGO_SS>99002045011981</CODIGO_SS>
+    <INFO_BOE>REVISION SALARIAL (BOE NUM. 50 - JUEVES 27 DE FEBRERO DE 2020)</INFO_BOE>
+    <FECHA_ULT_ACT>03-03-2020</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2019</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2020</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>GRUPO 1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <NOMBRE>GRUPO 2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>GRUPO 3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <NOMBRE>GRUPO 4</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>GRUPO 5</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <NOMBRE>GRUPO 6</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <NOMBRE>GRUPO 7</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>SALARIO BASE</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>602</CODIGO>
+      <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>602</CODIGO>
+      <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>48</CODIGO>
+      <NOMBRE>TURNICIDAD</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>624</CODIGO>
+      <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>500</CODIGO>
+      <NOMBRE>DIETA COMPLETA</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>506</CODIGO>
+      <NOMBRE>MEDIA DIETA</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>800</CODIGO>
+      <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>49</CODIGO>
+      <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>REVISION SALARIAL (BOE NUM. 50 - JUEVES 27 DE FEBRERO DE 2020)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>GRUPO 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>26.28</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>11957.4</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>3.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>25687.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>55.4</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.22</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>1965.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>9.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>7.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GRUPO 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>26.49</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12052.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>3.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>25687.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>55.4</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.22</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>1965.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>9.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>7.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>GRUPO 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>27.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12303.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>3.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>25687.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>55.4</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.22</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>1965.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>9.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>7.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>GRUPO 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>28.78</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>13094.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>3.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>25687.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>55.4</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.22</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>1965.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>9.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>7.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>GRUPO 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>30.97</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14091.35</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>3.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>25687.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>55.4</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.22</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>1965.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>9.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>7.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <NOMBRE>GRUPO 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>33.47</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15228.85</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>3.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>25687.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>55.4</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.22</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>1965.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>9.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>7.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <NOMBRE>GRUPO 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>36.81</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16748.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>3.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>25687.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>55.4</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.22</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>1965.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>9.98</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>7.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>REVISION SALARIAL (BOE NUM. 50 - JUEVES 27 DE FEBRERO DE 2020)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>GRUPO 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>26.81</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12198.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>4.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>26201.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>56.51</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.36</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>2004.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.16</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>10.18</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>8.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GRUPO 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>27.02</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12294.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>4.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>26201.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>56.51</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.36</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>2004.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.16</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>10.18</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>8.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>GRUPO 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>27.58</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12548.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>4.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>26201.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>56.51</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.36</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>2004.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.16</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>10.18</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>8.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>GRUPO 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>29.36</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>13358.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>4.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>26201.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>56.51</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.36</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>2004.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.16</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>10.18</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>8.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>GRUPO 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>31.59</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14373.45</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>4.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>26201.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>56.51</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.36</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>2004.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.16</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>10.18</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>8.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <NOMBRE>GRUPO 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>34.14</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15533.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>4.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>26201.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>56.51</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.36</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>2004.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.16</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>10.18</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>8.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <NOMBRE>GRUPO 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>37.55</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17085.25</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>4.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>49</CODIGO>
+              <NOMBRE>SEGURO DE ACCIDENTES</NOMBRE>
+              <IMPORTE>26201.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>56.51</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>506</CODIGO>
+              <NOMBRE>MEDIA DIETA</NOMBRE>
+              <IMPORTE>7.36</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>2004.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>602</CODIGO>
+              <NOMBRE>PLUS ASISTENCIA</NOMBRE>
+              <IMPORTE>7.16</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>624</CODIGO>
+              <NOMBRE>PLUS DOMINGOS Y FESTIVOS</NOMBRE>
+              <IMPORTE>10.18</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>800</CODIGO>
+              <NOMBRE>AYUDA ESCOLAR</NOMBRE>
+              <IMPORTE>8.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

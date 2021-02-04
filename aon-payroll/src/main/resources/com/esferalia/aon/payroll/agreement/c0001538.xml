@@ -1,0 +1,3171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0001538</FICHEROS>
+    <AMBITO>AUTONOMICO</AMBITO>
+    <NOMBRE>PELUQUERIAS, CENTROS DE ESTETICA Y BELLEZA DE CATALUÑA</NOMBRE>
+    <CODIGO_SS>79002515012006</CODIGO_SS>
+    <INFO_BOE>REVISION SALARIAL (DOGC NUM. 8176 - 14.7.2020)</INFO_BOE>
+    <FECHA_ULT_ACT>15-07-2020</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2018</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2020</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <NOMBRE>GRUPO I. PERSONAL DIRECTIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+      <NOMBRE>NIVEL 2.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+      <NOMBRE>NIVEL 2.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+      <NOMBRE>NIVEL 3.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+      <NOMBRE>NIVEL 3.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+      <NOMBRE>NIVEL 3.3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+      <NOMBRE>NIVEL 4.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+      <NOMBRE>NIVEL 4.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>9</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+      <NOMBRE>NIVEL 4.3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>10</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+      <NOMBRE>NIVEL 4.4</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>11</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+      <NOMBRE>NIVEL 5.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>12</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+      <NOMBRE>NIVEL 5.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>13</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+      <NOMBRE>NIVEL 5.3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>14</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+      <NOMBRE>NIVEL 5.4</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>15</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+      <NOMBRE>NIVEL 6.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>16</CODIGO>
+      <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+      <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+      <NOMBRE>NIVEL 6.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>17</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <NOMBRE>GRUPO I. PERSONAL DIRECTIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>18</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+      <NOMBRE>NIVEL 2.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>19</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+      <NOMBRE>NIVEL 2.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>20</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+      <NOMBRE>NIVEL 3.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>21</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+      <NOMBRE>NIVEL 3.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>22</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+      <NOMBRE>NIVEL 3.3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>23</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+      <NOMBRE>NIVEL 4.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>24</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+      <NOMBRE>NIVEL 4.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>25</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+      <NOMBRE>NIVEL 5.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>26</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+      <NOMBRE>NIVEL 5.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>27</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+      <NOMBRE>NIVEL 5.3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>28</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+      <NOMBRE>NIVEL 5.4</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>29</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+      <NOMBRE>NIVEL 6.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>30</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+      <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+      <NOMBRE>NIVEL 6.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>31</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <NOMBRE>GRUPO I. PERSONAL DIRECTIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>32</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+      <NOMBRE>NIVEL 2.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>33</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+      <NOMBRE>NIVEL 2.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>34</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+      <NOMBRE>NIVEL 3.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>35</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+      <NOMBRE>NIVEL 3.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>36</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+      <NOMBRE>NIVEL 4.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>37</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+      <NOMBRE>NIVEL 4.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>38</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+      <NOMBRE>NIVEL 4.3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>39</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+      <NOMBRE>NIVEL 5.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>40</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+      <NOMBRE>NIVEL 5.2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>41</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+      <NOMBRE>NIVEL 5.3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>42</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+      <NOMBRE>NIVEL 5.4</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>43</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+      <NOMBRE>NIVEL 6.1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>44</CODIGO>
+      <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+      <NOMBRE>NIVEL 3.3</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>23</CODIGO>
+      <NOMBRE>GARANTIZADO</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>601</CODIGO>
+      <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>SALARIO CONVENIO</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2018</AÑO>
+      <INFO_BOE>CORRECCION TABLAS (DOGC NUM. 7806 - 8.2.2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1755</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <NOMBRE>GRUPO I. PERSONAL DIRECTIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1510.81</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>832.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1018.15</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>713.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>916.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>499.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>890.91</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>439.76</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>858.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>428.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>839.97</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>356.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>763.61</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>392.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>763.61</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>428.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>839.97</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>237.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>763.61</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1215.17</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1037.89</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>931.23</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>860.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>860.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>742.45</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <NOMBRE>GRUPO I. PERSONAL DIRECTIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1482.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>998.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>899.09</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>1016.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>577.36</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>974.47</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>521.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>896.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>521.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>896.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>462.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>834.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1016.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>974.47</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>896.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>834.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>828.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>735.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <NOMBRE>GRUPO I. PERSONAL DIRECTIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1483.62</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1004.74</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>904.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>812.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>792.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>812.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>735.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>783.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>812.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>792.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>783.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>735.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>735.9</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.68</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>REVISION SALARIAL (DOGC NUM. 7894 - 11.6.2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1755</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <NOMBRE>GRUPO I. PERSONAL DIRECTIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1547.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>844.5</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1042.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>723.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>938.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>506.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>911.36</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>445.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>434.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>361.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>398.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>434.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>241.28</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1244.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1062.8</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>953.58</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <NOMBRE>GRUPO I. PERSONAL DIRECTIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1517.73</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1022.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>920.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1040.97</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>585.44</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>997.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>528.62</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>917.77</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>528.62</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>917.77</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>469.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1040.97</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>997.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>917.77</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <NOMBRE>GRUPO I. PERSONAL DIRECTIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1486.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1028.85</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>925.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>44</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.72</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>REVISION SALARIAL (DOGC NUM. 8176 - 14.7.2020)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1755</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <NOMBRE>GRUPO I. PERSONAL DIRECTIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1576.46</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>852.1</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1062.4</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>730.36</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>956.15</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>511.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>449.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>438.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>365.18</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>401.71</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>438.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>243.45</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1267.97</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1082.99</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <GRUPO>BARCELONA, LERIDA, TARRAGONA Y GERONA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <NOMBRE>GRUPO I. PERSONAL DIRECTIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1546.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1042.4</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>20</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1060.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>21</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>590.71</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1016.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>22</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>533.38</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>23</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>533.38</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>935.21</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>24</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>473.33</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>25</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1060.75</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>26</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1016.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>27</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>28</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>29</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>30</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE BARCELONA Y PROVINCIA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>31</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <NOMBRE>GRUPO I. PERSONAL DIRECTIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1514.25</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>32</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>1048.4</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>33</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL TITULADO</GRUPO>
+          <NOMBRE>NIVEL 2.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>34</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>35</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>44</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL TECNICO</GRUPO>
+          <NOMBRE>NIVEL 3.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>36</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>37</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>38</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO IV. PERSONAL ESPECIALISTA</GRUPO>
+          <NOMBRE>NIVEL 4.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>39</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>40</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>41</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>42</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO V. PERSONAL ADMINISTRATIVO</GRUPO>
+          <NOMBRE>NIVEL 5.4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>43</CODIGO>
+          <GRUPO>PELUQUERIAS DE SEÑORAS DE TARRAGONA, LERIDA Y GERONA</GRUPO>
+          <GRUPO>GRUPO VI. PERSONAL SUBALTERNO</GRUPO>
+          <NOMBRE>NIVEL 6.1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>23</CODIGO>
+              <NOMBRE>GARANTIZADO</NOMBRE>
+              <IMPORTE>950</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>601</CODIGO>
+              <NOMBRE>PLUS TRANSPORTE</NOMBRE>
+              <IMPORTE>1.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

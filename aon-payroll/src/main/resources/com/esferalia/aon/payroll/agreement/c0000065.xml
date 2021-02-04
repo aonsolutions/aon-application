@@ -1,0 +1,1742 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000065</FICHEROS>
+    <AMBITO>NACIONAL</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO ESTATAL DE ARTES GRAFICAS, MANIPULADOS DE PAPEL, MANIPULADOS DE CARTON, EDITORIALES E INDUSTRIAS AUXILIARES</NOMBRE>
+    <CODIGO_SS>99000355011982</CODIGO_SS>
+    <INFO_BOE>REVISION SALARIAL (BOE NUM. 50 - JUEVES 27 DE FEBRERO DE 2020)</INFO_BOE>
+    <FECHA_ULT_ACT>02-03-2020</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2019</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2020</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>NIVEL 1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <NOMBRE>NIVEL 10</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>NIVEL 11</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <NOMBRE>NIVEL 12</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>NIVEL 13</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <NOMBRE>NIVEL 14</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <NOMBRE>NIVEL 15</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <NOMBRE>NIVEL 16</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>9</CODIGO>
+      <NOMBRE>NIVEL 17</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>10</CODIGO>
+      <NOMBRE>NIVEL 18</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>11</CODIGO>
+      <NOMBRE>NIVEL 19</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>12</CODIGO>
+      <NOMBRE>NIVEL 2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>13</CODIGO>
+      <NOMBRE>NIVEL 3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>14</CODIGO>
+      <NOMBRE>NIVEL 4</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>15</CODIGO>
+      <NOMBRE>NIVEL 5</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>16</CODIGO>
+      <NOMBRE>NIVEL 6</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>17</CODIGO>
+      <NOMBRE>NIVEL 7</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>18</CODIGO>
+      <NOMBRE>NIVEL 8</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>19</CODIGO>
+      <NOMBRE>NIVEL 9</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>SALARIO BASE</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>1102</CODIGO>
+      <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>1103</CODIGO>
+      <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>1101</CODIGO>
+      <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>923</CODIGO>
+      <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 153 - JUEVES 27 DE JUNIO DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1768</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>NIVEL 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>23092.78</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>33554.14</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>2151.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1898.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1898.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>NIVEL 10</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11842.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19406.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1103.13</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>973.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>973.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>NIVEL 11</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11250.33</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18661.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1047.98</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>924.68</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>924.68</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>NIVEL 12</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10658.22</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17917.25</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>992.82</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>876.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>876.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>NIVEL 13</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10066.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17172.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>937.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>827.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>827.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <NOMBRE>NIVEL 14</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9651.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16651.42</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>899.06</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>793.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>793.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <NOMBRE>NIVEL 15</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9177.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16055.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>854.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>754.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>754.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <NOMBRE>NIVEL 16</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>8704.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15460</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>810.81</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>715.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>715.41</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <NOMBRE>NIVEL 17</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>8289.73</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14938.79</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>772.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>681.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>681.35</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <NOMBRE>NIVEL 18</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>7934.45</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14492.02</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>739.1</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>652.15</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>652.15</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <NOMBRE>NIVEL 19</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>7579.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14045.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>706</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>622.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>622.95</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <NOMBRE>NIVEL 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>18355.81</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>27597.24</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1709.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1508.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1508.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <NOMBRE>NIVEL 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>17763.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>26852.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1654.7</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1460.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1460.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <NOMBRE>NIVEL 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16579.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>25363.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1544.39</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1362.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1362.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <NOMBRE>NIVEL 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>15395.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>23874.16</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1434.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1265.36</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1265.36</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <NOMBRE>NIVEL 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14210.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22384.92</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1323.76</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1168.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1168.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <NOMBRE>NIVEL 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>13618.83</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21640.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1268.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1119.36</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1119.36</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <NOMBRE>NIVEL 8</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>13026.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20895.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1213.45</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1070.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1070.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <NOMBRE>NIVEL 9</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12434.58</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20151.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4514.17</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1158.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1022.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1022.02</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>REVISION SALARIAL (BOE NUM. 50 - JUEVES 27 DE FEBRERO DE 2020)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1768</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>NIVEL 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>23508.45</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>34158.11</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>2189.83</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1932.2</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1932.2</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>NIVEL 10</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12055.62</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19755.78</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1122.99</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>990.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>990.87</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>NIVEL 11</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>11452.84</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18997.75</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1066.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>941.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>941.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>NIVEL 12</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10850.07</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>18239.76</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1010.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>891.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>891.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>NIVEL 13</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>10247.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>17481.72</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>954.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>842.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>842.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <NOMBRE>NIVEL 14</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9825.34</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16951.15</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>915.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>807.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>807.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <NOMBRE>NIVEL 15</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>9343.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>16344.7</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>870.32</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>767.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>767.93</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <NOMBRE>NIVEL 16</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>8860.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15738.28</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>825.4</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>728.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>728.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <NOMBRE>NIVEL 17</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>8438.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>15207.69</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>786.09</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>693.61</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>693.61</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <NOMBRE>NIVEL 18</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>8077.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14752.88</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>752.4</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>663.89</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>663.89</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <NOMBRE>NIVEL 19</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>7715.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>14298.05</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>718.71</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>634.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>634.16</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <NOMBRE>NIVEL 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>18686.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>28093.99</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1740.64</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1535.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1535.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>13</CODIGO>
+          <NOMBRE>NIVEL 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>18083.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>27335.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1684.48</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1486.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1486.31</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>14</CODIGO>
+          <NOMBRE>NIVEL 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>16877.86</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>25819.91</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1572.19</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1387.22</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1387.22</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>15</CODIGO>
+          <NOMBRE>NIVEL 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>15672.31</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>24303.89</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1459.88</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1288.14</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1288.14</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>16</CODIGO>
+          <NOMBRE>NIVEL 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>14466.75</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22787.85</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1347.59</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1189.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1189.04</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>17</CODIGO>
+          <NOMBRE>NIVEL 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>13863.97</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>22029.85</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1291.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1139.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1139.51</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>18</CODIGO>
+          <NOMBRE>NIVEL 8</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>13261.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>21271.82</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1235.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1089.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1089.96</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>19</CODIGO>
+          <NOMBRE>NIVEL 9</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>12658.4</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20513.8</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>923</CODIGO>
+              <NOMBRE>COMPLEMENTO LINEAL</NOMBRE>
+              <IMPORTE>4595.43</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1101</CODIGO>
+              <NOMBRE>PAGA BENEFICIOS</NOMBRE>
+              <IMPORTE>1179.14</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1102</CODIGO>
+              <NOMBRE>PAGA EXTRA VERANO</NOMBRE>
+              <IMPORTE>1040.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1103</CODIGO>
+              <NOMBRE>PAGA EXTRA NAVIDAD</NOMBRE>
+              <IMPORTE>1040.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

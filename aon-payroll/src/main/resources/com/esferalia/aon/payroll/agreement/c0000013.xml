@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000013</FICHEROS>
+    <AMBITO>NACIONAL</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO DE MAYORISTAS E IMPORTADORES DE PRODUCTOS QUIMICOS INDUSTRIALES Y DE DROGUERIA, PERFUMERIA Y ANEXOS</NOMBRE>
+    <CODIGO_SS>99001095011981</CODIGO_SS>
+    <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 229 - VIERNES 21 DE SEPTIEMBRE DE 2018)</INFO_BOE>
+    <FECHA_ULT_ACT>17-07-2020</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2018</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2020</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>GRUPO I</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <NOMBRE>GRUPO II</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>GRUPO III</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <NOMBRE>GRUPO IV</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>GRUPO O</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <NOMBRE>GRUPO V</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <NOMBRE>GRUPO VI</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>120</CODIGO>
+      <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2018</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 229 - VIERNES 21 DE SEPTIEMBRE DE 2018)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1754</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>GRUPO I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>15468.09</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GRUPO II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>16063.02</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>GRUPO III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>16508.16</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>GRUPO IV</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>16954.36</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>GRUPO O</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>21861.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <NOMBRE>GRUPO V</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>17698.01</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <NOMBRE>GRUPO VI</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>19780.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 229 - VIERNES 21 DE SEPTIEMBRE DE 2018)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1754</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>GRUPO I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>15808.39</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GRUPO II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>16416.41</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>GRUPO III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>16871.34</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>GRUPO IV</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>17327.35</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>GRUPO O</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>22342.41</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <NOMBRE>GRUPO V</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>18087.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <NOMBRE>GRUPO VI</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>20215.42</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 229 - VIERNES 21 DE SEPTIEMBRE DE 2018)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1754</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>GRUPO I</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>16156.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GRUPO II</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>16777.57</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>GRUPO III</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>17242.51</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>GRUPO IV</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>17708.55</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>GRUPO O</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>22833.94</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <NOMBRE>GRUPO V</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>18485.29</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <NOMBRE>GRUPO VI</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>120</CODIGO>
+              <NOMBRE>SALARIO MINIMO GARANTIZADO</NOMBRE>
+              <IMPORTE>20660.16</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

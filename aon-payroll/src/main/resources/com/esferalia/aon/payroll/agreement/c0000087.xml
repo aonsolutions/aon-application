@@ -1,0 +1,875 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000087</FICHEROS>
+    <AMBITO>NACIONAL</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO ESTATAL DE CENTROS DE ASISTENCIA Y EDUCACION INFANTIL</NOMBRE>
+    <CODIGO_SS>99005615011990</CODIGO_SS>
+    <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 178 - VIERNES 26 DE JULIO DE 2019)</INFO_BOE>
+    <FECHA_ULT_ACT>12-08-2019</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2019</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2021</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+      <GRUPO>CARGOS DIRECTIVOS TEMPORALES</GRUPO>
+      <NOMBRE>DIRECTOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+      <GRUPO>CARGOS DIRECTIVOS TEMPORALES</GRUPO>
+      <NOMBRE>DIRECTOR PEDAGOGICO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+      <GRUPO>CARGOS DIRECTIVOS TEMPORALES</GRUPO>
+      <NOMBRE>SUBDIRECTOR</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+      <GRUPO>GRUPO I. PERSONAL DE AULA</GRUPO>
+      <NOMBRE>AUXILIAR DE APOYO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+      <GRUPO>GRUPO I. PERSONAL DE AULA</GRUPO>
+      <NOMBRE>EDUCADOR INFANTIL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+      <GRUPO>GRUPO I. PERSONAL DE AULA</GRUPO>
+      <NOMBRE>MAESTRO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+      <GRUPO>GRUPO II. PERSONAL DE SERVICIOS COMPLEMENTARIOS</GRUPO>
+      <NOMBRE>PERSONAL ESPECIALIZADO: LOGOPEDA, PSICOLOGO, ENFERMERO, MEDICO, PEDAGOGO, ASISTENTE SOCIAL</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+      <NOMBRE>PERSONAL ADMINISTRATIVO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>9</CODIGO>
+      <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+      <NOMBRE>PERSONAL DE COCINA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>10</CODIGO>
+      <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+      <NOMBRE>PERSONAL DE LIMPIEZA</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>11</CODIGO>
+      <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+      <NOMBRE>PERSONAL DE MANTENIMIENTO</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>12</CODIGO>
+      <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+      <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+      <NOMBRE>PERSONAL DE SERVICIOS GENERALES</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>SALARIO BASE</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>1336</CODIGO>
+      <NOMBRE>C.P.P.</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 178 - VIERNES 26 DE JULIO DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>CARGOS DIRECTIVOS TEMPORALES</GRUPO>
+          <NOMBRE>DIRECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1388.08</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19433.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>CARGOS DIRECTIVOS TEMPORALES</GRUPO>
+          <NOMBRE>DIRECTOR PEDAGOGICO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1388.08</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19433.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>CARGOS DIRECTIVOS TEMPORALES</GRUPO>
+          <NOMBRE>SUBDIRECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1388.08</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19433.12</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO I. PERSONAL DE AULA</GRUPO>
+          <NOMBRE>AUXILIAR DE APOYO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12600</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO I. PERSONAL DE AULA</GRUPO>
+          <NOMBRE>EDUCADOR INFANTIL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>930</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>13020</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>22.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO I. PERSONAL DE AULA</GRUPO>
+          <NOMBRE>MAESTRO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1370.28</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19183.92</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>29.21</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL DE SERVICIOS COMPLEMENTARIOS</GRUPO>
+          <NOMBRE>PERSONAL ESPECIALIZADO: LOGOPEDA, PSICOLOGO, ENFERMERO, MEDICO, PEDAGOGO, ASISTENTE SOCIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1360.22</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19043.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>28.67</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12600</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL DE COCINA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12600</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL DE LIMPIEZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12600</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL DE MANTENIMIENTO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12600</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL DE SERVICIOS GENERALES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>900</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>12600</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 178 - VIERNES 26 DE JULIO DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>CARGOS DIRECTIVOS TEMPORALES</GRUPO>
+          <NOMBRE>DIRECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1415.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19821.78</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>CARGOS DIRECTIVOS TEMPORALES</GRUPO>
+          <NOMBRE>DIRECTOR PEDAGOGICO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1415.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19821.78</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>CARGOS DIRECTIVOS TEMPORALES</GRUPO>
+          <NOMBRE>SUBDIRECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1415.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19821.78</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO I. PERSONAL DE AULA</GRUPO>
+          <NOMBRE>AUXILIAR DE APOYO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO I. PERSONAL DE AULA</GRUPO>
+          <NOMBRE>EDUCADOR INFANTIL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>948.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>13280.4</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>22.88</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO I. PERSONAL DE AULA</GRUPO>
+          <NOMBRE>MAESTRO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1397.69</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19567.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>29.79</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL DE SERVICIOS COMPLEMENTARIOS</GRUPO>
+          <NOMBRE>PERSONAL ESPECIALIZADO: LOGOPEDA, PSICOLOGO, ENFERMERO, MEDICO, PEDAGOGO, ASISTENTE SOCIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1387.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19423.94</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>29.24</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL DE COCINA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL DE LIMPIEZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL DE MANTENIMIENTO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL DE SERVICIOS GENERALES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2021</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 178 - VIERNES 26 DE JULIO DE 2019)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>0</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>CARGOS DIRECTIVOS TEMPORALES</GRUPO>
+          <NOMBRE>DIRECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1430</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20020</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>CARGOS DIRECTIVOS TEMPORALES</GRUPO>
+          <NOMBRE>DIRECTOR PEDAGOGICO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1430</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20020</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>CARGOS DIRECTIVOS TEMPORALES</GRUPO>
+          <NOMBRE>SUBDIRECTOR</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1430</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>20020</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO I. PERSONAL DE AULA</GRUPO>
+          <NOMBRE>AUXILIAR DE APOYO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO I. PERSONAL DE AULA</GRUPO>
+          <NOMBRE>EDUCADOR INFANTIL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>958.09</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>13413.2</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>23.11</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO I. PERSONAL DE AULA</GRUPO>
+          <NOMBRE>MAESTRO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1411.66</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19763.27</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>30.09</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO II. PERSONAL DE SERVICIOS COMPLEMENTARIOS</GRUPO>
+          <NOMBRE>PERSONAL ESPECIALIZADO: LOGOPEDA, PSICOLOGO, ENFERMERO, MEDICO, PEDAGOGO, ASISTENTE SOCIAL</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1</CODIGO>
+              <NOMBRE>SALARIO BASE</NOMBRE>
+              <IMPORTE>1401.3</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>5</CODIGO>
+              <NOMBRE>SALARIO TOTAL ANUAL</NOMBRE>
+              <IMPORTE>19618.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>29.54</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL ADMINISTRATIVO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>9</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL DE COCINA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>10</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL DE LIMPIEZA</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>11</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL DE MANTENIMIENTO</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>12</CODIGO>
+          <GRUPO>CENTROS DE EDUCACION INFANTIL GENERAL</GRUPO>
+          <GRUPO>GRUPO III. PERSONAL DE ADMINISTRACION Y SERVICIOS</GRUPO>
+          <NOMBRE>PERSONAL DE SERVICIOS GENERALES</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>1336</CODIGO>
+              <NOMBRE>C.P.P.</NOMBRE>
+              <IMPORTE>15.92</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>

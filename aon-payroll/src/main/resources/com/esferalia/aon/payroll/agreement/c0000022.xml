@@ -1,0 +1,1865 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+    <VERSION>1</VERSION>
+    <FICHEROS>c0000022</FICHEROS>
+    <AMBITO>NACIONAL</AMBITO>
+    <NOMBRE>CONVENIO COLECTIVO GENERAL DE LA INDUSTRIA QUIMICA</NOMBRE>
+    <CODIGO_SS>99004235011981</CODIGO_SS>
+    <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 191 - MIERCOLES 8 DE AGOSTO DE 2018)</INFO_BOE>
+    <FECHA_ULT_ACT>17-07-2020</FECHA_ULT_ACT>
+    <AÑO_APLIC_DESDE>2018</AÑO_APLIC_DESDE>
+    <AÑO_APLIC_HASTA>2020</AÑO_APLIC_HASTA>
+  </DATOS_GENERALES>
+  <CATALOGO_CAT_PROF>
+    <CAT_PROF_IT>
+      <CODIGO>1</CODIGO>
+      <NOMBRE>GRUPO 1</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>2</CODIGO>
+      <NOMBRE>GRUPO 2</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>GRUPO 3</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>4</CODIGO>
+      <NOMBRE>GRUPO 4</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>5</CODIGO>
+      <NOMBRE>GRUPO 5</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>6</CODIGO>
+      <NOMBRE>GRUPO 6</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>7</CODIGO>
+      <NOMBRE>GRUPO 7</NOMBRE>
+    </CAT_PROF_IT>
+    <CAT_PROF_IT>
+      <CODIGO>8</CODIGO>
+      <NOMBRE>GRUPO 8</NOMBRE>
+    </CAT_PROF_IT>
+  </CATALOGO_CAT_PROF>
+  <CATALOGO_CPTOS_RETRIB>
+    <CPTO_IT>
+      <CODIGO>3</CODIGO>
+      <NOMBRE>SALARIO CONVENIO</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>600</CODIGO>
+      <NOMBRE>PLUS CONVENIO</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>48</CODIGO>
+      <NOMBRE>TURNICIDAD</NOMBRE>
+      <TIPO_AMDH>A</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>501</CODIGO>
+      <NOMBRE>DIETA COMIDA</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>500</CODIGO>
+      <NOMBRE>DIETA COMPLETA</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>516</CODIGO>
+      <NOMBRE>DIETA PERNOCTA</NOMBRE>
+      <TIPO_AMDH>D</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>505</CODIGO>
+      <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+      <TIPO_AMDH>H</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>12</CODIGO>
+      <NOMBRE>ANTIGUEDAD</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>19</CODIGO>
+      <NOMBRE>TRIENIOS</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>21</CODIGO>
+      <NOMBRE>QUINQUENIOS</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+    <CPTO_IT>
+      <CODIGO>615</CODIGO>
+      <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+      <TIPO_AMDH>M</TIPO_AMDH>
+    </CPTO_IT>
+  </CATALOGO_CPTOS_RETRIB>
+  <TABLAS_SALARIALES>
+    <TAB_SAL_IT>
+      <AÑO>2018</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 191 - MIERCOLES 8 DE AGOSTO DE 2018)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1752</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>GRUPO 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>15264.57</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>18805.95</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>40.99</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>20.53</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.372</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>122.54</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>26.57</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GRUPO 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>16333.08</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>19874.47</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>40.99</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>20.53</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.372</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>122.54</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>28.47</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>GRUPO 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>17706.91</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>21248.28</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>40.99</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>20.53</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.372</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>122.54</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>30.84</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>GRUPO 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>19691.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>23232.67</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>40.99</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>20.53</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.372</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>122.54</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>34.29</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>GRUPO 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>22438.25</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>25980.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>40.99</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>20.53</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.372</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>122.54</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>39.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <NOMBRE>GRUPO 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>26255.09</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>29796.46</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>40.99</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>20.53</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.372</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>122.54</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>45.76</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <NOMBRE>GRUPO 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>31902.94</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>35444.34</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>40.99</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>20.53</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.372</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>122.54</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>55.6</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <NOMBRE>GRUPO 8</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>40451.09</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>43992.49</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>40.99</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>20.53</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.372</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>122.54</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>70.5</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2019</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 191 - MIERCOLES 8 DE AGOSTO DE 2018)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1752</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>GRUPO 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>15646.18</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>19276.1</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>42.01</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.382</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>125.61</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>27.23</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GRUPO 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>16741.41</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>20371.33</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>42.01</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.382</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>125.61</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>29.18</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>GRUPO 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>18149.58</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>21779.49</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>42.01</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.382</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>125.61</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>31.61</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>GRUPO 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>20183.6</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>23813.49</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>42.01</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.382</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>125.61</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>35.15</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>GRUPO 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>22999.21</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>26629.82</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>42.01</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.382</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>125.61</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>40.05</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <NOMBRE>GRUPO 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>26911.47</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>30541.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>42.01</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.382</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>125.61</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>46.91</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <NOMBRE>GRUPO 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>32700.52</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>36330.44</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>42.01</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.382</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>125.61</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>56.99</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <NOMBRE>GRUPO 8</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>41462.37</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>45092.3</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>42.01</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.04</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.382</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>125.61</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>72.26</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.34</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+    <TAB_SAL_IT>
+      <AÑO>2020</AÑO>
+      <INFO_BOE>CONVENIO COLECTIVO (BOE NUM. 191 - MIERCOLES 8 DE AGOSTO DE 2018)</INFO_BOE>
+      <COMPUTO_HORAS>
+        <COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        <COMPUTO_HORAS_TOTAL>1752</COMPUTO_HORAS_TOTAL>
+      </COMPUTO_HORAS>
+      <CATEGORIAS_PROFESIONALES>
+        <CAT_PROF_IT>
+          <CODIGO>1</CODIGO>
+          <NOMBRE>GRUPO 1</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>16037.34</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>19758</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>43.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.57</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.391</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>128.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>27.91</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>2</CODIGO>
+          <NOMBRE>GRUPO 2</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>17159.94</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>20880.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>43.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.57</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.391</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>128.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>29.91</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>3</CODIGO>
+          <NOMBRE>GRUPO 3</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>18603.32</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>22323.98</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>43.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.57</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.391</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>128.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>32.4</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>4</CODIGO>
+          <NOMBRE>GRUPO 4</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>20688.19</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>24408.82</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>43.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.57</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.391</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>128.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>36.03</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>5</CODIGO>
+          <NOMBRE>GRUPO 5</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>23574.19</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>27295.57</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>43.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.57</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.391</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>128.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>41.05</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>6</CODIGO>
+          <NOMBRE>GRUPO 6</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>27584.26</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>31304.9</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>43.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.57</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.391</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>128.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>48.08</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>7</CODIGO>
+          <NOMBRE>GRUPO 7</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>33518.03</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>37238.71</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>43.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.57</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.391</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>128.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>58.42</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+        <CAT_PROF_IT>
+          <CODIGO>8</CODIGO>
+          <NOMBRE>GRUPO 8</NOMBRE>
+          <CONCEPTOS>
+            <CPTO_IT>
+              <CODIGO>3</CODIGO>
+              <NOMBRE>SALARIO CONVENIO</NOMBRE>
+              <IMPORTE>42498.93</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>12</CODIGO>
+              <NOMBRE>ANTIGUEDAD</NOMBRE>
+              <IMPORTE>31.37</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>19</CODIGO>
+              <NOMBRE>TRIENIOS</NOMBRE>
+              <IMPORTE>78.43</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>21</CODIGO>
+              <NOMBRE>QUINQUENIOS</NOMBRE>
+              <IMPORTE>156.86</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>48</CODIGO>
+              <NOMBRE>TURNICIDAD</NOMBRE>
+              <IMPORTE>46219.61</IMPORTE>
+              <TIPO_AMDH>A</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>500</CODIGO>
+              <NOMBRE>DIETA COMPLETA</NOMBRE>
+              <IMPORTE>43.06</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>501</CODIGO>
+              <NOMBRE>DIETA COMIDA</NOMBRE>
+              <IMPORTE>21.57</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>505</CODIGO>
+              <NOMBRE>DIETA KILOMETRAJE</NOMBRE>
+              <IMPORTE>0.391</IMPORTE>
+              <TIPO_AMDH>H</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>516</CODIGO>
+              <NOMBRE>DIETA PERNOCTA</NOMBRE>
+              <IMPORTE>128.75</IMPORTE>
+              <TIPO_AMDH>D</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>600</CODIGO>
+              <NOMBRE>PLUS CONVENIO</NOMBRE>
+              <IMPORTE>74.07</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+            <CPTO_IT>
+              <CODIGO>615</CODIGO>
+              <NOMBRE>PLUS NOCTURNIDAD</NOMBRE>
+              <IMPORTE>11.63</IMPORTE>
+              <TIPO_AMDH>M</TIPO_AMDH>
+            </CPTO_IT>
+          </CONCEPTOS>
+        </CAT_PROF_IT>
+      </CATEGORIAS_PROFESIONALES>
+    </TAB_SAL_IT>
+  </TABLAS_SALARIALES>
+</CONVENIO_XML>
