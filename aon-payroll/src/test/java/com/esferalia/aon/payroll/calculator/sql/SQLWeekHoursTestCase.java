@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -95,8 +96,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		,new String[] { 
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
-		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" },
+		new String[] { 
+				"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				//"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				},
 			null);
 
 		Date startDate = getFirstDayOfMonth(getToday());
@@ -161,8 +164,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		,new String[] { 
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
-		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" },
+		new String[] { 
+				"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				//"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				},
 			null);
 
 		Date startDate = getFirstDayOfMonth(getToday());
@@ -248,8 +253,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		,new String[] { 
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
-		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" },
+		new String[] { 
+				"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				//"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				},
 			null);
 
 		Date startDate = getFirstDayOfMonth(contractStartDate);
@@ -317,8 +324,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		,new String[] { 
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
-		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" },
+		new String[] { 
+				"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				//"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				},
 			null);
 
 		Date startDate = getFirstDayOfMonth(getToday());
@@ -387,7 +396,8 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		new String[] { 
 				"BASE_CGC * 0.10", 
 				"BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" },
+				//"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				},
 			null);
 
 		Date startDate = getFirstDayOfMonth(contractEndDate);
@@ -461,8 +471,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		,new String[] { 
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
-		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" },
+		new String[] { 
+				"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				//"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				},
 			null);
 		
 		
@@ -540,8 +552,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		,new String[] { 
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
-		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" },
+		new String[] { 
+				"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				//"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				},
 			null);
 		
 		
@@ -633,8 +647,10 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 		,new String[] { 
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
-		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" },
+		new String[] { 
+				"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				//"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				},
 			null);
 		
 		
@@ -727,7 +743,8 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
 		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" },
+				//"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				},
 			null);
 
 		Date startDate = getFirstDayOfMonth(getToday());
@@ -738,7 +755,7 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, issueDate, contract);
 
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
-		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
 		jooqSalaryBuilder.execute();
 
 		Map<String, List<ContextData>> datas = AON
@@ -801,7 +818,8 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
 		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-				"BASE_IRPF * PORCENTAJE_IRPF/100" },
+				//"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				},
 			null);
 
 		Date startDate = getFirstDayOfMonth(getToday());
