@@ -174,13 +174,17 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	}
 	
 	private void save(AonToken aonToken) {
-		TaskHolder taskHolder = AON_SOLUTIONS.getTaskHolder(aonToken);
+	
+	    TaskHolder taskHolder = getData().opt("taskHolderId")!=null 
+	    		? AON.getTaskHolder(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f-> f.getIdProperty().eq(getData().optInt("taskHolderId"))) 
+	    		: AON_SOLUTIONS.getTaskHolder(aonToken);
+	
 		save(taskHolder);
 	}
 	
 	private void save(TaskHolder taskHolder) {
 		Coordinates coordinates = new Coordinates(getData().optString("coordinates"));
-		Date fecha = !getData().optString("date").isEmpty() ?  Toolkit.parseDate(getData().optString("date"), "yyyy-MM-dd HH:mm") : new Date();
+		Date date = !getData().optString("date").isEmpty() ?  new Date(getData().optLong("date")) : new Date();
 		Location lc =  !getData().optString("location").isEmpty() 
 				? AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  f -> f.getIdProperty().ge(getData().optInt("location")) )
 				: AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  coordinates);
@@ -189,7 +193,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				.setTaskHolder(taskHolder)
 				.setComments(getData().optString("comments"))
 				.setCoordinates(coordinates)
-				.setDate(fecha)
+				.setDate(date)
 				.setLocation(lc)
 				.setStatus(TimeControlStatus.safeValueOf(getData().optString("status")));
 		

@@ -141,7 +141,7 @@ export class AonMobileHeader extends AonElement {
 			saveTimeControl(signin).then(r => {
 				let aonSign = this.getElement('aonSign');
 				if(aonSign) {
-					aonSign.buildSignin();
+					aonSign.buildSignin(r);
 				}
 
 				this.timeControlStatus(r);

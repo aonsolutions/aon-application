@@ -113,9 +113,9 @@ export class AonContratoList extends AonElement {
         fn: (el) => this.getContratoPdf(res, el),
       },
       {
-        name: "Copia básica",
-        aonIcon: "aon_cbc",
-        fn: (el) => this.getCopyBasicPdf(res, el),
+        name: "Obtener TA",
+        aonIcon: "aon_ta",
+        fn: (el) => this.aonComunica.getParent().getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
       },
     ];
   }
@@ -125,16 +125,18 @@ export class AonContratoList extends AonElement {
     try {
       const contracts = await getContracts({ allEmployees: false });
       contracts.map(
-        ({ employeeInfo, contractInfo: { startDate, contractType } }) => {
+        ({ employeeInfo, contractInfo: { startDate, contractType, completeCCC } }) => {
           contractType = Number.parseInt(contractType);
           if (contractType) {
             employeeInfo.contractType = contractType;
           }
-
           if (startDate) {
             employeeInfo.fecha = startDate;
             employeeInfo.startDate = setDate(startDate);
           }
+
+          employeeInfo.regime = completeCCC.toString().substr(0,4);
+          employeeInfo.ctaCti = completeCCC.toString().substr(4);
 
           data.push(employeeInfo);
         }
@@ -150,13 +152,6 @@ export class AonContratoList extends AonElement {
     this.aonComunica.startLoading();
     const { document: ipf, fecha } = data;
     await getContratoPdf({ ipf, fecha });
-    this.aonComunica.stopLoading();
-  }
-
-  async getCopyBasicPdf(data, el) {
-    this.aonComunica.startLoading();
-    const { document: ipf, fecha } = data;
-    await getCopyBasicPdf({ ipf, fecha });
     this.aonComunica.stopLoading();
   }
 }

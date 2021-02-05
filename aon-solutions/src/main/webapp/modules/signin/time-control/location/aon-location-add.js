@@ -60,7 +60,7 @@ export class AonLocationAdd extends AonElement {
     this.build();
     this.eventListener();
   }
-  
+
   disconnectedCallback() {}
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -127,39 +127,51 @@ export class AonLocationAdd extends AonElement {
             <aon-input name="longitude" id="longitude" type="text" visible="false"></aon-input>
             <aon-input name="id" id="id" type="text" visible="false"></aon-input>
         `);
-
-    if (!this.isMobile()) this.buildToolbar();
   }
 
-  build() {}
-
-  eventListener() {
-    const form = this.getElement(`${this.id}Form`);
-    form.addEventListener("change", (e) => {
-      this.formSubmit();
-    });
+  build() {
+    if (this.isMobile()) this.buildToolbarMobile();
+    else this.buildToolbarDesk();
   }
 
-  buildToolbar() {
+  eventListener() {}
+
+  buildToolbarDesk() {
     const toolbar = this.getElement(this.TOOLBAR);
-    toolbar.removeButtons();
+    if (toolbar) {
+      toolbar.removeButtons();
+      toolbar.addButton2(
+        {
+          id: "Save",
+          name: "Guardar",
+          icon: "save",
+        },
+        () => this.formSubmit()
+      );
 
-    toolbar.addButton2(
-      {
-        id: "Delete",
-        name: "Eliminar",
-        icon: "delete",
-      },
-      () => this.removeData()
-    );
-    toolbar.addButton2(
-      {
-        id: "Previous",
-        name: "Volver",
-        icon: "arrow_back",
-      },
-      () => this.back()
-    );
+      toolbar.addButton2(
+        {
+          id: "Delete",
+          name: "Eliminar",
+          icon: "delete",
+        },
+        () => this.removeData()
+      );
+
+      toolbar.addButton2(
+        {
+          id: "Previous",
+          name: "Volver",
+          icon: "arrow_back",
+        },
+        () => this.back()
+      );
+    }
+  }
+
+  buildToolbarMobile() {
+    this.aonSigninEl.removeToolbarOptions();
+    this.aonSigninEl.addToolbarOption("Save", "save", () => this.formSubmit());
   }
 
   paintViewMap(data) {
@@ -201,7 +213,7 @@ export class AonLocationAdd extends AonElement {
     } catch (error) {}
   }
 
-  iframeOnload(iframe, zoom){
+  iframeOnload(iframe, zoom) {
     iframe.onload = async () => {
       const setCoordinates = (ev) => this.setCoordinates(ev);
       let doc = iframe.contentDocument;
@@ -209,18 +221,21 @@ export class AonLocationAdd extends AonElement {
         .then(({ latitude, longitude }) => ({ latitude, longitude }))
         .catch((e) => null);
       if (pos) {
-        iframe.contentWindow.showNewMap = function() {
+        iframe.contentWindow.showNewMap = function () {
           let mapContainer = doc.createElement("div");
-          mapContainer.setAttribute('style',"width: 100%; height:100%;");
+          mapContainer.setAttribute("style", "width: 100%; height:100%;");
           doc.body.appendChild(mapContainer);
           const mapOptions = {
             center: new this.google.maps.LatLng(pos.latitude, pos.longitude),
             zoom,
             mapTypeId: this.google.maps.MapTypeId.ROADMAP,
           };
-          setCoordinates({latitude:pos.latitude, longitude:pos.longitude}); //setValues default lat lng
+          setCoordinates({ latitude: pos.latitude, longitude: pos.longitude }); //setValues default lat lng
           const map = new this.google.maps.Map(mapContainer, mapOptions);
-          const position = new this.google.maps.LatLng( pos.latitude, pos.longitude);
+          const position = new this.google.maps.LatLng(
+            pos.latitude,
+            pos.longitude
+          );
           // add marker map
           const marker = new this.google.maps.Marker({
             position,
@@ -230,20 +245,27 @@ export class AonLocationAdd extends AonElement {
           });
 
           // ev drag
-          this.google.maps.event.addListener(marker, "dragend", (ev) => setCoordinates({latitude:ev.latLng.lat(), longitude: ev.latLng.lng()}));
-        }; 
+          this.google.maps.event.addListener(marker, "dragend", (ev) =>
+            setCoordinates({
+              latitude: ev.latLng.lat(),
+              longitude: ev.latLng.lng(),
+            })
+          );
+        };
 
         let script = document.createElement("script");
         script.type = "text/javascript";
         script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY_MAP}&hl=es&callback=showNewMap`;
-        iframe.contentDocument.getElementsByTagName("head")[0].appendChild(script);
+        iframe.contentDocument
+          .getElementsByTagName("head")[0]
+          .appendChild(script);
       } //pos
     }; //onload
     return iframe;
   }
 
-  setCoordinates(data){
-    if(data){
+  setCoordinates(data) {
+    if (data) {
       setValueName("latitude", data.latitude);
       setValueName("longitude", data.longitude);
       this.formSubmit();
@@ -266,6 +288,7 @@ export class AonLocationAdd extends AonElement {
 
   async save() {
     const data = this.getFormValues();
+    console.log(data);
     let count = Object.keys(data).length;
     if (count > 3) {
       try {
@@ -273,6 +296,8 @@ export class AonLocationAdd extends AonElement {
           ...data,
           coordinates: `${data.latitude},${data.longitude}`,
         });
+        this.TOAST.start({ message: `Datos guardados!`, type: "success" });
+        this.back();
         if (id) {
           setValueName("id", id);
         }

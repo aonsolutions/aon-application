@@ -68,16 +68,7 @@ export class AonEventDetailList extends AonElement {
     if (this.aonSigninEl) this.aonSigninEl.removeFloatOption();
   }
 
-  eventListener(){
-    // let iconLocationAllEl = document.querySelectorAll('#iconLocation');
-    // [...iconLocationAllEl].map(icon=>{
-    //   console.log(icon);
-    //   icon.addEventListener('click', (ev)=>{
-    //     ev.stopProgration();
-    //     console.log(ev);
-    //   })
-    // })
-  }
+  eventListener(){}
 
   buildToolbar() {
     this.aonSigninEl.removeToolbarOptions();
@@ -206,7 +197,7 @@ export class AonEventDetailList extends AonElement {
   }
 
   aonEvent(el, data) {
-    if("add_location" === el.target.textContent){
+    if(el && "add_location" === el.target.textContent){
       this.aonSigninEl.getParent().openLocationAdd(el, data);
     } else {
       let id = "aonEventAdd";
@@ -214,9 +205,7 @@ export class AonEventDetailList extends AonElement {
         `<aon-event-add id="${id}"></aon-event-add>`
       );
       const aonEventEl = this.getElement(id);
-      if (!data) {
-        data = this.data;
-      }
+      if (!data && this.data)  data = this.data;
       aonEventEl.data = data;
     }
   }

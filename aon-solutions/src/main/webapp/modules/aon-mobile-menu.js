@@ -13,6 +13,7 @@ import "./documental/aon-documental.js";
 import "./signin/aon-signin.js";
 import "./invoice/aon-invoice-panel.js";
 import "../components/aon-dialog-menu.js";
+import { downscaleImage } from "../services/compressImg.js";
 
 export class AonMobileMenu extends AonElement {
   CAMERA_INPUT;
@@ -163,16 +164,7 @@ export class AonMobileMenu extends AonElement {
 
   async openCamera(type) {
     this.TYPE_IMG = type;
-    const isApp = await actionMobile({ 
-      action: "camera", 
-      options:{
-        type: "CAMERA",
-        cameraQuality: 100,
-        // resizeWidth: 1280,
-        // resizeHeight: 1280,
-        // resizeQuality: 85
-      } 
-  });
+    const isApp = await actionMobile({ action: "camera" });
     if (!isApp) this.getElement("aonMobileMenuCameraInput").click();
   }
 
@@ -184,13 +176,18 @@ export class AonMobileMenu extends AonElement {
     if (archivo) this.sendImage(archivo);
   }
 
-  sendImage(fileObj) {
+  async sendImage(file) {
+    if (file.contentType.indexOf("image") >= 0) {
+      //compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
+      file = await downscaleImage(file, undefined, undefined, undefined);
+    }
+
     switch (this.TYPE_IMG) {
       case "document":
-        this.attachDocument(fileObj);
+        this.attachDocument(file);
         break;
       case "invoice":
-        this.attachInvoice(fileObj);
+        this.attachInvoice(file);
         break;
       case "solicitud":
         break;
@@ -206,7 +203,7 @@ export class AonMobileMenu extends AonElement {
       contentName: file.name,
       contentSize: file.size,
     };
-    const result = await uploadFileDocumental(data).catch((e) => null);
+    await uploadFileDocumental(data).catch((e) => null);
     await rootPanel(`<aon-documental />`);
     this.loading(false);
   }
