@@ -1,17 +1,19 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
-import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonLocationServlet", urlPatterns = {"/ms/api/location/*"})
@@ -22,7 +24,7 @@ public class LocationServlet extends AonApiHttpServlet{
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API TIMECONTROL SERVLET - GET METHOD");
+		LOGGER.info("AON API LOCATION SERVLET - GET METHOD");
 		try {
 			super.doGet(req, resp);
 		
@@ -40,7 +42,7 @@ public class LocationServlet extends AonApiHttpServlet{
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp){
-		LOGGER.info("AON API TIMECONTROL SERVLET - POST METHOD");
+		LOGGER.info("AON API LOCATION SERVLET - POST METHOD");
 		try {
 			super.doPost(req, resp);
 			String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
@@ -63,15 +65,15 @@ public class LocationServlet extends AonApiHttpServlet{
 		}
 		switch (route) {
 			case "list":
-				LOGGER.info("TIMECONTROL SERVLET - LOCATION-LIST");
+				LOGGER.info("LOCATION SERVLET - LOCATION-LIST");
 				obj = getLocationList(aonToken);
 				break;
 			case "save":
-				LOGGER.info("TIMECONTROL SERVLET - LOCATION-SAVE");
+				LOGGER.info("LOCATION SERVLET - LOCATION-SAVE");
 				obj = saveLocation(aonToken);
 			break;
 			case "delete":
-				LOGGER.info("TIMECONTROL SERVLET - LOCATION-DELETE");
+				LOGGER.info("LOCATION SERVLET - LOCATION-DELETE");
 				obj = deleteLocation(aonToken);
 			break;
 			default:
@@ -91,10 +93,9 @@ public class LocationServlet extends AonApiHttpServlet{
 
 	
 	private Object saveLocation(AonToken aonToken) {
-		TaskHolder taskHolder = AON_SOLUTIONS.getTaskHolder(aonToken);
 		Coordinates coordinates = new Coordinates(getData().optString("coordinates"));
 		Location location = new Location()
-				.setDomain(taskHolder.getDomain())
+				.setDomain(getDomain())
 				.setDescription(getData().optString("description"))
 				.setCoordinates(coordinates)
 				.setRadio(getData().optInt("radio"))
