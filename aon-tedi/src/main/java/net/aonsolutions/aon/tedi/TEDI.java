@@ -26,7 +26,7 @@ public class TEDI {
 	
 	public static TediResult validateInvoice(TediContext tctx, TediResult result) throws TediException {
 		if (tctx == null) throw new IllegalArgumentException("TediContext can not be null");
-		boolean mustCloseCtx =  tctx.getAONContext() != null; 
+		boolean mustCloseCtx =  tctx.getAONContext() == null; 
 		AONContext ctx = tctx.getAONContext();
 		try {
 			result.clearMessages();

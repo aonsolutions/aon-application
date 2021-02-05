@@ -87,6 +87,7 @@ public enum MimeType implements Serializable {
      * @return The MIME type.
      */
     public static MimeType getByExtension(String extension) {
+    	if (extension == null) return null;
     	String value = extension.toLowerCase();
     	for( MimeType mimeType : MimeType.values() ) {
     		if ( mimeType.extension.equals(value) ) {
@@ -157,10 +158,10 @@ public enum MimeType implements Serializable {
 	}
 
 	public static MimeType safeValueFromExtension( String extension ) {
+		if (AonStringUtils.isBlank(extension)) return null;
 		if (AonStringUtils.equalsIgnoreCase("JPEG",extension)) {
 			return JPEG;
 		}
-		if (AonStringUtils.isBlank(extension)) return null;
 		for (MimeType mimeType : MimeType.values() ) {
 			if (mimeType.getExtension().equals(extension)) {
 				return mimeType;

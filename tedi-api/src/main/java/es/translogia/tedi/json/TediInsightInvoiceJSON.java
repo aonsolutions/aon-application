@@ -55,6 +55,15 @@ public enum TediInsightInvoiceJSON {
 		},
 		(insight, json) -> json.put(IConstants.AMOUNTS, insight.getAmounts())
 	),
+	ISSUE_DATE(
+		(insight, json) -> insight.setIssueDate(TediJSONUtils.parseDate(json.optString(IConstants.ISSUE_DATE))),
+		(insight, json) -> TediJSONUtils.put(json, IConstants.ISSUE_DATE, insight.getIssueDate())
+	),
+	TOTAL(
+		(insight, json) -> insight.setTotal(TediJSONUtils.optDouble(json, IConstants.TOTAL)),
+		(insight, json) -> json.put(IConstants.TOTAL, insight.getTotal())
+	),
+	
 //	REFERENCES(
 //		(insight, json) -> {
 //			JSONArray referencesArray = json.optJSONArray(IConstants.REFERENCES);

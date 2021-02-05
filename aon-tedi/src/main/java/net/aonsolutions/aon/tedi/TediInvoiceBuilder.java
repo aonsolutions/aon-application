@@ -10,8 +10,9 @@ import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.OCRDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.translogia.tedi.ewok.TediAddress;
 import es.translogia.tedi.ewok.TediInvoice;
@@ -31,11 +32,13 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 		super();
 		this.ctx = ctx;
 	}
+	
 	@Override
 	public void addInsightNifs(Collection<Document> nifs) {
 		super.addInsightNifs(nifs);
 		if (get().getInsight() != null) {
-			TEDI_INVOICE_TYPE
+			TICKET_TYPE
+			.andThen(RECIBIDA_TYPE)
 			.andThen(RECEIVER)
 			.andThen(SENDER)
 			.accept(ctx, get());
@@ -45,28 +48,41 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 	@Override
 	public void finalizeParse() {
 		super.finalizeParse();
-		
 		if (get().getInsight() != null) {
-				DATE
-				.andThen(TOTAL)
-				.andThen(SIMPLE_IVA)
-				.andThen(COMPLEX_IVA)
-				.andThen(SIMPLE_IRPF)
+			DATE
+			.andThen(TOTAL)
+			.andThen(SIMPLE_IVA)
+			.andThen(COMPLEX_IVA)
+			.andThen(SIMPLE_IRPF)
+			.andThen(CHECK_TOTAL_INVOICE)
 			.accept(ctx, get());
 		}
-
 	}
 
-	public static BiConsumer<TediContext,TediInvoice> TEDI_INVOICE_TYPE = (ctx,inv) -> {
-		inv.setType(TediInvoiceType.RECIBIDA);
+	private static BiConsumer<TediContext,TediInvoice> TICKET_TYPE = (ctx,inv) -> {
+		if (inv.getInsight().getNifs() != null 
+			&& inv.getInsight().getNifs().length == 1 
+			&& !AonStringUtils.equals(ctx.getCompanyDocument(), inv.getInsight().getNifs()[0].getStr() )) {
+			inv.setType(TediInvoiceType.TICKET);	
+		}
 	};
-	public static BiConsumer<TediContext,TediInvoice> DATE = (ctx,inv) -> {
+	
+	private static BiConsumer<TediContext,TediInvoice> RECIBIDA_TYPE = (ctx,inv) -> {
+		if (inv.getType() == null) {
+			if (inv.getInsight().getNifs() != null 
+				&& inv.getInsight().getNifs().length > 1) {
+				inv.setType(TediInvoiceType.RECIBIDA);	
+			}
+		}
+	};
+
+	private static BiConsumer<TediContext,TediInvoice> DATE = (ctx,inv) -> {
 		inv.setDate( inv.getInsight().getIssueDate() );
 	};
-	public static BiConsumer<TediContext,TediInvoice> TOTAL = (ctx,inv) -> {
+	private static BiConsumer<TediContext,TediInvoice> TOTAL = (ctx,inv) -> {
 		inv.setTotal( inv.getInsight().getTotal() );
 	};
-	public static BiConsumer<TediContext,TediInvoice> RECEIVER = (ctx,inv) -> {
+	private static BiConsumer<TediContext,TediInvoice> RECEIVER = (ctx,inv) -> {
 		Company company = ctx.getAonConfiguration().getCompany();
 		inv.ensureReceiver()
 			.setDocument(company.getDocument())
@@ -75,13 +91,18 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 			.setAddress(getTediAddress( company.getMainAddress()));
 		
 	};
-	public static BiConsumer<TediContext,TediInvoice> SENDER = (ctx,inv) -> {
+	private static BiConsumer<TediContext,TediInvoice> SENDER = (ctx,inv) -> {
 		if ( inv.getReceiver() != null && inv.getReceiver().getDocument() != null) {
 			String companyDoc = inv.getReceiver().getDocument(); 
 			if (inv.getInsight().getNifs() != null && inv.getInsight().getNifs().length > 0) {
 				for (TediNif nif : inv.getInsight().getNifs()) {
 					if (!companyDoc.equals(nif.getStr())) {
-						inv.setSender( getRegistryData(ctx, nif.getStr() ) );
+						TediRegistry reg = getRegistryData(ctx, nif.getStr() );
+						if (reg == null) {
+							reg = new TediRegistry()
+								.setDocument(nif.getStr());
+						}
+						inv.setSender( reg );
 						break;
 					}
 				}
@@ -89,32 +110,6 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 		}
 	};
 	
-/*
-private TediInvoiceType type;
-private Date date;
-private Double total;
-private String reference;
-
-		***************
-		***************
-private String series;
-private Integer number;
-private TediInvoiceTransaction transaction;
-private TediInvoiceCategory category;
-private TediRegistry sender;
-private TediRegistry receiver;
-private LinkedList<TediInvoiceDetail> details;
-private LinkedList<TediInvoiceTax> taxes;
-private LinkedList<TediFinance> finances;
-private TediInvoiceFile file;
-private TediInvoiceStatus status;
-private TediInvoiceStatus oldStatus;
-private String source;
-private LinkedList<TediComments> comments;
-private TediEmailInfo email;
-private TediInsightInvoice insight;
-	 */
-
 	private static String getCountryCode( Country country ) {
 		return country==null?null:country .getIso2();  
 	}
@@ -130,11 +125,14 @@ private TediInsightInvoice insight;
 				.setPostalCode(raddress.getZip());
 	}
 	
-	private static TediRegistry getRegistryData(TediContext ctx, String str) {
-		// BUSCAR la infomarción en la colleccion de NIFS.
-		Registry reg = RegistryOldDAO.getRegistryStream(ctx.getAONContext(), p -> p.getDocumentProperty().eq(str))
-			.findFirst().orElse(null);
+	private static TediRegistry getRegistryData(TediContext ctx, String document) {
 		TediRegistry registry = null;
+		Registry reg = OCRDAO.getRegistry(ctx.getUser(),document);
+		if (reg == null) {
+			reg = RegistryDAO.getStream(ctx.getAONContext(), p -> p.getDocumentProperty().eq(document))
+					.findFirst()
+					.orElse(null);
+		}
 		if (reg != null) {
 			registry = new TediRegistry()
 				.setDocument(reg.getDocument())
@@ -261,6 +259,22 @@ private TediInsightInvoice insight;
 			}
 	};
 	
+	public static BiConsumer<TediContext,TediInvoice> CHECK_TOTAL_INVOICE = (ctx,inv) -> {
+		if ( !isSettled(inv) ) {
+			if (inv.getTaxes() != null && inv.getTaxes().size() > 0) {
+				inv.getTaxes().clear();
+			}
+			inv.ensureTax(
+					new TediInvoiceTax()
+					.setTaxType( TediTaxType.IVA )
+					.setBase( inv.getTotal() == null ? 0.0 : inv.getTotal() )
+					.setPercentage( 0.0 )
+					.setQuota(0.0)
+					);
+		}
+	};
+	
+	
 	private static boolean isSettled(TediInvoice inv) {
 		if ( inv == null) return false;
 		if ( inv.getTotal() == null) return false;
@@ -277,40 +291,3 @@ private TediInsightInvoice insight;
 		return AonMathUtils.equals(inv.getTotal(), total);
 	}	
 }	
-	
-/*
-	public static void setTaxes(List<Double> collection, InvoiceBuilder<?> handler) {
-		boolean something = simpleVATInvoice(amounts,handler);
-		if ( !something) {
-			complexVATInvoice(amounts,handler);
-			simpleIRPFInvoice(amounts, handler);
-			if ( handler.hasTaxes() ) {
-				double total = 0.0;
-				for ( InvoiceTax tax : handler.getTaxes() ) {
-					if (tax.getType() == TaxType.IVA) {
-						total = total + tax.getBase() + tax.getQuota();
-					}
-					if (tax.getType() == TaxType.IRPF) {
-						total = total - tax.getQuota();
-					}
-				}
-				int indexOfTotal = indexOf(amounts, total, 0);
-				if ( indexOfTotal >= 0 ) {
-					handler.setTotal( amounts[indexOfTotal]);
-				} else {
-	
-					//TODO
-					// Identificarcar aquellas lineas de IVA, Ãºnicas por porcentaje, que, sumadas 
-					// entre si den un numero (total) que exista en la factura
-					
-					
-				}
-			}
-		}
-		
-//		if (taxAdded) {
-//		}
-		
-	}
-
-*/

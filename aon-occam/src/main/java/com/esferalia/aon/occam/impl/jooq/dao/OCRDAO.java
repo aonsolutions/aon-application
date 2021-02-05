@@ -13,12 +13,14 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.registry.Raddinfo;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 
 public class OCRDAO {
 	
 	private static final Logger LOGGER = Logger.getLogger(OCRDAO.class.getName());
 	
 	private static final String GLOBAL_DOMAIN_NAME = "global.aonsolutions.net";
+	private static final int GLOBAL_DOMAIN_ID = -1;
 	private static final String OCR_REF_PATTERN = "OCR_REF_PATTERN";
 	private static final String REGISTRY_ALIAS_MARK = "OCR AUTOML";
  
@@ -34,8 +36,22 @@ public class OCRDAO {
 			.orElse(null);
 	}
 	
+	public static Registry getRegistry( String user, String document ) {
+		try ( AONContext ctx =  AONContext.getAONContext(GLOBAL_DOMAIN_NAME, GLOBAL_DOMAIN_ID , user) ) {
+			return RegistryDAO.getStream(ctx, f -> 
+						f.getDomainProperty().eq(GLOBAL_DOMAIN_ID)
+						.and(f.getDocumentProperty().eq(document)))
+				.findFirst()
+				.orElse(null);
+			
+		} catch (Throwable t) {
+			LOGGER.severe("Con not read GLOBAL registry OCR ("+ t.getMessage() +")");
+			return null;
+		}
+	}
+	
 	public static String[] getReferencePatterns( String user, String document ) {
-		try ( AONContext ctx =  AONContext.getAONContext(GLOBAL_DOMAIN_NAME, -1 , user) ) {
+		try ( AONContext ctx =  AONContext.getAONContext(GLOBAL_DOMAIN_NAME, GLOBAL_DOMAIN_ID , user) ) {
 			return ctx.getDslContext()
 				.select( RADDINFO.VALUE )
 				.from(RADDINFO)
@@ -58,7 +74,7 @@ public class OCRDAO {
 		teachReferenceCode(user, document, reference, new Date());
 	}
 	public static void teachReferenceCode(String user, String document, String reference, Date date) {
-		try ( AONContext ctx =  AONContext.getAONContext(GLOBAL_DOMAIN_NAME, -1, user) ) {
+		try ( AONContext ctx =  AONContext.getAONContext(GLOBAL_DOMAIN_NAME, GLOBAL_DOMAIN_ID, user) ) {
 			final Integer globalDomain =  getGlobalDomain(ctx);
 			Integer registry = ensureRegistry(ctx, globalDomain, document );
 			LinkedList<Raddinfo> patterns = ctx.getDslContext()

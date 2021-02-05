@@ -19,6 +19,12 @@ public enum TediContextKey  implements Serializable {
 			visitor.visitDomain(callback);
 		}
 	},
+	WORKPLACE("Centro de trabajo") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitWorkplace(callback);
+		}
+	},
 	TYPE("Tipo de factura") {
 		@Override
 		public void visit(ITediContextVisitor visitor,ICallback callback) {

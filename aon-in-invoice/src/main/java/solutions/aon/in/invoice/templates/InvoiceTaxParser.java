@@ -1,9 +1,5 @@
 package solutions.aon.in.invoice.templates;
 
-import java.util.List;
-
-import solutions.aon.in.invoice.InvoiceBuilder;
-
 public class InvoiceTaxParser {
 	/*
 	private static final double IVA_PERCENTS [] = {21.0, 10.0, 4.0};

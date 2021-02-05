@@ -18,6 +18,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<skipTests>true</skipTests>
+					<include>**/AonTediTestSuite.class</include>					
 				</configuration>
 			</plugin>
 			<plugin>
@@ -95,11 +96,25 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.13</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jcl</artifactId>
+			<version>1.7.25</version>
+			<scope>test</scope>
+		</dependency>		
+		<!-- 
+		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
 			<version>2.4.2</version>
 			<scope>test</scope>
 		</dependency>
+		 -->
 	</dependencies>
 
 </project>

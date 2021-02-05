@@ -5,8 +5,8 @@ import java.util.LinkedHashSet;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
@@ -339,7 +339,12 @@ public class TediContextVisitor implements ITediContextVisitor {
 	public void visitDomain(ICallback callback) {
 		noVisit();
 	}
-
+	
+	@Override
+	public void visitWorkplace(ICallback callback) {
+		noVisit();
+	}
+	
 	@Override
 	public void visitDetailDescription(ICallback callback) {
 		noVisit();
@@ -396,7 +401,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 	}
 	
 	private void showDateDialog(String label, Date date, ITediCallback<Date> callback) {
-		final DateBoxEx dateBox = new DateBoxEx();
+		final AonDateBox dateBox = new AonDateBox();
 		dateBox.setValue(date);
 		dateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
@@ -427,7 +432,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 	}
 
 	private void showRegistryDialog(String label, ITediCallback<AccountingRegistry> callback) {
-		final AccountingRegistryBox registryBox = new AccountingRegistryBox(getCurrentDomainName(), getCurrentDomain(),
+		final AonAccountingRegistryBox registryBox = new AonAccountingRegistryBox(getCurrentDomainName(), getCurrentDomain(),
 				getCurrentUser(),configuration, false);
 		registryBox.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
 			@Override

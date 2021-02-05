@@ -6,13 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import com.amazonaws.services.textract.AmazonTextract;
 import com.amazonaws.services.textract.AmazonTextractClientBuilder;
 import com.amazonaws.services.textract.model.Block;
-import com.amazonaws.services.textract.model.BoundingBox;
 import com.amazonaws.services.textract.model.DetectDocumentTextRequest;
 import com.amazonaws.services.textract.model.DetectDocumentTextResult;
 import com.amazonaws.services.textract.model.Document;
@@ -96,29 +94,29 @@ public class InvoiceIMGParser {
 		return text;
 	}
 
-	private static int compare(Block b1, Block b2) {
-		return compare(b1.getGeometry().getBoundingBox(), b2.getGeometry().getBoundingBox());
-	}
+//	private static int compare(Block b1, Block b2) {
+//		return compare(b1.getGeometry().getBoundingBox(), b2.getGeometry().getBoundingBox());
+//	}
 	
-	private static int compare(BoundingBox b1, BoundingBox b2) {
-		float top = b1.getTop() - b2.getTop();
-		if ( top < 0 ) 
-			return -1;
-		if ( top > 0 )
-			return 1;
-		
-		float left = b1.getLeft() - b2.getLeft();
-		if ( left < 0 ) 
-			return -1;
-		if ( left > 0 )
-			return 1;
-		
-		return 0;
-	}
+//	private static int compare(BoundingBox b1, BoundingBox b2) {
+//		float top = b1.getTop() - b2.getTop();
+//		if ( top < 0 ) 
+//			return -1;
+//		if ( top > 0 )
+//			return 1;
+//		
+//		float left = b1.getLeft() - b2.getLeft();
+//		if ( left < 0 ) 
+//			return -1;
+//		if ( left > 0 )
+//			return 1;
+//		
+//		return 0;
+//	}
 	
-	private static float getTop(Block b) {
-		return b.getGeometry().getBoundingBox().getTop();
-	}
+//	private static float getTop(Block b) {
+//		return b.getGeometry().getBoundingBox().getTop();
+//	}
 	
 	private static boolean intersects(Block b1, Block b2) {
 		

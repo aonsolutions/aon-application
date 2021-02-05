@@ -247,14 +247,14 @@ public enum TestTemplates {
 			@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2018, 10, 5, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
 			@Override public int getDocumentsNumber(){ return 2; }
 			@Override public int getDatesNumber(){ return 5; }
-			@Override public int getAmountNumber(){ return 131; }
+			@Override public int getAmountNumber(){ return 127; }
 			@Override public Double getTotal(){ return 151.71; }
 		},
 		ORANGE_3 ("/solutions/aon/in/invoice/pdf/ORANGE_3.pdf") {
 			@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2018, 11, 5, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
 			@Override public int getDocumentsNumber(){ return 2; }
 			@Override public int getDatesNumber(){ return 5; }
-			@Override public int getAmountNumber(){ return 124; }
+			@Override public int getAmountNumber(){ return 120; }
 			@Override public Double getTotal(){ return 146.62; }
 		},
 		RETENCION_1 ("/solutions/aon/in/invoice/pdf/RETENCION_1.pdf") {
@@ -263,7 +263,15 @@ public enum TestTemplates {
 			@Override public int getDatesNumber(){ return 1; }
 			@Override public int getAmountNumber(){ return 4; }
 			@Override public Double getTotal(){ return 867.00; }
-		}
+		},
+		AON_2021_02_03_AMAZON ("/solutions/aon/in/invoice/pdf/AON-2021-02-03-AMAZON.pdf") {
+			@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2021, 2, 3, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
+			@Override public int getDocumentsNumber(){ return 2; }
+			@Override public int getDatesNumber(){ return 2; }
+			@Override public int getAmountNumber(){ return 53; }
+			@Override public Double getTotal(){ return 1609.64; }
+		},
+		
 		;
 
 		private String file;

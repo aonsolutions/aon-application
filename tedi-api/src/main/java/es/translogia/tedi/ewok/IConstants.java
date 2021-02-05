@@ -34,6 +34,7 @@ public interface IConstants {
 	String ID = "id";
 	String INVESTMENT = "investment";
 	String INSIGHT = "insight";
+	String ISSUE_DATE = "issue_date";
 	String NAME = "name";
 	String NIFS = "nifs";
 	String NUMBER = "number";

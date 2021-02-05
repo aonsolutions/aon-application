@@ -34,6 +34,7 @@ public enum TediErrorMessages implements Serializable {
 	C013("Apunte contable vacio"),
 	C014("El importe del vencimiento no puede ser cero."),
 	C015("Cuenta Bancaria incorrecta."),
+	C016("No se ha podido determinar un centro de trabajo (workplace)"),
 	C500("Error desconocido");
 	;
 	private String message;

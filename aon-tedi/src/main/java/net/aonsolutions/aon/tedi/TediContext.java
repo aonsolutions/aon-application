@@ -2,6 +2,7 @@ package net.aonsolutions.aon.tedi;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Company;
 
 public class TediContext {
 	
@@ -55,4 +56,13 @@ public class TediContext {
 		this.aonConfiguration = aonConfiguration;
 		return this;
 	}
+	
+	public Company getCompany() {
+		return aonConfiguration != null ? aonConfiguration.getCompany() : null;
+	}
+	public String getCompanyDocument() {
+		return getCompany() != null ? getCompany().getDocument() : null;
+	}
+
+	
 }

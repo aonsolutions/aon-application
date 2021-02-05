@@ -14,11 +14,14 @@ public class AutoMLTemplate extends AbstractTemplate {
 	@Override
 	public InvoiceTemplate parse(String text, InvoiceBuilder<?> handler) throws InvoicePDFException {
 		try {
+			if (handler.getParserContext() == null) {
+				handler.setParserContext( LocaleParser.getContext( text )); 
+			}
 			handler.addInsightNifs(DocumentParser.getNifs(text));
-			handler.setInsightIssueDate(IssueDateParser.getIssueDate(text));
-			handler.addInsightDates(DateParser.getDates(text));
-			handler.setInsightTotal(TotalParser.getTotal(text));
-			handler.addInsightAmounts(AmountParser.getAmounts(text));
+			handler.setInsightIssueDate(IssueDateParser.getIssueDate(handler.getParserContext(),text));
+			handler.addInsightDates(DateParser.getDates(handler.getParserContext(), text ));
+			handler.setInsightTotal(TotalParser.getTotal(handler.getParserContext(), text));
+			handler.addInsightAmounts(AmountParser.getAmounts(handler.getParserContext(), text));
 			handler.setReference(ReferenceParser.getReference(handler.getReferencePatterns(), text));
 			return this;
 		} catch (Throwable e) {

@@ -1,14 +1,12 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.function.BiConsumer;
-
-import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryBankStatement.ACCOUNT_ENTRY_BANK_STATEMENT;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.BankStatement.BANK_STATEMENT;
 
+import java.util.Date;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;

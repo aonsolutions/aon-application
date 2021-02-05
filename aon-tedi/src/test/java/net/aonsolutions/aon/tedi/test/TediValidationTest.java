@@ -15,10 +15,7 @@ import java.util.LinkedList;
 import org.hamcrest.MatcherAssert;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
 
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
@@ -34,8 +31,6 @@ import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.tedi.TediErrorMessages;
 import net.aonsolutions.aon.tedi.TediParser;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
 public class TediValidationTest {
 
 	@After
@@ -58,6 +53,7 @@ public class TediValidationTest {
 	public void test_002_OverflowSeries() throws Exception {
 		System.out.print("\t-test Tedi overflow series validation");
 		TediInvoice tedi = TediInvoiceJSON.fromJSON(TediEwokFaker.getTediInvoice());
+		tedi.setType(TediInvoiceType.EMITIDA);
 		tedi.setSeries(AonStringUtils.repeat("X", (INVOICE.SERIES.getDataType().length() + 1)));
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
 		Assert.assertNotNull(result.getMessages());
@@ -68,20 +64,20 @@ public class TediValidationTest {
 				)));
 	}
 
-//	@Test
-//	public void test_003_NullNumber() throws Exception {
-//		System.out.print("\t-test Tedi null invoice number validation");
-//		TediInvoice tedi = TediInvoiceJSON.fromJSON(TediEwokFaker.getTediInvoice());
-//		tedi.setNumber(null);
-//		TediParser parser = new TediParser();
-//		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-//		Assert.assertNotNull(result.getMessages());
-//		printMessages(result.getMessages());
-//		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
-//				hasProperty("code", equalTo(TediErrorMessages.C003.toString()))
-//				,hasProperty("context", hasProperty("key",is(TediContextKey.NUMBER)))
-//				)));
-//	}
+	@Test
+	public void test_003_NullNumber() throws Exception {
+		System.out.print("\t-test Tedi null invoice number validation");
+		TediInvoice tedi = TediInvoiceJSON.fromJSON(TediEwokFaker.getTediInvoice());
+		tedi.setType(TediInvoiceType.EMITIDA);
+		tedi.setNumber(null);
+		TediResult result = TediParser.toFullInvoice(null,null,tedi);
+		Assert.assertNotNull(result.getMessages());
+		printMessages(result.getMessages());
+		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
+				hasProperty("code", equalTo(TediErrorMessages.C003.toString()))
+				,hasProperty("context", hasProperty("key",is(TediContextKey.NUMBER)))
+				)));
+	}
 
 	@Test
 	public void test_004_OverflowReference() throws Exception {
@@ -127,7 +123,7 @@ public class TediValidationTest {
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(),hasItem(allOf(
 				hasProperty("code", equalTo(TediErrorMessages.C001.toString())),
-				hasProperty("context", hasProperty("key",is(TediContextKey.RDOCUMENT)))
+				hasProperty("context", hasProperty("key",is(TediContextKey.REGISTRY)))
 				)));
 	}
 	
@@ -192,24 +188,24 @@ public class TediValidationTest {
 				;
 	}
 
-	@Test
-	public void test_010_NullRegistyName() throws Exception {
-		System.out.print("\t-test Tedi null registry name validation");
-		TediInvoice tedi = TediInvoiceJSON.fromJSON(TediEwokFaker.getTediInvoice());
-		if (tedi.getType() == null) {
-			tedi.setType(TediInvoiceType.RECIBIDA);
-		}
-		if (tedi.getRegistry() == null) {
-			tedi.setRegistry( new TediRegistry( ));
-		}
-		tedi.getRegistry().setName(null);
-		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		Assert.assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(),hasItem(allOf(
-				hasProperty("code", equalTo(TediErrorMessages.C001.toString())),
-				hasProperty("context", hasProperty("key",is(TediContextKey.RNAME))))));
-	}
+//	@Test
+//	public void test_010_NullRegistyName() throws Exception {
+//		System.out.print("\t-test Tedi null registry name validation");
+//		TediInvoice tedi = TediInvoiceJSON.fromJSON(TediEwokFaker.getTediInvoice());
+//		if (tedi.getType() == null) {
+//			tedi.setType(TediInvoiceType.RECIBIDA);
+//		}
+//		if (tedi.getRegistry() == null) {
+//			tedi.setRegistry( new TediRegistry( ));
+//		}
+//		tedi.getRegistry().setName(null);
+//		TediResult result = TediParser.toFullInvoice(null,null,tedi);
+//		Assert.assertNotNull(result.getMessages());
+//		printMessages(result.getMessages());
+//		MatcherAssert.assertThat(result.getMessages(),hasItem(allOf(
+//				hasProperty("code", equalTo(TediErrorMessages.C001.toString())),
+//				hasProperty("context", hasProperty("key",is(TediContextKey.RNAME))))));
+//	}
 
 	@Test
 	public void test_011_OverflowRegistryName() throws Exception {

@@ -4,9 +4,12 @@ import java.util.Collection;
 import java.util.Date;
 
 import solutions.aon.in.invoice.templates.Document;
+import solutions.aon.in.invoice.templates.ParserContext;
 
 public interface InvoiceBuilder<T extends Object>  {
-	
+
+	ParserContext getParserContext();
+	void setParserContext(ParserContext context);
 	T get();
 	void addInsightNifs( Collection<Document> nifs);
 	void addInsightDates( Collection<Date> dates);
@@ -18,5 +21,6 @@ public interface InvoiceBuilder<T extends Object>  {
 	String[] getReferencePatterns();
 	
 	void finalizeParse();
+	
 	
 }

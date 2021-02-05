@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog.AonMessageDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonScalableImage;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
@@ -51,7 +52,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -518,15 +518,18 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				paintButtons();
 				openAttach();
 			} if (mimeType.isImage()) {
-				ScrollPanel scrollpanel = new ScrollPanel();
-				scrollpanel.setStyleName(AON.CSS.aonScrollArea());
-				scrollpanel.addStyleName(AON.CSS.aonTextCenter());
-				Image image = new Image( doc );
-				image.setWidth("100%");
-				scrollpanel.setWidget(image);
-				attachPanelTableCell2.add(scrollpanel);
 				paintButtons();
-				openAttach();
+				double from = rootPanel.getWidgetSize(attachPanelTable) == null? 0 : rootPanel.getWidgetSize(attachPanelTable);
+				int to = Window.getClientWidth() - 900;
+				if (from < to) {
+					rootPanel.setWidgetSize(attachPanelTable, to);
+				}
+				AonScalableImage scalableImage = new AonScalableImage( );
+				attachPanelTableCell2.add(scalableImage);
+				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+					public void execute() {
+						scalableImage.setImage(doc);
+				}});
 			}
 			
 			if ( invoiceCallback.getConfiguration().isOCRActive() ) {

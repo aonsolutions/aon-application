@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.tedi.test.pdf;
+package net.aonsolutions.aon.tedi.test.img;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -8,9 +8,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.mysql.cj.jdbc.Driver;
 
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceTax;
@@ -18,54 +21,67 @@ import es.translogia.tedi.ewok.TediTaxType;
 import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediInvoiceBuilder;
-import net.aonsolutions.aon.tedi.test.AbstractTediTest;
 import solutions.aon.in.invoice.UnknownInvoiceException;
-import solutions.aon.in.invoice.pdf.InvoicePDFParser;
+import solutions.aon.in.invoice.img.InvoiceIMGParser;
 
-public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
+public class TediInvoiceIMGParserAonDemoTestCase {
 
-	@Test
-	public void test01AUSARTA() throws IOException, UnknownInvoiceException, ClassNotFoundException {
-		testTemplate(TestTemplates.AON_01_AUSARTA);
-	}
-	@Test
-	public void test02BNP() throws IOException, UnknownInvoiceException, ClassNotFoundException {
-		testTemplate(TestTemplates.AON_02_BNP);
-	}
-	@Test
-	public void test03BIP_DRIVE() throws IOException, UnknownInvoiceException, ClassNotFoundException {
-		testTemplate(TestTemplates.AON_03_BIP_DRIVE);
-	}
-	@Test
-	public void test04BIP_DRIVE() throws IOException, UnknownInvoiceException, ClassNotFoundException {
-		testTemplate(TestTemplates.AON_04_BIP_DRIVE);
-	}
-	@Test
-	public void test05TRANSLOGIA() throws IOException, UnknownInvoiceException, ClassNotFoundException {
-		testTemplate(TestTemplates.AON_05_TRANSLOGIA);
-	}
-	@Test
-	public void test06TRANSLOGIA() throws IOException, UnknownInvoiceException, ClassNotFoundException {
-		testTemplate(TestTemplates.AON_06_TRANSLOGIA);
-	}
-	@Test
-	public void test07TOLEDO() throws IOException, UnknownInvoiceException, ClassNotFoundException {
-		testTemplate(TestTemplates.AON_07_TOLEDO);
-	}
-	@Test
-	public void test08VODAFONE() throws IOException, UnknownInvoiceException, ClassNotFoundException {
-		testTemplate(TestTemplates.AON_08_VODAFONE);
-	}
-	@Test
-	public void test09VUELING() throws IOException, UnknownInvoiceException, ClassNotFoundException {
-		testTemplate(TestTemplates.AON_09_VUELING);
-	}
-	@Test
-	public void testAON_2021_02_03_AMAZON() throws IOException, UnknownInvoiceException, ClassNotFoundException {
-		testTemplate(TestTemplates.AON_2021_02_03_AMAZON);
+	private static String DOMAIN_NAME = "queserialascortas.ecastellano.euk";
+	private static int DOMAIN_ID = 18539;
+	private static String USER = "admin";
+	
+	private TediContext ctx;
+
+	@Before
+	public void before() throws ClassNotFoundException {
+		Class.forName( Driver.class.getName() );
+		ctx = new TediContext()
+				.setDomain(DOMAIN_ID)
+				.setDomainName(DOMAIN_NAME)
+				.setAONContext (AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, USER))
+				;
+		ctx.setAonConfiguration(ConfigurationDAO.getConfiguration(ctx.getAONContext()));
 	}
 	
-	private void testTemplate(TestTemplates template) throws IOException, UnknownInvoiceException, ClassNotFoundException {
+	@Test
+	public void test_AON_01_RESTAURANTE_7() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate( TestTemplates.AON_01_RESTAURANTE_7);
+	}
+	@Test
+	public void test_AON_02_QUINTANAPALLA_AREAS() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate( TestTemplates.AON_02_QUINTANAPALLA_AREAS);
+	}
+	@Test
+	public void test_AON_03_ERKIAGA() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate( TestTemplates.AON_03_ERKIAGA);
+	}
+	
+/*	
+	@Test
+	public void test_AON_01_AREAS() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate( TestTemplates.AON_01_AREAS );
+	}
+	@Test
+	public void test_AON_02_ARTEPAN() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate( TestTemplates.AON_02_ARTEPAN );
+	}
+	@Test
+	public void test_AON_03_BM_SMALL() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate( TestTemplates.AON_03_BM_SMALL );
+	}
+	@Test
+	public void test_AON_04_BM() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate( TestTemplates.AON_03_BM);
+	}
+	@Test
+	public void test_AON_04_Conforama20I() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate( TestTemplates.AON_04_Conforama20I);
+	}
+ */	
+		
+	
+	
+	private void testTemplate( TestTemplates template ) throws IOException, UnknownInvoiceException, ClassNotFoundException {
 		StringBuilder out = new StringBuilder();
 		out.append("-----------------");
 		out.append("\n");
@@ -73,19 +89,10 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 		out.append("\n");
 		out.append("-----------------");
 		out.append("\n");
-		
-		TediContext tctx = new TediContext()
-				.setDomain(DOMAIN_ID)
-				.setDomainName(DOMAIN_NAME)
-				.setAONContext ( ctx )
-				;
-		tctx.setAonConfiguration(ConfigurationDAO.getConfiguration(tctx.getAONContext()));
-		tctx.getAonConfiguration().getCompany().setDocument("B01487271");
-		
 		Date start = new Date();
-		try (InputStream is = TediInvoicePDFParserAonDemoTestCase.class.getResourceAsStream(template.getFile())) {
-			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( tctx );
-			InvoicePDFParser.parse(is , tediInvoiceBuilder);
+		try (InputStream is = TediInvoiceIMGParserAonDemoTestCase.class.getResourceAsStream(template.getFile())) {
+			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( ctx );
+			InvoiceIMGParser.parse(is , tediInvoiceBuilder);
 			String file = "["+ template.getFile() +"]. ";
 			System.out.println( file );
 			TediInvoice invoice = tediInvoiceBuilder.get();
@@ -99,15 +106,6 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 			// FECHA DE EMISIÓN
 			assertNotNull(file + " Invoice has no date!",invoice.getDate());
 			assertEquals(file + " Date does not match!", template.getDate(), invoice.getDate());
-			// NUMERO DE FACTURA
-/*				
-				if (template.getReference() == null) {
-					assertNull(file + " Invoice has reference!",invoice.getReference());	
-				} else {
-					assertNotNull(file + " Invoice has no reference!",invoice.getReference());
-					assertEquals(file + "  Reference does not match!", template.getReference(), invoice.getReference());
-				}
-*/
 			// DOCUMENTO SENDER
 			assertNotNull(file + " Invoice has no sender!",invoice.getSender());
 			assertNotNull(file + " Invoice has no document sender!",invoice.getSender().getDocument());
@@ -119,38 +117,6 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 			// TAXES
 			assertNotNull(file + " Invoice has no taxes!",invoice.getTaxes());
 			assertEquals(file + " Invoice taxes number does not match!", template.getTaxNumber(), invoice.getTaxes().size());
-
-			// BASE AL 0%
-			if (template.getTaxBase0() == null) {
-				assertNull(file + " Invoice has 0% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 0 ));	
-			} else {
-				assertNotNull(file + " Invoice has no 0% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 0 ));
-				assertEquals(file + " Invoice 0% VAT base not match: ",template.getTaxBase0() , getTaxBase(invoice, TediTaxType.IVA, 0 ),0);
-			}
-
-			// CUOTA AL 0%
-			if (template.getTaxQuota0() == null) {
-				assertNull(file + " Invoice has 0% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 0 ));	
-			} else {
-				assertNotNull(file + " Invoice has no 0% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 0 ));
-				assertEquals(file + " Invoice 0% VAT quota not match: ",template.getTaxQuota0() , getTaxQuota(invoice, TediTaxType.IVA, 0 ),0);
-			}
-
-			// BASE AL 4%
-			if (template.getTaxBase4() == null) {
-				assertNull(file + " Invoice has 4% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 4 ));	
-			} else {
-				assertNotNull(file + " Invoice has no 4% VAT base!", getTaxBase(invoice, TediTaxType.IVA, 4 ));
-				assertEquals(file + " Invoice 4% VAT base not match: ",template.getTaxBase4() , getTaxBase(invoice, TediTaxType.IVA, 4 ),0);
-			}
-
-			// CUOTA AL 4%
-			if (template.getTaxQuota4() == null) {
-				assertNull(file + " Invoice has 4% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 4 ));	
-			} else {
-				assertNotNull(file + " Invoice has no 4% VAT quota!", getTaxQuota(invoice, TediTaxType.IVA, 4 ));
-				assertEquals(file + " Invoice 4% VAT quota not match: ",template.getTaxQuota4() , getTaxQuota(invoice, TediTaxType.IVA, 4 ),0);
-			}
 
 			// BASE AL 10%
 			if (template.getTaxBase10() == null) {
@@ -195,7 +161,6 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 			out.append(template.getFile());
 			out.append("\n");
 		}
-		
 		out.append("-----------------");
 		out.append("\n");
 		System.out.println( out.toString() );

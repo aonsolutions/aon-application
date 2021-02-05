@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import solutions.aon.in.invoice.UnknownInvoiceException;
 import solutions.aon.in.invoice.templates.AmountParser;
+import solutions.aon.in.invoice.templates.ParserContext;
 
 public class AmountParserTestCase {
 	
@@ -49,7 +50,7 @@ public class AmountParserTestCase {
     @Test
 	public void testAmount() throws IOException, UnknownInvoiceException {
 		for ( String text : AMOUNTS.keySet()) {
-			Collection<Double> amounts = AmountParser.getAmounts( text  );
+			Collection<Double> amounts = AmountParser.getAmounts( ParserContext.SPANISH, text  );
 			assertNotNull(text,amounts);
 			Double expected = AMOUNTS.get(text);
 			if ( expected == null) {

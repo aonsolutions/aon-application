@@ -109,7 +109,7 @@ public class TediValidator {
 	 */
 	public static Consumer<ValidationContext> DUPLICATED_SERIES_NUMBER = (ctx) -> {
 		if ( ctx.getInvoice().isSales() && ctx.getInvoice().getNumber() != 0) {
-			if (ctx.getCtx().getDslContext().fetchExists( 
+			if (ctx.getCtx() != null && ctx.getCtx().getDslContext().fetchExists( 
 					ctx.getCtx().getDslContext().selectOne()
 						.from(INVOICE)
 						.where(INVOICE.DOMAIN.eq(ctx.getInvoice().getDomain()))
@@ -128,8 +128,12 @@ public class TediValidator {
 	 * En facturas recibidas, el Domain/Registry/Numero Referencia no puede estar duplicado
 	 */
 	public static Consumer<ValidationContext> DUPLICATED_REFERENCE_CODE = (ctx) -> {
-		if (!ctx.getInvoice().isSales() && !ctx.getInvoice().isUndeductible() && ctx.getInvoice().getIssueDate() != null) {
-			if (ctx.getCtx().getDslContext().fetchExists( 
+		if (AonStringUtils.isNotBlank(ctx.getInvoice().getReferenceCode())
+			&& ctx.getInvoice().getType() != null
+			&& !ctx.getInvoice().isSales() 
+			&& !ctx.getInvoice().isUndeductible() 
+			&& ctx.getInvoice().getIssueDate() != null) {
+			if (ctx.getCtx() != null && ctx.getCtx().getDslContext().fetchExists( 
 					ctx.getCtx().getDslContext().selectOne()
 					.from(INVOICE)
 					.where(INVOICE.DOMAIN.eq(ctx.getInvoice().getDomain()))

@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.tedi.test;
+package net.aonsolutions.aon.tedi.test.util;
 
 
 import java.io.FileInputStream;
@@ -18,6 +18,7 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
+import com.mysql.cj.jdbc.Driver;
 
 import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.tedi.TEDI;
@@ -130,7 +131,7 @@ public class FillRawdoc {
 	
 	public static void main(String[] args) throws ClassNotFoundException, IOException, TediException {
 		
-		Class.forName( org.mariadb.jdbc.Driver.class.getName() );
+		Class.forName( Driver.class.getName() );
 		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, USER);
 		AonConfiguration aonConfiguration = ConfigurationDAO.getConfiguration(ctx);
 		

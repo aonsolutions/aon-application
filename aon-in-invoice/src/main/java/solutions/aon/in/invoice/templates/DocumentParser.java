@@ -82,6 +82,9 @@ public class DocumentParser  {
 					}
 				}
 				if ( !fake ) {
+					fake = isFakeDocument(nif);
+				}
+				if ( !fake ) {
 					nifs.add(nif); 
 					index = matcher.end() + 1 ;
 				} else {
@@ -102,60 +105,140 @@ public class DocumentParser  {
 		return str.substring(beginIndex, endIndex);
 	}
 	
-	
+	private static boolean isFakeDocument(Document nif) {
+		boolean vlid = DocumentUtil.isValid(nif.getData()); 
+		return !vlid;
+	}
+
+	private static class DocumentUtil {
+		private static final char[] DNI_LETTERS = {'T','R','W','A','G','M','Y','F','P','D','X','B','N','J','Z','S','Q','V','H','L', 'C', 'K', 'E' };
+		private static final char[] NIF_LETTERS = {'J','A','B','C','D','E','F','G','H','I'};
+		
+		private static boolean isValid(String value) {
+			if (value == null || value.length() == 0) {
+				return false;
+			}
+			char[] doc = value.toCharArray();
+			if (doc.length == 9) {
+				String first = new String(doc,0,1);
+				if (first.matches("[0-9|K|L|M]")) {
+					return isValidNIF(doc);
+				}
+				if (first.matches("[X|Y|Z]")) {
+					return isValidNIE(doc);
+				}
+				return isValidCIF(doc);
+			}
+			return false;
+		}
+		
+		private static boolean isValidNIE(char[] doc) {
+			if (doc.length != 9) {
+				return false;
+			}
+			doc[0] = (doc[0] == 'X') ? '0' : doc[0];
+			doc[0] = (doc[0] == 'Y') ? '1' : doc[0];
+			doc[0] = (doc[0] == 'Z') ? '2' : doc[0];
+			String numbers = new String(doc, 0, 8);
+			if (!isNumeric(numbers)) {
+				return false;
+			}
+			return (doc[8] == DNI_LETTERS[(Integer.parseInt(numbers) % 23)]);
+		}
+		
+		private static boolean isValidNIF(char[] doc) {
+			if (doc.length != 9) {
+				return false;
+			}
+			doc[0] = (doc[0] == 'K' || doc[0] == 'L' || doc[0] == 'M') ? '0' : doc[0];
+			String numbers = new String(doc, 0, 8);
+			if (!isNumeric(numbers)) {
+				return false;
+			}
+			return (doc[8] == DNI_LETTERS[(Integer.parseInt(numbers) % 23)]);
+		}
+
+		private static boolean isValidCIF(char[] doc) {
+			if (doc.length != 9) {
+				return false;
+			}
+			String first = new String(doc,0,1);
+			/*
+				A 	Número	Sociedades anónimas
+				B 	Número	Sociedades de responsabilidad limitada
+				C 	Número	Sociedades colectivas
+				D 	Número	Sociedades comanditarias
+				E 	Número	Comunidades de bienes
+				F 	Número	Sociedades cooperativas
+				G 	Número	Asociaciones y Fundaciones
+				H 	Número	Comunidades de propietarios en régimen de propiedad horizontal
+				J 	Número	Sociedades civiles, con o sin personalidad jurídica
+				N 	Letra	Entidades extranjeras
+				P 	Letra	Corporaciones Locales
+				Q 	Letra	Organismos públicos
+				R 	Letra	Congregaciones e instituciones religiosas
+				S 	Letra	Órganos de la Administración General del Estado y de las Comunidades Autónomas
+				U 	Número	Uniones Temporales de Empresas
+				V 	Número	Otros tipos no definidos en el resto de claves
+				W 	Letra	Establecimientos permanentes de entidades no residentes en España 			 
+			*/
+			if (!first.matches("[A|B|C|D|E|F|G|H|J|N|P|Q|R|S|U|V|W]")) {
+				return false;
+			}
+			int lInDC = 0;
+			for (int i = 1; i < 8; ++i) {
+				String strDigit = new String(doc, i, 1);
+				if (!isNumeric(strDigit)) {
+					return false;
+				}
+				int digit = Integer.parseInt(strDigit);
+				if ((i % 2) != 0) {
+					digit *= 2;
+					if (digit >= 10) {
+						digit -= 9;
+					}
+				}
+				lInDC += digit;
+			}
+			// Buscamos el multiplo de diez mas cercano mayor al numero calculado.
+			lInDC = (((lInDC / 10) + 1) * 10) - lInDC;
+			if (lInDC == 10) {
+				lInDC = 0;
+			}
+			if (first.matches("[P|N|S|Q|R|W]")) {
+				return (NIF_LETTERS[lInDC] == doc[8]);
+			}
+			String strDC = new String(doc, 8, 1);
+			if (!isNumeric(strDC)) {
+				return false;
+			}
+			return (Integer.parseInt(strDC) == lInDC);
+		}
+		
+		
+		private static boolean isNumeric(String str) {
+	        if (str == null) {
+	            return false;
+	        }
+	        int sz = str.length();
+	        for (int i = 0; i < sz; i++) {
+	            if (Character.isDigit(str.charAt(i)) == false) {
+	                return false;
+	            }
+	        }
+	        return true;
+	    }
+
+	}
+
 	public static void main(String[] args) {
 		Collection<Document> documents = DocumentParser.getNifs(
-//				"Pagado "
-//				+"\nVendido por Amazon EU S.ï¿½ r.l., Sucursal en Espaï¿½a "
-//				+"\nIVA ESW0184081H"
-//				+"\nFecha de envï¿½o 10 enero 2019"
-//				+"\nNï¿½mero del documento AEU-SIM-INV-ES-2019-2524414"
-//				+"\nALEJANDRA JIMENEZ GONZï¿½LEZ "
-//				+"\nTotal a pagar 14,00 ?"
-//				+"\nC/SANTï¿½SIMA TRINIDAD, 30, PLANTA 7,PUERTA 8 "
-//				+"\nMADRID, MADRID, 28010 "
-//				+"\nES"
-//				+"\nSi tienes preguntas sobre tus pedidos, visita https://www.amazon.es/contacto"
-//				+"\nDirecciï¿½n de facturaciï¿½n Direcciï¿½n de envï¿½o Vendido por "
-//				+"\nAlejandra Jimenez Gonzï¿½lez Jonatan Garcï¿½a Bellï¿½s Amazon EU S.ï¿½ r.l., Sucursal en Espaï¿½a "
-//				+"\nC/Santï¿½sima Trinidad, 30, planta 7,puerta 8 C/Donantes de Sangre 1 7ï¿½d Calle de Ramï¿½rez de Prado 5 "
-//				+"\nMadrid, Madrid, 28010 Madrid, Madrid, 28041 28045 Madrid "
-//				+"\nES ES Espaï¿½a "
-//				+"\nIVA ESW0184081H "
-//				+"\nInformaciï¿½n del pedido"
-//				+"\nFecha del pedido 10 enero 2019"
-//				+"\nNï¿½mero del pedido 402-0296095-1463555"
-//				+"\nDetalles del documento"
-//				+"\nDescripciï¿½n Cant. P. Unitario IVA % P. Unitario Precio total" 
-//				+"\n(IVA excluido) (IVA incluido) (IVA incluido)"
-//				+"\nAgenda 2019 semana vista apaisada espaï¿½ol 1 11,57 ? 21% 14,00 ? 14,00 ?"
-//				+"\nASIN: B07HJ8B5V1"
-//				+"\nTotal 14,00 ?"
-//				+"\nIVA % Precio total IVA"
-//				+"\n(IVA excluido)"
-//				+"\n21% 11,57 ? 2,43 ?"
-//				+"\nTotal 11,57 ? 2,43 ?"
-//				+"\nNï¿½ Registro Integrado Industrial: 3725 (AEE) / 990 (Pilas y Acumuladores)" 
-//				+"\nLU-BIO-04 "
-//				+"\nAmazon EU S.ï¿½ r.l. - 38 avenue John F. Kennedy, L-1855 Luxemburgo" 
-//				+"\nR.C.S. Luxemburgo: B 101818 "
-//				+"\nAmazon EU S.ï¿½ r.l., Sucursal en Espaï¿½a ? Calle de Ramï¿½rez de Prado 5, 28045 Madrid, Espaï¿½a "
-//				+"\nRegistro Mercantil de Madrid ? Tomo 33.166, Libro 0, Folio 105, Seccion 8, Hoja M-596.819 ? NIF W-0184081H"
-//				+"\nPï¿½gina 1 de 1"
-//				
-//				+"\n44671367P"
-//				+"\n44671367-P"
-//				+"\n44.671.367-P"
-//				+"\n44671367/P"
-//				+"\n44.671.367/P"
-//				"7o8Cw6BtfN9l4hgFlfad197PQXNt25PCLvoE0Sqk 73742960S S0DCDY9dfLdi1V08i43q8KybGI0pNFU"
-				"73742960S:	eee" 
+				"asdfsd V01130111 :	eee" 
 		);
 		for (Document doc : documents) {
 			System.out.println( doc.getType() + " --- " + doc.getData() );
 		}
-		
 		System.out.println( "END" );
-		 
 	}
+	
 }

@@ -383,7 +383,7 @@ public class FinanceDAO {
 	private static Finance buildFinance(Invoice invoice, Date date, PayMethod payMethod, RegistryBank rBank, double totalPrice) {
 		return  new Finance()
 			.setDomain(invoice.getDomain())
-			.setPayment(!invoice.getType().equals(InvoiceType.SALES))
+			.setPayment(invoice.getType() != InvoiceType.SALES)
 			.setRegistry( new Registry().setId(invoice.getRegistry()))
 			.setRegistryName(invoice.getRegistryName())
 			.setRegistryDocument(invoice.getRegistryDocument())

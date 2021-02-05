@@ -1,30 +1,16 @@
 package solutions.aon.in.invoice.templates;
 
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AmountParser {
 	
-	public static List<Double> getAmounts(String text) {
-		Locale ES = new Locale("es");
-		String ds = Character.toString(DecimalFormatSymbols.getInstance( ES ).getDecimalSeparator());
-		String gs = Character.toString(DecimalFormatSymbols.getInstance( ES ).getGroupingSeparator());
-		List<Double> amounts = getAmounts(text,ds,gs);
-		if (amounts == null || amounts.size() == 0) {
-			// Try in english.
-			amounts = getAmounts(text,gs,ds);	
-		}
-		return amounts;
-	}
-	
-	public static List<Double> getAmounts(String text, String ds, String gs) {
-//		System.out.println( "Using '"+ds+"' as Decimal Separator and '"+gs+"' as Grouping Separator");
-		
+	public static List<Double> getAmounts(ParserContext ctx, String text) {
+		String ds = ctx.getDecimalSeparator();
+		String gs = ctx.getDecimalGroupingSeparator();
 		String pat = "(?<integ>-?\\+?(\\d+\\"+gs+")*\\d+)"
 				+"\\"+ds
 				+"(?<fract>\\d+)"
@@ -40,7 +26,7 @@ public class AmountParser {
 		while ( index <= text.length() && matcher.find(index) ) {
 			String integ = matcher.group("integ");
 			integ = integ.replaceAll("O", "0")
-						 .replaceAll( "\\" + gs , "");
+						 .replaceAll( "\\" + ctx.getDecimalGroupingSeparator(), "");
 			String fract = matcher.group("fract");
 //			System.out.print( 
 //				"("+ matcher.start() +", "+ matcher.end() +") Parte Entera ..: {" + integ + "}" + "  Parte Decimal .: {" + fract + "} --- ["
@@ -87,7 +73,7 @@ public class AmountParser {
 
 	public static void main(String[] args) {
 		String text = "Total Factura 2.105,50\u20ac";;
-		Collection<Double> amounts = AmountParser.getAmounts( text );
+		Collection<Double> amounts = AmountParser.getAmounts( ParserContext.SPANISH, text );
 		
 		System.out.println( "Amounts..:" );
 		for (Double amount : amounts) {

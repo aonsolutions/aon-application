@@ -14,14 +14,25 @@ import es.translogia.tedi.ewok.TediNifType;
 import solutions.aon.in.invoice.InvoiceBuilder;
 import solutions.aon.in.invoice.templates.Document;
 import solutions.aon.in.invoice.templates.Document.DocumentType;
+import solutions.aon.in.invoice.templates.ParserContext;
 
 public class TediInsightInvoiceBuilder implements InvoiceBuilder<TediInvoice> {
 	
+	private ParserContext ctx;
 	protected TediInvoice invoice;
 
 	public TediInsightInvoiceBuilder( ) {
 		invoice = new TediInvoice()
 				.setInsight( new TediInsightInvoice());
+	}
+	
+	@Override
+	public ParserContext getParserContext() {
+		return ctx;
+	}
+	@Override
+	public void setParserContext(ParserContext context) {
+		this.ctx = context;
 	}
 	
 	@Override
@@ -105,7 +116,7 @@ public class TediInsightInvoiceBuilder implements InvoiceBuilder<TediInvoice> {
 		if (!getInsight().hasIssueDate() && getInsight().getDates() != null && getInsight().getDates().length > 0) {
 			Date issueDate = null;
 			if ( getInsight().getDates().length == 1) {
-				// Si solo hay una fecha parseada, se asume como fecha de fatura
+				// Si solo hay una fecha parseada, se asume como fecha de factura
 				issueDate = getInsight().getDates()[0];
 			} else {
 				// Se averigua la fecha mas alta parseada.
@@ -150,4 +161,5 @@ public class TediInsightInvoiceBuilder implements InvoiceBuilder<TediInvoice> {
 			get().setReference(reference);
 		}
 	}
+
 }

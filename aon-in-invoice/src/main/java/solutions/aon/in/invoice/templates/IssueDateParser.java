@@ -7,25 +7,15 @@ import java.util.regex.Pattern;
 
 public class IssueDateParser {
 	
-	public static Date getIssueDate(String text) {
-		String[] patterns = {
-				"Fecha emisi.n.*"+DateParser.DATES_PATTERN+"\\b",
-				"Fecha de emisi.n.*"+DateParser.DATES_PATTERN+"\\b",
-				"Fecha de emisi.n de factura.*"+DateParser.DATES_PATTERN+"\\b",
-				"Fecha factura.*"+DateParser.DATES_PATTERN+"\\b",
-				"Fecha de factura.*"+DateParser.DATES_PATTERN+"\\b",
-				"Fecha de la factura.*"+DateParser.DATES_PATTERN+"\\b",
-				"Fecha operaci.n.*"+DateParser.DATES_PATTERN+"\\b",
-				"Fecha de env.o.*"+DateParser.DATES_PATTERN+"\\b",
-				"Fecha.*factura.*"+DateParser.DATES_PATTERN+"\\b",
-			};
+	public static Date getIssueDate(ParserContext ctx, String text) {
+		String[] patterns = ctx.getIssueDatePatterns();;
 		Date issueDate = null;
 		for (String pat : patterns) {
 			Pattern pattern = Pattern.compile( pat, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(text);
 			int index = 0;
 			while (index <= text.length() && matcher.find(index) ) {
-				Collection<Date> dates = DateParser.getDates(matcher.group());
+				Collection<Date> dates = DateParser.getDates(ctx, matcher.group());
 				if (dates != null && dates.size() > 0) {
 					issueDate = dates.stream().findFirst().get();
 					break;
@@ -40,10 +30,14 @@ public class IssueDateParser {
 	}
 
 	public static void main(String[] args) {
-		Date date = IssueDateParser.getIssueDate(
-			"Número de factura 21181119010327056\n"
-			+"Fecha de emisión de factura 19 de noviembre de 2018\n"
-			+"Fecha prevista de cargo 19/11/2018\n"
+		Date date = IssueDateParser.getIssueDate( ParserContext.ENGLISH_US,
+				"VAT Invoice Date:\n"+
+				"083580179390\n"+
+				"AON SOLUTIONS, S.L.\n"+
+				"Duque de Wellington 52 Bajo\n"+
+				"Vitoria-Gasteiz, Álava, 01010, ES\n"+
+				"EUINES21-1701\n"+
+				"VAT Invoice Date: February 3, 2021"
 		);
 		System.out.println( date );  
 		System.out.println( "END" );
