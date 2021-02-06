@@ -2,13 +2,15 @@ package com.esferalia.aon.occam.api.model.security;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.Workgroup;
+
 @SuppressWarnings("serial")
 public class UserWorkgroup implements Serializable {
 	
 	Integer id;
 	Integer domain;
 	Integer userId;
-	Integer workgroup;
+	Workgroup workgroup;
 
 	public UserWorkgroup() { }
 
@@ -39,11 +41,11 @@ public class UserWorkgroup implements Serializable {
 		return this;
 	}
 
-	public Integer getWorkgroup() {
+	public Workgroup getWorkgroup() {
 		return workgroup;
 	}
 
-	public UserWorkgroup setWorkgroup(Integer workgroup) {
+	public UserWorkgroup setWorkgroup(Workgroup workgroup) {
 		this.workgroup = workgroup;
 		return this;
 	}

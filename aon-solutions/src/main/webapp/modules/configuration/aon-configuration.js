@@ -124,7 +124,7 @@ export class AonConfiguration extends AonElement {
 		getAuth().then( user => {
 			let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
 			aonConfiguration.removeToolbarOptions();
-			aonConfiguration.setContentHTML('<aon-user id="aonUserPersonal" ><aon-user>');
+			aonConfiguration.setContentHTML('<aon-user id="aonUserPersonal" showPassword="true" ><aon-user>');
 			let aonUser = this.getElement('aonUserPersonal');
 			aonUser.style.display = this.isMobile() ? 'block' : 'flex';
 			aonUser.style.width = "100%";
@@ -236,6 +236,9 @@ export class AonConfiguration extends AonElement {
 		return false;
 	}
 
+	getApplication() {
+		return this.getElement(this.AON_CONFIGURATION);
+	}
 }
 
 window.customElements.define('aon-configuration', AonConfiguration);

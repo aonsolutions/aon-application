@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDomainApps, getUserAppRole, setUserAppRole, setUser} from  '../../services/service.js';
+import {getDomainApps, getUser, getUserAppRole, setUserAppRole, setUser, changePassword} from  '../../services/service.js';
 import {getApp} from  '../../services/app.js';
 
 import '../../components/aon-card.js';
@@ -51,6 +51,22 @@ export class AonUser extends AonElement {
 		this.setAttribute('showApps', showApps);
 	}
 
+	get showPassword() {
+		return this.getAttribute('showPassword');
+	}
+
+	set showPassword(showPassword) {
+		this.setAttribute('showPassword', showPassword);
+	}
+
+	get showInfo() {
+		return this.getAttribute('showInfo');
+	}
+
+	set showInfo(showInfo) {
+		this.setAttribute('showInfo', showInfo);
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		if('user' === name){
 			this.initUser();
@@ -75,7 +91,10 @@ export class AonUser extends AonElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<aon-card id="aonConfigurationUserCard" style="width:50%;" title="USUARIO"></aon-card>
+			<div id="aonConfigurationUserDiv" style="width:50%;">
+				<aon-card id="aonConfigurationUserCard"  title="USUARIO"></aon-card>
+				<aon-card id="aonConfigurationUserInfoCard" title="INFORMACIÓN ADICIONAL"></aon-card>
+			</div>
 			<aon-card id="aonConfigurationUserSecurityCard" style="width:50%;" title="PERMISOS"></aon-card>
 		`;
 		this.build();
@@ -92,11 +111,12 @@ export class AonUser extends AonElement {
 			}
 		});
 	}
+
 	initUser() {
 		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
 		this._user = user;
 		let aonUserName = document.getElementById('aonConfigurationUserCardName');
-		aonUserName.setAttribute('value', user && user.name ? user.name : '');
+		aonUserName.setAttribute('value', user && user.name && user.email ? user.name : '');
 		let aonUserSurname = document.getElementById('aonConfigurationUserCardSurname');
 		aonUserSurname.setAttribute('value', user && user.surname ? user.surname : '');
 		let aonUserDocument = document.getElementById('aonConfigurationUserCardDocument');
@@ -113,6 +133,16 @@ export class AonUser extends AonElement {
 				this.setAttribute('apps', JSON.stringify(apps));
 			});
 		}
+
+		if(this.hasAttribute('showInfo')) {
+			let data = {
+				user: this._user.id
+			}
+			getUser(data).then(usr => {
+				this.getElement('aonConfigurationUserInfoLogin').value = usr.login;
+				this.getElement('aonConfigurationUserInfoAON').checked = usr.newAon;
+			});
+		}
 	}
 
 	build() {
@@ -120,8 +150,7 @@ export class AonUser extends AonElement {
 		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
 
 		let card = document.getElementById('aonConfigurationUserCard');
-		card.setContentHTML(`
-			<form action="#" class="aon-margin-0">
+		let html = `<form action="#" class="aon-margin-0">
 				<aon-input class="aonWidth100" id="aonConfigurationUserCardEmail" description="Email" value=""></aon-input>
 			</form>
 			<form action="#" class="aon-margin-0">
@@ -131,8 +160,24 @@ export class AonUser extends AonElement {
 			<form action="#" class="aon-margin-0">
 				<aon-input class="aonWidth50" id="aonConfigurationUserCardDocument" description="DNI/NIE" value=""></aon-input>
 				<aon-input class="aonWidth50" id="aonConfigurationUserCardPhone" description="Teléfono Móvil" value=""></aon-input>
+			</form>`;
+		if(this.hasAttribute('showPassword')) {
+			html = html +
+			`<form action="#" class="aon-margin-0">
+				<table style="width:100%">
+				<tr>
+					<td>
+						<aon-input  id="aonConfigurationUserCardPassword" type="password" description="Contraseña" value="12345678" disabled="true"></aon-input>
+					</td>
+					<td style="padding-bottom:20px; width:40px">
+						<aon-icon-button id="aonConfigurationUserCardPasswordEdit" icon="edit"></aon-icon-button>
+					</td>
+				</tr>
+				<table>
 			</form>
-		`);
+			`;
+		}
+		card.setContentHTML(html);
 
 		let name = document.getElementById('aonConfigurationUserCardName');
 		name.onChange(() => {
@@ -173,16 +218,68 @@ export class AonUser extends AonElement {
 		table.style.width = '100%';
 		card2.setContent(table);
 
+		let editPassword = this.getElement('aonConfigurationUserCardPasswordEdit');
+		if(editPassword) {
+			editPassword.addEventListener('click', (e) => {
+				e.preventDefault();
+				this.editPassword()
+			});
+		}
+		let card3 = document.getElementById('aonConfigurationUserInfoCard');
+		card3.setVisible(this.hasAttribute('showInfo'));
+		if(this.hasAttribute('showInfo')) {
+			card3.setContentHTML = '';
+			let table = document.createElement('table');
+			card3.setContent(table);
+			table.style.width = '100%';
+			let tr = document.createElement('tr');
+			table.appendChild(tr);
+
+			let td1 = document.createElement('td');
+			tr.appendChild(td1)
+			td1.innerHTML = `<aon-input id="aonConfigurationUserInfoLogin" description="Identificador" disabled="true"></aon-input>`;
+
+			let td2 = document.createElement('td');
+			tr.appendChild(td2)
+			td2.innerHTML = `<aon-switch id="aonConfigurationUserInfoAON" title="nuevo AON" disabled="true"></aon-switch>`;
+		}
+
 		if(this.isMobile()) {
-			card.style.width = '100%'
+			let div = "aonConfigurationUserDiv"
+			div.style.width = '100%'
 			card2.style.width = '100%';
 		}
+
+	}
+
+	editPassword() {
+		let content = this.parentElement;
+		let application = content.parentElement;
+		let d = document.getElementById(application.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle("Cambiar Contraseña");
+		d.setContentHTML(`
+			<aon-input  id="aonConfigurationUserCardOldPassword" type="password" description="Contraseña Actual" value=""></aon-input>
+			<aon-input  id="aonConfigurationUserCardNewPassword" type="password" description="Nueva Contraseña" value=""></aon-input>
+		`);
+		d.addAcceptAction(() => {
+			let oldPassword = this.getElement('aonConfigurationUserCardOldPassword').value;
+			let newPassword = this.getElement('aonConfigurationUserCardNewPassword').value;
+			changePassword({oldPassword, newPassword});
+		});
+		d.open();
 	}
 
 	save() {
 		setUser(this._user).then(r => {
 			this.setAttribute('user', JSON.stringify(r));
 			this._user = r;
+			getDomainApps().then(apps => {
+				this.setAttribute('apps', JSON.stringify(apps));
+				this.initApps();
+			});
+
 		}).catch(e => {
 			let aonApplication = document.querySelector('aon-application');
 			let toast = this.getElement(aonApplication.TOAST);
@@ -256,6 +353,14 @@ export class AonUser extends AonElement {
 
 			setUserAppRole(role).then(() => {
 				getUserAppRole({user:user.id}).then(r => {
+					if(!role.active && r.contains(role.app)) {
+						r.forEach((item, i) => {
+							if(item == role.app){
+								r.splice(i, 1);
+							}
+						});
+					}
+
 					user.roles = r;
 					this._user.roles = r;
 					this.setAttribute('user', JSON.stringify(user));
@@ -276,7 +381,6 @@ export class AonUser extends AonElement {
 					}
 				});
 			});
-
 		});
 
 		if(app && app.access && active) {
@@ -343,6 +447,7 @@ export class AonUser extends AonElement {
 	}
 
 	isAdmin() {
+		console.log(JSON.stringify(this._user.roles));
 		return this._user.roles && this._user.roles.includes('ADMIN');
 	}
 

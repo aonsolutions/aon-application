@@ -56,6 +56,10 @@ export class AonUserPanel extends AonElement {
 		aonUser.style.width = "100%";
 		if(share)	aonUser.setAttribute('share', share);
 	}
+
+	getApplication() {
+		return this.getElement(this.AON_USER_PANEL);
+	}
 }
 
 window.customElements.define('aon-user-panel', AonUserPanel);

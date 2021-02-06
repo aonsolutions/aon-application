@@ -27,6 +27,7 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
+import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.DIGITAL_CERTIFICATE;
 
@@ -53,7 +54,6 @@ import com.esferalia.aon.jooq.tables.records.ContactRecord;
 import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -82,6 +82,7 @@ import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -93,6 +94,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserAppRoleProperties
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserScopePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserWorkgroupPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO.WorkgroupFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -366,7 +368,8 @@ public class SecurityDAO {
 				.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)))
 				.setRegistry(record.getValue(USER.REGISTRY))
 				.setAuth(record.getValue(USER.AUTH))
-				.setShared(AonEnumUtils.getBoolean(record.getValue(USER.SHARED)));
+				.setShared(AonEnumUtils.getBoolean(record.getValue(USER.SHARED)))
+				.setToolbar(UserToolbar.safeValueOf(record.getValue(USER.TOOLBAR)));
 				//.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
 		}
 		
@@ -393,6 +396,7 @@ public class SecurityDAO {
 	}
 	
 	public static Stream<User> getDomainUserStream(AONContext ctx, UserFilter filter) {
+		
 		return ctx.getDslContext()
 				.selectDistinct(USER_FIELDS)
 				.from(USER)
@@ -491,8 +495,9 @@ public class SecurityDAO {
 	}
 	
 	public static Stream<DomainApp> getDomainAppStream(AONContext ctx, DomainAppFilter filter){
-		return ctx.getDslContext().select().from(DOMAIN_APP)
-				.where(DOMAIN_APP_PROPERTIES.getConditions(filter))
+		return ctx.getDslContext().select()
+				.from(DOMAIN_APP)
+				.where(DOMAIN_APP_PROPERTIES.getConditions(filter))				
 				.fetch().stream().map(new DomainAppFiller());
 	}
 	
@@ -634,15 +639,22 @@ public class SecurityDAO {
 	}
 	
 	public static Stream<Scope> getUserScopeStream(AONContext ctx,  Integer userId, ScopeFilter filter){
-		return ctx.getDslContext().select().from(SCOPE)
+		if(filter != null)
+			return ctx.getDslContext().select().from(SCOPE)
 				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
 				.where(SCOPE_PROPERTIES.getConditions(filter))
 				.and(USER_SCOPE.USER_ID.eq(userId))
 				.fetch().stream().map(new ScopeFiller());
+
+		return ctx.getDslContext().select().from(SCOPE)
+				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
+				.where(USER_SCOPE.USER_ID.eq(userId))
+				.fetch().stream().map(new ScopeFiller());
 	}
 	
 	public static Stream<UserWorkgroup> getUserWorkgroupStream(AONContext ctx, UserWorkgroupFilter filter){
-		return ctx.getDslContext().select().from(USER_WORKGROUP)
+		return ctx.getDslContext().select()
+				.from(USER_WORKGROUP).join(WORKGROUP).on(WORKGROUP.ID.eq(USER_WORKGROUP.WORKGROUP))
 				.where(USER_WORKGROUP_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new UserWorkgroupFiller());
 	}
@@ -688,7 +700,7 @@ public class SecurityDAO {
 				.setId(r.getValue(USER_WORKGROUP.ID))
 				.setDomain(r.getValue(USER_WORKGROUP.DOMAIN))
 				.setUserId(r.getValue(USER_WORKGROUP.USER_ID))
-				.setWorkgroup(r.getValue(USER_WORKGROUP.WORKGROUP));
+				.setWorkgroup(WorkgroupFiller.buildWorkgroup(r));
 		}
 	}
 
@@ -1121,17 +1133,25 @@ public class SecurityDAO {
 	
 	public static DomainUserRoles getDomainUserRoles(AONContext ctx, Integer userId) {
 		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
-		User user = getUser(ctx, userId);
 		
-		LinkedList<DomainApp> domainApps = getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getId())).collect(Collectors.toCollection(LinkedList::new));
-		LinkedList<DomainApp> parentDomainApps = domain.getParentId() != null  && user.getDomain().equals(domain.getParentId())
-				? getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getId())).collect(Collectors.toCollection(LinkedList::new))
+		User user = userId != null ? getUser(ctx, userId) : new User();
+		
+		LinkedList<AonApp> domainApps = getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getActiveProperty().eq((byte) 1)))
+				.map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new));
+		LinkedList<AonApp> parentDomainApps = domain.getParentId() != null
+				? getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getActiveProperty().eq((byte) 1)))
+						.map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new))
 				: new LinkedList<>();
-		LinkedList<UserAppRole> domainUserRoles = getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getUserIdProperty().eq(userId)))
-				.collect(Collectors.toCollection(LinkedList::new));	
-		LinkedList<UserAppRole> parentDomainUserRoles = domain.getParentId() != null && user.getDomain().equals(domain.getParentId())
-				? getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getUserIdProperty().eq(userId)))
-						.collect(Collectors.toCollection(LinkedList::new))
+						
+		LinkedList<com.esferalia.aon.occam.api.model.aonsolutions.AonRole> domainUserRoles = 
+			userId != null
+				? getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(userId)))
+						.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new)) 
+				: new LinkedList<>();	
+		LinkedList<com.esferalia.aon.occam.api.model.aonsolutions.AonRole> parentDomainUserRoles = 
+			userId != null  && domain.getParentId() != null && user.getDomain().equals(domain.getParentId())
+				? getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getUserIdProperty().eq(userId)))
+						.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new))
 				: new LinkedList<>();	
 		return new DomainUserRoles()
 				.setDomain(domain)

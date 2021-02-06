@@ -9,10 +9,10 @@ public class DomainUserRoles {
 	Domain domain;
 	User user;
 	
-	LinkedList<DomainApp> domainApps;
-	LinkedList<DomainApp> parentDomainApps;
-	LinkedList<UserAppRole> domainUserRoles;
-	LinkedList<UserAppRole> parentDomainUserRoles;
+	LinkedList<AonApp> domainApps;
+	LinkedList<AonApp> parentDomainApps;
+	LinkedList<AonRole> domainUserRoles;
+	LinkedList<AonRole> parentDomainUserRoles;
 	
 	public DomainUserRoles() {
 	
@@ -36,38 +36,38 @@ public class DomainUserRoles {
 		return this;
 	}
 	
-	public LinkedList<DomainApp> getDomainApps() {
+	public LinkedList<AonApp> getDomainApps() {
 		return domainApps;
 	}
 	
-	public DomainUserRoles setDomainApps(LinkedList<DomainApp> domainApps) {
+	public DomainUserRoles setDomainApps(LinkedList<AonApp> domainApps) {
 		this.domainApps = domainApps;
 		return this;
 	}
 	
-	public LinkedList<DomainApp> getParentDomainApps() {
+	public LinkedList<AonApp> getParentDomainApps() {
 		return parentDomainApps;
 	}
 	
-	public DomainUserRoles setParentDomainApps(LinkedList<DomainApp> parentDomainApps) {
+	public DomainUserRoles setParentDomainApps(LinkedList<AonApp> parentDomainApps) {
 		this.parentDomainApps = parentDomainApps;
 		return this;
 	}
 	
-	public LinkedList<UserAppRole> getDomainUserRoles() {
+	public LinkedList<AonRole> getDomainUserRoles() {
 		return domainUserRoles;
 	}
 	
-	public DomainUserRoles setDomainUserRoles(LinkedList<UserAppRole> domainUserRoles) {
+	public DomainUserRoles setDomainUserRoles(LinkedList<AonRole> domainUserRoles) {
 		this.domainUserRoles = domainUserRoles;
 		return this;
 	}
 	
-	public LinkedList<UserAppRole> getParentDomainUserRoles() {
+	public LinkedList<AonRole> getParentDomainUserRoles() {
 		return parentDomainUserRoles;
 	}
 	
-	public DomainUserRoles setParentDomainUserRoles(LinkedList<UserAppRole> parentDomainUserRoles) {
+	public DomainUserRoles setParentDomainUserRoles(LinkedList<AonRole> parentDomainUserRoles) {
 		this.parentDomainUserRoles = parentDomainUserRoles;
 		return this;
 	}
@@ -76,181 +76,125 @@ public class DomainUserRoles {
 		return getDomain().getParentId().equals(getUser().getDomain());
 	}
 	
-	public Boolean isAdmin() {
-		return getDomainUserRoles().stream().filter(f -> AonRole.ADMIN.equals(f.getRole())).count() > 0
-			|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.ADMIN.equals(f.getRole())).count() > 0);
+	private Boolean hasApp(AonApp aonApp) {
+		return getDomainApps().contains(aonApp) || getParentDomainApps().contains(aonApp);
 	}
 	
-	private Boolean hasApp(AonApp aonApp) {
-		DomainApp dapp;
-		if(getDomainApps().size() > 0) {
-			dapp = getDomainApps().stream().filter(f -> aonApp.equals(f.getApp())).findFirst().orElse(null);
-		} else dapp = getParentDomainApps().stream().filter(f -> aonApp.equals(f.getApp())).findFirst().orElse(null);
-		return dapp != null && dapp.getActive();
+	private Boolean hasRole(AonRole aonRole) {
+		return getDomainUserRoles().contains(aonRole) 
+			|| (isParentUser() && getParentDomainUserRoles().contains(aonRole));
+	}
+	
+	public Boolean isAdmin() {
+		return  hasRole(AonRole.ADMIN);
 	}
 	
 	public Boolean isAccounting() {	
-		return hasApp(AonApp.ACCOUNTING)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.ACCOUNTING.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.ACCOUNTING.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.ACCOUNTING) && hasRole(AonRole.ACCOUNTING);
 	}
 	
 	public Boolean isAccountingManager() {
-		return hasApp(AonApp.ACCOUNTING)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.ACCOUNTING_MANAGER.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.ACCOUNTING_MANAGER.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.ACCOUNTING) && hasRole(AonRole.ACCOUNTING_MANAGER);
 	}
 	
 	public Boolean isFiscal() {
-		return hasApp(AonApp.FISCAL)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.FISCAL.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.FISCAL.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.FISCAL) && hasRole(AonRole.FISCAL);
 	}
 	
 	public Boolean isFiscalManager() {
-		return hasApp(AonApp.FISCAL)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.FISCAL_MANAGER.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.FISCAL_MANAGER.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.FISCAL) && hasRole(AonRole.FISCAL_MANAGER);
 	}
 	
 	public Boolean isPayroll() {
-		return hasApp(AonApp.PAYROLL)
-			&& ( getDomainUserRoles().stream().filter(f -> AonRole.PAYROLL.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.PAYROLL_MANAGER.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.PAYROLL) && hasRole(AonRole.PAYROLL);
 	}
 	
 	public Boolean isPayrollPortal() {
-		return hasApp(AonApp.PAYROLL)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.PAYROLL_PORTAL.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.PAYROLL_PORTAL.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.PAYROLL) && hasRole(AonRole.PAYROLL_PORTAL);
 	}
 	
 	public Boolean isPayrollManager() {
-		return hasApp(AonApp.PAYROLL)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.PAYROLL_MANAGER.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.PAYROLL_MANAGER.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.PAYROLL) && hasRole(AonRole.PAYROLL_MANAGER);
 	}
 	
 	public Boolean isDocumental() {
-		return hasApp(AonApp.DOCUMENTAL)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.DOCUMENTAL.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.DOCUMENTAL.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.DOCUMENTAL) && hasRole(AonRole.DOCUMENTAL);
 	}
 	
 	public Boolean isDocumentalManager() {
-		return hasApp(AonApp.DOCUMENTAL)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.DOCUMENTAL_MANAGER.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.DOCUMENTAL_MANAGER.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.DOCUMENTAL) && hasRole(AonRole.DOCUMENTAL_MANAGER);
 	}
 	
 	public Boolean isComunica() {
-		return hasApp(AonApp.COMUNICA)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.COMUNICA.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.COMUNICA.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.COMUNICA) && hasRole(AonRole.COMUNICA);
 	}
 	
 	public Boolean isComunicaPortal() {
-		return hasApp(AonApp.COMUNICA)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.COMUNICA_PORTAL.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.COMUNICA_PORTAL.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.COMUNICA) && hasRole(AonRole.COMUNICA_PORTAL);
 	}
 	
 	public Boolean isComunicaManager() {
-		return hasApp(AonApp.COMUNICA)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.COMUNICA_MANAGER.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.COMUNICA_MANAGER.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.COMUNICA) && hasRole(AonRole.COMUNICA_MANAGER);
 	}
 	
 	public Boolean isTimecontrol() {
-		return hasApp(AonApp.TIMECONTROL)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.TIMECONTROL.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.TIMECONTROL.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.TIMECONTROL) && hasRole(AonRole.TIMECONTROL);
 	}
 	
 	public Boolean isTimecontrolPortal() {
-		return hasApp(AonApp.TIMECONTROL)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.TIMECONTROL_PORTAL.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.TIMECONTROL_PORTAL.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.TIMECONTROL) && hasRole(AonRole.TIMECONTROL_PORTAL);
 	}
 	
 	public Boolean isTimecontrolManager() {
-		return hasApp(AonApp.TIMECONTROL)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.TIMECONTROL_MANAGER.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.TIMECONTROL_MANAGER.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.TIMECONTROL) && hasRole(AonRole.TIMECONTROL_MANAGER);
 	}
 	
 	public Boolean isMessenger() {
-		return hasApp(AonApp.MESSENGER)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.MESSENGER.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.MESSENGER.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.MESSENGER) && hasRole(AonRole.MESSENGER);
 	}
 	
 	public Boolean isMessengerManager() {
-		return hasApp(AonApp.MESSENGER)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.MESSENGER_MANAGER.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.MESSENGER_MANAGER.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.MESSENGER) && hasRole(AonRole.MESSENGER_MANAGER);
 	}
 	
 	public Boolean isInvoice() {
-		return hasApp(AonApp.INVOICE)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.INVOICE.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.INVOICE.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.INVOICE) && hasRole(AonRole.INVOICE);
 	}
 	
 	public Boolean isInvoicePortal() {
-		return hasApp(AonApp.INVOICE)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.INVOICE_PORTAL.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.INVOICE_PORTAL.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.INVOICE) && hasRole(AonRole.INVOICE_PORTAL);
 	}
 	
 	public Boolean isInvoiceManager() {
-		return hasApp(AonApp.INVOICE)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.INVOICE_MANAGER.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.INVOICE_MANAGER.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.INVOICE) && hasRole(AonRole.INVOICE_MANAGER);
 	}
 	
 	public Boolean isManagement() {
-		return hasApp(AonApp.MANAGEMENT)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.MANAGEMENT.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.MANAGEMENT.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.MANAGEMENT) && hasRole(AonRole.MANAGEMENT);
 	}
 	
 	public Boolean isManagementManager() {
-		return hasApp(AonApp.MANAGEMENT)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.MANAGEMENT_MANAGER.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.MANAGEMENT_MANAGER.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.MANAGEMENT) && hasRole(AonRole.MANAGEMENT_MANAGER);
 	}
 	
 	public Boolean isAlma() {
-		return hasApp(AonApp.ALMA)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.ALMA.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.ALMA.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.ALMA) && hasRole(AonRole.ALMA);
 	}
 	public Boolean isOcr() {
-		return hasApp(AonApp.OCR)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.OCR.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.OCR.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.OCR) && hasRole(AonRole.OCR);
 	}
 	
 	public Boolean isBank() {
-		return hasApp(AonApp.BANK)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.BANK.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.BANK.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.BANK) && hasRole(AonRole.BANK);
 	}
 	
 	public Boolean isConvenios() {
-		return hasApp(AonApp.CONVENIOS)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.CONVENIOS.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.CONVENIOS.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.CONVENIOS) && hasRole(AonRole.CONVENIOS);
 	}
 	public Boolean isAon() {
-		return hasApp(AonApp.AIO)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.AON.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.AON.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.AIO) && hasRole(AonRole.AON);
 	}
 	public Boolean isBidoq() {
-		return hasApp(AonApp.BIDOQ)
-			&& (getDomainUserRoles().stream().filter(f -> AonRole.BIDOQ.equals(f.getRole())).count() > 0
-				|| (isParentUser() && getParentDomainUserRoles().stream().filter(f -> AonRole.BIDOQ.equals(f.getRole())).count() > 0));
+		return hasApp(AonApp.BIDOQ) && hasRole(AonRole.BIDOQ);
 	}
 }

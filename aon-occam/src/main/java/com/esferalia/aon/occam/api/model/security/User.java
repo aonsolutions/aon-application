@@ -18,6 +18,8 @@ public class User implements Serializable {
 	private Integer registry;
 	private Integer enterprise;
 	private AonRole[] userRoles;
+	UserToolbar toolbar;
+	
 	private byte[] auth;
 	
 	public Integer getId() {
@@ -94,6 +96,15 @@ public class User implements Serializable {
 	}
 	public User setAuth(byte[] auth) {
 		this.auth = auth;
+		return this;
+	}
+	
+	public UserToolbar getToolbar() {
+		return toolbar;
+	}
+	
+	public User setToolbar(UserToolbar toolbar) {
+		this.toolbar = toolbar;
 		return this;
 	}
 

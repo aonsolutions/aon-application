@@ -53,6 +53,9 @@ export const setDomainApp = (data) => post(`${API_URL}/company/app`, data);
 
 export const getDomainNotice = (data) => get(`${API_URL}/company/notice`, data);
 
+export const getDomainUserRoles = (data) => get(`${API_URL}/company/approles`, data);
+
+
 export const getDomainApps = (domain) => {
     let d = true;
     if (!localStorage.getItem("aon_domain_name")) {

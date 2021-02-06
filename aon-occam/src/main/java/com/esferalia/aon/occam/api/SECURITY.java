@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
@@ -15,6 +16,12 @@ public class SECURITY {
 
 	private static ISecurity getSecurity() {
 		return new SecurityImpl();
+	}
+	
+	public static DomainUserRoles getDomainUserRoles(Domain domain, String login, Integer userId) {
+		try(AONContext ctx = AONContext.getAONContext(domain, login)){
+			return getSecurity().getDomainUserRoles(ctx, userId);
+		}
 	}
 	
 	public static DomainUserRoles getDomainUserRoles(String domainName, Integer domainId, String login, Integer userId) {

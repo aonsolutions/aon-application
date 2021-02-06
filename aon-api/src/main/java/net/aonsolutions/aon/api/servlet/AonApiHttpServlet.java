@@ -71,7 +71,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		
 		String domainLogin = req.getHeader("domain_login");
 		User user = AonStringUtils.isBlank(domainLogin)
-				? new User()
+				? new User().setLogin("")
 				: AON.getUser(getDomain().getName(), getDomain().getId(), domainLogin);
 		setUser(user);
 		

@@ -30,4 +30,6 @@ export const getManifest = (data) => get(`${API_URL}/manifest`, data);
 
 export const getAuth = (data) => get(`${API_URL}/auth`, data);
 
+export const changePassword = (data) => post(`${API_URL}/auth/password`, data);
+
 export const registerUser = (data) => post(`${API_URL}/register`, data);

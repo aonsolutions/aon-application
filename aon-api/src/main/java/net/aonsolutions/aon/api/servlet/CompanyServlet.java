@@ -1,11 +1,9 @@
 package net.aonsolutions.aon.api.servlet;
-import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,77 +13,102 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
-import com.esferalia.aon.occam.api.model.RawdocDomainData;
-import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonDomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonCompanyServlet", urlPatterns = {"/ms/api/company/*"})
-public class CompanyServlet extends HttpServlet{
+public class CompanyServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(CompanyServlet.class.getName());
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON COMPANY SERVLET - GET METHOD");
-		String token = req.getHeader("session_id");
+		LOGGER.info("AON API COMPANY SERVLET - GET METHOD");
+		try {
+			super.doGet(req, resp);
 
-		JSONArray jsArray = new JSONArray();
-
-		List<String> schemas = AONContext.getSchemas();
-		String domainName = req.getHeader("domain_name");
-		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-		Object object = new Object();
-		if(pathInfo  != null) {
-			if("app".equalsIgnoreCase(pathInfo[1])) {
-				Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
-				object = getDomainApps(domain);
-			} else if("notice".equalsIgnoreCase(pathInfo[1])) {
-				Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
-				RawdocUserData rawdocUserData = AON.getRawdocUserData(domain.getName(), domain.getId(), "");
-				object = rawdocUserData.toJSON();
+			switch (getPath()) {
+			case "/":
+				response(req, resp, getCompanies());
+				break;
+			case "/app":
+				response(req, resp, getDomainApps());
+				break;
+			case "/approles":
+				response(req, resp, getDomainUserRoles());
+				break;
+			case "/notice":
+				response(req, resp, getNotices());
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
 			}
-		} else {
-			for(String schema : schemas) {
-				AON_SOLUTIONS.getCompanyStream(token, schema, null, null)
-					.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName())).forEach(
-							ac -> jsArray.put(ac.toJSON()));
-			}
-			object = jsArray;
+		} catch (Exception e) {
+			error(req, resp, e);
 		}
-		Utils.addCorsHeader(resp);
-		Utils.giveBack(req, resp, object, new JSONObject());
 	}
-
+	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		LOGGER.info("COMPANY SERVLET - POST METHOD");
-		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-		JSONObject json = Utils.getRequestJSON(req);
-		if(pathInfo != null) {
-			if("app".equalsIgnoreCase(pathInfo[1])) {
-				json = setDomainApp(json);
-			} 
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("AON API COMPANY SERVLET - POST METHOD");
+		try {
+			super.doPost(req, resp);
+
+			switch (getPath()) {
+			case "/app":
+				response(req, resp, setDomainApp());
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
 		}
-		Utils.addCorsHeader(resp);
-		Utils.giveBack(req, resp, json, new JSONObject());
 	}
 		
-	private JSONArray getDomainApps(Domain domain){
+	private JSONArray getCompanies() {
+		List<String> schemas = AONContext.getSchemas();
+		JSONArray jsArray = new JSONArray();
+		for(String schema : schemas) {
+			AON_SOLUTIONS.getCompanyStream(getToken(), schema, null, null)
+				.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName())).forEach(
+						ac -> jsArray.put(ac.toJSON()));
+		}
+		return jsArray;
+	}
+	
+	private JSONObject getDomainUserRoles() {
+		DomainUserRoles dur = SECURITY.getDomainUserRoles(getDomain(), getUser().getLogin(), getUser().getId());
+		AonDomainUserRoles adur = new AonDomainUserRoles(dur);
+		return adur.toJSON();
+	}
+	
+	private JSONArray getDomainApps(){
 		JSONArray array = new JSONArray();
-		AON_SOLUTIONS.getDomainApp(domain.getName(), domain.getId(), "", f -> 
-		f.getDomainProperty().eq(domain.getId())).forEach(domainApp -> {	
-			if(domainApp.getApp() != null && domainApp.getActive()) {
-				array.put(domainApp.getApp().name().toLowerCase());
-			}
+		LinkedList<AonApp> list = new LinkedList<>();
+		DomainUserRoles dur = SECURITY.getDomainUserRoles(getDomain(), getUser().getLogin(), getUser().getId());
+		dur.getParentDomainApps().stream().forEach(app -> list.add(app));
+		dur.getDomainApps().stream().forEach(app -> {
+			if(!list.contains(app)) list.add(app);
+		});
+		
+		list.stream().forEach(app -> {	
+			array.put(app.name().toLowerCase());
 		});
 		if(array.isEmpty()) {
-			return oldModules(domain);
+			return oldModules(getDomain());
 		}
 		return array;
+	}
+	
+	private JSONObject getNotices() {
+		return AON.getRawdocUserData(getDomain().getName(), getDomain().getId(), getUser().getLogin()).toJSON();
 	}
 	
 	private JSONArray oldModules(Domain domain) {
@@ -122,11 +145,11 @@ public class CompanyServlet extends HttpServlet{
 		return array;
 	}
 	
-	private JSONObject setDomainApp(JSONObject json){
+	private JSONObject setDomainApp(){
 		// TODO ACTUALIZAR LA PARTE VIEJA!
-		String domainName = json.getString("domain");
-		String app = json.getString("app");
-		Boolean active = json.getBoolean("active");
+		String domainName = getData().getString("domain");
+		String app = getData().getString("app");
+		Boolean active = getData().getBoolean("active");
 		AonApp aonApp = AonApp.safeValueOf(app);
 		Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
 		DomainApp domainApp = AON_SOLUTIONS.getDomainApp(domain.getName(), domain.getId(), "", f -> 

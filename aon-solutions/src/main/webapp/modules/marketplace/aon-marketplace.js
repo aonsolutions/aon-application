@@ -1,6 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Apps, ClassicApps, Services, OtherServices} from  '../../services/app.js';
-import {getDomainApps, setDomainApp} from  '../../services/service.js';
+import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
+import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-card.js';
 import '../../components/aon-icon.js';
@@ -21,66 +22,67 @@ export class AonMarketplace extends AonElement {
 
 	constructor () {
 		super();
-		this.id = this.id || 'aonMarketplace';
-		this.APP = this.id + 'App';
-		this.VIEW_MODE = this.id + 'ViewMode';
 	}
 
 	connectedCallback () {
+		this.id = this.id || 'aonMarketplace';
+		this.APP = this.id + 'App';
+		this.VIEW_MODE = this.id + 'ViewMode';
+
 		let company = JSON.parse(localStorage.getItem('company'));
 
 		if(company) {
-			getDomainApps(company.domain).then(r => {
-				this.buildList(r);
+			getDomainUserRoles({}).then(r => {
+				this.buildList(new DomainUserRoles(r));
 			});
 		}
 	}
 
-	buildList(r) {
+	buildList(dur) {
 		this.innerHTML = `
 			<aon-icon-button id="${this.VIEW_MODE}" icon="view_module" style="position:absolute; right: 20px"></aon-icon-button>
 		`;
 
 		this.getElement(this.VIEW_MODE).addEventListener('click', () => {
-			this.buildModule(r);
+			this.buildModule(dur);
 		});
 
 		this.buildTitle('Aplicaciones');
-		this.buildListApps(Apps, r);
+		this.buildListApps(Apps, dur);
 
 		this.buildTitle('Servicios');
-		this.buildListApps(Services, r);
+		this.buildListApps(Services, dur);
 
 		this.buildTitle('Aplicaciones Clásicas');
-		this.buildListApps(ClassicApps, r);
+		this.buildListApps(ClassicApps, dur);
 
 		this.buildTitle('Otros Servicios');
-		this.buildListApps(OtherServices, r);
+		this.buildListApps(OtherServices, dur);
 	}
 
-	buildModule(r) {
+	buildModule(dur) {
 		this.innerHTML = `
 			<aon-icon-button id="${this.VIEW_MODE}" icon="view_list" style="position:absolute; right: 20px"></aon-icon-button>
 		`;
 
 		this.getElement(this.VIEW_MODE).addEventListener('click', () => {
-			this.buildList(r);
+			this.buildList(dur);
 		});
 
 		this.buildTitle('Aplicaciones');
-		this.buildModuleApps(Apps, r);
+		this.buildModuleApps(Apps, dur);
 
 		this.buildTitle('Servicios');
-		this.buildModuleApps(Services, r);
+		this.buildModuleApps(Services, dur);
 
 		this.buildTitle('Aplicaciones Clásicas');
-		this.buildModuleApps(ClassicApps, r);
+		this.buildModuleApps(ClassicApps, dur);
 
 		this.buildTitle('Otros Servicios');
-		this.buildModuleApps(OtherServices, r);
+		this.buildModuleApps(OtherServices, dur);
 	}
 
-	buildListApps(apps, r) {
+	buildListApps(apps, dur) {
 		let ul = document.createElement('ul');
 		ul.className = 'list-group';
 		ul.style.marginLeft = '60px';
@@ -120,7 +122,7 @@ export class AonMarketplace extends AonElement {
 			});
 			buttons.appendChild(moreInfo);
 
-			let contratado = r.includes(apps[key].app)
+			let contratado = dur.hasApp(apps[key].app.toUpperCase())
 			let contratar = document.createElement('button');
 			contratar.className = 'aonButton';
 			contratar.style.width = '110px';
@@ -129,6 +131,9 @@ export class AonMarketplace extends AonElement {
 			contratar.innerHTML = contratado ? 'Desactivar' : 'Contratar';
 			contratar.style.backgroundColor = '#002469';
 			contratar.style.opacity = contratado ? '0.3' : '1';
+			if(dur.hasParentApp(apps[key].app.toUpperCase())){
+				contratar.disabled = true;
+			}
 			if(OtherServices[key])  {
 				buttons.style.right = '120px';
 				contratar.disabled = true;
@@ -141,8 +146,8 @@ export class AonMarketplace extends AonElement {
 					app: apps[key].app,
 					active: !contratado
 				}).then(() => {
-					getDomainApps(company.domain).then(r => {
-						this.buildList(r);
+					getDomainUserRoles({}).then(r => {
+						this.buildList(new DomainUserRoles(r));
 					});
 				});
 			});
@@ -155,7 +160,7 @@ export class AonMarketplace extends AonElement {
 		}
 	}
 
-	buildModuleApps(apps, r) {
+	buildModuleApps(apps, dur) {
 		let ul = document.createElement('ul');
 		ul.style.marginLeft = '50px';
 		this.appendChild(ul);
@@ -209,7 +214,7 @@ export class AonMarketplace extends AonElement {
 			});
 			buttons.appendChild(moreInfo);
 
-			let contratado = r.includes(apps[key].app)
+			let contratado = dur.hasApp(apps[key].app.toUpperCase())
 			let contratar = document.createElement('button');
 			contratar.className = 'aonButton';
 			contratar.style.width = '110px';
@@ -218,6 +223,9 @@ export class AonMarketplace extends AonElement {
 			contratar.innerHTML = contratado ? 'Desactivar' : 'Contratar';
 			contratar.style.backgroundColor = '#002469';
 			contratar.style.opacity = contratado ? '0.3' : '1';
+			if(dur.hasParentApp(apps[key].app.toUpperCase())){
+				contratar.disabled = true;
+			}
 			if(OtherServices[key])  {
 				contratar.disabled = true;
 				contratar.style.backgroundColor= 'lightgrey';
@@ -229,8 +237,8 @@ export class AonMarketplace extends AonElement {
 					app: apps[key].app,
 					active: !contratado
 				}).then(() => {
-					getDomainApps(company.domain).then(r => {
-						this.buildModule(r);
+					getDomainUserRoles({}).then(r => {
+						this.buildModule(new DomainUserRoles(r));
 					});
 				});
 			});

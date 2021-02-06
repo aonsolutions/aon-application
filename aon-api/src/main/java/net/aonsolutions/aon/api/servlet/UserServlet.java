@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 @SuppressWarnings("serial")
@@ -83,7 +84,8 @@ public class UserServlet extends AonApiHttpServlet {
 	private JSONArray getDomainUsers() {
 		JSONArray jsArray = new JSONArray();
 		
-		AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), "").forEach(r -> {
+		AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId()))
+		.forEach(r -> {
 			JSONObject json = new JSONObject();
 			if(r.getAuth() != null) {
 				Auth auth = AON_SOLUTIONS.getAuth(getDomain().getName(), getDomain().getId(), r.getAuth());
@@ -98,6 +100,7 @@ public class UserServlet extends AonApiHttpServlet {
 				json.put("document", auth.getDocument() != null ? auth.getDocument() : "");
 				json.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
 				json.put("roles", getUserRoles(getDomain(), r));
+				
 				jsArray.put(json);
 			} else jsArray.put(userToJSON(r, json));
 		});
@@ -118,6 +121,27 @@ public class UserServlet extends AonApiHttpServlet {
 		json.put("id",user.getId());
 		json.put("name", user.getName());
 		json.put("login", user.getLogin());
+		json.put("newAon", UserToolbar.AON_SOLUTIONS.equals(user.getToolbar()));
+		
+		JSONArray scopes = new JSONArray();
+		AON.getUserScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), userId, null)
+		.forEach(us ->{
+			JSONObject scope = new JSONObject();
+			scope.put("id", us.getId());
+			scope.put("name", us.getDescription());
+			scopes.put(scope);
+		});
+		json.put("scopes", scopes);
+		
+		JSONArray workgroups = new JSONArray();
+		AON.getUserWorkgroupStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getUserIdProperty().eq(userId))
+		.forEach(wg ->{
+			JSONObject workgroup = new JSONObject();
+			workgroup.put("id", wg.getWorkgroup().getId());
+			workgroup.put("name", wg.getWorkgroup().getDescription());
+			workgroups.put(workgroup);
+		});
+		json.put("workgroups", workgroups);
 		return json;
 	}
 	
@@ -298,7 +322,13 @@ public class UserServlet extends AonApiHttpServlet {
 			if((user == null || user.getId() == null) && getData().opt("id") != null) {
 				user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(getData().getInt("id")));
 			} 
+			if(user != null && user.getId() != null && !user.getId().equals(getData().getInt("id"))){
+				throw new Exception("El mail introducido ya está asociado a otro usuario.");
+			}
 			
+			if(user != null && user.getId() != null && !user.getId().equals(getData().getInt("id"))){
+				throw new Exception("El mail pertenece a un usuario del enterno.");
+			}
 			if(auth.getAuth() != null) {
 				if(user == null || user.getId() == null) {
 					createUser(getDomain(), getData(), login, auth.getAuth());

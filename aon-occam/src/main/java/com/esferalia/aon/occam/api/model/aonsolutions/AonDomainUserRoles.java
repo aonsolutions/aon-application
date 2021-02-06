@@ -1,0 +1,37 @@
+package com.esferalia.aon.occam.api.model.aonsolutions;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class AonDomainUserRoles extends DomainUserRoles{
+
+	public AonDomainUserRoles(DomainUserRoles dur) {
+		super();
+		setDomain(dur.getDomain());
+		setDomainApps(dur.getDomainApps());
+		setDomainUserRoles(dur.getDomainUserRoles());
+		setParentDomainApps(dur.getParentDomainApps());
+		setParentDomainUserRoles(dur.getParentDomainUserRoles());
+	}
+	
+	public JSONObject toJSON() {
+		JSONObject json = new JSONObject();
+
+		JSONArray domainApps = new JSONArray();
+		JSONArray parentDomainApps = new JSONArray();
+		JSONArray domainUserRoles = new JSONArray();
+		JSONArray parentDomainUserRoles = new JSONArray();
+
+		getDomainApps().forEach(r -> domainApps.put(r.name()));
+		getParentDomainApps().forEach(r -> parentDomainApps.put(r.name()));
+		getDomainUserRoles().forEach(r -> domainUserRoles.put(r.name()));
+		getParentDomainUserRoles().forEach(r -> parentDomainUserRoles.put(r.name()));
+		
+		json.put("domainApps", domainApps);
+		json.put("parentDomainApps", parentDomainApps);
+		json.put("domainUserRoles", domainUserRoles);
+		json.put("parentDomainUserRoles", parentDomainUserRoles);
+
+		return json;
+	}
+}

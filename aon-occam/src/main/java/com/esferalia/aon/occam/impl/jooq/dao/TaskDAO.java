@@ -932,6 +932,22 @@ public class TaskDAO {
 		}
 	}
 	
+	public static class WorkgroupFiller implements Function<Record, Workgroup> {
+		@Override
+		public Workgroup apply(Record r) {
+			return buildWorkgroup(r);
+		}
+		
+		public static Workgroup buildWorkgroup(Record r) {
+			return new Workgroup().setId(r.getValue(WORKGROUP.ID))
+					.setDomain(r.getValue(WORKGROUP.DOMAIN))
+					.setDescription(r.getValue(WORKGROUP.DESCRIPTION))
+					.setStatus(r.getValue(WORKGROUP.STATUS));
+
+		}
+	}
+	
+	
 	private static class FullTagFiller implements Function<TagRecord, Tag> {
 		@Override
 		public Tag apply(TagRecord r) {
