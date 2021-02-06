@@ -767,12 +767,13 @@ public class IdcTest extends AbstractSQLTestCase {
 	protected Salary calculate(Collection<Bonus> ssBonuses,Collection<Data> datas) throws ExpressionException, SQLException, SalaryException {
 		Date bonusDate = ssBonuses.stream().map( b -> b.getStartDate()).sorted().findFirst().orElseThrow();
 		
-		Connection connection = getConnection();
-		AONContext aonContext = new AONContext(connection);
-		ContractRecord contract = newContract(aonContext, toSQL(bonusDate) , ssBonuses, datas);
-		
 		java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(bonusDate));
 		java.sql.Date endDate = toSQL(AonDateUtils.getLastDayOfMonth(bonusDate));
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		ContractRecord contract = newContract(aonContext, toSQL(startDate) , ssBonuses, datas);
+		
 		
 		ISQLContractSalaryCalculatorContext ctx = 
 		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
@@ -1020,6 +1021,233 @@ public class IdcTest extends AbstractSQLTestCase {
 			}
 			
 			
+		}
+	}
+
+	@Test
+	public void testIdcplnssVIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SQLException, SalaryException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssVI.pdf") ){
+			Collection<Bonus> ssBonuses = Idcplnss.getSSBonuses(is);
+			assertEquals(1, ssBonuses.size());
+			
+			//EXONE.ERE.F.MAY.COMP (100,00%) 01-12-2020 10-12-2020
+			
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.JANUARY);
+			calendar.set(Calendar.YEAR,2021);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			Date _01012021 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,5);
+			Date _05012021 = calendar.getTime();
+
+			calendar.set(Calendar.DAY_OF_MONTH,6);
+			Date _06012021 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,22);
+			Date _22012021 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,23);
+			Date _23012021 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,31);
+			Date _31012021 = calendar.getTime();
+
+			ssBonuses.stream().forEach(b -> {
+				assertEquals(b.getDescription(),_06012021, b.getStartDate());
+				assertEquals(b.getDescription(),_22012021, b.getEndDate());
+			});
+
+			Salary salary = calculate(ssBonuses, Collections.emptyList());	
+			
+			for ( ContextVariable var : new ContextVariable [] {
+					ContextVariable.CGC_BASE,
+					ContextVariable.CGP_BASE,
+//					ContextVariable.ENTERPRISE_QUOTA,
+//					ContextVariable.CGP_BASE_ENTERPRISE,
+					}) {
+				SalaryData[] salaryData = 
+				salary.getSalaryDatas().stream()
+				.filter( d->AonStringUtils.equals(d.getName(), var.getName()))
+				.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+				.toArray( SalaryData[]::new );
+				
+				assertEquals(var.getName(),3, salaryData.length);
+
+				assertEquals(var.getName(),_01012021, salaryData[0].getStartDate());
+				assertEquals(var.getName(),_05012021, salaryData[0].getEndDate());
+
+				assertEquals(var.getName(),_06012021, salaryData[1].getStartDate());
+				assertEquals(var.getName(),_22012021, salaryData[1].getEndDate());
+
+				assertEquals(var.getName(),_23012021, salaryData[2].getStartDate());
+				assertEquals(var.getName(),_31012021, salaryData[2].getEndDate());
+			}
+			
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println( cost.getName() + ": " + cost.getAmount() );
+			}
+			
+			assertEquals(1, salary.getSalaryBonus().size());
+			double totalBonus = 0.00;
+			for (SalaryBonus bonus : salary.getSalaryBonus()) {
+				totalBonus += bonus.getAmount();
+				System.out.println( bonus.getDescription() + ": " + bonus.getAmount() );
+			}
+			
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost );
+			
+			assertEquals(totalCost * 17 / 30, totalBonus, DELTA);
+
+			assertEquals(totalCost * 13 / 30, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
+	@Test
+	public void testIdcplnssVIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SQLException, SalaryException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssVII.pdf") ){
+			Collection<Bonus> ssBonuses = Idcplnss.getSSBonuses(is);
+			assertEquals(1, ssBonuses.size());
+			
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
+			calendar.set(Calendar.YEAR,2021);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			Date _01022021 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,28);
+			Date _28022021 = calendar.getTime();
+
+			ssBonuses.stream().forEach(b -> {
+				assertEquals(b.getDescription(),_01022021, b.getStartDate());
+				assertEquals(b.getDescription(),_28022021, b.getEndDate());
+			});
+
+			Salary salary = calculate(ssBonuses, Collections.emptyList());	
+			
+			for ( ContextVariable var : new ContextVariable [] {
+					ContextVariable.CGC_BASE,
+					ContextVariable.CGP_BASE,
+					}) {
+				SalaryData[] salaryData = 
+				salary.getSalaryDatas().stream()
+				.filter( d->AonStringUtils.equals(d.getName(), var.getName()))
+				.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+				.toArray( SalaryData[]::new );
+				
+				assertEquals(var.getName(),1, salaryData.length);
+
+				assertEquals(var.getName(),_01022021, salaryData[0].getStartDate());
+				assertEquals(var.getName(),_28022021, salaryData[0].getEndDate());
+
+			}
+			
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println( cost.getName() + ": " + cost.getAmount() );
+			}
+			
+			assertEquals(1, salary.getSalaryBonus().size());
+			double totalBonus = 0.00;
+			for (SalaryBonus bonus : salary.getSalaryBonus()) {
+				totalBonus += bonus.getAmount();
+				System.out.println( bonus.getDescription() + ": " + bonus.getAmount() );
+			}
+			
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost );
+			
+			assertEquals(341.66, totalBonus, DELTA);
+
+			assertEquals(totalCost - 341.66, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
+	@Test
+	public void testIdcplnssVIIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SQLException, SalaryException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssVIII.pdf") ){
+			Collection<Bonus> ssBonuses = Idcplnss.getSSBonuses(is);
+			assertEquals(1, ssBonuses.size());
+			
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
+			calendar.set(Calendar.YEAR,2021);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			Date _01022021 = calendar.getTime();
+			
+			calendar.set(Calendar.DAY_OF_MONTH,28);
+			Date _28022021 = calendar.getTime();
+
+			ssBonuses.stream().forEach(b -> {
+				assertEquals(b.getDescription(),_01022021, b.getStartDate());
+				assertEquals(b.getDescription(),_28022021, b.getEndDate());
+			});
+
+			Salary salary = calculate(ssBonuses, Collections.emptyList());	
+			
+			for ( ContextVariable var : new ContextVariable [] {
+					ContextVariable.CGC_BASE,
+					ContextVariable.CGP_BASE,
+					}) {
+				SalaryData[] salaryData = 
+				salary.getSalaryDatas().stream()
+				.filter( d->AonStringUtils.equals(d.getName(), var.getName()))
+				.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+				.toArray( SalaryData[]::new );
+				
+				assertEquals(var.getName(),1, salaryData.length);
+
+				assertEquals(var.getName(),_01022021, salaryData[0].getStartDate());
+				assertEquals(var.getName(),_28022021, salaryData[0].getEndDate());
+
+			}
+			
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				System.out.println( cost.getName() + ": " + cost.getAmount() );
+			}
+			
+			assertEquals(1, salary.getSalaryBonus().size());
+			double totalBonus = 0.00;
+			for (SalaryBonus bonus : salary.getSalaryBonus()) {
+				totalBonus += bonus.getAmount();
+				System.out.println( bonus.getDescription() + ": " + bonus.getAmount() );
+			}
+			
+			double totalCgcE = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				if ( cost.getType() != DeductionType.COMMON_CONTINGENCY )
+					continue;
+				totalCgcE += cost.getAmount();
+				System.out.println( cost.getDescription() + ": " + cost.getAmount() );
+			}
+					
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost );
+			
+			assertEquals(totalCgcE * 0.40, totalBonus, DELTA);
+
+//			assertEquals(totalCost - 341.66, salary.getTotalEnterprise(), DELTA);
 		}
 	}
 

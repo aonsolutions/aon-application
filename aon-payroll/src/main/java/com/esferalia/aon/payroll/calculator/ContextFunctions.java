@@ -249,6 +249,9 @@ public class ContextFunctions {
 			for ( ITimedVariable<Object> var : context.getVariables(name) ) {
 				if ( var.getPeriod().contains(date)) {
 					
+					if ( "CUOTA_EMPRESARIAL".equals(name))
+						System.out.println();
+
 					Period varPeriod = var.getPeriod();
 					Double varDoubleValue = 0.00;
 					try {	
@@ -271,9 +274,20 @@ public class ContextFunctions {
 					Double varValue = varDoubleValue;
 					Period valuePeriod  = varPeriod;
 					
+					abstract class DaysTimedVariable<T> implements ITimedVariable<T>  {
+						public abstract long getDays(Period period);
+					}
+					
+					
 					//TODO: Checks that 'varPeriod' is whole month.
 					boolean wholeMonth = isWholeMonth(varPeriod);
-					long varDays = wholeMonth ? monthDays : Math.min(getDaysBetweenDates(varPeriod.getStart(), varPeriod.getEnd())+ 1, monthDays);
+					long varDays ; 
+					if ( wholeMonth )
+						varDays = monthDays; 
+					else if ( var instanceof DaysTimedVariable )
+						varDays = ((DaysTimedVariable<?>)var).getDays(varPeriod);
+					else
+						varDays = Math.min(getDaysBetweenDates(varPeriod.getStart(), varPeriod.getEnd())+ 1, monthDays);
 					
 					
 					
@@ -300,7 +314,7 @@ public class ContextFunctions {
 					if ( date.compareTo(varPeriod.getEnd()) == 0 )
 						continue;
 					
-					ITimedVariable<Object> lastVariable = new ITimedVariable<Object>() {
+					class LastTimedVariable extends DaysTimedVariable<Object> {
 						@Override
 						public Period getPeriod() {
 							return new Period( AonDateUtils.addDays(date, 1), valuePeriod.getEnd());
@@ -313,7 +327,16 @@ public class ContextFunctions {
 							days = wholeMonth  ? secondDays : Math.min(secondDays , days);
 							return varValue * days / varDays;
 						}
+						
+						@Override
+						public long getDays(Period period) {
+							long days = getDaysBetweenDates(period.getStart(), period.getEnd()) +1;
+							long secondDays = varDays - firstDays;
+							return wholeMonth  ? secondDays : Math.min(secondDays , days);						
+						}
 					};
+					
+					ITimedVariable<Object> lastVariable = new LastTimedVariable();
 					
 					context.putVariable(name, lastVariable);
 				} // split;
