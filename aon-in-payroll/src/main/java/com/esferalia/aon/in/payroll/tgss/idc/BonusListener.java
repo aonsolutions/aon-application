@@ -41,7 +41,7 @@ class BonusListener  implements IdcListener {
 	};
 	
 	@SuppressWarnings("serial")
-	static final Map<String, String> PEC_DESCRIPTION_MAP = new HashMap<String, String>() {
+	static final Map<String, String> PEC_TYPE_T_49_MAP = new HashMap<String, String>() {
 		{
 			put("01", "BONIFICACIÓN INEM");
 			//put("02", "BONIFICACIÓN HACIENDA EMBARCACIONES ZONA ESPECIAL DE CANARIAS");
@@ -68,10 +68,17 @@ class BonusListener  implements IdcListener {
 		{
 			put("01", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
 			put("16", "%2$.2f"); 															// 
-			put("15", String.format("(%%s) * %%.2f / 100.00 * %1$s",ContextVariable.ERE_FACTOR_FORCE_OFF, ContextVariable.ERE_FACTOR_FORCE, ContextVariable.ERE_FACTOR )); 	// EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL
+			put("15", String.format(Locale.ROOT,"(%%s) * %%.2f / 100.00 * %1$s",ContextVariable.ERE_FACTOR_FORCE_OFF, ContextVariable.ERE_FACTOR_FORCE, ContextVariable.ERE_FACTOR )); 	// EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL
 			put("37", "( %s ) * %.2f / 100.00");
 			put("41", "( %s ) * %.2f / 100.00");
 
+		}
+	};
+
+	@SuppressWarnings("serial")
+	static final Map<String, String> PEC_DESCRIPTION_MAP = new HashMap<String, String>() {
+		{
+			put("16", "%s (%.2f)"); 															// 
 		}
 	};
 
@@ -86,7 +93,7 @@ class BonusListener  implements IdcListener {
 	@Override
 	public void onEmployeeQuotePEC(String nss, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) {
-		if ( PEC_DESCRIPTION_MAP.containsKey(code )) {
+		if ( PEC_TYPE_T_49_MAP.containsKey(code )) {
 			try {
 				if ( ENTERPRISE_QUOTA_EXPRESSION_MAP.containsKey(quota))
 					ssBonuses.add( newEnterpriseBonus(nss, ccc, code, description, portTipo, quota, start, end)) ;
@@ -112,7 +119,7 @@ class BonusListener  implements IdcListener {
 		ssBonus.setNss(nss);
 		ssBonus.setStartDate(start);
 		ssBonus.setEndDate(end);
-		ssBonus.setDescription(String.format(new Locale("es", "ES"),"%s (%.2f%%)", description, percent));
+		ssBonus.setDescription(String.format(new Locale("es", "ES"),PEC_DESCRIPTION_MAP.getOrDefault(code, "%s (%.2f%%)"), description, percent));
 		ssBonus.setFormula(getEnterpriseFormula(code, portTipo, quota, start, end));
 		
 		
@@ -157,7 +164,7 @@ class BonusListener  implements IdcListener {
 			code, 
 			quota,
 			
-			String.format(PEC_EXPRESSION_MAP.get(code), ENTERPRISE_QUOTA_EXPRESSION_MAP.get(quota), percent), 
+			String.format(Locale.ROOT, PEC_EXPRESSION_MAP.get(code), ENTERPRISE_QUOTA_EXPRESSION_MAP.get(quota), percent), 
 			
 			(percent / 100.00)
 			
