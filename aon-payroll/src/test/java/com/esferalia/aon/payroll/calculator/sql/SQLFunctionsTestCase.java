@@ -54,6 +54,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
@@ -869,6 +870,98 @@ public class SQLFunctionsTestCase extends
 	
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(100.00, result.get(0).getValue());
+	}
+
+	@Test
+	public void testInputFunctionX() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap()));
+		//@formatter:on
+		
+		try {
+ 			List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT('/*user*/ANTIGÜEDAD(100.00, TRIENIO)/**/','Hello World!!!');REMOVE();", 
+					startDate
+					,endDate, 
+					Double.class);
+			Assert.fail();
+		} catch ( RemoveException e ) {
+			
+		}
+	
+		try {
+ 			List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT(\"/*user*/ANTIGÜEDAD(100.00, TRIENIO)/**/\",\"Hello World!!!\");REMOVE();", 
+					startDate
+					,endDate, 
+					Double.class);
+			Assert.fail();
+		} catch ( RemoveException e ) {
+			
+		}
+
+		try {
+ 			List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT(\"/*user*/ANTIGÜEDAD(100.00, TRIENIO)/**/\",DIAS_MES);REMOVE();", 
+					startDate
+					,endDate, 
+					Double.class);
+			Assert.fail();
+		} catch ( RemoveException e ) {
+			
+		}
+
+	}
+	
+	@Test
+	public void testInputFunctionXI() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap()));
+		//@formatter:on
+		
+		List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT(' /*user*/(1.00) * ANTIGÜEDAD(100.00, TRIENIO)/**/ '   ,  ' Hello World!!!'  );", 
+				startDate
+				,endDate, 
+				Double.class);
+	
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(100.00, result.get(0).getValue());
+
+		result =  ctx.getExpressionContext().eval("INPUT(\" /*user*/(1.00) * ANTIGÜEDAD(100.00, TRIENIO)/**/ \"   ,  \" Hello World!!!\"  );", 
+				startDate
+				,endDate, 
+				Double.class);
+	
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(100.00, result.get(0).getValue());
+	
+		result =  ctx.getExpressionContext().eval("INPUT(\" /*user*/(1.00) * ANTIGÜEDAD(100.00, TRIENIO)/**/ \"   ,  ' Hello World!!!' );", 
+				startDate
+				,endDate, 
+				Double.class);
+	
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(100.00, result.get(0).getValue());
+	
 	}
 
 	

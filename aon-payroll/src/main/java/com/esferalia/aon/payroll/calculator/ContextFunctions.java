@@ -4,7 +4,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CHECK;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.INPUT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT_VARIABLE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SECTION;
@@ -30,7 +29,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
-import com.esferalia.aon.payroll.enumeration.VariableType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
@@ -195,7 +193,25 @@ public class ContextFunctions {
 		throw new MacroException() {
 			@Override
 			public String doMacro(String expr) {
-				return script;
+				String replaced =  expr;
+				try {
+					replaced = expr.replaceAll("INPUT\\s*\\(\\s*(['\"])"+ Pattern.quote(script) + "\\1\\s*,\\s*(['\"])"+Pattern.quote(msg)+"\\2\\s*\\)", script);
+				} catch ( Exception e ) {
+					
+				}
+				if (AonStringUtils.equals(replaced, expr)) {
+					try {
+						replaced =  expr.replaceAll("INPUT\\s*\\(\\s*(['\"])"+ Pattern.quote(script) + "\\1\\s*,[^\\)]+\\)", script);
+					} catch ( Exception e ) {
+						
+					}
+				}
+				if (AonStringUtils.equals(replaced, expr)) {
+					System.out.println("ERROR in INPUT : "+ expr);
+					return script;
+				} else {
+					return replaced; 
+				}
 			}
 		};
 	}
