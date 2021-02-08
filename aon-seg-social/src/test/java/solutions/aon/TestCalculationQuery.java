@@ -347,14 +347,172 @@ public class TestCalculationQuery {
 //		}
 //	}
 	
-	public static void main(String[] args) {
-		try {
-		throw new SegSocialException("Aplicación Cerrada temporalmente.", new SegSocialException("La aplicación SLD Cotización se encuentra en estado cerrado. Motivo : La aplicación estará fuera de servicio hasta el día 03/02/2021 a las 12 horas. La fecha prevista para la próxima apertura es: 03/02/2021 12:00."));
-		} catch ( Exception  e ) {
+	
+	
+	@Test
+	public void testWorkersCalculationQueryByCCCandNAFsOk() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
 			
-			System.out.println(e.getMessage() + e.getCause().getMessage());
-			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
 		}
 	}
+	
+	
+	@Test
+	public void testWorkersCalculationQueryByCCCandNAFsOkOriginalCert() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "010019805355", "011001022503", "011005185924"));
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	
+	@Test
+	public void testWorkersCalculationQueryByCCCandNAFsEmpty() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS));
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	@Test
+	public void testWorkersCalculationQueryByCCCandNAFsUnavailableLiqType() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", Regime.GENERAL, d, d, LiquidationType.L03_COMP_ABONO_SALARIOS_CARACTER_RETROACTIV, LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+		} catch (DataDoesNotExist e) {
+			
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	@Test
+	public void testWorkersCalculationQueryByCCCandNAFsWrongDate() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2021");
+			System.out.println(SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+		} catch (DataDoesNotExist e) {
+			
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	@Test
+	public void testWorkersCalculationQueryByCCCandNAFsWrongLiqOrigin() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.GENERADAS_POR_LA_TGSS, "111016467058", "111008520536", "gwt354"));
+		} catch (DataDoesNotExist e) {
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	@Test
+	public void testWorkersCalculationQueryByCCCandNAFsWrongRegime() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", Regime.ESPECIAL_MAR_GRUPO_1, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+		} catch (WrongRegimeException e) {
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	@Test
+	public void testWorkersCalculationQueryByCCCandNAFsWrongCCC() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534311", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+		} catch (invalidCccException e) {
+			
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	
+	
+//	public static void main(String[] args) {
+//		try {
+//		throw new SegSocialException("Aplicación Cerrada temporalmente.", new SegSocialException("La aplicación SLD Cotización se encuentra en estado cerrado. Motivo : La aplicación estará fuera de servicio hasta el día 03/02/2021 a las 12 horas. La fecha prevista para la próxima apertura es: 03/02/2021 12:00."));
+//		} catch ( Exception  e ) {
+//			
+//			System.out.println(e.getMessage() + e.getCause().getMessage());
+//			
+//		}
+//	}
 
 }
