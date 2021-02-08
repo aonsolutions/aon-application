@@ -17,7 +17,11 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import org.eclipse.persistence.logging.LogLevel;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -89,6 +93,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
+import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
@@ -143,6 +148,8 @@ import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class SalaryDraft extends ResizeComposite
 		implements CalculateCallback, SalarySelect.Listener, UndoManager.Listener{
+
+	private static Logger LOGGER = Logger.getLogger("");
 
 	public static final String CUSTOM = "CUSTOM";
 	public static final String ONLY_THIS_MONTH = "ONLY_THIS_MONTH";
@@ -3795,6 +3802,17 @@ public class SalaryDraft extends ResizeComposite
 
 		return row;
 	}
+	
+	private void dumpBonus(int row, Bonus bonus) {
+		String description = formatItemDescription(bonus, salaryDraftObject);
+		info("Dump Bonus '"+ description + "' " + DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(bonus.getStartDate()));
+		dumpItem(bonus, row, description, getIconRowStyle(bonus), new BonusChangeHandler<TextBox>(bonus), true, null, null, true);
+	}
+
+	private void dumpBonus(int row, Bonus bonus, String iconStyleName ) {
+		String description = formatItemDescription(bonus, salaryDraftObject);
+		dumpItem(bonus, row, description, iconStyleName, new BonusChangeHandler<TextBox>(bonus), true, null, null, true);
+	}
 
 	private void dumpPayment(Payment payment, int row, String iconStyleName,
 			ItemChangeHandler<TextBox, Payment> handler) {
@@ -5008,7 +5026,7 @@ public class SalaryDraft extends ResizeComposite
 		if ( isSystemBonus(bonus) )
 			dumpSystemBonus(idx, bonus);
 		else 
-			dumpItem(bonus, idx, iconStyleName, new BonusChangeHandler<TextBox>(bonus), true);
+			dumpBonus(idx, bonus);
 
 		CellFormatter fomatter = paymentsTable.getCellFormatter();
 		for (int col = 0; col < paymentsTable.getCellCount(idx); col++) {
@@ -5031,6 +5049,7 @@ public class SalaryDraft extends ResizeComposite
 		.collect(Collectors.summingInt(c ->  1 + ((c instanceof CompositeDeduction) ? ((CompositeDeduction)c).getChilds().size() : 0)));
 
 		if (show) {
+			info("showCosts(" + show +")" );
 			dumpCosts(costsBeforeRow);
 			dumpBonuses(costsBeforeRow + costsCount);
 		} else {
@@ -5096,11 +5115,11 @@ public class SalaryDraft extends ResizeComposite
 				if ( isSystemBonus(bonus) )
 					dumpSystemBonus(beforeRow + i, bonus);
 				else 
-					dumpItem(bonus, beforeRow + i, getIconRowStyle(bonus), new BonusChangeHandler<TextBox>(bonus), true);
+					dumpBonus(beforeRow + i, bonus);
 			} else {
 				String styles[] = eventStyles.get(Event.Type.WARNING);
 				if ( !isSystemBonus(bonus) )
-					dumpItem(bonus, beforeRow + i, styles[0], new BonusChangeHandler<TextBox>(bonus), true);
+					dumpBonus(beforeRow + i, bonus, styles[0]);
 				addStyle(paymentsTable, beforeRow + i, styles[1]);
 			}
 
@@ -6326,12 +6345,14 @@ public class SalaryDraft extends ResizeComposite
 		StringBuffer description = new StringBuffer(); 
 		description.append(AonStringUtils.isNotBlank(item.getDescription()) ? item.getDescription() : item.getDescriptionTemplate());
 		
-		if ( itemStart == null  || itemEnd == null )
+		if ( itemStart == null  || itemEnd == null ) {
 			return description.toString();
+		}
 
 		if ( itemStart.equals(draftStart)
-				&&  itemEnd.equals(draftEnd) )
+				&&  itemEnd.equals(draftEnd) ) {
 			return description.toString();
+		}
 		
 		
 		
@@ -6467,5 +6488,12 @@ public class SalaryDraft extends ResizeComposite
 	private static boolean isDefault(Payment payment) {
 		return AonStringUtils.startsWith(payment.getExpression(), "/*default*/" );
 	}
+	
+	private static void info(String message) {
+		if ( LogConfiguration.loggingIsEnabled())
+			LOGGER.log(Level.INFO, message);
+	}
+
+
 	
 }

@@ -8,6 +8,8 @@
 
 	<inherits name="com.vaadin.polymer.Elements"/>
 	
+	<inherits name="com.google.gwt.logging.Logging"/>
+
 	<inherits name='net.aonsolutions.gwt.pdfjs.PdfJs'/>
 	<inherits name='com.esferalia.aon.gwt.common.Common'/>
 	<inherits name="com.esferalia.aon.occam.api.Occam" />	
@@ -52,8 +54,15 @@
 	<extend-property name="user.agent" values="ie10" />
 
 	<set-configuration-property name="locale.useragent" value="Y" />
-
-	<!-- Inherit the default GWT style sheet.  You can change       -->
+	
+	<!-- To change the  default logLevel -->
+    <set-property name="gwt.logging.logLevel" value="SEVERE"/>   
+	<!-- To disable logging -->
+    <set-property name="gwt.logging.enabled" value="FALSE"/>          
+    <!-- To disable a default Handler -->
+    <set-property name="gwt.logging.consoleHandler" value="DISABLED"/> 
+    
+    <!-- Inherit the default GWT style sheet.  You can change       -->
 	<!-- the theme of your GWT application by uncommenting          -->
 	<!-- any one of the following lines.                            -->
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
