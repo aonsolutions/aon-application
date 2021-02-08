@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -202,6 +203,10 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	public boolean isUndeductible() {
 		return invoice != null && invoice.isUndeductible(); 
+	}
+	
+	public InvoiceType getInvoiceType() {
+		return (invoice != null)?invoice.getType():null;
 	}
 
 	public boolean isSurcharge() {

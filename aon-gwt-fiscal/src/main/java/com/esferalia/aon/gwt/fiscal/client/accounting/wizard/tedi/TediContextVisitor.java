@@ -264,6 +264,8 @@ public class TediContextVisitor implements ITediContextVisitor {
 									// ****
 									if (callback.getResult().getTedi().getType() == TediInvoiceType.TICKET) {
 										callback.getResult().getInvoice().setType(InvoiceType.UNDEDUCTIBLE);
+									} else {
+										callback.getResult().getInvoice().setType(ai.getInvoiceType());	
 									}
 									callback.onAccept(callback.getResult());
 								}

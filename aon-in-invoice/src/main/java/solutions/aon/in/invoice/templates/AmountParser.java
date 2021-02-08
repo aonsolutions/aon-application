@@ -11,11 +11,7 @@ public class AmountParser {
 	public static List<Double> getAmounts(ParserContext ctx, String text) {
 		String ds = ctx.getDecimalSeparator();
 		String gs = ctx.getDecimalGroupingSeparator();
-		String pat = "(?<integ>-?\\+?(\\d+\\"+gs+")*\\d+)"
-				+"\\"+ds
-				+"(?<fract>\\d+)"
-				+"\\b"; 
-//		System.out.println( pat );
+		String pat = ctx.getDecimalPattern(); 
 		
 		Pattern pattern = Pattern.compile( pat , Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
 		
@@ -24,14 +20,10 @@ public class AmountParser {
 		Matcher matcher = pattern.matcher(text);
 		int index = 0;
 		while ( index <= text.length() && matcher.find(index) ) {
-			String integ = matcher.group("integ");
+			String integ = matcher.group(ParserContext.INTEGER_KEY);
 			integ = integ.replaceAll("O", "0")
 						 .replaceAll( "\\" + ctx.getDecimalGroupingSeparator(), "");
-			String fract = matcher.group("fract");
-//			System.out.print( 
-//				"("+ matcher.start() +", "+ matcher.end() +") Parte Entera ..: {" + integ + "}" + "  Parte Decimal .: {" + fract + "} --- ["
-//				+ AonStringUtils.substring( text, matcher.start(), matcher.end()) + "]" 
-//			); 
+			String fract = matcher.group(ParserContext.FRACTION_KEY);
 			String str = integ + "." + fract;
 			Double amount = null;
 			try {
@@ -43,24 +35,20 @@ public class AmountParser {
 				int i = matcher.start();
 				String prefix = substr(text,i-1, 1).toUpperCase();
 				boolean fake = prefix.matches("[-\\"+gs+"\\+\\"+ds+"0-9]") || prefix.matches("[\\w]");
-//				System.out.print( fake ?" (FAKE 1!)":"" );
 				if ( !fake ) {
 					if ( (text.length() - matcher.end()) > 0 )  {
 						String suffix = substr(text,matcher.end(), 1).toUpperCase();
 						fake = suffix.matches("[-\\"+gs+"\\+\\"+ds+"0-9]") || suffix.matches("[\\w]");
 						fake = fake || suffix.matches("[\\w]");
-//						System.out.print( fake ?" (FAKE 2!)":"" );
 					}
 				}
 				if ( !fake ) {
-//					System.out.print( " (ADDED!)" );
 					amounts.add(amount); 
 				} 
 				index = matcher.end() + 1 ;
 			} else {
 				index = matcher.start() + 1 ;
 			}
-//			System.out.println();
 		}
 		return amounts;
 	}

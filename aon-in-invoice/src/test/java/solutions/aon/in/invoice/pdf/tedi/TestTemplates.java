@@ -271,7 +271,14 @@ public enum TestTemplates {
 			@Override public int getAmountNumber(){ return 53; }
 			@Override public Double getTotal(){ return 1609.64; }
 		},
-		
+		AON_2021_01_29_TERMOFUEL ("/solutions/aon/in/invoice/pdf/AON-2021-01-29-TERMOFUEL.pdf") {
+			@Override public Date getIssueDate() {return Date.from(LocalDateTime.of(2021, 1, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
+			@Override public int getDocumentsNumber(){ return 1; }
+			@Override public int getDatesNumber(){ return 4; }
+			@Override public int getAmountNumber(){ return 4; }
+			@Override public Double getTotal(){ return 556.65; }
+		},
+				
 		;
 
 		private String file;

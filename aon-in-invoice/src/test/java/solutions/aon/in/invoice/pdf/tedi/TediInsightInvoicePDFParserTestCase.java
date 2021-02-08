@@ -56,7 +56,9 @@ public class TediInsightInvoicePDFParserTestCase {
 	@Test public void testORANGE_2() throws IOException, UnknownInvoiceException {testTemplates( TestTemplates.ORANGE_2  );}
 	@Test public void testORANGE_3() throws IOException, UnknownInvoiceException {testTemplates( TestTemplates.ORANGE_3  );}
 	@Test public void testRETENCION_1() throws IOException, UnknownInvoiceException {testTemplates( TestTemplates.RETENCION_1  );}
-	@Test public void testAON_2021_02_03_AMAZON() throws IOException, UnknownInvoiceException {testTemplates( TestTemplates.AON_2021_02_03_AMAZON );} 
+	@Test public void testAON_2021_02_03_AMAZON() throws IOException, UnknownInvoiceException {testTemplates( TestTemplates.AON_2021_02_03_AMAZON );}
+	
+	@Test public void testAON_2021_01_29_TERMOFUEL() throws IOException, UnknownInvoiceException {testTemplates( TestTemplates.AON_2021_01_29_TERMOFUEL);}
 
 	// @Test public void test
 	

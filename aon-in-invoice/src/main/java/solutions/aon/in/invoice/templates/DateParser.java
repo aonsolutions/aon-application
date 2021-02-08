@@ -55,8 +55,6 @@ public class DateParser {
 					fake = !sep1.equals(sep2);
 				}
 				if ( !fake ) {
-					System.out.println( date );
-					System.out.println( matcher.group() );
 					dates.add(date);
 					added = true;
 					
