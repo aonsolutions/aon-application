@@ -45,7 +45,6 @@ public class DomainEnterprisesServiceAsync {
 	
 	private EnterprisesServiceAsync enterprisesServiceAsync;
 	
-	
 	public static DomainEnterprisesServiceAsync newInstance() {
 		EnterprisesServiceAsync enterprisesServiceASync = GWT
 				.create(EnterprisesService.class);
@@ -464,6 +463,10 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void removeIT(String regime, String ccc, String naf, String partType, Date dateBj, Date dateProcess, AsyncCallback<Void> asyncCallback) {
 		enterprisesServiceAsync.removeIT(getCurrentDomainName(), getCurrentUser(), regime, ccc, naf, partType, dateBj, dateProcess, asyncCallback);
+	}
+	
+	public void getContratoSepe(String ipf, Date startDate, Date endDate, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.getContratoSepe(getCurrentDomainName(), getCurrentUser(), ipf, startDate, endDate, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

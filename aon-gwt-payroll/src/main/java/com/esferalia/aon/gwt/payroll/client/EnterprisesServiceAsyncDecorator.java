@@ -739,4 +739,10 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.removeIT(domainName, userLogin, regime, ccc, naf, partType, dateBj, dateProcess, new AsyncCallbackWrapper<Void>(callback));
 	}
 
+	@Override
+	public void getContratoSepe(String domainName, String userLogin, String ipf, Date startDate, Date endDate, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.getContratoSepe(domainName, userLogin, ipf, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
+	}
+
 }

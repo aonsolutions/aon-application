@@ -832,4 +832,18 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		
 	}
 
+	@Override
+	public void sendContractoSEPE(String currentDomainName, String currentUser,
+			EmployeeContractInfo employeeContractInfo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendContractoCBSEPE(String currentDomainName, String currentUser,
+			EmployeeContractInfo employeeContractInfo) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

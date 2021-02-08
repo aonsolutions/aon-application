@@ -401,6 +401,24 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void sendContractoSEPE(String currentDomainName, String currentUser,
+					EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void sendContractoCBSEPE(String currentDomainName, String currentUser,
+					EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 		

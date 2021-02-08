@@ -262,5 +262,7 @@ public interface EnterprisesService extends RemoteService {
 	void removeIT(String domainName, String userLogin, String regime, String ccc, String naf, String partType, Date dateBj, Date dateProcess);
 
 	EmployeeContractInfo getEmployeeInfo(String currentDomainName, Integer contractId);
+
+	String getContratoSepe(String currentDomainName, String currentUser, String ipf, Date startDate, Date endDate);
 	
 }

@@ -818,5 +818,17 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.cambioCatProf(currentDomainName, user, ipf, regimen, ctaCti, nss, cat, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
+
+	@Override
+	public void sendContractoSEPE(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+		AON.start();
+		employeesServiceAsync.sendContractoSEPE(currentDomainName, user, employeeContractInfo, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void sendContractoCBSEPE(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+		AON.start();
+		employeesServiceAsync.sendContractoCBSEPE(currentDomainName, user, employeeContractInfo, new AsyncCallbackWrapper<Void>(callback));
+	}
 	
 }

@@ -259,6 +259,10 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	void cambioCatProf(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
 			String nss, String cat, Date fecha);
+
+	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
+
+	void sendContractoCBSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
 	
 
 }

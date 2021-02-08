@@ -282,4 +282,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void cambioCatProf(String currentDomainName, String currentUser, String ipf, String regimen, String ctaCti,
 			String nss, String cat, Date fecha, AsyncCallback<Void> callback);
 
+	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			AsyncCallback<Void> callback);
+
+	void sendContractoCBSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			AsyncCallback<Void> callback);
+
 }

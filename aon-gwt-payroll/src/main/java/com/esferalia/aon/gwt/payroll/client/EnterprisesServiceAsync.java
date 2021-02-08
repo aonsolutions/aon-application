@@ -172,5 +172,7 @@ public interface EnterprisesServiceAsync {
 			AsyncCallback<Void> asyncCallback);
 	void getEmployeeInfo(String currentDomainName, Integer contractId,
 			AsyncCallback<EmployeeContractInfo> asyncCallback);
+	void getContratoSepe(String currentDomainName, String currentUser, String ipf, Date startDate, Date endDate,
+			AsyncCallback<String> asyncCallback);
 	
 }

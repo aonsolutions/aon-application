@@ -125,6 +125,7 @@ import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import aon.sepe.objects.Contract;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaRED_ITParts.AccidentType;
 import solutions.aon.seg.social.SistemaRED_ITParts.CauseType;
@@ -136,6 +137,8 @@ import solutions.aon.seg.social.SistemaRED_Secondary_User;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.SecondaryUser;
+import solutions.aon.sepe.Contrato;
+import solutions.aon.sepe.exceptions.SepeException;
 
 /**
  * The server side implementation of the RPC service.
@@ -2877,6 +2880,23 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					dateProcess);
 			
 		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public String getContratoSepe(String domainName, String userLogin, String ipf, java.util.Date startDate, java.util.Date endDate) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			Certificate certificateSEPE = AON.getCertificateSEPE(domainName, domainId, userLogin);
+			InputStream is = new ByteArrayInputStream(certificateSEPE.getCertificate());
+			
+			Contract contract = Contrato.getContratoData(is, certificateSEPE.getPassword(), certificateSEPE.getType(), ipf, startDate, endDate);
+			
+			return null == contract ? null : contract.getSepeId();
+			
+		} catch (SQLException | SepeException e) {
 			throw new RuntimeException(e);
 		}
 	}

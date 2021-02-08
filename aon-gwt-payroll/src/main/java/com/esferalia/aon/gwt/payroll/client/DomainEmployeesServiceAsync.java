@@ -539,6 +539,14 @@ public class DomainEmployeesServiceAsync {
 	public void cambioCatProf(String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha, AsyncCallback<Void> callback) {
 		employeesServiceAsync.cambioCatProf(getCurrentDomainName(), getCurrentUser(), ipf, regimen, ctaCti, nss, cat, fecha, callback);
 	}
+	
+	public void sendContractoSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+		employeesServiceAsync.sendContractoSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
+	}
+
+	public void sendContractoCBSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) {
+		employeesServiceAsync.sendContractoCBSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
+	}
 
 	// ------------------------------------------------------------------------
 	
