@@ -42,7 +42,7 @@ public class LoginServlet extends HttpServlet{
 	    		
 	    		if(auth.getUuid() == null && !AonStringUtils.isBlank(domain)) {
     				auth = AON_SOLUTIONS.getAuth(domain, 0, username);
-
+    				auth.setSchema(schema);
 	    	    	if(auth.getUuid() != null) {
 	    	    		String pass = Utils.createPasswordHash(auth.getEmail(), password);
 						ok = pass.equals(auth.getPassword());

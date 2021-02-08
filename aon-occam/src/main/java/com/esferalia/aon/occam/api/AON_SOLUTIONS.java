@@ -360,6 +360,25 @@ public class AON_SOLUTIONS {
 		return taskHolder;
 	}
 	
+	public static LinkedList<TaskHolder> getTaskHolders(AonToken aonToken) {
+		LinkedList<TaskHolder> list = new LinkedList<TaskHolder>();;
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			String domain = AONContext.getSchemaFirstDomain(schema);
+			if(!AonStringUtils.isBlank(domain)) {
+				try (AONContext ctx = AONContext.getAONContext(domain, 0, "")){
+					getTask().getTaskHolderStream(ctx, aonToken.getAuth())
+					.forEach(r -> {
+						list.add(r);
+					});
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	}
+	
 	public static Stream<TimeControl> getTimeControlStream(Domain domain, String login, Date startDate, Date endDate) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getTimeControlStream(ctx, startDate, endDate);

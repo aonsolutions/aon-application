@@ -1,11 +1,15 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getTimeControl, saveTimeControl} from '../../services/service.js';
+import {getTaskHolders, getTimeControl, saveTimeControl} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
 import { timePaser } from '../../services/utils.js';
+import { AonDialog } from '../../components/aon-dialog.js';
+import { AonSelect } from '../../components/aon-select.js';
 
 export class AonSign extends AonElement {
 
   _timeAction;
+  _taskHolders;
+  _taskHolder;
 
   AON_SIGN;
   CONTENT;
@@ -28,10 +32,39 @@ export class AonSign extends AonElement {
     this.id = this.id || this.AON_SIGN;
     this.CONTENT = this.id + 'Content';
     this.TIME = this.id + 'Time';
-    this.build();
+    getTaskHolders().then(r => {
+      if(r.length > 0) {
+        this._taskHolders = r;
+        this._taskHolder = r[0].id;
+        this.build();
+      }
+    });
+
   }
 
   build(){
+    if(this._taskHolders.length > 1){
+      let company = this.createElement('div');
+      company.style.width = '200px';
+      this.appendChild(company);
+      let select = new AonSelect();
+      select.id = 'aonSignSelect2';
+      select.title = 'Empresa';
+      select.options = JSON.stringify(this._taskHolders.map(c => {
+        return {
+          value: c.id,
+          name: c.company
+        }
+      }));
+      select.addEventListener('change', () => {
+        this._taskHolder = select.value;
+        getTimeControl({task_holder: this._taskHolder}).then(r => this.buildSignin(r));
+      });
+      company.appendChild(select);
+      select.value = this._taskHolders[0].id
+
+    }
+
     let time = this.createElement('div');
     // time.style.marginLeft = '47px';
     time.style.fontSize = '30px';
@@ -41,7 +74,7 @@ export class AonSign extends AonElement {
     let div = this.createElement('div');
     div.id = this.CONTENT;
     this.appendChild(div);
-    getTimeControl().then(r => this.buildSignin(r));
+    getTimeControl({task_holder: this._taskHolder}).then(r => this.buildSignin(r));
   }
 
   entrada() {
@@ -57,12 +90,12 @@ export class AonSign extends AonElement {
 		button.innerHTML = 'ENTRADA';
 		button.addEventListener('click', () => {
       getPosition().then(position => {
-        let signin = {status: 'in'};
-        if(position)
+        let signin = {status: 'in', task_holder: this._taskHolder};
+        if(position && position.latitude && position.longitude)
           signin.coordinates = position.latitude + ',' + position.longitude;
         saveTimeControl(signin).then(r => this.buildSignin(r));
       });
-		});
+    });
 		content.appendChild(button);
 	}
 
@@ -79,7 +112,7 @@ export class AonSign extends AonElement {
 		button.innerHTML = 'SALIDA';
 		button.addEventListener('click', () => {
       getPosition().then(position => {
-        let signin = {status: 'out'};
+        let signin = {status: 'out', task_holder: this._taskHolder};
         if(position)
           signin.coordinates = position.latitude + ',' + position.longitude;
         saveTimeControl(signin).then(r => this.buildSignin(r));
@@ -96,7 +129,7 @@ export class AonSign extends AonElement {
 		button2.innerHTML = 'PAUSA';
 		button2.addEventListener('click', () => {
       getPosition().then(position => {
-        let signin = {status: 'pause'};
+        let signin = {status: 'pause', task_holder: this._taskHolder};
         if(position)
           signin.coordinates = position.latitude + ',' + position.longitude;
         saveTimeControl(signin).then(r => this.buildSignin(r));
@@ -118,7 +151,7 @@ export class AonSign extends AonElement {
 		button.innerHTML = 'VUELTA';
 		button.addEventListener('click', () => {
       getPosition().then(position => {
-        let signin = {status: 'in'};
+        let signin = {status: 'in', task_holder: this._taskHolder};
         if(position)
           signin.coordinates = position.latitude + ',' + position.longitude;
         saveTimeControl(signin).then(r => this.buildSignin(r));

@@ -26,6 +26,8 @@ export const getStatus = (data) =>
     resolve(jsonValues);
   });
 
+export const getTaskHolders = (data) => get(`${API_URL}/timecontrol/taskholder`, data);
+
 export const getTimeControlList = (data) => get(`${API_URL}/timecontrol/list`, data);
 
 export const getTaskHolderTimeControl = (data) => get(`${API_URL}/timecontrol/list-holder`, data);

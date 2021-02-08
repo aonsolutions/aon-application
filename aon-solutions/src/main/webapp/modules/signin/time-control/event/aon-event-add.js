@@ -81,7 +81,7 @@ export class AonEventAdd extends AonElement {
                 border-radius: .25rem;
               }
             </style>
-            ${toolbarMobile} 
+            ${toolbarMobile}
         `;
 
     const form = `
@@ -255,7 +255,7 @@ export class AonEventAdd extends AonElement {
     const data = {
       ...this.data,
       ...formValues,
-      taskHolderId: this.data.task_holder.id,
+      task_holder: this.data.task_holder.id,
       date: new Date(
         formatDateOrigin(formValues.date) + " " + formValues.time
       ).getTime(),

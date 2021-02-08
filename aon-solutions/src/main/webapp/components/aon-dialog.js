@@ -59,6 +59,9 @@ export class AonDialog extends AonElement {
 
 	constructor() {
 		super();
+	}
+
+	connectedCallback() {
 		this.DIALOG = this.id + 'Dialog';
 		this.MAIN = this.DIALOG + 'Main';
 		this.TITLE = this.DIALOG + 'Title';
@@ -66,10 +69,7 @@ export class AonDialog extends AonElement {
 		this.ACTION = this.DIALOG + 'Action';
 		this.CANCEL = this.ACTION + 'Cancel';
 		this.ACCEPT = this.ACTION + 'Accept';
-	}
-
-	connectedCallback() {
-
+		
 		this.innerHTML = `
 		<div id="${this.DIALOG}" class="aonDialog">
 			<div id="${this.MAIN}" class="aonDialogContent">
