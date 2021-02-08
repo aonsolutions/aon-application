@@ -6,8 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.AcademicTitulation;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
@@ -15,20 +18,21 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -52,6 +56,9 @@ public class ContractSpecificData extends ResizeComposite {
 
 	@UiField
 	MyStyle style;
+	
+	@UiField
+	HTMLPanel comunicaMeesage;
 	
 	@UiField
 	SuggestBox cnoSB;
@@ -331,6 +338,7 @@ public class ContractSpecificData extends ResizeComposite {
 	// ------------------------------------------------------ Constructor ---------------------------------------------------------
 
 	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	private DomainEmployeesServiceAsync employeesImpl = DomainEmployeesServiceAsync.newInstance();
 	private EmployeeContractInfo employeeContractInfo;
 	private Map<String, CNO> cnoMap;
 	
@@ -346,6 +354,35 @@ public class ContractSpecificData extends ResizeComposite {
 		this.employeeContractInfo = employeeContractInfoIn;
 		setDefaultView(this.employeeContractInfo.getContractInfo().getContractType());
 		fillSpecificData();
+		
+		getContratoSepe(s -> {
+//			Window.alert("SEPE Id : " + s);
+			setVisible(comunicaMeesage.getElement(), false);
+		}, f -> {
+//			Window.alert("SEPE Id Not Found");
+			setVisible(comunicaMeesage.getElement(), true);
+		});
+	}
+	
+	public void getContratoSepe(Consumer<String> success, Consumer<Throwable> failure) {
+		String ipf = employeeContractInfo.getEmployeeInfo().getDocument();
+		Date startDate = employeeContractInfo.getContractInfo().getStartDate();
+		Date endDate = employeeContractInfo.getContractInfo().getStartDate();
+		
+		impl.getContratoSepe(ipf, startDate, endDate, new AsyncCallback<String>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);	
+			}
+			
+		});
+		
 	}
 
 	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
@@ -1232,8 +1269,61 @@ public class ContractSpecificData extends ResizeComposite {
 	// ------------------------------------------------------ Auxiliar Methods ----------------------------------------------------
 	
 	private void initializeView() {
+		createComunicaMessage();
 		hideTables();
 		resetTables();
+	}
+
+	private void createComunicaMessage() {
+		Label comunicaL = new Label("El contrato no ha sido notificado el SEPE. Por favor comunique la copia basica y el contrato.");
+		FlowPanel flowPanel = new FlowPanel();
+		AonToolbarButton sendBasicCopyBtn = new AonToolbarButton("Comunicar Copia Basica", AON.CSS.aonIconSepeCto());
+		sendBasicCopyBtn.addClickHandler(e -> {
+			sendBasicCopy(e);
+		});
+		sendBasicCopyBtn.getElement().getStyle().setMarginRight(10, Unit.PX);
+		
+		AonToolbarButton sendContractBtn = new AonToolbarButton("Comunicar Contrato", AON.CSS.aonIconSepeCt());
+		sendContractBtn.addClickHandler(e -> {
+			sendContract(e);
+		});
+		
+		flowPanel.add(sendBasicCopyBtn);
+		flowPanel.add(sendContractBtn);
+		
+		comunicaMeesage.add(comunicaL);
+		comunicaMeesage.add(flowPanel);	
+		
+		setVisible(comunicaMeesage.getElement(), false);
+	}
+	
+
+	private void sendBasicCopy(ClickEvent e) {
+		employeesImpl.sendContractoCBSEPE(employeeContractInfo, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {}
+
+			@Override
+			public void onSuccess(Void result) {
+				
+			}
+			
+		});
+	}
+
+	private void sendContract(ClickEvent e) {
+		employeesImpl.sendContractoSEPE(employeeContractInfo, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {}
+
+			@Override
+			public void onSuccess(Void result) {
+				
+			}
+			
+		});
 	}
 
 	private void resetTables() {
@@ -1262,29 +1352,6 @@ public class ContractSpecificData extends ResizeComposite {
 		formativeLevelLB.addItem("-", "");
 		for(Entry<String, String> entry: formativeLevel.getFormativeLevelMap().entrySet())
 			formativeLevelLB.addItem(entry.getValue(), entry.getKey());
-		
-//		formativeLevelLB.addItem("ESTUDIOS PRIMARIOS INCOMPLETOS", "11");
-//		formativeLevelLB.addItem("ESTUDIOS PRIMARIOS COMPLETO", "12");
-//		formativeLevelLB.addItem("PROGRAMAS PARA FORMACION E INSERCION LABORAL QUE NO PRECISAN DE UNA TITULACION", "21");
-//		formativeLevelLB.addItem("PRIMERA ETAPA DE EDUCACION SECUNDARIA SIN TITULO DE GRADUADO ESCOLAR O EQUIVALENTE", "22");
-//		formativeLevelLB.addItem("PRIMERA ETAPA DE EDUCACION SECUNDARIA CON TITULO DE GRADUADO ESCOLAR O EQUIVALENTE", "23");
-//		formativeLevelLB.addItem("PROGRAMAS PARA FORMACION E INSERCION LABORAL QUE PRECISAN DE UNA TITULACION DE ESTUDIOS SECUNDARIOS DE PRIMERA ETAPA", "31");
-//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS DE BACHILLERATO", "32");
-//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS DE GRADO MEDIO DE FORMACION ESPECIFICA, ARTES PLASTICAS...", "33");
-//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS DE GRADO MEDIO DE MUSICA Y DANZA", "34");
-//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS PARA LA FORMACION E INSERCION LABORAL QUE PRECISAN DE UNA TITULACION DE ESTUDIOS SECUNDARIOS DE SEGUNDA ETAPA", "41");
-//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS DE GRADO SUPERIOR DE FORMACION PROFESIONAL ESPECIFICA Y EQUIVALENTE", "51");
-//		formativeLevelLB.addItem("TITULOS PROPIOS DE LAS UNIVERSIDADES Y OTRAS ENSE" + String.valueOf("\u00D1") + "ANZAS QUE PRECISAN DEL TITULO", "52");
-//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS PARA LA FORMACION E INSERCION LABORAL QUE PRECISAN DE UNA FORMACION PROFESIONAL", "53");
-//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAR UNIVERSITARIAS DE PRIMER CICLO Y EQUIVALENTES", "54");
-//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAR UNIVERSITARIAS DE SEGUNDO CICLO Y EQUIVALENTES", "55");
-//		formativeLevelLB.addItem("ESTUDIOS OFICIALES DE ESPECIALIZACION PREFESIONAL", "56");
-//		formativeLevelLB.addItem("PROGRAMAS DE POSTGRADO IMPARTIDOS POR LAS UNIVERSIDADES U OTRAS INSTITUCIONES", "57");
-//		formativeLevelLB.addItem("PROGRAMAS DE FORMACION E INSERCION LABORAL QUE PRECISAN DE UNA TITULACION UNIVERSITARIA", "58");
-//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS UNIVERSITARIAS DE GRADO", "59");
-//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS UNIVERSITARIAS DE MASTER", "60");
-//		formativeLevelLB.addItem("DOCTORADO UNIVERSITARIO", "61");
-//		formativeLevelLB.addItem("SIN ESTUDIOS", "80");
 		
 		academicTitulationLB.clear();
 		

@@ -65,9 +65,21 @@
 			padding: 4px;
 		}
 		
+		.flex{
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			border: 3px solid #eaeaea;
+			padding: 5px 10px;
+			width: 950px;
+			margin-left: 10px;
+			font-weight: bold;
+		}
+		
 	</ui:style>
 
    	<g:HTMLPanel> 
+   		<g:HTMLPanel ui:field="comunicaMeesage" styleName="{style.flex}"></g:HTMLPanel>
         <g:VerticalPanel ui:field="cnoTable" styleName="{style.styleBorder}"> 
 	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>CNO</g:Label>
 	    	<g:HTMLPanel>
