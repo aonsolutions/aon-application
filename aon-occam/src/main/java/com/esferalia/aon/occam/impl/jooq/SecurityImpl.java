@@ -40,6 +40,12 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
+	public Auth getAuthByDocument(AONContext ctx, String document) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getAuthByDocument(ctx, document));
+	}
+	
+	@Override
 	public Auth getAuth(AONContext ctx, byte[] auth) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.getAuth(ctx, auth));

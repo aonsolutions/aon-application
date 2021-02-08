@@ -139,6 +139,14 @@ public class SecurityDAO {
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
 	}
 	
+	public static Auth getAuthByDocument(AONContext ctx, String document) {
+		return ctx.getDslContext()
+			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
+			.from(AUTH)
+			.where(AUTH.DOCUMENT.eq(document))
+			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
+	}
+	
 	public static Integer[] getAuthDomains (AONContext ctx, byte[] auth) {
 		return ctx.getDslContext()
 			.select(USER.DOMAIN)

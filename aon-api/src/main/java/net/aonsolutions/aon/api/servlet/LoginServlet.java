@@ -1,7 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -14,11 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -36,8 +33,6 @@ public class LoginServlet extends HttpServlet{
 		String username = json.getString("username");
 		String password = json.getString("password");
 
-		JSONObject tokenObject = new JSONObject();
-
 	    Boolean ok = false;
 		Auth auth = new Auth();
 	    if(Utils.isEmail(username)) {
@@ -51,10 +46,6 @@ public class LoginServlet extends HttpServlet{
 	    	    	if(auth.getUuid() != null) {
 	    	    		String pass = Utils.createPasswordHash(auth.getEmail(), password);
 						ok = pass.equals(auth.getPassword());
-	    	    		tokenObject
-	    	    			.put("schema", schema)
-	    	    			.put("schema_first_domain", domain)
-	    	    			.put("uuid", auth.getUuid());
 	    	    	} 
 	    	    }	    		
 	    	}
@@ -70,12 +61,6 @@ public class LoginServlet extends HttpServlet{
     						if(auth.getUuid() == null && pass.equals(expectedPass)) {
     							String authPass = Utils.createPasswordHash(username, password);
     							auth = AON_SOLUTIONS.insertAuth(domain, 0, new Auth().setEmail(username).setPassword(authPass));
-    							if(auth.getUuid() != null) {
-    								tokenObject
-    									.put("schema", schema)
-    									.put("schema_first_domain", domain)
-    									.put("uuid", auth.getUuid());
-    							}
     						}
     						AON_SOLUTIONS.assignAuthToUser(domain, 0, user, auth.getUuid());
 	    				}
@@ -93,20 +78,7 @@ public class LoginServlet extends HttpServlet{
 	    	response.put("message", "La Contraseña no coincide.");
 	    	response.put("type", "error");
     	} else {
-	    	String token = "";
-	    	try {
-	    		Algorithm algorithm = Algorithm.HMAC256("aonsecret");
-
-	    		token = JWT.create()
-	    				.withIssuer("auth0")
-	    				.withSubject(tokenObject.toString())
-	    				.withIssuedAt(new Date())
-	    				//.withExpiresAt(AonDateUtils.addDays(new Date(), 1))
-	    				.sign(algorithm);
-	    	} catch (JWTCreationException exception){
-
-	    	}	
-	    	response.put("session_id", token);
+	    	response.put("session_id", AonToken.build(auth, null));
 	    }
     	resp.setContentType("application/json;charset=UTF-8");
 	    Utils.addCorsHeader(resp);

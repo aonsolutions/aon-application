@@ -111,6 +111,31 @@ public class AON_SOLUTIONS {
 		return auth;
 	}
 	
+	public static Auth getAuthByDocument(String domainName, Integer domainId, String document) { 
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, "");
+			return getSecurity().getAuthByDocument(ctx, document);
+		} finally {
+			if(ctx != null) {
+				ctx.close();
+			}
+		}
+	}
+	
+	public static Auth getAuthByDocument(String document) {
+		Auth auth = new Auth();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			String domain = AONContext.getSchemaFirstDomain(schema);
+			if(auth.getUuid() == null && !AonStringUtils.isBlank(domain)) {
+				auth = getAuthByDocument(domain, 0, document);
+				auth.setSchema(schema);
+		   	}	    		
+		}
+		return auth;
+	}
+	
 	public static Auth getAuth(byte[] auth) {
 		Auth auth0 = new Auth();
 		List<String> schemas = AONContext.getSchemas();
@@ -275,7 +300,6 @@ public class AON_SOLUTIONS {
 			try (AONContext ctx = AONContext.getAONContext(domain, 0, "")) {
 				Stream<AonCompany> s = getRegistry().getCompanyStream(ctx, aonToken.getAuth(), page, perPage);
 				stream = Stream.concat(stream, s);
-		
 			}
 		} 
 		return stream;

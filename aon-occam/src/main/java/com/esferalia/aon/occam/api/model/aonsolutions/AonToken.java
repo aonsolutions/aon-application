@@ -1,6 +1,15 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import java.util.Date;
+
 import org.json.JSONObject;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class AonToken {
 
@@ -66,5 +75,27 @@ public class AonToken {
 				.setUuid(json.getString(UUID))
 				.setSchemaFirstDomain(json.getString(SCHEMA_FIRST_DOMAIN));
 	}
-
+	
+	public static String build(Auth auth, Date expireDate) {
+		JSONObject tokenObject = new JSONObject();
+		tokenObject
+			.put("schema", auth.getSchema())
+			.put("schema_first_domain", AONContext.getSchemaFirstDomain(auth.getSchema()))
+			.put("uuid", auth.getUuid());
+		String token = "";
+		try {
+    		Algorithm algorithm = Algorithm.HMAC256("aonsecret");
+    		expireDate = expireDate != null ? expireDate : AonDateUtils.addYears(new Date(), 1);
+    		token = JWT.create()
+    				.withIssuer("auth0")
+    				.withSubject(tokenObject.toString())
+    				.withIssuedAt(new Date())
+    				.withExpiresAt(expireDate)
+    				.sign(algorithm);
+    	} catch (JWTCreationException exception){
+    		exception.printStackTrace();
+    		throw exception;
+    	}	
+		return token;
+	}
 }
