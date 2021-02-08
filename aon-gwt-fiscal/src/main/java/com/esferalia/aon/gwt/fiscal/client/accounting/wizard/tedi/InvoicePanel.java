@@ -275,11 +275,14 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	}
 	
 	private boolean hasPendingFinances() {
-		boolean pendingFinances = false;
-		for (Finance finance : getWrapper().getInvoice().getFinances()) {
-			pendingFinances = pendingFinances || finance.isFullPending();
+		if (getWrapper().getInvoice().getFinances() != null && !getWrapper().getInvoice().getFinances().isEmpty()) {
+			boolean pendingFinances = false;
+			for (Finance finance : getWrapper().getInvoice().getFinances()) {
+				pendingFinances = pendingFinances || finance.isFullPending();
+			}
+			return pendingFinances;
 		}
-		return pendingFinances;
+		return true;
 	}
 	
 	@Override
