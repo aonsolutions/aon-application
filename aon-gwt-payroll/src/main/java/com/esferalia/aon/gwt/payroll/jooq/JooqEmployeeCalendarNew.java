@@ -166,14 +166,13 @@ public class JooqEmployeeCalendarNew {
 		if(!journeyTypeRecords.isEmpty())
 			journeyTypeEmployee = journeyTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
 		else {
-			journeyTypeRecords = dslContext.select()
+			journeyTypeEmployee = dslContext.select()
 					  .from(CONTRACT_DATA)
 					  .where(CONTRACT_DATA.CONTRACT.eq(contract))
 					  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
 					  .orderBy(CONTRACT_DATA.START_DATE.desc())
-					  .fetch();
+					  .fetchOptional(CONTRACT_DATA.EXPRESSION).orElse("true");
 			
-			journeyTypeEmployee = journeyTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
 		}
 		
 		fullTimeJourney = isFullTimeJourney(journeyTypeEmployee);
