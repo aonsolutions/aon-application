@@ -686,6 +686,27 @@ public class ContrataEmployeeObject {
 					public void onFailure(Throwable caught) {}
 				});	
 	}
+	
+	public void getContratoSepe(Consumer<String> success, Consumer<Throwable> failure) {
+		String ipf = employeeContractData.getEmployeeInfo().getDocument();
+		Date startDate = employeeContractData.getContractInfo().getStartDate();
+		Date endDate = employeeContractData.getContractInfo().getStartDate();
+		
+		enterprisesService.getContratoSepe(ipf, startDate, endDate, new AsyncCallback<String>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);	
+			}
+			
+		});
+		
+	}
 		
 	// ---------------------------------------------- GETTERS  -------------------------------------------------
 	

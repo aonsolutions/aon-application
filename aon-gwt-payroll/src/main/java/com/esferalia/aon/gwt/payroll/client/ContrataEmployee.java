@@ -977,6 +977,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contrataEmployeeObject.setEmployeeContractInfo(employeeContractInfo);
 					initLogicWindow();
 					initExistingEmployee(employeeContractInfo.getContractInfo().hasPayroll());
+					
 //					contractSpecificData.setEmployeeContractInfo(employeeContractInfo);
 				}, 
 				t -> {}
