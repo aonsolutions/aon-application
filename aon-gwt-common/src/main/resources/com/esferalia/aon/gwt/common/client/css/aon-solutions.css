@@ -135,6 +135,8 @@
 .aon_icon_menu_collapse { background-image: iconMenuCollapse;}
 @url iconRestore aonIconRestore;
 .aon_icon_restore { background-image: iconRestore;}
+@url iconTrashList aonIconTrashList;
+.aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
 @url iconMoveTo aonIconMoveTo;
@@ -532,6 +534,10 @@
 .aon_confirm_dialog {
 	background: white none repeat scroll 0 0;
 	box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4);
+}
+
+.aon_confirm_dialog_height {
+	min-height: 110px;	
 }
 
 .aon_custom_confirm_dialog {

@@ -204,6 +204,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_restore")
 	String aonIconRestore();
 	
+	@ClassName("aon_icon_trash_list")
+	String aonIconTrashList();
+	
 	@ClassName("aon_icon_paste")
 	String aonIconPaste();
 	
@@ -569,6 +572,9 @@ public interface AonSolutionsCSS extends CssResource {
 	/* CONFIRM DIALOG*/
 	@ClassName("aon_confirm_dialog")
 	String aonConfirmDialog();
+	
+	@ClassName("aon_confirm_dialog_height")
+	String aonConfirmDialogHeight();
 	
 	@ClassName("aon_custom_confirm_dialog")
 	String aonCustomConfirmDialog();
