@@ -1,5 +1,7 @@
 package solutions.aon.seg.social.objects;
 
+import solutions.aon.seg.social.objects.WorkerLiquidation.WorkerLiquidationBuilder;
+
 public class Liquidation {
 	private Float cc_base;
 	private Float cc_businessFee;
@@ -25,6 +27,11 @@ public class Liquidation {
 	private Float workAccidentLiquid_businessFee;
 	private Float workAccidentLiquid_workerFee;
 	private Float workAccidentLiquid_totalFee;
+	
+	private Float grantsAndBonuses_base;
+	private Float grantsAndBonuses_businessFee;
+	private Float grantsAndBonuses_workerFee;
+	private Float grantsAndBonuses_totalFee;
 	
 	private Float otherContributions_base;
 	private Float otherContributions_businessFee;
@@ -164,6 +171,31 @@ public class Liquidation {
 	public void setWorkAccidentLiquid_totalFee(Float workAccidentLiquid_totalFee) {
 		this.workAccidentLiquid_totalFee = workAccidentLiquid_totalFee;
 	}
+	
+	public Float getGrantsAndBonuses_base() {
+		return grantsAndBonuses_base;
+	}
+	public void setGrantsAndBonuses_base(Float grantsAndBonuses_base) {
+		this.grantsAndBonuses_base = grantsAndBonuses_base;
+	}
+	public Float getGrantsAndBonuses_businessFee() {
+		return grantsAndBonuses_businessFee;
+	}
+	public void setGrantsAndBonuses_businessFee(Float grantsAndBonuses_businessFee) {
+		this.grantsAndBonuses_businessFee = grantsAndBonuses_businessFee;
+	}
+	public Float getGrantsAndBonuses_workerFee() {
+		return grantsAndBonuses_workerFee;
+	}
+	public void setGrantsAndBonuses_workerFee(Float grantsAndBonuses_workerFee) {
+		this.grantsAndBonuses_workerFee = grantsAndBonuses_workerFee;
+	}
+	public Float getGrantsAndBonuses_totalFee() {
+		return grantsAndBonuses_totalFee;
+	}
+	public void setGrantsAndBonuses_totalFee(Float grantsAndBonuses_totalFee) {
+		this.grantsAndBonuses_totalFee = grantsAndBonuses_totalFee;
+	}
 	public Float getOtherContributions_base() {
 		return otherContributions_base;
 	}
@@ -266,6 +298,11 @@ public class Liquidation {
 		public void visit_workAccidentLiquid_workerFee(Float workAccidentLiquid_workerFee);
 		public void visit_workAccidentLiquid_totalFee(Float workAccidentLiquid_totalFee);
 		
+		public void visit_grantsAndBonuses_base(Float grantsAndBonuses_base);
+		public void visit_grantsAndBonuses_businessFee(Float grantsAndBonuses_businessFee);
+		public void visit_grantsAndBonuses_workerFee(Float grantsAndBonuses_workerFee);
+		public void visit_grantsAndBonuses_totalFee(Float grantsAndBonuses_totalFee);
+		
 		public void visit_otherContributions_base(Float otherContributions_base);
 		public void visit_otherContributions_businessFee(Float otherContributions_businessFee);
 		public void visit_otherContributions_workerFee(Float otherContributions_workerFee);
@@ -327,6 +364,15 @@ public class Liquidation {
 			visitor.visit_workAccidentLiquid_workerFee(this.workAccidentLiquid_workerFee);
 		if(workAccidentLiquid_totalFee!=null)
 			visitor.visit_workAccidentLiquid_totalFee(this.workAccidentLiquid_totalFee);
+		
+		if(grantsAndBonuses_base!=null)
+			visitor.visit_grantsAndBonuses_base(this.grantsAndBonuses_base);
+		if(grantsAndBonuses_businessFee!=null)
+			visitor.visit_grantsAndBonuses_businessFee(this.grantsAndBonuses_businessFee);
+		if(grantsAndBonuses_workerFee!=null)
+			visitor.visit_grantsAndBonuses_workerFee(this.grantsAndBonuses_workerFee);
+		if(grantsAndBonuses_totalFee!=null)
+			visitor.visit_grantsAndBonuses_totalFee(this.grantsAndBonuses_totalFee);
 		
 		if(otherContributions_base!=null)
 			visitor.visit_otherContributions_base(this.otherContributions_base);
@@ -554,6 +600,32 @@ public class Liquidation {
 				stringBuffer.append(String.format("\tCC Liquid - liquid base:\"%S\"\n", ccLiquid_base));
 				
 			}
+
+			@Override
+			public void visit_grantsAndBonuses_base(Float grantsAndBonuses_base) {
+				stringBuffer.append(String.format("\tCC Grants and bonuses - liquid base:\"%S\"\n", grantsAndBonuses_base));
+				
+			}
+			
+			@Override
+			public void visit_grantsAndBonuses_businessFee(Float grantsAndBonuses_businessFee) {
+				stringBuffer.append(String.format("\tCC Grants and bonuses - business fee:\"%S\"\n", grantsAndBonuses_businessFee));
+				
+			}
+			
+			@Override
+			public void visit_grantsAndBonuses_workerFee(Float grantsAndBonuses_workerFee) {
+				stringBuffer.append(String.format("\tCC Grants and bonuses - worker fee:\"%S\"\n", grantsAndBonuses_workerFee));
+				
+			}
+			
+			@Override
+			public void visit_grantsAndBonuses_totalFee(Float grantsAndBonuses_totalFee) {
+				stringBuffer.append(String.format("\tCC Grants and bonuses - total fee:\"%S\"\n", grantsAndBonuses_totalFee));
+				
+			}
+			
+			
 		});
 		return stringBuffer.toString();
 	}
@@ -586,6 +658,11 @@ public class Liquidation {
 		private Float workAccidentLiquid_businessFee;
 		private Float workAccidentLiquid_workerFee;
 		private Float workAccidentLiquid_totalFee;
+		
+		private Float grantsAndBonuses_base;
+		private Float grantsAndBonuses_businessFee;
+		private Float grantsAndBonuses_workerFee;
+		private Float grantsAndBonuses_totalFee;
 		
 		private Float otherContributions_base;
 		private Float otherContributions_businessFee;
@@ -699,6 +776,25 @@ public class Liquidation {
 		
 		
 		
+		public LiquidationBuilder setGrantsAndBonuses_base(Float grantsAndBonuses_base) {
+			this.grantsAndBonuses_base = grantsAndBonuses_base;
+			return this;
+		}
+		public LiquidationBuilder setGrantsAndBonuses_businessFee(Float grantsAndBonuses_businessFee) {
+			this.grantsAndBonuses_businessFee = grantsAndBonuses_businessFee;
+			return this;
+		}
+		public LiquidationBuilder setGrantsAndBonuses_workerFee(Float grantsAndBonuses_workerFee) {
+			this.grantsAndBonuses_workerFee = grantsAndBonuses_workerFee;
+			return this;
+		}
+		public LiquidationBuilder setGrantsAndBonuses_totalFee(Float grantsAndBonuses_totalFee) {
+			this.grantsAndBonuses_totalFee = grantsAndBonuses_totalFee;
+			return this;
+		}
+		
+		
+		
 		public LiquidationBuilder setOtherContributions_base(Float otherContributions_base) {
 			this.otherContributions_base=otherContributions_base;
 			return this;
@@ -785,6 +881,11 @@ public class Liquidation {
 			liq.workAccidentLiquid_businessFee=this.workAccidentLiquid_businessFee;
 			liq.workAccidentLiquid_workerFee=this.workAccidentLiquid_workerFee;
 			liq.workAccidentLiquid_totalFee=this.workAccidentLiquid_totalFee;
+			
+			liq.grantsAndBonuses_base=this.grantsAndBonuses_base;
+			liq.grantsAndBonuses_businessFee=this.grantsAndBonuses_businessFee;
+			liq.grantsAndBonuses_workerFee=this.grantsAndBonuses_workerFee;
+			liq.grantsAndBonuses_totalFee=this.grantsAndBonuses_totalFee;
 			
 			liq.otherContributions_base=this.otherContributions_base;
 			liq.otherContributions_businessFee=this.otherContributions_businessFee;

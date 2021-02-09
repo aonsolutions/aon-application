@@ -1131,7 +1131,7 @@ public class SistemaRED_I {
 	
 	
 	
-	
+	//TAKES A MAP (LIQUIDATION TYPE AS KEY) OF MAPS (NAF AS KEY) OF WORKERS' LIQUIDATIONS PASSING CCC AND NAFS AS ARGUMENTS
 	public static Map<String,Map<String, WorkerLiquidation>> workersCalculationQueryByCCCandNAFS(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String ccc,
 			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
@@ -1599,6 +1599,17 @@ public class SistemaRED_I {
 			Float nmbr4=cellToFloat(tr.getCell(4));
 			lb.setTotalLiquid_totalFee(nmbr4);
 		}
+		else if(innerText.equalsIgnoreCase("BONIF.Y SUBVENC.CON CARGO AL INEM")) {
+			Float nmbr1=cellToFloat(tr.getCell(1));
+			lb.setGrantsAndBonuses_base(nmbr1);
+			Float nmbr2=cellToFloat(tr.getCell(2));
+			lb.setGrantsAndBonuses_businessFee(nmbr2);
+			Float nmbr3=cellToFloat(tr.getCell(3));
+			lb.setGrantsAndBonuses_workerFee(nmbr3);
+			Float nmbr4=cellToFloat(tr.getCell(4));
+			lb.setGrantsAndBonuses_totalFee(nmbr4);
+		}
+		
 		
 	}
 	
@@ -1704,6 +1715,16 @@ public class SistemaRED_I {
 			lb.setTotalLiquid_workerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
 			lb.setTotalLiquid_totalFee(nmbr4);
+		}
+		else if(innerText.equalsIgnoreCase("BONIF.Y SUBVENC.CON CARGO AL INEM")) {
+			Float nmbr1=cellToFloat(tr.getCell(1));
+			lb.setGrantsAndBonuses_base(nmbr1);
+			Float nmbr2=cellToFloat(tr.getCell(2));
+			lb.setGrantsAndBonuses_businessFee(nmbr2);
+			Float nmbr3=cellToFloat(tr.getCell(3));
+			lb.setGrantsAndBonuses_workerFee(nmbr3);
+			Float nmbr4=cellToFloat(tr.getCell(4));
+			lb.setGrantsAndBonuses_totalFee(nmbr4);
 		}
 		
 	}

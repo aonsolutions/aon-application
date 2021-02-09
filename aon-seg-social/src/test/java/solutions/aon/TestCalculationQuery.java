@@ -54,6 +54,25 @@ public class TestCalculationQuery {
 	}
 	
 	@Test
+	public void testCalculationQueryGrantsAndBonuses() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			Collection<Liquidation> liq=SistemaRED_I.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105577910", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+			for (Liquidation liquidation : liq) {
+				System.out.println(liq);
+			}
+		}catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	@Test
 	public void testCalculationQueryDateNotFound() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Calendar c=Calendar.getInstance();
@@ -490,6 +509,24 @@ public class TestCalculationQuery {
 			System.out.println(SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534311", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
 		} catch (invalidCccException e) {
 			
+		} catch (OutOfServiceException e) {
+			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
+		} catch (FailingHttpStatusCodeException e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
+	
+	@Test
+	public void testWorkersCalculationQueryByCCCandNAFsGrantsAndBonuses() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+			System.out.println(SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, "jg@FNMT", "pkcs12", "01105577910", Regime.GENERAL, d, d, LiquidationType.TODAS, LiquidationOrigin.TODAS, "011017250195"));
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
 		} catch (FailingHttpStatusCodeException e) {
