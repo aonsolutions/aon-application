@@ -458,18 +458,32 @@ public class ContrataEmployeeObject {
 	public void deleteContract(Consumer<Void> success, Consumer<Throwable> failure) {
 		Employee employeeAux = new Employee();
 		employeeAux.setId(getContractData().getContractId());
-		employeesService.moveContractId(employeeAux, new AsyncCallback<Void>() {
+		if(getContractData().hasPayroll()) {
+			employeesService.moveContractId(employeeAux, new AsyncCallback<Void>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
+				@Override
+				public void onFailure(Throwable caught) {
+					failure.accept(caught);
+				}
 
-			@Override
-			public void onSuccess(Void result) {
-				success.accept(result);
-			}
-		});
+				@Override
+				public void onSuccess(Void result) {
+					success.accept(result);
+				}
+			});
+		} else {
+			enterprisesService.delete4EverContract(getContractData().getContractId(), new AsyncCallback<Void>() {
+				
+				@Override
+				public void onSuccess(Void result) {
+					success.accept(result);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
+		
 	}
 	
 	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {

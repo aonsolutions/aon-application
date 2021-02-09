@@ -187,6 +187,28 @@
 
 		<d:ContrataEmployee ui:field="contrataEmployee"></d:ContrataEmployee>
  		<d:PDFViewer styleName="reset" ui:field='pdfViewer' /> 
+ 		
+ 		<g:DockLayoutPanel ui:field="trashDockLayoutPanel" >
+			<g:center>
+				<g:SplitLayoutPanel ui:field="trashSplitLayoutPanel">
+					<g:center>
+						<g:HTMLPanel ui:field="trashMainContainer" styleName="{style.mainContainer} {style.widthAll}">
+							<g:ScrollPanel height="100%" styleName="{style.p5}">
+								<g:VerticalPanel styleName="{style.tableStylePanel}">
+								
+									<g:HTMLPanel ui:field="filterTrashEmployeePanel"></g:HTMLPanel>
+								
+								 	<g:HTMLPanel ui:field="mainTrashTablePanel" styleName="{style.mt10}">
+								 		<c:DataGrid ui:field="trashEmployeeDataGrid" styleName="{style.pointer}"></c:DataGrid>
+								 	</g:HTMLPanel>
+							 		
+								</g:VerticalPanel>
+							</g:ScrollPanel>
+						</g:HTMLPanel>	
+					</g:center>
+				</g:SplitLayoutPanel>
+			</g:center>
+		</g:DockLayoutPanel>
 		
 	</g:DeckPanel>
 </ui:UiBinder> 

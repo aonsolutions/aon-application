@@ -21,6 +21,7 @@ public class MainContrataContractObject {
 	
 	private List<EmployeeContractInfo> allEmployeesList;
 	private List<EmployeeContractInfo> employeesList;
+	private List<EmployeeContractInfo> trashEmployeesList;
 	
 	private Map<String, Integer> employeesFilterMap;
 	
@@ -30,6 +31,7 @@ public class MainContrataContractObject {
 		super();
 		this.allEmployeesList = new ArrayList<EmployeeContractInfo>();
 		this.employeesList = new ArrayList<EmployeeContractInfo>();
+		this.trashEmployeesList = new ArrayList<EmployeeContractInfo>();
 		this.employeesFilterMap = new HashMap<String, Integer>();
 		this.workplaces = new ArrayList<Workplace>();
 	}
@@ -169,5 +171,56 @@ public class MainContrataContractObject {
 				employeesList.add(employee);
 		}
 	}
-		
+	
+	// ------------------------------------------------------------------------------------
+	//									TRASH EMPLOYEES
+	// ------------------------------------------------------------------------------------
+
+	public List<EmployeeContractInfo> getTrashEmployeesList() {
+		return this.trashEmployeesList;
+	}
+
+	public void getTrashEmployeesInfo(Consumer<List<EmployeeContractInfo>> success, Consumer<Throwable> failure) {
+		impl.getTrashEmployeesInfo(new AsyncCallback<List<EmployeeContractInfo>>() {
+			
+			@Override
+			public void onSuccess(List<EmployeeContractInfo> employeesInfoList) {
+				trashEmployeesList.clear();
+				trashEmployeesList.addAll(employeesInfoList);
+				success.accept(employeesInfoList);	
+			}
+
+			@Override
+			public void onFailure(Throwable caught) { }
+		});	
+	}
+
+	public void restoreContract(Integer contractId, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.restoreContract(contractId, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void resutl) {
+				success.accept(resutl);	
+			}
+
+			@Override
+			public void onFailure(Throwable caught) { }
+		});	
+	}
+
+
+	public void delete4EverContract(Integer contractId, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.delete4EverContract(contractId, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void resutl) {
+				success.accept(resutl);	
+			}
+
+			@Override
+			public void onFailure(Throwable caught) { }
+		});	
+	}
+
 }
+		

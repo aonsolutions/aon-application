@@ -14,9 +14,10 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
@@ -24,6 +25,8 @@ import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -32,8 +35,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -124,17 +129,43 @@ public class MainContrataContract extends MainEntryPoint {
 	ResultsPanel resultsPanel;
 	
 	ProgressPanel progressPanel;
+	
+	// Trash Employee
+	
+	@UiField
+	DockLayoutPanel trashDockLayoutPanel;
+	
+	@UiField
+	SplitLayoutPanel trashSplitLayoutPanel;
+	
+	@UiField
+	HTMLPanel trashMainContainer;
+	
+	@UiField
+	HTMLPanel filterTrashEmployeePanel;
+	
+	@UiField
+	HTMLPanel mainTrashTablePanel;
+	
+	@UiField(provided = true)
+	DataGrid<EmployeeContractInfo> trashEmployeeDataGrid;
+	
 	// --------------------------------------------------------------------------------------------
 	// 										VARIABLES
 	// --------------------------------------------------------------------------------------------
 		
 	private MainContrataContractObject mainContrataContractObject;
 	private NoSelectionModel<EmployeeContractInfo> selectionCCCInfoModel;
+	private NoSelectionModel<EmployeeContractInfo> selectionTrashCCCInfoModel;
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private List<EmployeeContractInfo> employeesList = Collections.emptyList();
+	private List<EmployeeContractInfo> trashEmployeesList = Collections.emptyList();
 	
 	private AonToolbar toolbar;
+	private AonToolbar trashToolbar;
+	private AonToolbarButton backListBtn;
 	private AonToolbarButton newContract;
+	private AonToolbarButton trashListBtn;
 	private AonToolbarButton up2DateSS;
 	
 	private SuggestBox employeeSB;
@@ -145,6 +176,7 @@ public class MainContrataContract extends MainEntryPoint {
 		contrataEmployee = new ContrataEmployeeImpl();
 		
 		provideEmployeesDataGrid();
+		provideTrashEmployeesDataGrid();
 		
 		// Add style to table header
 	    addStyleToHeader();
@@ -157,6 +189,9 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		toolbar = getToolbarPanel();
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		
+		trashToolbar = getTrashToolbarPanel();
+		trashDockLayoutPanel.addNorth( trashToolbar , AonToolbar.HEIGTH );
 		
 		getFilterEmployeePanel();
 		
@@ -194,6 +229,30 @@ public class MainContrataContract extends MainEntryPoint {
 	    addEmployeeInfoColumns(this.selectionCCCInfoModel);
 	    
 	    new ListDataProvider<EmployeeContractInfo>(Collections.emptyList()).addDataDisplay(employeeDataGrid);
+
+	}
+	
+	private void provideTrashEmployeesDataGrid() {
+		trashEmployeesList  = Collections.emptyList();
+		
+		// Resource Style CellTable
+		trashEmployeeDataGrid = new CustomDataGrid<EmployeeContractInfo>(Integer.MAX_VALUE, EmployeeContractInfo.KEY_PROVIDER);
+		trashEmployeeDataGrid.setWidth("100%");
+		
+		//Do not refresh the headers every time the dataGrid is updated.
+		trashEmployeeDataGrid.setAutoHeaderRefreshDisabled(true);
+		
+		// Set the message to display when the table is empty.
+		trashEmployeeDataGrid.setEmptyTableWidget(new Label("No existen contratos en la papelera".toUpperCase()));
+		
+		// Add a selection model so we can select cells.
+	    this.selectionTrashCCCInfoModel = new NoSelectionModel<EmployeeContractInfo>(EmployeeContractInfo.KEY_PROVIDER);
+	    trashEmployeeDataGrid.setSelectionModel(this.selectionTrashCCCInfoModel);
+		
+	    // Initialize the columns.
+	    addTrashEmployeeInfoColumns(this.selectionTrashCCCInfoModel);
+	    
+	    new ListDataProvider<EmployeeContractInfo>(Collections.emptyList()).addDataDisplay(trashEmployeeDataGrid);
 
 	}
 	
@@ -316,6 +375,203 @@ public class MainContrataContract extends MainEntryPoint {
 	    employeeDataGrid.addColumn(endDateColumn, "Fecha Fin");
 	      
 	}
+	
+	private void addTrashEmployeeInfoColumns(NoSelectionModel<EmployeeContractInfo> selectionTrashCCCInfoModel) {
+		selectionTrashCCCInfoModel.addSelectionChangeHandler(new Handler() {
+	        @Override
+	        public void onSelectionChange(SelectionChangeEvent event) {}
+	    });
+	    
+	    // Add Selection Column to table
+	    trashEmployeeDataGrid.setSelectionModel(selectionTrashCCCInfoModel);
+		
+		//----------------------------------------------------------------------
+	    //							CREATE COLUMNS
+	    //----------------------------------------------------------------------
+		
+		TextColumn<EmployeeContractInfo> employeeNameColumn = new TextColumn<EmployeeContractInfo>() {
+	      @Override
+	      public String getValue(EmployeeContractInfo employeeContractInfo) {
+	        return employeeContractInfo.getEmployeeInfo().getFullName();
+	      }
+	    };
+
+	    employeeNameColumn.setSortable(true);
+	     
+	    TextColumn<EmployeeContractInfo> documentColumn = new TextColumn<EmployeeContractInfo>() {
+	      @Override
+	      public String getValue(EmployeeContractInfo employeeContractInfo) {
+	        return employeeContractInfo.getEmployeeInfo().getDocument();
+	      }
+	    };
+
+	    documentColumn.setSortable(true);
+	    documentColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    trashEmployeeDataGrid.setColumnWidth(documentColumn, 10, Unit.PCT);
+	    
+	    TextColumn<EmployeeContractInfo> ssNumberColumn = new TextColumn<EmployeeContractInfo>() {
+	      @Override
+	      public String getValue(EmployeeContractInfo employeeContractInfo) {
+	        return employeeContractInfo.getEmployeeInfo().getSsNumber();
+	      }
+	    };
+
+	    ssNumberColumn.setSortable(true);
+	    ssNumberColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    trashEmployeeDataGrid.setColumnWidth(ssNumberColumn, 10, Unit.PCT);
+	    
+	    TextColumn<EmployeeContractInfo> contractTypeColumn = new TextColumn<EmployeeContractInfo>() {
+	      @Override
+	      public String getValue(EmployeeContractInfo employeeContractInfo) {
+	    	  if((byte)3 == employeeContractInfo.getContractInfo().getSsRegimen())
+	    		  return "RETA";
+	    	  if("000" == employeeContractInfo.getContractInfo().getContractType())
+	    		  return "BECARIO";
+	    	  return employeeContractInfo.getContractInfo().getContractType();
+	      }
+
+	    };
+
+	    contractTypeColumn.setSortable(true);
+	    contractTypeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    trashEmployeeDataGrid.setColumnWidth(contractTypeColumn, 10, Unit.PCT);
+	    
+	    TextColumn<EmployeeContractInfo> workplaceColumn = new TextColumn<EmployeeContractInfo>() {
+	      @Override
+	      public String getValue(EmployeeContractInfo employeeContractInfo) {
+	    	  return employeeContractInfo.getContractInfo().getWorkplaceName();
+	      }
+
+	    };
+
+	    workplaceColumn.setSortable(true);
+	    workplaceColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    trashEmployeeDataGrid.setColumnWidth(workplaceColumn, 15, Unit.PCT);
+	    
+	    TextColumn<EmployeeContractInfo> startDateColumn = new TextColumn<EmployeeContractInfo>() {
+	      @Override
+	      public String getValue(EmployeeContractInfo employeeContractInfo) {
+	    	  return formatFullDate.format(employeeContractInfo.getContractInfo().getStartDate());
+	      }
+	    };
+
+	    startDateColumn.setSortable(true);
+	    startDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    trashEmployeeDataGrid.setColumnWidth(startDateColumn, 10, Unit.PCT);
+	    
+	    TextColumn<EmployeeContractInfo> endDateColumn = new TextColumn<EmployeeContractInfo>() {
+		      @Override
+		      public String getValue(EmployeeContractInfo employeeContractInfo) {
+		    	  if(null != employeeContractInfo.getContractInfo().getEndDate())
+		    		  return formatFullDate.format(employeeContractInfo.getContractInfo().getEndDate());
+		    	  
+		    	  return "";
+		      }
+		    };
+
+		endDateColumn.setSortable(true);
+		endDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		trashEmployeeDataGrid.setColumnWidth(endDateColumn, 10, Unit.PCT);
+		
+		ActionCell<EmployeeContractInfo> draftActionCell = new ActionCell<EmployeeContractInfo>("", new ActionCell.Delegate<EmployeeContractInfo>() {
+
+			@Override
+			public void execute(EmployeeContractInfo employeeContractInfo) {
+				AonConfirmDialog confirmDialog = new AonConfirmDialog();
+				confirmDialog.confirm(
+						"BORRADO", 
+						String.valueOf("\u00BF") + "Desea eliminar definitivamente el contrato de  " + employeeContractInfo.getEmployeeInfo().getFullName() + "?. Le recordamos que este contrato tiene n"+ String.valueOf("\u00F3") + "minas generadas, si lo elimina definitivamente no podr"+ String.valueOf("\u00E1") +" recuperar dichas n"+ String.valueOf("\u00F3") +"minas.",
+						new AonConfirmDialogCallback() {
+
+							@Override
+							public void onAccept() {
+								mainContrataContractObject.delete4EverContract(
+										employeeContractInfo.getContractInfo().getContractId(),
+										s -> {
+											redrawTrashTable();
+										}, f -> {});
+							}
+
+							@Override
+							public void onCancel() {
+								// TODO Auto-generated method stub
+							}});
+			}
+		});
+	    
+	    Column<EmployeeContractInfo, EmployeeContractInfo> draftColumn = new Column<EmployeeContractInfo, EmployeeContractInfo>(draftActionCell) {
+
+			@Override
+			public EmployeeContractInfo getValue(EmployeeContractInfo object) {
+				return object;
+			}
+			
+			@Override
+			public void render(Context context, EmployeeContractInfo object, SafeHtmlBuilder sb) {
+				if(null != object) {
+					sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_delete_forever\" style=\"border: none !important; height: 20px;\" title=\"Borrar contrato definitivamente\"></button>");
+				}
+			}
+		};
+		
+		draftColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		trashEmployeeDataGrid.setColumnWidth(draftColumn, 5, Unit.PCT);
+		
+		ActionCell<EmployeeContractInfo> restoreActionCell = new ActionCell<EmployeeContractInfo>("", new ActionCell.Delegate<EmployeeContractInfo>() {
+
+			@Override
+			public void execute(EmployeeContractInfo employeeContractInfo) {
+				AonConfirmDialog confirmDialog = new AonConfirmDialog();
+				confirmDialog.confirm(
+						"RESTAURAR", 
+						String.valueOf("\u00BF") + "Desea restaurar el contrato de " + employeeContractInfo.getEmployeeInfo().getFullName() + "?",
+						new AonConfirmDialogCallback() {
+
+							@Override
+							public void onAccept() {
+								mainContrataContractObject.restoreContract(
+										employeeContractInfo.getContractInfo().getContractId(),
+										s -> {
+											redrawTrashTable();
+										}, f -> {});
+							}
+
+							@Override
+							public void onCancel() {
+								// TODO Auto-generated method stub
+							}});
+			}
+		});
+	    
+	    Column<EmployeeContractInfo, EmployeeContractInfo> restoreColumn = new Column<EmployeeContractInfo, EmployeeContractInfo>(restoreActionCell) {
+
+			@Override
+			public EmployeeContractInfo getValue(EmployeeContractInfo object) {
+				return object;
+			}
+			
+			@Override
+			public void render(Context context, EmployeeContractInfo object, SafeHtmlBuilder sb) {
+				if(null != object) {
+					sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_restore\" style=\"border: none !important; height: 20px;\" title=\"Restaurar contrato\"></button>");
+				}
+			}
+		};
+		
+		restoreColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		trashEmployeeDataGrid.setColumnWidth(restoreColumn, 5, Unit.PCT);
+	    
+	    // Add the columns.
+		trashEmployeeDataGrid.addColumn(employeeNameColumn, "Nobre Completo");
+		trashEmployeeDataGrid.addColumn(documentColumn, "Documento");
+		trashEmployeeDataGrid.addColumn(ssNumberColumn, "N" + String.valueOf("\u00B0") + " SS");
+		trashEmployeeDataGrid.addColumn(contractTypeColumn, "Tipo Contrato");
+		trashEmployeeDataGrid.addColumn(workplaceColumn, "Centro Trabajo");
+		trashEmployeeDataGrid.addColumn(startDateColumn, "Fecha Inicio");
+		trashEmployeeDataGrid.addColumn(endDateColumn, "Fecha Fin");
+		trashEmployeeDataGrid.addColumn(draftColumn, "");
+		trashEmployeeDataGrid.addColumn(restoreColumn, "");      
+	}
 
 	// --------------------------------------------------------------------------------------------
 	// 									HEADER STYLES
@@ -329,6 +585,16 @@ public class MainContrataContract extends MainEntryPoint {
 		employeeDataGrid.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		employeeDataGrid.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		employeeDataGrid.getHeader(6).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+	
+		trashEmployeeDataGrid.getHeader(0).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		trashEmployeeDataGrid.getHeader(1).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		trashEmployeeDataGrid.getHeader(2).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		trashEmployeeDataGrid.getHeader(3).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		trashEmployeeDataGrid.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		trashEmployeeDataGrid.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		trashEmployeeDataGrid.getHeader(6).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		trashEmployeeDataGrid.getHeader(7).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		trashEmployeeDataGrid.getHeader(8).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -388,7 +654,7 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		employeeSB.addKeyUpHandler(e-> {
 			String value = employeeSB.getValue();
-			if(StringUtils.isBlank(value) || value.length() < 3) {
+			if(AonStringUtils.isBlank(value) || value.length() < 3) {
 				mainContrataContractObject.resetEmployeesList();
 			} else {
 				List<Integer> employeesContractIds = mainContrataContractObject.getEmployeesContractIds(value);
@@ -411,6 +677,9 @@ public class MainContrataContract extends MainEntryPoint {
 	private void setTableHeights() {
 		employeeDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
 		mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
+		
+		trashEmployeeDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+		mainTrashTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -441,14 +710,42 @@ public class MainContrataContract extends MainEntryPoint {
 	    // Add style to table header
 	    addStyleToHeader();
 	    
-	    addSortColums(employeeContractInfoList); 
+	    addSortColums(employeeDataGrid, employeeContractInfoList); 
 		
 	}
 	
-	private void addSortColums(List<EmployeeContractInfo> employeeContractInfoList) {
+	private void initTrashContractTable() {		
+		// Create a data provider.
+	    ListDataProvider<EmployeeContractInfo> dataProvider = new ListDataProvider<EmployeeContractInfo>();
+
+	    // Connect the table to the data provider.
+	    dataProvider.addDataDisplay(trashEmployeeDataGrid);
+	    
+	    // Add the data to the data provider, which automatically pushes it to the
+	    // widget.
+	    List<EmployeeContractInfo> trashEmployeeContractInfoList = dataProvider.getList();
+	    trashEmployeeContractInfoList.clear();
+	    
+	    this.trashEmployeesList = mainContrataContractObject.getTrashEmployeesList();
+	    
+	    for (EmployeeContractInfo employeeContractInfo : this.trashEmployeesList) {
+	    	trashEmployeeContractInfoList.add(employeeContractInfo);
+	    } 
+	    
+	    // Set page size
+	    trashEmployeeDataGrid.setPageSize(trashEmployeesList.size());
+	    
+	    // Add style to table header
+	    addStyleToHeader();
+	    
+	    addSortColums(trashEmployeeDataGrid, trashEmployeeContractInfoList); 
+		
+	}
+	
+	private void addSortColums(DataGrid<EmployeeContractInfo> dataGrid, List<EmployeeContractInfo> employeeContractInfoList) {
 		ListHandler<EmployeeContractInfo> columnSortHandler = new ListHandler<EmployeeContractInfo>(employeeContractInfoList);
 		
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(0), new Comparator<EmployeeContractInfo>() {
+	    columnSortHandler.setComparator(dataGrid.getColumn(0), new Comparator<EmployeeContractInfo>() {
 	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
 		            if (o1 == o2) {
 		              return 0;
@@ -462,7 +759,7 @@ public class MainContrataContract extends MainEntryPoint {
 	          }
 	    });
 	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(1), new Comparator<EmployeeContractInfo>() {
+	    columnSortHandler.setComparator(dataGrid.getColumn(1), new Comparator<EmployeeContractInfo>() {
 	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
 		            if (o1 == o2) {
 		              return 0;
@@ -476,7 +773,7 @@ public class MainContrataContract extends MainEntryPoint {
 	          }
 	    });
 	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(2), new Comparator<EmployeeContractInfo>() {
+	    columnSortHandler.setComparator(dataGrid.getColumn(2), new Comparator<EmployeeContractInfo>() {
 	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
 		            if (o1 == o2) {
 		              return 0;
@@ -491,7 +788,7 @@ public class MainContrataContract extends MainEntryPoint {
 	    });
 	    
 	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(3), new Comparator<EmployeeContractInfo>() {
+	    columnSortHandler.setComparator(dataGrid.getColumn(3), new Comparator<EmployeeContractInfo>() {
 	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
 		            if (o1.getContractInfo().getContractType() == o2.getContractInfo().getContractType()) {
 		              return 0;
@@ -505,7 +802,7 @@ public class MainContrataContract extends MainEntryPoint {
 	          }
 	    });
 	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(4), new Comparator<EmployeeContractInfo>() {
+	    columnSortHandler.setComparator(dataGrid.getColumn(4), new Comparator<EmployeeContractInfo>() {
 	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
 		            if (o1 == o2) {
 		              return 0;
@@ -519,7 +816,7 @@ public class MainContrataContract extends MainEntryPoint {
 	          }
 	    });
 	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(5), new Comparator<EmployeeContractInfo>() {
+	    columnSortHandler.setComparator(dataGrid.getColumn(5), new Comparator<EmployeeContractInfo>() {
 	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
 		            if (o1 == o2) {
 		              return 0;
@@ -533,7 +830,7 @@ public class MainContrataContract extends MainEntryPoint {
 	         }
 	    });
 	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(6), new Comparator<EmployeeContractInfo>() {
+	    columnSortHandler.setComparator(dataGrid.getColumn(6), new Comparator<EmployeeContractInfo>() {
 	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
 		            if (o1.getContractInfo().getEndDate() == o2.getContractInfo().getEndDate()) {
 		              return 0;
@@ -549,10 +846,10 @@ public class MainContrataContract extends MainEntryPoint {
 	    
 	    
 	    // We know that the data is sorted alphabetically by default.
-	    employeeDataGrid.getColumn(0).setDefaultSortAscending(false);
-	    employeeDataGrid.getColumnSortList().push(employeeDataGrid.getColumn(0));   
+	    dataGrid.getColumn(0).setDefaultSortAscending(false);
+	    dataGrid.getColumnSortList().push(dataGrid.getColumn(0));   
 	    
-	    employeeDataGrid.addColumnSortHandler(columnSortHandler);
+	    dataGrid.addColumnSortHandler(columnSortHandler);
 
 	}
 	
@@ -564,8 +861,11 @@ public class MainContrataContract extends MainEntryPoint {
 		pdfViewer.setTitle("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.");
 		pdfViewer.setDocument(dataURI, Constants.DEFAULT_ZOOM / 100.00 );
 		deckPanel.showWidget(2);
-	}	
+	}
 	
+	protected void showTrashEmployee() {
+		deckPanel.showWidget(3);
+	}
 	
 	private void redrawTable() {
 		this.inactiveContractsCB.setValue(false);
@@ -573,6 +873,16 @@ public class MainContrataContract extends MainEntryPoint {
 		this.mainContrataContractObject.getEmployeesInfo(false,
 				s -> {
 					initContractTable();
+					setTableHeights();
+				},
+				f -> {}
+		);
+	}
+	
+	private void redrawTrashTable() {
+		this.mainContrataContractObject.getTrashEmployeesInfo(
+				s -> {
+					initTrashContractTable();
 					setTableHeights();
 				},
 				f -> {}
@@ -777,6 +1087,15 @@ public class MainContrataContract extends MainEntryPoint {
 		});
 		toolbar.add(newContract);
 		
+		trashListBtn = new AonToolbarButton( "Papelera Contratos", AON.CSS.aonIconTrashList() );
+		trashListBtn.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onTrashListBtn(event);
+			}
+		});
+		toolbar.add(trashListBtn);
+		
 		up2DateSS = new AonToolbarButton( "CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", AON.CSS.aonIconTgss() );
 		up2DateSS.setAccessKey('O');
 		up2DateSS.addClickHandler(new ClickHandler() {
@@ -788,6 +1107,26 @@ public class MainContrataContract extends MainEntryPoint {
 		toolbar.add(up2DateSS);
 		
 		return toolbar;
+	}
+	
+	private AonToolbar getTrashToolbarPanel() {
+		AonToolbar toolbar = new AonToolbar("Papelera contratos");
+		
+		backListBtn = new AonToolbarButton( AON.MSG.backAction(), AON.CSS.aonIconBack());
+		backListBtn.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onBackListBtn(event);
+			}
+		});
+		toolbar.add(backListBtn);
+		
+		return toolbar;
+	}
+	
+	private void onBackListBtn(ClickEvent event) {
+		redrawTable();
+		deckPanel.showWidget(0);
 	}
 
 	private void onNewContract(ClickEvent event) {
@@ -809,6 +1148,10 @@ public class MainContrataContract extends MainEntryPoint {
 		employeeDialog.show();
 	}
 
+	private void onTrashListBtn(ClickEvent event) {
+		redrawTrashTable();
+		showTrashEmployee();
+	}
 	
 	private void onUp2DateSS(ClickEvent event) {
 		XMLHttpRequest xhr = XMLHttpRequest.create();
