@@ -259,7 +259,7 @@ public class UserServlet extends AonApiHttpServlet {
 						.setUser(user);
 					uar = AON_SOLUTIONS.insertUserAppRole(domain.getName(), domain.getId(), "", uar);
 				}
-				if(AonApp.TIMECONTROL.equals(uar.getApp())) {
+				if(!getDomain().isParent() && AonApp.TIMECONTROL.equals(uar.getApp())) {
 					TaskHolder th = AON.getTaskHolder(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(user)));
 					if(th == null || th.getId() == null) {
 						User u = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(user));
@@ -327,11 +327,11 @@ public class UserServlet extends AonApiHttpServlet {
 			}
 			
 			if(user != null && user.getId() != null && !user.getId().equals(getData().getInt("id"))){
-				throw new Exception("El mail pertenece a un usuario del enterno.");
+				throw new Exception("El mail pertenece a un usuario del entorno.");
 			}
 			if(auth.getAuth() != null) {
 				if(user == null || user.getId() == null) {
-					createUser(getDomain(), getData(), login, auth.getAuth());
+					user = createUser(getDomain(), getData(), login, auth.getAuth());
 				} else AON_SOLUTIONS.assignAuthToUser(getDomain().getName(), getDomain().getId(), user, auth.getAuth());
 
 				js.put("id", user.getId());
