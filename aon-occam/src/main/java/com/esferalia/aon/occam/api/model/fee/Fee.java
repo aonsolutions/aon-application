@@ -215,6 +215,9 @@ public class Fee implements Serializable{
 	}
 	
 	public String getDiscountExpr() {
+		if(discountExpr == null) {
+			this.discountExpr = "0.0";
+		}
 		return discountExpr;
 	}
 	

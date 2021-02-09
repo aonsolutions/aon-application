@@ -57,28 +57,29 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
 	private void initialize(HttpServletRequest req, HttpServletResponse resp) {
-		setToken((AonStringUtils.isEmpty(req.getHeader("session_id")) || "null".equalsIgnoreCase(req.getHeader("session_id"))) 
-				? "" : req.getHeader("session_id"));
+		setToken((AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) 
+				|| IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.SESSION_ID))) 
+			? IConstants.EMPTY : req.getHeader(IConstants.SESSION_ID));
 		
-		String domainName = req.getHeader("domain_name");
-		Integer domainId = !"null".equalsIgnoreCase(req.getHeader("domain_id")) && AonNumberUtils.toInteger(req.getHeader("domain_id")) != null 
-				? AonNumberUtils.toInteger(req.getHeader("domain_id")) : 0;
+		String domainName = req.getHeader(IConstants.DOMAIN_NAME);
+		Integer domainId = !IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.DOMAIN_ID)) && AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) != null 
+				? AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) : 0;
 
 		Domain domain = AonStringUtils.isBlank(domainName)
 				? new Domain().setName(domainName).setId(domainId)
 				: AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
 		setDomain(domain);
 		
-		String domainLogin = req.getHeader("domain_login");
+		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
 		User user = AonStringUtils.isBlank(domainLogin)
-				? new User().setLogin("")
+				? new User().setLogin(IConstants.EMPTY)
 				: AON.getUser(getDomain().getName(), getDomain().getId(), domainLogin);
 		setUser(user);
 		
 		setParams(getParamsJSON(req));
 		setData(getRequestJSON(req));
 		
-		setPath(req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo() : "/");
+		setPath(req.getPathInfo()!= null || IConstants.EMPTY.equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo() : IConstants.ROOT_BAR);
 	}
 	
 	public String getToken() {
@@ -133,8 +134,8 @@ public class AonApiHttpServlet extends HttpServlet{
 		e.printStackTrace();
 		resp.setStatus(400);
 		JSONObject json = new JSONObject();
-		json.put("message", e.getMessage());
-		json.put("type", "error");
+		json.put(IConstants.MESSAGE, e.getMessage());
+		json.put(IConstants.TYPE, IConstants.ERROR);
 		addCorsHeader(resp);
 		giveBack(req, resp, json, new JSONObject());
 	}
@@ -155,7 +156,7 @@ public class AonApiHttpServlet extends HttpServlet{
 	public void responseFile(HttpServletRequest req, HttpServletResponse resp, File file, MimeType mimetype ) throws IOException {
 		addCorsHeader(resp);
         resp.setContentType(mimetype.getName());
-		resp.setHeader("Content-disposition", "inline; filename=\"" + file.getName() + "." + mimetype.getExtension() +"\";");
+		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "." + mimetype.getExtension() +"\";");
 		FileInputStream fileInpurOs =  new FileInputStream(file);
 		AonIOUtils.copy(fileInpurOs, resp.getOutputStream());
 		resp.flushBuffer();
@@ -163,11 +164,10 @@ public class AonApiHttpServlet extends HttpServlet{
 	}
 	
     protected void addCorsHeader(HttpServletResponse response){
-    	//response.addHeader("Access-Control-Allow-Credentials", "true");
-    	response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
-        response.addHeader("Access-Control-Allow-Headers", "*");//X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
-        response.addHeader("Access-Control-Max-Age", "1728000");
+    	response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+        response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_HEADERS, "*");
+        response.addHeader(IConstants.ACCESS_CONTROL_MAX_AGE, "1728000");
     }
 	
 	protected void giveBack(HttpServletRequest req, HttpServletResponse resp,

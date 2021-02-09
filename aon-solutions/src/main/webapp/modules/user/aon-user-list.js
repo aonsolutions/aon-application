@@ -48,9 +48,12 @@ export class AonUserList extends AonElement {
 	}
 
 	init() {
+		let filter = {
+			filter: this.hasAttribute('filter') ? this.getAttribute('filter') : 'company'
+		};
 		let table = document.getElementById('aonUserTable');
 		if(table) {
-			getUsers().then(users => {
+			getUsers(filter).then(users => {
 				table.removeRows();
 				users.forEach((user, i) => {
 					table.addRow(user, () => this.aonUser(user));

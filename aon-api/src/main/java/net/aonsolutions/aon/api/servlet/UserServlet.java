@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -83,9 +84,15 @@ public class UserServlet extends AonApiHttpServlet {
 	
 	private JSONArray getDomainUsers() {
 		JSONArray jsArray = new JSONArray();
-		
-		AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId()))
-		.forEach(r -> {
+		Stream<User> users;
+		if(!getDomain().isParent() && getParams().opt("filter") != null && getParams().optString("filter").equals("entorno")) {
+			users = AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getParentId()));
+		} else if(getParams().opt("filter") != null && getParams().optString("filter").equals("shared")) {
+			users = AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId())
+					.and(f.getSharedProperty().eq((byte)1)));
+		} else users = AON.getDomainUserStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId()));
+
+		users.forEach(r -> {
 			JSONObject json = new JSONObject();
 			if(r.getAuth() != null) {
 				Auth auth = AON_SOLUTIONS.getAuth(getDomain().getName(), getDomain().getId(), r.getAuth());

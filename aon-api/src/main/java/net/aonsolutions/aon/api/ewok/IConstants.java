@@ -1,7 +1,9 @@
 package net.aonsolutions.aon.api.ewok;
 
 public interface IConstants {
-
+	String EMPTY = "";
+	String ROOT_BAR = "/";
+	String NULL = "null";
 	String AMOUNT = "amount";
 	String ACTIVE = "active";
 	String ACCOUNT = "account";
@@ -24,8 +26,12 @@ public interface IConstants {
 	String DOCUMENT = "document";
 	String DOCUMENT_COUNTRY = "document_country";
 	String DOMAIN = "domain";
+	String DOMAIN_NAME = "domain_name";
+	String DOMAIN_ID = "domain_id";
+	String DOMAIN_LOGIN = "domain_login";
 	String DUE_DATE = "due_date";
 	String EMAIL = "email";
+	String ERROR = "error";
 	String FILE = "file";
 	String FILE_NAME = "fileName";
 	String FINANCES = "finances";
@@ -35,6 +41,7 @@ public interface IConstants {
 	String INVESTMENT = "investment";
 	String NAME = "name";
 	String NUMBER = "number";
+	String MESSAGE = "message";
 	String OLD_STATUS = "oldStatus";
 	String PAY_METHOD = "pay_method";
 	String PENDING = "pending";
@@ -48,8 +55,8 @@ public interface IConstants {
 	String PROVINCE = "province";
 	String QUANTITY = "quantity";
 	String QUOTA = "quota";
-//	String RDOCUMENT = "rdocument";
-//	String RNAME = "rname";
+	String RDOCUMENT = "rdocument";
+	String RNAME = "rname";
 	String RECEIVER = "receiver";
 	String REFERENCE = "reference";
 	String RETENTION = "retention";
@@ -72,4 +79,10 @@ public interface IConstants {
 	String WITHHOLDING = "withholding";
 	String CALLBACK = "callback";
 	
+	String SESSION_ID = "session_id";
+	String CONTENT_DISPOSITION = "Content-disposition";
+	String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+	String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
+	String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
+	String ACCESS_CONTROL_MAX_AGE = "Access-Control-Max-Age";
 }

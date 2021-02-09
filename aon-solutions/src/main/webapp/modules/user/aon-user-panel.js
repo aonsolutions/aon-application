@@ -28,8 +28,11 @@ export class AonUserPanel extends AonElement {
 	}
 
 	connectedCallback () {
+		// this.innerHTML = `
+		// 	<aon-application id="${this.AON_USER_PANEL}" title="${MSG.AON_MSG_USERS}" sidenav="block"></aon-application>
+		// `;
 		this.innerHTML = `
-			<aon-application id="${this.AON_USER_PANEL}" title="${MSG.AON_MSG_USERS}" sidenav="block"></aon-application>
+			<aon-application id="${this.AON_USER_PANEL}" title="${MSG.AON_MSG_USERS}"></aon-application>
 		`;
 		this.build();
   }
@@ -45,7 +48,29 @@ export class AonUserPanel extends AonElement {
 		aonUserPanel.addToolbarOption('UserShare', 'share', () => this.buildCreateUser(true));
 		aonUserPanel.addToolbarOption('UserAdd', 'add', () => this.buildCreateUser(true));
 
+		let filterOptions = [{
+				name: 'Empresa',
+				icon: 'domain',
+				fn: () => this.init('company')
+			}, {
+				name: 'Entorno',
+				icon: 'apartment',
+				fn: () => this.init('entorno')
+			}, {
+				name: 'Compartidas',
+				icon: 'share',
+				fn: () => this.init('shared')
+			}
+		];
+		aonUserPanel.addSidenavOptions('Usuarios', filterOptions);
+
 		aonUserPanel.setContentHTML('<aon-user-list> </aon-user-list>');
+		this.getElement('aonUserPanelSidenav').style.marginLeft = '153px';
+	}
+
+	init(filter){
+		let aonUserPanel = this.getElement(this.AON_USER_PANEL);
+		aonUserPanel.setContentHTML(`<aon-user-list filter="${filter}"> </aon-user-list>`);
 	}
 
 	buildCreateUser(share) {
