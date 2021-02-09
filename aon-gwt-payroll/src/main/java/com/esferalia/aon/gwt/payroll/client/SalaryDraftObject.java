@@ -9,9 +9,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
@@ -37,13 +40,15 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.js.payroll.client.Reports.Payroll;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
+import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class SalaryDraftObject implements IContextProvider , Payroll{
+	
+	private static Logger LOGGER = Logger.getLogger("");
 
 	public static Date NULL_DATE = new Date() {
 	};
@@ -455,8 +460,11 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	}
 
 	public void synchronize(final CalculateCallback callback) {
+		if ( isUp2Future(salaryDraft)) 
+			return; 
 		if ( isUp2Date(salaryDraft, 12 * 3600 * 1000) ) 
 			return;
+		
 //		salaryDraft.getBonuses().stream()
 //		.filter(b -> b.getExpression() );
 
@@ -484,17 +492,26 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		employeesServiceAsync.syncSalaryDraft(salaryDraft,
 				asyncCallback);
 	}
+	private boolean isUp2Future(SalaryDraft salaryDraft) {
+		Date lastDayOfCurrentMonth = DateUtils.getLastDayOfMonth(new Date());
+		return salaryDraft.getStartDate().after(lastDayOfCurrentMonth);
+	}
 	
+
 	private boolean isUp2Date(SalaryDraft salaryDraft, long limit) {
 		long time = new Date().getTime() ;
 		RegExp regExp = RegExp.compile("epoch:([0-9]+)");
 		for (Bonus bonus : salaryDraft.getBonuses()) {
 			MatchResult result = regExp.exec(bonus.getExpression());
-			if ( result == null )
+			if ( result == null ) {
+				warning("Unknown Bonus '" + bonus.getExpression()+"'");
 				return false;
+			}
 			long epoch = Long.parseLong(result.getGroup(1));		
-			if ( (time - epoch) > limit ) 
+			if ( (time - epoch) > limit ) {
+				warning("Obsolet Bonus '" + bonus.getExpression()+"'");
 				return false;
+			}
 		}
 		return salaryDraft.getBonuses().size() > 0;
 	}
@@ -1465,5 +1482,16 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public EmployeeEventsDraftObject getEmployeeEventsDraftObjecta() {
 		return employeeEventsDraftObject;
 	}
+	
+	private static void info(String message) {
+		if ( LogConfiguration.loggingIsEnabled())
+			LOGGER.log(Level.WARNING, message);
+	}
+
+	private static void warning(String message) {
+		if ( LogConfiguration.loggingIsEnabled())
+			LOGGER.log(Level.WARNING, message);
+	}
+
 
 }
