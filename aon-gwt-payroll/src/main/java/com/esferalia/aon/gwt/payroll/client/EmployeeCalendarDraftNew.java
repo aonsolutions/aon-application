@@ -420,6 +420,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	public EmployeeCalendarDraftNew() {
 		//Inicializamos la vista del calendario
 		initWidget(uiBinder.createAndBindUi(this));
+		this.yearLabel.setText((year + 1900)+"");
 		
 		// Add contextMenu
 		calendarGrid.addDomHandler(this, ContextMenuEvent.getType());
