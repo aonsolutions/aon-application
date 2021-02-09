@@ -51,6 +51,7 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 		if (get().getInsight() != null) {
 			DATE
 			.andThen(TOTAL)
+			.andThen(SUPER_SIMPLE_21_IVA)
 			.andThen(SIMPLE_IVA)
 			.andThen(COMPLEX_IVA)
 			.andThen(SIMPLE_IRPF)
@@ -172,31 +173,65 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 	private static final double IVA_PERCENTS [] = {21.0, 10.0, 4.0};
 	private static final double IRPF_PERCENTS [] = {19.0};
 	
-	public static BiConsumer<TediContext,TediInvoice> SIMPLE_IVA = (ctx,inv) -> {
-		if (inv.getInsight() != null && inv.getInsight().getAmounts() != null ) {
+	public static BiConsumer<TediContext,TediInvoice> SUPER_SIMPLE_21_IVA = (ctx,inv) -> {
+		if (inv.getTotal() != null 
+			&& AonMathUtils.isNotZero(inv.getTotal()) 
+			&& inv.getInsight() != null 
+			&& inv.getInsight().getAmounts() != null ) {
 			Double[] amounts = inv.getInsight().getAmounts(); 
-			Arrays.sort(amounts, Collections.reverseOrder());
-			iva: {
-				for (int i = 0; i < amounts.length; i++) {
-					double total = inv.getTotal(); // amounts[i];
-					if (amounts[i] != 0.0) {
-						for (double percentage : IVA_PERCENTS ) {
-							double base = total / (1 + percentage / 100.0);
-							if (base != 0.0) {
-								int indexOfBase = indexOf(amounts, base, i + 1);
-								if ( indexOfBase >= 0 ) {
-									double quota = total - base;
-									int indexOfQuota = indexOf(amounts, quota, i+1);
-									if ( indexOfQuota >= 0 ) {
-										// inv.setTotal(total);
-										inv.ensureTax(
-											new TediInvoiceTax()
-												.setTaxType( TediTaxType.IVA )
-												.setBase(amounts[indexOfBase])
-												.setPercentage(percentage )
-												.setQuota(amounts[indexOfQuota])
-												);
-										break iva;
+			double total = inv.getTotal(); // amounts[i];
+			double percentage = IVA_PERCENTS[0];
+			double base = total / (1 + percentage / 100.0);
+			for (int i = 0; i < amounts.length; i++) {
+				if (amounts[i] != 0.0) {
+					int indexOfBase = indexOf(amounts, base, i + 1);
+					if ( indexOfBase >= 0 ) {
+						double quota = total - base;
+						int indexOfQuota = indexOf(amounts, quota, i+1);
+						if ( indexOfQuota >= 0 ) {
+							// inv.setTotal(total);
+							inv.ensureTax(
+								new TediInvoiceTax()
+									.setTaxType( TediTaxType.IVA )
+									.setBase(amounts[indexOfBase])
+									.setPercentage(percentage )
+									.setQuota(amounts[indexOfQuota])
+									);
+							break;
+						}
+					}
+				}
+			}
+		}
+	};
+	
+	public static BiConsumer<TediContext,TediInvoice> SIMPLE_IVA = (ctx,inv) -> {
+		if ( !isSettled(inv) ) {
+			if (inv.getInsight() != null && inv.getInsight().getAmounts() != null ) {
+				Double[] amounts = inv.getInsight().getAmounts(); 
+				Arrays.sort(amounts, Collections.reverseOrder());
+				iva: {
+					for (int i = 0; i < amounts.length; i++) {
+						double total = inv.getTotal(); // amounts[i];
+						if (amounts[i] != 0.0) {
+							for (double percentage : IVA_PERCENTS ) {
+								double base = total / (1 + percentage / 100.0);
+								if (base != 0.0) {
+									int indexOfBase = indexOf(amounts, base, i + 1);
+									if ( indexOfBase >= 0 ) {
+										double quota = total - base;
+										int indexOfQuota = indexOf(amounts, quota, i+1);
+										if ( indexOfQuota >= 0 ) {
+											// inv.setTotal(total);
+											inv.ensureTax(
+												new TediInvoiceTax()
+													.setTaxType( TediTaxType.IVA )
+													.setBase(amounts[indexOfBase])
+													.setPercentage(percentage )
+													.setQuota(amounts[indexOfQuota])
+													);
+											break iva;
+										}
 									}
 								}
 							}
@@ -206,7 +241,7 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 			}
 		}
 	};
-	
+
 	public static BiConsumer<TediContext,TediInvoice> SIMPLE_IRPF = (ctx,inv) -> {
 		if ( !isSettled(inv) ) {
 			if (inv.getInsight() != null && inv.getInsight().getAmounts() != null ) {
@@ -260,10 +295,12 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 	};
 	
 	public static BiConsumer<TediContext,TediInvoice> CHECK_TOTAL_INVOICE = (ctx,inv) -> {
+		inv.getInsight().setSettledManually(false);
 		if ( !isSettled(inv) ) {
 			if (inv.getTaxes() != null && inv.getTaxes().size() > 0) {
 				inv.getTaxes().clear();
 			}
+			inv.getInsight().setSettledManually(true);
 			inv.ensureTax(
 					new TediInvoiceTax()
 					.setTaxType( TediTaxType.IVA )

@@ -18,8 +18,6 @@ public class TediResult implements Serializable {
 	private boolean checked;
 	private TediInvoice tedi;
 	private AccountingInvoice ai;
-	private LinkedList<TediError> messages = new LinkedList<TediError>();
-	private LinkedList<AccountingRegistry> posibleRegistries;
 
 	public TediResult() {
 
@@ -62,38 +60,6 @@ public class TediResult implements Serializable {
 		return this;
 	}
 	
-	public LinkedList<AccountingRegistry> getPosibleRegistries() {
-		return posibleRegistries;
-	}
-	public TediResult setPosibleRegistries(LinkedList<AccountingRegistry> posibleRegistries) {
-		this.posibleRegistries = posibleRegistries;
-		return this;
-	}
-
-	public LinkedList<TediError> getMessages() {
-		return messages;
-	}
-
-	public void add(TediError error) {
-		messages.add(error);
-	}
-
-	public TediLevel getMoreSeriousLevel() {
-		TediLevel level  = null;
-		if (getMessages() != null) {
-			for (TediError error : getMessages()) {
-				if (level == null || error.getLevel().ordinal() >  level.ordinal()) {
-					level = error.getLevel();
-				}
-			}
-		}
-		return level;
-	}
-	
-	public boolean isImportable() {
-		TediLevel level = getMoreSeriousLevel();;
-		return ( level == null || level.ordinal() < TediLevel.ERR.ordinal() );
-	}
 	public boolean isEmptyTicket() {
 		return isEmpty() && tedi.isTicket();
 	}
@@ -116,9 +82,25 @@ public class TediResult implements Serializable {
 	private boolean hasPNGAttach() {
 		return hasAttach() && (AonStringUtils.equals(getTedi().getFile().getContentType(), MimeType.PNG.getName())); 
 	}
-	
+
+	public void add(TediError error) {
+		getAccountingInvoice().add(error);
+	}
+
 	public void clearMessages() {
-		this.messages = new LinkedList<TediError>();		
+		getAccountingInvoice().clearMessages();
+	}
+
+	public LinkedList<TediError> getMessages() {
+		return getAccountingInvoice().getMessages();
+	}
+
+	public boolean isImportable() {
+		return getAccountingInvoice().isImportable();
+	}
+
+	public void setPosibleRegistries(LinkedList<AccountingRegistry> registries) {
+		getAccountingInvoice().setPosibleRegistries(registries);
 	}
 	
 }

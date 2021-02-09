@@ -37,6 +37,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -346,7 +347,10 @@ public class TediContextVisitor implements ITediContextVisitor {
 	public void visitWorkplace(ICallback callback) {
 		noVisit();
 	}
-	
+	@Override
+	public void visitBasesQuotas(ICallback callback) {
+		noVisit();
+	}
 	@Override
 	public void visitDetailDescription(ICallback callback) {
 		noVisit();
@@ -419,7 +423,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 
 	private void showDocumentDialog(String label, String document, ITediCallback<String> callback) {
 		final TextBox documentBox = new TextBox();
-		documentBox.setStyleName(AON.AON_CSS.aonInputText());
+		documentBox.setStyleName(AON.CSS.aonInputText());
 		documentBox.setValue(document);
 		documentBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
@@ -448,10 +452,10 @@ public class TediContextVisitor implements ITediContextVisitor {
 			|| callback.getCallback().getResult().getInvoice().isUndeductible() ) {
 			AccountingRegistry dc = callback.getCallback().getConfiguration().getDefaultCreditor();
 			if (dc != null) {
-				Label defaultCreditor = new Label("Asignar a " + dc.getName() + " (" + dc.getAccountCode() + ")");
-				defaultCreditor.setStyleName(AON.AON_CSS.aonClickableLabel());
-				defaultCreditor.addStyleName(AON.AON_CSS.aonIconRowSelector());
-				defaultCreditor.addStyleName(AON.AON_CSS.aonPaddingLeft20());
+				Button defaultCreditor = new Button("Asignar a " + dc.getName() + " (" + dc.getAccountCode() + ")");
+				defaultCreditor.setStyleName(AON.CSS.aonTabButton());
+				defaultCreditor.addStyleName(AON.CSS.aonIconRight());
+				defaultCreditor.addStyleName(AON.CSS.aonWidthAutoImportant());
 				defaultCreditor.addClickHandler( new ClickHandler() {
 					
 					@Override
@@ -483,11 +487,12 @@ public class TediContextVisitor implements ITediContextVisitor {
 			} else {
 				t = "titular";
 			}
-			final AccountingRegistryType type = ty;	
-			Label newCreditor = new Label("Crear el " + t + " (" + d + " " + n + ")");
-			newCreditor.setStyleName(AON.AON_CSS.aonClickableLabel());
-			newCreditor.addStyleName(AON.AON_CSS.aonIconReset());
-			newCreditor.addStyleName(AON.AON_CSS.aonPaddingLeft20());
+			final AccountingRegistryType type = ty;
+			
+			Button newCreditor = new Button("Crear el " + t + " (" + d + " " + n + ")");
+			newCreditor.setStyleName(AON.CSS.aonTabButton());
+			newCreditor.addStyleName(AON.CSS.aonWidthAutoImportant());
+			newCreditor.addStyleName(AON.CSS.aonIconAdd());
 			newCreditor.addClickHandler( new ClickHandler() {
 				
 				@Override
@@ -523,9 +528,9 @@ public class TediContextVisitor implements ITediContextVisitor {
 		
 		ListBox registryBox = new ListBox();
 		registryBox.addItem("<Selecciones un valor>", (String) null);
-		if (callback.getCallback().getResult().getPosibleRegistries() != null) {
+		if (callback.getCallback().getResult().getAccountingInvoice().getPosibleRegistries() != null) {
 			int index = 0;
-			for (AccountingRegistry ar : callback.getCallback().getResult().getPosibleRegistries() ) {
+			for (AccountingRegistry ar : callback.getCallback().getResult().getAccountingInvoice().getPosibleRegistries() ) {
 				registryBox.addItem("[" + ar.getType().getDescription().substring(0, 3)+"] " + ar.getDocument()  + " - " + ar.getName() + " (" + ar.getAccountCode() + ")", AonNumberUtils.toString(index));
 				index++;
 			}
@@ -536,7 +541,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 			@Override
 			public void onChange(ChangeEvent event) {
 				Integer index = AonNumberUtils.toInteger( registryBox.getSelectedValue() );
-				AccountingRegistry selected = callback.getCallback().getResult().getPosibleRegistries().get(index);
+				AccountingRegistry selected = callback.getCallback().getResult().getAccountingInvoice().getPosibleRegistries().get(index);
 				callback.onAccept(selected);
 			}
 		});
@@ -545,25 +550,9 @@ public class TediContextVisitor implements ITediContextVisitor {
 		container.add(dialog);
 	}
 
-//	private void showReferenceCodeDialog(String label, String referenceCode, ITediCallback<String> callback) {
-//		final TextBox referenceBox = new TextBox();
-//		referenceBox.setStyleName(AON.AON_CSS.aonInputText());
-//		referenceBox.setValue(referenceCode);
-//		referenceBox.addValueChangeHandler(new ValueChangeHandler<String>() {
-//			
-//			@Override
-//			public void onValueChange(ValueChangeEvent<String> event) {
-//				callback.onAccept(event.getValue());
-//			}
-//		});
-//		BasicDialog dialog = new BasicDialog();
-//		dialog.setContent(label, referenceBox);
-//		container.add(dialog);
-//	}
-	             
 	private void showBankAccountDialog(String label, String referenceCode, ITediCallback<String> callback) {
 		final TextBox referenceBox = new TextBox();
-		referenceBox.setStyleName(AON.AON_CSS.aonInputText());
+		referenceBox.setStyleName(AON.CSS.aonInputText());
 		referenceBox.setValue(referenceCode);
 		referenceBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
@@ -582,26 +571,29 @@ public class TediContextVisitor implements ITediContextVisitor {
 
 		public BasicDialog() {
 			super();
-			container.setStyleName(AON.AON_CSS.aonBlockCenter());
-			container.addStyleName(AON.AON_CSS.aonPanelGrid());
-			container.addStyleName(AON.AON_CSS.aonWidth90Percent());
+			setStyleName(AON.CSS.aonPadding());
+			addStyleName(AON.CSS.aonWidthAlmostAll());
+			addStyleName(AON.CSS.aonBorder());
+			
+			container.setStyleName(AON.CSS.aonBlockCenter());
+			container.addStyleName(AON.CSS.aonTable());
+			container.addStyleName(AON.CSS.aonWidthAlmostAll());
 			container.getColumnFormatter().setWidth(0, "100px");
 			container.getColumnFormatter().setWidth(1, "auto");
 			FlowPanel panel = new FlowPanel();
 			panel.add(container);
 			FlowPanel buttons = new FlowPanel();
-			buttons.setStyleName(AON.AON_CSS.aonTextCenter());
-			buttons.addStyleName(AON.AON_CSS.aonMarginTop());
+			buttons.setStyleName(AON.CSS.aonTextCenter());
+			buttons.addStyleName(AON.CSS.aonMarginTop());
 			add(container);
 		}
 
 		public void setContent(String label, IsWidget child) {
 			int row = container.getRowCount();
-			container.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-			container.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextLeft());
+			container.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+			container.getCellFormatter().addStyleName(row, 0, AON.CSS.aonTextRight());
 			container.setWidget(row, 0, new Label(label));
 
-			container.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 			container.setWidget(row, 1, child);
 		}
 	}

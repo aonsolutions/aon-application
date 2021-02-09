@@ -370,6 +370,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_width_almost_all")
 	String aonWidthAlmostAll();
 	
+	@ClassName("aon_width_auto")
+	String aonWidthAuto();
+
+	@ClassName("aon_width_auto_important")
+	String aonWidthAutoImportant();
+
 	@ClassName("aon_height_all")
 	String aonHeightAll();
 
@@ -726,6 +732,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_suggest_box_popup")
 	String aonSuggestBoxPopup();
+
+	@ClassName("aon_blink")
+	String aonBlink();
 
 }
 

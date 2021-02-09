@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonFullDocument;
@@ -70,6 +71,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -501,6 +503,30 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 		regTable.add(labelsPanel);
 		
+		if (invoiceCallback.getInvoice().isTediParsed() && invoiceCallback.getInvoice().getMessages() != null && !invoiceCallback.getInvoice().getMessages().isEmpty() ) {
+			AonTableButton tediButton  = new AonTableButton("Avisos proceso OCR",AON.CSS.aonIconWarning());
+			tediButton.addStyleName(AON.CSS.aonMarginRight());
+			tediButton.addStyleName(AON.CSS.aonMarginLeft());
+			tediButton.getElement().getStyle().setColor("red");
+			tediButton.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					tediButton.removeStyleName(AON.CSS.aonBlink());
+					final AonCustomPopup dialog = new AonCustomPopup();
+					dialog.setWidth((Window.getClientWidth() - 100) + "px");
+					dialog.setHeight((Window.getClientHeight() - 100) + "px");
+					dialog.setCaption( "Avisos proceso OCR");
+					TediProblemsList problemsPanel = new TediProblemsList( invoiceCallback.getInvoice().getMessages());
+					dialog.add( problemsPanel );
+					dialog.center();
+					dialog.show();
+				}
+				
+			});
+			regTable.add(tediButton);
+		}
+
 		AonTableButton helpButton  = new AonTableButton(AON.MSG.help(),AON.CSS.aonIconHelp());
 		helpButton.addStyleName(AON.CSS.aonMarginRight());
 		helpButton.addStyleName(AON.CSS.aonMarginLeft());

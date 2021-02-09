@@ -59,7 +59,7 @@ public class TediValidationTest {
 		Assert.assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
-				hasProperty("code", equalTo(TediErrorMessages.C002.toString()))
+				hasProperty("code", equalTo(TediErrorMessages.C003.toString()))
 				,hasProperty("context", hasProperty("key",is(TediContextKey.SERIES)))
 				)));
 	}

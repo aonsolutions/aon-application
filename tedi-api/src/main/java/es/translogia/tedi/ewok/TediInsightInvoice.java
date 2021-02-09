@@ -12,6 +12,7 @@ public class TediInsightInvoice implements Serializable {
 	private Double amounts[];
 	private Date issueDate;
 	private Double total;
+	private boolean settledManually;
 	
 	public Date[] getDates() {
 		return dates;
@@ -58,6 +59,16 @@ public class TediInsightInvoice implements Serializable {
 		return this;
 	}
 	
+	
+	public boolean isSettledManually() {
+		return settledManually;
+	}
+
+	public TediInsightInvoice setSettledManually(boolean settledManually) {
+		this.settledManually = settledManually;
+		return this;
+	}
+
 	public boolean hasIssueDate() {
 		return getIssueDate() != null;
 	}

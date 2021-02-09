@@ -9,7 +9,7 @@ public enum TestTemplates {
 	AON_01_RESTAURANTE_7 ("/net/aonsolutions/aon/tedi/test/img/01_RESTAURANTE_7.jpg") {
 		@Override public Date getDate() {return Date.from(LocalDateTime.of(2019, 12, 7, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
 		@Override public String getSenderDocument() {return "16272662R";}
-		@Override public String getReceiverDocument() {return "F01131978";}
+		@Override public String getReceiverDocument() {return "B01487271";}
 		@Override public int getTaxNumber() {return 1;}
 		@Override public Double getTaxBase10() {return 32.55;}
 		@Override public Double getTaxQuota10() {return 3.25;}
@@ -20,7 +20,7 @@ public enum TestTemplates {
 	AON_02_QUINTANAPALLA_AREAS ("/net/aonsolutions/aon/tedi/test/img/02_QUINTANAPALLA_AREAS.jpg") {
 		@Override public Date getDate() {return Date.from(LocalDateTime.of(2019, 7, 7, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
 		@Override public String getSenderDocument() {return "A08225013";}
-		@Override public String getReceiverDocument() {return "F01131978";}
+		@Override public String getReceiverDocument() {return "B01487271";}
 		@Override public int getTaxNumber() {return 1;}
 		@Override public Double getTaxBase10() {return 13.50;}
 		@Override public Double getTaxQuota10() {return 1.35;}
@@ -29,7 +29,7 @@ public enum TestTemplates {
 	AON_03_ERKIAGA ("/net/aonsolutions/aon/tedi/test/img/03-ERKIAGA.jpg") {
 		@Override public Date getDate() {return Date.from(LocalDateTime.of(2019, 11, 16, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
 		@Override public String getSenderDocument() {return "J01542877";}
-		@Override public String getReceiverDocument() {return "F01131978";}
+		@Override public String getReceiverDocument() {return "B01487271";}
 		@Override public int getTaxNumber() {return 1;}
 		@Override public Double getTaxBase10() {return 10.27;}
 		@Override public Double getTaxQuota10() {return 1.03;}

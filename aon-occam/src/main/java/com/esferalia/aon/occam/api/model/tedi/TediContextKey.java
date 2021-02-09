@@ -31,6 +31,12 @@ public enum TediContextKey  implements Serializable {
 			visitor.visitType(callback);
 		}
 	}, 
+	BASES_QUOTAS("Bases y cuotas") {
+		@Override
+		public void visit(ITediContextVisitor visitor,ICallback callback) {
+			visitor.visitBasesQuotas(callback);
+		}
+	}, 
 	SERIES("Serie") {
 		@Override
 		public void visit(ITediContextVisitor visitor,ICallback callback) {

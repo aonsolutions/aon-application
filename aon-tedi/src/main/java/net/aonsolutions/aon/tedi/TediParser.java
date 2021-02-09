@@ -1,9 +1,13 @@
 package net.aonsolutions.aon.tedi;
 
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+
 import java.util.LinkedList;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import org.jooq.Field;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
@@ -477,6 +481,11 @@ public class TediParser {
 	private static Consumer<TediParserContext> INVOICE_SERIES = (ctx) -> {
 		if (ctx.getTediResult().getTedi().isEmitida()) {
 			ctx.getTediResult().getInvoice().setSeries(ctx.getTediResult().getTedi().getSeries());
+			if (willOverflow(INVOICE.SERIES, ctx.getTediResult().getInvoice().getSeries())) {
+				String series = AonStringUtils.substring(ctx.getTediResult().getInvoice().getSeries(), 0, INVOICE.SERIES.getDataType().length());
+				ctx.getTediResult().getInvoice().setSeries( series );	
+				ctx.getTediResult().add( TediErrorMessages.C003.inf(TediContextKey.SERIES,TediContextKey.SERIES.getDescription(), series ));	
+			}
 		}
 	};
 	
@@ -499,6 +508,10 @@ public class TediParser {
 			result.getInvoice().setReferenceCode("<auto>"); 
 		}
 	};
+
+	private static boolean willOverflow(Field<String> field, String series) {
+		return (AonStringUtils.length(series) > field.getDataType().length());
+	}
 
 	private static Consumer<TediParserContext> INVOICE_COMMENTS = (ctx) -> {
 		TediResult result = ctx.getTediResult();
@@ -793,6 +806,12 @@ public class TediParser {
 		}
 	};
 
+	private static Consumer<TediParserContext> INVOICE_SETTLED_MANUALLY = (ctx) -> {
+		if (ctx.getTediResult().getTedi().getInsight() != null && ctx.getTediResult().getTedi().getInsight().isSettledManually()) {
+			ctx.getTediResult().add( TediErrorMessages.C017.inf(TediContextKey.BASES_QUOTAS,TediContextKey.BASES_QUOTAS.getDescription()));
+		}		
+	};
+
 	public static TediResult toAccountingInvoice(AONContext ctx, AonConfiguration aonCtx, TediInvoice tedi) {
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setInvoice(new Invoice());
@@ -819,6 +838,7 @@ public class TediParser {
 		.andThen(INVOICE_TOTAL)
 		.andThen(INVOICE_FINANCES)		
 		.andThen(INVOICE_COMMENTS)
+		.andThen(INVOICE_SETTLED_MANUALLY)
 		.accept(tctx);
 		
 		fillVats(ctx, aonCtx, result);

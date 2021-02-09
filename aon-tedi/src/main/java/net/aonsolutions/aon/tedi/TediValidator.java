@@ -12,8 +12,6 @@ import org.jooq.Field;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.AccountEntry;
-import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -54,7 +52,7 @@ public class TediValidator {
 	public static Consumer<ValidationContext> OVERFLOW_SERIES = (ctx) -> {
 		if (AonStringUtils.isNotBlank(ctx.getInvoice().getSeries())) {
 			if (willOverflow(INVOICE.SERIES, ctx.getInvoice().getSeries())) {
-				ctx.add( TediErrorMessages.C002.err(TediContextKey.SERIES, TediContextKey.SERIES.getDescription(),INVOICE.SERIES.getDataType().length()));
+				ctx.add( TediErrorMessages.C002.wrn(TediContextKey.SERIES, TediContextKey.SERIES.getDescription(),INVOICE.SERIES.getDataType().length()));
 			}
 		}
 	};
@@ -72,7 +70,7 @@ public class TediValidator {
 	 */
 	public static Consumer<ValidationContext> EMPTY_SALES_NUMBER = (ctx) -> {
 		if (ctx.getInvoice().isSales() && ctx.getInvoice().getNumber() == 0 ) {
-			ctx.add( TediErrorMessages.C001.err(TediContextKey.NUMBER));
+			ctx.add( TediErrorMessages.C001.wrn(TediContextKey.NUMBER));
 		}
 	};
 	
@@ -315,28 +313,27 @@ public class TediValidator {
 		}
 	};
 
-	public static Consumer<ValidationContext> ENTRY_SETTLED = (ctx) -> {
-		if (ctx.getResult().getAccountingInvoice() != null && ctx.getResult().getAccountingInvoice().getAccountEntry() != null) {
-			AccountEntry ae = ctx.getResult().getAccountingInvoice().getAccountEntry();
-			double sumD = 0.0;
-			double sumC = 0.0;
-			boolean empty = true;
-			for (AccountEntryDetail aed : ae.getDetails()) {
-				if (!aed.isDeleted()) {
-					sumD = AonMathUtils.sum(sumD, aed.getDebit());	
-					sumC = AonMathUtils.sum(sumC, aed.getCredit());
-					empty = false;
-				}
-			}
-			if (empty) {
-				ctx.add( TediErrorMessages.C013.wrn(TediContextKey.ACCOUNT_ENTRY) );
-			}
-			
-			if (!AonMathUtils.isZero( AonMathUtils.round(sumD - sumC))) {
-				ctx.add( TediErrorMessages.C012.wrn(TediContextKey.ACCOUNT_ENTRY) );
-			}
-		}
-	};
+//	public static Consumer<ValidationContext> ENTRY_SETTLED = (ctx) -> {
+//		if (ctx.getResult().getAccountingInvoice() != null && ctx.getResult().getAccountingInvoice().getAccountEntry() != null) {
+//			AccountEntry ae = ctx.getResult().getAccountingInvoice().getAccountEntry();
+//			double sumD = 0.0;
+//			double sumC = 0.0;
+//			boolean empty = true;
+//			for (AccountEntryDetail aed : ae.getDetails()) {
+//				if (!aed.isDeleted()) {
+//					sumD = AonMathUtils.sum(sumD, aed.getDebit());	
+//					sumC = AonMathUtils.sum(sumC, aed.getCredit());
+//					empty = false;
+//				}
+//			}
+//			if (empty) {
+//				ctx.add( TediErrorMessages.C013.wrn(TediContextKey.ACCOUNT_ENTRY) );
+//			}
+//			if (!AonMathUtils.isZero( AonMathUtils.round(sumD - sumC))) {
+//				ctx.add( TediErrorMessages.C012.wrn(TediContextKey.ACCOUNT_ENTRY) );
+//			}
+//		}
+//	};
 
 	private static boolean willOverflow(Field<String> field, String series) {
 		return (AonStringUtils.length(series) > field.getDataType().length());
@@ -391,7 +388,7 @@ public class TediValidator {
 			
 			.andThen(FINANCES_VALIDATION)
 			
-			.andThen(ENTRY_SETTLED)
+//			.andThen(ENTRY_SETTLED)
 			
 		.accept(new ValidationContext(ctx,result));
 		

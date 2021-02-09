@@ -24,4 +24,5 @@ public interface ITediContextVisitor {
 	void visitFinanceAmountZero(ICallback callback);
 	void visitFinanceAccountBank(ICallback callback);
 	void visitWorkplace(ICallback callback);
+	void visitBasesQuotas(ICallback callback);
 }

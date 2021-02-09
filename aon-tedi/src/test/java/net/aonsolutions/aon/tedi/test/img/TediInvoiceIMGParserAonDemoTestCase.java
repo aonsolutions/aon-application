@@ -21,28 +21,12 @@ import es.translogia.tedi.ewok.TediTaxType;
 import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediInvoiceBuilder;
+import net.aonsolutions.aon.tedi.test.AbstractTediTest;
 import solutions.aon.in.invoice.UnknownInvoiceException;
 import solutions.aon.in.invoice.img.InvoiceIMGParser;
 
-public class TediInvoiceIMGParserAonDemoTestCase {
+public class TediInvoiceIMGParserAonDemoTestCase  extends AbstractTediTest { 
 
-	private static String DOMAIN_NAME = "queserialascortas.ecastellano.euk";
-	private static int DOMAIN_ID = 18539;
-	private static String USER = "admin";
-	
-	private TediContext ctx;
-
-	@Before
-	public void before() throws ClassNotFoundException {
-		Class.forName( Driver.class.getName() );
-		ctx = new TediContext()
-				.setDomain(DOMAIN_ID)
-				.setDomainName(DOMAIN_NAME)
-				.setAONContext (AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID, USER))
-				;
-		ctx.setAonConfiguration(ConfigurationDAO.getConfiguration(ctx.getAONContext()));
-	}
-	
 	@Test
 	public void test_AON_01_RESTAURANTE_7() throws IOException, UnknownInvoiceException, ClassNotFoundException {
 		testTemplate( TestTemplates.AON_01_RESTAURANTE_7);
@@ -89,9 +73,18 @@ public class TediInvoiceIMGParserAonDemoTestCase {
 		out.append("\n");
 		out.append("-----------------");
 		out.append("\n");
+		
+		TediContext tctx = new TediContext()
+				.setDomain(DOMAIN_ID)
+				.setDomainName(DOMAIN_NAME)
+				.setAONContext ( ctx )
+				;
+		tctx.setAonConfiguration(ConfigurationDAO.getConfiguration(tctx.getAONContext()));
+		tctx.getAonConfiguration().getCompany().setDocument("B01487271");
+		
 		Date start = new Date();
 		try (InputStream is = TediInvoiceIMGParserAonDemoTestCase.class.getResourceAsStream(template.getFile())) {
-			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( ctx );
+			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( tctx );
 			InvoiceIMGParser.parse(is , tediInvoiceBuilder);
 			String file = "["+ template.getFile() +"]. ";
 			System.out.println( file );

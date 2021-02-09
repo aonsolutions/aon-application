@@ -319,6 +319,13 @@
 .aon_height_all {
 	height: 100%;
 }
+.aon_width_auto {
+	width: auto;
+}
+.aon_width_auto_important {
+	width: auto !important;
+}
+
 .aon_width_almost_all {
 	width: 98%;
 }
@@ -837,7 +844,7 @@
 }
 
 .aon_tab_button {
-	padding: 0 0 0 16px;
+	padding: 0 0 0 22px;
 	text-align: left;
 	border: 0px;
 	width: 20px;
@@ -1255,4 +1262,13 @@
 .aon_suggest_box_popup .item-selected {
 	background: #D5E2FF;
 	cursor: pointer;
+}
+
+.aon_blink {
+  animation: blinker 1s linear infinite;
+}
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
 }

@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.TediProblems.ITediProblemsCallback;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediService;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediServiceAsyncDecorator;
@@ -29,9 +30,6 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
-import com.esferalia.aon.occam.api.model.tedi.ICallback;
-import com.esferalia.aon.occam.api.model.tedi.TediError;
-import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -52,10 +50,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -580,17 +575,47 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	protected void afterTediParse(TediResult result) {
 		AccountingInvoice ai = result.getAccountingInvoice();
 		LOGGER.info("setDocument result.isImportable() --- > " + result.isImportable());
-	setWrapper(ai);
-	getCallback().getModule().syncCurrent();
+		setWrapper(ai);
+		getCallback().getModule().syncCurrent();
 		if (result.isImportable()) {
+			_paintEntry();
 			editInvoice();
 			getCallback().getModule().onPreview(getWrapper());
 		} else {
 			paintProblemsWidget(centerContainer, result);
 		}
 	}
-
+	
 	private void paintProblemsWidget(SimpleLayoutPanel contentPanel, TediResult result) {
+		  TediProblems scrollPanel = new TediProblems( new ITediProblemsCallback() {
+		    
+		    @Override public AccountEntryModuleOptions getModuleOptions() {return getCallback().getModuleOptions();}
+		    @Override public AccountEntryModuleTEDI getModule() {return getCallback().getModule();}
+		    @Override public String getCurrentUser() {return getCallback().getCurrentUser();}
+		    @Override public String getCurrentDomainName() {return getCallback().getCurrentDomainName();}
+		    @Override public int getCurrentDomainId() {return getCallback().getCurrentDomainId();}
+		    @Override public AonConfiguration getConfiguration() {return getCallback().getConfiguration();}
+		    
+		    @Override
+		    public void onError(Throwable caught) {
+		      MessageDialog.error(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
+		    }
+		    
+		    @Override
+		    public void onChanged(TediResult result) {
+		      afterTediParse( result );
+		    }
+		    
+		    @Override
+		    public TediResult getResult() {
+		      return result;
+		    }
+		  });
+	  contentPanel.setWidget(scrollPanel);
+	}
+
+/*	
+	private void spaintProblemsWidget(SimpleLayoutPanel contentPanel, TediResult result) {
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.setStyleName(AON.CSS.aonScrollArea());
 		FlowPanel mainPanel = new FlowPanel();
@@ -682,6 +707,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		return color;
 	}
 
-
+*/
 }
 
