@@ -6,7 +6,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Country implements Serializable {
 	
-	 AF("AFGANIST\u00C1N","AF","AFG", 4,4,34),
+	AF("AFGANIST\u00C1N","AF","AFG", 4,4,34),
 	AL("ALBANIA","AL","ALB",8,4,34),
 	DE("ALEMANIA","DE","DEU",276,8,22),
 	AD("ANDORRA","AD","AND",20,4,34),
@@ -188,6 +188,7 @@ public enum Country implements Serializable {
 	PT("PORTUGAL","PT","PRT",620,4,25),
 	PR("PUERTO RICO","PR","PRI",630,4,34),
 	GB("REINO UNIDO","GB","GBR",826,4,22),
+	XI("IRLANDA DEL NORTE","XI","GBR",826,4,22),
 	CF("REP\u00DABLICA CENTROAFRICANA","CF","CAF",140,4,34),
 	CZ("REP\u00DABLICA CHECA","CZ","CZE",203,4,24),
 	MK("MACEDONIA, LA ANTIGUA REP\u00DABLICA YUGOSLAVA DE","MK","MKD",807,3,19),
@@ -304,7 +305,7 @@ public enum Country implements Serializable {
 		return this == DE || this == AT || this == BE || this == BG || this == HR || this == CY || this == DK
 			|| this == SI || this == EE || this == FI || this == FR || this == GR || this == GB || this == NL
 			|| this == HU || this == IT || this == IE || this == LV || this == LT || this == LU || this == MT
-			|| this == PL || this == PT || this == CZ || this == SK || this == RO || this == SE;
+			|| this == PL || this == PT || this == CZ || this == SK || this == RO || this == SE || this == XI;
 	}
 
 	public static Country safeValueOf(String iso2) {

@@ -188,6 +188,7 @@ public enum Country implements IResourceable, IStringEnum {
 	PR("PR","PRI",630),
 	QA("QA","QAT",634),
 	GB("GB","GBR",826),
+	XI("XI","GBR",826),
 	EH("EH","ESH",732),
 	CF("CF","CAF",140),
 	CZ("CZ","CZE",203),
@@ -306,7 +307,8 @@ public enum Country implements IResourceable, IStringEnum {
 				|| this == Country.MT || this == Country.PL
 				|| this == Country.PT || this == Country.CZ
 				|| this == Country.SK || this == Country.RO
-				|| this == Country.SE || this == Country.ES;
+				|| this == Country.SE || this == Country.ES
+				|| this == Country.XI;
     }
 
 	public static Country valueOfIso3(String iso3) {
