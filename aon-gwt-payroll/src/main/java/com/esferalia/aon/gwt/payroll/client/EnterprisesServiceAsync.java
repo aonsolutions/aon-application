@@ -174,5 +174,8 @@ public interface EnterprisesServiceAsync {
 			AsyncCallback<EmployeeContractInfo> asyncCallback);
 	void getContratoSepe(String currentDomainName, String currentUser, String ipf, Date startDate, Date endDate,
 			AsyncCallback<String> asyncCallback);
+	void getTrashEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
+	void restoreContract(String currentDomainName, Integer contractId, AsyncCallback<Void> asyncCallback);
+	void delete4EverContract(String currentDomainName, Integer contractId, AsyncCallback<Void> asyncCallback);
 	
 }

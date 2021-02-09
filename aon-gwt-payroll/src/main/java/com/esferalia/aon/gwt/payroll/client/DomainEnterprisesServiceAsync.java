@@ -469,6 +469,18 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getContratoSepe(getCurrentDomainName(), getCurrentUser(), ipf, startDate, endDate, asyncCallback);
 	}
 	
+	public void getTrashEmployeesInfo(AsyncCallback<List<EmployeeContractInfo>> asyncCallback) {
+		enterprisesServiceAsync.getTrashEmployeesInfo(getCurrentDomainName(), asyncCallback);
+	}
+
+	public void restoreContract(Integer contractId, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.restoreContract(getCurrentDomainName(), contractId, asyncCallback);
+	}
+
+	public void delete4EverContract(Integer contractId, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.delete4EverContract(getCurrentDomainName(), contractId, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {
@@ -482,5 +494,6 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
 
 }

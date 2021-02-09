@@ -43,6 +43,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificate;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeePeculiarities;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.jooq.JooqIT;
 import com.esferalia.aon.gwt.payroll.jooq.JooqMail;
@@ -2897,6 +2898,34 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			return null == contract ? null : contract.getSepeId();
 			
 		} catch (SQLException | SepeException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public List<EmployeeContractInfo> getTrashEmployeesInfo(String domainName) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.getTrashEmployeesInfo(connection, domainId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void restoreContract(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqEmployees.moveContractId(connection, contractId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void delete4EverContract(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqEmployees.delete(connection, contractId);
+		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}

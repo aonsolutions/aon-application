@@ -745,4 +745,22 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.getContratoSepe(domainName, userLogin, ipf, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
 	}
 
+	@Override
+	public void getTrashEmployeesInfo(String domainName, AsyncCallback<List<EmployeeContractInfo>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getTrashEmployeesInfo(domainName, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
+	}
+
+	@Override
+	public void restoreContract(String domainName, Integer contractId, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.restoreContract(domainName, contractId, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void delete4EverContract(String domainName, Integer contractId, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.delete4EverContract(domainName, contractId, new AsyncCallbackWrapper<Void>(callback));
+	}
+
 }

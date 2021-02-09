@@ -2699,5 +2699,192 @@ public class JooqContrataContract {
 		
 		return contractOtherDataNames;
 	}
+	
+	// ------------------------------------------------------------------------------------------------------------------------
+	// ------------------------------------------------ TRASH EMPLOYEES -------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------------------------
+
+	public static List<EmployeeContractInfo> getTrashEmployeesInfo(Connection conn, Integer domainId) {
+		return getTrashEmployeesInfoDB(DSL.using(conn, getDefaultSettings()), domainId);
+	}
+
+	private static List<EmployeeContractInfo> getTrashEmployeesInfoDB(DSLContext dslContext, Integer domainId) {
+		List<EmployeeContractInfo> employeesInfo = new ArrayList<EmployeeContractInfo>();
+		
+		List<Integer> trashContractIds = dslContext.select(CONTRACT.ID).from(CONTRACT)
+				.where(CONTRACT.DOMAIN.eq(domainId))
+				.and(CONTRACT.ID.lt(0))
+				.fetch(CONTRACT.ID);
+		
+		for(Integer contractId : trashContractIds) {
+			
+			// --------------------------------------------- Init
+			
+			EmployeeContractInfo employeeContractInfo = new EmployeeContractInfo();
+			ContractInfo contractData = new ContractInfo();
+			EmployeeInfo employeeData = new EmployeeInfo();
+			
+			// --------------------------------------------- Employee Info
+			
+			// PERSON TABLE
+			Record personTable = dslContext.select().from(PERSON)
+					.where(PERSON.REGISTRY.eq(
+							dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+								.where(CONTRACT.ID.eq(contractId))))
+					.fetchOne();
+		
+			employeeData.setEmployeeId(personTable.get(PERSON.REGISTRY));
+			employeeData.setDomain(personTable.get(PERSON.DOMAIN));
+			employeeData.setSsNumber(personTable.get(PERSON.SOCIAL_SECURITY_NUM));
+			employeeData.setName(personTable.get(PERSON.NAME));
+			employeeData.setSurName(personTable.get(PERSON.FIRST_SURNAME));
+			employeeData.setSecondSurName(personTable.get(PERSON.SECOND_SURNAME));
+			
+			Integer employee_registry = personTable.get(PERSON.REGISTRY);
+			
+			// REGISTRY TABLE
+			Record registryTable = dslContext.select().from(REGISTRY)
+					.where(REGISTRY.ID.eq(employee_registry))
+					.fetchOne();
+			
+			employeeData.setDocument(registryTable.get(REGISTRY.DOCUMENT));
+			employeeData.setDocumentType(registryTable.get(REGISTRY.DOCUMENT_TYPE)); //Esto lo saco con el formato del documento, se podria obviar?
+			employeeData.setNationality(registryTable.get(REGISTRY.NATIONALITY));
+			
+			// --------------------------------------------- Contract Info
+			
+			// HAS PAYROLL
+			Result<Record> salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.CONTRACT.eq(contractId))
+						.and(SALARY.TYPE.eq((byte)0))
+						.orderBy(SALARY.END_DATE.desc())
+						.fetch();
+			
+			if(salaryRecords.isEmpty()){
+				contractData.setHasPayroll(false);
+				contractData.setPayrollDate(null);
+			}else{
+				contractData.setHasPayroll(true);
+				contractData.setPayrollDate(salaryRecords.get(0).get(SALARY.END_DATE));
+			}
+			
+			// CONTRACT TABLE
+			Record contractTable = dslContext.select().from(CONTRACT)
+					.where(CONTRACT.ID.eq(contractId))
+					.fetchOne();
+			
+			contractData.setContractId(contractId);
+			contractData.setStartDate(contractTable.get(CONTRACT.START_DATE));
+			contractData.setEndDate(contractTable.get(CONTRACT.END_DATE));
+			contractData.setSsRegimen(contractTable.get(CONTRACT.SS_REGIME));
+			
+			contractData.setOldStartDate(contractTable.get(CONTRACT.START_DATE));
+			contractData.setOldEndDate(contractTable.get(CONTRACT.END_DATE));
+			
+			Integer employe_workplace_table_id = contractTable.get(CONTRACT.WORKPLACE);
+			
+			// WORKPLACE TABLE		
+			contractData.setWorkplaceId(employe_workplace_table_id);
+			
+			Record workplaceRecord = dslContext.select().from(WORKPLACE).where(WORKPLACE.ID.eq(employe_workplace_table_id)).fetchOne();
+			
+			contractData.setWorkplaceName(workplaceRecord.get(WORKPLACE.DESCRIPTION));
+			
+			contractData.setContracttypeId(null);
+			contractData.setContractType(null);
+			contractData.setQuotegroupId(null);
+			contractData.setQuoteGroup(null);
+			contractData.setOcupationId(null);
+			contractData.setOcupation(null);
+			contractData.setJourneytypeId(null);
+			contractData.setJourneyType(null);
+			contractData.setPartialityCoef(null);
+			
+			// CONTRACT DATA TABLE
+			Date currentDate = new Date(new java.util.Date().getTime());
+			Result<Record> contractDataTable = null;
+			
+			if(null != contractData.getEndDate()) { //Para contratos finalizados
+				if(currentDate.after( contractData.getEndDate())) {
+					contractDataTable = dslContext.select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					.orderBy(CONTRACT_DATA.START_DATE)
+					.fetch();
+				}else {
+					contractDataTable = dslContext.select().from(CONTRACT_DATA)
+							.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+							.and(CONTRACT_DATA.START_DATE.le(currentDate))
+							.and(CONTRACT_DATA.END_DATE.ge(currentDate).or(CONTRACT_DATA.END_DATE.isNull()))
+							.fetch();
+					
+					if(contractDataTable.isEmpty())
+						contractDataTable = dslContext.select().from(CONTRACT_DATA)
+						.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+						.orderBy(CONTRACT_DATA.ID)
+						.fetch();
+				}
+				
+			} else {
+				
+				if(contractData.getStartDate().after(currentDate)) {
+					contractDataTable = dslContext.select().from(CONTRACT_DATA)
+							.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+							.and(CONTRACT_DATA.START_DATE.le(new Date(contractData.getStartDate().getTime())))
+							.and(CONTRACT_DATA.END_DATE.ge(new Date(contractData.getStartDate().getTime())).or(CONTRACT_DATA.END_DATE.isNull()))
+							.fetch();
+				}else
+					contractDataTable = dslContext.select().from(CONTRACT_DATA)
+							.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+							.orderBy(CONTRACT_DATA.START_DATE.asc())
+							.fetch();
+				
+				if(contractDataTable.isEmpty())
+					contractDataTable = dslContext.select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					.orderBy(CONTRACT_DATA.ID)
+					.fetch();
+			}
+				
+			Map<String, String> contractDataMap = new HashMap<>();
+			
+			for(Record r : contractDataTable){
+				contractDataMap.put(r.get(CONTRACT_DATA.NAME), r.get(CONTRACT_DATA.EXPRESSION));
+				
+				if(r.get(CONTRACT_DATA.NAME).equals("TC2")) {
+					contractData.setContracttypeId(r.get(CONTRACT_DATA.ID));
+					contractData.setContractType(r.get(CONTRACT_DATA.EXPRESSION));
+				}
+				
+			}
+			
+			employeeContractInfo.setEmployeeInfo(employeeData);
+			employeeContractInfo.setContractInfo(contractData);
+			
+			// ------------------------------------------- CONTRACT SPECIFIC DATA -----------------------------------------------------
+			
+			ContractSpecificData contractSpecificData = new ContractSpecificData();
+			employeeContractInfo.setContractSpecificData(contractSpecificData);
+			
+			// ---------------------------------------------- CONTRACT OTHER INFO -----------------------------------------------------
+			
+			Map<String, String> contractOtherInfoMap = new HashMap<String, String>();
+			employeeContractInfo.setContractOtherData(contractOtherInfoMap);
+			
+			// ------------------------------------------------ CONTRACT CLAUSE -------------------------------------------------------
+			
+			List<ContractClause> contractClauses = new ArrayList<ContractClause>();
+			employeeContractInfo.setContractClauses(contractClauses);
+
+			// ------------------------------------------------ CONTRACT ATTACH -------------------------------------------------------
+			
+			List<ContractAttach> contractAttachs = new ArrayList<ContractAttach>();
+			employeeContractInfo.setContractAttachments(contractAttachs);
+			
+			
+			employeesInfo.add(employeeContractInfo);
+		}
+		
+		return employeesInfo;
+	}
 
 }

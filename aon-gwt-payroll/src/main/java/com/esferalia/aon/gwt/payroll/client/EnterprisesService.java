@@ -264,5 +264,11 @@ public interface EnterprisesService extends RemoteService {
 	EmployeeContractInfo getEmployeeInfo(String currentDomainName, Integer contractId);
 
 	String getContratoSepe(String currentDomainName, String currentUser, String ipf, Date startDate, Date endDate);
+
+	List<EmployeeContractInfo> getTrashEmployeesInfo(String currentDomainName);
+
+	void restoreContract(String currentDomainName, Integer contractId);
+
+	void delete4EverContract(String currentDomainName, Integer contractId);
 	
 }
