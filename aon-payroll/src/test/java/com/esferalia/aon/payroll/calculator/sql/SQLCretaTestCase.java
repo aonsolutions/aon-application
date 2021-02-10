@@ -2445,12 +2445,14 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		@SuppressWarnings("serial")
 		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "01");
+		
+		addData(aonContext, contract, contract.getStartDate(), null, ContextVariable.PARTIAL_FACTOR, "0.5");
 
 		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 2);
 		Date endDate = getLastDayOfMonth(startDate);
 
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, endDate, null, null);
-		
+				
 		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 		
 		Assert.assertEquals(2, tramos.size());
@@ -5454,13 +5456,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 					// 500 Base de contingencias comunes.
 					List<ContextData> datas = salary.getContextData()
 							.get(CGC_BASE.getName());
-					Assert.assertEquals(2, datas.size());
+					Assert.assertEquals(1, datas.size());
 					
-					Assert.assertEquals(getFirstDayOfYear(getToday()), datas.get(0).getStartDate());
-					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					//Assert.assertEquals(getFirstDayOfYear(getToday()), datas.get(0).getStartDate());
+					//Assert.assertEquals(endDate, datas.get(0).getEndDate());
 
-					Assert.assertEquals(add(endDate, Calendar.DAY_OF_MONTH,1), datas.get(1).getStartDate());
-					Assert.assertEquals(add(endDate, Calendar.DAY_OF_MONTH, 50 ), datas.get(1).getEndDate());
+					Assert.assertEquals(add(endDate, Calendar.DAY_OF_MONTH,1), datas.get(0).getStartDate());
+					Assert.assertEquals(add(endDate, Calendar.DAY_OF_MONTH, 50 ), datas.get(0).getEndDate());
 					
 				});
 		;
@@ -6600,21 +6602,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
 		return jooqSalaryBuilder.execute();
 	}
-	
-	private static final void cleanSalaries(AONContext aonContext) {
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 		
-		aonContext.getDslContext().delete(SALARY_BONUS).execute();
-		aonContext.getDslContext().delete(SALARY_EMBARGO).execute();
-		aonContext.getDslContext().delete(SALARY_COST).execute();
-		aonContext.getDslContext().delete(SALARY_DEDUCTION).execute();
-		aonContext.getDslContext().delete(SALARY_PAYMENT).execute();
-		aonContext.getDslContext().delete(SALARY_DATA).execute();
-		aonContext.getDslContext().delete(SALARY).execute();
-
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
-	}
-	
 	private static Tramo clone ( Tramo tramo ) {
 		Tramo clone = new Tramo();
 

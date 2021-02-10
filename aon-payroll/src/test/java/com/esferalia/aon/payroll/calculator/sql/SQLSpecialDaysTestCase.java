@@ -226,6 +226,8 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 		
+		
+		cleanSalaries(aonContext);
 		cleanSystemData(aonContext);
 		
 		addSystemData(
@@ -254,7 +256,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 				, new String[] {}, 
 				null);
 		
-		addPayment(aonContext, contract, "DIAS DE AUSENCIA", "DIAS_AUSENCIA * 0.00", "_P", "BASE_CGC_MIN", PaymentType.CRA_0000, SalaryType.SALARY);
+		addPayment(aonContext, contract, "DIAS DE AUSENCIA", "DIAS_AUSENCIA * 0.00", "_P", "BASE_CGC_MIN", PaymentType.CRA_0001, SalaryType.SALARY);
 		
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
@@ -297,7 +299,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		salary = calculator.calculate(ctx);
 		
 		for(SalaryPayment p: salary.getSalaryPayments())
-			System.out.println(p.getDescription() + " = " + p.getAmount() + " = " + p.getQuote());
+			System.out.println(p.getDescription() + " = " + p.getAmount() + " = " + p.getQuote() );
 		
 		int lastDayOfMonth = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		int activeDays = (lastDayOfMonth - 11);
@@ -344,7 +346,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 				, new String[] {}, 
 				null);
 		
-		addPayment(aonContext, contract, "DIAS DE AUSENCIA", "DIAS_AUSENCIA * 0.00", "_P", "BASE_CGC_MIN", PaymentType.CRA_0000, SalaryType.SALARY);
+		addPayment(aonContext, contract, "DIAS DE AUSENCIA", "DIAS_AUSENCIA * 0.00", "_P", "BASE_CGC_MIN", PaymentType.CRA_0001, SalaryType.SALARY);
 		
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
@@ -427,7 +429,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 				, new String[] {}, 
 				null);
 		
-		addPayment(aonContext, contract, "DIAS DE AUSENCIA", "DIAS_AUSENCIA * 0.00", "_P", "BASE_CGC_MIN", PaymentType.CRA_0000, SalaryType.SALARY);
+		addPayment(aonContext, contract, "DIAS DE AUSENCIA", "DIAS_AUSENCIA * 0.00", "_P", "BASE_CGC_MIN", PaymentType.CRA_0001, SalaryType.SALARY);
 		
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
@@ -505,4 +507,6 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 		return (endDate.getDate() - startDate.getDate()) + 1;
 	}
+	
+
 }

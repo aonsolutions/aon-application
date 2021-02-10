@@ -57,7 +57,7 @@ public class SQLGeroaTestCase extends AbstractSQLTestCase {
 				SSRegimeType.GENERAL, 
 				getFirstDayOfYear(getToday()), 
 				geroaConcept, 
-				PaymentType.CRA_0000,
+				PaymentType.CRA_0033,
 				"/*read-only*//**/",
 				GEROA_PAYMENT, 
 				null, 

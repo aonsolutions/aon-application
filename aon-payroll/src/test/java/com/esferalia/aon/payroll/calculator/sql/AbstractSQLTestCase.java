@@ -27,6 +27,13 @@ import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
+import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
+import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
@@ -347,6 +354,12 @@ public abstract class AbstractSQLTestCase {
 				ContextVariable.ALL);
 	}
 
+	protected final void addSSRegimePayment(AONContext aonContext, SSRegimeType ssRegimetype,  Date startDate,
+			PaymentConceptRecord paymentConcept, PaymentType paymentType, String expression, String quoteExpression, String irpfExpression) {
+		addSSRegimePayment(aonContext, ssRegimetype, startDate, paymentConcept, paymentType, expression, quoteExpression,
+				irpfExpression, null);
+	}
+
 	protected final void addSSRegimeDeduction(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
 			DeductionType deductionType, String expression) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
@@ -636,8 +649,11 @@ public abstract class AbstractSQLTestCase {
 		return aonContext.getDslContext().insertInto(AGREEMENT_PAYMENT).set(AGREEMENT_PAYMENT.DOMAIN, domainId)
 				.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
 				.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.concept)
-				.set(AGREEMENT_PAYMENT.EXPRESSION, payment.expression).set(AGREEMENT_PAYMENT.START_DATE, startDate)
-				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) payment.salary.ordinal()).returning().fetchOne();
+				.set(AGREEMENT_PAYMENT.EXPRESSION, payment.expression)
+				.set(AGREEMENT_PAYMENT.START_DATE, startDate)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) payment.salary.ordinal())
+				.returning()
+				.fetchOne();
 	}
 
 	public static void addData(AONContext aonContext, AgreementRecord agreement, Date startDate,
@@ -787,7 +803,7 @@ public abstract class AbstractSQLTestCase {
 			String payment = payments[i];
 			PaymentConceptRecord concept = aonContext.getDslContext().insertInto(PAYMENT_CONCEPT)
 					.set(PAYMENT_CONCEPT.DOMAIN, domainId).set(PAYMENT_CONCEPT.CODE, String.format("P_%d", i))
-					.set(PAYMENT_CONCEPT.TYPE, (byte) PaymentType.CRA_0000.ordinal())
+					.set(PAYMENT_CONCEPT.TYPE, (byte) PaymentType.CRA_0001.ordinal())
 					.set(PAYMENT_CONCEPT.DESCRIPTION, payment).set(PAYMENT_CONCEPT.EXPRESSION, payment)
 					.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, PAYMENT.getName())
 					.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, PAYMENT.getName()).returning().fetchOne();
@@ -942,6 +958,10 @@ public abstract class AbstractSQLTestCase {
 
 
 	public static final RegistryRecord newPerson(AONContext aonContext, int domainId, String document) {
+		return newPerson(aonContext, domainId, document, "");
+	}
+
+	public static final RegistryRecord newPerson(AONContext aonContext, int domainId, String document, String nss ) {
 		RegistryRecord person = aonContext.getDslContext().insertInto(REGISTRY).set(REGISTRY.DOMAIN, domainId)
 				.set(REGISTRY.NAME, "").set(REGISTRY.ALIAS, "").set(REGISTRY.DOCUMENT, document)
 				.set(REGISTRY.DOCUMENT_COUNTRY, "").set(REGISTRY.DOCUMENT_TYPE, (byte) DocumentType.OTHER.ordinal())
@@ -951,7 +971,7 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().insertInto(PERSON).set(PERSON.DOMAIN, domainId).set(PERSON.REGISTRY, person.getId())
 				.set(PERSON.NAME, "").set(PERSON.FIRST_SURNAME, "").set(PERSON.SECOND_SURNAME, "")
 				// .set(PERSON.BIRTH_DATE, null)
-				.set(PERSON.SOCIAL_SECURITY_NUM, "").set(PERSON.GENDER, (byte) Gender.UNKNOWN.ordinal())
+				.set(PERSON.SOCIAL_SECURITY_NUM, nss).set(PERSON.GENDER, (byte) Gender.UNKNOWN.ordinal())
 				.set(PERSON.MARITAL_STATUS, (byte) MaritalStatus.UNKNOWN.ordinal()).execute();
 		return person;
 	}
@@ -1238,7 +1258,8 @@ public abstract class AbstractSQLTestCase {
 
 	public static final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, String description,
 			String expression, String irpfExpression, String quoteExpression, PaymentType type, SalaryType salaryType) {
-		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT).set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT)
+				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
 				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
 				.set(CONTRACT_PAYMENT.START_DATE, startDate)
 				.set(CONTRACT_PAYMENT.END_DATE, endDate)
@@ -1386,6 +1407,20 @@ public abstract class AbstractSQLTestCase {
 	}
 	
 	
+	public static final void cleanSalaries(AONContext aonContext) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+		
+		aonContext.getDslContext().delete(SALARY_BONUS).execute();
+		aonContext.getDslContext().delete(SALARY_EMBARGO).execute();
+		aonContext.getDslContext().delete(SALARY_COST).execute();
+		aonContext.getDslContext().delete(SALARY_DEDUCTION).execute();
+		aonContext.getDslContext().delete(SALARY_PAYMENT).execute();
+		aonContext.getDslContext().delete(SALARY_DATA).execute();
+		aonContext.getDslContext().delete(SALARY).execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
 	private static void shutUp() {
 		PrintStream devnull = new PrintStream(new OutputStream() {
 			@Override
@@ -1396,6 +1431,5 @@ public abstract class AbstractSQLTestCase {
 		System.setOut(devnull);
 		System.setErr(devnull);
 	}
-
 
 }

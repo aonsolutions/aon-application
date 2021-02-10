@@ -433,7 +433,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			}
 
 			if ( type == PaymentType.CRA_0033						// TODO: PLANES PENSIONES Y SIST. ALTERNATIVOS 					
-				|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
+				//|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
 				|| isFixBaseCgcMinPayment(payment) 
 				|| matchAny(ContextVariable.ERES, payment.getName()) 
 				|| ContextVariable.ERE_FORCE.getName().equals(payment.getName()) 
@@ -1622,7 +1622,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 	
 	private static boolean isFixBaseCgcMinPayment(IContractPayment p) {
-		return AonStringUtils.startsWith(p.getQuoteExpression(), "/*fixBaseCgcMin*/");
+		return AonStringUtils.startsWith(p.getQuoteExpression(), "/*fixBaseCgcMin*/") 
+				|| AonStringUtils.equals(p.getQuoteExpression(), String.format("%s", ContextVariable.CGC_BASE_MIN))  ;
 	}
 	
 	private  static Date getContractStartate(ISQLContractSalaryCalculatorContext ctx) {

@@ -893,19 +893,6 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 	
 	// -----------------------------------------------------------------------------------------------------
 	
-	private static final void cleanSalaries(AONContext aonContext) {
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
-		
-		aonContext.getDslContext().delete(SALARY_BONUS).execute();
-		aonContext.getDslContext().delete(SALARY_EMBARGO).execute();
-		aonContext.getDslContext().delete(SALARY_COST).execute();
-		aonContext.getDslContext().delete(SALARY_DEDUCTION).execute();
-		aonContext.getDslContext().delete(SALARY_PAYMENT).execute();
-		aonContext.getDslContext().delete(SALARY_DATA).execute();
-		aonContext.getDslContext().delete(SALARY).execute();
-
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
-	}
 	
 	private static int calculateAndSave(Connection connection,
 			ISQLContractSalaryCalculatorContext ctx) throws SalaryException {

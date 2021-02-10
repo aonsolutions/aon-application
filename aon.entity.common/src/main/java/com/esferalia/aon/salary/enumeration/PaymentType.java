@@ -7,7 +7,7 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum PaymentType implements IResourceable{
 	
-	CRA_0000(true,false),
+	CRA_0000(false,true),
 	CRA_0001(true,false),
 	CRA_0002(true,false){
 		@Override

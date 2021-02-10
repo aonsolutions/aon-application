@@ -2469,7 +2469,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract, directPay, 
 				String.format("BASE_REGULADORA * 0.00 * %s_366",  COMMON_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * %s",  QUOTE_DAYS),
-				PaymentType.CRA_0000
+				PaymentType.CRA_0001
 				);
 		//@formatter:on
 
@@ -2785,12 +2785,15 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 						put("BASE_CGC_MAX","3642.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");						
 					}
 				});
+		
+		PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
 
 		// @formatter:off
 		addSSRegimePayment(aonContext 
 				,SSRegimeType.GENERAL 
 				,getFirstDayOfYear(getToday()) 
-				,PaymentType.CRA_0000
+				,prestIT
+				,PaymentType.CRA_0001
 				,"0.00"
 				,String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS)
 				,"_P"
@@ -2798,7 +2801,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		addSSRegimePayment(aonContext 
 				,SSRegimeType.GENERAL 
 				,getFirstDayOfYear(getToday()) 
-				,PaymentType.CRA_0000
+				,prestIT
+				,PaymentType.CRA_0001
 				,String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS)
 				,String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS)
 				,"_P"
@@ -2806,7 +2810,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		addSSRegimePayment(aonContext 
 				,SSRegimeType.GENERAL 
 				,getFirstDayOfYear(getToday()) 
-				,PaymentType.CRA_0000
+				,prestIT
+				,PaymentType.CRA_0001
 				,String.format("BASE_REGULADORA * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS)
 				,String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS)
 				,"_P"
@@ -2814,7 +2819,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		addSSRegimePayment(aonContext 
 				,SSRegimeType.GENERAL 
 				,getFirstDayOfYear(getToday()) 
-				,PaymentType.CRA_0000
+				,prestIT
+				,PaymentType.CRA_0001
 				,String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS)
 				,String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS)
 				,"_P"
@@ -2917,7 +2923,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				,SSRegimeType.GENERAL 
 				,getFirstDayOfYear(getToday())
 				,prestIT
-				,PaymentType.CRA_0000
+				,PaymentType.CRA_0001
 				,"0.00"
 				,String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS)
 				,"_P"
@@ -2996,7 +3002,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				,SSRegimeType.GENERAL 
 				,getFirstDayOfYear(getToday())
 				,prestIT
-				,PaymentType.CRA_0000
+				,PaymentType.CRA_0001
 				,String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS)
 				,String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				,"_P"
@@ -3075,7 +3081,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				,SSRegimeType.GENERAL 
 				,getFirstDayOfYear(getToday())
 				,prestIT
-				,PaymentType.CRA_0000
+				,PaymentType.CRA_0001
 				,String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS)
 				,String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				,"_P"
@@ -3158,7 +3164,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				,SSRegimeType.GENERAL 
 				,getFirstDayOfYear(getToday())
 				,prestIT
-				,PaymentType.CRA_0000
+				,PaymentType.CRA_0001
 				,String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS)
 				,String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				,"_P"
@@ -3237,7 +3243,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				,SSRegimeType.GENERAL 
 				,getFirstDayOfYear(getToday())
 				,prestIT
-				,PaymentType.CRA_0000
+				,PaymentType.CRA_0001
 				,String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS)
 				,String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				,"_P"
