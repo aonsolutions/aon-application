@@ -65,7 +65,7 @@ export class AonLocationAdd extends AonElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     if ("data" == name && newValue) {
-      this.setValues();
+      this.setFormValues();
     }
     if ("add" == name && newValue) {
       this.paintViewMap(undefined);
@@ -230,7 +230,7 @@ export class AonLocationAdd extends AonElement {
             zoom,
             mapTypeId: this.google.maps.MapTypeId.ROADMAP,
           };
-          setCoordinates({ latitude: pos.latitude, longitude: pos.longitude }); //setValues default lat lng
+          setCoordinates({ latitude: pos.latitude, longitude: pos.longitude }); //setFormValues default lat lng
           const map = new this.google.maps.Map(mapContainer, mapOptions);
           const position = new this.google.maps.LatLng(
             pos.latitude,
@@ -265,14 +265,13 @@ export class AonLocationAdd extends AonElement {
   }
 
   setCoordinates(data) {
-    if (data) {
+    if (data && data.latitude && data.longitude) {
       setValueName("latitude", data.latitude);
       setValueName("longitude", data.longitude);
-      this.formSubmit();
     }
   }
 
-  setValues() {
+  setFormValues() {
     const data = this.data;
     if (data) {
       this.aonSigninToolbar.setAttribute("option", "Modificar " + this.NAME);
@@ -288,8 +287,7 @@ export class AonLocationAdd extends AonElement {
 
   async save() {
     const data = this.getFormValues();
-    console.log(data);
-    let count = Object.keys(data).length;
+    const count = Object.keys(data).length;
     if (count > 3) {
       try {
         const { id } = await saveLocation({

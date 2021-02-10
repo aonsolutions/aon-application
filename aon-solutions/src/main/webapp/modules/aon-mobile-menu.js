@@ -223,10 +223,6 @@ export class AonMobileMenu extends AonElement {
     this.loading(false);
   }
 
-  async sendTokenFCM(token) {
-    console.log("tokenFCM>", typeof token, token);
-  }
-
   loading(load) {
     let block = load ? "block" : "none";
     let aonEl = document.querySelector("#aonMobileMenuLoading");

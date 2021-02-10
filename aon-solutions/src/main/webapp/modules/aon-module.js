@@ -63,6 +63,15 @@ export class AonModule extends AonElement {
 		}
 		
 		window.setPosition = (pos) => setPosition(pos);
+		
+		window.setTokenFCM = (token) =>  {
+		    console.log("tokenFCM>", typeof token, token);
+		}
+		
+		window.setNotificationAction = (data) =>  {
+		    console.log("data Notification1>", typeof data, data);
+			alert(JSON.stringify(data));
+		}
 	}
 }
 window.customElements.define('aon-module',  AonModule);
