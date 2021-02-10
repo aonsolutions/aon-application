@@ -141,13 +141,13 @@ export class AonIconButton extends AonElement {
 
   constructor() {
     super();
+  }
+
+  connectedCallback() {
     this.BUTTON = this.id + "IconButton";
     this.ICON = this.id + "Icon";
     this.AON_ICON = this.id + "AonIcon";
     this.IMAGE = this.id + "Image";
-  }
-
-  connectedCallback() {
     this.appendChild(this.build());
   }
 

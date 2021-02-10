@@ -17,7 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -70,10 +72,16 @@ public class AonApiHttpServlet extends HttpServlet{
 				: AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
 		setDomain(domain);
 		
+
 		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
-		User user = AonStringUtils.isBlank(domainLogin)
-				? new User().setLogin(IConstants.EMPTY)
-				: AON.getUser(getDomain().getName(), getDomain().getId(), domainLogin);
+		User user = new User().setLogin("");
+		if(AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(getToken()) && getDomain().getId() != null && getDomain().getId() != 0) {
+			AonToken aonToken = SECURITY.getAonToken(getToken());
+			user = AON.getUser(domainName, domainId, "", f -> f.getAuthProperty().eq(aonToken.getAuth())
+					.and(f.getDomainProperty().eq(getDomain().getId()).or(f.getDomainProperty().eq(getDomain().getParentId()))));
+		} else if(getDomain().getId() != null && getDomain().getId() != 0){
+			user = AON.getUser(getDomain().getName(), getDomain().getId(), domainLogin);
+		}
 		setUser(user);
 		
 		setParams(getParamsJSON(req));

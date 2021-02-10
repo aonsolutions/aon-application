@@ -5,6 +5,7 @@ export class DomainUserRoles {
 
   domain;
 	user;
+  parentUser;
 
 	domainApps;
 	parentDomainApps;
@@ -14,6 +15,7 @@ export class DomainUserRoles {
   constructor(data) {
     this.domain = data.domain;
     this.user = data.user;
+    this.parentUser = data.parentUser;
     this.domainApps = data.domainApps;
     this.parentDomainApps = data.parentDomainApps;
     this.domainUserRoles = data.domainUserRoles;
@@ -69,7 +71,7 @@ export class DomainUserRoles {
 	}
 
 	isParentUser(){
-		return this.getDomain().getParentId().equals(getUser().getDomain());
+		return this.parentUser;
 	}
 
   hasApp(aonApp) {
@@ -90,115 +92,115 @@ export class DomainUserRoles {
 	}
 
 	isAccounting() {
-		return this.hasApp(App.ACCOUNTING) && this.hasRole(Role.ACCOUNTING);
+		return this.hasApp(App.ACCOUNTING) && (this.isAdmin() || this.hasRole(Role.ACCOUNTING));
 	}
 
 	isAccountingManager() {
-    return this.hasApp(App.ACCOUNTING) && this.hasRole(Role.ACCOUNTING_MANAGER);
+    return this.hasApp(App.ACCOUNTING) && (this.isAdmin() || this.hasRole(Role.ACCOUNTING_MANAGER));
 	}
 
 	isFiscal() {
-    return this.hasApp(App.FISCAL) && this.hasRole(Role.FISCAL);
+    return this.hasApp(App.FISCAL) && (this.isAdmin() || this.hasRole(Role.FISCAL));
 	}
 
 	isFiscalManager() {
-		return this.hasApp(App.FISCAL) && this.hasRole(Role.FISCAL_MANAGER);
+		return this.hasApp(App.FISCAL) && (this.isAdmin() || this.hasRole(Role.FISCAL_MANAGER));
 	}
 
   isPayroll() {
-		return this.hasApp(App.PAYROLL) && this.hasRole(Role.PAYROLL);
+		return this.hasApp(App.PAYROLL) && (this.isAdmin() || this.hasRole(Role.PAYROLL));
 	}
 
 	isPayrollPortal() {
-		return this.asApp(App.PAYROLL) && this.hasRole(Role.PAYROLL_PORTAL);
+		return this.asApp(App.PAYROLL) && (this.isAdmin() || this.hasRole(Role.PAYROLL_PORTAL));
 	}
 
   isPayrollManager() {
-		return this.hasApp(App.PAYROLL) && this.hasRole(Role.PAYROLL_MANAGER);
+		return this.hasApp(App.PAYROLL) && (this.isAdmin() || this.hasRole(Role.PAYROLL_MANAGER));
 	}
 
 	isDocumental() {
-		return this.hasApp(App.DOCUMENTAL) && this.hasRole(Role.DOCUMENTAL);
+		return this.hasApp(App.DOCUMENTAL) && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL));
 	}
 
 	isDocumentalManager() {
-		return this.hasApp(App.DOCUMENTAL) && this.hasRole(Role.DOCUMENTAL_MANAGER);
+		return this.hasApp(App.DOCUMENTAL) && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL_MANAGER));
 	}
 
 	isComunica() {
-		return this.hasApp(App.COMUNICA) && this.hasRole(Role.COMUNICA);
+		return this.hasApp(App.COMUNICA) && (this.isAdmin() || this.hasRole(Role.COMUNICA));
 	}
 
 	isComunicaPortal() {
-		return this.hasApp(App.COMUNICA) && this.hasRole(Role.COMUNICA_PORTAL);
+		return this.hasApp(App.COMUNICA) && (this.isAdmin() || this.hasRole(Role.COMUNICA_PORTAL));
 	}
 
 	isComunicaManager() {
-		return this.hasApp(App.COMUNICA) && this.hasRole(Role.COMUNICA_MANAGER);
+		return this.hasApp(App.COMUNICA) && (this.isAdmin() || this.hasRole(Role.COMUNICA_MANAGER));
 	}
 
 	isTimecontrol() {
-		return this.hasApp(App.TIMECONTROL) && this.hasRole(Role.TIMECONTROL);
+		return this.hasApp(App.TIMECONTROL) && (this.isAdmin() || this.hasRole(Role.TIMECONTROL));
 	}
 
 	isTimecontrolPortal() {
-		return this.hasApp(App.TIMECONTROL) && this.hasRole(Role.TIMECONTROL_PORTAL);
+		return this.hasApp(App.TIMECONTROL) && (this.isAdmin() || this.hasRole(Role.TIMECONTROL_PORTAL));
 	}
 
 	isTimecontrolManager() {
-		return this.hasApp(App.TIMECONTROL) && this.hasRole(Role.TIMECONTROL_MANAGER);
+		return this.hasApp(App.TIMECONTROL) && (this.isAdmin() || this.hasRole(Role.TIMECONTROL_MANAGER));
 	}
 
 	isMessenger() {
-		return this.hasApp(App.MESSENGER) && this.hasRole(Role.MESSENGER);
+		return this.hasApp(App.MESSENGER) && (this.isAdmin() || this.hasRole(Role.MESSENGER));
 	}
 
 	isMessengerManager() {
-		return this.hasApp(App.MESSENGER) && this.hasRole(Role.MESSENGER_MANAGER);
+		return this.hasApp(App.MESSENGER) && (this.isAdmin() || this.hasRole(Role.MESSENGER_MANAGER));
 	}
 
 	isInvoice() {
-		return this.hasApp(App.INVOICE) && this.hasRole(Role.INVOICE);
+		return this.hasApp(App.INVOICE) && (this.isAdmin() || this.hasRole(Role.INVOICE));
 	}
 
 	isInvoicePortal() {
-		return this.hasApp(App.INVOICE) && this.hasRole(Role.INVOICE_PORTAL);
+		return this.hasApp(App.INVOICE) && (this.isAdmin() || this.hasRole(Role.INVOICE_PORTAL));
 	}
 
 	isInvoiceManager() {
-		return this.hasApp(App.INVOICE) && this.hasRole(Role.INVOICE_MANAGER);
+		return this.hasApp(App.INVOICE) && (this.isAdmin() || this.hasRole(Role.INVOICE_MANAGER));
 	}
 
 	isManagement() {
-		return this.hasApp(App.MANAGEMENT) && this.hasRole(Role.MANAGEMENT);
+		return this.hasApp(App.MANAGEMENT) && (this.isAdmin() || this.hasRole(Role.MANAGEMENT));
 	}
 
 	isManagementManager() {
-		return this.hasApp(App.MANAGEMENT) && this.hasRole(Role.MANAGEMENT_MANAGER);
+		return this.hasApp(App.MANAGEMENT) && (this.isAdmin() || this.hasRole(Role.MANAGEMENT_MANAGER));
 	}
 
 	isAlma() {
-		return this.hasApp(App.ALMA) && this.hasRole(Role.ALMA);
+		return this.hasApp(App.ALMA) && (this.isAdmin() || this.hasRole(Role.ALMA));
 	}
 
 	isOcr() {
-		return this.hasApp(App.OCR) && this.hasRole(Role.OCR);
+		return this.hasApp(App.OCR) && (this.isAdmin() || this.hasRole(Role.OCR));
 	}
 
 	isBank() {
-		return this.hasApp(App.BANK) && this.hasRole(Role.BANK);
+		return this.hasApp(App.BANK) && (this.isAdmin() || this.hasRole(Role.BANK));
 	}
 
 	isConvenios() {
-		return this.hasApp(App.CONVENIOS) && this.hasRole(Role.CONVENIOS);
+		return this.hasApp(App.CONVENIOS) && (this.isAdmin() || this.hasRole(Role.CONVENIOS));
 	}
 
   isAon() {
-		return this.hasApp(App.AIO) && this.hasRole(Role.AON);
+		return this.hasApp(App.AIO) && (this.isAdmin() || this.hasRole(Role.AON));
 	}
 
   isBidoq() {
-		return this.hasApp(App.BIDOQ) && this.hasRole(Role.BIDOQ);
+		return this.hasApp(App.BIDOQ) && (this.isAdmin() || this.hasRole(Role.BIDOQ));
 	}
 
 }

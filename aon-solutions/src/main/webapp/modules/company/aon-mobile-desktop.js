@@ -49,11 +49,11 @@ export class AonMobileDesktop extends AonElement {
 
 	constructor () {
 		super();
-		this.id = 'aonDesktop';
-		this.SUGGESTION = this.id + 'Suggestion';
 	}
 
 	connectedCallback () {
+		this.id = 'aonDesktop';
+		this.SUGGESTION = this.id + 'Suggestion';
 		this.build();
   }
 
@@ -86,7 +86,19 @@ export class AonMobileDesktop extends AonElement {
 			searchSuggestion.title = 'Empresa Seleccionada';
 			searchSuggestion.value = company.name;
 			searchSuggestion.readonly = true;
+		} else {
+			getCompanies()
+			.then( companies => {
+				if(companies.length > 0) {
+					let company = companies[0];
+					localStorage.setItem('company', JSON.stringify(company));
+					searchSuggestion.title = 'Empresa Seleccionada';
+					searchSuggestion.value = company.name;
+					searchSuggestion.readonly = true;
+				}
+			});
 		}
+
 
 
 		document.addEventListener('click', function(event) {
@@ -130,6 +142,8 @@ export class AonMobileDesktop extends AonElement {
 				localStorage.setItem('aon_domain_login', user.login);
 			});
 			this.build();
+			let menu = document.querySelector('aon-mobile-menu');
+			menu.reload();
 		});
 
 		let div = document.createElement('div');

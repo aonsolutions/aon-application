@@ -114,7 +114,7 @@ export class AonHeader extends AonElement {
 				}, {
 					name: 'Ayuda',
 					icon: 'help_outline',
-					fn: () => rootPanel('<iframe height="100%" src="https://faqs.aonsolutions.es/"></iframe>')
+					fn: () => rootPanel('<iframe height="100%" width="100%" src="https://faqs.aonsolutions.es/"></iframe>')
 				}];
 				d.setMenuOptions(options, top, left);
 				d.open();

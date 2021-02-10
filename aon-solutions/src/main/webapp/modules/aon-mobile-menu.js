@@ -1,13 +1,17 @@
 import { AonElement } from "../components/AonElement.js";
+import { AonIconButton } from "../components/aon-icon-button.js";
+import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import { rootPanel } from "../services/gwtLoader.js";
 import { getReader } from "../services/utils.js";
 import {
   uploadFileDocumental,
   insertInvoice,
   actionMobile,
+  getDomainUserRoles,
+  closeSession
 } from "../services/service.js";
 import { Invoice } from "./invoice/Invoice.js";
-import "../components/aon-icon-button.js";
+
 import "./comunic@/aon-comunica.js";
 import "./documental/aon-documental.js";
 import "./signin/aon-signin.js";
@@ -16,8 +20,12 @@ import "../components/aon-dialog-menu.js";
 import { downscaleImage } from "../services/compressImg.js";
 
 export class AonMobileMenu extends AonElement {
+
   CAMERA_INPUT;
   TYPE_IMG;
+
+  _roles;
+
   get id() {
     return this.getAttribute("id");
   }
@@ -44,14 +52,131 @@ export class AonMobileMenu extends AonElement {
 
   constructor() {
     super();
-    this.CAMERA_INPUT = this.id + "CameraInput";
   }
 
   connectedCallback() {
-    this.build();
+    this.id = this.id || 'aonMobileMenu';
+    this.CAMERA_INPUT = this.id + "CameraInput";
+    getDomainUserRoles({}).then(r => {
+      this._roles = new DomainUserRoles(r);
+      this.build();
+    });
+  }
+
+  addMenuButton(name, icon, action) {
+    let menu = this.getElement('aonMobileMenuSidenav');
+    let n = (window.innerWidth / 5 - 40) / 2;
+    let span = document.createElement('span');
+    span.id = this.id + name;
+    span.style.top = '10px';
+    span.style.position = 'relative';
+    if(menu.childNodes.length > 0){
+      span.style.marginLeft = n;
+    }
+    if(menu.childNodes.length < 5){
+      span.style.marginRight = n;
+    }
+    menu.appendChild(span);
+
+    let button = new AonIconButton();
+    button.id = span.id + 'Button';
+    button.icon = icon;
+    button.addEventListener("click", action);
+    span.appendChild(button);
+
+
+  }
+
+  reload() {
+    getDomainUserRoles({}).then(r => {
+      this._roles = new DomainUserRoles(r);
+      let menu = this.getElement( this.id + 'Sidenav');
+      menu.innerHTML = '';
+      this.buildMenu();
+    });
   }
 
   build() {
+    let div = document.createElement('div');
+    div.id = this.id + 'Sidenav';
+    div.className = 'aonMobileMenu';
+    this.appendChild(div);
+    this.buildMenu();
+  }
+
+  buildMenu(){
+    let div = this.getElement( this.id + 'Sidenav');
+
+    let count = 1;
+
+    this.addMenuButton('Home', 'home', () =>
+      rootPanel('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>')
+    );
+
+    if(this._roles.isDocumental()) {
+      count++;
+      this.addMenuButton('Documental', 'snippet_folder', () =>
+        rootPanel("<aon-documental></aon-documental>")
+      );
+    }
+
+    if(this._roles.isTimecontrol()) {
+      count++;
+      this.addMenuButton('Timecontrol', 'alarm_on', () =>
+        rootPanel("<aon-signin></aon-signin>")
+      );
+    }
+
+    if(this._roles.isInvoice()) {
+      count++;
+      this.addMenuButton('Invoice', 'receipt', () =>
+        rootPanel("<aon-invoice-panel></aon-invoice-panel>")
+      );
+    }
+
+    if(this._roles.isComunica() && this._roles.isMessenger() && count === 4){
+      count++;
+      this.addMenuButton('More', 'more_horiz', () =>
+        // en desarrollo.
+        alert('en desarrollo')
+      );
+    } else {
+      if(this._roles.isComunica()) {
+        count++;
+        this.addMenuButton('Comunica', 'alternate_email', () =>
+          rootPanel("<aon-comunica></aon-comunica>")
+        );
+      }
+
+      if(this._roles.isMessenger()) {
+        count++;
+        this.addMenuButton('Messenger', 'message', () =>
+          // en desarrollo.
+          alert('en desarrollo')
+        );
+      }
+    }
+    if(count <= 4) {
+      count++;
+      this.addMenuButton('Configuration', 'settings', () =>
+        rootPanel('<aon-configuration id="aon-configuration"></aon-configuration>')
+      );
+    }
+
+    if(count <= 4) {
+      count++;
+      this.addMenuButton('Help', 'help_outline', () =>
+        rootPanel('<iframe height="100%" width="100%" src="https://faqs.aonsolutions.es/"></iframe>')
+      );
+    }
+
+    if(count <= 4) {
+      count++;
+      this.addMenuButton('CloseSession', 'input', () => closeSession());
+    }
+  }
+
+  buildOld() {
     this.innerHTML = `
 			<div id="aonMobileMenuSidenav" class="aonMobileMenu">
 
