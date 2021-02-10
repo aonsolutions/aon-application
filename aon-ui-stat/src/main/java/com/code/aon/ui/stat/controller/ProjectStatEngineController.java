@@ -108,7 +108,8 @@ public class ProjectStatEngineController implements Serializable {
 
 	public Date getFromDate() {
 		if (fromDate == null) {
-			setFromDate(CommonUtil.getYearFirstDay(2000));
+			int year = CommonUtil.getYear(new Date());
+			setFromDate(CommonUtil.getYearFirstDay( year - 1 ));
 		}
 		return fromDate;
 	}
@@ -119,7 +120,8 @@ public class ProjectStatEngineController implements Serializable {
 
 	public Date getToDate() {
 		if (toDate == null) {
-			setToDate(CommonUtil.getYearLastDay(2020));
+			int year = CommonUtil.getYear(new Date());
+			setToDate(CommonUtil.getYearLastDay(year + 1 ));
 		}
 		return toDate;
 	}
