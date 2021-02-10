@@ -16,7 +16,7 @@ import "./comunic@/aon-comunica.js";
 import "./documental/aon-documental.js";
 import "./signin/aon-signin.js";
 import "./invoice/aon-invoice-panel.js";
-import "../components/aon-dialog-menu.js";
+import {AonDialogMenu} from "../components/aon-dialog-menu.js";
 import { downscaleImage } from "../services/compressImg.js";
 
 export class AonMobileMenu extends AonElement {
@@ -83,8 +83,6 @@ export class AonMobileMenu extends AonElement {
     button.icon = icon;
     button.addEventListener("click", action);
     span.appendChild(button);
-
-
   }
 
   reload() {
@@ -101,6 +99,9 @@ export class AonMobileMenu extends AonElement {
     div.id = this.id + 'Sidenav';
     div.className = 'aonMobileMenu';
     this.appendChild(div);
+    let dialogMenu = new AonDialogMenu();
+    dialogMenu.id = this.id + 'dialogMenu';
+    this.appendChild(dialogMenu);
     this.buildMenu();
   }
 
@@ -136,10 +137,30 @@ export class AonMobileMenu extends AonElement {
 
     if(this._roles.isComunica() && this._roles.isMessenger() && count === 4){
       count++;
-      this.addMenuButton('More', 'more_horiz', () =>
-        // en desarrollo.
-        alert('en desarrollo')
-      );
+      this.addMenuButton('More', 'more_horiz', ({ target }) => {
+        let top = target.getBoundingClientRect().top;
+        const left = target.getBoundingClientRect().left;
+        const height = window.innerHeight;
+
+        if (height - top < height / 2) top = top - 80;
+
+        let d = this.getElement(this.id + 'dialogMenu');
+
+        let options = [
+          {
+            name: "Comunica",
+            icon: "alternate_email",
+            fn: () => rootPanel("<aon-comunica></aon-comunica>"),
+          },
+          {
+            name: "Solicitudes",
+            icon: "message",
+            fn: () => alert('en desarrollo')
+          }
+        ];
+        d.setMenuOptions(options, top, left);
+        d.open();
+      });
     } else {
       if(this._roles.isComunica()) {
         count++;
@@ -151,7 +172,6 @@ export class AonMobileMenu extends AonElement {
       if(this._roles.isMessenger()) {
         count++;
         this.addMenuButton('Messenger', 'message', () =>
-          // en desarrollo.
           alert('en desarrollo')
         );
       }
