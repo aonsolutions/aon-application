@@ -4,7 +4,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-rich-components">
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich">
 	
 	<style>
 	.aon-menuBar {
@@ -317,6 +318,24 @@
 	}
 
 	</style>
+
+	<script type="text/javascript">
+			function showSearchResults(){
+				if ( #{rich:element('smartFilter')}.value ) {
+					#{rich:element('smartFilterTablePanel')}.style.display='block';
+				}
+			}
+			function hideSearchResults(){
+				setTimeout(function() {
+					if ( document.activeElement != #{rich:element('smartFilterTablePanel')} )
+						#{rich:element('smartFilterTablePanel')}.style.display='none';
+				}, 500);
+			}
+			function escSearchResults(e){
+				if ( e.which === 27 )
+					#{rich:element('smartFilterTablePanel')}.style.display='none';
+			}
+	</script>
 		
 	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 1px solid #ddd;" >
 		<aon:form id="headerOptionsForm">
@@ -356,7 +375,17 @@
 					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" >
 						<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
 					</aon:commandLink>
-					<aon:inputText id="smartFilter" size="60" value="#{search.filter}" placeholder="Buscar Empresas y Trabajadores" styleClass="aon-input-search"  autocomplete="off" >
+					<aon:inputText 
+						id="smartFilter" 
+						size="60" 
+						value="#{search.filter}" 
+						placeholder="Buscar Empresas y Trabajadores" 
+						styleClass="aon-input-search"  
+						autocomplete="off" 
+						onblur="javascript:hideSearchResults()" 
+						onfocus="javascript:showSearchResults()" 
+						onkeydown="javascript:escSearchResults(event)"
+						>
 						<a4j:support 
 						event="onkeyup"
 						reRender="smartFilterTableContainer"
@@ -368,22 +397,10 @@
 							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
 						</a4j:support> 
 						
-						<a4j:support 
-						event="onblur"
-						reRender="smartFilterTableContainer"
-						eventsQueue="domainSwitcherFilterKeyUp"
-						requestDelay="500"
-						ajaxSingle="true"
-						bypassUpdates="true"
-						ignoreDupResponses="true"
-						limitToList="true">
-							<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{false}" />
-						</a4j:support> 
 					</aon:inputText>
 					
 					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%">
-						<aon:if test="#{aonConfiguration.properties.showSearchResults}">
-						<aon:div>
+						<aon:div id="smartFilterTablePanel" rendered="#{aonConfiguration.properties.showSearchResults}" >
 							<aon:div styleClass="search-results-popup-filter" >
 								<aon:outputText value="Resultados de búsqueda de '#{search.filter}'"
 								styleClass="aon-nowrap on-editDataTable-textColumn aon-margin-right aon-bold"/>
@@ -448,7 +465,6 @@
 							
 						
 						</aon:div>
-						</aon:if>
 					</aon:div>
 	
 			</aon:panelGroup>
