@@ -201,6 +201,12 @@
 .aon_icon_minus { background-image: iconMinus;}
 @url iconPreview aonIconPreview;
 .aon_icon_preview { background-image: iconPreview;}
+@url iconAeat aonIconAeat;
+.aon_icon_aeat { background-image: iconAeat;}
+@url iconAraba aonIconAraba;
+.aon_icon_araba { background-image: iconAraba;}
+@url iconBizkaia aonIconBizkaia;
+.aon_icon_bizkaia { background-image: iconBizkaia;}
 
 /* BASICS */
 .aon_selector {
@@ -411,6 +417,9 @@
 .aon_padding {
 	padding: 1em;
 }
+.aon_no_padding {
+	padding: 0px;
+}
 .aon_padding_bottom {
 	padding-bottom: 1em;
 }
@@ -460,6 +469,9 @@
 	white-space: nowrap;
 }
 
+.aon_color_white {
+	color: white;
+}
 .aon_color_red {
 	color: red;
 }
@@ -1245,6 +1257,28 @@
 	background-size: 20px 20px;		
 }
 
+.aon_label_with_icon{
+	padding-left: 22px;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	position: relative;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	outline: 0;
+	border: none;
+	overflow: visible;
+	display: inline-flex;
+	background-position: left center;
+	background-repeat: no-repeat;
+	background-color: inherit;
+	width: auto;
+	height: 20px;
+	background-size: 20px 20px;
+	align-items: center;		
+}
+
 /* SUGGEST POPUP */
 .aon_suggest_box_popup  {
 	border: 1px solid #bbb;
@@ -1272,3 +1306,10 @@
     opacity: 0;
   }
 }
+
+.aon_aeat_background_color { background-color: #3a85c3;}
+.aon_araba_background_color { background-color: #A30C51;}
+.aon_bizkaia_background_color { background-color: #D70004;}
+.aon_gipuzkoa_background_color { background-color: #A1C031;}
+.aon_navarra_background_color { background-color: #da002a;}
+

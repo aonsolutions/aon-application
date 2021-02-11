@@ -303,6 +303,15 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_preview")
 	String aonIconPreview();
 
+	@ClassName("aon_icon_aeat")
+	String aonIconAeat();
+
+	@ClassName("aon_icon_araba")
+	String aonIconAraba();
+
+	@ClassName("aon_icon_bizkaia")
+	String aonIconBizkaia();
+
 	/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();
@@ -454,6 +463,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_padding")
 	String aonPadding();
 
+	@ClassName("aon_no_padding")
+	String aonNoPadding();
+
 	@ClassName("aon_padding_bottom")
 	String aonPaddingBottom();
 	
@@ -508,9 +520,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_tag_item")
 	String aonTagItem();
 	
+	@ClassName("aon_color_white")
+	String aonColorWhite();
+	
 	@ClassName("aon_color_red")
 	String aonColorRed();
-	
+
 	@ClassName("aon_color_green")
 	String aonColorGreen();
 
@@ -730,11 +745,30 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_label")
 	String aonIconLabel();
 	
+	@ClassName("aon_label_with_icon")
+	String aonLabelWithIcon();
+	
+	
 	@ClassName("aon_suggest_box_popup")
 	String aonSuggestBoxPopup();
 
 	@ClassName("aon_blink")
 	String aonBlink();
 
+	@ClassName("aon_aeat_background_color")
+	String aonAeatBackgroundColor();
+	
+	@ClassName("aon_araba_background_color")
+	String aonArabaBackgroundColor();
+	
+	@ClassName("aon_bizkaia_background_color")
+	String aonBizkaiaBackgroundColor();
+	
+	@ClassName("aon_gipuzkoa_background_color")
+	String aonGipuzkoaBackgroundColor();
+	
+	@ClassName("aon_navarra_background_color")
+	String aonNavarraBackgroundColor();
+	
 }
 
