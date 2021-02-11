@@ -41,6 +41,8 @@ public class AonAgreementsToolbar extends Composite {
 		void onShowMenuButtonClick(ClickEvent event);
 
 		void onImportButtonClick(ClickEvent event);
+		
+		void onTrashListButtonClick(ClickEvent event);
 	}
 	
 	private static AonOptionsToolbarUiBinder uiBinder = GWT.create(AonOptionsToolbarUiBinder.class);
@@ -74,6 +76,7 @@ public class AonAgreementsToolbar extends Composite {
 	private AonButton pasteButton;
 	private AonButton viewButton;
 	private AonButton collapseAllButton;
+	private AonButton trashListButton;
 	
 	private boolean agreementTreeShowed = true;
 	private boolean searchTextBoxShowed = false;
@@ -83,10 +86,6 @@ public class AonAgreementsToolbar extends Composite {
 		createToolbar();
 		this.listeners = new ArrayList<Listener>();
 	}
-
-//	public void setVisibleSearchTextBox(boolean visible) {
-//		searchTextBox.getElement().getStyle().setOpacity(1);
-//	}
 	
 	public void setVisiblePasteButton(boolean visible) {
 		pasteButton.setVisible(visible);
@@ -273,12 +272,23 @@ public class AonAgreementsToolbar extends Composite {
 		toolsSection.add(collapseAllButton);
 		collapseAllButton.setVisible(false);
 		
+		trashListButton = new AonToolbarButton("Papelera Convenios", AON.CSS.aonIconTrashList() );
+		trashListButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				for(Listener listener : listeners)
+					listener.onTrashListButtonClick(event);
+			}
+		});
+		toolsSection.add(trashListButton);
+		
 		newButton.ensureDebugId("newButton");
 		copyButton.ensureDebugId("copyButton");
 		draftButton.ensureDebugId("draftButton");
 		pasteButton.ensureDebugId("pasteButton");
 		viewButton.ensureDebugId("viewButton");
 		collapseAllButton.ensureDebugId("collapseAllButton");
+		trashListButton.ensureDebugId("trashListButton");
 	}
 	
 	private void showSearchTextBox(){
