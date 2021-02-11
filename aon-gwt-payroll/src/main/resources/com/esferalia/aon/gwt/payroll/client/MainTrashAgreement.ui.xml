@@ -1,0 +1,52 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:commonsolutions='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
+
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainTrashAgreement.MyStyle">
+	
+	.stackHeader {
+	  padding: .7em .5em .7em .6em;
+	  
+	}
+
+	@sprite .agreementIcon {
+	     gwt-image: 'agreementgroup';
+	     float: left;
+	     padding-left: 5px;
+	}
+	
+	.borderR{
+		border-right: 1px solid #ddd;
+	}
+	
+	.cmd_btn{
+		background-position: center left;
+		background-repeat: no-repeat;
+		padding-left: 25px !important;
+		background-size: contain;
+	}
+	 
+	</ui:style>
+
+	<ui:image field='agreementgroup' src='agreementgroup.png' />
+	
+	<g:DockLayoutPanel ui:field="splitLayoutPanel" unit="PX">
+		<g:north size="45">
+			<commonsolutions:AonTrashAgreementsToolbar ui:field="toolbar" />
+		</g:north>
+		<g:west size='350'>
+			<aon:TrashAgreements debugId="agreements" ui:field='agreements' />
+		</g:west>
+		<g:center>
+			<g:SimpleLayoutPanel>
+				<common:DetailPanel ui:field="detailPanel" /> 
+			</g:SimpleLayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+
+	
+
+</ui:UiBinder>

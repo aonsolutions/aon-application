@@ -1,0 +1,28 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:commonsolutions='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.TrashAgreements.MyStyle">
+		.treeItem{
+			display: flex;
+			align-items: center;
+		}
+		
+		.rotate{
+			transform: rotate(180deg);
+		}
+	</ui:style>
+
+	<ui:image field='view' src='view.png' />
+
+	<ui:with type="com.esferalia.aon.gwt.payroll.client.MetaData.Resources" field="res" />
+
+	<g:DockLayoutPanel unit='PX'>
+		<g:center>
+			<employee:TrashAgreementsTree ui:field="agreementsTree" />
+		</g:center>
+		
+	</g:DockLayoutPanel>
+</ui:UiBinder>
