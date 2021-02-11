@@ -32,23 +32,27 @@
 	</ui:style>
 
 	<ui:image field='agreementgroup' src='agreementgroup.png' />
-
-	<g:DockLayoutPanel ui:field="splitLayoutPanel" unit="PX">
+	
+	<g:DeckPanel ui:field="deckPanel">
+	
+		<g:DockLayoutPanel ui:field="splitLayoutPanel" unit="PX">
+			<g:north size="45">
+				<commonsolutions:AonAgreementsToolbar ui:field="toolbar" />
+			</g:north>
+			<g:west size='350'>
+				<aon:Agreements debugId="agreements" ui:field='agreements' />
+			</g:west>
+			<g:center>
+				<g:SimpleLayoutPanel>
+					<aon:AgreementDraft debugId="agreementDraft" ui:field="agreementDraft" />
+				</g:SimpleLayoutPanel>
+			</g:center>
+		</g:DockLayoutPanel>
 		
-		<g:north size="45">
-			<commonsolutions:AonAgreementsToolbar ui:field="toolbar" />
-		</g:north>
-		
-		<g:west size='350'>
-			<aon:Agreements debugId="agreements" ui:field='agreements' />
-		</g:west>
-		<g:center>
-			<g:SimpleLayoutPanel>
-				<aon:AgreementDraft debugId="agreementDraft" ui:field="agreementDraft" />
-			</g:SimpleLayoutPanel>
-		</g:center>
+		<aon:MainTrashAgreement debugId="mainTrashAgreement" ui:field='mainTrashAgreement' />
+	
+	</g:DeckPanel>
 
-
-	</g:DockLayoutPanel>
+	
 
 </ui:UiBinder>

@@ -30,6 +30,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -265,6 +266,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	}
 	
 	@UiField
+	DeckPanel deckPanel;
+	
+	@UiField
 	DockLayoutPanel splitLayoutPanel;
 	
 	@UiField
@@ -275,6 +279,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	@UiField
 	AgreementDraft agreementDraft;
+	
+	@UiField(provided = true)
+	MainTrashAgreement mainTrashAgreement;
 	
 	private Integer parentDomain;	
 	private Storage storage;
@@ -298,6 +305,15 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		GWT.<MainEntryPoint.CodeMirrorResources>create(MainEntryPoint.CodeMirrorResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
+		mainTrashAgreement = new MainTrashAgreement() {
+			
+			@Override
+			public void onBackButtonClick() {
+				getAgreements();
+				showAgreements();
+			}
+		};
+		
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
 		
@@ -313,6 +329,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
+		
+		deckPanel.setAnimationEnabled(true);
+		showAgreements();
 		
 		agreements.addStyleName(style.borderR());
 		
@@ -355,6 +374,13 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		
 	}
 
+	private void showAgreements() {
+		deckPanel.showWidget(0);
+	}
+	
+	private void showTrashAgreements() {
+		deckPanel.showWidget(1);
+	}
 	// ---------------------------------------------------- Agreements.Listener
 
 	@Override
@@ -499,19 +525,36 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	@Override
 	public void onAgreementDelete(Agreement agreement) {
-		agreements.getAgreementsTree().getEnterpriseService().updateAgreementId(
-				agreement, new AsyncCallback<Void>() {
+		if(agreement.getHasContract()) {
+			agreements.getAgreementsTree().getEnterpriseService().updateAgreementId(
+					agreement, new AsyncCallback<Void>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("No ha sido posible enviar el Convenio a la papelera.");
-			}
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("No ha sido posible enviar el Convenio a la papelera.");
+				}
 
-			@Override
-			public void onSuccess(Void result) {
-				MainAgreement.this.agreements.reloadAgreements();
-			}
-		});
+				@Override
+				public void onSuccess(Void result) {
+					MainAgreement.this.agreements.reloadAgreements();
+				}
+			});
+		} else {
+			agreements.getAgreementsTree().getEnterpriseService().deleteAgreement(
+					agreement, new AsyncCallback<Void>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("No ha sido posible eliminar el Convenio.");
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					MainAgreement.this.agreements.reloadAgreements();
+				}
+			});
+		}
+		
 	}	
 	
 
@@ -610,6 +653,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	}
 
 	@Override
+	public void onTrashListButtonClick(ClickEvent event) {
+		showTrashAgreements();
+		mainTrashAgreement.selectFirstItem();
+	}
+
+	@Override
 	public void onImportButtonClick(ClickEvent event) {
 		ServiAgreementDialog serviAgreementDialog = new ServiAgreementDialog() {
 
@@ -638,6 +687,10 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	private AgreementsTree getAgreementsTree() {
 		return this.agreements.agreementsTree;
+	}
+	
+	private void getAgreements() {
+		this.agreements.getAgreements();
 	}
 	
 	public void addNewItemTree(Agreement agreement) {
