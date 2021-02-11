@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import { Apps, Services, OtherServices, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
-import {getDomainApps, setDomainApp, getDomainNotice} from  '../../services/service.js';
+import {getDomainApps, setDomainApp, getDomainNotice, sendNotificationTest} from  '../../services/service.js';
 import {bidoq} from  '../../services/bidoq.js';
 import {startModule, rootPanel} from '../../services/gwtLoader.js';
 
@@ -100,7 +100,7 @@ export class AonDesktop extends AonElement {
 			},{
 				name: 'Notificaciones',
 				icon: 'notifications',
-				fn: () => {}
+				fn: () => sendNotificationTest()
 			},{
 				name: 'Facturas Pendientes',
 				count: inboxCount,

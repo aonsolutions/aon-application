@@ -1,4 +1,5 @@
 <html>
+
 <head>
 	<title>AON SOLUTIONS</title>
 	<base href="/">
@@ -11,10 +12,13 @@
 	<!-- <link rel="icon" type="image/x-icon" href="assets/favicon.ico"> -->
 
 	<!-- BOOTSTRAP -->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
 	<!-- ROBOTO FONT -->
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
+		rel="stylesheet" type='text/css'>
 
 	<!-- MATERIAL ICONS -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
@@ -44,27 +48,33 @@
 	<link rel="stylesheet" type="text/css" href="css/aon-input-loading.css">
 
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	<script type="text/javascript" src="aon_gwt_aio/bower_components/webcomponentsjs/webcomponents-lite.js" ></script>
+	<script type="text/javascript" src="aon_gwt_aio/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-messaging.js"></script>
 	<script type="module" src="services/service.js"></script>
 	<script type="module" src="modules/aon-module.js"></script>
 	<script type="text/javascript">
 		let link = document.createElement('link');
-    link.type = 'image/x-icon';
-    link.rel = 'icon';
+		link.type = 'image/x-icon';
+		link.rel = 'icon';
 
-		if(window.location.href.includes('ayudat')){
+		if (window.location.href.includes('ayudat')) {
 			link.href = 'assets/ayudat-favicon.png';
-		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
+		} else if (window.location.href.includes('translogia') || window.location.href.includes('tedi')) {
 			link.href = 'assets/ayudat-favicon.png';
 			//link.href = 'assets/tedi-favicon.png';
 		} else {
 			link.href = 'assets/favicon.ico';
 		}
-    document.getElementsByTagName('head')[0].appendChild(link);
+		document.getElementsByTagName('head')[0].appendChild(link);
 		localStorage.setItem('aon_solutions', true);
+
+		
 	</script>
 </head>
+
 <body>
 	<aon-module></aon-module>
 </body>
+
 </html>

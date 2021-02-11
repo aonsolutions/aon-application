@@ -2,7 +2,6 @@ import {AonElement} from '../../components/AonElement.js';
 import {getTaskHolders, getTimeControl, saveTimeControl} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
 import { timePaser } from '../../services/utils.js';
-import { AonDialog } from '../../components/aon-dialog.js';
 import { AonSelect } from '../../components/aon-select.js';
 
 export class AonSign extends AonElement {

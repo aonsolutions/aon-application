@@ -1,14 +1,18 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.logging.Logger;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
@@ -76,6 +80,10 @@ public class LocationServlet extends AonApiHttpServlet{
 				LOGGER.info("LOCATION SERVLET - LOCATION-DELETE");
 				obj = deleteLocation(aonToken);
 			break;
+			case "notification-test":
+				LOGGER.info("LOCATION SERVLET - NOTIFICATION TEST");
+				obj = notificationTest();
+			break;
 			default:
 				break;
 		}
@@ -92,7 +100,7 @@ public class LocationServlet extends AonApiHttpServlet{
 	}
 
 	
-	private Object saveLocation(AonToken aonToken) {
+	private JSONObject saveLocation(AonToken aonToken) {
 		Coordinates coordinates = new Coordinates(getData().optString("coordinates"));
 		Location location = new Location()
 				.setDomain(getDomain())
@@ -106,10 +114,49 @@ public class LocationServlet extends AonApiHttpServlet{
 		return respObject;
 	}
 
-	private Object deleteLocation(AonToken aonToken) {
+	private JSONObject deleteLocation(AonToken aonToken) {
 		Location location = new Location().setId(getData().optInt("id"));
 		AON_SOLUTIONS.deleteLocation(getDomain(), "", location);
-		return new JSONArray();
+		return new JSONObject();
+	}
+	
+
+	public JSONObject notificationTest() {
+		String urlFB = "https://fcm.googleapis.com/fcm/send";
+		String keyFB = "AAAAQ_8KqDo:APA91bFXY2DUz7Ie9TM1qK9hO8RJ_8um9uKkIvT87QcyPobWunCFOvJpP4k961zzfJdGW0sUFWQUGGUMwsa9AOGsLtT0jTI_5sHl95MIgbBQBPDf6vbuOEQU16LQh84lVm1Jh2kNMl3G";
+		JSONObject responseJSON =  new JSONObject();
+		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+		try {
+			String tokenUserFCM = getParams().optString("tokenFCM");
+		    HttpPost httpPost = new HttpPost(urlFB);
+			httpPost.addHeader("Authorization", "key="+keyFB);
+			httpPost.addHeader("Content-Type", "application/json");
+			httpPost.addHeader("Accept", "*/*");
+			
+		    JSONObject payload = new JSONObject();
+		    JSONObject notification = new JSONObject();
+		    notification.put("body", "BODYYYYYYYY");
+		    notification.put("title", "TITULOOOO");
+		    payload.put("to", tokenUserFCM);
+		    payload.put("notification", notification);
+		    JSONObject dataJSON = new JSONObject(); //DATA 
+		    payload.put("data", dataJSON);
+		    
+			StringEntity params = new StringEntity(payload.toString());
+		    httpPost.setEntity(params);
+	
+		    CloseableHttpResponse response = httpClient.execute(httpPost);
+
+		    HttpEntity responseEntity = response.getEntity();
+		    if(responseEntity!=null) {
+		        String responseString = EntityUtils.toString(responseEntity);
+		        responseJSON = new JSONObject(responseString);
+		    }
+		    httpClient.close();
+		} catch (Exception e) {
+			 e.printStackTrace();
+		}
+		return responseJSON;
 	}
 	
 }

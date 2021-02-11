@@ -245,8 +245,8 @@ export class AonUser extends AonElement {
 		}
 
 		if(this.isMobile()) {
-			let div = "aonConfigurationUserDiv"
-			div.style.width = '100%'
+			let div = this.getElement("aonConfigurationUserDiv");
+			if(div) div.style.width = '100%'
 			card2.style.width = '100%';
 		}
 

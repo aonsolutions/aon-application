@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
+import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl, sendNotificationTest} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 
 import '../../components/aon-icon.js';
@@ -171,7 +171,7 @@ export class AonMobileDesktop extends AonElement {
 		}
 
 		ul.appendChild(this.buildNotificationsLi('Documentos sin leer', 'snippet_folder', 0, () => {}));
-		ul.appendChild(this.buildNotificationsLi('Notificaciones', 'notifications', 0, () => {}));
+		ul.appendChild(this.buildNotificationsLi('Notificaciones', 'notifications', 0, () => sendNotificationTest()));
 		ul.appendChild(this.buildNotificationsLi(MSG.AON_MSG_PENDING_INVOICES, 'inbox', inboxCount, () => {
 			if(inboxCount > 0) {
 				rootPanel('<aon-invoice-panel></aon-invoice-panel>');

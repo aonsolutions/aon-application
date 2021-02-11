@@ -6,9 +6,13 @@
 
 	export const rootPanel = (html) => new Promise((resolve)=>{
 		const myNode = document.getElementById("rootPanel");
-		myNode.innerHTML = '';
-		myNode.innerHTML = html;
-		resolve(myNode);
+		if(myNode){
+			myNode.innerHTML = '';
+			myNode.innerHTML = html;
+			resolve(myNode);
+		} else {
+			rejects(null);
+		}
 	});
 
 	export const drawChartsCallback = () => {

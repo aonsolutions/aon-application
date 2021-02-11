@@ -65,6 +65,7 @@ export class AonModule extends AonElement {
 		window.setPosition = (pos) => setPosition(pos);
 		
 		window.setTokenFCM = (token) =>  {
+			window.tokenFCM = token;
 		    console.log("tokenFCM>", typeof token, token);
 		}
 		

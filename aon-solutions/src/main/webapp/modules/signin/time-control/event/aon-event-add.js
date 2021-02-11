@@ -219,18 +219,19 @@ export class AonEventAdd extends AonElement {
   }
 
   setValues() {
-    const data = this.data;
-    if (data) {
+    if (this.data) {
+      const data = this.data;
+      if(data.coordinates.isEmpty()) delete data.coordinates;
+ 
       let date = new Date(data.date);
-      if (!date.isValid()) {
-        date = new Date();
-      }
+
+      if (!date.isValid()) { date = new Date();}
+
       const newTime = setTime(date);
       let obj = {
         ...data,
         time: newTime,
-        date: date,
-        coordinates: `${data.coordinates.latitude},${data.coordinates.longitude}`,
+        date: date
       };
       if (data.id) {
         this.aonSigninToolbar.setAttribute("option", "Modificar evento");
@@ -239,7 +240,8 @@ export class AonEventAdd extends AonElement {
         }
       }
       for (const property in obj) {
-        setValueName(property, obj[property]);
+        const value = obj[property];
+        if(value) setValueName(property, obj[property]);
       }
       this.getElement("name").disabled = "disabled";
     }
@@ -260,6 +262,9 @@ export class AonEventAdd extends AonElement {
         formatDateOrigin(formValues.date) + " " + formValues.time
       ).getTime(),
     };
+
+    if(data.coordinates.isEmpty())delete data.coordinates;
+    
     try {
       const { id } = await saveTimeControl(data);
       if (id) {
