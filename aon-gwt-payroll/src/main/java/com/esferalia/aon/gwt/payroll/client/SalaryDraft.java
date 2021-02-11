@@ -21,8 +21,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.eclipse.persistence.logging.LogLevel;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
@@ -49,6 +47,7 @@ import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.gwt.payroll.shared.Salary.TypeVisitor;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringTimeLineVariable;
@@ -1351,6 +1350,15 @@ public class SalaryDraft extends ResizeComposite
 			});
 		}
 
+		public void setHideButton(HasClickHandlers deleteButton) {
+			deleteButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					onExpressionChange(item, "HIDE()");
+				}
+			});
+		}
+
 		public void setEnableButton(HasClickHandlers deleteButton) {
 			deleteButton.addClickHandler(new ClickHandler() {
 				@Override
@@ -1459,6 +1467,8 @@ public class SalaryDraft extends ResizeComposite
 			paymentDialog.setQuoteExpression(item.getQuoteExpression());
 			
 			paymentDialog.setAvailablePayments(salaryDraftObject.getPayments());
+			
+			paymentDialog.setReadOnly(isSettle());
 
 			paymentDialog.center();
 			paymentDialog.show(this);
@@ -1988,6 +1998,43 @@ public class SalaryDraft extends ResizeComposite
 			calculate(deduction);
 		}
 
+	}
+	
+	class NewSettlePaymentHandler extends NewPaymentHandler {
+		
+		@Override
+		protected void addDrafItem(Payment payment, String expression) {
+			Payment draftPayment = new Payment();
+			draftPayment.setScope(Scope.SALARY);
+			draftPayment.setExpression(expression);
+			draftPayment.setIrpfExpression("_P");
+			draftPayment.setType(Payment.Type.CRA_0000);
+			draftPayment.setDescriptionTemplate(descriptionBox.getText());
+			draftPayment.setEndDate(salaryDraftObject.getEndDate());
+			draftPayment.setStartDate(salaryDraftObject.getStartDate());
+			draftPayment.setSalaryType(salaryDraftObject.getType());
+
+			salaryDraftObject.addDraftPayment(draftPayment);
+		}
+
+		@Override
+		protected void showSuggestions(SuggestBox suggestBox, Collection<? extends Suggestion> suggestions,
+				boolean isDisplayStringHTML, boolean isAutoSelectEnabled, SuggestionCallback callback) {
+		}
+	
+		@Override
+		protected void onEdit() {
+			PaymentDialog paymentDialog = new PaymentDialog();
+			paymentDialog.setReadOnly(true);
+			paymentDialog.setTypeListVisible();
+			paymentDialog.setNumberFormat(AON.CURRENCY_FORMAT);
+			paymentDialog.setContextProvider(salaryDraftObject);
+
+			paymentDialog.center();
+			paymentDialog.show(this);
+
+		}
+	
 	}
 
 	class NewPaymentHandler extends NewItemHandler<Payment> implements PaymentDialog.Callback {
@@ -3596,8 +3643,7 @@ public class SalaryDraft extends ResizeComposite
 
 	private NewPaymentHandler insertNewPaymentRow() {
 		int row = paymentsTable.getRowCount();
-
-		NewPaymentHandler newPaymentHandler = new NewPaymentHandler();
+		NewPaymentHandler newPaymentHandler = newPaymentHandler();
 		Button newButton = new Button();
 		newButton.setTabIndex(Short.MAX_VALUE);
 		newButton.setStyleName(AON.AON_ICON_RESET); // clear gwt-Button
@@ -3633,6 +3679,37 @@ public class SalaryDraft extends ResizeComposite
 		return newPaymentHandler;
 	}
 
+	private NewPaymentHandler newPaymentHandler() {
+		return salaryDraftObject.getType().accept(
+			new TypeVisitor<NewPaymentHandler>() {
+
+			@Override
+			public NewPaymentHandler visitSalary(Type type) {
+				return new NewPaymentHandler();
+			}
+
+			@Override
+			public NewPaymentHandler visitExtra(Type type) {
+				return new NewPaymentHandler();
+			}
+
+			@Override
+			public NewPaymentHandler visitSettle(Type type) {
+				return new NewSettlePaymentHandler();
+			}
+
+			@Override
+			public NewPaymentHandler visitDelay(Type type) {
+				return new NewPaymentHandler();
+			}
+
+			@Override
+			public NewPaymentHandler visitL00(Type type) {
+				return new NewPaymentHandler();
+			}
+		});
+	}
+	
 	private NewDeductionHandler insertNewDeductionRow() {
 		int row = paymentsTable.getRowCount();
 		NewDeductionHandler newDeductionHandler = new NewDeductionHandler();
@@ -4058,6 +4135,12 @@ public class SalaryDraft extends ResizeComposite
 			buttonsPanel.add(agreementButton);
 			handler.setEnableButton(agreementButton);
 			agreementButton.ensureDebugId("agreement-button-" + row );
+		} else if (isHideable(item)) {
+			Button hideButton = getEnableButton();
+			hideButton.setTabIndex(Short.MAX_VALUE);
+			buttonsPanel.add(hideButton);
+			handler.setHideButton(hideButton);
+			hideButton.ensureDebugId("agreement-button-" + row );
 		}
 
 		Button deleteButton = new Button();
@@ -4313,6 +4396,7 @@ public class SalaryDraft extends ResizeComposite
 		dumpSystemItem(bonus, description, row, percentWidget, expandButton, iconStyles);
 	}
 	
+
 	/*
 	 * 
 	 * @param context
@@ -4669,11 +4753,11 @@ public class SalaryDraft extends ResizeComposite
 			
 			@Override
 			public Void visitSalary(Type type) {
-				Reports.classic_new(salaryDraftObject,  dataURI -> {
-					SalaryDraft.this.showPreview();
-					SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
-				});
-//				print();
+//				Reports.classic_new(salaryDraftObject,  dataURI -> {
+//					SalaryDraft.this.showPreview();
+//					SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
+//				});
+				print();
 				return null;
 			}
 			
@@ -4684,7 +4768,7 @@ public class SalaryDraft extends ResizeComposite
 			}
 
 			@Override
-			public Void visitNotEnjoyedVacations(Type type) {
+			public Void visitL00(Type type) {
 				print();
 				return null;
 			}
@@ -5041,7 +5125,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private void showCosts(boolean show) {
-
+		
 		int costsBeforeRow = paymentsTable.getRowCount()
 				- (/* 1 new line */+2 /* blanks line */);
 
@@ -6483,6 +6567,10 @@ public class SalaryDraft extends ResizeComposite
 				(payment.getScope() == Scope.CONTRACT 
 				|| payment.getScope() == Scope.SALARY )
 				;
+	}
+
+	private static boolean isHideable(Item payment) {
+		return AonStringUtils.startsWith(payment.getExpression(), "/*hideable*/" );
 	}
 
 	private static boolean isDefault(Payment payment) {

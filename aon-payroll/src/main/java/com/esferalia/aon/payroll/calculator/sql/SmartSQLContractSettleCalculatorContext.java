@@ -44,6 +44,7 @@ import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.calculator.sql.FilterCollection.Filter;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.SalaryException;
@@ -204,7 +205,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 						extraPayment.setPaymentConcept(autoGenratedConcept);
 	
 						extraPayment.setDescription(description);
-						extraPayment.setExpression(String.format(Locale.US, "%f", amount));
+						extraPayment.setExpression(String.format(Locale.US, "/*hideable*/%f", amount));
 						extraPayment.setIrpfExpression(String.format(Locale.US, "%f", tax));
 						extraPayment.setQuoteExpression(String.format(Locale.US, "%f", quote));
 						
@@ -288,6 +289,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		criteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
 				
 		PaymentConcept autoGenratedConcept =  new PaymentConcept();
+		autoGenratedConcept.setCode("__PAGA_EXTRA");
 		autoGenratedConcept.setId(Integer.MAX_VALUE);
 		
 		for ( int i = 0; i < extras.size(); i++ ) {
@@ -446,12 +448,17 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 	
 	
 	private IContractPayment newExtraMsgPayment(String message) {
+		PaymentConcept autoGenratedConcept =  new PaymentConcept();
+		autoGenratedConcept.setCode("__PAGA_EXTRA");
+		autoGenratedConcept.setId(Integer.MAX_VALUE);
+
 		SystemPayment extraPayment = new SystemPayment();
 		
 		extraPayment.setType(PaymentType.CRA_0000);
 		extraPayment.setSalaryType(SalaryType.SETTLE);
 		extraPayment.setStartDate(getStart());
 		extraPayment.setEndDate(getEnd());
+		extraPayment.setPaymentConcept(autoGenratedConcept);
 
 		extraPayment.setExpression(String.format(Locale.US, "HIDE(\""
 				+ "<div>%s incluida en el finiquito. Si no desea incluirla, genere esta paga extra.</div>"
