@@ -171,7 +171,11 @@ public class JooqEmployeeCalendarNew {
 					  .where(CONTRACT_DATA.CONTRACT.eq(contract))
 					  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
 					  .orderBy(CONTRACT_DATA.START_DATE.desc())
-					  .fetchOptional(CONTRACT_DATA.EXPRESSION).orElse("true");
+					  .fetchStreamInto(CONTRACT_DATA)
+					  .map( data -> data.getExpression())
+					  .filter(tc2 -> AonStringUtils.isNotBlank(tc2))
+					  .findFirst()
+					  .orElse("true");
 			
 		}
 		
