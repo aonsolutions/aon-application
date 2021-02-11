@@ -289,7 +289,6 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		criteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
 				
 		PaymentConcept autoGenratedConcept =  new PaymentConcept();
-		autoGenratedConcept.setCode("__PAGA_EXTRA");
 		autoGenratedConcept.setId(Integer.MAX_VALUE);
 		
 		for ( int i = 0; i < extras.size(); i++ ) {
@@ -448,9 +447,6 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 	
 	
 	private IContractPayment newExtraMsgPayment(String message) {
-		PaymentConcept autoGenratedConcept =  new PaymentConcept();
-		autoGenratedConcept.setCode("__PAGA_EXTRA");
-		autoGenratedConcept.setId(Integer.MAX_VALUE);
 
 		SystemPayment extraPayment = new SystemPayment();
 		
@@ -458,7 +454,6 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		extraPayment.setSalaryType(SalaryType.SETTLE);
 		extraPayment.setStartDate(getStart());
 		extraPayment.setEndDate(getEnd());
-		extraPayment.setPaymentConcept(autoGenratedConcept);
 
 		extraPayment.setExpression(String.format(Locale.US, "HIDE(\""
 				+ "<div>%s incluida en el finiquito. Si no desea incluirla, genere esta paga extra.</div>"
