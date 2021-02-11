@@ -16,26 +16,26 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// ¿ --> \u00BF
 
 	 CM_001("303-CM001",false,null,"C\u00E1lculo por diferencia.")
-	,CM_002("303-CM002",false,null,"\u00BFEst\u00E1 inscrito en el Registro de devoluci\u00F3n mensual?")
+	,CM_002("303-CM002",false,null,"Sujeto pasivo inscrito en el Registro de devoluci\u00F3n mensual")
 	,CM_003("303-CM003",false,null,"Porcentaje de prorrata.")
 	,CM_004("303-CM004",false,null,"Tipo de declaraci\u00F3n")
 	,CM_005("303-CM005",false,null,"R\u00E9gimen por defecto")
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  AEAT -------
 	// 	----------------------------------------------------------------------------------
-	,CT_A02("303-CTA02",false,null,"\u00BFTributa exclusivamente en r\u00E9gimen simplificado?")
-	,CT_A03("303-CTA03",false,null,"\u00BFEs autoliquidaci\u00F3n conjunta?")
-	,CT_A04("303-CTA04",false,null,"\u00BFHa sido declarado en concurso de acreedores en el presente per\u00EDodo de liquidaci\u00F3n?")
+	,CT_A02("303-CTA02",false,null,"Sujeto pasivo que tributa exclusivamente en r\u00E9gimen simplificado")
+	,CT_A03("303-CTA03",false,null,"Autoliquidaci\u00F3n conjunta")
+	,CT_A04("303-CTA04",false,null,"Sujeto pasivo declarado en concurso de acreedores en el presente per\u00EDodo de liquidaci\u00F3n")
 	,CT_A05("303-CTA05",false,null,"Fecha en que se dict\u00F3 el auto de declaraci\u00F3n de concurso")
-	,CT_A06("303-CTA06",false,null,"Auto de declaraci\u00F3n de concurso dictado en el per\u00EDodo")
-	,CT_A07("303-CTA07",false,null,"\u00BFHa optado por el r\u00E9gimen especial del criterio de Caja (art. 163 undecies LIVA)?")
-	,CT_A08("303-CTA08",false,null,"\u00BFEs destinatario de operaciones a las que se aplique el r\u00E9gimen especial del criterio de caja?")
+	,CT_A06("303-CTA06",false,null,"Auto de declaraci\u00F3n de concurso dictado en el per\u00EDodo (tipo de autoliquidaci\u00F3n)")
+	,CT_A07("303-CTA07",false,null,"Sujeto pasivo acogido al r\u00E9gimen especial del criterio de Caja (art. 163 undecies LIVA)")
+	,CT_A08("303-CTA08",false,null,"Sujeto pasivo destinatario de operaciones acogidas al r\u00E9gimen especial del criterio de caja")
 	,CT_A09("303-CTA09",false,null,"Opci\u00F3n por la aplicaci\u00F3n de la prorrata especial (art\u00EDculo 103.Dos.1\u00BA LIVA)")
 	,CT_A10("303-CTA10",false,null,"Revocaci\u00F3n de la opci\u00F3n por la aplicaci\u00F3n de la prorrata especial (art\u00EDculo 103.Dos.1\u00BA LIVA)")
-	,CT_A11("303-CTA11",false,null,"Exonerados de la declaraci\u00F3n-resumen anual del IVA, modelo 390: \u00BFExiste volumen de operaciones (art. 121 LIVA)?")
+	,CT_A11("303-CTA11",false,null,"Sujeto pasivo con volumen anual de operaciones distinto de cero (art. 121 LIVA)")
 	,CT_A12("303-CTA12",false,null,"Sujeto pasivo que tributa exclusivamente a una Administraci\u00F3n tributaria Foral con IVA a la importaci\u00F3n liquidado por la Aduana pendiente de ingreso")
-	,CT_A13("303-CTA13",false,null,"\u00BFHa llevado voluntariamente los Libros registro del IVA a trav\u00E9s de la Sede electr\u00F3nica de la AEAT durante el ejercicio?")
-	,CT_A14("303-CTA14",false,null,"\u00BFEst\u00E1 exonerado de la Declaraci\u00F3n-resumen anual del IVA, modelo 390?")
+	,CT_A13("303-CTA13",false,null,"Sujeto pasivo acogido voluntariamente al SII")
+	,CT_A14("303-CTA14",false,null,"Sujeto pasivo exonerado de la Declaraci\u00F3n-resumen anual del IVA, modelo 390")
 	
 	,CT_C01("303-CTC01",true ,"1","R\u00E9gimen general - Base imponible")
 	,CT_C02("303-CTC02",false,"2","R\u00E9gimen general - Tipo %")
@@ -385,7 +385,13 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C65("303-CTA65",false,"65","% Atribuible a la Administraci\u00F3n del Estado") 
 	,CT_C66("303-CTA66",false,"66","Atribuible a la Administraci\u00F3n del Estado")
 	,CT_C77("303-CTA77",false,"77","IVA a la importaci\u00F3n liquidado por la Aduana pendiente de ingreso")  
-	,CT_C67("303-CTA67",false,"67","Cuotas a compensar de periodos anteriores") 
+	
+	,CT_C67("303-CTA67",false,"67","Cuotas a compensar de periodos anteriores")  // Hasta 2020
+	
+	,CT_C110("303-CTA110",false,"110","Cuotas a compensar pendientes de periodos anteriores") // A partir de 2021
+	,CT_C78("303-CTA78",false,"78","Cuotas a compensar de periodos anteriores aplicadas en este periodo") // A partir de 2021
+	,CT_C87("303-CTA87",false,"87","Cuotas a compensar de periodos previos pendientes para periodos posteriores (No se incluyen las cuotas a compensar generadas en este periodo)") // A partir de 2021
+	
 	,CT_C68("303-CTA68",false,"68","Exclusivamente para sujetos pasivos que tributan conjuntamente a la Administraci\u00F3n del Estado y a las Diputaciones Forales Resultado de la regularizaci\u00F3n anual") 
 	,CT_C69("303-CTA69",false,"69","Resultado") 
 	,CT_C70("303-CTA70",false,"70","A deducir")
@@ -417,7 +423,10 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C92("303-CTA92",false,"92","Navarra/Nafarroa")
 	,CT_C80("303-CTA80",false,"80","Operaciones en r\u00E9gimen general")
 	,CT_C81("303-CTA81",false,"81","Operaciones en r\u00E9gimen especial del criterio de caja conforme art. 75 LIVA")
-	,CT_C82("303-CTA82",false,"82","Exportaciones, entregas intracomunitarias  y otras operaciones con derecho a deducci\u00F3n") 
+	
+	// Félix: Esta casilla no se utiliza desde finales de 2017 (periodos 2017 en adelante), se desglosó en dos [93] y [94]
+	,CT_C82("303-CTA82",false,"82","Exportaciones, entregas intracomunitarias  y otras operaciones con derecho a deducci\u00F3n")
+	
 	,CT_C93("303-CTA93",false,"93","Entregas intracomunitarias exentas")
 	,CT_C94("303-CTA94",false,"94","Exportaciones y otras operaciones exentas con derecho a deducci\u00F3n")
 	,CT_C83("303-CTA83",false,"83","Operaciones exentas sin derecho a deducci\u00F3n")
@@ -429,8 +438,11 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C97("303-CTA97",false,"97","Operaciones en r\u00E9gimen especial de bienes usados, objetos de arte, antig\u00fcedades y objetos de colecci\u00F3n")
 	,CT_C98("303-CTA98",false,"98","Operaciones en r\u00E9gimen especial de Agencias de Viajes")
 	,CT_C79("303-CTA79",false,"79","Entregas de bienes inmuebles y operaciones financieras no habituales") 
-	,CT_C99("303-CTA99",false,"99","Entregas de bienes de inversi\u00F3n") 
-	,CT_C87("303-CTA87",false,"87","Entregas de bienes inmuebles y de inversi\u00F3n y operaciones financieras no habituales")  
+	,CT_C99("303-CTA99",false,"99","Entregas de bienes de inversi\u00F3n")
+
+	// Félix: Esta casilla no se utiliza desde finales de 2017 (periodos 2017 en adelante), se cambió por la [79]
+	//,CT_C87("303-CTA87",false,"87","Entregas de bienes inmuebles y de inversi\u00F3n y operaciones financieras no habituales")
+	
 	,CT_C88("303-CTA88",false,"88","Total volumen de operaciones")
 	,CT_C107("303-CTA107",false,"107","Territorio com\u00FAn")
 	

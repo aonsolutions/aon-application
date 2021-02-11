@@ -219,7 +219,11 @@ public class Model303 extends MainEntryPoint {
 	private void select(Mod303 selected) {
 		cleanErrorPanel();
 		if (selected.isAEAT()) {
-			if (selected.getYear() < 2018) {
+			
+			if (selected.getYear() >= 2021) {
+				declarationContainer.setWidget( new Model3032021AEAT(selected,new Model303Callback(), getAonData()));
+			}
+			else if (selected.getYear() < 2018) {
 				declarationContainer.setWidget( new Model3032017AEAT(selected,new Model303Callback(), getAonData()));
 			} else if ((selected.getYear() >= 2018 && selected.getYear() < 2020) 
 				|| (selected.getYear() == 2020 && !selected.isLastPeriod()))  {
@@ -227,6 +231,7 @@ public class Model303 extends MainEntryPoint {
 			} else {
 				declarationContainer.setWidget( new Model3032020AEAT(selected,new Model303Callback(), getAonData()));
 			}
+			
 		} else if (selected.isBizkaia()) {
 			if (selected.getYear() < 2017) {
 				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback(), getAonData()));	

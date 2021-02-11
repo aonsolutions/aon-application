@@ -84,6 +84,20 @@ public class Mod303DAO extends FiscalModelDAO {
 		}
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 		dec.fillSimplifiedRegime(mod303);
+		
+		// Comprobación Periodo Enero 2021 (Casilla 67 se desglosa en casillas 110, 78 y 87)		
+		// Comprobar si la casilla 67, cuotas a compensar de periodos anteriores, que se
+		// utilizaba hasta 2020, está cumplimentada, por si había algun modelo de 2021/01 
+		// creado cuando se hizo esta modificacion a mediados de febrero 2021. El importe 
+		// de la casilla 67 se lleva a las casillas 110 y 78, pues la casilla 67 desaparece
+		// del modelo 303 a partir de 2021
+		if (mod303 != null && mod303.getYear() == 2021 && mod303.getPeriod() == Period.M01 && mod303.getAmount(Mod303Key.CT_C67) != 0.0) {
+			mod303.putAmount(Mod303Key.CT_C110, mod303.getAmount(Mod303Key.CT_C67));
+			mod303.putAmount(Mod303Key.CT_C78, mod303.getAmount(Mod303Key.CT_C67));
+			mod303.putAmount(Mod303Key.CT_C67, 0.0);
+			saveOnlyMod303(ctx, mod303);
+		}
+		
 		return mod303;
 		
 	}
