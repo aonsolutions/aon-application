@@ -4768,7 +4768,7 @@ public class SalaryDraft extends ResizeComposite
 			}
 
 			@Override
-			public Void visitL00(Type type) {
+			public Void visitNotEnjoyedVacations(Type type) {
 				print();
 				return null;
 			}
