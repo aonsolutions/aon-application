@@ -435,6 +435,29 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public List<Agreement> getTrashAgreements(String domain, int offset, int limit) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domain);
+			Integer domainID = AonServletUtils.getDomainID(domain);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
+
+			return JooqAgreement.getTrashAgreements(connection, offset, limit,
+					domainID, parentDomainID);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+	
+	@Override
 	public Agreement getAgreement(String domain, Integer agreementId) {
 		Connection connection = null;
 		try {

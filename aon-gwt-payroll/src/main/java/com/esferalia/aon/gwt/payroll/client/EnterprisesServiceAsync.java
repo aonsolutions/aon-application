@@ -58,6 +58,7 @@ public interface EnterprisesServiceAsync {
 	void getWorkplacesExtras(String domain, List<Integer> workplaceIds, AsyncCallback<List<Extra>> callback);
 	void getAgreement(String domain, Integer agreementId, AsyncCallback<Agreement> callback);
 	void getAgreements(String domain, int offset , int limit, AsyncCallback<List<Agreement>> callback);
+	void getTrashAgreements(String currentDomainName, int offset, int limit, AsyncCallback<List<Agreement>> callback);
 	void getEnterprises(String domain, String user,int offset , int limit, AsyncCallback<List<Enterprise>> callback);
 	void getEnterprisesCosts(String domain, List<Integer> enterpriseIds, AsyncCallback<List<Cost>> callback);
 	void getBonusConcepts(String domain, int offset , int limit, AsyncCallback<List<Bonus>> callback);

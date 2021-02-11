@@ -113,6 +113,10 @@ public class DomainEnterprisesServiceAsync {
 	public void getAgreements(int offset, int limit, AsyncCallback<List<Agreement>> callback) {
 		enterprisesServiceAsync.getAgreements(getCurrentDomainName(), offset, limit, callback);
 	}
+	
+	public void getTrashAgreements(int offset, int limit, AsyncCallback<List<Agreement>> callback) {
+		enterprisesServiceAsync.getTrashAgreements(getCurrentDomainName(), offset, limit, callback);
+	}
 
 	public void getEnterprises(int offset, int limit, AsyncCallback<List<Enterprise>> callback) {
 		enterprisesServiceAsync.getEnterprises(getCurrentDomainName(), getCurrentUser(), offset, limit, callback);

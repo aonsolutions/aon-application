@@ -455,6 +455,12 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		return getAgreements(DSL.using(conn, getDefaultSettings()), offset,
 				limit, domains);
 	}
+	
+	public static List<Agreement> getTrashAgreements(Connection conn, int offset,
+			int limit, Integer... domains) throws SQLException {
+		return getTrashAgreements(DSL.using(conn, getDefaultSettings()), offset,
+				limit, domains);
+	}
 
 	public static Agreement getAgreement(Connection conn, Integer agreementId) throws SQLException {
 		return getAgreement(DSL.using(conn, getDefaultSettings()), agreementId);
@@ -508,6 +514,38 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			// agreement.setLevelsWithoutCategories(false);
 			// agreement.setEmployees(rs.getInt("EMPLOYEEs"));
 			// agreement.setRedefined(rs.getInt("REDEFINED"));
+			agreements.add(agreement);
+
+		}
+		return agreements;
+	}
+	
+	public static List<Agreement> getTrashAgreements(DSLContext dslContext,
+			int offset, int limit, Integer... domains) throws SQLException {
+		
+		// @formatter:off
+		Result<AgreementRecord> result = dslContext.select().from(AGREEMENT)
+				.where(AGREEMENT.DOMAIN.in(domains))
+				.and(AGREEMENT.ID.lt(0))				
+				.orderBy(AGREEMENT.DOMAIN.desc(), AGREEMENT.DESCRIPTION)
+				.offset(offset)
+				.limit(limit)
+				.fetchInto(AGREEMENT);
+		// @formatter:on
+
+		List<Agreement> agreements = new LinkedList<Agreement>();
+		for (AgreementRecord record : result) {
+			Agreement agreement = new Agreement();
+
+			agreement.setId(record.getId()); // Not NULL
+			agreement.setDomain(record.getDomain());
+			agreement.setDescription(record.getDescription());
+			agreement.setSSNumber(record.getSsNumber());
+			
+			agreement.setLevels(Collections.emptySet());
+
+			boolean hasContracts = hasContract(dslContext, record.getId());
+			agreement.setHasContract(hasContracts);
 			agreements.add(agreement);
 
 		}
@@ -651,6 +689,13 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
 				.where(AGREEMENT_LEVEL.AGREEMENT.in(agreement.getId()));
 
+		// TODO: poner a null todos los contratos que apuntan al convenio borrado
+		dslContext.update(CONTRACT)
+			.set(CONTRACT.AGREEMENT_LEVEL, DSL.val(null, CONTRACT.AGREEMENT_LEVEL))
+			.set(CONTRACT.CATEGORY_DESCRIPTION, DSL.val(null, CONTRACT.CATEGORY_DESCRIPTION))
+			.where(CONTRACT.AGREEMENT_LEVEL.in(agreementLevelId))
+			.execute();
+		
 		dslContext
 				.delete(AGREEMENT_LEVEL_CATEGORY)
 				.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL

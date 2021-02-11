@@ -79,6 +79,8 @@ public interface EnterprisesService extends RemoteService {
 	Agreement getAgreement(String domain, Integer agreementId) ;
 
 	List<Agreement> getAgreements(String domain, int offset, int limit) ;
+	
+	List<Agreement> getTrashAgreements(String currentDomainName, int offset, int limit);
 
 	List<Enterprise> getEnterprises(String domain, String user, int offset, int limit) ;
 
@@ -270,5 +272,6 @@ public interface EnterprisesService extends RemoteService {
 	void restoreContract(String currentDomainName, Integer contractId);
 
 	void delete4EverContract(String currentDomainName, Integer contractId);
+
 	
 }

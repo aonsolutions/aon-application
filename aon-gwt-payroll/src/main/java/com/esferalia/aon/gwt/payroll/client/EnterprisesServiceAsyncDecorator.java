@@ -159,6 +159,15 @@ public class EnterprisesServiceAsyncDecorator implements
 				new AsyncCallbackWrapper<List<Agreement>>(callback));
 
 	}
+	
+	@Override
+	public void getTrashAgreements(String domain, int offset, int limit,
+			AsyncCallback<List<Agreement>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getTrashAgreements(domain, offset, limit,
+				new AsyncCallbackWrapper<List<Agreement>>(callback));
+
+	}
 
 	@Override
 	public void getBonusConcepts(String domain, int offset, int limit,
