@@ -82,15 +82,20 @@ public class ContractData implements Serializable {
 		if ( isBlank(filter) ) 
 			return htmlFullName;
 		
+
 		Function<String, String> repl = s -> "<b>"+s+"</b>";
-		
-		StringBuffer display = new StringBuffer();
-		try {
-			display.append(replace(htmlFullName, filter, repl));
-		} catch ( Exception e ) {
-			display.append(htmlFullName);
+
+		for ( String word : filter.split("\\s+") ) {
+			try {
+				htmlFullName = replace(htmlFullName, word, repl);
+			} catch ( Exception e ) {
+			}
 		}
 		
+		StringBuffer display = new StringBuffer();
+
+		display.append(htmlFullName);
+
 		try {
 			display.append(" " + replace(document, filter, repl));
 		} catch ( Exception e ) {
@@ -100,6 +105,7 @@ public class ContractData implements Serializable {
 			display.append( " " + replace(ssNumber, filter, repl));
 		} catch ( Exception e ) {			
 		}
+
 		
 		
 

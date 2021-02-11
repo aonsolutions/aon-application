@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -36,6 +37,7 @@ import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.jooq.tables.Person;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContractSwitcher implements
 		ITemplateController, Serializable {
@@ -120,6 +122,7 @@ public class ContractSwitcher implements
 									d.getSsNumber(), getFilter())
 							|| StringUtils.containsIgnoreCase(
 									d.getDocument(), getFilter())
+							|| containsAll(d.getFullName(), getFilter())
 	
 							) {
 						filteredList.add(d);
@@ -267,6 +270,16 @@ public class ContractSwitcher implements
 
 	public String getDomainNameURL() throws ManagerBeanException {
 		return ((DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER)).getDomainNameURL();
+	}
+	
+	public static boolean containsAll (String str, String searchStr) {
+		return AonStringUtils.isNotBlank(str) 
+				&& AonStringUtils.isNotBlank(searchStr) 
+				&& containsAll(str, searchStr.split("\\s+"));
+	}
+
+	public static boolean containsAll (String str, String searchStrs []) {
+		return Arrays.stream(searchStrs).allMatch(searchStr -> AonStringUtils.containsIgnoreCase(str, searchStr));
 	}
 	
 }
