@@ -158,7 +158,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 				"/*read-only*/DIAS_VACACIONES_NO_DISFRUTADOS * ( SALARIO_DIA + SALARIO_VARIABLE_DIA )/**/ ", 
 				"_P", 
 				"_P", 
-				PaymentType.CRA_0000, 
+				PaymentType.CRA_0006,
 				SalaryType.SETTLE);
 
 		Date noHolidaysStart = add(contract.getEndDate(), Calendar.DATE, 1);
