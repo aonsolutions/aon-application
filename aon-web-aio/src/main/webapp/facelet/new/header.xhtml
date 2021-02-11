@@ -332,8 +332,14 @@
 				}, 500);
 			}
 			function escSearchResults(e){
-				if ( e.which === 27 )
+				if ( e.which === 27 ) {
 					#{rich:element('smartFilterTablePanel')}.style.display='none';
+					e.stopPropagation();
+      				e.preventDefault();  
+      				e.returnValue = false;
+      				e.cancelBubble = true;
+      				return false;
+				}
 			}
 	</script>
 		
@@ -388,6 +394,7 @@
 						>
 						<a4j:support 
 						event="onkeyup"
+						onsubmit="if (window.event.which == 27) {return false;}"
 						reRender="smartFilterTableContainer"
 						eventsQueue="domainSwitcherFilterKeyUp"
 						requestDelay="500"
