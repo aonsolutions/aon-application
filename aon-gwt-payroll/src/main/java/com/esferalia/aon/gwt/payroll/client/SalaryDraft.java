@@ -3704,7 +3704,7 @@ public class SalaryDraft extends ResizeComposite
 			}
 
 			@Override
-			public NewPaymentHandler visitL00(Type type) {
+			public NewPaymentHandler visitNotEnjoyedVacations(Type type) {
 				return new NewPaymentHandler();
 			}
 		});

@@ -181,7 +181,7 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 
 		static Map<Type, Boolean> BBCC_INCLUDED = new HashMap<Type, Boolean>() {
 			{
-				put(CRA_0000, true);
+				put(CRA_0000, false);
 				put(CRA_0001, true);
 				put(CRA_0002, true);
 				put(CRA_0003, true);
@@ -250,7 +250,7 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 		//@formatter:off
 		static Map<Type, Boolean> BBCC_EXCLUDED = new HashMap<Type, Boolean>() {
 			{
-				put(CRA_0000, false);
+				put(CRA_0000, true);
 				put(CRA_0001, false);
 				put(CRA_0002, false);
 				put(CRA_0003, false);
