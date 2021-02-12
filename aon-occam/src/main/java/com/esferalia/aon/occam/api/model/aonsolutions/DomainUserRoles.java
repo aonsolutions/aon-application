@@ -1,11 +1,12 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 
-public class DomainUserRoles {
+public class DomainUserRoles implements Serializable {
 	Domain domain;
 	User user;
 	
@@ -15,7 +16,7 @@ public class DomainUserRoles {
 	LinkedList<AonRole> parentDomainUserRoles;
 	
 	public DomainUserRoles() {
-	
+		super();
 	}
 	
 	public Domain getDomain() {
