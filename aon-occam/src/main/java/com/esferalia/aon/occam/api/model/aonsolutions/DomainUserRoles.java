@@ -90,111 +90,111 @@ public class DomainUserRoles {
 	}
 	
 	public Boolean isAccounting() {	
-		return hasApp(AonApp.ACCOUNTING) && hasRole(AonRole.ACCOUNTING);
+		return hasApp(AonApp.ACCOUNTING) && (isAdmin() || hasRole(AonRole.ACCOUNTING));
 	}
 	
 	public Boolean isAccountingManager() {
-		return hasApp(AonApp.ACCOUNTING) && hasRole(AonRole.ACCOUNTING_MANAGER);
+		return hasApp(AonApp.ACCOUNTING) && (isAdmin() || hasRole(AonRole.ACCOUNTING_MANAGER));
 	}
 	
 	public Boolean isFiscal() {
-		return hasApp(AonApp.FISCAL) && hasRole(AonRole.FISCAL);
+		return hasApp(AonApp.FISCAL) && (isAdmin() || hasRole(AonRole.FISCAL));
 	}
 	
 	public Boolean isFiscalManager() {
-		return hasApp(AonApp.FISCAL) && hasRole(AonRole.FISCAL_MANAGER);
+		return hasApp(AonApp.FISCAL) && (isAdmin() || hasRole(AonRole.FISCAL_MANAGER));
 	}
 	
 	public Boolean isPayroll() {
-		return hasApp(AonApp.PAYROLL) && hasRole(AonRole.PAYROLL);
+		return hasApp(AonApp.PAYROLL) && (isAdmin() || hasRole(AonRole.PAYROLL));
 	}
 	
 	public Boolean isPayrollPortal() {
-		return hasApp(AonApp.PAYROLL) && hasRole(AonRole.PAYROLL_PORTAL);
+		return hasApp(AonApp.PAYROLL) && (isAdmin() || hasRole(AonRole.PAYROLL_PORTAL));
 	}
 	
 	public Boolean isPayrollManager() {
-		return hasApp(AonApp.PAYROLL) && hasRole(AonRole.PAYROLL_MANAGER);
+		return hasApp(AonApp.PAYROLL) && (isAdmin() || hasRole(AonRole.PAYROLL_MANAGER));
 	}
 	
 	public Boolean isDocumental() {
-		return hasApp(AonApp.DOCUMENTAL) && hasRole(AonRole.DOCUMENTAL);
+		return hasApp(AonApp.DOCUMENTAL) && (isAdmin() || hasRole(AonRole.DOCUMENTAL));
 	}
 	
 	public Boolean isDocumentalManager() {
-		return hasApp(AonApp.DOCUMENTAL) && hasRole(AonRole.DOCUMENTAL_MANAGER);
+		return hasApp(AonApp.DOCUMENTAL) && (isAdmin() || hasRole(AonRole.DOCUMENTAL_MANAGER));
 	}
 	
 	public Boolean isComunica() {
-		return hasApp(AonApp.COMUNICA) && hasRole(AonRole.COMUNICA);
+		return hasApp(AonApp.COMUNICA) && (isAdmin() || hasRole(AonRole.COMUNICA));
 	}
 	
 	public Boolean isComunicaPortal() {
-		return hasApp(AonApp.COMUNICA) && hasRole(AonRole.COMUNICA_PORTAL);
+		return hasApp(AonApp.COMUNICA) && (isAdmin() || hasRole(AonRole.COMUNICA_PORTAL));
 	}
 	
 	public Boolean isComunicaManager() {
-		return hasApp(AonApp.COMUNICA) && hasRole(AonRole.COMUNICA_MANAGER);
+		return hasApp(AonApp.COMUNICA) && (isAdmin() || hasRole(AonRole.COMUNICA_MANAGER));
 	}
 	
 	public Boolean isTimecontrol() {
-		return hasApp(AonApp.TIMECONTROL) && hasRole(AonRole.TIMECONTROL);
+		return hasApp(AonApp.TIMECONTROL) && (isAdmin() || hasRole(AonRole.TIMECONTROL));
 	}
 	
 	public Boolean isTimecontrolPortal() {
-		return hasApp(AonApp.TIMECONTROL) && hasRole(AonRole.TIMECONTROL_PORTAL);
+		return hasApp(AonApp.TIMECONTROL) && (isAdmin() || hasRole(AonRole.TIMECONTROL_PORTAL));
 	}
 	
 	public Boolean isTimecontrolManager() {
-		return hasApp(AonApp.TIMECONTROL) && hasRole(AonRole.TIMECONTROL_MANAGER);
+		return hasApp(AonApp.TIMECONTROL) && (isAdmin() || hasRole(AonRole.TIMECONTROL_MANAGER));
 	}
 	
 	public Boolean isMessenger() {
-		return hasApp(AonApp.MESSENGER) && hasRole(AonRole.MESSENGER);
+		return hasApp(AonApp.MESSENGER) && (isAdmin() || hasRole(AonRole.MESSENGER));
 	}
 	
 	public Boolean isMessengerManager() {
-		return hasApp(AonApp.MESSENGER) && hasRole(AonRole.MESSENGER_MANAGER);
+		return hasApp(AonApp.MESSENGER) && (isAdmin() || hasRole(AonRole.MESSENGER_MANAGER));
 	}
 	
 	public Boolean isInvoice() {
-		return hasApp(AonApp.INVOICE) && hasRole(AonRole.INVOICE);
+		return hasApp(AonApp.INVOICE) && (isAdmin() || hasRole(AonRole.INVOICE));
 	}
 	
 	public Boolean isInvoicePortal() {
-		return hasApp(AonApp.INVOICE) && hasRole(AonRole.INVOICE_PORTAL);
+		return hasApp(AonApp.INVOICE) && (isAdmin() || hasRole(AonRole.INVOICE_PORTAL));
 	}
 	
 	public Boolean isInvoiceManager() {
-		return hasApp(AonApp.INVOICE) && hasRole(AonRole.INVOICE_MANAGER);
+		return hasApp(AonApp.INVOICE) && (isAdmin() || hasRole(AonRole.INVOICE_MANAGER));
 	}
 	
 	public Boolean isManagement() {
-		return hasApp(AonApp.MANAGEMENT) && hasRole(AonRole.MANAGEMENT);
+		return hasApp(AonApp.MANAGEMENT) && (isAdmin() || hasRole(AonRole.MANAGEMENT));
 	}
 	
 	public Boolean isManagementManager() {
-		return hasApp(AonApp.MANAGEMENT) && hasRole(AonRole.MANAGEMENT_MANAGER);
+		return hasApp(AonApp.MANAGEMENT) && (isAdmin() || hasRole(AonRole.MANAGEMENT_MANAGER));
 	}
 	
 	public Boolean isAlma() {
-		return hasApp(AonApp.ALMA) && hasRole(AonRole.ALMA);
+		return hasApp(AonApp.ALMA) && (isAdmin() || hasRole(AonRole.ALMA));
 	}
 	public Boolean isOcr() {
-		return hasApp(AonApp.OCR) && hasRole(AonRole.OCR);
+		return hasApp(AonApp.OCR) && (isAdmin() || hasRole(AonRole.OCR));
 	}
 	
 	public Boolean isBank() {
-		return hasApp(AonApp.BANK) && hasRole(AonRole.BANK);
+		return hasApp(AonApp.BANK) && (isAdmin() || hasRole(AonRole.BANK));
 	}
 	
 	public Boolean isConvenios() {
-		return hasApp(AonApp.CONVENIOS) && hasRole(AonRole.CONVENIOS);
+		return hasApp(AonApp.CONVENIOS) && (isAdmin() || hasRole(AonRole.CONVENIOS));
 	}
 	public Boolean isAon() {
-		return hasApp(AonApp.AIO) && hasRole(AonRole.AON);
+		return hasApp(AonApp.AIO) && (isAdmin() || hasRole(AonRole.AON));
 	}
 	public Boolean isBidoq() {
-		return hasApp(AonApp.BIDOQ) && hasRole(AonRole.BIDOQ);
+		return hasApp(AonApp.BIDOQ) && (isAdmin() || hasRole(AonRole.BIDOQ));
 	}
 }

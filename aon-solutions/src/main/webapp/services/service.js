@@ -1,4 +1,6 @@
-import './AonStringUtils.js'
+import './AonStringUtils.js';
+
+import './AonDateUtils.js';
 
 export * from './authService.js';
 
