@@ -57,7 +57,7 @@ import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
 import static com.esferalia.aon.jooq.tables.Location.LOCATION;
-
+import static com.esferalia.aon.jooq.tables.AuthDevice.AUTH_DEVICE;
 import java.sql.Date;
 import java.sql.Timestamp;
 
@@ -70,6 +70,7 @@ import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Raddinfo;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
+import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
@@ -122,6 +123,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
+import com.esferalia.aon.occam.api.model.Properties.AuthDeviceProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierProperties;
 import com.esferalia.aon.occam.api.model.Properties.CategoryProperties;
@@ -1652,6 +1654,24 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getRadioProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.RADIO);}
 		@Override public Property<Double> getLatitudeProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.LATITUDE);}
 		@Override public Property<Double> getLongitudeProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.LONGITUDE);}
+	}
+	
+	protected static class AuthDevicePropertiesDAO implements AuthDeviceProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, AuthDeviceFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+
+		protected Condition[] getConditions(AuthDeviceFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(AUTH_DEVICE.ID);}
+	
 	}
 
 	protected static class TariffPropertiesDAO implements TariffProperties {

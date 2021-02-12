@@ -4,6 +4,7 @@ import {
   serializeForm,
   setTime,
   formatDateOrigin,
+  isEmptyObject,
 } from "../../../../services/utils.js";
 import {
   getLocation,
@@ -221,7 +222,8 @@ export class AonEventAdd extends AonElement {
   setValues() {
     if (this.data) {
       const data = this.data;
-      if(data.coordinates.isEmpty()) delete data.coordinates;
+      
+      if(isEmptyObject(data.coordinates)) delete data.coordinates;
  
       let date = new Date(data.date);
 
@@ -263,7 +265,7 @@ export class AonEventAdd extends AonElement {
       ).getTime(),
     };
 
-    if(data.coordinates.isEmpty())delete data.coordinates;
+    if(isEmptyObject(data.coordinates)) delete data.coordinates;
     
     try {
       const { id } = await saveTimeControl(data);

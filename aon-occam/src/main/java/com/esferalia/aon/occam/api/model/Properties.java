@@ -1297,6 +1297,10 @@ public interface Properties {
 		Property<Double> getLongitudeProperty();
 	}
 	
+	public interface AuthDeviceProperties {
+		Property<Integer> getIdProperty();
+	}
+	
 	public interface RawdocProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
