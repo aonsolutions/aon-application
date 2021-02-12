@@ -13,9 +13,11 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainContrataITObject {
@@ -33,6 +35,8 @@ public class MainContrataITObject {
 	private Map<String, Integer> employeesFilterMap;
 	private Map<String, Integer> itsFilterMap;
 	
+	private DomainUserRoles userRoles;
+	
 	public MainContrataITObject() {
 		super();
 		this.allEmployeesList = new ArrayList<ITEmployee>();
@@ -41,6 +45,7 @@ public class MainContrataITObject {
 		this.allITsList = new ArrayList<IT>();
 		this.itsList = new ArrayList<IT>();
 		this.itsFilterMap = new HashMap<String, Integer>();
+		this.userRoles = new DomainUserRoles();
 	}
 	
 	public void getEmployeesInfo(Boolean allEmployees, Consumer<List<ITEmployee>> success, Consumer<Throwable> failure){
@@ -51,7 +56,19 @@ public class MainContrataITObject {
 			public void onSuccess(List<ITEmployee> employeesInfoList) {
 				initEmployeeList(employeesInfoList);
 				initITList(employeesInfoList);
-				success.accept(employeesInfoList);	
+				impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
+					
+					@Override
+					public void onSuccess(DomainUserRoles result) {
+						userRoles = result;
+						success.accept(employeesInfoList);	
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+					
+				});
+				
 			}
 
 			@Override
@@ -293,38 +310,48 @@ public class MainContrataITObject {
 	}
 	
 	public void removeIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-		impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
-				itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
-					
-					@Override
-					public void onSuccess(EmployeeSegSocial result) {
-						String naf = result.getNss();
-						String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
-						String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-						
-						impl.removeIT(
-								regime, 
-								ccc, 
-								naf, 
-								"ALTA", 
-								it.getStartDate(), 
-								it.getStartDate(), 
-								new AsyncCallback<Void>() {
+		deleteIT(it, s -> {
+			if(isUserComunica() && it.isComunicate())
+				impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
+						itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
 							
 							@Override
-							public void onSuccess(Void result) {
-								success.accept(result);
+							public void onSuccess(EmployeeSegSocial result) {
+								String naf = result.getNss();
+								String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
+								String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
+								
+								impl.removeIT(
+										regime, 
+										ccc, 
+										naf, 
+										"ALTA", 
+										it.getStartDate(), 
+										it.getStartDate(), 
+										new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {
+										success.accept(result);
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										failure.accept(caught);
+									}
+								});
+								
 							}
-							
+	
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+							
+							}
 						});
-						
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {}
-				});
+			else
+				success.accept(null);
+		}, f -> {});
+		
 	}
 	
 	public void deleteComunicateIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
@@ -671,6 +698,10 @@ public class MainContrataITObject {
 		default:
 			return "INCOMP_CTOS_FORM";
 		}
+	}
+	
+	public boolean isUserComunica() {
+		return this.userRoles.isComunica();
 	}
 		
 }

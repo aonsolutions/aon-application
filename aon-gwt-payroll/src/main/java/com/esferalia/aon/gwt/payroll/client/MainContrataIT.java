@@ -231,41 +231,43 @@ public class MainContrataIT extends MainEntryPoint {
 									AonConfirmDialog dialog = new AonConfirmDialog();
 									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 									
-									AonConfirmDialog comunicateDialog = new AonConfirmDialog();
-									comunicateDialog.confirm(
-											"COMUNIC" + String.valueOf("\u0040"), 
-											String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
-											new AonConfirmDialogCallback() {
-						
-												@Override
-												public void onAccept() {
-													mainContrataITObject.comunicateITBaja(employeeITInfo, it, t -> {
-														AonConfirmDialog dialog = new AonConfirmDialog();
-														dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-														
-														getITCertificatePDF(employeeITInfo, it);
-														
+									if(mainContrataITObject.isUserComunica()) {
+										AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+										comunicateDialog.confirm(
+												"COMUNIC" + String.valueOf("\u0040"), 
+												String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+												new AonConfirmDialogCallback() {
+							
+													@Override
+													public void onAccept() {
+														mainContrataITObject.comunicateITBaja(employeeITInfo, it, t -> {
+															AonConfirmDialog dialog = new AonConfirmDialog();
+															dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+															
+															getITCertificatePDF(employeeITInfo, it);
+															
+															refreshTableIT();
+															
+														}, d -> {});
+													}
+							
+													private void refreshTableIT() {
+														mainContrataITObject.getEmployeesInfo(false,
+																a -> {
+																	initContractTable();
+																	initITTable();
+																},
+																b -> {}
+														);
+													}
+	
+													@Override
+													public void onCancel() {
 														refreshTableIT();
-														
-													}, d -> {});
-												}
-						
-												private void refreshTableIT() {
-													mainContrataITObject.getEmployeesInfo(false,
-															a -> {
-																initContractTable();
-																initITTable();
-															},
-															b -> {}
-													);
-												}
-
-												@Override
-												public void onCancel() {
-													refreshTableIT();
-												}});	
-								},
-								f -> {});
+													}});
+									}},
+									f -> {});
+									
 					}
 	        		
 	        		@Override
@@ -275,41 +277,42 @@ public class MainContrataIT extends MainEntryPoint {
 									AonConfirmDialog dialog = new AonConfirmDialog();
 									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 									
-									AonConfirmDialog comunicateDialog = new AonConfirmDialog();
-									comunicateDialog.confirm(
-											"COMUNIC" + String.valueOf("\u0040"), 
-											String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
-											new AonConfirmDialogCallback() {
-						
-												@Override
-												public void onAccept() {
-													mainContrataITObject.comunicatePaternityIT(employeeITInfo, it, t -> {
-														AonConfirmDialog dialog = new AonConfirmDialog();
-														dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-														
-														getITCertificatePDF(employeeITInfo, it);
-														
+									if(mainContrataITObject.isUserComunica()) {
+										AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+										comunicateDialog.confirm(
+												"COMUNIC" + String.valueOf("\u0040"), 
+												String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+												new AonConfirmDialogCallback() {
+							
+													@Override
+													public void onAccept() {
+														mainContrataITObject.comunicatePaternityIT(employeeITInfo, it, t -> {
+															AonConfirmDialog dialog = new AonConfirmDialog();
+															dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+															
+															getITCertificatePDF(employeeITInfo, it);
+															
+															mainContrataITObject.getEmployeesInfo(false,
+																	a -> {
+																		initContractTable();
+																		initITTable();
+																	},
+																	b -> {}
+															);
+														}, d -> {});
+													}
+							
+													@Override
+													public void onCancel() {
 														mainContrataITObject.getEmployeesInfo(false,
-																a -> {
+																t -> {
 																	initContractTable();
-																	initITTable();
+																	setTableHeights();
 																},
-																b -> {}
+																d -> {}
 														);
-													}, d -> {});
-												}
-						
-												@Override
-												public void onCancel() {
-													mainContrataITObject.getEmployeesInfo(false,
-															t -> {
-																initContractTable();
-																setTableHeights();
-															},
-															d -> {}
-													);
-												}});	
-								},
+													}});
+									}},
 								f -> {});
 					}
 	        		
@@ -320,11 +323,12 @@ public class MainContrataIT extends MainEntryPoint {
 									AonConfirmDialog dialog = new AonConfirmDialog();
 									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 									
-									if(it.isComunicate())
+									if(it.isComunicate() && mainContrataITObject.isUserComunica())
 										mainContrataITObject.deleteComunicateIT(employeeITInfo, it, t -> {
 											mainContrataITObject.getEmployeesInfo(false,
 													a -> {
 														initContractTable();
+														initITTable();
 														setTableHeights();
 													},
 													b -> {}
@@ -334,6 +338,7 @@ public class MainContrataIT extends MainEntryPoint {
 										mainContrataITObject.getEmployeesInfo(false,
 												t -> {
 													initContractTable();
+													initITTable();
 													setTableHeights();
 												},
 												d -> {}
@@ -350,11 +355,12 @@ public class MainContrataIT extends MainEntryPoint {
 									AonConfirmDialog dialog = new AonConfirmDialog();
 									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 									
-									if(it.isComunicate())
+									if(it.isComunicate() && mainContrataITObject.isUserComunica())
 										mainContrataITObject.deleteComunicateIT(employeeITInfo, it, t -> {
 											mainContrataITObject.getEmployeesInfo(false,
 													a -> {
 														initContractTable();
+														initITTable();
 														setTableHeights();
 													},
 													b -> {}
@@ -364,6 +370,7 @@ public class MainContrataIT extends MainEntryPoint {
 										mainContrataITObject.getEmployeesInfo(false,
 												t -> {
 													initContractTable();
+													initITTable();
 													setTableHeights();
 												},
 												d -> {}
@@ -572,41 +579,43 @@ public class MainContrataIT extends MainEntryPoint {
 									AonConfirmDialog dialog = new AonConfirmDialog();
 									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 									
-									AonConfirmDialog comunicateDialog = new AonConfirmDialog();
-									comunicateDialog.confirm(
-											"COMUNIC" + String.valueOf("\u0040"), 
-											String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
-											new AonConfirmDialogCallback() {
-						
-												@Override
-												public void onAccept() {
-													mainContrataITObject.comunicatePaternityIT(itEmployee, it, t -> {
-														AonConfirmDialog dialog = new AonConfirmDialog();
-														dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-														
-														getITCertificatePDF(itEmployee, it);
-														
+									if(mainContrataITObject.isUserComunica()) {
+										AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+										comunicateDialog.confirm(
+												"COMUNIC" + String.valueOf("\u0040"), 
+												String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+												new AonConfirmDialogCallback() {
+							
+													@Override
+													public void onAccept() {
+														mainContrataITObject.comunicatePaternityIT(itEmployee, it, t -> {
+															AonConfirmDialog dialog = new AonConfirmDialog();
+															dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+															
+															getITCertificatePDF(itEmployee, it);
+															
+															mainContrataITObject.getEmployeesInfo(false,
+																	a -> {
+																		initContractTable();
+																		initITTable();
+																	},
+																	b -> {}
+															);
+														}, d -> {});
+													}
+							
+													@Override
+													public void onCancel() {
 														mainContrataITObject.getEmployeesInfo(false,
-																a -> {
+																t -> {
 																	initContractTable();
 																	initITTable();
+																	setTableHeights();
 																},
-																b -> {}
+																d -> {}
 														);
-													}, d -> {});
-												}
-						
-												@Override
-												public void onCancel() {
-													mainContrataITObject.getEmployeesInfo(false,
-															t -> {
-																initContractTable();
-																setTableHeights();
-															},
-															d -> {}
-													);
-												}});	
-								},
+													}});	
+									}},
 								f -> {});
 					}
 					
@@ -617,11 +626,12 @@ public class MainContrataIT extends MainEntryPoint {
 									AonConfirmDialog dialog = new AonConfirmDialog();
 									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 									
-									if(it.isComunicate())
+									if(it.isComunicate() && mainContrataITObject.isUserComunica())
 										mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
 											mainContrataITObject.getEmployeesInfo(false,
 													a -> {
 														initContractTable();
+														initITTable();
 														setTableHeights();
 													},
 													b -> {}
@@ -631,6 +641,7 @@ public class MainContrataIT extends MainEntryPoint {
 										mainContrataITObject.getEmployeesInfo(false,
 												t -> {
 													initContractTable();
+													initITTable();
 													setTableHeights();
 												},
 												d -> {}
@@ -647,11 +658,12 @@ public class MainContrataIT extends MainEntryPoint {
 									AonConfirmDialog dialog = new AonConfirmDialog();
 									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 									
-									if(it.isComunicate())
+									if(it.isComunicate() && mainContrataITObject.isUserComunica())
 										mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
 											mainContrataITObject.getEmployeesInfo(false,
 													a -> {
 														initContractTable();
+														initITTable();
 														initITTable();
 													},
 													b -> {}
@@ -661,6 +673,7 @@ public class MainContrataIT extends MainEntryPoint {
 										mainContrataITObject.getEmployeesInfo(false,
 												t -> {
 													initContractTable();
+													initITTable();
 													initITTable();
 												},
 												d -> {}
@@ -696,7 +709,7 @@ public class MainContrataIT extends MainEntryPoint {
 		
 		TextColumn<IT> employeeNameColumn = new TextColumn<IT>() {
 	      @Override
-	      public String getValue(IT itInfo) {
+	      public String getValue(IT itInfo) {  
 	        return itInfo.getFullName();
 	      }
 	    };

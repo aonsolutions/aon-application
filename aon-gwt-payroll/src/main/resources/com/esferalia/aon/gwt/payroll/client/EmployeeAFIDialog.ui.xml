@@ -307,7 +307,7 @@
 	   		<g:Button ui:field="generationAFITB"></g:Button>
     		<g:Label styleName="{style.bold} {style.ml10}">Generar fichero AFI</g:Label>	
     	</g:HTMLPanel>
-    	<g:HTMLPanel styleName="{style.flexEndPanel}">
+    	<g:HTMLPanel ui:field="notifyPanel" styleName="{style.flexEndPanel}">
     		<g:Button ui:field="notifyMovTB"></g:Button>
     		<g:Label styleName="{style.bold} {style.ml10}">Notificar movimiento</g:Label>
     	</g:HTMLPanel>

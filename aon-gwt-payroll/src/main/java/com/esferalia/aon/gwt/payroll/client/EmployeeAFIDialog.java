@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
@@ -102,6 +103,9 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	Button generationAFITB;
 	
 	@UiField
+	HTMLPanel notifyPanel;
+	
+	@UiField
 	Button notifyMovTB;
 	
 	@UiField
@@ -134,6 +138,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
 
+	private DomainUserRoles userRoles;
 	// -------------------------------------------------------------------------------------------
 	// ----------------------------------- CONSTRUCTOR -------------------------------------------
 	// -------------------------------------------------------------------------------------------
@@ -169,6 +174,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		this.domainId = domainId;
 		this.workplaceId = workplaceId;
 		
+		this.userRoles = new DomainUserRoles();
+		
 		checkStartEndContractAFI(startDate, endDate);	
 		
 		impl.getEmployeeAFIChanges(contractId, new AsyncCallback<AFIChanges>() {
@@ -177,15 +184,30 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			public void onFailure(Throwable caught) {}
 
 			@Override
-			public void onSuccess(AFIChanges result) {
-				afiChangesMap = result;
-				dateList = new ArrayList<Date>();
-				dateList.addAll(afiChangesMap.getAFIChanges().keySet());
+			public void onSuccess(AFIChanges afiChanges) {
+				impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
+					
+					@Override
+					public void onSuccess(DomainUserRoles result) {
+						userRoles = result;
+						afiChangesMap = afiChanges;
+						dateList = new ArrayList<Date>();
+						dateList.addAll(afiChangesMap.getAFIChanges().keySet());
+						
+						initView();
+						
+						acceptBtnDialog.setEnabled(true);
+						generationAFITB.setEnabled(true);
+						
+						if(!userRoles.isComunica())
+							notifyPanel.getElement().getStyle().setDisplay(Display.NONE);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+					
+				});
 				
-				initView();
-				
-				acceptBtnDialog.setEnabled(true);
-				generationAFITB.setEnabled(true);
 			}
 		});
 		

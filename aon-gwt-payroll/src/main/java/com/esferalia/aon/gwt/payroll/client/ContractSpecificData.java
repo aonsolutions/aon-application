@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.AcademicTitulation;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
@@ -344,10 +345,25 @@ public class ContractSpecificData extends ResizeComposite {
 	
 	private FormativeLevel formativeLevel = new FormativeLevel();
 	
+	private DomainUserRoles userRoles;
+	
 	public ContractSpecificData() {
 		initWidget(uiBinder.createAndBindUi(this));
 		cnoMap = new HashMap<String, CNO>();
-		initializeView();
+		this.userRoles = new DomainUserRoles();
+		impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
+			
+			@Override
+			public void onSuccess(DomainUserRoles result) {
+				userRoles = result;
+				initializeView();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+			
+		});
+		
 	}
 	
 	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfoIn) {
@@ -1269,7 +1285,8 @@ public class ContractSpecificData extends ResizeComposite {
 	// ------------------------------------------------------ Auxiliar Methods ----------------------------------------------------
 	
 	private void initializeView() {
-		createComunicaMessage();
+		if(userRoles.isComunica())
+			createComunicaMessage();
 		hideTables();
 		resetTables();
 	}
