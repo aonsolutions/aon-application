@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.payroll.AdditionalHoursUpdate;
 import net.aonsolutions.db.up2date.payroll.AlterAgreement4SSNumber;
 import net.aonsolutions.db.up2date.payroll.Holidays2021Insert;
+import net.aonsolutions.db.up2date.security.AuthDeviceCreation;
 import net.aonsolutions.db.up2date.timecontrol.CoordinatesUpdate;
 
 public class Up2Date {
@@ -145,7 +146,8 @@ public class Up2Date {
     		//CoordinatesUpdate.COORDINATES_UPDATE,
     		AlterAgreement4SSNumber.ALTER_AGREEMENT_SSNUM,
     		Holidays2021Insert.HOLIDAYS2021INSERT,
-    		AdditionalHoursUpdate.ADDITIONALHOURSUPDATE
+    		AdditionalHoursUpdate.ADDITIONALHOURSUPDATE,
+    		AuthDeviceCreation.AUTH_DEVICE_CREATION
     };
 
 
