@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -178,5 +179,7 @@ public interface EnterprisesServiceAsync {
 	void getTrashEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
 	void restoreContract(String currentDomainName, Integer contractId, AsyncCallback<Void> asyncCallback);
 	void delete4EverContract(String currentDomainName, Integer contractId, AsyncCallback<Void> asyncCallback);
+	void getServiAgreements(AsyncCallback<Map<String, String>> asyncCallback);
+	void getDomainUserRoles(String currentDomainName, String currentUser, AsyncCallback<DomainUserRoles> asyncCallback);
 	
 }

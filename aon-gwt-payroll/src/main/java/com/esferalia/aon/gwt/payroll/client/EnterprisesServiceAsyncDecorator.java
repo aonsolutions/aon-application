@@ -42,6 +42,7 @@ import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -770,6 +771,18 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void delete4EverContract(String domainName, Integer contractId, AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.delete4EverContract(domainName, contractId, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getServiAgreements(AsyncCallback<Map<String, String>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getServiAgreements(new AsyncCallbackWrapper<Map<String, String>>(callback));
+	}
+
+	@Override
+	public void getDomainUserRoles(String domainName, String currentUser, AsyncCallback<DomainUserRoles> callback) {
+		AON.start();
+		enterprisesServiceAsync.getDomainUserRoles(domainName, currentUser, new AsyncCallbackWrapper<DomainUserRoles>(callback));
 	}
 
 }

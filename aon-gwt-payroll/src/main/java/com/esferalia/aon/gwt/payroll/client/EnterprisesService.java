@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -272,6 +273,10 @@ public interface EnterprisesService extends RemoteService {
 	void restoreContract(String currentDomainName, Integer contractId);
 
 	void delete4EverContract(String currentDomainName, Integer contractId);
+
+	Map<String, String> getServiAgreements();
+
+	DomainUserRoles getDomainUserRoles(String currentDomainName, String currentUser);
 
 	
 }

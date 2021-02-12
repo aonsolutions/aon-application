@@ -95,12 +95,15 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.agreement.AgreementParser;
+import com.esferalia.aon.payroll.agreement.ServiAgreements;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
@@ -2948,6 +2951,27 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public void delete4EverContract(String domainName, Integer contractId) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			JooqEmployees.delete(connection, contractId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public Map<String, String> getServiAgreements() {
+		return ServiAgreements.getServiAgreementsMap();
+	}
+	
+	@Override
+	public DomainUserRoles getDomainUserRoles(String domainName, String userLogin) {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			DomainUserRoles domainUserRoles = SECURITY.getDomainUserRoles(domainName, domainId, userLogin, userId);
+			return domainUserRoles;
+			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

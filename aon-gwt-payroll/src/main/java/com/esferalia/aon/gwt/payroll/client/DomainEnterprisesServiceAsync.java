@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -485,6 +486,14 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.delete4EverContract(getCurrentDomainName(), contractId, asyncCallback);
 	}
 	
+	public void getServiAgreements(AsyncCallback<Map<String, String>> asyncCallback) {
+		enterprisesServiceAsync.getServiAgreements(asyncCallback);
+	}
+	
+	public void getDomainUserRoles(AsyncCallback<DomainUserRoles> asyncCallback) {
+		enterprisesServiceAsync.getDomainUserRoles(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {
@@ -498,6 +507,8 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
+	
 
 
 }
