@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import com.code.aon.config.Domain;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -17,6 +18,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Listener;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Toolbar;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
@@ -296,6 +298,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	private List<Listener> listeners;
 	private List<Toolbar> toolbars;
 	
+	private DomainUserRoles userRoles;
+	
 	@Override
 	public void onModuleLoad() {
 		// Inject rich styles.
@@ -346,6 +350,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		this.toolbars = new LinkedList<Toolbar>();
 		this.listeners = new LinkedList<Listener>();
 		
+		this.userRoles = new DomainUserRoles();
+		
 		addToolbar(this);
 		toolbar.addListener(this);
 		
@@ -368,7 +374,21 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 			@Override
 			public void onSuccess(Integer parentDomain) {
-				MainAgreement.this.parentDomain = parentDomain;				
+				MainAgreement.this.parentDomain = parentDomain;	
+				agreements.getAgreementsTree().getEnterpriseService().getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
+					
+					@Override
+					public void onSuccess(DomainUserRoles result) {
+						userRoles = result;
+//						Window.alert("UserRole : " + userRoles);
+//						Window.alert("UserRole isConvenios() : " + userRoles.isConvenios()); 
+						if(userRoles.isConvenios())
+							toolbar.setVisibleImportButton(true);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
 			}
 		});
 		
