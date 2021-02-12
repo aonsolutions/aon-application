@@ -2016,11 +2016,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	public void setReadOnly(boolean readOnly) {
 		
-		
 		for ( IFocusableEditor editor: salaryTableEditors)
 			editor.setReadOnly(readOnly);
+		
 		for ( PaymentEditor editor: paymentEditors)
 			editor.setReadOnly(readOnly);
+		
 		for ( ExtraEditor editor: extraEditors)
 			editor.setReadOnly(readOnly);
 		
@@ -4256,25 +4257,26 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		FlexTable table = (FlexTable)listBox.getParent();
 		
-		for ( int row = 0; row < table.getRowCount(); row++ ){
-			for ( int col = 0; col < table.getCellCount(row); col++ ){
-				if ( listBox == table.getWidget(row, col) ){
-					TextBox textBox = new TextBox();
-					textBox.setText(listBox.getSelectedItemText());
-					textBox.setReadOnly(readOnly);
-					
-					String styleName = listBox.getStyleName();
-					String gwtListBox = listBox.getStylePrimaryName();
-					styleName = styleName.replace(gwtListBox, "");
-					if ( styleName.trim().length() > 0 )
-						textBox.addStyleName(styleName);
-					
-					table.setWidget(row, col, textBox);
-					
-					return;
+		if(null != table)
+			for ( int row = 0; row < table.getRowCount(); row++ ){
+				for ( int col = 0; col < table.getCellCount(row); col++ ){
+					if ( listBox == table.getWidget(row, col) ){
+						TextBox textBox = new TextBox();
+						textBox.setText(listBox.getSelectedItemText());
+						textBox.setReadOnly(readOnly);
+						
+						String styleName = listBox.getStyleName();
+						String gwtListBox = listBox.getStylePrimaryName();
+						styleName = styleName.replace(gwtListBox, "");
+						if ( styleName.trim().length() > 0 )
+							textBox.addStyleName(styleName);
+						
+						table.setWidget(row, col, textBox);
+						
+						return;
+					}
 				}
 			}
-		}
 		
 	}
 	
@@ -4352,7 +4354,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			else
 				((InputElement)inputs.getItem(i)).setReadOnly(readOnly);
 		}
-		
 	}
 	
 	private static String getExpression4Payment(Payment concept) {
