@@ -87,6 +87,10 @@ public class AonAgreementsToolbar extends Composite {
 		this.listeners = new ArrayList<Listener>();
 	}
 	
+	public void setVisibleImportButton(boolean visible) {
+		importButton.setVisible(visible);
+	}
+	
 	public void setVisiblePasteButton(boolean visible) {
 		pasteButton.setVisible(visible);
 	}
@@ -220,6 +224,7 @@ public class AonAgreementsToolbar extends Composite {
 			}
 		});
 		toolsSection.add(importButton);
+		importButton.setVisible(false);
 		
 		draftButton = new AonToolbarButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
 		draftButton.addClickHandler(new ClickHandler() {
