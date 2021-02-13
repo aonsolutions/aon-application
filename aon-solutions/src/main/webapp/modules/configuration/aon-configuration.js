@@ -1,5 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
-import { getAuth } from "../../services/service.js";
+import { getAuth, getDomainUserRoles } from "../../services/service.js";
+import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import "../../components/aon-application.js";
 import "../../components/aon-card.js";
@@ -19,6 +20,8 @@ export class AonConfiguration extends AonElement {
   COMPANY;
   COMPANY_LIST;
   selected;
+
+  _roles;
 
   static get observedAttributes() {
     return ["company", "user"];
@@ -63,16 +66,21 @@ export class AonConfiguration extends AonElement {
 
   constructor() {
     super();
-    this.AON_CONFIGURATION = "aonConfiguration";
-    this.COMPANY = this.AON_CONFIGURATION + "Company";
-    this.COMPANY_LIST = this.AON_CONFIGURATION + "CompanyList";
   }
 
   connectedCallback() {
+    this.AON_CONFIGURATION = "aonConfiguration";
+    this.COMPANY = this.AON_CONFIGURATION + "Company";
+    this.COMPANY_LIST = this.AON_CONFIGURATION + "CompanyList";
+
     this.innerHTML = `
 			<aon-application id="${this.AON_CONFIGURATION}" title="${MSG.AON_MSG_SETTING}"></aon-application>
 		`;
-    this.build();
+
+    getDomainUserRoles({}).then(r => {
+      this._roles = new DomainUserRoles(r);
+      this.build();
+    });
   }
 
   build() {
@@ -92,7 +100,7 @@ export class AonConfiguration extends AonElement {
 
     if (
       localStorage.getItem("aon_domain_id") &&
-      localStorage.getItem("company")
+      localStorage.getItem("company") && this._roles.isAdmin()
     ) {
       let company = JSON.parse(localStorage.getItem("company"));
       let companyOptions = [];

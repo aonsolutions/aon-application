@@ -331,8 +331,7 @@
 						<aon:outputLabel for="ExternalApplication_OCR"
 							value="OCR" />
 						
-						<aon:if test="#{userUtils.newAONTheme and (domainSwitcher.betaEnabled or domainSwitcher.alphaEnabled)}">
-							
+						<aon:if test="#{domainSwitcher.betaEnabled or domainSwitcher.alphaEnabled}">							
 							<!-- COMUNICA -->
 							<aon:selectBooleanCheckbox
 								id="ExternalApplication_COMUNICA"
@@ -341,7 +340,7 @@
 							</aon:selectBooleanCheckbox>
 							<aon:outputLabel for="ExternalApplication_COMUNICA"
 								value="COMUNIC@" />
-								
+
 							<!-- CONVENIOS -->
 							<aon:selectBooleanCheckbox
 								id="ExternalApplication_CONVENIOS"
@@ -350,7 +349,9 @@
 							</aon:selectBooleanCheckbox>
 							<aon:outputLabel for="ExternalApplication_CONVENIOS"
 								value="CONVENIOS" />
-							
+						</aon:if>								
+
+						<aon:if test="#{domainSwitcher.alphaEnabled}">
 							<!-- BANK -->
 							<aon:selectBooleanCheckbox
 								id="ExternalApplication_BANK"
@@ -359,17 +360,17 @@
 							</aon:selectBooleanCheckbox>
 							<aon:outputLabel for="ExternalApplication_BANK"
 								value="BANK" />
-							
-							<!-- TIMECONTROL -->
-							<aon:selectBooleanCheckbox
-								id="ExternalApplication_TIMECONTROL"
-								value="#{marketplace.timecontrolActive}" 
-								reRender="aonContent" onclick="this.blur();">
-							</aon:selectBooleanCheckbox>
-							<aon:outputLabel for="ExternalApplication_TIMECONTROL"
-								value="HORARIO" />
-								
 						</aon:if>
+													
+						<!-- TIMECONTROL -->
+						<aon:selectBooleanCheckbox
+							id="ExternalApplication_TIMECONTROL"
+							value="#{marketplace.timecontrolActive}" 
+							reRender="aonContent" onclick="this.blur();">
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="ExternalApplication_TIMECONTROL"
+							value="HORARIO" />
+								
 					</aon:div>			
 				</aon:panelGrid>								
 

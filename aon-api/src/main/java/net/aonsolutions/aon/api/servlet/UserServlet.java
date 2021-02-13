@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonUserServlet", urlPatterns = {"/ms/api/user/*"})
@@ -116,14 +117,15 @@ public class UserServlet extends AonApiHttpServlet {
 	
 	private JSONObject getDomainUser() {
 		Integer userId = getParams().opt("user") != null ? getParams().optInt("user") : null;
-		AonToken aonToken = SECURITY.getAonToken(getToken());
 		User user = new User();
 		if(userId != null) {
 			user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(userId));
-		} else user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> 
+		} else {
+			AonToken aonToken = SECURITY.getAonToken(getToken());
+			user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> 
 				(f.getDomainProperty().eq(getDomain().getId()).or(f.getDomainProperty().eq(getDomain().getParentId())))
 				.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
-
+		}
 		JSONObject json = new JSONObject();
 		json.put("id",user.getId());
 		json.put("name", user.getName());
@@ -272,9 +274,13 @@ public class UserServlet extends AonApiHttpServlet {
 						User u = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(user));
 						Auth a = AON_SOLUTIONS.getAuth(domain.getName(), domain.getId(), u.getAuth());
 
-						Registry r = AON.getRegistry(getDomain().getName(), getDomain().getId(), "", f -> 
+						
+						Registry r = null;
+						if(!AonStringUtils.isBlank(a.getDocument())) {
+							r = AON.getRegistry(getDomain().getName(), getDomain().getId(), "", f -> 
 							f.getDomainProperty().eq(domain.getId())
 							.and(f.getDocumentProperty().eq(a.getDocument())));
+						}
 						if(r == null || r.getId() == null) {
 							r = AON.save(getDomain().getName(), getDomain().getId(), "", new Registry()
 									.setDocument(a.getDocument())

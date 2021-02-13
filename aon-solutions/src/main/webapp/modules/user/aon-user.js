@@ -120,11 +120,17 @@ export class AonUser extends AonElement {
 		let aonUserSurname = document.getElementById('aonConfigurationUserCardSurname');
 		aonUserSurname.setAttribute('value', user && user.surname ? user.surname : '');
 		let aonUserDocument = document.getElementById('aonConfigurationUserCardDocument');
-		aonUserDocument.setAttribute('value', user && user.document ? user.document : '');
+		if(user && user.document && !user.document.isEmpty()) {
+			aonUserDocument.disabled = true;
+			aonUserDocument.value = user.document;
+		} else aonUserDocument.value = '';
 		let aonUserPhone = document.getElementById('aonConfigurationUserCardPhone');
 		aonUserPhone.setAttribute('value', user && user.phone ? user.phone : '');
 		let aonUserEmail = document.getElementById('aonConfigurationUserCardEmail');
-		aonUserEmail.setAttribute('value', user && user.email ? user.email : '');
+		if(user && user.email && !user.email.isEmpty()) {
+			aonUserEmail.disabled = true;
+			aonUserEmail.value = user.email;
+		} else aonUserEmail.value = '';
 
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
 		card2.setVisible(this.hasSecurity());
