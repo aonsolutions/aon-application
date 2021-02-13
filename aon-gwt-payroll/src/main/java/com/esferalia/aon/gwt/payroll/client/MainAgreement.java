@@ -382,8 +382,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 						userRoles = result;
 //						Window.alert("UserRole : " + userRoles);
 //						Window.alert("UserRole isConvenios() : " + userRoles.isConvenios()); 
-						if(userRoles.isConvenios())
-							toolbar.setVisibleImportButton(true);
+						try {
+							if(userRoles.isConvenios())
+								toolbar.setVisibleImportButton(true);
+						} catch (Exception e) {
+							
+						}
 					}
 					
 					@Override
