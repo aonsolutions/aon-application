@@ -80,7 +80,7 @@ public class MainAgreementTest {
 
 		// MainAgreement
 		HtmlAnchor gwtAgreementAnchor = htmlPage
-				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement");
+				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement2");
 		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asText());
 		htmlPage = gwtAgreementAnchor.click();
 
