@@ -8645,7 +8645,7 @@ CREATE TABLE `auth_device` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
   `auth` BINARY(16) NOT NULL COMMENT 'Identificador unico de Auth',
   `device_type` tinyint(2) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Tipo del dispositivo',
-  `device_token` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Token del dispositivo',
+  `device_token` varchar(255) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Token del dispositivo',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dispositivos vinculados a auth';
 
