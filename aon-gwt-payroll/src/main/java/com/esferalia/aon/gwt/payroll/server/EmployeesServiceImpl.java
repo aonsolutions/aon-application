@@ -165,7 +165,8 @@ import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayroll;
+import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayroll;
+import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -5943,9 +5944,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e);
 		} catch (ManagerBeanException e) {
 			throw new IllegalArgumentException(e);
+		} catch (CanNotCreatePdfException e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
-
+	
+	
 
 }

@@ -58,8 +58,9 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayroll;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayrollEntry;
+import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayroll;
+import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayrollEntry;
+import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -116,9 +117,11 @@ import com.esferalia.aon.watson.util.AonUtils;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.objects.Idc;
+import solutions.aon.seg.social.objects.WorkerLiquidation;
 
 public class EmployeesServiceHelper {
 
@@ -1479,7 +1482,7 @@ public class EmployeesServiceHelper {
 	}
 	
 	
-	public static EnterprisePayroll geteEnterprisePayroll(String title, String logo, Date month, ICollectionProvider salariesProvider) throws ManagerBeanException {
+	public static EnterprisePayroll geteEnterprisePayroll(String title, InputStream logo, Date month, ICollectionProvider salariesProvider, ICollectionProvider sldProvider) throws ManagerBeanException {
 		
 		Map<String, Map<String, EnterprisePayrollEntry>> entries = new HashMap<String, Map<String,EnterprisePayrollEntry>>();
 		Collection<com.esferalia.aon.payroll.Salary> salaries = salariesProvider.getCollection(true);
