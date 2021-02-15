@@ -75,6 +75,20 @@ public class PDFToolkit {
 		contents.showText(content);
 		contents.endText();
 	}	
+	
+	//DRAWS A LEFT ALIGNED TEXT
+	public static void drawTextLeft(PDPageContentStream contents, PDRectangle box, String content, Color color, PDFont font, float fontSize, float x_margin, float y_margin) throws IOException {
+
+		float x = box.getLowerLeftX() + x_margin;
+		float y = y_margin + box.getLowerLeftY();
+
+		contents.setNonStrokingColor(color);
+		contents.beginText();
+		contents.setFont(font, fontSize);
+		contents.newLineAtOffset(x, y);
+		contents.showText(content);
+		contents.endText();
+	}	
 
 	//DRAWS A CENTERED TEXT
 	public static void drawTextCenter(PDPageContentStream contents, PDRectangle box, String content, Color

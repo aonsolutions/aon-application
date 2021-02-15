@@ -40,9 +40,52 @@ public class PdfText extends PdfComponent{
 				case RIGHT:		PDFToolkit.drawTextRight(stream, new PDRectangle(x, y, width, height), content, color, font, font_size, margin_x, margin_y);
 				break;
 				
-				default: 		PDFToolkit.drawText(stream, content, x, y, color, font, font_size);
+				default: 		PDFToolkit.drawTextLeft(stream, new PDRectangle(x, y, width, height), content, color, font, font_size, margin_x, margin_y);
 				break;
 			}					
 		} catch (IOException e) {e.printStackTrace();}
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public PDFont getFont() {
+		return font;
+	}
+
+	public void setFont(PDFont font) {
+		this.font = font;
+	}
+
+	public Float getFont_size() {
+		return font_size;
+	}
+
+	public void setFont_size(Float font_size) {
+		this.font_size = font_size;
+	}
+
+	public TEXT_ALIGNMENT getAlignment() {
+		return alignment;
+	}
+
+	public void setAlignment(TEXT_ALIGNMENT alignment) {
+		this.alignment = alignment;
 	}	
+	
+	
+	
 }

@@ -12,4 +12,13 @@ public class PdfSettings {
 		HORIZONTAL,
 		VERTICAL
 	}
+	
+	public static enum BORDER_POSITION{
+		BOTTOM,
+		TOP,
+		LEFT,
+		RIGHT
+	}
+	
+	
 }

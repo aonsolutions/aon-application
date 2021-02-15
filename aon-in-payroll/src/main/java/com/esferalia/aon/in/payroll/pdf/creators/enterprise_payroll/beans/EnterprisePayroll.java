@@ -1,29 +1,29 @@
-package com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll;
+package com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class EnterprisePayroll {
-	private String logo;
-	private Date month;
-	private String header;
-	private String subheader;
-	private Map<String,Map<String,EnterprisePayrollEntry>> entries;
+	
+	private Optional<InputStream> logo;
+	private Optional<Date> month;
+	private Optional<String> header;
+	private Optional<String> subheader;
+	private Optional<Map<String,Map<String,EnterprisePayrollEntry>>> entries;
 
-	public EnterprisePayroll(String logo, Date month, String header, String subheader,
-							 Map<String, Map<String, EnterprisePayrollEntry>> entries,
-							 Map<String, Map<String, EnterprisePayrollEntry>> ss_entries) {
-		this.logo = logo;
-		this.month = month;
-		this.header = header;
-		this.subheader = subheader;
-		this.entries = merge(entries,ss_entries);
+	public EnterprisePayroll(InputStream logo, Date month, String header, String subheader,Map<String, Map<String, EnterprisePayrollEntry>> entries,Map<String, Map<String, EnterprisePayrollEntry>> ss_entries) {
+		this.logo = Optional.ofNullable(logo);
+		this.month = Optional.ofNullable(month);
+		this.header = Optional.ofNullable(header);
+		this.subheader = Optional.ofNullable(subheader);
+		this.entries = Optional.ofNullable(merge(entries,ss_entries));
 	}
 
 	public Map<String,Map<String,EnterprisePayrollEntry>> merge(Map<String, Map<String, EnterprisePayrollEntry>> aon_category_entries, Map<String, Map<String, EnterprisePayrollEntry>> ss_category_entries){
-
 		if(ss_category_entries == null) ss_category_entries = new HashMap<>();
 		if(aon_category_entries == null) aon_category_entries = new HashMap<>();
 		Set<String> ss_categories = ss_category_entries.keySet();
@@ -48,11 +48,26 @@ public class EnterprisePayroll {
 		return aon_category_entries;
 	}
 
-	public String getLogo() {return logo;}
-	public Date getMonth() {return month;}
-	public String getHeader() {return header;}
-	public String getSubheader() {return subheader;}
-	public Map<String, Map<String, EnterprisePayrollEntry>> getEntries() {return entries;}
+
+	public Optional<InputStream> getLogo() {
+		return logo;
+	}
+
+	public Optional<Date> getMonth() {
+		return month;
+	}
+
+	public Optional<String> getHeader() {
+		return header;
+	}
+
+	public Optional<String> getSubheader() {
+		return subheader;
+	}
+
+	public Optional<Map<String, Map<String, EnterprisePayrollEntry>>> getEntries() {
+		return entries;
+	}
 
 	@Override
 	public String toString() {

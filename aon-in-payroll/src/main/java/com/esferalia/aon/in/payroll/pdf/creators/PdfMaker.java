@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import com.esferalia.aon.in.payroll.pdf.creators.budget.BudgetTemplate;
 import com.esferalia.aon.in.payroll.pdf.creators.budget.beans.Budget;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayrollTemplate;
+import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.JsonParseException;
 import com.esferalia.aon.in.payroll.pdf.creators.invoice.InvoiceMaker;
@@ -18,43 +18,45 @@ import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.DefaultPayroll
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 
-
 public class PdfMaker {
 
-	//CREATE THE INVOICE WITH A JSON
-	public static void print_invoice(InputStream json, PrintInvoiceConfiguration config, InputStream qr_code) throws CanNotCreatePdfException, JsonParseException {
+	// CREATE THE INVOICE WITH A JSON
+	public static void print_invoice(InputStream json, PrintInvoiceConfiguration config, InputStream qr_code)
+			throws CanNotCreatePdfException, JsonParseException {
 		new InvoiceMaker().create_with_json(json, config, qr_code);
 	}
-	
-	//CREATE THE INVOICE WITH A JAVA OBJECT
-	public static void print_invoice(String name, Invoice bill_obj, boolean adapt_background) throws IOException, CanNotCreatePdfException {
+
+	// CREATE THE INVOICE WITH A JAVA OBJECT
+	public static void print_invoice(String name, Invoice bill_obj, boolean adapt_background)
+			throws IOException, CanNotCreatePdfException {
 		new InvoiceMaker().create(name, bill_obj, adapt_background);
 	}
-	
-	//CREATE DEMO INVOICE
-	public static void print_demo_invoice(PrintInvoiceConfiguration config, InputStream qr_code) throws IOException, CanNotCreatePdfException {
+
+	// CREATE DEMO INVOICE
+	public static void print_demo_invoice(PrintInvoiceConfiguration config, InputStream qr_code)
+			throws IOException, CanNotCreatePdfException {
 		new InvoiceMaker().demoPdf(config, qr_code);
 	}
-	
-	//CREATE ENTERPRISE PAYROLL
-	public static void print_enterprise_payroll(EnterprisePayroll payroll, String name) throws IOException {
-		new EnterprisePayrollTemplate().print_enterprise_payroll(payroll, name);
+
+	// CREATE ENTERPRISE PAYROLL
+	public static void print_enterprise_payroll(EnterprisePayroll payroll, OutputStream os)
+			throws IOException, CanNotCreatePdfException {
+		EnterprisePayrollTemplate.print(payroll, os);
 	}
 
-	public static void print_enterprise_payroll(EnterprisePayroll payroll, OutputStream os) throws IOException {
-		new EnterprisePayrollTemplate().print_enterprise_payroll(payroll, os);
-	}
-	
-	//CREATE PAYROLL
-	public static void print_default_payroll(OutputStream os, DefaultPayroll payroll,InputStream logo, Locale language) throws CanNotCreatePdfException {
+	// CREATE PAYROLL
+	public static void print_default_payroll(OutputStream os, DefaultPayroll payroll, InputStream logo, Locale language)
+			throws CanNotCreatePdfException {
 		new DefaultPayrollTemplate().print(os, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
 	}
-	public static void print_default_payroll(String out, DefaultPayroll payroll,InputStream logo, Locale language) throws CanNotCreatePdfException {
+
+	public static void print_default_payroll(String out, DefaultPayroll payroll, InputStream logo, Locale language)
+			throws CanNotCreatePdfException {
 		new DefaultPayrollTemplate().print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
 	}
 
-	//CREATE BUDGET
+	// CREATE BUDGET
 	public static void print_budget(Budget budget) throws CanNotCreatePdfException {
-		new BudgetTemplate().print("./buget.pdf",budget, Optional.of(new Locale("Es")));
+		new BudgetTemplate().print("./buget.pdf", budget, Optional.of(new Locale("Es")));
 	}
 }

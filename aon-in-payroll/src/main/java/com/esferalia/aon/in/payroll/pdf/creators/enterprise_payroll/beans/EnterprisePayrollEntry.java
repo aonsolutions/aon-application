@@ -1,0 +1,183 @@
+package com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans;
+
+import java.util.Objects;
+import java.util.Optional;
+
+public class EnterprisePayrollEntry{
+	Optional<String> empleado;
+	Optional<String> tipo;
+	Optional<Double> devengado;
+	Optional<Double> ssTrab;
+	Optional<Double> irpf;
+	Optional<Double> deducciones;
+	Optional<Double> liquido;
+	Optional<Double> ssEmpr;
+	Optional<Double> costeTotal;
+	Optional<Double> ssTotal;
+
+	Optional<String> empleadoSS;
+	Optional<String> tipoSS;
+	Optional<Double> devengadoSS;
+	Optional<Double> ssTrabSS;
+	Optional<Double> irpfSS;
+	Optional<Double> deduccionesSS;
+	Optional<Double> liquidoSS;
+	Optional<Double> ssEmprSS;
+	Optional<Double> costeTotalSS;
+	Optional<Double> ssTotalSS;
+
+	public static enum EnterpriseEntryType{
+		AON_SYSTEM,
+		SEG_SOCIAL
+	}
+
+
+	//CONSTRUCTOR
+	public EnterprisePayrollEntry(EnterpriseEntryType type, String empleado, String tipo, Double devengado, Double ssTrab, Double irpf, Double deducciones, Double liquido, Double ssEmpr, Double costeTotal, Double ssTotal) {
+
+		this.empleado = 		Optional.empty();
+		this.tipo = 			Optional.empty();
+		this.devengado = 		Optional.empty();
+		this.ssTrab = 			Optional.empty();
+		this.irpf = 			Optional.empty();
+		this.deducciones =  	Optional.empty();
+		this.liquido = 			Optional.empty();
+		this.ssEmpr = 			Optional.empty();
+		this.costeTotal = 		Optional.empty();
+		this.ssTotal = 			Optional.empty();
+		
+		this.empleadoSS = 		Optional.empty();
+		this.tipoSS = 			Optional.empty();
+		this.devengadoSS = 		Optional.empty();
+		this.ssTrabSS = 		Optional.empty();
+		this.irpfSS = 			Optional.empty();
+		this.deduccionesSS = 	Optional.empty();
+		this.liquidoSS = 		Optional.empty();
+		this.ssEmprSS = 		Optional.empty();
+		this.costeTotalSS = 	Optional.empty();
+		this.ssTotalSS = 		Optional.empty();
+		
+		if(type == EnterpriseEntryType.AON_SYSTEM){
+			this.empleado = 	Optional.ofNullable(empleado);
+			this.tipo = 		Optional.ofNullable(tipo);
+			this.devengado = 	Optional.ofNullable(devengado);
+			this.ssTrab = 		Optional.ofNullable(ssTrab);
+			this.irpf = 		Optional.ofNullable(irpf);
+			this.deducciones =  Optional.ofNullable(deducciones);
+			this.liquido = 		Optional.ofNullable(liquido);
+			this.ssEmpr = 		Optional.ofNullable(ssEmpr);
+			this.costeTotal = 	Optional.ofNullable(costeTotal);
+			this.ssTotal = 		Optional.ofNullable(ssTotal);
+		}
+		if(type == EnterpriseEntryType.SEG_SOCIAL){
+
+			this.empleadoSS = 		Optional.ofNullable(empleado);
+			this.tipoSS = 			Optional.ofNullable(tipo);
+			this.devengadoSS = 		Optional.ofNullable(devengado);
+			this.ssTrabSS = 		Optional.ofNullable(ssTrab);
+			this.irpfSS = 			Optional.ofNullable(irpf);
+			this.deduccionesSS = 	Optional.ofNullable(deducciones);
+			this.liquidoSS = 		Optional.ofNullable(liquido);
+			this.ssEmprSS = 		Optional.ofNullable(ssEmpr);
+			this.costeTotalSS = 	Optional.ofNullable(costeTotal);
+			this.ssTotalSS = 		Optional.ofNullable(ssTotal);
+		}
+	}
+
+	public EnterprisePayrollEntry() {}
+
+	//SETS SS PARAMETERS WITH OTHER OBJECT
+	public void merge_ss_entry(EnterprisePayrollEntry ss_en){
+		this.tipoSS = 			ss_en.getTipoSS();
+		this.devengadoSS = 		ss_en.getDevengadoSS();
+		this.ssTrabSS =			ss_en.getSsTrabSS();
+		this.irpfSS = 			ss_en.getIrpfSS();
+		this.deduccionesSS = 	ss_en.getDeduccionesSS();
+		this.liquidoSS = 		ss_en.getLiquidoSS();
+		this.ssEmprSS = 		ss_en.getSsEmprSS();
+		this.costeTotalSS = 	ss_en.getCosteTotalSS();
+		this.ssTotalSS = 		ss_en.getSsTotalSS();
+	}
+
+	public Optional<String> getEmpleado() {return empleado;}
+	public Optional<String> getEmpleadoSS() {return empleadoSS;}
+
+	public Optional<String> getTipo() {return tipo;}
+	public Optional<String> getTipoSS() {return tipoSS;}
+
+	public Optional<Double> getDevengado() {return devengado;}
+	public Optional<Double> getDevengadoSS() {return devengadoSS;}
+
+	public Optional<Double> getSsTrab() {return ssTrab;}
+	public Optional<Double> getSsTrabSS() {return ssTrabSS;}
+
+	public Optional<Double> getIrpf() {return irpf;}
+	public Optional<Double> getIrpfSS() {return irpfSS;}
+
+	public Optional<Double> getDeducciones() {return deducciones;}
+	public Optional<Double> getDeduccionesSS() {return deduccionesSS;}
+
+	public Optional<Double> getLiquido() {return liquido;}
+	public Optional<Double> getLiquidoSS() {return liquidoSS;}
+
+	public Optional<Double> getSsEmpr() {return ssEmpr;}
+	public Optional<Double> getSsEmprSS() {return ssEmprSS;}
+
+	public Optional<Double> getCosteTotal() {return costeTotal;}
+	public Optional<Double> getCosteTotalSS() {return costeTotalSS;}
+
+	public Optional<Double> getSsTotal() {return ssTotal;}
+	public Optional<Double> getSsTotalSS() {return ssTotalSS;}
+
+	public boolean Has_ss(){
+		return empleadoSS.isPresent() || tipoSS.isPresent() || devengadoSS.isPresent() 
+				|| ssTrabSS.isPresent() || irpfSS.isPresent() || deduccionesSS.isPresent()
+				|| liquidoSS.isPresent() || ssEmprSS.isPresent() || ssTotalSS.isPresent();
+	}
+	public boolean Has_aon(){
+		return empleado.isPresent() || tipo.isPresent() || devengado.isPresent() 
+				|| ssTrab.isPresent() || irpf.isPresent() || deducciones.isPresent()
+				|| liquido.isPresent() || ssEmpr.isPresent() || ssTotal.isPresent();
+	}
+
+	public String toString() {
+		return "EnterprisePayrollEntry{" +
+				"  \n\templeado = '" + empleado + '\'' +
+				", \n\ttipo = '" + tipo + '\'' +
+				", \n\tdevengado = " + devengado +
+				", \n\tssTrab = " + ssTrab +
+				", \n\tirpf = " + irpf +
+				", \n\tdeducciones = " + deducciones +
+				", \n\tliquido = " + liquido +
+				", \n\tssEmpr = " + ssEmpr +
+				", \n\tcosteTotal = " + costeTotal +
+				", \n\tssTotal = " + ssTotal +
+				", \n\templeadoSS = '" + empleadoSS + '\'' +
+				", \n\ttipoSS = '" + tipoSS + '\'' +
+				", \n\tdevengadoSS = " + devengadoSS +
+				", \n\tssTrabSS = " + ssTrabSS +
+				", \n\tirpfSS = " + irpfSS +
+				", \n\tdeduccionesSS = " + deduccionesSS +
+				", \n\tliquidoSS = " + liquidoSS +
+				", \n\tssEmprSS = " + ssEmprSS +
+				", \n\tcosteTotalSS = " + costeTotalSS +
+				", \n\tssTotalSS = " + ssTotalSS +
+				"\n}";
+	}
+
+	@Override
+	public boolean equals(Object o) { 
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		EnterprisePayrollEntry that = (EnterprisePayrollEntry) o;
+		return Objects.equals(empleado, that.empleado) && Objects.equals(tipo, that.tipo) && Objects.equals(devengado, that.devengado) && Objects.equals(ssTrab, that.ssTrab) && Objects.equals(irpf, that.irpf) && Objects.equals(deducciones, that.deducciones) && Objects.equals(liquido, that.liquido) && Objects.equals(ssEmpr, that.ssEmpr) && Objects.equals(costeTotal, that.costeTotal) && Objects.equals(ssTotal, that.ssTotal) && Objects.equals(empleadoSS, that.empleadoSS) && Objects.equals(tipoSS, that.tipoSS) && Objects.equals(devengadoSS, that.devengadoSS) && Objects.equals(ssTrabSS, that.ssTrabSS) && Objects.equals(irpfSS, that.irpfSS) && Objects.equals(deduccionesSS, that.deduccionesSS) && Objects.equals(liquidoSS, that.liquidoSS) && Objects.equals(ssEmprSS, that.ssEmprSS) && Objects.equals(costeTotalSS, that.costeTotalSS) && Objects.equals(ssTotalSS, that.ssTotalSS);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(empleado, tipo, devengado, ssTrab, irpf, deducciones, liquido, ssEmpr, costeTotal, ssTotal, empleadoSS, tipoSS, devengadoSS, ssTrabSS, irpfSS, deduccionesSS, liquidoSS, ssEmprSS, costeTotalSS, ssTotalSS);
+	}
+
+
+}
+

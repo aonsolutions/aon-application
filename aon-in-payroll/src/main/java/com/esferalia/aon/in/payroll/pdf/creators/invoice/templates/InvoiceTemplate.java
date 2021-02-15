@@ -41,8 +41,6 @@ public class InvoiceTemplate {
 	//THE PDF DOCUMENT
 	public static void create(String name, Invoice bill_obj, boolean adapt_background) throws IOException, CanNotCreatePdfException {
 		try (PDDocument doc = new PDDocument()) {
-			
-
 			InvoiceTemplate template = new InvoiceTemplate();
 			
 			

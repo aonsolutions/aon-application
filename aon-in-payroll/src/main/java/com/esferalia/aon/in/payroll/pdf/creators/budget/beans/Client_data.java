@@ -38,6 +38,15 @@ public class Client_data {
 	public Optional<String> getPhone() {return phone;}
 	public Optional<String> getMobile() {return mobile;}
 	public Optional<String> getEmail() {return email;}
-	public Optional<String> getContact() {return contact;}	
+	public Optional<String> getContact() {return contact;}
+
+	@Override
+	public String toString() {
+		return "Client_data [business_name=" + business_name + ", address=" + address + ", nif=" + nif + ", city="
+				+ city + ", postal_code=" + postal_code + ", province=" + province + ", phone=" + phone + ", mobile="
+				+ mobile + ", email=" + email + ", contact=" + contact + "]";
+	}	
+	
+	
 	
 }
