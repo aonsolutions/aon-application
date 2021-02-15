@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
-import com.code.aon.config.Domain;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -24,7 +23,6 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.storage.client.Storage;
@@ -275,7 +273,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	
 	@UiField
 	AonAgreementsToolbar toolbar;
-	
+
 	@UiField
 	Agreements agreements;
 
@@ -453,7 +451,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			agreementDraft.setAgreementDraftObject(agreementDraftObject);
 		}
 		
-		toolbar.setVisibleDraftButton(isEditable(agreementDraftObject));
+		agreements.getToolbar().setVisibleDraftButton(isEditable(agreementDraftObject));
 		
 	}
 	
@@ -467,8 +465,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	@Override
 	public void onNewAgreement(Agreement agreement) {
-		// TODO Auto-generated method stub
-		
+		Window.alert("NEW");
 	}
 
 	@Override
@@ -492,11 +489,13 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	@Override
 	public void onAgreementContextMenu(Agreement agreement,
 			ContextMenuEvent event) {
-		NativeEvent nativeEvent = event.getNativeEvent();
-		contextMenu.setPopupPosition(nativeEvent.getClientX(), 
-				nativeEvent.getClientY());
-		contextMenu.setVisibleDeleteItem(isEditable(agreementDraft.agreementDraftObject));
-		contextMenu.show();
+		
+		// TODO : comment to avoid R Click
+//		NativeEvent nativeEvent = event.getNativeEvent();
+//		contextMenu.setPopupPosition(nativeEvent.getClientX(), 
+//				nativeEvent.getClientY());
+//		contextMenu.setVisibleDeleteItem(isEditable(agreementDraft.agreementDraftObject));
+//		contextMenu.show();
 	}
 
 	@Override
@@ -617,54 +616,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	}
 
 	@Override
-	public void onNewButtonClick(ClickEvent event) {
-		addNewItemTree(null);
-	}
-
-	@Override
-	public void onPasteButtonClick(ClickEvent event) {
-		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
-		
-		if(object instanceof Agreement) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onAgreementCtrlV((Agreement) object);
-		}
-	}
-
-	@Override
-	public void onCopyButtonClick(ClickEvent event) {
-		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
-		
-		if(object instanceof Agreement) {
-			Agreement agreement = (Agreement) object;
-			
-			if(agreement.getId() >= 0) {
-				for(Toolbar toolbar : toolbars)
-					toolbar.onAgreementCtrlC((Agreement) object);
-			}
-		}
-	}
-
-	@Override
-	public void onDraftButtonClick(ClickEvent event) {
-		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
-		if(object instanceof Agreement) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onMoveToTrash((Agreement) object);
-		}
-	}
-
-	@Override
-	public void onCollapseAllButtonClick(ClickEvent event) {
-		
-	}
-
-	@Override
-	public void onKeyUpSearchTextBox(KeyUpEvent event) {
-		agreements.filter(toolbar.getSearchTextBox().getValue());
-	}
-
-	@Override
 	public void onCollapseMenuButtonClick(ClickEvent event) {
 		splitLayoutPanel.setWidgetSize(agreements, 0);
 		splitLayoutPanel.animate(500);
@@ -716,13 +667,14 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	private void getAgreements() {
 		this.agreements.getAgreements();
 	}
-	
-	public void addNewItemTree(Agreement agreement) {
-		agreements.addAgreementItem(agreements.newAgreement());
-		//Select the Last One
-		getAgreementsTree().getTree().setSelectedItem(
-				getAgreementsTree().getTree().getItem(
-						getAgreementsTree().getTree().getItemCount() - 1));
+
+	@Override
+	public void onCollapseMenuClick(ClickEvent event) {
+		NativeEvent nativeEvent = event.getNativeEvent();
+		contextMenu.setPopupPosition(nativeEvent.getClientX(), 
+				nativeEvent.getClientY());
+		contextMenu.setVisibleDeleteItem(isEditable(agreementDraft.agreementDraftObject));
+		contextMenu.show();
 	}
 	
 }

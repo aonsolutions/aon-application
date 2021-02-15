@@ -6,12 +6,15 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAgreementsTreeToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
@@ -27,7 +30,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Agreements extends ResizeComposite implements
-		AgreementsTree.Listener {
+		AgreementsTree.Listener, AonAgreementsTreeToolbar.Listener {
 
 	interface Listener {
 
@@ -55,6 +58,8 @@ public class Agreements extends ResizeComposite implements
 		void onCopyAgreement(Agreement agreement);
 		
 		void onPasteAgreement(Agreement agreement);
+		
+		void onCollapseMenuClick(ClickEvent event);
 	}
 
 	private static final Images IMAGES = GWT.create(Images.class);
@@ -73,6 +78,9 @@ public class Agreements extends ResizeComposite implements
 	}
 	
 	@UiField
+	AonAgreementsTreeToolbar toolbar;
+	
+	@UiField
 	AgreementsTree agreementsTree;
 
 	private static Integer newsIdCounter = 0;	
@@ -89,6 +97,7 @@ public class Agreements extends ResizeComposite implements
 		this.toolbars = new LinkedList<Toolbar>();
 		
 		agreementsTree.addListener(this);
+		toolbar.addListener(this);
 		
 		agreementsTree.getEnterpriseService().getDomain(
 				new AsyncCallback<Integer>() {
@@ -155,7 +164,7 @@ public class Agreements extends ResizeComposite implements
 			listener.onAgreementSelected(agreement);
 	}
 
-	public synchronized Agreement newAgreement() {
+	private synchronized Agreement newAgreement() {
 		Agreement agreement = new Agreement();
 		int newId = newsIdCounter--;
 		agreement.setId(newsIdCounter);
@@ -248,7 +257,7 @@ public class Agreements extends ResizeComposite implements
 
 	}
 	
-	public void filter(String pattern) {
+	private void filter(String pattern) {
 		Tree tree = agreementsTree.tree;
 		for ( int i = 0; i < tree.getItemCount(); i++ ) {
 			TreeItem item = tree.getItem(i);
@@ -311,6 +320,63 @@ public class Agreements extends ResizeComposite implements
 				.toLowerCase()
 				.replaceAll("\\s+", "_")
 				;
+	}
+
+	@Override
+	public void onKeyUpSearchTextBox(KeyUpEvent event) {
+		filter(toolbar.getSearchTextBox().getValue());
+	}
+
+	@Override
+	public void onNewButtonClick(ClickEvent event) {
+		addNewItemTree(null);
+	}
+
+	@Override
+	public void onDraftButtonClick(ClickEvent event) {
+		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
+		if(object instanceof Agreement) {
+			for(Toolbar toolbar : toolbars)
+				toolbar.onMoveToTrash((Agreement) object);
+		}
+	}
+	
+//	@Override
+//	public void onCopyButtonClick(ClickEvent event) {
+//		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
+//		
+//		if(object instanceof Agreement) {
+//			Agreement agreement = (Agreement) object;
+//			
+//			if(agreement.getId() >= 0) {
+//				for(Toolbar toolbar : toolbars)
+//					toolbar.onAgreementCtrlC((Agreement) object);
+//			}
+//		}
+//	}
+
+//	@Override
+//	public void onPasteButtonClick(ClickEvent event) {
+//		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
+//		
+//		if(object instanceof Agreement) {
+//			for(Toolbar toolbar : toolbars)
+//				toolbar.onAgreementCtrlV((Agreement) object);
+//		}
+//	}
+
+	@Override
+	public void onCollapseAllButtonClick(ClickEvent event) {
+		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
+		
+		if(object instanceof Agreement) {
+			for(Toolbar toolbar : toolbars)
+				toolbar.onCollapseMenuClick(event);
+		}
+	}
+	
+	public AonAgreementsTreeToolbar getToolbar() {
+		return toolbar;
 	}
 
 }

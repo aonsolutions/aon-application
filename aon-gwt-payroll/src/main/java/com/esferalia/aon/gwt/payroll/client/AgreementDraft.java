@@ -4402,7 +4402,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		AonToolbar toolbar = new AonToolbar("Convenio");
 		
-		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconRestore() );
+		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndo() );
 		undoAllButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

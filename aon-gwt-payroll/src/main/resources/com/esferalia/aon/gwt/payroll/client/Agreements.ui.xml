@@ -20,6 +20,9 @@
 	<ui:with type="com.esferalia.aon.gwt.payroll.client.MetaData.Resources" field="res" />
 
 	<g:DockLayoutPanel unit='PX'>
+		<g:north size="50">
+			<commonsolutions:AonAgreementsTreeToolbar ui:field="toolbar" />
+		</g:north>
 		<g:center>
 			<employee:AgreementsTree ui:field="agreementsTree" />
 		</g:center>
