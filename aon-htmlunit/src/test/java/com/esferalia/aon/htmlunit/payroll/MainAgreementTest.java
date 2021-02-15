@@ -112,7 +112,8 @@ public class MainAgreementTest {
 		Assert.assertEquals(true, hidden.matcher(draftButton.getAttribute("style")).find());
 
 
-		agreementTreeItem.rightClick();
+//		agreementTreeItem.rightClick();
+		getElementById("collapseAllButton").click();
 		DomElement deleteItem = getElementById("deleteItem");
 //		Assert.assertNotEquals(deleteItem.isDisplayed(), true );
 		Assert.assertEquals(true, hidden.matcher(deleteItem.getAttribute("style")).find());
