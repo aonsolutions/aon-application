@@ -1507,6 +1507,25 @@ public class EmployeesServiceHelper {
 			
 		}
 		
+		Map<SalaryType, SalaryType> SLD_SALARY_TYPES_MAP = new HashMap<SalaryType, SalaryType>();
+		
+		Map<String, Map<String, EnterprisePayrollEntry>> ss_entries = new HashMap<String, Map<String,EnterprisePayrollEntry>>();
+
+		Collection<com.esferalia.aon.payroll.Salary> sld = Collections.emptyList(); //sldProvider.getCollection(true);
+		for ( com.esferalia.aon.payroll.Salary salary : sld ) {
+			
+			String workplace = salary.getContract().getWorkPlace().getDescription();
+			
+			Map<String, EnterprisePayrollEntry> workplace_entries = 
+			ss_entries.computeIfAbsent(workplace, s -> new TreeMap<String, EnterprisePayrollEntry>());
+			
+			
+			String employee = String.format("%s_%s", salary.getEmployeeName(),SLD_SALARY_TYPES_MAP.getOrDefault(salary.getType(), SalaryType.SALARY));//salary.getEmployeeName();
+			EnterprisePayrollEntry enterprisePayrollEntry = 
+			salary2EnterprisePayrollEntry(salary );
+			workplace_entries.put(employee, enterprisePayrollEntry);
+			
+		}
 		
 		
 		
