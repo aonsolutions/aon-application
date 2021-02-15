@@ -187,10 +187,15 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	}
 	
 	private void save(AonToken aonToken) {
-		LinkedList<TaskHolder> taskHolders = AON_SOLUTIONS.getTaskHolders(aonToken);
-		if(taskHolders.size() > 0) {
-			TaskHolder taskHolder = taskHolders.stream().filter(th -> th.getId().equals(getData().optInt("task_holder"))).findFirst()
-				.orElse(taskHolders.getFirst());
+		TaskHolder taskHolder = null;
+		if(getData().opt("task_holder") != null) {
+			taskHolder = AON.getTaskHolder(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f ->
+				f.getIdProperty().eq(getData().optInt("task_holder")));
+		} else {
+			taskHolder = AON_SOLUTIONS.getTaskHolders(aonToken).stream().findFirst().orElse(null);
+		}
+		
+		if(taskHolder != null ) {
 			save(taskHolder);
 		}
 	}
@@ -201,7 +206,9 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		Location lc =  !getData().optString("location").isEmpty() 
 				? AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  f -> f.getIdProperty().ge(getData().optInt("location")) )
 				: AON_SOLUTIONS.getLocation(taskHolder.getDomain(), "",  coordinates);
+				
 		TimeControlDetail tcd = new TimeControlDetail()
+				.setId(getData().opt("id") != null ? getData().optInt("id") : null)
 				.setDomain(taskHolder.getDomain())
 				.setTaskHolder(taskHolder)
 				.setComments(getData().optString("comments"))
