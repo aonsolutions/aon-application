@@ -49,6 +49,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconCloudImport();
 	
+	@Source("icons/aon-icon-import.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconImport();
+	
 	@Source("icons/aon-icon-menu.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconMenu();

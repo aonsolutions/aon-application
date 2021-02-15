@@ -129,6 +129,8 @@
 .aon_icon_sepe_cto { background-image: iconSepeCto;}
 @url iconCloudImport aonIconCloudImport;
 .aon_icon_cloud_import { background-image: iconCloudImport;}
+@url iconImport aonIconImport;
+.aon_icon_import { background-image: iconImport;}
 @url iconMenu aonIconMenu;
 .aon_icon_menu { background-image: iconMenu;}
 @url iconMenuCollapse aonIconMenuCollapse;
