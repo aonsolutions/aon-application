@@ -279,7 +279,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 				contractType = String.valueOf(this.contractType.getSelectedValue());
 				Integer contractTypeInt = Integer.parseInt(contractType);
 				
-				if((contractTypeInt >= 200 && contractTypeInt<300) || (contractTypeInt >= 500 && contractTypeInt<600) || contractTypeInt == 0)
+				if((contractTypeInt >= 200 && contractTypeInt<=300) || (contractTypeInt >= 500 && contractTypeInt<600) || contractTypeInt == 0)
 					showPartialTimeContract();
 				else
 					this.showElementsFullTimeContract();
@@ -707,9 +707,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	}
 	
 	private boolean checkDates() {
-		if(null == this.employee.end_date.getValue())
+		Date startDate = DateUtils.copyDateOnly(this.employee.start_date.getValue());
+		Date endDate = null == this.employee.end_date.getValue() ? null : DateUtils.copyDateOnly(this.employee.end_date.getValue());
+		if(null == endDate)
 			return true;
-		else if(this.employee.end_date.getValue().after(this.employee.start_date.getValue()))
+		else if(endDate.after(startDate) || endDate.equals(startDate))
 			return true;
 		else
 			return false;
@@ -995,7 +997,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		setSelectedValueLB(employee.contractType, contractData.getContractType());
 		
 		Integer contractTypeId = employeeDialogObject.getContractType();
-		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
+		if((contractTypeId >= 200 && contractTypeId<=300) || (contractTypeId >= 500 && contractTypeId<600)) {
 			employee.showElementsPartialTimeContract();
 			employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 			employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());

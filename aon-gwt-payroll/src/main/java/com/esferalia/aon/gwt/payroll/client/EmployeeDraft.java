@@ -196,7 +196,7 @@ public class EmployeeDraft extends Composite {
 			contractType = String.valueOf(this.contractType.getSelectedValue());
 			Integer contractTypeInt = Integer.parseInt(contractType);
 			
-			if((contractTypeInt >= 200 && contractTypeInt<300) || (contractTypeInt >= 500 && contractTypeInt<600 || contractTypeInt == 0)) {
+			if((contractTypeInt >= 200 && contractTypeInt<=300) || (contractTypeInt >= 500 && contractTypeInt<600 || contractTypeInt == 0)) {
 				showElementsPartialTimeContract();
 				
 				ContractJourneyDuration contractJourneyDuration = employeeDraftObject.getContractJourneyDuration();
@@ -1326,7 +1326,7 @@ public class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.contractType, employeeDraftObject.getContractType());
 		
 		Integer contractTypeId = employeeDraftObject.getContractTypeN();
-		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600 || contractTypeId == 0)) {
+		if((contractTypeId >= 200 && contractTypeId<=300) || (contractTypeId >= 500 && contractTypeId<600 || contractTypeId == 0)) {
 			employee.showElementsPartialTimeContract();
 			ContractJourneyDuration contractJourneyDuration = employeeDraftObject.getContractJourneyDuration();
 			if(contractJourneyDuration.getJourniesSize() != 0) {
@@ -1369,7 +1369,7 @@ public class EmployeeDraft extends Composite {
 
 		this.employee.category.setValue(employeeDraftObject.getContractAgreementCategory());
 		
-		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600 || contractTypeId == 0)) {
+		if((contractTypeId >= 200 && contractTypeId<=300) || (contractTypeId >= 500 && contractTypeId<600 || contractTypeId == 0)) {
 			this.employee.partiality_coef.setValue(employeeDraftObject.getPartalityCoef());
 		}
 		
