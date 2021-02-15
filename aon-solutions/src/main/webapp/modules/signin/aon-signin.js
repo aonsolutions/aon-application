@@ -21,7 +21,7 @@ export class AonSignin extends AonElement {
   paintView() {
     this.innerHTML = `
 			<aon-toast id="${this.AON_SIGNIN}Toast"></aon-toast>
-			<aon-application id="${this.AON_SIGNIN}" title="Control de Horario"></aon-application>
+			<aon-application id="${this.AON_SIGNIN}" title="Control Horario"></aon-application>
     `;
   }
   build() {
@@ -46,7 +46,7 @@ export class AonSignin extends AonElement {
           ),
       },
     ];
-    this.aonSigninEl.addSidenavOptions("Control de horario", options);
+    this.aonSigninEl.addSidenavOptions("Control horario", options);
   }
 
   paintViewPresenceList(){

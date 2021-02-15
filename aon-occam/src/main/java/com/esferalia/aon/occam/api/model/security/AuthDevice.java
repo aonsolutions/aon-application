@@ -1,14 +1,13 @@
 package com.esferalia.aon.occam.api.model.security;
 
 import org.json.JSONObject;
-
 public class AuthDevice {
 	public AuthDevice() {}
 
 	private Integer id;
-	private Auth auth;
-	private String device_type;
-	private String device_token;
+	private byte[] auth;
+	private DeviceType deviceType;
+	private String deviceToken;
 	
 	public Integer getId() {
 		return id;
@@ -19,32 +18,32 @@ public class AuthDevice {
 		return this;
 	}
 	
-	public AuthDevice setAuth(Auth auth) {
+	public AuthDevice setAuth(byte[] auth) {
 		this.auth = auth;
 		return this;
 	}
 
-	public AuthDevice setDeviceType(String device_type) {
-		this.device_type = device_type;
+	public AuthDevice setDeviceType(DeviceType device_type) {
+		this.deviceType = device_type;
 		return this;
 	}
 	
 	public AuthDevice setDeviceToken(String device_token) {
-		this.device_token = device_token;
+		this.deviceToken = device_token;
 		return this;
 	}
 
 
-	public Auth getAuth() {
+	public byte[] getAuth() {
 		return auth;
 	}
 
-	public String getDeviceType() {
-		return device_type;
+	public DeviceType getDeviceType() {
+		return deviceType;
 	}
 	
 	public String getDeviceToken() {
-		return device_token;
+		return deviceToken;
 	}
 
 
@@ -52,9 +51,8 @@ public class AuthDevice {
 		JSONObject json = new JSONObject();
 		json.put("id", getId());
 		json.put("auth", getAuth());
-		json.put("device_type", getDeviceType());
+		json.put("device_type", getDeviceType().value());
 		json.put("device_token", getDeviceToken());
-
 		return json;
 	}
 }

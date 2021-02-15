@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { setDateTimestamp, timePaser } from "../../../../services/utils.js";
+import { isEmptyObject, setDateTimestamp, sortBy, timePaser } from "../../../../services/utils.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import {
@@ -151,12 +151,10 @@ export class AonEventList extends AonElement {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
-          let lettersHtml = `<div class="profile-letters">${res.letters_name}</div>`;
           aonTable.addRow(
             {
               ...res,
-              status: res.textStatus,
-              lettersHtml,
+              status: res.textStatus
             },
             (el) => this.aonEvent(el, res)
           );
@@ -176,8 +174,9 @@ export class AonEventList extends AonElement {
         aonTable.removeAllLi();
         resp.map((res, idx) => {
           let options = {
+            iconHtmlCustom: `${res.lettersHtml}`,
             title: `${res.name} <div style="float: right;">${res.duration}</div>`,
-            subtitle: `(${res.textStatus}) ${res.nameLocation} <div style="float: right;">${res.dateParse}</div> `,
+            subtitle: `(${res.textStatus}) <div style="float: right;">${res.nameLocation} ${res.dateParse}</div> `,
           };
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
         });
@@ -191,33 +190,37 @@ export class AonEventList extends AonElement {
     this.aonSigninEl.startLoader();
     let data = [];
     try {
-      let resp = await getTaskHolderTimeControl(this.data);
-      resp.map(
-        async (r) => {
-          const name = r.task_holder.name;
-          const lettersName = StringTwoLetters(name);
-          const newStatus = r.status.toLowerCase();
-          const textStatus = await getStatus(newStatus);
-          let nameLocation = undefined;
-          if (r.last_location && r.last_location.name) {
-            nameLocation = r.last_location.name;
-          } else {
-            nameLocation = `<aon-icon-button id="iconLocation" icon="add_location" noHover="true"></aon-icon-button>`;
+      let datos = await getTaskHolderTimeControl(this.data);
+      if(datos){
+        sortBy(datos, 'last_date', 'desc').map(
+          async (r) => {
+            const name = r.task_holder.name;
+            const newStatus = r.status.toLowerCase();
+            const lettersName = StringTwoLetters(name);
+            const lettersHtml = `<div class="profile-letters ${newStatus}">${lettersName}</div>`;
+            const textStatus = await getStatus(newStatus);
+            let nameLocation = undefined;
+            if (r.last_location && r.last_location.name) {
+              nameLocation = r.last_location.name;
+            } else if(!isEmptyObject(r.coordinates)) {
+              nameLocation = `<aon-icon-button id="iconLocation" icon="add_location" noHover="true"></aon-icon-button>`;
+            }
+            const obj = {
+              ...r,
+              letters_name: lettersName,
+              textStatus: textStatus.name,
+              lettersHtml,
+              status: newStatus,
+              name: `${name}`,
+              last_location: r.last_location,
+              nameLocation,
+              dateParse: setDateTimestamp(r.last_date),
+              duration: timePaser(Number(r.time)),
+            };
+            data.push(obj);
           }
-          const obj = {
-            ...r,
-            letters_name: lettersName,
-            textStatus: textStatus.name,
-            status: newStatus,
-            name: `${name}`,
-            last_location: r.last_location,
-            nameLocation,
-            dateParse: setDateTimestamp(r.last_date),
-            duration: timePaser(Number(r.time)),
-          };
-          data.push(obj);
-        }
-      );
+        );
+      }
     } catch (e) {
       console.log(e);
     }

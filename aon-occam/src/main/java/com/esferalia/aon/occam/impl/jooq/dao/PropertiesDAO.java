@@ -1670,7 +1670,13 @@ public class PropertiesDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(AUTH_DEVICE.ID);}
+		@Override public Property<Integer> getIdProperty(){return new FilterDAO.PropertyDAO<Integer>(AUTH_DEVICE.ID);}
+
+		@Override public Property<byte[]> getAuthProperty(){return new FilterDAO.PropertyDAO<byte[]>(AUTH_DEVICE.AUTH);}
+
+		@Override public Property<Byte> getDeviceTypeProperty(){return new FilterDAO.PropertyDAO<Byte>(AUTH_DEVICE.DEVICE_TYPE);}
+		
+		@Override public Property<String> getDeviceTokenProperty() {return new FilterDAO.PropertyDAO<String>(AUTH_DEVICE.DEVICE_TOKEN);}
 	
 	}
 

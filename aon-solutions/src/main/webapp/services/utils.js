@@ -20,6 +20,13 @@ export const getReader = (file) => {
   });
 }
 
+
+
+export const isEmptyObject = (obj) =>  Object.keys(obj).length === 0 && obj.constructor === Object;
+
+//order by obj, campo, order asc or desc
+export const sortBy = (obj, value, orderBy='asc') =>  obj.sort((a, b) => 'asc' === orderBy.toLocaleLowerCase() ? a[value] - b[value] : b[value] - a[value]);
+
 export const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 
 export const round = (value) => decimalAdjust('round', value, -2);
@@ -111,6 +118,10 @@ export const setDateTimestamp = (d) => {
   let month = date.getMonth() + 1;
   if (month <= 9) month = '0' + month;
   let year = date.getFullYear();
+  
+  if(date.toDateString() === new Date().toDateString()){
+    return setTime(date);
+  }
 
   return day + '/' + month + '/' + year + " " + setTime(date);
 }
@@ -132,6 +143,3 @@ export const getDayMonth = (date) => {
   let month = months[d.getMonth()];
   return day + '-' + month;
 }
-
-
-export const isEmptyObject = (obj) =>  Object.keys(obj).length === 0 && obj.constructor === Object;

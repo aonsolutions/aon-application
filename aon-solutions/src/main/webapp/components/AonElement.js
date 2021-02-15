@@ -37,15 +37,18 @@ export class AonElement extends HTMLElement{
   }
 
   clearElement(id) {
-    document.getElementById(id).innerHTML = '';
+    const elem = document.getElementById(id);
+    if(elem) elem.innerHTML = '';
   }
 
   hideElement(id) {
-    document.getElementById(id).style.display = 'none';
+    const elem = document.getElementById(id);
+    if(elem) elem.style.display = 'none';
   }
 
   showElement(id) {
-    document.getElementById(id).style.display = 'block';
+    const elem = document.getElementById(id);
+    if(elem) elem.style.display = 'block';
   }
 
   rootPanel(element) {

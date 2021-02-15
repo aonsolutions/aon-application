@@ -7,6 +7,7 @@ import './register/aon-register.js';
 import './aon-home.js';
 import './company/aon-parent.js';
 import './company/aon-mobile-desktop.js';
+import { saveAuthDevice } from '../services/service.js';
 
 export class AonModule extends AonElement {
 	AON_LOGIN;
@@ -64,9 +65,12 @@ export class AonModule extends AonElement {
 		
 		window.setPosition = (pos) => setPosition(pos);
 		
-		window.setTokenFCM = (token) =>  {
-			window.tokenFCM = token;
-		    console.log("tokenFCM>", typeof token, token);
+		window.setTokenFCM = async (token) =>  {
+			if(token){
+				await saveAuthDevice({tokenFCM:token});
+				window.tokenFCM = token;
+				console.log("tokenFCM>", typeof token, token);
+			}
 		}
 		
 		window.setNotificationAction = (data) =>  {

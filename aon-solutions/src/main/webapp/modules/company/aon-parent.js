@@ -95,7 +95,7 @@ export class AonParent extends AonElement {
 		];
 		aonParent.addSidenavOptions('TAREAS PENDIENTES', taskOptions);
 		if(this.activeTimecontrol) {
-			aonParent.addSidenavWidgetHTML('CONTROL DE HORARIO',
+			aonParent.addSidenavWidgetHTML('CONTROL HORARIO',
 		 		'<aon-sign></aon-sign>');
 		}
 		let filterOptions = [{

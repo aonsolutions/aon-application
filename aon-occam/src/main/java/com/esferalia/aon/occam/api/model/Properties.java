@@ -1299,6 +1299,9 @@ public interface Properties {
 	
 	public interface AuthDeviceProperties {
 		Property<Integer> getIdProperty();
+		Property<byte[]> getAuthProperty();
+		Property<Byte> getDeviceTypeProperty();
+		Property<String> getDeviceTokenProperty();
 	}
 	
 	public interface RawdocProperties{

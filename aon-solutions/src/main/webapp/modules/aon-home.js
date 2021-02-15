@@ -5,7 +5,7 @@ import './aon-header.js';
 import './aon-menu.js';
 import './aon-mobile-header.js';
 import './aon-mobile-menu.js';
-import { getCompanies } from '../services/service.js';
+import { getCompanies, saveAuthDevice } from '../services/service.js';
 import { FirebaseService } from '../services/firebaseService.js';
 
 export class AonHome extends AonElement {
@@ -66,6 +66,7 @@ export class AonHome extends AonElement {
   		const firebaseSrv = new FirebaseService();
 		const token = await firebaseSrv.getTokenFB();
 		if (token) {
+			await saveAuthDevice({tokenFCM:token});
 			window.tokenFCM = token;
 			const messaging = firebaseSrv.getMessagingObject();
 			messaging.onMessage(

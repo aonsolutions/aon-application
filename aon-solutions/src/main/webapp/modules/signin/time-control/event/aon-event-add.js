@@ -222,11 +222,12 @@ export class AonEventAdd extends AonElement {
   setValues() {
     if (this.data) {
       const data = this.data;
-      
       if(isEmptyObject(data.coordinates)) delete data.coordinates;
- 
+      else if(data.coordinates){
+        data.coordinates = data.coordinates.latitude+","+data.coordinates.longitude;
+      }
+    
       let date = new Date(data.date);
-
       if (!date.isValid()) { date = new Date();}
 
       const newTime = setTime(date);
@@ -257,16 +258,12 @@ export class AonEventAdd extends AonElement {
     this.aonSigninEl.startLoading();
     let formValues = this.getFormValues();
     const data = {
-      ...this.data,
       ...formValues,
       task_holder: this.data.task_holder.id,
       date: new Date(
         formatDateOrigin(formValues.date) + " " + formValues.time
       ).getTime(),
     };
-
-    if(isEmptyObject(data.coordinates)) delete data.coordinates;
-    
     try {
       const { id } = await saveTimeControl(data);
       if (id) {

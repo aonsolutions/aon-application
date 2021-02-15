@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ISecurity;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
@@ -23,12 +24,14 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
+import com.esferalia.aon.occam.impl.jooq.dao.AuthDeviceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 
 public class SecurityImpl implements ISecurity {
@@ -315,4 +318,24 @@ public class SecurityImpl implements ISecurity {
 				configuration -> SecurityDAO.getDomainUserRoles(ctx, userId));
 	}
 
+
+	@Override
+	public AuthDevice saveAuthDevice(AONContext ctx, AuthDevice ad) {
+	    return  ctx.getDslContext().transactionResult(
+	            configuration -> AuthDeviceDAO.saveAuthDevice(ctx, ad));
+	}
+	
+	@Override
+	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter adf) {
+	    ctx.getDslContext().transaction(
+	            configuration -> AuthDeviceDAO.deleteAuthDevice(ctx, adf)
+	    );
+	}
+	
+	@Override
+	public AuthDevice getAuthDevice(AONContext ctx, AuthDeviceFilter adf) {
+	    return  ctx.getDslContext().transactionResult(
+	            configuration -> AuthDeviceDAO.getAuthDevice(ctx, adf));
+	}
+	
 }

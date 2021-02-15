@@ -32,7 +32,7 @@ public class LocationDAO {
 	}
 	
 	public static Location saveLocation(AONContext ctx, Location lc) {
-		return lc.getId()!=0
+		return lc.getId() !=0
 			? update(ctx, lc)
 			: insert(ctx, lc);
 	}

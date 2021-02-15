@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
@@ -20,6 +21,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -98,4 +100,8 @@ public interface ISecurity {
 	public Certificate insertCertificate(AONContext ctx, UserFilter userFilter , Certificate certificate) ;
 	public Certificate getCertificateSEPE(AONContext ctx, Integer domainId);
 	
+	
+	public AuthDevice saveAuthDevice(AONContext ctx, AuthDevice ad);
+	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter ad);
+	public AuthDevice getAuthDevice(AONContext ctx, AuthDeviceFilter adf);
 }

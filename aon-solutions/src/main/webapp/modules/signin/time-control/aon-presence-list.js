@@ -1,6 +1,6 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getGroups, getTimeControlList } from "../../../services/service.js";
-import { setDateTimestamp, timePaser } from "../../../services/utils.js";
+import { isEmptyObject, setDateTimestamp, sortBy, timePaser } from "../../../services/utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
@@ -124,24 +124,16 @@ export class AonPresenceList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn("", "string", "lettersHtml", "5%");
-      aonTable.addColumn("", "string", "statusHtml", "5%");
-      aonTable.addColumn("Nombre", "string", "name", "40%");
+      aonTable.addColumn("", "string", "lettersHtml", "6%");
+      aonTable.addColumn("Nombre", "string", "name", "44%");
       aonTable.addColumn("Duración", "string", "duration", "5%");
-      aonTable.addColumn("Fecha", "date", "last_date", "20%");
+      aonTable.addColumn("Fecha", "date", "dateParse", "20%");
       aonTable.addColumn("Ubicación", "string", "nameLocation", "25%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
-          let statusHtml = `<div class="timeControl ${res.status}"></div>`;
-          aonTable.addRow(
-            {
-              ...res,
-              statusHtml,
-            },
-            (el) => this.aonEvent(el, res)
-          );
+          aonTable.addRow(res, (el) => this.aonEvent(el, res));
         });
       } catch (e) {
         console.log(e);
@@ -159,8 +151,8 @@ export class AonPresenceList extends AonElement {
         resp.map((res, idx) => {
           let options = {
             iconHtmlCustom: `${res.lettersHtml}`,
-            title: `${res.name} <div style="font-size: 14px;float: right; color: rgba(0,0,0,.54);">${res.duration}<div style="float: right;margin-left: 15px;"></div>`,
-            subtitle: `${res.last_date} <div style="float: right;">${res.nameLocation} <div class="timeControl ${res.status}" style="float: right;margin-left: 4px; margin-top: -8%;"></div></div> `,
+            title: `${res.name} <div style="font-size: 14px;float: right; color: rgba(0,0,0,.54);">${res.duration}<div style="float: right;"></div>`,
+            subtitle: `${res.dateParse} <div style="float: right;">${res.nameLocation}</div> `,
           };
           if (res.contractType) options.option = this.getOptions(res);
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
@@ -176,38 +168,43 @@ export class AonPresenceList extends AonElement {
     let data = [];
     try {
       const datos = await getTimeControlList(this.filter);
-      datos.map(
-        ({
-          time,
-          last_date,
-          status,
-          coordinates,
-          last_location,
-          task_holder: { id: taskHolderId, name },
-        }) => {
-          const lettersName = StringTwoLetters(name);
-          const lettersHtml = `<div class="profile-letters">${lettersName}</div>`;
-          const newStatus = status.toLowerCase();
-          let nameLocation = undefined;
-          if (last_location && last_location.name) {
-            nameLocation = last_location.name;
-          } else {
-            nameLocation = `<aon-icon-button id="iconLocation" icon="add_location" noHover="true"></aon-icon-button>`;
-          }
-          const obj = {
-            lettersHtml,
-            status: newStatus,
-            name: `${name}`,
-            last_date: setDateTimestamp(last_date),
-            duration: timePaser(Number(time)),
+      if (datos) {
+        sortBy(datos, 'last_date', 'desc').map(
+          ({
+            time,
+            last_date,
+            status,
             coordinates,
             last_location,
-            nameLocation,
-            taskHolderId
-          };
-          data.push(obj);
-        }
-      );
+            task_holder: { id: taskHolderId, name },
+          }) => {
+            if (last_date) {
+              const newStatus = status.toLowerCase();
+              const lettersName = StringTwoLetters(name);
+              const lettersHtml = `<div class="profile-letters ${newStatus}">${lettersName}</div>`;
+              let nameLocation = undefined;
+              if (last_location && last_location.name) {
+                nameLocation = last_location.name;
+              } else if(!isEmptyObject(coordinates)) {
+                nameLocation = `<aon-icon-button id="iconLocation" icon="add_location" noHover="true"></aon-icon-button>`;
+              }
+              const obj = {
+                lettersHtml,
+                status: newStatus,
+                name: `${name}`,
+                dateParse: setDateTimestamp(last_date),
+                duration: timePaser(Number(time)),
+                last_date,
+                coordinates,
+                last_location,
+                nameLocation,
+                taskHolderId,
+              };
+              data.push(obj);
+            }
+          }
+        );
+      }
     } catch (e) {
       console.log(e);
     }
@@ -215,15 +212,17 @@ export class AonPresenceList extends AonElement {
     return data;
   }
 
-  aonEvent({target}, data) {
-    if("add_location" === target.textContent){
+  aonEvent({ target }, data) {
+    if ("add_location" === target.textContent) {
       this.aonSigninEl.getParent().openLocationAdd(undefined, data);
     } else {
       let id = "aonEventList";
-      this.aonSigninEl.setContentHTML(`<aon-event-list id="${id}"></aon-event-list>`);
+      this.aonSigninEl.setContentHTML(
+        `<aon-event-list id="${id}"></aon-event-list>`
+      );
       const aonEventEl = this.getElement(id);
       if (aonEventEl) {
-        aonEventEl.data = { ...data , group: this.GROUP_DEFAULT };
+        aonEventEl.data = { ...data, group: this.GROUP_DEFAULT };
       }
     }
   }

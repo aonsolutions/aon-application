@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { setDateTimestamp } from "../../../../services/utils.js";
+import { isEmptyObject, setDateTimestamp, sortBy } from "../../../../services/utils.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import {
@@ -152,8 +152,9 @@ export class AonEventDetailList extends AonElement {
         aonTable.removeAllLi();
         resp.map((res, idx) => {
           let options = {
+            iconHtmlCustom: `${res.lettersHtml}`,
             title: `${res.name} <div style="float: right;">${res.textStatus}</div>`,
-            subtitle: `${res.nameLocation} <div style="float: right;">${res.dateParse}</div> `,
+            subtitle: `<div style="float: right;">${res.nameLocation} ${res.dateParse}</div> `,
           };
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
         });
@@ -167,17 +168,18 @@ export class AonEventDetailList extends AonElement {
     this.aonSigninEl.startLoader();
     let data = [];
     if (this.data && this.data.detail) {
-      this.data.detail.forEach(
+      const details = sortBy(this.data.detail, 'date', 'desc');
+      details.forEach(
         async (resp) => {
           const name = resp.task_holder.name;
           const lettersName = StringTwoLetters(name);
-          const lettersHtml = `<div class="profile-letters">${lettersName}</div>`;
           const newStatus = resp.status.toLowerCase();
+          const lettersHtml = `<div class="profile-letters ${newStatus}">${lettersName}</div>`;
           const textStatus = await getStatus(newStatus);
           let nameLocation = undefined;
           if (resp.location && resp.location.name) {
             nameLocation = resp.location.name;
-          } else {
+          } else if(!isEmptyObject(resp.coordinates)) {
             nameLocation = `<aon-icon-button id="iconLocation" icon="add_location" noHover="true"></aon-icon-button>`;
           }
           const obj = {
