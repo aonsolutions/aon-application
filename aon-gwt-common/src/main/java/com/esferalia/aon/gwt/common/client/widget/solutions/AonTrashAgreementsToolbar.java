@@ -12,7 +12,6 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -155,7 +154,7 @@ public class AonTrashAgreementsToolbar extends Composite {
 		});
 		toolsSection.add(delete4EverButton);
 		
-		restoreButton = new AonToolbarButton(AON.MSG.restoreAction(), AON.CSS.aonIconRestore() );
+		restoreButton = new AonToolbarButton(AON.MSG.restoreAction(), AON.CSS.aonIconRestoreDeleted() );
 		restoreButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -171,35 +170,31 @@ public class AonTrashAgreementsToolbar extends Composite {
 	}
 	
 	private void showSearchTextBox(){
-		final Element e = searchTextBox.getElement();
-
-	    new Animation() {
+		new Animation() {
 
 	        @Override
 	        protected void onUpdate( double progress ) {
-	            e.getStyle().setOpacity( progress );
+	        	searchTextBox.getElement().getStyle().setOpacity( progress );
 	        }
 
 	        @Override
 	        protected void onComplete() {
-	        	 e.getStyle().setOpacity( 1.0 );
+	        	searchTextBox.getElement().getStyle().setOpacity( 1.0 );
 	        }
 	    }.run( 500 );
 	}
 	
 	private void hideSearchTextBox(){
-		final Element e = searchTextBox.getElement();
-
-	    new Animation() {
+		new Animation() {
 
 	        @Override
 	        protected void onUpdate( double progress ) {
-	            e.getStyle().setOpacity( 1.0 - progress );
+	        	searchTextBox.getElement().getStyle().setOpacity( 1.0 - progress );
 	        }
 
 	        @Override
 	        protected void onComplete() {
-	        	 e.getStyle().setOpacity( 0 );
+	        	searchTextBox.getElement().getStyle().setOpacity( 0 );
 	        }
 	    }.run( 500 );
 	}
