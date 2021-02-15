@@ -31,8 +31,8 @@ public enum AonRole  implements Serializable {
 	BANK,				// ACCESO AL SERVICIO BANK
 	CONVENIOS,			// ACCESO AL SERVICIO CONVENIOS
 	AON,
-	BIDOQ
-	;
+	BIDOQ;
+	
 	public Byte value(){
 		return (byte) ordinal();
 	}
@@ -49,50 +49,10 @@ public enum AonRole  implements Serializable {
 	}
 	
 	public static AonRole safeValueOf( String i ) {
-		if (i == null || "".equals(i)) return null;
-		if(i.equalsIgnoreCase(ADMIN.name())) {
-			return ADMIN;
-		} else if(i.equalsIgnoreCase(ACCOUNTING.name())) {
-			return ACCOUNTING;
-		} else if(i.equalsIgnoreCase(ACCOUNTING_MANAGER.name())) {
-			return ACCOUNTING_MANAGER;
-		} else if(i.equalsIgnoreCase(FISCAL.name())) {
-			return FISCAL;
-		} else if(i.equalsIgnoreCase(FISCAL_MANAGER.name())) {
-			return FISCAL_MANAGER;
-		} else if(i.equalsIgnoreCase(PAYROLL.name())) {
-			return PAYROLL;
-		} else if(i.equalsIgnoreCase(PAYROLL_MANAGER.name())) {
-			return PAYROLL_MANAGER;
-		} else if(i.equalsIgnoreCase(PAYROLL_PORTAL.name())) {
-			return PAYROLL_PORTAL;
-		} else if(i.equalsIgnoreCase(DOCUMENTAL.name())) {
-			return DOCUMENTAL;
-		} else if(i.equalsIgnoreCase(DOCUMENTAL_MANAGER.name())) {
-			return DOCUMENTAL_MANAGER;
-		} else if(i.equalsIgnoreCase(COMUNICA.name())) {
-			return COMUNICA;
-		} else if(i.equalsIgnoreCase(COMUNICA_MANAGER.name())) {
-			return COMUNICA_MANAGER;
-		} else if(i.equalsIgnoreCase(COMUNICA_PORTAL.name())) {
-			return COMUNICA_PORTAL;
-		} else if(i.equalsIgnoreCase(TIMECONTROL.name())) {
-			return TIMECONTROL;
-		} else if(i.equalsIgnoreCase(TIMECONTROL_MANAGER.name())) {
-			return TIMECONTROL_MANAGER;
-		} else if(i.equalsIgnoreCase(TIMECONTROL_PORTAL.name())) {
-			return TIMECONTROL_PORTAL;
-		} else if(i.equalsIgnoreCase(MESSENGER.name())) {
-			return MESSENGER;
-		} else if(i.equalsIgnoreCase(MESSENGER_MANAGER.name())) {
-			return MESSENGER_MANAGER;
-		} else if(i.equalsIgnoreCase(INVOICE.name())) {
-			return INVOICE;
-		} else if(i.equalsIgnoreCase(INVOICE_MANAGER.name())) {
-			return INVOICE_MANAGER;
-		} else if(i.equalsIgnoreCase(INVOICE_PORTAL.name())) {
-			return INVOICE_PORTAL;
-		} 
+		for (AonRole rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
 		return null;
 	}
 }

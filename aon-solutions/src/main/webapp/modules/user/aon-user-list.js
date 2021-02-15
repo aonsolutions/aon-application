@@ -64,9 +64,8 @@ export class AonUserList extends AonElement {
 
 	aonUser(user) {
 		let content = this.parentElement;
-		content.innerHTML = '<aon-user id="aonUser-' + user.id + '" showApps="true" showInfo="true"><aon-user>';
+		content.innerHTML = '<aon-user id="aonUser-' + user.id + '" showApps="true" showInfo="true" showToolbar="true"><aon-user>';
 		let aonUser = document.getElementById('aonUser-' + user.id);
-		aonUser.style.display = "flex";
 		aonUser.style.width = "100%";
 		aonUser.setAttribute('user', JSON.stringify(user));
 	}

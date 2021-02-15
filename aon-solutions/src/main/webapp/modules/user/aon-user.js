@@ -1,17 +1,26 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDomainApps, getUser, getUserAppRole, setUserAppRole, setUser, changePassword} from  '../../services/service.js';
+import {getDomainApps, getUser, getUserAppRole, setUserAppRole, setUser, deleteUser,
+	 changePassword, getAuth} from  '../../services/service.js';
 import {getApp} from  '../../services/app.js';
+import {ToolbarType} from '../../models/enums.js';
+import {UserAction} from './userEnums.js';
 
 import '../../components/aon-card.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-input.js';
 import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
+import '../../components/aon-toolbar.js';
+
+import * as CONSTANT from "../../environments/constants.js";
+import * as MSG from "../../environments/msg.js";
+import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 
 export class AonUser extends AonElement {
 
 	SWITCH;
 	SELECT;
+	TOOLBAR;
 
 	_user;
 
@@ -67,6 +76,30 @@ export class AonUser extends AonElement {
 		this.setAttribute('showInfo', showInfo);
 	}
 
+	get showToolbar() {
+		return this.getAttribute('showToolbar');
+	}
+
+	set showToolbar(showToolbar) {
+		this.setAttribute('showToolbar', showToolbar);
+	}
+
+	get autosave() {
+		return this.getAttribute('autosave');
+	}
+
+	set autosave(autosave) {
+		this.setAttribute('autosave', autosave);
+	}
+
+	get onlyAuth() {
+		return this.getAttribute('onlyAuth');
+	}
+
+	set onlyAuth(onlyAuth) {
+		this.setAttribute('onlyAuth', onlyAuth);
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		if('user' === name){
 			this.initUser();
@@ -82,21 +115,28 @@ export class AonUser extends AonElement {
 
 	constructor () {
 		super();
-		this.id = this.id || 'aonUser';
-		this.SWITCH = this.id + 'Switch';
-		this.SELECT = this.id + 'Select';
-
-		this._user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
 	}
 
 	connectedCallback () {
+		this.id = this.id || 'aonUser';
+		this.SWITCH = this.id + 'Switch';
+		this.SELECT = this.id + 'Select';
+		this.TOOLBAR = this.id + 'Toolbar';
+
+		this._user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
+
 		this.innerHTML = `
-			<div id="aonConfigurationUserDiv" style="width:50%;">
-				<aon-card id="aonConfigurationUserCard"  title="USUARIO"></aon-card>
-				<aon-card id="aonConfigurationUserInfoCard" title="INFORMACIÓN ADICIONAL"></aon-card>
+			<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.AON_MSG_USER}"> </aon-toolbar>
+			<div style="display:flex;width:100%;">
+				<div id="aonConfigurationUserDiv" class="aonSubContent" style="width:50%;">
+					<aon-card id="aonConfigurationUserCard"  title="${MSG.AON_MSG_USER}"></aon-card>
+					<aon-card id="aonConfigurationUserInfoCard" title="${MSG.AON_MSG_ADDITIONAL_INFORMATION}"></aon-card>
+				</div>
+				<aon-card id="aonConfigurationUserSecurityCard" style="width:50%;" title="${MSG.AON_MSG_PERMISSIONS}"></aon-card>
 			</div>
-			<aon-card id="aonConfigurationUserSecurityCard" style="width:50%;" title="PERMISOS"></aon-card>
 		`;
+
+		this.buildUserToolbar();
 		this.build();
   }
 
@@ -115,6 +155,7 @@ export class AonUser extends AonElement {
 	initUser() {
 		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
 		this._user = user;
+		this.buildUserToolbar();
 		let aonUserName = document.getElementById('aonConfigurationUserCardName');
 		aonUserName.setAttribute('value', user && user.name && user.email ? user.name : '');
 		let aonUserSurname = document.getElementById('aonConfigurationUserCardSurname');
@@ -149,6 +190,19 @@ export class AonUser extends AonElement {
 				this.getElement('aonConfigurationUserInfoAON').checked = usr.newAon;
 			});
 		}
+	}
+
+	buildUserToolbar() {
+		let userToolbar = this.getElement(this.TOOLBAR);
+		if(!this.hasAttribute('showToolbar') || this.isMobile())
+			userToolbar.style.display = 'none';
+		userToolbar.removeButtons();
+
+		if(!this.isAutosave())
+			userToolbar.addButton2(UserAction.SAVE, () => this.save());
+		if(this._user.id)
+			userToolbar.addButton2(UserAction.DELETE, () => this.delete());
+		userToolbar.addButton2(UserAction.BACK, () => this.back());
 	}
 
 	build() {
@@ -188,32 +242,52 @@ export class AonUser extends AonElement {
 		let name = document.getElementById('aonConfigurationUserCardName');
 		name.onChange(() => {
 			this._user.name = name.value;
-			this.save();
+			if(this.isAutosave()){
+				this.save();
+			}
 		});
 
 		let surname = document.getElementById('aonConfigurationUserCardSurname');
 		surname.onChange(() => {
 			this._user.surname= surname.value;
-			this.save();
+			if(this.isAutosave()){
+				this.save();
+			}
 		});
 
 		let doc = document.getElementById('aonConfigurationUserCardDocument');
 		doc.onChange(() => {
 			this._user.document= doc.getAttribute('value');
-			this.save();
+			if(this.isAutosave()){
+				this.save();
+			}
 		});
 
 		let phone = document.getElementById('aonConfigurationUserCardPhone');
 		phone.onChange(() => {
 			this._user.phone= phone.getAttribute('value');
-			this.save();
+			if(this.isAutosave()){
+				this.save();
+			}
 		});
 
 		let email = document.getElementById('aonConfigurationUserCardEmail');
 		email.onChange(() => {
 			this._user.email = email.getAttribute('value');
 			this._user.share = this.hasAttribute('share');
-			this.save();
+			if(this.isAutosave()){
+				this.save();
+			} else {
+				getAuth({email: this._user.email}).then((auth) => {
+					if(auth.uuid){
+						this._user.name = auth.name || "";
+						this._user.surname = auth.surname || "";
+						this._user.document = auth.document || "";
+						this._user.phone = auth.phone || "";
+						this.setAttribute('user', JSON.stringify(this._user));
+					}
+				});
+			}
 		});
 
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
@@ -255,7 +329,6 @@ export class AonUser extends AonElement {
 			if(div) div.style.width = '100%'
 			card2.style.width = '100%';
 		}
-
 	}
 
 	editPassword() {
@@ -285,12 +358,32 @@ export class AonUser extends AonElement {
 				this.setAttribute('apps', JSON.stringify(apps));
 				this.initApps();
 			});
-
 		}).catch(e => {
-			let aonApplication = document.querySelector('aon-application');
-			let toast = this.getElement(aonApplication.TOAST);
-			toast.start(JSON.parse(e));
+			if(!this.isOnlyAuth()) {
+				let aonApplication = document.querySelector('aon-application');
+				let toast = this.getElement(aonApplication.TOAST);
+				toast.start(JSON.parse(e));
+			}
 		});
+	}
+
+	delete() {
+		let aonApplication = document.querySelector('aon-application');
+    let d = document.getElementById(aonApplication.DIALOG);
+    d.clear();
+    if(!this.isMobile()) d.width = '400px';
+    d.setTitle(MSG.AON_MSG_DELETE);
+    d.setContentHTML(`Estás seguro de eliminar el usuario`);
+    d.addAcceptAction(() => {
+			let data = { user: this._user.id};
+			deleteUser(data).then(() => this.back());
+    });
+    d.open();
+	}
+
+	back() {
+		let aonApplication = document.querySelector('aon-application');
+		aonApplication.setContentHTML("<aon-user-list> </aon-user-list>");
 	}
 
 	buildAppSelect(app) {
@@ -450,6 +543,18 @@ export class AonUser extends AonElement {
 				setUserAppRole(role);
 			}
 		}
+	}
+
+	isAutosave() {
+		return this.hasAttribute('autosave') && this.getAttribute('autosave') != 'false';
+	}
+
+	isOnlyAuth() {
+		return this.hasAttribute('onlyAuth') && this.getAttribute('onlyAuth') != 'false';
+	}
+
+	isShowApps() {
+		return this.hasAttribute('showApps') && this.getAttribute('showApps') != 'false'
 	}
 
 	isAdmin() {

@@ -80,7 +80,7 @@ export class AonConfiguration extends AonElement {
     getDomainUserRoles({}).then(r => {
       this._roles = new DomainUserRoles(r);
       this.build();
-    });
+    }).catch(() => this.build());
   }
 
   build() {
@@ -140,10 +140,9 @@ export class AonConfiguration extends AonElement {
       let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
       aonConfiguration.removeToolbarOptions();
       aonConfiguration.setContentHTML(
-        '<aon-user id="aonUserPersonal" showPassword="true" ><aon-user>'
+        '<aon-user id="aonUserPersonal" showPassword="true" onlyAuth="true" autosave="true"><aon-user>'
       );
       let aonUser = this.getElement("aonUserPersonal");
-      aonUser.style.display = this.isMobile() ? "block" : "flex";
       aonUser.style.width = "100%";
       aonUser.setAttribute("user", JSON.stringify(user));
     });
@@ -234,9 +233,8 @@ export class AonConfiguration extends AonElement {
   buildCreateUser(share) {
     let content = document.getElementById("aonConfigurationContent");
     content.innerHTML =
-      '<aon-user id="aonUserCreate" showApps="true" ><aon-user>';
+      '<aon-user id="aonUserCreate" showApps="true" showToolbar="true" ><aon-user>';
     let aonUser = document.getElementById("aonUserCreate");
-    aonUser.style.display = "flex";
     aonUser.style.width = "100%";
     if (share) aonUser.setAttribute("share", share);
   }

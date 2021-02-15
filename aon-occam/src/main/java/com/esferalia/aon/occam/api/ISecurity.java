@@ -41,6 +41,7 @@ public interface ISecurity {
 	
 	public User getUser(AONContext ctx, UserFilter filter);
 	public User insertUser(AONContext ctx, User user);
+	public User delete(AONContext ctx, User user);
 	public Stream<User> getDomainUserStream(AONContext ctx);
 	public Stream<User> getDomainUserStream(AONContext ctx, UserFilter filter);
 	public Stream<User> getUserStream(AONContext ctx, UserFilter filter);

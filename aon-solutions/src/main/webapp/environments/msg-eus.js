@@ -131,3 +131,7 @@ export const AON_MSG_HEADER = 'Goiburu';
 export const AON_MSG_FOOTER = 'Oina';
 export const AON_MSG_BACKGROUND_ADJUST = 'Atzealdea Estutu';
 export const AON_MSG_DETAILED = 'Xehatua';
+export const AON_MSG_ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
+export const AON_MSG_PERMISSIONS = 'Baimenak';
+export const AON_MSG_DELETE = 'Ezabatu';
+export const AON_MSG_SAVE = 'Gorde';

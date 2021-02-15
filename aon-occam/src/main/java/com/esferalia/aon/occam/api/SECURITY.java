@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 
 public class SECURITY {
@@ -78,6 +79,12 @@ public class SECURITY {
 	public static AuthDevice getAuthDevice(Domain domain, String login, AuthDeviceFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getSecurity().getAuthDevice(ctx, filter);
+		}
+	}
+	
+	public static User delete(Domain domain, String login, User user) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getSecurity().delete(ctx, user);
 		}
 	}
 	

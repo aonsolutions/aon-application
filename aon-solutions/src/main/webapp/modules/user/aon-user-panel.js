@@ -1,4 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
+import {getDomainUserRoles} from  '../../services/service.js';
+import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-application.js';
 import '../../components/aon-card.js';
@@ -34,7 +36,11 @@ export class AonUserPanel extends AonElement {
 		this.innerHTML = `
 			<aon-application id="${this.AON_USER_PANEL}" title="${MSG.AON_MSG_USERS}"></aon-application>
 		`;
-		this.build();
+		getDomainUserRoles({}).then(r => {
+				this._roles = new DomainUserRoles(r);
+				this.build();
+		});
+
   }
 
 	build() {
@@ -48,7 +54,7 @@ export class AonUserPanel extends AonElement {
 		aonUserPanel.addToolbarOption('UserShare', 'share', () => this.buildCreateUser(true));
 		aonUserPanel.addToolbarOption('UserAdd', 'add', () => this.buildCreateUser(true));
 
-		let filterOptions = [{
+		let filterOptions = this._roles.isParentUser() ? [{
 				name: 'Empresa',
 				icon: 'domain',
 				fn: () => this.init('company')
@@ -56,6 +62,15 @@ export class AonUserPanel extends AonElement {
 				name: 'Entorno',
 				icon: 'apartment',
 				fn: () => this.init('entorno')
+			}, {
+				name: 'Compartidas',
+				icon: 'share',
+				fn: () => this.init('shared')
+			}
+		]: [{
+				name: 'Empresa',
+				icon: 'domain',
+				fn: () => this.init('company')
 			}, {
 				name: 'Compartidas',
 				icon: 'share',
@@ -75,9 +90,8 @@ export class AonUserPanel extends AonElement {
 
 	buildCreateUser(share) {
 		let content = document.getElementById('aonUserPanelContent');
-		content.innerHTML = '<aon-user id="aonUserCreate" showApps="true" ><aon-user>';
+		content.innerHTML = '<aon-user id="aonUserCreate" showApps="true" showToolbar="true"><aon-user>';
 		let aonUser = document.getElementById('aonUserCreate');
-		aonUser.style.display = "flex";
 		aonUser.style.width = "100%";
 		if(share)	aonUser.setAttribute('share', share);
 	}

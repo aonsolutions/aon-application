@@ -131,3 +131,7 @@ export const AON_MSG_HEADER = 'Capçalera';
 export const AON_MSG_FOOTER = 'Peu';
 export const AON_MSG_BACKGROUND_ADJUST = 'Ajustar Fons';
 export const AON_MSG_DETAILED = 'Detallat';
+export const AON_MSG_ADDITIONAL_INFORMATION = 'Informació Addicional';
+export const AON_MSG_PERMISSIONS = 'Permisos';
+export const AON_MSG_DELETE = 'Esborrar';
+export const AON_MSG_SAVE = 'Guardar';

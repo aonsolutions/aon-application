@@ -132,3 +132,7 @@ export const AON_MSG_HEADER = 'Header';
 export const AON_MSG_FOOTER = 'Footer';
 export const AON_MSG_BACKGROUND_ADJUST = 'Background Adjust';
 export const AON_MSG_DETAILED = 'Detailed';
+export const AON_MSG_ADDITIONAL_INFORMATION = 'Additional Information';
+export const AON_MSG_PERMISSIONS = 'Permissions';
+export const AON_MSG_DELETE = 'Delete';
+export const AON_MSG_SAVE = 'Save';

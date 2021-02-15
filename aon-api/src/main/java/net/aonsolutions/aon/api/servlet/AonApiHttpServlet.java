@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,6 +54,11 @@ public class AonApiHttpServlet extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+		initialize(req, resp);
+	}
+	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
 		initialize(req, resp);
 	}
 	
@@ -208,7 +212,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
-		String s = checkString(bld.toString());
+		String s = bld.toString();
 		if(s == null || s.isBlank()){
 			s = "{}";
 		}
@@ -225,9 +229,5 @@ public class AonApiHttpServlet extends HttpServlet{
 	      jsonObj.put(entry.getKey(), o);
 	    }
 	    return jsonObj;
-	}
-	
-	public String checkString(String str){
-		return new String(str.getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
 	}
 }

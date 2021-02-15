@@ -114,6 +114,12 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
+	public User delete(AONContext ctx, User user) {
+		return ctx.getDslContext().transactionResult(
+				Configuration -> SecurityDAO.delete(ctx, user));
+	}
+	
+	@Override
 	public LinkedList<User> getUsersByEmail(AONContext ctx, String email) {
 		return SecurityDAO.getUsersByEmail(ctx, email);
 	}

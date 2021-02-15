@@ -1,6 +1,8 @@
 package net.aonsolutions.aon.api.servlet;
+import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -10,6 +12,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -19,6 +26,7 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
@@ -29,7 +37,10 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import solutions.aon.aws.SES;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonUserServlet", urlPatterns = {"/ms/api/user/*"})
@@ -69,6 +80,43 @@ public class UserServlet extends AonApiHttpServlet {
 		}
 	}
 
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
+		try {
+			super.doPost(req, resp);
+			switch (getPath()) {
+			case "/":
+				response(req, resp, setUser());
+				break;
+			case "/app":
+				response(req, resp, setUserAppRole());
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
+		try {
+			super.doDelete(req, resp);
+			switch (getPath()) {
+			case "/":
+				deleteUser();
+				response(req, resp);
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
 	private JSONArray getDomainUserRoles() {
 		Integer userId = getParams().opt("user") != null ? getParams().optInt("user") : null;
 		User user = new User();
@@ -199,25 +247,7 @@ public class UserServlet extends AonApiHttpServlet {
 		return userAppRoles;
 	}
 	
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
-		try {
-			super.doPost(req, resp);
-			switch (getPath()) {
-			case "/":
-				response(req, resp, setUser());
-				break;
-			case "/app":
-				response(req, resp, setUserAppRole());
-				break;
-			default:
-				throw new Exception("La ruta introducida es incorrecta.");
-			}
-		} catch (Exception e) {
-			error(req, resp, e);
-		}
-	}
+
 	
 	private void setUserAppRole(Domain domain, User user, AonApp app, AonRole role){
 		UserAppRole uar = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> 
@@ -274,7 +304,6 @@ public class UserServlet extends AonApiHttpServlet {
 						User u = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(user));
 						Auth a = AON_SOLUTIONS.getAuth(domain.getName(), domain.getId(), u.getAuth());
 
-						
 						Registry r = null;
 						if(!AonStringUtils.isBlank(a.getDocument())) {
 							r = AON.getRegistry(getDomain().getName(), getDomain().getId(), "", f -> 
@@ -325,6 +354,7 @@ public class UserServlet extends AonApiHttpServlet {
 			Auth auth = AON_SOLUTIONS.getAuth(email);
 			if(auth.getUuid() == null) {
 				auth = createAuth(getDomain(), getData(), login);
+				sendAuthCreateInfoMail(email, login);
 			} else updateAuth(auth, getData());
 			
 			byte[] a = auth.getAuth();
@@ -335,7 +365,7 @@ public class UserServlet extends AonApiHttpServlet {
 			if((user == null || user.getId() == null) && getData().opt("id") != null) {
 				user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(getData().getInt("id")));
 			} 
-			if(user != null && user.getId() != null && !user.getId().equals(getData().getInt("id"))){
+			if(user != null && user.getId() != null && !user.getId().equals(getData().optInt("id"))){
 				throw new Exception("El mail introducido ya está asociado a otro usuario.");
 			}
 			
@@ -362,6 +392,14 @@ public class UserServlet extends AonApiHttpServlet {
 		return js;
 	}
 	
+	private void deleteUser() {
+		if(getData().opt("user") != null) {
+			Integer userId = getData().optInt("user");
+			User user = AON.getUser(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getIdProperty().eq(userId));
+			SECURITY.delete(getDomain(), getUser().getLogin(), user);
+		}
+	}
+	
 	private Auth createAuth(Domain domain, JSONObject json, String login) {
 		String pass = Utils.createPasswordHash(json.optString("email"), login);
 		Auth auth = new Auth()
@@ -386,6 +424,7 @@ public class UserServlet extends AonApiHttpServlet {
 	
 	private User createUser(Domain domain, JSONObject json, String login, byte[] auth) {
 		Company cp = AON.getCompany(getDomain().getName(), getDomain().getId(), login, f -> f.getDomainProperty().eq(getDomain().getId()));
+		
 		User user = new User()
 			.setAuth(auth)
 			.setActive(true)
@@ -394,6 +433,27 @@ public class UserServlet extends AonApiHttpServlet {
 			.setName(json.opt("name") != null ? json.getString("name") : login)
 			.setShared(json.optBoolean("shared"))
 			.setEnterprise(cp.getId());
+		
+		if(json.opt("document") != null) {
+			String document = json.optString("document");
+			if(!AonStringUtils.isBlank(document) && AonDocumentUtil.isValid(document)) {
+				Integer registryId = null;
+				Optional<Person> p = AON.getPerson(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getDocumentProperty().eq(document)));
+				if(p.isPresent() && p.get().getId() != null) {
+					registryId = p.get().getId();
+				}
+				
+				if(registryId == null) {
+					Registry r = AON.getRegistry(getDomain().getName(), getDomain().getId(), "", f -> 
+						f.getDomainProperty().eq(domain.getId())
+						.and(f.getDocumentProperty().eq(document)));
+					registryId = r.getId();
+				}
+				user.setRegistry(registryId);
+			}
+		}	
 		return AON.insertUser(domain.getName(), domain.getId(), "", user);
 	}
 	
@@ -411,5 +471,31 @@ public class UserServlet extends AonApiHttpServlet {
 			json.put("email", "");
 		return json;
 	}	
+	
+	private void sendAuthCreateInfoMail(String email, String password) {
+		String from = "no-reply@aon.solutions"; //auth.getEmail();
+		String to = email;
+		String body = authCreateInfoContent(email, password);
+		String subject = "NUEVO USUARIO | AON SOLUTIONS"; 
+		SES.sendEmail(from, to, subject, body);
+	}
+	
+	private String authCreateInfoContent(String email, String password) {
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+			
+		VelocityContext context = new VelocityContext();
+		context.put("email", email);
+		context.put("password", password);
+			
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/auth_create_info.vm");
+			
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
+	}
 	
 }

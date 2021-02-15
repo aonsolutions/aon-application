@@ -84,6 +84,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -321,6 +322,52 @@ public class SecurityDAO {
 			.execute();
 		
 		return user.setId(id);
+	}
+	
+	public static User delete(AONContext ctx, User user) {
+		ctx.checkWrite();
+		deleteUserTaskHolder(ctx, user);
+		deleteUserAppRoles(ctx, user);
+		deleteUserScopes(ctx, user);
+		deleteUserWorkgroups(ctx, user);
+		deleteUser(ctx, user);
+		return user;
+	}
+	
+	private static void deleteUser(AONContext ctx, UserFilter filter) {
+		ctx.getDslContext().delete(USER)
+			.where(USER_PROPERTIES.getConditions(filter))
+			.execute();
+	}
+	
+	private static void deleteUser(AONContext ctx, User user) {
+		deleteUser(ctx, f -> f.getIdProperty().eq(user.getId()));
+	}
+	
+	private static void deleteUserScopes(AONContext ctx, User user) {
+		deleteUserScope(ctx, f -> f.getUserIdProperty().eq(user.getId()));
+	}
+	
+	private static void deleteUserTaskHolder(AONContext ctx, User user) {
+		TaskHolder taskHolder = TaskDAO.getTaskHolder(ctx, f -> f.getUserIdProperty().eq(user.getId()));
+		if(taskHolder.getId() != null) {
+			taskHolder.setActive(false);
+			taskHolder.setUserId(null);
+			TaskDAO.save(ctx, taskHolder);
+		}
+	}
+	private static void deleteUserAppRoles(AONContext ctx, User user) {
+		deleteUserAppRole(ctx, f -> f.getUserIdProperty().eq(user.getId()));
+	}
+	
+	private static void deleteUserWorkgroups(AONContext ctx, User user) {
+		deleteUserWorkgroup(ctx, f -> f.getUserIdProperty().eq(user.getId()));
+	}
+	
+	private static void deleteUserWorkgroup(AONContext ctx, UserWorkgroupFilter filter) {
+		ctx.getDslContext().delete(USER_WORKGROUP)
+			.where(USER_WORKGROUP_PROPERTIES.getConditions(filter))
+			.execute();
 	}
 	
 	public static LinkedList<User> getUsersByEmail(AONContext ctx, String email){

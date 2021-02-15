@@ -23,8 +23,13 @@ public class AuthServlet extends AonApiHttpServlet{
 		LOGGER.info("AON AUTH SERVLET - GET METHOD");
 		try {
 			super.doGet(req, resp);
-			AonToken aonToken = SECURITY.getAonToken(getToken());
-			Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+			Auth auth = new Auth();
+			if(getParams().opt("email") != null) {
+				auth = AON_SOLUTIONS.getAuth(getParams().optString("email"));
+			} else {
+				AonToken aonToken = SECURITY.getAonToken(getToken());
+				auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+			}
 			
 			JSONObject json = new JSONObject();
 			json.put("email", auth.getEmail());
