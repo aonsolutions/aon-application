@@ -1,7 +1,5 @@
 package solutions.aon.seg.social.objects;
 
-import solutions.aon.seg.social.objects.WorkerLiquidation.WorkerLiquidationBuilder;
-
 public class Liquidation {
 	private Float cc_base;
 	private Float cc_businessFee;
@@ -603,25 +601,25 @@ public class Liquidation {
 
 			@Override
 			public void visit_grantsAndBonuses_base(Float grantsAndBonuses_base) {
-				stringBuffer.append(String.format("\tCC Grants and bonuses - liquid base:\"%S\"\n", grantsAndBonuses_base));
+				stringBuffer.append(String.format("\tGrants and bonuses - liquid base:\"%S\"\n", grantsAndBonuses_base));
 				
 			}
 			
 			@Override
 			public void visit_grantsAndBonuses_businessFee(Float grantsAndBonuses_businessFee) {
-				stringBuffer.append(String.format("\tCC Grants and bonuses - business fee:\"%S\"\n", grantsAndBonuses_businessFee));
+				stringBuffer.append(String.format("\tGrants and bonuses - business fee:\"%S\"\n", grantsAndBonuses_businessFee));
 				
 			}
 			
 			@Override
 			public void visit_grantsAndBonuses_workerFee(Float grantsAndBonuses_workerFee) {
-				stringBuffer.append(String.format("\tCC Grants and bonuses - worker fee:\"%S\"\n", grantsAndBonuses_workerFee));
+				stringBuffer.append(String.format("\tGrants and bonuses - worker fee:\"%S\"\n", grantsAndBonuses_workerFee));
 				
 			}
 			
 			@Override
 			public void visit_grantsAndBonuses_totalFee(Float grantsAndBonuses_totalFee) {
-				stringBuffer.append(String.format("\tCC Grants and bonuses - total fee:\"%S\"\n", grantsAndBonuses_totalFee));
+				stringBuffer.append(String.format("\tGrants and bonuses - total fee:\"%S\"\n", grantsAndBonuses_totalFee));
 				
 			}
 			

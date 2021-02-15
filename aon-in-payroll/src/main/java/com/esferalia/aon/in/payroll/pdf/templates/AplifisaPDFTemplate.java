@@ -344,9 +344,9 @@ public class AplifisaPDFTemplate implements SalaryPDFTemplate {
 			{
 				Double base = PdfParsingTools.payrollDoubleParser(AonStringUtils.trimToNull(matcher.group("base")));
 				if (base != null)
-					salaryBuilder.setTotalIrpf(base);
-				else
-					salaryBuilder.setTotalIrpf(0d);
+					salaryBuilder.setIrpfBase(base);
+				else 
+					salaryBuilder.setIrpfBase(0d);
 				Double percent = PdfParsingTools.payrollDoubleParser(AonStringUtils.trimToNull(matcher.group("percent")));
 				Double deduction = PdfParsingTools.payrollDoubleParser(AonStringUtils.trimToNull(matcher.group("deduction")));
 				DeductionType dt = DeductionType.IRPF;
@@ -355,6 +355,7 @@ public class AplifisaPDFTemplate implements SalaryPDFTemplate {
 				if (deduction != null) {
 					salaryBuilder.addDeduction(deduction, description, dateFrom, dateTo,
 							new Deduction().setType(dt).setName(context), Collections.emptyMap());
+					salaryBuilder.setTotalIrpf(deduction);
 					if (base != null) {
 
 						salaryBuilder.addData(ContextVariable.IRPF_BASE.getName(),
@@ -363,6 +364,8 @@ public class AplifisaPDFTemplate implements SalaryPDFTemplate {
 					if (percent != null) {
 						salaryBuilder.addData("PORCENTAJE_IRPF", new TimedObject<Double>(percent, period));
 					}
+				} else {
+					salaryBuilder.setTotalIrpf(0d);
 				}
 
 			}

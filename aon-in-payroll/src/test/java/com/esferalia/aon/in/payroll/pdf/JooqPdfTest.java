@@ -25,6 +25,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.mysql.cj.protocol.Resultset;
 @Ignore
 public class JooqPdfTest {
 
@@ -1769,6 +1770,112 @@ public class JooqPdfTest {
 			SalaryPDFParser.parse(is, builder);
 			builder.execute();
 		}
+		
+//		try (InputStream is = PdfTest.class.getResourceAsStream("aplifisa/nominas 2020.pdf");
+//				Connection connection = DriverManager
+//						.getConnection("jdbc:mysql://172.17.0.2:3306/ayudat-aonsolutions-net", "root", "root")) {
+//				SalaryPDFParser.parse(is, new SalaryBuilder() {
+//					String entName, empName, entHome, empDoc, entDoc, category, ccc, quoteGroup, naf;
+//					Date seniorityDate, dateFrom, dateTo;
+//					Integer timeUnits, salaryId;
+//					@Override
+//					public void setEnterpriseName(String enterpriseName) {
+//						this.entName = enterpriseName;
+//					}
+//					@Override
+//					public void setEmployeeName(String employeeName) {
+//						this.empName = employeeName;
+//					}
+//					@Override
+//					public void setEnterpriseAddress(String enterpriseAddress) {
+//						this.entHome = enterpriseAddress;
+//					}
+//					@Override
+//					public void setEmployeeDocument(String employeeDocument) {
+//						this.empDoc = employeeDocument;
+//					}
+//					@Override
+//					public void setEnterpriseDocument(String enterpriseDocument) {
+//						this.entDoc = enterpriseDocument;
+//					}
+//					@Override
+//					public void setSocialSecurityNumber(String socialSecurityNumber) {
+//						this.naf = socialSecurityNumber;
+//					}
+//					@Override
+//					public void setCategory(String category) {
+//						this.category = category;
+//					}
+//					@Override
+//					public void setCcc(String ccc) {
+//						this.ccc = ccc;
+//					}
+//					@Override
+//					public void setQuoteGroup(String quoteGroup) {
+//						this.quoteGroup = quoteGroup;
+//					}
+//					@Override
+//					public void setSeniorityDate(Date seniorityDate) {
+//						this.seniorityDate = seniorityDate;
+//					}
+//					@Override
+//					public void setStartDate(Date startDate) {
+//						this.dateFrom = startDate;
+//					}
+//					@Override
+//					public void setEndDate(Date endDate) {
+//						this.dateTo = endDate;
+//					}
+//					@Override
+//					public void setTimeUnits(Integer timeUnits) {
+//						DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+//						this.timeUnits = timeUnits;
+//						String sql = "select id from salary"
+//								+ " where employee_document='"+this.empDoc+"'"
+//								+ " and enterprise_document='"+this.entDoc+"'"
+//								+ " and seniority_date='"+df.format(this.seniorityDate)+"'"
+//								+ " and start_date='"+df.format(this.dateFrom)+"'"
+//								+ " and end_date='"+df.format(this.dateTo)+"'"
+//								+ " and ccc='"+this.ccc+"'";
+//						System.out.println(sql);
+//						try(Statement st = connection.createStatement();
+//								ResultSet rs = st.executeQuery(sql)){
+//							if (rs.next()) {
+//								this.salaryId = rs.getInt("id");
+//							}
+//							String sql2 = "select count(*) as correct "
+//									+ " from salary"
+//									+ " where employee_document='"+this.empDoc+"'"
+//									+ " and enterprise_document='"+this.entDoc+"'"
+//									+ " and seniority_date='"+df.format(this.seniorityDate)+"'"
+//									+ " and start_date='"+df.format(this.dateFrom)+"' and"
+//									+ " end_date='"+df.format(this.dateTo)+"'"
+//									+ " and enterprise_address='"+this.entHome+"'"
+//									+ " and ccc='"+this.ccc+"'"
+//									+ " and social_security_number='"+this.naf+"'"
+//									+ " and id="+this.salaryId;
+//							ResultSet rs1=st.executeQuery(sql2);
+//							if(rs1.next()) {
+//								if(rs1.getInt("correct")!=1) {
+//									System.out.println(sql2);
+//									fail("MAL");
+//								}
+//							}
+//							
+//							
+//							
+//							
+//						} catch (SQLException e) {
+//							System.err.println(e.getMessage());
+//						}
+//					}
+//					
+//					
+//					
+//					
+//					
+//				});
+//			}
 	}
 	
 	@Test

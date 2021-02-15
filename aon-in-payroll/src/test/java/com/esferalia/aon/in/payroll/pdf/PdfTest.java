@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,6 +19,8 @@ import java.util.Map;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
+import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -2742,15 +2745,7 @@ public class PdfTest {
 			});
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	@Test
 	//@Ignore
 	public void test260() throws IOException, UnknownPDFException {
