@@ -508,6 +508,7 @@ public class JooqContrataContract {
 		Result<Record> contractOtherDataRecords = dslContext.select().from(CONTRACT_INFO)
 				.where(CONTRACT_INFO.NAME.in(contractOtherDataNames))
 				.and(CONTRACT_INFO.CONTRACT.isNull())
+				.and(CONTRACT_INFO.DOMAIN.eq(domainId))
 				.orderBy(CONTRACT_INFO.START_DATE.desc())
 				.fetch();
 		
