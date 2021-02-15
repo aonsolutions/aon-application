@@ -1482,7 +1482,7 @@ public class EmployeesServiceHelper {
 	}
 	
 	
-	public static EnterprisePayroll geteEnterprisePayroll(String title, InputStream logo, Date month, ICollectionProvider salariesProvider, ICollectionProvider sldProvider) throws ManagerBeanException {
+	public static EnterprisePayroll geteEnterprisePayroll(String title, InputStream logo, Date month, ICollectionProvider salariesProvider/*, ICollectionProvider sldProvider*/) throws ManagerBeanException {
 		
 		Map<String, Map<String, EnterprisePayrollEntry>> entries = new HashMap<String, Map<String,EnterprisePayrollEntry>>();
 		Collection<com.esferalia.aon.payroll.Salary> salaries = salariesProvider.getCollection(true);
@@ -1507,7 +1507,6 @@ public class EmployeesServiceHelper {
 		}
 		
 		
-		Map<String, Map<String, EnterprisePayrollEntry>> ss_entries = Collections.emptyMap();
 		
 		
 		
