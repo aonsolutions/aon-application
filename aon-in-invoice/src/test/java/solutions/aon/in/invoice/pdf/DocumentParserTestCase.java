@@ -143,6 +143,17 @@ public class DocumentParserTestCase {
 		Document nif = nifs.stream().findFirst().get();
 		assertEquals(text,DocumentType.LEGAL_PERSON_NIF, nif.getType());
 	}
+
+	
+	@Test
+	public void testXXX1() throws IOException, UnknownInvoiceException {
+		String text = "N.I.F.: A - 01314319";
+		Collection<Document> nifs = DocumentParser.getNifs( text  );
+		assertNotNull(text,nifs);
+		assertEquals(text,1,nifs.size());
+		Document nif = nifs.stream().findFirst().get();
+		assertEquals(text,DocumentType.LEGAL_PERSON_NIF, nif.getType());
+	}
 	
 }
 

@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AmountParser {
-	
+
 	public static List<Double> getAmounts(ParserContext ctx, String text) {
 		String ds = ctx.getDecimalSeparator();
 		String gs = ctx.getDecimalGroupingSeparator();

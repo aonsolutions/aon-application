@@ -58,27 +58,19 @@ public class InvoicePDFParser {
 		PDFTextStripper stripper= new PDFTextStripper();
 		stripper.setSortByPosition(true);
 		InvoiceTemplate template = null;
-		
-		
-		
-		for (int p = 1; p <= doc.getNumberOfPages(); p++) {
-            // Set the page interval to extract. If we don't, then all pages would be extracted.
-			stripper.setStartPage(p);
-			stripper.setEndPage(p);
-			
-			String text = stripper.getText(doc);
-			
-			if (isBlank(text)) {
-				// try with images ...
-				text = getImages(doc,p-1).stream()
-				.map(img -> InvoiceIMGParser.extract(img)) 
-				.collect(Collectors.joining("\r\n"));
-			}
-			
+		String text = stripper.getText(doc);
+		if (!isBlank(text)) {
 			template = Templates.parse(template, text, handler);
 		}
-		
-		
+		if (isBlank(text) || handler.getInsightNifs() == null || handler.getInsightNifs().length < 2) {
+			if (doc.getNumberOfPages() >= 1) {
+				text = getImages(doc,0)
+						.stream()
+						.map(img -> InvoiceIMGParser.extract(img)) 
+						.collect(Collectors.joining("\r\n"));
+				template = Templates.parse(template, text, handler);
+			}
+		}
 		handler.finalizeParse();
 	}
 	

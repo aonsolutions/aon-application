@@ -44,6 +44,11 @@ public class TediInsightInvoiceBuilder implements InvoiceBuilder<TediInvoice> {
 	}
 	
 	@Override
+	public TediNif[] getInsightNifs() {
+		return getInsight() != null?getInsight().getNifs():null;
+	}
+
+	@Override
 	public void addInsightNifs(Collection<Document> nifs) {
 		if (nifs != null && nifs.size() > 0) {
 			LinkedHashSet<TediNif> uniqueDocuments = new LinkedHashSet<TediNif>();
@@ -80,6 +85,11 @@ public class TediInsightInvoiceBuilder implements InvoiceBuilder<TediInvoice> {
 			uniqueDates.addAll( dates );
 			getInsight().setDates(uniqueDates.toArray( new Date[uniqueDates.size()] ));
 		}
+	}
+	
+	@Override
+	public Double[] getInsightAmounts() {
+		return getInsight() != null?getInsight().getAmounts():null;
 	}
 
 	@Override

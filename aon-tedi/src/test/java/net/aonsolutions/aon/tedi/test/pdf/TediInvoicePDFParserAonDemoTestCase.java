@@ -65,7 +65,21 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 		testTemplate(TestTemplates.AON_2021_02_03_AMAZON);
 	}
 	
+	@Test
+	public void testAON_2020_12_31_BK() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate(TestTemplates.AON_2020_12_31_BK);
+	}
+	
+	@Test
+	public void testAON_2021_02_01_RCR() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate(TestTemplates.AON_2021_02_01_RCR );
+	}
+	
 	private void testTemplate(TestTemplates template) throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate(template, false);
+	}
+		
+	private void testTemplate(TestTemplates template, boolean sales) throws IOException, UnknownInvoiceException, ClassNotFoundException {
 		StringBuilder out = new StringBuilder();
 		out.append("-----------------");
 		out.append("\n");
@@ -80,7 +94,7 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 				.setAONContext ( ctx )
 				;
 		tctx.setAonConfiguration(ConfigurationDAO.getConfiguration(tctx.getAONContext()));
-		tctx.getAonConfiguration().getCompany().setDocument("B01487271");
+		tctx.getAonConfiguration().getCompany().setDocument(sales?template.getReceiverDocument():template.getReceiverDocument());
 		
 		Date start = new Date();
 		try (InputStream is = TediInvoicePDFParserAonDemoTestCase.class.getResourceAsStream(template.getFile())) {

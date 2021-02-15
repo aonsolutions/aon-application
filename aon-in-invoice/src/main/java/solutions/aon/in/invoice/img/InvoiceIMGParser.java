@@ -67,30 +67,28 @@ public class InvoiceIMGParser {
 			
 		});
 		
-		Block blocks [] = 
-		detectDocumentTextResult.getBlocks().stream()
-		.filter(b -> b.getText() != null )
-		.filter(b -> b.getBlockType().equals("LINE"))
-		.toArray(Block[]::new);
+		Block blocks[] = detectDocumentTextResult.getBlocks()
+			.stream()
+			.filter(b -> b.getText() != null )
+			.filter(b -> b.getBlockType().equals("LINE"))
+			.toArray(Block[]::new);
 		
-		LinkedList<Block> lines = new LinkedList<Block>();
-		for ( int i = 0; i < 1 ; i++  ) {
-			lines.add(blocks[i]);
-		}			
-		
-		for ( int i = 1; i < blocks.length; i++  ) {
-			Block block = blocks[i];
-			Block line = lines.peekLast();
-			if ( intersects(line, block)) 
-				line.setText(line.getText() + " " + block.getText() );
-			else 
-				lines.add(block);
+		String text = null;
+		if (blocks != null && blocks.length > 0 ) {
+			LinkedList<Block> lines = new LinkedList<Block>();
+			for ( int i = 0; i < 1 ; i++  ) {
+				lines.add(blocks[i]);
+			}			
+			for ( int i = 1; i < blocks.length; i++  ) {
+				Block block = blocks[i];
+				Block line = lines.peekLast();
+				if ( intersects(line, block)) 
+					line.setText(line.getText() + " " + block.getText() );
+				else 
+					lines.add(block);
+			}
+			text = lines.stream().map(b -> b.getText()).collect(Collectors.joining("\r\n"));
 		}
-		
-		String text = lines.stream().map(b -> b.getText()).collect(Collectors.joining("\r\n"));
-		
-		System.out.println(text);
-		
 		return text;
 	}
 

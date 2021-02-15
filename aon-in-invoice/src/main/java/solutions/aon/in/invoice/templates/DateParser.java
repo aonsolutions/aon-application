@@ -17,6 +17,7 @@ public class DateParser {
 		Matcher matcher = pattern.matcher(text);
 		int index = 0;
 		while ( index <= text.length() && matcher.find(index) ) {
+			boolean letterMonth = false;
 			boolean added = false;
 			Date date = null;
 			String m = matcher.group("month");
@@ -27,6 +28,7 @@ public class DateParser {
 				m = m.replaceAll("\\W", "");
 				if (ctx.getMonthsMap().containsKey((m.toLowerCase()))) {
 					month = ctx.getMonthsMap().get(m.toLowerCase());
+					letterMonth = true;
 				}
 			};
 			if (month != -1) {
@@ -52,7 +54,7 @@ public class DateParser {
 					sep1 = sep1 != null ? sep1.trim() : "";  
 					String sep2 = matcher.group("sep2");
 					sep2 = sep2 != null ? sep2.trim() : "";
-					fake = !sep1.equals(sep2);
+					fake = !sep1.equals(sep2) || ("".equals(sep1) && !letterMonth);
 				}
 				if ( !fake ) {
 					dates.add(date);

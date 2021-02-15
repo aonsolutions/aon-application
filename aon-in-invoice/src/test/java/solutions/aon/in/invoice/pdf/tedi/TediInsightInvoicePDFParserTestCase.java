@@ -57,8 +57,10 @@ public class TediInsightInvoicePDFParserTestCase {
 	@Test public void testORANGE_3() throws IOException, UnknownInvoiceException {testTemplates( TestTemplates.ORANGE_3  );}
 	@Test public void testRETENCION_1() throws IOException, UnknownInvoiceException {testTemplates( TestTemplates.RETENCION_1  );}
 	@Test public void testAON_2021_02_03_AMAZON() throws IOException, UnknownInvoiceException {testTemplates( TestTemplates.AON_2021_02_03_AMAZON );}
-	
 	@Test public void testAON_2021_01_29_TERMOFUEL() throws IOException, UnknownInvoiceException {testTemplates( TestTemplates.AON_2021_01_29_TERMOFUEL);}
+	@Test public void testAON_2020_12_31_BK() throws IOException, UnknownInvoiceException {testTemplates( TestTemplates.AON_2020_12_31_BK );}
+
+	@Test public void testAON_2021_02_01_RCR() throws IOException, UnknownInvoiceException {testTemplates( TestTemplates.AON_2021_02_01_RCR );}
 
 	// @Test public void test
 	
@@ -86,8 +88,20 @@ public class TediInsightInvoicePDFParserTestCase {
 			assertEquals(file  + " must parse " + template.getDocumentsNumber() + " documents!" ,template.getDocumentsNumber(), insight.getNifs().length );
 			assertNotNull(file + " has no dates!",insight.getDates());
 			assertEquals(file + " must parse " + template.getDatesNumber() + " dates!" ,template.getDatesNumber(),insight.getDates().length);
-			assertNotNull(file + " has no amounts!",insight.getAmounts());
-			assertEquals(file + " must parse " + template.getAmountNumber() + " amounts!" ,template.getAmountNumber(),insight.getAmounts().length);
+			
+			if (template.getAmountNumber() == null) {
+				assertNull(file + "Invoice has amounts!",insight.getAmounts());
+			} else {
+				assertNotNull(file + " has no amounts!",insight.getAmounts());
+				System.out.println( "********" );
+				System.out.println( "********" );
+				for (Double am : insight.getAmounts() ) {
+					System.out.println( am );
+				}
+				System.out.println( "********" );
+				System.out.println( "********" );
+				assertEquals(file + " must parse " + template.getAmountNumber() + " amounts!" ,template.getAmountNumber().intValue(),insight.getAmounts().length);
+			}
 			if (template.getTotal() != null) {
 				assertNotNull(file + " has no total!",insight.getTotal());
 				assertEquals(file + " total not match: ",template.getTotal() , insight.getTotal().doubleValue(),0);

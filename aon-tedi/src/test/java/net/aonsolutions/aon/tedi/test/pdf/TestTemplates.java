@@ -110,6 +110,26 @@ public enum TestTemplates {
 			@Override public Double getTaxQuota0() {return 0.0;}
 			@Override public Double getTotal(){ return 1609.64; }
 		},
+		AON_2020_12_31_BK ("/net/aonsolutions/aon/tedi/test/pdf/AON-2020-12-31-BK.pdf") {
+			@Override public Date getDate() {return Date.from(LocalDateTime.of(2020, 12, 31, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
+			@Override public String getReference(){ return null; }
+			@Override public String getSenderDocument() {return "A01314319";}
+			@Override public String getReceiverDocument() {return "B01487271";}
+			@Override public int getTaxNumber() {return 1;}
+			@Override public Double getTaxBase0() {return 927.96;}
+			@Override public Double getTaxQuota0() {return 0.0;}
+			@Override public Double getTotal(){ return 927.96; }
+		},
+		AON_2021_02_01_RCR ("/net/aonsolutions/aon/tedi/test/pdf/AON-2021-02-01-RCR.pdf") {
+			@Override public Date getDate() {return Date.from(LocalDateTime.of(2021, 2, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());}
+			@Override public String getReference(){ return "PO03384/21"; }
+			@Override public String getSenderDocument() {return "B02230407";}
+			@Override public String getReceiverDocument() {return "B98267552";}
+			@Override public int getTaxNumber() {return 1;}
+			@Override public Double getTaxBase21() {return 21.0;}
+			@Override public Double getTaxQuota21() {return 4.41;}
+			@Override public Double getTotal(){ return 25.41; }
+		},
 		
 		
 		;

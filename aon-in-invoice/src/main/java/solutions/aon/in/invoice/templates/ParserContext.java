@@ -175,6 +175,9 @@ public enum ParserContext {
 	public static ParserContext getDefault() {
 		return SPANISH;
 	}
+	public static ParserContext alternativeContext(ParserContext parserContext) {
+		return parserContext == SPANISH ? ENGLISH_US : SPANISH;
+	}
 	
 	public abstract String[] getMonths();
 	public abstract Map<String,Integer> getMonthsMap();
@@ -184,5 +187,6 @@ public enum ParserContext {
 	protected abstract String[] getIssueDatePatterns();
 	protected abstract String[] getAcceptPatterns();
 	protected abstract String[] getTotalPatterns();
+
 
 }

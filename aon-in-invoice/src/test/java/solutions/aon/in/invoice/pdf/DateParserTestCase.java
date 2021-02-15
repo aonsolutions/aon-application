@@ -29,6 +29,10 @@ public class DateParserTestCase {
 		super();
 	}
 	
+	private static Date getDate(int d,int m,int y) {
+		return Date.from(LocalDateTime.of(y, m, d, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
+	}
+	
 	private String getLorem( String data ) {
 		String randomText = null;
 		if (FAKER.random().nextInt(0, 6) > 3) {
@@ -227,6 +231,27 @@ public class DateParserTestCase {
 		assertEquals(1,dates.size());
 		assertEquals(FEBRUARY_03_02_2021,dates.stream().findFirst().get());
 	}
+	
+	@Test
+	public void testDate_022() throws IOException, UnknownInvoiceException {
+		String text = 
+			"Factura MARTINEZ Y SEGARRA ASESORES S.L.\n"+
+			"PO03384/21 01/02/2021\n"+
+			"C/ Mestre Racional, 15-8\n"+
+			"46005 VALENCIA\n"+
+			"16151 VALENCIA\n"+
+			"B98267552\n"+
+			"       CUOTA SUPERCONTABLE.COM FEBRERO'21          1    21.00              21.00\n"+
+			"21.00 21.00 21% 4.41 25.41 Eur.\n"+
+			"FORMA DE PAGO: Domiciliación Bancaria\n"; 
+		Collection<Date> dates = DateParser.getDates(ParserContext.SPANISH, text );
+		assertNotNull(dates);
+		assertEquals(1,dates.size());
+		assertEquals(getDate(1,2,2021),dates.stream().findFirst().get());
+	}
+	
+	
+	
 	
 }
 
