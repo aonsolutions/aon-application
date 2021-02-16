@@ -5,8 +5,6 @@ import './aon-header.js';
 import './aon-menu.js';
 import './aon-mobile-header.js';
 import './aon-mobile-menu.js';
-import { getCompanies, saveAuthDevice } from '../services/service.js';
-import { FirebaseService } from '../services/firebaseService.js';
 
 export class AonHome extends AonElement {
 	constructor () {
@@ -48,23 +46,6 @@ export class AonHome extends AonElement {
 					});
 				}
 			});
-
-			this.initializeFB();
-		}
-	}
-
-
-	async initializeFB()  {
-  		const firebaseSrv = new FirebaseService();
-		const token = await firebaseSrv.getTokenFB();
-		if (token) {
-			await saveAuthDevice({tokenFCM:token});
-			window.tokenFCM = token;
-			const messaging = firebaseSrv.getMessagingObject();
-			messaging.onMessage(
-				(payload) => firebaseSrv.pushNotification(payload),
-				(err) => console.log(err)
-			);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 import {AonElement} from '../components/AonElement.js';
 import {rootPanel} from '../services/gwtLoader.js';
 import {setPosition} from '../services/maps.js';
-
+import { FirebaseService } from '../services/firebaseService.js';
 import './login/aon-login.js';
 import './register/aon-register.js';
 import './aon-home.js';
@@ -26,6 +26,9 @@ export class AonModule extends AonElement {
 	}
 
 	connectedCallback () {
+		this.observerListener();
+		this.setWindowApp();
+
 		let loginDiv= this.createElement('div');
 		loginDiv.id = this.AON_LOGIN;
 		loginDiv.style.display = 'none';
@@ -43,11 +46,17 @@ export class AonModule extends AonElement {
 		registerDiv.style.display = 'none';
 		this.appendChild(registerDiv);
 		registerDiv.innerHTML = '<aon-register></aon-register>';
-
 		this.load();
 	}
 
+	observerListener(){
+		window.addEventListener('userAuth', ()=>{
+			this.initializeFB();
+		});
+	}
+
 	load() {
+
 		if(localStorage.getItem('aon_session_id')){
 			document.getElementById("aonLogin").style.display = 'none';
 			document.getElementById("aonHome").style.display = 'block';
@@ -58,25 +67,48 @@ export class AonModule extends AonElement {
 			rootPanel(this.isMobile()
 			 	? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 			 	: '<aon-parent id="aonParent"></aon-parent>');
+			
+			window.dispatchEvent( new Event('userAuth') );
+
 		} else {
 			this.getElement(this.AON_LOGIN).style.display = 'block';
 			this.getElement(this.AON_HOME).style.display = 'none';
 		}
 		
+
+	}
+
+	setWindowApp(){
 		window.setPosition = (pos) => setPosition(pos);
 		
-		window.setTokenFCM = async (token) =>  {
-			if(token){
-				await saveAuthDevice({tokenFCM:token});
-				window.tokenFCM = token;
-				console.log("tokenFCM>", typeof token, token);
-			}
-		}
+		window.setTokenFCM =  (tk) =>  window.tokenFCM = tk;
 		
 		window.setNotificationAction = (data) =>  {
 		    console.log("data Notification1>", typeof data, data);
 			alert(JSON.stringify(data));
 		}
 	}
+
+	async initializeFB()  {
+		let token = undefined;
+		if(!this.isMobile()) { // initialize observer message firebase desk
+			const firebaseSrv = new FirebaseService;
+			token = await firebaseSrv.getTokenFB();
+			if (token) {
+				window.tokenFCM = token;
+				const messaging = firebaseSrv.getMessagingObject();
+				messaging.onMessage(
+					(payload) => firebaseSrv.pushNotification(payload),
+					(err) => console.log(err)
+				);
+			}
+		} else if(window.tokenFCM) {
+			token = window.tokenFCM;
+		}
+
+		if(token) await saveAuthDevice({tokenFCM:token});
+		console.log("TOKEN FCM", token);
+  	}
+	
 }
 window.customElements.define('aon-module',  AonModule);

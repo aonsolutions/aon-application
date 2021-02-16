@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
+import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
+import com.esferalia.aon.occam.api.model.security.AuthDevice;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonLocationServlet", urlPatterns = {"/ms/api/location/*"})
@@ -63,6 +65,7 @@ public class LocationServlet extends AonApiHttpServlet{
 	//router
 	private Object router(String[] pathInfo, AonToken aonToken) throws Exception {
 		Object obj = new Object();
+		notificationTest();
 		String route = null;
 		if(pathInfo!=null) {
 			route = pathInfo[1];
@@ -122,40 +125,49 @@ public class LocationServlet extends AonApiHttpServlet{
 	
 
 	public JSONObject notificationTest() {
-		String urlFB = "https://fcm.googleapis.com/fcm/send";
-		String keyFB = "AAAAQ_8KqDo:APA91bFXY2DUz7Ie9TM1qK9hO8RJ_8um9uKkIvT87QcyPobWunCFOvJpP4k961zzfJdGW0sUFWQUGGUMwsa9AOGsLtT0jTI_5sHl95MIgbBQBPDf6vbuOEQU16LQh84lVm1Jh2kNMl3G";
+		final String urlFB = "https://fcm.googleapis.com/fcm/send";
+		final String keyFB = "AAAAQ_8KqDo:APA91bFXY2DUz7Ie9TM1qK9hO8RJ_8um9uKkIvT87QcyPobWunCFOvJpP4k961zzfJdGW0sUFWQUGGUMwsa9AOGsLtT0jTI_5sHl95MIgbBQBPDf6vbuOEQU16LQh84lVm1Jh2kNMl3G";
 		JSONObject responseJSON =  new JSONObject();
-		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-		try {
-			String tokenUserFCM = getParams().optString("tokenFCM");
-		    HttpPost httpPost = new HttpPost(urlFB);
-			httpPost.addHeader("Authorization", "key="+keyFB);
-			httpPost.addHeader("Content-Type", "application/json");
-			httpPost.addHeader("Accept", "*/*");
-			
-		    JSONObject payload = new JSONObject();
-		    JSONObject notification = new JSONObject();
-		    notification.put("body", "BODYYYYYYYY");
-		    notification.put("title", "TITULOOOO");
-		    payload.put("to", tokenUserFCM);
-		    payload.put("notification", notification);
-		    JSONObject dataJSON = new JSONObject(); //DATA 
-		    payload.put("data", dataJSON);
-		    
-			StringEntity params = new StringEntity(payload.toString());
-		    httpPost.setEntity(params);
-	
-		    CloseableHttpResponse response = httpClient.execute(httpPost);
+		AonToken aonToken = SECURITY.getAonToken(getToken());
+		AuthDevice authDevice = SECURITY.getAuthDevice(getDomain(), getUser().getLogin(), f->f.getAuthProperty().eq(aonToken.getAuth()));
+		
+		if(authDevice!=null) {
+			CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+			try {
+				Notification nt = new Notification()
+				.setBody("BODYYYYYYYY")
+				.setTitle("TITLE")
+				.setDeviceToken(authDevice.getDeviceToken());
 
-		    HttpEntity responseEntity = response.getEntity();
-		    if(responseEntity!=null) {
-		        String responseString = EntityUtils.toString(responseEntity);
-		        responseJSON = new JSONObject(responseString);
-		    }
-		    httpClient.close();
-		} catch (Exception e) {
-			 e.printStackTrace();
+			    HttpPost httpPost = new HttpPost(urlFB);
+				httpPost.addHeader("Authorization", "key="+keyFB);
+				httpPost.addHeader("Content-Type", "application/json");
+				httpPost.addHeader("Accept", "*/*");
+				
+			    JSONObject payload = new JSONObject();
+			    JSONObject notification = new JSONObject();
+			    notification.put("title", nt.getTitle());
+			    notification.put("body", nt.getBody());
+			    payload.put("to", nt.getDeviceToken());
+			    payload.put("notification", notification);
+			    payload.put("data", nt.getData());
+			    
+				StringEntity params = new StringEntity(payload.toString());
+			    httpPost.setEntity(params);
+		
+			    CloseableHttpResponse response = httpClient.execute(httpPost);
+
+			    HttpEntity responseEntity = response.getEntity();
+			    if(responseEntity!=null) {
+			        String responseString = EntityUtils.toString(responseEntity);
+			        responseJSON = new JSONObject(responseString);
+			    }
+			    httpClient.close();
+			} catch (Exception e) {
+				 e.printStackTrace();
+			}
 		}
+	
 		return responseJSON;
 	}
 	

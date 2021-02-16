@@ -47,10 +47,8 @@ export class AonEventAdd extends AonElement {
   constructor() {
     super();
     this.id = this.id || "aonEventAdd";
-    this.TOOLBAR = this.id + "Toolbar";
     this.aonSigninEl = this.getElement("aonSignin");
-    this.aonSigninToolbar = this.getElement(`${this.aonSigninEl.id}Toolbar`);
-    this.aonSigninToolbar.setAttribute("option", "Registrar evento");
+    this.aonSigninEl.addToolbarTitle("Registrar evento");
     this.TOAST = this.getElement(`${this.aonSigninEl.id}Toast`);
   }
 
@@ -63,9 +61,6 @@ export class AonEventAdd extends AonElement {
   attributeChangedCallback(name, oldValue, newValue) {}
 
   paintView() {
-    const toolbarMobile = !this.isMobile()
-      ? `<aon-toolbar id="${this.TOOLBAR}" type="secondary" title="Evento"> </aon-toolbar>`
-      : "";
     const initHtml = `
             <style>
               .aonCard{
@@ -82,7 +77,6 @@ export class AonEventAdd extends AonElement {
                 border-radius: .25rem;
               }
             </style>
-            ${toolbarMobile}
         `;
 
     const form = `
@@ -146,35 +140,28 @@ export class AonEventAdd extends AonElement {
   }
 
   buildToolbarDesk() {
-    const toolbar = this.getElement(this.TOOLBAR);
-    toolbar.removeButtons();
+    const toolbar = this.aonSigninEl;
+    if(toolbar){
+      toolbar.removeToolbarOptions();
+      toolbar.addToolbarOption2(
+        {
+          id: "Save",
+          name: "Guardar",
+          icon: "save",
+        },
+        () => this.formSubmit()
+      );
+  
+      toolbar.addToolbarOption2(
+        {
+          id: "Previous",
+          name: "Volver",
+          icon: "arrow_back",
+        },
+        () => this.back()
+      );
+    }
 
-    toolbar.addButton2(
-      {
-        id: "Save",
-        name: "Guardar",
-        icon: "save",
-      },
-      () => this.formSubmit()
-    );
-
-    // toolbar.addButton2(
-    //   {
-    //     id: "Delete",
-    //     name: "Eliminar",
-    //     icon: "delete",
-    //   },
-    //   () => this.removeData()
-    // );
-
-    toolbar.addButton2(
-      {
-        id: "Previous",
-        name: "Volver",
-        icon: "arrow_back",
-      },
-      () => this.back()
-    );
   }
 
   buildToolbarMobile() {
@@ -237,7 +224,7 @@ export class AonEventAdd extends AonElement {
         date: date
       };
       if (data.id) {
-        this.aonSigninToolbar.setAttribute("option", "Modificar evento");
+        this.aonSigninEl.addToolbarTitle("Modificar evento");
         if (data.location && data.location.id) {
           obj["location"] = data.location.id;
         }

@@ -1,13 +1,14 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { isEmptyObject, setDateTimestamp, sortBy } from "../../../../services/utils.js";
-import "../../../../components/aon-table.js";
-import "../../../../components/aon-mobile-list.js";
 import {
   getStatus,
 } from "../../../../services/service.js";
 
-import "./aon-event-add.js";
 import { StringTwoLetters } from "../utils.js";
+
+import "../../../../components/aon-table.js";
+import "../../../../components/aon-mobile-list.js";
+import "./aon-event-add.js";
 
 export class AonEventDetailList extends AonElement {
   TABLE_ID;
@@ -50,9 +51,6 @@ export class AonEventDetailList extends AonElement {
   constructor() {
     super();
     this.aonSigninEl = this.getElement("aonSignin");
-    this.aonSigninToolbar = this.getElement(
-      `${this.aonSigninEl.id}Toolbar`
-    );
     this.id = this.id || "aonEvent";
     this.TABLE_ID = this.id + "Table";
   }
@@ -89,6 +87,7 @@ export class AonEventDetailList extends AonElement {
       this.aonSigninEl.addToolbarOption("Add", "add", () =>
         this.aonEvent()
       );
+      this.aonSigninEl.addToolbarOption("Previus", "arrow_back", (e) => this.back());
     }
   }
 
@@ -104,7 +103,7 @@ export class AonEventDetailList extends AonElement {
   }
 
   async getTable() {
-    this.aonSigninToolbar.setAttribute("option", "Eventos");
+    this.aonSigninEl.addToolbarTitle("Detalle");
     this.aonSigninEl.startLoader();
     if (this.isMobile()) {
       await this.getTableMobile();
@@ -210,6 +209,12 @@ export class AonEventDetailList extends AonElement {
       if (!data && this.data)  data = this.data;
       aonEventEl.data = data;
     }
+  }
+
+  back(){
+    this.aonSigninEl.setContentHTML(
+     `<aon-presence-list></aon-presence-list>` 
+    );
   }
 }
 window.customElements.define("aon-event-detail-list", AonEventDetailList);

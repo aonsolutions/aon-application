@@ -39,6 +39,8 @@ export class AonPresenceList extends AonElement {
     this.id = this.id || "aonPresenceList";
     this.TABLE_ID = this.id + "Table";
     this.GROUP_DEFAULT = "DAY";
+
+    // console.log(atob(localStorage.getItem(this.id)));
   }
 
   connectedCallback() {
@@ -47,6 +49,11 @@ export class AonPresenceList extends AonElement {
     this.buildToolbar();
     this.eventListener();
   }
+  
+  disconnectedCallback() {
+    // localStorage.setItem(this.id, btoa(this.innerHTML))
+  }
+
   eventListener() {}
 
   paintView() {
@@ -62,9 +69,7 @@ export class AonPresenceList extends AonElement {
 
   async build() {
     this.aonSigninEl = this.getElement("aonSignin");
-    this.aonSigninToolbar = this.getElement(`${this.aonSigninEl.id}Toolbar`);
-    this.aonSigninToolbar.setAttribute("option", "Presencia");
-
+    this.aonSigninEl.addToolbarTitle("Presencia");
     this.aonSigninEl.startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();

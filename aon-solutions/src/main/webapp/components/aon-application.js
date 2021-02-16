@@ -429,6 +429,11 @@ export class AonApplication extends AonElement {
 		});
 	}
 
+	addToolbarTitle(title){
+		let toolbar = this.getElement(this.TOOLBAR);
+		if(toolbar) toolbar.setAttribute("option", title);
+	}
+
 	addToolbarOption2(option, fn) {
 		this.getElement(this.TOOLBAR).addButton2(option, fn);
 	}

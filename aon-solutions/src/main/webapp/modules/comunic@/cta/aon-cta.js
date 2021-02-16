@@ -27,8 +27,6 @@ export class AonCta extends AonElement {
         this.ACTION = 'CREATE';
         this.id = this.id || 'aonComunicaCcc';
         this.aonComunicaEl = this.getElement('aonComunica');
-        this.TOOLBAR = this.id + 'Toolbar';
-        this.aonComunicaToolbar = this.getElement('aonComunicaToolbar');
         this._cta = [];
     }
 
@@ -88,7 +86,7 @@ export class AonCta extends AonElement {
     }
 
     build() {
-        this.aonComunicaToolbar.setAttribute('option', 'Cuenta de Cotización');
+        this.aonComunicaEl.addToolbarTitle('Cuenta de Cotización');
         this.initLists();
 
         let cardTitle = this.getElement(`${this.id}CtzCardTitle`);

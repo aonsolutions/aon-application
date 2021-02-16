@@ -32,9 +32,9 @@ public class LocationDAO {
 	}
 	
 	public static Location saveLocation(AONContext ctx, Location lc) {
-		return lc.getId() !=0
-			? update(ctx, lc)
-			: insert(ctx, lc);
+		Location location  = lc.getId() !=0 ? update(ctx, lc) : insert(ctx, lc);
+		updateLocationUser(ctx, location);
+		return location;
 	}
 	private static Location insert(AONContext ctx, Location lc) {
 		ctx.checkWrite();
@@ -101,6 +101,11 @@ public class LocationDAO {
 		.having(distance.le(LOCATION.RADIO.cast(BigDecimal.class)))
 		.orderBy(distance.asc()).limit(1).fetch().stream().map( new LocationFiller() )
 		.findFirst().orElse(new Location());
+	}
+	
+	
+	private static void updateLocationUser(AONContext ctx, Location lc) {
+		TimeControlDAO.updateTimeControDetailLocation(ctx, lc);
 	}
 	
 	public static class LocationFiller  implements Function<Record, Location> {

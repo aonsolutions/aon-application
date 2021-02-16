@@ -10,9 +10,7 @@
 			myNode.innerHTML = '';
 			myNode.innerHTML = html;
 			resolve(myNode);
-		} else {
-			rejects(null);
-		}
+		} 
 	});
 
 	export const drawChartsCallback = () => {

@@ -4,7 +4,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.DeviceType;
@@ -51,12 +53,14 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 	
 	private JSONObject saveAuthDevice() {
 		AonToken aonToken = SECURITY.getAonToken(getToken());
+
+		Domain domain = new Domain().setName(aonToken.getSchemaFirstDomain()).setId(0);
 		AuthDevice authDevice = new AuthDevice()
 				.setId(getData().optInt("id"))
 				.setAuth(aonToken.getAuth())
 				.setDeviceType(DeviceType.safeValueOf(getData().optString("device_type")))
 				.setDeviceToken(getData().optString("tokenFCM"));
-		return SECURITY.saveAuthDevice(getDomain(), getUser().getLogin(), authDevice).toJSON();
+		return SECURITY.saveAuthDevice(domain, getUser().getLogin(), authDevice).toJSON();
 	}
 	
 	private JSONObject deleteAuthDevice() {

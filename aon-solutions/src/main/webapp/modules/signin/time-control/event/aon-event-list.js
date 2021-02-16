@@ -1,15 +1,16 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { isEmptyObject, setDateTimestamp, sortBy, timePaser } from "../../../../services/utils.js";
-import "../../../../components/aon-table.js";
-import "../../../../components/aon-mobile-list.js";
 import {
   getGroups,
   getStatus,
   getTaskHolderTimeControl,
 } from "../../../../services/service.js";
-
-import "./aon-event-detail-list.js";
 import { StringTwoLetters } from "../utils.js";
+
+import "../../../../components/aon-table.js";
+import "../../../../components/aon-mobile-list.js";
+import "./aon-event-detail-list.js";
+import  "../aon-presence-list.js";
 
 export class AonEventList extends AonElement {
   TABLE_ID;
@@ -52,10 +53,7 @@ export class AonEventList extends AonElement {
   constructor() {
     super();
     this.aonSigninEl = this.getElement("aonSignin");
-    this.aonSigninToolbar = this.getElement(
-      `${this.aonSigninEl.id}Toolbar`
-    );
-    this.id = this.id || "aonEvent";
+    this.id = this.id || "aonEventList";
     this.TABLE_ID = this.id + "Table";
   }
 
@@ -67,14 +65,8 @@ export class AonEventList extends AonElement {
 
   disconnectedCallback() {}
 
-  buildToolbar() {
-    this.aonSigninEl.removeToolbarOptions();
-    this.buildFilter();
-    const filterEl = this.getElement(`${this.id}Filter`);
-    this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
-      filterEl.openFilter()
-    );
-  }
+  build() {}
+
 
   buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
@@ -125,7 +117,7 @@ export class AonEventList extends AonElement {
   }
 
   async getTable() {
-    this.aonSigninToolbar.setAttribute("option", "Eventos");
+    this.aonSigninEl.addToolbarTitle("Eventos");
     this.aonSigninEl.startLoader();
     if (this.isMobile()) {
       await this.getTableMobile();
@@ -135,14 +127,25 @@ export class AonEventList extends AonElement {
     this.aonSigninEl.stopLoader();
   }
 
-  async build() {}
+
+  buildToolbar() {
+    this.aonSigninEl.removeToolbarOptions();
+    this.buildFilter();
+    const filterEl = this.getElement(`${this.id}Filter`);
+    this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
+      filterEl.openFilter()
+    );
+
+    this.aonSigninEl.addToolbarOption("Previus", "arrow_back", (e) => this.back());
+  }
+
 
   async getTableDesk() {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn("", "string", "lettersHtml", "5%");
-      aonTable.addColumn("Nombre", "string", "name", "35%");
+      aonTable.addColumn("", "string", "lettersHtml", "6%");
+      aonTable.addColumn("Nombre", "string", "name", "34%");
       aonTable.addColumn("Estado", "", "status", "15%");
       aonTable.addColumn("Duración", "", "duration", "5%");
       aonTable.addColumn("Fecha", "date", "dateParse", "20%");
@@ -241,6 +244,12 @@ export class AonEventList extends AonElement {
         aonEventEl.data = data;
       }
     }
+  }
+
+  back(){
+    this.aonSigninEl.setContentHTML(
+     `<aon-presence-list></aon-presence-list>` 
+    );
   }
 }
 window.customElements.define("aon-event-list", AonEventList);

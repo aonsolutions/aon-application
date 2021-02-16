@@ -118,10 +118,6 @@ export const setDateTimestamp = (d) => {
   let month = date.getMonth() + 1;
   if (month <= 9) month = '0' + month;
   let year = date.getFullYear();
-  
-  if(date.toDateString() === new Date().toDateString()){
-    return setTime(date);
-  }
 
   return day + '/' + month + '/' + year + " " + setTime(date);
 }

@@ -73,10 +73,6 @@ export class AonLocationAdd extends AonElement {
   }
 
   paintView() {
-    const toolbarMobile = !this.isMobile()
-      ? `<aon-toolbar id="${this.TOOLBAR}" type="secondary" title="${this.NAME}"> </aon-toolbar>`
-      : "";
-
     let initHtml = `
             <style>
               .aonCard{
@@ -96,7 +92,6 @@ export class AonLocationAdd extends AonElement {
                 display: none !important;
               }
             </style>
-            ${toolbarMobile} 
         `;
 
     const form = `
@@ -137,7 +132,7 @@ export class AonLocationAdd extends AonElement {
   eventListener() {}
 
   buildToolbarDesk() {
-    const toolbar = this.getElement(this.TOOLBAR);
+    const toolbar = this.aonSigninToolbar;
     if (toolbar) {
       toolbar.removeButtons();
       toolbar.addButton2(
@@ -309,7 +304,7 @@ export class AonLocationAdd extends AonElement {
       this.aonSigninEl.startLoader();
       try {
         await deleteLocation(data);
-        this.TOAST.start({ message: `Datos eliminados!` });
+        // this.TOAST.start({ message: `Datos eliminados!` });
         this.back();
       } catch (error) {
         this.TOAST.start({ message: error, type: "error" });
@@ -319,7 +314,7 @@ export class AonLocationAdd extends AonElement {
   }
 
   back() {
-    this.aonSigninEl.setContentHTML(`<aon-location-list></aon-location-list>`);
+    // this.aonSigninEl.setContentHTML(`<aon-location-list></aon-location-list>`);
   }
 }
 

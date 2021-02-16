@@ -81,9 +81,9 @@ export class AonLogin extends AonElement {
 								Si olvidaste tus datos de acceso haz <a id="aonLoginRemember" class="aonLink aonColorSecondary">click aquí</a>
 							</div>
 
-              <div style="padding-bottom: 20px;">
+              <!--<div style="padding-bottom: 20px;">
                 Si no tienes cuenta <a id="aonBtnRegister" class="aonLink aonColorSecondary"> Registrate </a>
-              </div>
+              </div>-->
 
 							<div style="position:relative;">
 								<button class="aonButton" id="aonLoginSignin" type="submit" style="width:100%">Iniciar Sesión</button>
@@ -130,11 +130,11 @@ export class AonLogin extends AonElement {
       this.getElement("aonDialogLogin").open()
     );
 
-    let aonBtnRegister = this.getElement("aonBtnRegister");
-    aonBtnRegister.addEventListener("click", () => {
-      this.hideElement("aonLogin");
-      this.showElement("aonRegister");
-    });
+    // let aonBtnRegister = this.getElement("aonBtnRegister");
+    // aonBtnRegister.addEventListener("click", () => {
+    //   this.hideElement("aonLogin");
+    //   this.showElement("aonRegister");
+    // });
   }
 
   aonDialogLoginRemember() {
@@ -177,6 +177,9 @@ export class AonLogin extends AonElement {
         localStorage.removeItem("aon_domain_id");
         localStorage.removeItem("aon_domain_name");
         localStorage.removeItem("aon_domain_login");
+
+        window.dispatchEvent( new Event('userAuth') );
+
         rootPanel(
           this.isMobile()
             ? '<aon-mobile-desktop id="aonParent"></aon-mobile-desktop>'

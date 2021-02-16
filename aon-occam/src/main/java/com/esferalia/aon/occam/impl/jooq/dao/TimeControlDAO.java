@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
@@ -13,8 +14,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.Field;
+import org.jooq.Param;
 import org.jooq.Record;
-
+import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
@@ -64,6 +67,41 @@ public class TimeControlDAO {
 	
 	public static LinkedList<TimeControlDetail> getTimeControlDetailList(AONContext ctx, TimeControlFilter filter) {
 		return getTimeControlDetailStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static void updateTimeControDetailLocation(AONContext ctx, Location lc) {
+		ctx.checkRead();
+		Param<Double> lt = DSL.val(lc.getCoordinates().getLatitude());
+		Param<Double> lg = DSL.val(lc.getCoordinates().getLongitude());
+		Field<BigDecimal> pi = DSL.pi();
+		
+		Field<BigDecimal> f1 = DSL.sin(TIMECONTROL.LATITUDE.mul(pi).div(180))
+				.mul(DSL.sin(lt.mul(pi).div(180)));
+		
+		Field<BigDecimal> f2 = DSL.cos(TIMECONTROL.LATITUDE.mul(pi).div(180))
+				.mul(DSL.cos(lt.mul(pi).div(180)))
+				.mul(DSL.cos(TIMECONTROL.LONGITUDE.sub(lg).mul(pi.div(180))));
+		
+		Field<BigDecimal> f3 = DSL.acos( f1.add(f2)).mul(DSL.val(180).div(pi));
+
+		Field<BigDecimal> distance = f3.mul(DSL.val(60).mul(1.1515).mul(1609.344)).as("distance");
+
+		LinkedList<Integer> list = ctx.getDslContext()
+		.select(TIMECONTROL.ID,distance)
+		.from(TIMECONTROL)
+		.where(TIMECONTROL.DOMAIN.eq(ctx.getDomainId()))
+		.and(TIMECONTROL.LOCATION.isNull())
+		.having(
+				distance.le(DSL.val(lc.getRadio())
+				.cast(BigDecimal.class))
+		 ).fetch().stream()
+		.map( r-> r.getValue(TIMECONTROL.ID) )
+		.collect(Collectors.toCollection(LinkedList::new));
+
+		ctx.getDslContext()
+		.update(TIMECONTROL)
+		.set(TIMECONTROL.LOCATION, lc.getId())
+		.where(TIMECONTROL.ID.in(list)).execute();
 	}
 
 	public static Stream<TimeControl> getTimeControlStream(AONContext ctx, Date startDate, Date endDate) {
