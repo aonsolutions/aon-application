@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { getAuth, getDomainUserRoles } from "../../services/service.js";
+import { getAuth, getDomainUserRoles, getCompanyOne, getCompanyMedia } from "../../services/service.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import "../../components/aon-application.js";
@@ -149,9 +149,6 @@ export class AonConfiguration extends AonElement {
   }
 
   buildGeneral() {
-    let company = this.getAttribute("company")
-      ? JSON.parse(this.getAttribute("company"))
-      : undefined;
     let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
     aonConfiguration.removeToolbarOptions();
     aonConfiguration.setContentHTML(`
@@ -160,40 +157,44 @@ export class AonConfiguration extends AonElement {
 				<aon-card id="aonConfigurationGeneral2Card" style="width:50%;" title="Información Adicional"></aon-card>
 			</div>
 		`);
+    getCompanyOne().then(cp => {
+      let card = this.getElement("aonConfigurationGeneralCard");
+      card.setContentHTML(`
+        <form action="#" class="aon-margin-0">
+          <aon-input class="aonWidth25" id="aonConfigurationGeneralNif" description="NIF" value="${
+            cp.document
+          }"></aon-input>
+          <aon-input class="aonWidth75" id="aonConfigurationGeneralName" description="Razón Social" value="${
+            cp.name
+          }"></aon-input>
+        </form>
+        <form action="#" class="aon-margin-0">
+          <aon-input type="address" class="aon-width-100" id="aonConfigurationGeneralAddress" description="Dirección" ></aon-input>
+        </form>
+      `);
 
-    let card = this.getElement("aonConfigurationGeneralCard");
+      let address = document.getElementById('aonConfigurationGeneralAddress');
+  		address.buildAddressValue(JSON.stringify(cp.address));
+      getCompanyMedia().then(m => {
+        let card2 = this.getElement("aonConfigurationGeneral2Card");
+        card2.setContentHTML(`
+    			<form action="#" class="aon-margin-0">
+    				<aon-input class="aonWidth50" id="aonConfigurationGeneral2Phone" description="Teléfono" value="${m.fixed_phone}"></aon-input>
+    				<aon-input class="aonWidth50" id="aonConfigurationGeneral2Fax" description="Fax" value="${m.fax}"></aon-input>
+    			</form>
 
-    card.setContentHTML(`
-			<form action="#" class="aon-margin-0">
-				<aon-input class="aonWidth25" id="aonConfigurationGeneralNif" description="NIF" value="${
-          company ? company.document : null
-        }"></aon-input>
-				<aon-input class="aonWidth75" id="aonConfigurationGeneralName" description="Razón Social" value="${
-          company ? company.name : null
-        }"></aon-input>
-			</form>
-			<form action="#" class="aon-margin-0">
-				<aon-input type="address" class="aon-width-100" id="aonConfigurationGeneralAddress" description="Dirección"></aon-input>
-			</form>
-		`);
+    			<form action="#" class="aon-margin-0">
+    				<aon-input class="aon-width-100" id="aonConfigurationGeneral2Email" description="Email" value="${m.email}"></aon-input>
+    			</form>
 
-    let card2 = this.getElement("aonConfigurationGeneral2Card");
-    card2.setContentHTML(`
-			<form action="#" class="aon-margin-0">
-				<aon-input class="aonWidth50" id="aonConfigurationGeneral2Phone" description="Teléfono" value=""></aon-input>
-				<aon-input class="aonWidth50" id="aonConfigurationGeneral2Fax" description="Fax" value=""></aon-input>
-			</form>
+    			<form action="#" class="aon-margin-0">
+    				<aon-input class="aon-width-100" id="aonConfigurationGeneral2Web" description="Web" value="${m.web}"></aon-input>
+    			</form>
 
-			<form action="#" class="aon-margin-0">
-				<aon-input class="aon-width-100" id="aonConfigurationGeneral2Email" description="Email" value=""></aon-input>
-			</form>
-
-			<form action="#" class="aon-margin-0">
-				<aon-input class="aon-width-100" id="aonConfigurationGeneral2Web" description="Web" value=""></aon-input>
-			</form>
-
-			<!-- LOGO -->
-		`);
+    			<!-- LOGO -->
+    		`);
+      });
+    });
   }
 
   buildUser() {

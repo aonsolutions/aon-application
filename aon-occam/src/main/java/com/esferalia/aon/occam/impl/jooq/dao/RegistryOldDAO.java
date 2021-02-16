@@ -41,7 +41,6 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.CategoryRecord;
-import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.SegmentRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
@@ -95,6 +94,7 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierFiller;
@@ -452,21 +452,25 @@ public class RegistryOldDAO {
 				.fetchInto(RMEDIA).stream().map(new RMediaFiller());
 	}
 	
-	public static class RMediaFiller  implements Function<RmediaRecord,RegistryMedia> {
+	public static class RMediaFiller  implements Function<Record,RegistryMedia> {
 
 		@Override
-		public RegistryMedia apply(RmediaRecord r) {
+		public RegistryMedia apply(Record r) {
+			return buildRmedia(r);
+		}
+		
+		public static RegistryMedia buildRmedia(Record r) {
 			return new RegistryMedia()
-					.setId(r.getId())
-					.setDomain(r.getDomain())
-					.setComment(r.getComment())
-					.setMedia(r.getMedia())
-					.setRegistry(new Registry().setId(r.getRegistry()))
-					.setAdministrative(r.getAdministrative())
-					.setCommercial(r.getCommercial())
-					.setTechnical(r.getTechnical())
-					.setRaddress(r.getRaddress())
-					.setValue(r.getValue());
+					.setId(r.getValue(RMEDIA.ID))
+					.setDomain(r.getValue(RMEDIA.DOMAIN))
+					.setComment(r.getValue(RMEDIA.COMMENT))
+					.setMedia(MediaType.safeValueOf(r.getValue(RMEDIA.MEDIA)))
+					.setRegistry(new Registry().setId(r.getValue(RMEDIA.REGISTRY)))
+					.setAdministrative(r.getValue(RMEDIA.ADMINISTRATIVE) == 1)
+					.setCommercial(r.getValue(RMEDIA.COMMERCIAL) == 1)
+					.setTechnical(r.getValue(RMEDIA.TECHNICAL) == 1)
+					.setRaddress(r.getValue(RMEDIA.RADDRESS))
+					.setValue(r.getValue(RMEDIA.VALUE));
 		}
 	}
 	
@@ -598,8 +602,8 @@ public class RegistryOldDAO {
 	public static RegistryMedia insertRMedia(AONContext ctx, RegistryMedia rmedia){
 		return ctx.getDslContext().insertInto(RMEDIA, RMEDIA.ADMINISTRATIVE, RMEDIA.COMMENT, RMEDIA.COMMERCIAL, RMEDIA.DOMAIN, RMEDIA.MEDIA,
 				RMEDIA.RADDRESS, RMEDIA.REGISTRY, RMEDIA.TECHNICAL, RMEDIA.VALUE)
-			.values(rmedia.getAdministrative(), rmedia.getComment(), rmedia.getCommercial(), rmedia.getDomain(), rmedia.getMedia(),
-					rmedia.getRaddress(), rmedia.getRegistry().getId(), rmedia.getTechnical(), rmedia.getValue()).returning()
+			.values(rmedia.getAdministrativeValue(), rmedia.getComment(), rmedia.getCommercialValue(), rmedia.getDomain(), rmedia.getMedia().value(),
+					rmedia.getRaddress(), rmedia.getRegistry().getId(), rmedia.getTechnicalValue(), rmedia.getValue()).returning()
 			.fetch().stream().map(new RMediaFiller()).findFirst().orElse(new RegistryMedia());
 	}
 	

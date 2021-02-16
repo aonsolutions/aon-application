@@ -57,10 +57,14 @@ export class AonMobileMenu extends AonElement {
   connectedCallback() {
     this.id = this.id || 'aonMobileMenu';
     this.CAMERA_INPUT = this.id + "CameraInput";
-    getDomainUserRoles({}).then(r => {
-      this._roles = new DomainUserRoles(r);
+    if(!localStorage.getItem('company')) {
+      getDomainUserRoles({}).then(r => {
+        this._roles = new DomainUserRoles(r);
+        this.build();
+      });
+    } else {
       this.build();
-    });
+    }
   }
 
   addMenuButton(name, icon, action) {
@@ -114,28 +118,28 @@ export class AonMobileMenu extends AonElement {
       rootPanel('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>')
     );
 
-    if(this._roles.isDocumental()) {
+    if(this._roles && this._roles.isDocumental()) {
       count++;
       this.addMenuButton('Documental', 'snippet_folder', () =>
         rootPanel("<aon-documental></aon-documental>")
       );
     }
 
-    if(this._roles.isTimecontrol()) {
+    if(this._roles && this._roles.isTimecontrol()) {
       count++;
       this.addMenuButton('Timecontrol', 'alarm_on', () =>
         rootPanel("<aon-signin></aon-signin>")
       );
     }
 
-    if(this._roles.isInvoice()) {
+    if(this._roles && this._roles.isInvoice()) {
       count++;
       this.addMenuButton('Invoice', 'receipt', () =>
         rootPanel("<aon-invoice-panel></aon-invoice-panel>")
       );
     }
 
-    if(this._roles.isComunica() && this._roles.isMessenger() && count === 4){
+    if(this._roles && this._roles.isComunica() && this._roles.isMessenger() && count === 4){
       count++;
       this.addMenuButton('More', 'more_horiz', ({ target }) => {
         let top = target.getBoundingClientRect().top;
@@ -162,14 +166,14 @@ export class AonMobileMenu extends AonElement {
         d.open();
       });
     } else {
-      if(this._roles.isComunica()) {
+      if(this._roles && this._roles.isComunica()) {
         count++;
         this.addMenuButton('Comunica', 'alternate_email', () =>
           rootPanel("<aon-comunica></aon-comunica>")
         );
       }
 
-      if(this._roles.isMessenger()) {
+      if(this._roles && this._roles.isMessenger()) {
         count++;
         this.addMenuButton('Messenger', 'message', () =>
           alert('en desarrollo')

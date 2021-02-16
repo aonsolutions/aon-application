@@ -218,13 +218,13 @@ public class RegistryImport extends Import {
 			for(int i = 0; i < mails.length; i++) {
 				if(!AonStringUtils.isBlank(mails[i])) {
 					RegistryMedia rm = new RegistryMedia()
-							.setMedia(MediaType.EMAIL.value())
+							.setMedia(MediaType.EMAIL)
 							.setDomain(domain.getId())
 							.setValue(mails[i])
-							.setAdministrative((byte) 1)
+							.setAdministrative(true)
 							.setComment("")
-							.setCommercial((byte) 1)
-							.setTechnical((byte) 1);
+							.setCommercial(true)
+							.setTechnical(true);
 					reg.getRmediaList().add(rm);
 				}
 			}
@@ -241,13 +241,13 @@ public class RegistryImport extends Import {
 				if(!AonStringUtils.isBlank(phones[i])) {
 					String p = phones[i].trim().replace("-", "");
 					RegistryMedia rm =  new RegistryMedia()
-						.setMedia(p.charAt(0) == '6' || p.charAt(0) == '7' ? MediaType.CELLULAR.value() : MediaType.FIXED_PHONE.value())
+						.setMedia(p.charAt(0) == '6' || p.charAt(0) == '7' ? MediaType.CELLULAR : MediaType.FIXED_PHONE)
 						.setDomain(domain.getId())
 						.setValue(p)
-						.setAdministrative((byte) 1)
+						.setAdministrative(true)
 						.setComment("")
-						.setCommercial((byte) 1)
-						.setTechnical((byte) 1);
+						.setCommercial(true)
+						.setTechnical(true);
 					reg.getRmediaList().add(rm);
 				}
 			}
@@ -308,7 +308,7 @@ public class RegistryImport extends Import {
 				RegistryMedia rm2 = AON.getRMedia(domain.getName(), domain.getId(), user.getLogin(), f -> 
 					f.getDomainProperty().eq(domain.getId())
 					.and(f.getRegistryProperty().eq(registryId))
-					.and(f.getMediaProperty().eq(rm.getMedia()))
+					.and(f.getMediaProperty().eq(rm.getMedia().value()))
 					.and(f.getValueProperty().eq(rm.getValue())));
 				
 				if(rm2 == null || rm2.getId() == null) {

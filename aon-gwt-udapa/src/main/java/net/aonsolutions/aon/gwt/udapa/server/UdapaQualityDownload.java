@@ -72,10 +72,10 @@ public class UdapaQualityDownload extends HttpServlet{
 			map.put("registry_end_address", raddress.getZip() + " " + raddress.getCity() + " " + raddress.getGeozoneName());
 
 			LinkedList<RegistryMedia> list = AON.getRMediaList(domain.getName(), domain.getId(), login, f -> f.getRegistryProperty().eq(company.getId()));
-			String phone = list.stream().filter(a -> a.getMedia() == MediaType.FIXED_PHONE.value()).map(r -> r.getValue()).findFirst().orElse("-");
-			String fax = list.stream().filter(a -> a.getMedia() == MediaType.FAX.value()).map(r -> r.getValue()).findFirst().orElse("-");
-			String mail = list.stream().filter(a -> a.getMedia() == MediaType.EMAIL.value()).map(r -> r.getValue()).findFirst().orElse("-");
-			String web = list.stream().filter(a -> a.getMedia() == MediaType.WEB.value()).map(r -> r.getValue()).findFirst().orElse("-");
+			String phone = list.stream().filter(a -> a.getMedia() == MediaType.FIXED_PHONE).map(r -> r.getValue()).findFirst().orElse("-");
+			String fax = list.stream().filter(a -> a.getMedia() == MediaType.FAX).map(r -> r.getValue()).findFirst().orElse("-");
+			String mail = list.stream().filter(a -> a.getMedia() == MediaType.EMAIL).map(r -> r.getValue()).findFirst().orElse("-");
+			String web = list.stream().filter(a -> a.getMedia() == MediaType.WEB).map(r -> r.getValue()).findFirst().orElse("-");
 		
 			map.put("phone", phone);
 			map.put("fax", fax);

@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.MediaType;
+
 public class RegistryMedia implements Serializable {
 
 	/**
@@ -12,12 +14,12 @@ public class RegistryMedia implements Serializable {
 	private Integer id;
 	private Integer domain;
 	private Registry registry;
-	private byte media;
+	private MediaType media;
 	private String value;
 	private String comment;
-	private Byte administrative;
-	private Byte commercial;
-	private Byte technical;
+	private Boolean administrative;
+	private Boolean commercial;
+	private Boolean technical;
 	private Integer raddress;
 	
 	public RegistryMedia() {
@@ -39,7 +41,7 @@ public class RegistryMedia implements Serializable {
 		return this;
 	}
 	
-	public RegistryMedia setMedia(byte media) {
+	public RegistryMedia setMedia(MediaType media) {
 		this.media = media;
 		return this;
 	}
@@ -64,7 +66,7 @@ public class RegistryMedia implements Serializable {
 	public Registry getRegistry() {
 		return registry;
 	}
-	public byte getMedia() {
+	public MediaType getMedia() {
 		return media;
 	}
 	public String getValue() {
@@ -74,29 +76,41 @@ public class RegistryMedia implements Serializable {
 		return comment;
 	}
 
-	public Byte getAdministrative() {
+	public Boolean getAdministrative() {
 		return administrative;
 	}
 
-	public RegistryMedia setAdministrative(Byte administrative) {
+	public byte getAdministrativeValue() {
+		return getAdministrative() ? (byte) 1 : 0;
+	}
+
+	public RegistryMedia setAdministrative(Boolean administrative) {
 		this.administrative = administrative;
 		return this;
 	}
 
-	public Byte getCommercial() {
+	public Boolean getCommercial() {
 		return commercial;
 	}
+	
+	public byte getCommercialValue() {
+		return getCommercial() ? (byte) 1 : 0;
+	}
 
-	public RegistryMedia setCommercial(Byte commercial) {
+	public RegistryMedia setCommercial(Boolean commercial) {
 		this.commercial = commercial;
 		return this;
 	}
 
-	public Byte getTechnical() {
+	public Boolean getTechnical() {
 		return technical;
 	}
+	
+	public byte getTechnicalValue() {
+		return getTechnical() ? (byte) 1 : 0;
+	}
 
-	public RegistryMedia setTechnical(Byte technical) {
+	public RegistryMedia setTechnical(Boolean technical) {
 		this.technical = technical;
 		return this;
 	}

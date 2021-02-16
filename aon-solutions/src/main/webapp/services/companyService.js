@@ -4,6 +4,9 @@ import { API_URL } from "../environments/environments.js";
 let companies;
 let company;
 
+let domainUserRoles;
+
+
 export const getCompanies = () => {
   return new Promise((resolve, reject) => {
     if (companies) {
@@ -53,7 +56,30 @@ export const setDomainApp = (data) => post(`${API_URL}/company/app`, data);
 
 export const getDomainNotice = (data) => get(`${API_URL}/company/notice`, data);
 
+export const getCompanyOne = (data) => get(`${API_URL}/company/one`, data);
+export const getCompanyMedia = (data) => get(`${API_URL}/company/media`, data);
+export const getCompanyAddress = (data) => get(`${API_URL}/company/address`, data);
+
 export const getDomainUserRoles = (data) => get(`${API_URL}/company/approles`, data);
+
+// export const getDomainUserRoles = (data) => {
+//   let company = JSON.parse(this.localStorage.getItem("company"));
+//   return new Promise((resolve, reject) => {
+//     if (domainUserRoles) {
+//       resolve(domainUserRoles);
+//     } else {
+//       request("GET", `${API_URL}/company/approles`, getToken(), data, (result, error) => {
+//         try{
+//           if (error) reject(error);
+//           else {
+//             domainUserRoles = JSON.parse(result);
+//             resolve(domainUserRoles);
+//           }
+//         } catch(e){reject(e);}
+//       });
+//     }
+//   });
+// }
 
 
 export const getDomainApps = (domain) => {

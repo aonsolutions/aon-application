@@ -24,7 +24,6 @@ import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.AppParamRecord;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
-import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -39,6 +38,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.NoticeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO.RMediaFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class AonHubDAO {
@@ -229,22 +229,9 @@ public class AonHubDAO {
 		@Override public Property<Integer> getRaddressProperty() {return new FilterDAO.PropertyDAO<Integer>(RMEDIA.RADDRESS);}
 	}
 	
-	private static class FullRegistryMediaFiller implements Function<RmediaRecord, RegistryMedia> {
-
-		@Override
-		public RegistryMedia apply(RmediaRecord r) {
-			return new RegistryMedia().setComment(r.getComment())
-					.setDomain(r.getDomain())
-					.setId(r.getId())
-					.setMedia(r.getMedia())
-					.setRegistry(new Registry().setId(r.getRegistry()))
-					.setValue(r.getValue());
-		}
-	}
-	
 	public static LinkedList<RegistryMedia> getRMediaList(AONContext ctx, RegistryMediaFilter filter) {
 		return ctx.getDslContext().select().from(RMEDIA).where(RMEDIA_PROPERTIES.getConditions(filter)).fetchInto(RMEDIA)
-				.stream().map(new FullRegistryMediaFiller()).collect(Collectors.toCollection(LinkedList::new));
+				.stream().map(new RMediaFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	public static List<Registry> getRegistries(AONContext ctx,

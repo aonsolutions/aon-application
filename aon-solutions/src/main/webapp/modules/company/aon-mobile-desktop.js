@@ -95,11 +95,11 @@ export class AonMobileDesktop extends AonElement {
 					searchSuggestion.title = 'Empresa Seleccionada';
 					searchSuggestion.value = company.name;
 					searchSuggestion.readonly = true;
+					let menu = document.querySelector('aon-mobile-menu');
+					menu.reload();
 				}
 			});
 		}
-
-
 
 		document.addEventListener('click', function(event) {
 			let sg = document.getElementById(this.SUGGESTION);

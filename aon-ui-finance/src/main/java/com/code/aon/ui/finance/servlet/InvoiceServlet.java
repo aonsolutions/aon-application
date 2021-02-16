@@ -423,7 +423,7 @@ public class InvoiceServlet extends HttpServlet{
 			return new RegistryMedia();
 		}
 		RegistryMedia rm = new RegistryMedia();
-		rm.setMediaType(MediaType.values()[rmedia.getMedia()]);
+		rm.setMediaType(MediaType.values()[rmedia.getMedia().value()]);
 		rm.setDomain(rmedia.getDomain());
 		rm.setId(rmedia.getId());
 		rm.setValue(rmedia.getValue());

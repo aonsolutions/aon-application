@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolderType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -161,7 +162,7 @@ public class WorkServlet extends HttpServlet{
 				.setDomain(domain);
 		registry = AON.insertRegistry(domain.getName(), domain.getId(), userName, registry);
 		if(json.opt("email") != null){
-			RegistryMedia rmedia = new RegistryMedia().setMedia((byte) 4).setValue(json.getString("email"))
+			RegistryMedia rmedia = new RegistryMedia().setMedia(MediaType.EMAIL).setValue(json.getString("email"))
 				.setDomain(domain.getId()).setRegistry(registry);
 			AON.insertRMedia(domain.getName(), domain.getId(), userName, rmedia);
 		}			
@@ -200,7 +201,7 @@ public class WorkServlet extends HttpServlet{
 				rmedia = new RegistryMedia()
 						.setRegistry(registry)
 						.setDomain(domain.getId())
-						.setMedia((byte) 4)
+						.setMedia(MediaType.EMAIL)
 						.setValue(json.getString("email"));
 				AON.insertRMedia(domain.getName(), domain.getId(), userName, rmedia);
 			}

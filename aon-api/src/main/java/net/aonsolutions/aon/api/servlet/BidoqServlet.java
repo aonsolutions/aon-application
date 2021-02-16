@@ -30,7 +30,7 @@ public class BidoqServlet extends AonApiHttpServlet {
 			super.doPost(req, resp);
 			if(BIDOQ_SESSION_ID.equals(getToken())) {
 				String user = getData().optString("user");
-				String company = getData().optString("user");
+				String company = getData().optString("company");
 				String action = getData().optString("action");
 				
 				Auth auth = AON_SOLUTIONS.getAuthByDocument(user);

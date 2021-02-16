@@ -159,14 +159,14 @@ public class ToJSON {
 		json.put(MSG.ID, rmedia.getId());
 		json.put(MSG.DOMAIN, rmedia.getDomain());
 		json.put(MSG.REGISTRY, rmedia.getRegistry().getId());
-		json.put("media", rmedia.getMedia());
+		json.put("media", rmedia.getMedia().value());
 		json.put("value", rmedia.getValue());
 		json.put(MSG.COMMENT, rmedia.getComment());
-		json.put("administrative", rmedia.getAdministrative() == 1);
-		json.put("commercial", rmedia.getCommercial() == 1);
-		json.put("technical", rmedia.getTechnical() == 1);
+		json.put("administrative", rmedia.getAdministrative());
+		json.put("commercial", rmedia.getCommercial());
+		json.put("technical", rmedia.getTechnical());
 		json.put("raddress", rmedia.getRaddress());
-		json.put("icon", Icon.rmediaIcon(rmedia.getMedia()));
+		json.put("icon", Icon.rmediaIcon(rmedia.getMedia().value()));
 		return json;
 	}
 	

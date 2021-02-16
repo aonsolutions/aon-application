@@ -1108,7 +1108,7 @@ public class DeliveryImport {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
 							.setRegistry(new Registry().setId(registry.getId()))
-							.setMedia(MediaType.FIXED_PHONE.value())
+							.setMedia(MediaType.FIXED_PHONE)
 							.setValue(r.getTelefono1());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
 				}
@@ -1117,7 +1117,7 @@ public class DeliveryImport {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
 							.setRegistry(new Registry().setId(registry.getId()))
-							.setMedia(MediaType.FIXED_PHONE.value())
+							.setMedia(MediaType.FIXED_PHONE)
 							.setValue(r.getTelefono2());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
 				}
@@ -1126,7 +1126,7 @@ public class DeliveryImport {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
 							.setRegistry(new Registry().setId(registry.getId()))
-							.setMedia(MediaType.FAX.value())
+							.setMedia(MediaType.FAX)
 							.setValue(r.getFax());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
 				}
@@ -1135,7 +1135,7 @@ public class DeliveryImport {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
 							.setRegistry(new Registry().setId(registry.getId()))
-							.setMedia(MediaType.EMAIL.value())
+							.setMedia(MediaType.EMAIL)
 							.setValue(r.getTelefono1());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
 				}
@@ -1144,7 +1144,7 @@ public class DeliveryImport {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
 							.setRegistry(new Registry().setId(registry.getId()))
-							.setMedia(MediaType.WEB.value())
+							.setMedia(MediaType.WEB)
 							.setValue(r.getWeb());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
 				}

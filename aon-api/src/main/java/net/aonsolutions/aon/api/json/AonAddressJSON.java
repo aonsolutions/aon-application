@@ -42,7 +42,11 @@ public enum AonAddressJSON {
 	),
 	POSTAL_CODE(
 		(address, json) -> address.setZip(json.optString(IConstants.POSTAL_CODE)),
-		(address, json) -> json.put(IConstants.POSTAL_CODE, address.getZip())
+		(address, json) -> {
+			json.put(IConstants.POSTAL_CODE, address.getZip());
+			json.put(IConstants.ZIP, address.getZip());
+			return json;
+		}
 	);
 	
 	private IAonAddressFromJSON fromJSON;

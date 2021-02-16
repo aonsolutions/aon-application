@@ -323,7 +323,9 @@ export class AonInput extends AonElement {
       }" icon="room" noHover="true"></aon-icon-button>`;
       div.appendChild(iconLabel);
       this.buildAddress();
-      iconLabel.addEventListener("click", () => {
+      iconLabel.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (!this.hasAttribute("readonly")) {
           let divEdit = document.getElementById(
             this.getAttribute("id") + "Edit"

@@ -14,15 +14,7 @@ export class AonHome extends AonElement {
 	}
 
 	connectedCallback () {
-		if(this.isMobile() && !localStorage.getItem('company')) {
-			getCompanies().then( companies => {
-				if(companies.length > 0) {
-					let company = companies[0];
-					localStorage.setItem('company', JSON.stringify(company));
-					this.build();
-				}
-			});
-		} else this.build();
+		this.build();
 	}
 
 	build(){

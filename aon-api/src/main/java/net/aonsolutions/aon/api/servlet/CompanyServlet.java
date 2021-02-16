@@ -14,12 +14,17 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonDomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
+
+import net.aonsolutions.aon.api.json.AonAddressJSON;
+import net.aonsolutions.aon.api.json.AonRegistryJSON;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonCompanyServlet", urlPatterns = {"/ms/api/company/*"})
@@ -37,6 +42,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 			case "/":
 				response(req, resp, getCompanies());
 				break;
+			case "/one":
+				response(req, resp, getCompany());
+				break;
 			case "/app":
 				response(req, resp, getDomainApps());
 				break;
@@ -46,6 +54,12 @@ public class CompanyServlet extends AonApiHttpServlet{
 			case "/notice":
 				response(req, resp, getNotices());
 				break;
+			case "/media":
+				response(req, resp, getMedia());
+				break;
+			case "/address":
+				response(req, resp, getMainAddress());
+				break;	
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
 			}
@@ -83,6 +97,15 @@ public class CompanyServlet extends AonApiHttpServlet{
 		return jsArray;
 	}
 	
+	private JSONObject getCompany() {
+		Company company = AON.getCompany(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+			f.getDomainProperty().eq(getDomain().getId()));
+		RAddress ra = AON.getRAddressStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+			f.getRegistryProperty().eq(company.getId()).and(f.getTypeProperty().eq((byte)0))).findFirst().orElse(new RAddress());
+		company.setMainAddress(ra);
+		return AonRegistryJSON.toJSON(company);
+	}
+	
 	private JSONObject getDomainUserRoles() {
 		DomainUserRoles dur = SECURITY.getDomainUserRoles(getDomain(), getUser().getLogin(), getUser().getId());
 		AonDomainUserRoles adur = new AonDomainUserRoles(dur);
@@ -109,6 +132,30 @@ public class CompanyServlet extends AonApiHttpServlet{
 	
 	private JSONObject getNotices() {
 		return AON.getRawdocUserData(getDomain().getName(), getDomain().getId(), getUser().getLogin()).toJSON();
+	}
+	
+	private JSONObject getMedia() {
+		Integer registryId = getData().opt("company") != null 
+			? getData().optInt("company") 
+			: AON.getCompany(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+				f.getDomainProperty().eq(getDomain().getId())).getId();
+		JSONObject json = new JSONObject();
+		AON.getRMediaStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+			f.getDomainProperty().eq(getDomain().getId()).and(f.getRegistryProperty().eq(registryId)))
+		.forEach(rm -> {
+			json.put(rm.getMedia().name().toLowerCase(), rm.getValue());
+		});
+		return json;
+	}
+	
+	private JSONObject getMainAddress() {
+		Integer registryId = getData().opt("company") != null 
+			? getData().optInt("company") 
+			: AON.getCompany(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+					f.getDomainProperty().eq(getDomain().getId())).getId();
+		RAddress ra = AON.getRAddressStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+			f.getRegistryProperty().eq(registryId).and(f.getTypeProperty().eq((byte)0))).findFirst().orElse(new RAddress());
+		return AonAddressJSON.toJSON(ra);
 	}
 	
 	private JSONArray oldModules(Domain domain) {
