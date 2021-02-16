@@ -825,7 +825,7 @@ public abstract class CretaDetail extends Composite {
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub
-						Window.alert(caught.getMessage());
+						//Window.alert(caught.getMessage());
 					}
 
 					@Override

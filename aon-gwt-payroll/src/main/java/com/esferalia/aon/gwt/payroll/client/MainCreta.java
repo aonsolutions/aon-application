@@ -2019,7 +2019,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					cb.onSuccess(result);
 				} catch (Throwable caught) {
 					String json = xhr.getResponseText();
-					Window.alert(json);
+					//Window.alert(json);
 					cb.onFailure(caught);
 				}
 
@@ -2396,7 +2396,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub
-						Window.alert(caught.getMessage());
+						//Window.alert(caught.getMessage());
 					}
 
 					@Override

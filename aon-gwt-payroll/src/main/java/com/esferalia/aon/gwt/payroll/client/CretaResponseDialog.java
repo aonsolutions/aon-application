@@ -274,7 +274,7 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO:
-				Window.alert(caught.getMessage());
+				//Window.alert(caught.getMessage());
 			}
 
 			@Override

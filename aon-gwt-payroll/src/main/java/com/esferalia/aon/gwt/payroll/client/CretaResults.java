@@ -186,7 +186,7 @@ public class CretaResults extends Composite implements RequiresResize{
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				Window.alert(caught.getMessage());
+				//Window.alert(caught.getMessage());
 			}
 
 			@Override
