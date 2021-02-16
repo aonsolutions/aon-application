@@ -2128,7 +2128,7 @@ public class Bases {
 		
 		Map<String,Double> codigoValorMap = new HashMap<String, Double>();
 		// @formatter:off
-		AON.getSalaryData(
+		AON.getContractData(
 		ctx,
 		props -> props.getCCCProperty().eq(ccc)
 				.and(props.getEndDateProperty().ge(startDate))
@@ -3045,8 +3045,8 @@ public class Bases {
 		if (skipExisting)
 			callbacksList.add(new SkipExistingCallback());
 
-		Errors errors = new Errors();
-		callbacksList.add(errors);
+		//Errors errors = new Errors();
+		//callbacksList.add(errors);
 
 		Comments comment = new Comments(xsw);
 		callbacksList.add(comment);

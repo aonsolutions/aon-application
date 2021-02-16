@@ -23,4 +23,9 @@ public class SalaryImpl implements ISalary {
 		return SalaryDAO.getSalaryData(ctx, filter, supplier);
 	}
 
+	@Override
+	public Stream<Salary> getContractData(AONContext ctx,
+			SalaryFilter filter, Supplier<Salary> supplier) {
+		return SalaryDAO.getContractData(ctx, filter, supplier);
+	}
 }

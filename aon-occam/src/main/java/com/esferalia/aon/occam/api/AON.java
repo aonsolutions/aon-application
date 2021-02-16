@@ -2265,6 +2265,11 @@ public class AON {
 		return getSalary().getSalaryData(ctx, filter, Salary::new);
 	}
 
+	public static Stream<Salary> getContractData(AONContext ctx,
+			SalaryFilter filter) {
+		return getSalary().getSalaryData(ctx, filter, Salary::new);
+	}
+
 	public static Stream<Bonus> getAvailableBonuses(AONContext ctx,
 			BonusFilter filter) {
 		return getSystem().getAvailableBonus(ctx, filter, Bonus::new);

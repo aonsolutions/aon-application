@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Supplier;
@@ -35,8 +36,6 @@ import org.jooq.Record;
 import org.jooq.TableField;
 import org.jooq.lambda.Seq;
 
-import com.esferalia.aon.jooq.tables.Contract;
-import com.esferalia.aon.jooq.tables.EnterpriseCcc;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -348,6 +347,48 @@ public class SalaryDAO {
 		);
 		//@formatter:on
 
+	}
+
+	public static Stream<Salary> getContractData(AONContext ctx, SalaryFilter filter, Supplier<Salary> supplier){
+		Condition conditions[] = SALARY_PROPERTIES.getConditions(filter);
+		
+		return 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.leftJoin(CONTRACT_DATA)
+		.on(
+			SALARY.CONTRACT.eq(CONTRACT_DATA.CONTRACT)
+			.and(CONTRACT_DATA.START_DATE.le(SALARY.END_DATE))
+			.and(CONTRACT_DATA.END_DATE.isNull()
+				.or(CONTRACT_DATA.END_DATE.ge(SALARY.START_DATE))
+				)
+		)
+		.where(conditions)
+		.and(CONTRACT_DATA.END_DATE.isNull()
+			.or(CONTRACT_DATA.END_DATE.ge(CONTRACT_DATA.START_DATE))
+		)
+		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+		.fetchGroups(SALARY.ID)
+		.entrySet()
+		.stream()
+		.map(entry -> {
+			
+			Salary salary = supplier.get();
+			entry.getValue().forEach( contractDataRecord -> {
+				salary.addContextData(
+				contractDataRecord.getValue(CONTRACT_DATA.NAME), 
+				contractDataRecord.getValue(CONTRACT_DATA.EXPRESSION),
+				contractDataRecord.getValue(CONTRACT_DATA.START_DATE),
+				contractDataRecord.getValue(CONTRACT_DATA.END_DATE));
+				
+			});
+			
+			return salary;
+			
+		})
+		;
+			
 	}
 
 	public static Stream<Salary> getSalaryData(AONContext ctx,
