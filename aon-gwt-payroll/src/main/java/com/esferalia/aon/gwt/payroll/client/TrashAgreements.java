@@ -5,11 +5,13 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTrashAgreementsTreeToolbar;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -23,21 +25,20 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TrashAgreements extends ResizeComposite implements TrashAgreementsTree.Listener {
+public class TrashAgreements extends ResizeComposite implements 
+	TrashAgreementsTree.Listener, AonTrashAgreementsTreeToolbar.Listener {
 
 	interface Listener {
-
-		void onAgreementSupr(Agreement agreement);
-
-		void onAgreementContextMenu(Agreement agreement, ContextMenuEvent event);
-
-		void onAgreementSelected(Agreement agreement);
 		
-		void onBackButtonClick();
-
 		void onCollapseMenuButtonClick();
 
 		void onShowMenuButtonClick();
+		
+		void onBackButtonClick();
+		
+		void onAgreementSelected(Agreement agreement);
+
+		void onAgreementSupr(Agreement agreement);
 	}
 	
 	interface Toolbar {
@@ -57,7 +58,11 @@ public class TrashAgreements extends ResizeComposite implements TrashAgreementsT
 	interface MyStyle extends CssResource {
 		String treeItem();
 		String rotate();
+		String paddingLeft();
 	}
+	
+	@UiField
+	AonTrashAgreementsTreeToolbar toolbar;
 	
 	@UiField
 	TrashAgreementsTree agreementsTree;
@@ -75,6 +80,7 @@ public class TrashAgreements extends ResizeComposite implements TrashAgreementsT
 		this.toolbars = new LinkedList<Toolbar>();
 		
 		agreementsTree.addListener(this);
+		toolbar.addListener(this);
 		
 		agreementsTree.getEnterpriseService().getDomain(
 				new AsyncCallback<Integer>() {
@@ -172,6 +178,8 @@ public class TrashAgreements extends ResizeComposite implements TrashAgreementsT
 					TrashAgreementsTree.getImageResource(agreement, domain)));
 
 		agreementTreeItem.setUserObject(agreement);
+		
+		agreementTreeItem.addStyleName(style.paddingLeft());
 
 		agreementsTree.getTree().addItem(agreementTreeItem);
 		
@@ -210,14 +218,6 @@ public class TrashAgreements extends ResizeComposite implements TrashAgreementsT
 		for (Listener listener : listeners)
 			listener.onAgreementSelected(agreement);
 	}
-
-	@Override
-	public void onAgreementContextMenu(Agreement agreement,
-			ContextMenuEvent event) {
-		for (Listener listener : listeners)
-			listener.onAgreementContextMenu(agreement, event);
-
-	}
 	
 	@Override
 	public void onAgreementDelete4Ever(Agreement agreement) {
@@ -253,6 +253,29 @@ public class TrashAgreements extends ResizeComposite implements TrashAgreementsT
 				.toLowerCase()
 				.replaceAll("\\s+", "_")
 				;
+	}
+
+	@Override
+	public void onKeyUpSearchTrashTextBox(KeyUpEvent event) {
+		filter(toolbar.getSearchTextBox().getValue());
+	}
+
+	@Override
+	public void onDelete4EverButtonClick(ClickEvent event) {
+		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
+		if(object instanceof Agreement) {
+			for(Toolbar toolbar : toolbars)
+				toolbar.onAgreementDelete4Ever((Agreement) object);
+		}
+	}
+
+	@Override
+	public void onRestoreButtonClick(ClickEvent event) {
+		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
+		if(object instanceof Agreement) {
+			for(Toolbar toolbar : toolbars)
+				toolbar.onAgreementRestore((Agreement) object);
+		}
 	}
 
 }

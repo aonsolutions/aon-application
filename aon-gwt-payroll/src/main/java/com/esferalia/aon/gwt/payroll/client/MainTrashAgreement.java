@@ -18,11 +18,7 @@ import com.esferalia.aon.gwt.payroll.client.TrashAgreements.Listener;
 import com.esferalia.aon.gwt.payroll.client.TrashAgreements.Toolbar;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -30,7 +26,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
 interface TrashEditionListener {
@@ -47,42 +42,6 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 	static interface Binder extends UiBinder<Widget, MainTrashAgreement> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
-	
-	class Delete4EverAgreementCommand implements ScheduledCommand {
-
-		@Override
-		public void execute() {
-			for(TrashEditionListener listener : editionsListener)
-				listener.onAgreementDelete4Ever(agreement);
-		}
-	}
-	
-	class RestoreAgreementCommand implements ScheduledCommand {
-
-		@Override
-		public void execute() {
-			for(TrashEditionListener listener : editionsListener)
-				listener.onAgreementRestore(agreement);
-		}
-	}
-	
-	class AgreementContextMenu extends ContextMenu {
-		
-		private MenuItem delete4EverItem = null;
-		private MenuItem restoreItem = null;
-		
-		public AgreementContextMenu() {
-			
-			delete4EverItem = addItem("Eliminar Definitivamente", new Delete4EverAgreementCommand(), 
-					AON.CSS.aonIconDeleteForever(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
-			delete4EverItem.ensureDebugId("delete4EverItem");
-			
-			restoreItem = addItem(AON.MSG.restoreAction(), new RestoreAgreementCommand(), 
-					AON.CSS.aonIconRestore(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
-			restoreItem.ensureDebugId("restoreItem");
-		}
-		
-	}
 	
 	@UiField
 	MyStyle style;
@@ -107,8 +66,6 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 	private Map<Integer, AgreementDraftObject> agreementDrafts;	
 	private List<TrashEditionListener> editionsListener;
 	
-	private AgreementContextMenu contextMenu;
-	
 	private Integer domain;	
 	private Agreement agreement;
 	private AgreementDraft agreementDraft;
@@ -130,8 +87,6 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 		
 		this.agreementDrafts = new HashMap<Integer, AgreementDraftObject>();
 		this.editionsListener = new LinkedList<TrashEditionListener>();
-		
-		this.contextMenu = new AgreementContextMenu();
 		
 		this.domain = null;
 		this.agreement = null;
@@ -162,26 +117,6 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 					}
 				});
 		
-	}
-	
-	// ---------------------------------------------------- TrashAgreements.Toolbar
-
-	@Override
-	public void onDelete4EverButtonClick(ClickEvent event) {
-		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
-		if(object instanceof Agreement) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onAgreementDelete4Ever((Agreement) object);
-		}
-	}
-
-	@Override
-	public void onRestoreButtonClick(ClickEvent event) {
-		Object object = getAgreementsTree().getTree().getSelectedItem().getUserObject();
-		if(object instanceof Agreement) {
-			for(Toolbar toolbar : toolbars)
-				toolbar.onAgreementRestore((Agreement) object);
-		}
 	}
 	
 	// ---------------------------------------------------- TrashAgreements.Listener
@@ -224,15 +159,6 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 		agreementDraft.setAgreementDraftObject(agreementDraftObject);
 
 	}
-	
-	@Override
-	public void onAgreementContextMenu(Agreement agreement,
-			ContextMenuEvent event) {
-		NativeEvent nativeEvent = event.getNativeEvent();
-		contextMenu.setPopupPosition(nativeEvent.getClientX(), 
-				nativeEvent.getClientY());
-		contextMenu.show();
-	}
 
 	@Override
 	public void onAgreementSupr(Agreement agreement) {
@@ -262,11 +188,6 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 	public void onShowTrashMenuButtonClick(ClickEvent event) {
 		splitLayoutPanel.setWidgetSize(agreements, 350);
 		splitLayoutPanel.animate(500);
-	}
-
-	@Override
-	public void onKeyUpSearchTrashTextBox(KeyUpEvent event) {
-		agreements.filter(toolbar.getSearchTextBox().getValue());
 	}
 
 	@Override

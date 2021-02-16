@@ -8,8 +8,6 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -33,7 +31,7 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TrashAgreementsTree extends Composite implements KeyDownHandler, ContextMenuHandler {
+public class TrashAgreementsTree extends Composite implements KeyDownHandler {
 	
 	public static class OverlayImagesImpl {
 
@@ -94,8 +92,6 @@ public class TrashAgreementsTree extends Composite implements KeyDownHandler, Co
 		
 		void onTreeItemSelected(SelectionEvent<TreeItem> event);
 		
-		void onAgreementContextMenu(Agreement agreement, ContextMenuEvent event);
-		
 		void getAgreements();
 	}
 	
@@ -130,27 +126,10 @@ public class TrashAgreementsTree extends Composite implements KeyDownHandler, Co
 		
 		this.listeners = new ArrayList<Listener>();
 		this.tree.addKeyDownHandler(this);
-		this.tree.addDomHandler(this, ContextMenuEvent.getType());
+		
 	}
 	
 	// ---------------------------------------------------- ContextMenu
-
-	@Override
-	public void onContextMenu(ContextMenuEvent event) {
-		event.preventDefault();
-		event.stopPropagation();
-		
-		TreeItem item = tree.getSelectedItem();
-		Object object = item.getUserObject();
-		
-		if(object instanceof Agreement)
-			onAgreementContextMenu((Agreement) object, event);
-	}
-	
-	private void onAgreementContextMenu(Agreement agreement, ContextMenuEvent event) {
-		for(Listener listener : listeners)
-			listener.onAgreementContextMenu(agreement, event);
-	}
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
@@ -255,8 +234,5 @@ public class TrashAgreementsTree extends Composite implements KeyDownHandler, Co
 		else 
 			return IMAGES.rowSelector();
 	}
-
-	
-
 
 }

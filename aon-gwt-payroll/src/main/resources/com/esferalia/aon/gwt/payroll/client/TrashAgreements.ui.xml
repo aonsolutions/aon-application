@@ -13,6 +13,10 @@
 		.rotate{
 			transform: rotate(180deg);
 		}
+		
+		.paddingLeft{
+			padding-left: 10px !important;
+		}
 	</ui:style>
 
 	<ui:image field='view' src='view.png' />
@@ -20,6 +24,9 @@
 	<ui:with type="com.esferalia.aon.gwt.payroll.client.MetaData.Resources" field="res" />
 
 	<g:DockLayoutPanel unit='PX'>
+		<g:north size="50">
+			<commonsolutions:AonTrashAgreementsTreeToolbar ui:field="toolbar" />
+		</g:north>
 		<g:center>
 			<employee:TrashAgreementsTree ui:field="agreementsTree" />
 		</g:center>
