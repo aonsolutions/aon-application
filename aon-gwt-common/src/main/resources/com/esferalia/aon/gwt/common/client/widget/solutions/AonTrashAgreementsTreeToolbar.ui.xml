@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:style type="com.esferalia.aon.gwt.common.client.widget.solutions.AonAgreementsTreeToolbar.MyStyle">
+	<ui:style type="com.esferalia.aon.gwt.common.client.widget.solutions.AonTrashAgreementsTreeToolbar.MyStyle">
 	
 		.toolbar{
 			width: 100%;

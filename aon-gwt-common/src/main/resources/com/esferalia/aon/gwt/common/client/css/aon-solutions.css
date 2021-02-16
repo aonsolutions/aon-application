@@ -5,6 +5,10 @@
 /* ICONS */
 @url iconAdd aonIconAdd;
 .aon_icon_add { background-image: iconAdd;}
+@url iconVisibility aonIconVisibility;
+.aon_icon_visibility { background-image: iconVisibility;}
+@url iconVisibilityOff aonIconVisibilityOff;
+.aon_icon_visibility_off { background-image: iconVisibilityOff;}
 @url iconSave aonIconSave;
 .aon_icon_save { background-image: iconSave;}
 @url iconDelete aonIconDelete;

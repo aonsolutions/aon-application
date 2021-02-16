@@ -5,6 +5,12 @@ import com.google.gwt.resources.client.CssResource;
 public interface AonSolutionsCSS extends CssResource {
 
 	/* ICONS */
+	
+	@ClassName("aon_icon_visibility")
+	String aonIconVisibility();
+	
+	@ClassName("aon_icon_visibility_off")
+	String aonIconVisibilityOff();
 
 	@ClassName("aon_icon_add")
 	String aonIconAdd();
