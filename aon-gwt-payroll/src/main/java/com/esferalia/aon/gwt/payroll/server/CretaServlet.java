@@ -250,53 +250,51 @@ public class CretaServlet extends HttpServlet
 				}
 			};
 			
-			try {
-				os.printf("\"diff_bases\":\"%s\",\r\n", generateBases(connection, true, true, true, nafs, defaults,
-						trabajadoresYTramosIss, respuestasIss, customBasesCb, noDiffsBasesCb, skippedCallback, i54Callback));
-			} catch (EmptyBasesException e) {
-				os.printf("\"draft_request\":\"%s\",\r\n",
-						generateBorrador(e.getAutorizado(), 
-								getMesControl(), getAnhoControl(),
-								noDiffsBasesCb.getMeses(), noDiffsBasesCb.getAnhos(),
-								noDiffsBasesCb.getTipos(), noDiffsBasesCb.getAceptarBasesAnteriores(),
-								noDiffsBasesCb.getCCCs()));
-			} catch (NoneSkippedException e) {
-				//os.printf("\"diff_bases\":null,\r\n");
+			if (trabajadoresYTramosIss.size() == 1 ) {
+				try {
+						os.printf("\"diff_bases\":\"%s\",\r\n", generateBases(connection, true, true, true, nafs, defaults,
+								trabajadoresYTramosIss, respuestasIss, customBasesCb, noDiffsBasesCb, skippedCallback, i54Callback));
+				} catch (EmptyBasesException e) {
+					os.printf("\"draft_request\":\"%s\",\r\n",
+							generateBorrador(e.getAutorizado(), 
+									getMesControl(), getAnhoControl(),
+									noDiffsBasesCb.getMeses(), noDiffsBasesCb.getAnhos(),
+									noDiffsBasesCb.getTipos(), noDiffsBasesCb.getAceptarBasesAnteriores(),
+									noDiffsBasesCb.getCCCs()));
+				} catch (NoneSkippedException e) {
+					//os.printf("\"diff_bases\":null,\r\n");
+				}
 			}
 	
 			try {
-				for (Part part : req.getParts()) {
+				
+				if (trabajadoresYTramosIss.size() == 1 ) {
 					try {
-						CretaService.File file = CretaService.File.valueOf(part.getName());
-						if (file == CretaService.File.TRABAJADORES_TRAMOS ){
-							part.getInputStream();
-							// full_bases generated from  'SDL Fichero de Trabajadores y Tramos' try from salaries 
-							Map<Parameter,Object> parameterMap = new HashMap<CretaService.Parameter, Object>();
-							parameterMap.put(Parameter.TIPO, pickerBasesCb.getTipo());
-							parameterMap.put(Parameter.AUTORIZADO, pickerBasesCb.getAutorizado());
-							parameterMap.put(Parameter.DESDE_MES, pickerBasesCb.getDesdeMes());
-							parameterMap.put(Parameter.DESDE_ANHO, pickerBasesCb.getDesdeAnho());
-							parameterMap.put(Parameter.HASTA_MES, pickerBasesCb.getHastaMes());
-							parameterMap.put(Parameter.HASTA_ANHO, pickerBasesCb.getHastaAnho());
-							parameterMap.put(Parameter.CTRL_MES, pickerBasesCb.getDesdeMes());
-							parameterMap.put(Parameter.CTRL_ANHO, pickerBasesCb.getDesdeAnho());
-							parameterMap.put(Parameter.CCC, pickerBasesCb.getCCCs());
-							trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, parameterMap ));
-							try {
-								os.printf("\"salary_bases\":\"%s\",\r\n", generateBases(connection, true, false, false, nafs, defaults,
-										trabajadoresYTramosIss, respuestasIss, 
-										customBasesCb, 
-										i54Callback , 
-										new CheckNotEqualsBasesCallback(pickerBasesCb.getBases()  )));
-							} catch (EmptyBasesException e) {
-							}
+						// full_bases generated from  'SDL Fichero de Trabajadores y Tramos' try from salaries 
+						Map<Parameter,Object> parameterMap = new HashMap<CretaService.Parameter, Object>();
+						parameterMap.put(Parameter.TIPO, pickerBasesCb.getTipo());
+						parameterMap.put(Parameter.AUTORIZADO, pickerBasesCb.getAutorizado());
+						parameterMap.put(Parameter.DESDE_MES, pickerBasesCb.getDesdeMes());
+						parameterMap.put(Parameter.DESDE_ANHO, pickerBasesCb.getDesdeAnho());
+						parameterMap.put(Parameter.HASTA_MES, pickerBasesCb.getHastaMes());
+						parameterMap.put(Parameter.HASTA_ANHO, pickerBasesCb.getHastaAnho());
+						parameterMap.put(Parameter.CTRL_MES, pickerBasesCb.getDesdeMes());
+						parameterMap.put(Parameter.CTRL_ANHO, pickerBasesCb.getDesdeAnho());
+						parameterMap.put(Parameter.CCC, pickerBasesCb.getCCCs());
+						trabajadoresYTramosIss = Collections.singletonList(generateTrabajadoresYTramos(connection, parameterMap ));
+						try {
+							os.printf("\"salary_bases\":\"%s\",\r\n", generateBases(connection, true, false, false, nafs, defaults,
+									trabajadoresYTramosIss, respuestasIss, 
+									customBasesCb, 
+									i54Callback , 
+									new CheckNotEqualsBasesCallback(pickerBasesCb.getBases()  )));
+						} catch (EmptyBasesException e) {
 						}
 					} catch (IllegalArgumentException e) {
 					}
 				}
 			}
 			catch ( Exception e ) { 
-				e.printStackTrace();
 			}
 
 			os.printf("\"errors\":%s,\r\n", toJSON(pickerBasesCb.errors));
