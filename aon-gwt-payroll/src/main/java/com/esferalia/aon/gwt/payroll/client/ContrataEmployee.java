@@ -923,7 +923,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private boolean checkDates() {
 		if(null == this.employee.end_date.getValue())
 			return true;
-		else if(this.employee.end_date.getValue().after(this.employee.start_date.getValue()))
+		else if(this.employee.end_date.getValue().after(this.employee.start_date.getValue()) ||
+				this.employee.end_date.getValue().equals(this.employee.start_date.getValue()))
 			return true;
 		else
 			return false;
