@@ -3,10 +3,9 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
-import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -77,7 +76,6 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 	@UiField
 	Tree tree;
 	
-	private static Integer newsIdCounter = 0;
 	private List<Listener> listeners;
 	
 	private EmployeesServiceAsync employeesServiceAsync;
@@ -164,17 +162,6 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 		tree.clear();
 	}
 	
-	private Agreement getSelectedAgreement() {
-		TreeItem selectedItem = tree.getSelectedItem();
-		return selectedItem != null ? (Agreement) selectedItem.getUserObject()
-				: null;
-	}
-	
-	private void fireAgreements() {
-		for (Listener listener : listeners)
-			listener.getAgreements();
-	}
-	
 	private void onAgreementContextMenu(Agreement agreement, ContextMenuEvent event) {
 		for(Listener listener : listeners)
 			listener.onAgreementContextMenu(agreement, event);
@@ -240,13 +227,12 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 	}
 	
 	public static ImageResource getImageResource(Agreement agreement, Integer actualDomain) {
-		if (NumberUtils.equals(0, agreement.getDomain()))
+		if (AonNumberUtils.equals(0, agreement.getDomain()))
 			return IMAGES.aon_icon_row_s();
-		else if(NumberUtils.notEquals(actualDomain, agreement.getDomain()))
+		else if(AonNumberUtils.notEquals(actualDomain, agreement.getDomain()))
 			return IMAGES.aon_icon_row_c();
 		else 
 			return IMAGES.rowSelector();
-//			return RESOURCES[0][0][agreement.hasLevelsWithoutCategories() ? 1 : 0];
 	}
 
 	public static class OverlayImagesImpl {

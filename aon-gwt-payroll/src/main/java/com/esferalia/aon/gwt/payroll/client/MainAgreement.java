@@ -44,6 +44,9 @@ interface EditionListener {
 	void onAgreementPaste(Agreement agreement);
 	
 	void onAgreementDelete(Agreement agreement);
+	
+	void onViewAgreements(Agreement agreement, Boolean allAgreements);
+
 }
 
 public class MainAgreement extends MainEntryPoint implements Listener,
@@ -412,7 +415,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		this.contextMenu.setVisibleCopyItem(agreement.getId());		
 		
 		this.contextMenu.setVisibleMoveItem( (parentDomain != null) && 
-				parentDomain.intValue() != agreement.getDomain().intValue());
+				parentDomain.intValue() != agreement.getDomain().intValue() && agreement.getDomain().intValue() != 0);
 
 		AgreementDraftObject agreementDraftObject = agreementDrafts
 				.get(agreement.getId());
@@ -465,7 +468,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	@Override
 	public void onNewAgreement(Agreement agreement) {
-		Window.alert("NEW");
+		
 	}
 
 	@Override
@@ -676,5 +679,10 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		contextMenu.setVisibleDeleteItem(isEditable(agreementDraft.agreementDraftObject));
 		contextMenu.show();
 	}
-	
+
+	@Override
+	public void onViewAgreements(Agreement agreement, Boolean allAgreements) {
+		for(EditionListener listener : editionsListener)
+			listener.onViewAgreements(agreement, allAgreements);
+	}
 }

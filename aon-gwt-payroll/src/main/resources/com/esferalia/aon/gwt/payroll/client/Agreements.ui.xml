@@ -13,6 +13,10 @@
 		.rotate{
 			transform: rotate(180deg);
 		}
+		
+		.paddingLeft{
+			padding-left: 10px !important;
+		}
 	</ui:style>
 
 	<ui:image field='view' src='view.png' />
