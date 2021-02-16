@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.DismissalType;
+import com.esferalia.aon.payroll.enumeration.OffType;
 import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -33,6 +34,9 @@ public class AonConstants {
 	public static Double NON_WORKING = -1.00;
 	
 	
+	@Variable(ContextVariable.NOT_PAID_PERMISSION)
+	public static OffType NOT_PAID_PERMISSION = OffType.NOT_PAID_PERMISSION;
+
 	// ------------------------------------------------------------------------
 	// 
 	// ------------------------------------------------------------------------
