@@ -1,9 +1,11 @@
 package com.esferalia.aon.in.payroll.pdf.creators.invoice;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
@@ -104,7 +106,7 @@ public class InvoiceMaker {
 					qr_code
 			);
 			
-			InvoiceTemplate.create("Invoice.pdf", bill_obj, config.getAdjustImage());
+			InvoiceTemplate.create(new FileOutputStream("Invoice.pdf"), bill_obj, config.getAdjustImage());
 		} catch (CanNotCreatePdfException e) {throw e;}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -131,12 +133,12 @@ public class InvoiceMaker {
 				qr_code
 		);
 
-		InvoiceTemplate.create("demo_bill.pdf", bill_obj, config.getAdjustImage());
+		InvoiceTemplate.create(new FileOutputStream("demo_bill.pdf"), bill_obj, config.getAdjustImage());
 	}
 	
 	//CREATE PDF WITH OBJECT
-	public void create(String name, Invoice bill_obj, boolean adapt_background) throws IOException, CanNotCreatePdfException {
-		InvoiceTemplate.create(name, bill_obj, adapt_background);
+	public void create(OutputStream os, Invoice bill_obj, boolean adapt_background) throws IOException, CanNotCreatePdfException {
+		InvoiceTemplate.create(os, bill_obj, adapt_background);
 	}
 	
 }

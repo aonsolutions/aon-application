@@ -9,22 +9,20 @@ import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 
 public abstract class PdfComponent {
 
-	public float x;
-	public float y;
+	protected float x;
+	protected float y;
 	
-	public float width;
-	public float height;
+	protected float width;
+	protected float height;
 	
-	public float margin_x;
-	public float margin_y;
+	protected float margin_x;
+	protected float margin_y;
 	
-	public PDPageContentStream stream;
-	
-	public abstract void draw();
+	protected PDPageContentStream stream;
+	abstract void draw();
 	
 	public PdfComponent(float x, float y, float width, float height, float margin_x, float margin_y,
 			PDPageContentStream stream) {
-		super();
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -100,5 +98,5 @@ public abstract class PdfComponent {
 		this.stream = stream;
 	}
 	
-
+	
 }

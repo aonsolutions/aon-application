@@ -9,8 +9,8 @@ import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 
 public class PdfImage extends PdfComponent{
 
-	PDDocument doc;
-	byte[] img;
+	private PDDocument doc;
+	private byte[] img;
 
 	public PdfImage(float x, float y, float width, float height, float margin_x, float margin_y,
 			PDPageContentStream stream, PDDocument doc, byte[] img) {
@@ -33,4 +33,22 @@ public class PdfImage extends PdfComponent{
 		
 		return this;
 	}
+
+	public PDDocument getDoc() {
+		return doc;
+	}
+
+	public void setDoc(PDDocument doc) {
+		this.doc = doc;
+	}
+
+	public byte[] getImg() {
+		return img;
+	}
+
+	public void setImg(byte[] img) {
+		this.img = img;
+	}
+	
+	
 }

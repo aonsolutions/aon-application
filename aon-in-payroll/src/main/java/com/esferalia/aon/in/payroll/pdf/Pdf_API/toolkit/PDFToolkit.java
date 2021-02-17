@@ -204,21 +204,20 @@ public class PDFToolkit {
 	public static List<String> divide_string_to_fit(String text, float max, PDFont font, float fontSize) throws IOException{
 		ArrayList<String> lines = new ArrayList<>();
 		ArrayList<String> words = (ArrayList<String>) StringToolkit.to_words(text);
-
 		String line = "";
 		
-		for (String word : words) {
-			float fw = (font.getStringWidth(line + " " + word) / 1000.0f) * fontSize;
-			if(fw > max) {
-				lines.add(line);
+		for(int i = 0; i < words.size(); i++) {
+			float fw = (font.getStringWidth(line + " " + words.get(i)) / 1000.0f) * fontSize;
+			if(fw < max) 	line +=  " " + words.get(i).trim();
+			else {
+				if(line.equals("")) lines.add(words.get(i));
+				else lines.add(line.trim());
 				line = "";
-			}else line += " " + word;
-		}	
-		if(lines.size() > 1 && !lines.get(lines.size()-1).equals(line)) lines.add(line);
-		
+			}
+		}if(!line.equals("")) lines.add(line.trim());
 		return lines;
 	}
-
+	
 	//CROP TEXT WITH ...
 	public static String cropped_string(String text, double width, PDFont font, float fontSize) throws IOException {
 		if(text == null) return text;

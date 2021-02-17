@@ -203,7 +203,6 @@ public class EnterprisePayrollTemplate {
 			category_title.draw();
 			month_title.draw();
 			t.y -= 15;
-			
 			double[] subtotal_aon = new double[] {0,0,0,0,0,0,0,0};
 			double[] subtotal_ss = new double[] {0,0,0,0,0,0,0,0};
 			category.getValue().entrySet().stream().forEach(entry -> {

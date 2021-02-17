@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class InvoiceTemplate {
 
-	String filename = "./EnterpriseBill.pdf";
+	OutputStream filename;
 	float height;
 	float top;
 	float bottom;
@@ -39,12 +39,12 @@ public class InvoiceTemplate {
 
 
 	//THE PDF DOCUMENT
-	public static void create(String name, Invoice bill_obj, boolean adapt_background) throws IOException, CanNotCreatePdfException {
+	public static void create(OutputStream os, Invoice bill_obj, boolean adapt_background) throws IOException, CanNotCreatePdfException {
 		try (PDDocument doc = new PDDocument()) {
 			InvoiceTemplate template = new InvoiceTemplate();
 			
 			
-			if (name != null) 		template.filename = name;
+			if (os != null) 		template.filename = os;
 			if (bill_obj == null) 	throw new CanNotCreatePdfException("No bill found.");
 			template.bill = bill_obj;
 

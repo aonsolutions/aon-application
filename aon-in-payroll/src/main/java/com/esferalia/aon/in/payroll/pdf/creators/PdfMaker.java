@@ -27,9 +27,9 @@ public class PdfMaker {
 	}
 
 	// CREATE THE INVOICE WITH A JAVA OBJECT
-	public static void print_invoice(String name, Invoice bill_obj, boolean adapt_background)
+	public static void print_invoice(OutputStream out, Invoice bill_obj, boolean adapt_background)
 			throws IOException, CanNotCreatePdfException {
-		new InvoiceMaker().create(name, bill_obj, adapt_background);
+		new InvoiceMaker().create(out, bill_obj, adapt_background);
 	}
 
 	// CREATE DEMO INVOICE
@@ -39,15 +39,15 @@ public class PdfMaker {
 	}
 
 	// CREATE ENTERPRISE PAYROLL
-	public static void print_enterprise_payroll(EnterprisePayroll payroll, OutputStream os)
+	public static void print_enterprise_payroll(EnterprisePayroll payroll, OutputStream out)
 			throws IOException, CanNotCreatePdfException {
-		EnterprisePayrollTemplate.print(payroll, os);
+		EnterprisePayrollTemplate.print(payroll, out);
 	}
 
 	// CREATE PAYROLL
-	public static void print_default_payroll(OutputStream os, DefaultPayroll payroll, InputStream logo, Locale language)
+	public static void print_default_payroll(OutputStream out, DefaultPayroll payroll, InputStream logo, Locale language)
 			throws CanNotCreatePdfException {
-		new DefaultPayrollTemplate().print(os, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
+		new DefaultPayrollTemplate().print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
 	}
 
 	public static void print_default_payroll(String out, DefaultPayroll payroll, InputStream logo, Locale language)
@@ -56,7 +56,7 @@ public class PdfMaker {
 	}
 
 	// CREATE BUDGET
-	public static void print_budget(Budget budget) throws CanNotCreatePdfException {
-		new BudgetTemplate().print("./buget.pdf", budget, Optional.of(new Locale("Es")));
+	public static void print_budget(OutputStream out,Budget budget) throws CanNotCreatePdfException {
+		BudgetTemplate.print(out, budget, Optional.of(new Locale("Es")));
 	}
 }

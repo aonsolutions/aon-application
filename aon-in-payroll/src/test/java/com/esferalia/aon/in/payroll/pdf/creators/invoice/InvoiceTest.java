@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,7 +52,7 @@ public class InvoiceTest {
 				105,
 				InvoiceTest.class.getResourceAsStream("qrcode.png")
 		);
-		try {InvoiceTemplate.create(null,bill,true);}
+		try {InvoiceTemplate.create(new FileOutputStream("invoice.pdf"),bill,true);}
 		catch (IOException e){fail("Can not read test resources");}
 		catch (CanNotCreatePdfException e) {fail("Can not create pdf");}
 	}
