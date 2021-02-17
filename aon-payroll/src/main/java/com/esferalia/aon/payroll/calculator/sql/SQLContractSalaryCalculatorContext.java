@@ -997,8 +997,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				} // leave until ends of work, try next work with this leave.
 
 			} while (true);
-
+			
 			periods.add(work);
+			for ( w++; w < worked.size(); w++ )
+				periods.add(worked.get(w));
 
 			return periods;
 		}
