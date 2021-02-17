@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -887,6 +888,213 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = calculator.calculate(ctx);
 		
+		Assert.assertEquals(0.00, salary.getCommonBase(), DELTA);
+		
+	}
+	
+	@Ignore("Test ingnored for deployment")
+	@Test
+	public void testSSRegimeArtistVII()
+			throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+
+		cleanSystemData(aonContext);
+
+		//@formatter:off
+		addCCCData(aonContext,
+				CCCType.ARTIST,
+				firstDayOfYear, 
+				null, 
+				new HashMap<String,String>(){
+				{
+					put("COTIZACION_MENSUAL","true");
+					put("BASE_CGP_MIN","BASE_CGC_MIN");
+					put("BASE_CGP_MAX","BASE_CGC_MAX");
+				}
+		});
+		
+		addCCCData(aonContext,
+				CCCType.ARTIST,
+				firstDayOfYear, 
+				null, 
+				new HashMap<String,String>(){
+				{
+					
+					// ARTIST_BASES
+					put("BASE_CGC_MIN", "[\"01\":48.88, \"02\":40.53, \"03\":35.26, \"05\":35.00, \"07\":35.00][GRUPO_COTIZACION] * DIAS_NOMINA");
+					
+					put("BASE_CGC_MAX_DIA", "(($ in [ [461.00,270.00], [829.00,341.00], [1386.00,407.00], [Double.MAX_VALUE,542.00] ] if $[0] >= BASE_CGC_BRUTA/DIAS_NOMINA)[0][1]) * DIAS_NOMINA");
+					put("BASE_CGC_MAX_MES", "MAX(4070.10 - SUM(\"BASE_CGC\"), 0)");
+					put("BASE_CGC_MAX", "MIN(BASE_CGC_MAX_DIA , BASE_CGC_MAX_MES)");
+					
+				}
+		});
+		
+		
+		//@formatter:on
+		
+		// 01/11/2019
+		Date firstOfNovember = getFirstDayOfMonth(getToday());
+		firstOfNovember = AonDateUtils.add(firstOfNovember, Calendar.MONTH, -1);
+		
+		// 15/11/2019
+		Date midOfNovember = getFirstDayOfMonth(getToday());
+		midOfNovember = AonDateUtils.add(midOfNovember, Calendar.MONTH, -1);
+		midOfNovember = AonDateUtils.add(midOfNovember, Calendar.DAY_OF_MONTH, 14);
+		
+		// 16/11/2019
+		Date stOfNovember = getFirstDayOfMonth(getToday());
+		stOfNovember = AonDateUtils.add(stOfNovember, Calendar.MONTH, -1);
+		stOfNovember = AonDateUtils.add(stOfNovember, Calendar.DAY_OF_MONTH, 15);
+		
+		// 25/11/2019
+		Date tfOfNovember = getFirstDayOfMonth(getToday());
+		tfOfNovember = AonDateUtils.add(tfOfNovember, Calendar.MONTH, -1);
+		tfOfNovember = AonDateUtils.add(tfOfNovember, Calendar.DAY_OF_MONTH, 24);
+		
+		// 26/11/2019
+		Date tsOfNovember = getFirstDayOfMonth(getToday());
+		tsOfNovember = AonDateUtils.add(tsOfNovember, Calendar.MONTH, -1);
+		tsOfNovember = AonDateUtils.add(tsOfNovember, Calendar.DAY_OF_MONTH, 25);
+		
+		// 30/11/2019
+		Date lastOfNovember = getFirstDayOfMonth(getToday());
+		lastOfNovember = AonDateUtils.add(lastOfNovember, Calendar.MONTH, -1);
+		lastOfNovember = AonDateUtils.getLastDayOfMonth(lastOfNovember);
+		
+		System.out.println(firstOfNovember);
+		System.out.println(midOfNovember);
+		System.out.println(stOfNovember);
+		System.out.println(tfOfNovember);
+		System.out.println(tsOfNovember);
+		System.out.println(lastOfNovember);
+		System.out.println();
+		
+		
+		//@formatter:off
+		
+		// --------------------------------------- FIRST CONTRACT
+		ContractRecord contract = newContract(
+				aonContext, 
+				SSRegimeType.GENERAL, 
+				CCCType.ARTIST, 
+				firstOfNovember,
+				midOfNovember,
+				new HashMap<String,String>(){
+					{
+						put("GRUPO_COTIZACION","'03'");
+					}
+				}, 
+				new String[] {
+				}, 
+				new String[] {
+						
+				}, 
+				null /* without category*/
+				);
+		
+		final Integer contractId = contract.getId();
+		
+		addPayment(aonContext, contract, addConcept(aonContext, "SALARIO_BASE"), "1000.00", "_P", PaymentType.CRA_0001);
+		addPayment(aonContext, contract, addConcept(aonContext, "PLUS_SALARIAL"), "2950.00", "_P", PaymentType.CRA_0001);
+		
+		//@formatter:on
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				firstOfNovember, 
+				midOfNovember, 
+				midOfNovember,
+				contract);
+		
+		calculateAndSave(connection, ctx);
+		
+		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contractId))
+			.forEach(s -> Assert.assertEquals(3950.00, s.getCommonContingenciesBase(), DELTA));
+		
+		// --------------------------------------- SECOND CONTRACT
+		ContractRecord contract2 = newContract(
+				aonContext, 
+				SSRegimeType.GENERAL, 
+				CCCType.ARTIST, 
+				stOfNovember,
+				tfOfNovember,
+				new HashMap<String,String>(){
+					{
+						put("GRUPO_COTIZACION","'03'");
+					}
+				}, 
+				new String[] {
+				}, 
+				new String[] {
+						
+				}, 
+				null /* without category*/
+				);
+		
+		final Integer contract2Id = contract2.getId();
+		final Date filterDate = stOfNovember;
+		
+		addPayment(aonContext, contract2, addConcept(aonContext, "SALARIO_BASE"), "4000.00", "_P", PaymentType.CRA_0001);
+		
+		//@formatter:on
+
+		ISQLContractSalaryCalculatorContext ctx2 = getContractSalaryCalculatorContext(
+				connection, 
+				stOfNovember, 
+				tfOfNovember, 
+				tfOfNovember,
+				contract2);
+		
+		calculateAndSave(connection, ctx2);
+		
+		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract2Id).and(p.getStartDateProperty().eq(filterDate)))
+			.forEach(s -> Assert.assertEquals(4070.10 - 3950.00, s.getCommonContingenciesBase(), DELTA));
+	
+		
+		// --------------------------------------- THIRD CONTRACT
+		ContractRecord contract3 = newContract(
+				aonContext, 
+				SSRegimeType.GENERAL, 
+				CCCType.ARTIST, 
+				tsOfNovember,
+				lastOfNovember,
+				new HashMap<String,String>(){
+					{
+						put("GRUPO_COTIZACION","'03'");
+					}
+				}, 
+				new String[] {
+				}, 
+				new String[] {
+						
+				}, 
+				null /* without category*/
+				);
+		
+		addPayment(aonContext, contract3, addConcept(aonContext, "SALARIO_BASE"), "176.29", "_P", PaymentType.CRA_0001);
+		
+		//@formatter:on
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, 
+				tsOfNovember, 
+				lastOfNovember, 
+				lastOfNovember,
+				contract3);
+		
+		SalaryBuilder builder = new SalaryBuilder();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator(builder);
+		
+		Salary salary = calculator.calculate(ctx);
+		
+		// Fail cause BASE_CGC_MIN execute when it doesn't have to cause he is above BASE_CGC_MAX
 		Assert.assertEquals(0.00, salary.getCommonBase(), DELTA);
 		
 	}
