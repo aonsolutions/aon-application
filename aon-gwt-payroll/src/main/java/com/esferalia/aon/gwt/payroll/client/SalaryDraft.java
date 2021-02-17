@@ -343,6 +343,8 @@ public class SalaryDraft extends ResizeComposite
 			"ERE_TOTAL",
 			"REINCORPORADO_ERE",
 			
+			"CAUSA_INACTIVIDAD",
+			
 			
 	};
 
