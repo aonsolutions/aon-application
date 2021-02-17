@@ -80,6 +80,10 @@ public class AonAgreementsTreeToolbar extends Composite {
 		newButton.setEnabled(enabled);
 	}
 	
+	public void setEnabledViewAgreementsButton(boolean enabled) {
+		viewAgreementsButton.setEnabled(enabled);
+	}
+	
 	public TextBox getSearchTextBox() {
 		return searchTextBox;
 	}

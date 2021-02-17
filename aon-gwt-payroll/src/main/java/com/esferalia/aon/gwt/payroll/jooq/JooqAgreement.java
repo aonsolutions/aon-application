@@ -13,6 +13,7 @@ import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
@@ -509,7 +510,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			agreement.setLevels(Collections.emptySet());
 			//agreement.setLevels(getAgreementLevel(dslContext, record.getId(), agreement));
 
-			boolean hasContracts = hasContract(dslContext, record.getId());
+			boolean hasContracts = hasContract(dslContext, record.getId(), domains[0]);
 			agreement.setHasContract(hasContracts);
 			// agreement.setLevelsWithoutCategories(false);
 			// agreement.setEmployees(rs.getInt("EMPLOYEEs"));
@@ -544,7 +545,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			
 			agreement.setLevels(Collections.emptySet());
 
-			boolean hasContracts = hasContract(dslContext, record.getId());
+			boolean hasContracts = hasContract(dslContext, record.getId(), domains[0]);
 			agreement.setHasContract(hasContracts);
 			agreements.add(agreement);
 
@@ -646,36 +647,21 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 	}
 
 	private static boolean hasContract(DSLContext dslContext,
-			Integer agreementId) throws SQLException {
-
-		Cursor<Record> cursor = dslContext
-				.select()
-				.from(CONTRACT)
-//				.where(CONTRACT.AGREEMENT_LEVEL_CATEGORY.in(
-				.where(CONTRACT.AGREEMENT_LEVEL.in(
-						
-						dslContext
-						.select(AGREEMENT_LEVEL.ID)
-						.from(AGREEMENT_LEVEL)
-						.where(AGREEMENT_LEVEL.AGREEMENT
-								.in(agreementId))))
-
-		.fetchLazy();
-
-//				dslContext
-//						.select(AGREEMENT_LEVEL_CATEGORY.ID)
-//						.from(AGREEMENT_LEVEL_CATEGORY)
-//						.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.in(
-//
-//						dslContext
-//								.select(AGREEMENT_LEVEL.ID)
-//								.from(AGREEMENT_LEVEL)
-//								.where(AGREEMENT_LEVEL.AGREEMENT
-//										.in(agreementId))))))
-//
-//				.fetchLazy();
-
-		return (cursor.hasNext()) ? true : false;
+			Integer agreementId, Integer domainId) throws SQLException {
+		
+		List<Integer> domainChildIds = dslContext.select(DOMAIN.ID).from(DOMAIN)
+				.where(DOMAIN.PARENT.eq(domainId))
+				.fetch(DOMAIN.ID);
+		
+		Result<Record> agreementContracts = dslContext.select().from(CONTRACT)
+			.where(CONTRACT.AGREEMENT_LEVEL.in(
+					dslContext.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+						.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId))
+						.fetch(AGREEMENT_LEVEL.ID)
+			)).and(CONTRACT.DOMAIN.eq(domainId).or(CONTRACT.DOMAIN.in(domainChildIds)))
+			.fetch();
+		
+		return agreementContracts.isNotEmpty();
 
 	}
 

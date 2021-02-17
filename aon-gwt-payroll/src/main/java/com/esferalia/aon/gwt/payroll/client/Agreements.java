@@ -114,6 +114,7 @@ public class Agreements extends ResizeComposite implements
 					@Override
 					public void onSuccess(Integer result) {
 						Agreements.this.domain = result;
+						toolbar.setEnabledViewAgreementsButton(false);
 						getAgreements();
 					}
 				});
@@ -124,6 +125,7 @@ public class Agreements extends ResizeComposite implements
 		agreementsTree.clearTree();
 		getAgreements(0, 10, s -> {
 			showAgreements(false); // Show active agreements
+			toolbar.setEnabledViewAgreementsButton(true);
 		}, f -> {});
 	}
 
@@ -316,10 +318,11 @@ public class Agreements extends ResizeComposite implements
 						// Get remainning
 						if ( agreements.size() == limit )
 							getAgreements(offset + limit, limit , s -> {
-								showAgreements(false); // Show active agreements
+								success.accept(agreements);
+//								showAgreements(false); // Show active agreements
 							}, f -> {});
-						
-						success.accept(agreements);
+						else
+							success.accept(agreements);
 //						else 
 //							toolbar.setVisibleSearchTextBox(true);
 
@@ -381,7 +384,7 @@ public class Agreements extends ResizeComposite implements
 			if(allAgreements)
 				item.setVisible(true);
 			else {
-				item.setVisible(agreement.getHasContract());
+				item.setVisible(agreement.getHasContract() || item.isSelected());
 			}
 		}
 	}
