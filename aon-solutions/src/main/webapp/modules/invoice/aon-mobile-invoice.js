@@ -39,7 +39,8 @@ export class AonMobileInvoice extends AonInvoice {
       let fileCard = this.getElement('aonInvoiceItemFileCard');
       fileCard.style.display = 'block';
       this.getElement(fileCard.TITLE).style.marginBottom = '0px';
-      fileCard.addTitleButton('visibility', () => this.openFileCard());
+      fileCard.cleanSection2();
+      fileCard.addTitleButton('Visualizar', 'visibility', false, () => this.openFileCard());
     }
   }
 
@@ -53,13 +54,15 @@ export class AonMobileInvoice extends AonInvoice {
     } else {
       fileCard.setContentHTML(`<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}" width="${w}"><aon-viewer>`);
     }
-    fileCard.addTitleButton('visibility_off', () => this.closeFileCard());
+    fileCard.cleanSection2();
+    fileCard.addTitleButton('Visualizar', 'visibility_off', false, () => this.closeFileCard());
   }
 
   closeFileCard() {
     let fileCard = this.getElement('aonInvoiceItemFileCard');
     fileCard.setContentHTML('');
-    fileCard.addTitleButton('visibility', () => this.openFileCard());
+    fileCard.cleanSection2();
+    fileCard.addTitleButton('Visualizar', 'visibility', false, () => this.openFileCard());
   }
 
 

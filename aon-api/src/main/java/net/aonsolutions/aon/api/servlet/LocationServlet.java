@@ -1,9 +1,11 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -13,6 +15,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
@@ -33,14 +36,16 @@ public class LocationServlet extends AonApiHttpServlet{
 		LOGGER.info("AON API LOCATION SERVLET - GET METHOD");
 		try {
 			super.doGet(req, resp);
-		
-			Object responseObject = new JSONObject();		
-			String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-			
-			AonToken aonToken = SECURITY.getAonToken(getToken());
-			responseObject = router(pathInfo, aonToken); 
-		
-			response(req, resp, responseObject);
+			switch (getPath()) {
+			case "/":
+				response(req, resp, getLocationList());
+				break;
+			case "/notification-test":
+				response(req, resp, notificationTest());
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
+			}
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -51,49 +56,36 @@ public class LocationServlet extends AonApiHttpServlet{
 		LOGGER.info("AON API LOCATION SERVLET - POST METHOD");
 		try {
 			super.doPost(req, resp);
-			String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-			AonToken aonToken = SECURITY.getAonToken(getToken());
-		
-			Object responseObject = router(pathInfo, aonToken); 
-			
-			response(req, resp, responseObject);
+			switch (getPath()) {
+			case "/":
+				response(req, resp, saveLocation());
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp){
+		LOGGER.info("AON API LOCATION SERVLET - DELETE METHOD");
+		try {
+			super.doDelete(req, resp);
+			switch (getPath()) {
+			case "/":
+				response(req, resp, deleteLocation());
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
+			}
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
 	}
 
-	//router
-	private Object router(String[] pathInfo, AonToken aonToken) throws Exception {
-		Object obj = new Object();
-		notificationTest();
-		String route = null;
-		if(pathInfo!=null) {
-			route = pathInfo[1];
-		}
-		switch (route) {
-			case "list":
-				LOGGER.info("LOCATION SERVLET - LOCATION-LIST");
-				obj = getLocationList(aonToken);
-				break;
-			case "save":
-				LOGGER.info("LOCATION SERVLET - LOCATION-SAVE");
-				obj = saveLocation(aonToken);
-			break;
-			case "delete":
-				LOGGER.info("LOCATION SERVLET - LOCATION-DELETE");
-				obj = deleteLocation(aonToken);
-			break;
-			case "notification-test":
-				LOGGER.info("LOCATION SERVLET - NOTIFICATION TEST");
-				obj = notificationTest();
-			break;
-			default:
-				break;
-		}
-		return obj;
-	}
-	
-	private Object getLocationList(AonToken aonToken) {
+	private Object getLocationList() {
 		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getLocationStream(getDomain(), "", f -> f.getDomainProperty().eq(getDomain().getId()))
 		.forEach(lc -> {
@@ -103,7 +95,7 @@ public class LocationServlet extends AonApiHttpServlet{
 	}
 
 	
-	private JSONObject saveLocation(AonToken aonToken) {
+	private JSONObject saveLocation() {
 		Coordinates coordinates = new Coordinates(getData().optString("coordinates"));
 		Location location = new Location()
 				.setDomain(getDomain())
@@ -117,7 +109,7 @@ public class LocationServlet extends AonApiHttpServlet{
 		return respObject;
 	}
 
-	private JSONObject deleteLocation(AonToken aonToken) {
+	private JSONObject deleteLocation() {
 		Location location = new Location().setId(getData().optInt("id"));
 		AON_SOLUTIONS.deleteLocation(getDomain(), "", location);
 		return new JSONObject();

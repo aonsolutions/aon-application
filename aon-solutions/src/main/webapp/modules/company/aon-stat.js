@@ -26,7 +26,6 @@ export class AonStat extends AonElement {
     let bannerImg = document.createElement('img');
     bannerImg.src = '../assets/img/atp_img_publi.jpg';
     bannerImg.style.width = '100%';
-    bannerImg.style.maxWidth = '1117px';
 
     div.appendChild(bannerImg);
 

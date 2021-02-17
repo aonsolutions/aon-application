@@ -1,6 +1,9 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+
+import com.sun.org.apache.bcel.internal.generic.ACONST_NULL;
 
 public enum AonRole  implements Serializable {
 	ADMIN, 
@@ -31,7 +34,11 @@ public enum AonRole  implements Serializable {
 	BANK,				// ACCESO AL SERVICIO BANK
 	CONVENIOS,			// ACCESO AL SERVICIO CONVENIOS
 	AON,
-	BIDOQ;
+	BIDOQ,
+	EMPLOYEE,			// USUARIO TIPO EMPLEADO
+	ENTERPRISE,			// USUARIO TIPO EMPRESA
+	DOCUMENTAL_PORTAL	// ACCESO A DOCUMENTAL -  MODO PORTAL/EMPRESA
+	;
 	
 	public Byte value(){
 		return (byte) ordinal();
@@ -54,6 +61,37 @@ public enum AonRole  implements Serializable {
 				return rs;
 		}
 		return null;
+	}
+	
+	public static LinkedList<AonRole> getEmployeeRoles() {
+		LinkedList<AonRole> list = new LinkedList<>();
+		list.add(EMPLOYEE);
+		list.add(TIMECONTROL);
+		list.add(DOCUMENTAL);
+		list.add(PAYROLL);
+		list.add(MESSENGER);		
+		return list;
+	}
+	
+	public static LinkedList<AonRole> getEnterpriseRoles() {
+		LinkedList<AonRole> list = new LinkedList<>();
+		list.add(ENTERPRISE);
+		list.add(TIMECONTROL);
+		list.add(TIMECONTROL_PORTAL);
+		list.add(DOCUMENTAL);
+		list.add(DOCUMENTAL_PORTAL);
+		list.add(PAYROLL);
+		list.add(PAYROLL_PORTAL);
+		list.add(MESSENGER);		
+		list.add(COMUNICA);
+		list.add(COMUNICA_PORTAL);
+		list.add(FISCAL);
+		list.add(ACCOUNTING);
+		list.add(INVOICE);
+		list.add(INVOICE_PORTAL);
+		list.add(OCR);
+		list.add(MANAGEMENT);
+		return list;
 	}
 }
 

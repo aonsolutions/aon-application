@@ -81,6 +81,7 @@ export class AonUserPanel extends AonElement {
 
 		aonUserPanel.setContentHTML('<aon-user-list> </aon-user-list>');
 		this.getElement('aonUserPanelSidenav').style.marginLeft = '153px';
+		aonUserPanel.closeSidenav();
 	}
 
 	init(filter){

@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getDomainApps, getUser, getUserAppRole, setUserAppRole, setUser, deleteUser,
 	 changePassword, getAuth} from  '../../services/service.js';
-import {getApp} from  '../../services/app.js';
+import {EnterpriseApps, EmployeeApps, getApp} from  '../../services/app.js';
 import {ToolbarType} from '../../models/enums.js';
 import {UserAction} from './userEnums.js';
 
@@ -143,7 +143,9 @@ export class AonUser extends AonElement {
 	initApps() {
 		let apps = this.getAttribute('apps') ? JSON.parse(this.getAttribute('apps')) : undefined;
 		this.clearElement('aonUserRoleTable');
-		this.buildAppSelect(undefined);
+		if(this.isPersonalizado()) {
+			this.buildAppSelect(undefined);
+		}
 		apps.forEach((app, i) => {
 			let application = getApp(app);
 			if(application){
@@ -175,6 +177,9 @@ export class AonUser extends AonElement {
 
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
 		card2.setVisible(this.hasSecurity());
+
+		this.buildPermissionButtons();
+
 		if(user && !this.hasAttribute('apps') && this.hasAttribute('showApps')) {
 			getDomainApps().then(apps => {
 				this.setAttribute('apps', JSON.stringify(apps));
@@ -191,6 +196,67 @@ export class AonUser extends AonElement {
 			});
 		}
 	}
+
+	buildPermissionButtons() {
+
+		let card2 = this.getElement('aonConfigurationUserSecurityCard');
+		card2.cleanSection2();
+		card2.addTitleButton('Personalizado', MATERIAL_ICONS.TUNE, this.isPersonalizado(), () => {
+			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+
+			let enterprise = { role: 'ENTERPRISE', active: false, user: user.id};
+			let employee = { role: 'EMPLOYEE', active: false, user: user.id};
+			this.saveModeRole([enterprise, employee]);
+		});
+
+		card2.addTitleButton('Empresa', MATERIAL_ICONS.BUSINESS, this.isEnterprise(), () => {
+			let apps = this.getAttribute('apps') ? JSON.parse(this.getAttribute('apps')) : undefined;
+			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+
+			let roles = [{ role: 'ENTERPRISE', active: true, user: user.id}];
+			apps.forEach((app, i) => {
+				let application = getApp(app);
+
+				if(application && EnterpriseApps.includes(application.app)){
+					let rol1 = {app:application.app, role: application.app.toUpperCase(), active: true, user: user.id};
+					let rol2 = {app:application.app, role: application.app.toUpperCase() + '_PORTAL', active: true, user: user.id};
+					roles.push(rol1);
+					roles.push(rol2);
+				}
+			});
+			this.saveModeRole(roles);
+		});
+
+		card2.addTitleButton('Empleado', MATERIAL_ICONS.PERSON, this.isEmployee(), () => {
+			let apps = this.getAttribute('apps') ? JSON.parse(this.getAttribute('apps')) : undefined;
+			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+
+			let enterprise = { role: 'ENTERPRISE', active: false, user: user.id};
+			let employee = { role: 'EMPLOYEE', active: true, user: user.id};
+			let roles = [enterprise, employee];
+			apps.forEach((app, i) => {
+				let application = getApp(app);
+				if(application && EmployeeApps.includes(application.app)){
+					let rol = {app:application.app, role: application.app.toUpperCase(), active: true, user: user.id};
+					roles.push(rol);
+				}
+			});
+			this.saveModeRole(roles);
+		});
+	}
+
+	saveModeRole(roles) {
+		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		setUserAppRole({roles}).then(() => {
+			getUserAppRole({user:user.id}).then(r => {
+				user.roles = r;
+				this._user.roles = r;
+				this.setAttribute('user', JSON.stringify(user));
+				this.initApps();
+			});
+		});
+	}
+
 
 	buildUserToolbar() {
 		let userToolbar = this.getElement(this.TOOLBAR);
@@ -387,111 +453,131 @@ export class AonUser extends AonElement {
 	}
 
 	buildAppSelect(app) {
-		let table = this.getElement('aonUserRoleTable');
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		if((this.isEmployee() && EmployeeApps.includes(app.app))
+	 			|| (this.isEnterprise() && EnterpriseApps.includes(app.app))
+				|| this.isPersonalizado()){
+			let table = this.getElement('aonUserRoleTable');
+			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
 
-		let tr = document.createElement('tr');
-		table.appendChild(tr);
-		let td1 = document.createElement('td');
-		td1.style.width = '30px';
-		td1.style.height = '40px';
-		tr.appendChild(td1);
+			let tr = document.createElement('tr');
+			table.appendChild(tr);
+			let td1 = document.createElement('td');
+			td1.style.width = '30px';
+			td1.style.height = '40px';
+			tr.appendChild(td1);
 
-		if(!app) {
-			let icon = document.createElement('i');
-			icon.className = 'material-icons';
-			icon.innerHTML = 'security';
-			td1.appendChild(icon);
-		} else if(app.logo){
-			let img = document.createElement('img');
-			img.style.width = '24px';
-			img.src = app.logo;
-			td1.appendChild(img);
-		} else {
-			td1.innerHTML =  `<aon-icon icon="${app.icon}" color="${app.color}" size="30px"></aon-icon>`;
-		}
-
-		let td2 = document.createElement('td');
-		td2.style.height = '40px';
-		tr.appendChild(td2)
-
-		let span2 = document.createElement('span');
-		span2.style.padding = '10px';
-		span2.style.fontWeight = 'bold';
-		span2.style.color = '#5f6368';
-		span2.innerHTML = app ? app.title : 'Administrador';
-		td2.appendChild(span2);
-
-		let td3 = document.createElement('td');
-		td3.style.height = '40px';
-		tr.appendChild(td3);
-		let id = this.SWITCH + (app ? app.app : 'ADMIN');
-		td3.innerHTML = `<aon-switch id="${id}"> </aon-switch>`;
-		let aonSwitch = this.getElement(id);
-		let active = this.isAdmin() || this.isApp(app ? app.app : 'ADMIN');
-		aonSwitch.checked = active;
-
-		let td4 = document.createElement('td');
-		tr.appendChild(td4);
-
-		aonSwitch.addEventListener('change', () => {
-			let roles = [app ? app.app.toUpperCase() : 'ADMIN'];
-
-			if (app && app.access && aonSwitch.isChecked()) {
-				let roleManager = app.app.toUpperCase() + '_MANAGER';
-				roles.push(roleManager);
+			if(!app) {
+				let icon = document.createElement('i');
+				icon.className = 'material-icons';
+				icon.innerHTML = 'security';
+				td1.appendChild(icon);
+			} else if(app.logo){
+				let img = document.createElement('img');
+				img.style.width = '24px';
+				img.src = app.logo;
+				td1.appendChild(img);
+			} else {
+				td1.innerHTML =  `<aon-icon icon="${app.icon}" color="${app.color}" size="30px"></aon-icon>`;
 			}
 
-			let role = {
-				domain: localStorage.getItem('aon_domain_name'),
-				app: app ? app.app : 'ADMIN',
-				roles,
-				user: user.id,
-				active: aonSwitch.isChecked()
-			};
+			let td2 = document.createElement('td');
+			td2.style.height = '40px';
+			tr.appendChild(td2)
 
-			setUserAppRole(role).then(() => {
-				getUserAppRole({user:user.id}).then(r => {
-					if(!role.active && r.contains(role.app)) {
-						r.forEach((item, i) => {
-							if(item == role.app){
-								r.splice(i, 1);
-							}
-						});
-					}
+			let span2 = document.createElement('span');
+			span2.style.padding = '10px';
+			span2.style.fontWeight = 'bold';
+			span2.style.color = '#5f6368';
+			span2.innerHTML = app ? app.title : 'Administrador';
+			td2.appendChild(span2);
 
-					user.roles = r;
-					this._user.roles = r;
-					this.setAttribute('user', JSON.stringify(user));
-					if(!app) {
-						this.initApps();
-					}
-					if(app && app.access && aonSwitch.isChecked()) {
-						let selectId = this.SELECT + (app ? app.app : 'ADMIN');
-						td4.innerHTML = `<aon-select id="${selectId}" title="Modo de Acceso"></aon-select>`;
-						let select = this.getElement(selectId);
-						select.options = JSON.stringify(app.access);
-						select.value = this.getAccess(app);
-						select.addEventListener('change', () => {
-							this.accessAction(app, select.value);
-						});
-					} else {
-						td4.innerHTML = '';
-					}
+			let td3 = document.createElement('td');
+			td3.style.height = '40px';
+			tr.appendChild(td3);
+			let id = this.SWITCH + (app ? app.app : 'ADMIN');
+			td3.innerHTML = `<aon-switch id="${id}"> </aon-switch>`;
+			let aonSwitch = this.getElement(id);
+			let active = this.isAdmin() || this.isApp(app ? app.app : 'ADMIN');
+			aonSwitch.checked = active;
+
+			let td4 = document.createElement('td');
+			tr.appendChild(td4);
+
+			aonSwitch.addEventListener('change', () => {
+				let rolePortal = app ? app.app.toUpperCase() : 'ADMIN';
+				let roleA = {
+					app: app ? app.app : 'ADMIN',
+					role: rolePortal,
+					user: user.id,
+					active: aonSwitch.isChecked()
+				};
+				let roles = [roleA];
+
+				if (app && app.access && aonSwitch.isChecked() && this.isPersonalizado()) {
+					let roleManager = app.app.toUpperCase() + '_MANAGER';
+					let roleB = {
+						app: app ? app.app : 'ADMIN',
+						role: roleManager,
+						user: user.id,
+						active: aonSwitch.isChecked()
+					};
+					roles.push(roleB);
+				}
+
+				if (app && app.access && aonSwitch.isChecked() && this.isEnterprise()) {
+					let rolePortal = app.app.toUpperCase() + '_PORTAL';
+					let roleC = {
+						app: app ? app.app : 'ADMIN',
+						role: rolePortal,
+						user: user.id,
+						active: aonSwitch.isChecked()
+					};
+					roles.push(roleC);
+				}
+
+				setUserAppRole({roles}).then(() => {
+					getUserAppRole({user:user.id}).then(r => {
+						// if(!aonSwitch.isChecked() && r.contains(role.app)) {
+						// 	r.forEach((item, i) => {
+						// 		if(item == role.app){
+						// 			r.splice(i, 1);
+						// 		}
+						// 	});
+						// }
+
+						user.roles = r;
+						this._user.roles = r;
+						this.setAttribute('user', JSON.stringify(user));
+						if(!app) {
+							this.initApps();
+						}
+						if(app && app.access && aonSwitch.isChecked() && this.isPersonalizado()) {
+							let selectId = this.SELECT + (app ? app.app : 'ADMIN');
+							td4.innerHTML = `<aon-select id="${selectId}" title="Modo de Acceso"></aon-select>`;
+							let select = this.getElement(selectId);
+							select.options = JSON.stringify(app.access);
+							select.value = this.getAccess(app);
+							select.addEventListener('change', () => {
+								this.accessAction(app, select.value);
+							});
+						} else {
+							td4.innerHTML = '';
+						}
+					});
 				});
 			});
-		});
 
-		if(app && app.access && active) {
-			let selectId = this.SELECT + (app ? app.app : 'ADMIN');
-			td4.innerHTML = `<aon-select id="${selectId}" title="Modo de Acceso"></aon-select>`;
-			let select = this.getElement(selectId);
+			if(app && app.access && active && this.isPersonalizado()) {
+				let selectId = this.SELECT + (app ? app.app : 'ADMIN');
+				td4.innerHTML = `<aon-select id="${selectId}" title="Modo de Acceso"></aon-select>`;
+				let select = this.getElement(selectId);
 
-			select.options = JSON.stringify(app.access);
-			select.value = this.getAccess(app);
-			select.addEventListener('change', () => {
-				this.accessAction(app, select.value);
-			});
+				select.options = JSON.stringify(app.access);
+				select.value = this.getAccess(app);
+				select.addEventListener('change', () => {
+					this.accessAction(app, select.value);
+				});
+			}
 		}
 	}
 
@@ -516,32 +602,50 @@ export class AonUser extends AonElement {
 	accessAction(app, value) {
 		if(app) {
 			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-			let role = {
-				domain: localStorage.getItem('aon_domain_name'),
-				app: app ? app.app : 'ADMIN',
-				user: user.id,
-			};
+			let roles = [];
 			let rol = app.app.toUpperCase()
 			let manager = app.app.toUpperCase() + '_MANAGER';
 			let portal = app.app.toUpperCase() + '_PORTAL';
+			let role = {
+
+			};
 			if('Asesor' === value){
-				role.roles = [manager];
-				role.active = true;
-				setUserAppRole(role);
+				roles.push({
+					app: app ? app.app : 'ADMIN',
+					user: user.id,
+					role: manager,
+					active: true
+				});
 			} else if('Empresa' === value) {
-				role.roles = [manager];
-				role.active = false;
-				setUserAppRole(role);
+				roles.push({
+					app: app ? app.app : 'ADMIN',
+					user: user.id,
+					role: manager,
+					active: false
+				});
 				if(app.access.length > 2) {
-					role.roles = [portal];
-					role.active = true;
-					setUserAppRole(role);
+					roles.push({
+						app: app ? app.app : 'ADMIN',
+						user: user.id,
+						role: portal,
+						active: true
+					});
 				}
 			} else if('Empleado' === value) {
-				role.roles = [manager, portal];
-				role.active = false;
-				setUserAppRole(role);
+				roles.push({
+					app: app ? app.app : 'ADMIN',
+					user: user.id,
+					role: manager,
+					active: false
+				});
+				roles.push({
+					app: app ? app.app : 'ADMIN',
+					user: user.id,
+					role: portal,
+					active: false
+				});
 			}
+			setUserAppRole({roles});
 		}
 	}
 
@@ -560,6 +664,18 @@ export class AonUser extends AonElement {
 	isAdmin() {
 		console.log(JSON.stringify(this._user.roles));
 		return this._user.roles && this._user.roles.includes('ADMIN');
+	}
+
+	isEmployee() {
+		return this._user.roles && this._user.roles.includes('EMPLOYEE') && !this.isEnterprise();
+	}
+
+	isEnterprise() {
+		return this._user.roles && this._user.roles.includes('ENTERPRISE');
+	}
+
+	isPersonalizado() {
+		return !this.isEmployee() && !this.isEnterprise();
 	}
 
 	hasSecurity() {

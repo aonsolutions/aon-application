@@ -137,6 +137,14 @@ export class AonIconButton extends AonElement {
           ? this.getAttribute("color")
           : "#5f6368";
     }
+
+    if ("background" === name) {
+      let button = this.getElement(this.BUTTON);
+      if (button)
+        button.style.backgroundColor = this.hasAttribute("background")
+          ? this.getAttribute("background")
+          : "transparent";
+    }
   }
 
   constructor() {

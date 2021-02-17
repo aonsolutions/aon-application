@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.ewok.IConstants;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "BidoqServlet", urlPatterns = {"/ms/api/bidoq/*"})
 public class BidoqServlet extends AonApiHttpServlet {
@@ -27,7 +29,12 @@ public class BidoqServlet extends AonApiHttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		try {
-			super.doPost(req, resp);
+			setToken((AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) 
+					|| IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.SESSION_ID))) 
+				? IConstants.EMPTY : req.getHeader(IConstants.SESSION_ID));
+
+			setData(getRequestJSON(req));
+			
 			if(BIDOQ_SESSION_ID.equals(getToken())) {
 				String user = getData().optString("user");
 				String company = getData().optString("company");

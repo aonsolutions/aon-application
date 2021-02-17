@@ -30,7 +30,9 @@ public enum RegistryAttachmentType implements IResourceable {
 	CRETA_RESPUESTA,
 	CRETA_TRABAJADORES_Y_TRAMOS,
 	SYSTEM_MESSAGE,
-	CRETA_BASES;
+	CRETA_BASES,
+	DOCUMENTAL_ENTERPRISE,
+	DOCUMENTAL_EMPLOYEE;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_registry_attachment_type_";

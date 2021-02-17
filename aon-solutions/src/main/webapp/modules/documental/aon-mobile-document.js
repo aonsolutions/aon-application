@@ -30,7 +30,8 @@ export class AonMobileDocument extends AonDocument {
       let fileCard = this.getElement(this.FILE_CARD);
       fileCard.style.display = 'block';
       this.getElement(fileCard.TITLE).style.marginBottom = '0px';
-      fileCard.addTitleButton('visibility', () => this.openFileCard());
+      fileCard.cleanSection2();
+      fileCard.addTitleButton('Visualizar', 'visibility', false, () => this.openFileCard());
     }
   }
 
@@ -64,14 +65,17 @@ export class AonMobileDocument extends AonDocument {
     let fileCard = this.getElement(this.FILE_CARD);
     let w = this.getElement(fileCard.CONTENT).offsetWidth;
     fileCard.setContentHTML(`<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${w}"></aon-viewer>`);
-    fileCard.addTitleButton('visibility_off', () => this.closeFileCard());
+    fileCard.cleanSection2();
+    fileCard.addTitleButton('Visualizar', 'visibility_off', false, () => this.closeFileCard());
   }
 
   closeFileCard() {
     let fileCard = this.getElement(this.FILE_CARD);
     fileCard.setContentHTML('');
-    fileCard.addTitleButton('visibility', () => this.openFileCard());
+    fileCard.cleanSection2();
+    fileCard.addTitleButton('Visualizar', 'visibility', false, () => this.openFileCard());
   }
+
 }
 
 window.customElements.define('aon-mobile-document',  AonMobileDocument);

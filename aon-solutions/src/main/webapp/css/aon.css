@@ -608,10 +608,21 @@ form {
 }
 
 .aonCardTitle {
+  display: flex;
   margin-bottom: 15px;
   font-size: 18px;
   color: #5f6368;
   font-weight: bold;
+}
+
+.aonCardTitleSection {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+}
+
+.aonCardTitleSectionEnd {
+  justify-content: flex-end;
 }
 
 .aonDialog {

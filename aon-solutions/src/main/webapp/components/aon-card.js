@@ -1,11 +1,12 @@
 import {AonElement} from './AonElement.js';
-
-import './aon-icon-button.js';
+import { AonIconButton } from "./aon-icon-button.js";
 
 export class AonCard extends AonElement {
 
  	CARD;
 	TITLE;
+  TITLE_SECTION1;
+  TITLE_SECTION2;
 	CONTENT;
 
 	static get observedAttributes() {
@@ -49,7 +50,9 @@ export class AonCard extends AonElement {
 	constructor () {
 		super();
 		this.CARD = this.id + 'Card';
-		this.TITLE = this.id + 'Title';
+	  this.TITLE = this.id + 'Title';
+    this.TITLE_SECTION1 = this.TITLE + 'Section1';
+    this.TITLE_SECTION2 = this.TITLE + 'Section2';
 		this.CONTENT = this.id + 'Content';
 	}
 
@@ -60,13 +63,24 @@ export class AonCard extends AonElement {
 	build() {
 		let div = this.createElement('div');
 		div.id = this.CARD;
-		div.className = 'aonCard';
+    div.className = 'aonCard';
 		this.appendChild(div);
 
 		let title = this.createElement('div');
 		title.id = this.TITLE;
 		title.className = 'aonCardTitle';
-		title.innerHTML = this.title;
+
+    let section1 = this.createElement('section');
+    section1.id = this.TITLE_SECTION1;
+    section1.className = 'aonCardTitleSection';
+    section1.innerHTML = this.title;
+    title.appendChild(section1);
+
+    let section2 = this.createElement('section');
+    section2.id = this.TITLE_SECTION2;
+    section2.className = 'aonCardTitleSection aonCardTitleSectionEnd';
+    title.appendChild(section2);
+
 		div.appendChild(title);
 
 		let content = this.createElement('div');
@@ -74,14 +88,25 @@ export class AonCard extends AonElement {
 		div.appendChild(content);
 	}
 
-  addTitleButton(icon, fn) {
-    let title = this.getElement(this.TITLE);
-    title.innerHTML = `${this.title} <aon-icon-button id="${this.TITLE + 'Button'}" icon="${icon}"> </aon-icon-button>`;
-    let button = this.getElement(this.TITLE + 'Button');
-    button.style.position = 'absolute';
-    button.style.right = '20px';
-    button.style.top = '17px';
+  cleanSection2() {
+    let section2 = this.getElement(this.TITLE_SECTION2);
+    section2.innerHTML = '';
+  }
+
+  addTitleButton(name, icon, selected, fn) {
+    let button = new AonIconButton();
+    button.id = this.TITLE_SECTION2 + name + 'Button';
+    button.icon = icon;
+    button.style.position = 'relative';
+    button.title = name;
+
+    if(selected) {
+      button.background = 'lightgray';
+    }
+
     button.addEventListener('click', fn);
+    let title = this.getElement(this.TITLE_SECTION2);
+    title.appendChild(button);
   }
 
 	setContent(el) {

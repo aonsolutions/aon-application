@@ -1,6 +1,8 @@
 import * as MSG from "../environments/msg.js";
 
 export const MenuApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'invoice', 'timecontrol', 'management', 'tools'];
+export const EmployeeApps = ['documental', 'timecontrol', 'payroll', 'messenger'];
+export const EnterpriseApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'invoice', 'timecontrol', 'management', 'messenger', 'ocr'];
 
 export const Apps = {
   ACCOUNTING: {
@@ -77,6 +79,9 @@ export const Apps = {
       }, {
         value: 'Empresa',
         name: 'Empresa'
+      }, {
+        value: 'Empleado',
+        name: 'Empleado'
       }]
   },
   TIMECONTROL: {

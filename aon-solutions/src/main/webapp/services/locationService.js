@@ -1,9 +1,9 @@
-import { post, get } from "./request.js";
+import { post, get, remove } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
-export const saveLocation = (data) => post(`${API_URL}/location/save`, data);
-export const deleteLocation = (data) => post(`${API_URL}/location/delete`, data);
-export const getLocation = (data) => get(`${API_URL}/location/list`, data);
+export const saveLocation = (data) => post(`${API_URL}/location`, data);
+export const deleteLocation = (data) => remove(`${API_URL}/location`, data);
+export const getLocation = (data) => get(`${API_URL}/location`, data);
 
 
 //remove test sendNotificationTest
