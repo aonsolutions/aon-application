@@ -90,24 +90,26 @@ export class AonModule extends AonElement {
 	}
 
 	async initializeFB()  {
-		let token = undefined;
-		if(!this.isMobile()) { // initialize observer message firebase desk
-			const firebaseSrv = new FirebaseService;
-			token = await firebaseSrv.getTokenFB();
-			if (token) {
-				window.tokenFCM = token;
-				const messaging = firebaseSrv.getMessagingObject();
-				messaging.onMessage(
-					(payload) => firebaseSrv.pushNotification(payload),
-					(err) => console.log(err)
-				);
+		try{
+			let token = undefined;
+			if(!this.isMobile()) { // initialize observer message firebase desk
+				const firebaseSrv = new FirebaseService;
+				token = await firebaseSrv.getTokenFB();
+				if (token) {
+					window.tokenFCM = token;
+					const messaging = firebaseSrv.getMessagingObject();
+					messaging.onMessage(
+						(payload) => firebaseSrv.pushNotification(payload),
+						(err) => console.log(err)
+					);
+				}
+			} else if(window.tokenFCM) {
+				token = window.tokenFCM;
 			}
-		} else if(window.tokenFCM) {
-			token = window.tokenFCM;
-		}
-
-		if(token) await saveAuthDevice({tokenFCM:token});
-		console.log("TOKEN FCM", token);
+	
+			if(token) await saveAuthDevice({tokenFCM:token});
+			console.log("TOKEN FCM", token);
+		} catch(e){}
   	}
 	
 }

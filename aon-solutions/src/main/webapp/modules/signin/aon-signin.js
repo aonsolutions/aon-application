@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import "../../components/aon-toast.js";
 import "../../components/aon-application.js";
-import "./time-control/aon-presence-list.js";
+import {AonPresenceList} from "./time-control/aon-presence-list.js";
 import "./time-control/location/aon-location-list.js";
 import "./time-control/location/aon-location-add.js";
 
@@ -46,13 +46,42 @@ export class AonSignin extends AonElement {
           ),
       },
     ];
+    
     this.aonSigninEl.addSidenavOptions("Control horario", options);
+
+    const options2 = [
+      {
+        icon: 'today',
+        name: "Hoy",
+        fn: () => this.filterAonSignin({period:"today"})
+      },
+      {
+        icon: 'today',
+        name: "Ayer",
+        fn: () => this.filterAonSignin({period:"yesterday"})
+      },
+      {
+        icon: 'today',
+        name: "Ésta semana",
+        fn: () => this.filterAonSignin({period: "this_week"})
+      },
+      {
+        icon: 'today',
+        name: "Éste mes",
+        fn: () => this.filterAonSignin({period: "this_month"})
+      }
+    ];
+    this.aonSigninEl.addSidenavOptions("Período", options2);
   }
 
-  paintViewPresenceList(){
-    this.aonSigninEl.setContentHTML(
-      `<aon-presence-list></aon-presence-list>`
-    );
+  async paintViewPresenceList(){
+    let aonList = new AonPresenceList();
+    aonList.id = "aonPresenceList";
+    this.aonSigninEl.setContent(aonList);
+  }
+
+  filterAonSignin(data){
+    window.dispatchEvent(new CustomEvent('filterAonSignin', { detail: data }));
   }
 
   openLocationAdd(el, data) {

@@ -1,15 +1,15 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { getGroups, getTimeControlList } from "../../../services/service.js";
-import { isEmptyObject, setDateTimestamp, sortBy, timePaser } from "../../../services/utils.js";
+import { getPeriod, getStatus, getTimeControlList } from "../../../services/service.js";
+import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, timeHour } from "../../../services/utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
-import "./event/aon-event-list.js";
+import {AonEventList} from "./event/aon-event-list.js";
+
 import { StringTwoLetters } from "./utils.js";
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
-  GROUP_DEFAULT;
   static get observedAttributes() {
     return ["filter"];
   }
@@ -31,30 +31,35 @@ export class AonPresenceList extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name) this.build();
+    if ("filter" === name){}
   }
 
   constructor() {
     super();
     this.id = this.id || "aonPresenceList";
     this.TABLE_ID = this.id + "Table";
-    this.GROUP_DEFAULT = "DAY";
-
+    this.aonSigninEl = this.getElement("aonSignin");
+    this.aonSigninEl.addToolbarTitle("Presencia");
     // console.log(atob(localStorage.getItem(this.id)));
   }
 
   connectedCallback() {
-    this.paintView();
     this.build();
-    this.buildToolbar();
-    this.eventListener();
   }
   
   disconnectedCallback() {
     // localStorage.setItem(this.id, btoa(this.innerHTML))
   }
 
-  eventListener() {}
+  async build(){
+    this.paintView();
+    window.addEventListener('filterAonSignin', ({detail})=>{
+      if(detail && detail.period) setValueName('period', detail.period);
+      this.getTable();
+    })
+    await this.buildToolbar();
+    await this.getTable();
+  }
 
   paintView() {
     let innerHTML = `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
@@ -67,32 +72,30 @@ export class AonPresenceList extends AonElement {
     this.innerHTML = innerHTML;
   }
 
-  async build() {
-    this.aonSigninEl = this.getElement("aonSignin");
-    this.aonSigninEl.addToolbarTitle("Presencia");
-    this.aonSigninEl.startLoader();
-    if (this.isMobile()) await this.getTableMobile();
-    else await this.getTableDesk();
-    this.aonSigninEl.stopLoader();
-  }
-
-  buildToolbar() {
+  async buildToolbar() {
     this.aonSigninEl.removeToolbarOptions();
-    this.buildFilter();
+    await this.buildFilter();
     const filterEl = this.getElement(`${this.id}Filter`);
     this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
       filterEl.openFilter()
     );
   }
 
-  buildFilter() {
+  async getTable() {
+    this.aonSigninEl.startLoader();
+    if (this.isMobile()) await this.getTableMobile();
+    else await this.getTableDesk();
+    this.aonSigninEl.stopLoader();
+  }
+
+  async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
     let inputs = [
       {
         type: "select",
-        id: "group",
-        name: "group",
-        title: "Agrupar por",
+        id: "period",
+        name: "period",
+        title: "Período",
       },
       {
         type: "date",
@@ -108,21 +111,34 @@ export class AonPresenceList extends AonElement {
       },
     ];
     aonFilter.setInputs(inputs);
-    aonFilter.addEventListener("applyFilter", ({ detail }) => {
-      if (detail) {
-        this.filter = detail;
-        if (this.filter.group) {
-          this.GROUP_DEFAULT = this.filter.group;
-        }
-      }
+    aonFilter.addEventListener("applyFilter", () => {
+      this.getTable();
     });
-    this.getOptionsGroup();
+
+    await this.getOptionsPeriod();
   }
 
-  async getOptionsGroup() {
-    let groupEl = this.getElement("group");
-    groupEl.options = JSON.stringify(await getGroups());
-    groupEl.value = this.GROUP_DEFAULT;
+  async getOptionsPeriod() {
+    let periodEl = this.getElement("period");
+    periodEl.options = JSON.stringify(await getPeriod());
+    this.eventListenerFilter();
+  }
+
+  eventListenerFilter(){
+    let periodEl = this.getElement("period");
+    periodEl.addEventListener('change', ({detail}) => {
+      setValueName('startDate', detail.startDate);
+      setValueName('endDate', detail.endDate);
+    });
+
+    this.getElement("startDate").addEventListener("change",(ev)=>{
+      periodEl.value = "personalized";
+    });
+    this.getElement("endDate").addEventListener("change",(ev)=>{
+      periodEl.value = "personalized";
+    });
+
+    periodEl.value = "today";
   }
 
   async getTableDesk() {
@@ -130,14 +146,16 @@ export class AonPresenceList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumn("", "string", "lettersHtml", "6%");
-      aonTable.addColumn("Nombre", "string", "name", "44%");
-      aonTable.addColumn("Duración", "string", "duration", "5%");
+      aonTable.addColumn("Nombre", "string", "name", "34%");
+      aonTable.addColumn("Estado", "", "textStatus", "15%");
       aonTable.addColumn("Fecha", "date", "dateParse", "20%");
-      aonTable.addColumn("Ubicación", "string", "nameLocation", "25%");
+      aonTable.addColumn("Duración", "", "duration", "5%");
+      aonTable.addColumn("Ubicación", "string", "nameLocation", "20%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
+          res.dateParse = setDateTimestampDay(res.last_date);
           aonTable.addRow(res, (el) => this.aonEvent(el, res));
         });
       } catch (e) {
@@ -154,10 +172,11 @@ export class AonPresenceList extends AonElement {
         const resp = await this.getData();
         aonTable.removeAllLi();
         resp.map((res, idx) => {
+          res.dateParse = setDateTimestamp(res.last_date);
           let options = {
             iconHtmlCustom: `${res.lettersHtml}`,
-            title: `${res.name} <div style="font-size: 14px;float: right; color: rgba(0,0,0,.54);">${res.duration}<div style="float: right;"></div>`,
-            subtitle: `${res.dateParse} <div style="float: right;">${res.nameLocation}</div> `,
+            title: `${res.name}`,
+            subtitle: `(${res.duration}) ${res.dateParse} <span style="float: right;">${res.nameLocation}</span> `,
           };
           if (res.contractType) options.option = this.getOptions(res);
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
@@ -172,10 +191,11 @@ export class AonPresenceList extends AonElement {
     this.aonSigninEl.startLoader();
     let data = [];
     try {
-      const datos = await getTimeControlList(this.filter);
+      const filtros = this.getElement(`${this.id}Filter`).getValues();
+      const datos = await getTimeControlList(filtros);
       if (datos) {
         sortBy(datos, 'last_date', 'desc').map(
-          ({
+          async ({
             time,
             last_date,
             status,
@@ -188,6 +208,7 @@ export class AonPresenceList extends AonElement {
               const lettersName = StringTwoLetters(name);
               const lettersHtml = `<div class="profile-letters ${newStatus}">${lettersName}</div>`;
               let nameLocation = undefined;
+              const textStatus = await getStatus(newStatus);
               if (last_location && last_location.name) {
                 nameLocation = last_location.name;
               } else if(!isEmptyObject(coordinates)) {
@@ -195,10 +216,10 @@ export class AonPresenceList extends AonElement {
               }
               const obj = {
                 lettersHtml,
+                textStatus: textStatus.name,
                 status: newStatus,
                 name: `${name}`,
-                dateParse: setDateTimestamp(last_date),
-                duration: timePaser(Number(time)),
+                duration: timeHour(Number(time)),
                 last_date,
                 coordinates,
                 last_location,
@@ -221,15 +242,13 @@ export class AonPresenceList extends AonElement {
     if ("add_location" === target.textContent) {
       this.aonSigninEl.getParent().openLocationAdd(undefined, data);
     } else {
-      let id = "aonEventList";
-      this.aonSigninEl.setContentHTML(
-        `<aon-event-list id="${id}"></aon-event-list>`
-      );
-      const aonEventEl = this.getElement(id);
-      if (aonEventEl) {
-        aonEventEl.data = { ...data, group: this.GROUP_DEFAULT };
-      }
+      let aonList= new AonEventList();
+      aonList.id = "aonEventList";
+      const filtros = this.getElement(`${this.id}Filter`).getValues();
+      aonList.data = { ...data, ...filtros};
+      this.aonSigninEl.setContent(aonList);
     }
   }
 }
+
 window.customElements.define("aon-presence-list", AonPresenceList);

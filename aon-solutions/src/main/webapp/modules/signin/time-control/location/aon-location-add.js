@@ -299,12 +299,12 @@ export class AonLocationAdd extends AonElement {
   }
 
   async removeData() {
-    const data = this.getFormValues();
     if (confirm(`Estas seguro de eliminar la ${this.NAME}?`)) {
       this.aonSigninEl.startLoader();
       try {
+        const data = this.getFormValues();
         await deleteLocation(data);
-        // this.TOAST.start({ message: `Datos eliminados!` });
+        this.TOAST.start({ message: `Datos eliminados!` });
         this.back();
       } catch (error) {
         this.TOAST.start({ message: error, type: "error" });
@@ -314,7 +314,7 @@ export class AonLocationAdd extends AonElement {
   }
 
   back() {
-    // this.aonSigninEl.setContentHTML(`<aon-location-list></aon-location-list>`);
+    this.aonSigninEl.setContentHTML(`<aon-location-list></aon-location-list>`);
   }
 }
 

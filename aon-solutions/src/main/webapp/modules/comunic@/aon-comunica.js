@@ -31,7 +31,6 @@ export class AonComunica extends AonElement {
 	}
 	build() {
 		this.aonComunicaEl = this.getElement(this.AON_COMUNICA);
-
 		this.buildToolbar();
 		this.paintViewCtz();
 	}

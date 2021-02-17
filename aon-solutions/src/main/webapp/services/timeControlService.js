@@ -1,5 +1,6 @@
 import { post, get } from "./request.js";
 import { API_URL } from "../environments/environments.js";
+import { addDays, formatDateOrigin, firstDayWeek, lastDayWeek} from "./utils.js";
 
 export const getTimeControl = (data) => get(`${API_URL}/timecontrol`, data);
 export const saveTimeControl = (data) => post(`${API_URL}/timecontrol`, data);
@@ -26,11 +27,14 @@ export const getStatus = (data) =>
     resolve(jsonValues);
   });
 
-export const getTaskHolders = (data) => get(`${API_URL}/timecontrol/taskholder`, data);
+export const getTaskHolders = (data) =>
+  get(`${API_URL}/timecontrol/taskholder`, data);
 
-export const getTimeControlList = (data) => get(`${API_URL}/timecontrol/list`, data);
+export const getTimeControlList = (data) =>
+  get(`${API_URL}/timecontrol/list`, data);
 
-export const getTaskHolderTimeControl = (data) => get(`${API_URL}/timecontrol/list-holder`, data);
+export const getTaskHolderTimeControl = (data) =>
+  get(`${API_URL}/timecontrol/list-holder`, data);
 
 export const getGroups = (data) =>
   new Promise((resolve) => {
@@ -52,6 +56,74 @@ export const getGroups = (data) =>
         value: "YEAR",
       },
     ];
-
+    if (data) {
+      jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
+    }
     resolve(jsonValues);
-});
+  });
+
+export const getPeriod = (data) => {
+  const now = new Date();
+  const dayWeekFirst = firstDayWeek(now);
+  const dayWeekLast = lastDayWeek(now);
+  return new Promise((resolve) => {
+    let jsonValues = [
+      {
+        name: "Hoy",
+        value: "today",
+        startDate: formatDateOrigin(now),
+        endDate: formatDateOrigin(now)
+      },
+      {
+        name: "Ayer",
+        value: "yesterday",
+        startDate: formatDateOrigin(addDays(now, -1)),
+        endDate: formatDateOrigin(addDays(now, -1))
+      },
+      {
+        name: "Ésta semana",
+        value: "this_week",
+        startDate: formatDateOrigin( new Date().setDate(dayWeekFirst) ),
+        endDate: formatDateOrigin( new Date().setDate(dayWeekLast) )
+      },
+      {
+        name: "Semana pasada",
+        value: "last_week",
+        startDate: formatDateOrigin(  new Date().setDate(dayWeekFirst -7)  ),
+        endDate: formatDateOrigin( new Date().setDate(dayWeekLast -7) )
+      },
+      {
+        name: "Éste mes",
+        value: "this_month",
+        startDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth(), 1)),
+        endDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth() + 1, 0))
+      },
+      {
+        name: "Mes pasado",
+        value: "last_month",
+        startDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth() -1), 1)),
+        endDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth()-1) + 1, 0))
+      },
+      {
+        name: "Éste año",
+        value: "this_year",
+        startDate: formatDateOrigin(new Date(now.getFullYear(), 0, 1)),
+        endDate: formatDateOrigin(new Date(now.getFullYear(), 12, 0))
+      },
+      {
+        name: "Año pasado",
+        value: "last_year",
+        startDate: formatDateOrigin(new Date(now.getFullYear()-1, 0, 1)),
+        endDate:formatDateOrigin(new Date(now.getFullYear()-1, 12, 0))
+      },
+      {
+        name: "Personalizado",
+        value: "personalized",
+      },
+    ];
+    if (data) {
+      jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
+    }
+    resolve(jsonValues);
+  });
+}

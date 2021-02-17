@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { isEmptyObject, setDateTimestamp, sortBy, timePaser } from "../../../../services/utils.js";
+import { isEmptyObject, setDateTimestamp, setValueName, sortBy, timeHour } from "../../../../services/utils.js";
 import {
   getGroups,
   getStatus,
@@ -60,12 +60,19 @@ export class AonEventList extends AonElement {
   connectedCallback() {
     this.paintView();
     this.build();
-    this.buildToolbar();
+
   }
 
   disconnectedCallback() {}
 
-  build() {}
+  async build() {
+    this.buildToolbar();
+    window.addEventListener('filterAonSignin', ({detail})=>{
+      if(detail && detail.period) setValueName('period', detail.period);
+      this.getTable();
+    })
+    await this.getTable();
+  }
 
 
   buildFilter() {
@@ -147,8 +154,8 @@ export class AonEventList extends AonElement {
       aonTable.addColumn("", "string", "lettersHtml", "6%");
       aonTable.addColumn("Nombre", "string", "name", "34%");
       aonTable.addColumn("Estado", "", "status", "15%");
-      aonTable.addColumn("Duración", "", "duration", "5%");
       aonTable.addColumn("Fecha", "date", "dateParse", "20%");
+      aonTable.addColumn("Duración", "", "duration", "5%");
       aonTable.addColumn("Ubicación", "string", "nameLocation", "20%");
       try {
         const resp = await this.getData();
@@ -178,8 +185,8 @@ export class AonEventList extends AonElement {
         resp.map((res, idx) => {
           let options = {
             iconHtmlCustom: `${res.lettersHtml}`,
-            title: `${res.name} <div style="float: right;">${res.duration}</div>`,
-            subtitle: `(${res.textStatus}) <div style="float: right;">${res.nameLocation} ${res.dateParse}</div> `,
+            title: `${res.name} (${res.duration})`,
+            subtitle: `(${res.textStatus}) ${res.dateParse} <span style="float: right;">${res.nameLocation}</span>`,
           };
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
         });
@@ -218,7 +225,7 @@ export class AonEventList extends AonElement {
               last_location: r.last_location,
               nameLocation,
               dateParse: setDateTimestamp(r.last_date),
-              duration: timePaser(Number(r.time)),
+              duration: timeHour(Number(r.time)),
             };
             data.push(obj);
           }
