@@ -1,0 +1,93 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'>
+
+	<ui:with field='res'
+		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.CCC.MyStyle">
+	
+		.widthAll{
+			width: 100%;
+		}
+		
+		.heightAll{
+			height: 100%;
+		}
+		
+		.flexCenter{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		.flexEvenly{
+			display: flex;
+			justify-content: space-evenly;
+			align-items: center;
+		}
+		
+		.styleBorder{
+			width: 100%;
+			max-width: 900px;
+			border: 1px solid black;
+		}
+		
+		.tittle{
+			position: relative;
+			top: -0.7em;
+			left: 20px;
+			width: 130px;
+			padding: 0 5px;
+			background-color: white;
+			font-size: 12px;
+			font-weight: bold;
+			text-align: center;
+		}
+		
+		.container{
+			width: 100%;
+			padding: 5px;
+		}
+		
+		.gridStyle{
+			width: 100%;
+			max-width: 875px;
+		}
+		
+		.scrollStyle {
+			width: 100%;
+			max-width: 875px;
+		}
+		
+		.headerStyle{
+			font-weight: bold;
+			padding-left: 5px;
+		}
+		
+		.warningColor{
+			font-weight: bold;
+			color: #be0000;
+		}
+	
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexCenter}" debugId="activityHTMLPanel">
+   		<g:VerticalPanel styleName="{style.styleBorder}">
+    	<g:Label styleName='{style.tittle}'>Cuentas de cotización</g:Label>
+	    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll}" debugId="paymetDialogHTMLPanel">
+	    		<g:VerticalPanel styleName="{style.container}">
+	    			<g:Grid ui:field="cccDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
+	    			<g:HTMLPanel>
+	    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;"/>
+	    			</g:HTMLPanel>
+		    		<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollStyle}">
+		    			<g:Grid ui:field="cccDataTable"></g:Grid>
+		    		</g:ScrollPanel>
+	    		</g:VerticalPanel>
+	    	</g:HTMLPanel>
+	    </g:VerticalPanel>
+   	</g:HTMLPanel>
+</ui:UiBinder> 
+
