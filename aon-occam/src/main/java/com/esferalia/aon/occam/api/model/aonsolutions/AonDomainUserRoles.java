@@ -28,6 +28,7 @@ public class AonDomainUserRoles extends DomainUserRoles{
 		getDomainUserRoles().forEach(r -> domainUserRoles.put(r.name()));
 		getParentDomainUserRoles().forEach(r -> parentDomainUserRoles.put(r.name()));
 		
+		json.put("domain", getDomain().getId());
 		json.put("parentUser", isParentUser());
 		json.put("domainApps", domainApps);
 		json.put("parentDomainApps", parentDomainApps);

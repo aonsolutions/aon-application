@@ -86,6 +86,8 @@ export class AonMobileDesktop extends AonElement {
 			searchSuggestion.title = 'Empresa Seleccionada';
 			searchSuggestion.value = company.name;
 			searchSuggestion.readonly = true;
+			let menu = document.querySelector('aon-mobile-menu');
+			menu.reload();
 		} else {
 			getCompanies()
 			.then( companies => {

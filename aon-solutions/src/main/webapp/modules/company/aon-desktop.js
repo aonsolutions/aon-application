@@ -16,6 +16,7 @@ import '../fiscal/aon-fiscal.js';
 import '../laboral/aon-laboral.js';
 import '../comunic@/aon-comunica.js';
 import '../signin/aon-signin.js';
+import './aon-stat.js';
 
 export class AonDesktop extends AonElement {
 
@@ -204,7 +205,9 @@ export class AonDesktop extends AonElement {
 		bannerImg.style.width = '100%';
 		bannerImg.style.maxWidth = '1117px';
 		banner.appendChild(bannerImg);
-		div.appendChild(banner);
+		let divSlide = document.createElement('div');
+		divSlide.innerHTML = '<aon-stat></aon-stat>'
+		div.appendChild(divSlide);
 
 		div.appendChild(this.buildTitle('CONTRATADOS'));
 
@@ -388,17 +391,19 @@ export class AonDesktop extends AonElement {
 	appSelection(app) {
 		switch(app){
 			case Apps.DOCUMENTAL.app:
-				//startModule('aon_gwt_aio', 'documents');
 				rootPanel('<aon-documental></aon-documental>')
 				break;
 			case Apps.ACCOUNTING.app:
-				rootPanel('<aon-contable></aon-contable>');
+				this.development('Panel Contable');
+				//rootPanel('<aon-contable></aon-contable>');
 				break;
 			case Apps.FISCAL.app:
-				rootPanel('<aon-fiscal></aon-fiscal>');
+				this.development('Panel Fiscal');
+				//rootPanel('<aon-fiscal></aon-fiscal>');
 				break;
 			case Apps.PAYROLL.app:
-				rootPanel('<aon-laboral></aon-laboral>');
+				this.development('Panel Laboral');
+				//rootPanel('<aon-laboral></aon-laboral>');
 				break;
 			case Apps.COMUNICA.app:
 				rootPanel('<aon-comunica></aon-comunica>');
@@ -410,6 +415,17 @@ export class AonDesktop extends AonElement {
 				rootPanel('<aon-signin></aon-signin>');
 				break;
 		}
+	}
+
+	development(title) {
+		let aonApplication = document.querySelector('aon-application');
+		let d = document.getElementById(aonApplication.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(title);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
 	}
 
 }

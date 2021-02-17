@@ -99,21 +99,24 @@ export class AonMenu extends AonElement {
 				if(this._roles.includes('ADMIN') || this._roles.includes('ACCOUNTING_MANAGER')) {
 					this.buildAppMenu(Apps.ACCOUNTING);
 				} else {
-					rootPanel('<aon-contable></aon-contable>')
+					this.development('Panel Contable');
+					//rootPanel('<aon-contable></aon-contable>')
 				}
 				break;
 			case Apps.FISCAL.app:
 				if(this._roles.includes('ADMIN') || this._roles.includes('FISCAL_MANAGER')) {
 					this.buildAppMenu(Apps.FISCAL);
 				} else {
-					rootPanel('<aon-fiscal></aon-fiscal>')
+					this.development('Panel Fiscal');
+					//rootPanel('<aon-fiscal></aon-fiscal>')
 				}
 				break;
 			case Apps.PAYROLL.app:
 				if(this._roles.includes('ADMIN') || this._roles.includes('PAYROLL_MANAGER')) {
 					this.buildAppMenu(Apps.PAYROLL);
 				} else {
-					rootPanel('<aon-laboral></aon-laboral>')
+					this.development('Panel Laboral');
+					//rootPanel('<aon-laboral></aon-laboral>')
 				}
 				break;
 			case Apps.COMUNICA.app:
@@ -363,11 +366,14 @@ export class AonMenu extends AonElement {
 		let launchButton = document.getElementById('aon-menu-sidenav-app-launch-button');
 		launchButton.addEventListener('click', () => {
 			if(Apps.ACCOUNTING.app === app.app) {
-				rootPanel('<aon-contable></aon-contable>');
+				this.development('Panel Contable');
+				//rootPanel('<aon-contable></aon-contable>');
 			} else if(Apps.FISCAL.app === app.app) {
-				rootPanel('<aon-fiscal></aon-fiscal>');
+				this.development('Panel Fiscal');
+				//rootPanel('<aon-fiscal></aon-fiscal>');
 			} else if(Apps.PAYROLL.app === app.app) {
-				rootPanel('<aon-laboral></aon-laboral>');
+				this.development('Panel Laboral');
+				//rootPanel('<aon-laboral></aon-laboral>');
 			}
 		});
 		let closeButton = document.getElementById('aon-menu-sidenav-app-close-button');
@@ -375,6 +381,17 @@ export class AonMenu extends AonElement {
 			aonMenuSidenav.style.width = '150px';
 			this.buildMenu();
 		});
+	}
+
+	development(title) {
+		let aonApplication = document.querySelector('aon-application');
+		let d = document.getElementById(aonApplication.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(title);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
 	}
 
 	getSubApps(app){
