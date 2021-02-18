@@ -345,6 +345,8 @@ public class SalaryDraft extends ResizeComposite
 			
 			"CAUSA_INACTIVIDAD",
 			
+			"JORNADAS_TEORICAS"
+			
 			
 	};
 

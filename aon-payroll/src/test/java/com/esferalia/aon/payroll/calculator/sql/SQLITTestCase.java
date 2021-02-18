@@ -5804,6 +5804,55 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(2, salary.getSalaryPayments().size());
 
 	}
+
+	@Test
+	public void testIfDaysIT() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				add(getFirstDayOfYear(getToday()), Calendar.MONTH, -6),
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date startITDate = add(startDate, Calendar.MONTH,-2);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+		
+
+		addData(aonContext, contract, add(startDate, Calendar.DAY_OF_MONTH,10), add(startDate, Calendar.DAY_OF_MONTH,20), ContextVariable.IF_DAYS, "10");
+		
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		List<ITimedResult<Number>> results = ctx.getExpressionContext().eval(ContextVariable.LEAVE_DAYS.getName(), startDate, endDate, Number.class);
+		Assert.assertEquals(2, results.size());
+		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		Assert.assertEquals(add(startDate, Calendar.DAY_OF_MONTH,9), results.get(0).getPeriod().getEnd());
+	
+		Assert.assertEquals(add(startDate, Calendar.DAY_OF_MONTH,21), results.get(1).getPeriod().getStart());
+		Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+
+		results = ctx.getExpressionContext().eval(ContextVariable.COMMON_DISEASE_DAYS_21.getName(), startDate, endDate, Number.class);
+		Assert.assertEquals(2, results.size());
+		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		Assert.assertEquals(add(startDate, Calendar.DAY_OF_MONTH,9), results.get(0).getPeriod().getEnd());
+	
+		Assert.assertEquals(add(startDate, Calendar.DAY_OF_MONTH,21), results.get(1).getPeriod().getStart());
+		Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+	}
+	
 	// ------------------------------------------------------------------------
 	
 

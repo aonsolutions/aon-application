@@ -270,6 +270,8 @@ public enum ContextVariable implements IResourceable {
 	SLD_C763("BONIFICACION_FORMACION_CONTINUA", VariableType.DOUBLE, false),
 
 	
+//	DO_DAYS("JORNADAS_REALES", VariableType.DOUBLE, false),
+	IF_DAYS("JORNADAS_TEORICAS", VariableType.DOUBLE, false),
 	;
 
 	public static final String ALL = "_P";

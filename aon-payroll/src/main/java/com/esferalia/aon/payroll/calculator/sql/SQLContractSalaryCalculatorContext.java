@@ -4343,7 +4343,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
-
+		
+		fixItDaysWhenIfDays(ctx);
+		
 		loadWeekHoursContextVariable(ctx);
 
 		List<Period> contract = getMonths(contractStartDate, contractEndDate);
@@ -4897,6 +4899,30 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		}
 
+	}
+	
+	private void fixItDaysWhenIfDays(ContractExpressionContext ctx) {
+		List<Period> ifPeriods = ctx.getPeriods(ContextVariable.IF_DAYS);
+		if ( ifPeriods.isEmpty() ) 
+			return;
+		
+		List<Period> itPeriods = ctx.getPeriods(ContextVariable.LEAVE_DAYS);
+		if ( itPeriods.isEmpty() ) 
+			return;
+		
+		ctx.removeVariable(ContextVariable.LEAVE_DAYS);		
+		
+		for ( Period p : Period.sub(itPeriods, ifPeriods) ) {
+			ctx.setVariable(ContextVariable.LEAVE_DAYS, p.daysStream().count(), p.getStart(), p.getEnd());
+		}
+		
+		itPeriods = ctx.getPeriods(ContextVariable.COMMON_DISEASE_DAYS_21);
+		
+		if ( itPeriods.size() > 0 ) {  
+			ctx.removeVariable(ContextVariable.COMMON_DISEASE_DAYS_21);	
+			for ( Period p : Period.sub(itPeriods, ifPeriods) )
+				ctx.setVariable(ContextVariable.COMMON_DISEASE_DAYS_21, p.daysStream().count(), p.getStart(), p.getEnd());
+		}
 	}
 
 	private void loadWeekHoursContextVariable(ContractExpressionContext ctx) {
