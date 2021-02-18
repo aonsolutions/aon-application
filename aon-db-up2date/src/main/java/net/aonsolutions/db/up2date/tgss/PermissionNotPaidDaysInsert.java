@@ -8,6 +8,7 @@ import java.sql.Date;
 import java.util.Calendar;
 
 import org.jooq.DSLContext;
+import org.jooq.DeleteConditionStep;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.SQLDialect;
 import org.jooq.UpdateConditionStep;
@@ -55,17 +56,11 @@ public class PermissionNotPaidDaysInsert implements Update {
 		
 		
 		
-		boolean upgraded = dslContext.fetchCount(
-				dslContext.select().from(SYSTEM_PAYMENT)
-					.where(SYSTEM_PAYMENT.DOMAIN.eq(0))
-					.and(SYSTEM_PAYMENT.START_DATE.eq(_2010StartDate))
-					.and(SYSTEM_PAYMENT.DESCRIPTION.eq("DIAS PERMISO NO RETRIBUIDO"))
-				) == 1;
 
 		// IF ALREADY EXISTS
-				
-		if ( upgraded )
-			return;
+		DeleteConditionStep<SystemPaymentRecord> deletePermissionNonPaidSystemPayment = dslContext.deleteFrom(SYSTEM_PAYMENT)
+		.where(SYSTEM_PAYMENT.DOMAIN.eq(0))
+		.and(SYSTEM_PAYMENT.DESCRIPTION.eq("PERMISO NO RETRIBUIDO"));
 		
 		// DOMAIN = 0, PERMISSION_NOT_PAID_DAYS
 		
@@ -107,6 +102,7 @@ public class PermissionNotPaidDaysInsert implements Update {
 			
 			upateContractData.execute();
 			upateDropDaysSystemPayment.execute();
+			deletePermissionNonPaidSystemPayment.execute();
 			insertPermissionNonPaidSystemPayment.execute();
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
