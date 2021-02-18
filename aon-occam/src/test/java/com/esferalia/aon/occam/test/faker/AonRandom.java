@@ -6,11 +6,19 @@ import java.util.Locale;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -46,6 +54,16 @@ public class AonRandom {
 
 	public static Tariff getTariff(AONContext ctx) {
 		return TariffDAO.getRandom(ctx, null );
+	}
+
+	public static Registry getRegistry(AONContext ctx) {
+		return RegistryDAO.getRandom(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+	}
+	public static RegistryMedia getRegistryMedia(AONContext ctx, RegistryMediaFilter filter) {
+		return RegistryMediaDAO.getRandom(ctx, null );
+	}
+	public static RegistryAddress getRegistryAddress(AONContext ctx, RegistryAddressFilter filter) {
+		return RegistryAddressDAO.getRandom(ctx, filter );
 	}
 
 	public static Customer getCustomer(AONContext ctx) {
@@ -87,8 +105,11 @@ public class AonRandom {
 			.orElse(null);
 	}
 	
+	
+	
 	private static boolean gt( int percent) {
 		return faker.random().nextInt(0,100) > percent;
 	}
+
 }
 

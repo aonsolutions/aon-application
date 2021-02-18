@@ -24,6 +24,9 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -80,8 +83,10 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 	}
 
 	private static AccountingRegistryServiceAsync SERVICE;
+	
 	private final AccRegTypeListBox type = new AccRegTypeListBox();
-	private FlowPanel documentWarningContainer = new FlowPanel();
+	private final TextBox name = new TextBox();
+	private final FlowPanel documentWarningContainer = new FlowPanel();
 	
 	public AonAccountingRegistryPanel(final String domainName,final int domain,final String user
 			, Integer id 
@@ -125,6 +130,10 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 		} else {
 			show(domainName,domain, user, config, newAccountingRegistry(domain,initial),callback);
 		}
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			public void execute() {
+				type.setFocus(true);
+		}});
 	}
 		
 	protected AccountingRegistry newAccountingRegistry(int domain,AccountingRegistry initial) {
@@ -217,6 +226,8 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 		table.setStyleName(AON.CSS.aonTable());
 		table.addStyleName(AON.CSS.aonWidthAll());
 				
+		AonFullDocument fulldocument = new AonFullDocument();
+		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.titularType()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		type.addKeyUpHandler( keyUpHandler);
@@ -227,6 +238,9 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 			@Override
 			public void onChange(ChangeEvent event) {
 				documentWarningContainer.clear();
+				documentWarningContainer.removeStyleName(AON.CSS.aonMargin());
+				documentWarningContainer.removeStyleName(AON.CSS.aonBorder());
+				documentWarningContainer.removeStyleName(AON.CSS.aonPaddingLeft());
 				type.getValue().visit(reg, new IAccountingRegistryTypeVisitor() {
 					
 					@Override
@@ -269,19 +283,29 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 						okButton.setEnabled(reg.isDirty());
 					}
 				});	
+				if ( AonStringUtils.isNotBlank( fulldocument.getDocument())) {
+					checkRegistryDocument(domainName,domain, user,config,callback,type.getValue(),reg.getId(),fulldocument, false);
+				}
 			}
 		});
 		++row;
 		
-		// table.setWidget(row,0,new InlineLabel("."));
-		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-		table.setWidget(row,1,documentWarningContainer);
+		documentWarningContainer.getElement().getStyle().setProperty("display", "inline-grid");
+		documentWarningContainer.getElement().getStyle().setProperty("max-height", "160px");
+		documentWarningContainer.getElement().getStyle().setProperty("overflow-y", "auto");
+		documentWarningContainer.addStyleName(AON.CSS.aonFlexBlock());
+		documentWarningContainer.addStyleName(AON.CSS.aonFontSmall());
+		documentWarningContainer.addStyleName(AON.CSS.aonWidthAlmostAll()); 
+		documentWarningContainer.addStyleName(AON.CSS.aonBackgroundLigthGray());
+										
+		// table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+		table.setWidget(row,0,documentWarningContainer);
+		table.getFlexCellFormatter().setColSpan(row, 0, 2);
 		++row;
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.document()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 
-		AonFullDocument fulldocument = new AonFullDocument();
 		fulldocument.setValue(reg.getDocumentType(), reg.getDocumentCountry(), reg.getDocument());
 		fulldocument.getTypeWidget().addKeyUpHandler( keyUpHandler);
 		fulldocument.addTypeChangeHandler(new ChangeHandler() {
@@ -289,7 +313,7 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 			public void onChange(ChangeEvent event) {
 				reg.setDocumentType(fulldocument.getType());
 				okButton.setEnabled(reg.isDirty());
-				checkRegistryDocument(domainName,domain, user,config,callback,type.getValue(),reg.getId(),fulldocument,documentWarningContainer, false);
+				// checkRegistryDocument(domainName,domain, user,config,callback,type.getValue(),reg.getId(),fulldocument, false);
 			}
 		});
 		fulldocument.getCountryWidget().addKeyUpHandler( keyUpHandler);
@@ -299,7 +323,7 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 			public void onChange(ChangeEvent event) {
 				reg.setDocumentCountry(fulldocument.getCountry());
 				okButton.setEnabled(reg.isDirty());
-				checkRegistryDocument(domainName,domain,user,config,callback,type.getValue(),reg.getId(),fulldocument,documentWarningContainer, false);
+				// checkRegistryDocument(domainName,domain,user,config,callback,type.getValue(),reg.getId(),fulldocument, false);
 			}
 		});
 		fulldocument.getDocumentWidget().addKeyUpHandler( keyUpHandler);
@@ -309,7 +333,7 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 			public void onValueChange(ValueChangeEvent<String> event) {
 				reg.setDocument(fulldocument.getDocument());
 				okButton.setEnabled(reg.isDirty());
-				checkRegistryDocument(domainName,domain,user,config,callback,type.getValue(),reg.getId(),fulldocument,documentWarningContainer, true);
+				checkRegistryDocument(domainName,domain,user,config,callback,type.getValue(),reg.getId(),fulldocument, true);
 			}
 
 		});
@@ -318,7 +342,6 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 
 		table.setWidget(row,0,new InlineLabel(AON.MSG.name()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-		final TextBox name = new TextBox();
 		name.setValue(reg.getName());
 		name.setStyleName(AON.CSS.aonInputText());
 		name.setVisibleLength(40);
@@ -841,7 +864,6 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
     	buttons.add(cancelButton);
     	rootPanel.add(buttons);
 		setWidget(rootPanel);
-		type.setFocus(true);
 	}
 
 	@Override
@@ -869,24 +891,22 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 			, AccountingRegistryType accountingRegistryType
 			, Integer id
 			, AonFullDocument fulldocument
-			, FlowPanel documentWarningContainer, Boolean documentChange) {
-		if ( id == null
-		 && fulldocument.getType() != null 
-		 && fulldocument.getCountry() != null 
-		 && AonStringUtils.isNotBlank( fulldocument.getDocument())) {
+			, Boolean documentChange) {
+		if ( id == null && AonStringUtils.isNotBlank( fulldocument.getDocument())) {
 			SERVICE.getAccountingRegistries(domainName, domain, user,
 					new AccountingRegistryParams()
 						.setType(accountingRegistryType)
 						.setId(id)
 						.setDocument(fulldocument.getDocument())
-						.setDocumentType(fulldocument.getType())
-						.setDocumentCountry(fulldocument.getCountry())
 					,new AsyncCallback<LinkedList<AccountingRegistry>>() {
 				
 				@Override
 				public void onSuccess(LinkedList<AccountingRegistry> result) {
 					int count = 0;
 					documentWarningContainer.clear();
+					documentWarningContainer.removeStyleName(AON.CSS.aonMargin());
+					documentWarningContainer.removeStyleName(AON.CSS.aonBorder());
+					documentWarningContainer.removeStyleName(AON.CSS.aonPaddingLeft());
 					Boolean sameType = false;
 					for (AccountingRegistry reg : result) {
 						String icon = AON.CSS.aonIconCustomer();
@@ -898,13 +918,14 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 						}
 						if (!AonNumberUtils.equals(reg.getId(),id))  {
 							++count;
-							Label label = new Label(AonStringUtils.abbreviate( AccountingRegistry.getFullDescription(reg), 60) );
+							// Label label = new Label(AonStringUtils.abbreviate( AccountingRegistry.getFullDescription(reg), 60) );
+							Label label = new Label(AccountingRegistry.getFullDescription(reg) );
+							label.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
 							label.setTitle(AON.MSG.selectAction());
-							label.setStyleName(AON.CSS.aonBlockMessage());
-							label.addStyleName(AON.CSS.aonFixedFont());
+							label.setStyleName(AON.CSS.aonLabelWithIcon());
 							label.addStyleName(icon);
-							label.addStyleName(AON.CSS.aonClickable());
-							label.addStyleName(AON.CSS.aonBorderBottom());
+							label.addStyleName(AON.CSS.aonClickableLabel());
+							label.addStyleName(AON.CSS.aonEllipsis());
 							label.addClickHandler( new ClickHandler() {
 								@Override
 								public void onClick(ClickEvent event) {
@@ -928,7 +949,7 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 									}
 								}
 							});
-							documentWarningContainer.add(label);
+							documentWarningContainer.add( label );
 						}
 					} 
 					
@@ -938,13 +959,19 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 								.setDocumentType(fulldocument.getType())
 								.setDocument(fulldocument.getDocument())
 								.setType(accountingRegistryType);
-						SERVICE.getAccountingRegistry(domainName, domain, user, 
+						SERVICE.initialize(domainName, domain, user, 
 								ar,  new AsyncCallback<AccountingRegistry>() {
 									
 							@Override
 							public void onSuccess(AccountingRegistry result) {
 								
-								show(domainName, domain, user, config, result, callback);		
+								show(domainName, domain, user, config, result, callback);
+								Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+									public void execute() {
+										name.selectAll();
+										name.setFocus(true);				
+								}});
+								
 							}
 									
 							@Override
@@ -955,9 +982,14 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 					}
 					if (count > 0) {
 						Label errorLabel = new Label( AON.MSG.existingRegistryWarning(result.size()));
-						errorLabel.setStyleName(AON.CSS.aonBlockMessage());
-						errorLabel.addStyleName(AON.CSS.aonBlockWarningMessage());
+						errorLabel.setStyleName(AON.CSS.aonLabelWithIcon());
+						errorLabel.addStyleName(AON.CSS.aonIconWarning());
+						errorLabel.addStyleName(AON.CSS.aonBold());
+						errorLabel.addStyleName(AON.CSS.aonBorderBottom());
 						documentWarningContainer.insert(errorLabel, 0 );
+						documentWarningContainer.addStyleName(AON.CSS.aonMargin());
+						documentWarningContainer.addStyleName(AON.CSS.aonBorder());
+						documentWarningContainer.addStyleName(AON.CSS.aonPaddingLeft());
 					} 
 				}
 				

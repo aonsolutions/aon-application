@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 
 public class Asserts {
 	
@@ -37,6 +38,19 @@ public class Asserts {
 		assertEquals("DeliveryGrouped",expected.isDeliveryGrouped(),actual.isDeliveryGrouped());
 		assertEquals("DeliveryValuated",expected.isDeliveryValuated(),actual.isDeliveryValuated());
 		assertEquals("Account",expected.getAccount(),actual.getAccount());
+	}
+
+	public static void assertEqualsRegistryMedia (RegistryMedia expected, RegistryMedia actual) {
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("Registry",expected.getRegistry(), actual.getRegistry());
+		assertEquals("Media",expected.getMedia(), actual.getMedia());
+		assertEquals("Value",expected.getValue(), actual.getValue());
+		assertEquals("Comment",expected.getComment(), actual.getComment());
+		assertEquals("Raddress",expected.getRaddress(), actual.getRaddress());
+		assertEquals("Administrative",expected.isAdministrative(), actual.isAdministrative());
+		assertEquals("Commercial",expected.isCommercial(), actual.isCommercial());
+		assertEquals("Technical",expected.isTechnical(), actual.isTechnical());
 	}
 
 	public static void assertEqualsTariff(Tariff expected, Tariff actual) {

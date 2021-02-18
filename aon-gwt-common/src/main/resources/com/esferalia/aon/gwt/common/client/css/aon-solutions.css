@@ -302,6 +302,12 @@
 	white-space: nowrap;
 }
 
+.aon_ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .aon_display_grid_cell_inner {
 	display: flex;
 	align-items: self-end;
@@ -417,7 +423,7 @@
 }
 
 .aon_clickable_block:hover {
-	background-color: #FFFFD1;
+	background-color: #EEE;
 }
 
 .aon_padding {
@@ -1274,7 +1280,6 @@
 	user-select: none;
 	outline: 0;
 	border: none;
-	overflow: visible;
 	display: inline-flex;
 	background-position: left center;
 	background-repeat: no-repeat;

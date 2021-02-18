@@ -7,12 +7,17 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.MediaType.IMediaTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
 public class AonFaker {
@@ -54,6 +59,47 @@ public class AonFaker {
 		return customer;
 	}
 	
+	public static RegistryMedia getRegistryMedia( AONContext ctx) {
+		return getRegistryMedia(ctx, null); 
+	}
+	public static RegistryMedia getRegistryMedia( AONContext ctx, Registry registry ) {
+		if (registry == null) {
+			registry = AonRandom.getRegistry(ctx);
+		}
+		RegistryMedia media = new RegistryMedia();
+		media.setDomain(ctx.getDomainId());
+		media.setRegistry(registry.getId());
+		MediaType mediaType = AonRandom.randomEnum(MediaType.class); 
+		media.setMedia(mediaType);
+		if (mediaType != null) {
+			mediaType.visit(new IMediaTypeVisitor() {
+				@Override public void visitWeb() { media.setValue( faker.internet().url() ); }
+				@Override public void visitUnknown() { media.setValue( null ); }
+				@Override public void visitFixedPhone() { media.setValue( faker.phoneNumber().phoneNumber() ); }
+				@Override public void visitFax() { media.setValue( faker.phoneNumber().phoneNumber() ); }
+				@Override public void visitEmail() {
+					String email = faker.internet().safeEmailAddress();
+					email = AonStringUtils.remove(email, ' ');
+					media.setValue( email );
+				}
+				@Override public void visitCellular() {media.setValue( faker.phoneNumber().cellPhone() );}
+			});
+		}
+		media.setComment( AonRandom.b(25) ? faker.lorem().characters(0, 64) : null); 
+		
+		media.setAdministrative(AonRandom.b(95));
+		media.setCommercial(AonRandom.b(55));
+		media.setTechnical(AonRandom.b(25));
+		if (AonRandom.b(15)) {
+			int registryId = registry.getId();
+			RegistryAddress address = AonRandom.getRegistryAddress(ctx, f-> f.getRegistryProperty().eq(registryId));
+			if (address != null) {
+				media.setRaddress(address.getId());
+			}
+		}
+		return media;
+	}
+
 	public static Tariff getTariff( AONContext ctx ) {
 		Tariff tariff = new Tariff();
 		tariff.setDomain(ctx.getDomainId());

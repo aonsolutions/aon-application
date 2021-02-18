@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
@@ -13,45 +12,16 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.registry.Raddinfo;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 
-public class OCRDAO {
+public class OCRDAO extends GlobalDAO {
 	
 	private static final Logger LOGGER = Logger.getLogger(OCRDAO.class.getName());
 	
-	private static final String GLOBAL_DOMAIN_NAME = "global.aonsolutions.net";
-	private static final int GLOBAL_DOMAIN_ID = -1;
 	private static final String OCR_REF_PATTERN = "OCR_REF_PATTERN";
 	private static final String REGISTRY_ALIAS_MARK = "OCR AUTOML";
  
-	private static Integer getGlobalDomain( AONContext ctx ) {
-		return ctx.getDslContext()
-			.select( DOMAIN.ID )
-			.from(DOMAIN)
-			.where(DOMAIN.NAME.eq( GLOBAL_DOMAIN_NAME ) )
-			.fetch()
-			.stream()
-			.map( rec -> rec.getValue(DOMAIN.ID))
-			.findFirst()
-			.orElse(null);
-	}
-	
-	public static Registry getRegistry( String user, String document ) {
-		try ( AONContext ctx =  AONContext.getAONContext(GLOBAL_DOMAIN_NAME, GLOBAL_DOMAIN_ID , user) ) {
-			return RegistryDAO.getStream(ctx, f -> 
-						f.getDomainProperty().eq(GLOBAL_DOMAIN_ID)
-						.and(f.getDocumentProperty().eq(document)))
-				.findFirst()
-				.orElse(null);
-			
-		} catch (Throwable t) {
-			LOGGER.severe("Con not read GLOBAL registry OCR ("+ t.getMessage() +")");
-			return null;
-		}
-	}
-	
 	public static String[] getReferencePatterns( String user, String document ) {
-		try ( AONContext ctx =  AONContext.getAONContext(GLOBAL_DOMAIN_NAME, GLOBAL_DOMAIN_ID , user) ) {
+		try ( AONContext ctx =  getGlobalAONContext( user) ) {
 			return ctx.getDslContext()
 				.select( RADDINFO.VALUE )
 				.from(RADDINFO)
@@ -74,7 +44,7 @@ public class OCRDAO {
 		teachReferenceCode(user, document, reference, new Date());
 	}
 	public static void teachReferenceCode(String user, String document, String reference, Date date) {
-		try ( AONContext ctx =  AONContext.getAONContext(GLOBAL_DOMAIN_NAME, GLOBAL_DOMAIN_ID, user) ) {
+		try ( AONContext ctx =  getGlobalAONContext( user) ) {
 			final Integer globalDomain =  getGlobalDomain(ctx);
 			Integer registry = ensureRegistry(ctx, globalDomain, document );
 			LinkedList<Raddinfo> patterns = ctx.getDslContext()
@@ -179,42 +149,6 @@ public class OCRDAO {
 	private static final String ANY_RE = ".";
 	private static final String DOT_RE = "\\.";
 
-//	private static String infer(String  pat, String ref) {
-//		if (ref != null) {
-//			ref = ref.trim().toUpperCase();
-//			if (pat == null) {
-//				return generalize(ref);
-//			}
-//			pat = pat.replace("\\", "");
-//			int maxLength = Math.max(ref.length(),pat.length());
-//			char[] ret = new char[maxLength];
-//			Arrays.fill(ret, ' ');
-//			System.out.println("\t infering: ["+pat+"]  and ["+ref+"]");
-//			for (int i = 0; i < maxLength ; ++i) {
-//				if (i >= pat.length()) {
-//					ret[i] = generalize(ref.charAt(i));;;
-//				} else if (i >= ref.length()) {
-//					ret[i] = generalize(pat.charAt(i));;
-//				} else {
-//					ret[i] = join(pat.charAt(i) , ref.charAt(i));
-//				}
-//			}
-//			pat = new String( ret );	
-//		}
-//		String toReturn = toRegex( pat );
-//		System.out.println("\t infering: ["+pat+"]  and ["+ref+"] ---> [" + toReturn + "]");
-//		return toReturn;
-//	}
-//	private static char join(char p , char r) {
-//		r = generalize(r);
-//		if (p==r) return p;
-//		if ( p==DIGIT  && r==WORD) return WORD;
-//		if ( p==WORD && r==DIGIT) return WORD;
-//		return ANY;
-//	}
-	
-
-	
 	private static char generalize(char r) {
 		if (Character.isDigit(r)) return  DIGIT;	
 		else if (Character.isLetter(r)) return WORD;	

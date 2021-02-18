@@ -39,6 +39,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 
 public interface IAccounting {
 	//		  	REGISTRY
+	public AccountingRegistry initialize(AONContext ctx, AccountingRegistry ar);
 	public Stream<AccountingRegistry> getAccountingRegistries(AONContext ctx, AccountingRegistryFilter filter);
 	public AccountingRegistry insert(AONContext ctx, AccountingRegistry reg);
 	public AccountingRegistry update(AONContext ctx, AccountingRegistry reg);

@@ -1107,7 +1107,7 @@ public class DeliveryImport {
 				if(r.getTelefono1() != null) {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
-							.setRegistry(new Registry().setId(registry.getId()))
+							.setRegistry(registry.getId())
 							.setMedia(MediaType.FIXED_PHONE)
 							.setValue(r.getTelefono1());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
@@ -1116,7 +1116,7 @@ public class DeliveryImport {
 				if(r.getTelefono2() != null) {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
-							.setRegistry(new Registry().setId(registry.getId()))
+							.setRegistry(registry.getId())
 							.setMedia(MediaType.FIXED_PHONE)
 							.setValue(r.getTelefono2());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
@@ -1125,7 +1125,7 @@ public class DeliveryImport {
 				if(r.getFax() != null) {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
-							.setRegistry(new Registry().setId(registry.getId()))
+							.setRegistry(registry.getId())
 							.setMedia(MediaType.FAX)
 							.setValue(r.getFax());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
@@ -1134,7 +1134,7 @@ public class DeliveryImport {
 				if(r.getEmail() != null) {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
-							.setRegistry(new Registry().setId(registry.getId()))
+							.setRegistry(registry.getId())
 							.setMedia(MediaType.EMAIL)
 							.setValue(r.getTelefono1());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);
@@ -1143,7 +1143,7 @@ public class DeliveryImport {
 				if(r.getWeb() != null) {
 					RegistryMedia rm = new RegistryMedia()
 							.setDomain(domain.getId())
-							.setRegistry(new Registry().setId(registry.getId()))
+							.setRegistry(registry.getId())
 							.setMedia(MediaType.WEB)
 							.setValue(r.getWeb());
 					AON.insertRMedia(domain.getName(), domain.getId(), user.getLogin(), rm);

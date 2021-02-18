@@ -420,7 +420,10 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_nowrap")
 	String aonNowrap();
-	
+		
+	@ClassName("aon_ellipsis")
+	String aonEllipsis();
+
 	@ClassName("aon_truncate")
 	String aonTruncate();
 	

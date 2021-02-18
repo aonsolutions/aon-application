@@ -104,7 +104,7 @@ public enum InvoiceType implements Serializable  {
 	
 	public static InvoiceType safeValueOf( Integer i ) {
 		if (i == null) return null;
-		if (i < 0 || i >= DocumentType.values().length) return null;
+		if (i < 0 || i >= InvoiceType.values().length) return null;
 		return InvoiceType.values()[i];
 	}
 	

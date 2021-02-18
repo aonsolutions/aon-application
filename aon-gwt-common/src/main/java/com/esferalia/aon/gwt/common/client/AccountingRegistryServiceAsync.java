@@ -10,7 +10,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface AccountingRegistryServiceAsync {
 
-	void getAccountingRegistry(String domainName, int domain, String user, AccountingRegistry ar, AsyncCallback<AccountingRegistry> callback);
+	void initialize(String domainName, int domain, String user, AccountingRegistry ar, AsyncCallback<AccountingRegistry> callback);
+//	void getAccountingRegistry(String domainName, int domain, String user, AccountingRegistry ar, AsyncCallback<AccountingRegistry> callback);
 	void getAccountingRegistries(String domainName, int domain, String user, Integer id, AsyncCallback<LinkedList<AccountingRegistry>> callback);
 	void getAccountingRegistries(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<AccountingRegistry>> asyncCallback);
 	void getAccountingRegistries(String domainName, int domain, String user, AccountingRegistryParams params, AsyncCallback<LinkedList<AccountingRegistry>> callback);

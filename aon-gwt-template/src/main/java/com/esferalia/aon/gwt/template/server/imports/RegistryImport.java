@@ -304,7 +304,7 @@ public class RegistryImport extends Import {
 			}
 			Integer registryId = reg.getId();
 			for(RegistryMedia rm : r.getRmediaList()) {
-				rm.setRegistry(reg);
+				rm.setRegistry(reg.getId());
 				RegistryMedia rm2 = AON.getRMedia(domain.getName(), domain.getId(), user.getLogin(), f -> 
 					f.getDomainProperty().eq(domain.getId())
 					.and(f.getRegistryProperty().eq(registryId))

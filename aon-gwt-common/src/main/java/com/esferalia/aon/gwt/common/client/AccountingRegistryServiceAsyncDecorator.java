@@ -17,10 +17,16 @@ public class AccountingRegistryServiceAsyncDecorator implements AccountingRegist
 	}
 
 	@Override
-	public void getAccountingRegistry(String domainName, int domain, String user, AccountingRegistry ar, AsyncCallback<AccountingRegistry> callback) {
+	public void initialize(String domainName, int domain, String user, AccountingRegistry ar, AsyncCallback<AccountingRegistry> callback) {
 		AON.start();
-		serviceAsync.getAccountingRegistry(domainName, domain, user, ar, new AsyncCallbackWrapper<AccountingRegistry>(callback));
+		serviceAsync.initialize(domainName, domain, user, ar, new AsyncCallbackWrapper<AccountingRegistry>(callback));
 	}
+
+//	@Override
+//	public void getAccountingRegistry(String domainName, int domain, String user, AccountingRegistry ar, AsyncCallback<AccountingRegistry> callback) {
+//		AON.start();
+//		serviceAsync.getAccountingRegistry(domainName, domain, user, ar, new AsyncCallbackWrapper<AccountingRegistry>(callback));
+//	}
 
 	@Override
 	public void getAccountingRegistries(String domainName, int domain, String user, Integer id, AsyncCallback<LinkedList<AccountingRegistry>> callback) {

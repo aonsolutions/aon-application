@@ -51,6 +51,16 @@ public class ACCOUNTING {
 	// ********************************************
 	// ********************* ACCOUNTING REGISTRY **
 	// ********************************************
+	public static AccountingRegistry initialize(String domainName, int domain, String user, AccountingRegistry ar) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().initialize(ctx, ar);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	public static AccountingRegistry insert(String domainName,
 			int domainId, String login, AccountingRegistry reg) {
 		AONContext ctx = null;
@@ -926,6 +936,7 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
+
 
 		
 }

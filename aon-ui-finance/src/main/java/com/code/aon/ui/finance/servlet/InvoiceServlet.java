@@ -428,11 +428,11 @@ public class InvoiceServlet extends HttpServlet{
 		rm.setId(rmedia.getId());
 		rm.setValue(rmedia.getValue());
 		rm.setComment(rmedia.getComment());
-		rm.setAdministrative(rmedia.getAdministrative() != null && rmedia.getAdministrative().equals(1));
-		rm.setCommercial(rmedia.getCommercial() != null && rmedia.getCommercial().equals(1));
-		rm.setTechnical(rmedia.getTechnical() != null && rmedia.getTechnical().equals(1));
+		rm.setAdministrative(rmedia.isAdministrative());
+		rm.setCommercial(rmedia.isCommercial());
+		rm.setTechnical(rmedia.isTechnical());
 		Registry registry = new Registry();
-		registry.setId(rmedia.getRegistry().getId());
+		registry.setId(rmedia.getRegistry());
 		rm.setRegistry(registry);
 		return rm;
 	}

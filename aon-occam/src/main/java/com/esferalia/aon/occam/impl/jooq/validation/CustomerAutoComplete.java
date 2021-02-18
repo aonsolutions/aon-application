@@ -12,14 +12,14 @@ public class CustomerAutoComplete {
 	
 	public static BiConsumer<AONContext,Customer> COMPLETE_TRANSACTION = (ctx,customer) -> {
 		if (customer.getTransaction() == null) {
-			ctx.log().info("\t saving registry: autocomplete trasnsaction: " + InvoiceTransactionType.NATIONAL);
+			ctx.log().info("\t saving customer: autocomplete transaction: " + InvoiceTransactionType.NATIONAL);
 			customer.setTransaction(InvoiceTransactionType.NATIONAL);
 		}
 	};
 
 	public static BiConsumer<AONContext,Customer> COMPLETE_STATUS = (ctx,customer) -> {
 		if (customer.getStatus() == null) {
-			ctx.log().info("\t saving registry: autocomplete status: " + RegistryStatus.ACTIVE);
+			ctx.log().info("\t saving customer: autocomplete status: " + RegistryStatus.ACTIVE);
 			customer.setStatus(RegistryStatus.ACTIVE);
 		}
 	};

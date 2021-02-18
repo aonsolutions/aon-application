@@ -339,7 +339,10 @@ public enum StreetType {
 	ZONA 	("ZONA ","ZO","ZONA"),
 	ZUBI 	("ZUBI ","PT","ZUBI"),
 	ZUHAI	("ZUHAI","AB","ZUHAIZTI"),
-	ZUMAR	("ZUMAR","AL","ZUMARDI")
+	ZUMAR	("ZUMAR","AL","ZUMARDI"),
+	
+	XX	("XX","XX","XX"),	// TODO ???????????????
+	ZZ	("ZZ","ZZ","ZZ"),	// TODO ???????????????
 	;
 	private String ineCode;
 	private String aeatCode;

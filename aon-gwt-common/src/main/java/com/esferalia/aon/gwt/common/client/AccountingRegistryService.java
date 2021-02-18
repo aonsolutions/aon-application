@@ -13,7 +13,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("ms/AccountingRegistry")
 public interface AccountingRegistryService extends RemoteService {
 
-	AccountingRegistry getAccountingRegistry(String domainName, int domain, String user, AccountingRegistry ar) throws AonCoreException;
+	AccountingRegistry initialize(String domainName, int domain, String user, AccountingRegistry ar) throws AonCoreException;
+//	AccountingRegistry getAccountingRegistry(String domainName, int domain, String user, AccountingRegistry ar) throws AonCoreException;
 	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain, String user,Integer id) throws AonCoreException;
 	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain, String user,String query) throws AonCoreException;
 	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain, String user,AccountingRegistryParams params) throws AonCoreException;

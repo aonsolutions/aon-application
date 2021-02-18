@@ -930,7 +930,7 @@ public class AccountingRegistryPanel extends SimpleLayoutPanel implements Focusa
 								.setDocumentType(fulldocument.getType())
 								.setDocument(fulldocument.getDocument())
 								.setType(accountingRegistryType);
-						SERVICE.getAccountingRegistry(domainName, domain, user, 
+						SERVICE.initialize(domainName, domain, user, 
 								ar,  new AsyncCallback<AccountingRegistry>() {
 									
 							@Override

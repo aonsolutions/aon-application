@@ -4,6 +4,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
@@ -26,13 +27,16 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.MediaType.IMediaTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -518,5 +522,120 @@ public class AccountingRegistryDAO {
 		}
 		return reg;
 	}
+
+	public static AccountingRegistry initialize(AONContext ctx, AccountingRegistry ar) {
+		// Tiene ID, se resetea todo desde BD.
+		if (ar.getId() != null) {
+			return getAccountingRegistries(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()))
+				.findFirst()
+				.orElse(null);
+		}
+		
+		// No tiene tipo, no se que inicializar.
+		if (ar.getType() == null) throw new IllegalArgumentException("El Dato 'Tipo' es obligatorio.");
+
+		// No tiene documento, la busqueda es demasiado aleatoria. No se sigue.
+		if (AonStringUtils.isBlank( ar.getDocument() )) throw new IllegalArgumentException("El Dato 'Documento' es obligatorio.");	
+		
+		// 1) Se busca EN EL DOMINIO un registry que coincida con el documento.
+		Registry reg = searchRegistryInDomain( ctx, ar);
+		boolean foundInDomain = reg != null;
+		
+		// 2) En el caso de ser dominio hijo, se busca en sus hermanos.
+		boolean foundInSiblings = false;
+		if (reg == null) {
+			reg = searchRegistryInSiblings( ctx, ar);
+			foundInSiblings = reg != null;
+		}
+		
+		// 3) Como ultima opcion se busca en GLOBAL.
+		boolean foundInGlobal = false;
+		if (reg == null) {
+			reg = searchRegistryInGlobal( ctx, ar);
+			foundInGlobal = reg != null;
+		}
+		
+		if ( reg != null) {
+			fillRegistry(ctx, ar, reg , foundInDomain, foundInSiblings, foundInGlobal);
+		}
+		return ar;
+	}
+
+	private static Registry searchRegistryInDomain(AONContext ctx, AccountingRegistry ar) {
+		Registry reg = RegistryDAO.getStream(ctx, 
+				f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getDocumentProperty().eq(ar.getDocument()))
+				)
+			.findFirst()
+			.orElse(null);
+		return reg;
+	}
+	
+	private static Registry searchRegistryInSiblings(AONContext ctx, AccountingRegistry ar) {
+		Registry reg = null;
+		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
+		if (domain.getParentId() != null) {
+			reg = ctx.getDslContext()
+				.select()
+				.from(REGISTRY)
+				.innerJoin(DOMAIN).on(REGISTRY.DOMAIN.eq(DOMAIN.ID))
+				.where(REGISTRY.DOCUMENT.eq(ar.getDocument()))
+				.and(DOMAIN.PARENT.eq(domain.getParentId()))
+				.fetch()
+				.stream()
+				.map(new RegistryFiller())
+				.findFirst()
+				.orElse(null);
+		}
+		return reg;
+	}
+	
+	private static Registry searchRegistryInGlobal(AONContext ctx, AccountingRegistry ar) {
+		return GlobalDAO.getRegistry(ctx.getUser(), ar.getDocument());
+	}
+
+	private static void fillRegistry(AONContext ctx, AccountingRegistry ar, Registry reg
+			, boolean foundInDomain
+			, boolean foundInSiblings
+			, boolean foundInGlobal) {
+		ar.setId(null)
+			.setAccountId(null)
+			.setAccountCode(null)
+			.setAccountDescription(null)
+			.setDocumentType(reg.getDocumentType())
+			.setDocumentCountry(reg.getDocumentCountry())
+			.setDocument(reg.getDocument())
+			.setName(reg.getName())
+			.setAlias(reg.getAlias());
+		
+		if (foundInDomain) {
+			RegistryMediaDAO.getStreamByRegistry(ctx, reg.getId())
+			.forEach( media -> media.getMedia().visit( new IMediaTypeVisitor(){
+				@Override public void visitUnknown( ) {}
+				@Override public void visitFixedPhone() {ar.setPhone(media.getValue());}
+				@Override public void visitCellular() {ar.setCellular(media.getValue());}
+				@Override public void visitFax() {ar.setFax(media.getValue());}
+				@Override public void visitEmail() {ar.setEmail(media.getValue());}
+				@Override public void visitWeb() {ar.setWeb(media.getValue());}
+			}));
+		}
+		
+		if (!foundInGlobal) {
+			RegistryAddress address = RegistryAddressDAO.getMain(ctx, reg.getId());
+			if (address != null) {
+				ar.setAddressId(null)
+				.setAddress(address.getAddress())
+				.setAddressNumber(address.getNumber())
+				.setAddressStreetType(address.getStreetType())
+				.setAddressTown(address.getCity())
+				.setAddressZIP(address.getZip())
+				.setGeozone(address.getGeozone());
+			}
+		}
+	}
 	
 }
+
+
+
+

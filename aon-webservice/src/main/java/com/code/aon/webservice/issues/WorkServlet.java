@@ -163,7 +163,7 @@ public class WorkServlet extends HttpServlet{
 		registry = AON.insertRegistry(domain.getName(), domain.getId(), userName, registry);
 		if(json.opt("email") != null){
 			RegistryMedia rmedia = new RegistryMedia().setMedia(MediaType.EMAIL).setValue(json.getString("email"))
-				.setDomain(domain.getId()).setRegistry(registry);
+				.setDomain(domain.getId()).setRegistry(registry.getId());
 			AON.insertRMedia(domain.getName(), domain.getId(), userName, rmedia);
 		}			
 		TaskHolder taskHolder = new TaskHolder()
@@ -199,7 +199,7 @@ public class WorkServlet extends HttpServlet{
 						rmedia.setValue(json.getString("email")));
 			} else if(rmedia.getValue() == null){
 				rmedia = new RegistryMedia()
-						.setRegistry(registry)
+						.setRegistry(registry.getId())
 						.setDomain(domain.getId())
 						.setMedia(MediaType.EMAIL)
 						.setValue(json.getString("email"));

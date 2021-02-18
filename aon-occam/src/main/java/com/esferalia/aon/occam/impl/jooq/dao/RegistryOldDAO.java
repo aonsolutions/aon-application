@@ -146,7 +146,15 @@ public class RegistryOldDAO {
 	
 	private static final CreditorPropertiesDAO CREDITOR_PROPERTIES = new CreditorPropertiesDAO();
 
+	/**
+	 * @deprecated  Replaced by RegistryAddressDAO.RAddressPropertiesDAO
+	 */
+	@Deprecated(forRemoval = true )
 	private static final RAddressPropertiesDAO RADDRESS_PROPERTIES = new RAddressPropertiesDAO();
+	/**
+	 * @deprecated  Replaced by RegistryAddressDAO.RAddressPropertiesDAO
+	 */
+	@Deprecated(forRemoval = true )
 	private static class RAddressPropertiesDAO implements RegistryAddressProperties {
 		private Condition[] getConditions(RegistryAddressFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -238,6 +246,10 @@ public class RegistryOldDAO {
 	}
 	
 	
+	/**
+	 * @deprecated  Replaced by RegistryAddressDAO.getStream
+	 */
+	@Deprecated(forRemoval = true )
 	public static Stream<Registry> getAonRegistryStream(AONContext ctx, RegistryFilter filter){
 		return ctx.getDslContext().select().from(REGISTRY)
 				.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.eq(REGISTRY.ID))
@@ -259,6 +271,7 @@ public class RegistryOldDAO {
 	/**
 	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.getRegistry(AONContext ctx, Integer id)
 	 */
+	@Deprecated(forRemoval = true )
 	public static Registry getRegistry(AONContext ctx, RegistryFilter filter){
 		return getRegistryStream(ctx, filter).findFirst().orElse(new Registry());
 	}
@@ -278,6 +291,10 @@ public class RegistryOldDAO {
 		}
 	}
 	
+	/**
+	 * @deprecated  Replaced by RegistryDAO.RegistryFiller
+	 */
+	@Deprecated(forRemoval = true )
 	public static class RegistryFiller  implements Function<Record,Registry> {
 
 		@Override
@@ -298,6 +315,10 @@ public class RegistryOldDAO {
 		
 	}
 	
+	/**
+	 * @deprecated  Replaced by RegistryDAO.RegistryFiller
+	 */
+	@Deprecated(forRemoval = true )
 	public static class FullRegistryFiller  implements Function<Record,Registry> {
 
 		@Override
@@ -428,7 +449,15 @@ public class RegistryOldDAO {
 	
 	// ------------------------------------- RMEDIA
 	
+	/**
+	 * @deprecated  Replaced by RegistryMediaDAO.RMediaPropertiesDAO
+	 */
+	@Deprecated(forRemoval = true )
 	private static final RMediaPropertiesDAO RMEDIA_PROPERTIES = new RMediaPropertiesDAO();
+	/**
+	 * @deprecated  Replaced by RegistryMediaDAO.RMediaPropertiesDAO
+	 */
+	@Deprecated(forRemoval = true )
 	private static class RMediaPropertiesDAO implements RegistryMediaProperties {
 		private Condition[] getConditions(RegistryMediaFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -447,11 +476,19 @@ public class RegistryOldDAO {
 		@Override public Property<Integer> getRaddressProperty() {return new FilterDAO.PropertyDAO<Integer>(RMEDIA.RADDRESS);}
 	}
 	
+	/**
+	 * @deprecated  Replaced by RegistryMediaDAO.getStream
+	 */
+	@Deprecated(forRemoval = true )
 	public static Stream<RegistryMedia> getRMediaStream(AONContext ctx, RegistryMediaFilter filter){
 		return ctx.getDslContext().select().from(RMEDIA).where(RMEDIA_PROPERTIES.getConditions(filter))
 				.fetchInto(RMEDIA).stream().map(new RMediaFiller());
 	}
 	
+	/**
+	 * @deprecated  Replaced by RegistryMediaDAO.RegistryMediaFiller
+	 */
+	@Deprecated(forRemoval = true )
 	public static class RMediaFiller  implements Function<Record,RegistryMedia> {
 
 		@Override
@@ -465,7 +502,7 @@ public class RegistryOldDAO {
 					.setDomain(r.getValue(RMEDIA.DOMAIN))
 					.setComment(r.getValue(RMEDIA.COMMENT))
 					.setMedia(MediaType.safeValueOf(r.getValue(RMEDIA.MEDIA)))
-					.setRegistry(new Registry().setId(r.getValue(RMEDIA.REGISTRY)))
+					.setRegistry(r.getValue(RMEDIA.REGISTRY))
 					.setAdministrative(r.getValue(RMEDIA.ADMINISTRATIVE) == 1)
 					.setCommercial(r.getValue(RMEDIA.COMMERCIAL) == 1)
 					.setTechnical(r.getValue(RMEDIA.TECHNICAL) == 1)
@@ -537,6 +574,10 @@ public class RegistryOldDAO {
 				.fetchInto(REGISTRY).stream().map(new SellerFiller());
 	}
 	
+	/**
+	 * @deprecated  Replaced by RegistryAddressDAO.getStreamByRegistry
+	 */
+	@Deprecated(forRemoval = true )
 	public static Stream<RAddress> getRAddressStream(AONContext ctx, Integer registryId){
 		return ctx.getDslContext().select().from(RADDRESS)
 					.join(REGISTRY).on(RADDRESS.REGISTRY.eq(REGISTRY.ID))
@@ -545,6 +586,10 @@ public class RegistryOldDAO {
 				.fetch().stream().map(new RAddressFiller());
 	}
 
+	/**
+	 * @deprecated  Replaced by RegistryAddressDAO.getStream
+	 */
+	@Deprecated(forRemoval = true )
 	public static Stream<RAddress> getRAddressStream(AONContext ctx,
 			RegistryAddressFilter filter) {
 		return ctx.getDslContext().select().from(RADDRESS)
@@ -554,6 +599,10 @@ public class RegistryOldDAO {
 				.fetch().stream().map(new RAddressFiller());
 	}
 	
+	/**
+	 * @deprecated  Replaced by RegistryAddressDAO.insert
+	 */
+	@Deprecated(forRemoval = true )
 	public static RAddress insertRAddress(AONContext ctx, RAddress raddress){
 		return ctx.getDslContext().insertInto(RADDRESS, RADDRESS.ADDRESS, RADDRESS.ADDRESS2, RADDRESS.ADDRESS3, RADDRESS.ALIAS,
 				RADDRESS.CITY, RADDRESS.DOMAIN, RADDRESS.GEOZONE, RADDRESS.MUNICIPALITY_CODE, RADDRESS.NUMBER, RADDRESS.RECIPIENT,
@@ -599,14 +648,24 @@ public class RegistryOldDAO {
 			.returning().fetch().stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
 	}
 	
+	/**
+	 * @deprecated  Replaced by RegistryMediaDAO.insert
+	 */
+	@Deprecated(forRemoval = true )
 	public static RegistryMedia insertRMedia(AONContext ctx, RegistryMedia rmedia){
 		return ctx.getDslContext().insertInto(RMEDIA, RMEDIA.ADMINISTRATIVE, RMEDIA.COMMENT, RMEDIA.COMMERCIAL, RMEDIA.DOMAIN, RMEDIA.MEDIA,
 				RMEDIA.RADDRESS, RMEDIA.REGISTRY, RMEDIA.TECHNICAL, RMEDIA.VALUE)
-			.values(rmedia.getAdministrativeValue(), rmedia.getComment(), rmedia.getCommercialValue(), rmedia.getDomain(), rmedia.getMedia().value(),
-					rmedia.getRaddress(), rmedia.getRegistry().getId(), rmedia.getTechnicalValue(), rmedia.getValue()).returning()
+			.values(AonEnumUtils.getByte( rmedia.isAdministrative()), rmedia.getComment(), 
+					AonEnumUtils.getByte( rmedia.isCommercial()), rmedia.getDomain(), rmedia.getMedia().value(),
+					rmedia.getRaddress(), rmedia.getRegistry(), 
+					AonEnumUtils.getByte( rmedia.isTechnical()), rmedia.getValue()).returning()
 			.fetch().stream().map(new RMediaFiller()).findFirst().orElse(new RegistryMedia());
 	}
 	
+	/**
+	 * @deprecated  Replaced by RegistryMediaDAO.update
+	 */
+	@Deprecated(forRemoval = true )
 	public static RegistryMedia updateRMedia(AONContext ctx, RegistryMedia rmedia){
 		return ctx.getDslContext().update(RMEDIA)
 			.set(RMEDIA.VALUE, rmedia.getValue())
@@ -615,6 +674,10 @@ public class RegistryOldDAO {
 			.fetch().stream().map(new  RMediaFiller()).findFirst().orElse(new RegistryMedia());
 	}
 	
+	/**
+	 * @deprecated  Replaced by RegistryMediaDAO.delete
+	 */
+	@Deprecated(forRemoval = true )
 	public static RegistryMedia deleteRMedia(AONContext ctx, Integer registry){
 		return ctx.getDslContext().delete(RMEDIA)
 				.where(RMEDIA.REGISTRY.eq(registry)).returning()
@@ -622,6 +685,10 @@ public class RegistryOldDAO {
 	}
 	
 
+	/**
+	 * @deprecated  Replaced by RegistryAddressDAO.RegistryAddressFiller
+	 */
+	@Deprecated(forRemoval = true )
 	public static class RAddressFiller  implements Function<Record, RAddress> {
 
 		@Override
@@ -647,6 +714,10 @@ public class RegistryOldDAO {
 		}
 	}
 
+	/**
+	 * @deprecated  Replaced by RegistryAddressDAO.RegistryAddressFiller
+	 */
+	@Deprecated(forRemoval = true )
 	public static class RAddressFiller2  implements Function<Record, RAddress> {
 
 		@Override
@@ -675,6 +746,7 @@ public class RegistryOldDAO {
 	/**
 	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.getStream(AONContext ctx, CustomerFilter filter)
 	 */
+	@Deprecated(forRemoval = true )
 	public static Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter){
 		return ctx.getDslContext().select().from(CUSTOMER)
 				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))

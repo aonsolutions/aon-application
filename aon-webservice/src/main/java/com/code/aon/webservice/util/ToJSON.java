@@ -158,13 +158,13 @@ public class ToJSON {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, rmedia.getId());
 		json.put(MSG.DOMAIN, rmedia.getDomain());
-		json.put(MSG.REGISTRY, rmedia.getRegistry().getId());
+		json.put(MSG.REGISTRY, rmedia.getRegistry());
 		json.put("media", rmedia.getMedia().value());
 		json.put("value", rmedia.getValue());
 		json.put(MSG.COMMENT, rmedia.getComment());
-		json.put("administrative", rmedia.getAdministrative());
-		json.put("commercial", rmedia.getCommercial());
-		json.put("technical", rmedia.getTechnical());
+		json.put("administrative", rmedia.isAdministrative());
+		json.put("commercial", rmedia.isCommercial());
+		json.put("technical", rmedia.isTechnical());
 		json.put("raddress", rmedia.getRaddress());
 		json.put("icon", Icon.rmediaIcon(rmedia.getMedia().value()));
 		return json;

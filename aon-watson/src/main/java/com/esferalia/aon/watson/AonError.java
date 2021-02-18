@@ -32,11 +32,13 @@ public enum AonError implements Serializable{
 	,EMPTY_SCOPE("El \u00E1mbito es un dato obligatorio, no puede estar vac\u00EDa")
 	,EMPTY_NAME("El nombre es un dato obligatorio, no puede estar vac\u00EDa")
 	,EMPTY_YEAR("El ejercicio es un dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_DATA("El dato \"{0}\" es obligatorio, no puede estar vac\u00EDo")
 	,INVALID_YEAR("El ejercicio debe tener un valor real")
 	,EMPTY_PERIOD("El periodo es un dato obligatorio, no puede estar vac\u00EDo")
 	,WRONG_PERIOD("No se ha encontrado un periodo contable para la fecha \"{0}\"")
 	,EMPTY_EPIGRAPH("El ep\u00EDgrafe es un dato obligatorio, no puede estar vac\u00EDo")
 	,INVALID_LENGTH("La longitud del dato \"{0}\" no puede superar los {1} car\u00E1cteres")
+	,INVALID_FORMAT("El formato del dato \"{0}\" no es correcto: \"{1}\"")
 	
 	// -----------------------------------------------------------
 	// --------------------- ENUMERATION -------------------------

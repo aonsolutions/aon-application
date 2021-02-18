@@ -7,6 +7,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -40,13 +42,16 @@ public class RegistryDAO {
 			;
 		}
 	}
+	private static SelectConditionStep<Record> select(AONContext ctx, RegistryFilter filter) {
+		return ctx.getDslContext()
+				.select()
+				.from(REGISTRY)
+				.where(REGISTRY_PROPERTIES.getConditions(filter));
+	}
 
 	public static Stream<Registry> getStream(AONContext ctx, RegistryFilter filter){
 		ctx.checkRead();
-		return ctx.getDslContext()
-			.select()
-			.from(REGISTRY)
-			.where(REGISTRY_PROPERTIES.getConditions(filter))
+		return select(ctx, filter)
 			.fetch()
 			.stream()
 			.map(new RegistryFiller());
@@ -118,5 +123,17 @@ public class RegistryDAO {
 		ctx.log().info("DELETE REGISTRY id:" + id + " ("+count+" rows)");
 	}
 	
+	// *************************************************
+	// ********** TEST PURPOSE METHODS *****************
+	// *************************************************
+	public static Registry getRandom(AONContext ctx, RegistryFilter filter) {
+		return select(ctx,filter)
+			.orderBy( DSL.rand() )
+			.fetch()
+			.stream()
+			.map(new RegistryFiller())
+			.findFirst()
+			.orElse(null);
+	}
 	
 }
