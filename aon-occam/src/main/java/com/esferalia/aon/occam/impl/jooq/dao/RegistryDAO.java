@@ -3,7 +3,9 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
+import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
@@ -14,6 +16,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryFull;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -123,6 +127,62 @@ public class RegistryDAO {
 		ctx.log().info("DELETE REGISTRY id:" + id + " ("+count+" rows)");
 	}
 	
+	// *************************************************
+	// ********** FULL REGISTRY *****************
+	// *************************************************
+	public static RegistryFull getFull(AONContext ctx, Integer id){
+		Registry registry = getStream(ctx, p -> p.getIdProperty().eq(id))
+			.findFirst()
+			.orElse(null);
+		RegistryFull full = null;
+		if (registry != null) {
+			full = new RegistryFull()
+				.setRegistry(registry)
+				.setAddresses( RegistryAddressDAO.getStreamByRegistry(ctx, registry.getId()).collect(Collectors.toCollection(LinkedList::new)))
+				.setMedias( RegistryMediaDAO.getStreamByRegistry(ctx, registry.getId()).collect(Collectors.toCollection(LinkedList::new)))
+			;
+		}
+		return full;
+	}
+
+	public static RegistryFull save(AONContext ctx, RegistryFull registryFull) {
+		if (registryFull == null) throw new IllegalArgumentException("registryFull is null");
+		if (registryFull.getRegistry() == null) throw new IllegalArgumentException("registryFull.registry is null");
+		if (registryFull.isNew()) {
+			ctx.log().info("INSERT REGISTRY FULL");
+		} else {
+			ctx.log().info("UPDATE REGISTRY FULL");
+		}
+		// Registry 
+		registryFull.setRegistry( registryFull.isNew()
+			?insert(ctx, registryFull.getRegistry())
+			:update(ctx, registryFull.getRegistry())
+		);
+		// Registry Medias
+		if (registryFull.hasMedias()) {
+			for (RegistryMedia media : registryFull.getMedias()) {
+				if (media.isDirty()) {
+					media.setRegistry(registryFull.getId());
+					RegistryMediaDAO.save(ctx, media);
+				}
+			}
+		}
+		RegistryFull ret = getFull(ctx, registryFull.getId()); 
+		return ret;
+	}
+	
+	public static void delete(AONContext ctx, RegistryFull registryFull) {
+		// Registry Medias
+		if (registryFull.hasMedias()) {
+			for (RegistryMedia media : registryFull.getMedias()) {
+				RegistryMediaDAO.delete(ctx, media.getId());
+			}
+		}
+		// Registry 
+		delete(ctx, registryFull.getId()); 
+		
+	}
+
 	// *************************************************
 	// ********** TEST PURPOSE METHODS *****************
 	// *************************************************

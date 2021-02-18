@@ -1,17 +1,26 @@
 package com.esferalia.aon.occam.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 
 public class Asserts {
 	
 	private static final double DELTA = 1e-15;
 	
+	public static void assertEqualsNulls(String msg,Object expected, Object actual) {
+		if ( expected == null) assertNull(msg,actual);
+		if ( expected != null) assertNotNull(msg,actual);
+	}
+	
 	public static void assertEqualsRegistry (Registry expected, Registry actual) {
+		assertEqualsNulls( "Registry", expected, actual);
 		assertEquals("Id", expected.getId(), actual.getId());
 		assertEquals("Domain", expected.getDomain().getId(), actual.getDomain().getId());
 		assertEquals("Document",expected.getDocument(), actual.getDocument());
@@ -23,8 +32,16 @@ public class Asserts {
 		assertEquals("Nationality",expected.getNationality(), actual.getNationality());
 		assertEquals("SecurityLevel",expected.getSecurityLevel() , actual.getSecurityLevel());
 	}
+	
+	public static void assertEqualsRegistryFull (RegistryFull expected, RegistryFull actual) {
+		assertEqualsNulls( "RegistryFull", expected, actual);
+		
+	}
+
+		
 
 	public static void assertEqualsCustomer(Customer expected, Customer actual) {
+		assertEqualsNulls( "Customer", expected, actual);
 		assertEqualsRegistry(expected, actual);
 		assertEquals("Tariff",expected.getTariff(), actual.getTariff());
 		assertEquals("Surcharge",expected.isSurcharge(),actual.isSurcharge());
@@ -41,6 +58,7 @@ public class Asserts {
 	}
 
 	public static void assertEqualsRegistryMedia (RegistryMedia expected, RegistryMedia actual) {
+		assertEqualsNulls( "RegistryMedia", expected, actual);
 		assertEquals("Id", expected.getId(), actual.getId());
 		assertEquals("Domain", expected.getDomain(), actual.getDomain());
 		assertEquals("Registry",expected.getRegistry(), actual.getRegistry());
@@ -54,6 +72,7 @@ public class Asserts {
 	}
 
 	public static void assertEqualsTariff(Tariff expected, Tariff actual) {
+		assertEqualsNulls( "Tariff", expected, actual);
 		assertEquals("Id",expected.getId(), actual.getId());
 		assertEquals("Domain",expected.getDomain(), actual.getDomain());
 		assertEquals("Code",expected.getCode(), actual.getCode());

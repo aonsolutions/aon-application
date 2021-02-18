@@ -65,7 +65,8 @@ public class RegistryMediaDAO {
 				.setCommercial(rec.getValue(RMEDIA.COMMERCIAL) == 1)
 				.setTechnical(rec.getValue(RMEDIA.TECHNICAL) == 1)
 				.setRaddress(rec.getValue(RMEDIA.RADDRESS))
-				.setValue(rec.getValue(RMEDIA.VALUE));
+				.setValue(rec.getValue(RMEDIA.VALUE))
+				.setDirty(false);
 		}
 	}
 	
@@ -150,6 +151,13 @@ public class RegistryMediaDAO {
 			.fetch()
 			.stream()
 			.map(new RegistryMediaFiller());
+		
+	}
+	
+	public static RegistryMedia save(AONContext ctx, RegistryMedia media){
+		return (media.getId() == null)
+				?insert(ctx, media)
+				:update(ctx, media);
 	}
 	
 	public static RegistryMedia insert(AONContext ctx, RegistryMedia media){
@@ -204,13 +212,14 @@ public class RegistryMediaDAO {
 		ctx.log().info("DELETE REGISTRY MEDIA id:" + id + " ("+count+" rows)");
 	}
 	
-	public static void deleteByRegistry(AONContext ctx, Integer registry){
+	public static int deleteByRegistry(AONContext ctx, Integer registry){
 		ctx.checkWrite();
 		RegistryMediaValidation.validateDeletion(ctx, registry);
 		int count = ctx.getDslContext().delete(RMEDIA)
 			.where(RMEDIA.REGISTRY.eq(registry))
 			.execute();
 		ctx.log().info("DELETE REGISTRY MEDIA registry:" + registry + " ("+count+" rows)");
+		return count;
 	}
 	
 	// *************************************************

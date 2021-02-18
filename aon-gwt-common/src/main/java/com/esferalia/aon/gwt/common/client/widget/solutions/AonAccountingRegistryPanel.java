@@ -228,6 +228,19 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 				
 		AonFullDocument fulldocument = new AonFullDocument();
 		
+		documentWarningContainer.getElement().getStyle().setProperty("display", "inline-grid");
+		documentWarningContainer.getElement().getStyle().setProperty("max-height", "160px");
+		documentWarningContainer.getElement().getStyle().setProperty("overflow-y", "auto");
+		documentWarningContainer.addStyleName(AON.CSS.aonFlexBlock());
+		documentWarningContainer.addStyleName(AON.CSS.aonFontSmall());
+		documentWarningContainer.addStyleName(AON.CSS.aonWidthAlmostAll()); 
+		documentWarningContainer.addStyleName(AON.CSS.aonBackgroundLigthGray());
+										
+		// table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
+		table.setWidget(row,0,documentWarningContainer);
+		table.getFlexCellFormatter().setColSpan(row, 0, 2);
+		++row;
+
 		table.setWidget(row,0,new InlineLabel(AON.MSG.titularType()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		type.addKeyUpHandler( keyUpHandler);
@@ -288,19 +301,6 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 				}
 			}
 		});
-		++row;
-		
-		documentWarningContainer.getElement().getStyle().setProperty("display", "inline-grid");
-		documentWarningContainer.getElement().getStyle().setProperty("max-height", "160px");
-		documentWarningContainer.getElement().getStyle().setProperty("overflow-y", "auto");
-		documentWarningContainer.addStyleName(AON.CSS.aonFlexBlock());
-		documentWarningContainer.addStyleName(AON.CSS.aonFontSmall());
-		documentWarningContainer.addStyleName(AON.CSS.aonWidthAlmostAll()); 
-		documentWarningContainer.addStyleName(AON.CSS.aonBackgroundLigthGray());
-										
-		// table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
-		table.setWidget(row,0,documentWarningContainer);
-		table.getFlexCellFormatter().setColSpan(row, 0, 2);
 		++row;
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.document()));
@@ -724,7 +724,7 @@ public class AonAccountingRegistryPanel extends SimpleLayoutPanel implements Foc
 			int i = 1;
 			for (GeoZone geozone : config.getGeozones()) {
 				provinceBox.addItem(geozone.getName(),AonNumberUtils.toString(geozone.getId()));
-				if (geozone.getId() == reg.getGeozone()) {
+				if (AonNumberUtils.equals(geozone.getId(), reg.getGeozone())) {
 					provinceBox.setSelectedIndex(i);
 				}
 				i++;

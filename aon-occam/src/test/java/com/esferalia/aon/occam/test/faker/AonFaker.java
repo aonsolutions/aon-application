@@ -90,8 +90,8 @@ public class AonFaker {
 		media.setAdministrative(AonRandom.b(95));
 		media.setCommercial(AonRandom.b(55));
 		media.setTechnical(AonRandom.b(25));
-		if (AonRandom.b(15)) {
-			int registryId = registry.getId();
+		Integer registryId = (registry !=null)?registry.getId():null;
+		if (registryId != null && AonRandom.b(15)) {
 			RegistryAddress address = AonRandom.getRegistryAddress(ctx, f-> f.getRegistryProperty().eq(registryId));
 			if (address != null) {
 				media.setRaddress(address.getId());
