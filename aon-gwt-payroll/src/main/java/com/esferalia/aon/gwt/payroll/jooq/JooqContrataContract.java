@@ -109,11 +109,13 @@ public class JooqContrataContract {
 			Map<String, String> contractOtherInfo = getContractOtherInfoDB(dslContext, domainId, contractId, contractType+"");
 			Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, domainId, contractId);
 			
+			Map<String, String> contractClauses = parseClausesToMap(getContractClausesDB(dslContext, domainId, contractId));
+			
 			FormativeLevel formativeLevel = new FormativeLevel();
 			contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
 			contractFillInfo.put("E_FORMATIVE_LVL_CODE", formativeLevelCode);
 			
-			byte[] data = ContractFill.fillContract(contractType, contractOtherInfo, contractFillInfo);
+			byte[] data = ContractFill.fillContract(contractType, contractOtherInfo, contractFillInfo, contractClauses);
 			return data;
 	}
 
@@ -126,16 +128,28 @@ public class JooqContrataContract {
 			Map<String, String> contractOtherInfo = getContractOtherInfoDB(dslContext, domainId, contractId, contractTypeStr);
 			Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, domainId, contractId);
 			
+			Map<String, String> contractClauses = parseClausesToMap(getContractClausesDB(dslContext, domainId, contractId));
+			
 			FormativeLevel formativeLevel = new FormativeLevel();
 			contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
 			contractFillInfo.put("E_FORMATIVE_LVL_CODE", formativeLevelCode);
 			
-			return ContractFill.fillContract(contractType, contractOtherInfo, contractFillInfo);
+			return ContractFill.fillContract(contractType, contractOtherInfo, contractFillInfo, contractClauses);
 		}catch (SQLException e) {
 			throw new RuntimeException(e);
 		} 
 	}
 	
+	private static Map<String, String> parseClausesToMap(List<ContractClause> contractClauses) {
+		Map<String, String> contractClausesMap = new HashMap<String, String>();
+		
+		for(ContractClause contractClause : contractClauses) {
+			contractClausesMap.put(contractClause.getName(), contractClause.getDescription());
+		}
+		
+		return contractClausesMap;
+	}
+
 	private static Map<String, String> getContractFillInfoDB(DSLContext dslContext, Integer domainId, Integer contractId) {
 		Map<String, String> contractFillData = new HashMap<String, String>();
 		
@@ -452,6 +466,7 @@ public class JooqContrataContract {
 			.set(CONTRACT_CLAUSE.DOMAIN, contractClause.getDomain())
 			.set(CONTRACT_CLAUSE.CONTRACT, contractClause.getContract())
 			.set(CONTRACT_CLAUSE.LINE, contractClause.getLineNumber())
+			.set(CONTRACT_CLAUSE.NAME, contractClause.getName())
 			.set(CONTRACT_CLAUSE.DESCRIPTION, contractClause.getDescription())
 			.execute();
 		 

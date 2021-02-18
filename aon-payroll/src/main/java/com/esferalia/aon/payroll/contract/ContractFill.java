@@ -5,12 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
-import org.apache.pdfbox.cos.COSStream;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
@@ -20,6 +19,7 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 public class ContractFill {
 	
+	@SuppressWarnings("serial")
 	private static final Map<String, String> FIELDNAMESTOMAP = new HashMap<String,String>(){
 		{
 			put("Texto10", "ENTERPRISE_COUNTRY_CODE");
@@ -43,22 +43,22 @@ public class ContractFill {
 		}
 	};
 	
-	public static byte[] fillContract(Integer contractType, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo) {
+	public static byte[] fillContract(Integer contractType, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
 		if(null == contractType)
 			return null;
 		
 		if(contractType >= 100 && contractType <= 400) 
-			return fillIndefiniteContract(contractOtherInfo, contractFillInfo);
+			return fillIndefiniteContract(contractOtherInfo, contractFillInfo, contractClauses);
 		else if (contractType == 421) 
-			return fillFormationContract(contractOtherInfo, contractFillInfo);
+			return fillFormationContract(contractOtherInfo, contractFillInfo, contractClauses);
 		else if (contractType == 420 || contractType == 520) 
-			return fillPracticeContract(contractOtherInfo, contractFillInfo);
+			return fillPracticeContract(contractOtherInfo, contractFillInfo, contractClauses);
 		else 
-			return fillTemporalContract(contractOtherInfo, contractFillInfo);
+			return fillTemporalContract(contractOtherInfo, contractFillInfo, contractClauses);
 		
 	}
 	
-	private static byte[] fillIndefiniteContract(Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo) {
+	private static byte[] fillIndefiniteContract(Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("indefinido.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -84,20 +84,25 @@ public class ContractFill {
 						if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "$aon:")) {
 							valueStr = valueStr.replace("$aon:", "");
 							
-							if(!StringUtils.contains(valueStr, " ")){
-								String newValue = contractOtherInfo.getOrDefault(valueStr, "");
-								newValue = newValue.toUpperCase();
-								setField(field, newValue);
+							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
+								setAditionalClauses(field, contractClauses);
 							} else {
-								String newValue = "";
-								String[] splits = StringUtils.split(valueStr, " ");
-								for(int i=0; i<splits.length; i++) {
-									if(splits[i].contains("_"))
-										newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
+								if(!StringUtils.contains(valueStr, " ")){
+									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
+									newValue = newValue.toUpperCase();
+									setField(field, newValue);
+								} else {
+									String newValue = "";
+									String[] splits = StringUtils.split(valueStr, " ");
+									for(int i=0; i<splits.length; i++) {
+										if(splits[i].contains("_"))
+											newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
+									}
+									newValue = newValue.toUpperCase();
+									setField(field, newValue);
 								}
-								newValue = newValue.toUpperCase();
-								setField(field, newValue);
 							}
+							
 						} else if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "${")) {
 							valueStr = valueStr.replace("${", "");
 							valueStr = valueStr.replace("}", "");
@@ -139,7 +144,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillFormationContract(Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo) {
+	private static byte[] fillFormationContract(Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("formacion.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -164,17 +169,21 @@ public class ContractFill {
 						if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "$aon:")) {
 							valueStr = valueStr.replace("$aon:", "");
 							
-							if(!StringUtils.contains(valueStr, " ")){
-								String newValue = contractOtherInfo.getOrDefault(valueStr, "");
-								setField(field, newValue);
+							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
+								setAditionalClauses(field, contractClauses);
 							} else {
-								String newValue = "";
-								String[] splits = StringUtils.split(valueStr, " ");
-								for(int i=0; i<splits.length; i++) {
-									if(splits[i].contains("_"))
-										newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
+								if(!StringUtils.contains(valueStr, " ")){
+									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
+									setField(field, newValue);
+								} else {
+									String newValue = "";
+									String[] splits = StringUtils.split(valueStr, " ");
+									for(int i=0; i<splits.length; i++) {
+										if(splits[i].contains("_"))
+											newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
+									}
+									setField(field, newValue);
 								}
-								setField(field, newValue);
 							}
 						} else if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "${")) {
 							valueStr = valueStr.replace("${", "");
@@ -216,7 +225,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillPracticeContract(Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo) {
+	private static byte[] fillPracticeContract(Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("practicas.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -241,17 +250,21 @@ public class ContractFill {
 						if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "$aon:")) {
 							valueStr = valueStr.replace("$aon:", "");
 							
-							if(!StringUtils.contains(valueStr, " ")){
-								String newValue = contractOtherInfo.getOrDefault(valueStr, "");
-								setField(field, newValue);
+							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
+								setAditionalClauses(field, contractClauses);
 							} else {
-								String newValue = "";
-								String[] splits = StringUtils.split(valueStr, " ");
-								for(int i=0; i<splits.length; i++) {
-									if(splits[i].contains("_"))
-										newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
+								if(!StringUtils.contains(valueStr, " ")){
+									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
+									setField(field, newValue);
+								} else {
+									String newValue = "";
+									String[] splits = StringUtils.split(valueStr, " ");
+									for(int i=0; i<splits.length; i++) {
+										if(splits[i].contains("_"))
+											newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
+									}
+									setField(field, newValue);
 								}
-								setField(field, newValue);
 							}
 						} else if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "${")) {
 							valueStr = valueStr.replace("${", "");
@@ -293,7 +306,7 @@ public class ContractFill {
 		}
 	}
 
-	private static byte[] fillTemporalContract(Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo) {
+	private static byte[] fillTemporalContract(Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, Map<String, String> contractClauses) {
 		InputStream is = ContractFill.class.getResourceAsStream("temporal.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
@@ -318,17 +331,21 @@ public class ContractFill {
 						if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "$aon:")) {
 							valueStr = valueStr.replace("$aon:", "");
 							
-							if(!StringUtils.contains(valueStr, " ")){
-								String newValue = contractOtherInfo.getOrDefault(valueStr, "");
-								setField(field, newValue);
+							if(StringUtils.equals(valueStr, "ADITIONAL_CLAUSES")) {
+								setAditionalClauses(field, contractClauses);
 							} else {
-								String newValue = "";
-								String[] splits = StringUtils.split(valueStr, " ");
-								for(int i=0; i<splits.length; i++) {
-									if(splits[i].contains("_"))
-										newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
+								if(!StringUtils.contains(valueStr, " ")){
+									String newValue = contractOtherInfo.getOrDefault(valueStr, "");
+									setField(field, newValue);
+								} else {
+									String newValue = "";
+									String[] splits = StringUtils.split(valueStr, " ");
+									for(int i=0; i<splits.length; i++) {
+										if(splits[i].contains("_"))
+											newValue += contractOtherInfo.getOrDefault(splits[i], "") + " ";
+									}
+									setField(field, newValue);
 								}
-								setField(field, newValue);
 							}
 						} else if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "${")) {
 							valueStr = valueStr.replace("${", "");
@@ -393,6 +410,26 @@ public class ContractFill {
 //	        fieldDictionary.setNeedToBeUpdated(true);
 //	        fieldDictionary = (COSDictionary) fieldDictionary.getDictionaryObject(COSName.PARENT);
 //	    }
+	}
+	
+	public static void setAditionalClauses(PDField field, Map<String, String> contractClauses) throws IOException {
+	    
+		System.out.println("Original value: " + field.getValueAsString());
+		
+		field.getCOSObject().removeItem(COSName.AP);
+		
+		String clauses = "\n";
+		Integer line = 1;
+		for(Entry<String, String> entry : contractClauses.entrySet()) {
+			clauses += "\t" + line + "  -  " + entry.getKey() + " :  \t\t" + entry.getValue() + "\n\n";
+			line++;
+		}
+		
+		field.setValue(clauses);
+		((PDTextField) field).setDefaultValue(clauses);
+		
+		System.out.println("New value: " + field.getValueAsString());
+		
 	}
 
 }
