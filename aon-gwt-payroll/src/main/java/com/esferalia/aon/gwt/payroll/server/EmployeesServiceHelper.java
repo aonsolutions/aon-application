@@ -1570,7 +1570,7 @@ public class EmployeesServiceHelper {
 				salary.getTotalLiquid(),
 				salary.getTotalEnterprise(),
 				salary.getTotalPayment() + salary.getTotalEnterprise(),
-				salary.getSocialSecurityContributions() + salary.getTotalEnterprise());
+				salary.getSocialSecurityContributions() + salary.getTotalEnterprise(),0.00);
 	}
 
 

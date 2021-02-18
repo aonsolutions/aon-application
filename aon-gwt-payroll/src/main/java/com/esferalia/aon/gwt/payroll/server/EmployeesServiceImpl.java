@@ -5938,7 +5938,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			EnterprisePayroll enterprisePayroll = EmployeesServiceHelper.geteEnterprisePayroll("N\u00D3MINA DE EMPRESA", null, getDate(cost).getTime(), salariesProvider);
 			
-			PdfMaker.print_enterprise_payroll(enterprisePayroll, os);
+			PdfMaker.print_enterprise_payroll(enterprisePayroll, os,Optional.of(new Locale("Es")));
 
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);
