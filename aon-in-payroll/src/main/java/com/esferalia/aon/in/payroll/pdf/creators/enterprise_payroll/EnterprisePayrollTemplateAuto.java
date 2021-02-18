@@ -130,9 +130,10 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		if(t.mg.isActive("deducciones")) 		current = set_column(current,sizes,headers,alignments,c,"Deducciones",RIGHT);
 		if(t.mg.isActive("liquido"))  			current = set_column(current,sizes,headers,alignments,c,"Liquido",RIGHT);
 		if(t.mg.isActive("ssEmpr")) 	 		current = set_column(current,sizes,headers,alignments,c,"S.S. Empr.",RIGHT);
-		if(t.mg.isActive("costeTotal")) 		current = set_column(current,sizes,headers,alignments,c,"Coste total",RIGHT);
 		if(t.mg.isActive("bonificaciones")) 	current = set_column(current,sizes,headers,alignments,c,"Bonificaciones",RIGHT);
 		if(t.mg.isActive("ssTotal")) 			current = set_column(current,sizes,headers,alignments,c,"Total S.S",RIGHT);		
+		if(t.mg.isActive("costeTotal")) 		current = set_column(current,sizes,headers,alignments,c,"Coste total",RIGHT);
+		
 		
 		return create_table(t,sizes,headers,alignments);
 	}
