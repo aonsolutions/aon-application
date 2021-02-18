@@ -206,41 +206,41 @@ public class UserServlet extends AonApiHttpServlet {
 		LinkedList<UserAppRole> roles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> f.getUserIdProperty().eq(user.getId())).collect(Collectors.toCollection(LinkedList::new));
 		JSONArray userAppRoles = new JSONArray();
 		if(roles.stream().count() == 0) {
-			User usr = AON.getUser(domain.getName(), user.getDomain(), user.getLogin());
-			for(Integer i = 0; i < usr.getUserRoles().length; i++) {				
-				com.esferalia.aon.occam.api.model.type.AonRole aonRole = usr.getUserRoles()[i];
-				if(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING_MANAGER.equals(aonRole)) {
-					userAppRoles.put(AonRole.ACCOUNTING_MANAGER.name());
-					setUserAppRole(domain, user, AonApp.ACCOUNTING, AonRole.ACCOUNTING);
-				} else if(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING.equals(aonRole)) {
-					userAppRoles.put(AonRole.ACCOUNTING.name());
-					setUserAppRole(domain, user, AonApp.ACCOUNTING, AonRole.ACCOUNTING);
-				} else if(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER_MANAGER.equals(aonRole)) {
-					userAppRoles.put(AonRole.MESSENGER_MANAGER.name());
-					setUserAppRole(domain, user, AonApp.MESSENGER, AonRole.MESSENGER_MANAGER);
-				} else if(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER.equals(aonRole)) {
-					userAppRoles.put(AonRole.MESSENGER.name());
-					setUserAppRole(domain, user, AonApp.MESSENGER, AonRole.MESSENGER);
-				} else if(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER.equals(aonRole)) {
-					userAppRoles.put(AonRole.DOCUMENTAL_MANAGER.name());
-					setUserAppRole(domain, user, AonApp.DOCUMENTAL, AonRole.DOCUMENTAL_MANAGER);
-				} else if(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT.equals(aonRole)) {
-					userAppRoles.put(AonRole.DOCUMENTAL.name());
-					setUserAppRole(domain, user, AonApp.DOCUMENTAL, AonRole.DOCUMENTAL);
-				} else if(com.esferalia.aon.occam.api.model.type.AonRole.FISCAL.equals(aonRole)) {
-					userAppRoles.put(AonRole.FISCAL_MANAGER);
-					setUserAppRole(domain, user, AonApp.FISCAL, AonRole.FISCAL_MANAGER);
-				} else if(com.esferalia.aon.occam.api.model.type.AonRole.PAYROLL.equals(aonRole)) {
-					userAppRoles.put(AonRole.PAYROLL_MANAGER.name());
-					setUserAppRole(domain, user, AonApp.PAYROLL, AonRole.PAYROLL_MANAGER);
-				} else if(com.esferalia.aon.occam.api.model.type.AonRole.FINANCE.equals(aonRole)) {
-					userAppRoles.put(AonRole.INVOICE_MANAGER.name());
-					setUserAppRole(domain, user, AonApp.INVOICE, AonRole.INVOICE_MANAGER);
-				} else if(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN.equals(aonRole)) {
-					userAppRoles.put(AonRole.ADMIN);
-					setUserAppRole(domain, user, null, AonRole.ADMIN);
-				}		
-			}
+//			User usr = AON.getUser(domain.getName(), user.getDomain(), user.getLogin());
+//			for(Integer i = 0; i < usr.getUserRoles().length; i++) {				
+//				com.esferalia.aon.occam.api.model.type.AonRole aonRole = usr.getUserRoles()[i];
+//				if(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING_MANAGER.equals(aonRole)) {
+//					userAppRoles.put(AonRole.ACCOUNTING_MANAGER.name());
+//					setUserAppRole(domain, user, AonApp.ACCOUNTING, AonRole.ACCOUNTING);
+//				} else if(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING.equals(aonRole)) {
+//					userAppRoles.put(AonRole.ACCOUNTING.name());
+//					setUserAppRole(domain, user, AonApp.ACCOUNTING, AonRole.ACCOUNTING);
+//				} else if(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER_MANAGER.equals(aonRole)) {
+//					userAppRoles.put(AonRole.MESSENGER_MANAGER.name());
+//					setUserAppRole(domain, user, AonApp.MESSENGER, AonRole.MESSENGER_MANAGER);
+//				} else if(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER.equals(aonRole)) {
+//					userAppRoles.put(AonRole.MESSENGER.name());
+//					setUserAppRole(domain, user, AonApp.MESSENGER, AonRole.MESSENGER);
+//				} else if(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER.equals(aonRole)) {
+//					userAppRoles.put(AonRole.DOCUMENTAL_MANAGER.name());
+//					setUserAppRole(domain, user, AonApp.DOCUMENTAL, AonRole.DOCUMENTAL_MANAGER);
+//				} else if(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT.equals(aonRole)) {
+//					userAppRoles.put(AonRole.DOCUMENTAL.name());
+//					setUserAppRole(domain, user, AonApp.DOCUMENTAL, AonRole.DOCUMENTAL);
+//				} else if(com.esferalia.aon.occam.api.model.type.AonRole.FISCAL.equals(aonRole)) {
+//					userAppRoles.put(AonRole.FISCAL_MANAGER);
+//					setUserAppRole(domain, user, AonApp.FISCAL, AonRole.FISCAL_MANAGER);
+//				} else if(com.esferalia.aon.occam.api.model.type.AonRole.PAYROLL.equals(aonRole)) {
+//					userAppRoles.put(AonRole.PAYROLL_MANAGER.name());
+//					setUserAppRole(domain, user, AonApp.PAYROLL, AonRole.PAYROLL_MANAGER);
+//				} else if(com.esferalia.aon.occam.api.model.type.AonRole.FINANCE.equals(aonRole)) {
+//					userAppRoles.put(AonRole.INVOICE_MANAGER.name());
+//					setUserAppRole(domain, user, AonApp.INVOICE, AonRole.INVOICE_MANAGER);
+//				} else if(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN.equals(aonRole)) {
+//					userAppRoles.put(AonRole.ADMIN);
+//					setUserAppRole(domain, user, null, AonRole.ADMIN);
+//				}		
+//			}
 		} else {
 			roles.stream().forEach(uar -> userAppRoles.put(uar.getRole().name()));
 		}

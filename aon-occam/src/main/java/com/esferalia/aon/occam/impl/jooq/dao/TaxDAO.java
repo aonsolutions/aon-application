@@ -95,8 +95,8 @@ public class TaxDAO {
 					.setStartDate(rec.getValue(TAX.START_DATE))
 					.setVatDeductionType( VatDeductionType.safeValueOf( rec.getValue(TAX.VAT_DEDUCTION_TYPE)))
 					.setWithholdingType(WithholdingType.safeValueOf( rec.getValue(TAX.WITHHOLDING_TYPE)))
-					.setSalesAccount( rec.getValue(TAX.SALES_ACCOUNT) == null
-							? null
+					.setSalesAccount( rec.getValue(SALES_ACCOUNT.ID) == null
+							? null //new Account().setId(rec.getValue(TAX.SALES_ACCOUNT))
 							: new Account()
 								.setId(rec.getValue(SALES_ACCOUNT.ID))
 								.setDomain(rec.getValue(SALES_ACCOUNT.DOMAIN))
@@ -107,8 +107,8 @@ public class TaxDAO {
 								.setLevel(rec.getValue(SALES_ACCOUNT.LEVEL))
 								.setActive(AonEnumUtils.getBoolean(rec.getValue(SALES_ACCOUNT.ACTIVE)))
 								.setCostCenter(rec.getValue(SALES_ACCOUNT.COST_CENTER)))
-					.setPurchaseAccount( rec.getValue(TAX.PURCHASE_ACCOUNT) == null
-							? null
+					.setPurchaseAccount( rec.getValue(PURCHASE_ACCOUNT.ID) == null
+							? null //new Account().setId(rec.getValue(TAX.PURCHASE_ACCOUNT))
 							: new Account()
 								.setId(rec.getValue(PURCHASE_ACCOUNT.ID))
 								.setDomain(rec.getValue(PURCHASE_ACCOUNT.DOMAIN))
@@ -122,8 +122,7 @@ public class TaxDAO {
 					.setCreationUser(rec.getValue(TAX.CREATION_USER))
 					.setCreationDate(rec.getValue(TAX.CREATION_DATE))
 					.setModificationUser(rec.getValue(TAX.MODIFICATION_USER))
-					.setModificationDate(rec.getValue(TAX.MODIFICATION_DATE))
-					;					
+					.setModificationDate(rec.getValue(TAX.MODIFICATION_DATE));					
 		}
 	}	
 }

@@ -33,22 +33,27 @@ export class AonInvoicePanel extends AonElement {
 
 	constructor () {
 		super();
-		this.INVOICE = 'aonInvoice';
-		this.INPUTFILE = this.INVOICE + 'InputFile';
-		this._filter = {
-			status: 'inbox',
-			page: 0,
-			per_page: 50
-		}
 	}
 
+
 	connectedCallback () {
+		this.initialize();
 		this.innerHTML = `
 			<aon-application id="${this.INVOICE}" title="${MSG.AON_MSG_INVOICES}" drag_and_drop="true"></aon-application>
 			<aon-dialog-menu id="aonDialogAddOption"> </aon-dialog-menu>
 			<input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
 		`;
 		this.build();
+	}
+
+	initialize() {
+		this.INVOICE = 'aonInvoice';
+		this.INPUTFILE = this.INVOICE + 'InputFile';
+		this._filter = {
+			status: 'inbox',
+			page: 0,
+			per_page: 50
+		};
 	}
 
   build(){

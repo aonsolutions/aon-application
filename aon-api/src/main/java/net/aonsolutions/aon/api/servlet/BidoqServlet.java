@@ -2,6 +2,7 @@ package net.aonsolutions.aon.api.servlet;
 
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,23 +19,18 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.aon.api.ewok.IConstants;
-
 @SuppressWarnings("serial")
 @WebServlet(name = "BidoqServlet", urlPatterns = {"/ms/api/bidoq/*"})
 public class BidoqServlet extends AonApiHttpServlet {
-	
+	private static final Logger LOGGER  = Logger.getLogger(BidoqServlet.class.getName());
+
 	private static final String BIDOQ_SESSION_ID = "AONd95770f269e711eb94390242ac130002";
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("AON API BIDOQ SERVLET - POST METHOD");
 		try {
-			setToken((AonStringUtils.isEmpty(req.getHeader(IConstants.SESSION_ID)) 
-					|| IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.SESSION_ID))) 
-				? IConstants.EMPTY : req.getHeader(IConstants.SESSION_ID));
-
-			setData(getRequestJSON(req));
-			
+			super.doPost(req, resp);
 			if(BIDOQ_SESSION_ID.equals(getToken())) {
 				String user = getData().optString("user");
 				String company = getData().optString("company");
@@ -71,8 +67,12 @@ public class BidoqServlet extends AonApiHttpServlet {
 				JSONObject json = new JSONObject();
 				json.put("url", url);
 				response(req, resp, json);
-			} else throw new Exception("El token es incorrecto.");
+			} else {
+				LOGGER.info("TOKEN RECIBIDO: " + getToken());
+				throw new Exception("El token es incorrecto.");
+			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			error(req, resp, e);
 		}
 	}

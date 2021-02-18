@@ -146,7 +146,7 @@ export class AonMarketplace extends AonElement {
 					app: apps[key].app,
 					active: !contratado
 				}).then(() => {
-					getDomainUserRoles({}).then(r => {
+					getDomainUserRoles({reload:true}).then(r => {
 						this.buildList(new DomainUserRoles(r));
 					});
 				});
@@ -237,7 +237,7 @@ export class AonMarketplace extends AonElement {
 					app: apps[key].app,
 					active: !contratado
 				}).then(() => {
-					getDomainUserRoles({}).then(r => {
+					getDomainUserRoles({reload: true}).then(r => {
 						this.buildModule(new DomainUserRoles(r));
 					});
 				});

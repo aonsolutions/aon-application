@@ -66,7 +66,7 @@ export const getDomainUserRoles = (data) => {
   let company = JSON.parse(localStorage.getItem("company"));
 
   return new Promise((resolve, reject) => {
-    if (domainUserRoles && domainUserRoles.domain === company.id) {
+    if (domainUserRoles && domainUserRoles.domain === company.id && !data.reload) {
       resolve(domainUserRoles);
     } else {
       request("GET", `${API_URL}/company/approles`, getToken(), data, (result, error) => {

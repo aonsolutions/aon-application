@@ -326,7 +326,8 @@ public class InvoiceImport {
 			return;
 		}
 		
-		if("%RETENCIÓN".equalsIgnoreCase(title)) {
+		if("%RETENCIÓN".equalsIgnoreCase(title) || "%RETENCION".equalsIgnoreCase(title) 
+				|| "% RETENCIÓN".equalsIgnoreCase(title) || "% RETENCION".equalsIgnoreCase(title)) {
 			Double percent = Utils.parseDouble(o);
 			if(percent > 0 && percent < 1)
 				percent = percent * 100;
@@ -334,7 +335,7 @@ public class InvoiceImport {
 			return;
 		}
 		
-		if("CUOTA RETENCIÓN".equalsIgnoreCase(title)) {
+		if("CUOTA RETENCIÓN".equalsIgnoreCase(title) || "CUOTA RETENCION".equalsIgnoreCase(title)) {
 			inv.setRetentionQuota(Utils.parseDouble(o));
 			return;
 		}
@@ -629,6 +630,7 @@ public class InvoiceImport {
 				AON.insertFinance(domain.getName(), domain.getId(), user.getLogin(), f);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			error.setError(false);
 			error.setTextError("Línea " + ivs.get(i).getLine() + ": " + e.getMessage());
 		}
