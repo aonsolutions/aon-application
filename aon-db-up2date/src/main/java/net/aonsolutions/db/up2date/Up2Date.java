@@ -24,6 +24,7 @@ import net.aonsolutions.db.up2date.payroll.AlterAgreement4SSNumber;
 import net.aonsolutions.db.up2date.payroll.Holidays2021Insert;
 import net.aonsolutions.db.up2date.security.AuthDeviceCreation;
 import net.aonsolutions.db.up2date.security.AuthDeviceUpdate;
+import net.aonsolutions.db.up2date.tgss.IfDaysInsert;
 import net.aonsolutions.db.up2date.tgss.PermissionNotPaidDaysInsert;
 import net.aonsolutions.db.up2date.timecontrol.CoordinatesUpdate;
 
@@ -151,7 +152,8 @@ public class Up2Date {
 			//AdditionalHoursUpdate.ADDITIONALHOURSUPDATE,
 			//AuthDeviceCreation.AUTH_DEVICE_CREATION,
     		AuthDeviceUpdate.AUTH_DEVICE_UPDATE,
-    		PermissionNotPaidDaysInsert.PERMISSIONNOTPAIDDAYSINSERT
+    		PermissionNotPaidDaysInsert.PERMISSIONNOTPAIDDAYSINSERT,
+    		IfDaysInsert.IFDAYSINSERT
     };
 
 
