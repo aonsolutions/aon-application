@@ -88,7 +88,7 @@ public class EmployeeCalendarDraftObjectData {
 			put("DIAS_HUELGA", DayType.STRIKEDAY);
 			put("DIAS_ERE", DayType.EREDAY);
 			put("DIAS_INACTIVIDAD", DayType.INACTIVITY);
-			put("PEONADAS", DayType.PEONADAS);
+			put("JORNADAS_REALES", DayType.REAL_DAY);
 			put("NO_LABORABLE", DayType.NOWORKINGDAY);
 			put("DIAS_AUSENCIA", DayType.DROPDAY);
 			put("DIAS_PARCIALIDAD", DayType.PARTIALITY);
@@ -112,8 +112,9 @@ public class EmployeeCalendarDraftObjectData {
 		T visitITDay(DayType dayType);
 		T visitNoTypeDay(DayType dayType);
 		T visitInactivityDay(DayType dayType);
-		T visitPeonadasDay(DayType dayType);
+		T visitRealDay(DayType dayType);
 		T visitPartialityDay(DayType dayType);
+		T visitIfDay(DayType dayType);
 	}
 	
 	public static enum DayType{
@@ -177,10 +178,10 @@ public class EmployeeCalendarDraftObjectData {
 				return visitor.visitInactivityDay(this);
 			}
 		},
-		PEONADAS{
+		REAL_DAY{
 			@Override
 			public <T> T visit(DayTypeVisitor<T> visitor) {
-				return visitor.visitPeonadasDay(this);
+				return visitor.visitRealDay(this);
 			}
 		},
 		PARTIALITY{
@@ -195,6 +196,12 @@ public class EmployeeCalendarDraftObjectData {
 				return visitor.visitNoTypeDay(this);
 			}
 		
+		},
+		IF_DAY{
+			@Override
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitIfDay(this);
+			}
 		};
 		
 		public abstract <T> T visit(DayTypeVisitor<T> visitor); 

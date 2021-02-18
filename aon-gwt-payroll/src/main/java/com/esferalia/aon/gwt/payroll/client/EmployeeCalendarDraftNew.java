@@ -151,14 +151,22 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					return null;
 				}
 				
-				// Peonadas
+				// Jornadas Reales
 				@Override
-				public Void visitPeonadasDay(DayType dayType) {
+				public Void visitRealDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.dayTypeButton());
 					calendarGrid.getWidget(row, col).addStyleName(style.peonadasStyle());
 					return null;
 				}
 				
+				// Jornadas Teoricas
+				@Override
+				public Void visitIfDay(DayType dayType) {
+					calendarGrid.getWidget(row, col).addStyleName(style.dayTypeButton());
+					calendarGrid.getWidget(row, col).addStyleName(style.peonadasStyle());
+					return null;
+				}
+
 				// Parcialidad
 				@Override
 				public Void visitPartialityDay(DayType dayType) {
@@ -648,7 +656,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 	@UiHandler("peonadasDayButton")
 	public void onPeonadasDayButtonClick(ClickEvent event) {
-		initDatesDialog(DayType.PEONADAS);
+		initiAgrarianDialog(DayType.REAL_DAYS);
 	}
 	
 	// --------------------------- Days Hours
@@ -1133,6 +1141,36 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		inactivityDialog.show();
 	}
 	
+	private void initiAgrarianDialog(DayType dayType) {
+		String caption = getCaptionByDayType(dayType);
+		EmployeeCalendarAgrarianDialog agrarianDialog = 
+			new EmployeeCalendarAgrarianDialog(
+				caption, 
+				this.selectedDates.getSelectedList(),
+				this.employeeCalendarDraftObject.getContractStartDate(),
+				this.employeeCalendarDraftObject.getContractEndDate()) {
+			
+			@Override
+			protected void onAccept() {
+				Date startDate = getStartDate();
+				Date endDate = getEndDate();
+				Integer daysBetween = getDaysBetween(startDate, endDate);
+				switch (getType()) {
+				case "JORNADAS_REALES":
+					addDayType(startDate, endDate, DayType.REAL_DAYS, Integer.toString(daysBetween));
+					break;
+				case "JORNADAS_TEORICAS":
+					addDayType(startDate, endDate, DayType.IF_DAYS, Integer.toString(daysBetween));
+					break;
+				default:
+					break;
+				}
+			}
+		};
+		agrarianDialog.center();
+		agrarianDialog.show();
+	}
+
 	private void initDropDialog(DayType dayType) {
 		String caption = getCaptionByDayType(dayType);
 		EmployeeCalendarPercentDialog percentDialog = new EmployeeCalendarPercentDialog(
@@ -1154,15 +1192,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					case 1:
 						addDayType(startDate, endDate, DayType.DROPDAY, coefficient);
 						break;
-//					case 2:
-//						addDayType(startDate, endDate, DayType.EREDAY, coefficient);
-//						break;
-//					case 3:
-//						addDayType(startDate, endDate, DayType.EREFZADAY, coefficient);
-//						break;
-//					case 4:
-//						addDayType(startDate, endDate, DayType.EREFZAEXONDAY, coefficient);
-//						break;
 					default:
 						break;
 				}	
@@ -1172,6 +1201,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		percentDialog.center();
 		percentDialog.show();
 	}
+	
 	
 	private void initPartialityDialog(DayType dayType) {
 		String caption = getCaptionByDayType(dayType);
@@ -1225,8 +1255,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			return "DIAS VACACIONES";
 		case INACTIVITY:
 			return "DIAS INACTIVIDAD";
-		case PEONADAS:
-			return "DIAS PEONADAS";
+		case REAL_DAYS:
+			return "JORNADAS";
 		case DROPDAY:
 			return "DIAS AUSENCIA";
 		case PARTIALITY:
@@ -1472,7 +1502,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) peonadas", new Command() {
 				@Override
 				public void execute() {
-					initDatesDialog(DayType.PEONADAS);
+					initDatesDialog(DayType.REAL_DAYS);
 				}
 			});
 		}

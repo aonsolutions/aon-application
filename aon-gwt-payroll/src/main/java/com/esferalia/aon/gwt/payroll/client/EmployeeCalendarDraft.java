@@ -138,7 +138,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				}
 
 				@Override
-				public Void visitPeonadasDay(DayType dayType) {
+				public Void visitRealDay(DayType dayType) {
+					calendarGrid.getWidget(row, col).addStyleName(style.peonadasStyle());
+					return null;
+				}
+
+				@Override
+				public Void visitIfDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.peonadasStyle());
 					return null;
 				}
@@ -2262,7 +2268,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	}
 	
 	private void addPeonadas() {
-		applyDayTypeSelectedDates(DayType.PEONADAS);
+		applyDayTypeSelectedDates(DayType.REAL_DAY);
 	}
 	
 	private void addNoWorkingDay() {

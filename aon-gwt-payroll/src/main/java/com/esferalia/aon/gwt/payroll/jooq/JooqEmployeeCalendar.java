@@ -77,13 +77,12 @@ public class JooqEmployeeCalendar {
 		varNames.add("DIAS_INACTIVIDAD");
 		varNames.add("NO_LABORABLE");
 		varNames.add("CAUSA_INACTIVIDAD");
-		varNames.add("PEONADAS");
 		varNames.add("FESTIVE_WORKING");
 		// FESTIVE WORKING DAYS
 		varNames.add("FESTIVE_WORKING");
-		// PEONADAS
-		varNames.add("PEONADAS");
+		// JORNADAS
 		varNames.add("JORNADAS_REALES");
+		varNames.add("JORNADAS_TEORICAS");
 		// CAUSA INACTIVITY
 		varNames.add("CAUSA_INACTIVIDAD");
 		// DROPDAY (AUSENCIA)
@@ -389,7 +388,8 @@ public class JooqEmployeeCalendar {
 							,"NO_LABORABLE"
 							,"DIAS_INACTIVIDAD"
 							,"DIAS_AUSENCIA"
-							,"PEONADAS"))
+							,"JORNADAS_REALES"
+							,"JORNADAS_TEORICAS"))
 					.fetch();
 		
 		for(Record r: contractDayTypesEmployeeInfo){
@@ -850,7 +850,8 @@ public class JooqEmployeeCalendar {
 //				  ,"COEFICIENTE_INACTIVIDAD"
 				  ,"COEFICIENTE_AUSENCIA"
 				  ,"DIAS_AUSENCIA"
-				  ,"PEONADAS"
+				  ,"JORNADAS_REALES"
+				  ,"JORNADAS_TEORICAS"
 				  ,"FESTIVE_WORKING"
 				  // ERE TYPES
 				  ,ContextVariable.ERE_DAYS.getName()
@@ -1211,7 +1212,7 @@ public class JooqEmployeeCalendar {
 		
 		Result<Record> peonadasRecords = dslContext.select().from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contract))
-				.and(CONTRACT_DATA.NAME.eq("PEONADAS"))
+				.and(CONTRACT_DATA.NAME.eq("JORNADAS_REALES"))
 				.fetch();
 		
 		ArrayList<Date> months = new ArrayList<>();
@@ -1238,7 +1239,7 @@ public class JooqEmployeeCalendar {
 					
 					Result<Record> peonadasMonthRecords = dslContext.select().from(CONTRACT_DATA)
 							.where(CONTRACT_DATA.CONTRACT.eq(contract))
-							.and(CONTRACT_DATA.NAME.eq("PEONADAS"))
+							.and(CONTRACT_DATA.NAME.eq("JORNADAS_REALES"))
 							.and(CONTRACT_DATA.START_DATE.ge(sqlStartDate))
 							.and(CONTRACT_DATA.END_DATE.le(sqlEndDate))
 							.fetch();
@@ -1631,7 +1632,7 @@ public class JooqEmployeeCalendar {
 	
 	private static boolean validDayType(String dayType) {
 		return dayType.equals("DIAS_ERE") || dayType.equals("DIAS_HUELGA") || dayType.equals("NO_LABORABLE") 
-				|| dayType.equals("DIAS_VACACIONES") || dayType.equals("DIAS_INACTIVIDAD") || dayType.equals("PEONADAS")
+				|| dayType.equals("DIAS_VACACIONES") || dayType.equals("DIAS_INACTIVIDAD") || dayType.equals("JORNADAS_REALES") || dayType.equals("JORNADAS_TEORICAS")
 				|| dayType.equals("DIAS_AUSENCIA") || dayType.equals("DIAS_ERE_FZA") || dayType.equals("DIAS_ERE_FZA_EXONERADO");
 				//|| dayType.equals("DIAS_PARCIALIDAD");
 	}
@@ -1654,8 +1655,11 @@ public class JooqEmployeeCalendar {
 		case INACTIVITY:
 			result = "DIAS_INACTIVIDAD";
 			break;
-		case PEONADAS:
-			result = "PEONADAS";
+		case REAL_DAY:
+			result = "JORNADAS_REALES";
+			break;
+		case IF_DAY:
+			result = "JORNADAS_TEORICAS";
 			break;
 		case NOWORKINGDAY:
 			result = "NO_LABORABLE";

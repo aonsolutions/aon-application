@@ -35,12 +35,14 @@ public class CalendarDaysType implements Serializable {
 		// IT
 		T visitITDay(DayType dayType);
 		// Peonadas
-		T visitPeonadasDay(DayType dayType);
+		T visitRealDay(DayType dayType);
 		//Parcialidad
 		T visitPartialityDay(DayType dayType);
 		// OTROS
 		T visitFreeDay(DayType dayType);
 		T visitNoTypeDay(DayType dayType);
+
+		T visitIfDay(DayType dayType);
 	}
 	
 	public static enum DayType{
@@ -126,10 +128,10 @@ public class CalendarDaysType implements Serializable {
 			}
 		},
 		// Peonadas
-		PEONADAS{
+		REAL_DAYS{
 			@Override
 			public <T> T visit(DayTypeVisitor<T> visitor) {
-				return visitor.visitPeonadasDay(this);
+				return visitor.visitRealDay(this);
 			}
 		},
 		// Parcialidad
@@ -150,6 +152,13 @@ public class CalendarDaysType implements Serializable {
 			@Override
 			public <T> T visit(DayTypeVisitor<T> visitor) {
 				return visitor.visitNoTypeDay(this);
+			}
+		},
+		// Teoricas
+		IF_DAYS{
+			@Override
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitIfDay(this);
 			}
 		};
 		
@@ -707,7 +716,8 @@ public class CalendarDaysType implements Serializable {
 	private boolean validDayType(DayType dayType) {
 		ArrayList<DayType> validDayTypes = new ArrayList<DayType>();
 		validDayTypes.add(DayType.NOWORKINGDAY);
-		validDayTypes.add(DayType.PEONADAS);
+		validDayTypes.add(DayType.REAL_DAYS);
+		validDayTypes.add(DayType.IF_DAYS);
 		validDayTypes.add(DayType.HOLIDAY);
 		validDayTypes.add(DayType.EREDAY);
 		validDayTypes.add(DayType.EREFZADAY);
@@ -739,7 +749,8 @@ public class CalendarDaysType implements Serializable {
 	private boolean isDaysBetweenExpression(DayType dayType) {
 		ArrayList<DayType> validDayTypes = new ArrayList<DayType>();
 		validDayTypes.add(DayType.NOWORKINGDAY);
-		validDayTypes.add(DayType.PEONADAS);
+		validDayTypes.add(DayType.REAL_DAYS);
+		validDayTypes.add(DayType.IF_DAYS);
 		validDayTypes.add(DayType.HOLIDAY);
 		validDayTypes.add(DayType.WORKINGDAY);
 		

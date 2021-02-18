@@ -100,9 +100,9 @@ public class JooqEmployeeCalendarNew {
 		varNames.add("CAUSA_INACTIVIDAD");
 		varNames.add("DIAS_INACTIVIDAD");
 		
-		// PEONADAS
-		varNames.add("PEONADAS");
+		// JORNADAS
 		varNames.add("JORNADAS_REALES");
+		varNames.add("JORNADAS_TEORICAS");
 		
 		// LABORABLES
 		varNames.add("LABORABLE_DOMINGO");
@@ -508,7 +508,8 @@ public class JooqEmployeeCalendarNew {
 				.and(CONTRACT_DATA.NAME.in(
 						ContextVariable.HOLIDAYS.getName()
 						,"NO_LABORABLE"
-						,"PEONADAS"
+						,"JORNADAS_REALES"
+						,"JORNADAS_TEORICAS"
 						,"LABORABLE"
 						//Coeficientes
 						,ContextVariable.ERE_FACTOR.getName()
@@ -798,7 +799,8 @@ public class JooqEmployeeCalendarNew {
 					"DIAS_FESTIVOS",
 					ContextVariable.HOLIDAYS.getName()
 					,"NO_LABORABLE"
-					,"PEONADAS"
+					,"JORNADAS_REALES"
+					,"JORNADAS_TEORICAS"
 					,ContextVariable.ERE_FACTOR.getName()
 					,ContextVariable.STRIKE_FACTOR.getName()
 					,"COEFICIENTE_ERE_FZA"
@@ -889,7 +891,8 @@ public class JooqEmployeeCalendarNew {
 			put(DayType.STRIKEDAY, "COEFICIENTE_HUELGA");
 			put(DayType.EREDAY, "COEFICIENTE_ERE");
 			put(DayType.INACTIVITY, "CAUSA_INACTIVIDAD");
-			put(DayType.PEONADAS, "PEONADAS");
+			put(DayType.REAL_DAYS, "JORNADAS_REALES");
+			put(DayType.IF_DAYS, "JORNADAS_TEORICAS");
 			put(DayType.NOWORKINGDAY, "NO_LABORABLE");
 			put(DayType.DROPDAY, "COEFICIENTE_AUSENCIA");
 			put(DayType.PARTIALITY, "COEFICIENTE_PARCIALIDAD");
@@ -911,7 +914,8 @@ public class JooqEmployeeCalendarNew {
 			put("COEFICIENTE_HUELGA", DayType.STRIKEDAY);
 			put("COEFICIENTE_ERE", DayType.EREDAY);
 			put("CAUSA_INACTIVIDAD", DayType.INACTIVITY);
-			put("PEONADAS", DayType.PEONADAS);
+			put("JORNADAS_REALES", DayType.REAL_DAYS);
+			put("JORNADAS_TEORICAS", DayType.IF_DAYS);
 			put("NO_LABORABLE", DayType.NOWORKINGDAY);
 			put("COEFICIENTE_AUSENCIA", DayType.DROPDAY);
 			put("COEFICIENTE_PARCIALIDAD", DayType.PARTIALITY);

@@ -65,7 +65,7 @@ public class JooqAgrarian {
 					))
 					.fetch()	
 			))
-			.and(CONTRACT_DATA.NAME.eq("PEONADAS"))
+			.and(CONTRACT_DATA.NAME.eq("JORNADAS_REALES"))
 			.and(CONTRACT_DATA.START_DATE.greaterOrEqual(new Date(startDate.getTimeInMillis())))
 			.and(CONTRACT_DATA.END_DATE.lessOrEqual(new Date(endDate.getTimeInMillis())))
 			.fetch();
@@ -90,7 +90,7 @@ public class JooqAgrarian {
 			
 			System.out.println(
 					"Contract : " + r.get(CONTRACT_DATA.CONTRACT) +
-					" PEONADAS -> StartDate : " + r.get(CONTRACT_DATA.START_DATE) +
+					" JORNADAS_REALES -> StartDate : " + r.get(CONTRACT_DATA.START_DATE) +
 					" EndDate : " + r.get(CONTRACT_DATA.END_DATE) +
 					" Nombre : " + personRecords.get(0).get(PERSON.NAME) +
 					" Apellido : " + personRecords.get(0).get(PERSON.FIRST_SURNAME)
