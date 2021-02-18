@@ -153,18 +153,20 @@ export class AonToolbar extends AonElement {
 
 	addButton(name, icon, fn) {
 		const id = this.TOOL_SECTION + name + 'Button';
-		let button = `<aon-icon-button id="${id}" icon="${icon}"> </aon-icon-button>`;
-		let span = document.createElement('span');
-		span.innerHTML= button;
+		if(this.getElement(id) == null) {
+			let button = `<aon-icon-button id="${id}" icon="${icon}"> </aon-icon-button>`;
+			let span = document.createElement('span');
+			span.innerHTML= button;
 
-		let toolSection = this.getElement(this.TOOL_SECTION);
-		toolSection.style.paddingRight = this.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
-		if(toolSection.children.length > 0) {
-			toolSection.insertBefore(span, toolSection.children[0]);
-		} else toolSection.appendChild(span);
+			let toolSection = this.getElement(this.TOOL_SECTION);
+			toolSection.style.paddingRight = this.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
+			if(toolSection.children.length > 0) {
+				toolSection.insertBefore(span, toolSection.children[0]);
+			} else toolSection.appendChild(span);
 
-		let b = document.getElementById(id);
-		b.addEventListener('click', fn);
+			let b = document.getElementById(id);
+			b.addEventListener('click', fn);
+		}
 	}
 
 	addSearchButton() {

@@ -19,7 +19,7 @@ import "../../../../components/aon-suggestion.js";
 import "../../../../components/aon-select.js";
 import "../../../../components/aon-switch.js";
 import "../../../../components/aon-icon-button.js";
-import "./aon-event-list.js";
+import { AonEventDetailList } from "./aon-event-detail-list.js";
 
 export class AonEventAdd extends AonElement {
   ACTION;
@@ -50,6 +50,8 @@ export class AonEventAdd extends AonElement {
     this.aonSigninEl = this.getElement("aonSignin");
     this.aonSigninEl.addToolbarTitle("Registrar evento");
     this.TOAST = this.getElement(`${this.aonSigninEl.id}Toast`);
+    this.aonSigninParentEl = this.aonSigninEl.getParent();
+    this.aonSigninParentEl.periodSideNavDisplay(false);
   }
 
   connectedCallback() {
@@ -261,7 +263,7 @@ export class AonEventAdd extends AonElement {
         type: "success",
         delay: 3000,
       });
-      // this.back();
+      this.back();
     } catch (error) {
       this.TOAST.start({ message: error, type: "error" });
     }
@@ -284,7 +286,9 @@ export class AonEventAdd extends AonElement {
   }
 
   back() {
-    this.aonSigninEl.setContentHTML(`<aon-presence-list></aon-presence-list>`);
+    let aonEventDetailList = new AonEventDetailList();
+    aonEventDetailList.filter = true;
+    this.aonSigninEl.setContent(aonEventDetailList);
   }
 }
 

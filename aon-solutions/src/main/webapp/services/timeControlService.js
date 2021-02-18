@@ -4,6 +4,7 @@ import { addDays, formatDateOrigin, firstDayWeek, lastDayWeek} from "./utils.js"
 
 export const getTimeControl = (data) => get(`${API_URL}/timecontrol`, data);
 export const saveTimeControl = (data) => post(`${API_URL}/timecontrol`, data);
+export const getTimeControlDetail = (data) => get(`${API_URL}/timecontrol/list-holder-detail`, data);
 
 export const getStatus = (data) =>
   new Promise((resolve) => {

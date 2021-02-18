@@ -482,6 +482,12 @@ export class AonApplication extends AonElement {
 		return this.parentNode;
 	}
 
+	getChild(){
+		let el = this.getElement(this.CONTENT);
+		if(el) el = el.firstChild;
+		return el;
+	}
+
 	isSidenavBlock() {
 			return this.hasAttribute('sidenav') && 'block' === this.getAttribute('sidenav');
 	}

@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
@@ -50,6 +51,9 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				break;
 			case "/list-holder":
 				response(req, resp, getTaskHolderTimeControlStream());
+				break;
+			case "/list-holder-detail":
+				response(req, resp, getTimeControlDetailStream());
 				break;
 			case "/taskholder":
 				response(req, resp, getTaskHolders());
@@ -169,6 +173,32 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		JSONArray array = new JSONArray();
 		TimeControlGroup timeCG = TimeControlGroup.safeValueOf(getParams().optString("group"));
 		AON_SOLUTIONS.getTaskHolderTimeControlStream(getDomain(), "", getParams().optInt("taskHolderId"), startDate, endDate, timeCG)
+		.forEach(tc -> {
+			array.put(tc.toJSON());
+		});
+		
+		return array;
+	}
+	
+	private Object getTimeControlDetailStream() {		
+		Date startDate =  AonDateUtils.getDateWithoutTime(new Date());
+		Date endDate = new Date();
+
+		if(!getParams().optString("startDate").isEmpty()) startDate = Toolkit.parseDate(getParams().optString("startDate"), "yyyy-MM-dd");
+		if(!getParams().optString("endDate").isEmpty()) endDate = Toolkit.parseDate(getParams().optString("endDate"), "yyyy-MM-dd");
+		
+		endDate = AonDateUtils.addDays(startDate, 1);
+		endDate = AonDateUtils.addSeconds(endDate, -1);
+		
+		Timestamp startTimestamp = new Timestamp(startDate.getTime());
+		Timestamp endTimestamp = new Timestamp(endDate.getTime());
+		
+		JSONArray array = new JSONArray();
+		AON_SOLUTIONS.getTimeControlDetailStream(getDomain(), "", f -> 
+		f.getDomainProperty().eq(getDomain().getId())
+		.and(f.getDateProperty().ge(startTimestamp))
+		.and(f.getDateProperty().le(endTimestamp))
+		.and(f.getTaskHolderProperty().eq(getParams().optInt("taskHolderId"))))
 		.forEach(tc -> {
 			array.put(tc.toJSON());
 		});

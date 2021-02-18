@@ -3,8 +3,8 @@ import { getPeriod, getStatus, getTimeControlList } from "../../../services/serv
 import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, timeHour } from "../../../services/utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
-import "../../../components/aon-filter.js";
 import {AonEventList} from "./event/aon-event-list.js";
+import "../../../components/aon-filter.js";
 
 import { StringTwoLetters } from "./utils.js";
 
@@ -31,7 +31,7 @@ export class AonPresenceList extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name){}
+    if ("filter" === name) this.getTable();
   }
 
   constructor() {
@@ -40,29 +40,24 @@ export class AonPresenceList extends AonElement {
     this.TABLE_ID = this.id + "Table";
     this.aonSigninEl = this.getElement("aonSignin");
     this.aonSigninEl.addToolbarTitle("Presencia");
-    // console.log(atob(localStorage.getItem(this.id)));
+    this.aonSigninParentEl = this.aonSigninEl.getParent();
   }
 
   connectedCallback() {
     this.build();
   }
   
-  disconnectedCallback() {
-    // localStorage.setItem(this.id, btoa(this.innerHTML))
-  }
+  disconnectedCallback() {}
 
   async build(){
     this.paintView();
-    window.addEventListener('filterAonSignin', ({detail})=>{
-      if(detail && detail.period) setValueName('period', detail.period);
-      this.getTable();
-    })
-    await this.buildToolbar();
+    this.buildToolbar();
+    await this.buildFilter();
     await this.getTable();
   }
 
   paintView() {
-    let innerHTML = `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
+    let innerHTML =  `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
     if (this.isMobile()) {
       innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
     } else {
@@ -72,21 +67,14 @@ export class AonPresenceList extends AonElement {
     this.innerHTML = innerHTML;
   }
 
-  async buildToolbar() {
+  buildToolbar() {
     this.aonSigninEl.removeToolbarOptions();
-    await this.buildFilter();
     const filterEl = this.getElement(`${this.id}Filter`);
     this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
       filterEl.openFilter()
     );
   }
 
-  async getTable() {
-    this.aonSigninEl.startLoader();
-    if (this.isMobile()) await this.getTableMobile();
-    else await this.getTableDesk();
-    this.aonSigninEl.stopLoader();
-  }
 
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
@@ -111,24 +99,19 @@ export class AonPresenceList extends AonElement {
       },
     ];
     aonFilter.setInputs(inputs);
-    aonFilter.addEventListener("applyFilter", () => {
-      this.getTable();
+    aonFilter.addEventListener("applyFilter", ({detail}) => {
+      if(detail) this.aonSigninParentEl.setDataFilter(detail);
     });
 
-    await this.getOptionsPeriod();
-  }
-
-  async getOptionsPeriod() {
     let periodEl = this.getElement("period");
     periodEl.options = JSON.stringify(await getPeriod());
-    this.eventListenerFilter();
-  }
 
-  eventListenerFilter(){
-    let periodEl = this.getElement("period");
     periodEl.addEventListener('change', ({detail}) => {
-      setValueName('startDate', detail.startDate);
-      setValueName('endDate', detail.endDate);
+      if(detail){
+        const {startDate, endDate} = detail;
+        setValueName('startDate', startDate);
+        setValueName('endDate', endDate);
+      }
     });
 
     this.getElement("startDate").addEventListener("change",(ev)=>{
@@ -137,9 +120,17 @@ export class AonPresenceList extends AonElement {
     this.getElement("endDate").addEventListener("change",(ev)=>{
       periodEl.value = "personalized";
     });
-
-    periodEl.value = "today";
   }
+
+  async getTable() {
+    this.aonSigninEl.startLoader();
+    if (this.isMobile()) await this.getTableMobile();
+    else await this.getTableDesk();
+    this.aonSigninEl.stopLoader();
+    this.aonSigninParentEl.changeFilter();
+  }
+
+
 
   async getTableDesk() {
     const aonTable = this.getElement(this.TABLE_ID);
@@ -147,15 +138,14 @@ export class AonPresenceList extends AonElement {
       aonTable.removeColumns();
       aonTable.addColumn("", "string", "lettersHtml", "6%");
       aonTable.addColumn("Nombre", "string", "name", "34%");
-      aonTable.addColumn("Estado", "", "textStatus", "15%");
-      aonTable.addColumn("Fecha", "date", "dateParse", "20%");
+      aonTable.addColumn("Último estado", "", "lastStatus", "35%");
       aonTable.addColumn("Duración", "", "duration", "5%");
-      aonTable.addColumn("Ubicación", "string", "nameLocation", "20%");
+      aonTable.addColumn("Última ubicación", "string", "nameLocation", "20%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
-          res.dateParse = setDateTimestampDay(res.last_date);
+          res.lastStatus = `${res.textStatus} ${setDateTimestampDay(res.last_date)}`
           aonTable.addRow(res, (el) => this.aonEvent(el, res));
         });
       } catch (e) {
@@ -191,8 +181,10 @@ export class AonPresenceList extends AonElement {
     this.aonSigninEl.startLoader();
     let data = [];
     try {
-      const filtros = this.getElement(`${this.id}Filter`).getValues();
-      const datos = await getTimeControlList(filtros);
+      let filter = null;
+      try { filter = this.aonSigninParentEl._filter;} catch (error) {}
+
+      const datos = await getTimeControlList(filter);
       if (datos) {
         sortBy(datos, 'last_date', 'desc').map(
           async ({
@@ -240,12 +232,12 @@ export class AonPresenceList extends AonElement {
 
   aonEvent({ target }, data) {
     if ("add_location" === target.textContent) {
-      this.aonSigninEl.getParent().openLocationAdd(undefined, data);
+      this.aonSigninParentEl.openLocationAdd(undefined, data);
     } else {
       let aonList= new AonEventList();
       aonList.id = "aonEventList";
-      const filtros = this.getElement(`${this.id}Filter`).getValues();
-      aonList.data = { ...data, ...filtros};
+      this.aonSigninParentEl._filter.taskHolderId = data.taskHolderId;
+      aonList.filter = true;
       this.aonSigninEl.setContent(aonList);
     }
   }

@@ -1,16 +1,17 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { isEmptyObject, setDateTimestamp, setValueName, sortBy, timeHour } from "../../../../services/utils.js";
 import {
-  getGroups,
+  getPeriod,
   getStatus,
   getTaskHolderTimeControl,
 } from "../../../../services/service.js";
 import { StringTwoLetters } from "../utils.js";
-
+import { AonPresenceList } from "../aon-presence-list.js";
+import {AonEventDetailList} from "./aon-event-detail-list.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
-import "./aon-event-detail-list.js";
-import  "../aon-presence-list.js";
+import "../../../../components/aon-filter.js";
+
 
 export class AonEventList extends AonElement {
   TABLE_ID;
@@ -43,46 +44,73 @@ export class AonEventList extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name) {
-      this.data = { ...this.data, ...this.filter };
-    } else if ("data" == name && newValue) {
-      this.getTable();
-    }
+    if ("filter" === name) this.getTable();
   }
 
   constructor() {
     super();
-    this.aonSigninEl = this.getElement("aonSignin");
     this.id = this.id || "aonEventList";
     this.TABLE_ID = this.id + "Table";
+    this.aonSigninEl = this.getElement("aonSignin");
+    this.aonSigninEl.addToolbarTitle("Eventos");
+    this.aonSigninParentEl = this.aonSigninEl.getParent();
+    this.aonSigninParentEl.periodSideNavDisplay(true);
   }
 
   connectedCallback() {
-    this.paintView();
     this.build();
-
   }
 
   disconnectedCallback() {}
 
   async build() {
+    this.paintView();
     this.buildToolbar();
-    window.addEventListener('filterAonSignin', ({detail})=>{
-      if(detail && detail.period) setValueName('period', detail.period);
-      this.getTable();
-    })
+    await this.buildFilter();
     await this.getTable();
   }
 
 
-  buildFilter() {
+  paintView() {
+    let innerHTML = `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
+    if (this.isMobile()) {
+      innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
+    } else {
+      innerHTML = innerHTML + ` <aon-table id='${this.TABLE_ID}' />`;
+    }
+
+    this.innerHTML = innerHTML;
+  }
+
+  async getTable() {
+    this.aonSigninEl.startLoader();
+    if (this.isMobile()) {
+      await this.getTableMobile();
+    } else {
+      await this.getTableDesk();
+    }
+    this.aonSigninEl.stopLoader();
+    this.aonSigninParentEl.changeFilter();
+  }
+
+
+  buildToolbar() {
+    this.aonSigninEl.removeToolbarOptions();
+    const filterEl = this.getElement(`${this.id}Filter`);
+    this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
+      filterEl.openFilter()
+    );
+    this.aonSigninEl.addToolbarOption("Previus", "arrow_back", (e) => this.back());
+  }
+
+  async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
     let inputs = [
       {
         type: "select",
-        id: "group",
-        name: "group",
-        title: "Agrupar por",
+        id: "period",
+        name: "period",
+        title: "Período",
       },
       {
         type: "date",
@@ -98,52 +126,27 @@ export class AonEventList extends AonElement {
       },
     ];
     aonFilter.setInputs(inputs);
-    aonFilter.addEventListener("applyFilter", ({ detail }) => {
-      if (detail) this.filter = detail;
+    aonFilter.addEventListener("applyFilter", ({detail}) => {
+      if(detail) this.aonSigninParentEl.setDataFilter(detail);
     });
-    this.getOptionsGroup();
-  }
 
-  async getOptionsGroup() {
-    let groupEl = this.getElement("group");
-    groupEl.options = JSON.stringify(await getGroups());
-    if (this.data && this.data.group) {
-      groupEl.value = this.data.group;
-    }
-  }
+    let periodEl = this.getElement("period");
+    periodEl.options = JSON.stringify(await getPeriod());
 
-  paintView() {
-    let innerHTML = `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
-    if (this.isMobile()) {
-      innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
-    } else {
-      innerHTML = innerHTML + ` <aon-table id='${this.TABLE_ID}' />`;
-    }
+    periodEl.addEventListener('change', ({detail}) => {
+      if(detail){
+        const {startDate, endDate} = detail;
+        setValueName('startDate', startDate);
+        setValueName('endDate', endDate);
+      }
+    });
 
-    this.innerHTML = innerHTML;
-  }
-
-  async getTable() {
-    this.aonSigninEl.addToolbarTitle("Eventos");
-    this.aonSigninEl.startLoader();
-    if (this.isMobile()) {
-      await this.getTableMobile();
-    } else {
-      await this.getTableDesk();
-    }
-    this.aonSigninEl.stopLoader();
-  }
-
-
-  buildToolbar() {
-    this.aonSigninEl.removeToolbarOptions();
-    this.buildFilter();
-    const filterEl = this.getElement(`${this.id}Filter`);
-    this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
-      filterEl.openFilter()
-    );
-
-    this.aonSigninEl.addToolbarOption("Previus", "arrow_back", (e) => this.back());
+    this.getElement("startDate").addEventListener("change",(ev)=>{
+      periodEl.value = "personalized";
+    });
+    this.getElement("endDate").addEventListener("change",(ev)=>{
+      periodEl.value = "personalized";
+    });
   }
 
 
@@ -200,7 +203,9 @@ export class AonEventList extends AonElement {
     this.aonSigninEl.startLoader();
     let data = [];
     try {
-      let datos = await getTaskHolderTimeControl(this.data);
+      let filter = null;
+      try { filter = this.aonSigninParentEl._filter;} catch (error) {}
+      let datos = await getTaskHolderTimeControl(filter);
       if(datos){
         sortBy(datos, 'last_date', 'desc').map(
           async (r) => {
@@ -240,23 +245,19 @@ export class AonEventList extends AonElement {
 
   aonEvent({target}, data) {
     if("add_location" === target.textContent){
-      this.aonSigninEl.getParent().openLocationAdd(undefined, data);
+      this.aonSigninParentEl.openLocationAdd(undefined, data);
     } else {
-      let id = "aonEventDetailList";
-      this.aonSigninEl.setContentHTML(
-        `<aon-event-detail-list id="${id}"></aon-event-detail-list>`
-      );
-      const aonEventEl = this.getElement(id);
-      if (data && aonEventEl) {
-        aonEventEl.data = data;
-      }
+      let aonEventDetail = new AonEventDetailList();
+      aonEventDetail.id = "aonEventDetailList";
+      aonEventDetail.filter = true;
+      this.aonSigninEl.setContent(aonEventDetail);
     }
   }
 
   back(){
-    this.aonSigninEl.setContentHTML(
-     `<aon-presence-list></aon-presence-list>` 
-    );
+    let aonPresenceList = new AonPresenceList();
+    aonPresenceList.filter = true;
+    this.aonSigninEl.setContent(aonPresenceList);
   }
 }
 window.customElements.define("aon-event-list", AonEventList);
