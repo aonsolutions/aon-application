@@ -11,6 +11,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMPROVEMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TEMP_PAYMENT;
+import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0000;
 import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0001;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
@@ -1568,6 +1569,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				PaymentType paymentType = PaymentType.values()[r.value2()];
 				if ( paymentType == CRA_0001 )
 					return;
+				if ( paymentType == CRA_0000)
+					return;
 				
 				String description = normalize(r.value1());
 				
@@ -1594,6 +1597,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				
 				PaymentType paymentType = PaymentType.values()[r.value2()];
 				if ( paymentType == CRA_0001 )
+					return;
+				if ( paymentType == CRA_0000 )
 					return;
 				
 				String description = normalize(r.value1());
