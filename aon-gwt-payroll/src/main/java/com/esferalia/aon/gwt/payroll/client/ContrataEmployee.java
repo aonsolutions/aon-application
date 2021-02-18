@@ -1754,25 +1754,47 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void onSaveContract(ClickEvent event) {
-		int ssRegime = employee.ssRegimeType.getSelectedIndex();
-		contrataEmployeeObject.setSSRegime(ssRegime);
 		
-		if(checkIfSaveIsPossible())
-			if(checkDates())
-				contrataEmployeeObject.updateEmployee(
-						r -> {
-							this.setContrataEmployeeObject(this.contrataEmployeeObject, r);
-						}, 
-						t -> {}
-				);			
-			else{
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("AVISO: Fechas", "La fecha de inicio no puede ser posterior a la fecha de fin.");
-			}
-		else {
-			AonConfirmDialog dialog = new AonConfirmDialog();
-			dialog.info("AVISO: Campos obligatorios", "Hay que rellenar los campos azules correcta y obligatoriamente.");
+		Integer itemIdx = tabLayOutPanel.getSelectedIndex();
+		switch (itemIdx) {
+		case 0:
+			contrataEmployeeObject.setEmployeeContract(s -> {}, f -> {});
+			break;
+		case 1:
+			contrataEmployeeObject.setContractSpecificData(s -> {}, f -> {});
+			break;
+		case 2:
+			contrataEmployeeObject.setContractOtherInfo(s -> {}, f -> {});
+			break;
+		case 3:
+			contrataEmployeeObject.setContractClauses(s -> {}, f -> {});
+			break;
+		case 4:
+			contrataEmployeeObject.setContractAttachments(s -> {}, f -> {});
+			break;
+		default:
+			break;
 		}
+		
+//		int ssRegime = employee.ssRegimeType.getSelectedIndex();
+//		contrataEmployeeObject.setSSRegime(ssRegime);
+//		
+//		if(checkIfSaveIsPossible())
+//			if(checkDates())
+//				contrataEmployeeObject.updateEmployee(
+//						r -> {
+//							this.setContrataEmployeeObject(this.contrataEmployeeObject, r);
+//						}, 
+//						t -> {}
+//				);			
+//			else{
+//				AonConfirmDialog dialog = new AonConfirmDialog();
+//				dialog.info("AVISO: Fechas", "La fecha de inicio no puede ser posterior a la fecha de fin.");
+//			}
+//		else {
+//			AonConfirmDialog dialog = new AonConfirmDialog();
+//			dialog.info("AVISO: Campos obligatorios", "Hay que rellenar los campos azules correcta y obligatoriamente.");
+//		}
 	}
 
 	private void onDeleteContract(ClickEvent event) {
