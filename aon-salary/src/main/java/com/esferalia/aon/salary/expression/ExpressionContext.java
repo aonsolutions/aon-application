@@ -625,7 +625,7 @@ public class ExpressionContext {
 	public boolean isRead(Object ...names) {
 		for (Object name : names)
 			if ( read.contains(name))
-				return true;
+				return getCurrentBindings().containsKey(name);
 		
 		return false;
 	}
