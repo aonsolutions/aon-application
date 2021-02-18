@@ -701,7 +701,13 @@ public class MainContrataITObject {
 	}
 	
 	public boolean isUserComunica() {
-		return this.userRoles.isComunica();
+		boolean isComunica = false;
+		try {
+			isComunica = this.userRoles.isComunica();
+			return isComunica;
+		} catch (NullPointerException e) {
+			return isComunica;
+		}
 	}
 		
 }

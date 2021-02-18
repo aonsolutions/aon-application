@@ -208,11 +208,11 @@ public class JooqIT {
 						it.addITPart(itPart);
 						
 						if(typePart == (byte) 0) { // Parte de Baja -> Check communicationStatus
-							Record leaveBatchRecord = dslContext.select().from(LEAVE_BATCH).where(LEAVE_BATCH.ID.eq(
+							Record leaveBatchRecord = dslContext.select().from(LEAVE_BATCH).where(LEAVE_BATCH.ID.in(
 									dslContext.select(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
 										.from(LEAVE_BATCH_DETAIL)
 										.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.eq(contractLeaveDetailId))
-										.fetchOne(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
+										.fetch(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
 							)).and(LEAVE_BATCH.COMMUNICATION_ID.eq("COMUNICA")).fetchOne();
 							
 							if(null != leaveBatchRecord) {

@@ -265,6 +265,14 @@ public class MainContrataIT extends MainEntryPoint {
 													public void onCancel() {
 														refreshTableIT();
 													}});
+									} else {
+										mainContrataITObject.getEmployeesInfo(false,
+												a -> {
+													initContractTable();
+													initITTable();
+												},
+												b -> {}
+										);
 									}},
 									f -> {});
 									
@@ -312,6 +320,14 @@ public class MainContrataIT extends MainEntryPoint {
 																d -> {}
 														);
 													}});
+									} else {
+										mainContrataITObject.getEmployeesInfo(false,
+												a -> {
+													initContractTable();
+													initITTable();
+												},
+												b -> {}
+										);
 									}},
 								f -> {});
 					}
@@ -615,6 +631,14 @@ public class MainContrataIT extends MainEntryPoint {
 																d -> {}
 														);
 													}});	
+									} else {
+										mainContrataITObject.getEmployeesInfo(false,
+												a -> {
+													initContractTable();
+													initITTable();
+												},
+												b -> {}
+										);
 									}},
 								f -> {});
 					}
