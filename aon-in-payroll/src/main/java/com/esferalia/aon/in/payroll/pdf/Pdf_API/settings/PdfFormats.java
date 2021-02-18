@@ -18,7 +18,8 @@ public class PdfFormats {
 	
 	
 	//RETURN LATIN VERSION OF A NUMBER WITH . AND , (STRING)
-	public static String to_latin_number(double number){
+	public static String to_latin_number(Double number){
+		if(number == null) return "";
 		DecimalFormat formater = new DecimalFormat("###,###.##");
 		return formater.format(number);
 	}

@@ -14,6 +14,7 @@ public class EnterprisePayrollEntry{
 	Optional<Double> ssEmpr;
 	Optional<Double> costeTotal;
 	Optional<Double> ssTotal;
+	Optional<Double> bonificaciones;
 
 	Optional<String> empleadoSS;
 	Optional<String> tipoSS;
@@ -25,6 +26,7 @@ public class EnterprisePayrollEntry{
 	Optional<Double> ssEmprSS;
 	Optional<Double> costeTotalSS;
 	Optional<Double> ssTotalSS;
+	Optional<Double> bonificacionesSS;
 
 	public static enum EnterpriseEntryType{
 		AON_SYSTEM,
@@ -33,7 +35,7 @@ public class EnterprisePayrollEntry{
 
 
 	//CONSTRUCTOR
-	public EnterprisePayrollEntry(EnterpriseEntryType type, String empleado, String tipo, Double devengado, Double ssTrab, Double irpf, Double deducciones, Double liquido, Double ssEmpr, Double costeTotal, Double ssTotal) {
+	public EnterprisePayrollEntry(EnterpriseEntryType type, String empleado, String tipo, Double devengado, Double ssTrab, Double irpf, Double deducciones, Double liquido, Double ssEmpr, Double costeTotal, Double ssTotal, Double bonificaciones) {
 
 		this.empleado = 		Optional.empty();
 		this.tipo = 			Optional.empty();
@@ -45,6 +47,7 @@ public class EnterprisePayrollEntry{
 		this.ssEmpr = 			Optional.empty();
 		this.costeTotal = 		Optional.empty();
 		this.ssTotal = 			Optional.empty();
+		this.bonificaciones = 	Optional.empty();
 		
 		this.empleadoSS = 		Optional.empty();
 		this.tipoSS = 			Optional.empty();
@@ -56,21 +59,22 @@ public class EnterprisePayrollEntry{
 		this.ssEmprSS = 		Optional.empty();
 		this.costeTotalSS = 	Optional.empty();
 		this.ssTotalSS = 		Optional.empty();
+		this.bonificacionesSS = Optional.empty();
 		
 		if(type == EnterpriseEntryType.AON_SYSTEM){
-			this.empleado = 	Optional.ofNullable(empleado);
-			this.tipo = 		Optional.ofNullable(tipo);
-			this.devengado = 	Optional.ofNullable(devengado);
-			this.ssTrab = 		Optional.ofNullable(ssTrab);
-			this.irpf = 		Optional.ofNullable(irpf);
-			this.deducciones =  Optional.ofNullable(deducciones);
-			this.liquido = 		Optional.ofNullable(liquido);
-			this.ssEmpr = 		Optional.ofNullable(ssEmpr);
-			this.costeTotal = 	Optional.ofNullable(costeTotal);
-			this.ssTotal = 		Optional.ofNullable(ssTotal);
+			this.empleado = 		Optional.ofNullable(empleado);
+			this.tipo = 			Optional.ofNullable(tipo);
+			this.devengado = 		Optional.ofNullable(devengado);
+			this.ssTrab = 			Optional.ofNullable(ssTrab);
+			this.irpf = 			Optional.ofNullable(irpf);
+			this.deducciones =  	Optional.ofNullable(deducciones);
+			this.liquido = 			Optional.ofNullable(liquido);
+			this.ssEmpr = 			Optional.ofNullable(ssEmpr);
+			this.costeTotal = 		Optional.ofNullable(costeTotal);
+			this.ssTotal = 			Optional.ofNullable(ssTotal);
+			this.bonificaciones = 	Optional.ofNullable(bonificaciones);
 		}
 		if(type == EnterpriseEntryType.SEG_SOCIAL){
-
 			this.empleadoSS = 		Optional.ofNullable(empleado);
 			this.tipoSS = 			Optional.ofNullable(tipo);
 			this.devengadoSS = 		Optional.ofNullable(devengado);
@@ -81,6 +85,7 @@ public class EnterprisePayrollEntry{
 			this.ssEmprSS = 		Optional.ofNullable(ssEmpr);
 			this.costeTotalSS = 	Optional.ofNullable(costeTotal);
 			this.ssTotalSS = 		Optional.ofNullable(ssTotal);
+			this.bonificacionesSS = Optional.ofNullable(bonificaciones);
 		}
 	}
 
@@ -97,6 +102,7 @@ public class EnterprisePayrollEntry{
 		this.ssEmprSS = 		ss_en.getSsEmprSS();
 		this.costeTotalSS = 	ss_en.getCosteTotalSS();
 		this.ssTotalSS = 		ss_en.getSsTotalSS();
+		this.bonificacionesSS = ss_en.getBonificacionesSS();
 	}
 
 	public Optional<String> getEmpleado() {return empleado;}
@@ -128,41 +134,37 @@ public class EnterprisePayrollEntry{
 
 	public Optional<Double> getSsTotal() {return ssTotal;}
 	public Optional<Double> getSsTotalSS() {return ssTotalSS;}
+	
+	public Optional<Double> getBonificaciones() {return bonificaciones;}
+	public Optional<Double> getBonificacionesSS() {return bonificacionesSS;}
 
 	public boolean Has_ss(){
 		return empleadoSS.isPresent() || tipoSS.isPresent() || devengadoSS.isPresent() 
 				|| ssTrabSS.isPresent() || irpfSS.isPresent() || deduccionesSS.isPresent()
-				|| liquidoSS.isPresent() || ssEmprSS.isPresent() || ssTotalSS.isPresent();
+				|| liquidoSS.isPresent() || ssEmprSS.isPresent() || ssTotalSS.isPresent()
+				|| bonificacionesSS.isPresent();
 	}
 	public boolean Has_aon(){
 		return empleado.isPresent() || tipo.isPresent() || devengado.isPresent() 
 				|| ssTrab.isPresent() || irpf.isPresent() || deducciones.isPresent()
-				|| liquido.isPresent() || ssEmpr.isPresent() || ssTotal.isPresent();
+				|| liquido.isPresent() || ssEmpr.isPresent() || ssTotal.isPresent()
+				|| bonificaciones.isPresent();
 	}
 
+
+
+	@Override
 	public String toString() {
-		return "EnterprisePayrollEntry{" +
-				"  \n\templeado = '" + empleado + '\'' +
-				", \n\ttipo = '" + tipo + '\'' +
-				", \n\tdevengado = " + devengado +
-				", \n\tssTrab = " + ssTrab +
-				", \n\tirpf = " + irpf +
-				", \n\tdeducciones = " + deducciones +
-				", \n\tliquido = " + liquido +
-				", \n\tssEmpr = " + ssEmpr +
-				", \n\tcosteTotal = " + costeTotal +
-				", \n\tssTotal = " + ssTotal +
-				", \n\templeadoSS = '" + empleadoSS + '\'' +
-				", \n\ttipoSS = '" + tipoSS + '\'' +
-				", \n\tdevengadoSS = " + devengadoSS +
-				", \n\tssTrabSS = " + ssTrabSS +
-				", \n\tirpfSS = " + irpfSS +
-				", \n\tdeduccionesSS = " + deduccionesSS +
-				", \n\tliquidoSS = " + liquidoSS +
-				", \n\tssEmprSS = " + ssEmprSS +
-				", \n\tcosteTotalSS = " + costeTotalSS +
-				", \n\tssTotalSS = " + ssTotalSS +
-				"\n}";
+		return "EnterprisePayrollEntry :\t\n{ \n\templeado: \t\t" + empleado + ", \n\ttipo: \t\t" + tipo
+				+ ", \n\tdevengado: \t\t" + devengado + ", \n\tssTrab: \t\t" + ssTrab + ", \n\tirpf: \t\t" + irpf
+				+ ", \n\tdeducciones: \t\t" + deducciones + ", \n\tliquido: \t\t" + liquido + ", \n\tssEmpr: \t\t"
+				+ ssEmpr + ", \n\tcosteTotal: \t\t" + costeTotal + ", \n\tssTotal: \t\t" + ssTotal
+				+ ", \n\tbonificaciones: \t\t" + bonificaciones + ", \n\templeadoSS: \t\t" + empleadoSS
+				+ ", \n\ttipoSS: \t\t" + tipoSS + ", \n\tdevengadoSS: \t\t" + devengadoSS + ", \n\tssTrabSS: \t\t"
+				+ ssTrabSS + ", \n\tirpfSS: \t\t" + irpfSS + ", \n\tdeduccionesSS: \t\t" + deduccionesSS
+				+ ", \n\tliquidoSS: \t\t" + liquidoSS + ", \n\tssEmprSS: \t\t" + ssEmprSS + ", \n\tcosteTotalSS: \t\t"
+				+ costeTotalSS + ", \n\tssTotalSS: \t\t" + ssTotalSS + ", \n\tbonificacionesSS: \t\t" + bonificacionesSS
+				+ "\n}";
 	}
 
 	@Override

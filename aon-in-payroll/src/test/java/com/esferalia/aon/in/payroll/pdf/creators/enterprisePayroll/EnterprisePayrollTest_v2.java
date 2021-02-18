@@ -4,7 +4,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.Test;
 
@@ -13,6 +15,7 @@ import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.Enterp
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayrollEntry;
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayrollEntry.EnterpriseEntryType;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
+
 
 public class EnterprisePayrollTest_v2 {
 
@@ -32,8 +35,8 @@ public class EnterprisePayrollTest_v2 {
 
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, "Juan Pérez de la Vega Martín", "Nómina",
-						9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99);
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, "Andoni Etxebarria Azkuna", "Nómina",
+						9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9.99, 9999.99);
 
 				categoria1.put(cat, e);
 				categoria2.put(cat, e);
@@ -43,18 +46,19 @@ public class EnterprisePayrollTest_v2 {
 			for (int i = 0; i < 4; i++) {
 				String cat = "cet " + i;
 				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, "Amanda de la Vega Martín", "Nómina",
-						9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99);
+						9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9.999,9999.99);
 
 				categoria1.put(cat, e);
 				categoria2.put(cat, e);
 				categoria3.put(cat, e);
 			}
 			
-			for (int i = 0; i < 40; i++) {
+			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
 				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.SEG_SOCIAL, "Juan Pérez de la Vega Martín" + i, "Nómina",
-						29999.99, 29999.99, 29999.99, 29999.99, 29999.99, 9999.99, 29999.99, 29999.99);
+						29999.99, 29999.99, 29999.99, 29999.99, 29999.99, 9999.99, 29999.99, null,9999.99);
 
+				categoria3.put(cat, e);
 				categoria4.put(cat, e);
 				categoria5.put(cat, e);
 				categoria6.put(cat, e);
@@ -69,7 +73,68 @@ public class EnterprisePayrollTest_v2 {
 			ss_entries.put("Bilbao",categoria6);
 
 			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", "AON SOLUTIONS S.L",	entries, ss_entries);
-			PdfMaker.print_enterprise_payroll(payroll, new FileOutputStream("Enterprise_payroll.pdf"));
+			PdfMaker.print_enterprise_payroll(payroll, new FileOutputStream("Enterprise_payroll.pdf"),Optional.of(new Locale("Es")));
+			
+		} catch (IOException | CanNotCreatePdfException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testEnterprisePayroll2() {
+
+		try {
+			Map<String, Map<String, EnterprisePayrollEntry>> entries = new HashMap<>();
+			Map<String, Map<String, EnterprisePayrollEntry>> ss_entries = new HashMap<>();;
+
+			HashMap<String, EnterprisePayrollEntry> categoria1 = new HashMap<>();
+			HashMap<String, EnterprisePayrollEntry> categoria2 = new HashMap<>();
+			HashMap<String, EnterprisePayrollEntry> categoria3 = new HashMap<>();
+			HashMap<String, EnterprisePayrollEntry> categoria4 = new HashMap<>();
+			HashMap<String, EnterprisePayrollEntry> categoria5 = new HashMap<>();
+			HashMap<String, EnterprisePayrollEntry> categoria6 = new HashMap<>();
+
+			for (int i = 0; i < 4; i++) {
+				String cat = "Categoria " + i;
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, "Nómina",
+						null, null, null, null, null, null, 9999.99, 9.99, 9999.99);
+
+				categoria1.put(cat, e);
+				categoria2.put(cat, e);
+				categoria3.put(cat, e);
+			}
+			
+			for (int i = 0; i < 4; i++) {
+				String cat = "cet " + i;
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, "Nómina",
+						null, null, null, null, null, null, 9999.99, 9.999,9999.99);
+
+				categoria1.put(cat, e);
+				categoria2.put(cat, e);
+				categoria3.put(cat, e);
+			}
+			
+			for (int i = 0; i < 4; i++) {
+				String cat = "Categoria " + i;
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.SEG_SOCIAL, null, "Nómina",
+						null, null, null, null, null, null, 29999.99, null,9999.99);
+
+				categoria3.put(cat, e);
+				categoria4.put(cat, e);
+				categoria5.put(cat, e);
+				categoria6.put(cat, e);
+			}
+			
+			entries.put("Amurrio",categoria1);
+			entries.put("Vitoria",categoria2);
+			entries.put("Murgia",categoria3);
+			
+			ss_entries.put("Amurrio",categoria4);
+			ss_entries.put("Donosti",categoria5);
+			ss_entries.put("Bilbao",categoria6);
+
+			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", "AON SOLUTIONS S.L",	entries, ss_entries);
+			PdfMaker.print_enterprise_payroll(payroll, new FileOutputStream("Enterprise_payroll.pdf"),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {
 			e.printStackTrace();

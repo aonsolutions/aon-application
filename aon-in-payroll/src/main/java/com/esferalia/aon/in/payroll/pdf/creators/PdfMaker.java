@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import com.esferalia.aon.in.payroll.pdf.creators.budget.BudgetTemplate;
 import com.esferalia.aon.in.payroll.pdf.creators.budget.beans.Budget;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayrollTemplate;
+import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.EnterprisePayrollTemplateAuto;
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.JsonParseException;
@@ -39,14 +39,14 @@ public class PdfMaker {
 	}
 
 	// CREATE ENTERPRISE PAYROLL
-	public static void print_enterprise_payroll(EnterprisePayroll payroll, OutputStream out)
+	public static void print_enterprise_payroll(EnterprisePayroll payroll, OutputStream out, Optional<Locale> locale)
 			throws IOException, CanNotCreatePdfException {
-		EnterprisePayrollTemplate.print(payroll, out);
+		EnterprisePayrollTemplateAuto.print(payroll, out, locale);
 	}
 
 	// CREATE PAYROLL
-	public static void print_default_payroll(OutputStream out, DefaultPayroll payroll, InputStream logo, Locale language)
-			throws CanNotCreatePdfException {
+	public static void print_default_payroll(OutputStream out, DefaultPayroll payroll, InputStream logo,
+			Locale language) throws CanNotCreatePdfException {
 		new DefaultPayrollTemplate().print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
 	}
 
@@ -54,9 +54,9 @@ public class PdfMaker {
 			throws CanNotCreatePdfException {
 		new DefaultPayrollTemplate().print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
 	}
-
+ 
 	// CREATE BUDGET
-	public static void print_budget(OutputStream out,Budget budget) throws CanNotCreatePdfException {
+	public static void print_budget(OutputStream out, Budget budget) throws CanNotCreatePdfException {
 		BudgetTemplate.print(out, budget, Optional.of(new Locale("Es")));
 	}
 }
