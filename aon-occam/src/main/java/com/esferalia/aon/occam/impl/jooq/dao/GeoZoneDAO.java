@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.conf.ParamType;
 
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -69,6 +70,14 @@ public class GeoZoneDAO {
 	}
 	public static GeoZone get(AONContext ctx, Condition condition) {
 		ctx.checkRead();
+		System.out.println(
+				ctx.getDslContext() 
+				.selectFrom(GEOZONE)
+				.where(condition)
+				.and(GEOZONE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+				.getSQL(ParamType.INLINED)
+				);
+		
 		return ctx.getDslContext() 
 			.selectFrom(GEOZONE)
 			.where(condition)

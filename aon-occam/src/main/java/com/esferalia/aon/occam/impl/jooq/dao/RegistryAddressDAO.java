@@ -66,6 +66,7 @@ public class RegistryAddressDAO {
 					.setZip(r.getValue(RADDRESS.ZIP))
 					.setCity(r.getValue(RADDRESS.CITY))
 					.setGeozone(r.getValue(RADDRESS.GEOZONE))
+					.setGeozoneCode(r.getValue(GEOZONE.CODE))
 					.setGeozoneName(r.getValue(GEOZONE.NAME))
 					.setAlias(r.getValue(RADDRESS.ALIAS))
 					.setMunicipalityCode(r.getValue(RADDRESS.MUNICIPALITY_CODE))

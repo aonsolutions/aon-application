@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Properties.AccountingRegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
@@ -623,13 +625,29 @@ public class AccountingRegistryDAO {
 		if (!foundInGlobal) {
 			RegistryAddress address = RegistryAddressDAO.getMain(ctx, reg.getId());
 			if (address != null) {
+				
+				// Puede que geozone venga de otro dominio. (SIBLING)
+				Integer geozoneId = null;
+				if (address.getGeozone() != null) {
+					// Si ambos tiene herencia puede que el coódigo sirva.
+					GeoZone geozone = GeoZoneDAO.get(ctx, address.getGeozone());
+					if (geozone == null) {
+						if (AonStringUtils.isNotBlank(address.getGeozoneCode())) {
+							geozone = GeoZoneDAO.get(ctx, address.getGeozoneCode());
+						}
+					}
+					if (geozone != null) {
+						geozoneId = geozone.getId(); 		
+					}
+				}
+				
 				ar.setAddressId(null)
 				.setAddress(address.getAddress())
 				.setAddressNumber(address.getNumber())
 				.setAddressStreetType(address.getStreetType())
 				.setAddressTown(address.getCity())
 				.setAddressZIP(address.getZip())
-				.setGeozone(address.getGeozone());
+				.setGeozone(geozoneId);
 			}
 		}
 	}

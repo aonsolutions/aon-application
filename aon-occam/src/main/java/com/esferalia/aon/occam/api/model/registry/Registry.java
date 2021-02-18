@@ -23,6 +23,10 @@ public class Registry implements Serializable{
 	private Country nationality;
 	private SecurityLevel securityLevel;
 	
+	/**
+	 * @deprecated Use RegistryFull to access registry data.
+	 */
+	@Deprecated()
 	private RAddress mainAddress;
 	
 	public Integer getId() {
@@ -112,9 +116,17 @@ public class Registry implements Serializable{
 		return this;
 	}
 
+	/**
+	 * @deprecated Use RegistryFull to access registry data.
+	 */
+	@Deprecated() 
 	public RAddress getMainAddress() {
 		return mainAddress;
 	}
+	/**
+	 * @deprecated Use RegistryFull to access registry data.
+	 */
+	@Deprecated()
 	public Registry setMainAddress(RAddress mainAddress) {
 		this.mainAddress = mainAddress;
 		return this;
@@ -136,4 +148,5 @@ public class Registry implements Serializable{
 					:AonStringUtils.EMPTY)
 				;
 	}
+	
 }

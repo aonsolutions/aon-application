@@ -41,9 +41,15 @@ public class AonUtils {
 		}
 		return obj1.equals(obj2);
 	}
-	
 	public static boolean notEquals(final Object obj1, final Object obj2) {
-		return equals(obj1,obj2) == false;
+		return !equals(obj1,obj2);
+	}
+	
+	public static boolean equals(final Number n1, final Number n2) {
+		return AonNumberUtils.equals(n1, n2);
+	}
+	public static boolean notEquals(final Number n1, final Number n2) {
+		return !equals(n1,n2);
 	}
 
 	/**
