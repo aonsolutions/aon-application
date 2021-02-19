@@ -33,8 +33,8 @@ phases:
       - echo Entered the build phase...
       - echo Building TEST version...
       - echo Build started on `date`
-      # - mvn -B --fail-at-end --offline -DbuildNumber=666 -Dgwt.working=true clean install
-      - mvn -B --fail-at-end -DbuildNumber=666 -Dgwt.working=true clean install
+      - mvn -B --fail-at-end --offline -DbuildNumber=666 -Dgwt.working=true clean install
+      # - mvn -B --fail-at-end -DbuildNumber=666 -Dgwt.working=true clean install
       - echo Building TEST Docker images... 
       - docker build --no-cache -t aonsolutions/aon-application:test .
       - docker build --no-cache -t aonsolutions/aon-db-up2date:test ./aon-db-up2date
