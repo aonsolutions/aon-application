@@ -1,6 +1,7 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { isEmptyObject, setDateTimestamp, setValueName, sortBy, timeHour } from "../../../../services/utils.js";
+import { formatDateOrigin, isEmptyObject, setDateTimestamp, setValueName, sortBy, timeHour } from "../../../../services/utils.js";
 import {
+  getGroups,
   getPeriod,
   getStatus,
   getTaskHolderTimeControl,
@@ -52,12 +53,12 @@ export class AonEventList extends AonElement {
     this.id = this.id || "aonEventList";
     this.TABLE_ID = this.id + "Table";
     this.aonSigninEl = this.getElement("aonSignin");
-    this.aonSigninEl.addToolbarTitle("Eventos");
     this.aonSigninParentEl = this.aonSigninEl.getParent();
     this.aonSigninParentEl.periodSideNavDisplay(true);
   }
 
   connectedCallback() {
+    this.aonSigninEl.addToolbarTitle("Resumen");
     this.build();
   }
 
@@ -100,12 +101,18 @@ export class AonEventList extends AonElement {
     this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
       filterEl.openFilter()
     );
-    this.aonSigninEl.addToolbarOption("Previus", "arrow_back", (e) => this.back());
+    // this.aonSigninEl.addToolbarOption("Previus", "arrow_back", (e) => this.back());
   }
 
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
     let inputs = [
+      {
+        type: "select",
+        id: "group",
+        name: "group",
+        title: "Agrupar por ",
+      },
       {
         type: "select",
         id: "period",
@@ -129,6 +136,9 @@ export class AonEventList extends AonElement {
     aonFilter.addEventListener("applyFilter", ({detail}) => {
       if(detail) this.aonSigninParentEl.setDataFilter(detail);
     });
+
+    let groupEl = this.getElement('group')
+    groupEl.options = JSON.stringify(await getGroups());
 
     let periodEl = this.getElement("period");
     periodEl.options = JSON.stringify(await getPeriod());
@@ -154,6 +164,7 @@ export class AonEventList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
+      aonTable.addBack((e)=>this.back());
       aonTable.addColumn("", "string", "lettersHtml", "6%");
       aonTable.addColumn("Nombre", "string", "name", "34%");
       aonTable.addColumn("Estado", "", "status", "15%");
@@ -204,7 +215,7 @@ export class AonEventList extends AonElement {
     let data = [];
     try {
       let filter = null;
-      try { filter = this.aonSigninParentEl._filter;} catch (error) {}
+      try {filter = {...this.aonSigninParentEl._filter};} catch (error) {}
       let datos = await getTaskHolderTimeControl(filter);
       if(datos){
         sortBy(datos, 'last_date', 'desc').map(
@@ -244,12 +255,19 @@ export class AonEventList extends AonElement {
   }
 
   aonEvent({target}, data) {
+    // if(data){
+    //   const startDateTask = formatDateOrigin(data.last_date);
+    //   this.aonSigninParentEl.setDataFilter({startDateTask, endDateTask:startDateTask});
+    // }
     if("add_location" === target.textContent){
       this.aonSigninParentEl.openLocationAdd(undefined, data);
     } else {
       let aonEventDetail = new AonEventDetailList();
       aonEventDetail.id = "aonEventDetailList";
-      aonEventDetail.filter = true;
+      if(data){
+        const startDate = formatDateOrigin(data.last_date);
+        aonEventDetail.DATE_TASK = {startDate, endDate:startDate};
+      }
       this.aonSigninEl.setContent(aonEventDetail);
     }
   }

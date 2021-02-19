@@ -6,7 +6,7 @@ import "./time-control/location/aon-location-add.js";
 import "../../components/aon-toast.js";
 import "../../components/aon-application.js";
 import { getPeriod } from "../../services/service.js";
-import { setValueName } from "../../services/utils.js";
+import { formatDateOrigin, setValueName } from "../../services/utils.js";
 
 export class AonSignin extends AonElement {
   AON_SIGNIN;
@@ -25,7 +25,9 @@ export class AonSignin extends AonElement {
   initialize(){
     this.AON_SIGNIN = "aonSignin";
     this._filter = { 
-      period: "today"
+      period: "today",
+      startDate: formatDateOrigin(new Date()),
+      endDate: formatDateOrigin(new Date())
     };
   }
 
@@ -94,27 +96,24 @@ export class AonSignin extends AonElement {
 
   async paintViewPresenceList(){
     const id = "aonPresenceList";
-    this.periodSideNavDisplay(true);
     if(this.getElement(id)==null){
       let aonList = new AonPresenceList();
       aonList.id = id;
       this.aonSigninEl.setContent(aonList);
     }
-    this.setDataFilter();
   }
 
   periodSideNavDisplay(b){
-    let eleSideNav = this.getElement('aonSigninSidenavPeríodo');
+    let eleSideNav = this.getElement(`${this.aonSigninEl.SIDENAV}Período`);
     if(eleSideNav) eleSideNav.style.display = b ? "block": "none";
   }
 
   async setDataFilter(data){
     try {
-      let newData = {};
       if(data && data.period){
-        newData = {...data, ...await getPeriod(data.period)};
-      }
-      this._filter = {...this._filter, ...newData};
+        data = {...data, ...await getPeriod(data.period)};
+      } 
+      this._filter = {...this._filter, ...data};
       this.aonSigninEl.getChild().filter = true;
     } catch (error) {}
   }

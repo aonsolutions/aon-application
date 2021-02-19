@@ -209,6 +209,12 @@ public class TimeControlDAO {
 		return tcd.setId(id);
 	}
 	
+	public static void deleteTimeControlDetail(AONContext ctx, TimeControlFilter filter) {
+		ctx.checkWrite();
+		ctx.getDslContext().delete(TIMECONTROL).where(TIMECONTROL_PROPERTIES.getConditions(filter)).execute();	
+	}
+	
+	
 	public static TimeControlDetail updateTimeControlDetail(AONContext ctx, TimeControlDetail tcd) {
 		ctx.checkWrite();
 		ctx.getDslContext()

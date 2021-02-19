@@ -168,6 +168,21 @@ export class AonTable extends AonElement {
     return tr;
   }
 
+  addBack(fn){
+    if(!this.getElement("backTable")){
+      let headerTable = this.getElement(this.THEADER);   
+      let thIcon = this.createElement("th");
+      thIcon.id = "backTable";
+      thIcon.innerHTML = `<aon-icon-button id="${this.getId()}Back" icon="arrow_back" noHover="true"></aon-icon-button>`;
+      headerTable.insertBefore(thIcon , headerTable.childNodes[0]);
+      let iconBack = this.getElement(`${this.getId()}Back`);
+      if(iconBack) {
+        iconBack.firstChild.style.paddingTop = "15px";
+        iconBack.addEventListener('click', e => fn(e))
+      }
+    }
+  }
+
   removeRows() {
     let body = this.getElement(this.getId() + "TableBody");
     if (body) body.innerHTML = "";

@@ -21,6 +21,7 @@ public interface ITimeControl {
 	public Stream<TimeControlDetail> getTimeControlDetailStream(AONContext ctx, TimeControlFilter filter);
 	public LinkedList<TimeControlDetail> getTimeControlDetailList(AONContext ctx, TimeControlFilter filter);
 	public TimeControlDetail saveTimeControlDetail(AONContext ctx, TimeControlDetail tcd);
+	public void deleteTimeControlDetail(AONContext ctx, TimeControlFilter filter);
 	
 	//LOCATION
 	public Location saveLocation(AONContext ctx, Location lc);

@@ -52,6 +52,7 @@ export class AonFilter extends AonElement {
   }
 
   setInputs(inputs) {
+    this.dialogClear();
     let d = this.getElement(this.DIALOG);
     d.setTitle(this.title);
     if (!this.isMobile()) d.width = "400px";

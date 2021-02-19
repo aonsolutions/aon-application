@@ -414,6 +414,11 @@ public class AON_SOLUTIONS {
 			return getTimeControl().saveTimeControlDetail(ctx, tcd);
 		}
 	}
+	public static void deleteTimeControlDetail(Domain domain, String login, TimeControlFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getTimeControl().deleteTimeControlDetail(ctx, filter);
+		}
+	}
 	
 	public static Location saveLocation(Domain domain, String login, Location lc) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){

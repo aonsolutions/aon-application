@@ -7,6 +7,7 @@ import {
   isEmptyObject,
 } from "../../../../services/utils.js";
 import {
+  deleteTimeControl,
   getLocation,
   getStatus,
   saveTimeControl,
@@ -20,10 +21,14 @@ import "../../../../components/aon-select.js";
 import "../../../../components/aon-switch.js";
 import "../../../../components/aon-icon-button.js";
 import { AonEventDetailList } from "./aon-event-detail-list.js";
+import { ToolbarType } from "../../../../models/enums.js";
+import { UserAction } from "../../../user/userEnums.js";
 
 export class AonEventAdd extends AonElement {
   ACTION;
   TOAST;
+  TITLE
+  TOOLBAR;
   static get observedAttributes() {
     return ["data"];
   }
@@ -41,7 +46,7 @@ export class AonEventAdd extends AonElement {
   }
 
   set data(value) {
-    this.setAttribute("data", JSON.stringify(value));
+    if(value) this.setAttribute("data", JSON.stringify(value));
   }
 
   constructor() {
@@ -52,15 +57,23 @@ export class AonEventAdd extends AonElement {
     this.TOAST = this.getElement(`${this.aonSigninEl.id}Toast`);
     this.aonSigninParentEl = this.aonSigninEl.getParent();
     this.aonSigninParentEl.periodSideNavDisplay(false);
+    this.TOOLBAR = this.id + "Toolbar";
   }
 
   connectedCallback() {
-    this.paintView();
     this.build();
     this.eventListener();
   }
 
   attributeChangedCallback(name, oldValue, newValue) {}
+
+  async build() {
+    this.paintView();
+    await this.initLists();
+    if (this.isMobile()) this.buildToolbarMobile();
+    else this.buildToolbarDesk();
+  }
+
 
   paintView() {
     const initHtml = `
@@ -80,8 +93,9 @@ export class AonEventAdd extends AonElement {
               }
             </style>
         `;
-
+    const aonToolbar = this.isMobile() ? "" : `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="EVENTO"> </aon-toolbar>`;
     const form = `
+          ${aonToolbar}
         <form id="${this.id}Form" action="#" onsubmit="return false;">
             <div id="${this.id}Div">
                 <div class="aonCol-sm-12">
@@ -114,14 +128,9 @@ export class AonEventAdd extends AonElement {
             <aon-input name="id" id="id" type="text" visible="false"></aon-input>
             <aon-input name="coordinates" id="coordinates" type="text" visible="false"></aon-input>
         `);
+      
   }
-
-  build() {
-    this.initLists();
-    if (this.isMobile()) this.buildToolbarMobile();
-    else this.buildToolbarDesk();
-  }
-
+  
   async initLists() {
     await this.listStatus();
     await this.listLocation();
@@ -142,28 +151,14 @@ export class AonEventAdd extends AonElement {
   }
 
   buildToolbarDesk() {
-    const toolbar = this.aonSigninEl;
-    if(toolbar){
-      toolbar.removeToolbarOptions();
-      toolbar.addToolbarOption2(
-        {
-          id: "Save",
-          name: "Guardar",
-          icon: "save",
-        },
-        () => this.formSubmit()
-      );
-  
-      toolbar.addToolbarOption2(
-        {
-          id: "Previous",
-          name: "Volver",
-          icon: "arrow_back",
-        },
-        () => this.back()
-      );
-    }
+    let eventToolbar = this.getElement(this.TOOLBAR);
+		eventToolbar.removeButtons();
 
+		eventToolbar.addButton2(UserAction.SAVE, () => this.formSubmit());
+    if(this.data && this.data.id){
+      eventToolbar.addButton2(UserAction.DELETE, () => this.delete());
+    }
+		eventToolbar.addButton2(UserAction.BACK, () => this.back());
   }
 
   buildToolbarMobile() {
@@ -233,7 +228,7 @@ export class AonEventAdd extends AonElement {
       }
       for (const property in obj) {
         const value = obj[property];
-        if(value) setValueName(property, obj[property]);
+        if(value) setValueName(property, value);
       }
       this.getElement("name").disabled = "disabled";
     }
@@ -244,6 +239,7 @@ export class AonEventAdd extends AonElement {
   }
 
   async save() {
+    console.log(this.data);
     this.aonSigninEl.startLoading();
     let formValues = this.getFormValues();
     const data = {
@@ -263,19 +259,19 @@ export class AonEventAdd extends AonElement {
         type: "success",
         delay: 3000,
       });
-      this.back();
+      // this.back();
     } catch (error) {
       this.TOAST.start({ message: error, type: "error" });
     }
     this.aonSigninEl.stopLoading();
   }
 
-  async removeData() {
+  async delete() {
     const data = this.getFormValues();
     if (confirm(`Estas seguro de eliminarlo?`)) {
       this.aonSigninEl.startLoader();
       try {
-        // await postDeleteData(data);
+        await deleteTimeControl(data);
         this.TOAST.start({ message: `En desarrollo!` });
         this.back();
       } catch (error) {
@@ -286,8 +282,15 @@ export class AonEventAdd extends AonElement {
   }
 
   back() {
+    this.aonSigninEl.back();
     let aonEventDetailList = new AonEventDetailList();
-    aonEventDetailList.filter = true;
+    if(this.data && this.data.date){
+      const startDate = formatDateOrigin(new Date(this.data.date));
+      aonEventDetailList.DATE_TASK ={
+        startDate,
+        endDate:startDate
+      }
+    }
     this.aonSigninEl.setContent(aonEventDetailList);
   }
 }

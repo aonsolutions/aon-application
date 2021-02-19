@@ -55,6 +55,13 @@ public class TimeControlImpl implements ITimeControl {
 	}
 	
 	@Override
+	public void deleteTimeControlDetail(AONContext ctx, TimeControlFilter filter) {
+		ctx.getDslContext().transaction(
+				configuration -> TimeControlDAO.deleteTimeControlDetail(ctx, filter)
+		);
+	}
+	
+	@Override
 	public Location saveLocation(AONContext ctx, Location lc) {
 		return  ctx.getDslContext().transactionResult(
 				configuration -> LocationDAO.saveLocation(ctx, lc));

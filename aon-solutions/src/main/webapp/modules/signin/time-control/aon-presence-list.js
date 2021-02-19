@@ -1,12 +1,11 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList } from "../../../services/service.js";
 import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, timeHour } from "../../../services/utils.js";
+import {AonEventList} from "./event/aon-event-list.js";
+import { StringTwoLetters } from "./utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
-import {AonEventList} from "./event/aon-event-list.js";
 import "../../../components/aon-filter.js";
-
-import { StringTwoLetters } from "./utils.js";
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
@@ -31,23 +30,35 @@ export class AonPresenceList extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name) this.getTable();
+    if ("filter" === name){
+      this.initialize();
+      this.getTable();
+    } 
   }
 
   constructor() {
     super();
-    this.id = this.id || "aonPresenceList";
-    this.TABLE_ID = this.id + "Table";
-    this.aonSigninEl = this.getElement("aonSignin");
-    this.aonSigninEl.addToolbarTitle("Presencia");
-    this.aonSigninParentEl = this.aonSigninEl.getParent();
   }
 
   connectedCallback() {
+    this.initialize();
     this.build();
+  }
+
+  initialize(){
+    this.id = this.id || "aonPresenceList";
+    this.TABLE_ID = this.id + "Table";
+    this.aonSigninEl = this.getElement("aonSignin");
+    this.aonSigninParentEl = this.aonSigninEl.getParent();
+    this.aonSigninEl.addToolbarTitle("Presencia");
+    this.aonSigninParentEl.periodSideNavDisplay(true);
   }
   
   disconnectedCallback() {}
+  
+  adoptedCallback(){
+    console.log("adoptedCallback");
+  }
 
   async build(){
     this.paintView();
@@ -182,7 +193,7 @@ export class AonPresenceList extends AonElement {
     let data = [];
     try {
       let filter = null;
-      try { filter = this.aonSigninParentEl._filter;} catch (error) {}
+      try {filter = {...this.aonSigninParentEl._filter};} catch (error) {}
 
       const datos = await getTimeControlList(filter);
       if (datos) {
