@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
@@ -1543,44 +1544,50 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	
 	private static void initPaymentType(ISQLContractSalaryCalculatorContext ctx) {
 		
-//		Connection connection = ctx.getConnection();
-//		try {
-//			if ( !PAYMENTS_DATABASES.add(connection.getCatalog()) )
-//				return;
-//		} catch (SQLException e1) {
-//			return;
-//		}
-//		
-//		DSLContext dslContext = new AONContext(ctx.getConnection()).getDslContext();
-//		
-//		dslContext
-//		.select(
-//		AGREEMENT_PAYMENT.DESCRIPTION
-//		,DSL.ifnull(AGREEMENT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE)
-//		)
-//		.from(AGREEMENT_PAYMENT)
-//		.leftJoin(PAYMENT_CONCEPT).onKey()
-//		.where(AGREEMENT_PAYMENT.DESCRIPTION.isNotNull())
-//		.groupBy(AGREEMENT_PAYMENT.DESCRIPTION)
-//		.fetchLazy()
-//		.forEach(
-//		(r) -> {
-//			try {
-//				PaymentType paymentType = PaymentType.values()[r.value2()];
-//				if ( paymentType == CRA_0001 )
-//					return;
-//				if ( paymentType == CRA_0000)
-//					return;
-//				
-//				String description = normalize(r.value1());
-//				
-//				
-//				PAYMENTS_DESCRIPTIONS.put(description, paymentType);
-//			} catch ( Exception e ) {
-//			}
-//		}
-//		);
-//
+		Connection connection = ctx.getConnection();
+		try {
+			if ( !PAYMENTS_DATABASES.add(connection.getCatalog()) )
+				return;
+		} catch (SQLException e1) {
+			return;
+		}
+		
+		DSLContext dslContext = new AONContext(ctx.getConnection()).getDslContext();
+		
+		Field<Integer> count = DSL.count().as("COUNT");		
+		Field<Byte> agreementPaymentType = 
+		DSL.ifnull(AGREEMENT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE).as("TYPE");
+		
+		dslContext
+		.select(
+		AGREEMENT_PAYMENT.DESCRIPTION
+		,agreementPaymentType
+		,count
+		)
+		.from(AGREEMENT_PAYMENT)
+		.leftJoin(PAYMENT_CONCEPT).onKey()
+		.where(AGREEMENT_PAYMENT.DESCRIPTION.isNotNull())
+		.groupBy(AGREEMENT_PAYMENT.DESCRIPTION, agreementPaymentType)
+		.orderBy(AGREEMENT_PAYMENT.DESCRIPTION, count)
+		.fetchLazy()
+		.forEach(
+		(r) -> {
+			try {
+				PaymentType paymentType = PaymentType.values()[r.value2()];
+				if ( paymentType == CRA_0001 )
+					return;
+				if ( paymentType == CRA_0000)
+					return;
+				
+				String description = normalize(r.value1());
+				
+				
+				PAYMENTS_DESCRIPTIONS.putIfAbsent(description, paymentType);
+			} catch ( Exception e ) {
+			}
+		}
+		);
+
 //		dslContext
 //		.select(
 //		CONTRACT_PAYMENT.DESCRIPTION
@@ -1603,7 +1610,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 //				
 //				String description = normalize(r.value1());
 //				
-//				PAYMENTS_DESCRIPTIONS.put(description, paymentType);
+//				PAYMENTS_DESCRIPTIONS.putIfAbsent(description, paymentType);
 //			} catch ( Exception e ) {
 //			}
 //		}
