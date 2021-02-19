@@ -1543,71 +1543,71 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	
 	private static void initPaymentType(ISQLContractSalaryCalculatorContext ctx) {
 		
-		Connection connection = ctx.getConnection();
-		try {
-			if ( !PAYMENTS_DATABASES.add(connection.getCatalog()) )
-				return;
-		} catch (SQLException e1) {
-			return;
-		}
-		
-		DSLContext dslContext = new AONContext(ctx.getConnection()).getDslContext();
-		
-		dslContext
-		.select(
-		AGREEMENT_PAYMENT.DESCRIPTION
-		,DSL.ifnull(AGREEMENT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE)
-		)
-		.from(AGREEMENT_PAYMENT)
-		.leftJoin(PAYMENT_CONCEPT).onKey()
-		.where(AGREEMENT_PAYMENT.DESCRIPTION.isNotNull())
-		.groupBy(AGREEMENT_PAYMENT.DESCRIPTION)
-		.fetchLazy()
-		.forEach(
-		(r) -> {
-			try {
-				PaymentType paymentType = PaymentType.values()[r.value2()];
-				if ( paymentType == CRA_0001 )
-					return;
-				if ( paymentType == CRA_0000)
-					return;
-				
-				String description = normalize(r.value1());
-				
-				
-				PAYMENTS_DESCRIPTIONS.put(description, paymentType);
-			} catch ( Exception e ) {
-			}
-		}
-		);
-
-		dslContext
-		.select(
-		CONTRACT_PAYMENT.DESCRIPTION
-		,DSL.ifnull(CONTRACT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE)
-		)
-		.from(CONTRACT_PAYMENT)
-		.leftJoin(PAYMENT_CONCEPT).onKey()
-		.where(CONTRACT_PAYMENT.DESCRIPTION.isNotNull())
-		.groupBy(CONTRACT_PAYMENT.DESCRIPTION)
-		.fetchLazy()
-		.forEach(
-		(r) -> {
-			try {
-				
-				PaymentType paymentType = PaymentType.values()[r.value2()];
-				if ( paymentType == CRA_0001 )
-					return;
-				if ( paymentType == CRA_0000 )
-					return;
-				
-				String description = normalize(r.value1());
-				
-				PAYMENTS_DESCRIPTIONS.put(description, paymentType);
-			} catch ( Exception e ) {
-			}
-		}
-		);
+//		Connection connection = ctx.getConnection();
+//		try {
+//			if ( !PAYMENTS_DATABASES.add(connection.getCatalog()) )
+//				return;
+//		} catch (SQLException e1) {
+//			return;
+//		}
+//		
+//		DSLContext dslContext = new AONContext(ctx.getConnection()).getDslContext();
+//		
+//		dslContext
+//		.select(
+//		AGREEMENT_PAYMENT.DESCRIPTION
+//		,DSL.ifnull(AGREEMENT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE)
+//		)
+//		.from(AGREEMENT_PAYMENT)
+//		.leftJoin(PAYMENT_CONCEPT).onKey()
+//		.where(AGREEMENT_PAYMENT.DESCRIPTION.isNotNull())
+//		.groupBy(AGREEMENT_PAYMENT.DESCRIPTION)
+//		.fetchLazy()
+//		.forEach(
+//		(r) -> {
+//			try {
+//				PaymentType paymentType = PaymentType.values()[r.value2()];
+//				if ( paymentType == CRA_0001 )
+//					return;
+//				if ( paymentType == CRA_0000)
+//					return;
+//				
+//				String description = normalize(r.value1());
+//				
+//				
+//				PAYMENTS_DESCRIPTIONS.put(description, paymentType);
+//			} catch ( Exception e ) {
+//			}
+//		}
+//		);
+//
+//		dslContext
+//		.select(
+//		CONTRACT_PAYMENT.DESCRIPTION
+//		,DSL.ifnull(CONTRACT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE)
+//		)
+//		.from(CONTRACT_PAYMENT)
+//		.leftJoin(PAYMENT_CONCEPT).onKey()
+//		.where(CONTRACT_PAYMENT.DESCRIPTION.isNotNull())
+//		.groupBy(CONTRACT_PAYMENT.DESCRIPTION)
+//		.fetchLazy()
+//		.forEach(
+//		(r) -> {
+//			try {
+//				
+//				PaymentType paymentType = PaymentType.values()[r.value2()];
+//				if ( paymentType == CRA_0001 )
+//					return;
+//				if ( paymentType == CRA_0000 )
+//					return;
+//				
+//				String description = normalize(r.value1());
+//				
+//				PAYMENTS_DESCRIPTIONS.put(description, paymentType);
+//			} catch ( Exception e ) {
+//			}
+//		}
+//		);
 	}
 
 	
