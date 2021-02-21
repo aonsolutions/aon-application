@@ -4761,7 +4761,7 @@ public class SalaryDraft extends ResizeComposite
 //					SalaryDraft.this.showPreview();
 //					SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
 //				});
-				print();
+				printSalary();
 				return null;
 			}
 			
