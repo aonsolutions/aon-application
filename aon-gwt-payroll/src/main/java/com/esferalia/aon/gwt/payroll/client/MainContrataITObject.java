@@ -17,7 +17,6 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainContrataITObject {
@@ -152,33 +151,33 @@ public class MainContrataITObject {
 						float baseCP = it.getDailyCGPBase().floatValue();
 						int days = 	30;
 						
-						impl.setComunicationIT(itEmployee, it, new AsyncCallback<Void>() {
+						Date dateFrom = it.getStartDate();
+						Date dateTo = null != it.getEndDate() ? it.getEndDate() : DateUtils.addDays2Date(DateUtils.copyDateOnly(it.getStartDate()), (16*7));
+						if("P" == applicantType || applicantType.equals("P"))
+							dateTo = null != it.getEndDate() ? it.getEndDate() : DateUtils.addDays2Date(DateUtils.copyDateOnly(it.getStartDate()), (12*7));
+						dateTo = DateUtils.addDays2Date(dateTo, -1);
+						
+						impl.createITCertificate(affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days, new AsyncCallback<Boolean>() {
 
 							@Override
-							public void onFailure(Throwable caught) {}
-
-							@Override
-							public void onSuccess(Void result) {
-								Date dateFrom = it.getStartDate();
-								Date dateTo = null != it.getEndDate() ? it.getEndDate() : DateUtils.addDays2Date(DateUtils.copyDateOnly(it.getStartDate()), (16*7));
-								if("P" == applicantType || applicantType.equals("P"))
-									dateTo = null != it.getEndDate() ? it.getEndDate() : DateUtils.addDays2Date(DateUtils.copyDateOnly(it.getStartDate()), (12*7));
-								dateTo = DateUtils.addDays2Date(dateTo, -1);
-								
-								impl.createITCertificate(affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days, new AsyncCallback<Boolean>() {
-
-									@Override
-									public void onFailure(Throwable caught) {
-										// TODO Auto-generated method stub
-									}
-
-									@Override
-									public void onSuccess(Boolean result) {
-										success.accept(result);
-									}});
+							public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub
 							}
-							
-						});
+
+							@Override
+							public void onSuccess(Boolean result) {
+								impl.setComunicationIT(itEmployee, it, new AsyncCallback<Void>() {
+
+									@Override
+									public void onFailure(Throwable caught) {}
+
+									@Override
+									public void onSuccess(Void res) {
+										success.accept(result);
+									}
+									
+								});
+							}});
 					}
 					
 					@Override
@@ -295,7 +294,17 @@ public class MainContrataITObject {
 									
 									@Override
 									public void onSuccess(Void result) {
-										success.accept(result);
+										impl.setComunicationIT(itEmployee, it, new AsyncCallback<Void>() {
+
+											@Override
+											public void onFailure(Throwable caught) {}
+
+											@Override
+											public void onSuccess(Void res) {
+												success.accept(result);
+											}
+											
+										});
 									}
 									
 									@Override

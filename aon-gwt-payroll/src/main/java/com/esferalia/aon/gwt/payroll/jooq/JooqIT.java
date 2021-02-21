@@ -135,15 +135,15 @@ public class JooqIT {
 					it.setDailyREGBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_REG_BASE));
 					it.setTypeHighPart(contractLeaveRecord.get(CONTRACT_LEAVE.DISCHARGE_CAUSE));
 					
-					Record contractDataDatePayRecord = dslContext.select().from(CONTRACT_DATA)
+					List<Record> contractDataDatePayRecords = dslContext.select().from(CONTRACT_DATA)
 							.where(
 									CONTRACT_DATA.NAME.eq("INICIO_PAGO_DIRECTO")
 							).and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
 							.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
-							.fetchOne();
+							.fetch();
 					
-					if(null != contractDataDatePayRecord) {
-						java.util.Date directDayPay = getDirectPayDateByExpression(contractDataDatePayRecord.get(CONTRACT_DATA.EXPRESSION));
+					if(!contractDataDatePayRecords.isEmpty()) {
+						java.util.Date directDayPay = getDirectPayDateByExpression(contractDataDatePayRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
 						it.setDirectPayDate(directDayPay);
 					}
 					
