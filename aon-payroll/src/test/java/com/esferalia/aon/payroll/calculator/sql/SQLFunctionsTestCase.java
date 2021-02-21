@@ -4,13 +4,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.Salary.SALARY;
-import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
-import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
-import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
-import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
-import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
-import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
@@ -47,6 +40,7 @@ import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
@@ -996,7 +990,7 @@ public class SQLFunctionsTestCase extends
 				,endDate, 
 				Double.class);
 	
-		Assert.assertEquals(2, results.size());
+		Assert.assertEquals(3, results.size());
 		
 		double monthDays = get(endDate, DAY_OF_MONTH);
 		double workedDays = monthDays - 10;
@@ -1005,9 +999,9 @@ public class SQLFunctionsTestCase extends
 		Assert.assertEquals(add(startIT, DAY_OF_MONTH,-1), results.get(0).getPeriod().getEnd());
 		Assert.assertEquals(1000.00*10/workedDays, results.get(0).getValue());
 
-		Assert.assertEquals(add(endIT, DAY_OF_MONTH,1), results.get(1).getPeriod().getStart());
-		Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
-		Assert.assertEquals(1000.00*(monthDays-20)/workedDays, results.get(1).getValue());
+		Assert.assertEquals(add(endIT, DAY_OF_MONTH,1), results.get(2).getPeriod().getStart());
+		Assert.assertEquals(endDate, results.get(2).getPeriod().getEnd());
+		Assert.assertEquals(1000.00*(monthDays-20)/workedDays, results.get(2).getValue());
 	}
 
 	@Test
@@ -1043,6 +1037,53 @@ public class SQLFunctionsTestCase extends
 
 	}
 	
+	@Test
+	public void testFractionFunctionXI() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		ContractRecord contract = newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap());
+		
+		addData(aonContext, contract, startDate, endDate, ContextVariable.ADDITIONAL_HOURS, "10.00");
+//		
+		
+		Date startOffDate = add(startDate, Calendar.DAY_OF_MONTH, 10);
+		Date endOffDate = add(startOffDate, Calendar.DAY_OF_MONTH, 9);
+		addData(aonContext, contract, startOffDate, endOffDate, ContextVariable.OFF_DAYS, "10.00");
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		ctx.getExpressionContext().eval("HORAS_COMPLEMENTARIAS=FRACCIONAR(CONTEXT,HORAS_COMPLEMENTARIAS)", 
+				startDate
+				,endDate, 
+				Double.class);
+	
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("HORAS_COMPLEMENTARIAS", 
+				startDate
+				,endDate, 
+				Double.class);
+		Assert.assertEquals(3, results.size());
+		
+		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
+		Assert.assertEquals(add(startOffDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
+
+		Assert.assertEquals(add(endOffDate, Calendar.DAY_OF_MONTH, 1), results.get(2).getPeriod().getStart());
+		Assert.assertEquals(endDate, results.get(2).getPeriod().getEnd());
+		
+		Assert.assertEquals(10.00, results.get(0).getValue() + results.get(1).getValue() + results.get(2).getValue());
+
+	}
+
 	@Test
 	public void testSumFunction() throws ExpressionException, SQLException {
 
