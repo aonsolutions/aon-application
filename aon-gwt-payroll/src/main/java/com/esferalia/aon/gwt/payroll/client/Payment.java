@@ -581,7 +581,7 @@ public class Payment extends ResizeComposite {
 	
 	public void setReadOnly(boolean readOnly) {
 		conceptSuggestBox.getValueBox().setReadOnly(readOnly);
-		conceptSuggestBox.getElement().setAttribute("disabled", "disabled");
+		conceptSuggestBox.getValueBox().setEnabled(!readOnly);
 		
 		if(readOnly) {
 			typeLabel.setText(typeListBox.getSelectedItemText());
@@ -589,11 +589,11 @@ public class Payment extends ResizeComposite {
 		}
 		
 		descriptionSuggestBox.getValueBox().setReadOnly(readOnly);
-		descriptionSuggestBox.getElement().setAttribute("disabled", "disabled");
+		descriptionSuggestBox.getValueBox().setEnabled(!readOnly);
 		resetDescriptionButton.setEnabled(!readOnly);
 		
 		paymentTextBox.setReadOnly(readOnly);
-		paymentTextBox.getElement().setAttribute("disabled", "disabled");
+		paymentTextBox.setEnabled(!readOnly);
 		fxPaymentButton.setEnabled(!readOnly);
 		resetPaymentButton.setEnabled(!readOnly);
 		
@@ -603,7 +603,7 @@ public class Payment extends ResizeComposite {
 		}
 		
 		taxTextBox.setReadOnly(readOnly);
-		taxTextBox.getElement().setAttribute("disabled", "disabled");
+		taxTextBox.setEnabled(!readOnly);
 		fxTaxButton.setEnabled(!readOnly);
 		resetTaxButton.setEnabled(!readOnly);
 		
@@ -613,7 +613,7 @@ public class Payment extends ResizeComposite {
 		}
 		
 		quoteTextBox.setReadOnly(readOnly);
-		quoteTextBox.getElement().setAttribute("disabled", "disabled");
+		quoteTextBox.setEnabled(!readOnly);
 		fxQuoteButton.setEnabled(!readOnly);
 		resetQuoteButton.setEnabled(!readOnly);
 		
