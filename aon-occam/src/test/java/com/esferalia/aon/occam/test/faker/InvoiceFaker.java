@@ -72,7 +72,7 @@ public class InvoiceFaker {
 			public void visitExpenses(Invoice invoice) {
 				Creditor creditor = AonRandom.getRandomCreditor( ctx );
 				invoice.setScope(new Scope().setId( creditor.getScope() ));
-				fillRegistryData(invoice, creditor.getRegistry());
+				fillRegistryData(invoice, creditor);
 				invoice.setTransaction( creditor.getTransaction() );
 				invoice.setService( true );
 				invoice.setVatAccrualPayment(invoice.isNational() && creditor.isVatAccrualPayment());

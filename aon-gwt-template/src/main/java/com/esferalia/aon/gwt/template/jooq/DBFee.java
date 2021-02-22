@@ -204,7 +204,7 @@ public class DBFee {
 						.setAlias(result.get(index).getValue(REGISTRY.ALIAS))
 						.setDocument(result.get(index).getValue(REGISTRY.DOCUMENT))
 						.setName(result.get(index).getValue(REGISTRY.NAME));
-				customer.setRegistryData(registry);
+				customer.copy(registry);
 				customer.setStatus(RegistryStatus.values()[result.get(index).value5()]);
 			
 				return customer;
@@ -231,13 +231,12 @@ public class DBFee {
 
 			for (Record4<Integer, String,String,String> r : data) {
 				Customer customer = new Customer();
-				customer.setId(r.value1());
 				Registry registry = new Registry();
+				registry.setId(r.value1());
 				registry.setAlias(r.value2());
 				registry.setDocument(r.value3());
 				registry.setName(r.value4());
-				customer.setRegistryData(registry);
-
+				customer.copy(registry);
 				v.add(customer);
 			}
 

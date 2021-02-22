@@ -127,16 +127,12 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 			tab.setWidget(row, 0, new Label(AON.MSG.creditor()));
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 			Finance finance = callback.getFiscalModel().getFinance();
-			creditorBox.setValue(
-				new Creditor()
-					.setRegistry(finance.getRegistry())
-					.setId(finance.getRegistry()==null?null:finance.getRegistry().getId())
-				);
+			creditorBox.setValue(new Creditor().copy(finance.getRegistry()));
 			creditorBox.addSelectionHandler(new SelectionHandler<Creditor>() {
 				
 				@Override
 				public void onSelection(SelectionEvent<Creditor> event) {
-					Registry registry = event.getSelectedItem().getRegistry();
+					Registry registry = event.getSelectedItem();
 					callback.getFiscalModel().getFinance().setRegistry(registry);
 					callback.getFiscalModel().getFinance().setRegistryDocument(registry.getDocument());
 					callback.getFiscalModel().getFinance().setRegistryDocumentCountry(registry.getDocumentCountry());

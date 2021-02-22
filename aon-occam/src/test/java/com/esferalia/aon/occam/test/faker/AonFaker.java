@@ -39,7 +39,7 @@ public class AonFaker {
 	
 	public static Customer getCustomer( AONContext ctx ) {
 		Customer customer = new Customer();
-		customer.setRegistryData(getRegistry(ctx));
+		customer.copy(getRegistry(ctx));
 		Tariff tariff = AonRandom.getTariff(ctx);
 		customer.setTariff( tariff == null? null : tariff.getId() );
 		customer.setSurcharge( AonRandom.b(10) );

@@ -717,7 +717,7 @@ public class InvoiceImport {
 						.setNationality(country));
 				}	
 				customer = new Customer()
-					.setRegistryData(reg)
+					.copy(reg)
 					.setStatus(RegistryStatus.ACTIVE)
 					.setTransaction( transaction )
 					.setScope(getScopeId(domain, user));
@@ -795,12 +795,12 @@ public class InvoiceImport {
 					.and(f.getAliasProperty().eq(nif))).findFirst().orElse(new Account());
 			
 				creditor = new Creditor()
-						.setAccount(acc)
+						.copy(reg)
+						.setAccount(acc==null?null:acc.getId())
 						.setTransaction(transaction)
-						.setRegistry(reg)
 						.setStatus(RegistryStatus.ACTIVE)
 						.setScope(getScopeId(domain, user));
-				creditor.setDomain(domain.getId());
+				creditor.setDomain(domain);
 				creditor.setId(reg.getId());
 				AON.insertCreditor(domain.getName(), domain.getId(), user.getLogin(), creditor);
 			}
@@ -812,8 +812,8 @@ public class InvoiceImport {
 			return new AccountingRegistry()
 					.setType(AccountingRegistryType.CREDITOR)
 					.setId(creditor.getId())
-					.setName(creditor.getRegistry().getName())
-					.setAccountId(creditor.getAccount().getId());
+					.setName(creditor.getName())
+					.setAccountId(creditor.getAccount());
 		} 
 		return null;
 	}

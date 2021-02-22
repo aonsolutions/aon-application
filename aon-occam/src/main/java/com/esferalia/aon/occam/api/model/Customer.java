@@ -37,18 +37,8 @@ public class Customer extends Registry implements Serializable, HasAudit {
 		deliveryValuated = true;
 	}
 	
-	public Customer setRegistryData(Registry registry) {
-		this.setId(registry.getId());
-		this.setDomain(registry.getDomain());
-		this.setDocument(registry.getDocument());
-		this.setDocumentType(registry.getDocumentType());
-		this.setDocumentCountry(registry.getDocumentCountry());
-		this.setName(registry.getName());
-		this.setAlias(registry.getAlias());
-		this.setLegalPerson(registry.isLegalPerson());
-		this.setNationality(registry.getNationality());
-		this.setSecurityLevel(registry.getSecurityLevel());
-		return this;
+	public Customer copy(Registry registry) {
+		return super.copy( registry, this);
 	}
 	
 	public Integer getTariff() {

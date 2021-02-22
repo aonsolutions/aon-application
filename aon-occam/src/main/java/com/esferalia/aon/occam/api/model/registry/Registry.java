@@ -148,5 +148,21 @@ public class Registry implements Serializable{
 					:AonStringUtils.EMPTY)
 				;
 	}
+		
+	public <T extends Registry> T copy(Registry registry, T child) {
+		if (registry != null) {
+			child.setId(registry.getId());
+			child.setDomain(registry.getDomain());
+			child.setDocument(registry.getDocument());
+			child.setDocumentType(registry.getDocumentType());
+			child.setDocumentCountry(registry.getDocumentCountry());
+			child.setName(registry.getName());
+			child.setAlias(registry.getAlias());
+			child.setLegalPerson(registry.isLegalPerson());
+			child.setNationality(registry.getNationality());
+			child.setSecurityLevel(registry.getSecurityLevel());
+		}
+		return child;
+	}
 	
 }

@@ -1073,7 +1073,7 @@ public class DeliveryImport {
 					account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), r.getCuenta()).getId();
 				}
 				customer = new Customer()
-						.setRegistryData(registry)
+						.copy(registry)
 						.setScope(scope)
 						.setStatus(RegistryStatus.ACTIVE)
 						.setTransaction( r.getTransaccion()!= null ? InvoiceTransactionType.safeValueOf(r.getTransaccion()) : InvoiceTransactionType.NATIONAL)

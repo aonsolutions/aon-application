@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import org.jooq.Record;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CreditorPropertiesDAO;
@@ -37,10 +38,10 @@ public class CreditorDAO {
 	private static class MinimalCreditorFiller  implements Function<Record,Creditor> {
 		@Override
 		public Creditor apply(Record record) {
-			return new Creditor()
-				.setId(record.getValue(CREDITOR.REGISTRY))
-				.setRegistry(new RegistryOldDAO.RegistryFiller().apply(record))
-				.setDomain(record.getValue(CREDITOR.DOMAIN));
+			Creditor creditor = new Creditor()
+				.copy((new RegistryOldDAO.RegistryFiller().apply(record)));
+			creditor.setDomain(new Domain().setId(record.getValue(CREDITOR.DOMAIN)));
+			return creditor;
 		}
 	}
 	

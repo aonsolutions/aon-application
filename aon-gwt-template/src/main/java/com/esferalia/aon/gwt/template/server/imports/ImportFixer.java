@@ -118,20 +118,20 @@ public class ImportFixer {
 	
 	public static void fixCreditor(Domain domain, String login) {
 		LinkedList<Creditor> creditors = AON.getCreditorList(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()));
-		LinkedList<String> names = creditors.stream().map(r -> r.getRegistry().getName()).distinct().collect(Collectors.toCollection(LinkedList::new));
+		LinkedList<String> names = creditors.stream().map(r -> r.getName()).distinct().collect(Collectors.toCollection(LinkedList::new));
 		names.forEach(name -> {
 			LinkedList<Creditor> list =  new LinkedList<>();
 			try {
-				list = creditors.stream().filter(f -> f.getRegistry() != null && name.equals(f.getRegistry().getName())).collect(Collectors.toCollection(LinkedList::new));
+				list = creditors.stream().filter(f -> f != null && name.equals(f.getName())).collect(Collectors.toCollection(LinkedList::new));
 			} catch (Exception e) {
 				System.out.println(name);
 			}
 			if(list.size() > 1) {
-				OptionalInt accountMinId = list.stream().filter(f -> f.getAccount() != null && f.getAccount().getId() != null).mapToInt(r -> r.getAccount().getId()).min();
+				OptionalInt accountMinId = list.stream().filter(f -> f.getAccount() != null).mapToInt(r -> r.getAccount()).min();
 				if(accountMinId.isPresent()) {
-					LinkedList<Integer> accounts  = list.stream().filter(f -> f.getAccount() != null && f.getAccount().getId() != null).map(r -> r.getAccount().getId()).collect(Collectors.toCollection(LinkedList::new));
+					LinkedList<Integer> accounts  = list.stream().filter(f -> f.getAccount() != null).map(r -> r.getAccount()).collect(Collectors.toCollection(LinkedList::new));
 					updateAccount(domain, login, accountMinId.getAsInt(), accounts);
-					LinkedList<Creditor> theCreditors = list.stream().filter(f -> f.getRegistry().getDocument() != null ).collect(Collectors.toCollection(LinkedList::new));
+					LinkedList<Creditor> theCreditors = list.stream().filter(f -> f.getDocument() != null ).collect(Collectors.toCollection(LinkedList::new));
 					Integer creditorId = -1;
 					if(theCreditors.size() > 1) {
 						// TU PUTA MADRE!!!!

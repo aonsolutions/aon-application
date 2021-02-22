@@ -43,7 +43,7 @@ public class CustomerDAO {
 			if(registry == null) 
 				registry = REGISTRY;
 			return new Customer()
-					.setRegistryData( new Registry() 
+					.copy( new Registry() 
 						.setId(r.getValue(registry.ID))
 						.setDomain(new Domain().setId(r.getValue(CUSTOMER.DOMAIN)))
 						.setDocument(r.getValue(registry.DOCUMENT))

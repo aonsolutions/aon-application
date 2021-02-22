@@ -861,9 +861,9 @@ public class RegistryOldDAO {
 		ctx.getDslContext().insertInto(CREDITOR, CREDITOR.ACCOUNT, CREDITOR.DOMAIN, CREDITOR.REGISTRY,
 				CREDITOR.SCOPE, CREDITOR.STATUS, CREDITOR.TRANSACTION, CREDITOR.WITHHOLDING,
 				CREDITOR.CREATION_USER, CREDITOR.CREATION_DATE, CREDITOR.MODIFICATION_USER, CREDITOR.MODIFICATION_DATE)
-			.values(creditor.getAccount().getId(), creditor.getDomain(), creditor.getRegistry().getId(),
-					creditor.getScope(), creditor.getStatus().value(), creditor.getTransaction().value(), 
-					creditor.isWithholding() ? (byte) 1 : (byte) 0,	ctx.getUser(), new Timestamp(new Date().getTime()),
+			.values(creditor.getAccount(), creditor.getDomain().getId(), creditor.getId(),
+					creditor.getScope(), creditor.getStatus().value(), creditor.getTransaction().value(),
+					AonEnumUtils.getByte(creditor.isWithholding()),ctx.getUser(), new Timestamp(new Date().getTime()),
 					ctx.getUser(), new Timestamp(new Date().getTime()))
 			.execute();
 		return creditor;

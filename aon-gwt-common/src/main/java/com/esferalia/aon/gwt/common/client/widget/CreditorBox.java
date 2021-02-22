@@ -142,8 +142,8 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 									LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
 									if (result != null) {
 										for (final Creditor creditor : result) {
-											suggestions.add(new CreditorSuggestion(creditor, creditor.getRegistry().getDocument()
-									        		, decorate(Registry.getFullDescription(creditor.getRegistry()), request.getQuery())));
+											suggestions.add(new CreditorSuggestion(creditor, creditor.getDocument()
+									        		, decorate(Registry.getFullDescription(creditor), request.getQuery())));
 										}
 									}
 									Response resp = new Response(suggestions);
@@ -183,7 +183,7 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 	private void select(Creditor creditor) {
 		creditorTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
 		id = creditor.getId();
-		description = creditor.getRegistry().getName();
+		description = creditor.getName();
 		descriptionLabel.setText(description);
 		descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		SelectionEvent.fire(CreditorBox.this, creditor );
@@ -193,8 +193,8 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 		if (creditor != null && creditor.getId() != null) {
 			id = creditor.getId();	
 			creditorTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-			creditorTextBox.setValue(creditor.getRegistry().getDocument());
-			description = creditor.getRegistry().getName();
+			creditorTextBox.setValue(creditor.getDocument());
+			description = creditor.getName();
 			descriptionLabel.setText(description);
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		} else {

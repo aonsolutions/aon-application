@@ -282,13 +282,12 @@ public class FillerDAO {
 		@Override
 		public Creditor apply(Record r) {
 			Creditor creditor = new Creditor();
-			creditor.setDomain(r.getValue(REGISTRY.DOMAIN));
+			creditor.setDomain(new Domain().setId(r.getValue(REGISTRY.DOMAIN)));
 			creditor.setId(r.getValue(REGISTRY.ID));
-			creditor.setRegistry(new Registry().setId(r.getValue(REGISTRY.ID))
-					.setDocument(r.getValue(REGISTRY.DOCUMENT))
-					.setName(r.getValue(REGISTRY.NAME)));
+			creditor.setDocument(r.getValue(REGISTRY.DOCUMENT));
+			creditor.setName(r.getValue(REGISTRY.NAME));
 			return creditor.setScope(r.getValue(CREDITOR.SCOPE))
-					.setAccount(new Account().setId(r.getValue(CREDITOR.ACCOUNT)))
+					.setAccount(r.getValue(CREDITOR.ACCOUNT))
 					.setWithholding(r.getValue(CREDITOR.WITHHOLDING).shortValue() == 1)
 					.setVatAccrualPayment(r.getValue(CREDITOR.VAT_ACCRUAL_PAYMENT).shortValue() == 1)
 					.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(CREDITOR.TRANSACTION).intValue()))

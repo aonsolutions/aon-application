@@ -429,7 +429,7 @@ public class RegistryImport extends Import {
 					acc = getAccount(domain, user, acc);
 					Customer c = new Customer()
 							.setAccount(acc.getId())
-							.setRegistryData(reg)
+							.copy(reg)
 							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
 							.setStatus(RegistryStatus.ACTIVE);
 					c.setDomain(domain);
@@ -469,12 +469,12 @@ public class RegistryImport extends Import {
 				if(!creditor.isPresent()) {
 					acc = getAccount(domain, user, acc);
 					Creditor cre = new Creditor()
-							.setAccount(acc)
+							.setAccount(acc==null?null:acc.getId())
 							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
 							.setStatus(RegistryStatus.ACTIVE);
 					cre.setId(registryId);
-					cre.setRegistry(reg);
-					cre.setDomain(domain.getId());
+					cre.copy(reg);
+					cre.setDomain(domain);
 					AON.insertCreditor(domain.getName(), domain.getId(), user.getLogin(), cre);
 				}
 			}

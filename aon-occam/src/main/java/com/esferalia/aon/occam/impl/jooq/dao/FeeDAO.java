@@ -116,7 +116,7 @@ public class FeeDAO {
 						: new Domain().setId(r.getValue(CUSTOMER_FEE.DOMAIN)) )
 					.setCustomer(r.get(CUSTOMER.REGISTRY) != null
 						? CustomerFiller.buildCustomer(r, customerRegistry)
-						: new Customer().setRegistryData(new Registry().setId(r.getValue(CUSTOMER_FEE.CUSTOMER))))
+						: new Customer().copy(new Registry().setId(r.getValue(CUSTOMER_FEE.CUSTOMER))))
 					.setItem(r.get(ITEM.ID) != null
 						? ItemFiller.buildItem(r)
 						: new Item().setId(r.getValue(CUSTOMER_FEE.ITEM)))			
