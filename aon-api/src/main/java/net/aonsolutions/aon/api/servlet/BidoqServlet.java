@@ -35,6 +35,14 @@ public class BidoqServlet extends AonApiHttpServlet {
 				String user = getData().optString("user");
 				String company = getData().optString("company");
 				String action = getData().optString("action");
+
+				if(AonStringUtils.isEmpty(user)) {
+					throw new Exception("El campo user está vacío");
+				}
+				
+				if(AonStringUtils.isEmpty(company)) {
+					throw new Exception("El campo company está vacío");
+				}
 				
 				Auth auth = AON_SOLUTIONS.getAuthByDocument(user);
 				if(auth.getUuid() == null) {

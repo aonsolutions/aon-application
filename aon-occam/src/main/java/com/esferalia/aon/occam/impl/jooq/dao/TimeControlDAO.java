@@ -36,7 +36,6 @@ public class TimeControlDAO {
 
 	private static final TimeControlPropertiesDAO TIMECONTROL_PROPERTIES = new TimeControlPropertiesDAO();
 
-	
 	public static Stream<TimeControlDetail> getTimeControlDetailStream(AONContext ctx, TimeControlFilter filter) {
 		ctx.checkRead();
 		return ctx.getDslContext()
@@ -231,7 +230,6 @@ public class TimeControlDAO {
 		TimeControl tc = new TimeControl().setTime(0L);
 		
 		details.forEach(r -> {
-			tc.setLastDate(r.getDate());
 			if(tc.getStatus() == null) {
 				tc.setInDate(AonDateUtils.getDateWithoutTime(r.getDate()));
 			}
@@ -248,20 +246,16 @@ public class TimeControlDAO {
 				tc.setTaskHolder(r.getTaskHolder());
 			}
 			tc.getDetail().add(r);
-			
-			tc.setLastLocation(r.getLocation());
-			tc.setLastCoordinates(r.getCoordinates());
 		});
 		
-		if(tc.getDetail().isEmpty()) {
-			TimeControlDetail tcd = getLastTimeControlDetail(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-					.and(f.getTaskHolderProperty().eq(taskHolderId)));
+		TimeControlDetail tcd = getLastTimeControlDetail(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getTaskHolderProperty().eq(taskHolderId)));
 
-			tc.setLastCoordinates(tcd.getCoordinates());
-			tc.setLastDate(tcd.getDate());
-			tc.setLastLocation(tcd.getLocation());
-			tc.setTaskHolder(TaskDAO.getTaskHolderStream(ctx, f -> f.getIdProperty().eq(taskHolderId)).findFirst().orElse(new TaskHolder()));
-		}
+		tc.setLastCoordinates(tcd.getCoordinates());
+		tc.setLastDate(tcd.getDate());
+		tc.setLastLocation(tcd.getLocation());
+		tc.setTaskHolder(TaskDAO.getTaskHolderStream(ctx, f -> f.getIdProperty().eq(taskHolderId)).findFirst().orElse(new TaskHolder()));
+		
 		return tc;
 	}
 

@@ -223,7 +223,7 @@ export class AonMobileInvoice extends AonInvoice {
       let name = document.getElementById('name');
       name.value = registry.name;
       let address = document.getElementById('address');
-      address.buildAddressValue(JSON.stringify(registry.address));
+      address.buildAddressValue(registry.address);
       if(this._invoice.isEmitida) {
         this._invoice.receiver = registry;
       } else {
@@ -258,7 +258,7 @@ export class AonMobileInvoice extends AonInvoice {
       let nif = document.getElementById('nif');
       nif.value = registry.document;
       let address = document.getElementById('address');
-      address.buildAddressValue(JSON.stringify(registry.address));
+      address.buildAddressValue(registry.address);
       if(this._invoice.isEmitida) {
         this._invoice.receiver = registry;
       } else {
@@ -278,8 +278,8 @@ export class AonMobileInvoice extends AonInvoice {
     tr3.appendChild(tdAddress);
     let address = document.getElementById('address');
     address.buildAddressValue(this.isEmitida()
-      ? JSON.stringify(this._invoice.receiver ? this._invoice.receiver.address : {})
-      : JSON.stringify(this._invoice.sender ? this._invoice.sender.address : {}));
+      ? this._invoice.receiver ? this._invoice.receiver.address : {}
+      : this._invoice.sender ? this._invoice.sender.address : {});
     if(this.isAccounting()) {
       address.readonly = 'readonly';
     }

@@ -174,7 +174,7 @@ export class AonConfiguration extends AonElement {
       `);
 
       let address = document.getElementById('aonConfigurationGeneralAddress');
-  		address.buildAddressValue(JSON.stringify(cp.address));
+  		address.buildAddressValue(cp.address);
       getCompanyMedia().then(m => {
         let card2 = this.getElement("aonConfigurationGeneral2Card");
         card2.setContentHTML(`

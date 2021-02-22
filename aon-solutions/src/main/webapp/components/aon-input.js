@@ -450,17 +450,14 @@ export class AonInput extends AonElement {
   }
 
   buildAddressValue(val) {
-    this.value = val;
-    let value =
-      this.value && this.value != "undefined"
-        ? JSON.parse(this.getAttribute("value"))
-        : {
-            country: "ES",
-            address: "",
-            zip: "",
-            city: "",
-            province: "",
-          };
+    let value = {
+      country: val.country || "ES",
+      address: val.address || "",
+      zip: val.zip || "",
+      city: val.city || "",
+      province: val.provice ||  ""
+    }
+    this.value = JSON.stringify(value);
 
     let address = document.getElementById(this.getAttribute("id") + "Address");
     if (address) {
