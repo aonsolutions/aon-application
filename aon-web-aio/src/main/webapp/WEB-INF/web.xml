@@ -25,7 +25,7 @@
 	<!-- -Test Servlet -->
 	<servlet>
 		<servlet-name>TestServlet</servlet-name>
-		<servlet-class>com.esferalia.aon.in.payroll.servlets.ExcelServlet</servlet-class>
+		<servlet-class>com.code.aon.aio.servlet.TestServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>TestServlet</servlet-name>
