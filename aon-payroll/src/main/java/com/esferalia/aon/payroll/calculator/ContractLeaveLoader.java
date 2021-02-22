@@ -4,8 +4,10 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
+import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DAY_OF_MONTH;
@@ -454,6 +456,19 @@ public class ContractLeaveLoader {
 							ExpressionContext.getCurrentBindings().get(factorVariable, value -> value, 1.00);
 
 							return getQuoteDays(exprCtx, period) * (1.00 - value);
+						}
+					});
+					exprCtx.putVariable(ContextVariable.WORKED_FACTOR, new ITimedVariable<Double>() {
+
+						@Override
+						public Period getPeriod() {
+							return period;
+						}
+
+						@Override
+						public Double getValue(Period period) {
+
+							return (1.00 - value);
 						}
 					});
 					// exprCtx.setVariable(ContextVariable.WORKED_DAYS,
