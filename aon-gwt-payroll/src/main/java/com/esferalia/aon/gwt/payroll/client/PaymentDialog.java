@@ -8,9 +8,10 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
+import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -41,6 +42,7 @@ public class PaymentDialog extends CustomDialog {
 	public PaymentDialog() {
 		setCaption("Percepci\u00f3n");
 		setWidget(binder.createAndBindUi(this));
+		setType(Type.CRA_0001);
 	}
 
 	public void setAvailableConcepts(
@@ -77,7 +79,7 @@ public class PaymentDialog extends CustomDialog {
 	}
 	
 	public void setType(com.esferalia.aon.gwt.payroll.shared.Payment.Type type) {
-		payment.setType(type == null ? CRA_0000 : type);
+		payment.setType(type == null ? Type.CRA_0001 : type);
 	}
 
 	public com.esferalia.aon.gwt.payroll.shared.Salary.Type getReceiptType() {
@@ -142,7 +144,7 @@ public class PaymentDialog extends CustomDialog {
 	
 	public void setReadOnly(boolean readOnly) {
 		payment.setReadOnly(readOnly);
-		buttonsRow.getStyle().setDisplay(Display.NONE);
+		buttonsRow.getStyle().setDisplay(readOnly ? Display.NONE : Display.TABLE_ROW);
 	}
 	
 	public void setTypeListVisible() {
