@@ -21,7 +21,7 @@ public class TimeControl {
 	private Date lastDate;
 	private Location lastLocation;
 	private Coordinates lastCoordinates;
-
+	
 	public TimeControl() {
 		this.time = 0L;
 	}
@@ -100,8 +100,27 @@ public class TimeControl {
 		this.lastCoordinates = lastCoordinates;
 	}
 
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public TimeControlGroup getGroup() {
+		return group;
+	}
+
+	public void setGroup(TimeControlGroup group) {
+		this.group = group;
+	}
+
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
+		json.put("start_date", getStartDate() != null ? getStartDate().getTime() : null);
+		json.put("group", getGroup() != null ? getGroup().name() : null);
+		
 		json.put("time", getTime());
 		json.put("in_date", getInDate() != null ? getInDate().getTime() : null);
 		json.put("status", getStatus() != null ? getStatus().name().toLowerCase() : TimeControlStatus.OUT);

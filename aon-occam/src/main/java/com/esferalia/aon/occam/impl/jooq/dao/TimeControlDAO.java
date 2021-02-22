@@ -119,7 +119,7 @@ public class TimeControlDAO {
 		
 		TaskDAO.getTaskHolderStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
 			.and(f.getUserIdProperty().isNotNull())).forEach(th -> {
-				TimeControl tc = buildTimeControl(ctx, th.getId(), list.stream().filter(f -> f.getTaskHolder().getId().equals(th.getId())));
+				TimeControl tc = buildTimeControl(ctx, th.getId(), list.stream().filter(f -> f.getTaskHolder().getId().equals(th.getId())), null, null);
 				tcList.add(tc);
 			});
 		return tcList.stream();
@@ -142,33 +142,68 @@ public class TimeControlDAO {
 			.and(f.getTaskHolderProperty().eq(taskHolderId)));
 		
 		if(TimeControlGroup.DAY.equals(group)) {
-			list.stream().map(r -> AonDateUtils.getDateWithoutTime(r.getDate())).distinct().forEach(date -> {
+			Date date = startDate;
+			while(date.compareTo(endDate) <= 0 ) {
 				Date aDate = AonDateUtils.getDateWithoutTime(date);
 				Date bDate = AonDateUtils.addDays(aDate, 1);
 				Date cDate = AonDateUtils.addSeconds(bDate, -1);
-				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (f.getDate().compareTo(aDate) >= 0 && f.getDate().compareTo(cDate) <= 0)));
+				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (f.getDate().compareTo(aDate) >= 0 && f.getDate().compareTo(cDate) <= 0)), date, TimeControlGroup.DAY);
 				tcList.add(tc);
-			});
+				date = AonDateUtils.addDays(date, 1);
+			}
+//			list.stream().map(r -> AonDateUtils.getDateWithoutTime(r.getDate())).distinct().forEach(date -> {
+//				Date aDate = AonDateUtils.getDateWithoutTime(date);
+//				Date bDate = AonDateUtils.addDays(aDate, 1);
+//				Date cDate = AonDateUtils.addSeconds(bDate, -1);
+//				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (f.getDate().compareTo(aDate) >= 0 && f.getDate().compareTo(cDate) <= 0)));
+//				tcList.add(tc);
+//			});
 		} else if(TimeControlGroup.WEEK.equals(group)) {
-			list.stream().map(r -> AonDateUtils.getFirstDayOfWeek(AonDateUtils.getDateWithoutTime(r.getDate()))).distinct().forEach(date -> {
+			Date date = AonDateUtils.getFirstDayOfWeek(startDate);
+			while(date.compareTo(endDate) <= 0 ) {
+				Date aDate = date;
 				Date bDate = AonDateUtils.addDays(date, 7);
 				Date cDate = AonDateUtils.addSeconds(bDate, -1);
-				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (f.getDate().compareTo(date) >= 0 && f.getDate().compareTo(cDate) <= 0)));
+				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (f.getDate().compareTo(aDate) >= 0 && f.getDate().compareTo(cDate) <= 0)), date, TimeControlGroup.WEEK);
 				tcList.add(tc);
-			});
+				date = AonDateUtils.addWeeks(date, 1);
+			}
+//			list.stream().map(r -> AonDateUtils.getFirstDayOfWeek(AonDateUtils.getDateWithoutTime(r.getDate()))).distinct().forEach(date -> {
+//				Date bDate = AonDateUtils.addDays(date, 7);
+//				Date cDate = AonDateUtils.addSeconds(bDate, -1);
+//				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (f.getDate().compareTo(date) >= 0 && f.getDate().compareTo(cDate) <= 0)));
+//				tcList.add(tc);
+//			});
 		} else if(TimeControlGroup.MONTH.equals(group)) {
-			list.stream().map(r -> AonDateUtils.getMonth(r.getDate()) +"/"+ AonDateUtils.getYear(r.getDate())).distinct().forEach(date -> {
-				String[] a = date.split("/");
+			Date date = AonDateUtils.getMonthFirstDay(startDate);
+			while(date.compareTo(endDate) <= 0 ) {
+				int month = AonDateUtils.getMonth(date);
+				int year = AonDateUtils.getYear(date);
 				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (
-						AonDateUtils.getMonth(f.getDate()) == Integer.parseInt(a[0])
-						&& AonDateUtils.getYear(f.getDate()) == Integer.parseInt(a[1]))));
+						AonDateUtils.getMonth(f.getDate()) == month
+						&& AonDateUtils.getYear(f.getDate()) == year)), date, TimeControlGroup.MONTH );
 				tcList.add(tc);
-			});
+				date = AonDateUtils.addMonths(date, 1);
+			}
+//			list.stream().map(r -> AonDateUtils.getMonth(r.getDate()) +"/"+ AonDateUtils.getYear(r.getDate())).distinct().forEach(date -> {
+//				String[] a = date.split("/");
+//				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> (
+//						AonDateUtils.getMonth(f.getDate()) == Integer.parseInt(a[0])
+//						&& AonDateUtils.getYear(f.getDate()) == Integer.parseInt(a[1]))));
+//				tcList.add(tc);
+//			});
 		} else if(TimeControlGroup.YEAR.equals(group)) {
-			list.stream().map(r -> AonDateUtils.getYear(r.getDate())).distinct().forEach(year -> {
-				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> AonDateUtils.getYear(f.getDate()) == year));
+			Date date = AonDateUtils.getYearFirstDay(startDate);
+			while(date.compareTo(endDate) <= 0 ) {
+				int year = AonDateUtils.getYear(date);
+				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> AonDateUtils.getYear(f.getDate()) == year), date, TimeControlGroup.YEAR);
 				tcList.add(tc);
-			});
+				date = AonDateUtils.addYears(date, 1);
+			}
+//			list.stream().map(r -> AonDateUtils.getYear(r.getDate())).distinct().forEach(year -> {
+//				TimeControl tc = buildTimeControl(ctx, taskHolderId, list.stream().filter(f -> AonDateUtils.getYear(f.getDate()) == year));
+//				tcList.add(tc);
+//			});
 		}
 		return tcList.stream();
 	}
@@ -186,7 +221,7 @@ public class TimeControlDAO {
 			f.getDomainProperty().eq(ctx.getDomainId())
 				.and(f.getDateProperty().ge(startTimestamp))
 				.and(f.getDateProperty().le(endTimestamp))
-				.and(f.getTaskHolderProperty().eq(taskHolderId))));
+				.and(f.getTaskHolderProperty().eq(taskHolderId))), null, null);
 	}
 	
 	public static TimeControlDetail saveTimeControlDetail(AONContext ctx, TimeControlDetail tcd) {
@@ -226,7 +261,7 @@ public class TimeControlDAO {
 		return tcd;
 	}
 	
-	private static TimeControl buildTimeControl(AONContext ctx, Integer taskHolderId, Stream<TimeControlDetail> details) {
+	private static TimeControl buildTimeControl(AONContext ctx, Integer taskHolderId, Stream<TimeControlDetail> details, Date startDate, TimeControlGroup group) {
 		TimeControl tc = new TimeControl().setTime(0L);
 		
 		details.forEach(r -> {
@@ -255,6 +290,9 @@ public class TimeControlDAO {
 		tc.setLastDate(tcd.getDate());
 		tc.setLastLocation(tcd.getLocation());
 		tc.setTaskHolder(TaskDAO.getTaskHolderStream(ctx, f -> f.getIdProperty().eq(taskHolderId)).findFirst().orElse(new TaskHolder()));
+
+		tc.setStartDate(startDate);
+		tc.setGroup(group);
 		
 		return tc;
 	}
