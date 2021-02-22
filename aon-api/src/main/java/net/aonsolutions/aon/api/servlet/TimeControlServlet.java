@@ -71,17 +71,46 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		LOGGER.info("AON API TIMECONTROL SERVLET - POST METHOD");
 		try {
 			super.doPost(req, resp);
-			Object responseObject = null;
-			if(AonStringUtils.isEmpty(getToken())) {
-				save(getDomain(), getUser());
-				responseObject = getTimeControl(getDomain(), getUser());
-			} else {
-				AonToken aonToken = SECURITY.getAonToken(getToken());
-				save(aonToken);
-				responseObject = getTimeControl(aonToken, getData().optInt("task_holder"));
+
+			switch (getPath()) {
+			case "/":
+				if(AonStringUtils.isEmpty(getToken())) {
+					save(getDomain(), getUser());
+					response ( req, resp, getTimeControl(getDomain(), getUser()));
+				} else {
+					AonToken aonToken = SECURITY.getAonToken(getToken());
+					save(aonToken);
+					response ( req, resp, getTimeControl(aonToken, getData().optInt("task_holder")) );
+				}
+				break;
+			case "/save":
+				if(AonStringUtils.isEmpty(getToken())) {
+					response ( req, resp, save(getDomain(), getUser()));
+				} else {
+					AonToken aonToken = SECURITY.getAonToken(getToken());
+					response ( req, resp, save(aonToken) );
+				}
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
 			}
-			
-			response(req, resp, responseObject);
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp){
+		LOGGER.info("AON API TIME-CONTROL SERVLET - DELETE METHOD");
+		try {
+			super.doDelete(req, resp);
+			switch (getPath()) {
+			case "/":
+				response(req, resp, delete());
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
+			}
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -181,13 +210,14 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	}
 	
 	private Object getTimeControlDetailStream() {		
-		Date startDate =  AonDateUtils.getDateWithoutTime(new Date());
-		Date endDate = new Date();
-
+		Date startDate = null;
+		Date endDate = null;
 		if(!getParams().optString("startDate").isEmpty()) startDate = Toolkit.parseDate(getParams().optString("startDate"), "yyyy-MM-dd");
 		if(!getParams().optString("endDate").isEmpty()) endDate = Toolkit.parseDate(getParams().optString("endDate"), "yyyy-MM-dd");
 		
-		endDate = AonDateUtils.addDays(startDate, 1);
+		startDate = AonDateUtils.getDateWithoutTime(startDate);
+		endDate = AonDateUtils.getDateWithoutTime(endDate);
+		endDate = AonDateUtils.addDays(endDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 		
 		Timestamp startTimestamp = new Timestamp(startDate.getTime());
@@ -206,17 +236,24 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return array;
 	}
 	
-	private void save(Domain domain, User user) {
+	
+	private JSONObject delete() {
+		AON_SOLUTIONS.deleteTimeControlDetail(getDomain(), getUser().getLogin(), f ->
+				f.getIdProperty().eq(getData().optInt("id")));
+		return new JSONObject();
+	}
+	
+	private JSONObject save(Domain domain, User user) {
 		TaskHolder taskHolder = getData().opt("task_holder") != null 
 		    ? AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), f -> 
 		    	f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq(getData().optInt("task_holder"))))
 		    : AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getUserIdProperty().eq(user.getId())));
-		save(taskHolder);
+		  return save(taskHolder);
 	}
 	
-	private void save(AonToken aonToken) {
+	private JSONObject save(AonToken aonToken) {
 		TaskHolder taskHolder = null;
 		if(getData().opt("task_holder") != null) {
 			taskHolder = AON.getTaskHolder(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f ->
@@ -226,11 +263,12 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		}
 		
 		if(taskHolder != null ) {
-			save(taskHolder);
+			return save(taskHolder);
 		}
+		return new JSONObject();
 	}
 	
-	private void save(TaskHolder taskHolder) {
+	private JSONObject save(TaskHolder taskHolder) {
 		Coordinates coordinates = new Coordinates(getData().optString("coordinates"));
 		Date date = !getData().optString("date").isEmpty() ?  new Date(getData().optLong("date")) : new Date();
 		Location lc =  !getData().optString("location").isEmpty() 
@@ -247,7 +285,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				.setLocation(lc)
 				.setStatus(TimeControlStatus.safeValueOf(getData().optString("status")));
 		
-		AON_SOLUTIONS.saveTimeControlDetail(tcd.getDomain(), "", tcd);
+		return AON_SOLUTIONS.saveTimeControlDetail(tcd.getDomain(), "", tcd).toJSON();
 	}
 	
 }

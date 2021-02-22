@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.DeviceType;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "AonNotificationTokenServlet", urlPatterns = {"/ms/api/auth-device/*"})
+@WebServlet(name = "AonAuthDeviceServlet", urlPatterns = {"/ms/api/authdevice/*"})
 public class AuthDeviceServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(AuthDeviceServlet.class.getName());
@@ -20,7 +20,7 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		try {
-			LOGGER.info("AON AUTH-DEVICE SERVLET - GET METHOD");
+			LOGGER.info("AON AUTHDEVICE SERVLET - GET METHOD");
 			super.doGet(req, resp);
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -31,15 +31,15 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		try {
 			super.doPost(req, resp);
-			LOGGER.info("AON AUTH-DEVICE  SERVLET - GET METHOD");
+			LOGGER.info("AON AUTHDEVICE  SERVLET - GET METHOD");
 			Object responseObject = null;
 
 			switch (getPath()) {
 			case "/save":
-				responseObject = saveAuthDevice();
+				responseObject = save();
 			break;
 			case "/delete":
-				responseObject = deleteAuthDevice();
+				responseObject = delete();
 			break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -51,7 +51,7 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 		}
 	}	
 	
-	private JSONObject saveAuthDevice() {
+	private JSONObject save() {
 		AonToken aonToken = SECURITY.getAonToken(getToken());
 
 		Domain domain = new Domain().setName(aonToken.getSchemaFirstDomain()).setId(0);
@@ -63,7 +63,7 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 		return SECURITY.saveAuthDevice(domain, getUser().getLogin(), authDevice).toJSON();
 	}
 	
-	private JSONObject deleteAuthDevice() {
+	private JSONObject delete() {
 		SECURITY.deleteAuthDevice(getDomain(), getUser().getLogin(), f-> f.getIdProperty().eq(getData().optInt("id")));
 		return new JSONObject();
 	}

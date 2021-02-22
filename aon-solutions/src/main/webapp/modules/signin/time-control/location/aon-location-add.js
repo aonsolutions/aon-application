@@ -290,7 +290,6 @@ export class AonLocationAdd extends AonElement {
           coordinates: `${data.latitude},${data.longitude}`,
         });
         this.TOAST.start({ message: `Datos guardados!`, type: "success" });
-        this.back();
         if (id) {
           setValueName("id", id);
         }

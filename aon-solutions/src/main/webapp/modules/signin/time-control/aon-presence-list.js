@@ -175,9 +175,9 @@ export class AonPresenceList extends AonElement {
         resp.map((res, idx) => {
           res.dateParse = setDateTimestamp(res.last_date);
           let options = {
-            iconHtmlCustom: `${res.lettersHtml}`,
+            iconHtmlCustom: `${res.lettersHtml}  <span style="float: right;">(${res.duration})</span> `,
             title: `${res.name}`,
-            subtitle: `(${res.duration}) ${res.dateParse} <span style="float: right;">${res.nameLocation}</span> `,
+            subtitle: `${res.dateParse} <span style="float: right;">${res.nameLocation}</span> `,
           };
           if (res.contractType) options.option = this.getOptions(res);
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));

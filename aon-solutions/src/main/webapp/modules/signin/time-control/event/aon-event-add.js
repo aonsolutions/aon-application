@@ -10,7 +10,7 @@ import {
   deleteTimeControl,
   getLocation,
   getStatus,
-  saveTimeControl,
+  saveTimeControlDetail,
 } from "../../../../services/service.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
@@ -250,7 +250,7 @@ export class AonEventAdd extends AonElement {
       ).getTime(),
     };
     try {
-      const { id } = await saveTimeControl(data);
+      const { id } = await saveTimeControlDetail(data);
       if (id) {
         setValueName("id", id);
       }
@@ -259,7 +259,6 @@ export class AonEventAdd extends AonElement {
         type: "success",
         delay: 3000,
       });
-      // this.back();
     } catch (error) {
       this.TOAST.start({ message: error, type: "error" });
     }
@@ -272,7 +271,7 @@ export class AonEventAdd extends AonElement {
       this.aonSigninEl.startLoader();
       try {
         await deleteTimeControl(data);
-        this.TOAST.start({ message: `En desarrollo!` });
+        this.TOAST.start({ message: `Datos eliminados!` });
         this.back();
       } catch (error) {
         this.TOAST.start({ message: error, type: "error" });

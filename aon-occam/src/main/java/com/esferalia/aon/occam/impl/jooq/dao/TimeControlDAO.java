@@ -203,7 +203,7 @@ public class TimeControlDAO {
 			.values(tcd.getDomain().getId(), tcd.getTaskHolder().getId(), tcd.getStatus().value(),
 					new Timestamp(tcd.getDate().getTime()), tcd.getComments(), tcd.getLocation().getId(),
 					tcd.getCoordinates().getLatitude(), tcd.getCoordinates().getLongitude())
-			.execute();
+			.returning(TIMECONTROL.ID).fetchOne().getValue(TIMECONTROL.ID);
 		
 		return tcd.setId(id);
 	}

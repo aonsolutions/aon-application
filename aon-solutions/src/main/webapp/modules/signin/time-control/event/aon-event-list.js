@@ -199,7 +199,7 @@ export class AonEventList extends AonElement {
         resp.map((res, idx) => {
           let options = {
             iconHtmlCustom: `${res.lettersHtml}`,
-            title: `${res.name} (${res.duration})`,
+            title: `${res.name}  <span style="float: right;">(${res.duration})</span>`,
             subtitle: `(${res.textStatus}) ${res.dateParse} <span style="float: right;">${res.nameLocation}</span>`,
           };
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
