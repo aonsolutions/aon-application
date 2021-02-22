@@ -555,10 +555,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 		if ((icon & 0x01b) == 0x01b) 			// Error
 			return AON.AON_ICON_EXCEPTION;
-		if ((icon & 0x02b) == 0x02b)			// Warning
-			return AON.AON_ICON_OKWARNING;
 		if ((icon & 0x04b) == 0x04b)			// Success
 			return AON.AON_ICON_OK;
+		if ((icon & 0x02b) == 0x02b)			// Warning
+			return AON.AON_ICON_OKWARNING;
 		if ((icon & 0x08b) == 0x08b)			// Info 
 			return  isTrabajadoressYTramos(trabajadoresYTramos) ? AON.AON_ICON_ERRORWARNING : AON.AON_ICON_WARN ;
 

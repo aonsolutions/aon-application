@@ -931,9 +931,10 @@ public abstract class CretaDetail extends Composite {
 				for (JsError jsError : jsErros) {
 					// Confirmed
 					if ( AonStringUtils.equalsIgnoreCase("A9761", jsError.getCode())) {
-						confirmed = true ;
-					// Calculated
-					}
+						confirmed = true ; // Calculated
+					} else if ( AonStringUtils.equalsIgnoreCase("R9566", jsError.getCode())) {
+						confirmed = true ; // Already confirmed
+					} 
 					
 					else if ( AonStringUtils.equalsIgnoreCase("R9544", jsError.getCode())) {
 						r9544 = true ;
@@ -943,17 +944,38 @@ public abstract class CretaDetail extends Composite {
 						r9607 = true ;
 					}else if ( AonStringUtils.equalsIgnoreCase("R9650", jsError.getCode())) {
 						r9650 = true ;
-					}else if ( AonStringUtils.equalsIgnoreCase("R9529", jsError.getCode())) {
+					}
+					
+					else if ( AonStringUtils.equalsIgnoreCase("R9529", jsError.getCode())) {
 						calculated = true ;
-					}else if ( MainCreta.isTrabajadoressYTramos(jsFile) 
+					}else if ( AonStringUtils.equalsIgnoreCase("A9708", jsError.getCode())) {
+						calculated = true ;
+					}else if ( AonStringUtils.equalsIgnoreCase("R9626", jsError.getCode())) {
+						calculated = true ;
+					}else if ( AonStringUtils.equalsIgnoreCase("R9758", jsError.getCode())) {
+						calculated = true ; // Partially confirmed
+					}else if ( AonStringUtils.equalsIgnoreCase("R9668", jsError.getCode())) {
+						calculated = true ; // Draft generated
+					}else if ( AonStringUtils.equalsIgnoreCase("R9669", jsError.getCode())) {
+						calculated = true ; // Partially draft generated
+					}else if ( AonStringUtils.equalsIgnoreCase("R9626", jsError.getCode())) {
+						calculated = true ; // Reftification accepted 
+					}
+					
+					else if ( MainCreta.isTrabajadoressYTramos(jsFile) 
 							&& AonStringUtils.equalsIgnoreCase("A9999", jsError.getCode())) {
 						processing = true ;
 					}else if (/* MainCreta.isTrabajadoressYTramos(jsFile) 
 							&& */AonStringUtils.equalsIgnoreCase("R9998", jsError.getCode())) {
 						processing = true ;
-					}else if ( AonStringUtils.equalsIgnoreCase("A9999", jsError.getCode())) {
-						pending = true ;
+					}else if ( AonStringUtils.equalsIgnoreCase("R9569", jsError.getCode())) {
+						processing = true ;
+						// Liquidation started.  
 					}
+										
+					else if ( AonStringUtils.equalsIgnoreCase("A9999", jsError.getCode())) {
+						pending = true ;
+					} 
 					else {
 						error = true ;
 					}
