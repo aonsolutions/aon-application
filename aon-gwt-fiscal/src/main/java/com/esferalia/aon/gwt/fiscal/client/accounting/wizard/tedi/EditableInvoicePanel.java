@@ -1440,6 +1440,13 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 							public void onSuccess(Integer result) {
 								number.setValue(result,false,true);
 								invoiceCallback.getInvoice().getInvoice().setNumber(result);
+								
+								String referenceCode = AonStringUtils.leftPad(Integer.toString(invoiceCallback.getInvoice().getInvoice().getNumber()), 6, "0");
+								if (!AonStringUtils.isBlank(invoiceCallback.getInvoice().getInvoice().getSeries())) {
+									referenceCode = invoiceCallback.getInvoice().getInvoice().getSeries() + "/" + referenceCode;
+								}
+								invoiceCallback.getInvoice().getInvoice().setReferenceCode(referenceCode);
+								
 								invoiceCallback.paintEntry();
 								invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
 								invoiceCallback.getModule().refreshIdLabel();
@@ -1459,6 +1466,11 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
 				invoiceCallback.getInvoice().getInvoice().setNumber(number.getValue());
+				String referenceCode = AonStringUtils.leftPad(Integer.toString(invoiceCallback.getInvoice().getInvoice().getNumber()), 6, "0");
+				if (!AonStringUtils.isBlank(invoiceCallback.getInvoice().getInvoice().getSeries())) {
+					referenceCode = invoiceCallback.getInvoice().getInvoice().getSeries() + "/" + referenceCode;
+				}
+				invoiceCallback.getInvoice().getInvoice().setReferenceCode(referenceCode);
 				invoiceCallback.paintEntry();
 				invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
 				invoiceCallback.getModule().refreshIdLabel();
