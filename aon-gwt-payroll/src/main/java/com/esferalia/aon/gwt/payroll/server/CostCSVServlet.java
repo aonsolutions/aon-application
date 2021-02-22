@@ -55,15 +55,15 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.ibm.icu.util.Calendar;
 
-@SuppressWarnings("serial")
-@WebServlet(
-		name = "Cost-Excel", 
-		urlPatterns = { 
-				"/aon_gwt_aio/cost_excel/*" ,
-				"/aon_gwt_payroll/cost_excel/*" 
-		}
-)
-public class CostExcelServlet extends HttpServlet {
+//@SuppressWarnings("serial")
+//@WebServlet(
+//		name = "Cost-Excel", 
+//		urlPatterns = { 
+//				"/aon_gwt_aio/cost_excel/*" ,
+//				"/aon_gwt_payroll/cost_excel/*" 
+//		}
+//)
+public class CostCSVServlet extends HttpServlet {
 	
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	
@@ -108,11 +108,11 @@ public class CostExcelServlet extends HttpServlet {
 
 		DSLContext ctx;
 		
-		response.setContentType(MimeType.MS_EXCEL.getName());
-		response.setHeader("Content-disposition", "attachment; filename=\"Costes."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
+//		response.setContentType(MimeType.MS_EXCEL.getName());
+//		response.setHeader("Content-disposition", "attachment; filename=\"Costes."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 		
-//		response.setContentType(MimeType.CSV.getName());
-//		response.setHeader("Content-disposition", "attachment; filename=\"Costes."+ MimeType.CSV.getExtension()+ "\";");
+		response.setContentType(MimeType.CSV.getName());
+		response.setHeader("Content-disposition", "attachment; filename=\"Costes."+ MimeType.CSV.getExtension()+ "\";");
 		
 		try (ServletOutputStream sos = response.getOutputStream();
 			Connection connection = AonServletUtils.getConnection(_domainName);
@@ -135,15 +135,14 @@ public class CostExcelServlet extends HttpServlet {
 //			_types.add((_settle.equals("1")) ? (byte) 2 : (byte) -1);
 //			_types.add((_delay.equals("1")) ? (byte) 3 : (byte) -1);
 			
-			Stream<EnterprisePayroll> stream = EnterprisePayrollExcel.getEnterprisePayrolls(ctx, condition);
+//			Stream<EnterprisePayroll> stream = EnterprisePayrollExcel.getEnterprisePayrolls(ctx, condition);
 			
-//			Stream<com.esferalia.aon.in.payroll.csv.EnterprisePayrollCSV.EnterprisePayroll> stream = EnterprisePayrollCSV.getEnterprisePayrolls(ctx, condition);
+			Stream<com.esferalia.aon.in.payroll.csv.EnterprisePayrollCSV.EnterprisePayroll> stream = EnterprisePayrollCSV.getEnterprisePayrolls(ctx, condition);
 
 			
 			List<IEnterprisePayroll> list = stream.collect(Collectors.toList());
-			EnterprisePayrollExcel.write(sos, list, Optional.empty());
-//			EnterprisePayrollExcel.writeDiff(sos, list, Optional.empty());
-//			EnterprisePayrollCSV.write(sos, list);
+//			EnterprisePayrollExcel.write(sos, list, Optional.empty());
+			EnterprisePayrollCSV.write(sos, list);
 
 			sos.flush();
 			response.flushBuffer();

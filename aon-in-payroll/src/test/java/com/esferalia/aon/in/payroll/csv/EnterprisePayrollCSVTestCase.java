@@ -13,7 +13,7 @@ import com.github.javafaker.Faker;
 import com.github.javafaker.Number;
 import com.github.javafaker.Pokemon;
 
-@Ignore
+//@Ignore
 public class EnterprisePayrollCSVTestCase {
 	
 	
@@ -25,26 +25,33 @@ public class EnterprisePayrollCSVTestCase {
 		@JsonProperty("Centro de trabajo")
 		private String workplace;
 		@JsonProperty("Bruto")
-		private double raw;
+		private Double raw;
 		@JsonProperty("Seg. Social empleado")
-		private double employeeSS;
+		private Double employeeSS;
 		@JsonProperty("IRPF")
-		private double irpf;
+		private Double irpf;
 		@JsonProperty("Líquido")
-		private double liquid;
+		private Double liquid;
 		@JsonProperty("Seg. Social empresa")
-		private double enterpriseSS;
+		private Double enterpriseSS;
 		@JsonProperty("Coste total")
-		private double totalCost;
+		private Double totalCost;
 		@JsonProperty("Seg. Social total")
-		private double totalSS;
+		private Double totalSS;
 		@JsonProperty("Bonificaciones")
-		private double bonuses;
+		private Double bonuses;
 		
 		@JsonProperty("Base Cont. Comunes")
-		private double cgcBase;
+		private Double cgcBase;
 		@JsonProperty("Base IRPF")
-		private double irpfBase;
+		private Double irpfBase;
+		
+		@JsonProperty("Contingencias comunes")
+		private Double cgc;
+		@JsonProperty("Desempleo")
+		private Double unemployment;
+		@JsonProperty("Formación profesional")
+		private Double jobTraining;
 		
 		@Override
 		public String getEmployee() {
@@ -57,59 +64,75 @@ public class EnterprisePayrollCSVTestCase {
 		}
 
 		@Override
-		public double getRaw() {			
+		public Double getRaw() {			
 			return raw;
 		}
 
 		@Override
-		public double getEmployeeSS() {			
+		public Double getEmployeeSS() {			
 			return employeeSS;
 		}
 
 		@Override
-		public double getIrpf() {			
+		public Double getIrpf() {			
 			return irpf;
 		}
 
 		@Override
-		public double getLiquid() {			
+		public Double getLiquid() {			
 			return liquid;
 		}
 
 		@Override
-		public double getEnterpriseSS() {			
+		public Double getEnterpriseSS() {			
 			return enterpriseSS;
 		}
 
 		@Override
-		public double getTotalCost() {			
+		public Double getTotalCost() {			
 			return totalCost;
 		}
 
 		@Override
-		public double getTotalSS() {			
+		public Double getTotalSS() {			
 			return totalSS;
 		}
 
 		@Override
-		public double getBonuses() {			
+		public Double getBonuses() {			
 			return bonuses;
 		}
 
 		@Override
-		public double getCgcBase() {
+		public Double getCgcBase() {
 			return cgcBase;
 		}
 
 		@Override
-		public double getIrpfBase() {
+		public Double getIrpfBase() {
 			return irpfBase;
+		}
+
+		@Override
+		public Double getCgc() {
+			return cgc;
+		}
+
+		@Override
+		public Double getUnemployment() {
+			return unemployment;
+		}
+
+		@Override
+		public Double getJobTraining() {
+			return jobTraining;
 		}
 		
 	}
 	
 	
 	@Test
+	//@Ignore
 	public void testWrite() {
 		Pokemon pokemon = Faker.instance().pokemon();
 		Number number = Faker.instance().number();

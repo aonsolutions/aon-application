@@ -5,16 +5,20 @@ public interface IEnterprisePayroll {
 	public String getEmployee();
 	public String getWorkplace();
 	
-	public double getRaw();
-	public double getEmployeeSS();
-	public double getIrpf();
-	public double getLiquid();
-	public double getEnterpriseSS();
-	public double getTotalCost();
-	public double getTotalSS();
-	public double getBonuses();
+	public Double getRaw();
+	public Double getEmployeeSS();
+	public Double getIrpf();
+	public Double getLiquid();
+	public Double getEnterpriseSS();
+	public Double getTotalCost();
+	public Double getTotalSS();
+	public Double getBonuses();
 	
-	public double getCgcBase();
-	public double getIrpfBase();
+	public Double getCgcBase();
+	public Double getIrpfBase();
+	
+	public Double getCgc();
+	public Double getUnemployment();
+	public Double getJobTraining();
 
 }

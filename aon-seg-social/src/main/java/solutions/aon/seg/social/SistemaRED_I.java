@@ -1,11 +1,8 @@
 package solutions.aon.seg.social;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -32,12 +29,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
-import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLLabelElement;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.app_issues.OutOfServiceException;
@@ -50,15 +45,14 @@ import solutions.aon.seg.social.exceptions.invalidData.NoMoreDataException;
 import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
 import solutions.aon.seg.social.exceptions.invalidData.WrongRegimeException;
 import solutions.aon.seg.social.exceptions.invalidData.invalidCccException;
-import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.Idc;
 import solutions.aon.seg.social.objects.Liquidation;
 import solutions.aon.seg.social.objects.Liquidation.LiquidationBuilder;
 import solutions.aon.seg.social.objects.SituacionEmpresa;
 import solutions.aon.seg.social.objects.SituacionEmpresa.SituacionEmpresaBuilder;
-import solutions.aon.seg.social.objects.WorkerLiquidation.WorkerLiquidationBuilder;
 import solutions.aon.seg.social.objects.WorkerLiquidation;
+import solutions.aon.seg.social.objects.WorkerLiquidation.WorkerLiquidationBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
@@ -511,7 +505,7 @@ public class SistemaRED_I {
 			jacadaform.getInputByName("txt_SDFAO").setValueAttribute("" + calendar.get(Calendar.YEAR));
 			// Selecting document's printing method
 			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
-			ArrayList<byte[]> ret=new ArrayList<byte[]>();
+//			ArrayList<byte[]> ret=new ArrayList<byte[]>();
 			for (DomElement de : it) {
 				if (de.getTextContent().trim().equalsIgnoreCase("OnLine")) {
 					htmlPage = de.click();
