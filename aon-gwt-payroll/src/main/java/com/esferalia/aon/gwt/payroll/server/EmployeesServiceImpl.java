@@ -5575,7 +5575,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		case DELAY:
 			return "L90";
 		case SETTLE:
-		case NOT_ENJOYED_VACATIONS:
 			return "L13";
 		default:
 			return "L00";
@@ -5587,7 +5586,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		case "L90":
 			return SalaryType.DELAY;
 		case "L13":
-			return SalaryType.NOT_ENJOYED_VACATIONS;
+			return SalaryType.SETTLE;
 		default:
 			return SalaryType.SALARY;
 		}
