@@ -1052,11 +1052,6 @@ public class SalaryDraftController extends BasicController implements ContractSa
 				public List<Month> visitSettle(SalaryType salaryType) {
 					return getSettleMonths(year);
 				}
-				@Override
-				public List<Month> visitNotEnjoyedVacations(
-						SalaryType salaryType) {
-					return Collections.emptyList();
-				}
 		});
 		return availableMonths;
 	}

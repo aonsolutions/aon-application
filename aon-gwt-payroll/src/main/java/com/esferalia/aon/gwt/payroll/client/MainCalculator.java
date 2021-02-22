@@ -576,12 +576,6 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 				return cost.getDelaysCount();
 			}
 
-			@Override
-			public Integer visitNotEnjoyedVacations(Type type) {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
 		});
 	}	
 }

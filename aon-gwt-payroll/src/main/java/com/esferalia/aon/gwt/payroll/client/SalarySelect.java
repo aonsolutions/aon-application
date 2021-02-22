@@ -150,12 +150,6 @@ public class SalarySelect extends Composite {
 				return null;
 			}
 
-			@Override
-			public Void visitNotEnjoyedVacations(Type type) {
-				// NOOP
-				return null;
-			}
-			
 		});
 		
 	}
@@ -352,11 +346,6 @@ public class SalarySelect extends Composite {
 				return null;
 			}
 
-			@Override
-			public Void visitNotEnjoyedVacations(Type type) {
-				// TODO Auto-generated method stub
-				return null;
-			}
 		});
 	}
 
@@ -498,11 +487,6 @@ public class SalarySelect extends Composite {
 
 				return null;
 
-			}
-
-			@Override
-			public Void visitNotEnjoyedVacations(Type type) {
-				return visitSettle(type);
 			}
 
 		});

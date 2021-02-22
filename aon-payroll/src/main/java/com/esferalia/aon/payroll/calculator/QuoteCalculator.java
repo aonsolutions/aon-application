@@ -589,10 +589,6 @@ public abstract class QuoteCalculator {
 					return null;
 				}
 
-				@Override
-				public Object visitNotEnjoyedVacations(SalaryType salaryType) {
-					return null;
-				}
 			});
 
 			return quotesImpl;
@@ -829,13 +825,6 @@ public abstract class QuoteCalculator {
 					@Override
 					public QuoteCalculator visitDelay(SalaryType salaryType) {
 						return new UnlimitedQuote(expressionContext, startDate,
-								endDate);
-					}
-
-					@Override
-					public QuoteCalculator visitNotEnjoyedVacations(
-							SalaryType salaryType) {
-						return new GeneralQuote(expressionContext, startDate,
 								endDate);
 					}
 

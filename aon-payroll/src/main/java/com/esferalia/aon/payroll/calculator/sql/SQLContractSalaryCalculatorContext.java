@@ -315,15 +315,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			+ "	ON payment_concept = payment_concept.id" + " WHERE contract = ? " + " AND start_date <= ? "
 			+ " AND ( end_date IS NULL " + " OR end_date >= ? )";
 
-	private static final String PAYMENTS_FILTER[] = {
-			" AND salary_type IN (" + SalaryType.SALARY.ordinal() + " ," + SalaryType.EXTRA.ordinal() + ")", // SalaryType.SALARY
-			" AND salary_type = " + SalaryType.EXTRA.ordinal() + " ", // SalaryType.EXTRA
-			" AND salary_type = " + SalaryType.SETTLE.ordinal() + " ", // SalaryType.SETTLE
-			" AND salary_type = " + SalaryType.DELAY.ordinal() + " ", // SalaryType.DELAY
-			" AND salary_type = " + SalaryType.NOT_ENJOYED_VACATIONS.ordinal() + " ", // SalaryType.NOT_ENJOYED_VACATIONS
-	};
-	// " AND salary_type IN ("+SalaryType.SALARY.ordinal()+"
-	// ,"+SalaryType.EXTRA.ordinal()+")"
 
 	private static final String DEDUCTION_SQL = "SELECT *" + ", " + ExpressionScope.CONTRACT.ordinal() + " AS "
 			+ SQLContractDeduction.SCOPE_ALIAS + " FROM contract_deduction" + " LEFT JOIN  deduction_concept" // LEFT

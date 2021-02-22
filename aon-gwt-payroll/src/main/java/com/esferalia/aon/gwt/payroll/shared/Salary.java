@@ -6,11 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.shared.HasDescription;
+import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 
 public class  Salary implements Serializable {
 	
 	public static interface TypeVisitor<E> {
-
+		
 		E visitSalary(Type type);
 
 		E visitExtra(Type type);
@@ -19,9 +20,12 @@ public class  Salary implements Serializable {
 
 		E visitDelay(Type type);
 
-		E visitNotEnjoyedVacations(Type type);
+		default E visitL00(Type type) { return visitSalary(type); };
 
-	}
+		default E visitL03(Type type) { return visitDelay(type); };
+
+		default E visitL13(Type type) { return visitSettle(type); };
+}
 	
 	public static enum Type implements HasDescription{
 		SALARY {
@@ -48,12 +52,30 @@ public class  Salary implements Serializable {
 				return visitor.visitDelay(this);
 			}
 		},
-		NOT_ENJOYED_VACATIONS{
+
+		L00 
+		{
 			@Override
 			public <E> E accept(TypeVisitor<E> visitor) {
-				return visitor.visitNotEnjoyedVacations(this);
+				return visitor.visitL00(this);
 			}
-		};
+		},
+		L03 
+		{
+			@Override
+			public <E> E accept(TypeVisitor<E> visitor) {
+				return visitor.visitL03(this);
+			}
+		},
+		L13 
+		{
+			@Override
+			public <E> E accept(TypeVisitor<E> visitor) {
+				return visitor.visitL13(this);
+			}
+		}
+		
+		;
 		
 		
 		public String getVariable(){
@@ -74,18 +96,20 @@ public class  Salary implements Serializable {
 				put(EXTRA,"EXTRA");
 				put(SETTLE,"FINIQUITO");
 				put(DELAY,"ATRASOS");
-				put(NOT_ENJOYED_VACATIONS,"NOMINA");
+				put(L00,"L00");
+				//put(SLD_RESULTS,null);
+
 			}
 		};
 		
 		static Map<Type, String> DESCRIPTIONS = 
 				new HashMap<Salary.Type, String>() {
 			{
-				put(SALARY,"Nomina");
+				put(SALARY,"N\u00f3mina");
 				put(EXTRA,"Extra");
 				put(SETTLE,"Finiquito");
 				put(DELAY,"Atrasos");
-				put(NOT_ENJOYED_VACATIONS,"Vacaciones");
+				put(L00,"Liquidaci\u00f3n Ordinaria L00");
 			}
 		};
 	}

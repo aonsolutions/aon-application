@@ -423,13 +423,6 @@ public class ContractSalaryCalculatorContext extends
 			return sqlCtx;
 		}
 
-		@Override
-		public ISQLContractSalaryCalculatorContext visitNotEnjoyedVacations(
-				SalaryType salaryType) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
 	}
 
 	@Override

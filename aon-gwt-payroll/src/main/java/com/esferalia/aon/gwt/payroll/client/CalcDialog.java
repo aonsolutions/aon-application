@@ -62,11 +62,6 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 			throw new RuntimeException("Not implemented");
 		}
 
-		@Override
-		public T visitNotEnjoyedVacations(Type type) {
-			throw new RuntimeException("Not implemented");
-		}
-		
 	}
 	
 	interface Binder extends UiBinder<Widget, CalcDialog> {
@@ -297,11 +292,6 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 				return null;
 			}
 
-			@Override
-			public Void visitNotEnjoyedVacations(Type type) {
-				// TODO Auto-generated method stub
-				return null;
-			}
 		});
 
 	}

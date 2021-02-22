@@ -483,10 +483,6 @@ public class PayrollServletUtils extends AonServletUtils {
 				return visitSalary(salaryType);
 			}
 
-			@Override
-			public String visitNotEnjoyedVacations(SalaryType salaryType) {
-				return visitSalary(salaryType);
-			}
 		});
 	}
 

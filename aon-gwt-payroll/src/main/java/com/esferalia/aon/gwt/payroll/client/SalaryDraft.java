@@ -3707,10 +3707,6 @@ public class SalaryDraft extends ResizeComposite
 				return new NewPaymentHandler();
 			}
 
-			@Override
-			public NewPaymentHandler visitNotEnjoyedVacations(Type type) {
-				return new NewPaymentHandler();
-			}
 		});
 	}
 	
@@ -4771,12 +4767,6 @@ public class SalaryDraft extends ResizeComposite
 				return null;
 			}
 
-			@Override
-			public Void visitNotEnjoyedVacations(Type type) {
-				print();
-				return null;
-			}
-			
 		});
 	}
 

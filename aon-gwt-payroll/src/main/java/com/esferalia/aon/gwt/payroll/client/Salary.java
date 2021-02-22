@@ -384,11 +384,6 @@ public class Salary extends ResizeComposite {
 				return null;
 			}
 
-			@Override
-			public Void visitNotEnjoyedVacations(Type type) {
-				return null;
-			}
-			
 		});
 	}
 

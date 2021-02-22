@@ -563,11 +563,6 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 					return null;
 				}
 
-				@Override
-				public ISQLContractSalaryCalculatorContext visitNotEnjoyedVacations(SalaryType salaryType) {
-					// TODO Auto-generated method stub
-					return null;
-				}
 			});
 			
 //			ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(conn, startDate, endDate,

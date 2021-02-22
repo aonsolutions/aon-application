@@ -83,7 +83,6 @@ import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractNotEnjoyedCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
@@ -1385,28 +1384,6 @@ public class EmployeesServiceHelper {
 		return draftCtx;
 	}
 
-	static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getNotEnjoyedCalculatorContextImpl(
-			final Connection conn, final SalaryDraft draft,
-			IContractSalaryCalculatorContext.IListener listener)
-			throws ExpressionException, SQLException {
-	
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(EmployeesServiceImpl.tableCol(CONTRACT, ContractColumns.ID),
-				draft.getEmployee().getId());
-	
-		SQLContractSalaryCalculatorContext ctx = new SQLContractNotEnjoyedCalculatorContext(
-				conn, draft.getStartDate(), draft.getEndDate(),
-				draft.getIssueDate(), criteria);
-	
-		ctx.setListener(listener);
-		ctx.next();
-	
-		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
-				draft, ctx);
-		draftCtx.setListener(listener);
-		return draftCtx;
-	}
-
 	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
 			final Connection conn, final SalaryDraft draft,
 			final IContractSalaryCalculatorContext.IListener listener)
@@ -1467,18 +1444,6 @@ public class EmployeesServiceHelper {
 						}
 					}
 	
-					@Override
-					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitNotEnjoyedVacations(
-							SalaryType salaryType) {
-						try {
-							return getNotEnjoyedCalculatorContextImpl(conn,
-									draft, listener);
-						} catch (SQLException e) {
-							throw new IllegalArgumentException(e);
-						} catch (ExpressionException e) {
-							throw new ExpressionExceptionWrapper(e);
-						}
-					}
 				});
 	}
 	

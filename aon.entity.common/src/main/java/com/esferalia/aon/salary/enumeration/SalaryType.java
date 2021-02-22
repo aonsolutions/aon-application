@@ -36,11 +36,27 @@ public enum SalaryType implements IResourceable {
 			return visitor.visitDelay(this);
 		}
 	},
-	NOT_ENJOYED_VACATIONS
+	
+	
+	L00 
 	{
 		@Override
 		public <E> E accept(SalaryTypeVisitor<E> visitor) {
-			return visitor.visitNotEnjoyedVacations(this);
+			return visitor.visitL00(this);
+		}
+	},
+	L03 
+	{
+		@Override
+		public <E> E accept(SalaryTypeVisitor<E> visitor) {
+			return visitor.visitL03(this);
+		}
+	},
+	L13 
+	{
+		@Override
+		public <E> E accept(SalaryTypeVisitor<E> visitor) {
+			return visitor.visitL13(this);
 		}
 	}
 	;
