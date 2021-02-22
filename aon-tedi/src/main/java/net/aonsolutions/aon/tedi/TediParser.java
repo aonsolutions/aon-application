@@ -409,7 +409,7 @@ public class TediParser {
 					}
 				} else  if (ar.getType() == AccountingRegistryType.SUPPLIER) {
 					result.getTedi().getSender().setName(ar.getName());
-					if (result.getInvoice().getType() != InvoiceType.EXPENSES) {
+					if (result.getInvoice().getType() != InvoiceType.PURCHASE) {
 						result.getInvoice().setType( InvoiceType.PURCHASE );
 						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
 					}
