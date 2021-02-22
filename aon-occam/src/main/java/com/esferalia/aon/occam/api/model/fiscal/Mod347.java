@@ -43,9 +43,13 @@ public class Mod347 implements IFiscalModel, HasAudit {
 	private boolean useTaxDate;
 	private boolean excludeOutputNationalZero;
 	private boolean excludeInputNationalZero;
-	private boolean excludeMod180Declared;
-	private boolean excludeMod190Declared;
 	
+	// No se utilizan a partir de Febrero 2021, se sustituyen por los 2 siguientes, se dejan para conservar lo que había grabado en los modelos existentes hasta el momento
+	private boolean excludeMod180Declared;   
+	private boolean excludeMod190Declared;
+	// -----	
+	private boolean excludeRetention;
+	private boolean excludeIntracommunity;
 	
 	@Override
 	public Integer getId() { 
@@ -346,7 +350,24 @@ public class Mod347 implements IFiscalModel, HasAudit {
 		this.excludeMod190Declared = excludeMod190Declared;
 		return this;
 	}
-	
-	
+
+	public boolean isExcludeRetention() {
+		return excludeRetention;
+	}
+
+	public Mod347 setExcludeRetention(boolean excludeRetention) {
+		this.excludeRetention = excludeRetention;
+		return this;
+	}
+
+	public boolean isExcludeIntracommunity() {
+		return excludeIntracommunity;
+	}
+
+	public Mod347 setExcludeIntracommunity(boolean excludeIntracommunity) {
+		this.excludeIntracommunity = excludeIntracommunity;
+		return this;
+	}
+
 	
 }

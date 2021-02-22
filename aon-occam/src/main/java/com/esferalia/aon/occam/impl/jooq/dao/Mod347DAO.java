@@ -3,10 +3,10 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsMod347.FS_MOD347;
 import static com.esferalia.aon.jooq.tables.FsMod347Detail.FS_MOD347_DETAIL;
-import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
-import static com.esferalia.aon.jooq.tables.FsModel180Detail.FS_MODEL180_DETAIL;
-import static com.esferalia.aon.jooq.tables.FsModel190.FS_MODEL190;
-import static com.esferalia.aon.jooq.tables.FsModel190Detail.FS_MODEL190_DETAIL;
+//import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
+//import static com.esferalia.aon.jooq.tables.FsModel180Detail.FS_MODEL180_DETAIL;
+//import static com.esferalia.aon.jooq.tables.FsModel190.FS_MODEL190;
+//import static com.esferalia.aon.jooq.tables.FsModel190Detail.FS_MODEL190_DETAIL;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
@@ -21,10 +21,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.AggregateFunction;
+//import org.jooq.AggregateFunction;
 import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
-import org.jooq.impl.DSL;
+//import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsMod347Record;
 import com.esferalia.aon.occam.api.AONContext;
@@ -126,14 +126,17 @@ public class Mod347DAO {
 				.setExcludeOutputNationalZero(ensureFlag(1,flags))
 				.setExcludeMod180Declared(ensureFlag(2,flags))
 				.setExcludeMod190Declared(ensureFlag(3,flags))
+				.setExcludeRetention(ensureFlag(4,flags))
+				.setExcludeIntracommunity(ensureFlag(5,flags))
 				;
 		}
 
 		private boolean ensureFlag(int i, String flags) {
 			if (AonStringUtils.isBlank(flags)) return false;
 			String[] tokens = AonStringUtils.split(flags, ',');
-			if (tokens.length < i) return false;
-			return Boolean.parseBoolean(tokens[i]);
+			if (i < tokens.length)
+				return Boolean.parseBoolean(tokens[i]);
+			else return false;			
 		}
 	}
 	
@@ -167,6 +170,8 @@ public class Mod347DAO {
 		mod347.setExcludeInputNationalZero(true);
 		mod347.setExcludeMod180Declared(true);
 		mod347.setExcludeMod190Declared(true);
+		mod347.setExcludeRetention(true);
+		mod347.setExcludeIntracommunity(true);
 		return mod347;
 	}
 	
@@ -179,7 +184,9 @@ public class Mod347DAO {
 				+ fm.isExcludeInputNationalZero() + ","
 				+ fm.isExcludeOutputNationalZero() + ","
 				+ fm.isExcludeMod180Declared() + ","
-				+ fm.isExcludeMod190Declared();
+				+ fm.isExcludeMod190Declared() + ","
+				+ fm.isExcludeRetention() + ","
+				+ fm.isExcludeIntracommunity();
 			if (fm.getId() != null) {
 				ctx.getDslContext().update(FS_MOD347)
 					.set(FS_MOD347.COMMENTS, comments)
@@ -240,8 +247,10 @@ public class Mod347DAO {
 				+ FLAG_SEPARATOR
 				+ mod347.isExcludeInputNationalZero() + ","
 				+ mod347.isExcludeOutputNationalZero() + ","
-				+ mod347.isExcludeMod180Declared() + ","
-				+ mod347.isExcludeMod190Declared();
+     			+ mod347.isExcludeMod180Declared() + ","
+				+ mod347.isExcludeMod190Declared() + ","
+				+ mod347.isExcludeRetention() + ","
+				+ mod347.isExcludeIntracommunity();
 		FsMod347Record record = ctx.getDslContext().insertInto(FS_MOD347)
 			.set(FS_MOD347.DOMAIN,mod347.getDomain())
 			.set(FS_MOD347.YEAR,mod347.getYear())
@@ -277,7 +286,10 @@ public class Mod347DAO {
 				+ mod347.isExcludeInputNationalZero() + ","
 				+ mod347.isExcludeOutputNationalZero() + ","
 				+ mod347.isExcludeMod180Declared() + ","
-				+ mod347.isExcludeMod190Declared();
+				+ mod347.isExcludeMod190Declared() + ","
+				+ mod347.isExcludeRetention() + ","
+				+ mod347.isExcludeIntracommunity();
+		
 		ctx.getDslContext().update(FS_MOD347)			
 			.set(FS_MOD347.YEAR,mod347.getYear())
 			.set(FS_MOD347.ADMINISTRATION, mod347.getAdministration().getValue())
@@ -691,9 +703,9 @@ public class Mod347DAO {
 		Map<String,Mod347Declared> mapResult = new TreeMap<String, Mod347Declared>();
 		
 		// Obtenemos el desglose de facturas del ejercicio actual y el anterior (facturas RECC), usando VATDAO
-		// Solo facturas Nacionales o ISP y sin retencion
+		// Solo facturas Nacionales o ISP o Intracomunitarias (con y sin retencion) ya se filtraran mas abajo
 		getInvoiceBreakdown(ctx, fromDate, toDate, mod347)
-				.filter(vat -> (vat.getTransaction() == InvoiceTransactionType.NATIONAL || vat.getTransaction() == InvoiceTransactionType.OTHER_ISP))
+				.filter(vat -> (vat.getTransaction() == InvoiceTransactionType.NATIONAL || vat.getTransaction() == InvoiceTransactionType.OTHER_ISP || vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY))
 				.peek( vat -> {					
 					// Las compras y gastos, se ponen todas como compras
 					vat.setInvoiceType( vat.getInvoiceType() == InvoiceType.SALES ? InvoiceType.SALES : InvoiceType.PURCHASE);
@@ -930,7 +942,7 @@ public class Mod347DAO {
 			: AonStringUtils.substring(declared.getOperatorNif(),2); 
 		return getInvoiceBreakdown(ctx, fromDate, toDate, mod347)
 			.filter( vat -> AonStringUtils.equals(vat.getRegistryDocument(),registryDocument))
-		    .filter( vat -> (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2) &&  // Nacional o ISP 
+		    .filter( vat -> (vat.getTransaction() == invoiceTransaction1 || vat.getTransaction() == invoiceTransaction2 || vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY) &&  // Nacional o ISP o intracomunitarias 
 		                    (vat.getInvoiceType() == invoiceType1 || vat.getInvoiceType() == invoiceType2) &&  				 // Tipo (Ventas o Compras/Gastos)		                    
 		                    (vat.isVatAccrualRegime() == declared.isVatAccrual())                                            // Criterio de caja		                    
 	                    );  
@@ -943,8 +955,12 @@ public class Mod347DAO {
 			)
 			.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )				
 			.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )
-			.filter(vat ->  Mod347DAO.excludeIfPresentInMod180(ctx,mod347,vat))
-			.filter(vat ->  Mod347DAO.excludeIfPresentInMod190(ctx,mod347,vat));		
+			.filter(vat ->  !(mod347.isExcludeRetention() && vat.hasRetention()))
+			.filter(vat ->  !(mod347.isExcludeIntracommunity() && vat.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY));
+
+//		.filter(vat ->  Mod347DAO.excludeIfPresentInMod180(ctx,mod347,vat))
+//		.filter(vat ->  Mod347DAO.excludeIfPresentInMod190(ctx,mod347,vat));		
+		
 	}
 	
 	// --------------- DUPLICAR MODELO ---------------
@@ -971,49 +987,50 @@ public class Mod347DAO {
 	
 	}
 	
-	private static boolean excludeIfPresentInMod180(AONContext ctx, Mod347 mod347,VatContext vat) {
-		if (vat.hasRetention() && mod347.isExcludeMod180Declared()) { 
-			AggregateFunction<Integer> count = DSL.count();
-			int c = ctx.getDslContext()
-				.select( count )
-				.from(FS_MODEL180)
-				.innerJoin(FS_MODEL180_DETAIL).on(FS_MODEL180.ID.eq(FS_MODEL180_DETAIL.FS_MODEL180))
-				.where(FS_MODEL180.DOMAIN.eq(mod347.getDomain()))
-				.and(FS_MODEL180.YEAR.eq(mod347.getYear()))
-				.and(FS_MODEL180_DETAIL.DOCUMENT.eq(vat.getRegistryDocument()))
-				.fetch()
-				.stream()
-				.mapToInt( rec -> rec.get(count) )
-				.findFirst()
-				.orElse( 0 )
-				;
-			return (c==0);
-		}
-		return (mod347.isExcludeMod180Declared() || mod347.isExcludeMod190Declared()) 
-				? true
-				: !vat.hasRetention();
-	}
-	private static boolean excludeIfPresentInMod190(AONContext ctx, Mod347 mod347,VatContext vat) { 
-		if (vat.hasRetention() && mod347.isExcludeMod190Declared()) { 
-			AggregateFunction<Integer> count = DSL.count();
-			int c = ctx.getDslContext()
-				.select( count )
-				.from(FS_MODEL190)
-				.innerJoin(FS_MODEL190_DETAIL).on(FS_MODEL190.ID.eq(FS_MODEL190_DETAIL.FS_MODEL190))
-				.where(FS_MODEL190.DOMAIN.eq(mod347.getDomain()))
-				.and(FS_MODEL190.YEAR.eq(mod347.getYear()))
-				.and(FS_MODEL190_DETAIL.DOCUMENT.eq(vat.getRegistryDocument()))
-				.fetch()
-				.stream()
-				.mapToInt( rec -> rec.get(count) )
-				.findFirst()
-				.orElse( 0 )
-				;
-			return (c==0);
-		}
-		return (mod347.isExcludeMod180Declared() || mod347.isExcludeMod190Declared()) 
-				? true
-				: !vat.hasRetention();
-	}
+//	private static boolean excludeIfPresentInMod180(AONContext ctx, Mod347 mod347,VatContext vat) {
+//		if (vat.hasRetention() && mod347.isExcludeMod180Declared()) { 
+//			AggregateFunction<Integer> count = DSL.count();
+//			int c = ctx.getDslContext()
+//				.select( count )
+//				.from(FS_MODEL180)
+//				.innerJoin(FS_MODEL180_DETAIL).on(FS_MODEL180.ID.eq(FS_MODEL180_DETAIL.FS_MODEL180))
+//				.where(FS_MODEL180.DOMAIN.eq(mod347.getDomain()))
+//				.and(FS_MODEL180.YEAR.eq(mod347.getYear()))
+//				.and(FS_MODEL180_DETAIL.DOCUMENT.eq(vat.getRegistryDocument()))
+//				.fetch()
+//				.stream()
+//				.mapToInt( rec -> rec.get(count) )
+//				.findFirst()
+//				.orElse( 0 )
+//				;
+//			return (c==0);
+//		}
+//		return (mod347.isExcludeMod180Declared() || mod347.isExcludeMod190Declared()) 
+//				? true
+//				: !vat.hasRetention();
+//	}
+	
+//	private static boolean excludeIfPresentInMod190(AONContext ctx, Mod347 mod347,VatContext vat) { 
+//		if (vat.hasRetention() && mod347.isExcludeMod190Declared()) { 
+//			AggregateFunction<Integer> count = DSL.count();
+//			int c = ctx.getDslContext()
+//				.select( count )
+//				.from(FS_MODEL190)
+//				.innerJoin(FS_MODEL190_DETAIL).on(FS_MODEL190.ID.eq(FS_MODEL190_DETAIL.FS_MODEL190))
+//				.where(FS_MODEL190.DOMAIN.eq(mod347.getDomain()))
+//				.and(FS_MODEL190.YEAR.eq(mod347.getYear()))
+//				.and(FS_MODEL190_DETAIL.DOCUMENT.eq(vat.getRegistryDocument()))
+//				.fetch()
+//				.stream()
+//				.mapToInt( rec -> rec.get(count) )
+//				.findFirst()
+//				.orElse( 0 )
+//				;
+//			return (c==0);
+//		}
+//		return (mod347.isExcludeMod180Declared() || mod347.isExcludeMod190Declared()) 
+//				? true
+//				: !vat.hasRetention();
+//	}
 	
 }
