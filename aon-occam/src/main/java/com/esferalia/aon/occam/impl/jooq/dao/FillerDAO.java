@@ -50,7 +50,6 @@ import java.util.function.Function;
 import org.jooq.Record;
 
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -247,6 +246,10 @@ public class FillerDAO {
 		}
 	}
 	
+	/**
+	 * @deprecated  Use SupplierDAO.SupplierFiller
+	 */
+	@Deprecated
 	public static class SupplierFiller implements Function<Record, Supplier> {
 		@Override
 		public Supplier apply(Record r) {
@@ -265,12 +268,12 @@ public class FillerDAO {
 			return supplier.setScope(r.getValue(SUPPLIER.SCOPE))
 					.setTariff(r.getValue(SUPPLIER.TARIFF))
 					.setAccount(r.getValue(SUPPLIER.ACCOUNT))
-					.setWithholding(r.getValue(SUPPLIER.WITHHOLDING).shortValue())
-					.setWithholdingFarmer(r.getValue(SUPPLIER.WITHHOLDING_FARMER).shortValue())
-					.setVatAccrualPayment(r.getValue(SUPPLIER.VAT_ACCRUAL_PAYMENT).shortValue())
-					.setTransaction(r.getValue(SUPPLIER.TRANSACTION).shortValue())
+					.setWithholding(r.getValue(SUPPLIER.WITHHOLDING).shortValue() == 1)
+					.setWithholdingFarmer(r.getValue(SUPPLIER.WITHHOLDING_FARMER).shortValue() == 1)
+					.setVatAccrualPayment(r.getValue(SUPPLIER.VAT_ACCRUAL_PAYMENT).shortValue() == 1)
+					.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(SUPPLIER.TRANSACTION).intValue()))
 					.setStatus(RegistryStatus.safeValueOf(r.getValue(SUPPLIER.STATUS)))
-					.setPurchaseValuated(r.getValue(SUPPLIER.PURCHASE_VALUATED).shortValue())
+					.setPurchaseValuated(r.getValue(SUPPLIER.PURCHASE_VALUATED).shortValue() == 1)
 					.setCreationDate(r.getValue(SUPPLIER.CREATION_DATE))
 					.setCreationUser(r.getValue(SUPPLIER.CREATION_USER))
 					.setModificationDate(r.getValue(SUPPLIER.MODIFICATION_DATE))
@@ -278,6 +281,10 @@ public class FillerDAO {
 		}
 	}
 	
+	/**
+	 * @deprecated  Use CreditorDAO.CreditorFiller
+	 */
+	@Deprecated
 	public static class CreditorFiller implements Function<Record, Creditor> {
 		@Override
 		public Creditor apply(Record r) {
@@ -302,8 +309,6 @@ public class FillerDAO {
 	public static class TargetFiller implements Function<Record, Target> {
 		@Override
 		public Target apply(Record r) {
-			Target target = new Target();
-
 			return new Target()
 					.setRegistryData( new Registry() 
 							.setId(r.getValue(REGISTRY.ID))

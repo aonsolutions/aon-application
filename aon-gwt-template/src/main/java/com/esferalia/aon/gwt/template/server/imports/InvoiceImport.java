@@ -756,7 +756,7 @@ public class InvoiceImport {
 					.and(f.getAliasProperty().eq(nif))).findFirst().orElse(new Account());
 				
 				supplier = new Supplier()
-						.setTransaction((short) transaction.ordinal())
+						.setTransaction(transaction)
 						.setStatus(RegistryStatus.ACTIVE)
 						.setScope(getScopeId(domain, user))
 						.setAccount(acc.getId());

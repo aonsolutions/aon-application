@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
@@ -9,21 +10,28 @@ import java.util.Date;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.jooq.Condition;
 import  org.jooq.Record;
+import org.jooq.Select;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.CustomerAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.CustomerValidation;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -31,6 +39,38 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 public class CustomerDAO {
 	
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
+	public static class CustomerPropertiesDAO extends RegistryPropertiesDAO implements CustomerProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, CustomerFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(CustomerFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.REGISTRY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.DOMAIN);}
+		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.TARIFF);}
+		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.SURCHARGE);}
+		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.WITHHOLDING);}
+		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.TRANSACTION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.SCOPE);}
+		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.E_INVOICE);}
+		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.INVOICING_GROUP);}
+		@Override public Property<Byte> getProjectGroupedProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.PROJECT_GROUPED);}
+		@Override public Property<Byte> getDeliveryGroupedProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.DELIVERY_GROUPED);}
+		@Override public Property<Byte> getDeliveryValuatedProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.DELIVERY_VALUATED);}
+		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(CUSTOMER.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CUSTOMER.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(CUSTOMER.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CUSTOMER.MODIFICATION_DATE);}	
+	}
 
 	protected static class CustomerFiller  implements Function<Record, Customer> {
 
@@ -94,12 +134,21 @@ public class CustomerDAO {
 			.orElse(null);
 	}
 	
-	
-	public static Customer insert(AONContext ctx, Customer customer){
+	public static Customer save(AONContext ctx, Customer customer) {
 		ctx.checkWrite();
 		CustomerAutoComplete.autoComplete(ctx, customer);
 		CustomerValidation.validate(ctx, customer);
+		boolean nullId = (customer.getId() == null); 
 		customer = (Customer) RegistryDAO.save(ctx, customer);
+		if (nullId || get(ctx, customer.getId()) == null ) {
+			customer = insert(ctx, customer);
+		} else {
+			customer = update(ctx, customer);			
+		}
+		return customer;
+	}
+	
+	private static Customer insert(AONContext ctx, Customer customer){
 		ctx.getDslContext().insertInto(CUSTOMER)
 			.set(CUSTOMER.REGISTRY,customer.getId())
 			.set(CUSTOMER.DOMAIN,customer.getDomain().getId())
@@ -122,11 +171,7 @@ public class CustomerDAO {
 		return customer;
 	}
 
-	public static Customer update(AONContext ctx, Customer customer){
-		ctx.checkWrite();
-		CustomerAutoComplete.autoComplete(ctx, customer);
-		CustomerValidation.validate(ctx, customer);
-		customer = (Customer) RegistryDAO.save(ctx, customer);
+	private static Customer update(AONContext ctx, Customer customer){
 		int count = ctx.getDslContext().update(CUSTOMER)
 			.set(CUSTOMER.DOMAIN,customer.getDomain().getId())
 			.set(CUSTOMER.TARIFF,customer.getTariff())
@@ -156,6 +201,29 @@ public class CustomerDAO {
 			.where(CUSTOMER.REGISTRY.eq(id))
 			.execute();
 		ctx.log().info("DELETE CUSTOMER id:" + id + " ("+count+" rows)");
+	}
+
+	public static Account getCustomerAccount(AONContext ctx, Integer customerId) {
+		return ctx.getDslContext().select(ACCOUNT.fields())
+			.from ( CUSTOMER )
+			.join( ACCOUNT ).on(CUSTOMER.ACCOUNT.eq(ACCOUNT.ID))
+			.where(CUSTOMER.REGISTRY.eq(customerId))
+			.fetch()
+			.stream()
+			.map(new FullAccountFiller () )
+			.findFirst()
+			.orElse(null);
+	}
+	
+	public static void updateCustomerAccount(AONContext ctx, Integer customerId, Integer account) {
+		ctx.checkWrite();
+		ctx.getDslContext().update(CUSTOMER)
+		.set(CUSTOMER.ACCOUNT,account)
+		.set(CUSTOMER.MODIFICATION_USER,ctx.getUser())
+		.set(CUSTOMER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+		.where(CUSTOMER.REGISTRY.eq(customerId))
+		.execute();
+	ctx.log().info("ACCOUNT " + account + " LINKED TO CUSTOMER " + customerId);
 	}
 
 	// *************************************************

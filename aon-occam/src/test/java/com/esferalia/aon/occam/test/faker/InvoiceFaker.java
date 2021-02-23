@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.github.javafaker.Faker;
@@ -59,13 +58,12 @@ public class InvoiceFaker {
 				Supplier supplier = AonRandom.getRandomSupplier( ctx );
 				fillRegistryData(invoice, supplier);
 				invoice.setScope(new Scope().setId( supplier.getScope() ));
-				Short tr = supplier.getTransaction();
-				invoice.setTransaction( InvoiceTransactionType.safeValueOf( tr==null?(byte) 0:tr.byteValue() ));
+				invoice.setTransaction(supplier.getTransaction());
 				invoice.setService( faker.random().nextInt(0, 100) > 90);
-				invoice.setVatAccrualPayment(invoice.isNational() && supplier.getVatAccrualPayment() == 1);
+				invoice.setVatAccrualPayment(invoice.isNational() && supplier.isVatAccrualPayment());
 				invoice.setSurcharge(config.getCompany().isSurcharge());
-				invoice.setWithholding(supplier.getWithholding() == 1);
-				invoice.setWithholdingFarmer(supplier.getWithholdingFarmer() == 1);
+				invoice.setWithholding(supplier.isWithholding());
+				invoice.setWithholdingFarmer(supplier.isWithholdingFarmer());
 			}
 			
 			@Override

@@ -3,23 +3,22 @@ package com.esferalia.aon.occam.api.model.registry;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.HasAudit;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
-public class Supplier extends Registry implements Serializable{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class Supplier extends Registry implements Serializable, HasAudit {
+	
+	private static final long serialVersionUID = -6627852535384896368L;
 	
 	private Integer tariff;
-	private Short withholding;
-	private Short withholdingFarmer;
-	private Short vatAccrualPayment;
-	private Short transaction;
+	private boolean withholding;
+	private boolean withholdingFarmer;
+	private boolean vatAccrualPayment;
+	private InvoiceTransactionType transaction;
 	private RegistryStatus status;
 	private Integer scope;
-	private Short purchaseValuated;
+	private boolean purchaseValuated;
 	private Integer account;
 	
 	private String creationUser;
@@ -28,63 +27,49 @@ public class Supplier extends Registry implements Serializable{
 	private Date modificationDate;
 	
 	public Supplier() {
-		withholding = (byte) 0;
-		withholdingFarmer = (byte) 0;
-		vatAccrualPayment = (byte) 0;
-		transaction = (byte) 0;
-		purchaseValuated = (byte) 0;
+		transaction = InvoiceTransactionType.NATIONAL;
 	}
 	
-	public Integer getScope() {
-		return scope;
-	}
-
-	public Supplier setScope(Integer scope) {
-		this.scope = scope;
-		return this;
+	public Supplier copy(Registry registry) {
+		return super.copy( registry, this);
 	}
 
 	public Integer getTariff() {
 		return tariff;
 	}
-
 	public Supplier setTariff(Integer tariff) {
 		this.tariff = tariff;
 		return this;
 	}
 
-	public Short getWithholding() {
+	public boolean isWithholding() {
 		return withholding;
 	}
-
-	public Supplier setWithholding(Short withholding) {
+	public Supplier setWithholding(boolean withholding) {
 		this.withholding = withholding;
 		return this;
 	}
 
-	public Short getWithholdingFarmer() {
+	public boolean isWithholdingFarmer() {
 		return withholdingFarmer;
 	}
-
-	public Supplier setWithholdingFarmer(Short withholdingFarmer) {
+	public Supplier setWithholdingFarmer(boolean withholdingFarmer) {
 		this.withholdingFarmer = withholdingFarmer;
 		return this;
 	}
 
-	public Short getVatAccrualPayment() {
+	public boolean isVatAccrualPayment() {
 		return vatAccrualPayment;
 	}
-
-	public Supplier setVatAccrualPayment(Short vatAccrualPayment) {
+	public Supplier setVatAccrualPayment(boolean vatAccrualPayment) {
 		this.vatAccrualPayment = vatAccrualPayment;
 		return this;
 	}
 
-	public Short getTransaction() {
+	public InvoiceTransactionType getTransaction() {
 		return transaction;
 	}
-
-	public Supplier setTransaction(Short transaction) {
+	public Supplier setTransaction(InvoiceTransactionType transaction) {
 		this.transaction = transaction;
 		return this;
 	}
@@ -98,11 +83,18 @@ public class Supplier extends Registry implements Serializable{
 		return this;
 	}
 
-	public Short getPurchaseValuated() {
-		return purchaseValuated;
+	public Integer getScope() {
+		return scope;
+	}
+	public Supplier setScope(Integer scope) {
+		this.scope = scope;
+		return this;
 	}
 
-	public Supplier setPurchaseValuated(Short purchaseValuated) {
+	public boolean isPurchaseValuated() {
+		return purchaseValuated;
+	}
+	public Supplier setPurchaseValuated(boolean purchaseValuated) {
 		this.purchaseValuated = purchaseValuated;
 		return this;
 	}
@@ -116,6 +108,7 @@ public class Supplier extends Registry implements Serializable{
 		return this;
 	}
 
+	@Override
 	public String getCreationUser() {
 		return creationUser;
 	}
@@ -125,6 +118,7 @@ public class Supplier extends Registry implements Serializable{
 		return this;
 	}
 
+	@Override
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -134,6 +128,7 @@ public class Supplier extends Registry implements Serializable{
 		return this;
 	}
 
+	@Override
 	public String getModificationUser() {
 		return modificationUser;
 	}
@@ -143,6 +138,7 @@ public class Supplier extends Registry implements Serializable{
 		return this;
 	}
 
+	@Override
 	public Date getModificationDate() {
 		return modificationDate;
 	}
@@ -151,6 +147,5 @@ public class Supplier extends Registry implements Serializable{
 		this.modificationDate = modificationDate;
 		return this;
 	}
-	
-	
+
 }

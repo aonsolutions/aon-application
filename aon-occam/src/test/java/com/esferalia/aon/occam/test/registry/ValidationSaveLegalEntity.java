@@ -19,7 +19,7 @@ public class ValidationSaveLegalEntity extends AbstractOccamTest {
 		boolean entity = AonDocumentUtil.isEntity( registry.getDocument() );
 		registry.setDocumentCountry( Country.ES );
 		registry.setLegalPerson( !entity );
-		registry = RegistryDAO.insert(ctx, registry);
+		registry = RegistryDAO.save(ctx, registry);
 		String msg = "Doc: " + registry.getDocument() + " must be "  + AonDocumentUtil.isEntity( registry.getDocument() ) +  " --> " + registry.isLegalPerson(); 
 		assertEquals(msg,entity, registry.isLegalPerson() );
 	}

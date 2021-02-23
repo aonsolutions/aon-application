@@ -20,7 +20,7 @@ public class ValidationSaveOverflowName extends AbstractOccamTest {
 	public void test() {
 		Registry registry = AonFaker.getRegistry( ctx );
 		registry.setName( AonStringUtils.repeat('X', REGISTRY.NAME.getDataType().length() + 1) );
-		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryDAO.insert(ctx, registry) );
+		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryDAO.save(ctx, registry) );
 		assertEquals(AonError.INVALID_LENGTH.format( "Nombre o raz\u00F3n social", REGISTRY.NAME.getDataType().length()),e.getMessage());
 	}
 

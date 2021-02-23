@@ -3,12 +3,15 @@ package com.esferalia.aon.occam.test.faker;
 import java.util.Locale;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.product.Tariff;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -36,29 +39,75 @@ public class AonFaker {
 		registry.setConfidential( !AonRandom.b(98) );
 		return registry;
 	}
-	
+
 	public static Customer getCustomer( AONContext ctx ) {
-		Customer customer = new Customer();
-		customer.copy(getRegistry(ctx));
-		Tariff tariff = AonRandom.getTariff(ctx);
-		customer.setTariff( tariff == null? null : tariff.getId() );
-		customer.setSurcharge( AonRandom.b(10) );
-		customer.setWithholding( AonRandom.b(10) );
-		customer.setTransaction( AonRandom.b(90) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class));
-		Scope scope = AonRandom.random( SecurityDAO.getAvailableScopes (ctx) );
-		customer.setStatus( AonRandom.b(90) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class));
-		customer.setScope( scope == null ? null : scope.getId() );
-		customer.setEInvoice( AonRandom.b(40) );
-		// TODO
-		customer.setInvoicingGroup( null );
-		customer.setProjectGrouped( AonRandom.b(4) );
-		customer.setDeliveryGrouped( AonRandom.b(90) );
-		customer.setDeliveryValuated( AonRandom.b(90) );
-		// TODO
-		customer.setAccount( null );
-		return customer;
+		return getCustomer(ctx, getRegistry(ctx));
 	}
 	
+	public static Customer getCustomer( AONContext ctx , Registry registry) {
+		Tariff tariff = AonRandom.getTariff(ctx);
+		// Account account = AonRandom.getAccount(ctx, p -> p.getCodeProperty().like("430%"));
+		Account account = null;
+		Scope scope = AonRandom.random( SecurityDAO.getAvailableScopes (ctx) );
+		return new Customer()
+			.copy(registry)
+			.setTariff( tariff == null? null : tariff.getId() )
+			.setSurcharge( AonRandom.b(10) )
+			.setWithholding( AonRandom.b(10) )
+			.setTransaction( AonRandom.b(90) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class))
+			.setStatus( AonRandom.b(90) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class))
+			.setScope( scope == null ? null : scope.getId() )
+			.setEInvoice( AonRandom.b(40) )
+			// TODO
+			.setInvoicingGroup( null )
+			.setProjectGrouped( AonRandom.b(4) )
+			.setDeliveryGrouped( AonRandom.b(90) )
+			.setDeliveryValuated( AonRandom.b(90) )
+			// TODO
+			.setAccount( account == null? null : account.getId() );
+		
+	}
+	
+	public static Creditor getCreditor( AONContext ctx ) {
+		return getCreditor(ctx, getRegistry(ctx));
+	}
+
+	public static Creditor getCreditor(AONContext ctx, Registry registry) {
+		Scope scope =  AonRandom.random( SecurityDAO.getAvailableScopes (ctx) );
+		//Account account = AonRandom.getAccount(ctx, p -> p.getCodeProperty().like("410%"));
+		Account account = null;
+		return new Creditor()
+			.copy(registry)
+			.setWithholding( AonRandom.b(10) )
+			.setVatAccrualPayment( AonRandom.b(98) )
+			.setTransaction( AonRandom.b(90) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class))
+			.setStatus( AonRandom.b(90) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class))
+			.setScope( scope == null ? null : scope.getId() )
+			.setAccount( account == null? null : account.getId() );
+	}
+
+	public static Supplier getSupplier( AONContext ctx ) {
+		return getSupplier(ctx, getRegistry(ctx));
+	}
+
+	public static Supplier getSupplier(AONContext ctx, Registry registry) {
+		Tariff tariff = AonRandom.getTariff(ctx);
+		Scope scope =  AonRandom.random( SecurityDAO.getAvailableScopes (ctx) );
+		//Account account = AonRandom.getAccount(ctx, p -> p.getCodeProperty().like("410%"));
+		Account account = null;
+		return new Supplier()
+			.copy(registry)
+			.setTariff( tariff == null? null : tariff.getId() )
+			.setWithholding( AonRandom.b(10) )
+			.setWithholdingFarmer( AonRandom.b(99) )
+			.setVatAccrualPayment( AonRandom.b(98) )
+			.setTransaction( AonRandom.b(90) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class))
+			.setStatus( AonRandom.b(90) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class))
+			.setScope( scope == null ? null : scope.getId() )
+			.setPurchaseValuated(AonRandom.b(50) )
+			.setAccount( account == null? null : account.getId() );
+	}
+
 	public static RegistryMedia getRegistryMedia( AONContext ctx) {
 		return getRegistryMedia(ctx, null); 
 	}

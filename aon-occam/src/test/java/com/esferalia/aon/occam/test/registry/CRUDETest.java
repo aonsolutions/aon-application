@@ -16,11 +16,11 @@ public class CRUDETest extends AbstractOccamTest {
 	@Test
 	public void test() {
 		Registry registry = AonFaker.getRegistry( ctx ); 
-		registry = RegistryDAO.insert(ctx, registry);
+		registry = RegistryDAO.save(ctx, registry);
 		Registry inserted = RegistryDAO.get(ctx, registry.getId());
 		Asserts.assertEqualsRegistry (registry, inserted);
 		
-		registry = RegistryDAO.update(ctx, registry);
+		registry = RegistryDAO.save(ctx, registry);
 		Registry updated = RegistryDAO.get(ctx, registry.getId());
 		Asserts.assertEqualsRegistry (registry, updated);
 		

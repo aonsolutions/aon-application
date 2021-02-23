@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.test.customer;
+package com.esferalia.aon.occam.test.registry.customer;
 
 import static org.junit.Assert.assertNull;
 
@@ -15,11 +15,11 @@ public class CRUDETest extends AbstractOccamTest {
 	@Test
 	public void test() {
 		Customer customer = AonFaker.getCustomer( ctx ); 
-		customer = CustomerDAO.insert(ctx, customer);
+		customer = CustomerDAO.save(ctx, customer);
 		Customer inserted = CustomerDAO.get(ctx, customer.getId());
 		Asserts.assertEqualsCustomer(customer, inserted);
 		
-		customer = CustomerDAO.update(ctx, customer);
+		customer = CustomerDAO.save(ctx, customer);
 		Customer updated = CustomerDAO.get(ctx, customer.getId());
 		Asserts.assertEqualsCustomer(customer, updated);
 		

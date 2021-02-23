@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
+import static com.esferalia.aon.jooq.tables.AuthDevice.AUTH_DEVICE;
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
@@ -13,12 +14,12 @@ import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
-import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
+import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
@@ -29,6 +30,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetailCommission.INVOICE_DETA
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
+import static com.esferalia.aon.jooq.tables.Location.LOCATION;
 import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
 import static com.esferalia.aon.jooq.tables.Offer.OFFER;
 import static com.esferalia.aon.jooq.tables.OfferDetailCommission.OFFER_DETAIL_COMMISSION;
@@ -38,26 +40,24 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
-import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.Tariff.TARIFF;
+import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
-import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
-import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
-import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
-import static com.esferalia.aon.jooq.tables.Location.LOCATION;
-import static com.esferalia.aon.jooq.tables.AuthDevice.AUTH_DEVICE;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 
@@ -175,8 +175,6 @@ import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserWorkgroupProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
-import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
-import com.esferalia.aon.occam.api.model.registry.CreditorProperties;
 
 public class PropertiesDAO {
 	
@@ -264,6 +262,10 @@ public class PropertiesDAO {
 		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(APP_PARAM.VALUE);}
 	}
 	
+	/**
+	 * @deprecated  Replaced by CustomerDAO.CustomerPropertiesDAO
+	 */
+	@Deprecated(forRemoval = true )
 	public static class CustomerPropertiesDAO extends RegistryPropertiesDAO implements CustomerProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, CustomerFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -350,29 +352,11 @@ public class PropertiesDAO {
 	}
 	
 	
-	public static class CreditorPropertiesDAO implements CreditorProperties {
-		
-		protected Select<Record> build(SelectJoinStep<Record> select, CreditorFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(CreditorFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(CREDITOR.REGISTRY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CREDITOR.DOMAIN);}
-		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.DOCUMENT);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.NAME);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.ALIAS);}
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(CREDITOR.STATUS);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.SECURITY_LEVEL);}
-		@Override public Property<Integer> getAccountProperty() { return new FilterDAO.PropertyDAO<Integer>(CREDITOR.ACCOUNT);}
-	}
-	
-	public static class SupplierPropertiesDAO implements SupplierProperties {
+	/**
+	 * @deprecated  Replaced by SupplierDAO.SupplierPropertiesDAO
+	 */
+	@Deprecated(forRemoval = true )
+	public static class SupplierPropertiesDAO extends RegistryPropertiesDAO implements SupplierProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, SupplierFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.build(select);
@@ -385,29 +369,21 @@ public class PropertiesDAO {
 			}
 			return new Condition[] { filterDAO.getCondition() };
 		}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.REGISTRY);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.DOMAIN);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.SCOPE);}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.REGISTRY);}
-		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
-		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_TYPE);}
-		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_COUNTRY);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ALIAS);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
-		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.MODIFICATION_DATE);}
 		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.TARIFF);}
 		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.WITHHOLDING);}
 		@Override public Property<Byte> getWithholdingFarmerProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.WITHHOLDING_FARMER);}
 		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.VAT_ACCRUAL_PAYMENT);}
 		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.TRANSACTION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.SCOPE);}
 		@Override public Property<Byte> getPurchaseValuatedProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.PURCHASE_VALUATED);}
 		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.MODIFICATION_DATE);}
 	}
 	
 	public static class TargetPropertiesDAO implements TargetProperties {

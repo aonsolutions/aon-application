@@ -6,9 +6,11 @@ import static org.junit.Assert.assertNull;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.product.Tariff;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
 
 public class Asserts {
 	
@@ -54,6 +56,31 @@ public class Asserts {
 		assertEquals("ProjectGrouped",expected.isProjectGrouped(),actual.isProjectGrouped());
 		assertEquals("DeliveryGrouped",expected.isDeliveryGrouped(),actual.isDeliveryGrouped());
 		assertEquals("DeliveryValuated",expected.isDeliveryValuated(),actual.isDeliveryValuated());
+		assertEquals("Account",expected.getAccount(),actual.getAccount());
+	}
+
+	public static void assertEqualsCreditor(Creditor expected, Creditor actual) {
+		assertEqualsNulls( "Creditor", expected, actual);
+		assertEqualsRegistry(expected, actual);
+		assertEquals("Withholding",expected.isWithholding(),actual.isWithholding());
+		assertEquals("VatAccrualPayment",expected.isVatAccrualPayment(),actual.isVatAccrualPayment());
+		assertEquals("Transaction",expected.getTransaction(),actual.getTransaction());
+		assertEquals("Status",expected.getStatus(),actual.getStatus());
+		assertEquals("Scope",expected.getScope(),actual.getScope());
+		assertEquals("Account",expected.getAccount(),actual.getAccount());
+	}
+
+	public static void assertEqualsSupplier(Supplier expected, Supplier actual) {
+		assertEqualsNulls( "Supplier", expected, actual);
+		assertEqualsRegistry(expected, actual);
+		assertEquals("Tariff",expected.getTariff(), actual.getTariff());
+		assertEquals("Withholding",expected.isWithholding(),actual.isWithholding());
+		assertEquals("WithholdingFarmer",expected.isWithholdingFarmer(),actual.isWithholdingFarmer());
+		assertEquals("VatAccrualPayment",expected.isVatAccrualPayment(),actual.isVatAccrualPayment());
+		assertEquals("Transaction",expected.getTransaction(),actual.getTransaction());
+		assertEquals("Status",expected.getStatus(),actual.getStatus());
+		assertEquals("Scope",expected.getScope(),actual.getScope());
+		assertEquals("PurchaseValuated",expected.isPurchaseValuated(),actual.isPurchaseValuated());
 		assertEquals("Account",expected.getAccount(),actual.getAccount());
 	}
 

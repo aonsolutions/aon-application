@@ -20,7 +20,7 @@ public class ValidationSaveOverflowDocument extends AbstractOccamTest {
 	public void test() {
 		Registry registry = AonFaker.getRegistry( ctx );
 		registry.setDocument( AonStringUtils.repeat('X', REGISTRY.DOCUMENT.getDataType().length() + 1) );
-		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryDAO.insert(ctx, registry) );
+		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryDAO.save(ctx, registry) );
 		assertEquals(AonError.REGISTRY_OVERFLOW_DOCUMENT.getMessage(),e.getMessage());
 	}
 

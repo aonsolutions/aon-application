@@ -16,7 +16,7 @@ public class ValidationSaveEmptyDocumentCountry extends AbstractOccamTest {
 	public void test() {
 		Registry registry = AonFaker.getRegistry( ctx );
 		registry.setDocumentCountry(null);
-		registry = RegistryDAO.insert(ctx, registry);
+		registry = RegistryDAO.save(ctx, registry);
 		assertEquals(registry.getDocumentCountry(), Country.ES);
 	}
 

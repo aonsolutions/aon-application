@@ -18,7 +18,7 @@ public class ValidationSaveEmptyDomainId extends AbstractOccamTest {
 	public void test() {
 		Registry registry = AonFaker.getRegistry( ctx );
 		registry.getDomain().setId(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryDAO.insert(ctx, registry) );
+		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryDAO.save(ctx, registry) );
 		assertEquals(AonError.EMPTY_DOMAIN.getMessage(),e.getMessage());
 	}
 	

@@ -20,7 +20,7 @@ public class ValidationSaveOverflowAlias extends AbstractOccamTest {
 	public void test() {
 		Registry registry = AonFaker.getRegistry( ctx );
 		registry.setAlias( AonStringUtils.repeat('X', REGISTRY.ALIAS.getDataType().length() + 1) );
-		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryDAO.insert(ctx, registry) );
+		AonCoreException e = assertThrows(AonCoreException.class, () -> RegistryDAO.save(ctx, registry) );
 		assertEquals(AonError.INVALID_LENGTH.format( "Alias", REGISTRY.ALIAS.getDataType().length() ),e.getMessage());
 	}
 

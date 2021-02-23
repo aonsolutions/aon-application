@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.test.customer;
+package com.esferalia.aon.occam.test.registry.customer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,7 +16,7 @@ public class ValidationSaveEmptyTransaction extends AbstractOccamTest {
 	public void test() {
 		Customer registry = AonFaker.getCustomer( ctx );
 		registry.setTransaction(null);
-		registry = CustomerDAO.insert(ctx, registry);
+		registry = CustomerDAO.save(ctx, registry);
 		assertEquals(registry.getTransaction(), InvoiceTransactionType.NATIONAL);
 	}
 

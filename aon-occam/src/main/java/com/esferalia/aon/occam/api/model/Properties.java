@@ -721,6 +721,21 @@ public interface Properties {
 		Property<Integer> getAccountProperty();
 	}
 	
+	public interface CreditorProperties extends RegistryProperties, AuditProperties{
+		Property<Integer> getRegistryProperty();
+		Property<Integer> getDomainProperty();
+		Property<Byte> getWithholdingProperty();
+		Property<Byte> getVatAccrualPaymentProperty();
+		Property<Byte> getTransactionProperty();
+		Property<Byte> getStatusProperty();
+		Property<Integer> getScopeProperty();
+		Property<Integer> getAccountProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Timestamp> getModificationDateProperty();	
+	}
+	
 	public interface SellerProperties extends RegistryProperties{
 		Property<Integer> getRegistryProperty();
 		Property<Integer> getDomainProperty();
@@ -769,6 +784,8 @@ public interface Properties {
 	}
 	
 	public interface SupplierProperties extends RegistryProperties, AuditProperties{
+		Property<Integer> getRegistryProperty();
+		Property<Integer> getDomainProperty();
 		Property<Integer> getTariffProperty();
 		Property<Byte> getWithholdingProperty();
 		Property<Byte> getWithholdingFarmerProperty();

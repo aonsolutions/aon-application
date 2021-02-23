@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.test.customer;
+package com.esferalia.aon.occam.test.registry.customer;
 
 
 import org.junit.runner.RunWith;
@@ -7,9 +7,11 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+	ValidationSaveEmptyScope.class,
 	ValidationSaveEmptyTransaction.class,
 	ValidationSaveEmptyStatus.class,
 	CRUDETest.class,
+	CRUDEExistingRegistryTest.class,
 })
 public class CustomerTestSuite {
 

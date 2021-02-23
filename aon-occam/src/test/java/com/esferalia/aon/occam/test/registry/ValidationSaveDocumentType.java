@@ -19,7 +19,7 @@ public class ValidationSaveDocumentType extends AbstractOccamTest {
 		Registry registry = AonFaker.getRegistry( ctx );
 		DocumentType documentType = registry.getDocumentType();
 		registry.setDocumentCountry(Country.FR);
-		registry = RegistryDAO.insert(ctx, registry);
+		registry = RegistryDAO.save(ctx, registry);
 		assertEquals(documentType, registry.getDocumentType() );
 	}
 
@@ -29,7 +29,7 @@ public class ValidationSaveDocumentType extends AbstractOccamTest {
 		registry.setDocument("23049210J");
 		registry.setDocumentCountry(Country.ES);
 		registry.setDocumentType(DocumentType.values()[AonRandom.number(DocumentType.NIF.ordinal(), DocumentType.NIE.ordinal())]);		
-		registry = RegistryDAO.insert(ctx, registry);
+		registry = RegistryDAO.save(ctx, registry);
 		assertEquals(DocumentType.NIF, registry.getDocumentType() );
 	}
 	
@@ -39,7 +39,7 @@ public class ValidationSaveDocumentType extends AbstractOccamTest {
 		registry.setDocument("23049210J");
 		registry.setDocumentCountry(Country.ES);
 		registry.setDocumentType(DocumentType.values()[AonRandom.number(DocumentType.NIF.ordinal(), DocumentType.NIE.ordinal())]);		
-		registry = RegistryDAO.insert(ctx, registry);
+		registry = RegistryDAO.save(ctx, registry);
 		assertEquals(DocumentType.NIF, registry.getDocumentType() );
 	}
 
@@ -49,7 +49,7 @@ public class ValidationSaveDocumentType extends AbstractOccamTest {
 		registry.setDocument("D08078115");
 		registry.setDocumentCountry(Country.ES);
 		registry.setDocumentType(DocumentType.values()[AonRandom.number(DocumentType.NIF.ordinal(), DocumentType.NIE.ordinal())]);		
-		registry = RegistryDAO.insert(ctx, registry);
+		registry = RegistryDAO.save(ctx, registry);
 		assertEquals(DocumentType.CIF, registry.getDocumentType() );
 	}
 
@@ -59,7 +59,7 @@ public class ValidationSaveDocumentType extends AbstractOccamTest {
 		registry.setDocument("X1291539C");
 		registry.setDocumentCountry(Country.ES);
 		registry.setDocumentType(DocumentType.values()[AonRandom.number(DocumentType.NIF.ordinal(), DocumentType.NIE.ordinal())]);
-		registry = RegistryDAO.insert(ctx, registry);
+		registry = RegistryDAO.save(ctx, registry);
 		assertEquals(DocumentType.NIE, registry.getDocumentType() );
 	}
 }

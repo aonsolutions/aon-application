@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -75,7 +76,6 @@ import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
-import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
@@ -97,6 +97,7 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO.CreditorPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CreditorFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CustomerFiller;
@@ -108,7 +109,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.SupplierFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.TargetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CreditorPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PersonPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RBankPropertiesDAO;
@@ -358,6 +358,10 @@ public class RegistryOldDAO {
 		
 	}
 	
+	/**
+	 * @deprecated  Use CustomerDAO.getCustomerAccount
+	 */
+	@Deprecated
 	public static Account getCustomerAccount(AONContext ctx, Integer registry) {
 		return ctx.getDslContext().select(ACCOUNT.fields())
 			.from ( CUSTOMER )
@@ -369,6 +373,10 @@ public class RegistryOldDAO {
 			.findFirst()
 			.orElse(null);
 	}
+	/**
+	 * @deprecated  Use SupplierDAO.getSupplierAccount
+	 */
+	@Deprecated
 	public static Account getSupplierAccount(AONContext ctx, Integer registry) {
 		return ctx.getDslContext().select(ACCOUNT.fields())
 			.from ( SUPPLIER )
@@ -380,6 +388,10 @@ public class RegistryOldDAO {
 			.findFirst()
 			.orElse(null);
 	}
+	/**
+	 * @deprecated  Use CreditorDAO.getCreditorAccount
+	 */
+	@Deprecated
 	public static Account getCreditorAccount(AONContext ctx, Integer registry) {
 		return ctx.getDslContext().select(ACCOUNT.fields())
 			.from ( CREDITOR )
@@ -392,6 +404,10 @@ public class RegistryOldDAO {
 			.orElse(null);
 	}
 	
+	/**
+	 * @deprecated  Use CreditorDAO.updateCreditorAccount
+	 */
+	@Deprecated
 	public static void updateCreditorAccount(AONContext ctx, Integer registry, Integer account) {
 		ctx.checkWrite();
 		ctx.getDslContext().update(CREDITOR)
@@ -403,6 +419,10 @@ public class RegistryOldDAO {
 		ctx.log().info("ACCOUNT " + account + " LINKED TO CREDITOR " + registry);
 	}
 
+	/**
+	 * @deprecated  Use CustomerDAO.updateCustomerAccount
+	 */
+	@Deprecated
 	public static void updateCustomerAccount(AONContext ctx, Integer registry, Integer account) {
 		ctx.checkWrite();
 		ctx.getDslContext().update(CUSTOMER)
@@ -414,6 +434,10 @@ public class RegistryOldDAO {
 	ctx.log().info("ACCOUNT " + account + " LINKED TO CUSTOMER " + registry);
 	}
 
+	/**
+	 * @deprecated  Use SupplierDAO.updateSupplierAccount
+	 */
+	@Deprecated
 	public static void updateSupplierAccount(AONContext ctx, Integer registry, Integer account) {
 		ctx.getDslContext().update(SUPPLIER)
 		.set(SUPPLIER.ACCOUNT,account)
@@ -857,6 +881,10 @@ public class RegistryOldDAO {
 			,filter).fetch().stream().map(new CreditorFiller());
 	}
 	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO.insert(AONContext ctx, Creditor creditor)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Creditor insertCreditor(AONContext ctx, Creditor creditor){
 		ctx.getDslContext().insertInto(CREDITOR, CREDITOR.ACCOUNT, CREDITOR.DOMAIN, CREDITOR.REGISTRY,
 				CREDITOR.SCOPE, CREDITOR.STATUS, CREDITOR.TRANSACTION, CREDITOR.WITHHOLDING,
@@ -884,9 +912,14 @@ public class RegistryOldDAO {
 				SUPPLIER.WITHHOLDING_FARMER, SUPPLIER.VAT_ACCRUAL_PAYMENT, SUPPLIER.TRANSACTION, SUPPLIER.STATUS, 
 				SUPPLIER.SCOPE, SUPPLIER.PURCHASE_VALUATED, SUPPLIER.ACCOUNT, SUPPLIER.CREATION_USER, SUPPLIER.CREATION_DATE,
 				SUPPLIER.MODIFICATION_USER, SUPPLIER.MODIFICATION_DATE)
-			.values(supplier.getId(), supplier.getDomain().getId(), supplier.getTariff(), supplier.getWithholding().byteValue(), supplier.getWithholdingFarmer().byteValue(),
-					supplier.getVatAccrualPayment().byteValue(),supplier.getTransaction().byteValue(), supplier.getStatus().value(), supplier.getScope(), 
-					supplier.getPurchaseValuated().byteValue(), supplier.getAccount(), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser(),
+			.values(supplier.getId(), supplier.getDomain().getId(), supplier.getTariff(), 
+					AonEnumUtils.getByte(supplier.isWithholding()),
+					AonEnumUtils.getByte(supplier.isWithholdingFarmer()),
+					AonEnumUtils.getByte(supplier.isVatAccrualPayment()),
+					AonEnumUtils.getByte(supplier.getTransaction()), 
+					supplier.getStatus().value(), supplier.getScope(), 
+					AonEnumUtils.getByte(supplier.isPurchaseValuated()), 
+					supplier.getAccount(), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser(),
 					new Timestamp(new Date().getTime())).execute();
 		return supplier;
 	}

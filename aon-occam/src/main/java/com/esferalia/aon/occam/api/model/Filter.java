@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractProperties;
+import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
@@ -367,6 +368,11 @@ public interface Filter {
 		Filter filter(CustomerProperties properties);
 	}
 	
+	@FunctionalInterface
+	public interface CreditorFilter{
+		Filter filter(CreditorProperties properties);
+	}
+
 	@FunctionalInterface
 	public interface SellerFilter{
 		Filter filter(SellerProperties properties);

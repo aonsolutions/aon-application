@@ -67,13 +67,13 @@ public class RegistryDAO {
 			.orElse(null);
 	}
 
-	public static Registry save(AONContext ctx, Registry registry) {
+	public static <R extends Registry> R save(AONContext ctx, R registry) {
 		return (registry.getId() == null)
 			?insert(ctx, registry)
 			:update(ctx, registry);
 	}
 	
-	public static Registry insert(AONContext ctx, Registry registry) {
+	private static <R extends Registry> R insert(AONContext ctx, R registry) {
 		ctx.checkWrite();
 		RegistryAutoComplete.autoComplete(ctx, registry);
 		RegistryValidation.validate(ctx, registry); 
@@ -97,7 +97,7 @@ public class RegistryDAO {
 		return registry; 
 	}
 
-	public static Registry update(AONContext ctx, Registry registry) {
+	private static <R extends Registry> R update(AONContext ctx, R registry) {
 		ctx.checkWrite();
 		RegistryAutoComplete.autoComplete(ctx, registry);
 		RegistryValidation.validate(ctx, registry); 

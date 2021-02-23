@@ -107,7 +107,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 				:(query);
 		return AON.getBasicCreditors(domainName, domain,user,
-				p ->  p.getActiveProperty().eq( RegistryStatus.ACTIVE.value())
+				p ->  p.getStatusProperty().eq( RegistryStatus.ACTIVE.value())
 					.and(p.getDocumentProperty().like(q)
 					 .or(p.getNameProperty().like(q))
 					 .or(p.getAliasProperty().like(q)))
