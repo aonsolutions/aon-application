@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { formatDateOrigin, formatDate, setFullDate, setValueName, sortBy, timeHour } from "../../../../services/utils.js";
+import { formatDateOrigin, formatDate, setFullDate, setValueName, sortBy, timeHour, setDateTimestampDay, setDateTpDay, firstLetters } from "../../../../services/utils.js";
 import {
   getGroups,
   getPeriod,
@@ -187,7 +187,7 @@ export class AonEventList extends AonElement {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
-          res.dateParse = setFullDate(res.start_date);
+          res.dateParse = firstLetters(setFullDate(res.start_date));
           aonTable.addRow(
             {
               ...res,
@@ -209,7 +209,7 @@ export class AonEventList extends AonElement {
         const resp = await this.getData();
         aonTable.removeAllLi();
         resp.map((res, idx) => {
-          res.dateParse = formatDate(res.start_date);
+          res.dateParse = firstLetters(setDateTpDay(res.start_date));
           let options = {
             paddingTopTitle: "5px",
             iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.duration}</span>`,
@@ -232,7 +232,7 @@ export class AonEventList extends AonElement {
       try {filter = {...this.aonSigninParentEl._filter};} catch (error) {}
       let datos = await getTaskHolderTimeControl(filter);
       if(datos){
-        sortBy(datos, 'last_date', 'desc').map(
+        sortBy(datos, 'start_date', 'asc').map(
           async (r) => {
             if(!this.TASK_HOLDER)  this.TASK_HOLDER = r.task_holder;
             const name = this.TASK_HOLDER.name;

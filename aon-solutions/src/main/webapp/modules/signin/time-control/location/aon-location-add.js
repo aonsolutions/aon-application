@@ -2,18 +2,13 @@ import { AonElement } from "../../../../components/AonElement.js";
 import { setValueName, serializeForm, waitEl } from "../../../../services/utils.js";
 import { deleteLocation, saveLocation } from "../../../../services/service.js";
 import { getPosition } from "../../../../services/maps.js";
-import "../../../../components/aon-card.js";
-import "../../../../components/aon-input.js";
-import "../../../../components/aon-number.js";
-import "../../../../components/aon-date.js";
-import "../../../../components/aon-suggestion.js";
-import "../../../../components/aon-select.js";
-import "../../../../components/aon-switch.js";
-import "../../../../components/aon-icon-button.js";
-import "./aon-location-list.js";
 import { API_KEY_MAP } from "../../../../environments/constants.js";
 import { UserAction } from "../../../user/userEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
+import { AonLocationList } from "./aon-location-list.js";
+import "../../../../components/aon-card.js";
+import "../../../../components/aon-input.js";
+import "../../../../components/aon-number.js";
 
 export class AonLocationAdd extends AonElement {
   TOAST;
@@ -267,7 +262,7 @@ export class AonLocationAdd extends AonElement {
   }
 
   back() {
-    this.aonSigninEl.setContentHTML(`<aon-location-list></aon-location-list>`);
+    this.aonSigninEl.setContent(new AonLocationList());
   }
 }
 

@@ -2,7 +2,7 @@ import { INPUTS_ALL } from '../environments/constants.js';
 
 const days = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
 
-const months = ["enero", "febrero", "marzo", "abrril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
 export const getReader = (file) => {
   return new Promise((resolve) => {
@@ -121,6 +121,8 @@ export const formatDate = (d) => {
   return day + '/' + month + '/' + year;
 }
 
+export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());
+
 export const setDate = (date) => formatDate(date);
 
 export const addDays = (date, day) => {
@@ -146,7 +148,6 @@ export const firstDayWeek = (d) => {
 
 export const lastDayWeek = (d) => firstDayWeek(new Date(d)) + 6;
 
-
 export const formatDateOrigin = (d) => {
   let date = new Date(d);
   let day = addZero(date.getDate(), 2);
@@ -160,18 +161,21 @@ export const setDateTimestamp = (d) => {
   return formatDate(date) + " " + setTime(date);
 }
 
-export const setDateTimestampDay = (d)=>{
+export const setDateTpDay = (d)=>{
   const date = new Date(d);
   const now = new Date();
   let day = days[date.getDay()];
 
   if(date.getDay() === now.getDay()){
-    day = "Hoy";
+    day = "hoy";
   } else if(date.getDay() === addDays(now, -1).getDay()){
-    day = "Ayer";
+    day = "ayer";
   }
-  return day+", "+formatDate(date) + " " + setTime(date);
+  return day+", "+formatDate(date);
 }
+
+export const setDateTimestampDay = (d)=> setDateTpDay(new Date(d)) +" " + setTime(new Date(d));
+
 
 export const setFullDate = (d) => {
   const date = new Date(d);

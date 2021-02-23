@@ -12,12 +12,13 @@ import {
 } from "../../../../services/service.js";
 
 import { AonEventList } from "./aon-event-list.js";
+import { ToolbarType } from "../../../../models/enums.js";
+import { UserAction } from "../../../user/userEnums.js";
+import { AonEventAdd } from "./aon-event-add.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
-import "./aon-event-add.js";
-import { ToolbarType } from "../../../../models/enums.js";
-import { UserAction } from "../../../user/userEnums.js";
+
 
 export class AonEventDetailList extends AonElement {
   TABLE_ID;
@@ -200,7 +201,8 @@ export class AonEventDetailList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumnIcon("arrow_back", "string", "lettersHtml", "6%", ()=>this.back());
-      aonTable.addColumn("Fecha", "date", "dateParse", "40%");
+      aonTable.addColumn("Estado", "string", "textStatus", "10%");
+      aonTable.addColumn("Fecha", "date", "dateParse", "20%");
       aonTable.addColumn("Ubicación", "string", "nameLocation", "30%");
       try {
         const resp = await this.getData();
@@ -297,14 +299,13 @@ export class AonEventDetailList extends AonElement {
       this.aonSigninEl.getParent().openLocationAdd(el, data);
     } else {
       let id = "aonEventAdd";
-      this.aonSigninEl.setContentHTML(
-        `<aon-event-add id="${id}"></aon-event-add>`
-      );
-      const aonEventEl = this.getElement(id);
+      let aonEventAdd = new AonEventAdd();
+      aonEventAdd.id = id;
       if (!data && this.TASK_HOLDER) {
         data = { task_holder: this.TASK_HOLDER, name: this.TASK_HOLDER.name };
       }
-      if (data) aonEventEl.data = data;
+      if (data) aonEventAdd.data = data;
+      this.aonSigninEl.setContent(aonEventAdd);
     }
   }
 
