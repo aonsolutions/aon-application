@@ -91,8 +91,7 @@ export class AonDocument extends AonElement {
 
     this.buildData();
 
-    if(!this.isMobile())
-      this.buildDocumentToolbar();
+    this.buildDocumentToolbar();
   }
 
   buildData() {
@@ -177,7 +176,7 @@ export class AonDocument extends AonElement {
     scopeSelect.title = MSG.AON_MSG_SCOPE;
     tdScope.appendChild(scopeSelect);
     tr3.appendChild(tdScope);
-    getScopes({domain: localStorage.getItem('aon_domain_id')}).then( scopes => {
+    getScopes().then( scopes => {
       scopeSelect.setOptions(scopes.map(s => {
         return {
           value: s.id,
@@ -294,16 +293,17 @@ export class AonDocument extends AonElement {
     let aonDocumental = this.getElement('aonDocumental');
     let documentToolbar = this.getElement(this.TOOLBAR);
     documentToolbar.removeButtons();
+    if(!this.isMobile()){
+      documentToolbar.addButton2(DocumentalAction.NEXT, () => this.next());
+      documentToolbar.addButton2(DocumentalAction.PREVIOUS, () => this.previous());
 
-    documentToolbar.addButton2(DocumentalAction.NEXT, () => this.next());
-    documentToolbar.addButton2(DocumentalAction.PREVIOUS, () => this.previous());
-
-    documentToolbar.addSeparator();
-    if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
-      documentToolbar.addButton2(DocumentalAction.DELETE, () => this.remove());
+      documentToolbar.addSeparator();
+      if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
+        documentToolbar.addButton2(DocumentalAction.DELETE, () => this.remove());
+      }
+      //  documentToolbar.addButton2(DocumentalAction.SEND, () => this.send());
+      documentToolbar.addButton2(DocumentalAction.DOWNLOAD, () => this.download());
     }
-//  documentToolbar.addButton2(DocumentalAction.SEND, () => this.send());
-    documentToolbar.addButton2(DocumentalAction.DOWNLOAD, () => this.download());
     documentToolbar.addButton2(DocumentalAction.BACK, () => this.back());
   }
 

@@ -730,6 +730,7 @@ public class AonDateUtils {
 		int day = calendar.get(Calendar.DAY_OF_YEAR);
 		while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
 			calendar.set(Calendar.DAY_OF_YEAR, --day);
+			day = calendar.get(Calendar.DAY_OF_YEAR);
 		}
 		return calendar.getTime();
 	}

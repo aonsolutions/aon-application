@@ -15,6 +15,7 @@ export class DomainUserRoles {
   oldDomainModules;
   oldParentDomainModules;
   oldUserRoles;
+
   constructor(data) {
     this.domain = data.domain;
     this.user = data.user;
@@ -159,7 +160,8 @@ export class DomainUserRoles {
 	}
 
 	isDocumental() {
-		return this.hasApp(App.DOCUMENTAL) && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL));
+		return (this.hasApp(App.DOCUMENTAL) && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL)))
+      || this.isDocumentalPortal() || this.isDocumentalManager();
 	}
 
   isDocumentalPortal() {

@@ -76,8 +76,9 @@ export class AonDocumental extends AonElement {
   			}
   		});
 
-      if(this.isMobile() && (this._roles.isDocumentalPortal() || this._roles.isDocumentalManager())) {
-        aonDocumental.addFloatOption(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
+      if(this.isMobile()) {
+        if(this._roles.isDocumentalPortal() || this._roles.isDocumentalManager())
+          aonDocumental.addFloatOption(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
       } else {
         if(this._roles.isDocumentalPortal() || this._roles.isDocumentalManager()){
           aonDocumental.addToolbarOption2(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
@@ -204,7 +205,7 @@ export class AonDocumental extends AonElement {
 
     loadScopes() {
       let aonDocumental = this.getElement(this.DOCUMENTAL);
-      getScopes({domain: localStorage.getItem('aon_domain_id')}).then( scopes => {
+      getScopes().then( scopes => {
         this._scopes = scopes.map(s => {
           return {
             value: s.id,

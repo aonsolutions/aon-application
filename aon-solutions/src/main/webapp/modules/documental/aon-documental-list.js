@@ -209,7 +209,10 @@ export class AonDocumentalList extends AonElement {
 		let remove = DocumentalAction.DELETE;
 		remove.fn = () => {}; //this.remove();
 
-		let actions = [send, download, remove];
+		let actions = [send, download];
+		if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()) {
+			actions.push(remove);
+		}
 		d.setMenuOptions(actions, top, left);
 		d.open();
 	}

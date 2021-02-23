@@ -1,5 +1,8 @@
 import {AonDocument} from './aon-document.js';
 import {DocumentalAction} from './DocumentalEnums.js';
+import {getDomainUserRoles} from '../../services/service.js';
+import {DomainUserRoles} from '../../models/DomainUserRoles.js';
+import {ToolbarType} from '../../models/enums.js';
 
 import '../../components/aon-card.js';
 import '../../components/aon-viewer.js';
@@ -14,25 +17,32 @@ export class AonMobileDocument extends AonDocument {
 
   constructor () {
     super();
-    this.FILE_CARD = this.FILE + 'Card';
   }
 
   connectedCallback () {
+    this.initialize();
+    this.FILE_CARD = this.FILE + 'Card';
     this.innerHTML = `
-      <aon-card id="${this.FILE_CARD}" title="${MSG.AON_MSG_FILE}" style="display:none;"> </aon-card>
-      <aon-card id="${this.DATA_CARD}" title="${MSG.AON_MSG_FILE_DATA}"> </aon-card>
+      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="DOCUMENTO"> </aon-toolbar>
+      <div>
+        <aon-card id="${this.FILE_CARD}" title="${MSG.AON_MSG_FILE}" style="display:none;"> </aon-card>
+        <aon-card id="${this.DATA_CARD}" title="${MSG.AON_MSG_FILE_DATA}"> </aon-card>
+      </div>
     `;
 
-    this.buildOptions();
-    this.buildData();
-
-    if(this.document.file.type.includes('pdf') || this.document.file.type.includes('image')) {
-      let fileCard = this.getElement(this.FILE_CARD);
-      fileCard.style.display = 'block';
-      this.getElement(fileCard.TITLE).style.marginBottom = '0px';
-      fileCard.cleanSection2();
-      fileCard.addTitleButton('Visualizar', 'visibility', false, () => this.openFileCard());
-    }
+    getDomainUserRoles({}).then(r => {
+      this._roles = new DomainUserRoles(r);
+      this.buildOptions();
+      this.buildData();
+      this.buildDocumentToolbar();
+      if(this.document.file.type.includes('pdf') || this.document.file.type.includes('image')) {
+        let fileCard = this.getElement(this.FILE_CARD);
+        fileCard.style.display = 'block';
+        this.getElement(fileCard.TITLE).style.marginBottom = '0px';
+        fileCard.cleanSection2();
+        fileCard.addTitleButton('Visualizar', 'visibility', false, () => this.openFileCard());
+      }
+    });
   }
 
   buildOptions() {
@@ -55,7 +65,10 @@ export class AonMobileDocument extends AonDocument {
       let remove = DocumentalAction.DELETE;
       remove.fn = () => this.remove();
 
-      let actions = [send, download, remove];
+      let actions = [send, download];
+      if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()) {
+        actions.push(remove);
+      }
       d.setMenuOptions(actions, top, left);
       d.open();
     });

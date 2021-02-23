@@ -93,8 +93,10 @@ export class AonMobileMenu extends AonElement {
     getDomainUserRoles({}).then(r => {
       this._roles = new DomainUserRoles(r);
       let menu = this.getElement( this.id + 'Sidenav');
-      menu.innerHTML = '';
-      this.buildMenu();
+      if(menu){
+        menu.innerHTML = '';
+        this.buildMenu();
+      }
     });
   }
 

@@ -30,11 +30,7 @@ export const deleteCategory = (data) => {
 };
 
 
-export const getScopes = (data) => {
-  let domainName = localStorage.getItem("aon_domain_name");
-  let user = localStorage.getItem('aon_domain_login');
-  return get(`${API_URL}/attachment/${domainName}/${user}/scope`, data);
-}
+export const getScopes = (data) => get(`${API_URL}/scope`, data);
 
 export const getTags = (data) => {
   let domainName = localStorage.getItem("aon_domain_name");

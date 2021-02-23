@@ -1,5 +1,4 @@
 import {AonElement} from '../../components/AonElement.js';
-import {deleteFile, getCategories, getScopes, getTags, updateFile} from '../../services/service.js';
 
 import '../../components/aon-date.js';
 import '../../components/aon-input.js';
@@ -28,13 +27,10 @@ export class AonInvoicePrint extends AonElement {
 
   constructor () {
     super();
-    this.id = this.id || 'aonInvoicePrintConfiguration';
-    this.DATA = this.id + 'Data';
-    this.DATA_CARD = this.DATA + 'Card';
-    this.FILE = this.id + 'File';
   }
 
   connectedCallback () {
+    this.initialize();
     this.innerHTML = `
       <div style="display:flex;">
         <div id="${this.DATA}" class="aonSubContent" style="width:100%">
@@ -47,6 +43,13 @@ export class AonInvoicePrint extends AonElement {
     `;
 
     this.build();
+  }
+
+  initialize() {
+    this.id = this.id || 'aonInvoicePrintConfiguration';
+    this.DATA = this.id + 'Data';
+    this.DATA_CARD = this.DATA + 'Card';
+    this.FILE = this.id + 'File';
   }
 
   build() {
