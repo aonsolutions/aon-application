@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.core.client.GWT;
@@ -66,6 +68,27 @@ public class ProgressPanel extends ResizeComposite implements ProvidesResize {
 		
 	}
 	
+	public static class TimeTask extends Task {
+		private long startTimeMillis ;
+		private long endTimeMillis ;
+		
+		public void startTime() {
+			startTimeMillis = System.currentTimeMillis();
+		}
+	
+		public void endTime() {
+			endTimeMillis = System.currentTimeMillis();
+		}
+		
+		public long getTimeMillis() {
+			return endTimeMillis - startTimeMillis;
+		}
+
+		public long getTimeSeconds() {
+			return (long) (getTimeMillis() / 1000.00);
+		}
+	}
+	
 	
 	
 	interface Binder extends UiBinder<DockLayoutPanel, ProgressPanel> {
@@ -77,10 +100,10 @@ public class ProgressPanel extends ResizeComposite implements ProvidesResize {
 	@UiField 
 	FlexTable flexTable;
 	
-	private List<Task> tasks ;
+	private Set<Task> tasks ;
 
 	public ProgressPanel() {
-		tasks = new ArrayList<Task>();
+		tasks = new HashSet<Task>();
 		initWidget(binder.createAndBindUi(this));
 	}
 

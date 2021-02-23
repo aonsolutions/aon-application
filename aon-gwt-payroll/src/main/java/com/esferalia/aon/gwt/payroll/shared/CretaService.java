@@ -9,6 +9,11 @@ import com.google.gwt.http.client.URL;
 
 public interface CretaService {
 
+	public static enum Message {
+		BEGIN,
+		END
+	}
+
 	public static enum Parameter {
 		CCC, 
 		TIPO, 
@@ -325,6 +330,36 @@ public interface CretaService {
 		public final native boolean isRequestSendRNT() /*-{
 			return this.requestSendRNT;
 		}-*/;
+	}
+
+	public static class JsProgressResult extends JavaScriptObject {
+
+		protected JsProgressResult() {
+		}
+
+
+		// ----------------------------------- JSNI (Native JavaScript Methods)
+
+		public final native JsProgress[] getProgress() /*-{
+			return this.__progress;
+		}-*/;
+
+	}
+
+	public static class JsProgress extends JavaScriptObject {
+		protected JsProgress() {
+		}
+		
+		// ----------------------------------- JSNI (Native JavaScript Methods)
+
+		public final native String getMsg() /*-{
+			return this.msg;
+		}-*/;
+
+		public final native Double getPercent() /*-{
+			return this.percent;
+		}-*/;
+
 	}
 
 	public static class JsError extends JavaScriptObject {

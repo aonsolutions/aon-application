@@ -192,7 +192,19 @@ public class CretaServlet extends HttpServlet
 			PrintWriter os = resp.getWriter();
 	
 			os.println("{");
-	
+			
+			os.printf("\"__progress\":[");
+			os.printf("\r\n{\"percent\": 0.00, \"msg\":\"%s\"}", CretaService.Message.BEGIN);
+			os.flush();
+			
+			ProgressCallback progressCb = new ProgressCallback() {
+				@Override
+				public void progress(String message) {
+					os.printf(",\r\n{\"percent\": 0.00, \"msg\":\"%s\"}", message);
+					os.flush();
+				}
+			};
+			
 			List<InputStream> respuestasIss = new ArrayList<InputStream>();
 			List<InputStream> trabajadoresYTramosIss = new ArrayList<InputStream>();
 			
@@ -215,8 +227,12 @@ public class CretaServlet extends HttpServlet
 			}
 			
 			try {
-				os.printf("\"full_bases\":\"%s\",\r\n", generateBases(connection, true, false, false, nafs, defaults,
-						trabajadoresYTramosIss, respuestasIss, customBasesCb, i54Callback, pickerBasesCb));
+				String bases = generateBases(connection, true, false, false, nafs, defaults,
+						trabajadoresYTramosIss, respuestasIss, customBasesCb, i54Callback, pickerBasesCb, progressCb );
+				os.printf(",\r\n{\"percent\": 100.00, \"msg\":\"%s\"}", CretaService.Message.END);
+				os.flush();
+				os.printf("],\r\n");
+				os.printf("\"full_bases\":\"%s\",\r\n", bases);
 			} catch (EmptyBasesException e) {
 				os.printf("\"full_bases\":\"\",\r\n");
 			}
@@ -1465,6 +1481,20 @@ public class CretaServlet extends HttpServlet
 		
 		
 	}
+
+	public abstract static class ProgressCallback implements BasesCallback {
+		
+		
+		@Override
+		public void trabajadorAdded(net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				Trabajador trabajadorCreta, Salary salary) {
+			
+			progress(String.format("%s: %s [%s]", salary.getEnterpriseName(), salary.getEmployeeName(), salary.getEmployeeDocument()));
+		}
+		
+		public abstract void progress(String comment) ;
+	}
+
 	private static <J extends JSON> String toJSON(List<J> jsons) {
 		StringBuffer buff = new StringBuffer();
 		buff.append("[\r\n");
@@ -1546,7 +1576,7 @@ public class CretaServlet extends HttpServlet
 		Date today = new Date();
 		int dayOfMonth = AonDateUtils.get(today, Calendar.DAY_OF_MONTH);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(today);				
-		return dayOfMonth >= 5 ? firstDayOfMonth : AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1 );
+		return dayOfMonth >= 33 ? firstDayOfMonth : AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1 );
 	}
 
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> findTrabajadoresYTramos(HttpServletRequest req) throws SQLException{
@@ -2303,6 +2333,14 @@ public class CretaServlet extends HttpServlet
 			return "0111";
 		}
 	} 
+	
+	private static CretaService.File getFile(Part part) {
+		try {
+			return CretaService.File.valueOf( part.getName());
+		} catch ( IllegalArgumentException e) {
+			return null;
+		}
+	}
 	
 
 }

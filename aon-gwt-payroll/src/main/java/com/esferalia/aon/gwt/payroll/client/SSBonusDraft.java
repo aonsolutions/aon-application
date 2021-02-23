@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -114,12 +115,14 @@ public class SSBonusDraft extends CustomDialog {
 		this.ssBonuses = new ArrayList<>();
 		this.contractId = contractId;
 
-		progressPanel.addAttachHandler(e -> {
+		HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
+		handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
 			// Synchronize cret@ messages.
 			Task syncTask = new Task();
 			syncTask.setDescription("Comprobando bonificaciones...");
 			progressPanel.showTask(syncTask);
 			syncTask.messageChanged("Sistema RED...");
+			handlerRegistration[0].removeHandler();
 		});
 
 		impl.getEmployeeSSBonuses(this.contractId, new AsyncCallback<List<SSBonusData>>() {

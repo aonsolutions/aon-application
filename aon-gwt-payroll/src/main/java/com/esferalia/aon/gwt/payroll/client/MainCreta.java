@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import javax.persistence.SynchronizationType;
+
 import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.Pos;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -29,6 +31,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.TimeTask;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree.CretaCommand;
@@ -45,6 +48,8 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.JsError;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEvent;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsPeculiaridad;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsProgress;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsProgressResult;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTramo;
@@ -68,7 +73,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -122,7 +129,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	public static <T extends JsFile> Collection<T> getOld(File file, T t) {
 		return getOlder(file.name(), t);
 	}
-
+	
+	public interface ProgressCallback {
+		public void onProgress( JsProgress progress);
+	}
 
 	
 	private class MainCretaSyncCallback implements SyncCallback {
@@ -430,7 +440,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	@Override
 	public void onEnterprises(List<Enterprise> enterprises) {
-		progressPanel.addAttachHandler(e ->  {
+
+		HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
+		handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
 			// Synchronize cret@ messages. 
 			Task syncTask = new Task();
 			syncTask.setDescription("Sincronizando mensajes");
@@ -459,7 +471,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					sync(this, cccss);
 				}
 			}, cccs );
-			
+			handlerRegistration[0].removeHandler();
 			
 		});
 		showProgressPanel();
@@ -510,6 +522,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
 	}
 
+	private void showProgressPanel(Void v) {
+		showProgressPanel();
+	}
 
 	public static boolean hasTrabajadoresYTramos(JsRespuesta jsRespuesta) {
 		JsEmployee jsEmployees[] = jsRespuesta.getEmployees();
@@ -763,28 +778,41 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		    void callback() throws Exception;
 		}
 		
+		private TimeTask task ;
 		private DetailPanel detailPanel;
 		private ResultsPanel resultsPanel;
+		private ProgressPanel progressPanel;
 		private Consumer<Void> showResults;
+		private Consumer<Void> showProgress;
 		private Consumer<Void> onReftificativa;
 		private Consumer<Void> onSolicitudRecepcionRNT;
 		
 		public AbstractBaseCretaDetail(
 				DetailPanel detailPanel, 
 				ResultsPanel resultsPanel,
+				ProgressPanel progressPanel,
 				Consumer<Void> onReftificativa,
 				Consumer<Void> onSolicitudRecepcionRNT,
-				Consumer<Void> showResults
+				Consumer<Void> showResults,
+				Consumer<Void> showProgress
 				) {
 			this.detailPanel = detailPanel;
 			this.resultsPanel = resultsPanel;
+			this.progressPanel = progressPanel;
 			this.onReftificativa = onReftificativa;
 			this.onSolicitudRecepcionRNT = onSolicitudRecepcionRNT;
 			this.showResults = showResults;
+			this.showProgress = showProgress;
 		}
 		
 		@Override
 		public void onBases(CretaService.JsBasesResult result) {
+			
+			task.endTime();
+			long seconds = task.getTimeSeconds() % 60;
+			long minutes = task.getTimeSeconds() / 60;
+			task.messageChanged( ( minutes > 0 ? minutes + " minutos y " : "" ) + seconds + " segundos");
+			task.finished();
 			
 			MergeEditor mergeEditor = new BasesMergeEditor();
 			mergeEditor.setOrig(result.getBasesFile());
@@ -895,6 +923,27 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 		
 		@Override
+		protected void submitBases() {
+			
+			HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
+			handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
+				AbstractBaseCretaDetail.this.task = new TimeTask();
+				AbstractBaseCretaDetail.this.task.startTime();
+				AbstractBaseCretaDetail.this.task.setDescription("Generando Fichero de Bases...");
+				progressPanel.showTask(AbstractBaseCretaDetail.this.task);
+				handlerRegistration[0].removeHandler();
+			});
+			showProgress.accept(null);
+
+			super.submitBases();
+		}
+		
+		@Override
+		protected void onProgress(JsProgress progress) {
+			task.messageChanged(progress.getMsg());
+		}
+		
+		@Override
 		protected void onDCLResults(JsEvent[] msgs, JsEvent[] errors) {
 			CretaResults cretaResults = new CretaResults() {
 				@Override
@@ -954,6 +1003,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		String getEmployeeFullName(JsEmployee jsEmployee) {
 			return super.getEmployeeFullName(jsEmployee);
 		}
+		
+		
 
 	}
 	
@@ -962,9 +1013,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		public BaseCretaDetail() {
 			super(detailPanel, 
 				resultsPanel, 
+				progressPanel,
 				MainCreta.this::reftification,
 				MainCreta.this::requestSendRNT,
-				MainCreta.this::showResultsPanel);
+				MainCreta.this::showResultsPanel,
+				MainCreta.this::showProgressPanel);
 		}
 
 		@Override
@@ -2017,6 +2070,35 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					String json = xhr.getResponseText();
 					JsBasesResult result = eval("(" + json + ")");
 					cb.onSuccess(result);
+				} catch (Throwable caught) {
+					String json = xhr.getResponseText();
+					//Window.alert(json);
+					cb.onFailure(caught);
+				}
+
+			}
+		});
+	}
+
+	protected static void submit(String url, Map<String, Collection<String>> datas, Collection<JsFile> jsFiles,
+			final AsyncCallback<JsBasesResult> cb, final ProgressCallback progressCb) {
+
+		submit(url, datas, jsFiles, new ReadyStateChangeHandler() {
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				try {
+					int state = xhr.getReadyState();
+					if (state == XMLHttpRequest.LOADING) {
+						String json = xhr.getResponseText();
+						JsProgressResult result = eval("(" + json + "]})");
+						JsProgress[] progresses = result.getProgress();
+						JsProgress progress = progresses[progresses.length-1]; 
+						progressCb.onProgress(progress);
+					} else if (state == XMLHttpRequest.DONE) {
+						String json = xhr.getResponseText();
+						JsBasesResult result = eval("(" + json + ")");
+						cb.onSuccess(result);
+					}
 				} catch (Throwable caught) {
 					String json = xhr.getResponseText();
 					//Window.alert(json);

@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEmployee;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsError;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEvent;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsProgress;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -764,7 +765,35 @@ public abstract class CretaDetail extends Composite {
 		super.onAttach();
 	}
 
+	protected void submitBases() {
+		Map<String, Collection<String>> datas = new HashMap<String, Collection<String>>();
+		try {
+			datas.put(CretaService.Parameter.NAFS.name(), getNafs());
+		}catch ( Exception e ) {
+		}
+		
+		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES,
+				datas,
+				jsFileSelectionModel.getSelectedSet(),
+				new AsyncCallback<CretaService.JsBasesResult>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						//Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JsBasesResult result) {
+						onBases(result);
+					}
+				},
+				(progress) -> onProgress(progress));
+	}
+	
 	protected abstract void onBases(JsBasesResult result);
+	
+	protected abstract void onProgress(JsProgress progress);
 
 	protected abstract String getDescription(String ccc);
 
@@ -810,31 +839,6 @@ public abstract class CretaDetail extends Composite {
 		return MainCreta.getIconStyle(t, respuestasMap.get(t.getId()));
 	}
 
-	private void submitBases() {
-		Map<String, Collection<String>> datas = new HashMap<String, Collection<String>>();
-		try {
-			datas.put(CretaService.Parameter.NAFS.name(), getNafs());
-		}catch ( Exception e ) {
-		}
-		
-		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES,
-				datas,
-				jsFileSelectionModel.getSelectedSet(),
-				new AsyncCallback<CretaService.JsBasesResult>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-						//Window.alert(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(JsBasesResult result) {
-						onBases(result);
-					}
-				});
-	}
-	
 	private Collection<String> getNafs() {
 		List<String> nafs = new LinkedList<String>();
 		jsFileSelectionModel.getSelectedSet()

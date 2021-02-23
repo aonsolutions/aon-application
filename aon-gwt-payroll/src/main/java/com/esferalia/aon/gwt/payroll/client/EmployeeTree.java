@@ -1687,8 +1687,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private class BaseCretaDetail extends AbstractBaseCretaDetail {
 
 		public BaseCretaDetail() {
-			super(EmployeeTree.this.employeeDetail, EmployeeTree.this.resultsPanel, EmployeeTree.this::reftification,EmployeeTree.this::requestSendRNT,
-					EmployeeTree.this::showResultsPanel);
+			super(
+				EmployeeTree.this.employeeDetail, 
+				EmployeeTree.this.resultsPanel, 
+				EmployeeTree.this.progressPanel, 
+				EmployeeTree.this::reftification,
+				EmployeeTree.this::requestSendRNT,
+				EmployeeTree.this::showResultsPanel,
+				EmployeeTree.this::showProgressPanel
+				);
 		}
 
 		@Override
@@ -2165,11 +2172,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	public void onStartSLD() {
 		progressPanel = new ProgressPanel();
 
-		progressPanel.addAttachHandler(e -> {
+		HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
+		handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
 			// Synchronize cret@ messages.
 			Task syncTask = new Task();
 			syncTask.setDescription("Consultando C\u00e1lculos del SISTEMA RED ( Remesas SLD, Sistema de Liquidaci\u00f3n Directa )");
 			progressPanel.showTask(syncTask);
+			handlerRegistration[0].removeHandler();
 		});
 		showProgressPanel();
 		
@@ -2704,13 +2713,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			cccCretaDetail = new CCCCretaDetail();
 
 			progressPanel = new ProgressPanel();
-
-			progressPanel.addAttachHandler(e -> {
-				// Synchronize cret@ messages.
+			
+			// I use an array for skip compile warning/error 'handlerRegistration may not be initialized'.
+			HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
+			handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
+				// Synchronize Cret@ messages.
 				Task syncTask = new Task();
 				syncTask.setDescription("Sincronizando mensajes");
 				progressPanel.showTask(syncTask);
 				MainCreta.sync(new EmployeeTreeSyncCallback(syncTask), getCCs());
+				handlerRegistration[0].removeHandler();
 			});
 			showProgressPanel();
 
@@ -2839,6 +2851,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}	
 	private void showResultsPanel(Void v) {
 		showResultsPanel();
+	}
+
+	private void showProgressPanel(Void v) {
+		showProgressPanel();
 	}
 
 	private List<CCC> getCCs() {
