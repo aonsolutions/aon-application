@@ -27,6 +27,10 @@
               <name>dbName</name>
               <value>aon_jooq_</value>
             </property>
+            <property>
+              <name>javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema</name>
+              <value>com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory</value>
+            </property>
           </systemProperties>
         </configuration>
       </plugin>
