@@ -15,7 +15,7 @@ import com.esferalia.aon.occam.test.registry.supplier.SupplierTestSuite;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	AccountTestSuite.class,
+//	AccountTestSuite.class,
 	TariffTestSuite.class,
 	RegistryTestSuite.class,
 	RegistryMediaTestSuite.class,
