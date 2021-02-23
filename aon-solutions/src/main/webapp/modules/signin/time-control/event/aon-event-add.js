@@ -52,7 +52,7 @@ export class AonEventAdd extends AonElement {
     this.TOOLBAR = this.id + "Toolbar";
     this.aonSigninEl = this.getElement("aonSignin");
     this.aonSigninEl.addToolbarTitle("Registrar evento");
-    this.TOAST = this.getElement(`${this.aonSigninEl.id}Toast`);
+    this.TOAST = this.getElement(`${this.aonSigninEl.TOAST}`);
     this.aonSigninParentEl = this.aonSigninEl.getParent();
     this.aonSigninParentEl.periodSideNavDisplay(false);
   }

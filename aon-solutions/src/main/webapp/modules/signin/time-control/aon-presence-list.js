@@ -6,6 +6,7 @@ import { StringTwoLetters } from "./utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
+import { PresenceFilterInput, SigninSidenav } from "../signinEnums.js";
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
@@ -81,7 +82,7 @@ export class AonPresenceList extends AonElement {
   buildToolbar() {
     this.aonSigninEl.removeToolbarOptions();
     const filterEl = this.getElement(`${this.id}Filter`);
-    this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
+    this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
       filterEl.openFilter()
     );
   }
@@ -89,27 +90,7 @@ export class AonPresenceList extends AonElement {
 
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
-    let inputs = [
-      {
-        type: "select",
-        id: "period",
-        name: "period",
-        title: "Período",
-      },
-      {
-        type: "date",
-        name: "startDate",
-        id: "startDate",
-        title: "Desde",
-      },
-      {
-        type: "date",
-        name: "endDate",
-        id: "endDate",
-        title: "Hasta",
-      },
-    ];
-    aonFilter.setInputs(inputs);
+    aonFilter.setInputs(PresenceFilterInput);
     aonFilter.addEventListener("applyFilter", ({detail}) => {
       if(detail) this.aonSigninParentEl.setDataFilter(detail);
     });
@@ -209,7 +190,7 @@ export class AonPresenceList extends AonElement {
               const newStatus = status.toLowerCase();
               const lettersName = StringTwoLetters(name);
               const lettersHtml = `<div class="profile-letters ${newStatus}">${lettersName}</div>`;
-              let nameLocation = undefined;
+              let nameLocation = "";
               const textStatus = await getStatus(newStatus);
               if (last_location && last_location.name) {
                 nameLocation = last_location.name;

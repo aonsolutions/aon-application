@@ -18,6 +18,7 @@ import { AonEventAdd } from "./aon-event-add.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
+import { SigninSidenav, PresenceFilterInput } from "../../signinEnums.js";
 
 
 export class AonEventDetailList extends AonElement {
@@ -110,8 +111,8 @@ export class AonEventDetailList extends AonElement {
 
   buildToolbarDesk() {
     this.aonSigninEl.removeToolbarOptions();
-    this.aonSigninEl.addToolbarOption("Save", "add", (e) => this.aonEvent());
-    this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
+    this.aonSigninEl.addToolbarOption2(SigninSidenav.ADD, (e) => this.aonEvent());
+    this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
       this.getElement(`${this.id}Filter`).openFilter()
     );
   }
@@ -121,47 +122,17 @@ export class AonEventDetailList extends AonElement {
     let toolbarEl = this.getElement(this.TOOLBAR);
     this.aonSigninEl.removeToolbarOptions();
     toolbarEl.removeButtons();
+    this.aonSigninEl.addFloatOption(SigninSidenav.ADD, () => this.aonEvent() );
 
-    let floatButton = this.getElement(`${this.aonSigninEl.id}FloatSpan`);
-    if (!floatButton) {
-      this.aonSigninEl.addFloatOption(
-        {
-          id: "AddEvent",
-          name: "addevent",
-          icon: "add",
-        },
-        () => this.aonEvent()
-      );
-    }
     toolbarEl.addButton2(UserAction.BACK, () => this.back());
-    this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
+    this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
       filterEl.openFilter()
     );
   }
 
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
-    let inputs = [
-      {
-        type: "select",
-        id: "period",
-        name: "period",
-        title: "Período",
-      },
-      {
-        type: "date",
-        name: "startDate",
-        id: "startDate",
-        title: "Desde",
-      },
-      {
-        type: "date",
-        name: "endDate",
-        id: "endDate",
-        title: "Hasta",
-      },
-    ];
-    aonFilter.setInputs(inputs);
+    aonFilter.setInputs(PresenceFilterInput);
     aonFilter.addEventListener("applyFilter", ({ detail }) => {
       if (detail) this.aonSigninParentEl.setDataFilter(detail);
     });
@@ -262,7 +233,7 @@ export class AonEventDetailList extends AonElement {
           const status = await getStatus(newStatus);
           const textStatus = status.name;
           const lettersHtml = `<div class="profile-letters ${newStatus}">${textStatus.substr(0,1)}</div>`;
-          let nameLocation = undefined;
+          let nameLocation = "";
           if (resp.location && resp.location.name) {
             nameLocation = resp.location.name;
           } else if (resp.coordinates) {

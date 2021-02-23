@@ -5,6 +5,7 @@ import { getPeriod } from "../../services/service.js";
 import { formatDateOrigin, setValueName } from "../../services/utils.js";
 import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
 import { AonLocationList } from "./time-control/location/aon-location-list.js";
+import { SigninSidenav } from "./signinEnums.js";
 import "../../components/aon-toast.js";
 import "../../components/aon-application.js";
 
@@ -48,13 +49,11 @@ export class AonSignin extends AonElement {
   buildToolbar() {
     const options = [
       {
-        name: "Presencia",
-        icon: "account_box",
+        ...SigninSidenav.PRESENCE,
         fn: () => this.paintViewPresenceList()
       },
       {
-        name: "Ubicaciones",
-        icon: "location_on",
+        ...SigninSidenav.LOCATION,
         fn: () =>{
           this.aonSigninEl.setContent(new AonLocationList());
           this.periodSideNavDisplay(false);
@@ -67,24 +66,20 @@ export class AonSignin extends AonElement {
 
     const options2 = [
       {
-        icon: 'today',
-        name: "Hoy",
+        ...SigninSidenav.PERIOD.TODAY,
         fn: () => this.setDataFilter({period:"today"})
       },
       {
-        icon: 'today',
-        name: "Ayer",
+        ...SigninSidenav.PERIOD.YESTERDAY,
         fn: () =>this.setDataFilter({period:"yesterday"})
       },
       {
-        icon: 'today',
-        name: "Ésta semana",
+        ...SigninSidenav.PERIOD.THIS_WEEK,
         fn: () =>this.setDataFilter({period:"this_week"})
       },
       {
-        icon: 'today',
-        name: "Éste mes",
-        fn: () =>this.setDataFilter({period:"this_month"})
+        ...SigninSidenav.PERIOD.THIS_MONTH,
+        fn: (e) => this.setDataFilter({period:"this_month"})
       }
     ];
     

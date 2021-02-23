@@ -48,7 +48,7 @@ export class AonLocationAdd extends AonElement {
     this.id = this.id || "aonLocationAdd";
     this.TOOLBAR = this.id + "Toolbar";
     this.aonSigninEl = this.getElement("aonSignin");
-    this.TOAST = this.getElement(`${this.aonSigninEl.id}Toast`);
+    this.TOAST = this.getElement(`${this.aonSigninEl.TOAST}`);
   }
 
   connectedCallback() {
@@ -247,7 +247,7 @@ export class AonLocationAdd extends AonElement {
   }
 
   async delete() {
-    if (confirm(`Estas seguro de eliminar la ${this.NAME}?`)) {
+    if (confirm(`Estas seguro de eliminar ${this.NAME}?`)) {
       this.aonSigninEl.startLoading();
       try {
         const data = this.getFormValues();

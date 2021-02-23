@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { formatDateOrigin, formatDate, setFullDate, setValueName, sortBy, timeHour, setDateTimestampDay, setDateTpDay, firstLetters } from "../../../../services/utils.js";
+import { formatDateOrigin, setFullDate, setValueName, sortBy, timeHour,  setDateTpDay, firstLetters } from "../../../../services/utils.js";
 import {
   getGroups,
   getPeriod,
@@ -14,6 +14,7 @@ import {AonEventDetailList} from "./aon-event-detail-list.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
+import { EventListFilterInput, SigninSidenav } from "../../signinEnums.js";
 
 
 export class AonEventList extends AonElement {
@@ -109,7 +110,7 @@ export class AonEventList extends AonElement {
   buildToolbarDesk() {
     this.aonSigninEl.removeToolbarOptions();
     const filterEl =  this.getElement(`${this.id}Filter`);
-    this.aonSigninEl.addToolbarOption("Filter", "tune", (e) => filterEl.openFilter());
+    this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) => filterEl.openFilter());
   }
   buildToolbarMobile(){
     this.aonSigninEl.removeToolbarOptions();
@@ -117,38 +118,12 @@ export class AonEventList extends AonElement {
     const filterEl =  this.getElement(`${this.id}Filter`);
     toolbarEl.removeButtons();
 		toolbarEl.addButton2(UserAction.BACK, () => this.back());
-    this.aonSigninEl.addToolbarOption("Filter", "tune", (e) => filterEl.openFilter());
+    this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) => filterEl.openFilter());
   }
 
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
-    let inputs = [
-      {
-        type: "select",
-        id: "group",
-        name: "group",
-        title: "Agrupar por ",
-      },
-      {
-        type: "select",
-        id: "period",
-        name: "period",
-        title: "Período",
-      },
-      {
-        type: "date",
-        name: "startDate",
-        id: "startDate",
-        title: "Desde",
-      },
-      {
-        type: "date",
-        name: "endDate",
-        id: "endDate",
-        title: "Hasta",
-      },
-    ];
-    aonFilter.setInputs(inputs);
+    aonFilter.setInputs(EventListFilterInput);
     aonFilter.addEventListener("applyFilter", ({detail}) => {
       if(detail) this.aonSigninParentEl.setDataFilter(detail);
     });

@@ -3,6 +3,7 @@ import { getLocation } from "../../../../services/service.js";
 import { AonLocationAdd } from "./aon-location-add.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
+import { SigninSidenav } from "../../signinEnums.js";
 
 export class AonLocationList extends AonElement {
   TABLE_ID;
@@ -68,19 +69,11 @@ export class AonLocationList extends AonElement {
     this.aonSigninEl.removeToolbarOptions();
 
     if (this.isMobile()) {
-      let floatButton = this.getElement(`${this.aonSigninEl.id}FloatSpan`);
-      if (!floatButton) {
-        this.aonSigninEl.addFloatOption(
-          {
-            id: "AddLocation",
-            name: "addlocation",
-            icon: "add",
-          },
+        this.aonSigninEl.addFloatOption(SigninSidenav.ADD,
           () => this.add()
         );
-      }
     } else {
-      this.aonSigninEl.addToolbarOption("Add", "add", () => this.add());
+      this.aonSigninEl.addToolbarOption2(SigninSidenav.ADD, () => this.add());
     }
   }
 
