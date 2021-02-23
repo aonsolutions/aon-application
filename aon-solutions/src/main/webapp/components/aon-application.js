@@ -477,6 +477,11 @@ export class AonApplication extends AonElement {
     if (toolbar) toolbar.setAttribute("option", title);
   }
 
+  addTitleToolSection(title) {
+    let toolbar = this.getElement(this.TOOLBAR);
+    if (toolbar) toolbar.addTitleToolSection(title);
+  }
+
   addToolbarOption2(option, fn) {
     this.getElement(this.TOOLBAR).addButton2(option, fn);
   }

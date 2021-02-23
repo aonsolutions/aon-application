@@ -109,6 +109,20 @@ export class AonTable extends AonElement {
     header.appendChild(th);
   }
 
+  addColumnIcon(name, type, id, width, fn) {
+    let header = this.getElement(this.getId() + "TableHeader");
+    let th = document.createElement("th");
+    th.innerHTML = `<aon-icon-button id="${this.getId()}Back" icon="${name}" noHover="true"></aon-icon-button>`;
+    th.style.width = width;
+    this.columns.push({ name, type, id, width });
+    header.appendChild(th);
+    let iconBack = this.getElement(`${this.getId()}Back`);
+    if(iconBack) {
+      iconBack.firstChild.style.paddingTop = "15px";
+      iconBack.addEventListener('click', e => fn(e))
+    }
+  }
+
   addRow(value, fn, contextMenu) {
     let body = this.getElement(this.getId() + "TableBody");
     if (!body) return true;
@@ -166,21 +180,6 @@ export class AonTable extends AonElement {
     });
 
     return tr;
-  }
-
-  addBack(fn){
-    if(!this.getElement("backTable")){
-      let headerTable = this.getElement(this.THEADER);   
-      let thIcon = this.createElement("th");
-      thIcon.id = "backTable";
-      thIcon.innerHTML = `<aon-icon-button id="${this.getId()}Back" icon="arrow_back" noHover="true"></aon-icon-button>`;
-      headerTable.insertBefore(thIcon , headerTable.childNodes[0]);
-      let iconBack = this.getElement(`${this.getId()}Back`);
-      if(iconBack) {
-        iconBack.firstChild.style.paddingTop = "15px";
-        iconBack.addEventListener('click', e => fn(e))
-      }
-    }
   }
 
   removeRows() {

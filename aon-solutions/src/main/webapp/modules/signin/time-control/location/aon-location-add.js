@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { setValueName, serializeForm } from "../../../../services/utils.js";
+import { setValueName, serializeForm, waitEl } from "../../../../services/utils.js";
 import { deleteLocation, saveLocation } from "../../../../services/service.js";
 import { getPosition } from "../../../../services/maps.js";
 import "../../../../components/aon-card.js";
@@ -12,6 +12,8 @@ import "../../../../components/aon-switch.js";
 import "../../../../components/aon-icon-button.js";
 import "./aon-location-list.js";
 import { API_KEY_MAP } from "../../../../environments/constants.js";
+import { UserAction } from "../../../user/userEnums.js";
+import { ToolbarType } from "../../../../models/enums.js";
 
 export class AonLocationAdd extends AonElement {
   TOAST;
@@ -44,24 +46,19 @@ export class AonLocationAdd extends AonElement {
     this.setAttribute("data", JSON.stringify(value));
   }
 
+
   constructor() {
     super();
     this.NAME = "Ubicación";
     this.id = this.id || "aonLocationAdd";
     this.TOOLBAR = this.id + "Toolbar";
     this.aonSigninEl = this.getElement("aonSignin");
-    this.aonSigninToolbar = this.getElement(`${this.aonSigninEl.id}Toolbar`);
-    this.aonSigninToolbar.setAttribute("option", `Registrar ${this.NAME}`);
     this.TOAST = this.getElement(`${this.aonSigninEl.id}Toast`);
   }
 
   connectedCallback() {
-    this.paintView();
     this.build();
-    this.eventListener();
   }
-
-  disconnectedCallback() {}
 
   attributeChangedCallback(name, oldValue, newValue) {
     if ("data" == name && newValue) {
@@ -70,6 +67,12 @@ export class AonLocationAdd extends AonElement {
     if ("add" == name && newValue) {
       this.paintViewMap(undefined);
     }
+  }
+
+
+  async build() {
+    this.paintView();
+    this.buildToolbar();
   }
 
   paintView() {
@@ -93,8 +96,9 @@ export class AonLocationAdd extends AonElement {
               }
             </style>
         `;
-
+    const aonToolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}"> </aon-toolbar>`;
     const form = `
+          ${aonToolbar}
         <form id="${this.id}Form" action="#" onsubmit="return false;">
             <div id="${this.id}Div">
                 <div class="aonCol-sm-12">
@@ -124,60 +128,27 @@ export class AonLocationAdd extends AonElement {
         `);
   }
 
-  build() {
-    if (this.isMobile()) this.buildToolbarMobile();
-    else this.buildToolbarDesk();
-  }
-
-  eventListener() {}
-
-  buildToolbarDesk() {
-    const toolbar = this.aonSigninToolbar;
-    if (toolbar) {
-      toolbar.removeButtons();
-      toolbar.addButton2(
-        {
-          id: "Save",
-          name: "Guardar",
-          icon: "save",
-        },
-        () => this.formSubmit()
-      );
-
-      toolbar.addButton2(
-        {
-          id: "Delete",
-          name: "Eliminar",
-          icon: "delete",
-        },
-        () => this.removeData()
-      );
-
-      toolbar.addButton2(
-        {
-          id: "Previous",
-          name: "Volver",
-          icon: "arrow_back",
-        },
-        () => this.back()
-      );
+  buildToolbar(){
+    const toolbarEl = this.getElement(this.TOOLBAR);
+    toolbarEl.removeButtons();
+    if(this.data && this.data.id){
+      toolbarEl.addButton2(UserAction.DELETE, () =>this.delete());
+      toolbarEl.title = "Edición";
+    } else {
+      toolbarEl.title = "Registro";
     }
+    toolbarEl.addButton2(UserAction.SAVE, () => this.save());
+    toolbarEl.addButton2(UserAction.BACK, () => this.back());
   }
 
-  buildToolbarMobile() {
-    this.aonSigninEl.removeToolbarOptions();
-    this.aonSigninEl.addToolbarOption("Save", "save", () => this.formSubmit());
-  }
-
-  paintViewMap(data) {
-    let aonMap = this.getElement(`${this.id}Map`);
+  async paintViewMap(data) {
+    let aonMap = await waitEl(`#${this.id}Map`);
     aonMap.innerHTML = "";
     const zoom = 16;
     let iframeId = this.id + "Iframe";
     let iframe = this.createElement("iframe");
     iframe.id = iframeId;
     iframe.frameborder = 0;
-    // max-width:640px;
     iframe.style = "border:0;height: 400px;width: 100%;";
     if (data && data.latitude && data.longitude) {
       iframe.src = `https://maps.google.es/maps?q=${data.latitude},${data.longitude}&z=${zoom}&output=embed&hl=es`;
@@ -185,27 +156,6 @@ export class AonLocationAdd extends AonElement {
       iframe = this.iframeOnload(iframe, zoom);
     }
     aonMap.appendChild(iframe);
-  }
-
-  getFormValues() {
-    const form = this.getElement(`${this.id}Form`);
-    return serializeForm(form);
-  }
-
-  async listStatus() {
-    let status = this.getElement("status");
-    try {
-      const resp = await getStatus();
-      status.options = JSON.stringify(
-        resp.map((r) => {
-          return {
-            ...r,
-            name: `${r.name}`,
-            value: r.value,
-          };
-        })
-      );
-    } catch (error) {}
   }
 
   iframeOnload(iframe, zoom) {
@@ -259,6 +209,12 @@ export class AonLocationAdd extends AonElement {
     return iframe;
   }
 
+  getFormValues() {
+    const form = this.getElement(`${this.id}Form`);
+    return serializeForm(form);
+  }
+
+
   setCoordinates(data) {
     if (data && data.latitude && data.longitude) {
       setValueName("latitude", data.latitude);
@@ -266,40 +222,38 @@ export class AonLocationAdd extends AonElement {
     }
   }
 
-  setFormValues() {
+  async setFormValues() {
+    await waitEl('#latitude');
     const data = this.data;
     if (data) {
-      this.aonSigninToolbar.setAttribute("option", "Modificar " + this.NAME);
       const obj = { ...data };
       for (const property in obj) setValueName(property, obj[property]);
       this.paintViewMap(data);
     }
   }
 
-  formSubmit() {
-    this.save();
-  }
-
   async save() {
     const data = this.getFormValues();
     const count = Object.keys(data).length;
     if (count > 3) {
+      this.aonSigninEl.startLoading();
       try {
         const { id } = await saveLocation({
           ...data,
           coordinates: `${data.latitude},${data.longitude}`,
         });
         this.TOAST.start({ message: `Datos guardados!`, type: "success" });
-        if (id) {
-          setValueName("id", id);
-        }
-      } catch (error) {}
+        if (id) { setValueName("id", id); }
+      } catch (error) {
+        this.TOAST.start({ message: error, type: "error" });
+      }
+      this.aonSigninEl.stopLoading();
     }
   }
 
-  async removeData() {
+  async delete() {
     if (confirm(`Estas seguro de eliminar la ${this.NAME}?`)) {
-      this.aonSigninEl.startLoader();
+      this.aonSigninEl.startLoading();
       try {
         const data = this.getFormValues();
         await deleteLocation(data);
@@ -308,7 +262,7 @@ export class AonLocationAdd extends AonElement {
       } catch (error) {
         this.TOAST.start({ message: error, type: "error" });
       }
-      this.aonSigninEl.stopLoader();
+      this.aonSigninEl.stopLoading();
     }
   }
 

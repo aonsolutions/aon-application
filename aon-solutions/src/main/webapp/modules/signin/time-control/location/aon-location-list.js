@@ -1,10 +1,8 @@
 import { AonElement } from "../../../../components/AonElement.js";
+import { getLocation } from "../../../../services/service.js";
+import { AonLocationAdd } from "./aon-location-add.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
-import { getLocation } from "../../../../services/service.js";
-
-import "./aon-location-add.js";
-import "../../../../components/aon-dialog.js";
 
 export class AonLocationList extends AonElement {
   TABLE_ID;
@@ -34,7 +32,6 @@ export class AonLocationList extends AonElement {
 
   constructor() {
     super();
-
     this.aonSigninEl = this.getElement("aonSignin");
     this.aonSigninToolbar = this.getElement(
       `${this.aonSigninEl.id}Toolbar`
@@ -160,16 +157,11 @@ export class AonLocationList extends AonElement {
   }
 
   add(el, data) {
-    let id = "aonLocationAdd";
-    this.aonSigninEl.setContentHTML(
-      `<aon-location-add id="${id}"></aon-location-add>`
-    );
-    const aonEl = this.getElement(id);
-    if (data && aonEl) {
-      aonEl.data = data;
-    } else if(!data) {
-      aonEl.add = true;
-    }
+    let aonLocationAdd = new AonLocationAdd();
+    aonLocationAdd.id = "aonLocationAdd";
+    if (data) aonLocationAdd.data = data;
+    else aonLocationAdd.add = true;
+    this.aonSigninEl.setContent(aonLocationAdd);
   }
 }
 window.customElements.define("aon-location-list", AonLocationList);

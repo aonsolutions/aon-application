@@ -1,12 +1,12 @@
 import { AonElement } from "../../components/AonElement.js";
 
 import {AonPresenceList} from "./time-control/aon-presence-list.js";
-import "./time-control/location/aon-location-list.js";
-import "./time-control/location/aon-location-add.js";
-import "../../components/aon-toast.js";
-import "../../components/aon-application.js";
 import { getPeriod } from "../../services/service.js";
 import { formatDateOrigin, setValueName } from "../../services/utils.js";
+import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
+import { AonLocationList } from "./time-control/location/aon-location-list.js";
+import "../../components/aon-toast.js";
+import "../../components/aon-application.js";
 
 export class AonSignin extends AonElement {
   AON_SIGNIN;
@@ -56,9 +56,7 @@ export class AonSignin extends AonElement {
         name: "Ubicaciones",
         icon: "location_on",
         fn: () =>{
-          this.aonSigninEl.setContentHTML(
-            `<aon-location-list id="aonLocationList"></aon-location-list>`
-          );
+          this.aonSigninEl.setContent(new AonLocationList());
           this.periodSideNavDisplay(false);
         }
 
@@ -128,13 +126,13 @@ export class AonSignin extends AonElement {
   }
 
   openLocationAdd(el, data) {
-    let id = "aonLocationAdd";
-    this.aonSigninEl.setContentHTML(`<aon-location-add id="${id}"></aon-location-add>`);
     const {coordinates} = data;
-    const aonEventEl = this.getElement(id);
-    if(aonEventEl && coordinates && coordinates.latitude && coordinates.longitude) {
-      aonEventEl.data = { ...data, latitude:coordinates.latitude, longitude: coordinates.longitude};
+    let aonLocationAdd = new AonLocationAdd();
+    aonLocationAdd.id = "aonLocationAdd";
+    if(coordinates && coordinates.latitude && coordinates.longitude) {
+      aonLocationAdd.data = {latitude:coordinates.latitude, longitude: coordinates.longitude};
     }
+    this.aonSigninEl.setContent(aonLocationAdd);
   }
 }
 window.customElements.define("aon-signin", AonSignin);

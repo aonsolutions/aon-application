@@ -3,8 +3,7 @@ import {
   setValueName,
   serializeForm,
   setTime,
-  formatDateOrigin,
-  isEmptyObject,
+  formatDateOrigin
 } from "../../../../services/utils.js";
 import {
   deleteTimeControl,
@@ -52,17 +51,16 @@ export class AonEventAdd extends AonElement {
   constructor() {
     super();
     this.id = this.id || "aonEventAdd";
+    this.TOOLBAR = this.id + "Toolbar";
     this.aonSigninEl = this.getElement("aonSignin");
     this.aonSigninEl.addToolbarTitle("Registrar evento");
     this.TOAST = this.getElement(`${this.aonSigninEl.id}Toast`);
     this.aonSigninParentEl = this.aonSigninEl.getParent();
     this.aonSigninParentEl.periodSideNavDisplay(false);
-    this.TOOLBAR = this.id + "Toolbar";
   }
 
   connectedCallback() {
     this.build();
-    this.eventListener();
   }
 
   attributeChangedCallback(name, oldValue, newValue) {}
@@ -70,8 +68,8 @@ export class AonEventAdd extends AonElement {
   async build() {
     this.paintView();
     await this.initLists();
-    if (this.isMobile()) this.buildToolbarMobile();
-    else this.buildToolbarDesk();
+    this.buildToolbar();
+    this.eventListener();
   }
 
 
@@ -93,7 +91,7 @@ export class AonEventAdd extends AonElement {
               }
             </style>
         `;
-    const aonToolbar = this.isMobile() ? "" : `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="EVENTO"> </aon-toolbar>`;
+    const aonToolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}"> </aon-toolbar>`;
     const form = `
           ${aonToolbar}
         <form id="${this.id}Form" action="#" onsubmit="return false;">
@@ -134,7 +132,7 @@ export class AonEventAdd extends AonElement {
   async initLists() {
     await this.listStatus();
     await this.listLocation();
-    if (this.data) this.setValues();
+    this.setValues();
   }
 
   eventListener() {
@@ -148,23 +146,24 @@ export class AonEventAdd extends AonElement {
         );
       }
     });
+
+    let aonSubmit = this.getElement(`${this.id}Submit`);
+    if (aonSubmit) aonSubmit.addEventListener('click', () => this.save());
   }
 
-  buildToolbarDesk() {
-    let eventToolbar = this.getElement(this.TOOLBAR);
-		eventToolbar.removeButtons();
-
-		eventToolbar.addButton2(UserAction.SAVE, () => this.formSubmit());
+  buildToolbar(){
+    let toolbarEl = this.getElement(this.TOOLBAR);
+    toolbarEl.removeButtons();
     if(this.data && this.data.id){
-      eventToolbar.addButton2(UserAction.DELETE, () => this.delete());
+      toolbarEl.addButton2(UserAction.DELETE, () =>this.delete());
+      toolbarEl.title = "Edición";
+    } else {
+      toolbarEl.title = "Registro";
     }
-		eventToolbar.addButton2(UserAction.BACK, () => this.back());
+    toolbarEl.addButton2(UserAction.SAVE, () => this.save());
+    toolbarEl.addButton2(UserAction.BACK, () => this.back());
   }
 
-  buildToolbarMobile() {
-    this.aonSigninEl.removeToolbarOptions();
-    this.aonSigninEl.addToolbarOption("Save", "save", () => this.formSubmit());
-  }
 
   getFormValues() {
     const form = this.getElement(`${this.id}Form`);
@@ -205,41 +204,24 @@ export class AonEventAdd extends AonElement {
 
   setValues() {
     if (this.data) {
-      const data = this.data;
-      if(isEmptyObject(data.coordinates)) delete data.coordinates;
-      else if(data.coordinates){
-        data.coordinates = data.coordinates.latitude+","+data.coordinates.longitude;
-      }
-    
+      let data = this.data;
+      if(data.coordinates){data.coordinates = data.coordinates.latitude+","+data.coordinates.longitude;}
+      if(data.location && data.location.id){data.location = data.location.id;}
       let date = new Date(data.date);
       if (!date.isValid()) { date = new Date();}
 
-      const newTime = setTime(date);
-      let obj = {
-        ...data,
-        time: newTime,
-        date: date
-      };
-      if (data.id) {
-        this.aonSigninEl.addToolbarTitle("Modificar evento");
-        if (data.location && data.location.id) {
-          obj["location"] = data.location.id;
-        }
-      }
-      for (const property in obj) {
-        const value = obj[property];
+      data.date = date;
+      data.time = setTime(date);
+
+      for (const property in data) {
+        const value = data[property];
         if(value) setValueName(property, value);
       }
       this.getElement("name").disabled = "disabled";
     }
   }
 
-  formSubmit() {
-    this.save();
-  }
-
   async save() {
-    console.log(this.data);
     this.aonSigninEl.startLoading();
     let formValues = this.getFormValues();
     const data = {
@@ -251,9 +233,7 @@ export class AonEventAdd extends AonElement {
     };
     try {
       const { id } = await saveTimeControlDetail(data);
-      if (id) {
-        setValueName("id", id);
-      }
+      if (id) { setValueName("id", id); }
       this.TOAST.start({
         message: "Datos guardados!",
         type: "success",
@@ -281,8 +261,8 @@ export class AonEventAdd extends AonElement {
   }
 
   back() {
-    this.aonSigninEl.back();
     let aonEventDetailList = new AonEventDetailList();
+    console.log(this.data);
     if(this.data && this.data.date){
       const startDate = formatDateOrigin(new Date(this.data.date));
       aonEventDetailList.DATE_TASK ={

@@ -230,7 +230,7 @@ export class AonToolbar extends AonElement {
 		const id = this.TITLE_SECTION + action.id + 'Button';
 		if(this.getElement(id) == null) {
 			let span = document.createElement('span');
-			span.style.marginRight = '20px';
+			// span.style.marginRight = '20px';
 			span.innerHTML = `<aon-icon-button id="${id}" icon="${action.icon}" title="${action.name}"> </aon-icon-button>`;
 
 			let titleSection = this.getElement(this.TITLE_SECTION);
@@ -238,6 +238,19 @@ export class AonToolbar extends AonElement {
 
 			let b = document.getElementById(id);
 			b.addEventListener('click', fn);
+		}
+	}
+
+	addTitleToolSection(title) {
+		const id = this.TOOL_SECTION + 'Title';
+		if(this.getElement(id) == null) {
+			this.addSeparator();
+			let span = document.createElement('span');
+			span.style.marginRight = "10px";
+			span.innerHTML = title;
+			span.id = id;
+			let titleSection = this.getElement(this.TOOL_SECTION);
+			titleSection.insertBefore(span, titleSection.children[0]);
 		}
 	}
 

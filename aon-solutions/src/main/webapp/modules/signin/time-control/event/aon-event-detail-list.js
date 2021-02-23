@@ -1,17 +1,23 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { isEmptyObject, setDateTimestamp, setValueName, sortBy } from "../../../../services/utils.js";
+import {
+  removeEmpty,
+  setDateTimestamp,
+  setValueName,
+  sortBy,
+} from "../../../../services/utils.js";
 import {
   getStatus,
   getPeriod,
-  getTimeControlDetail
+  getTimeControlDetail,
 } from "../../../../services/service.js";
 
-import { StringTwoLetters } from "../utils.js";
 import { AonEventList } from "./aon-event-list.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
 import "./aon-event-add.js";
+import { ToolbarType } from "../../../../models/enums.js";
+import { UserAction } from "../../../user/userEnums.js";
 
 export class AonEventDetailList extends AonElement {
   TABLE_ID;
@@ -34,7 +40,7 @@ export class AonEventDetailList extends AonElement {
   }
 
   set data(value) {
-    if(value) this.setAttribute("data", JSON.stringify(value));
+    if (value) this.setAttribute("data", JSON.stringify(value));
   }
 
   get id() {
@@ -57,16 +63,16 @@ export class AonEventDetailList extends AonElement {
     super();
   }
 
-
   connectedCallback() {
     this.initialize();
     this.aonSigninEl.addToolbarTitle("Detalle");
     this.build();
   }
 
-  initialize(){
-    this.id = this.id || "aonEvent";
+  initialize() {
+    this.id = this.id || "aonEventDetail";
     this.TABLE_ID = this.id + "Table";
+    this.TOOLBAR = this.id + "Toolbar";
     this.aonSigninEl = this.getElement("aonSignin");
     this.aonSigninParentEl = this.aonSigninEl.getParent();
     this.aonSigninParentEl.periodSideNavDisplay(true);
@@ -78,36 +84,58 @@ export class AonEventDetailList extends AonElement {
 
   async build() {
     this.paintView();
-    this.buildToolbar();
+    if (this.isMobile()) {
+      this.buildToolbarMobile();
+    } else {
+      this.buildToolbarDesk();
+    }
     await this.buildFilter();
     await this.getTable();
   }
 
-  buildToolbar() {
-    this.aonSigninEl.removeToolbarOptions();
-
+  paintView() {
+    let innerHTML = `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
+    const aonToolbar = this.isMobile()
+      ? `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}"> </aon-toolbar>`
+      : "";
     if (this.isMobile()) {
-      let floatButton = this.getElement(`${this.aonSigninEl.id}FloatSpan`);
-      if (!floatButton) {
-        this.aonSigninEl.addFloatOption(
-          {
-            id: "AddEvent",
-            name: "addevent",
-            icon: "add",
-          },
-          () => this.aonEvent()
-        );
-      }
+      innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
     } else {
-      const filterEl = this.getElement(`${this.id}Filter`);
-      this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
-        filterEl.openFilter()
-      );
-      // this.aonSigninEl.addToolbarOption("Previus", "arrow_back", (e) => this.back());
-      this.aonSigninEl.addToolbarOption("Add", "add", () =>
-      this.aonEvent()
-    );
+      innerHTML = innerHTML + ` <aon-table id='${this.TABLE_ID}' />`;
     }
+
+    this.innerHTML = aonToolbar + innerHTML;
+  }
+
+  buildToolbarDesk() {
+    this.aonSigninEl.removeToolbarOptions();
+    this.aonSigninEl.addToolbarOption("Save", "add", (e) => this.aonEvent());
+    this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
+      this.getElement(`${this.id}Filter`).openFilter()
+    );
+  }
+
+  buildToolbarMobile() {
+    const filterEl = this.getElement(`${this.id}Filter`);
+    let toolbarEl = this.getElement(this.TOOLBAR);
+    this.aonSigninEl.removeToolbarOptions();
+    toolbarEl.removeButtons();
+
+    let floatButton = this.getElement(`${this.aonSigninEl.id}FloatSpan`);
+    if (!floatButton) {
+      this.aonSigninEl.addFloatOption(
+        {
+          id: "AddEvent",
+          name: "addevent",
+          icon: "add",
+        },
+        () => this.aonEvent()
+      );
+    }
+    toolbarEl.addButton2(UserAction.BACK, () => this.back());
+    this.aonSigninEl.addToolbarOption("Filter", "tune", (e) =>
+      filterEl.openFilter()
+    );
   }
 
   async buildFilter() {
@@ -133,42 +161,30 @@ export class AonEventDetailList extends AonElement {
       },
     ];
     aonFilter.setInputs(inputs);
-    aonFilter.addEventListener("applyFilter", ({detail}) => {
-      if(detail) this.aonSigninParentEl.setDataFilter(detail);
+    aonFilter.addEventListener("applyFilter", ({ detail }) => {
+      if (detail) this.aonSigninParentEl.setDataFilter(detail);
     });
 
     let periodEl = this.getElement("period");
     periodEl.options = JSON.stringify(await getPeriod());
 
-    periodEl.addEventListener('change', ({detail}) => {
-      if(detail){
-        const {startDate, endDate} = detail;
-        setValueName('startDate', startDate);
-        setValueName('endDate', endDate);
+    periodEl.addEventListener("change", ({ detail }) => {
+      if (detail) {
+        const { startDate, endDate } = detail;
+        setValueName("startDate", startDate);
+        setValueName("endDate", endDate);
       }
     });
 
-    this.getElement("startDate").addEventListener("change",(ev)=>{
+    this.getElement("startDate").addEventListener("change", (ev) => {
       periodEl.value = "personalized";
     });
-    this.getElement("endDate").addEventListener("change",(ev)=>{
+    this.getElement("endDate").addEventListener("change", (ev) => {
       periodEl.value = "personalized";
     });
-  }
-
-  paintView() {
-    let innerHTML = `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
-    if (this.isMobile()) {
-      innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
-    } else {
-      innerHTML = innerHTML + ` <aon-table id='${this.TABLE_ID}' />`;
-    }
-
-    this.innerHTML = innerHTML;
   }
 
   async getTable() {
-
     this.aonSigninEl.startLoader();
     if (this.isMobile()) {
       await this.getTableMobile();
@@ -183,12 +199,9 @@ export class AonEventDetailList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addBack((e)=>this.back());
-      aonTable.addColumn("", "string", "lettersHtml", "5%");
-      aonTable.addColumn("Nombre", "string", "name", "35%");
-      aonTable.addColumn("Estado", "", "status", "15%");
-      aonTable.addColumn("Fecha", "date", "dateParse", "25%");
-      aonTable.addColumn("Ubicación", "string", "nameLocation", "20%");
+      aonTable.addColumnIcon("arrow_back", "string", "lettersHtml", "6%", ()=>this.back());
+      aonTable.addColumn("Fecha", "date", "dateParse", "40%");
+      aonTable.addColumn("Ubicación", "string", "nameLocation", "30%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -210,15 +223,15 @@ export class AonEventDetailList extends AonElement {
   async getTableMobile() {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
-      aonTable.createAonDialog();
       try {
         const resp = await this.getData();
         aonTable.removeAllLi();
         resp.map((res, idx) => {
           let options = {
-            iconHtmlCustom: `${res.lettersHtml}`,
-            title: `${res.name} (${res.textStatus})`,
-            subtitle: `${res.dateParse}<span style="float: right;">${res.nameLocation}</span> `,
+            paddingTopTitle: "5px",
+            iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.dateParse}</span>`,
+            title: `${res.textStatus}`,
+            subtitle: `<span style="float: right;">${res.nameLocation}</span>`,
           };
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
         });
@@ -232,47 +245,55 @@ export class AonEventDetailList extends AonElement {
     this.aonSigninEl.startLoader();
     let data = [];
     try {
-        let filter = null;
-        try { filter = {...this.aonSigninParentEl._filter, ...this.DATE_TASK};} catch (error) {}
+      let filter = null;
+      try {
+        filter = { ...this.aonSigninParentEl._filter, ...this.DATE_TASK };
+      } catch (error) {}
 
-        const datos = await getTimeControlDetail(filter);
-        if(datos){
-          sortBy(datos, 'date', 'desc').forEach(
-            async (resp) => {
-              const name = resp.task_holder.name;
-              if(!this.TASK_HOLDER) this.TASK_HOLDER =  resp.task_holder;
-              const lettersName = StringTwoLetters(name);
-              const newStatus = resp.status.toLowerCase();
-              const lettersHtml = `<div class="profile-letters ${newStatus}">${lettersName}</div>`;
-              const textStatus = await getStatus(newStatus);
-              let nameLocation = undefined;
-              if (resp.location && resp.location.name) {
-                nameLocation = resp.location.name;
-              } else if(!isEmptyObject(resp.coordinates)) {
-                nameLocation = `<aon-icon-button id="iconLocation" icon="add_location" noHover="true"></aon-icon-button>`;
-              }
-              const obj = {
-                ...resp,
-                lettersHtml,
-                textStatus: textStatus.name,
-                status: newStatus,
-                name: `${name}`,
-                nameLocation,
-                dateParse: setDateTimestamp(resp.date)
-              };
-              data.push(obj);
-            }
-          );
-        }
+      const datos = await getTimeControlDetail(filter);
+      if (datos) {
+        sortBy(datos, "date", "desc").forEach(async (resp) => {
+          removeEmpty(resp);
+          const name = resp.task_holder.name;
+          if (!this.TASK_HOLDER) this.TASK_HOLDER = resp.task_holder;
+          const newStatus = resp.status.toLowerCase();
+          const status = await getStatus(newStatus);
+          const textStatus = status.name;
+          const lettersHtml = `<div class="profile-letters ${newStatus}">${textStatus.substr(0,1)}</div>`;
+          let nameLocation = undefined;
+          if (resp.location && resp.location.name) {
+            nameLocation = resp.location.name;
+          } else if (resp.coordinates) {
+            nameLocation = `<aon-icon-button id="iconLocation" icon="add_location" noHover="true"></aon-icon-button>`;
+          }
+          const obj = {
+            ...resp,
+            lettersHtml,
+            textStatus,
+            status: newStatus,
+            name: `${name}`,
+            nameLocation,
+            dateParse: setDateTimestamp(resp.date),
+          };
+          data.push(obj);
+        });
+      }
     } catch (error) {
       console.log(error);
     }
-
+    this.paintName();
     return data;
   }
 
+  paintName(){
+    if(this.TASK_HOLDER) {
+      if(this.isMobile()) this.getElement(this.TOOLBAR).title = this.TASK_HOLDER.name;
+      else this.aonSigninEl.addTitleToolSection(this.TASK_HOLDER.name);
+    }
+  }
+
   aonEvent(el, data) {
-    if(el && "add_location" === el.target.textContent){
+    if (el && "add_location" === el.target.textContent) {
       this.aonSigninEl.getParent().openLocationAdd(el, data);
     } else {
       let id = "aonEventAdd";
@@ -280,10 +301,10 @@ export class AonEventDetailList extends AonElement {
         `<aon-event-add id="${id}"></aon-event-add>`
       );
       const aonEventEl = this.getElement(id);
-      if (!data && this.TASK_HOLDER){
-        data = {task_holder: this.TASK_HOLDER, name: this.TASK_HOLDER.name}; 
+      if (!data && this.TASK_HOLDER) {
+        data = { task_holder: this.TASK_HOLDER, name: this.TASK_HOLDER.name };
       }
-      if(data) aonEventEl.data = data;
+      if (data) aonEventEl.data = data;
     }
   }
 

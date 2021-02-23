@@ -1,8 +1,8 @@
 import { INPUTS_ALL } from '../environments/constants.js';
 
-const days = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+const days = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
 
-const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+const months = ["enero", "febrero", "marzo", "abrril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
 export const getReader = (file) => {
   return new Promise((resolve) => {
@@ -24,10 +24,31 @@ export const getReader = (file) => {
   });
 }
 
-export const isEmptyObject = (obj) => !obj || obj.constructor === Object &&  Object.keys(obj).length === 0;
+export const isEmptyObject = (obj) => !obj || (obj.constructor === Object &&  Object.keys(obj).length === 0);
+
+export const removeEmpty = (obj) => {
+  Object.keys(obj).forEach((key) =>  isEmptyObject(obj[key]) ?  delete obj[key] : null);
+  return obj;
+};
 
 //order by obj, campo, order asc or desc
 export const sortBy = (obj, value, orderBy='asc') =>  obj.sort((a, b) => 'asc' === orderBy.toLocaleLowerCase() ? a[value] - b[value] : b[value] - a[value]);
+
+export const waitEl = (selector)=> new Promise((resolve,reject)=>{
+  let i = 0;
+  let element = null;
+  let interval = setInterval(()=> {
+    i++;
+    element = document.querySelector(selector);
+    if (element) {
+      clearInterval(interval);
+      resolve(element);
+    } else if(i >= 100){ // 10 seg
+      clearInterval(interval);
+      reject("Element empty");
+    }
+  }, 100); // check every 100ms
+});
 
 export const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 
@@ -67,6 +88,8 @@ export const setValueName = (name, value) => {
   return el;
 }
 
+const addZero = (value, length) => value.toString().length < length ? addZero("0" + value, length) : value;
+
 export const timePaser = (time) =>{
   let msecPerMinute = 1000 * 60;
   let msecPerHour = msecPerMinute * 60;
@@ -85,16 +108,15 @@ export const timePaser = (time) =>{
     + (seconds < 10 ? '0' : '') + seconds;
 }
 
-export const timeHour = (time) =>{
- return timePaser(time).substr(0,5);
+export const timeHour = (time) => {
+  let arr = timePaser(time).split(":");
+  return  `${arr[0]}:${arr[1]}`;
 }
 
-const formatDate = (d) => {
+export const formatDate = (d) => {
   let date = new Date(d);
-  let day = date.getDate();
-  if (day <= 9) day = '0' + day;
-  let month = date.getMonth() + 1;
-  if (month <= 9) month = '0' + month;
+  let day = addZero(date.getDate(), 2);
+  let month = addZero(date.getMonth() + 1, 2);
   let year = date.getFullYear();
   return day + '/' + month + '/' + year;
 }
@@ -124,12 +146,11 @@ export const firstDayWeek = (d) => {
 
 export const lastDayWeek = (d) => firstDayWeek(new Date(d)) + 6;
 
+
 export const formatDateOrigin = (d) => {
   let date = new Date(d);
-  let day = date.getDate();
-  if (day <= 9) day = '0' + day;
-  let month = date.getMonth() + 1;
-  if (month <= 9) month = '0' + month;
+  let day = addZero(date.getDate(), 2);
+  let month = addZero(date.getMonth() + 1, 2);
   let year = date.getFullYear();
   return year + '-' + month + '-' + day;
 }
@@ -152,19 +173,23 @@ export const setDateTimestampDay = (d)=>{
   return day+", "+formatDate(date) + " " + setTime(date);
 }
 
+export const setFullDate = (d) => {
+  const date = new Date(d);
+  let dayText = days[date.getDay()];
+  let monthText = months[date.getMonth()];
+  return `${dayText}, ${date.getDate()} de ${monthText} de ${date.getFullYear()}`;
+}
+
 export const setTime = (date)=> {
-  let hour = date.getHours();
-  if (hour <= 9) hour = '0' + hour;
-  let min  = date.getMinutes();
-  if (min <= 9) min = '0' + min;
+  let hour =  addZero(date.getHours(), 2);
+  let min  =  addZero(date.getMinutes(), 2);
   return hour+":"+min;
 }
 
-
 export const getDayMonth = (date) => {
   const d = new Date(date);
-  let day = d.getDate();
-  if (day <= 9) day = '0' + day;
+  let day = addZero(d.getDate(), 2);
   const month = months[d.getMonth()];
   return day + '-' + month;
 }
+

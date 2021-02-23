@@ -168,14 +168,13 @@ export class AonPresenceList extends AonElement {
   async getTableMobile() {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
-      aonTable.createAonDialog();
       try {
         const resp = await this.getData();
         aonTable.removeAllLi();
         resp.map((res, idx) => {
           res.dateParse = setDateTimestamp(res.last_date);
           let options = {
-            iconHtmlCustom: `${res.lettersHtml}  <span style="float: right;">(${res.duration})</span> `,
+            iconHtmlCustom: `${res.lettersHtml} <span style="float: right;color: rgba(0,0,0,.54);">${res.duration}</span>`,
             title: `${res.name}`,
             subtitle: `${res.dateParse} <span style="float: right;">${res.nameLocation}</span> `,
           };

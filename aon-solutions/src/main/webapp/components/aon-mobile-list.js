@@ -83,14 +83,19 @@ export class AonMobileList extends AonElement {
 
     let div = document.createElement("div");
     div.className = "aonListText";
+    if(data.paddingTopTitle) div.style.paddingTop = data.paddingTopTitle;
     div.innerHTML = data.title;
 
-    let span3 = document.createElement("span");
-    span3.className = "aonLiSpanSubtitle";
-    span3.innerHTML = data.subtitle;
-
     span.appendChild(div);
-    span.appendChild(span3);
+
+    if(data.subtitle){
+      let span3 = document.createElement("span");
+      span3.className = "aonLiSpanSubtitle";
+      span3.innerHTML = data.subtitle;
+      span.appendChild(span3);
+    }
+  
+
     li.appendChild(span);
 
     ///OPTIONS
