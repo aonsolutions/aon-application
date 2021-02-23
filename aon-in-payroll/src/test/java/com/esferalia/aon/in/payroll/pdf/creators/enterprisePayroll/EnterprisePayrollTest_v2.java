@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
@@ -15,6 +16,7 @@ import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.Enterp
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayrollEntry;
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayrollEntry.EnterpriseEntryType;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
+import com.github.javafaker.Faker;
 
 
 public class EnterprisePayrollTest_v2 {
@@ -33,10 +35,21 @@ public class EnterprisePayrollTest_v2 {
 			HashMap<String, EnterprisePayrollEntry> categoria5 = new HashMap<>();
 			HashMap<String, EnterprisePayrollEntry> categoria6 = new HashMap<>();
 
+			Faker f = new Faker();
+			
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, "Andoni Etxebarria Azkuna", "Nómina",
-						9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9.99, 9999.99);
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, f.name().fullName(), "Nómina",
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999), 
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999), 
+						f.number().randomDouble(2, 0, 99999), 
+						f.number().randomDouble(2, 0, 99999)
+				);
 
 				categoria1.put(cat, e);
 				categoria2.put(cat, e);
@@ -45,9 +58,17 @@ public class EnterprisePayrollTest_v2 {
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "cet " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, "Amanda de la Vega Martín", "Nómina",
-						9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9999.99, 9.999,9999.99);
-
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, f.name().fullName(), "Nómina",
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999), 
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999), 
+						f.number().randomDouble(2, 0, 99999), 
+						f.number().randomDouble(2, 0, 99999)
+				);
 				categoria1.put(cat, e);
 				categoria2.put(cat, e);
 				categoria3.put(cat, e);
@@ -55,24 +76,33 @@ public class EnterprisePayrollTest_v2 {
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.SEG_SOCIAL, "Juan Pérez de la Vega Martín" + i, "Nómina",
-						29999.99, 29999.99, 29999.99, 29999.99, 29999.99, 9999.99, 29999.99, null,9999.99);
-
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.SEG_SOCIAL, f.name().fullName(), "Nómina",
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999), 
+						f.number().randomDouble(2, 0, 99999),
+						f.number().randomDouble(2, 0, 99999), 
+						f.number().randomDouble(2, 0, 99999), 
+						f.number().randomDouble(2, 0, 99999)
+				);
+				
 				categoria3.put(cat, e);
 				categoria4.put(cat, e);
 				categoria5.put(cat, e);
 				categoria6.put(cat, e);
 			}
 			
-			entries.put("Amurrio",categoria1);
-			entries.put("Vitoria",categoria2);
-			entries.put("Murgia",categoria3);
+			entries.put(f.pokemon().location(),categoria1);
+			entries.put(f.pokemon().location(),categoria2);
+			entries.put(f.pokemon().location(),categoria3);
 			
-			ss_entries.put("Amurrio",categoria4);
-			ss_entries.put("Donosti",categoria5);
-			ss_entries.put("Bilbao",categoria6);
+			ss_entries.put(f.pokemon().location(),categoria4);
+			ss_entries.put(f.pokemon().location(),categoria5);
+			ss_entries.put(f.pokemon().location(),categoria6);
 
-			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", "AON SOLUTIONS S.L",	entries, ss_entries);
+			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", f.zelda().game() + " S.L",	entries, ss_entries);
 			PdfMaker.print_enterprise_payroll(payroll, new FileOutputStream("Enterprise_payroll.pdf"),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {
@@ -81,6 +111,7 @@ public class EnterprisePayrollTest_v2 {
 	}
 	
 	@Test
+	@Ignore
 	public void testEnterprisePayroll2() {
 
 		try {

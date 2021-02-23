@@ -16,6 +16,7 @@ import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.TEXT
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -198,7 +199,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 			table.add_to_cell(0, "SUBTOTAL");
 			
 			for (int i = 2; i < subtotal_aon.size(); i++) 
-				table.add_to_cell(i, subtotal_aon.get(i));
+				table.add_to_cell(i, to_latin_number(subtotal_aon.get(i)));
 			
 			table.new_row();
 		}
@@ -209,7 +210,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 			table.fontsize = 7.5f;
 			
 			for (int i = 2; i < subtotal_ss.size(); i++) 
-				table.add_to_cell(i, subtotal_ss.get(i));
+				table.add_to_cell(i, to_latin_number(subtotal_ss.get(i)));
 			
 			table.new_row();
 		}
@@ -396,11 +397,11 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		ArrayList<Double> total_aon = t.mg.get_aon_total();
 		ArrayList<Double> total_ss = t.mg.get_ss_total();
 		table.font = HELVETICA_BOLD;
-		
+
 		if(total_aon.stream().mapToDouble(p-> p).sum() != 0) {
 			table.add_to_cell(0, "TOTAL:");
 			for (int i = 2; i < total_aon.size(); i++) 
-				table.add_to_cell(i, total_aon.get(i));
+				table.add_to_cell(i, to_latin_number(total_aon.get(i)));
 			table.new_row();
 		}
 		
@@ -409,7 +410,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		if(total_ss.stream().mapToDouble(p-> p).sum() != 0) {
 			table.add_to_cell(0, "TOTAL SS:");
 			for (int i = 2; i < total_ss.size(); i++) 
-				table.add_to_cell(i, total_ss.get(i));
+				table.add_to_cell(i, to_latin_number(total_ss.get(i)));
 			
 			table.new_row();
 		}

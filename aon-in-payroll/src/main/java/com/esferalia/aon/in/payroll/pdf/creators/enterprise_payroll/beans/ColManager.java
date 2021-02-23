@@ -82,24 +82,24 @@ public class ColManager {
 	
 	public void add_to_subtotal(EnterprisePayrollEntry e) {
 		
-		subtotal_aon[2] += 	e.devengado.orElse(0.00);
-		subtotal_aon[3] += 	e.ssTrab.orElse(0.00);
-		subtotal_aon[4] += 	e.irpf.orElse(0.00);
-		subtotal_aon[5] += 	e.deducciones.orElse(0.00);
-		subtotal_aon[6] += 	e.liquido.orElse(0.00);
-		subtotal_aon[7] += 	e.ssEmpr.orElse(0.00);
-		subtotal_aon[8] += 	e.bonificaciones.orElse(0.00);
-		subtotal_aon[9] += 	e.ssTotal.orElse(0.00);
-		subtotal_aon[10] += 	e.costeTotal.orElse(0.00);
+		subtotal_aon[2]  += e.devengado.orElse(0.00);
+		subtotal_aon[3]  += e.ssTrab.orElse(0.00);
+		subtotal_aon[4]  += e.irpf.orElse(0.00);
+		subtotal_aon[5]  += e.deducciones.orElse(0.00);
+		subtotal_aon[6]  += e.liquido.orElse(0.00);
+		subtotal_aon[7]  += e.ssEmpr.orElse(0.00);
+		subtotal_aon[8]  += e.bonificaciones.orElse(0.00);
+		subtotal_aon[9]  += e.ssTotal.orElse(0.00);
+		subtotal_aon[10] += e.costeTotal.orElse(0.00);
 		
-		subtotal_ss[2] += 	e.devengadoSS.orElse(0.00);
-		subtotal_ss[3] += 	e.ssTrabSS.orElse(0.00);
-		subtotal_ss[4] += 	e.irpfSS.orElse(0.00);
-		subtotal_ss[5] += 	e.deduccionesSS.orElse(0.00);
-		subtotal_ss[6] += 	e.liquidoSS.orElse(0.00);
-		subtotal_ss[7] += 	e.ssEmprSS.orElse(0.00);
-		subtotal_ss[8] += 	e.bonificacionesSS.orElse(0.00);
-		subtotal_ss[9] += 	e.ssTotalSS.orElse(0.00);
+		subtotal_ss[2]  += 	e.devengadoSS.orElse(0.00);
+		subtotal_ss[3]  += 	e.ssTrabSS.orElse(0.00);
+		subtotal_ss[4]  += 	e.irpfSS.orElse(0.00);
+		subtotal_ss[5]  += 	e.deduccionesSS.orElse(0.00);
+		subtotal_ss[6]  += 	e.liquidoSS.orElse(0.00);
+		subtotal_ss[7]  += 	e.ssEmprSS.orElse(0.00);
+		subtotal_ss[8]  += 	e.bonificacionesSS.orElse(0.00);
+		subtotal_ss[9]  += 	e.ssTotalSS.orElse(0.00);
 		subtotal_ss[10] += 	e.costeTotalSS.orElse(0.00);
 				
 	}
@@ -160,7 +160,7 @@ public class ColManager {
 		ArrayList<Double> arr = new ArrayList<>();
 	
 		for (int i = 0; i < total_aon.length; i++) 
-			if(enabled[i]) arr.add(subtotal_aon[i]);
+			if(enabled[i]) arr.add(total_aon[i]);
 			
 		return arr;
 	}
