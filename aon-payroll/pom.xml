@@ -119,6 +119,17 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+		<groupId>solutions.aon</groupId>
+		<artifactId>aon.sepe</artifactId>
+		<version>${project.version}</version>
+		<scope>compile</scope>
+	</dependency>
+    <dependency>
+		<groupId>net.sourceforge.htmlunit</groupId>
+		<artifactId>htmlunit</artifactId>
+		<version>2.43.0</version>
+	</dependency>
+    <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.customer</artifactId>
       <version>${project.version}</version>

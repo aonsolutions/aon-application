@@ -253,6 +253,13 @@
 		</dependency>
 
 		<dependency>
+			<groupId>solutions.aon</groupId>
+			<artifactId>aon.aws</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
 		   <groupId>com.esferalia.aon</groupId>
 		   <artifactId>aon.in.payroll</artifactId>
 		   <version>${project.version}</version>
