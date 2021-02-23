@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -69,7 +70,14 @@ public class ToJSON {
 		} else if(MimeType.ZIP.equals(attach.getMimeType())) {
 			icon = "view-list";
 		}
-
+		
+		String type = "enterprise";
+	    if(RegistryAttachmentType.DOCUMENTAL_ASESOR.value() == attach.getType()){
+	    	type = "asesor";
+	    } else if(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value() == attach.getType()) {
+	    	type = "employee";
+	    }
+		
 		JSONArray tagArray = new JSONArray();
 		if(attach.getTagList() != null)
 			attach.getTagList().stream().forEach(r -> {
@@ -94,6 +102,7 @@ public class ToJSON {
 			.put("title", attach.getDescription())
 			.put("icon", icon)
 			.put("tags", tagArray)
+			.put("type", type)
 			.put("file", f);
 	}
 	

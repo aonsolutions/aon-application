@@ -12,6 +12,9 @@ export class DomainUserRoles {
 	domainUserRoles;
 	parentDomainUserRoles;
 
+  oldDomainModules;
+  oldParentDomainModules;
+  oldUserRoles;
   constructor(data) {
     this.domain = data.domain;
     this.user = data.user;
@@ -20,6 +23,10 @@ export class DomainUserRoles {
     this.parentDomainApps = data.parentDomainApps;
     this.domainUserRoles = data.domainUserRoles;
     this.parentDomainUserRoles = data.parentDomainUserRoles;
+
+    this.oldDomainModules = data.oldDomainModules;
+    this.oldParentDomainModules = data.oldParentDomainModules;
+    this.oldUserRoles = data.oldUserRoles;
   }
 
   getDomain() {
@@ -70,8 +77,40 @@ export class DomainUserRoles {
 		this.parentDomainUserRoles = parentDomainUserRoles;
 	}
 
+  getOldDomainModules() {
+		return this.oldDomainModules;
+	}
+
+  setOldDomainModules(oldDomainModules) {
+		this.oldDomainModules = oldDomainModules;
+	}
+
+  getOldParentDomainModules() {
+		return this.oldParentDomainModules;
+	}
+
+  setOldParentDomainModules(oldParentDomainModules) {
+		this.oldParentDomainModules = oldParentDomainModules;
+	}
+
+  getOldUserRoles() {
+    return this.oldUserRoles;
+  }
+
+  setOldUserRoles(oldUserRoles) {
+    this.oldUserRoles = oldUserRoles;
+  }
+
 	isParentUser(){
 		return this.parentUser;
+	}
+
+  hasOldModule(mod) {
+  	return getOldDomainModules().includes(mod) || getOldParentDomainModules().includes(mod);
+  }
+
+  hasOldRole(oldRole) {
+		return this.getOldUserRoles().includes(oldRole);
 	}
 
   hasApp(aonApp) {
@@ -123,8 +162,14 @@ export class DomainUserRoles {
 		return this.hasApp(App.DOCUMENTAL) && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL));
 	}
 
+  isDocumentalPortal() {
+		return (this.hasApp(App.DOCUMENTAL) && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL_PORTAL)))
+        || this.hasOldRole('ADMIN') || this.hasOldRole('DOCUMENT');
+	}
+
 	isDocumentalManager() {
-		return this.hasApp(App.DOCUMENTAL) && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL_MANAGER));
+		return (this.hasApp(App.DOCUMENTAL) && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL_MANAGER)))
+        || this.hasOldRole('ADMIN') || this.hasOldRole('DOCUMENT_MANAGER');
 	}
 
 	isComunica() {

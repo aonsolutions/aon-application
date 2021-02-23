@@ -171,6 +171,15 @@ public class DocumentalServlet extends HttpServlet{
 		JSONArray documentArray = json.getJSONArray("documents");
 		Integer scopeId = json.opt("scope") != null && !AonStringUtils.isEmpty(json.optString("scope"))? json.optInt("scope") : null;
 		Integer categoryId = json.opt("category") != null && !AonStringUtils.isEmpty(json.optString("category"))? json.optInt("category") : null;
+		RegistryAttachmentType rat = RegistryAttachmentType.CORPORATE_IDENTITY;
+		if(json.opt("type") != null) { 
+			String type = json.optString("type");
+			if(type.equalsIgnoreCase("asesor")) {
+				rat = RegistryAttachmentType.DOCUMENTAL_ASESOR;
+			} else if(type.equalsIgnoreCase("employee")) {
+				rat = RegistryAttachmentType.DOCUMENTAL_EMPLOYEE;
+			}
+		}
 		for (int i = 0; i < documentArray.length(); i++) {
 			JSONObject doc = documentArray.getJSONObject(i);
 			Integer attachId = doc.getInt("id");
@@ -178,6 +187,7 @@ public class DocumentalServlet extends HttpServlet{
 				Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(attachId), AttachType.REGISTRY, true);
 				attach.setCategory(categoryId);
 				attach.setScope(scopeId);
+				attach.setType(rat.value());
 				AON.updateAttach(domain.getName(), domain.getId(), login, attach);				
 			}
 			
@@ -200,6 +210,15 @@ public class DocumentalServlet extends HttpServlet{
 			attach.setConfidential(json.optBoolean("confidential"));
 		}catch (Exception e) {
 			attach.setConfidential(Boolean.toString(true).equals(json.getString("confidential")));
+		}
+		
+		if(json.opt("type") != null) { 
+			String type = json.optString("type");
+			if(type.equalsIgnoreCase("asesor")) {
+				attach.setType(RegistryAttachmentType.DOCUMENTAL_ASESOR.value());
+			} else if(type.equalsIgnoreCase("employee")) {
+				attach.setType(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value());
+			} else attach.setType(RegistryAttachmentType.CORPORATE_IDENTITY.value());
 		}
 		
 		if(json.opt("category") != null) { 

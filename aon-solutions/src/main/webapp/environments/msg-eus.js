@@ -135,3 +135,9 @@ export const AON_MSG_ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
 export const AON_MSG_PERMISSIONS = 'Baimenak';
 export const AON_MSG_DELETE = 'Ezabatu';
 export const AON_MSG_SAVE = 'Gorde';
+export const AON_MSG_TYPE = 'Mota';
+export const AON_MSG_TYPES = 'Motak';
+
+export const AON_MSG_ENTERPRISE = 'Enpresa';
+export const AON_MSG_EMPLOYEE = 'Langile';
+export const AON_MSG_ASESOR = 'Aholkulari';

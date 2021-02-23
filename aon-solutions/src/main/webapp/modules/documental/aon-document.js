@@ -1,12 +1,15 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ToolbarType} from '../../models/enums.js';
-import {DocumentalAction} from './DocumentalEnums.js';
-import {deleteFile, getCategories, getScopes, getTags, updateFile} from '../../services/service.js';
+import {DocumentalAction, ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
+   EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
+import {deleteFile, getCategories, getScopes, getTags, updateFile,
+  getDomainUserRoles} from '../../services/service.js';
+import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
+import {AonSelect} from '../../components/aon-select.js';
 import '../../components/aon-toolbar.js';
 import '../../components/aon-date.js';
 import '../../components/aon-input.js';
-import '../../components/aon-select.js';
 import '../../components/aon-viewer.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
@@ -19,6 +22,7 @@ export class AonDocument extends AonElement {
 
   doc;
   _tags;
+  _roles;
 
   TOOLBAR;
   DATA;
@@ -35,16 +39,10 @@ export class AonDocument extends AonElement {
 
   constructor () {
     super();
-    this.id = this.id || 'aonDocumentalSheet';
-    this.TOOLBAR = this.id + 'Toolbar';
-    this.DATA = this.id + 'Data';
-    this.DATA_CARD = this.DATA + 'Card';
-    this.FILE = this.id + 'File';
-    this.doc = this.document;
-    this._tags = [];
   }
 
   connectedCallback () {
+    this.initialize();
     this.innerHTML = `
       <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>
       <div style="display:flex;">
@@ -57,7 +55,20 @@ export class AonDocument extends AonElement {
       </div>
     `;
 
-    this.build();
+    getDomainUserRoles({}).then(r => {
+      this._roles = new DomainUserRoles(r);
+      this.build();
+    });
+  }
+
+  initialize() {
+    this.id = this.id || 'aonDocumentalSheet';
+    this.TOOLBAR = this.id + 'Toolbar';
+    this.DATA = this.id + 'Data';
+    this.DATA_CARD = this.DATA + 'Card';
+    this.FILE = this.id + 'File';
+    this.doc = this.document;
+    this._tags = [];
   }
 
   build() {
@@ -99,6 +110,9 @@ export class AonDocument extends AonElement {
 		tdDate.innerHTML = `<aon-date id="date" title="${MSG.AON_MSG_DATE}"></aon-date>`;
 		tr.appendChild(tdDate);
 		let date = document.getElementById('date');
+    if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
+      date.readonly = 'true';
+    }
     if(this.document.date) {
       let d = this.document.date.split('/');
       date.setDate(new Date(d[2], d[1] - 1, d[0]));
@@ -108,6 +122,7 @@ export class AonDocument extends AonElement {
     tdConfidential.innerHTML = `<aon-switch id="confidential" title="${MSG.AON_MSG_CONFIDENTIAL}"></aon-switch>`;
     tr.appendChild(tdConfidential);
     let confidential = this.getElement('confidential');
+    confidential.disabled = !this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal();
     confidential.checked = this.document.confidential;
     confidential.addEventListener('change', () => this.updateConfidential(confidential.checked));
 
@@ -119,6 +134,9 @@ export class AonDocument extends AonElement {
 		tdName.innerHTML = `<aon-input id="name" description="${MSG.AON_MSG_NAME}"></aon-input>`;
 		tr2.appendChild(tdName);
 		let name = this.getElement('name');
+    if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
+      name.readonly = 'true';
+    }
     name.value = this.document.title;
 		name.addEventListener('change', () => this.updateName(name.value));
 
@@ -128,39 +146,48 @@ export class AonDocument extends AonElement {
     // CATEGORY
     let tdCategory = document.createElement('td');
     tdCategory.setAttribute('colspan', '1');
-    tdCategory.innerHTML = `<aon-select id="category" title="${MSG.AON_MSG_CATEGORY}"></aon-select>`;
+    let categorySelect = new AonSelect();
+    categorySelect.id = 'category';
+    if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
+      categorySelect.readonly = 'true';
+    }
+    categorySelect.title = MSG.AON_MSG_CATEGORY;
+    tdCategory.appendChild(categorySelect);
     tr3.appendChild(tdCategory);
     getCategories({domain: localStorage.getItem('aon_domain_id')}).then( categories => {
-      let category = document.getElementById('category')
-      let cat = categories.map(c => {
+      categorySelect.setOptions(categories.map(c => {
         return {
           value: c.id,
           name: c.name
         }
-      });
-      category.options = JSON.stringify(cat);
-      if(this.document.scope)
-        category.value = this.document.category.id;
-      category.addEventListener('select', () => this.updateCategory(category.value));
+      }));
+      if(this.document.category)
+        categorySelect.value = this.document.category.id;
+      categorySelect.addEventListener('select', () => this.updateCategory(categorySelect.value));
     });
 
     // SCOPE
     let tdScope = document.createElement('td');
     tdScope.setAttribute('colspan', '1');
-    tdScope.innerHTML = `<aon-select id="scope" title="${MSG.AON_MSG_SCOPE}"></aon-select>`;
+    let scopeSelect = new AonSelect();
+    scopeSelect.id = 'scope';
+    if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
+      scopeSelect.readonly = 'true';
+    }
+    scopeSelect.title = MSG.AON_MSG_SCOPE;
+    tdScope.appendChild(scopeSelect);
     tr3.appendChild(tdScope);
     getScopes({domain: localStorage.getItem('aon_domain_id')}).then( scopes => {
-      let scope = document.getElementById('scope');
-      let scp = scopes.map(s => {
+      scopeSelect.setOptions(scopes.map(s => {
         return {
           value: s.id,
           name: s.name
         }
-      });
-      scope.options = JSON.stringify(scp);
+      }));
+
       if(this.document.scope)
-        scope.value = this.document.scope.id;
-      scope.addEventListener('select', () => this.updateScope(scope.value));
+        scopeSelect.value = this.document.scope.id;
+      scopeSelect.addEventListener('select', () => this.updateScope(scopeSelect.value));
     });
 
     let tr4 = document.createElement('tr');
@@ -168,23 +195,49 @@ export class AonDocument extends AonElement {
 
     // TAG
     let tdTag = document.createElement('td');
-    tdTag.setAttribute('colspan', '2');
-    tdTag.innerHTML = `<aon-select id="tag" title="${MSG.AON_MSG_TAG}"></aon-select>`;
+    tdTag.setAttribute('colspan', '1');
+
+    let tagSelect = new AonSelect();
+    tagSelect.id = 'tag';
+    tagSelect.title = MSG.AON_MSG_TAG;
+    if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
+      tagSelect.readonly = 'true';
+    }
+    tdTag.appendChild(tagSelect);
     tr4.appendChild(tdTag);
     getTags({domain: localStorage.getItem('aon_domain_id')}).then( tags => {
-      let tag = document.getElementById('tag')
-      let t = tags.map(c => {
+      tagSelect.setOptions(tags.map(c => {
         return {
           value: c.id,
           name: c.name
         }
-      });
-      tag.options = JSON.stringify(t);
-      tag.addEventListener('select', (event) => {
+      }));
+      tagSelect.addEventListener('select', (event) => {
         this.addTag(event.detail);
         tag.value = '';
       });
     });
+
+    let tdType = document.createElement('td');
+    tdType.setAttribute('colspan', '1');
+
+    let typeSelect = new AonSelect();
+    typeSelect.id = 'type';
+    typeSelect.title = MSG.AON_MSG_TYPE;
+    if(!this._roles.isDocumentalManager() && !this._roles.isDocumentalPortal()){
+      typeSelect.readonly = 'true';
+    }
+    let typeOptions = EMPLOYEE_TYPE_OPTION;
+    if(this._roles.isDocumentalManager()) {
+      typeOptions = ASESOR_TYPE_OPTION;
+    } else if(this._roles.isDocumentalPortal()){
+      typeOptions = ENTERPRISE_TYPE_OPTION;
+    };
+    typeSelect.setOptions(typeOptions);
+    tdType.appendChild(typeSelect);
+    tr4.appendChild(tdType);
+    typeSelect.value = this.document.type;
+    typeSelect.addEventListener('select', () => this.updateType(typeSelect.value));
 
     let tr5 = document.createElement('tr');
     table.appendChild(tr5);
@@ -246,8 +299,9 @@ export class AonDocument extends AonElement {
     documentToolbar.addButton2(DocumentalAction.PREVIOUS, () => this.previous());
 
     documentToolbar.addSeparator();
-
-    documentToolbar.addButton2(DocumentalAction.DELETE, () => this.remove());
+    if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
+      documentToolbar.addButton2(DocumentalAction.DELETE, () => this.remove());
+    }
 //  documentToolbar.addButton2(DocumentalAction.SEND, () => this.send());
     documentToolbar.addButton2(DocumentalAction.DOWNLOAD, () => this.download());
     documentToolbar.addButton2(DocumentalAction.BACK, () => this.back());
@@ -329,6 +383,11 @@ export class AonDocument extends AonElement {
     this.save();
   }
 
+  updateType(type) {
+    this.doc.type = type;
+    this.save();
+  }
+
   updateConfidential(confidential) {
     this.doc.confidential = confidential;
     this.save();
@@ -346,6 +405,7 @@ export class AonDocument extends AonElement {
       confidential: this.doc.confidential,
       category: this.doc.category ? this.doc.category.id : undefined,
       scope: this.doc.scope ? this.doc.scope.id : undefined,
+      type: this.doc.type,
       tags: this._tags.map(t => t.id || t.value)
     }
     updateFile(d);

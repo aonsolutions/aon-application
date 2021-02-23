@@ -31,7 +31,7 @@ public enum RegistryAttachmentType implements IResourceable {
 	CRETA_TRABAJADORES_Y_TRAMOS,
 	SYSTEM_MESSAGE,
 	CRETA_BASES,
-	DOCUMENTAL_ENTERPRISE,
+	DOCUMENTAL_ASESOR,
 	DOCUMENTAL_EMPLOYEE;
 	
     /** Message key prefix. */

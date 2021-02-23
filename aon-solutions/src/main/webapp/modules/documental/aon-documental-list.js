@@ -1,6 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
 import {DocumentalAction} from './DocumentalEnums.js';
-import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles} from '../../services/service.js';
+import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles,
+	getDomainUserRoles} from '../../services/service.js';
+import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-table.js';
 
@@ -10,6 +12,7 @@ import * as MSG from "../../environments/msg.js";
 export class AonDocumentalList extends AonElement {
 
 	more;
+	_roles;
 
 	TABLE;
 
@@ -26,21 +29,28 @@ export class AonDocumentalList extends AonElement {
   }
 
 	attributeChangedCallback(name, oldValue, newValue) {
-
+		this.initialize();
 	}
 
 	constructor () {
 		super();
-		this.more = true;
-		this.TABLE = 'aonDocumentalTable';
 	}
 
 	connectedCallback () {
+		this.initialize();
 		this.innerHTML = `
 			<aon-table id='${this.TABLE}' selectable='true'></aon-table>
-			`;
-		this.build();
+		`;
+		getDomainUserRoles({}).then(r => {
+			this._roles = new DomainUserRoles(r);
+			this.build();
+		});
  	}
+
+	initialize() {
+		this.more = true;
+		this.TABLE = 'aonDocumentalTable';
+	}
 
  	build() {
 		let aonDocumentalTable = this.getElement(this.TABLE);
@@ -162,7 +172,8 @@ export class AonDocumentalList extends AonElement {
 		let aonDocumental = this.getElement(ad.DOCUMENTAL);
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.addSeparator();
-		aonDocumental.addToolbarOption2(DocumentalAction.EDIT, () => this.editFiles());
+		if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal())
+			aonDocumental.addToolbarOption2(DocumentalAction.EDIT, () => this.editFiles());
 		aonDocumental.addToolbarOption2(DocumentalAction.DOWNLOAD, () => this.downloadFiles());
 		aonDocumental.addToolbarOption2(DocumentalAction.SEND, () => this.sendFiles());
 	}

@@ -4,14 +4,23 @@ import java.io.Serializable;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.security.User;
 
 public class DomainUserRoles implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	Domain domain;
 	User user;
 	
 	LinkedList<AonApp> domainApps;
 	LinkedList<AonApp> parentDomainApps;
+	LinkedList<Module> oldDomainModules;
+	LinkedList<Module> oldParentDomainModules;
+	
 	LinkedList<AonRole> domainUserRoles;
 	LinkedList<AonRole> parentDomainUserRoles;
 	
@@ -73,8 +82,34 @@ public class DomainUserRoles implements Serializable {
 		return this;
 	}
 	
+	public LinkedList<Module> getOldDomainModules() {
+		if(oldDomainModules == null) {
+			oldDomainModules = new LinkedList<>();
+		}
+		return oldDomainModules;
+	}
+
+	public void setOldDomainModules(LinkedList<Module> oldDomainModules) {
+		this.oldDomainModules = oldDomainModules;
+	}
+
+	public LinkedList<Module> getOldParentDomainModules() {
+		if(oldParentDomainModules == null) {
+			oldParentDomainModules = new LinkedList<>();
+		}
+		return oldParentDomainModules;
+	}
+
+	public void setOldParentDomainModules(LinkedList<Module> oldParentDomainModules) {
+		this.oldParentDomainModules = oldParentDomainModules;
+	}
+
 	public Boolean isParentUser(){
 		return getDomain().getParentId() != null && getDomain().getParentId().equals(getUser().getDomain());
+	}
+	
+	private Boolean hasOldModule(Module module) {
+		return getOldDomainModules().contains(module) || getOldParentDomainModules().contains(module);
 	}
 	
 	private Boolean hasApp(AonApp aonApp) {
@@ -86,8 +121,18 @@ public class DomainUserRoles implements Serializable {
 			|| (isParentUser() && getParentDomainUserRoles().contains(aonRole));
 	}
 	
+	private Boolean hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole role) {
+		Boolean bool = false;
+		for (com.esferalia.aon.occam.api.model.type.AonRole ar : getUser().getUserRoles()) {
+			if(ar.equals(role)) {
+				bool = true;
+			}
+		}
+		return bool;
+	}
+	
 	public Boolean isAdmin() {
-		return  hasRole(AonRole.ADMIN);
+		return  hasRole(AonRole.ADMIN); // && hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN);
 	}
 	
 	public Boolean isAccounting() {	
@@ -122,8 +167,17 @@ public class DomainUserRoles implements Serializable {
 		return hasApp(AonApp.DOCUMENTAL) && (isAdmin() || hasRole(AonRole.DOCUMENTAL));
 	}
 	
+	public Boolean isDocumentalPortal() {
+		return (hasApp(AonApp.DOCUMENTAL) && (isAdmin() || hasRole(AonRole.DOCUMENTAL_PORTAL))) 
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT);
+	}
+	
 	public Boolean isDocumentalManager() {
-		return hasApp(AonApp.DOCUMENTAL) && (isAdmin() || hasRole(AonRole.DOCUMENTAL_MANAGER));
+		return ((hasOldModule(Module.DOCUMENT) || hasApp(AonApp.DOCUMENTAL))
+			&& ( isAdmin() || hasRole(AonRole.DOCUMENTAL_MANAGER)))
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN) 
+				||hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER);
 	}
 	
 	public Boolean isComunica() {
@@ -197,5 +251,9 @@ public class DomainUserRoles implements Serializable {
 	}
 	public Boolean isBidoq() {
 		return hasApp(AonApp.BIDOQ) && (isAdmin() || hasRole(AonRole.BIDOQ));
+	}
+	
+	public Boolean isConfidential() {
+		return hasRole(AonRole.CONFIDENTIALITY) || hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CONFIDENTIALITY);
 	}
 }

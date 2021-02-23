@@ -3,8 +3,6 @@ package com.esferalia.aon.occam.api.model.aonsolutions;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import com.sun.org.apache.bcel.internal.generic.ACONST_NULL;
-
 public enum AonRole  implements Serializable {
 	ADMIN, 
 	ACCOUNTING, 		// ACCESO A CONTABILIDAD -  MODO PORTAL/EMPRESA 
@@ -37,7 +35,8 @@ public enum AonRole  implements Serializable {
 	BIDOQ,
 	EMPLOYEE,			// USUARIO TIPO EMPLEADO
 	ENTERPRISE,			// USUARIO TIPO EMPRESA
-	DOCUMENTAL_PORTAL	// ACCESO A DOCUMENTAL -  MODO PORTAL/EMPRESA
+	DOCUMENTAL_PORTAL,	// ACCESO A DOCUMENTAL -  MODO PORTAL/EMPRESA
+	CONFIDENTIALITY		
 	;
 	
 	public Byte value(){

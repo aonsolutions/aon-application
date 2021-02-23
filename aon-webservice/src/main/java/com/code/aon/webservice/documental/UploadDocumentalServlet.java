@@ -77,7 +77,17 @@ public class UploadDocumentalServlet extends HttpServlet{
     			.setCategory(categoryId)
     			.setConfidential(false)
     			.setDparentId(Long.toString(size));
-    	Integer attachId = AON.insertAttach(domain.getName(), domain.getId(), login, attach);
+
+		if(json.opt("type") != null) { 
+			String type = json.optString("type");
+			if(type.equalsIgnoreCase("asesor")) {
+				attach.setType(RegistryAttachmentType.DOCUMENTAL_ASESOR.value());
+			} else if(type.equalsIgnoreCase("employee")) {
+				attach.setType(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value());
+			} else attach.setType(RegistryAttachmentType.CORPORATE_IDENTITY.value());
+		}
+		
+		Integer attachId = AON.insertAttach(domain.getName(), domain.getId(), login, attach);
     	
     	if(json.opt("tag") != null && !AonStringUtils.isEmpty(json.optString("tag"))) {
         	AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attachId, json.optInt("tag"));

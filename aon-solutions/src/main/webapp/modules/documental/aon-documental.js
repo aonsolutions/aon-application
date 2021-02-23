@@ -1,7 +1,10 @@
 import {AonElement} from '../../components/AonElement.js';
-import {DocumentalAction, DocumentalSidenav} from './DocumentalEnums.js';
+import {DocumentalAction, DocumentalSidenav, ASESOR_TYPE_OPTION,
+  ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
 import {getCategories, getTags, createTag, createCategory, editCategory,
-    deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes} from '../../services/service.js';
+    deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes,
+    getDomainUserRoles} from '../../services/service.js';
+import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {requestBidoq} from '../../services/request.js';
 import {bidoq} from  '../../services/bidoq.js';
 import {AonSelect} from '../../components/aon-select.js';
@@ -17,7 +20,7 @@ import '../../components/aon-input.js';
 
 
 import * as MSG from "../../environments/msg.js";
-
+import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 
 export class AonDocumental extends AonElement {
 
@@ -25,6 +28,7 @@ export class AonDocumental extends AonElement {
     _tags;
     _categories;
     _scopes;
+    _roles;
 
     DOCUMENTAL;
   	INPUTFILE;
@@ -43,15 +47,25 @@ export class AonDocumental extends AonElement {
 
     connectedCallback () {
       this.innerHTML = `
-        <aon-application id="${this.DOCUMENTAL}" title="${MSG.AON_MSG_DOCUMENTARY}" drag_and_drop="true"></aon-application>
+        <aon-application id="${this.DOCUMENTAL}" title="${MSG.AON_MSG_DOCUMENTARY}"></aon-application>
         <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
       `;
-      this.build();
-      //this.buildBidoq();
+      getDomainUserRoles({}).then(r => {
+        this._roles = new DomainUserRoles(r);
+        this.build();
+        //this._roles.isBidoq() {
+          //this.buildBidoq();
+        //}
+      });
     }
 
     build(){
       let aonDocumental = this.getElement(this.DOCUMENTAL);
+
+      if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()) {
+        aonDocumental.drag_and_drop = true;
+      }
+
       let input = this.getElement(this.INPUTFILE);
 
       input.addEventListener('change', () => this.upload(input.files));
@@ -62,15 +76,18 @@ export class AonDocumental extends AonElement {
   			}
   		});
 
-      if(this.isMobile()) {
+      if(this.isMobile() && (this._roles.isDocumentalPortal() || this._roles.isDocumentalManager())) {
         aonDocumental.addFloatOption(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
       } else {
-        aonDocumental.addToolbarOption2(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
+        if(this._roles.isDocumentalPortal() || this._roles.isDocumentalManager()){
+          aonDocumental.addToolbarOption2(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
+        }
         aonDocumental.addSearchOption();
         aonDocumental.addEventListener('search', (event) => this.search(event.detail));
       }
 
       this.addDocumentOptions();
+      this.addTypeOptions();
       this.addCategoryOptions();
       this.addTagOptions();
       this.loadScopes();
@@ -101,9 +118,50 @@ export class AonDocumental extends AonElement {
       aonDocumental.addSidenavOptions2(DocumentalSidenav.DOCUMENTS, documentOptions);
     }
 
+    addTypeOptions() {
+      if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()) {
+        let typeOptions = [{
+            name: MSG.AON_MSG_ENTERPRISE,
+            icon: MATERIAL_ICONS.BUSINESS,
+            fn: () => {
+              this._filter.category = undefined;
+              this._filter.tag = undefined;
+              this._filter.type = 'enterprise';
+              this.aonDocumentalList();
+            }
+        },{
+          name: MSG.AON_MSG_EMPLOYEE,
+          icon: MATERIAL_ICONS.PERSON,
+          fn: () => {
+            this._filter.category = undefined;
+            this._filter.tag = undefined;
+            this._filter.type = 'employee';
+            this.aonDocumentalList();
+          }
+        }];
+        if(this._roles.isDocumentalManager()) {
+          typeOptions.push({
+            name: MSG.AON_MSG_ASESOR,
+            icon: 'work',
+            fn: () => {
+              this._filter.category = undefined;
+              this._filter.tag = undefined;
+              this._filter.type = 'asesor';
+              this.aonDocumentalList();
+            }
+          });
+        }
+        let aonDocumental = this.getElement(this.DOCUMENTAL);
+        aonDocumental.addSidenavOptions2(DocumentalSidenav.TYPES, typeOptions);
+
+      }
+    }
+
     addCategoryOptions() {
       let aonDocumental = this.getElement(this.DOCUMENTAL);
-      aonDocumental.addSidenavOptions2(DocumentalSidenav.CATEGORIES, [], () => this.createCategory());
+      if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
+        aonDocumental.addSidenavOptions2(DocumentalSidenav.CATEGORIES, [], () => this.createCategory());
+      } else aonDocumental.addSidenavOptions2(DocumentalSidenav.CATEGORIES, []);
       this.loadCategories();
     }
 
@@ -125,8 +183,10 @@ export class AonDocumental extends AonElement {
               this._filter.tag = undefined;
               this._filter.category = item.id;
               this.aonDocumentalList();
-            },
-            actions: [{
+            }
+          };
+          if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
+            option.actions = [{
                 id: 'Delete',
                 icon: 'delete',
                 action: () => this.deleteCategory(item)
@@ -135,8 +195,8 @@ export class AonDocumental extends AonElement {
                 icon: 'edit',
                 action: () => this.editCategory(item)
               }
-            ]
-          };
+            ];
+          }
           aonDocumental.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
         });
       });
@@ -208,7 +268,9 @@ export class AonDocumental extends AonElement {
 
     addTagOptions() {
       let aonDocumental = this.getElement(this.DOCUMENTAL);
-      aonDocumental.addSidenavOptions2(DocumentalSidenav.TAGS, [], () => this.createTag());
+      if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
+        aonDocumental.addSidenavOptions2(DocumentalSidenav.TAGS, [], () => this.createTag());
+      } else aonDocumental.addSidenavOptions2(DocumentalSidenav.TAGS, []);
       this.loadTags();
     }
 
@@ -230,8 +292,10 @@ export class AonDocumental extends AonElement {
               this._filter.category = undefined;
               this._filter.tag = item.id;
               this.aonDocumentalList();
-            },
-            actions: [{
+            }
+          };
+          if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
+            option.actions = [{
                 id: 'Delete',
                 icon: 'delete',
                 action: () => this.deleteTag(item)
@@ -240,8 +304,9 @@ export class AonDocumental extends AonElement {
                 icon: 'edit',
                 action: () => this.editTag(item)
               }
-            ]
-          };
+            ];
+          }
+
           aonDocumental.addSidenavOptionsListValue(DocumentalSidenav.TAGS, option);
         });
       });
@@ -346,11 +411,15 @@ export class AonDocumental extends AonElement {
       if(!this.isMobile()) d.width = '400px';
       d.setTitle(MSG.AON_MSG_UPLOAD_FILE);
       d.setContent(this.uploadOption(files.length === 1));
+      let selType = this.getElement("aonDocumentalUploadType");
+      selType.value = this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()
+        ? 'enterprise' : 'employee';
       d.addAcceptAction(() => {
         let data = {
           category: this.getElement("aonDocumentalUploadCategory").value,
           scope: this.getElement("aonDocumentalUploadScope").value,
           tag: this.getElement("aonDocumentalUploadTag").value,
+          type: this.getElement("aonDocumentalUploadType").value
         }
         for(let i = 0; i < files.length; i++) {
           const READER = new FileReader();
@@ -422,6 +491,30 @@ export class AonDocumental extends AonElement {
 
       tr4.appendChild(tdTag);
 
+      let tr5 = document.createElement('tr');
+      table.appendChild(tr5);
+
+      // TYPE
+
+      let tdType = document.createElement('td');
+      tdType.setAttribute('colspan', '1');
+      let selType = new AonSelect();
+      selType.id = "aonDocumentalUploadType";
+      selType.title = MSG.AON_MSG_TYPE;
+
+      let typeOptions = EMPLOYEE_TYPE_OPTION;
+      if(this._roles.isDocumentalManager()) {
+        typeOptions = ASESOR_TYPE_OPTION;
+      } else if(this._roles.isDocumentalPortal()){
+        typeOptions = ENTERPRISE_TYPE_OPTION;
+      };
+      selType.setOptions(typeOptions);
+
+      tdType.appendChild(selType);
+      tr5.appendChild(tdType);
+
+      // selType.value = this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()
+      //   ? 'enterprise' : 'employee';
       return table;
     }
 
@@ -436,7 +529,8 @@ export class AonDocumental extends AonElement {
           contentSize: file.size,
           category: d.category,
           tag: d.tag,
-          scope: d.scope
+          scope: d.scope,
+          type: d.type
         };
 
         let aonDocumental = this.getElement(this.DOCUMENTAL);

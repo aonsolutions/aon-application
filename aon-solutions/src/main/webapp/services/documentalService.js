@@ -3,11 +3,7 @@ import { API_URL } from "../environments/environments.js";
 
 export const getDocument = (id) => get(`${API_URL}/documental`, { id });
 
-export const getDocuments = (data) => {
-  let domainName = localStorage.getItem("aon_domain_name");
-  let user = localStorage.getItem('aon_domain_login');
-  return get(`${API_URL}/attachment/${domainName}/${user}/files`, data);
-};
+export const getDocuments = (data) => get(`${API_URL}/documental/files`, data);
 
 export const getCategories = (data) => {
   let domainName = localStorage.getItem("aon_domain_name");

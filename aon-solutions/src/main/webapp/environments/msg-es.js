@@ -136,3 +136,9 @@ export const AON_MSG_ADDITIONAL_INFORMATION = 'Información Adicional';
 export const AON_MSG_PERMISSIONS = 'Permisos';
 export const AON_MSG_DELETE = 'Borrar';
 export const AON_MSG_SAVE = 'Guardar';
+export const AON_MSG_TYPE = 'Tipo';
+export const AON_MSG_TYPES = 'Tipos';
+
+export const AON_MSG_ENTERPRISE = 'Empresa';
+export const AON_MSG_EMPLOYEE = 'Empleado';
+export const AON_MSG_ASESOR = 'Asesor';
