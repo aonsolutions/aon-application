@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDatabaseOption;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDbPasswordOption;
@@ -58,11 +59,12 @@ import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.agreement.Agreement.AgreementLevel;
 import com.esferalia.aon.payroll.agreement.Agreement.AgreementLevelData;
+import com.esferalia.aon.payroll.agreement.ServiAgreement.Extension;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AgreementParser {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-	private static Integer DOMAIN = 0;
+	private static Integer DOMAIN_ID = 0;
 	
 	private static List<String> agreementCodes = new ArrayList<String>() {{
 		add("c0000000");
@@ -403,10 +405,11 @@ public class AgreementParser {
 	}};
 	
 	public static String getAgreement(DSLContext dslContext, String agreementCode, Integer domainId) {
-		DOMAIN = domainId;
+		DOMAIN_ID = domainId;
 		String log = "";
 		Map<String, String> varNotInsertMap = new HashMap<String, String>();
-		InputStream is = AgreementParser.class.getResourceAsStream(agreementCode + ".xml");
+		
+		InputStream is = ServiAgreement.get_online_file(agreementCode, Extension.XML);
 		
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 	    DocumentBuilder documentBuilder;
@@ -430,19 +433,10 @@ public class AgreementParser {
 			// Insert Agreement to DataBase
 			varNotInsertMap = insertAgreementDB(dslContext, agreement);
 			
-			System.out.println("serviAgreementsMap.put(\"" + agreement.getSSCode() + " - " + agreement.getAgreementDescription().toUpperCase() + "\",  \"" + agreement.getServiAgreementCode() + "\");"  );
-			
-			PrintWriter out = new PrintWriter(new File("/Users/sergio/Desktop/ParseAgreement.txt"));
-			out.write(agreement.toString());
-			out.close();
+//			System.out.println("serviAgreementsMap.put(\"" + agreement.getSSCode() + " - " + agreement.getAgreementDescription().toUpperCase() + "\",  \"" + agreement.getServiAgreementCode() + "\");"  );
 			
 			if(!varNotInsertMap.isEmpty()) {
-				log += agreement.getSSCode() + " - " + agreement.getAgreementDescription().toUpperCase() + "\",  \"" + agreement.getServiAgreementCode() + "\n";
-				log += "---------------------------------- VAR NOT INSERT ---------------------------------- \n";
-				for(Entry<String, String> entry: varNotInsertMap.entrySet())
-					log += entry.getKey() + " -- " + entry.getValue() + "\n";
-				
-				return log;
+				return getAgreementLog(dslContext, domainId, agreement, varNotInsertMap);
 			}
 			
 		} catch (ParserConfigurationException e) {
@@ -454,6 +448,101 @@ public class AgreementParser {
 		}
 		
 		return log;
+	}
+
+	private static String getAgreementLog(DSLContext dslContext, Integer domainId, Agreement agreement, Map<String, String> varNotInsertMap) {
+		// Domain Record
+		Record domainRecord = dslContext.select().from(DOMAIN).where(DOMAIN.ID.eq(domainId)).fetchOne();
+		
+		String html = "<html>";
+		
+		html += "<head>";
+		html += "<style>";
+		html += "#serviAgrement {";
+			html += "font-family: Arial, Helvetica, sans-serif;";
+			html += "border-collapse: collapse;";
+			html += "width: 100%;";
+			html += "}";
+
+		html += "#serviAgrement td, #serviAgrement th {";
+			html += "border: 1px solid #ddd;";
+			html += "padding: 8px;";
+			html += "}";
+
+		html += "#serviAgrement tr:nth-child(even){background-color: #f2f2f2;}";
+
+		html += "#serviAgrement tr:hover {background-color: #ddd;}";
+
+		html += "#serviAgrement th {";
+			html += "padding-top: 12px;";
+			html += "padding-bottom: 12px;";
+			html += "text-align: left;";
+			html += "background-color: #0065a8;";
+			html += "color: white;";
+			html += "}";
+		html += "</style>";
+		html += "</head>";
+		
+		html += "<body>";
+		
+		html += "<div style=\"font-family: \"Lucida Sans Unicode\", \"Lucida Grande\", sans-serif;font-size: 12px;letter-spacing: 2px;word-spacing: 0px;color: #000000;font-weight: normal;text-decoration: none;font-style: normal;font-variant: normal;text-transform: none;\">";
+		html += "<p>Estimado desarrollador:</p>";
+		html += "<p>Le adjuntamos el log generado a la hora de intentar importar un convenio desde la plataforma de ServiConvenios.</p>";
+		
+		// Domain Data
+		
+		html += "<ul>";
+		html += "<li>";
+		html += "<a style=\"font-weight: bold; color: black;\"> Domain Id : </a>" + domainId;
+		html += "</li>";
+		html += "<li>";
+		html += "<a style=\"font-weight: bold; color: black;\"> Domain URL : </a>" + domainRecord.get(DOMAIN.NAME);
+		html += "</li>";
+		html += "<li>";
+		html += "<a style=\"font-weight: bold; color: black;\"> Domain Description : </a>" + domainRecord.get(DOMAIN.DESCRIPTION);
+		html += "</li>";
+		html += "</ul>";
+		
+		// Domain Data
+		
+		html += "<ul>";
+		html += "<li>";
+		html += "<a style=\"font-weight: bold; color: black;\"> Agreement SS Code : </a>" + agreement.getSSCode();
+		html += "</li>";
+		html += "<li>";
+		html += "<a style=\"font-weight: bold; color: black;\"> Agreement Description : </a>" + agreement.getAgreementDescription().toUpperCase();
+		html += "</li>";
+		html += "<li>";
+		html += "<a style=\"font-weight: bold; color: black;\"> ServiAgreement Code : </a>" + agreement.getServiAgreementCode();
+		html += "</li>";
+		html += "</ul>";
+		
+		html += "<br>";
+		
+		html += "<p>Variables que no se han podido insertar : </p>";
+		
+		html += "<br>";
+		
+		html += "<table id=\"serviAgrement\">";
+		html += "<tr>";
+		html += "<th>Nombre ServiConvenios</th>";
+		html += "<th>Nombre AON (Revisar)</th>";
+		html += "</tr>";
+
+		for(Entry<String, String> entry: varNotInsertMap.entrySet()) {
+			html += "<tr>";
+			html += "<td>" + entry.getKey() + "</td>";
+			html += "<td>" + entry.getValue() + "</td>";
+			html += "</tr>";
+		}
+		
+		html += "</table>";
+		
+		html += "</div>";
+		html += "</body>";
+		html += "</html>";
+		
+		return html;
 	}
 
 	private static Agreement getAgreementInfo(DSLContext dslContext, Document document) {
@@ -526,8 +615,6 @@ public class AgreementParser {
 		}
 	}
 
-	
-	
 	private static void getAgreementLevelAndCategory(DSLContext dslContext, Document document, Agreement agreement) {
 		NodeList list = document.getElementsByTagName("CATALOGO_CAT_PROF");
 		for(int i=0; i<list.getLength(); i++) {
@@ -679,7 +766,7 @@ public class AgreementParser {
 		// Agreement
 		
 		AgreementRecord agreementRecord = dslContext.insertInto(AGREEMENT)
-			.set(AGREEMENT.DOMAIN, DOMAIN)
+			.set(AGREEMENT.DOMAIN, DOMAIN_ID)
 			.set(AGREEMENT.DESCRIPTION, parseDescription(agreement.getAgreementDescription()))
 			.set(AGREEMENT.SS_NUMBER, agreement.getSSCode())
 			.returning(AGREEMENT.ID)
@@ -713,7 +800,7 @@ public class AgreementParser {
 //			System.out.println(levelDescription + " - " + levelDescription.length());
 			
 			AgreementLevelRecord agreementLevelRecord = dslContext.insertInto(AGREEMENT_LEVEL)
-				.set(AGREEMENT_LEVEL.DOMAIN, DOMAIN)
+				.set(AGREEMENT_LEVEL.DOMAIN, DOMAIN_ID)
 				.set(AGREEMENT_LEVEL.AGREEMENT, agreementId)
 				.set(AGREEMENT_LEVEL.DESCRIPTION, levelDescription)
 				.returning(AGREEMENT_LEVEL.ID)
@@ -725,7 +812,7 @@ public class AgreementParser {
 			
 			for(String lvlCategory : lvl.getLevelCategories()) {
 				dslContext.insertInto(AGREEMENT_LEVEL_CATEGORY)
-					.set(AGREEMENT_LEVEL_CATEGORY.DOMAIN, DOMAIN)
+					.set(AGREEMENT_LEVEL_CATEGORY.DOMAIN, DOMAIN_ID)
 					.set(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL, agreementLevelId)
 					.set(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION, parseDescription(lvlCategory))
 					.execute();
@@ -738,15 +825,19 @@ public class AgreementParser {
 				
 				if(null != realName) {
 					dslContext.insertInto(AGREEMENT_LEVEL_DATA)
-						.set(AGREEMENT_LEVEL_DATA.DOMAIN, DOMAIN)
+						.set(AGREEMENT_LEVEL_DATA.DOMAIN, DOMAIN_ID)
 						.set(AGREEMENT_LEVEL_DATA.NAME, realName)
 						.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, agreementLevelId)
 						.set(AGREEMENT_LEVEL_DATA.EXPRESSION, lvlData.getValue())
 						.set(AGREEMENT_LEVEL_DATA.START_DATE, parseDateToSql(lvlData.getStartDate()))
 						.set(AGREEMENT_LEVEL_DATA.END_DATE, parseDateToSql(lvlData.getEndDate()))
 						.execute();
-				} else
-					mapVarNotInsert.put(lvlData.getName(), lvlData.getName());
+				} else {
+					if( !AonStringUtils.containsIgnoreCase(lvlData.getName(), "TOTAL") &&
+						!AonStringUtils.containsIgnoreCase(lvlData.getName(), "PAGA_EXTRA"))
+							
+							mapVarNotInsert.put(lvlData.getName(), lvlData.getName());
+				}
 			}
 			
 		}
@@ -756,7 +847,7 @@ public class AgreementParser {
 		Date auxEndDate = null;
 		
 		dslContext.insertInto(AGREEMENT_DATA)
-			.set(AGREEMENT_DATA.DOMAIN, DOMAIN)
+			.set(AGREEMENT_DATA.DOMAIN, DOMAIN_ID)
 			.set(AGREEMENT_DATA.NAME, "PAGAS")
 			.set(AGREEMENT_DATA.AGREEMENT, agreementId)
 			.set(AGREEMENT_DATA.EXPRESSION, "14")
@@ -772,7 +863,7 @@ public class AgreementParser {
 			if(null != agreementPayment) {
 //				System.out.println(agreementPayment.getConceptCode());
 				PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
-						.set(PAYMENT_CONCEPT.DOMAIN, DOMAIN)
+						.set(PAYMENT_CONCEPT.DOMAIN, DOMAIN_ID)
 						.set(PAYMENT_CONCEPT.CODE, agreementPayment.getConceptCode())
 						.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.getNormalizeName())
 						.set(PAYMENT_CONCEPT.TYPE, agreementPayment.getType())
@@ -786,7 +877,7 @@ public class AgreementParser {
 				Integer paymentConceptId = paymentConceptRecord.getId();
 				
 				dslContext.insertInto(AGREEMENT_PAYMENT)
-						.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN)
+						.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
 						.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 						.set(AGREEMENT_PAYMENT.TYPE, agreementPayment.getType())
@@ -804,7 +895,7 @@ public class AgreementParser {
 		Integer paymentConceptId = insertOrGetPaymentConceptExtraPay(dslContext);
 		
 		AgreementPaymentRecord agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
-			.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN)
+			.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
 			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 			.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
@@ -822,7 +913,7 @@ public class AgreementParser {
 		Integer agreementPaymentId = agreementPaymentRecord.getId();
 		
 		dslContext.insertInto(AGREEMENT_EXTRA)
-			.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN)
+			.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
 			.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
 			.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
 			.set(AGREEMENT_EXTRA.START_DATE, "1/1")
@@ -831,7 +922,7 @@ public class AgreementParser {
 			.execute();
 		
 		agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
-			.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN)
+			.set(AGREEMENT_PAYMENT.DOMAIN, DOMAIN_ID)
 			.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 			.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 			.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
@@ -849,7 +940,7 @@ public class AgreementParser {
 		agreementPaymentId = agreementPaymentRecord.getId();
 		
 		dslContext.insertInto(AGREEMENT_EXTRA)
-		.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN)
+		.set(AGREEMENT_EXTRA.DOMAIN, DOMAIN_ID)
 		.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
 		.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentId)
 		.set(AGREEMENT_EXTRA.START_DATE, "1/7")
@@ -864,7 +955,7 @@ public class AgreementParser {
 	private static Integer insertOrGetPaymentConceptExtraPay(DSLContext dslContext) {
 		
 		Result<Record> paymentConceptRecords = dslContext.select().from(PAYMENT_CONCEPT)
-			.where(PAYMENT_CONCEPT.DOMAIN.eq(DOMAIN))
+			.where(PAYMENT_CONCEPT.DOMAIN.eq(DOMAIN_ID))
 			.and(PAYMENT_CONCEPT.CODE.eq("PAGA_EXTRA"))
 			.and(PAYMENT_CONCEPT.DESCRIPTION.eq("PAGA EXTRAORDINARIA"))
 			.and(PAYMENT_CONCEPT.EXPRESSION.eq("SALARIO_BASE+PLUS_SALARIAL"))
@@ -875,7 +966,7 @@ public class AgreementParser {
 			return paymentConceptRecords.get(0).get(PAYMENT_CONCEPT.ID);
 			
 		PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
-				.set(PAYMENT_CONCEPT.DOMAIN, DOMAIN)
+				.set(PAYMENT_CONCEPT.DOMAIN, DOMAIN_ID)
 				.set(PAYMENT_CONCEPT.CODE, "PAGA_EXTRA")
 				.set(PAYMENT_CONCEPT.DESCRIPTION, "PAGA EXTRAORDINARIA")
 				.set(PAYMENT_CONCEPT.TYPE, (byte)4)
@@ -981,7 +1072,7 @@ public class AgreementParser {
 			String domainIdStr = cmd.getOptionValue(domainOpt.getLongOpt(), null);
 			
 			if(null != domainIdStr)
-				DOMAIN = Integer.parseInt(domainIdStr);
+				DOMAIN_ID = Integer.parseInt(domainIdStr);
 			
 			// Get dslContext for given connection
 			AONContext ctx = new AONContext(connection);

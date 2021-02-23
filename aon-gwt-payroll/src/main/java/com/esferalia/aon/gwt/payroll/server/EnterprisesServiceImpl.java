@@ -103,7 +103,7 @@ import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.agreement.AgreementParser;
-import com.esferalia.aon.payroll.agreement.ServiAgreements;
+import com.esferalia.aon.payroll.agreement.ServiAgreementsFilter;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
@@ -2760,7 +2760,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			AONContext ctx = new AONContext(connection);
 			DSLContext dslContext = ctx.getDslContext();
 			
-			AgreementParser.getAgreement(dslContext, serviAgreementCode, domainId);
+			String log = AgreementParser.getAgreement(dslContext, serviAgreementCode, domainId);
+			
+			if(!AonStringUtils.isBlank(log)) {
+				JooqMail.sendAgreementLogMail(log);
+			}
+		
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2958,7 +2963,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	@Override
 	public Map<String, String> getServiAgreements() {
-		return ServiAgreements.getServiAgreementsMap();
+		return ServiAgreementsFilter.getServiAgreementsMap();
 	}
 	
 	@Override

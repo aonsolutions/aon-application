@@ -33,6 +33,8 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.google.api.client.util.Base64;
 
+import solutions.aon.aws.SES;
+
 public class JooqMail {
 
 	private static Settings SETTINGS = null;
@@ -440,6 +442,17 @@ public class JooqMail {
 		}
 		
 		return salaryIds;
+	}
+	
+	// ----------------------------------------------------------------------------------------------------------------
+	// 											SERVI AGREEMENTS LOG MAILING
+	// ----------------------------------------------------------------------------------------------------------------
+
+	public static void sendAgreementLogMail(String body) {
+		
+//		SES.sendEmailWithBCC("no-reply@aon.solutions", "svaldepenas@aonsolutions.es", "s.valdepenas@gmail.com", "ServiConvenios Logs", body);
+		SES.sendEmail("no-reply@aon.solutions", "svaldepenas@aonsolutions.es", "ServiConvenios Logs", body);
+		
 	}
 
 }
