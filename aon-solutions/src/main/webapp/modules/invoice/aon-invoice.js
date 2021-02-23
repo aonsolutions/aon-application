@@ -893,8 +893,15 @@ export class AonInvoice extends AonElement {
 				quota: round(Number(this._invoice.total / 1.21) * 0.21)
 		 	};
 			this._invoice.taxes.push(tax);
-			this.getElement('total').readonly = 'readonly';
 			this.printTax(tax, 0);
+		} else if(this._invoice.taxes.length === 1){
+			let tax = this._invoice.taxes[0];
+		 	const p1 = tax.percentage / 100;
+			const p2 = p1 + 1;
+			tax.base = round(Number(this._invoice.total) / p2),
+			tax.quota = round(Number(this._invoice.total / p2) * p1);
+			this._invoice.taxes[0] = tax;
+			this.printTaxes();
 		}
 	}
 
@@ -1109,7 +1116,7 @@ export class AonInvoice extends AonElement {
 		let taxType = this.getElement('taxType' + i);
 		taxType.setEnumOptions(TaxType);
 		taxType.value = tax.type || tax.tax;
-		if(this.isAccounting()) {
+		if(this.isAccounting() || this._invoice.details.length > 0) {
 			taxType.readonly = 'readonly';
 		}
 
@@ -1120,7 +1127,7 @@ export class AonInvoice extends AonElement {
 		let taxPercentage = document.getElementById('taxPercentage' + i);
 		taxPercentage.options = JSON.stringify( TaxType.IVA === tax.type || TaxType.IVA === tax.tax ? TaxIVAPercentage : TaxIRPFPercentage);
 		taxPercentage.value = tax.percentage;
-		if(this.isAccounting()) {
+		if(this.isAccounting() || this._invoice.details.length > 0) {
 			taxPercentage.readonly = 'readonly';
 		}
 		taxPercentage.addEventListener('select', () => this.updateTaxPercentage(i));
@@ -1131,7 +1138,7 @@ export class AonInvoice extends AonElement {
 		tr.appendChild(tdTaxBase);
 		let taxBase = document.getElementById('taxBase' + i);
 		taxBase.value = tax.base;
-		if(this.isAccounting()) {
+		if(this.isAccounting() || this._invoice.details.length > 0) {
 			taxBase.readonly = 'readonly';
 		}
 		taxBase.addEventListener('change', () => this.updateTaxBase(i));
@@ -1141,7 +1148,7 @@ export class AonInvoice extends AonElement {
 		tdTaxQuota.innerHTML = `<aon-number id="taxQuota${i}" description="Cuota" format="true" decimals="2"></aon-number>`;
 		tr.appendChild(tdTaxQuota);
 		let taxQuota = document.getElementById('taxQuota' + i);
-		if(this.isAccounting()) {
+		if(this.isAccounting() || this._invoice.details.length > 0) {
 			taxQuota.readonly = 'readonly';
 		}
 		taxQuota.addEventListener('change', () => this.updateTaxQuota(i));
@@ -1153,7 +1160,7 @@ export class AonInvoice extends AonElement {
 		tr.appendChild(tdRemoveButton);
 		let removeButton = document.getElementById('taxRemove' + i);
 		removeButton.addEventListener('click', () => {
-			if(!this.isAccounting()) {
+			if(!this.isAccounting() && this._invoice.details.length <= 0) {
 				this.removeTax(i);
 				if(TaxType.IRPF === tax.type || TaxType.IRPF === tax.tax ) {
 					this.getElement('irpf').checked = false;
@@ -1285,9 +1292,9 @@ export class AonInvoice extends AonElement {
 		this._invoice.total = round(this.totalImpuestos() + this._invoice.suplidos.total);
 		let total = this.getElement('total');
 		total.value = this._invoice.total;
-		if(this._invoice.taxes.length > 0) {
+		if(this._invoice.taxes.length > 1) {
 			total.readonly = 'readonly';
-		}
+		} else total.readonly = false;
 	}
 
 	updateSuplidos() {
