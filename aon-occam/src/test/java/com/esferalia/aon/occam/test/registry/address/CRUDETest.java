@@ -8,11 +8,13 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
+import com.esferalia.aon.occam.test.Repeat;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 
 public class CRUDETest extends AbstractOccamTest {
 
 	@Test
+	@Repeat( 50 )
 	public void test() {
 		RegistryAddress address = AonFaker.getRegistryAddress( ctx ); 
 		address = RegistryAddressDAO.save(ctx, address);

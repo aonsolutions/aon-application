@@ -106,7 +106,9 @@ public class Asserts {
 		assertEquals("Registry",expected.getRegistry(), actual.getRegistry());
 		assertEquals("Main",expected.isMain(), actual.isMain());
 		assertEquals("Recipient",expected.getRecipient(), actual.getRecipient());
-		assertEquals("StreetType",expected.getStreetType(), actual.getStreetType());
+		assertEquals("StreetType"
+				, expected.getStreetType()==null?null:expected.getStreetType().getAeatCode()
+				, actual.getStreetType()==null?null:actual.getStreetType().getAeatCode());
 		assertEquals("Address",expected.getAddress(), actual.getAddress());
 		assertEquals("Number",expected.getNumber(), actual.getNumber());
 		assertEquals("Address2",expected.getAddress2(), actual.getAddress2());
