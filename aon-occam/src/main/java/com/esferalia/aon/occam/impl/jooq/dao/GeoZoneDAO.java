@@ -7,7 +7,8 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.conf.ParamType;
+import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -33,7 +34,7 @@ public class GeoZoneDAO {
 		@Override public Property<Byte> getSystemProperty() {return new FilterDAO.PropertyDAO<Byte>(GEOZONE.SYSTEM);}
 	}
 	
-	private static class FullGeoZoneFiller  implements Function<Record,GeoZone> {
+	private static class GeoZoneFiller  implements Function<Record,GeoZone> {
 		@Override
 		public GeoZone apply(Record record) {
 			return new GeoZone()
@@ -45,46 +46,29 @@ public class GeoZoneDAO {
 			;
 		}
 	}
-
-	private static Stream<GeozoneRecord> getGeoZoneStream(AONContext ctx, GeoZoneFilter filter) {
+	private static SelectConditionStep<GeozoneRecord> select(AONContext ctx, GeoZoneFilter filter) {
 		return ctx.getDslContext()
 				.selectFrom(GEOZONE)
 				.where(GEOZONE_PROPERTIES.getConditions(filter))
-				.and(GEOZONE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-				.orderBy(GEOZONE.CODE)
-				.fetch()
-				.stream();
+				.and(GEOZONE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)));
 	}
-	public static Stream<GeoZone> getGeoZones(AONContext ctx, GeoZoneFilter filter) {
-		ctx.checkRead();
-		return getGeoZoneStream(ctx, filter)
-			.map(new FullGeoZoneFiller());			
-	}
-	public static GeoZone get(AONContext ctx, Integer id) {
-		Condition condition = GEOZONE.ID.equal(id);
-		return get(ctx, condition);
-	}
-	public static GeoZone get(AONContext ctx, String code) {
-		Condition condition = GEOZONE.CODE.equal(code);
-		return get(ctx, condition);
-	}
-	public static GeoZone get(AONContext ctx, Condition condition) {
-		ctx.checkRead();
-		System.out.println(
-				ctx.getDslContext() 
-				.selectFrom(GEOZONE)
-				.where(condition)
-				.and(GEOZONE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-				.getSQL(ParamType.INLINED)
-				);
-		
-		return ctx.getDslContext() 
-			.selectFrom(GEOZONE)
-			.where(condition)
-			.and(GEOZONE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+	
+	public static Stream<GeoZone> getStream(AONContext ctx, GeoZoneFilter filter) {
+		return select(ctx,filter)
+			.orderBy(GEOZONE.CODE)
 			.fetch()
 			.stream()
-			.map(new FullGeoZoneFiller())
+			.map(new GeoZoneFiller());
+	}
+	public static GeoZone get(AONContext ctx, Integer id) {
+		return get(ctx, p -> p.getIdProperty().eq(id));
+	}
+	public static GeoZone get(AONContext ctx, String code) {
+		return get(ctx, p -> p.getCodeProperty().eq(code));
+	}
+	public static GeoZone get(AONContext ctx, GeoZoneFilter filter) {
+		ctx.checkRead();
+		return getStream(ctx,filter)
 			.findFirst()
 			.orElse(null);
 	}
@@ -103,6 +87,18 @@ public class GeoZoneDAO {
 		return get(ctx, id);
 	}
 
+	// *************************************************
+	// ********** TEST PURPOSE METHODS *****************
+	// *************************************************
+	public static GeoZone getRandom(AONContext ctx, GeoZoneFilter filter) {
+		return select(ctx,filter)
+			.orderBy( DSL.rand() )
+			.fetch()
+			.stream()
+			.map(new GeoZoneFiller())
+			.findFirst()
+			.orElse(null);
+	}
 }
 
 

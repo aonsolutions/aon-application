@@ -17,7 +17,7 @@ public class InsertTest extends AbstractOccamTest {
 
 	@Test
 	public void testInsert() throws IOException {
-		InputStream inputStream = InsertTest.class.getResourceAsStream("accounts.txt");
+		InputStream inputStream = InsertTest.class.getResourceAsStream("/com/esferalia/aon/occam/test/accounting/account/accounts.txt");
 		InputStreamReader inputStreamReader = new InputStreamReader(inputStream,Charset.forName("UTF-8"));
 		LineNumberReader reader = new LineNumberReader(inputStreamReader);
 		while ( reader.ready()) {

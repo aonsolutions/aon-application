@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.test.registry.media;
+package com.esferalia.aon.occam.test.registry.address;
 
 
 import org.junit.runner.RunWith;
@@ -9,11 +9,11 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	ValidationSaveEmptyDomain.class,
 	ValidationSaveEmptyRegistry.class,
-	ValidationSaveEmptyMedia.class,
-	ValidationSaveOverflowValue.class,
-	ValidationSaveInvalidMail.class,
+	ValidationSaveOverflowNumber.class,
+	ValidationSaveOverflowZip.class,
+	ValidationSaveMainAddress.class,
 	CRUDETest.class,
 })
-public class RegistryMediaTestSuite {
+public class RegistryAddressTestSuite {
 	
 }

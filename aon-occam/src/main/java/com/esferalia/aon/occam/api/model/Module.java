@@ -42,6 +42,10 @@ public enum Module {
 		return name;
 	}
 
+	public byte value() {
+		return (byte) this.ordinal();
+	}
+
 	public static Module get(String name) {
     	for( Module module : Module.values() ) {
     		if ( module.getName().equals(name) ) {

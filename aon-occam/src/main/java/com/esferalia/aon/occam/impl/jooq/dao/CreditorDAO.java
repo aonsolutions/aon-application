@@ -30,7 +30,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistryPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.CreditorAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.CreditorValidation;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -44,8 +44,9 @@ public class CreditorDAO {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.build(select);
 		}
-		
+
 		protected Condition[] getConditions(CreditorFilter filter) {
+			if (filter == null) return new Condition[0];
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };

@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 
 import java.util.function.BiConsumer;
@@ -21,9 +20,9 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonValidationUtil;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.server.AonValidationUtil;
 
 public class RegistryMediaDAO {
 	public static final String MEDIA_TYPE_LABEL = "Tipo de contacto";
@@ -35,6 +34,7 @@ public class RegistryMediaDAO {
 	private static class RMediaPropertiesDAO implements RegistryMediaProperties {
 		
 		private Condition[] getConditions(RegistryMediaFilter filter) {
+			if (filter == null) return new Condition[0];
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
@@ -175,9 +175,9 @@ public class RegistryMediaDAO {
 			.set(RMEDIA.COMMERCIAL, AonEnumUtils.getByte( media.isCommercial()))
 			.set(RMEDIA.TECHNICAL, AonEnumUtils.getByte( media.isTechnical()))
 			.set(RMEDIA.RADDRESS,media.getRaddress())
-			.returning(REGISTRY.ID)
+			.returning(RMEDIA.ID)
 			.fetchOne()
-			.getValue(REGISTRY.ID);
+			.getValue(RMEDIA.ID);
 		media.setId(id);
 		ctx.log().info("INSERT REGISTRY MEDIA id: " + media.getId());
 		return media; 

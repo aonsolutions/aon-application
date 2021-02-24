@@ -1,11 +1,13 @@
 package com.esferalia.aon.occam.test.faker;
 
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import java.util.Locale;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -19,6 +21,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.MediaType.IMediaTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
@@ -32,11 +35,11 @@ public class AonFaker {
 		registry.setDomain(new Domain().setId(ctx.getDomainId()));
 		registry.setDocument(faker.regexify(documentRegexp));
 		registry.setDocumentType( AonRandom.randomEnum(DocumentType.class) );
-		registry.setDocumentCountry( AonRandom.b(95) ? Country.ES: AonRandom.randomEnum(Country.class));
+		registry.setDocumentCountry( AonRandom.gt(5) ? Country.ES: AonRandom.randomEnum(Country.class));
 		registry.setName( faker.company().name() );
 		registry.setAlias( faker.company().profession() );
-		registry.setNationality( AonRandom.b(95) ? Country.ES: AonRandom.randomEnum(Country.class));
-		registry.setConfidential( !AonRandom.b(98) );
+		registry.setNationality( AonRandom.gt(5) ? Country.ES: AonRandom.randomEnum(Country.class));
+		registry.setConfidential( !AonRandom.gt(98) );
 		return registry;
 	}
 
@@ -52,17 +55,17 @@ public class AonFaker {
 		return new Customer()
 			.copy(registry)
 			.setTariff( tariff == null? null : tariff.getId() )
-			.setSurcharge( AonRandom.b(10) )
-			.setWithholding( AonRandom.b(10) )
-			.setTransaction( AonRandom.b(90) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class))
-			.setStatus( AonRandom.b(90) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class))
+			.setSurcharge( AonRandom.gt(95) )
+			.setWithholding( AonRandom.gt(85) )
+			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class))
+			.setStatus( AonRandom.gt(2) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class))
 			.setScope( scope == null ? null : scope.getId() )
-			.setEInvoice( AonRandom.b(40) )
+			.setEInvoice( AonRandom.gt(40) )
 			// TODO
 			.setInvoicingGroup( null )
-			.setProjectGrouped( AonRandom.b(4) )
-			.setDeliveryGrouped( AonRandom.b(90) )
-			.setDeliveryValuated( AonRandom.b(90) )
+			.setProjectGrouped( AonRandom.gt(4) )
+			.setDeliveryGrouped( AonRandom.gt(90) )
+			.setDeliveryValuated( AonRandom.gt(90) )
 			// TODO
 			.setAccount( account == null? null : account.getId() );
 		
@@ -78,10 +81,10 @@ public class AonFaker {
 		Account account = null;
 		return new Creditor()
 			.copy(registry)
-			.setWithholding( AonRandom.b(10) )
-			.setVatAccrualPayment( AonRandom.b(98) )
-			.setTransaction( AonRandom.b(90) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class))
-			.setStatus( AonRandom.b(90) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class))
+			.setWithholding( AonRandom.gt(85) )
+			.setVatAccrualPayment( AonRandom.gt(98) )
+			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class))
+			.setStatus( AonRandom.gt(2) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class))
 			.setScope( scope == null ? null : scope.getId() )
 			.setAccount( account == null? null : account.getId() );
 	}
@@ -98,14 +101,43 @@ public class AonFaker {
 		return new Supplier()
 			.copy(registry)
 			.setTariff( tariff == null? null : tariff.getId() )
-			.setWithholding( AonRandom.b(10) )
-			.setWithholdingFarmer( AonRandom.b(99) )
-			.setVatAccrualPayment( AonRandom.b(98) )
-			.setTransaction( AonRandom.b(90) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class))
-			.setStatus( AonRandom.b(90) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class))
+			.setWithholding( AonRandom.gt(95) )
+			.setWithholdingFarmer( AonRandom.gt(90) )
+			.setVatAccrualPayment( AonRandom.gt(92) )
+			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class))
+			.setStatus( AonRandom.gt(2) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class))
 			.setScope( scope == null ? null : scope.getId() )
-			.setPurchaseValuated(AonRandom.b(50) )
+			.setPurchaseValuated(AonRandom.gt(50) )
 			.setAccount( account == null? null : account.getId() );
+	}
+	
+	public static RegistryAddress getRegistryAddress( AONContext ctx) {
+		return getRegistryAddress(ctx, null); 
+	}
+	public static RegistryAddress getRegistryAddress( AONContext ctx, Integer registryId ) {
+		if (registryId == null) {
+			Registry registry = AonRandom.getRegistry(ctx);
+			registryId = registry.getId();
+		}
+		GeoZone geozone = AonRandom.getGeozone(ctx,30);
+		RegistryAddress address = new RegistryAddress()
+			.setDomain(ctx.getDomainId())
+			.setRegistry(registryId)
+			.setMain(AonRandom.gt(50))
+			.setStreetType(AonRandom.randomEnum(StreetType.class,75))
+			.setRecipient( AonRandom.name(20, RADDRESS.RECIPIENT.getDataType().length()) )
+			.setAddress( AonRandom.gt(10)?faker.address().streetName():null )
+			.setNumber( AonRandom.gt(12)?faker.address().streetAddressNumber():null)
+			.setAddress2( AonRandom.gt(90)?faker.address().secondaryAddress():null )
+			.setAddress3( AonRandom.gt(97)?faker.address().secondaryAddress():null )
+			.setZip( AonRandom.gt(10)?faker.address().zipCode():null )
+			.setCity( AonRandom.gt(10)?faker.address().city():null )
+			.setGeozone(geozone == null? null : geozone.getId())
+			.setGeozoneCode(geozone == null? null : geozone.getCode())
+			.setGeozoneName(geozone == null? null : geozone.getName())
+			.setRecipient( AonRandom.alias(20, RADDRESS.ALIAS.getDataType().length()) )
+			.setMunicipalityCode(AonRandom.gt(30)?faker.address().zipCode():null);
+		return address;
 	}
 
 	public static RegistryMedia getRegistryMedia( AONContext ctx) {
@@ -134,13 +166,13 @@ public class AonFaker {
 				@Override public void visitCellular() {media.setValue( faker.phoneNumber().cellPhone() );}
 			});
 		}
-		media.setComment( AonRandom.b(25) ? faker.lorem().characters(0, 64) : null); 
+		media.setComment( AonRandom.gt(25) ? faker.lorem().characters(0, 64) : null); 
 		
-		media.setAdministrative(AonRandom.b(95));
-		media.setCommercial(AonRandom.b(55));
-		media.setTechnical(AonRandom.b(25));
+		media.setAdministrative(AonRandom.gt(5));
+		media.setCommercial(AonRandom.gt(40));
+		media.setTechnical(AonRandom.gt(75));
 		Integer registryId = (registry !=null)?registry.getId():null;
-		if (registryId != null && AonRandom.b(15)) {
+		if (registryId != null && AonRandom.gt(15)) {
 			RegistryAddress address = AonRandom.getRegistryAddress(ctx, f-> f.getRegistryProperty().eq(registryId));
 			if (address != null) {
 				media.setRaddress(address.getId());
@@ -154,9 +186,9 @@ public class AonFaker {
 		tariff.setDomain(ctx.getDomainId());
 		tariff.setCode( faker.number().digits( 6) );
 		tariff.setName( faker.commerce().productName());
-		tariff.setPurchase( AonRandom.b(10) );
+		tariff.setPurchase( AonRandom.gt(50) );
 		tariff.setDiscount( AonRandom.getDouble(0, 100, 2));
-		tariff.setActive( !AonRandom.b(98) );
+		tariff.setActive( !AonRandom.gt(2) );
 		return tariff;
 	}
 	

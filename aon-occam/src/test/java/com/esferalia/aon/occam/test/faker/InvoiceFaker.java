@@ -55,7 +55,7 @@ public class InvoiceFaker {
 			
 			@Override
 			public void visitPurchase(Invoice invoice) {
-				Supplier supplier = AonRandom.getRandomSupplier( ctx );
+				Supplier supplier = AonRandom.getSupplier( ctx );
 				fillRegistryData(invoice, supplier);
 				invoice.setScope(new Scope().setId( supplier.getScope() ));
 				invoice.setTransaction(supplier.getTransaction());
@@ -68,7 +68,7 @@ public class InvoiceFaker {
 			
 			@Override
 			public void visitExpenses(Invoice invoice) {
-				Creditor creditor = AonRandom.getRandomCreditor( ctx );
+				Creditor creditor = AonRandom.getCreditor( ctx );
 				invoice.setScope(new Scope().setId( creditor.getScope() ));
 				fillRegistryData(invoice, creditor);
 				invoice.setTransaction( creditor.getTransaction() );

@@ -12,9 +12,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import  org.jooq.Record;
-import org.jooq.Select;
 import org.jooq.SelectConditionStep;
-import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -31,7 +29,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistryPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.CustomerAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.CustomerValidation;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -40,16 +38,11 @@ public class CustomerDAO {
 	
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
 	public static class CustomerPropertiesDAO extends RegistryPropertiesDAO implements CustomerProperties {
-		protected Select<Record> build(SelectJoinStep<Record> select, CustomerFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
 		
 		protected Condition[] getConditions(CustomerFilter filter) {
+			if (filter == null) return new Condition[0];
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null){
-				return new Condition[0];
-			}
+			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.REGISTRY);}

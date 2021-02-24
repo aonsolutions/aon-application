@@ -514,6 +514,10 @@ public class PropertiesDAO {
 		@Override public Property<Timestamp> getReceptionEndDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.RECEPTION_END_DATE);}
 	}
 	
+	/**
+	 * @deprecated  Replaced by RegistryDAO.RegistryPropertiesDAO
+	 */
+	@Deprecated(forRemoval = true )
 	public static class RegistryPropertiesDAO implements RegistryProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, RegistryFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);

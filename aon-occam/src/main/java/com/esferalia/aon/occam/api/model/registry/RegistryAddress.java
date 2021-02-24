@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -27,7 +26,6 @@ public class RegistryAddress implements Serializable {
 	private String geozoneName;
 	private String alias;	
 	private String municipalityCode;
-	private Country country;
 
 	public Integer getId() {
 		return id;
@@ -162,14 +160,6 @@ public class RegistryAddress implements Serializable {
 	}
 	public RegistryAddress setGeozoneName(String geozoneName) {
 		this.geozoneName = geozoneName;
-		return this;
-	}
-	
-	public Country getCountry(){
-		return country;
-	}
-	public RegistryAddress setCountry(Country country) {
-		this.country = country;
 		return this;
 	}
 	

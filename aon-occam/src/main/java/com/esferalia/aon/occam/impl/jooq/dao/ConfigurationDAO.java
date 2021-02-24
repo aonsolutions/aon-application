@@ -49,7 +49,7 @@ public class ConfigurationDAO {
 						}
 						))
 				.setVatTaxes( TaxDAO.getVatTaxs(ctx,atDate).collect(Collectors.toCollection(LinkedList::new)))
-				.setGeozones( GeoZoneDAO.getGeoZones(ctx, null).collect(Collectors.toCollection(LinkedList::new)))
+				.setGeozones( GeoZoneDAO.getStream(ctx, null).collect(Collectors.toCollection(LinkedList::new)))
 				.setAvailableScopes(SecurityDAO.getAvailableScopes (ctx))
 				.setAutoConcepts(AccountEntryDAO.getAutoConcepts(ctx).map(ac -> ac.getDescription())
 						.collect(Collectors.toCollection(LinkedList::new)))

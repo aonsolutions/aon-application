@@ -449,7 +449,7 @@ public class RegistryOldDAO {
 	}
 	
 	/**
-	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.insert(AONContext ctx, Registry reg)
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.save(AONContext ctx, Registry reg)
 	 */
 	@Deprecated(forRemoval = true )
 	protected static Integer insert(AONContext ctx, Registry reg) {
@@ -874,6 +874,10 @@ public class RegistryOldDAO {
 	
 	// ------------------- CREDITOR
 
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO.getStream(AONContext ctx, CreditorFilter filter)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter){
 		return CREDITOR_PROPERTIES.build(ctx.getDslContext().select()
 					.from(CREDITOR).join(SCOPE).on(CREDITOR.SCOPE.eq(SCOPE.ID))
@@ -899,6 +903,10 @@ public class RegistryOldDAO {
 	
 	// ------------------- SUPPLIER
 
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO.getStream(AONContext ctx, SupplierFilter filter)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter){
 		return SUPPLIER_PROPERTIES.build(ctx.getDslContext().select()
 					.from(SUPPLIER).join(SCOPE).on(SUPPLIER.SCOPE.eq(SCOPE.ID))
@@ -906,7 +914,10 @@ public class RegistryOldDAO {
 			,filter).fetch().stream().map(new SupplierFiller());
 	}
 	
-	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO.save(AONContext ctx, Supplier supplier)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Supplier insertSupplier(AONContext ctx, Supplier supplier){
 		ctx.getDslContext().insertInto(SUPPLIER, SUPPLIER.REGISTRY, SUPPLIER.DOMAIN, SUPPLIER.TARIFF, SUPPLIER.WITHHOLDING,
 				SUPPLIER.WITHHOLDING_FARMER, SUPPLIER.VAT_ACCRUAL_PAYMENT, SUPPLIER.TRANSACTION, SUPPLIER.STATUS, 

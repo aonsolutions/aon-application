@@ -93,13 +93,6 @@ public class TediInsightInvoicePDFParserTestCase {
 				assertNull(file + "Invoice has amounts!",insight.getAmounts());
 			} else {
 				assertNotNull(file + " has no amounts!",insight.getAmounts());
-				System.out.println( "********" );
-				System.out.println( "********" );
-				for (Double am : insight.getAmounts() ) {
-					System.out.println( am );
-				}
-				System.out.println( "********" );
-				System.out.println( "********" );
 				assertEquals(file + " must parse " + template.getAmountNumber() + " amounts!" ,template.getAmountNumber().intValue(),insight.getAmounts().length);
 			}
 			if (template.getTotal() != null) {

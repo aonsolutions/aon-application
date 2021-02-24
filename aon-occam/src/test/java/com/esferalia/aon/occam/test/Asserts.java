@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -96,6 +97,27 @@ public class Asserts {
 		assertEquals("Administrative",expected.isAdministrative(), actual.isAdministrative());
 		assertEquals("Commercial",expected.isCommercial(), actual.isCommercial());
 		assertEquals("Technical",expected.isTechnical(), actual.isTechnical());
+	}
+
+	public static void assertEqualsRegistryAddress(RegistryAddress expected, RegistryAddress actual) {
+		assertEqualsNulls( "RegistryAddress", expected, actual);
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("Registry",expected.getRegistry(), actual.getRegistry());
+		assertEquals("Main",expected.isMain(), actual.isMain());
+		assertEquals("Recipient",expected.getRecipient(), actual.getRecipient());
+		assertEquals("StreetType",expected.getStreetType(), actual.getStreetType());
+		assertEquals("Address",expected.getAddress(), actual.getAddress());
+		assertEquals("Number",expected.getNumber(), actual.getNumber());
+		assertEquals("Address2",expected.getAddress2(), actual.getAddress2());
+		assertEquals("Address3",expected.getAddress3(), actual.getAddress3());
+		assertEquals("Zip",expected.getAddress3(), actual.getAddress3());
+		assertEquals("City",expected.getCity(), actual.getCity());
+		assertEquals("Geozone",expected.getGeozone(), actual.getGeozone());
+		assertEquals("GeozoneCode",expected.getGeozoneCode(), actual.getGeozoneCode());
+		assertEquals("GeozoneName",expected.getGeozoneName(), actual.getGeozoneName());
+		assertEquals("Alias",expected.getAlias(), actual.getAlias());
+		assertEquals("MunicipalityCode",expected.getMunicipalityCode(), actual.getMunicipalityCode());
 	}
 
 	public static void assertEqualsTariff(Tariff expected, Tariff actual) {
