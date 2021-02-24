@@ -163,7 +163,7 @@ export class AonIconButton extends AonElement {
     let background = this.hasAttribute("background")
       ? this.getAttribute("background")
       : "transparent";
-    let button = document.createElement("button");
+    let button = this.getElement(this.BUTTON) || document.createElement("button");
     button.setAttribute("id", this.BUTTON);
     button.className = "aonIconButton";
     button.style.color = this.getAttribute("color")
@@ -205,7 +205,7 @@ export class AonIconButton extends AonElement {
     }
 
     if (this.hasAttribute("icon")) {
-      let icon = document.createElement("i");
+      let icon = this.getElement(this.ICON) || document.createElement("i");
       icon.id = this.ICON;
       icon.className = this.getAttribute("outlined")
         ? "material-icons-outlined"
@@ -213,7 +213,7 @@ export class AonIconButton extends AonElement {
       icon.innerHTML = this.getAttribute("icon");
       button.appendChild(icon);
     } else if (this.hasAttribute("image")) {
-      let image = document.createElement("img");
+      let image = this.getElement(this.IMAGE) || document.createElement("img");
       image.id = this.IMAGE;
       image.style.width = "24px";
       image.style.height = "24px";

@@ -262,7 +262,8 @@ export class AonLocationAdd extends AonElement {
   }
 
   back() {
-    this.aonSigninEl.setContent(new AonLocationList());
+    // this.aonSigninEl.setContent(new AonLocationList());
+    this.aonSigninEl.back();
   }
 }
 

@@ -14,6 +14,7 @@ import '../../components/aon-application.js';
 import '../../components/aon-dialog-menu.js';
 
 import * as MSG from "../../environments/msg.js";
+import { downscaleImage } from '../../services/compressImg.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -64,9 +65,8 @@ export class AonInvoicePanel extends AonElement {
 
 		let input = this.getElement(this.INPUT_FILE);
 		input.addEventListener('change', () => this.preview(input.files));
-
-		let inputCamera = this.getElement(this.INPUT_CAMERA);
-		inputCamera.addEventListener('change',  () => this.preview(input.files));
+		
+		this.getElement(this.INPUT_CAMERA).addEventListener('change',  ({target}) => this.preview(target.files));
 
 		aonInvoice.addEventListener('drop', (event) => {
 			if(event && event.dataTransfer && event.dataTransfer.files){
@@ -238,7 +238,7 @@ export class AonInvoicePanel extends AonElement {
 		}
 	}
 
-	attach(fileDataUri,  mimetype){
+	async attach(fileDataUri,  mimetype){
 		if (fileDataUri.length > 0) {
 			const base64File = fileDataUri.split(',')[1];
 			const data = {
@@ -250,10 +250,10 @@ export class AonInvoicePanel extends AonElement {
 				invoice: new Invoice('recibida')
 			};
 			if(this.isMobile()) {
-				// if (data.file.contentType.indexOf("image") >= 0) {
-		    //   //compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
-		    //   data.file = await downscaleImage(file, undefined, undefined, undefined);
-		    // }
+				if (data.file.contentType.indexOf("image") >= 0) {
+					//compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
+					data.file = await downscaleImage(data.file, undefined, undefined, undefined);
+		    	}
 			}
 			let aonInvoice = document.getElementById('aonInvoice');
 			aonInvoice.startLoader();

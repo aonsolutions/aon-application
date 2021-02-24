@@ -13,7 +13,7 @@ import {
   getStatus,
   saveTimeControlDetail,
 } from "../../../../services/service.js";
-import { AonEventDetailList } from "./aon-event-detail-list.js";
+// import { AonEventDetailList } from "./aon-event-detail-list.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { UserAction } from "../../../user/userEnums.js";
 import "../../../../components/aon-card.js";
@@ -284,15 +284,16 @@ export class AonEventAdd extends AonElement {
   }
 
   back() {
-    let aonEventDetailList = new AonEventDetailList();
-    if (this.data && this.data.date) {
-      const startDate = formatDateOrigin(new Date(this.data.date));
-      aonEventDetailList.DATE_TASK = {
-        startDate,
-        endDate: startDate,
-      };
-    }
-    this.aonSigninEl.setContent(aonEventDetailList);
+    // let aonEventDetailList = new AonEventDetailList();
+    // if (this.data && this.data.date) {
+    //   const startDate = formatDateOrigin(new Date(this.data.date));
+    //   aonEventDetailList.DATE_TASK = {
+    //     startDate,
+    //     endDate: startDate,
+    //   };
+    // }
+    // this.aonSigninEl.setContent(aonEventDetailList);
+    this.aonSigninEl.back();
   }
 }
 

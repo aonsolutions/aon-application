@@ -32,7 +32,8 @@ export class AonComunica extends AonElement {
 	build() {
 		this.aonComunicaEl = this.getElement(this.AON_COMUNICA);
 		this.buildToolbar();
-		this.paintViewCtz();
+		if(this.isMobile()) this.painViewContract();
+		else this.paintViewCtz();
 	}
 
 	buildToolbar(){
@@ -43,7 +44,7 @@ export class AonComunica extends AonElement {
 					icon: 'contract',
 					color: 'black'
 				},
-				fn: () => this.paintViewContrato()
+				fn: () => this.painViewContract()
 			},
 			{
 				name: 'Partes IT',
@@ -86,7 +87,7 @@ export class AonComunica extends AonElement {
 	}
 
 
-	paintViewContrato(){
+	painViewContract(){
 		this.aonComunicaEl.removeToolbarOptions();
 		if(this.isMobile())
 			this.aonComunicaEl.setContentHTML(`<aon-contrato-list id="aonContratoList" ></aon-contrato-list>`)

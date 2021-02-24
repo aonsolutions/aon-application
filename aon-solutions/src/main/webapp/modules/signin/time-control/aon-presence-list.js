@@ -1,6 +1,6 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList } from "../../../services/service.js";
-import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, timeHour } from "../../../services/utils.js";
+import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, timeHour, waitEl } from "../../../services/utils.js";
 import {AonEventList} from "./event/aon-event-list.js";
 import { StringTwoLetters } from "./utils.js";
 import "../../../components/aon-table.js";
@@ -31,10 +31,7 @@ export class AonPresenceList extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if ("filter" === name){
-      this.initialize();
-      this.getTable();
-    } 
+    if ("filter" === name) this.getTable();
   }
 
   constructor() {
@@ -55,12 +52,6 @@ export class AonPresenceList extends AonElement {
     this.aonSigninParentEl.periodSideNavDisplay(true);
   }
   
-  disconnectedCallback() {}
-  
-  adoptedCallback(){
-    console.log("adoptedCallback");
-  }
-
   async build(){
     this.paintView();
     this.buildToolbar();
@@ -115,6 +106,7 @@ export class AonPresenceList extends AonElement {
   }
 
   async getTable() {
+    this.aonSigninEl = await waitEl("#aonSignin");
     this.aonSigninEl.startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();

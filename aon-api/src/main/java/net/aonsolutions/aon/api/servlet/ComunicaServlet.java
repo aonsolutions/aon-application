@@ -66,7 +66,8 @@ public class ComunicaServlet extends HttpServlet{
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 	    	resp.setStatus(500);
-	    	content = e.getCause().getMessage()!=null ? e.getCause().getMessage().getBytes() : "".getBytes();
+	    	String message = e.getCause().getMessage();
+	    	content = message!=null ? message.getBytes() : "".getBytes();
 	    } catch (Exception e) {
 			e.printStackTrace();
 			resp.setStatus(500);
@@ -104,7 +105,8 @@ public class ComunicaServlet extends HttpServlet{
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 	    	resp.setStatus(500);
-	    	content = e.getCause().getMessage().getBytes();
+	    	String message = e.getCause().getMessage();
+	    	content = message!=null ? message.getBytes() : "".getBytes();
 	    } catch (Exception e) {
 			e.printStackTrace();
 			resp.setStatus(500);

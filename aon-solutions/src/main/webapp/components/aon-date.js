@@ -106,24 +106,27 @@ export class AonDate extends AonElement {
   buildDatepicker() {
     let input = this.getElement(this.INPUT);
     let div = this.getElement(input.DIV);
-    let span = this.createElement('span');
+    let span = this.getElement(input.SPAN) || this.createElement('span');
     span.id = input.SPAN;
     div.appendChild(span);
 
-    let datepicker = this.createElement('div');
+    let datepicker =  this.getElement(this.DATEPICKER) || this.createElement('div');
     datepicker.id = this.DATEPICKER;
     datepicker.className = 'aonDatepicker';
     datepicker.style.width = '250px';
     span.appendChild(datepicker);
-
-    let datepickerHeader = this.createElement('div');
+    let datepickerHeaderId =this.DATEPICKER +"Header";
+    let datepickerHeader = this.getElement(datepickerHeaderId) || this.createElement('div');
     datepickerHeader.style.height = '50px';
+    datepickerHeader.id = datepickerHeaderId;
+
     datepickerHeader.innerHTML = `
-      <aon-icon-button id="${this.DATEPICKER_PREVIOUS}" icon="keyboard_arrow_left"></aon-icon-button>
-      <span id="${this.DATEPICKER_MONTH}"> ${this.getMonthName()} </span>
-      <span id="${this.DATEPICKER_YEAR}"> ${this.year} </span>
-      <aon-icon-button id="${this.DATEPICKER_NEXT}" icon="keyboard_arrow_right"></aon-icon-button>
-    `;
+    <aon-icon-button id="${this.DATEPICKER_PREVIOUS}" icon="keyboard_arrow_left"></aon-icon-button>
+    <span id="${this.DATEPICKER_MONTH}"> ${this.getMonthName()} </span>
+    <span id="${this.DATEPICKER_YEAR}"> ${this.year} </span>
+    <aon-icon-button id="${this.DATEPICKER_NEXT}" icon="keyboard_arrow_right"></aon-icon-button>
+  `;
+
     datepicker.appendChild(datepickerHeader);
 
     let previous = this.getElement(this.DATEPICKER_PREVIOUS);

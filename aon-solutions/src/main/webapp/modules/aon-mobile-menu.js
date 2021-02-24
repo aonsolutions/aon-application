@@ -229,7 +229,7 @@ export class AonMobileMenu extends AonElement {
 					type="file"
 					accept="image/*"
 					capture="camera"
-					id="aonMobileMenuCameraInput"
+					id="${this.CAMERA_INPUT}"
 					hidden
 				  />
 			</div>
@@ -316,7 +316,7 @@ export class AonMobileMenu extends AonElement {
   async openCamera(type) {
     this.TYPE_IMG = type;
     const isApp = await actionMobile({ action: "camera" });
-    if (!isApp) this.getElement("aonMobileMenuCameraInput").click();
+    if (!isApp) this.getElement(this.CAMERA_INPUT).click();
   }
 
   async changeImage({ target }) {

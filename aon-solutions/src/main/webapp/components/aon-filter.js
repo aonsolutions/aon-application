@@ -85,7 +85,7 @@ export class AonFilter extends AonElement {
   }
 
   getInput(attribute) {
-    let { type } = attribute;
+    let { type, id } = attribute;
     let html = "";
     let newAttributes = this.convertObjToString(attribute, " ");
     switch (type) {
