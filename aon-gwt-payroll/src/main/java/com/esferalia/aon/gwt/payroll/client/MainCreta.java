@@ -925,11 +925,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		@Override
 		protected void submitBases() {
 			
+			AbstractBaseCretaDetail.this.task = new TimeTask();
+			AbstractBaseCretaDetail.this.task.startTime();
+			AbstractBaseCretaDetail.this.task.setDescription("Generando Fichero de Bases...");
+
 			HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
 			handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
-				AbstractBaseCretaDetail.this.task = new TimeTask();
-				AbstractBaseCretaDetail.this.task.startTime();
-				AbstractBaseCretaDetail.this.task.setDescription("Generando Fichero de Bases...");
 				progressPanel.showTask(AbstractBaseCretaDetail.this.task);
 				handlerRegistration[0].removeHandler();
 			});

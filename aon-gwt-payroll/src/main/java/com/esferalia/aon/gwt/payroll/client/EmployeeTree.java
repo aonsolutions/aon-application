@@ -2710,9 +2710,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private CCCCretaDetail getCCCCretaDetail() {
 		if (cccCretaDetail == null) {
+			progressPanel = new ProgressPanel();
 			cccCretaDetail = new CCCCretaDetail();
 
-			progressPanel = new ProgressPanel();
 			
 			// I use an array for skip compile warning/error 'handlerRegistration may not be initialized'.
 			HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
