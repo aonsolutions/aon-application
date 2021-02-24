@@ -20,12 +20,13 @@ public class CompositeSalaryBuilder<E extends ISalary,T extends ISalaryBuilder<E
 
 	@Override
 	public E getSalary() {
+		E salary = null;
 		for (ISalaryBuilder<E> builder : builders) {
-			E salary = builder.getSalary();
-			if (salary != null)
-				return salary;
+			E s = builder.getSalary();
+			if (s != null)
+				salary = s;
 		}
-		return null;
+		return salary;
 	}
 
 	@Override
