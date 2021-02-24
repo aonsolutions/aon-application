@@ -7,7 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	InsertTest.class,
+	LoadTest.class,
 })
 public class AccountTestSuite {
 

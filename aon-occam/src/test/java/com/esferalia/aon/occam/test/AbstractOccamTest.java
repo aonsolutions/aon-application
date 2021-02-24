@@ -8,9 +8,9 @@ import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
 import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLICATION_MODULE;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,7 +32,16 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.test.faker.AonFaker;
+import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.mysql.jdbc.Driver;
 
 import net.aonsolutions.core.pool.AonConnectionException;
@@ -127,7 +136,7 @@ public class AbstractOccamTest {
 		try {
 			context = new AONContext(connect());
 			AONContext contextBis = context;
-			Domain domain = context.getDslContext().transactionResult(configuration -> insertDomain(contextBis, "11111111H", DOMAIN_NAME)); 
+			Domain domain = context.getDslContext().transactionResult(configuration -> insertDomain(contextBis, DOMAIN_NAME)); 
 			DOMAIN_ID = domain.getId(); 
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -138,12 +147,12 @@ public class AbstractOccamTest {
 		}
 	}
 	
-	public static Domain insertDomain(AONContext ctx, String document, String name) throws AonCoreException {
+	public static Domain insertDomain(AONContext ctx, final String domainName) throws AonCoreException {
 		Domain domain = null;
 		Record domainRecord = ctx.getDslContext()
 				.select()
 				.from(DOMAIN)
-				.where(DOMAIN.NAME.eq(name))
+				.where(DOMAIN.NAME.eq(domainName))
 				.fetchAny();
 
 		if (domainRecord != null) {
@@ -152,7 +161,7 @@ public class AbstractOccamTest {
 			domain.setName(domainRecord.get(DOMAIN.NAME));
 			return domain;
 		}
-		// DOMAIN
+		
 		int newDomainId = ctx
 				.getDslContext()
 				.insertInto(DOMAIN)
@@ -161,14 +170,15 @@ public class AbstractOccamTest {
 				.set(DOMAIN.DOMAINMANAGEMENT, (byte) 0)
 				.set(DOMAIN.TYPE, (byte) 0)
 				.set(DOMAIN.OWNER, USER )
-				.set(DOMAIN.NAME, name )
-				.set(DOMAIN.DESCRIPTION, name )
+				.set(DOMAIN.NAME, domainName )
+				.set(DOMAIN.DESCRIPTION, domainName )
 				.set(DOMAIN.ENABLEHEREDITY, (byte) 1)
 				.set(DOMAIN.MAXDEFINEDUSERS, 1)
 				.set(DOMAIN.MAXDOCUMENTSIZE, 1)
 				.set(DOMAIN.MAXTOTALDOCUMENTSIZE, 16).returning(DOMAIN.ID)
 				.fetchOne().getId();
-		ctx.log().info("Dominio " + name + " insertado correctamente");
+		domain = DomainDAO.getDomain(ctx, newDomainId);
+		ctx.log().info("Dominio " + domainName + " insertado correctamente");
 		
 		ctx.getDslContext().insertInto(DOMAIN_APP)
 			.set(DOMAIN_APP.DOMAIN, newDomainId)
@@ -202,19 +212,24 @@ public class AbstractOccamTest {
 				.execute();
 		}
 
-		int newRegistryId = ctx.getDslContext().insertInto(REGISTRY)
-				.set(REGISTRY.DOMAIN, newDomainId)
-				.set(REGISTRY.DOCUMENT, document)
-				.set(REGISTRY.DOCUMENT_TYPE, (byte) 0)
-				.set(REGISTRY.NAME, name)
-				.set(REGISTRY.TYPE, (byte) 1)
-				.returning(REGISTRY.ID).fetchOne()
-				.getId();
+		Registry registry = AonFaker.getRegistry(ctx);
+		registry.setDomain(domain);
+		registry = RegistryDAO.save(ctx, registry);
 		ctx.log().info("Registry insertado correctamente");
 
+		RegistryAddress address = AonFaker.getRegistryAddress(ctx,registry.getId());
+		address.setDomain(newDomainId);
+		address = RegistryAddressDAO.save(ctx, address);
+		ctx.log().info("Registry Address insertado correctamente");
+		
 		ctx.getDslContext().insertInto(COMPANY)
-				.set(COMPANY.REGISTRY, newRegistryId)
+				.set(COMPANY.REGISTRY, registry.getId())
 				.set(COMPANY.DOMAIN, newDomainId)
+				.set(COMPANY.ACTIVE, (byte) 1)
+				.set(COMPANY.SURCHARGE,AonEnumUtils.getByte(AonRandom.gt(95)))
+				.set(COMPANY.WITHHOLDING,AonEnumUtils.getByte(AonRandom.gt(85)))
+				.set(COMPANY.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte(AonRandom.gt(99)))
+				.set(COMPANY.E_INVOICE,AonEnumUtils.getByte(AonRandom.gt(50)))
 				.execute();
 		ctx.log().info("Company insertada correctamente");
 		
@@ -262,17 +277,23 @@ public class AbstractOccamTest {
 			.getId();
 		ctx.log().info("Perfil de usuario en la aplicación insertada correctamente");
 		
-		ctx.getDslContext()
+		int enterpriseId = ctx.getDslContext()
 				.insertInto(ENTERPRISE)
-				.set(ENTERPRISE.REGISTRY, newRegistryId)
+				.set(ENTERPRISE.REGISTRY, registry.getId())
 				.set(ENTERPRISE.DOMAIN, newDomainId)
 				.set(ENTERPRISE.SCOPE, newScopeId)
 				.execute();
 		ctx.log().info("Enterprise insertada correctamente");
 
-		domain = new Domain();
-		domain.setId(newDomainId);
-		domain.setName(name);
+		ctx.getDslContext().insertInto(WORKPLACE)
+		.set(WORKPLACE.DOMAIN, newDomainId)
+		.set(WORKPLACE.DESCRIPTION, "DEFAULT")
+		.set(WORKPLACE.ADDRESS, address.getId())
+		.set(WORKPLACE.ENTERPRISE, registry.getId())
+		.set(WORKPLACE.SCOPE, newScopeId)
+		.set(WORKPLACE.ECONOMICAGREEMENT, AonEnumUtils.getByte( AonRandom.randomEnum( Administration.class, 10) ))
+		.execute();
+		ctx.log().info("Workplace insertada correctamente");
 
 		return domain;
 	}
