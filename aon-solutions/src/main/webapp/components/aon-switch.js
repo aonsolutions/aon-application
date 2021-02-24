@@ -125,5 +125,6 @@ export class AonSwitch extends AonElement {
       && CONSTANT.FALSE !== this.getAttribute(CONSTANT.CHECKED)
   }
 }
-
-window.customElements.define('aon-switch',  AonSwitch);
+if(!window.customElements.get('aon-switch')){
+	window.customElements.define('aon-switch',  AonSwitch);
+}

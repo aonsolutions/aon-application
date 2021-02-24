@@ -149,14 +149,18 @@ export class AonIconButton extends AonElement {
 
   constructor() {
     super();
-  }
-
-  connectedCallback() {
     this.BUTTON = this.id + "IconButton";
     this.ICON = this.id + "Icon";
     this.AON_ICON = this.id + "AonIcon";
     this.IMAGE = this.id + "Image";
+  }
+
+  connectedCallback() {
     this.appendChild(this.build());
+  }
+
+  initialize() {
+
   }
 
   build() {
@@ -226,5 +230,6 @@ export class AonIconButton extends AonElement {
     return button;
   }
 }
-
-window.customElements.define("aon-icon-button", AonIconButton);
+if(!window.customElements.get('aon-icon-button')){
+  window.customElements.define("aon-icon-button", AonIconButton);
+}

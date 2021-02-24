@@ -42,5 +42,6 @@ export class AonToast extends AonElement {
 	}
 
 }
-
-window.customElements.define('aon-toast', AonToast);
+if(!window.customElements.get('aon-toast')){
+	window.customElements.define('aon-toast', AonToast);
+}

@@ -50,5 +50,6 @@ export class AonSlider extends AonElement {
 	}
 
 }
-
-window.customElements.define('aon-slider',  AonSlider);
+if(!window.customElements.get('aon-slider')){
+	window.customElements.define('aon-slider',  AonSlider);
+}

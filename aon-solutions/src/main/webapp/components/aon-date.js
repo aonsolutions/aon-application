@@ -339,5 +339,6 @@ export class AonDate extends AonElement {
     return d;
   }
 }
-
-window.customElements.define('aon-date',  AonDate);
+if(!window.customElements.get('aon-date')){
+  window.customElements.define('aon-date',  AonDate);
+}

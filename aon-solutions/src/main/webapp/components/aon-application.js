@@ -86,7 +86,7 @@ export class AonApplication extends AonElement {
     this.build();
     this.getObserverContent();
   }
-  
+
   getObserverContent() {
     let observer = new MutationObserver((mutations) => {
       mutations.forEach(mutation=>{
@@ -550,4 +550,6 @@ export class AonApplication extends AonElement {
     );
   }
 }
-window.customElements.define("aon-application", AonApplication);
+if(!window.customElements.get('aon-application')){
+  window.customElements.define("aon-application", AonApplication);
+}

@@ -215,5 +215,6 @@ export class AonTable extends AonElement {
     d.open();
   }
 }
-
-window.customElements.define("aon-table", AonTable);
+if(!window.customElements.get('aon-table')){
+  window.customElements.define("aon-table", AonTable);
+}

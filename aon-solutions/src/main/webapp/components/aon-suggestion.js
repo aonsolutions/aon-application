@@ -173,5 +173,6 @@ export class AonSuggestion extends AonElement {
     }
   }
 }
-
-window.customElements.define('aon-suggestion', AonSuggestion);
+if(!window.customElements.get('aon-suggestion')){
+  window.customElements.define('aon-suggestion', AonSuggestion);
+}

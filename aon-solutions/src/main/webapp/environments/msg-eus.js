@@ -141,3 +141,6 @@ export const AON_MSG_TYPES = 'Motak';
 export const AON_MSG_ENTERPRISE = 'Enpresa';
 export const AON_MSG_EMPLOYEE = 'Langile';
 export const AON_MSG_ASESOR = 'Aholkulari';
+
+export const AON_MSG_ACCOUNTING = 'Kontabilitatea';
+export const AON_MSG_BOOKING = 'Kontratazioa';

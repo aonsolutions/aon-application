@@ -115,5 +115,6 @@ export class AonDialogMenu extends AonElement {
 		});
 	}
 }
-
-window.customElements.define('aon-dialog-menu', AonDialogMenu);
+if(!window.customElements.get('aon-dialog-menu')){
+	window.customElements.define('aon-dialog-menu', AonDialogMenu);
+}

@@ -21,7 +21,7 @@ export class AonCheckbox extends AonElement {
 	set name(name) {
 		this.setAttribute('name', name);
 	}
-	
+
 
 	get value() {
 		return this.getAttribute('value');
@@ -111,5 +111,6 @@ export class AonCheckbox extends AonElement {
 		return this.value && this.value === 'true';
 	}
 }
-
-window.customElements.define('aon-checkbox',  AonCheckbox);
+if(!window.customElements.get('aon-card')){
+	window.customElements.define('aon-card',  AonCheckbox);
+}

@@ -65,5 +65,6 @@ export class AonSearchBox extends HTMLElement {
 		});
 	}
 }
-
-window.customElements.define('aon-search-box', AonSearchBox);
+if(!window.customElements.get('aon-search-box')){
+	window.customElements.define('aon-search-box', AonSearchBox);
+}

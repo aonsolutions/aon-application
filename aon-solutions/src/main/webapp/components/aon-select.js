@@ -206,5 +206,6 @@ export class AonSelect extends AonElement {
     return this.disabled == "true";
   }
 }
-
-window.customElements.define('aon-select', AonSelect);
+if(!window.customElements.get('aon-select')){
+  window.customElements.define('aon-select', AonSelect);
+}

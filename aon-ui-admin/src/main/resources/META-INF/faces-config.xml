@@ -718,4 +718,12 @@
 		</navigation-case>
 	</navigation-rule>	
 	
+	<!-- =================== New Suite Marketplace ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>new_suite_marketplace</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/newSuite/marketplace.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+	
 </faces-config>

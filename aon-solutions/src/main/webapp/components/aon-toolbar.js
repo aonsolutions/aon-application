@@ -280,5 +280,6 @@ export class AonToolbar extends AonElement {
 		return this.hasAttribute('title') ? this.getAttribute('title') : '';
 	}
 }
-
-window.customElements.define('aon-toolbar',  AonToolbar);
+if(!window.customElements.get('aon-toolbar')){
+	window.customElements.define('aon-toolbar',  AonToolbar);
+}

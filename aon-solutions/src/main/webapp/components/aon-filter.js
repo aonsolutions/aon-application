@@ -41,7 +41,7 @@ export class AonFilter extends AonElement {
 
   build() {}
   eventListener(){}
-  
+
   paintView() {
     this.innerHTML = `<aon-dialog id="${this.DIALOG}"> </aon-dialog>`;
   }
@@ -107,5 +107,6 @@ export class AonFilter extends AonElement {
     return Object.keys(obj).map((k) => `${k.trim()}="${obj[k]}"`).join(separator);
   }
 }
-
-window.customElements.define("aon-filter", AonFilter);
+if(!window.customElements.get('aon-filter')){
+  window.customElements.define("aon-filter", AonFilter);
+}

@@ -1,5 +1,5 @@
 import {AonElement} from './AonElement.js';
-import { AonIconButton } from "./aon-icon-button.js";
+import "./aon-icon-button.js";
 
 export class AonCard extends AonElement {
 
@@ -94,19 +94,25 @@ export class AonCard extends AonElement {
   }
 
   addTitleButton(name, icon, selected, fn) {
-    let button = new AonIconButton();
-    button.id = this.TITLE_SECTION2 + name + 'Button';
-    button.icon = icon;
-    button.style.position = 'relative';
-    button.title = name;
+    let id = this.TITLE_SECTION2 + name + 'Button';
+    let background = selected ? 'lightgray' : 'transparent';
+    let btn = `<aon-icon-button id="${id}" icon="${icon}" style="position:relative;" title="${name}" background="${background}"></aon-icon-button>`
 
-    if(selected) {
-      button.background = 'lightgray';
-    }
+    // let button = new AonIconButton();
+    // button.id = this.TITLE_SECTION2 + name + 'Button';
+    // button.icon = icon;
+    // button.style.position = 'relative';
+    // button.title = name;
 
-    button.addEventListener('click', fn);
+    let span = document.createElement('span');
+    span.id = id + "Span";
+    span.innerHTML = btn;
+
     let title = this.getElement(this.TITLE_SECTION2);
-    title.appendChild(button);
+    title.appendChild(span);
+
+    let button = document.getElementById(id);
+    button.addEventListener('click', fn);
   }
 
 	setContent(el) {
@@ -125,4 +131,6 @@ export class AonCard extends AonElement {
 		this.getElement(this.CARD).style.backgroundColor = color;
 	}
 }
-window.customElements.define('aon-card',  AonCard);
+if(!window.customElements.get('aon-card')){
+  window.customElements.define('aon-card',  AonCard);
+}

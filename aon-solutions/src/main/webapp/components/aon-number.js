@@ -284,5 +284,6 @@ export class AonNumber extends AonElement {
         this.setAttribute('disabled', disabled);
     }
 }
-
-window.customElements.define('aon-number', AonNumber);
+if(!window.customElements.get('aon-number')){
+  window.customElements.define('aon-number', AonNumber);
+}

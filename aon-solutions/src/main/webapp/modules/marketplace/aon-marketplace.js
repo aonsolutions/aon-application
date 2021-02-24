@@ -4,8 +4,8 @@ import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-card.js';
-import '../../components/aon-icon.js';
 import '../../components/aon-icon-button.js';
+import '../../components/aon-icon.js';
 
 export class AonMarketplace extends AonElement {
 
@@ -25,17 +25,16 @@ export class AonMarketplace extends AonElement {
 	}
 
 	connectedCallback () {
+		this.initialize();
+		getDomainUserRoles({}).then(r => {
+			this.buildList(new DomainUserRoles(r));
+		});
+	}
+
+	initialize() {
 		this.id = this.id || 'aonMarketplace';
 		this.APP = this.id + 'App';
 		this.VIEW_MODE = this.id + 'ViewMode';
-
-		let company = JSON.parse(localStorage.getItem('company'));
-
-		if(company) {
-			getDomainUserRoles({}).then(r => {
-				this.buildList(new DomainUserRoles(r));
-			});
-		}
 	}
 
 	buildList(dur) {
@@ -140,9 +139,8 @@ export class AonMarketplace extends AonElement {
 				contratar.style.backgroundColor= 'lightgrey';
 			}
 			contratar.addEventListener('click', () => {
-				let company = JSON.parse(localStorage.getItem('company'));
 				setDomainApp({
-					domain: company.domain,
+					domain: localStorage.getItem('aon_domain_name'),
 					app: apps[key].app,
 					active: !contratado
 				}).then(() => {
@@ -231,9 +229,8 @@ export class AonMarketplace extends AonElement {
 				contratar.style.backgroundColor= 'lightgrey';
 			}
 			contratar.addEventListener('click', () => {
-				let company = JSON.parse(localStorage.getItem('company'));
 				setDomainApp({
-					domain: company.domain,
+					domain: localStorage.getItem('aon_domain_name'),
 					app: apps[key].app,
 					active: !contratado
 				}).then(() => {
@@ -265,5 +262,6 @@ export class AonMarketplace extends AonElement {
 		this.appendChild(div);
 	}
 }
-
-window.customElements.define('aon-marketplace', AonMarketplace);
+if(!window.customElements.get('aon-marketplace')){
+	window.customElements.define('aon-marketplace', AonMarketplace);
+}

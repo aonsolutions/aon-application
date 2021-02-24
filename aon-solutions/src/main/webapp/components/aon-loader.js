@@ -42,5 +42,6 @@ export class AonLoader extends AonElement {
 	}
 
 }
-
-window.customElements.define('aon-loader',  AonLoader);
+if(!window.customElements.get('aon-loader')){
+	window.customElements.define('aon-loader',  AonLoader);
+}

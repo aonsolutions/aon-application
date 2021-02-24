@@ -178,9 +178,9 @@ export class AonUser extends AonElement {
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
 		card2.setVisible(this.hasSecurity());
 
-		this.buildPermissionButtons();
-
 		if(user && !this.hasAttribute('apps') && this.hasAttribute('showApps')) {
+			this.buildPermissionButtons();
+
 			getDomainApps().then(apps => {
 				this.setAttribute('apps', JSON.stringify(apps));
 			});
@@ -198,7 +198,6 @@ export class AonUser extends AonElement {
 	}
 
 	buildPermissionButtons() {
-
 		let card2 = this.getElement('aonConfigurationUserSecurityCard');
 		card2.cleanSection2();
 		card2.addTitleButton('Personalizado', MATERIAL_ICONS.TUNE, this.isPersonalizado(), () => {
@@ -253,6 +252,7 @@ export class AonUser extends AonElement {
 				this._user.roles = r;
 				this.setAttribute('user', JSON.stringify(user));
 				this.initApps();
+				this.buildPermissionButtons();
 			});
 		});
 	}

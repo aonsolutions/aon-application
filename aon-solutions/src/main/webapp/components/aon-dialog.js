@@ -69,7 +69,7 @@ export class AonDialog extends AonElement {
 		this.ACTION = this.DIALOG + 'Action';
 		this.CANCEL = this.ACTION + 'Cancel';
 		this.ACCEPT = this.ACTION + 'Accept';
-		
+
 		this.innerHTML = `
 		<div id="${this.DIALOG}" class="aonDialog">
 			<div id="${this.MAIN}" class="aonDialogContent">
@@ -216,5 +216,6 @@ export class AonDialog extends AonElement {
 		this.getElement(this.ACTION).appendChild(accept);
 	}
 }
-
-window.customElements.define('aon-dialog', AonDialog);
+if(!window.customElements.get('aon-dialog')){
+	window.customElements.define('aon-dialog', AonDialog);
+}

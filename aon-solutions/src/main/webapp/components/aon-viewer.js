@@ -265,5 +265,6 @@ export class AonViewer extends AonElement {
 		});
 	}
 }
-
-window.customElements.define('aon-viewer', AonViewer);
+if(!window.customElements.get('aon-viewer')){
+	window.customElements.define('aon-viewer', AonViewer);
+}

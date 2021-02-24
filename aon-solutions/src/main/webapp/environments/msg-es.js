@@ -142,3 +142,6 @@ export const AON_MSG_TYPES = 'Tipos';
 export const AON_MSG_ENTERPRISE = 'Empresa';
 export const AON_MSG_EMPLOYEE = 'Empleado';
 export const AON_MSG_ASESOR = 'Asesor';
+
+export const AON_MSG_ACCOUNTING = 'Contabilidad';
+export const AON_MSG_BOOKING = 'Contratación';

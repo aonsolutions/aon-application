@@ -94,7 +94,7 @@ export class AonMobileList extends AonElement {
       span3.innerHTML = data.subtitle;
       span.appendChild(span3);
     }
-  
+
 
     li.appendChild(span);
 
@@ -152,4 +152,6 @@ export class AonMobileList extends AonElement {
     return this.setAttribute("filter", JSON.stringify(filter));
   }
 }
-window.customElements.define("aon-mobile-list", AonMobileList);
+if(!window.customElements.get('aon-mobile-list')){
+  window.customElements.define("aon-mobile-list", AonMobileList);
+}

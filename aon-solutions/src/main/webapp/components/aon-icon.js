@@ -75,5 +75,6 @@ export class AonIcon extends AonElement {
 		`;
   }
 }
-
-window.customElements.define('aon-icon', AonIcon);
+if(!window.customElements.get('aon-icon')){
+  window.customElements.define('aon-icon', AonIcon);
+}

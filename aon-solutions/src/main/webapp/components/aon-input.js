@@ -619,5 +619,6 @@ export class AonInput extends AonElement {
     } else if (!valor && div_load) div_load.remove();
   }
 }
-
-window.customElements.define("aon-input", AonInput);
+if(!window.customElements.get('aon-input')){
+  window.customElements.define("aon-input", AonInput);
+}
