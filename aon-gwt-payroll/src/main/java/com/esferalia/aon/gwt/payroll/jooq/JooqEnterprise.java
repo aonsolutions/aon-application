@@ -794,6 +794,10 @@ public class JooqEnterprise {
 			Integer cccId = enterprise.get(ENTERPRISE_CCC.ID);
 			String cccCode = enterprise.get(ENTERPRISE_CCC.CCC);
 			String regime = getSSRegime(enterprise.get(ENTERPRISE_CCC.TYPE)).getCode();
+			
+			if(enterprise.get(ENTERPRISE_CCC.TYPE) == 6)
+				continue;
+			
 			Byte type = enterprise.get(ENTERPRISE_CCC.TYPE);
 			
 			String completeCCCAccount = regime + cccCode;
