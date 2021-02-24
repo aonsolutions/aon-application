@@ -450,6 +450,7 @@ export class AonInput extends AonElement {
   }
 
   buildAddressValue(val) {
+    if(!val) val = {};
     let value = {
       country: val.country || "ES",
       address: val.address || "",

@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {AonApplication} from '../../components/aon-application.js';
-import {insertInvoice, deleteInvoices} from '../../services/service.js';
+import {insertInvoice, deleteInvoices, actionMobile} from '../../services/service.js';
 import {Invoice} from './Invoice.js';
 import {InvoiceAction} from './invoiceEnums.js';
 
@@ -21,7 +21,8 @@ export class AonInvoicePanel extends AonElement {
 	_filter;
 
 	INVOICE;
-	INPUTFILE;
+	INPUT_FILE;
+	INPUT_CAMERA;
 
 	get status() {
 		return this.getAttribute('status');
@@ -39,16 +40,18 @@ export class AonInvoicePanel extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		this.innerHTML = `
-			<aon-application id="${this.INVOICE}" title="${MSG.AON_MSG_INVOICES}" drag_and_drop="true"></aon-application>
-			<aon-dialog-menu id="aonDialogAddOption"> </aon-dialog-menu>
-			<input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
+			<aon-application id='${this.INVOICE}' title='${MSG.AON_MSG_INVOICES}' drag_and_drop='true'></aon-application>
+			<aon-dialog-menu id='aonDialogAddOption'> </aon-dialog-menu>
+			<input id='${this.INPUT_FILE}' style='display:none;' type='file' name='file' multiple>
+			<input id='${this.INPUT_CAMERA}' type='file' accept='image/*' capture='camera' hidden />
 		`;
 		this.build();
 	}
 
 	initialize() {
 		this.INVOICE = 'aonInvoice';
-		this.INPUTFILE = this.INVOICE + 'InputFile';
+		this.INPUT_FILE = this.INVOICE + 'InputFile';
+		this.INPUT_CAMERA = this.INVOICE + 'InputCamera';
 		this._filter = {
 			status: 'inbox',
 			page: 0,
@@ -58,9 +61,12 @@ export class AonInvoicePanel extends AonElement {
 
   build(){
 		let aonInvoice = this.getElement(this.INVOICE);
-		let input = this.getElement(this.INPUTFILE);
 
+		let input = this.getElement(this.INPUT_FILE);
 		input.addEventListener('change', () => this.preview(input.files));
+
+		let inputCamera = this.getElement(this.INPUT_CAMERA);
+		inputCamera.addEventListener('change',  () => this.preview(input.files));
 
 		aonInvoice.addEventListener('drop', (event) => {
 			if(event && event.dataTransfer && event.dataTransfer.files){
@@ -201,12 +207,24 @@ export class AonInvoicePanel extends AonElement {
 				icon: 'receipt',
 				fn: () => this.aonInvoice('ticket')
 			}];
+		if(this.isMobile()) {
+			options.push({
+				name: 'Camara',
+				icon: 'camera',
+				fn: () => this.openCamera()
+			});
+		}
 		d.setMenuOptions(options, top, left);
 		d.open();
 	}
 
+	async openCamera() {
+		const isApp = await actionMobile({ action: "camera" });
+		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
+	}
+
 	addInvoiceFile() {
-		let el = this.getElement(this.INPUTFILE);
+		let el = this.getElement(this.INPUT_FILE);
 		el.click();
 	}
 
@@ -231,6 +249,12 @@ export class AonInvoicePanel extends AonElement {
 				},
 				invoice: new Invoice('recibida')
 			};
+			if(this.isMobile()) {
+				// if (data.file.contentType.indexOf("image") >= 0) {
+		    //   //compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
+		    //   data.file = await downscaleImage(file, undefined, undefined, undefined);
+		    // }
+			}
 			let aonInvoice = document.getElementById('aonInvoice');
 			aonInvoice.startLoader();
 			insertInvoice(data).then((r) => {
