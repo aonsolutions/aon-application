@@ -43,11 +43,13 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 //			baseURL.append( getThreadLocalRequest().getContextPath() );
 // ---------------------
 			HttpServletRequest req = getThreadLocalRequest();
-			String scheme = req.getScheme();
 			String serverName = req.getServerName();
 			int serverPort = req.getServerPort();
 			StringBuilder baseURL = new StringBuilder();
-			baseURL.append(scheme).append("://").append(serverName);
+//			String scheme = req.getScheme();
+			baseURL
+//				.append(scheme).append(":")
+				.append("//").append(serverName);
 			if (serverPort != 80 && serverPort != 443) {
 				baseURL.append(":").append(serverPort);
 			}
