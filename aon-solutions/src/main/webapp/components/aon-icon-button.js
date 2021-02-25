@@ -101,6 +101,7 @@ export class AonIconButton extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
+    this.initialize();
     if ("disabled" === name) {
       document
         .getElementById(this.getAttribute("id") + "IconButton")
@@ -149,6 +150,9 @@ export class AonIconButton extends AonElement {
 
   constructor() {
     super();
+  }
+
+  initialize() {
     this.BUTTON = this.id + "IconButton";
     this.ICON = this.id + "Icon";
     this.AON_ICON = this.id + "AonIcon";
@@ -156,14 +160,12 @@ export class AonIconButton extends AonElement {
   }
 
   connectedCallback() {
-    this.appendChild(this.build());
-  }
-
-  initialize() {
-
+    this.initialize();
+    this.build();
   }
 
   build() {
+    this.clear();
     let background = this.hasAttribute("background")
       ? this.getAttribute("background")
       : "transparent";
@@ -227,7 +229,11 @@ export class AonIconButton extends AonElement {
     if (this.hasAttribute("aonIcon")) {
       button.innerHTML = `<aon-icon id="${this.AON_ICON}" icon="${this.aonIcon}"></aon-icon>`;
     }
-    return button;
+    this.appendChild(button);
+  }
+
+  clear() {
+    this.innerHTML = '';
   }
 }
 if(!window.customElements.get('aon-icon-button')){
