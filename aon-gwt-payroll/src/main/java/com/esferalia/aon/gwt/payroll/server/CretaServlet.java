@@ -226,16 +226,17 @@ public class CretaServlet extends HttpServlet
 				trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
 			}
 			
+			String bases ;
 			try {
-				String bases = generateBases(connection, true, false, false, nafs, defaults,
+				bases = generateBases(connection, true, false, false, nafs, defaults,
 						trabajadoresYTramosIss, respuestasIss, customBasesCb, i54Callback, pickerBasesCb, progressCb );
-				os.printf(",\r\n{\"percent\": 100.00, \"msg\":\"%s\"}", CretaService.Message.END);
-				os.flush();
-				os.printf("],\r\n");
-				os.printf("\"full_bases\":\"%s\",\r\n", bases);
 			} catch (EmptyBasesException e) {
-				os.printf("\"full_bases\":\"\",\r\n");
+				bases = "";
 			}
+			os.printf(",\r\n{\"percent\": 100.00, \"msg\":\"%s\"}", CretaService.Message.END);
+			os.flush();
+			os.printf("],\r\n");
+			os.printf("\"full_bases\":\"%s\",\r\n", bases);
 	
 			respuestasIss.clear();
 			trabajadoresYTramosIss.clear();
