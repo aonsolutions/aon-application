@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.server;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
+import static com.esferalia.aon.watson.server.AonDateUtils.getMonthFirstDay;
+import static com.esferalia.aon.watson.server.AonDateUtils.getMonthLastDay;
 import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 
 import java.io.ByteArrayInputStream;
@@ -127,6 +129,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.payroll.tgss.cra.Cra;
 import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import aon.sepe.objects.Contract;
@@ -1459,8 +1462,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			stmt = connection.prepareStatement(sql);
 			int parameterIndex = 1;
-			stmt.setDate(parameterIndex++, month);
-			stmt.setDate(parameterIndex++, month);
+			stmt.setDate(parameterIndex++, toSqlDate(getMonthLastDay(month)));
+			stmt.setDate(parameterIndex++, toSqlDate(getMonthFirstDay(month)));
 
 			for (Integer cccId : cccIds) {
 				stmt.setInt(parameterIndex++, cccId);
@@ -2981,4 +2984,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+	
+	protected static Date toSqlDate(java.util.Date date) {
+		return date == null ? null : new java.sql.Date(date.getTime());
+	}
+
 }
