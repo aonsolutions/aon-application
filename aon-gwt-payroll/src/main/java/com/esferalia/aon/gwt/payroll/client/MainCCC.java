@@ -35,8 +35,7 @@ public class MainCCC extends MainEntryPoint{
 		}
 
 		@Override
-		protected void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account,
-				String province, String provinceCode) {
+		protected void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account, String province, String provinceCode) {
 			mainCCCObject.insertCCC(
 					cccId, 
 					activityId, 
@@ -107,6 +106,7 @@ public class MainCCC extends MainEntryPoint{
 		this.mainCCCObject.getMainCCCInfo(
 				s -> {
 					cccWidget.onInsertRows();
+					cccWidget.calculateScrollPanelHeightMainCCC();
 				}, f -> {});
 	}
 

@@ -215,16 +215,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	class NewActivityCommand implements ScheduledCommand {
-		private DomainEnterprisesServiceAsync enterprisesService;
-
 		@Override
 		public void execute() {
-			// Create a remote service proxy to talk to the server-side Employees
-			// service.
-			enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-
 			ActivityDialog activityDialog = new ActivityDialog();
-			ActivityDialogObject activityDialogObject = new ActivityDialogObject(enterprise, enterprisesService);
+			ActivityDialogObject activityDialogObject = new ActivityDialogObject(enterprise);
 			activityDialog.setActivityDialogObject(activityDialogObject);
 			enterpriseContextMenu.hide();
 			activityDialog.center();
@@ -2305,17 +2299,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	@Override
 	public void onActivitySelected(Activity activity) {
-		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
-		ActivityDraftObject activityDraftObject = new ActivityDraftObject(activity, domainEnterprisesServiceAsync);
+		ActivityDraftObject activityDraftObject = new ActivityDraftObject(activity);
 
 		employeeDetail.setWidget(getActivityDraft());
 		getActivityDraft().setActivityDraftObject(activityDraftObject);
-
-//		int pos = employees.getVerticalScrollPosition();
-//		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
-//
-//		employeeDetail.setWidget(jsf);
-//		jsf.activitySelected(activity.getId());
+		
 		this.activity = activity;
 	}
 
@@ -3344,11 +3332,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	protected static void showNewActivity() {
-		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-
 		ActivityDialog activityDialog = new ActivityDialog();
-		ActivityDialogObject activityDialogObject = new ActivityDialogObject(getEmployeeTree().enterprise,
-				enterprisesService);
+		ActivityDialogObject activityDialogObject = new ActivityDialogObject(getEmployeeTree().enterprise);
 		activityDialog.setActivityDialogObject(activityDialogObject);
 		activityDialog.center();
 		activityDialog.show();

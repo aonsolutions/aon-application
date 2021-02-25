@@ -227,12 +227,13 @@ public class JooqActivity {
 							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
 							.fetch();
 					
-					geozoneId = dslContext.insertInto(GEOZONE)
-							.set(GEOZONE.DOMAIN, activityInfo.getDomain())
-							.set(GEOZONE.NAME, gezoneRecordsInfo.get(0).get(GEOZONE.NAME))
-							.set(GEOZONE.CODE, gezoneRecordsInfo.get(0).get(GEOZONE.CODE))
-							.returning(GEOZONE.ID)
-							.fetchOne().get(GEOZONE.ID);
+					if(gezoneRecordsInfo.isNotEmpty())
+						geozoneId = dslContext.insertInto(GEOZONE)
+								.set(GEOZONE.DOMAIN, activityInfo.getDomain())
+								.set(GEOZONE.NAME, gezoneRecordsInfo.get(0).get(GEOZONE.NAME))
+								.set(GEOZONE.CODE, gezoneRecordsInfo.get(0).get(GEOZONE.CODE))
+								.returning(GEOZONE.ID)
+								.fetchOne().get(GEOZONE.ID);
 				}else {
 					geozoneId = geozoneRecords.get(0).get(GEOZONE.ID);
 					
