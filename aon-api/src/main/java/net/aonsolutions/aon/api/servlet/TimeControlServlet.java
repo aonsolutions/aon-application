@@ -125,6 +125,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 			json.put("id", th.getId());
 			json.put("name", th.getName());
 			json.put("company", th.getDomain().getDescription());
+			json.put("domain_id", th.getDomain().getId());
 			array.put(json);
 		});
 		return array;

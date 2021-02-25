@@ -2,6 +2,8 @@ import { post, get, remove } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 import { addDays, formatDateOrigin, firstDayWeek, lastDayWeek} from "./utils.js";
 
+let taskHolders;
+
 export const getTimeControl = (data) => get(`${API_URL}/timecontrol`, data);
 export const saveTimeControl = (data) => post(`${API_URL}/timecontrol`, data);
 export const saveTimeControlDetail = (data) => post(`${API_URL}/timecontrol/save`, data);
@@ -30,8 +32,23 @@ export const getStatus = (data) =>
     resolve(jsonValues);
   });
 
-export const getTaskHolders = (data) =>
-  get(`${API_URL}/timecontrol/taskholder`, data);
+// export const getTaskHolders = (data) =>
+//   get(`${API_URL}/timecontrol/taskholder`, data);
+
+export const getTaskHolders = (data) => {
+  data = data || {};
+  return new Promise((resolve, reject) => {
+    if (taskHolders && !data.reload) {
+      resolve(taskHolders);
+    } else {
+      get(`${API_URL}/timecontrol/taskholder`, data)
+        .then(r => {
+          taskHolders = r;
+          resolve(taskHolders);
+        }).catch(e => reject(e));
+    }
+  });
+}
 
 export const getTimeControlList = (data) =>
   get(`${API_URL}/timecontrol/list`, data);

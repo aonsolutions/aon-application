@@ -18,17 +18,13 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
-import com.esferalia.aon.occam.api.model.registry.Registry;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.CustomerAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.CustomerValidation;
@@ -73,20 +69,8 @@ public class CustomerDAO {
 		}
 		
 		public static Customer buildCustomer(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
-			if(registry == null) 
-				registry = REGISTRY;
 			return new Customer()
-					.copy( new Registry() 
-						.setId(r.getValue(registry.ID))
-						.setDomain(new Domain().setId(r.getValue(CUSTOMER.DOMAIN)))
-						.setDocument(r.getValue(registry.DOCUMENT))
-						.setDocumentType(DocumentType.safeValueOf(r.getValue(registry.DOCUMENT_TYPE)))
-						.setDocumentCountry(Country.safeValueOf(r.getValue(registry.DOCUMENT_COUNTRY)) )
-						.setName(r.getValue(registry.NAME))
-						.setAlias(r.getValue(registry.ALIAS))
-						.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(registry.TYPE)))
-						.setNationality(Country.safeValueOf(r.getValue(registry.NATIONALITY)) )
-						.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(registry.SECURITY_LEVEL))))
+					.copy(RegistryFiller.build(r, registry))
 					.setAccount(r.getValue(CUSTOMER.ACCOUNT))
 					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
 					.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))
@@ -107,6 +91,7 @@ public class CustomerDAO {
 	}
 	
 	private static SelectConditionStep<Record> select(AONContext ctx, CustomerFilter filter) {
+		
 		return ctx.getDslContext().select()
 				.from(CUSTOMER)
 				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))

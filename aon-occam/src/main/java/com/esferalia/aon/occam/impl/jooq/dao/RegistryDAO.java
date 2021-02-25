@@ -53,18 +53,23 @@ public class RegistryDAO {
 	public static class RegistryFiller  implements Function<Record,Registry> {
 		@Override
 		public Registry apply(Record record) {
-			return new Registry()
-				.setId(record.getValue(REGISTRY.ID))
-				.setDomain(new Domain().setId(record.getValue(REGISTRY.DOMAIN)))
-				.setAlias(record.getValue(REGISTRY.ALIAS))
-				.setDocument(record.getValue(REGISTRY.DOCUMENT))
-				.setDocumentType(DocumentType.safeValueOf(record.getValue(REGISTRY.DOCUMENT_TYPE)))
-				.setDocumentCountry(Country.safeValueOf(record.getValue(REGISTRY.DOCUMENT_COUNTRY)))
-				.setName(record.getValue(REGISTRY.NAME))
-				.setNationality(Country.safeValueOf(record.getValue(REGISTRY.NATIONALITY)))
-				.setSecurityLevel(SecurityLevel.safeValueOf( record.getValue(REGISTRY.SECURITY_LEVEL)))
-				.setLegalPerson( AonEnumUtils.getBoolean( record.getValue(REGISTRY.TYPE) ))
-			;
+			return build(record, null);
+		}
+		
+		public static Registry build(Record record, com.esferalia.aon.jooq.tables.Registry registry) {
+			if(registry == null) 
+				registry = REGISTRY;
+			return new Registry() 
+					.setId(record.getValue(registry.ID))
+					.setDomain(new Domain().setId(record.getValue(registry.DOMAIN)))
+					.setDocument(record.getValue(registry.DOCUMENT))
+					.setDocumentType(DocumentType.safeValueOf(record.getValue(registry.DOCUMENT_TYPE)))
+					.setDocumentCountry(Country.safeValueOf(record.getValue(registry.DOCUMENT_COUNTRY)) )
+					.setName(record.getValue(registry.NAME))
+					.setAlias(record.getValue(registry.ALIAS))
+					.setLegalPerson(AonEnumUtils.getBoolean(record.getValue(registry.TYPE)))
+					.setNationality(Country.safeValueOf(record.getValue(registry.NATIONALITY)) )
+					.setSecurityLevel(SecurityLevel.safeValueOf(record.getValue(registry.SECURITY_LEVEL)));
 		}
 	}
 	private static SelectConditionStep<Record> select(AONContext ctx, RegistryFilter filter) {

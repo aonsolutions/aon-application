@@ -3,7 +3,7 @@ import {Transactions} from '../../services/transaction.js';
 import {Paymethods} from '../../services/paymethod.js';
 import {TaxType, TaxIVAPercentage, TaxIRPFPercentage, InvoiceAction} from './invoiceEnums.js';
 import {getInvoiceCategories} from '../../services/invoiceCategory.js';
-import {insertInvoice, deleteInvoices, getUserAppRole, getGlobalRegistries, getInvoiceAccounts, sendInvoiceMail} from '../../services/service.js';
+import {insertInvoice, deleteInvoices, getUserAppRole, getCustomers, getGlobalRegistries, getInvoiceAccounts, sendInvoiceMail} from '../../services/service.js';
 import {isNumber, round} from '../../services/utils.js';
 import {Invoice} from './Invoice.js';
 import {getNextInvoice, getPreviousInvoice} from './InvoiceCache.js';
@@ -574,19 +574,27 @@ export class AonInvoice extends AonElement {
 		}
 		nif.addEventListener('keyup', () => {
 			if(nif.value.length > 2) {
-				getGlobalRegistries({document:nif.value}).then( registries =>
-					nif.buildOptions(registries.map(r => {return {name: r.document, value: r.document, registry: r};}))
-				);
+				getCustomers().then( r => {
+					let options = nif.buildOptions(r.filter(f => f.document.includes(nif.value))
+						.map(r => {return {name: r.document, value: r.document, registry: r};}));
+					// if(options.length == 0) {
+					// 	getGlobalRegistries({document:nif.value}).then( registries =>
+					// 		nif.buildOptions(registries.map(r => {return {name: r.document, value: r.document, registry: r};}))
+					// 	);
+					// } else
+					name.buildOptions(options);
+				});
 			} else {
 				nif.closeOptions();
 			}
 		});
 		nif.addEventListener('select', (event) => {
+			alert(event.detail.registry);
 			let registry = event.detail.registry;
 			let name = document.getElementById('name');
 			name.value = registry.name;
-			let address = document.getElementById('address');
-			address.buildAddressValue(registry.address);
+			// let address = document.getElementById('address');
+			// address.buildAddressValue(registry.address);
 			if(this._invoice.isEmitida) {
 				this._invoice.receiver = registry;
 			} else {
@@ -611,19 +619,26 @@ export class AonInvoice extends AonElement {
 		}
 		name.addEventListener('keyup', () => {
 			if(name.value.length > 2) {
-				getGlobalRegistries({name:name.value}).then( registries =>
-					name.buildOptions(registries.map(r => {return {name: r.name, value: r.name, registry: r};}))
-				);
+				getCustomers().then( r => {
+					let options = r.filter(f => f.name.toUpperCase().includes(name.value.toUpperCase()))
+						.map(r => {return {name: r.name, value: r.name, registry: r};});
+					// if(options.length == 0) {
+					// 	getGlobalRegistries({name:name.value}).then( registries =>
+					// 	 	name.buildOptions(registries.map(r => {return {name: r.name, value: r.name, registry: r};}))
+					// 	);
+					// } else
+					name.buildOptions(options);
+				});
 			} else {
 				name.closeOptions();
 			}
 		});
 		name.addEventListener('select', (event) => {
-			let registry = event.detail.registry;
+			let registry = event.detail ? event.detail.registry : {};
 			let nif = document.getElementById('nif');
 			nif.value = registry.document;
-			let address = document.getElementById('address');
-			address.buildAddressValue(registry.address);
+			// let address = document.getElementById('address');
+			// address.buildAddressValue(registry.address);
 			if(this._invoice.isEmitida) {
 				this._invoice.receiver = registry;
 			} else {
