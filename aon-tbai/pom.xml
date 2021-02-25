@@ -13,7 +13,7 @@
 	<description>AON TBAI (TICKET BAI)</description>
 
 	<dependencies>
-	
+	<!-- 
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
@@ -41,9 +41,11 @@
 			<version>2.3.1</version>
 			<type>pom</type>
 		</dependency>
+		 -->
 	</dependencies>
 	
 	<build>
+	<!--  
         <plugins>
             <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -64,6 +66,7 @@
         </plugin>
         
 		</plugins>
+		-->
     </build>
 
 </project>

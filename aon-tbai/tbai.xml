@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:TicketBai xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="urn:ticketbai:emision">
+    <Cabecera>
+        <IDVersionTBAI>1.2</IDVersionTBAI>
+    </Cabecera>
+    <Sujetos>
+        <Emisor>
+            <NIF>58658371X</NIF>
+            <ApellidosNombreRazonSocial>Aketza</ApellidosNombreRazonSocial>
+        </Emisor>
+        <Destinatarios>
+            <IDDestinatario>
+                <NIF>12323032R</NIF>
+                <IDOtro>
+                    <IDType>type 1</IDType>
+                    <ID>1</ID>
+                </IDOtro>
+                <ApellidosNombreRazonSocial>Juan Urtado</ApellidosNombreRazonSocial>
+                <CodigoPostal>01470</CodigoPostal>
+                <Direccion>Oceano Pacifico 21, 7A, Vitoria</Direccion>
+            </IDDestinatario>
+        </Destinatarios>
+        <VariosDestinatarios>N</VariosDestinatarios>
+    </Sujetos>
+    <Factura>
+        <CabeceraFactura>
+            <SerieFactura>AAA</SerieFactura>
+            <NumFactura>478329823</NumFactura>
+            <FacturaSimplificada>S</FacturaSimplificada>
+            <FacturaRectificativa>
+                <ImporteRectificacionSustitutiva>
+                    <BaseRectificada>199.99</BaseRectificada>
+                    <CuotaRectificada>20.05</CuotaRectificada>
+                    <CuotaRecargoRectificada>1.25</CuotaRecargoRectificada>
+                </ImporteRectificacionSustitutiva>
+            </FacturaRectificativa>
+        </CabeceraFactura>
+        <DatosFactura>
+            <DetallesFactura/>
+            <ImporteTotalFactura>120512.0</ImporteTotalFactura>
+            <RetencionSoportada>150.75</RetencionSoportada>
+            <Claves/>
+        </DatosFactura>
+        <TipoDesglose/>
+    </Factura>
+    <HuellaTBAI>
+        <Software>
+            <LicenciaTBAI>1278263423</LicenciaTBAI>
+            <EntidadDesarrolladora>
+                <NIF>10101010T</NIF>
+                <IDOtro>
+                    <IDType>type 2</IDType>
+                    <ID>1</ID>
+                </IDOtro>
+            </EntidadDesarrolladora>
+            <Nombre>AON APPLICATION</Nombre>
+            <Version>3.2</Version>
+        </Software>
+        <NumSerieDispositivo>1278263423</NumSerieDispositivo>
+    </HuellaTBAI>
+</ns3:TicketBai>
