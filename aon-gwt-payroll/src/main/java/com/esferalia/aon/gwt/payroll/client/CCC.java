@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -110,6 +111,11 @@ public abstract class CCC extends ResizeComposite {
 	}
 	
 	private void calculateScrollPanelHeight() {
+		Integer clientHeight = Window.getClientHeight();
+		scrollPanel.setHeight((clientHeight - 550) + "px");
+	}
+	
+	public void calculateScrollPanelHeightMainCCC() {
 		Integer clientHeight = Window.getClientHeight();
 		scrollPanel.setHeight((clientHeight - 350) + "px");
 	}
@@ -275,10 +281,14 @@ public abstract class CCC extends ResizeComposite {
 		
 		Label geozone = new Label("");
 		
-		HorizontalPanel hPanel = new HorizontalPanel();
+		HTMLPanel hPanel = new HTMLPanel("");
+		hPanel.setStyleName(style.flexEvenly());
+		hPanel.addStyleName(style.widthAll());
+		
 		Label typeCode = new Label("");
-		typeCode.getElement().getStyle().setPadding(4, Unit.PX);
-		typeCode.getElement().getStyle().setMarginLeft(15, Unit.PX);
+		String newCCCRegimeCode = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
+		typeCode.setText(newCCCRegimeCode);
+		
 		AonTableButton accountStatus = new AonTableButton("", AON.CSS.aonIconValid());
 		TextBox account = new TextBox();
 		account.setMaxLength(11);
@@ -384,7 +394,7 @@ public abstract class CCC extends ResizeComposite {
 		cccDataTable.setWidget(row, 3, geozone);
 		cccDataTable.setWidget(row, 4, delete);
 		
-		if(getActivities().size() == 1)
+		if(null != getActivities() && getActivities().size() == 1)
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), activitiesLB);
 		
 		return newId;
@@ -400,10 +410,23 @@ public abstract class CCC extends ResizeComposite {
 		return cccDataTable.getWidget(row, column);
 	}
 	
+	public void hideActivityColumn() {
+		cccDataTableHeader.getColumnFormatter().getElement(0).getStyle().setDisplay(Display.NONE);
+		cccDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setDisplay(Display.NONE);
+		cccDataTable.getColumnFormatter().getElement(0).getStyle().setDisplay(Display.NONE);
+		for(int row=0; row < cccDataTable.getRowCount(); row++)
+			cccDataTable.getCellFormatter().getElement(row, 0).getStyle().setDisplay(Display.NONE);
+	}
+	
 	private ListBox createActivitiesListBox() {
 		ListBox activities = new ListBox();
-		for(Entry<Integer, String> entry : getActivities())
-			activities.addItem(entry.getValue(), entry.getKey().toString());
+		
+		Set<Entry<Integer, String>> activitySet = getActivities();
+		if(null == activitySet)
+			activities.addItem("", "-1");
+		else
+			for(Entry<Integer, String> entry : getActivities())
+				activities.addItem(entry.getValue(), entry.getKey().toString());
 		
 		activities.addStyleName("aon-selectOneMenu");
 		activities.getElement().getStyle().setWidth(98, Unit.PCT);
