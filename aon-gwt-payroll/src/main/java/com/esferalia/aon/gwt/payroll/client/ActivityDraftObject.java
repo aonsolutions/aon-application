@@ -12,13 +12,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class ActivityDraftObject extends AbstractDraftObject {
 	
 	private ActivityInfo activityInfo;
-	private DomainEnterprisesServiceAsync enterprisesService;
+	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	private Integer activityId;
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
-	public ActivityDraftObject(Activity activity, DomainEnterprisesServiceAsync enterprisesService) {
-		this.enterprisesService = enterprisesService;
+	public ActivityDraftObject(Activity activity) {
 		this.activityId = activity.getId();
 	}
 	

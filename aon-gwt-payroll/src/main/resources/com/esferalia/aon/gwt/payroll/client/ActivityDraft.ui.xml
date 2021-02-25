@@ -7,52 +7,23 @@
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.ActivityDraft.MyStyle">
-		.center {
-			margin-top: 5px;
-			margin-left: auto;
-			margin-right: auto;
-			margin-bottom: 15px;
-		}		
-		.warningColor{
-			font-weight: bold;
-			color: #be0000;
+		.container {
+			margin: 0 10px;
 		}
 		
+		.flexCenter	{
+			display: flex;
+			width: 100%;
+			justify-content: center;
+			margin-top: 60px;
+		}
 	</ui:style>
 
-	<g:DockLayoutPanel unit="PX">
-		<g:north size="35">
-			<g:FlowPanel>
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
-					<g:HorizontalPanel>
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText">Actividad</g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-								<g:Label styleName="aon-outputText"></g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='saveButton'
-									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
-									enabled="true" />
-							</g:HTMLPanel>
-						</g:HorizontalPanel>
-					</g:HorizontalPanel>
-				</g:FlowPanel>
-			</g:FlowPanel>
-		</g:north>
+	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
-			<g:ScrollPanel>
-				<g:VerticalPanel styleName="{style.center}" >
-	    		<e:Activity ui:field="activity"/> 
-				</g:VerticalPanel>
-			</g:ScrollPanel>
+			<g:HTMLPanel ui:field="centerContainer" styleName="{style.flexCenter}"></g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
+		
 </ui:UiBinder> 
 

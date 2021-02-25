@@ -12,12 +12,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class ActivityDialogObject {
 	
 	private ActivityInfo activityInfo;
-	private DomainEnterprisesServiceAsync enterprisesService;
+	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
-	public ActivityDialogObject(Enterprise enterprise, DomainEnterprisesServiceAsync enterprisesService) {
-		this.enterprisesService = enterprisesService;
+	public ActivityDialogObject(Enterprise enterprise) {
 		activityInfo = new ActivityInfo();
 		activityInfo.setEnterprise(enterprise.getId());
 		activityInfo.setDomain(enterprise.getDomain());
@@ -48,8 +47,6 @@ public class ActivityDialogObject {
 		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozoneCode, geozone);
 	}
 	
-	
-
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
 
 	public void getCNAE2009(Consumer<Map<String, String>> success, Consumer<Throwable> failure){
@@ -84,6 +81,7 @@ public class ActivityDialogObject {
 	}
 	
 	// ------------------------------------------------- SET METHODS -------------------------------------------------
+	
 	public void setActivityDescription(String description) {
 		this.activityInfo.setDescription(description);
 	}

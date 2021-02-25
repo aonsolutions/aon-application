@@ -5,34 +5,29 @@
 
 	<ui:Style type="com.esferalia.aon.gwt.payroll.client.ActivityDialog.MyStyle">
 		
-		.warningColor{
-			font-weight: bold;
-			color: #be0000;
+		.widthAll{
+			width: 100%;
 		}
-	
+		
+		.heightAll{
+			height: 100%;
+		}
+		
+		.container{
+			min-width: 600px;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+			margin: 5px 10px;
+		}
 	</ui:Style>
 
-
-	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel"> 
-
-		<table class="aon-width-all aon-height-all" >
-			<tr>
-				<td>
-					<a:Activity ui:field="activity"/>
-				</td>
-			</tr>
-			<tr>
-			    
-			</tr>
-			<tr>
-				<td colspan="2" align="right">
-					<g:Button ui:field="cancelButton" debugId="activityDialogCancelButton">Cancelar</g:Button>
-					<g:Button ui:field="acceptButton" debugId="activityDialogAcceptButton" >Aceptar</g:Button>
-				</td>
-			</tr>
-		</table>
-
-
-	</g:HTMLPanel>
+	<g:VerticalPanel styleName="{style.widthAll} {style.heightAll} {style.container}"> 
+		<g:HTMLPanel ui:field="north" styleName="{style.widthAll} {style.heightAll}"></g:HTMLPanel>
+		<a:Activity ui:field="activity"/>
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
+	</g:VerticalPanel>
 
 </ui:UiBinder>
