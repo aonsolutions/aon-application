@@ -7,10 +7,10 @@ public class DefaultPayrollAccrual {
 	private Optional<Double> amount;
 	private Optional<String> description;
 	
-	public DefaultPayrollAccrual(Optional<Double> amount, Optional<String> description) {
+	public DefaultPayrollAccrual(Double amount, String description) {
 		super();
-		this.amount = amount;
-		this.description = description;
+		this.amount = Optional.ofNullable(amount);
+		this.description = Optional.ofNullable(description);
 	}
 
 	public Optional<Double> getAmount() {return amount;}

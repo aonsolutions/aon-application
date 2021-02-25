@@ -2,6 +2,7 @@ package com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -82,6 +83,30 @@ public class DefaultPayroll {
  	 	private Optional <PayrollTypes.Type> payroll_type;
  	 	
  	 	private Optional <Contingency_bases> contingencies;
+ 	 	
+ 	 	public DefaultPayrollBuilder() {
+			enterprise = 			Optional.empty();
+			address = 				Optional.empty();
+			address_2 = 			Optional.empty();
+			cif = 					Optional.empty();
+			ccc = 					Optional.empty();
+			employee = 				Optional.empty();
+			nif = 					Optional.empty();
+			nss = 					Optional.empty();
+			professional_group  = 	Optional.empty();
+			quotation_group = 		Optional.empty();
+			antiquity = 			Optional.empty();
+			liquid_period_start =   Optional.empty();
+			liquid_period_end = 	Optional.empty();
+			total_days = 			Optional.empty();
+			accruals =  			Optional.of(new HashMap<>());
+			deductions =  			Optional.of(new HashMap<>());
+			accrual_total = 		Optional.empty();
+			deduction_total = 		Optional.empty();
+			payroll_total = 		Optional.empty();
+			payroll_type = 			Optional.empty();
+			contingencies =			Optional.empty();
+ 	 	}
 
 		public DefaultPayrollBuilder setEnterprise(String enterprise) { 
 			this.enterprise =Optional.ofNullable(enterprise );

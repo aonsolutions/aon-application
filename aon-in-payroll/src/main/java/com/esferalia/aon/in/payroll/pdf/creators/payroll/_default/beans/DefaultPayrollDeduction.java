@@ -8,11 +8,11 @@ public class DefaultPayrollDeduction {
 	private Optional<String> description;
 	private Optional<Double> percent;
 	
-	public DefaultPayrollDeduction(Optional<Double> amount, Optional<String> description, Optional<Double> percent) {
+	public DefaultPayrollDeduction(Double amount, String description, Double percent) {
 		super();
-		this.amount = amount;
-		this.description = description;
-		this.percent = percent;
+		this.amount = Optional.ofNullable(amount);
+		this.description = Optional.ofNullable(description);
+		this.percent = Optional.ofNullable(percent);
 	}
 
 	public Optional<Double> getAmount() {return amount;}

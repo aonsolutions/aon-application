@@ -37,7 +37,7 @@ public class DetailedPayrollTest {
 		
 		for(Integer key : keys) {
 			for (int i = 0; i < random(10); i++) {
-				DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(Optional.of(999999999.99),Optional.of("Descripcion por defecto."));
+				DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(999999999.99,"Descripcion por defecto.");
 				ac.get(key).add(accrual);
 			}
 		}
@@ -56,9 +56,9 @@ public class DetailedPayrollTest {
 			for (int i = 0; i < random(3); i++) {
 				DefaultPayrollDeduction deduction =
 						new DefaultPayrollDeduction(
-								Optional.of(999999999.99),
-								Optional.of("Descripcion por defecto"),
-								Optional.of(99.99)
+								999999999.99,
+								"Descripcion por defecto",
+								99.99
 						);
 				de.get(key).add(deduction);
 			}
