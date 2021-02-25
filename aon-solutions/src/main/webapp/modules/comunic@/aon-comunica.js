@@ -1,39 +1,53 @@
 import { AonElement } from '../../components/AonElement.js';
 import { startModule } from '../../services/gwtLoader.js';
-import { getIDC, getTA, postDeleteMov } from '../../services/service.js';
+import { getDomainUserRoles, getIDC, getTA, postDeleteMov } from '../../services/service.js';
 import { addDays } from '../../services/utils.js';
+import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import './aon-movements.js';
 import '../../components/aon-toast.js';
 import '../../components/aon-application.js';
 import './cta/aon-cta-list.js';
 import './contrato/aon-contrato-list.js';
 
-export class AonComunica extends AonElement {
 
+export class AonComunica extends AonElement {
+	_roles;
 	AON_COMUNICA;
 	MOVEMENTS;
 	constructor() {
 		super();
+	}
+	
+	connectedCallback() {
+		this.initialize();
+		getDomainUserRoles({reload:true}).then(r=>{
+			this._roles = new DomainUserRoles(r);
+			this.build();
+		})
+	}
+	disconnectedCallback() {}
+
+	initialize(){
 		this.AON_COMUNICA = 'aonComunica';
 		this.MOVEMENTS = this.AON_COMUNICA + 'Movements';
 	}
+	
 
-	connectedCallback() {
+	build() {
 		this.paintView();
-		this.build()
+		if(!this.isEmployee()){
+			this.aonComunicaEl = this.getElement(this.AON_COMUNICA);
+			this.buildToolbar();
+			if(this.isMobile()) this.painViewContract();
+			else this.paintViewCtz();
+		}
 	}
-	disconnectedCallback() {}
+
 	paintView() {
 		this.innerHTML = `
 			<aon-toast id="${this.AON_COMUNICA}Toast"></aon-toast>
 			<aon-application id="${this.AON_COMUNICA}" title="COMUNIC@"></aon-application>
 		`;
-	}
-	build() {
-		this.aonComunicaEl = this.getElement(this.AON_COMUNICA);
-		this.buildToolbar();
-		if(this.isMobile()) this.painViewContract();
-		else this.paintViewCtz();
 	}
 
 	buildToolbar(){
@@ -79,10 +93,11 @@ export class AonComunica extends AonElement {
 				fn: () => this.aonComunicaEl.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`)
 			}
 		];
-		if(this.isMobile()){
+		if(this.isMobile() || (this._roles.isComunicaPortal() && !this._roles.isComunicaManager())){
 			delete options[1]; 
 			delete options[3]; 
 		}
+
 		this.aonComunicaEl.addSidenavOptions('TGSS/SEPE', options);
 	}
 
@@ -161,6 +176,10 @@ export class AonComunica extends AonElement {
 			});
 		}
 		return option;
+	}
+
+	isEmployee(){
+		return !this._roles.isComunicaManager() && !this._roles.isComunicaPortal();
 	}
 }
 window.customElements.define('aon-comunica', AonComunica);

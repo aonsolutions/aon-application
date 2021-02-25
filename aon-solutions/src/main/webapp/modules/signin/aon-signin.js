@@ -1,18 +1,23 @@
 import { AonElement } from "../../components/AonElement.js";
 
 import {AonPresenceList} from "./time-control/aon-presence-list.js";
-import { getPeriod } from "../../services/service.js";
+import { getDomainUserRoles, getPeriod, getTaskHolders } from "../../services/service.js";
 import { formatDateOrigin, setValueName } from "../../services/utils.js";
 import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
 import { AonLocationList } from "./time-control/location/aon-location-list.js";
 import { SigninSidenav } from "./signinEnums.js";
-import "../../components/aon-toast.js";
+import { DomainUserRoles } from "../../models/DomainUserRoles.js";
+import { AonEventList } from "./time-control/event/aon-event-list.js";
+import { AonEventDetailList } from "./time-control/event/aon-event-detail-list.js";
+import { AonEventAdd } from "./time-control/event/aon-event-add.js";
 import "../../components/aon-application.js";
+
 
 export class AonSignin extends AonElement {
   AON_SIGNIN;
   _filter;
-
+  _roles;
+  TASK_HOLDER;
   constructor() {
     super();
   }
@@ -20,7 +25,11 @@ export class AonSignin extends AonElement {
   disconnectedCallback() {}
   connectedCallback() {
     this.initialize();
-    this.build();
+    getDomainUserRoles({reload:true}).then(r=>{
+      this._roles = new DomainUserRoles(r);
+      this.build();
+    })
+
   }
 
   initialize(){
@@ -35,12 +44,11 @@ export class AonSignin extends AonElement {
   async build() {
     this.paintView();
     this.buildToolbar();
-    this.paintViewPresenceList();
+    this.showView("aonPresenceList");
   }
 
   paintView() {
     this.innerHTML = `
-			<aon-toast id="${this.AON_SIGNIN}Toast"></aon-toast>
 			<aon-application id="${this.AON_SIGNIN}" title="Control Horario"></aon-application>
     `;
     this.aonSigninEl = this.getElement(this.AON_SIGNIN);
@@ -50,7 +58,7 @@ export class AonSignin extends AonElement {
     const options = [
       {
         ...SigninSidenav.PRESENCE,
-        fn: () => this.paintViewPresenceList()
+        fn: () => this.showView("aonPresenceList")
       },
       {
         ...SigninSidenav.LOCATION,
@@ -61,7 +69,11 @@ export class AonSignin extends AonElement {
 
       },
     ];
-    
+
+    if( this.isEmployee()) {
+      delete options[1];
+    } 
+
     this.aonSigninEl.addSidenavOptions("Control horario", options);
 
     const options2 = [
@@ -85,15 +97,6 @@ export class AonSignin extends AonElement {
     
     this.aonSigninEl.addSidenavOptions("Período", options2);
 
-  }
-
-  async paintViewPresenceList(){
-    const id = "aonPresenceList";
-    if(this.getElement(id)==null){
-      let aonList = new AonPresenceList();
-      aonList.id = id;
-      this.aonSigninEl.setContent(aonList);
-    }
   }
 
   periodSideNavDisplay(b){
@@ -120,14 +123,76 @@ export class AonSignin extends AonElement {
     } catch (error) {}
   }
 
-  openLocationAdd(el, data) {
-    const {coordinates} = data;
-    let aonLocationAdd = new AonLocationAdd();
-    aonLocationAdd.id = "aonLocationAdd";
-    if(coordinates && coordinates.latitude && coordinates.longitude) {
-      aonLocationAdd.data = {latitude:coordinates.latitude, longitude: coordinates.longitude};
-    }
-    this.aonSigninEl.setContent(aonLocationAdd);
+  showView(view, data, filter = undefined){
+    return new Promise(async(resolve)=>{
+      let aonView = undefined;
+      if("aonPresenceList" === view && this.isEmployee()) {
+        const taskHolder = await this.getTaskHolder().catch(e=>null);
+        if(taskHolder){
+          data = {taskHolderId:taskHolder.id};
+        }
+        view = "aonEventList";
+      } else if( "aonLocationAdd" === view && this.isEmployee()){
+       resolve(true);
+       return;
+      }
+  
+      if(!this.getElement(view)){
+        switch(view){
+          case "aonPresenceList":
+              aonView = new AonPresenceList();
+          break;
+          case "aonEventList":
+            aonView = new AonEventList();
+            if(data && data.taskHolderId) this._filter.taskHolderId = data.taskHolderId;
+          break;
+          case "aonLocationAdd":
+              aonView = new AonLocationAdd();
+              if(data){
+                if(data.coordinates && data.coordinates.latitude && data.coordinates.longitude){
+                  data = {...data, latitude:data.coordinates.latitude, longitude: data.coordinates.longitude}
+                  aonView.data = {...data,latitude:data.coordinates.latitude, longitude: data.coordinates.longitude};
+                }
+                if(data.add){
+                  aonView.add = data.add;
+                }
+              } 
+          break;
+          case "aonEventDetailList":
+              aonView = new AonEventDetailList();
+              if(data){
+                const startDate = formatDateOrigin(data.start_date);
+                aonView.DATE_TASK = {startDate, endDate:startDate};
+              }
+          break;
+          case "aonEventAdd":
+            aonView = new AonEventAdd();
+            if (data) {
+              aonView.data = data;
+            }
+          break;
+        }
+        aonView.id = view;
+        if(filter) aonView.filter = filter;
+        this.aonSigninEl.setContent(aonView);
+      }
+      
+      resolve(true);
+    });
   }
+
+  async getTaskHolder(){
+    if(!this.TASK_HOLDER){
+      const domain_id = localStorage.getItem("aon_domain_id");
+      const result = await getTaskHolders({reload:true});
+      this.TASK_HOLDER = result.find(r=> r.domain_id == domain_id);
+    }
+    return this.TASK_HOLDER;
+  }
+  
+  isEmployee(){
+    return !this._roles.isTimecontrolManager() && !this._roles.isTimecontrolPortal();
+  }
+
 }
 window.customElements.define("aon-signin", AonSignin);

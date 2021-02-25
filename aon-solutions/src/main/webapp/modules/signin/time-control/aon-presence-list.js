@@ -1,12 +1,11 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList } from "../../../services/service.js";
 import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, timeHour, waitEl } from "../../../services/utils.js";
-import {AonEventList} from "./event/aon-event-list.js";
+import { PresenceFilterInput, SigninSidenav } from "../signinEnums.js";
 import { StringTwoLetters } from "./utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
-import { PresenceFilterInput, SigninSidenav } from "../signinEnums.js";
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
@@ -214,14 +213,11 @@ export class AonPresenceList extends AonElement {
   }
 
   aonEvent({ target }, data) {
+    const parent = this.aonSigninParentEl;
     if ("add_location" === target.textContent) {
-      this.aonSigninParentEl.openLocationAdd(undefined, data);
+      parent.showView("aonLocationAdd", data);
     } else {
-      let aonList= new AonEventList();
-      aonList.id = "aonEventList";
-      this.aonSigninParentEl._filter.taskHolderId = data.taskHolderId;
-      aonList.filter = true;
-      this.aonSigninEl.setContent(aonList);
+      parent.showView("aonEventList", data, true);
     }
   }
 }

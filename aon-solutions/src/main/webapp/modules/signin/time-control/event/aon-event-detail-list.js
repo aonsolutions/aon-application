@@ -10,15 +10,13 @@ import {
   getPeriod,
   getTimeControlDetail,
 } from "../../../../services/service.js";
-
-import { AonEventList } from "./aon-event-list.js";
+import { SigninSidenav, PresenceFilterInput } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { UserAction } from "../../../user/userEnums.js";
-import { AonEventAdd } from "./aon-event-add.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
-import { SigninSidenav, PresenceFilterInput } from "../../signinEnums.js";
+
 
 
 export class AonEventDetailList extends AonElement {
@@ -111,7 +109,10 @@ export class AonEventDetailList extends AonElement {
 
   buildToolbarDesk() {
     this.aonSigninEl.removeToolbarOptions();
-    this.aonSigninEl.addToolbarOption2(SigninSidenav.ADD, (e) => this.aonEvent());
+    if(!this.aonSigninParentEl.isEmployee()){
+      this.aonSigninEl.addToolbarOption2(SigninSidenav.ADD, (e) => this.aonEvent());
+    }
+
     this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
       this.getElement(`${this.id}Filter`).openFilter()
     );
@@ -122,8 +123,9 @@ export class AonEventDetailList extends AonElement {
     let toolbarEl = this.getElement(this.TOOLBAR);
     this.aonSigninEl.removeToolbarOptions();
     toolbarEl.removeButtons();
-    this.aonSigninEl.addFloatOption(SigninSidenav.ADD, () => this.aonEvent() );
-
+    if(!this.aonSigninParentEl.isEmployee()){
+      this.aonSigninEl.addFloatOption(SigninSidenav.ADD, () => this.aonEvent() );
+    }
     toolbarEl.addButton2(UserAction.BACK, () => this.back());
     this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
       filterEl.openFilter()
@@ -267,23 +269,17 @@ export class AonEventDetailList extends AonElement {
 
   aonEvent(el, data) {
     if (el && "add_location" === el.target.textContent) {
-      this.aonSigninEl.getParent().openLocationAdd(el, data);
+      this.aonSigninParentEl.showView("aonLocationAdd", data);
     } else {
-      let id = "aonEventAdd";
-      let aonEventAdd = new AonEventAdd();
-      aonEventAdd.id = id;
       if (!data && this.TASK_HOLDER) {
         data = { task_holder: this.TASK_HOLDER, name: this.TASK_HOLDER.name };
       }
-      if (data) aonEventAdd.data = data;
-      this.aonSigninEl.setContent(aonEventAdd);
+      this.aonSigninParentEl.showView("aonEventAdd", data);
     }
   }
 
   back() {
-    let aonEventList = new AonEventList();
-    aonEventList.filter = true;
-    this.aonSigninEl.setContent(aonEventList);
+    this.aonSigninParentEl.showView("aonEventList", undefined, true);
   }
 }
 window.customElements.define("aon-event-detail-list", AonEventDetailList);

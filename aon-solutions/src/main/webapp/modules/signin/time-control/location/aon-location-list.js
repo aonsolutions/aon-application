@@ -34,6 +34,7 @@ export class AonLocationList extends AonElement {
   constructor() {
     super();
     this.aonSigninEl = this.getElement("aonSignin");
+    this.aonSigninParentEl = this.aonSigninEl.getParent();
     this.aonSigninToolbar = this.getElement(
       `${this.aonSigninEl.id}Toolbar`
     );
@@ -42,9 +43,7 @@ export class AonLocationList extends AonElement {
   }
 
   connectedCallback() {
-    this.paintView();
     this.build();
-    this.buildToolbar();
   }
 
   disconnectedCallback() {
@@ -62,7 +61,9 @@ export class AonLocationList extends AonElement {
   }
 
   build() {
+    this.paintView();
     this.getTable();
+    this.buildToolbar();
   }
 
   buildToolbar() {
@@ -150,11 +151,10 @@ export class AonLocationList extends AonElement {
   }
 
   add(el, data) {
-    let aonLocationAdd = new AonLocationAdd();
-    aonLocationAdd.id = "aonLocationAdd";
-    if (data) aonLocationAdd.data = data;
-    else aonLocationAdd.add = true;
-    this.aonSigninEl.setContent(aonLocationAdd);
+    let newData = data;
+    console.log(newData);
+    if (!data) newData = {add:true};
+    this.aonSigninParentEl.showView("aonLocationAdd", newData);
   }
 }
 window.customElements.define("aon-location-list", AonLocationList);

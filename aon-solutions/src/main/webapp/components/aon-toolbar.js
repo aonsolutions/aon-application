@@ -247,7 +247,7 @@ export class AonToolbar extends AonElement {
 			this.addSeparator();
 			let span = document.createElement('span');
 			span.style.marginRight = "10px";
-			span.innerHTML = title;
+			if(title) span.innerHTML = title.toString().toUpperCase();
 			span.id = id;
 			let titleSection = this.getElement(this.TOOL_SECTION);
 			titleSection.insertBefore(span, titleSection.children[0]);

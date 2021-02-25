@@ -13,13 +13,13 @@ import {
   getStatus,
   saveTimeControlDetail,
 } from "../../../../services/service.js";
-// import { AonEventDetailList } from "./aon-event-detail-list.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { UserAction } from "../../../user/userEnums.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-date.js";
 import "../../../../components/aon-select.js";
+import { INPUTS_ALL } from "../../../../environments/constants.js";
 
 export class AonEventAdd extends AonElement {
   ACTION;
@@ -170,12 +170,16 @@ export class AonEventAdd extends AonElement {
     let toolbarEl = this.getElement(this.TOOLBAR);
     toolbarEl.removeButtons();
     if (this.data && this.data.id) {
-      toolbarEl.addButton2(UserAction.DELETE, () => this.delete());
+      if(!this.aonSigninParentEl.isEmployee()){
+        toolbarEl.addButton2(UserAction.DELETE, () => this.delete());
+      }
       toolbarEl.title = "Edición";
     } else {
       toolbarEl.title = "Registro";
     }
-    toolbarEl.addButton2(UserAction.SAVE, () => this.save());
+    if(!this.aonSigninParentEl.isEmployee()){
+      toolbarEl.addButton2(UserAction.SAVE, () => this.save());
+    }
     toolbarEl.addButton2(UserAction.BACK, () => this.back());
   }
 
@@ -240,6 +244,8 @@ export class AonEventAdd extends AonElement {
       }
       this.getElement("name").disabled = "disabled";
     }
+    
+    if(this.aonSigninParentEl.isEmployee()) this.formRead();
   }
 
   async save() {
@@ -283,17 +289,18 @@ export class AonEventAdd extends AonElement {
     }
   }
 
+  formRead() {
+    [...this.getElement(`${this.id}Form`).querySelectorAll(INPUTS_ALL)].map(el => {
+      el.readonly = true;
+    });
+  }
+
   back() {
-    // let aonEventDetailList = new AonEventDetailList();
-    // if (this.data && this.data.date) {
-    //   const startDate = formatDateOrigin(new Date(this.data.date));
-    //   aonEventDetailList.DATE_TASK = {
-    //     startDate,
-    //     endDate: startDate,
-    //   };
-    // }
-    // this.aonSigninEl.setContent(aonEventDetailList);
-    this.aonSigninEl.back();
+    let data= undefined;
+    if(this.data) data= {...this.data, start_date:this.data.date};
+    this.aonSigninParentEl.showView("aonEventDetailList", data);
+
+    // this.aonSigninEl.back();
   }
 }
 

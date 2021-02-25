@@ -282,7 +282,14 @@ export class AonAltaDirecta extends AonElement {
             id: 'Delete',
             name: 'Anular',
             icon: 'delete_forever',
-        }, () => this.aonComunicaEl.deleteMov(this.data));
+        }, async () => {
+            try {
+                await this.aonComunicaEl.deleteMov(this.data);
+                this.back();
+            } catch (error) {
+                console.log(error);
+            }
+        });
 
         toolbar.addButton2({
             id: 'Save',

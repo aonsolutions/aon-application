@@ -70,7 +70,7 @@ public class ComunicaPdfServlet extends HttpServlet{
             e.printStackTrace(); 
 			resp.setStatus(500);
             resp.getWriter().print("<html><head><title>Oops an error happened!</title></head>");
-            resp.getWriter().print("<body>"+ e.getMessage() +"</body>");
+            resp.getWriter().print("<body>"+e.getClass().getSimpleName()+" "+ e.getMessage() +"</body>");
             resp.getWriter().println("</html>");
 		}
 

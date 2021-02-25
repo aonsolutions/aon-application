@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { formatDateOrigin, setFullDate, setValueName, sortBy, timeHour,  setDateTpDay, firstLetters } from "../../../../services/utils.js";
+import { setFullDate, setValueName, sortBy, timeHour,  setDateTpDay, firstLetters } from "../../../../services/utils.js";
 import {
   getGroups,
   getPeriod,
@@ -8,13 +8,10 @@ import {
 } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { UserAction } from "../../../user/userEnums.js";
-import { AonPresenceList } from "../aon-presence-list.js";
-import {AonEventDetailList} from "./aon-event-detail-list.js";
-
+import { EventListFilterInput, SigninSidenav } from "../../signinEnums.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
-import { EventListFilterInput, SigninSidenav } from "../../signinEnums.js";
 
 
 export class AonEventList extends AonElement {
@@ -117,7 +114,9 @@ export class AonEventList extends AonElement {
     let toolbarEl = this.getElement(this.TOOLBAR);
     const filterEl =  this.getElement(`${this.id}Filter`);
     toolbarEl.removeButtons();
-		toolbarEl.addButton2(UserAction.BACK, () => this.back());
+    if(!this.aonSigninParentEl.isEmployee()){
+		  toolbarEl.addButton2(UserAction.BACK, () => this.back());
+    }
     this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) => filterEl.openFilter());
   }
 
@@ -155,7 +154,11 @@ export class AonEventList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumnIcon("arrow_back", "string", "lettersHtml", "6%", ()=>this.back());
+      let iconBack = "";
+      if(!this.aonSigninParentEl.isEmployee()){
+        iconBack = "arrow_back";
+      }
+      aonTable.addColumnIcon(iconBack, "string", "lettersHtml", "6%", ()=>this.back());
       aonTable.addColumn("Fecha", "date", "dateParse", "40%");
       aonTable.addColumn("Duración", "", "duration", "30%");
       try {
@@ -269,22 +272,14 @@ export class AonEventList extends AonElement {
 
   aonEvent({target}, data) {
     if("add_location" === target.textContent){
-      this.aonSigninParentEl.openLocationAdd(undefined, data);
+      this.aonSigninParentEl.showView("aonLocationAdd", data);
     } else {
-      let aonEventDetail = new AonEventDetailList();
-      aonEventDetail.id = "aonEventDetailList";
-      if(data){
-        const startDate = formatDateOrigin(data.last_date);
-        aonEventDetail.DATE_TASK = {startDate, endDate:startDate};
-      }
-      this.aonSigninEl.setContent(aonEventDetail);
+      this.aonSigninParentEl.showView("aonEventDetailList", data);
     }
   }
 
   back(){
-    let aonPresenceList = new AonPresenceList();
-    aonPresenceList.filter = true;
-    this.aonSigninEl.setContent(aonPresenceList);
+    this.aonSigninParentEl.showView("aonPresenceList", undefined, true);
   }
 }
 window.customElements.define("aon-event-list", AonEventList);

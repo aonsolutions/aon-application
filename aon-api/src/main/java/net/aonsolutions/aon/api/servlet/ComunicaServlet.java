@@ -67,11 +67,11 @@ public class ComunicaServlet extends HttpServlet{
 			e.printStackTrace();
 	    	resp.setStatus(500);
 	    	String message = e.getCause().getMessage();
-	    	content = message!=null ? message.getBytes() : "".getBytes();
+	    	content = message!=null ? message.getBytes() : e.getClass().getSimpleName().getBytes();
 	    } catch (Exception e) {
 			e.printStackTrace();
 			resp.setStatus(500);
-			content = e.getMessage()!=null ? e.getMessage().getBytes() : "".getBytes();
+			content = e.getMessage()!=null ? e.getMessage().getBytes() : e.getClass().getSimpleName().getBytes();
 		}
 		
 		resp.setContentType("text/html");
@@ -106,7 +106,7 @@ public class ComunicaServlet extends HttpServlet{
 			e.printStackTrace();
 	    	resp.setStatus(500);
 	    	String message = e.getCause().getMessage();
-	    	content = message!=null ? message.getBytes() : "".getBytes();
+	    	content = message!=null ? message.getBytes() : e.getClass().getSimpleName().getBytes();
 	    } catch (Exception e) {
 			e.printStackTrace();
 			resp.setStatus(500);
@@ -173,7 +173,7 @@ public class ComunicaServlet extends HttpServlet{
                 employees.addAll(SistemaRED.getTotalEmployees(new ByteArrayInputStream(cert), certificatePassword, certificateType, regimen, cti));
             } catch(InvalidCertificateException e) {
                 e.printStackTrace();
-                errors.add("invalidCertificate");
+                errors.add(e.getClass().getSimpleName());
             } catch(Exception e) {
                 e.printStackTrace();
             }

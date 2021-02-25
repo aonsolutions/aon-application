@@ -134,9 +134,12 @@ export class AonContratoList extends AonElement {
             employeeInfo.fecha = startDate;
             employeeInfo.startDate = setDate(startDate);
           }
-
-          employeeInfo.regime = completeCCC.toString().substr(0,4);
-          employeeInfo.ctaCti = completeCCC.toString().substr(4);
+          if(completeCCC){
+            employeeInfo.regime = completeCCC.toString().substr(0,4);
+            employeeInfo.ctaCti = completeCCC.toString().substr(4);
+          } else {
+            employeeInfo.contractType = undefined;
+          }
 
           data.push(employeeInfo);
         }

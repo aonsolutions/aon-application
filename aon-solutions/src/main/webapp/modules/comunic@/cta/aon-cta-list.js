@@ -38,6 +38,7 @@ export class AonCtaList extends AonElement {
   }
 
   paintView() {
+    this.aonComunica.removeToolbarOptions();
     if (this.isMobile())
       this.innerHTML = ` <aon-mobile-list id='${this.ID}' />`;
     else this.innerHTML = ` <aon-table id='${this.ID}' />`;

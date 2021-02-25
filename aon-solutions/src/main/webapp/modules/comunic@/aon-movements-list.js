@@ -66,7 +66,7 @@ export class AonMovementsList extends AonElement {
         });
       } catch (e) {
         const toast = this.getElement(`aonComunicaToast`);
-        if ("invalidCertificate" === e && toast)
+        if ("invalidCertificate" === e || "CertificateNotFoundException" === e && toast)
           toast.start({ message: e, type: "error" });
       }
     }
@@ -159,6 +159,9 @@ export class AonMovementsList extends AonElement {
         });
     } catch (e) {
       console.log(e);
+      const toast = this.getElement(`aonComunicaToast`);
+      if ("InvalidCertificateException" === e || "CertificateNotFoundException" === e && toast)
+        toast.start({ message: e, type: "error" });
     }
     return data;
   }
