@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
@@ -34,8 +35,10 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDeductionRecord;
@@ -616,11 +619,17 @@ public class EmployeeDAO {
 		dslContext
 		.select()
 		.from(CONTRACT_DEDUCTION)
+		.innerJoin(DEDUCTION_CONCEPT).onKey()
 		.where(CONTRACT_DEDUCTION.CONTRACT.eq(contractRecord.getId()))
 		.and(DSL.condition(endDate == null ).or(CONTRACT_DEDUCTION.START_DATE.le(endDate)))
 		.and(CONTRACT_DEDUCTION.END_DATE.isNull().or(CONTRACT_DEDUCTION.END_DATE.ge(startDate)))
-		.fetchStreamInto(CONTRACT_DEDUCTION)
-		.forEach( contractDeduction -> {
+		.fetchStream()
+		.filter( EmployeeDAO::filter )
+		.forEach( r -> {
+			
+			//DeductionConceptRecord deductionConcept = r.into(DEDUCTION_CONCEPT); 
+			ContractDeductionRecord contractDeduction = r.into(CONTRACT_DEDUCTION); 
+			
 			if ( remove(deductionsList, contractDeduction) ) {
 				return;
 			}
@@ -674,6 +683,28 @@ public class EmployeeDAO {
 	}
 	
 
+	private static boolean filter( Record r ) {
+		try {
+			
+			Byte type = r.get(CONTRACT_DEDUCTION.TYPE);
+			if ( type == null )
+				type = r.get(DEDUCTION_CONCEPT.TYPE);
+			
+			if ( type == null )
+				return true;
+			
+			switch (DeductionType.values()[type]) {
+			case IRPF:
+			case ADVANCE_PAYMENT:
+				return false;
+
+			default:
+				return true;
+			}
+		} catch ( Throwable t ) {
+			return true;
+		}
+	}
 
 	private static boolean remove( List<Deduction> list, ContractDeductionRecord r ) {
 		for (int i = 0; i < list.size(); i++) {
