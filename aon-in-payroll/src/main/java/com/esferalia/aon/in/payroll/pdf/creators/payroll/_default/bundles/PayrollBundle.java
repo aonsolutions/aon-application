@@ -30,7 +30,7 @@ public class PayrollBundle  extends ListResourceBundle{
 	        { "TOTAL DEDUCIR", "Total deducir" },
 	        { "TOTAL PERCIBIR", "Liquido total a percibir" },
 	        { "FIRMA EMPRESA", "Sello y firma de la empresa" },
-	        { "FIRMA TRABAJADOR", "'El 'DD' de 'MMMM' recibí'" },
+	        { "FIRMA TRABAJADOR", "'El 'dd' de 'MMMM' recibí'" },
 	        { "TITULO PIE", "Determinación de las bases de cotización a la Seguridad Social y conceptos de recaudación conjunta" },
 	        { "TITULO PIE 2", "y de la base sujeta a retención del IRPF y aportación de la empresa" },
 	        { "BASE", "Base" },

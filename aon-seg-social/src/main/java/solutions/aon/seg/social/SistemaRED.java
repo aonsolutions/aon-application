@@ -236,6 +236,24 @@ public class SistemaRED {
 			throw new SegSocialException(e);
 		}
 	}
+	
+	public static Map<String,Map<String, WorkerLiquidation>> getWorkersLiquidationsByCCCandNAFs(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String ccc,
+			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
+		return SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, nafs);
+	}
+	
+	public static Map<String,Map<String, WorkerLiquidation>> getWorkersLiquidationsByCCCandNAFs(final byte[] certificateData,
+			final String certificatePassword, final String certificateType, final String ccc,
+			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, nafs);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
 
 	public static Employee sendMov(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException {

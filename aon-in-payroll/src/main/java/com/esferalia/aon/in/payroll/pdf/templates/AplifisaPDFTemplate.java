@@ -13,18 +13,16 @@ import java.util.regex.Pattern;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.pdf.templates.AltaiPDFTemplate.PDFContract;
-import com.esferalia.aon.in.payroll.pdf.templates.common_classes.*;
+import com.esferalia.aon.in.payroll.pdf.templates.common_classes.Deduction;
 import com.esferalia.aon.in.payroll.pdf.templates.regex.AplifisaRegex;
+import com.esferalia.aon.in.payroll.pdf.templates.tools.PdfParsingTools;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.enumeration.DeductionType;
-import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.in.payroll.pdf.templates.tools.*;
 
 public class AplifisaPDFTemplate implements SalaryPDFTemplate {
 
