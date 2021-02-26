@@ -58,6 +58,7 @@ import com.esferalia.aon.occam.api.model.HasEndDate;
 import com.esferalia.aon.occam.api.model.HasStartDate;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
