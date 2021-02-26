@@ -3,17 +3,16 @@ import { startModule } from '../../services/gwtLoader.js';
 import { getDomainUserRoles, getIDC, getTA, postDeleteMov } from '../../services/service.js';
 import { addDays } from '../../services/utils.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
-import './aon-movements.js';
-import '../../components/aon-toast.js';
+import { AonMovements } from './aon-movements.js';
 import '../../components/aon-application.js';
 import './cta/aon-cta-list.js';
 import './contrato/aon-contrato-list.js';
-
 
 export class AonComunica extends AonElement {
 	_roles;
 	AON_COMUNICA;
 	MOVEMENTS;
+	_movements;
 	constructor() {
 		super();
 	}
@@ -36,7 +35,6 @@ export class AonComunica extends AonElement {
 	build() {
 		this.paintView();
 		if(!this.isEmployee()){
-			this.aonComunicaEl = this.getElement(this.AON_COMUNICA);
 			this.buildToolbar();
 			if(this.isMobile()) this.painViewContract();
 			else this.paintViewCtz();
@@ -45,9 +43,9 @@ export class AonComunica extends AonElement {
 
 	paintView() {
 		this.innerHTML = `
-			<aon-toast id="${this.AON_COMUNICA}Toast"></aon-toast>
 			<aon-application id="${this.AON_COMUNICA}" title="COMUNIC@"></aon-application>
 		`;
+		this.aonComunicaEl = this.getElement(this.AON_COMUNICA);
 	}
 
 	buildToolbar(){
@@ -90,7 +88,7 @@ export class AonComunica extends AonElement {
 					icon: 'aon_seg_social',
 					color: 'black'
 				},
-				fn: () => this.aonComunicaEl.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`)
+				fn: () => this.aonComunicaEl.setContent(new AonMovements())
 			}
 		];
 		if(this.isMobile() || (this._roles.isComunicaPortal() && !this._roles.isComunicaManager())){
@@ -118,7 +116,7 @@ export class AonComunica extends AonElement {
 
 	async deleteMov(data, el) {
 		if (confirm(`Estas seguro de anular el movimiento de ${data.name} ?`)) {
-			const toast = this.getElement(`${this.AON_COMUNICA}Toast`);
+			const toast = this.getElement(this.aonComunicaEl.TOAST);
 			this.aonComunicaEl.startLoader();
 			try {
 				await postDeleteMov(data);

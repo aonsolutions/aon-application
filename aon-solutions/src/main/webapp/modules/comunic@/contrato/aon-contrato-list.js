@@ -96,11 +96,7 @@ export class AonContratoList extends AonElement {
           aonCtaTable.addLi(options, idx);
         });
       } catch (e) {
-        const toast = this.getElement(`aonComunicaToast`);
-        if ("invalidCertificate" === e) {
-          if (toast) toast.start({ message: e, type: "error" });
-          this.getElement("aonComunicaSidenavCertificados").click();
-        }
+        console.log(e);
       }
     }
   }

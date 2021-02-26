@@ -15,3 +15,5 @@ export const StringTwoLetters = (str) => {
   }
   return newStr;
 };
+
+export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());

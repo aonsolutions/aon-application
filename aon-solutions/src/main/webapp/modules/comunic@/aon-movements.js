@@ -1,9 +1,8 @@
 import { AonElement } from '../../components/AonElement.js';
 
 import '../../components/aon-dialog-menu.js';
-
-import './aon-movements-list.js';
-import'./aon-alta-directa.js';
+import { AonAltaDirecta } from './aon-alta-directa.js';
+import { AonMovementsList } from './aon-movements-list.js';
 
 export class AonMovements extends AonElement {
 
@@ -23,43 +22,43 @@ export class AonMovements extends AonElement {
 
 
     connectedCallback() {
-        this.innerHTML = `
-            <aon-dialog-menu id="aonDialogAddOption" > </aon-dialog-menu>
-        `;
-
         this.build();
-        this.aonList();
     }
 
     build() {
-        let aonComunica = this.aonComunicaEl;
-        aonComunica.removeToolbarOptions();
-
+        this.paintView();
+        this.aonComunicaEl.removeToolbarOptions();
         if (this.isMobile()) {
-            let floatButton = this.getElement(`${aonComunica.id}FloatSpan`);
+            let floatButton = this.getElement(`${this.aonComunicaEl.id}FloatSpan`);
             if (!floatButton) {
-                aonComunica.addFloatOption({
+                this.aonComunicaEl.addFloatOption({
                     id: 'AddAlta',
                     name: 'addalta',
                     icon: 'add'
                 }, () =>  this.aonAltaDirecta()); 
             }
         } else {
-            aonComunica.addToolbarOption('Add', 'add', () => this.aonAltaDirecta());
+            this.aonComunicaEl.addToolbarOption('Add', 'add', () => this.aonAltaDirecta());
         }
+        this.aonList();
+    }
+
+    paintView(){
+        this.innerHTML = `<aon-dialog-menu id="aonDialogAddOption" > </aon-dialog-menu>`;
     }
 
     async aonList(filter) {
-        let aonComunica = this.aonComunicaEl;
-        this.getElement(aonComunica.TOOLBAR).setAttribute('option', 'Movimientos');
-        if (filter) aonComunica.setFilter(filter);
+        this.getElement(this.aonComunicaEl.TOOLBAR).setAttribute('option', 'Movimientos');
+        if (filter) this.aonComunicaEl.setFilter(filter);
         else {
-            aonComunica.setContentHTML(`<aon-movements-list id="${this.id}List" />`);
+            let aonMovementsList = new AonMovementsList();
+            aonMovementsList.id = this.id+"List";
+            this.aonComunicaEl.setContent(aonMovementsList);
         }
     }
 
     aonAltaDirecta() {
-        this.aonComunicaEl.setContentHTML(`<aon-alta-directa />`);
+        this.aonComunicaEl.setContent(new AonAltaDirecta());
     }
 
 }

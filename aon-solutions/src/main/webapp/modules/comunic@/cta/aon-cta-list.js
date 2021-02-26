@@ -8,7 +8,7 @@ import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 
 export class AonCtaList extends AonElement {
-  ID;
+  TABLE_ID;
   static get observedAttributes() {
     return ["filter"];
   }
@@ -27,32 +27,31 @@ export class AonCtaList extends AonElement {
 
   constructor() {
     super();
-    this.aonComunica = this.getElement("aonComunica");
-    this.aonComunicaEl = this.aonComunica.getParent();
-    this.ID = "aonCtaTable";
+    this.aonComunicaEl = this.getElement("aonComunica");
+    this.TABLE_ID = "aonCtaTable";
   }
 
   connectedCallback() {
-    this.paintView();
     this.build();
   }
 
-  paintView() {
-    this.aonComunica.removeToolbarOptions();
-    if (this.isMobile())
-      this.innerHTML = ` <aon-mobile-list id='${this.ID}' />`;
-    else this.innerHTML = ` <aon-table id='${this.ID}' />`;
-  }
-
   async build() {
-    this.aonComunica.startLoader();
+    this.paintView();
+    this.aonComunicaEl.startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
-    this.aonComunica.stopLoader();
+    this.aonComunicaEl.stopLoader();
+  }
+  
+  paintView() {
+    this.aonComunicaEl.removeToolbarOptions();
+    if (this.isMobile())
+      this.innerHTML = ` <aon-mobile-list id='${this.TABLE_ID}' />`;
+    else this.innerHTML = ` <aon-table id='${this.TABLE_ID}' />`;
   }
 
   async getTableDesk() {
-    const aonCtaTable = this.getElement(this.ID);
+    const aonCtaTable = this.getElement(this.TABLE_ID);
     if (aonCtaTable) {
       aonCtaTable.addColumn("Tipo", "string", "tipo", "20%");
       aonCtaTable.addColumn("Cuenta de cotización", "string", "ccc", "40%");
@@ -69,17 +68,13 @@ export class AonCtaList extends AonElement {
           });
         });
       } catch (e) {
-        const toast = this.getElement(`aonComunicaToast`);
-        if ("invalidCertificate" === e) {
-          if (toast) toast.start({ message: e, type: "error" });
-          this.getElement("aonComunicaSidenavCertificados").click();
-        }
+        console.log(e);
       }
     }
   }
 
   async getTableMobile() {
-    const aonCtaTable = this.getElement(this.ID);
+    const aonCtaTable = this.getElement(this.TABLE_ID);
     if (aonCtaTable) {
       aonCtaTable.createAonDialog();
       try {
@@ -97,11 +92,7 @@ export class AonCtaList extends AonElement {
           );
         });
       } catch (e) {
-        const toast = this.getElement(`aonComunicaToast`);
-        if ("invalidCertificate" === e) {
-          if (toast) toast.start({ message: e, type: "error" });
-          this.getElement("aonComunicaSidenavCertificados").click();
-        }
+        console.log(e);
       }
     }
   }
@@ -149,10 +140,10 @@ export class AonCtaList extends AonElement {
   }
 
   async getCertCorriente(data, el) {
-    this.aonComunica.startLoading();
+    this.aonComunicaEl.startLoading();
     const { ccc, cccRegimeCode: regimen } = data;
     await getCertCorriente({ ccc, regimen }); // open pdf
-    this.aonComunica.stopLoading();
+    this.aonComunicaEl.stopLoading();
   }
 }
 window.customElements.define("aon-cta-list", AonCtaList);

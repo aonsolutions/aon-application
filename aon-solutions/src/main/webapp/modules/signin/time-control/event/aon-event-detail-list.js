@@ -262,8 +262,9 @@ export class AonEventDetailList extends AonElement {
 
   paintName(){
     if(this.TASK_HOLDER) {
-      if(this.isMobile()) this.getElement(this.TOOLBAR).title = this.TASK_HOLDER.name;
-      else this.aonSigninEl.addTitleToolSection(this.TASK_HOLDER.name);
+      const {name} = this.TASK_HOLDER;
+      if(this.isMobile()) this.getElement(this.TOOLBAR).title = `<a href="tel:+34000000000">${name}</a>`;
+      else this.aonSigninEl.addTitleToolSection(name);
     }
   }
 

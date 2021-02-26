@@ -1,9 +1,9 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { getLocation } from "../../../../services/service.js";
-import { AonLocationAdd } from "./aon-location-add.js";
+import { SigninSidenav } from "../../signinEnums.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
-import { SigninSidenav } from "../../signinEnums.js";
+
 
 export class AonLocationList extends AonElement {
   TABLE_ID;
@@ -152,7 +152,6 @@ export class AonLocationList extends AonElement {
 
   add(el, data) {
     let newData = data;
-    console.log(newData);
     if (!data) newData = {add:true};
     this.aonSigninParentEl.showView("aonLocationAdd", newData);
   }

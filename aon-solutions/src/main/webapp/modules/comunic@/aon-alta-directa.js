@@ -10,6 +10,7 @@ import '../../components/aon-suggestion.js';
 import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-icon-button.js';
+import { ToolbarType } from '../../models/enums.js';
 
 export class AonAltaDirecta extends AonElement {
     _contrato;
@@ -41,27 +42,38 @@ export class AonAltaDirecta extends AonElement {
         this.id = this.id || 'aonAltaDirecta';
         this.TOOLBAR = this.id + 'Toolbar';
         this.aonComunica = this.getElement('aonComunica');
-        this.aonComunicaEl = this.aonComunica.getParent();
+        this.aonComunicaParentEl = this.aonComunica.getParent();
         this.aonComunicaToolbar = this.getElement('aonComunicaToolbar');
         this.aonComunicaToolbar.setAttribute('option', 'Comunicar contrato');
-        this.TOAST = this.getElement(`aonComunicaToast`);
+        this.TOAST = this.getElement(this.aonComunica.TOAST);
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if ("data" == name && newValue) {
-            this.aonComunicaToolbar.setAttribute('option', 'Modificar contrato');
+            const textEdit =  'Modificar contrato';
+            this.aonComunicaToolbar.setAttribute('option', textEdit);
+            const toolbarEl = this.getElement(this.TOOLBAR);
+            if(toolbarEl){
+                toolbarEl.title = textEdit
+            }
             this.edit(this.data);
         }
     }
 
     connectedCallback() {
-        this.paintView();
         this.build();
+    }
+
+    build() {
+        this.paintView();
+        this.buildToolbar();
+        this.initLists();
         this.eventListener();
     }
 
+
     paintView() {
-        const toolbarMobile = !this.isMobile() ? `<aon-toolbar id="${this.TOOLBAR}" type="secondary" title="Alta directa"> </aon-toolbar>` : '';
+        const toolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="Alta directa"> </aon-toolbar>`;
         const initHtml = `
             <style>
               .aonCard{
@@ -86,10 +98,7 @@ export class AonAltaDirecta extends AonElement {
                 z-index: 9;
               }
             </style>
-
-            ${toolbarMobile} 
-
-   
+            ${toolbar} 
         `;
 
         const form = `
@@ -196,20 +205,61 @@ export class AonAltaDirecta extends AonElement {
         let aonAltaDirectaNss = this.getElement(`${this.id}NssDiv`);
         aonAltaDirectaNss.innerHTML = `<aon-suggestion id="${this.id}Nss" title="NSS/NAF" name="nss"></aon-suggestion>`;
 
-        if (!this.isMobile()) this.buildToolbar();
-        else {
+        if (this.isMobile()){
             this.getElement(`${this.id}DivSubmit`)
                 .innerHTML = `<button class="aonButton" type="button" id="${this.id}Submit">Comunicar</button>`;
         }
-
         this.addSpanDecimal();
-    }
-
-    build() {
         this.getElement(`${this.id}Dni`).disabled = true;
         this.getElement('fecha').value = new Date();
-        this.initLists();
     }
+
+    buildToolbar() {
+        const toolbar = this.getElement(this.TOOLBAR);
+        toolbar.removeButtons();
+
+        toolbar.addButton2({
+            id: 'Idc',
+            name: 'Obtener IDC',
+            aonIcon: 'aon_idc',
+        }, () => this.aonComunicaParentEl.getIdc(this.data));
+
+        toolbar.addButton2({
+            id: 'Ta',
+            name: 'Obtener TA',
+            aonIcon: 'aon_ta',
+        }, () => this.aonComunicaParentEl.getTa(this.data));
+
+        toolbar.addButton2({
+            id: 'Delete',
+            name: 'Anular',
+            icon: 'delete_forever',
+        }, async () => {
+            try {
+                await this.aonComunicaParentEl.deleteMov(this.data);
+                this.back();
+            } catch (error) {
+                console.log(error);
+            }
+        });
+
+        if(!this.isMobile()){
+            toolbar.addButton2({
+                id: 'Save',
+                name: 'Comunicar',
+                icon: 'send'
+            }, () => this.formSubmit());
+        }
+
+        toolbar.addButton2({
+            id: 'Previous',
+            name: 'Volver',
+            icon: 'arrow_back'
+        }, () => this.back());
+
+        this.hiddenButtonToolbar({ 'Delete': true, 'Idc': true, 'Ta': true });
+    }
+
 
     initLists() {
         this.suggestionDni();
@@ -262,49 +312,7 @@ export class AonAltaDirecta extends AonElement {
         this.getElement(`${this.id}IconReset`).addEventListener('click', (e) => this.disabledCardTrabajor(false));
     }
 
-    buildToolbar() {
-        const toolbar = this.getElement(this.TOOLBAR);
-        toolbar.removeButtons();
 
-        toolbar.addButton2({
-            id: 'Idc',
-            name: 'Obtener IDC',
-            aonIcon: 'aon_idc',
-        }, () => this.aonComunicaEl.getIdc(this.data));
-
-        toolbar.addButton2({
-            id: 'Ta',
-            name: 'Obtener TA',
-            aonIcon: 'aon_ta',
-        }, () => this.aonComunicaEl.getTa(this.data));
-
-        toolbar.addButton2({
-            id: 'Delete',
-            name: 'Anular',
-            icon: 'delete_forever',
-        }, async () => {
-            try {
-                await this.aonComunicaEl.deleteMov(this.data);
-                this.back();
-            } catch (error) {
-                console.log(error);
-            }
-        });
-
-        toolbar.addButton2({
-            id: 'Save',
-            name: 'Comunicar',
-            icon: 'send'
-        }, () => this.formSubmit());
-
-        toolbar.addButton2({
-            id: 'Previous',
-            name: 'Volver',
-            icon: 'arrow_back'
-        }, () => this.back());
-
-        this.hiddenButtonToolbar({ 'Delete': true, 'Idc': true, 'Ta': true });
-    }
 
     hiddenButtonToolbar(buttonToolbar) {
         let toolbarSection = this.getElement(this.TOOLBAR);
@@ -380,7 +388,7 @@ export class AonAltaDirecta extends AonElement {
 
         //hidden toolbar button
         let buttonToolbar = { "Idc": false, "Ta": false };
-        if (this.aonComunicaEl.anularCondition(obj.situation, obj.fecha)) buttonToolbar["Delete"] = false;
+        if (this.aonComunicaParentEl.anularCondition(obj.situation, obj.fecha)) buttonToolbar["Delete"] = false;
         this.hiddenButtonToolbar(buttonToolbar);
         //end hidden toolbar
 
@@ -654,6 +662,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             await postAltaDirecta(this.getContrato());
             this.TOAST.start({ message: 'Alta procesada!', type: 'success', delay: 3000 });
+            this.aonComunicaParentEl._movements = undefined;
             this.back();
         } catch (error) {
             this.TOAST.start({ message: error, type: 'error' });
@@ -673,6 +682,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             await postUpdateCto(cto_new);
             this.TOAST.start({ message: 'Contrato modificado!', type: 'primary', delay: 3000 });
+            this.aonComunicaParentEl._movements = undefined;
             this.back();
         } catch (error) {
             this.TOAST.start({ message: error, type: 'error' });

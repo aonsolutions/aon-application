@@ -15,9 +15,9 @@ import "../../components/aon-application.js";
 
 export class AonSignin extends AonElement {
   AON_SIGNIN;
+  TASK_HOLDER;
   _filter;
   _roles;
-  TASK_HOLDER;
   constructor() {
     super();
   }
@@ -151,7 +151,7 @@ export class AonSignin extends AonElement {
               if(data){
                 if(data.coordinates && data.coordinates.latitude && data.coordinates.longitude){
                   data = {...data, latitude:data.coordinates.latitude, longitude: data.coordinates.longitude}
-                  aonView.data = {...data,latitude:data.coordinates.latitude, longitude: data.coordinates.longitude};
+                  aonView.data = {...data, latitude:data.coordinates.latitude, longitude: data.coordinates.longitude};
                 }
                 if(data.add){
                   aonView.add = data.add;

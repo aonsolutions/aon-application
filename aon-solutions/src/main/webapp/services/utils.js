@@ -121,8 +121,6 @@ export const formatDate = (d) => {
   return day + '/' + month + '/' + year;
 }
 
-export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());
-
 export const setDate = (date) => formatDate(date);
 
 export const addDays = (date, day) => {
@@ -130,11 +128,13 @@ export const addDays = (date, day) => {
   result.setDate(result.getDate() + day);
   return result;
 }
+
 export const addMonth = (date, month) => {
   let result = new Date(date);
   result.setMonth( result.getMonth()  + month);
   return result;
 }
+
 export const addYear = (date, year) => {
   let result = new Date(date);
   result.setFullYear( result.getFullYear() + year);
@@ -175,7 +175,6 @@ export const setDateTpDay = (d)=>{
 }
 
 export const setDateTimestampDay = (d)=> setDateTpDay(new Date(d)) +" " + setTime(new Date(d));
-
 
 export const setFullDate = (d) => {
   const date = new Date(d);

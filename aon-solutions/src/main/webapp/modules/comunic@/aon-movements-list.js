@@ -5,7 +5,7 @@ import "../../components/aon-table.js";
 import "../../components/aon-mobile-list.js";
 
 export class AonMovementsList extends AonElement {
-  ID;
+  TABLE_ID;
   static get observedAttributes() {
     return ["filter"];
   }
@@ -24,35 +24,36 @@ export class AonMovementsList extends AonElement {
 
   constructor() {
     super();
-    this.aonComunica = this.getElement("aonComunica");
-    this.aonComunicaEl = this.aonComunica.getParent();
-    this.ID = "aonMovementTable";
+    this.TABLE_ID = "aonMovementTable";
+    this.aonComunicaEl = this.getElement("aonComunica");
+    this.aonComunicaParentEl = this.aonComunicaEl.getParent();
+    this.toastEl = this.getElement(this.aonComunicaEl.TOAST);
   }
 
   connectedCallback() {
-    this.paintView();
     this.build();
   }
 
   disconnectedCallback() {
-    if (this.aonComunica) this.aonComunica.removeFloatOption();
+    if (this.aonComunicaEl) this.aonComunicaEl.removeFloatOption();
   }
 
   paintView() {
     if (this.isMobile())
-      this.innerHTML = ` <aon-mobile-list id='${this.ID}' />`;
-    else this.innerHTML = ` <aon-table id='${this.ID}' />`;
+      this.innerHTML = ` <aon-mobile-list id='${this.TABLE_ID}' />`;
+    else this.innerHTML = ` <aon-table id='${this.TABLE_ID}' />`;
   }
 
   async build() {
-    this.aonComunica.startLoader();
+    this.paintView();
+    this.aonComunicaEl.startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
-    this.aonComunica.stopLoader();
+    this.aonComunicaEl.stopLoader();
   }
 
   async getTableDesk() {
-    const aonMovementTable = this.getElement(this.ID);
+    const aonMovementTable = this.getElement(this.TABLE_ID);
     if (aonMovementTable) {
       aonMovementTable.addColumn("Apellidos y nombre", "string", "name", "45%");
       aonMovementTable.addColumn("DNI/NIE", "string", "dni", "15%");
@@ -65,15 +66,13 @@ export class AonMovementsList extends AonElement {
           aonMovementTable.addRow(res, (el) => this.aonMovement(el, res));
         });
       } catch (e) {
-        const toast = this.getElement(`aonComunicaToast`);
-        if ("invalidCertificate" === e || "CertificateNotFoundException" === e && toast)
-          toast.start({ message: e, type: "error" });
+        console.log(e);
       }
     }
   }
 
   async getTableMobile() {
-    const aonMovementTable = this.getElement(this.ID);
+    const aonMovementTable = this.getElement(this.TABLE_ID);
     if (aonMovementTable) {
       aonMovementTable.createAonDialog();
       try {
@@ -86,25 +85,22 @@ export class AonMovementsList extends AonElement {
               aonIcon: "aon_seg_social",
               title: `${res.name}`,
               subtitle: `${res.status} ${res.fecha}`,
-              option: this.aonComunicaEl.getOptions(res),
+              option: this.aonComunicaParentEl.getOptions(res),
             },
             idx,
             (el) => this.aonMovement(el, res)
           );
         });
       } catch (e) {
-        const toast = this.getElement(`aonComunicaToast`);
-        if ("invalidCertificate" === e && toast) {
-          toast.start({ message: e, type: "error" });
-        }
+        console.log(e);
       }
     }
   }
 
   async aonMovement({ target: el }, { regime, ctaCti, nss, prev, situation }) {
     let id = "aonAltaDirecta";
-    this.aonComunica.startLoader();
-    this.aonComunica.setContentHTML(
+    this.aonComunicaEl.startLoader();
+    this.aonComunicaEl.setContentHTML(
       `<aon-alta-directa id="${id}"></aon-alta-directa>`
     );
     try {
@@ -121,47 +117,49 @@ export class AonMovementsList extends AonElement {
         }
       }
     } catch (error) {}
-    this.aonComunica.stopLoader();
+    this.aonComunicaEl.stopLoader();
   }
 
   async getData() {
     let data = [];
     try {
-      const resp = await getMovements(this.getFilter());
+      const movements = this.aonComunicaParentEl._movements;
+      const resp = movements || await getMovements(this.getFilter());
       data = resp
         .sort((a, b) => new Date(b.fra) - new Date(a.fra))
         .map((res) => {
-          const { ipf, fra, situation } = res;
-          const fecha = setDate(fra);
-          const date_now = new Date();
-          const prev = new Date(fra).getTime() > date_now.getTime();
-          const dni = ipf.toString().substring(1);
-          let color = "#000";
-          let tipo_mov = situation === "AL" ? "Alta" : "Baja";
-          if (prev) {
-            color = "#488601";
-            tipo_mov = `${tipo_mov} previa`;
-          } else if (this.aonComunicaEl.anularCondition(situation, fra)) {
-            color = "#CB8D00";
-            tipo_mov = `${tipo_mov} Consolidada`;
-          } else {
-            tipo_mov = `${tipo_mov} Consolidada`;
-          }
+        const { ipf, fra, situation } = res;
+        const fecha = setDate(fra);
+        const date_now = new Date();
+        const prev = new Date(fra).getTime() > date_now.getTime();
+        const dni = ipf.toString().substring(1);
+        let color = "#000";
+        let tipo_mov = situation === "AL" ? "Alta" : "Baja";
+        if (prev) {
+          color = "#488601";
+          tipo_mov = `${tipo_mov} previa`;
+        } else if (this.aonComunicaParentEl.anularCondition(situation, fra)) {
+          color = "#CB8D00";
+          tipo_mov = `${tipo_mov} Consolidada`;
+        } else {
+          tipo_mov = `${tipo_mov} Consolidada`;
+        }
 
-          const status = `<span style="font-weight: 700;color: ${color};">${tipo_mov}</span>`;
-          return {
-            ...res,
-            dni,
-            fecha,
-            status,
-            prev,
-          };
-        });
+        const status = `<span style="font-weight: 700;color: ${color};">${tipo_mov}</span>`;
+        return {
+          ...res,
+          dni,
+          fecha,
+          status,
+          prev,
+        };
+      });
+      this.aonComunicaParentEl._movements = data;
     } catch (e) {
       console.log(e);
-      const toast = this.getElement(`aonComunicaToast`);
-      if ("InvalidCertificateException" === e || "CertificateNotFoundException" === e && toast)
-        toast.start({ message: e, type: "error" });
+      if ("InvalidCertificateException" === e || "CertificateNotFoundException" === e){
+        this.toastEl.start({ message: e, type: "error" });
+      }
     }
     return data;
   }

@@ -15,11 +15,12 @@ import {
 } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { UserAction } from "../../../user/userEnums.js";
+import { INPUTS_ALL } from "../../../../environments/constants.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-date.js";
 import "../../../../components/aon-select.js";
-import { INPUTS_ALL } from "../../../../environments/constants.js";
+
 
 export class AonEventAdd extends AonElement {
   ACTION;
@@ -91,7 +92,6 @@ export class AonEventAdd extends AonElement {
     const aonToolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}"> </aon-toolbar>`;
     const aonCardCoordinate = ` <div class="aonCol-sm-12"><aon-card id="${this.id}CardCoordinate" title="Coordenadas" visible="false"></aon-card> </div>`;
     const form = `
-          ${aonToolbar}
         <form id="${this.id}Form" action="#" onsubmit="return false;">
             <div id="${this.id}Div">
                 <div class="aonCol-sm-12">
@@ -101,7 +101,7 @@ export class AonEventAdd extends AonElement {
             </div>
         </form>`;
 
-    this.innerHTML = initHtml + form;
+    this.innerHTML = aonToolbar + initHtml + form;
 
     this.aonSigninEl.removeToolbarOptions();
 

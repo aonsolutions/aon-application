@@ -5,7 +5,6 @@ import { getPosition } from "../../../../services/maps.js";
 import { API_KEY_MAP } from "../../../../environments/constants.js";
 import { UserAction } from "../../../user/userEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
-// import { AonLocationList } from "./aon-location-list.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-number.js";
@@ -93,7 +92,6 @@ export class AonLocationAdd extends AonElement {
         `;
     const aonToolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}"> </aon-toolbar>`;
     const form = `
-          ${aonToolbar}
         <form id="${this.id}Form" action="#" onsubmit="return false;">
             <div id="${this.id}Div">
                 <div class="aonCol-sm-12">
@@ -102,7 +100,7 @@ export class AonLocationAdd extends AonElement {
             </div>
         </form>`;
 
-    this.innerHTML = initHtml + form;
+    this.innerHTML = aonToolbar + initHtml + form;
 
     this.aonSigninEl.removeToolbarOptions();
 
