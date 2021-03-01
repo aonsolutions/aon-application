@@ -52,7 +52,7 @@ export class AonInvoicePanel extends AonElement {
 	initialize() {
 		this.INVOICE = 'aonInvoice';
 		this.INPUT_FILE = this.INVOICE + 'InputFile';
-		this.INPUT_CAMERA = this.INVOICE + 'InputCamera';
+		this.INPUT_CAMERA = 'aonMobileMenuCameraInput';// this.INVOICE + 'InputCamera';
 		this._filter = {
 			status: 'inbox',
 			page: 0,
@@ -219,8 +219,25 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	async openCamera() {
-		const isApp = await actionMobile({ action: "camera" });
+		const isApp = await actionMobile({ action: "camera", id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' });
+		console.log('aon-invoice-panel');
 		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
+	}
+
+	async receiveAppImage(file) {
+		if (file.contentType.indexOf("image") >= 0) {
+		  //compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
+		  const f = await downscaleImage(file, undefined, undefined, undefined);
+		  const data = {
+				file:f,
+				invoice: new Invoice('recibida')
+		   };
+		   let aonInvoice = document.getElementById('aonInvoice');
+		   aonInvoice.startLoader();
+		   await insertInvoice(data);
+		   this.aonInvoiceList({status:'inbox'})
+		   aonInvoice.stopLoader();
+		}
 	}
 
 	addInvoiceFile() {
