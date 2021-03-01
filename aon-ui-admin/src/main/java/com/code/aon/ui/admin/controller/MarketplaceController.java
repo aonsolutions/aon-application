@@ -9,6 +9,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 
@@ -20,6 +21,8 @@ public class MarketplaceController implements Serializable {
 	private String login;
 	private HashMap<AonApp, DomainApp> domainApps = new HashMap<AonApp, DomainApp>();
 
+	private boolean suitePortal;
+	
 	public void init() {
 		setLogin(AonUtil.getRemoteUser());
 		setDomain(AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), getLogin()));
@@ -28,6 +31,8 @@ public class MarketplaceController implements Serializable {
 		.forEach(r -> {
 			domainApps.put(r.getApp(), r);
 		});
+		
+		this.suitePortal = AON.getDomainModules(getDomain().getName(), getDomain().getId(), getLogin()).filter(f -> Module.SUITE_PORTAL.equals(f)).count() > 0;
 	}
 
 	public boolean isActive(AonApp app) {
@@ -41,6 +46,14 @@ public class MarketplaceController implements Serializable {
 				.setDomain(DomainManager.getCurrentDomain())
 				.setApp(app)
 				.setActive(active));
+	}
+	
+	public boolean isSuitePortal() {
+		return suitePortal;
+	}
+	
+	public void setSuitePortal(boolean suitePortal) {
+		this.suitePortal = suitePortal;
 	}
 
 	public void contract() {

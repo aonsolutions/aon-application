@@ -263,6 +263,7 @@ public class BookingInfo implements Serializable {
 				list.add(aioInfo.getModuleInfo(Module.DOCUMENT));
 				list.add(aioInfo.getModuleInfo(Module.PAYROLL_PORTAL));
 				list.add(aioInfo.getModuleInfo(Module.FINANCE_PORTAL));
+				list.add(aioInfo.getModuleInfo(Module.SUITE_PORTAL));
 				break;
 			case OFFICE:
 				list.add(aioInfo.getModuleInfo(Module.FISCAL));

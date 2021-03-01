@@ -40,7 +40,8 @@ public enum Module implements IResourceable {
 	ECOMMERCE( "eCommerce" ),
 	CALL_CENTER( "call_center" ),
 	FINANCE_PORTAL( "finance_portal" ),
-	AON_FINANCE( "aonFinance" );
+	AON_FINANCE( "aonFinance" ),
+	SUITE_PORTAL("suite_portal");
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_module_";

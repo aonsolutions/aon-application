@@ -83,6 +83,7 @@ public interface ICommonMessages {
 	String MODULE_FINANCE = "aon_module_finance";	
 	String MODULE_MANAGEMENT_FINANCE = "aon_module_management_finance";
 	String MODULE_WAREHOUSE = "aon_module_warehouse";
+	String MODULE_SUITE_PORTAL = "aon_module_suite_portal";
 	String MONTH = "aon_month";	
 	String NEW_PASSWORD_ERROR = "aon_security_new_passwd_error";
 	String NO = "aon_no";

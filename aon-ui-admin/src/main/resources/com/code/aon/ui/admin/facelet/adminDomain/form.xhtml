@@ -251,7 +251,7 @@
 						</aon:div>
 					</aon:if>
 
-					<aon:outputLabel for="Domain_maxDocumentSize"
+<!-- 					<aon:outputLabel for="Domain_maxDocumentSize"
 						value="#{bundle.admin_domain_maxDocumentSize}" />
 					<rich:inputNumberSlider id="Domain_maxDocumentSize"
 						value="#{adminDomain.to.maxDocumentSize}"
@@ -268,7 +268,7 @@
 						</aon:selectOneMenu>		
 						<aon:outputText styleClass="aon-margin-left"
 							value="#{documentManager.usedSpaceMessage}" />
-					</h:panelGrid>
+					</h:panelGrid> -->
 					
 					<aon:if test="#{(adminDomain.to.type == 'ENTERPRISE' and (adminDomain.parentDomain == null or adminDomain.parentDomain.type == 'CONSULTANCY')) or (fn:length(adminDomain.bookingInfo.selectableBookingModules) &gt; 0)}">
 						<aon:outputLabel value="#{bundle.admin_modules_booked}" />
@@ -291,12 +291,7 @@
 									value="#{adminDomain.bookingInfo.selectableBookingModules}">
 									<aon:selectBooleanCheckbox
 										disabled="#{appModule.disabled}"
-										value="#{appModule.checked}" >
-										<a4j:support event="onchange" ajaxSingle="true"
-											rendered="#{appModule.module == 'DOCUMENT'}"
-											actionListener="#{adminDomain.bookingInfo.onDocumentalChanged}"
-											reRender="Domain_maxTotalDocumentSize" />
-									</aon:selectBooleanCheckbox>
+										value="#{appModule.checked}" />
 									<aon:outputText styleClass="aon-italic aon-margin-right"
 										style="#{(appModule.disabled)?'color: graytext;':''}"
 										value="#{appModule.description}" />

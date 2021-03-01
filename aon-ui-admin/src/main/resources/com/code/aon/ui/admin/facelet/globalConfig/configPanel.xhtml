@@ -303,6 +303,7 @@
 																		
 					</rich:panelBarItem>
 
+					<aon:if test="#{marketplace.suitePortal}">
 					<rich:panelBarItem id="new_suite"
 						label="#{bundle.new_suite}">
 						<aon:div styleClass="aon-direct-access-list-element">
@@ -317,7 +318,7 @@
 								value="#{bundle.admin_booking}" />
 						</aon:div>					
 					</rich:panelBarItem>
-					
+					</aon:if>
 					<aon:if test="#{serviceAccount.console}">
 						<rich:panelBarItem id="service_account"
 							label="#{bundle.admin_global_panel_service_accounts}">

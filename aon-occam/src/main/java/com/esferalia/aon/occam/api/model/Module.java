@@ -29,7 +29,8 @@ public enum Module {
 	ECOMMERCE( "eCommerce" ),
 	CALL_CENTER( "call_center" ),
 	FINANCE_PORTAL( "finance_portal" ),
-	AON_FINANCE( "aonFinance" );
+	AON_FINANCE( "aonFinance" ),
+	SUITE_PORTAL("suite_portal");
 
     
 	private String name;
