@@ -55,6 +55,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -68,6 +69,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import es.translogia.tedi.ewok.TediRegistry;
@@ -96,7 +98,14 @@ public class RawdocModule extends MainEntryPoint {
 	private AonMinimizePanel footPanel;
 	private TabLayoutPanel tabLayout;
 	private ScrollPanel extraInfoContainer;
-	private SimpleLayoutPanel viewerContainer;
+	
+	private FlowPanel attachPanelTable;
+	private FlowPanel attachPanelTableRow;
+	private FlowPanel attachPanelTableCell1;
+	private VerticalPanel buttons;
+	private FlowPanel attachPanelTableCell2;
+	private AonTableButton attachCloseButton;
+	private AonTableButton attachOpenButton;
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton searchButton;
@@ -110,7 +119,6 @@ public class RawdocModule extends MainEntryPoint {
 
 	private boolean minimizedByUser;
 	private int extraInfoTabIndex;
-	private int viewerTabIndex;
 	
 	final private int limit = 100;
 	final private MutableInt offset = new MutableInt(0);
@@ -171,11 +179,35 @@ public class RawdocModule extends MainEntryPoint {
 		dockLayoutPanel.addNorth(progressContainer, 5);
 		splitLayoutPanel = new SplitLayoutPanel();
 		dockLayoutPanel.add(splitLayoutPanel);
+		
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
+
+		attachPanelTable = new FlowPanel();
+		attachPanelTable.setStyleName(AON.CSS.aonDisplayTable());
+		attachPanelTable.addStyleName(AON.CSS.aonWidthAll());
+		attachPanelTable.setHeight("100%");
+		
+		attachPanelTableRow = new FlowPanel();
+		attachPanelTableRow.addStyleName(AON.CSS.aonWidthAll());
+		attachPanelTableRow.setHeight("100%");
+		attachPanelTableRow.setStyleName(AON.CSS.aonDisplayTableRow());
+		attachPanelTable.add(attachPanelTableRow);
+		
+		attachPanelTableCell1 = new FlowPanel();
+		attachPanelTableCell1.setHeight("100%");
+		attachPanelTableCell1.setStyleName(AON.CSS.aonDisplayTableCell());
+		attachPanelTableRow.add(attachPanelTableCell1);
+		
+		attachPanelTableCell2= new FlowPanel();
+		attachPanelTableCell2.setStyleName(AON.CSS.aonDisplayTableCell());
+		attachPanelTableCell2.setHeight("100%");
+		attachPanelTableRow.add(attachPanelTableCell2);
+		
+		splitLayoutPanel.addEast(attachPanelTable,0);
 		centerLayoutPanel = new SimpleLayoutPanel();
 		centerPanel = new ScrollPanel();
 		centerPanel.setStyleName(AON.CSS.aonScrollArea());
-		centerPanel.addStyleName(AON.CSS.aonMarginBottom());
+		// centerPanel.addStyleName(AON.CSS.aonMarginBottom());
 		container = new FlowPanel();
 		centerPanel.setWidget(container);
 		centerLayoutPanel.setWidget(centerPanel);
@@ -352,12 +384,6 @@ public class RawdocModule extends MainEntryPoint {
 		extraInfoTabIndex = tabIndex;
 		tabIndex++;
 
-		viewerContainer = new SimpleLayoutPanel();
-		tabLayout.add(viewerContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.documentViewer(), AON.CSS.aonIconViewDocument()));
-		viewerTabIndex = tabIndex;
-		tabIndex++;
-
-		
 		tabLayout.setAnimationDuration(300);
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
 			
@@ -440,18 +466,19 @@ public class RawdocModule extends MainEntryPoint {
 	}
 	
 	public void showViewer( MimeType mimeType, String url ) {
-		openFootPanelIfNeeded( 3 );
-		tabLayout.selectTab(viewerTabIndex);
-		
+		attachPanelTableCell2.clear();
+		openAttach();
+		paintButtons();
+		buttons.addStyleName(AON.CSS.aonBackgroundYellow());
 		if ( mimeType != null && mimeType.isPDF()) {
 			FullViewer viewer = new FullViewer(url, ViewerDefaultScale.PAGE_WIDTH);
-			viewerContainer.setWidget(viewer);
+			attachPanelTableCell2.add(viewer);
 		} else if ( mimeType != null && mimeType.isImage()) {
 			ScrollPanel imagePanel = new ScrollPanel();
 			imagePanel.setStyleName(AON.CSS.aonTextCenter());
 			Image image = new Image( url );
 			imagePanel.setWidget(image);
-			viewerContainer.setWidget(imagePanel);
+			attachPanelTableCell2.add(imagePanel);
 		} else {
 			ScrollPanel labelPanel = new ScrollPanel();
 			Label unknown = new Label("No se ha podido determinar un visor para este tipo de documento.");
@@ -459,19 +486,20 @@ public class RawdocModule extends MainEntryPoint {
 			unknown.addStyleName(AON.CSS.aonBlockInfoMessage());
 			unknown.addStyleName(AON.CSS.aonMargin());
 			labelPanel.setWidget(unknown);
-			viewerContainer.setWidget(labelPanel);
+			attachPanelTableCell2.add(labelPanel);
 		}
+		new Timer() {
+			@Override
+			public void run() {
+				buttons.removeStyleName(AON.CSS.aonBackgroundYellow());
+			}
+		}.schedule(2000);
 	}
 
-	public void clearViewer( ) {
-		tabLayout.selectTab(viewerTabIndex);
-		viewerContainer.setWidget(new Label() );
-	}
-	
 	public void clearFootInfo( ) {
 		closeFootPanel();
 		clearExtraInfo();
-		clearViewer();
+		attachPanelTableCell2.add(new Label() );
 	}
 	
 	public void clearExtraInfo( ) {
@@ -562,9 +590,6 @@ public class RawdocModule extends MainEntryPoint {
 									.setTediResult(result)
 									.setBackButtonVisible(false)
 									.setSessionLogTabVisible(false)
-									.setPreviewSectionVisible(true)
-									.setBalancesSectionVisible(false)
-									.setStatementTabVisible(false)
 									.setJournalTabVisible(false)
 									.setExtraInfoTabVisible(false)
 									.setExternalCallback(new ModuleCallback() {
@@ -947,6 +972,46 @@ public class RawdocModule extends MainEntryPoint {
 		tab.setWidget(row, COLS.ADJ.ordinal(), new Label(label));
 		tab.getCellFormatter().setStyleName(row, COLS.ADJ.ordinal(), AON.CSS.aonTextCenter());
 		tab.getCellFormatter().addStyleName(row, COLS.ADJ.ordinal(), AON.CSS.aonBold());
+	}
+	
+	protected void openAttach() {
+		double from = splitLayoutPanel.getWidgetSize(attachPanelTable) == null? 0 : splitLayoutPanel.getWidgetSize(attachPanelTable);
+		int to = Window.getClientWidth() - 900;
+		if (from < to) {
+			splitLayoutPanel.setWidgetSize(attachPanelTable, to);
+		}
+	}
+
+	protected void closeAttach() {
+		splitLayoutPanel.setWidgetSize(attachPanelTable, 20);
+	}
+
+	private void paintButtons() {
+		attachPanelTableCell1.setWidth("20px");
+		buttons = new VerticalPanel();
+		buttons.setHeight("100%");
+		buttons.setStyleName(AON.CSS.aonFlexBlock());
+		attachPanelTableCell1.add(buttons);
+		
+		attachCloseButton = new AonTableButton("Cerrar documento adjunto",AON.CSS.aonIconRight());
+		buttons.add(attachCloseButton);
+
+		attachOpenButton = new AonTableButton("Ver documento adjunto",AON.CSS.aonIconLeft());
+		buttons.add(attachOpenButton);
+		
+		attachCloseButton.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				closeAttach();
+			}
+		});
+		
+		attachOpenButton.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				openAttach();
+			}
+		});
 	}
 
 }		
