@@ -155,7 +155,7 @@ public class Up2Date {
     		//AuthDeviceUpdate.AUTH_DEVICE_UPDATE,
     		//PermissionNotPaidDaysInsert.PERMISSIONNOTPAIDDAYSINSERT,
     		//IfDaysInsert.IFDAYSINSERT
-    		Bases2021Update.BASES2021UPDATE
+    		//Bases2021Update.BASES2021UPDATE
     };
 
 
