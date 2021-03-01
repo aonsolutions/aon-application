@@ -29,9 +29,9 @@ import net.aonsolutions.aon.tedi.TediException;
 public class FillRawdoc {
 
 	private static AONContext ctx;
-	private static String DOMAIN_NAME = "queserialascortas.ecastellano.euk";
-	private static int DOMAIN_ID = 18539;
-	private static String USER = "admin";
+	private static String DOMAIN_NAME = "udapa.ecastellano.euk";
+	private static int DOMAIN_ID = 3049;
+	private static String USER = "montse";
 	private static Faker FAKER = new Faker(new Locale("es"));
 	
 	private static String[] FILES = new String[]{
@@ -40,26 +40,26 @@ public class FillRawdoc {
 //			,"/home/ecastellano/TRABAJO/RAWDOC/192678.pdf"
 //			,"/home/ecastellano/TRABAJO/RAWDOC/192682.pdf"
 //			,"/home/ecastellano/TRABAJO/RAWDOC/192683.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/192684.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/192777.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/192993.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/193174.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/193176.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/193179.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/193180.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/193181.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/193183.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/193263.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/193265.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/193266.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/193394.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/193396.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/193397.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/20191211FacturaBipDrive005420175264.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/AON.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/AON.png"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/ARALAB.pdf"
-//			,"/home/ecastellano/TRABAJO/RAWDOC/AYSER.pdf"
+			 "/home/ecastellano/TRABAJO/RAWDOC/192684.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/192777.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/192993.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/193174.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/193176.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/193179.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/193180.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/193181.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/193183.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/193263.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/193265.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/193266.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/193394.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/193396.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/193397.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/20191211FacturaBipDrive005420175264.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/AON.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/AON.png"
+			,"/home/ecastellano/TRABAJO/RAWDOC/ARALAB.pdf"
+			,"/home/ecastellano/TRABAJO/RAWDOC/AYSER.pdf"
 //			,"/home/ecastellano/TRABAJO/RAWDOC/AYSER.png"
 //			,"/home/ecastellano/TRABAJO/RAWDOC/b-font.pdf"
 //			,"/home/ecastellano/TRABAJO/RAWDOC/EMBALAJES_BASKONIA.pdf"
@@ -126,7 +126,7 @@ public class FillRawdoc {
 //			,"/home/ecastellano/Pictures/SIMA.png"
 //			,"/home/ecastellano/Pictures/FRUTAS.png"
 //			"/home/ecastellano/TRABAJO/Facturas/Factura_OSCAR.xlsx"
-			"/home/ecastellano/TRABAJO/Facturas/Modelo-factura.docx"
+//			"/home/ecastellano/TRABAJO/Facturas/Modelo-factura.docx"
 	};
 	
 	public static void main(String[] args) throws ClassNotFoundException, IOException, TediException {
