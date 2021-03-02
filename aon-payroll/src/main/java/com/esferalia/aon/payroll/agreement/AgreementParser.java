@@ -409,7 +409,11 @@ public class AgreementParser {
 		String log = "";
 		Map<String, String> varNotInsertMap = new HashMap<String, String>();
 		
-		InputStream is = ServiAgreement.get_online_file(agreementCode, Extension.XML);
+		InputStream is = null;
+		if(AonStringUtils.contains(agreementCode, 'a'))
+			is = AgreementParser.class.getResourceAsStream(agreementCode + ".xml");
+		else
+			is = ServiAgreement.get_online_file(agreementCode, Extension.XML);
 		
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 	    DocumentBuilder documentBuilder;
