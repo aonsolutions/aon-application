@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
+import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
@@ -811,15 +812,25 @@ public class AccountingInvoiceDAO {
 		attach.setDescription("Factura");
 		if (attach.getData() == null) {
 			if (attach.getAttachURL() != null) {
-				InputStream in = null;
-				try {
-					URL url = new URL(attach.getAttachURL());
-					URLConnection conn = url.openConnection();
-					conn.connect();
-					in = new BufferedInputStream(conn.getInputStream());
-					attach.setData( AonIOUtils.toByteArray(in) );
-				} finally {
-					AonIOUtils.closeQuietly(in);
+				if ( accInvoice.isFromRawdoc()) {
+					InputStream in = null;
+					try {
+						Rawdoc rawdoc = RawdocDAO.getFull(ctx, accInvoice.getAttach().getId());
+						attach.setData( rawdoc.getData() );
+					} finally {
+						AonIOUtils.closeQuietly(in);
+					}
+				} else {
+					InputStream in = null;
+					try {
+						URL url = new URL(attach.getAttachURL());
+						URLConnection conn = url.openConnection();
+						conn.connect();
+						in = new BufferedInputStream(conn.getInputStream());
+						attach.setData( AonIOUtils.toByteArray(in) );
+					} finally {
+						AonIOUtils.closeQuietly(in);
+					}
 				}
 			}
 		} else {
