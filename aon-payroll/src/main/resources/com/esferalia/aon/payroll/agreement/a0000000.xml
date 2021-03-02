@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CONVENIO_XML xsi:noNamespaceSchemaLocation="http://www2.serviconvenios.com/convexml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DATOS_GENERALES>
+		<VERSION>1</VERSION>
+    		<FICHEROS>a0000000</FICHEROS>
+    		<AMBITO>GENERICO</AMBITO>
+    		<NOMBRE>AON SOLUTIONS CONVENIO GENERAL</NOMBRE>
+    		<CODIGO_SS>00000000000000</CODIGO_SS>
+    		<INFO_BOE></INFO_BOE>
+    		<FECHA_ULT_ACT>01-01-1970</FECHA_ULT_ACT>
+    		<AÑO_APLIC_DESDE>1970</AÑO_APLIC_DESDE>
+    		<AÑO_APLIC_HASTA>2021</AÑO_APLIC_HASTA>
+  	</DATOS_GENERALES>
+  	<CATALOGO_CAT_PROF>
+    		<CAT_PROF_IT>
+      			<CODIGO>1</CODIGO>
+      			<GRUPO>AD PERSON</GRUPO>
+      			<NOMBRE>GENERICO</NOMBRE>
+    		</CAT_PROF_IT>
+  	</CATALOGO_CAT_PROF>
+  	<CATALOGO_CPTOS_RETRIB>
+  			<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>SALARIO BASE</NOMBRE>
+      			<TIPO_AMDH>A</TIPO_AMDH>
+    		</CPTO_IT>
+    		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>SALARIO BASE</NOMBRE>
+      			<TIPO_AMDH>M</TIPO_AMDH>
+    		</CPTO_IT>
+    		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>SALARIO BASE</NOMBRE>
+      			<TIPO_AMDH>D</TIPO_AMDH>
+   		</CPTO_IT>
+    		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>SALARIO BASE</NOMBRE>
+     			<TIPO_AMDH>H</TIPO_AMDH>
+    		</CPTO_IT>
+    		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>SALARIO BASE MINIMO</NOMBRE>
+      			<TIPO_AMDH>A</TIPO_AMDH>
+    		</CPTO_IT>
+    		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>PLUS CONVENIO</NOMBRE>
+      			<TIPO_AMDH>M</TIPO_AMDH>
+    		</CPTO_IT>
+    		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>PLUS SALARIAL</NOMBRE>
+      			<TIPO_AMDH>D</TIPO_AMDH>
+    		</CPTO_IT>
+    		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>PLUS SALARIAL LABORAL</NOMBRE>
+      			<TIPO_AMDH>D</TIPO_AMDH>
+    		</CPTO_IT>
+    		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>PLUS SALARIAL FIJO</NOMBRE>
+      			<TIPO_AMDH>M</TIPO_AMDH>
+    		</CPTO_IT>
+    		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>PLUS EXTRA SALARIAL</NOMBRE>
+      			<TIPO_AMDH>M</TIPO_AMDH>
+    			</CPTO_IT>
+   		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>PLUS EXTRA SALARIAL</NOMBRE>
+      			<TIPO_AMDH>D</TIPO_AMDH>
+    		</CPTO_IT>
+   		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>PLUS EXTRA SALARIAL LABORAL</NOMBRE>
+      			<TIPO_AMDH>D</TIPO_AMDH>
+    		</CPTO_IT>
+   		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>PLUS EXTRA SALARIAL FIJO</NOMBRE>
+      			<TIPO_AMDH>M</TIPO_AMDH>
+   		</CPTO_IT>
+    		<CPTO_IT>
+      			<CODIGO>13</CODIGO>
+     			<NOMBRE>RETRIBUCION EN ESPECIE</NOMBRE>
+      			<TIPO_AMDH>M</TIPO_AMDH>
+    		</CPTO_IT>
+    		<CPTO_IT>
+      			<CODIGO>1</CODIGO>
+      			<NOMBRE>COMPLEMENTO PERSONAL DE ANTIGUEDAD</NOMBRE>
+      			<TIPO_AMDH>M</TIPO_AMDH>
+    		</CPTO_IT>
+    		<CPTO_IT>
+      			<CODIGO>43</CODIGO>
+      			<NOMBRE>GASTOS PECNORTA</NOMBRE>
+      			<TIPO_AMDH>D</TIPO_AMDH>
+    		</CPTO_IT>
+     		<CPTO_IT>
+      			<CODIGO>45</CODIGO>
+      			<NOMBRE>GASTOS MANUTENCION</NOMBRE>
+      			<TIPO_AMDH>D</TIPO_AMDH>
+   		</CPTO_IT>
+     		<CPTO_IT>
+      			<CODIGO>50</CODIGO>
+      			<NOMBRE>GASTOS LOCOMOCION SIN JUSTIFICANTE</NOMBRE>
+      			<TIPO_AMDH>D</TIPO_AMDH>
+    		</CPTO_IT>
+  	</CATALOGO_CPTOS_RETRIB>
+  	<TABLAS_SALARIALES>
+  		<TAB_SAL_IT>
+  			<AÑO>1970</AÑO>
+  			<INFO_BOE></INFO_BOE>
+  			<COMPUTO_HORAS>
+        		<COMPUTO_HORAS_FORMA>A</COMPUTO_HORAS_FORMA>
+        		<COMPUTO_HORAS_TOTAL>1736</COMPUTO_HORAS_TOTAL>
+      		</COMPUTO_HORAS>
+      		<CATEGORIAS_PROFESIONALES>
+      			<CAT_PROF_IT>
+      				<CODIGO>1</CODIGO>
+      				<GRUPO></GRUPO>
+      				<NOMBRE></NOMBRE>
+      			</CAT_PROF_IT>
+      		</CATEGORIAS_PROFESIONALES>
+  		</TAB_SAL_IT>
+  	</TABLAS_SALARIALES>
+</CONVENIO_XML>
