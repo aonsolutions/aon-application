@@ -170,7 +170,7 @@ public class TbaiEmisionInvoice extends Invoice {
 			
 			if(expedition_date.isPresent()) 	{
 				invoice_header.setFechaExpedicionFactura(format_date(expedition_date.get(), "dd/MM/yyyy").orElseThrow()); 	
-				invoice_header.setHoraExpedicionFactura(format_date(expedition_date.get(), "hh:mm").orElseThrow());		
+				invoice_header.setHoraExpedicionFactura(format_date(expedition_date.get(),  "hh:mm").orElseThrow());		
 			}
 			
 			final DatosFacturaType invoice_data = 			new DatosFacturaType();
@@ -241,11 +241,11 @@ public class TbaiEmisionInvoice extends Invoice {
 	}
 	
 	private NoSujetaType getNosubject(final Optional<NoSubject> no_subject) {
-		final NoSujetaType    no_sujeta = new NoSujetaType();
+		final NoSujetaType    no_sujeta =	new NoSujetaType();
 		final DetalleNoSujeta det = 		new DetalleNoSujeta();
 		
 		final Optional<CausaNoSujetaType> cause = 	no_subject.get().getDetails_cause();
-		final Optional<Double> amount = 				no_subject.get().getDetails_amount();
+		final Optional<Double> amount = 			no_subject.get().getDetails_amount();
 		
 		if(cause.isPresent()) 		det.setCausa(cause.get());
 		if(amount.isPresent())  	det.setImporte(amount.get() + "");
