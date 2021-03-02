@@ -15,6 +15,7 @@ import '../../components/aon-dialog-menu.js';
 
 import * as MSG from "../../environments/msg.js";
 import { downscaleImage } from '../../services/compressImg.js';
+import { getReader } from '../../services/utils.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -247,23 +248,16 @@ export class AonInvoicePanel extends AonElement {
 
 	preview(files) {
 		for(let i = 0; i < files.length; i++) {
-			const READER = new FileReader();
-			READER.readAsDataURL(files[i]);
-			READER.onload = (_event) => {
-				this.attach(READER.result, files[i].type);
-			};
+			getReader(files[i]).then(f=>{
+				this.attach(f);
+			});
 		}
 	}
 
-	async attach(fileDataUri,  mimetype){
+	async attach(file){
 		if (fileDataUri.length > 0) {
-			const base64File = fileDataUri.split(',')[1];
 			const data = {
-				file: {
-					content: base64File,
-					contentType: mimetype,
-					contentEncoding: 'base64'
-				},
+				file,
 				invoice: new Invoice('recibida')
 			};
 			if(this.isMobile()) {

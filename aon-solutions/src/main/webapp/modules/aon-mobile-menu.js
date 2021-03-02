@@ -2,11 +2,11 @@ import { AonElement } from "../components/AonElement.js";
 import { AonIconButton } from "../components/aon-icon-button.js";
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import { rootPanel } from "../services/gwtLoader.js";
-import { getReader } from "../services/utils.js";
+// import { getReader } from "../services/utils.js";
 import {
   uploadFileDocumental,
   insertInvoice,
-  actionMobile,
+  // actionMobile,
   getDomainUserRoles,
   closeSession
 } from "../services/service.js";
@@ -17,7 +17,8 @@ import "./documental/aon-documental.js";
 import "./signin/aon-signin.js";
 import "./invoice/aon-invoice-panel.js";
 import {AonDialogMenu} from "../components/aon-dialog-menu.js";
-import { downscaleImage } from "../services/compressImg.js";
+import { waitEl } from "../services/utils.js";
+// import { downscaleImage } from "../services/compressImg.js";
 
 export class AonMobileMenu extends AonElement {
 
@@ -52,57 +53,29 @@ export class AonMobileMenu extends AonElement {
 
   constructor() {
     super();
+    this.eventListener();
+  }
+
+  eventListener(){
+    window.addEventListener('userAuth', ()=>{
+      this.build();
+			this.reload();
+		});
   }
 
   connectedCallback() {
+    console.log("connect aon-mobile-menu");
     this.id = this.id || 'aonMobileMenu';
     this.CAMERA_INPUT = this.id + "CameraInput";
-    if(!localStorage.getItem('company')) {
-      getDomainUserRoles({}).then(r => {
-        this._roles = new DomainUserRoles(r);
-        this.build();
-      });
-    } else {
-      this.build();
-    }
   }
 
-  addMenuButton(name, icon, action) {
-    let menu = this.getElement('aonMobileMenuSidenav');
-    let n = (window.innerWidth / 5 - 40) / 2;
-    let span = document.createElement('span');
-    span.id = this.id + name;
-    span.style.top = '10px';
-    span.style.position = 'relative';
-    if(menu.childNodes.length > 0){
-      span.style.marginLeft = n;
-    }
-    if(menu.childNodes.length < 5){
-      span.style.marginRight = n;
-    }
-    menu.appendChild(span);
-
-    let button = new AonIconButton();
-    button.id = span.id + 'Button';
-    button.icon = icon;
-    button.addEventListener("click", action);
-    span.appendChild(button);
-  }
-
-  reload() {
-    getDomainUserRoles({}).then(r => {
-      this._roles = new DomainUserRoles(r);
-      let menu = this.getElement( this.id + 'Sidenav');
-      if(menu){
-        menu.innerHTML = '';
-        this.buildMenu();
-      }
-    });
-  }
 
   build() {
+    const id = this.id + 'Sidenav';
+    const sidEl = this.getElement(id);
+    if(sidEl)sidEl.remove();
     let div = document.createElement('div');
-    div.id = this.id + 'Sidenav';
+    div.id = id;
     div.className = 'aonMobileMenu';
     this.appendChild(div);
     let dialogMenu = new AonDialogMenu();
@@ -111,9 +84,19 @@ export class AonMobileMenu extends AonElement {
     this.buildMenu();
   }
 
-  buildMenu(){
-    let div = this.getElement( this.id + 'Sidenav');
 
+  reload() {
+    waitEl(`#${this.id}Sidenav`).then(async(menu)=>{
+      console.log("reload menu");
+      const r = await getDomainUserRoles({});
+      this._roles = new DomainUserRoles(r);
+      menu.innerHTML = '';
+      this.buildMenu();
+     });
+  }
+
+  async buildMenu(){
+    await waitEl(`#${this.id}Sidenav`); 
     let count = 1;
 
     this.addMenuButton('Home', 'home', () =>
@@ -201,6 +184,27 @@ export class AonMobileMenu extends AonElement {
       this.addMenuButton('CloseSession', 'input', () => closeSession());
     }
   }
+
+  addMenuButton(name, icon, action) {
+    let menu = this.getElement(`${this.id}Sidenav`);
+    let n = (window.innerWidth / 5 - 40) / 2;
+    let span = document.createElement('span');
+    span.id = this.id + name;
+    span.style.top = '10px';
+    span.style.position = 'relative';
+    span.style.marginLeft = n;
+    if(menu.childNodes.length < 5){
+      span.style.marginRight = n;
+    }
+    menu.appendChild(span);
+
+    let button = new AonIconButton();
+    button.id = span.id + 'Button';
+    button.icon = icon;
+    button.addEventListener("click", action);
+    span.appendChild(button);
+  }
+
 
   buildOld() {
     this.innerHTML = `
@@ -314,37 +318,37 @@ export class AonMobileMenu extends AonElement {
   }
 
   async openCamera(type) {
-    this.TYPE_IMG = type;
-    const isApp = await actionMobile({ action: "camera" });
-    if (!isApp) this.getElement(this.CAMERA_INPUT).click();
+    // this.TYPE_IMG = type;
+    // const isApp = await actionMobile({ action: "camera" });
+    // if (!isApp) this.getElement(this.CAMERA_INPUT).click();
   }
 
   async changeImage({ target }) {
-    const {
-      files: [file],
-    } = target;
-    const archivo = await getReader(file).catch((e) => null);
-    if (archivo) this.sendImage(archivo);
+    // const {
+    //   files: [file],
+    // } = target;
+    // const archivo = await getReader(file).catch((e) => null);
+    // if (archivo) this.sendImage(archivo);
   }
 
   async sendImage(file) {
-    if (file.contentType.indexOf("image") >= 0) {
-      //compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
-      file = await downscaleImage(file, undefined, undefined, undefined);
-    }
+    // if (file.contentType.indexOf("image") >= 0) {
+    //   //compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
+    //   file = await downscaleImage(file, undefined, undefined, undefined);
+    // }
 
-    switch (this.TYPE_IMG) {
-      case "document":
-        this.attachDocument(file);
-        break;
-      case "invoice":
-        this.attachInvoice(file);
-        break;
-      case "solicitud":
-        break;
-      default:
-        break;
-    }
+    // switch (this.TYPE_IMG) {
+    //   case "document":
+    //     this.attachDocument(file);
+    //     break;
+    //   case "invoice":
+    //     this.attachInvoice(file);
+    //     break;
+    //   case "solicitud":
+    //     break;
+    //   default:
+    //     break;
+    // }
   }
 
   async attachDocument(file) {

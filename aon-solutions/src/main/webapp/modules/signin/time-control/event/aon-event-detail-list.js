@@ -270,7 +270,7 @@ export class AonEventDetailList extends AonElement {
 
   aonEvent(el, data) {
     if (el && "add_location" === el.target.textContent) {
-      this.aonSigninParentEl.showView("aonLocationAdd", data);
+      this.aonSigninParentEl.showView("aonLocationAdd", {coordinates:data.coordinates});
     } else {
       if (!data && this.TASK_HOLDER) {
         data = { task_holder: this.TASK_HOLDER, name: this.TASK_HOLDER.name };

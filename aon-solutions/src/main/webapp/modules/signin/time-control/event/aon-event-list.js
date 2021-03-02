@@ -274,11 +274,7 @@ export class AonEventList extends AonElement {
   }
 
   aonEvent({target}, data) {
-    if("add_location" === target.textContent){
-      this.aonSigninParentEl.showView("aonLocationAdd", data);
-    } else {
-      this.aonSigninParentEl.showView("aonEventDetailList", data);
-    }
+    this.aonSigninParentEl.showView("aonEventDetailList", data);
   }
 
   back(){
