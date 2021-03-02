@@ -15,8 +15,10 @@ import java.util.stream.Collector;
 
 import org.jooq.lambda.Seq;
 
+import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
+import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Salary implements Serializable {
@@ -43,20 +45,22 @@ public class Salary implements Serializable {
 		}
 	}
 	public static class Payment {
+		String name;
 		Double irpf;
 		Double quote;
 		Double amount;
-		String name;
 		String expression;
 		String description;
+		PaymentType paymentType;
 
-		public Payment(Double amount, Double quote, String expression, String description, String name) {
+		public Payment(Double amount, Double quote, String expression, String description, String name, PaymentType paymentType) {
 			super();
 			this.quote = quote;
 			this.amount = amount;
 			this.name = name;
 			this.description = description;
 			this.expression = expression;
+			this.paymentType = paymentType;
 		}
 
 		public Double getQuote() {
@@ -78,17 +82,23 @@ public class Salary implements Serializable {
 		public String getName() {
 			return name;
 		}
+		
+		public PaymentType getPaymentType() {
+			return paymentType;
+		}
 
 	}
 
 	public static class Deduction {
 		Double amount;
 		String description;
+		DeductionType deductionType;
 
-		public Deduction(Double amount, String description) {
+		public Deduction(Double amount, String description, DeductionType deductionType) {
 			super();
 			this.amount = amount;
 			this.description = description;
+			this.deductionType =deductionType;
 		}
 
 		public Double getAmount() {
@@ -119,6 +129,10 @@ public class Salary implements Serializable {
 			return false;
 		}
 		
+		public DeductionType getDeductionType() {
+			return deductionType;
+		}
+		
 
 	}
 
@@ -126,7 +140,7 @@ public class Salary implements Serializable {
 	public static class CommonContingecyDeduction extends Deduction {
 
 		public CommonContingecyDeduction(Double amount, String description) {
-			super(amount, description);
+			super(amount, description, DeductionType.COMMON_CONTINGENCY);
 		}
 
 		@Override
@@ -138,7 +152,7 @@ public class Salary implements Serializable {
 	public static class ProfessionalContingecyDeduction extends Deduction {
 
 		public ProfessionalContingecyDeduction(Double amount, String description) {
-			super(amount, description);
+			super(amount, description, DeductionType.PROFESSIONAL_CONTINGENCY);
 		}
 
 		@Override
@@ -150,7 +164,7 @@ public class Salary implements Serializable {
 	public static class UnemploymentDeduction extends Deduction{
 
 		public UnemploymentDeduction(Double amount, String description) {
-			super(amount, description);
+			super(amount, description, DeductionType.UNEMPLOYMENT);
 		}
 		
 		@Override
@@ -163,7 +177,7 @@ public class Salary implements Serializable {
 	public static class JobTrainingDeduction extends Deduction{
 
 		public JobTrainingDeduction(Double amount, String description) {
-			super(amount, description);
+			super(amount, description, DeductionType.JOB_TRAINING);
 		}
 		
 		@Override
@@ -177,11 +191,13 @@ public class Salary implements Serializable {
 		
 		Double amount;
 		String description;
+		DeductionType costType;
 
-		public Cost(Double amount, String description) {
+		public Cost(Double amount, String description, DeductionType costType) {
 			super();
 			this.amount = amount;
 			this.description = description;
+			this.costType = costType;
 		}
 
 		public Double getAmount() {
@@ -221,12 +237,16 @@ public class Salary implements Serializable {
 		public boolean isProfesionalContingency() {
 			return false;
 		}
+		
+		public DeductionType getCostType() {
+			return costType;
+		}
 	}
 
 	public static class CommonContingecyCost extends Cost {
 
 		public CommonContingecyCost(Double amount, String description) {
-			super(amount, description);
+			super(amount, description, DeductionType.COMMON_CONTINGENCY);
 		}
 
 		@Override
@@ -238,7 +258,7 @@ public class Salary implements Serializable {
 	public static class UnemploymentCost extends Cost{
 
 		public UnemploymentCost(Double amount, String description) {
-			super(amount, description);
+			super(amount, description, DeductionType.UNEMPLOYMENT);
 		}
 		
 		@Override
@@ -251,7 +271,7 @@ public class Salary implements Serializable {
 	public static class JobTrainingCost extends Cost{
 
 		public JobTrainingCost(Double amount, String description) {
-			super(amount, description);
+			super(amount, description, DeductionType.JOB_TRAINING);
 		}
 		
 		@Override
@@ -264,7 +284,7 @@ public class Salary implements Serializable {
 	public static class ITCost extends Cost {
 
 		public ITCost(Double amount, String description) {
-			super(amount, description);
+			super(amount, description, DeductionType.IT);
 		}
 
 		@Override
@@ -276,7 +296,7 @@ public class Salary implements Serializable {
 	public static class IMSCost extends Cost {
 
 		public IMSCost(Double amount, String description) {
-			super(amount, description);
+			super(amount, description, DeductionType.IMS);
 		}
 
 		@Override
@@ -288,7 +308,7 @@ public class Salary implements Serializable {
 	public static class FogasaCost extends Cost {
 
 		public FogasaCost(Double amount, String description) {
-			super(amount, description);
+			super(amount, description, DeductionType.FOGASA);
 		}
 
 		@Override
@@ -631,19 +651,27 @@ public class Salary implements Serializable {
 	}
 
 	public void addPayment(String name, String expression, String description,
-			Double amount, Double quote) {
-		Payment payment = new Payment(amount, quote, expression, description, name);
+			Double amount, Double quote, PaymentType paymentType) {
+		Payment payment = new Payment(amount, quote, expression, description, name, paymentType);
 		
 		payments.add(payment);
 	}
-
+	public void addPayment(String name, String expression, String description,
+			Double amount, Double quote, Byte paymentType) {
+		addPayment(name, expression, description, amount, quote, typeOf(paymentType,PaymentType.class));
+	}
+	
 	public List<Cost> getCosts() {
 		return Collections.unmodifiableList(costs);
 	}
 	
-
 	public void addCost(Byte type, String code, String description,
-			Double amount) {
+			Double amount, Byte costType) {
+		addCost(costType, code, description, amount, typeOf(costType, DeductionType.class));
+	}
+	
+	public void addCost(Byte type, String code, String description,
+			Double amount, DeductionType costType) {
 		Cost cost = null ;
 		if ( AonStringUtils.equals("IT_E", code) ) 
 			type = (byte)DeductionType.IT.ordinal();
@@ -690,7 +718,7 @@ public class Salary implements Serializable {
 		} catch (Exception e) {
 		}
 		if ( cost == null )
-			cost = new Cost(amount, description);
+			cost = new Cost(amount, description, costType);
 		
 		costs.add(cost);
 	}
@@ -699,9 +727,13 @@ public class Salary implements Serializable {
 		return Collections.unmodifiableList(deductions);
 	}
 	
+	public void addDeduction(Byte type, String description,
+			Double amount, Byte deductionType) {
+		addDeduction(deductionType, description, amount, typeOf(deductionType, DeductionType.class));
+	}
 	
 	public void addDeduction(Byte type, String description,
-			Double amount) {
+			Double amount, DeductionType deductionType) {
 		Deduction deduction = null ;
 		try {
 			deduction = DeductionType.deductionTypeOf(type)
@@ -735,7 +767,7 @@ public class Salary implements Serializable {
 		} catch (Exception e) {
 		}
 		if ( deduction == null )
-			deduction = new Deduction(amount, description);
+			deduction = new Deduction(amount, description, deductionType);
 		
 		deductions.add(deduction);
 	}
@@ -799,4 +831,13 @@ public class Salary implements Serializable {
 		}
 	}
 	
+	private static <T extends Enum<?>> T typeOf(Byte ordinal, Class<T> type) {
+		if ( ordinal == null )
+			return null;
+		try {
+			return type.getEnumConstants()[ordinal];
+		} catch ( Exception e ) {
+			return null;
+		}
+	}
 }

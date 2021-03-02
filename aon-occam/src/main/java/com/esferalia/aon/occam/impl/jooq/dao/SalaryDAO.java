@@ -90,19 +90,19 @@ public class SalaryDAO {
 				}
 				final SalaryEntry entry = map.get(keyMap);
 				if (!aggregated) {
-					entry.setSalaryDescription(rec.getValue(SALARY.EMPLOYEE_NAME));
+					entry.setSalaryDescription(rec.get(SALARY.EMPLOYEE_NAME));
 				}
 				entry.setSalaryCount(entry.getSalaryCount()+1);
 				entry.setEmployeeSocialInsurance( AonMathUtils.round(entry.getEmployeeSocialInsurance() 
-						+ rec.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)));;
+						+ rec.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)));;
 				entry.setCompanySocialInsurance( AonMathUtils.round(entry.getCompanySocialInsurance() 
-						+ rec.getValue(SALARY.TOTAL_ENTERPRISE)));;
-				double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
-				if (AonMathUtils.isZero(rec.getValue(SALARY.INKIND_IRPF_BASE))) {
+						+ rec.get(SALARY.TOTAL_ENTERPRISE)));;
+				double totalIrpf = rec.get(SALARY.TOTAL_IRPF);
+				if (AonMathUtils.isZero(rec.get(SALARY.INKIND_IRPF_BASE))) {
 					entry.setIrpf( AonMathUtils.round(entry.getIrpf() + totalIrpf));
 				} else {
-					double base = rec.getValue(SALARY.IRPF_BASE);
-					double moneyBase = rec.getValue(SALARY.MONEY_IRPF_BASE);
+					double base = rec.get(SALARY.IRPF_BASE);
+					double moneyBase = rec.get(SALARY.MONEY_IRPF_BASE);
 					double irpf = AonMathUtils.round( moneyBase * totalIrpf  / base ); 	
 					entry.setIrpf( AonMathUtils.round(entry.getIrpf() + irpf));
 					entry.setInKindIrpf( AonMathUtils.round(entry.getInKindIrpf() + AonMathUtils.round( totalIrpf - irpf)));
@@ -113,8 +113,8 @@ public class SalaryDAO {
 					.fetch()
 					.stream()
 					.forEach(pay -> {
-						double amount = AonMathUtils.round(pay.getValue(SALARY_PAYMENT.AMOUNT));
-						Byte type = pay.getValue(SALARY_PAYMENT.TYPE);
+						double amount = AonMathUtils.round(pay.get(SALARY_PAYMENT.AMOUNT));
+						Byte type = pay.get(SALARY_PAYMENT.TYPE);
 						// Puede ser nulo??
 						if (type == null) {
 							entry.setMoneySalary( AonMathUtils.round(entry.getMoneySalary() + amount));
@@ -137,8 +137,8 @@ public class SalaryDAO {
 					.fetch()
 					.stream()
 					.forEach(ded -> {
-						double amount = AonMathUtils.round(ded.getValue(SALARY_DEDUCTION.AMOUNT));
-						Byte type = ded.getValue(SALARY_DEDUCTION.TYPE);
+						double amount = AonMathUtils.round(ded.get(SALARY_DEDUCTION.AMOUNT));
+						Byte type = ded.get(SALARY_DEDUCTION.TYPE);
 						if (AonNumberUtils.equals(type, DEDUCTION_ADVANCE) ) {
 							entry.setSalaryDedAdvPayment(AonMathUtils.round(entry.getSalaryDedAdvPayment() + amount));
 						} else if (AonNumberUtils.equals(type,DEDUCTION_TYPE_OTHER) 
@@ -152,7 +152,7 @@ public class SalaryDAO {
 					.fetch()
 					.stream()
 					.forEach(emb -> {
-						double amount = AonMathUtils.round(emb.getValue(SALARY_EMBARGO.AMOUNT));
+						double amount = AonMathUtils.round(emb.get(SALARY_EMBARGO.AMOUNT));
 						entry.setSalaryDedSeize( AonMathUtils.round(entry.getSalaryDedSeize() + amount));
 				});
 			});
@@ -249,56 +249,57 @@ public class SalaryDAO {
 		return Seq.seq(rootCursor)
 				.map(rootRecord-> {
 				Salary salary = supplier.get()
-				.setId(rootRecord.getValue(SALARY.ID))		
-				.setStartDate(rootRecord.getValue(SALARY.START_DATE))
-				.setEndDate(rootRecord.getValue(SALARY.END_DATE))
-				.setSalaryDays(rootRecord.getValue(SALARY.TIME_UNITS))
-				.setEmployeeName(rootRecord.getValue(SALARY.EMPLOYEE_NAME))
-				.setEnterpriseCCC(rootRecord.getValue(SALARY.CCC))
-				.setEnterpriseName(rootRecord.getValue(SALARY.ENTERPRISE_NAME))
-				.setEnterpriseDocument(rootRecord.getValue(SALARY.ENTERPRISE_DOCUMENT))
-				.setIrpfBase(rootRecord.getValue(SALARY.IRPF_BASE))
-				.setEmployeeDocument(rootRecord.getValue(SALARY.EMPLOYEE_DOCUMENT))
-				.setTotalLiquid(rootRecord.getValue(SALARY.TOTAL_LIQUID))
-				.setTotalPayment(rootRecord.getValue(SALARY.TOTAL_PAYMENT))
-				.setTotalIrpf(rootRecord.getValue(SALARY.TOTAL_IRPF))
-				.setTotalDeduction(rootRecord.getValue(SALARY.TOTAL_DEDUCTION))
-				.setCommonContingenciesBase(rootRecord.getValue(SALARY.CGC_BASE))
-				.setProfessionalContingenciesBase(rootRecord.getValue(SALARY.CGP_BASE))
-				.setIrpfBase(rootRecord.getValue(SALARY.IRPF_BASE))
-				.setMoneyIrpfBase(rootRecord.getValue(SALARY.MONEY_IRPF_BASE))
-				.setInkindIrpfBase(rootRecord.getValue(SALARY.INKIND_IRPF_BASE))
-				.setTotalEnterprise(rootRecord.getValue(SALARY.TOTAL_ENTERPRISE))
-				.setTotalSSContributions(rootRecord.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS))
+				.setId(rootRecord.get(SALARY.ID))		
+				.setStartDate(rootRecord.get(SALARY.START_DATE))
+				.setEndDate(rootRecord.get(SALARY.END_DATE))
+				.setSalaryDays(rootRecord.get(SALARY.TIME_UNITS))
+				.setEmployeeName(rootRecord.get(SALARY.EMPLOYEE_NAME))
+				.setEnterpriseCCC(rootRecord.get(SALARY.CCC))
+				.setEnterpriseName(rootRecord.get(SALARY.ENTERPRISE_NAME))
+				.setEnterpriseDocument(rootRecord.get(SALARY.ENTERPRISE_DOCUMENT))
+				.setIrpfBase(rootRecord.get(SALARY.IRPF_BASE))
+				.setEmployeeDocument(rootRecord.get(SALARY.EMPLOYEE_DOCUMENT))
+				.setTotalLiquid(rootRecord.get(SALARY.TOTAL_LIQUID))
+				.setTotalPayment(rootRecord.get(SALARY.TOTAL_PAYMENT))
+				.setTotalIrpf(rootRecord.get(SALARY.TOTAL_IRPF))
+				.setTotalDeduction(rootRecord.get(SALARY.TOTAL_DEDUCTION))
+				.setCommonContingenciesBase(rootRecord.get(SALARY.CGC_BASE))
+				.setProfessionalContingenciesBase(rootRecord.get(SALARY.CGP_BASE))
+				.setIrpfBase(rootRecord.get(SALARY.IRPF_BASE))
+				.setMoneyIrpfBase(rootRecord.get(SALARY.MONEY_IRPF_BASE))
+				.setInkindIrpfBase(rootRecord.get(SALARY.INKIND_IRPF_BASE))
+				.setTotalEnterprise(rootRecord.get(SALARY.TOTAL_ENTERPRISE))
+				.setTotalSSContributions(rootRecord.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS))
 				;
 				
-				int salaryId = rootRecord.getValue(SALARY.ID);
+				int salaryId = rootRecord.get(SALARY.ID);
 				
 				Seq.limitWhile(
 				Seq.skipUntil(Seq.seq(dataIter), 
-				r -> r.getValue(SALARY_DATA.SALARY) >= salaryId ),
-				r -> r.getValue(SALARY_DATA.SALARY) == salaryId )
+				r -> r.get(SALARY_DATA.SALARY) >= salaryId ),
+				r -> r.get(SALARY_DATA.SALARY) == salaryId )
 				.forEachOrdered(dataRecord->
 					salary.setContextData(
-					dataRecord.getValue(SALARY_DATA.NAME), 
-					dataRecord.getValue(SALARY_DATA.EXPRESSION),
-					dataRecord.getValue(SALARY_DATA.START_DATE),
-					dataRecord.getValue(SALARY_DATA.END_DATE))
+					dataRecord.get(SALARY_DATA.NAME), 
+					dataRecord.get(SALARY_DATA.EXPRESSION),
+					dataRecord.get(SALARY_DATA.START_DATE),
+					dataRecord.get(SALARY_DATA.END_DATE))
 				);
 				
 				dataIter.back();
 				
 				Seq.limitWhile(
 				Seq.skipUntil(Seq.seq(paymentIter), 
-				r -> r.getValue(SALARY_PAYMENT.SALARY) >= salaryId ),
-				r -> r.getValue(SALARY_PAYMENT.SALARY) == salaryId )
+				r -> r.get(SALARY_PAYMENT.SALARY) >= salaryId ),
+				r -> r.get(SALARY_PAYMENT.SALARY) == salaryId )
 				.forEachOrdered(paymentRecord->{
 					salary.addPayment(
-							paymentRecord.getValue(SALARY_PAYMENT.PAYMENT_CONCEPT), 
-							paymentRecord.getValue(SALARY_PAYMENT.EXPRESSION), 
-							paymentRecord.getValue(SALARY_PAYMENT.DESCRIPTION), 
-							paymentRecord.getValue(SALARY_PAYMENT.AMOUNT),
-							paymentRecord.getValue(SALARY_PAYMENT.QUOTE)
+							paymentRecord.get(SALARY_PAYMENT.PAYMENT_CONCEPT), 
+							paymentRecord.get(SALARY_PAYMENT.EXPRESSION), 
+							paymentRecord.get(SALARY_PAYMENT.DESCRIPTION), 
+							paymentRecord.get(SALARY_PAYMENT.AMOUNT),
+							paymentRecord.get(SALARY_PAYMENT.QUOTE),
+							paymentRecord.get(SALARY_PAYMENT.TYPE)
 							);
 				}
 				);
@@ -306,39 +307,44 @@ public class SalaryDAO {
 
 				Seq.limitWhile(
 				Seq.skipUntil(Seq.seq(deductionIter), 
-				r -> r.getValue(SALARY_DEDUCTION.SALARY) >= salaryId ),
-				r -> r.getValue(SALARY_DEDUCTION.SALARY) == salaryId )
+				r -> r.get(SALARY_DEDUCTION.SALARY) >= salaryId ),
+				r -> r.get(SALARY_DEDUCTION.SALARY) == salaryId )
 				.forEachOrdered(deductionRecord->{
 					salary.addDeduction(
-							deductionRecord.getValue(SALARY_DEDUCTION.TYPE), 
-							deductionRecord.getValue(SALARY_DEDUCTION.DESCRIPTION), 
-							deductionRecord.getValue(SALARY_DEDUCTION.AMOUNT));
+							deductionRecord.get(SALARY_DEDUCTION.TYPE), 
+							deductionRecord.get(SALARY_DEDUCTION.DESCRIPTION), 
+							deductionRecord.get(SALARY_DEDUCTION.AMOUNT),
+							deductionRecord.get(SALARY_DEDUCTION.TYPE)
+							);
 				}
 				);
 				deductionIter.back();
 				
 				Seq.limitWhile(
 				Seq.skipUntil(Seq.seq(costIter), 
-				r -> r.getValue(SALARY_COST.SALARY) >= salaryId ),
-				r -> r.getValue(SALARY_COST.SALARY) == salaryId )
+				r -> r.get(SALARY_COST.SALARY) >= salaryId ),
+				r -> r.get(SALARY_COST.SALARY) == salaryId )
 				.forEachOrdered(costRecord->
 					salary.addCost(
-							costRecord.getValue(SALARY_COST.TYPE), 
-							costRecord.getValue(SALARY_COST.COST_CONCEPT), 
-							costRecord.getValue(SALARY_COST.DESCRIPTION), 
-							costRecord.getValue(SALARY_COST.AMOUNT))
+							costRecord.get(SALARY_COST.TYPE), 
+							costRecord.get(SALARY_COST.COST_CONCEPT), 
+							costRecord.get(SALARY_COST.DESCRIPTION), 
+							costRecord.get(SALARY_COST.AMOUNT),
+							costRecord.get(SALARY_COST.TYPE)
+							)
 				);
 				costIter.back();
 
 				Seq.limitWhile(
 				Seq.skipUntil(Seq.seq(bonusIter), 
-				r -> r.getValue(SALARY_BONUS.SALARY) >= salaryId ),
-				r -> r.getValue(SALARY_BONUS.SALARY) == salaryId )
+				r -> r.get(SALARY_BONUS.SALARY) >= salaryId ),
+				r -> r.get(SALARY_BONUS.SALARY) == salaryId )
 				.forEachOrdered(bonusRecord->
 					salary.addBonus(
-							bonusRecord.getValue(SALARY_BONUS.BONUS_CONCEPT), 
-							bonusRecord.getValue(SALARY_BONUS.DESCRIPTION), 
-							bonusRecord.getValue(SALARY_BONUS.AMOUNT))
+							bonusRecord.get(SALARY_BONUS.BONUS_CONCEPT), 
+							bonusRecord.get(SALARY_BONUS.DESCRIPTION), 
+							bonusRecord.get(SALARY_BONUS.AMOUNT)
+							)
 				);
 				bonusIter.back();
 
@@ -377,10 +383,10 @@ public class SalaryDAO {
 			Salary salary = supplier.get();
 			entry.getValue().forEach( contractDataRecord -> {
 				salary.addContextData(
-				contractDataRecord.getValue(CONTRACT_DATA.NAME), 
-				contractDataRecord.getValue(CONTRACT_DATA.EXPRESSION),
-				contractDataRecord.getValue(CONTRACT_DATA.START_DATE),
-				contractDataRecord.getValue(CONTRACT_DATA.END_DATE));
+				contractDataRecord.get(CONTRACT_DATA.NAME), 
+				contractDataRecord.get(CONTRACT_DATA.EXPRESSION),
+				contractDataRecord.get(CONTRACT_DATA.START_DATE),
+				contractDataRecord.get(CONTRACT_DATA.END_DATE));
 				
 			});
 			
@@ -423,7 +429,8 @@ public class SalaryDAO {
 		.leftJoin(SALARY_DATA)
 		.onKey(FK_SALARY_DATA_SALARY)
 		.where(conditions)
-		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+		.orderBy(
+		SALARY.EMPLOYEE_DOCUMENT)
 		.fetchLazy();
 		//@formatter:on
 
@@ -469,68 +476,68 @@ public class SalaryDAO {
 				.map(rootRecord-> {
 					
 					
-					String employeeDocument = rootRecord.getValue(SALARY.EMPLOYEE_DOCUMENT);	
+					String employeeDocument = rootRecord.get(SALARY.EMPLOYEE_DOCUMENT);	
 
 					Salary salary = supplier.get()
 					.setEmployeeDocument(employeeDocument)
-					.setEmployeeName(rootRecord.getValue(SALARY.EMPLOYEE_NAME))
-					.setEmployeeSSNumber(rootRecord.getValue(SALARY.SOCIAL_SECURITY_NUMBER))
-					.setEnterpriseDocument(rootRecord.getValue(SALARY.ENTERPRISE_DOCUMENT))
-					.setEnterpriseName(rootRecord.getValue(SALARY.ENTERPRISE_NAME))
-					.setEnterpriseCCC(rootRecord.getValue(SALARY.CCC))
-					.setStartDate(rootRecord.getValue(SALARY.START_DATE))
-					.setEndDate(rootRecord.getValue(SALARY.END_DATE))
+					.setEmployeeName(rootRecord.get(SALARY.EMPLOYEE_NAME))
+					.setEmployeeSSNumber(rootRecord.get(SALARY.SOCIAL_SECURITY_NUMBER))
+					.setEnterpriseDocument(rootRecord.get(SALARY.ENTERPRISE_DOCUMENT))
+					.setEnterpriseName(rootRecord.get(SALARY.ENTERPRISE_NAME))
+					.setEnterpriseCCC(rootRecord.get(SALARY.CCC))
+					.setStartDate(rootRecord.get(SALARY.START_DATE))
+					.setEndDate(rootRecord.get(SALARY.END_DATE))
 					.setTotalPayment(rootRecord.get(SALARY.TOTAL_PAYMENT))
 					;
 					
 					
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(salaryDataIter), 
-					r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
-					r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
+					r -> r.get(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
+					r -> r.get(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
 					.forEachOrdered(salaryDataRecord->
 						salary.setContextData(
-						salaryDataRecord.getValue(SALARY_DATA.NAME), 
-						salaryDataRecord.getValue(SALARY_DATA.EXPRESSION),
-						salaryDataRecord.getValue(SALARY_DATA.START_DATE),
-						salaryDataRecord.getValue(SALARY_DATA.END_DATE))
+						salaryDataRecord.get(SALARY_DATA.NAME), 
+						salaryDataRecord.get(SALARY_DATA.EXPRESSION),
+						salaryDataRecord.get(SALARY_DATA.START_DATE),
+						salaryDataRecord.get(SALARY_DATA.END_DATE))
 					);
 					salaryDataIter.back();
 					
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(contractDataIter), 
-					r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
-					r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
+					r -> r.get(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
+					r -> r.get(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
 					.forEachOrdered(contractDataRecord->
 						salary.addContextData(
-						contractDataRecord.getValue(CONTRACT_DATA.NAME), 
-						contractDataRecord.getValue(CONTRACT_DATA.EXPRESSION),
-						contractDataRecord.getValue(CONTRACT_DATA.START_DATE),
-						contractDataRecord.getValue(CONTRACT_DATA.END_DATE))
+						contractDataRecord.get(CONTRACT_DATA.NAME), 
+						contractDataRecord.get(CONTRACT_DATA.EXPRESSION),
+						contractDataRecord.get(CONTRACT_DATA.START_DATE),
+						contractDataRecord.get(CONTRACT_DATA.END_DATE))
 					);
 					contractDataIter.back();
 
 
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(salaryImlicitDataIter), 
-					r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
-					r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
+					r -> r.get(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
+					r -> r.get(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
 					.forEachOrdered(salaryRecord-> {
 						Optional.ofNullable(salaryRecord.get(SALARY.TOTAL_PAYMENT))
 						.ifPresent( d ->  {
 							salary.setContextData(
 									"TOTAL_DEVENGADO", 
 									String.format(Locale.ROOT, "%f", d), 
-									salaryRecord.getValue(SALARY.START_DATE), 
-									salaryRecord.getValue(SALARY.END_DATE));
+									salaryRecord.get(SALARY.START_DATE), 
+									salaryRecord.get(SALARY.END_DATE));
 						});
 						Optional.ofNullable(salaryRecord.get(ENTERPRISE_CCC.TYPE))
 						.ifPresent( b ->  {
 							salary.setContextData(
 									"CCC_TYPE", 
 									String.format(Locale.ROOT, "%d", b), 
-									salaryRecord.getValue(SALARY.START_DATE), 
-									salaryRecord.getValue(SALARY.END_DATE));
+									salaryRecord.get(SALARY.START_DATE), 
+									salaryRecord.get(SALARY.END_DATE));
 						});
 					}
 					);
@@ -551,11 +558,11 @@ public class SalaryDAO {
 	
 	private static void fixSalaryData(String name, Salary salary, TableField<SalaryRecord, Double> field,Record record){
 		
-		if ( record.getValue(field) == null ) 
+		if ( record.get(field) == null ) 
 			return;
 		
-		Date salaryStart = record.getValue(SALARY.START_DATE);
-		Date salaryEnd = record.getValue(SALARY.END_DATE);
+		Date salaryStart = record.get(SALARY.START_DATE);
+		Date salaryEnd = record.get(SALARY.END_DATE);
 		
 		List<ContextData> datas = salary.getContextData().get(name);
 		if ( datas != null && !datas.isEmpty() )
@@ -566,7 +573,7 @@ public class SalaryDAO {
 					return;
 		
 		salary.setContextData(name, 
-				Double.toString(record.getValue(field)),
+				Double.toString(record.get(field)),
 				salaryStart,
 				salaryEnd);
 	}

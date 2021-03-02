@@ -1316,7 +1316,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			.filter(p -> AonStringUtils.equals(contractPayment.getName(), p.getName()))
 			.findFirst().ifPresentOrElse(
 			p -> monthlyQuotedPayments.add(p), 
-			() -> monthlyQuotedPayments.add( new Payment(0.00, 0.00, contractPayment.getExpression(), contractPayment.getDescription(), contractPayment.getName())) ) ) ;
+			() -> monthlyQuotedPayments.add( new Payment(0.00, 0.00, contractPayment.getExpression(), contractPayment.getDescription(), contractPayment.getName(), null)) ) ) ;
 
 		})
 		;
