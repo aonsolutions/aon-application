@@ -39,6 +39,9 @@ public abstract class ServiAgreementDialog extends AonCustomDialog {
 	SuggestBox serviAgreementsSB;
 	
 	@UiField
+	HTMLPanel messagePanel;
+	
+	@UiField
 	HTMLPanel buttonsPanel;
 	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
@@ -52,7 +55,7 @@ public abstract class ServiAgreementDialog extends AonCustomDialog {
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
 	public ServiAgreementDialog() {	
-		setCaption("ServiConvenios: B" + String.valueOf("\u00FA") + "squeda");
+		setCaption("Convenios: B" + String.valueOf("\u00FA") + "squeda");
 		
 		setWidget(binder.createAndBindUi(this));
 		
@@ -88,6 +91,9 @@ public abstract class ServiAgreementDialog extends AonCustomDialog {
 		serviAgreementsSB.setAutoSelectEnabled(true);
 	}
 
+	public void setMessageVisible(boolean visible) {
+		messagePanel.setVisible(visible);
+	}
 	
 	private void getButtonsPanel() {
 		buttonsPanel.clear();

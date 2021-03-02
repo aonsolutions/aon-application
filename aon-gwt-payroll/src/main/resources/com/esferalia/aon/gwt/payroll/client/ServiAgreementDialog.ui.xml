@@ -41,6 +41,11 @@
 			width: 400px;
 		}
 		
+		.message{
+			color: #7d7d7d;
+			max-width: 475px;
+		}
+		
 		
 	</ui:Style>
 
@@ -50,6 +55,9 @@
 			<g:HTMLPanel styleName="{style.mainPanel}">
 				<g:Label styleName="{style.title}">Convenio</g:Label>
 				<g:SuggestBox ui:field="serviAgreementsSB" styleName="{style.w400}"></g:SuggestBox>
+			</g:HTMLPanel>
+			<g:HTMLPanel ui:field="messagePanel" styleName="{style.mainPanel}">
+				<g:Label styleName="{style.message}">AonSolutions: Importación de convenios INACTIVA.</g:Label>
 			</g:HTMLPanel>
 			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
 		</g:VerticalPanel>

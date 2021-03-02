@@ -381,18 +381,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 					@Override
 					public void onSuccess(DomainUserRoles result) {
 						userRoles = result;
-//						Window.alert("UserRole : " + userRoles);
-//						Window.alert("UserRole isConvenios() : " + userRoles.isConvenios()); 
-						try {
-							if(userRoles.isConvenios())
-								toolbar.setVisibleImportButton(true);
-						} catch (Exception e) {
-							
-						}
+						toolbar.setVisibleImportButton(true);
 					}
 					
 					@Override
 					public void onFailure(Throwable caught) {}
+					
 				});
 			}
 		});
@@ -659,6 +653,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			
 		};
 		
+		serviAgreementDialog.setMessageVisible(!userRoles.isConvenios());
 		serviAgreementDialog.center();
 		serviAgreementDialog.show();
 	}
