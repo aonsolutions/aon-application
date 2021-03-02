@@ -6,56 +6,147 @@
     <Sujetos>
         <Emisor>
             <NIF>58658371X</NIF>
-            <ApellidosNombreRazonSocial>Aketza</ApellidosNombreRazonSocial>
+            <ApellidosNombreRazonSocial>Koffing</ApellidosNombreRazonSocial>
         </Emisor>
         <Destinatarios>
             <IDDestinatario>
                 <NIF>12323032R</NIF>
                 <IDOtro>
+                    <CodigoPais>ES</CodigoPais>
                     <IDType>type 1</IDType>
                     <ID>1</ID>
                 </IDOtro>
-                <ApellidosNombreRazonSocial>Juan Urtado</ApellidosNombreRazonSocial>
+                <ApellidosNombreRazonSocial>Krabby</ApellidosNombreRazonSocial>
                 <CodigoPostal>01470</CodigoPostal>
-                <Direccion>Oceano Pacifico 21, 7A, Vitoria</Direccion>
+                <Direccion>Oceano Pacifico 21, 7A, Lavaridge Town</Direccion>
             </IDDestinatario>
         </Destinatarios>
         <VariosDestinatarios>N</VariosDestinatarios>
+        <EmitidaPorTercerosODestinatario>T</EmitidaPorTercerosODestinatario>
     </Sujetos>
     <Factura>
         <CabeceraFactura>
-            <SerieFactura>AAA</SerieFactura>
-            <NumFactura>478329823</NumFactura>
+            <SerieFactura>Menoetius</SerieFactura>
+            <NumFactura>364</NumFactura>
+            <FechaExpedicionFactura>01/03/2021</FechaExpedicionFactura>
+            <HoraExpedicionFactura>01:37</HoraExpedicionFactura>
             <FacturaSimplificada>S</FacturaSimplificada>
             <FacturaRectificativa>
+                <Codigo>R1</Codigo>
+                <Tipo>I</Tipo>
                 <ImporteRectificacionSustitutiva>
-                    <BaseRectificada>199.99</BaseRectificada>
-                    <CuotaRectificada>20.05</CuotaRectificada>
-                    <CuotaRecargoRectificada>1.25</CuotaRecargoRectificada>
+                    <BaseRectificada>88.56</BaseRectificada>
+                    <CuotaRectificada>22.58</CuotaRectificada>
+                    <CuotaRecargoRectificada>0.42</CuotaRecargoRectificada>
                 </ImporteRectificacionSustitutiva>
             </FacturaRectificativa>
+            <FacturasRectificadasSustituidas>
+                <IDFacturaRectificadaSustituida>
+                    <SerieFactura>CCC</SerieFactura>
+                </IDFacturaRectificadaSustituida>
+            </FacturasRectificadasSustituidas>
         </CabeceraFactura>
         <DatosFactura>
-            <DetallesFactura/>
+            <FechaOperacion>01/03/2021</FechaOperacion>
+            <DetallesFactura>
+                <IDDetalleFactura>
+                    <DescripcionDetalle>The Forsaken Inn</DescripcionDetalle>
+                    <Cantidad>23.7</Cantidad>
+                    <ImporteUnitario>94.64</ImporteUnitario>
+                    <Descuento>93.0</Descuento>
+                    <ImporteTotal>476.01</ImporteTotal>
+                </IDDetalleFactura>
+            </DetallesFactura>
             <ImporteTotalFactura>120512.0</ImporteTotalFactura>
-            <RetencionSoportada>150.75</RetencionSoportada>
-            <Claves/>
+            <RetencionSoportada>404938.0</RetencionSoportada>
+            <Claves>
+                <IDClave>
+                    <ClaveRegimenIvaOpTrascendencia>Cardguard</ClaveRegimenIvaOpTrascendencia>
+                </IDClave>
+                <IDClave>
+                    <ClaveRegimenIvaOpTrascendencia>Toughjoyfax</ClaveRegimenIvaOpTrascendencia>
+                </IDClave>
+            </Claves>
         </DatosFactura>
-        <TipoDesglose/>
+        <TipoDesglose>
+            <DesgloseTipoOperacion>
+                <PrestacionServicios>
+                    <Sujeta>
+                        <Exenta>
+                            <DetalleExenta>
+                                <CausaExencion>E1</CausaExencion>
+                                <BaseImponible>10.0</BaseImponible>
+                            </DetalleExenta>
+                        </Exenta>
+                        <NoExenta>
+                            <DetalleNoExenta>
+                                <TipoNoExenta>S1</TipoNoExenta>
+                                <DesgloseIVA>
+                                    <DetalleIVA>
+                                        <BaseImponible>10.0</BaseImponible>
+                                        <TipoImpositivo>10.0</TipoImpositivo>
+                                        <TipoRecargoEquivalencia>C</TipoRecargoEquivalencia>
+                                        <CuotaRecargoEquivalencia>10.0</CuotaRecargoEquivalencia>
+                                        <OperacionEnRecargoDeEquivalenciaORegimenSimplificado>S</OperacionEnRecargoDeEquivalenciaORegimenSimplificado>
+                                    </DetalleIVA>
+                                </DesgloseIVA>
+                            </DetalleNoExenta>
+                        </NoExenta>
+                    </Sujeta>
+                    <NoSujeta>
+                        <DetalleNoSujeta>
+                            <Causa>OT</Causa>
+                            <Importe>150.99</Importe>
+                        </DetalleNoSujeta>
+                    </NoSujeta>
+                </PrestacionServicios>
+                <Entrega>
+                    <Sujeta>
+                        <Exenta>
+                            <DetalleExenta>
+                                <CausaExencion>E1</CausaExencion>
+                                <BaseImponible>10.0</BaseImponible>
+                            </DetalleExenta>
+                        </Exenta>
+                        <NoExenta>
+                            <DetalleNoExenta>
+                                <TipoNoExenta>S1</TipoNoExenta>
+                                <DesgloseIVA>
+                                    <DetalleIVA>
+                                        <BaseImponible>10.0</BaseImponible>
+                                        <TipoImpositivo>10.0</TipoImpositivo>
+                                        <TipoRecargoEquivalencia>C</TipoRecargoEquivalencia>
+                                        <CuotaRecargoEquivalencia>10.0</CuotaRecargoEquivalencia>
+                                        <OperacionEnRecargoDeEquivalenciaORegimenSimplificado>S</OperacionEnRecargoDeEquivalenciaORegimenSimplificado>
+                                    </DetalleIVA>
+                                </DesgloseIVA>
+                            </DetalleNoExenta>
+                        </NoExenta>
+                    </Sujeta>
+                    <NoSujeta>
+                        <DetalleNoSujeta>
+                            <Causa>OT</Causa>
+                            <Importe>150.99</Importe>
+                        </DetalleNoSujeta>
+                    </NoSujeta>
+                </Entrega>
+            </DesgloseTipoOperacion>
+        </TipoDesglose>
     </Factura>
     <HuellaTBAI>
         <Software>
-            <LicenciaTBAI>1278263423</LicenciaTBAI>
+            <LicenciaTBAI>843010</LicenciaTBAI>
             <EntidadDesarrolladora>
-                <NIF>10101010T</NIF>
+                <NIF>10101010T</NIF>    <ID>1</ID>
                 <IDOtro>
+                    <CodigoPais>ES</CodigoPais>
                     <IDType>type 2</IDType>
                     <ID>1</ID>
                 </IDOtro>
             </EntidadDesarrolladora>
-            <Nombre>AON APPLICATION</Nombre>
-            <Version>3.2</Version>
+            <Nombre>Cheval</Nombre>
+            <Version>1.51</Version>
         </Software>
-        <NumSerieDispositivo>1278263423</NumSerieDispositivo>
+        <NumSerieDispositivo>843010</NumSerieDispositivo>
     </HuellaTBAI>
 </ns3:TicketBai>
