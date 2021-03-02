@@ -3601,7 +3601,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, -1);
 		Date endDate = getLastDayOfMonth(startDate);
 		
-		Date endERE = add(startDate, DAY_OF_MONTH, 6);
+		Date endERE = add(startDate, DAY_OF_MONTH, 4);
 		
 		addData(aonContext, contract, startDate, endERE, ContextVariable.ERE_FACTOR_FORCE_OFF, 1.00);
 		
@@ -3640,26 +3640,26 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		// ERE 
 		Tramo tramo0 = tramos.get(0); 
 		Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
-		Assert.assertEquals("07", tramo0.getFechaHasta().getDia());
+		Assert.assertEquals("05", tramo0.getFechaHasta().getDia());
 		assertTramoExpedienteRegulacionEmpleoTotal(tramo0);
 		
 		Tramo tramo1 = tramos.get(1); 
-		Assert.assertEquals("08", tramo1.getFechaDesde().getDia());
-		Assert.assertEquals("08", tramo1.getFechaHasta().getDia());
+		Assert.assertEquals("06", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals("06", tramo1.getFechaHasta().getDia());
 		assertTramoActivoNormal(tramo1);
 		
 		Tramo tramo2 = tramos.get(2); 
-		Assert.assertEquals("09", tramo2.getFechaDesde().getDia());
-		Assert.assertEquals("23", tramo2.getFechaHasta().getDia());
+		Assert.assertEquals("07", tramo2.getFechaDesde().getDia());
+		Assert.assertEquals("21", tramo2.getFechaHasta().getDia());
 		assertTramoIT15PrimerosDias(tramo2);
 		
 		Tramo tramo3 = tramos.get(3); 
-		Assert.assertEquals("24", tramo3.getFechaDesde().getDia());
-		Assert.assertEquals("28", tramo3.getFechaHasta().getDia());
+		Assert.assertEquals("22", tramo3.getFechaDesde().getDia());
+		Assert.assertEquals("26", tramo3.getFechaHasta().getDia());
 		assertTramoITPagoDelegado(tramo3);
 		
 		Tramo tramo4 = tramos.get(4); 
-		Assert.assertEquals("29", tramo4.getFechaDesde().getDia());
+		Assert.assertEquals("27", tramo4.getFechaDesde().getDia());
 		//Assert.assertEquals("28", tramo4.getFechaHasta().getDia());
 		assertTramoITPagoDelegado(tramo4);
 		
