@@ -2965,8 +2965,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public Map<String, String> getServiAgreements() {
-		return ServiAgreementsFilter.getServiAgreementsMap();
+	public Map<String, String> getServiAgreements(String domainName, String userLogin) {
+		DomainUserRoles domainUserRoles = getDomainUserRoles(domainName, userLogin);
+		return ServiAgreementsFilter.getServiAgreementsMap(domainUserRoles.isConvenios());
 	}
 	
 	@Override

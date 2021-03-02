@@ -274,7 +274,7 @@ public interface EnterprisesService extends RemoteService {
 
 	void delete4EverContract(String currentDomainName, Integer contractId);
 
-	Map<String, String> getServiAgreements();
+	Map<String, String> getServiAgreements(String currentDomainName, String currentUser);
 
 	DomainUserRoles getDomainUserRoles(String currentDomainName, String currentUser);
 

@@ -774,9 +774,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getServiAgreements(AsyncCallback<Map<String, String>> callback) {
+	public void getServiAgreements(String domainName, String currentUser, AsyncCallback<Map<String, String>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getServiAgreements(new AsyncCallbackWrapper<Map<String, String>>(callback));
+		enterprisesServiceAsync.getServiAgreements(domainName, currentUser, new AsyncCallbackWrapper<Map<String, String>>(callback));
 	}
 
 	@Override

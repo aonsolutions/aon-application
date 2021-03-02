@@ -179,7 +179,7 @@ public interface EnterprisesServiceAsync {
 	void getTrashEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
 	void restoreContract(String currentDomainName, Integer contractId, AsyncCallback<Void> asyncCallback);
 	void delete4EverContract(String currentDomainName, Integer contractId, AsyncCallback<Void> asyncCallback);
-	void getServiAgreements(AsyncCallback<Map<String, String>> asyncCallback);
+	void getServiAgreements(String currentDomainName, String currentUser, AsyncCallback<Map<String, String>> asyncCallback);
 	void getDomainUserRoles(String currentDomainName, String currentUser, AsyncCallback<DomainUserRoles> asyncCallback);
 	
 }

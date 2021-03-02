@@ -487,7 +487,7 @@ public class DomainEnterprisesServiceAsync {
 	}
 	
 	public void getServiAgreements(AsyncCallback<Map<String, String>> asyncCallback) {
-		enterprisesServiceAsync.getServiAgreements(asyncCallback);
+		enterprisesServiceAsync.getServiAgreements(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
 	public void getDomainUserRoles(AsyncCallback<DomainUserRoles> asyncCallback) {
