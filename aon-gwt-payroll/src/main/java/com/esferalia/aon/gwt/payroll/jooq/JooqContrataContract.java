@@ -593,11 +593,20 @@ public class JooqContrataContract {
 	private static ContractSpecificData getContractSpecificDataDB(DSLContext dslContext, Integer domainId, Integer contractId) {
 		ContractSpecificData contractSpecificData = new ContractSpecificData();
 		
+		Result<Record> cnoRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.eq("CNO"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.fetch();
+		
+		if(cnoRecords.isNotEmpty()) {
+			String cno = cnoRecords.get(0).get(CONTRACT_DATA.EXPRESSION).split("\"")[1];
+			contractSpecificData.setCno(cno);
+		}
+		
 		Result<Record> contractAttachRecords = dslContext.select().from(CONTRACT_ATTACH)
 			.where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
 			.and(CONTRACT_ATTACH.TYPE.eq((byte)4))
 			.fetch();
-//			.fetchOne();
 		
 		if(null == contractAttachRecords || contractAttachRecords.isEmpty())
 			return contractSpecificData;	

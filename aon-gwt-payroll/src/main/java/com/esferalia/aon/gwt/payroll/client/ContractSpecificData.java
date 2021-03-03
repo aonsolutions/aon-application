@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
@@ -371,13 +372,17 @@ public class ContractSpecificData extends ResizeComposite {
 		setDefaultView(this.employeeContractInfo.getContractInfo().getContractType());
 		fillSpecificData();
 		
-		getContratoSepe(s -> {
-//			Window.alert("SEPE Id : " + s);
+		if(userRoles.isComunica())
+			getContratoSepe(s -> {
+	//			Window.alert("SEPE Id : " + s);
+				setVisible(comunicaMeesage.getElement(), false);
+			}, f -> {
+	//			Window.alert("SEPE Id Not Found");
+				setVisible(comunicaMeesage.getElement(), true);
+			});
+		else
 			setVisible(comunicaMeesage.getElement(), false);
-		}, f -> {
-//			Window.alert("SEPE Id Not Found");
-			setVisible(comunicaMeesage.getElement(), true);
-		});
+			
 	}
 	
 	public void getContratoSepe(Consumer<String> success, Consumer<Throwable> failure) {
@@ -407,7 +412,7 @@ public class ContractSpecificData extends ResizeComposite {
 	void onCNOSBChange(SelectionEvent<Suggestion> event) {
 		String cnoStr = cnoSB.getValue();
 		String cno = "";
-		if(!StringUtils.isBlank(cnoStr))
+		if(!AonStringUtils.isBlank(cnoStr))
 			cno = cnoStr.split(" -")[0];
 		
 		this.employeeContractInfo.getContractSpecificData().setCno(cno);	
