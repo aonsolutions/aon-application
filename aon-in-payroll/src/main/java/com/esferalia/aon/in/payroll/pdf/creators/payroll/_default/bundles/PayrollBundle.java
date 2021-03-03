@@ -9,6 +9,7 @@ public class PayrollBundle  extends ListResourceBundle{
 	    }
 
 	    private Object[][] contents = {
+	    	{ "MONEDA", "\u20ac"},
 	    	{ "FORMATO FECHA", "dd/MM/yyyy"},
 	        { "TITULO","Recibo individual justificativo del pago de *" },
 	        { "EMPRESA", "Empresa" },

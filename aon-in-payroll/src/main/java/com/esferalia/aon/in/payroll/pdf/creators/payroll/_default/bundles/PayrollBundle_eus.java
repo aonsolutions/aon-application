@@ -9,6 +9,7 @@ public class PayrollBundle_eus  extends ListResourceBundle{
 	    }
 
 	    private Object[][] contents = {
+	    	{ "MONEDA", "\u20ac"},
 	        { "TITULO","* ordainketa justifikazioaren bakarkako ordainagiria" },
 	        { "EMPRESA", "Konpainia" },
 	        { "DOMICILIO", "Helbidea" },

@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Salary implements Serializable {
@@ -339,6 +340,7 @@ public class Salary implements Serializable {
 	
 	
 	private Integer id;
+	private SalaryType salaryType;
 
 	private Date startDate;
 	private Date endDate;
@@ -365,6 +367,7 @@ public class Salary implements Serializable {
 	private Double totalEnterprise;
 	private Double totalIrpf;
 	private Double totalSSContributions;
+	private Double remuneration;
 
 	// Tax (I.R.P.F) bases
 	private Double irpfBase;
@@ -397,6 +400,20 @@ public class Salary implements Serializable {
 
 	public Salary setId(Integer id) {
 		this.id = id;
+		return this;
+	}
+	
+	public SalaryType getSalaryType() {
+		return salaryType;
+	}
+	
+	public Salary setSalaryType(SalaryType salaryType) {
+		this.salaryType = salaryType;
+		return this;
+	}
+	
+	public Salary setSalaryType(Byte salaryType) {
+		this.salaryType = typeOf(salaryType, SalaryType.class);
 		return this;
 	}
 
@@ -541,6 +558,15 @@ public class Salary implements Serializable {
 
 	public Salary setTotalSSContributions(Double totalSSContributions) {
 		this.totalSSContributions = totalSSContributions;
+		return this;
+	}
+
+	public Double getRemuneration() {
+		return remuneration;
+	}
+
+	public Salary setRemuneration(Double remuneration) {
+		this.remuneration = remuneration;
 		return this;
 	}
 

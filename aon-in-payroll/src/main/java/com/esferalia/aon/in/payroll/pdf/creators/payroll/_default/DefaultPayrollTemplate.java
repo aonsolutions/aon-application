@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -57,6 +58,14 @@ public class DefaultPayrollTemplate {
 			doc.save(os);
 		} catch (Exception e) {throw new CanNotCreatePdfException(e);}
 	}
+	
+	// PRINT THE PDF FROM COLLECTION
+	public void print(OutputStream os, Collection<DefaultPayroll> payrolls, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException, IOException {
+		
+		try (PDDocument doc = print(payrolls, logo, language)) {
+			doc.save(os);
+		} catch (Exception e) {throw new CanNotCreatePdfException(e);}
+	}
 
 	public void print(String filename, DefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException {
 		try (PDDocument doc = print(payroll, logo, language)) {
@@ -64,8 +73,8 @@ public class DefaultPayrollTemplate {
 		} catch (Exception e) {throw new CanNotCreatePdfException(e);}
 	}
 
-	// PRINT THE PDF
-	private PDDocument print(DefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException, IOException {
+	// PRINT THE PDF FROM COLLECTION
+	private PDDocument print(Collection<DefaultPayroll> payrolls, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException, IOException {
 			PDDocument doc = new PDDocument();
 
 			
@@ -73,48 +82,120 @@ public class DefaultPayrollTemplate {
 			words = ResourceBundle.getBundle("com.esferalia.aon.in.payroll.pdf.creators.payroll._default.bundles.PayrollBundle",lang);
 
 			limit = 800;
-			this.payroll = payroll;
+			
+			byte[] bLogo = logo.get().readAllBytes();
+			
+			for (DefaultPayroll payroll : payrolls) {
+				
+				logo = Optional.ofNullable(new ByteArrayInputStream(bLogo));
+				
+				this.payroll = payroll;
 
-			if (payroll == null)
-				throw new CanNotCreatePdfException("No payroll found.");
+				if (payroll == null)
+					throw new CanNotCreatePdfException("No payroll found.");
+				
+				
+				
+				PDPage page = PDFToolkit.createVerticalPage();
+				doc.addPage(page);
+	
+				contents = new PDPageContentStream(doc, page);
+	
+				draw_header();
+				boolean jump = calculate();
+	
+				this.doc = doc;
+				this.logo = logo;
+	
+				if (jump) {
+					draw_accruals();
+					PDFToolkit.drawBorderedBox(contents, 10, 10, 575, 695, PdfColors.LIGHT_GRAY);
+					contents.close();
+	
+					page = PDFToolkit.createVerticalPage();
+					doc.addPage(page);
+					contents = new PDPageContentStream(doc, page);
+	
+					draw_header();
+					PDFToolkit.drawBorderedBox(contents, 10, 175, 575, 532, PdfColors.LIGHT_GRAY);
+					y -= 15;
+	
+					draw_deductions();
+					draw_footer();
+	
+				} else {
+					PDFToolkit.drawBorderedBox(contents, 10, 175, 575, 532, PdfColors.LIGHT_GRAY);
+					draw_accruals();
+					draw_deductions();
+					draw_footer();
+				}
+	
+				contents.close();
+				
+			}
+			return doc;
+			
+	}
+	
+	
+	
+	private PDDocument print(DefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language) throws CanNotCreatePdfException, IOException {
+		PDDocument doc = new PDDocument();
 
-			PDPage page = PDFToolkit.createVerticalPage();
+		
+		lang = language.orElse(new Locale("Es"));
+		words = ResourceBundle.getBundle("com.esferalia.aon.in.payroll.pdf.creators.payroll._default.bundles.PayrollBundle",lang);
+
+		limit = 800;
+		this.payroll = payroll;
+
+		if (payroll == null)
+			throw new CanNotCreatePdfException("No payroll found.");
+
+		PDPage page = PDFToolkit.createVerticalPage();
+		doc.addPage(page);
+
+		contents = new PDPageContentStream(doc, page);
+
+		draw_header();
+		boolean jump = calculate();
+
+		this.doc = doc;
+		this.logo = logo;
+
+		if (jump) {
+			draw_accruals();
+			PDFToolkit.drawBorderedBox(contents, 10, 10, 575, 695, PdfColors.LIGHT_GRAY);
+			contents.close();
+
+			page = PDFToolkit.createVerticalPage();
 			doc.addPage(page);
-
 			contents = new PDPageContentStream(doc, page);
 
 			draw_header();
-			boolean jump = calculate();
+			PDFToolkit.drawBorderedBox(contents, 10, 175, 575, 532, PdfColors.LIGHT_GRAY);
+			y -= 15;
 
-			this.doc = doc;
-			this.logo = logo;
+			draw_deductions();
+			draw_footer();
 
-			if (jump) {
-				draw_accruals();
-				PDFToolkit.drawBorderedBox(contents, 10, 10, 575, 695, PdfColors.LIGHT_GRAY);
-				contents.close();
+		} else {
+			PDFToolkit.drawBorderedBox(contents, 10, 175, 575, 532, PdfColors.LIGHT_GRAY);
+			draw_accruals();
+			draw_deductions();
+			draw_footer();
+		}
 
-				page = PDFToolkit.createVerticalPage();
-				doc.addPage(page);
-				contents = new PDPageContentStream(doc, page);
-
-				draw_header();
-				PDFToolkit.drawBorderedBox(contents, 10, 175, 575, 532, PdfColors.LIGHT_GRAY);
-				y -= 15;
-
-				draw_deductions();
-				draw_footer();
-
-			} else {
-				PDFToolkit.drawBorderedBox(contents, 10, 175, 575, 532, PdfColors.LIGHT_GRAY);
-				draw_accruals();
-				draw_deductions();
-				draw_footer();
-			}
-
-			contents.close();
-			return doc;
-	}
+		contents.close();
+		return doc;
+}
+	
+	
+	
+	
+	
+	
+	
 	
 	// DRAW THE HEADER
 	private void draw_header() throws IOException {
@@ -209,7 +290,7 @@ public class DefaultPayrollTemplate {
 		String title = words.getString("DEVENGOS").toUpperCase() + ".";
 		String totals = words.getString("TOTALES").toUpperCase();
 		String accrual_total_title = "A." + words.getString("TOTAL DEVENGADO").toUpperCase() + ":";
-		String accrual_total = PdfFormats.to_latin_number(payroll.getAccrual_total().orElse(0.00));
+		String accrual_total = PdfFormats.to_latin_number(payroll.getAccrual_total().orElse(0.00)) + words.getString("MONEDA");
 		
 		//BUILD THE ACCRUALS
 		PDFToolkit.drawText(contents,title,x,y,PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, fontSize + 3);
@@ -223,22 +304,27 @@ public class DefaultPayrollTemplate {
 			try {
 				//CONTENT
 				double local_total = m.getValue().stream().mapToDouble(accrual -> accrual.getAmount().orElse(0.00)).sum();
-				String accrual_txt = m.getKey() + ". " + CraTypes.get_type(m.getKey(),lang);
-				String accrual_total_txt = PdfFormats.to_latin_number(local_total);
 				
-				//BUILD 
-				PDFToolkit.drawText(contents, accrual_txt,x,y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, fontSize+1);
-				PDFToolkit.drawTextRight(contents, new PDRectangle(x + 355, y - 5, 100, 10), accrual_total_txt, PdfColors.BLACK, PdfFonts.HELVETICA, fontSize-1, 5, 5);
-				PDFToolkit.drawBox(contents,x,y - 2, 455, .2f, PdfColors.BLACK);
-				y -= 12;
-
-				m.getValue().stream().forEach(n -> {
-					try {
-						String entry_txt = PdfFormats.to_latin_number(n.getAmount().orElse(0.00)) + " en " + n.getDescription().orElse("");
-						PDFToolkit.drawText(contents,entry_txt,x + 9,y, PdfColors.BLACK, PdfFonts.HELVETICA, fontSize);
-					} catch (IOException e) {e.printStackTrace();}
-					y -= 10.5f;
-				});
+				if (local_total != 0) {
+					String accrual_txt = m.getKey() + ". " + CraTypes.get_type(m.getKey(),lang);
+					String accrual_total_txt = PdfFormats.to_latin_number(local_total) + words.getString("MONEDA");
+					
+					//BUILD 
+					PDFToolkit.drawText(contents, accrual_txt,x,y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, fontSize+1);
+					PDFToolkit.drawTextRight(contents, new PDRectangle(x + 355, y - 5, 100, 10), accrual_total_txt, PdfColors.BLACK, PdfFonts.HELVETICA, fontSize-1, 5, 5);
+					PDFToolkit.drawBox(contents,x,y - 2, 455, .2f, PdfColors.BLACK);
+					y -= 12;
+	
+					m.getValue().stream().forEach(n -> {
+						try {
+							String entry_txt = PdfFormats.to_latin_number(n.getAmount().orElse(0.00)) + words.getString("MONEDA") + " en " + n.getDescription().orElse("");
+							PDFToolkit.drawText(contents,entry_txt,x + 9,y, PdfColors.BLACK, PdfFonts.HELVETICA, fontSize) ;
+						} catch (IOException e) {e.printStackTrace();}
+						y -= 10.5f;
+					});
+					}
+				
+				
 
 			} catch (IOException | UnknownCraException e) {e.printStackTrace();}
 			y -= 5;
@@ -256,9 +342,9 @@ public class DefaultPayrollTemplate {
 		//DEDUCTIONS CONTENT
 		String title =						words.getString("DEDUCCIONES").toUpperCase() + ".";
 		String deduction_total_title = 		"B. " + words.getString("TOTAL DEDUCIR").toUpperCase() + ": ";
-		String deduction_total = 			PdfFormats.to_latin_number(payroll.getDeduction_total().orElse(0.00));
+		String deduction_total = 			PdfFormats.to_latin_number(payroll.getDeduction_total().orElse(0.00)) + words.getString("MONEDA");
 		String payroll_total_title = 		words.getString("TOTAL PERCIBIR").toUpperCase() + " (A-B): ";
-		String payroll_total = 				PdfFormats.to_latin_number(payroll.getPayroll_total().orElse(0.00));
+		String payroll_total = 				PdfFormats.to_latin_number(payroll.getPayroll_total().orElse(0.00)) + words.getString("MONEDA");
 		String enterprise_sign = 			words.getString("FIRMA EMPRESA").toUpperCase();
 		String employee_sign = 				PdfFormats.formatDate(new Date(),words.getString("FIRMA TRABAJADOR")).get();
 		
@@ -274,27 +360,30 @@ public class DefaultPayrollTemplate {
 			try {
 				//CONTENT
 				double local_total = m.getValue().stream().mapToDouble(accrual->accrual.getAmount().orElse(0.00)).sum();
-				String deduction_txt = m.getKey() + ". " + DeductionTypes.getType(m.getKey());
-				String deduction_total_txt = PdfFormats.to_latin_number(local_total);
+				if (local_total != 0.00) {
+					String deduction_txt = m.getKey() + ". " + DeductionTypes.getType(m.getKey());
+					String deduction_total_txt = PdfFormats.to_latin_number(local_total) + words.getString("MONEDA");
+						
+					//BUILD 
+					PDFToolkit.drawText(contents,deduction_txt,x,y,PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, fontSize);
+					PDFToolkit.drawTextRight(contents,new PDRectangle(x + 355,y - 5, 100, 10),deduction_total_txt,PdfColors.BLACK,PdfFonts.HELVETICA,fontSize-2,2,5);
+					PDFToolkit.drawBox(contents,x, y -2, 455, .2f, PdfColors.BLACK);
 					
-				//BUILD 
-				PDFToolkit.drawText(contents,deduction_txt,x,y,PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, fontSize);
-				PDFToolkit.drawTextRight(contents,new PDRectangle(x + 355,y - 5, 100, 10),deduction_total_txt,PdfColors.BLACK,PdfFonts.HELVETICA,fontSize-2,2,5);
-				PDFToolkit.drawBox(contents,x, y -2, 455, .2f, PdfColors.BLACK);
-				
-				y -= 12;
-				m.getValue().stream().forEach(
-						n ->{
-							try {
-								String entry_txt =  PdfFormats.to_latin_number(n.getAmount().orElse(0.00))+ " por " + n.getDescription().orElse("");
-								String entry_percent = PdfFormats.to_latin_number(n.getPercent().orElse(0.00))+ " % " ;
-								
-								PDFToolkit.drawText(contents,entry_txt,x + 9,y,PdfColors.BLACK, PdfFonts.HELVETICA, fontSize);
-								PDFToolkit.drawText(contents,entry_percent,x + 345,y,PdfColors.BLACK, PdfFonts.HELVETICA, fontSize-1);
-							} catch (IOException e) {e.printStackTrace();}
-							y -= 10;
-						}
-				);			
+					y -= 12;
+					m.getValue().stream().forEach(
+							n ->{
+								try {
+									String entry_txt =  PdfFormats.to_latin_number(n.getAmount().orElse(0.00))+ "\u20ac por " + n.getDescription().orElse("");
+									String entry_percent = PdfFormats.to_latin_number(n.getPercent().orElse(0.00))+ " % " ;
+									
+									PDFToolkit.drawText(contents,entry_txt,x + 9,y,PdfColors.BLACK, PdfFonts.HELVETICA, fontSize);
+									PDFToolkit.drawText(contents,entry_percent,x + 345,y,PdfColors.BLACK, PdfFonts.HELVETICA, fontSize-1);
+								} catch (IOException e) {e.printStackTrace();}
+								y -= 10;
+							}
+					);	
+				}
+						
 				
 			} 
 			catch (IOException e) {e.printStackTrace();}
@@ -350,36 +439,50 @@ public class DefaultPayrollTemplate {
 			String irpf_title =					"4. " + words.getString("BASE SUJETA A RETENCION IRPF") + " ";
 			String total_contingencies_title =	words.getString("TOTAL APORTACIONES");
 			
+			
+			
 			String monthly_ammount =  			PdfFormats.to_latin_number(contigencies.get().getMonthly_amount().orElse(0.00)) + "";
 			String comm_cont_base = 			PdfFormats.to_latin_number(contigencies.get().getCommon_cont_base().orElse(0.00)) + "";
 			String comm_cont_type = 			PdfFormats.to_latin_number(contigencies.get().getCommon_cont_type().orElse(0.00)) + "%";
+			if (comm_cont_type.contains("-1"))
+				comm_cont_type = "err. %";
 			String comm_cont_ap_ent = 			PdfFormats.to_latin_number(contigencies.get().getCommon_cont_ap_enterprise().orElse(0.00)) + "";
 			String extra_prorration_amount =    PdfFormats.to_latin_number(contigencies.get().getExtra_proration_amount().orElse(0.00)) + "";
 			String prof_contingencies_base = 	PdfFormats.to_latin_number(contigencies.get().getProfessional_cont_base().orElse(0.00)) + "";
 			String at_ep_type = 				PdfFormats.to_latin_number(contigencies.get().getAt_ep_type().orElse(0.00)) + "%";
+			if (at_ep_type.contains("-1"))
+				at_ep_type = "err. %";
 			String at_ep_ap_ent =				PdfFormats.to_latin_number(contigencies.get().getAt_ep_ap_enterprise().orElse(0.00)) + "";
 			String unemployment_type = 			PdfFormats.to_latin_number(contigencies.get().getUnemployment_type().orElse(0.00)) + "%";
+			if (unemployment_type.contains("-1"))
+				unemployment_type = "err. %";
 			String unemployment_ap_ent = 		PdfFormats.to_latin_number(contigencies.get().getUnemployment_ap_enterprise().orElse(0.00)) + "";
 			String profes_form_type = 			PdfFormats.to_latin_number(contigencies.get().getProfes_form_type().orElse(0.00)) + "%";
 			String profes_form_ap_ent = 		PdfFormats.to_latin_number(contigencies.get().getProfes_form_ap_enterprise().orElse(0.00)) + "";
 			String fogasa_type = 				PdfFormats.to_latin_number(contigencies.get().getFogasa_type().orElse(0.00)) + "%";
+			if (fogasa_type.contains("-1"))
+				fogasa_type = "err. %";
 			String fogasa_ap_ent = 				PdfFormats.to_latin_number(contigencies.get().getFogasa_ap_enterprise().orElse(0.00)) + "";
 			String force_majeure_base = 		PdfFormats.to_latin_number(contigencies.get().getForce_majeure_base().orElse(0.00)) + "";
 			String force_majeure_type = 		PdfFormats.to_latin_number(contigencies.get().getForce_majeure_type().orElse(0.00)) + "%";
+			if (force_majeure_type.contains("-1"))
+				force_majeure_type = "err. %";
 			String force_majeure_ap_ent = 		PdfFormats.to_latin_number(contigencies.get().getForce_majeure_ap_enterprise().orElse(0.00)) + "";
 			String no_struct_base = 			PdfFormats.to_latin_number(contigencies.get().getNo_struct_base().orElse(0.00)) + "";
 			String no_struct_type = 			PdfFormats.to_latin_number(contigencies.get().getNo_struct_type().orElse(0.00)) + "%";
+			if (no_struct_type.contains("-1"))
+				no_struct_type = "err. %";
 			String no_struct_ap_ent = 			PdfFormats.to_latin_number(contigencies.get().getNo_struct_ap_enterprise().orElse(0.00)) + "";
 			String total_irpf = 				PdfFormats.to_latin_number(contigencies.get().getIrpf_esp().orElse(0.00) + contigencies.get().getIrpf_retrib_diner().orElse(0.00)) + "\u20ac";
-			String total_contingencies_amount =	PdfFormats.to_latin_number(contigencies.get().getTotal().orElse(0.00));
+			String total_contingencies_amount =	PdfFormats.to_latin_number(contigencies.get().getTotal().orElse(0.00)) + words.getString("MONEDA");
 			
 			//BUILD FOOTER
 			
 			Double irpf_esp = contigencies.get().getIrpf_esp().orElse(0.00) ;
 			Double irpf_ret_din = contigencies.get().getIrpf_retrib_diner().orElse(0.00);
 					
-			if(irpf_esp != 0) irpf_title += 		PdfFormats.to_latin_number(irpf_esp) + "\u20ac " + words.getString("EN ESPECIE") + " ";
-			if(irpf_ret_din != 0) irpf_title += 	PdfFormats.to_latin_number(irpf_ret_din) + "\u20ac " + words.getString("EN RETRIBUCIONES DINERARIAS");
+			if(irpf_esp != 0) irpf_title += 		PdfFormats.to_latin_number(irpf_esp) + words.getString("MONEDA") + words.getString("EN ESPECIE") + " ";
+			if(irpf_ret_din != 0) irpf_title += 	PdfFormats.to_latin_number(irpf_ret_din) + words.getString("MONEDA") + words.getString("EN RETRIBUCIONES DINERARIAS");
 			
 			PDFToolkit.drawBorderedBox(contents, 10, 10, 575, 160, PdfColors.LIGHT_GRAY);
 			PDFToolkit.drawText(contents,title,x,y,PdfColors.BLACK,PdfFonts.HELVETICA_BOLD,fontSize-1);

@@ -270,6 +270,12 @@ public class SalaryDAO {
 				.setInkindIrpfBase(rootRecord.get(SALARY.INKIND_IRPF_BASE))
 				.setTotalEnterprise(rootRecord.get(SALARY.TOTAL_ENTERPRISE))
 				.setTotalSSContributions(rootRecord.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS))
+				.setEmployeeSeniorityDate(rootRecord.get(SALARY.SENIORITY_DATE))
+				.setEnterpriseAddress(rootRecord.get(SALARY.ENTERPRISE_ADDRESS))
+				.setEmployeeSSNumber(rootRecord.get(SALARY.SOCIAL_SECURITY_NUMBER))
+				.setEmployeeCategory(rootRecord.get(SALARY.CATEGORY))
+				.setSalaryType(rootRecord.get(SALARY.TYPE))
+				.setEmployeeQuoteGroup(rootRecord.get(SALARY.QUOTE_GROUP))
 				;
 				
 				int salaryId = rootRecord.get(SALARY.ID);
