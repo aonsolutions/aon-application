@@ -57,6 +57,7 @@ import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.agreement.Agreement.AgreementLevel;
 import com.esferalia.aon.payroll.agreement.Agreement.AgreementLevelData;
 import com.esferalia.aon.payroll.agreement.ServiAgreement.Extension;
@@ -404,10 +405,13 @@ public class AgreementParser {
 
 	}};
 	
-	public static String getAgreement(DSLContext dslContext, String agreementCode, Integer domainId) {
+	public static Pair<Integer,String> getAgreement(DSLContext dslContext, String agreementCode, Integer domainId) {
 		DOMAIN_ID = domainId;
+		Pair<Integer,String> agreementLog = new Pair<Integer, String>(-1, "");
+		
 		String log = "";
 		Map<String, String> varNotInsertMap = new HashMap<String, String>();
+		Pair<Integer,Map<String, String>> insertResult = new Pair<Integer, Map<String,String>>(-1, new HashMap<String, String>());
 		
 		InputStream is = null;
 		if(AonStringUtils.contains(agreementCode, 'a'))
@@ -435,12 +439,14 @@ public class AgreementParser {
 			getAgreementLevelData(dslContext, document, agreement);
 			
 			// Insert Agreement to DataBase
-			varNotInsertMap = insertAgreementDB(dslContext, agreement);
+			insertResult = insertAgreementDB(dslContext, agreement);
 			
 //			System.out.println("serviAgreementsMap.put(\"" + agreement.getSSCode() + " - " + agreement.getAgreementDescription().toUpperCase() + "\",  \"" + agreement.getServiAgreementCode() + "\");"  );
 			
+			varNotInsertMap = insertResult.getSecond();
+			
 			if(!varNotInsertMap.isEmpty()) {
-				return getAgreementLog(dslContext, domainId, agreement, varNotInsertMap);
+				log = getAgreementLog(dslContext, domainId, agreement, varNotInsertMap);
 			}
 			
 		} catch (ParserConfigurationException e) {
@@ -451,7 +457,10 @@ public class AgreementParser {
 			e.printStackTrace();
 		}
 		
-		return log;
+		agreementLog.setFirst(insertResult.getFirst());
+		agreementLog.setSecond(log);
+		
+		return agreementLog;
 	}
 
 	private static String getAgreementLog(DSLContext dslContext, Integer domainId, Agreement agreement, Map<String, String> varNotInsertMap) {
@@ -763,7 +772,8 @@ public class AgreementParser {
 		}
 	}
 	
-	private static Map<String, String> insertAgreementDB(DSLContext dslContext, Agreement agreement) {
+	private static Pair<Integer,Map<String, String>> insertAgreementDB(DSLContext dslContext, Agreement agreement) {
+		Pair<Integer,Map<String, String>> result = new Pair<Integer, Map<String,String>>(-1, new HashMap<String, String>());
 		// Variables not insert
 		Map<String, String> mapVarNotInsert = new HashMap<String, String>();
 		
@@ -952,7 +962,10 @@ public class AgreementParser {
 		.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
 		.execute();
 		
-		return mapVarNotInsert;
+		result.setFirst(agreementId);
+		result.setSecond(mapVarNotInsert);
+		
+		return result;
 		
 	}
 	
@@ -1084,8 +1097,12 @@ public class AgreementParser {
 			
 //			getAgreement(dslContext, agreementCode);
 			
+			Pair<Integer,String> agreementResult = new Pair<Integer, String>(-1, "");
+			
 			String log = "";
-			log += getAgreement(dslContext, agreementCode, Integer.parseInt(domainIdStr));
+			agreementResult = getAgreement(dslContext, agreementCode, Integer.parseInt(domainIdStr));
+			log = agreementResult.getSecond();
+			
 //			for(String agreementCodeAux : agreementCodes)
 //				log += getAgreement(dslContext, agreementCodeAux, Integer.parseInt(domainIdStr));
 			
