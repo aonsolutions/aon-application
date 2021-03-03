@@ -2616,6 +2616,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	public void setSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
+		info("setSalaryDraftObject");
 		showDraft();
 		this.salaryDraftObject = salaryDraftObject;
 		onChangedSalaryDraftObject(salaryDraftObject);
@@ -4104,6 +4105,7 @@ public class SalaryDraft extends ResizeComposite
 		if (itemScope.compareTo(Scope.AGREEMENT) > 0 
 			&& item.isDefinedAt(Scope.AGREEMENT)
 			&& isRemove(item) ) {
+			info("SETDISABLEBUTTON:" + item.getDescription());
 			Button agreementButton = getDisableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
@@ -4113,29 +4115,34 @@ public class SalaryDraft extends ResizeComposite
 		}
 		else if (itemScope.compareTo(Scope.AGREEMENT) == 0 
 				&& isDisabled(item) ) {
+			info("SETDISABLEAGREEMENTBUTTON:" + item.getDescription());
 			Button agreementButton = getDisableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
 			handler.setDisableAgreementButton(agreementButton);
 			agreementButton.ensureDebugId("agreement-button-" + row );
 			paymentsTable.getRowFormatter().addStyleName(row, "aon-Disabled");
-		} 
+		}
 		else if (item.isDefinedAt(Scope.AGREEMENT) &&
 			itemScope.compareTo(Scope.AGREEMENT) > 0) {
+			info("SETENABLEBUTTON:" + item.getDescription());
 			Button agreementButton = getEnableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
-			handler.setEnableAgreementButton(agreementButton);
+			handler.setEnableButton(agreementButton);
+			//handler.setEnableAgreementButton(agreementButton);
 			agreementButton.ensureDebugId("agreement-button-" + row );
 
 		} else if (item.isDefinedAt(Scope.AGREEMENT) ||
 			itemScope.compareTo(Scope.AGREEMENT) == 0) {
+			info("SETENABLEBUTTON:" + item.getDescription());
 			Button agreementButton = getEnableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
 			handler.setEnableButton(agreementButton);
 			agreementButton.ensureDebugId("agreement-button-" + row );
 		} else if (isHideable(item)) {
+			info("SETHIDEBUTTON:" + item.getDescription());
 			Button hideButton = getEnableButton();
 			hideButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(hideButton);
