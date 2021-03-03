@@ -1,5 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.creators.enterprisePayroll;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -21,10 +22,24 @@ import com.github.javafaker.Faker;
 
 public class EnterprisePayrollTest_v2 {
 
+	//CHECKS IF IS CREATED DIRECTORY
+	private void checkDirectory() {
+		File dir = new File("./pdf_out/");
+		if(!dir.exists()) dir.mkdir();
+	}
+	
+	
 	@Test
 	public void testEnterprisePayroll() {
-
+		checkDirectory();
 		try {
+			
+			System.out.println("\n\n-----------------------------------");
+			System.out.println(" ENTERPRISE PAYROLL CREATOR");
+			System.out.println("-----------------------------------");
+			System.out.println("\n Starting.....");
+			
+			
 			Map<String, Map<String, EnterprisePayrollEntry>> entries = new HashMap<>();
 			Map<String, Map<String, EnterprisePayrollEntry>> ss_entries = new HashMap<>();;
 
@@ -36,6 +51,9 @@ public class EnterprisePayrollTest_v2 {
 			HashMap<String, EnterprisePayrollEntry> categoria6 = new HashMap<>();
 
 			Faker f = new Faker();
+			
+			System.out.println(" Starting java faker.....");
+			System.out.println(" Collecting data .....");
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
@@ -51,10 +69,12 @@ public class EnterprisePayrollTest_v2 {
 						f.number().randomDouble(2, 0, 99999)
 				);
 
+				System.out.println(" > new Entry: " + e.getEmpleado());
 				categoria1.put(cat, e);
 				categoria2.put(cat, e);
 				categoria3.put(cat, e);
 			}
+			System.out.println(" Setting up categories .....");
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "cet " + i;
@@ -69,10 +89,13 @@ public class EnterprisePayrollTest_v2 {
 						f.number().randomDouble(2, 0, 99999), 
 						f.number().randomDouble(2, 0, 99999)
 				);
+				System.out.println(" > new Entry: " + e.getEmpleado());
+				
 				categoria1.put(cat, e);
 				categoria2.put(cat, e);
 				categoria3.put(cat, e);
 			}
+			System.out.println(" Settting up data.....");
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
@@ -87,6 +110,7 @@ public class EnterprisePayrollTest_v2 {
 						f.number().randomDouble(2, 0, 99999), 
 						f.number().randomDouble(2, 0, 99999)
 				);
+				System.out.println(" > new Entry: " + e.getEmpleado());
 				
 				categoria3.put(cat, e);
 				categoria4.put(cat, e);
@@ -103,7 +127,7 @@ public class EnterprisePayrollTest_v2 {
 			ss_entries.put(f.pokemon().location(),categoria6);
 
 			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", f.zelda().game() + " S.L",	entries, ss_entries);
-			PdfMaker.print_enterprise_payroll(payroll, new FileOutputStream("Enterprise_payroll.pdf"),Optional.of(new Locale("Es")));
+			PdfMaker.print_enterprise_payroll(payroll, new FileOutputStream("./pdf_out/Enterprise_payroll.pdf"),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {
 			e.printStackTrace();

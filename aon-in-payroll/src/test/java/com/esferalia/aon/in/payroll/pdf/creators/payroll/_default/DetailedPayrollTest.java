@@ -2,6 +2,7 @@ package com.esferalia.aon.in.payroll.pdf.creators.payroll._default;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,23 +11,35 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollAccrual;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollDeduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases.Contingency_bases_builder;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll.DefaultPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollAccrual;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollDeduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
 
 
 public class DetailedPayrollTest {
 
+	//CHECKS IF IS CREATED DIRECTORY
+	private void checkDirectory() {
+		File dir = new File("./pdf_out/");
+		if(!dir.exists()) dir.mkdir();
+	}
+	
 	
 	@Test
-	public void random_print_test() {
+	public void random_print_test() {		
+		checkDirectory();
+		
+		System.out.println("\n\n-----------------------------------");
+		System.out.println(" PAYROLL CREATOR");
+		System.out.println("-----------------------------------");
+		System.out.println("\n Starting.....");
+		
 		DefaultPayrollBuilder builder = new DefaultPayrollBuilder();
 		
 		//CREATE ACCRUALS
@@ -41,6 +54,7 @@ public class DetailedPayrollTest {
 				ac.get(key).add(accrual);
 			}
 		}
+		System.out.println(" Preparing accruals.....");
 		
 		///CREATE DEDUCTIONS
 		Map<Integer,ArrayList<DefaultPayrollDeduction>> de = new HashMap<Integer,ArrayList<DefaultPayrollDeduction>>();
@@ -63,7 +77,7 @@ public class DetailedPayrollTest {
 				de.get(key).add(deduction);
 			}
 		}
-		
+		System.out.println(" Preparing deductions.....");
 		
 		//CREATE CONTIGENCIES
 		Contingency_bases_builder con_builder = new Contingency_bases_builder();
@@ -91,7 +105,7 @@ public class DetailedPayrollTest {
 		.setIrpf_esp(Optional.of(99999.99))
 		.setIrpf_retrib_diner(Optional.of(99999.99))
 		.setTotal(Optional.of(99999.99));
-
+		System.out.println(" Setting up contingencies.....");
 		
 		//BUILD PAYROLL
 		builder
@@ -117,7 +131,11 @@ public class DetailedPayrollTest {
 		.setPayrollType(Optional.of(PayrollTypes.Type.EXTRAS))
 		.setContingencies(Optional.of(con_builder.build()));
 		
-		try { PdfMaker.print_default_payroll("payrollRandom.pdf", builder.build(), DetailedPayrollTest.class.getResourceAsStream("HOR.png"),new Locale("Es"));} 
+		try { 
+			System.out.println(" Printing PDF file..... \n");
+			PdfMaker.print_default_payroll("./pdf_out/payrollRandom.pdf", builder.build(), DetailedPayrollTest.class.getResourceAsStream("HOR.png"),new Locale("Es"));
+			System.out.println(" >> DONE.");
+		} 
 		catch (CanNotCreatePdfException e) {
 			e.printStackTrace(); 
 			fail("Can not create the payroll");

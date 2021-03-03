@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,12 +24,26 @@ import static junit.framework.Assert.fail;
 
 public class InvoiceTest {
 
+	//CHECKS IF IS CREATED DIRECTORY
+	private void checkDirectory() {
+		File dir = new File("./pdf_out/");
+		if(!dir.exists()) dir.mkdir();
+	}
+	
+	
 	@Test
 	public void EnterpriseBillCreationTest(){
+		System.out.println("\n\n-----------------------------------");
+		System.out.println(" INVOICE CREATOR");
+		System.out.println("-----------------------------------");
+		System.out.println("\n Starting.....");
+		
+		checkDirectory();
 		ArrayList<InvoiceEntry> entries = new ArrayList<>();
 		ArrayList<InvoiceTax> taxes = new ArrayList<>();
 		ArrayList<InvoiceFinance> finances = new ArrayList<>();
 
+		System.out.println(" Creating entries.....");
 		for (int i = 1; i < 20; i++)
 			entries.add(new InvoiceEntry("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris." + i,99999999.99,99999999.99,100,99999999.99));
 		for (int i = 0; i < 3; i++)
@@ -52,21 +67,39 @@ public class InvoiceTest {
 				105,
 				InvoiceTest.class.getResourceAsStream("qrcode.png")
 		);
-		try {InvoiceTemplate.create(new FileOutputStream("invoice.pdf"),bill,true);}
+		
+		System.out.println(" Setting up invoice.....");
+		try {
+			System.out.println(" Printing PDF file..... \n");
+			InvoiceTemplate.create(new FileOutputStream("./pdf_out/invoice.pdf"),bill,true);
+			System.out.println(" >> DONE.");
+		}
 		catch (IOException e){fail("Can not read test resources");}
 		catch (CanNotCreatePdfException e) {fail("Can not create pdf");}
 	}
 
 	@Test
 	public void EnterpriseBillCreationTestWithJSONTest() {
+		
+		System.out.println("\n\n-----------------------------------");
+		System.out.println(" INVOICE CREATOR (JSON MODE)");
+		System.out.println("-----------------------------------");
+		System.out.println("\n Starting.....");
+		
 		PrintInvoiceConfiguration config = new PrintInvoiceConfiguration();
 		config.setAdjustImage(true)
 			  .setDetailed(true)
 			  .setBackgroundImage(InvoiceTest.class.getResourceAsStream("TestLayer.png"))
 			  .setHeader(105)
 			  .setFooter(75);
-
-		try {PdfMaker.print_invoice(InvoiceTest.class.getResourceAsStream("factura.json"), config, InvoiceTest.class.getResourceAsStream("qrcode.png"));}
+		System.out.println(" Setting up invoice.....");
+		
+		try {
+			System.out.println(" Parsing json file.....");
+			System.out.println(" Printing PDF file.....");
+			PdfMaker.print_invoice(InvoiceTest.class.getResourceAsStream("factura.json"), config, InvoiceTest.class.getResourceAsStream("qrcode.png"));
+			System.out.println(" >> DONE.");
+		}
 		catch (CanNotCreatePdfException e) {fail("Can not create pdf");}
 		catch (JsonParseException e) {fail("Can not parse json");}
 	}
@@ -74,6 +107,12 @@ public class InvoiceTest {
 	@Test
 	@Ignore
 	public void EnterpriseBillCreationDemoTest() {
+		
+		System.out.println("\n\n-----------------------------------");
+		System.out.println(" INVOICE CREATOR (DEMO MODE)");
+		System.out.println("-----------------------------------");
+		System.out.println("\n Starting.....");
+		
 		PrintInvoiceConfiguration config = new PrintInvoiceConfiguration();
 		config.setAdjustImage(true)
 				.setDetailed(true)
@@ -82,7 +121,11 @@ public class InvoiceTest {
 				.setFooter(75);
 
 		try {PdfMaker.print_demo_invoice(config, InvoiceTest.class.getResourceAsStream("qrcode.png"));}
-		catch (CanNotCreatePdfException e) {fail("Can not create pdf" );}
+		catch (CanNotCreatePdfException e) {
+			System.out.println(" Printing PDF file.....");
+			fail("Can not create pdf" );
+			System.out.println(" >> DONE.");
+		}
 		catch (IOException e) {fail("Can not access test resources");}
 	}
 

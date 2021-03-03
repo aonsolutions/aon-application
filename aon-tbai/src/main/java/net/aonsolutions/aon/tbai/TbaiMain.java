@@ -1,11 +1,14 @@
 package net.aonsolutions.aon.tbai;
 
-import static net.aonsolutions.aon.tbai.Toolkit.JsonToolkit.getArray;
-import static net.aonsolutions.aon.tbai.Toolkit.JsonToolkit.getNumber;
-import static net.aonsolutions.aon.tbai.Toolkit.JsonToolkit.getObject;
-import static net.aonsolutions.aon.tbai.Toolkit.JsonToolkit.getString;
-import static net.aonsolutions.aon.tbai.Toolkit.JsonToolkit.read;
-import static net.aonsolutions.aon.tbai.Toolkit.TbaiToolkit.parseDate;
+import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getArray;
+import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getNumber;
+import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getObject;
+import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getString;
+import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.read;
+import static net.aonsolutions.aon.tbai._enums.Territory.ARABA;
+import static net.aonsolutions.aon.tbai._enums.Territory.BIZKAIA;
+import static net.aonsolutions.aon.tbai._enums.Territory.GIPUZKOA;
+import static net.aonsolutions.aon.tbai.toolkit.DataToolkit.parseDate;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -23,12 +26,17 @@ import javax.xml.bind.Marshaller;
 
 import com.esferalia.aon.occam.api.model.type.Country;
 
-import net.aonsolutions.aon.tbai.beans.invoice.TbaiEmisionInvoice;
-import net.aonsolutions.aon.tbai.beans.invoice.TbaiEmisionInvoice.TbaiEmisionInvoiceBuilder;
-import net.aonsolutions.aon.tbai.beans.invoice.enums.IDtype;
-import net.aonsolutions.aon.tbai.beans.invoice.parts.Entity;
-import net.aonsolutions.aon.tbai.beans.invoice.parts.InvoiceDetailData;
-import net.aonsolutions.aon.tbai.exceptions.CannotCreateXMLException;
+import net.aonsolutions.aon.tbai._beans.Entity;
+import net.aonsolutions.aon.tbai._beans.InvoiceDetailData;
+import net.aonsolutions.aon.tbai._enums.IDtype;
+import net.aonsolutions.aon.tbai._enums.Territory;
+import net.aonsolutions.aon.tbai.emision.EmisionInvoice;
+import net.aonsolutions.aon.tbai.emision.EmisionInvoice.TbaiEmisionInvoiceBuilder;
+import net.aonsolutions.aon.tbai.emision.araba.ArabaEmisionValidator;
+import net.aonsolutions.aon.tbai.emision.bizkaia.BizkaiaEmisionValidator;
+import net.aonsolutions.aon.tbai.emision.gipuzkoa.GipuzkoaEmisionValidator;
+import net.aonsolutions.aon.tbai.exceptions.validation.ValidationException;
+import net.aonsolutions.aon.tbai.exceptions.xml.XMLCreationException;
 import ticketbai.emision.Cabecera;
 import ticketbai.emision.Factura;
 import ticketbai.emision.HuellaTBAI;
@@ -37,10 +45,7 @@ import ticketbai.emision.TicketBai;
 
 public class TbaiMain {
 	
-	
-
-	//JSON TO INVOICE
-	public static TbaiEmisionInvoice json_to_invoice(final InputStream is) {
+	public static EmisionInvoice jsonToInvoice(final InputStream is) {
 	
 		final JsonObject json = read(is);		
 		final String date = 				getString(json, "date");
@@ -94,7 +99,7 @@ public class TbaiMain {
 		}	
 		
 		final TbaiEmisionInvoiceBuilder builder = new TbaiEmisionInvoiceBuilder();		
-		final TbaiEmisionInvoice invoice = 
+		final EmisionInvoice invoice = 
 			 builder
 			.setSender				(sender)
 			.setRecievers			(receivers)
@@ -118,9 +123,15 @@ public class TbaiMain {
 		return invoice;
 	}
 	
-	//INVOICE TBAI EMISION
-	public static void tbai_emision(final TbaiEmisionInvoice i,final String name) throws CannotCreateXMLException {
-		try {
+	public static void createEmisionTBAI(final EmisionInvoice i,final String name,Territory territory) throws XMLCreationException, ValidationException {
+		try {			
+			switch (territory) {
+				case ARABA:				ArabaEmisionValidator.validate(i); 		break;
+				case BIZKAIA: 			BizkaiaEmisionValidator.validate(i);  	break;
+				case GIPUZKOA:			GipuzkoaEmisionValidator.validate(i); 	break;
+				default:  				throw new ValidationException("Territory is not defined");
+			}
+			
 			final Cabecera 		cabecera = 	i.getCabecera();
 			final Sujetos 		sujetos = 	i.getSujetos();
 			final Factura 		factura = 	i.getFactura();
@@ -138,10 +149,9 @@ public class TbaiMain {
 			final OutputStream os = new FileOutputStream( "./" + name);
 			jaxbMarshaller.marshal( tbai, os );
 		} 
-		catch (JAXBException | FileNotFoundException e) {throw new CannotCreateXMLException("ERROR WHILE ACCESSING DISK: Aborting...", e);} 
+		catch (JAXBException | FileNotFoundException e) {throw new XMLCreationException("ERROR WHILE ACCESSING DISK: Aborting...", e);} 
 	}
 	
-	//INVOICE TBAI ANULATION
-	public static void tbai_anulation(){/*TO DO uwu*/}
+	public static void createAnulacionTBAI(){/*TO DO uwu*/}
 
 }
