@@ -55,6 +55,7 @@ form {
   -webkit-appearance: none;
   -moz-appearance: none;
   outline: none !important;
+  box-shadow: 0px 2px 4px rgb(0, 0, 0, .15);
 }
 
 .aonButton:active {
@@ -65,6 +66,12 @@ form {
   cursor: not-allowed;
   background-color: #cccccc;
 }
+
+button:disabled, button[disabled]{
+  cursor: not-allowed;
+  background-color: #ccc !important;
+}
+
 .aonColorIcon {
   color: #5f6368;
 }

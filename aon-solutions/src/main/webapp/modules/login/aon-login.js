@@ -15,6 +15,7 @@ import "../company/aon-mobile-desktop.js";
 import "../company/aon-parent.js";
 
 import * as MSG from "../../environments/msg.js";
+import { webkitRequestMobile } from "../../services/request.js";
 
 export class AonLogin extends AonElement {
   constructor() {
@@ -91,7 +92,7 @@ export class AonLogin extends AonElement {
 
 						</div>
 			    <div class="aon-login-info2">
-    				<span >
+    				<span>
 							<a target="_blank" href="http://www.aonsolutions.es">
 			        	aon Solutions
 			      	</a>
@@ -101,6 +102,8 @@ export class AonLogin extends AonElement {
 			      </div>
 			    </div>
 
+          <div id="logosMobiles"></div>
+
 				</div>
 			</div>
 
@@ -108,7 +111,11 @@ export class AonLogin extends AonElement {
 			<aon-toast id="aonLoginToast"></aon-toast>
 			`;
 
-    this.buildLogo();
+    if(webkitRequestMobile()){ // si es app
+      this.buildAppLogo();
+    } 
+
+    // this.buildAppLogo();
 
     this.aonDialogLoginRemember();
 
@@ -130,11 +137,30 @@ export class AonLogin extends AonElement {
       this.getElement("aonDialogLogin").open()
     );
 
-    // let aonBtnRegister = this.getElement("aonBtnRegister");
-    // aonBtnRegister.addEventListener("click", () => {
-    //   this.hideElement("aonLogin");
-    //   this.showElement("aonRegister");
-    // });
+  }
+
+
+  buildAppLogo(){
+    const div  = this.getElement('logosMobiles');
+    div.style.textAlign = "center";
+    const playStore = this.createElement('a');
+    playStore.href = "https://play.google.com/store/apps/details?id=aon.solutions";
+    playStore.target = "_blank";
+    const imgPlayStore = this.createElement('img');
+    imgPlayStore.src= "assets/playstore.png";
+    imgPlayStore.style.height = "40px";
+    playStore.appendChild(imgPlayStore);
+    div.appendChild(playStore);
+
+    const appStore = this.createElement('a');
+    appStore.href = "https://itunes.apple.com/es/app/aon-solutions/id1538461097";
+    appStore.target = "_blank";
+    const imgAppStore = this.createElement('img');
+    imgAppStore.src= "assets/appstore.png";
+    imgAppStore.style.height = "40px";
+    imgAppStore.style.filter = "grayscale(100%)";
+    appStore.appendChild(imgAppStore);
+    div.appendChild(appStore);
   }
 
   aonDialogLoginRemember() {

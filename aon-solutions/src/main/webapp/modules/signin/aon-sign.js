@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getTaskHolders, getTimeControl, saveTimeControl} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
-import { timePaser } from '../../services/utils.js';
+import { timePaser, setDateTimestampDay } from '../../services/utils.js';
 import { AonSelect } from '../../components/aon-select.js';
 
 export class AonSign extends AonElement {
@@ -42,6 +42,12 @@ export class AonSign extends AonElement {
   }
 
   build(){
+
+    if(this.isMobile()){
+      this.style.textAlign= "center";
+      this.parentNode.style.marginLeft = 0;
+    }
+
     if(this._taskHolders.length > 1){
       let company = this.createElement('div');
       company.style.width = '200px';
@@ -71,6 +77,7 @@ export class AonSign extends AonElement {
     time.innerHTML = "00:00:00";
     this.appendChild(time);
     let div = this.createElement('div');
+    if(this.isMobile()) div.style.marginTop = "5px";
     div.id = this.CONTENT;
     this.appendChild(div);
     getTimeControl({task_holder: this._taskHolder}).then(r => this.buildSignin(r));
@@ -83,17 +90,25 @@ export class AonSign extends AonElement {
 		let button = document.createElement('button');
     button.className = 'aonButton';
 		button.style.backgroundColor = '#86D364';
-		button.style.marginRight = '10px';
-    button.style.width = '100px';
     button.style.padding = '1rem 1rem';
+    button.style.width = '120px';
 		button.innerHTML = 'ENTRADA';
-		button.addEventListener('click', () => {
-      getPosition().then(position => {
+    if(this.isMobile()){
+      button.style.fontWeight = 'bold';
+      button.style.width = "60%";
+      button.style.borderRadius = "12px";
+    } else {
+      button.style.marginRight = '10px';
+    }
+		button.addEventListener('click', async () => {
+      this.disabledButton(true);
+      await getPosition().then(async(position) => {
         let signin = {status: 'in', task_holder: this._taskHolder};
         if(position && position.latitude && position.longitude)
           signin.coordinates = position.latitude + ',' + position.longitude;
-        saveTimeControl(signin).then(r => this.buildSignin(r));
+        await saveTimeControl(signin).then(r => this.buildSignin(r));
       });
+      this.disabledButton(false);
     });
 		content.appendChild(button);
 	}
@@ -109,13 +124,19 @@ export class AonSign extends AonElement {
     button.style.width = '100px';
     button.style.padding = '1rem 1rem';
 		button.innerHTML = 'SALIDA';
-		button.addEventListener('click', () => {
-      getPosition().then(position => {
+    if(this.isMobile()){
+      button.style.fontWeight = 'bold';
+      button.style.borderRadius = "6px";
+    } 
+		button.addEventListener('click', async () => {
+      this.disabledButton(true);
+      await getPosition().then(async(position) => {
         let signin = {status: 'out', task_holder: this._taskHolder};
         if(position)
           signin.coordinates = position.latitude + ',' + position.longitude;
-        saveTimeControl(signin).then(r => this.buildSignin(r));
+        await saveTimeControl(signin).then(r => this.buildSignin(r));
       });
+      this.disabledButton(false);
 		});
 		content.appendChild(button);
 
@@ -124,15 +145,21 @@ export class AonSign extends AonElement {
 		button2.style.backgroundColor = '#F39F1D';
 		button2.style.marginRight = '10px';
     button2.style.width = '100px';
-    button.style.padding = '1rem 1rem';
+    button2.style.padding = '1rem 1rem';
 		button2.innerHTML = 'PAUSA';
-		button2.addEventListener('click', () => {
-      getPosition().then(position => {
+    if(this.isMobile()){
+      button2.style.fontWeight = 'bold';
+      button2.style.borderRadius = "6px";
+    } 
+		button2.addEventListener('click', async() => {
+      this.disabledButton(true);
+      await getPosition().then(async(position) => {
         let signin = {status: 'pause', task_holder: this._taskHolder};
         if(position)
           signin.coordinates = position.latitude + ',' + position.longitude;
-        saveTimeControl(signin).then(r => this.buildSignin(r));
+        await saveTimeControl(signin).then(r => this.buildSignin(r));
       });
+      this.disabledButton(false);
 		});
 		content.appendChild(button2);
 	}
@@ -144,20 +171,33 @@ export class AonSign extends AonElement {
 		let button = document.createElement('button');
     button.className = 'aonButton';
 		button.style.backgroundColor = '#86D364';
-		button.style.marginRight = '10px';
-    button.style.width = '100px';
+    button.style.width = '120px';
     button.style.padding = '1rem 1rem';
 		button.innerHTML = 'VUELTA';
-		button.addEventListener('click', () => {
-      getPosition().then(position => {
+    if(this.isMobile()){
+      button.style.fontWeight = 'bold';
+      button.style.width = "22%";
+      button.style.borderRadius = "12px";
+    } else {
+      button.style.marginRight = '10px';
+    }
+		button.addEventListener('click', async () => {
+      this.disabledButton(true);
+      await getPosition().then(async(position) => {
         let signin = {status: 'in', task_holder: this._taskHolder};
         if(position)
           signin.coordinates = position.latitude + ',' + position.longitude;
-        saveTimeControl(signin).then(r => this.buildSignin(r));
+        await saveTimeControl(signin).then(r => this.buildSignin(r));
       });
+      this.disabledButton(false);
 		});
 		content.appendChild(button);
 	}
+
+  disabledButton(disabled){
+    let content = document.getElementById(this.CONTENT);
+    if(content) [...content.querySelectorAll('button')].map(el => el.disabled = disabled);
+  }
 
   buildSignin(signin) {
 		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
@@ -178,6 +218,7 @@ export class AonSign extends AonElement {
       this.timeStop();
       this.getElement(this.TIME).innerHTML = timePaser(signin.time);
     }
+    this.divLastTime(signin);
   }
 
   timeAction(time) {
@@ -186,6 +227,20 @@ export class AonSign extends AonElement {
       timeDiv.innerHTML = timePaser(time);
     } else this.timeStop();
     this._timeAction = setTimeout( () => this.timeAction(time + 1000), 1000);
+  }
+
+  divLastTime(signin){
+    if(signin && signin.last_date){
+      const id = 'lastTimeUser';
+      const div = this.getElement(id) || this.createElement('div');
+      div.id = id;
+      div.style.marginTop = "10px"; 
+      div.style.color = "grey"; 
+      div.style.fontSize = "12px"; 
+      div.innerHTML = `Ult. conexión ${setDateTimestampDay(signin.last_date)}`;
+      let content = document.getElementById(this.CONTENT);
+      content.append(div);
+    }
   }
 
   timeStop() {
