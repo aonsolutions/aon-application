@@ -660,10 +660,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
+	private boolean hasCertificateSEPE;
+	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 	
 	public ContrataEmployee() {
 		this.zoom = Constants.DEFAULT_ZOOM;
+		this.hasCertificateSEPE = false;
 		
 		employee = new EmployeeImplementation();
 		contractSpecificData = new ContractSpecificData();
@@ -987,9 +990,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		this.contrataEmployeeObject.setEmployeeContractInfo(employeeContractInfo);		
 		checkStatus(this.contrataEmployeeObject);
 		
-		
+		checkCertificateSEPE();
 	}
 	
+	private void checkCertificateSEPE() {
+		setVisible(cbc.getElement(), hasCertificateSEPE);
+		setVisible(cto.getElement(), hasCertificateSEPE);
+	}
+
 	private void initLogicWindow() {
 		initActivitiesCCC();
 		initWorkplaces();
@@ -1932,5 +1940,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void onDownloadPDF(ClickEvent event) {
 		String fileName = contrataEmployeeObject.getEmployeeFullName() + " IDC.pdf";
 		pdfViewer.download(fileName);
+	}
+
+	public void setHasCertificateSEPE(boolean hasCertificateSEPE) {
+		this.hasCertificateSEPE = hasCertificateSEPE;
 	}
 }

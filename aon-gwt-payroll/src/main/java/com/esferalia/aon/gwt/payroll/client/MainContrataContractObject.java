@@ -27,6 +27,8 @@ public class MainContrataContractObject {
 	
 	private List<Workplace> workplaces;
 	
+	private boolean hasCertificateSEPE;
+	
 	public MainContrataContractObject() {
 		super();
 		this.allEmployeesList = new ArrayList<EmployeeContractInfo>();
@@ -34,6 +36,7 @@ public class MainContrataContractObject {
 		this.trashEmployeesList = new ArrayList<EmployeeContractInfo>();
 		this.employeesFilterMap = new HashMap<String, Integer>();
 		this.workplaces = new ArrayList<Workplace>();
+		this.hasCertificateSEPE = false;
 	}
 	
 	public void getEmployeesInfo(Boolean allEmployees, Consumer<List<EmployeeContractInfo>> success, Consumer<Throwable> failure){
@@ -49,7 +52,17 @@ public class MainContrataContractObject {
 					public void onSuccess(List<Workplace> result) {
 						workplaces.clear();
 						workplaces.addAll(result);
-						success.accept(employeesInfoList);	
+						impl.hasCertificateSEPE(new AsyncCallback<Boolean>() {
+
+							@Override
+							public void onFailure(Throwable caught) {}
+
+							@Override
+							public void onSuccess(Boolean result) {
+								hasCertificateSEPE = result.booleanValue();
+								success.accept(employeesInfoList);	
+							}
+						});
 					}
 					
 					@Override
@@ -220,6 +233,10 @@ public class MainContrataContractObject {
 			@Override
 			public void onFailure(Throwable caught) { }
 		});	
+	}
+	
+	public boolean hasCertificateSEPE() {
+		return this.hasCertificateSEPE;
 	}
 
 }

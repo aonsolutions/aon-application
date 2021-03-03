@@ -265,9 +265,9 @@ public class MainContrataContract extends MainEntryPoint {
 	        	Integer contractId = employeeContractInfoSelected.getContractInfo().getContractId();
 	        	
 	        	mainContrataContractObject.getEmployeeInfo(contractId, employeeContractInfo -> {
+	        		contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
 	        		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
 		    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
-		        	
 		    		deckPanel.showWidget(1);
 	        	}, f -> {});
 	        	
