@@ -180,7 +180,7 @@ public class MainCRANew extends MainEntryPoint {
 		year.clear();
 		yearTillT.clear();
 		
-		String[] months = new String[]{"Enero", "Frebero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+		String[] months = new String[]{"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
 		for(int i=0; i<months.length; i++) {
 			month.addItem(months[i], i+"");
 			monthTillT.addItem(months[i], i+"");
