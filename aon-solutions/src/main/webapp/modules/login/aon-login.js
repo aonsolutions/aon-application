@@ -111,7 +111,7 @@ export class AonLogin extends AonElement {
 			<aon-toast id="aonLoginToast"></aon-toast>
 			`;
 
-    if(webkitRequestMobile()){ // si es app
+    if(!webkitRequestMobile()){ // si es app
       this.buildAppLogo();
     } 
 
