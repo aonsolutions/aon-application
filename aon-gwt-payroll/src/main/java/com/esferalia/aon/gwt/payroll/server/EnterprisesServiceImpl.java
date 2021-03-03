@@ -104,6 +104,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.agreement.AgreementParser;
 import com.esferalia.aon.payroll.agreement.ServiAgreementsFilter;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
@@ -2756,18 +2757,22 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void getServiAgreement(String domainName, String serviAgreementCode) {
+	public int getServiAgreement(String domainName, String serviAgreementCode) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
 			AONContext ctx = new AONContext(connection);
 			DSLContext dslContext = ctx.getDslContext();
 			
-			String log = AgreementParser.getAgreement(dslContext, serviAgreementCode, domainId);
+			Pair<Integer,String> agreementLog = AgreementParser.getAgreement(dslContext, serviAgreementCode, domainId);
 			
+			String log = agreementLog.getSecond();
 			if(!AonStringUtils.isBlank(log)) {
 				JooqMail.sendAgreementLogMail(log);
 			}
+			
+			Integer agreementId = agreementLog.getFirst();
+			return agreementId;
 		
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -2981,6 +2986,22 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			DomainUserRoles domainUserRoles = SECURITY.getDomainUserRoles(domainName, domainId, userLogin, userId);
 			return domainUserRoles;
 			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public boolean hasCertificateSEPE(String domainName, String userLogin) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			Certificate certificateSEPE = AON.getCertificateSEPE(domainName, domainId, userLogin);
+			
+			return null != certificateSEPE;
+			
+		} catch (CertificateNotFoundException e) {
+			return false;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

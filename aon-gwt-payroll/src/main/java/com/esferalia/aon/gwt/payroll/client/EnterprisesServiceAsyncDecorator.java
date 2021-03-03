@@ -699,9 +699,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getServiAgreement(String currentDomainName, String serviAgreementCode, AsyncCallback<Void> callback) {
+	public void getServiAgreement(String currentDomainName, String serviAgreementCode, AsyncCallback<Integer> callback) {
 		AON.start();
-		enterprisesServiceAsync.getServiAgreement(currentDomainName, serviAgreementCode, new AsyncCallbackWrapper<Void>(callback));
+		enterprisesServiceAsync.getServiAgreement(currentDomainName, serviAgreementCode, new AsyncCallbackWrapper<Integer>(callback));
 	}
 
 	@Override
@@ -783,6 +783,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getDomainUserRoles(String domainName, String currentUser, AsyncCallback<DomainUserRoles> callback) {
 		AON.start();
 		enterprisesServiceAsync.getDomainUserRoles(domainName, currentUser, new AsyncCallbackWrapper<DomainUserRoles>(callback));
+	}
+
+	@Override
+	public void hasCertificateSEPE(String domainName, String currentUser, AsyncCallback<Boolean> callback) {
+		AON.start();
+		enterprisesServiceAsync.hasCertificateSEPE(domainName, currentUser, new AsyncCallbackWrapper<Boolean>(callback));
 	}
 
 }

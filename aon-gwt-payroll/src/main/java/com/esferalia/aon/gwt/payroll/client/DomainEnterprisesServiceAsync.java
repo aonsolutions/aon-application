@@ -438,7 +438,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setComunicationIT(getCurrentDomainName(), getCurrentUser(), itEmployee, it, asyncCallback);
 	}
 	
-	public void getServiAgreement(String serviAgreementCode, AsyncCallback<Void> asyncCallback) {
+	public void getServiAgreement(String serviAgreementCode, AsyncCallback<Integer> asyncCallback) {
 		enterprisesServiceAsync.getServiAgreement(getCurrentDomainName(), serviAgreementCode, asyncCallback);
 	}
 	
@@ -494,6 +494,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getDomainUserRoles(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
+	public void hasCertificateSEPE(AsyncCallback<Boolean> asyncCallback) {
+		enterprisesServiceAsync.hasCertificateSEPE(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {
@@ -507,8 +511,5 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
-	
-
 
 }

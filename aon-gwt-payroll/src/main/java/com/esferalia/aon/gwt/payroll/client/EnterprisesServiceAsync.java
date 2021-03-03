@@ -156,7 +156,7 @@ public interface EnterprisesServiceAsync {
 			String contributionAccount, Date dateFrom, Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback);
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it,
 			AsyncCallback<Void> asyncCallback);
-	void getServiAgreement(String currentDomainName, String serviAgreementCode, AsyncCallback<Void> asyncCallback);
+	void getServiAgreement(String currentDomainName, String serviAgreementCode, AsyncCallback<Integer> asyncCallback);
 	void checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList,
 			AsyncCallback<Boolean> asyncCallback);
 	void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
@@ -181,5 +181,6 @@ public interface EnterprisesServiceAsync {
 	void delete4EverContract(String currentDomainName, Integer contractId, AsyncCallback<Void> asyncCallback);
 	void getServiAgreements(String currentDomainName, String currentUser, AsyncCallback<Map<String, String>> asyncCallback);
 	void getDomainUserRoles(String currentDomainName, String currentUser, AsyncCallback<DomainUserRoles> asyncCallback);
+	void hasCertificateSEPE(String currentDomainName, String currentUser, AsyncCallback<Boolean> asyncCallback);
 	
 }

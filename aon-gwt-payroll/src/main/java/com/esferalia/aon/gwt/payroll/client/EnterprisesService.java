@@ -246,7 +246,7 @@ public interface EnterprisesService extends RemoteService {
 
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it);
 
-	void getServiAgreement(String currentDomainName, String serviAgreementCode);
+	int getServiAgreement(String currentDomainName, String serviAgreementCode);
 
 	boolean checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList);
 
@@ -277,6 +277,8 @@ public interface EnterprisesService extends RemoteService {
 	Map<String, String> getServiAgreements(String currentDomainName, String currentUser);
 
 	DomainUserRoles getDomainUserRoles(String currentDomainName, String currentUser);
+
+	boolean hasCertificateSEPE(String currentDomainName, String currentUser);
 
 	
 }
