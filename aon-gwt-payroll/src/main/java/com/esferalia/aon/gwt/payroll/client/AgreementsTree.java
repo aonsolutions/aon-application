@@ -286,5 +286,7 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 		}
 	}
 
-
+	public void scrollToTop() {
+		scrollPanel.scrollToTop();
+	}
 }

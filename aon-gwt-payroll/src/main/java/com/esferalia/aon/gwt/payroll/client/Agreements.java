@@ -124,7 +124,19 @@ public class Agreements extends ResizeComposite implements
 	public void getAgreements() {
 		agreementsTree.clearTree();
 		getAgreements(0, 10, s -> {
+			selectActiveAgreementOrFirst();
 			showAgreements(false); // Show active agreements
+			agreementsTree.scrollToTop();
+			toolbar.setEnabledViewAgreementsButton(true);
+		}, f -> {});
+	}
+	
+	public void getAgreementsAndSelectImported(Integer agreementId) {
+		agreementsTree.clearTree();
+		getAgreements(0, 10, s -> {
+			selectImportAgreement(agreementId);
+			showAgreements(false); // Show active agreements
+			agreementsTree.scrollToTop();
 			toolbar.setEnabledViewAgreementsButton(true);
 		}, f -> {});
 	}
@@ -303,7 +315,7 @@ public class Agreements extends ResizeComposite implements
 								if (item2Select == -1)
 									item2Select = i;
 							}
-							if (agreement.hasEmployees()) {
+							if (agreement.getHasContract()) {
 								if (item2Select == -1)
 									item2Select = i;
 							}
@@ -319,12 +331,9 @@ public class Agreements extends ResizeComposite implements
 						if ( agreements.size() == limit )
 							getAgreements(offset + limit, limit , s -> {
 								success.accept(agreements);
-//								showAgreements(false); // Show active agreements
 							}, f -> {});
 						else
 							success.accept(agreements);
-//						else 
-//							toolbar.setVisibleSearchTextBox(true);
 
 					}
 				});
@@ -385,6 +394,38 @@ public class Agreements extends ResizeComposite implements
 				item.setVisible(true);
 			else {
 				item.setVisible(agreement.getHasContract() || item.isSelected());
+			}
+		}
+	}
+	
+	private void selectActiveAgreementOrFirst() {
+		Tree tree = agreementsTree.tree;
+		boolean isSelected = false;
+		for ( int i = 0; i < tree.getItemCount(); i++ ) {
+			TreeItem item = tree.getItem(i);
+			Agreement agreement = (Agreement) item.getUserObject();
+			
+			if(agreement.getHasContract() && !isSelected) {
+				agreementsTree.tree.setSelectedItem(item, true);
+				isSelected = true;
+			}
+		}
+		
+		// If not exist active agreements.. select first
+		if(!isSelected)
+			agreementsTree.getTree().setSelectedItem(agreementsTree.getTree().getItem(0), true);
+	}
+	
+	private void selectImportAgreement(Integer agreementId) {
+		Tree tree = agreementsTree.tree;
+		boolean isSelected = false;
+		for ( int i = 0; i < tree.getItemCount(); i++ ) {
+			TreeItem item = tree.getItem(i);
+			Agreement agreement = (Agreement) item.getUserObject();
+			
+			if(AonNumberUtils.equals(agreementId, agreement.getId()) && !isSelected) {
+				agreementsTree.tree.setSelectedItem(item, true);
+				isSelected = true;
 			}
 		}
 	}

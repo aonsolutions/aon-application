@@ -637,7 +637,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			@Override
 			protected void onAccept(String serviAgreementCode) {
 				getAgreementsTree().getEnterpriseService().getServiAgreement(serviAgreementCode, 
-						new AsyncCallback<Void>() {
+						new AsyncCallback<Integer>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -645,8 +645,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 					}
 
 					@Override
-					public void onSuccess(Void result) {
-						agreements.getAgreements();
+					public void onSuccess(Integer importedAgreementId) {
+						agreements.getAgreementsAndSelectImported(importedAgreementId);
 					}
 				});
 			}
