@@ -1,23 +1,41 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+
+import com.esferalia.aon.occam.api.model.Module;
 
 public enum AonApp implements Serializable{
-	INVOICE,
-	DOCUMENTAL,
-	MESSENGER,
-	ACCOUNTING,
-	FISCAL,
-	PAYROLL,
-	OCR,
-	AIO,
-	ALMA,
-	COMUNICA,
-	BIDOQ,
-	CONVENIOS,
-	BANK,
-	TIMECONTROL,
-	MANAGEMENT;
+	INVOICE(getEmptyModules()),
+	DOCUMENTAL(getDocumentalModules()),
+	MESSENGER(getMessengerModules()),
+	ACCOUNTING(getAccountingModules()),
+	FISCAL(getFiscalModules()),
+	PAYROLL(getPayrollModules()),
+	OCR(getEmptyModules()),
+	AIO(getEmptyModules()),
+	ALMA(getEmptyModules()),
+	COMUNICA(getEmptyModules()),
+	BIDOQ(getEmptyModules()),
+	CONVENIOS(getEmptyModules()),
+	BANK(getEmptyModules()),
+	TIMECONTROL(getEmptyModules()),
+	MANAGEMENT(getManagementModules()),
+	PACK_SUITE(getPackSuiteModules()),
+	PACK_PORTAL(getPackPortalModules()),
+	PACK_PAYROLL(getPayrollModules()),
+	PACK_FISCAL_ACCOUNTING(getPackFiscalAccountingModules())
+	;
+	
+	LinkedList<Module> modules;
+	
+	private AonApp(LinkedList<Module> modules) {
+		this.modules = modules;
+	}
+	
+	public LinkedList<Module> getModules() {
+		return modules;
+	}
 	
 	public Byte value(){
 		return (byte) ordinal();
@@ -35,40 +53,78 @@ public enum AonApp implements Serializable{
 	}
 	
 	public static AonApp safeValueOf( String i ) {
-		if (i == null || "".equals(i)) return null;
-		
-		if(i.equalsIgnoreCase(INVOICE.name())) {
-			return INVOICE;
-		} else if(i.equalsIgnoreCase(DOCUMENTAL.name())) {
-			return DOCUMENTAL;
-		} else if(i.equalsIgnoreCase(MESSENGER.name())) {
-			return MESSENGER;
-		} else if(i.equalsIgnoreCase(ACCOUNTING.name())) {
-			return ACCOUNTING;
-		} else if(i.equalsIgnoreCase(FISCAL.name())) {
-			return FISCAL;
-		} else if(i.equalsIgnoreCase(PAYROLL.name())) {
-			return PAYROLL;
-		} else if(i.equalsIgnoreCase(OCR.name())) {
-			return OCR;
-		} else if(i.equalsIgnoreCase(AIO.name())) {
-			return AIO;
-		} else if(i.equalsIgnoreCase(ALMA.name())) {
-			return ALMA;
-		} else if(i.equalsIgnoreCase(COMUNICA.name())) {
-			return COMUNICA;
-		} else if(i.equalsIgnoreCase(BIDOQ.name())) {
-			return BIDOQ;
-		} else if(i.equalsIgnoreCase(CONVENIOS.name())) {
-			return CONVENIOS;
-		} else if(i.equalsIgnoreCase(BANK.name())) {
-			return BANK;
-		} else if(i.equalsIgnoreCase(TIMECONTROL.name())) {
-			return TIMECONTROL;
-		} else if(i.equalsIgnoreCase(MANAGEMENT.name())) {
-			return MANAGEMENT;
-		} 
+		for (AonApp rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
 		return null;
 	}
 	
+	private static LinkedList<Module> getEmptyModules() {
+		return new LinkedList<>();
+	}
+	private static LinkedList<Module> getDocumentalModules() {
+		LinkedList<Module> list = new LinkedList<Module>();
+		list.add(Module.DOCUMENT);
+		list.add(Module.DOCUMENT_PORTAL);
+		return list;
+	}
+	
+	private static LinkedList<Module> getMessengerModules() {
+		LinkedList<Module> list = new LinkedList<Module>();
+		list.add(Module.CALL_CENTER);
+		return list;
+	}
+	
+	private static LinkedList<Module> getAccountingModules() {
+		LinkedList<Module> list = new LinkedList<Module>();
+		list.add(Module.ACCOUNTING);
+		return list;
+	}
+	
+	private static LinkedList<Module> getFiscalModules() {
+		LinkedList<Module> list = new LinkedList<Module>();
+		list.add(Module.FISCAL);
+		return list;
+	}
+	
+	private static LinkedList<Module> getPayrollModules() {
+		LinkedList<Module> list = new LinkedList<Module>();
+		list.add(Module.PAYROLL);
+		list.add(Module.PAYROLL_PORTAL);
+		return list;
+	}
+	
+	private static LinkedList<Module> getManagementModules() {
+		LinkedList<Module> list = new LinkedList<Module>();
+		list.add(Module.MANAGEMENT);
+		return list;
+	}
+	
+	private static LinkedList<Module> getPackSuiteModules() {
+		LinkedList<Module> list =new LinkedList<Module>();
+		list.add(Module.DOCUMENT);
+		list.add(Module.DOCUMENT_PORTAL);
+		list.add(Module.ACCOUNTING);
+		list.add(Module.FISCAL);
+		list.add(Module.PAYROLL);
+		list.add(Module.PAYROLL_PORTAL);
+		list.add(Module.CALL_CENTER);
+		return list;
+	}
+	
+	private static LinkedList<Module> getPackPortalModules() {
+		LinkedList<Module> list =new LinkedList<Module>();
+		list.add(Module.DOCUMENT);
+		list.add(Module.DOCUMENT_PORTAL);
+		list.add(Module.CALL_CENTER);
+		return list;
+	}
+	
+	private static LinkedList<Module> getPackFiscalAccountingModules() {
+		LinkedList<Module> list = new LinkedList<Module>();
+		list.add(Module.FISCAL);
+		list.add(Module.ACCOUNTING);
+		return list;
+	}
 }

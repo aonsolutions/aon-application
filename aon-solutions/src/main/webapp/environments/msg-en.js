@@ -51,6 +51,7 @@ export const AON_MSG_PREVIOUS = 'Previous';
 
 export const AON_MSG_PENDING = 'Pending';
 export const AON_MSG_PENDINGS = 'Pendings';
+export const AON_MSG_PENDING_DOCUMENTS = 'Pending Documents';
 
 export const AON_MSG_RECENTS = 'Recents';
 
@@ -145,3 +146,15 @@ export const AON_MSG_ASESOR = 'Asesor';
 
 export const AON_MSG_ACCOUNTING = 'Accounting';
 export const AON_MSG_BOOKING = 'Booking';
+
+export const AON_MSG_BUDGET = 'Budget';
+export const AON_MSG_BUDGETS = 'Budgets';
+export const AON_MSG_BILLING = 'Billing';
+
+export const AON_MSG_SII = 'SII';
+export const AON_MSG_TICKETBAI = 'TicketBAI';
+export const AON_MSG_SII_TICKETBAI = 'SII / TicketBAI';
+
+export const AON_MSG_ACTIVATE = 'Activate';
+export const AON_MSG_DEACTIVATE = 'Deactivate';
+export const AON_MSG_CONTRACT = 'Contract';

@@ -51,6 +51,7 @@ export const AON_MSG_PREVIOUS = 'Aurrekoa';
 
 export const AON_MSG_PENDING = 'Zain';
 export const AON_MSG_PENDINGS = 'Zain Daudenak';
+export const AON_MSG_PENDING_DOCUMENTS = 'Zain Dauden Fitxategiak';
 
 export const AON_MSG_RECENTS = 'Berriak';
 
@@ -144,3 +145,15 @@ export const AON_MSG_ASESOR = 'Aholkulari';
 
 export const AON_MSG_ACCOUNTING = 'Kontabilitatea';
 export const AON_MSG_BOOKING = 'Kontratazioa';
+
+export const AON_MSG_BUDGET = 'Aurrekontua';
+export const AON_MSG_BUDGETS = 'Aurrekontuak';
+export const AON_MSG_BILLING = 'Fakturazioa';
+
+export const AON_MSG_SII = 'SII';
+export const AON_MSG_TICKETBAI = 'TicketBAI';
+export const AON_MSG_SII_TICKETBAI = 'SII / TicketBAI';
+
+export const AON_MSG_ACTIVATE = 'Aktibatu';
+export const AON_MSG_DEACTIVATE = 'Desaktibatu';
+export const AON_MSG_CONTRACT = 'Kontratatu';

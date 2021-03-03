@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
+import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
 import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLICATION_MODULE;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
@@ -211,6 +212,7 @@ public class SecurityDAO {
 		if (domainApp.getDomain() == null) throw new AonCoreException("DomainApp.domain can not be null"); 
 		if (domainApp.getApp() == null) throw new AonCoreException("DomainApp.app can not be null");
 		// Se chequea que no exista una fila para ese dominio y app
+		saveDomainModule(ctx, domainApp);
 		DomainApp exists = getDomainAppStream(ctx, p -> p.getDomainProperty().eq(domainApp.getDomain())
 	 			.and(p.getAppProperty().eq( domainApp.getApp().value())))
 				.findFirst()
@@ -1068,13 +1070,55 @@ public class SecurityDAO {
 				.stream().map(r -> Module.safeValueOf(r.getValue(DOMAIN_APPLICATION_MODULE.MODULE).intValue()));
 	}
 	
+	public static Integer getDomainApplicationModule(AONContext ctx, Module module){
+		return ctx.getDslContext().select().from(DOMAIN_APPLICATION_MODULE)
+				.where(DOMAIN_APPLICATION_MODULE.DOMAIN.eq(ctx.getDomainId()))
+				.and(DOMAIN_APPLICATION_MODULE.MODULE.eq(module.value()))
+				.fetch().stream().map(r -> r.getValue(DOMAIN_APPLICATION_MODULE.ID))
+				.findFirst().orElse(null);
+	}
+	
+	public static void saveDomainModule(AONContext ctx, DomainApp domainApp) {
+		domainApp.getApp().getModules().stream().forEach(module -> {
+			if(domainApp.isActive()) {
+				insertDomainModule(ctx, module);
+			} else deleteDomainModule(ctx, module);
+		});
+	}
+	
+	public static void insertDomainModule(AONContext ctx, Module module) {
+		Integer id = getDomainApplicationModule(ctx, module);
+		if(id == null) {
+			Integer domainApplication = ctx.getDslContext().select(DOMAIN_APPLICATION.ID)
+					.from(DOMAIN_APPLICATION)
+					.where(DOMAIN_APPLICATION.DOMAIN.eq(ctx.getDomainId()))
+					.fetch().stream().map(r -> r.getValue(DOMAIN_APPLICATION.ID)).findFirst().orElse(null);
+		
+
+			ctx.getDslContext().insertInto(DOMAIN_APPLICATION_MODULE)
+				.set(DOMAIN_APPLICATION_MODULE.DOMAIN, ctx.getDomainId())
+				.set(DOMAIN_APPLICATION_MODULE.DOMAIN_APPLICATION, domainApplication)
+				.set(DOMAIN_APPLICATION_MODULE.MODULE, module.value())
+				.execute();
+				;
+		}
+	}	
+	
+	public static void deleteDomainModule(AONContext ctx, Module module) {
+		ctx.getDslContext().delete(DOMAIN_APPLICATION_MODULE)
+			.where(DOMAIN_APPLICATION_MODULE.DOMAIN.eq(ctx.getDomainId())
+			.and(DOMAIN_APPLICATION_MODULE.MODULE.eq(module.value())))
+			.execute();
+	}
+	
+	
+	
 	public static Optional<Certificate> getCertificate(AONContext aonContext, UserFilter userFilter ) {
 		return getCertificate(aonContext.getDslContext(), userFilter);
 	}
 	
 	
 	public static Optional<Certificate> getCertificate(DSLContext dslContext, UserFilter userFilter ) {
-		
 		SelectOnConditionStep<Record> select = 
 		dslContext
 		.select()

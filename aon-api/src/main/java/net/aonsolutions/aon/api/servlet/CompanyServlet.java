@@ -193,26 +193,31 @@ public class CompanyServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject setDomainApp(){
-		// TODO ACTUALIZAR LA PARTE VIEJA!
-		String domainName = getData().getString("domain");
-		String app = getData().getString("app");
-		Boolean active = getData().getBoolean("active");
-		AonApp aonApp = AonApp.safeValueOf(app);
-		Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
-		DomainApp domainApp = AON_SOLUTIONS.getDomainApp(domain.getName(), domain.getId(), "", f -> 
-			f.getDomainProperty().eq(domain.getId()).and(f.getAppProperty().eq(aonApp.value()))).findFirst().orElse(null);
-		if(domainApp == null) {
-			domainApp = new DomainApp()
-					.setDomain(domain.getId())
-					.setApp(aonApp)
-					.setActive(active);
-			domainApp = AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", domainApp);
-		} else {
-			domainApp.setActive(active);
-			domainApp = AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", domainApp);
+		JSONArray array = getData().optJSONArray("apps");
+		LinkedList<AonApp> apps = new LinkedList<>();
+		for(int i = 0; i < array.length(); i++) {
+			apps.add(AonApp.safeValueOf(array.getString(i)));;
 		}
+		LinkedList<DomainApp> activeDomainApps = new LinkedList<DomainApp>();
 		
-		return domainApp.toJSON();
+		for (AonApp aonApp : AonApp.values()) {
+			DomainApp domainApp = AON_SOLUTIONS.getDomainApp(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
+			f.getDomainProperty().eq(getDomain().getId()).and(f.getAppProperty().eq(aonApp.value()))).findFirst().orElse(new DomainApp());
+			if(apps.contains(aonApp) && (domainApp.isEmpty() || !domainApp.isActive())) {
+				 activeDomainApps.add(domainApp
+						 .setDomain(getDomain().getId())
+						 .setApp(aonApp)
+						 .setActive(true));
+			} else if(!domainApp.isEmpty()) {
+				AON_SOLUTIONS.saveDomainApp(getDomain().getName(), getDomain().getId(), getUser().getLogin(), domainApp.setActive(false));
+			}
+		}
+
+		for (DomainApp domainApp : activeDomainApps) {
+			AON_SOLUTIONS.saveDomainApp(getDomain().getName(), getDomain().getId(), getUser().getLogin(), domainApp);
+		}
+
+		return new JSONObject();
 	}
 	
 }

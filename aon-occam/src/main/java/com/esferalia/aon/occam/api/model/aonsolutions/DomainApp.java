@@ -62,5 +62,9 @@ public class DomainApp {
 		return json;
 	}
 	
+	public boolean isEmpty() {
+		return getId() == null && getApp() == null 
+			&& getActive() == null && getDomain() == null;
+	}
 
 }

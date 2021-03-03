@@ -8,10 +8,12 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 
 public class MarketplaceController implements Serializable {
 	
@@ -21,18 +23,24 @@ public class MarketplaceController implements Serializable {
 	private String login;
 	private HashMap<AonApp, DomainApp> domainApps = new HashMap<AonApp, DomainApp>();
 
+	private DomainUserRoles dur = new DomainUserRoles();
+	
 	private boolean suitePortal;
 	
 	public void init() {
+
 		setLogin(AonUtil.getRemoteUser());
 		setDomain(AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), getLogin()));
+		setDur(SECURITY.getDomainUserRoles(getDomain(), getLogin(), null));
 		
 		AON_SOLUTIONS.getDomainApp(getDomain().getName(), getDomain().getId(), getLogin(), f -> f.getDomainProperty().eq(getDomain().getId()))
 		.forEach(r -> {
 			domainApps.put(r.getApp(), r);
 		});
 		
-		this.suitePortal = AON.getDomainModules(getDomain().getName(), getDomain().getId(), getLogin()).filter(f -> Module.SUITE_PORTAL.equals(f)).count() > 0;
+		boolean suitePortalParent = getDomain().getParentId() != null && AON.getDomainModules(getDomain().getName(),getDomain().getParentId(), getLogin()).filter(f -> Module.SUITE_PORTAL.equals(f)).count() > 0;
+		boolean suitePortalDomain = AON.getDomainModules(getDomain().getName(), getDomain().getId(), getLogin()).filter(f -> Module.SUITE_PORTAL.equals(f)).count() > 0;
+		this.suitePortal = suitePortalParent || suitePortalDomain;
 	}
 
 	public boolean isActive(AonApp app) {
@@ -63,6 +71,14 @@ public class MarketplaceController implements Serializable {
 		});
 	}
 
+	public DomainUserRoles getDur() {
+		return dur;
+	}
+	
+	public void setDur(DomainUserRoles dur) {
+		this.dur = dur;
+	}
+	
 	public Domain getDomain() {
 		return domain;
 	}
@@ -80,31 +96,31 @@ public class MarketplaceController implements Serializable {
 	}
 
 	public boolean isInvoiceActive() {
-		return isActive(AonApp.INVOICE);
+		return getDur().hasInvoice();
 	}
 	
 	public boolean isDocumentalActive() {
-		return isActive(AonApp.DOCUMENTAL);
+		return getDur().hasDocumental();
 	}
 	
 	public boolean isMessengerActive() {
-		return isActive(AonApp.MESSENGER);
+		return getDur().hasMessenger();
 	}
 	
 	public boolean isAccountngActive() {
-		return isActive(AonApp.ACCOUNTING);
+		return getDur().hasAccounting();
 	}
 	
 	public boolean isFiscalActive() {
-		return isActive(AonApp.FISCAL);
+		return getDur().hasFiscal();
 	}
 	
 	public boolean isPayrollActive() {
-		return isActive(AonApp.PAYROLL);
+		return getDur().hasPayroll();
 	}
 	
 	public boolean isOcrActive() {
-		return isActive(AonApp.OCR);
+		return getDur().hasOcr();
 	}
 	
 	public boolean isAioActive() {
@@ -116,7 +132,7 @@ public class MarketplaceController implements Serializable {
 	}
 	
 	public boolean isComunicaActive() {
-		return isActive(AonApp.COMUNICA);
+		return getDur().hasComunica();
 	}
 	
 	public boolean isBidoqActive() {
@@ -132,7 +148,7 @@ public class MarketplaceController implements Serializable {
 	}
 	
 	public boolean isTimecontrolActive() {
-		return isActive(AonApp.TIMECONTROL);
+		return getDur().hasTimecontrol();
 	}
 	
 	public boolean isManagementActive() {

@@ -131,24 +131,86 @@ export class DomainUserRoles {
 		return this.hasRole(Role.ADMIN);
 	}
 
+  hasPackSuite() {
+    return this.hasApp(App.PACK_SUITE);
+  }
+
+  hasParentPackSuite() {
+    return this.hasParentApp(App.PACK_SUITE);
+  }
+
+  hasPackPortal() {
+    return this.hasPackSuite() || this.hasApp(App.PACK_PORTAL);
+  }
+
+  hasParentPackPortal() {
+    return this.hasParentPackSuite() || this.hasParentApp(App.PACK_PORTAL);
+  }
+
+  hasPackPayroll() {
+    return this.hasPackSuite() || this.hasApp(App.PACK_PAYROLL);
+  }
+
+  hasParentPackPayroll() {
+    return this.hasParentPackSuite() || this.hasParentApp(App.PACK_PAYROLL);
+  }
+
+  hasPackFiscalAccounting() {
+    return this.hasPackSuite() || this.hasApp(App.PACK_FISCAL_ACCOUNTING);
+  }
+
+  hasParentPackFiscalAccounting() {
+    return this.hasParentPackSuite() || this.hasParentApp(App.PACK_FISCAL_ACCOUNTING);
+  }
+
+  hasAccounting() {
+    return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_FISCAL_ACCOUNTING)
+      || this.hasApp(App.ACCOUNTING);
+  }
+
+  hasParentAccounting() {
+    return this.hasParentPackSuite() || this.hasParentPackFiscalAccounting()
+      || this.hasParentApp(App.ACCOUNTING);
+  }
+
 	isAccounting() {
-		return this.hasApp(App.ACCOUNTING) && (this.isAdmin() || this.hasRole(Role.ACCOUNTING));
+		return this.hasAccounting() && (this.isAdmin() || this.hasRole(Role.ACCOUNTING));
 	}
 
 	isAccountingManager() {
-    return this.hasApp(App.ACCOUNTING) && (this.isAdmin() || this.hasRole(Role.ACCOUNTING_MANAGER));
+    return this.hasAccounting() && (this.isAdmin() || this.hasRole(Role.ACCOUNTING_MANAGER));
 	}
 
+  hasFiscal() {
+    return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_FISCAL_ACCOUNTING)
+      || this.hasApp(App.FISCAL);
+  }
+
+  hasParentFiscal() {
+    return this.hasParentPackSuite() || this.hasParentPackFiscalAccounting()
+      || this.hasParentApp(App.FISCAL);
+  }
+
 	isFiscal() {
-    return this.hasApp(App.FISCAL) && (this.isAdmin() || this.hasRole(Role.FISCAL));
+    return this.hasFiscal() && (this.isAdmin() || this.hasRole(Role.FISCAL));
 	}
 
 	isFiscalManager() {
 		return this.hasApp(App.FISCAL) && (this.isAdmin() || this.hasRole(Role.FISCAL_MANAGER));
 	}
 
+  hasPayroll() {
+    return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_PAYROLL)
+      || this.hasApp(App.PAYROLL);
+  }
+
+  hasParentPayroll() {
+    return this.hasParentPackSuite() || this.hasParentPackPayroll()
+      || this.hasParentApp(App.PAYROLL);
+  }
+
   isPayroll() {
-		return this.hasApp(App.PAYROLL) && (this.isAdmin() || this.hasRole(Role.PAYROLL));
+		return this.hasPayroll() && (this.isAdmin() || this.hasRole(Role.PAYROLL));
 	}
 
 	isPayrollPortal() {
@@ -159,63 +221,117 @@ export class DomainUserRoles {
 		return this.hasApp(App.PAYROLL) && (this.isAdmin() || this.hasRole(Role.PAYROLL_MANAGER));
 	}
 
+  hasDocumental() {
+    return this.hasPackSuite() || this.hasPackPortal()
+      || this.hasApp(App.DOCUMENTAL);
+  }
+
+  hasParentDocumental() {
+    return this.hasParentPackSuite() || this.hasParentPackPortal()
+      || this.hasParentApp(App.DOCUMENTAL);
+  }
+
 	isDocumental() {
-		return (this.hasApp(App.DOCUMENTAL) && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL)))
+		return (this.hasDocumental() && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL)))
       || this.isDocumentalPortal() || this.isDocumentalManager();
 	}
 
   isDocumentalPortal() {
-		return (this.hasApp(App.DOCUMENTAL) && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL_PORTAL)))
+		return (this.hasDocumental() && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL_PORTAL)))
         || this.hasOldRole('ADMIN') || this.hasOldRole('DOCUMENT');
 	}
 
 	isDocumentalManager() {
-		return (this.hasApp(App.DOCUMENTAL) && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL_MANAGER)))
+		return (this.hasDocumental() && (this.isAdmin() || this.hasRole(Role.DOCUMENTAL_MANAGER)))
         || this.hasOldRole('ADMIN') || this.hasOldRole('DOCUMENT_MANAGER');
 	}
 
+  hasComunica() {
+    return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_PAYROLL)
+      || this.hasApp(App.COMUNICA);
+  }
+
+  hasParentComunica() {
+    return this.hasParentPackSuite() || this.hasParentPackPayroll()
+      || this.hasParentApp(App.COMUNICA);
+  }
+
 	isComunica() {
-		return this.hasApp(App.COMUNICA) && (this.isAdmin() || this.hasRole(Role.COMUNICA));
+		return this.hasComunica() && (this.isAdmin() || this.hasRole(Role.COMUNICA));
 	}
 
 	isComunicaPortal() {
-		return this.hasApp(App.COMUNICA) && (this.isAdmin() || this.hasRole(Role.COMUNICA_PORTAL));
+		return this.hasComunica() && (this.isAdmin() || this.hasRole(Role.COMUNICA_PORTAL));
 	}
 
 	isComunicaManager() {
-		return this.hasApp(App.COMUNICA) && (this.isAdmin() || this.hasRole(Role.COMUNICA_MANAGER));
+		return this.hasComunica() && (this.isAdmin() || this.hasRole(Role.COMUNICA_MANAGER));
 	}
 
+  hasTimeControl() {
+    return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_PORTAL)
+      || this.hasApp(App.TIMECONTROL) || this.hasComunica();
+  }
+
+  hasParentTimeControl() {
+    return this.hasParentPackSuite() || this.hasParentPackPortal()
+      || this.hasParentApp(App.TIMECONTROL) || this.hasParentComunica();
+  }
+
 	isTimecontrol() {
-		return this.hasApp(App.TIMECONTROL) && (this.isAdmin() || this.hasRole(Role.TIMECONTROL));
+		return this.hasTimeControl() && (this.isAdmin() || this.hasRole(Role.TIMECONTROL));
 	}
 
 	isTimecontrolPortal() {
-		return this.hasApp(App.TIMECONTROL) && (this.isAdmin() || this.hasRole(Role.TIMECONTROL_PORTAL));
+		return this.hasTimeControl() && (this.isAdmin() || this.hasRole(Role.TIMECONTROL_PORTAL));
 	}
 
 	isTimecontrolManager() {
-		return this.hasApp(App.TIMECONTROL) && (this.isAdmin() || this.hasRole(Role.TIMECONTROL_MANAGER));
+		return this.hasTimeControl() && (this.isAdmin() || this.hasRole(Role.TIMECONTROL_MANAGER));
 	}
 
+  // MESSENGER - MENSAJERÍA
+
+  hasMessenger() {
+    return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_PORTAL)
+      || this.hasApp(App.MESSENGER);
+  }
+
+  hasParentMessenger() {
+    return this.hasParentPackSuite() || this.hasParentPackPortal()
+      || this.hasParentApp(App.MESSENGER);
+  }
+
 	isMessenger() {
-		return this.hasApp(App.MESSENGER) && (this.isAdmin() || this.hasRole(Role.MESSENGER));
+		return this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER));
 	}
 
 	isMessengerManager() {
-		return this.hasApp(App.MESSENGER) && (this.isAdmin() || this.hasRole(Role.MESSENGER_MANAGER));
+		return this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER_MANAGER));
 	}
 
+  // INVOICES - FACTURAS
+
+  hasInvoice() {
+    return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_PORTAL)
+      || this.hasApp(App.INVOICE);
+  }
+
+  hasParentInvoice() {
+    return this.hasParentPackSuite() || this.hasParentPackPortal()
+      || this.hasParentApp(App.INVOICE);
+  }
+
 	isInvoice() {
-		return this.hasApp(App.INVOICE) && (this.isAdmin() || this.hasRole(Role.INVOICE));
+		return this.hasInvoice() && (this.isAdmin() || this.hasRole(Role.INVOICE));
 	}
 
 	isInvoicePortal() {
-		return this.hasApp(App.INVOICE) && (this.isAdmin() || this.hasRole(Role.INVOICE_PORTAL));
+		return this.hasInvoice() && (this.isAdmin() || this.hasRole(Role.INVOICE_PORTAL));
 	}
 
 	isInvoiceManager() {
-		return this.hasApp(App.INVOICE) && (this.isAdmin() || this.hasRole(Role.INVOICE_MANAGER));
+		return this.hasInvoice() && (this.isAdmin() || this.hasRole(Role.INVOICE_MANAGER));
 	}
 
 	isManagement() {
@@ -250,4 +366,23 @@ export class DomainUserRoles {
 		return this.hasApp(App.BIDOQ) && (this.isAdmin() || this.hasRole(Role.BIDOQ));
 	}
 
+  isConfidential() {
+    return this.hasRole(Role.CONFIDENTIALITY);
+  }
+
+  isAlpha() {
+    return this.hasRole(Role.ALPHA);
+  }
+
+  isBeta() {
+    return this.hasRole(Role.BETA);
+  }
+
+  isEmployee() {
+    return this.hasRole(Role.EMPLOYEE);
+  }
+
+  isEnterprise() {
+    return this.hasRole(Role.ENTERPRISE);
+  }
 }

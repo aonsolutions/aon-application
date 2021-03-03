@@ -5,9 +5,13 @@ import java.io.Serializable;
 import com.code.aon.AonVersion;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 
 public class OCRConfigurationController implements Serializable {
 	
@@ -15,7 +19,9 @@ public class OCRConfigurationController implements Serializable {
 	private boolean active;
 	
 	public void init() {
-		setActive( AON_SOLUTIONS.isOCRActive(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser()) );
+		Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser());
+		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, AonUtil.getRemoteUser(), null);
+		setActive(dur.hasOcr());
 	}
 	
 	public boolean isActive() {
