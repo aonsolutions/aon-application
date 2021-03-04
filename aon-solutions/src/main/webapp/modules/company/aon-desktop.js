@@ -5,8 +5,7 @@ import {getDomainApps, setDomainApp, getDomainNotice, getDomainUserRoles} from  
 import {bidoq} from  '../../services/bidoq.js';
 import {startModule, rootPanel} from '../../services/gwtLoader.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-// MODULES
-import {AonAccounting} from '../accounting/aon-accounting.js';
+
 
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
@@ -305,8 +304,7 @@ export class AonDesktop extends AonElement {
 				rootPanel('<aon-documental></aon-documental>')
 				break;
 			case Apps.ACCOUNTING.app:
-				//this.development('Panel Contable');
-				this.rootPanel(new AonAccounting());
+				this.development('Panel Contable');
 				//rootPanel('<aon-contable></aon-contable>');
 				break;
 			case Apps.FISCAL.app:
