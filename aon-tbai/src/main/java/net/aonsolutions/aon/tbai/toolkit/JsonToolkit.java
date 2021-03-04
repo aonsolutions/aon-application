@@ -15,26 +15,31 @@ public class JsonToolkit {
 	};
 	
 	public static JsonArray getArray(final JsonObject parent, final String name) {
+		if(parent == null) 	 return null;
 		return (parent.containsKey(name))? 	
 		parent.getJsonArray(name) : null; 
 	}
 	
 	public static JsonObject getObject(final JsonObject parent, final String name) {
+		if(parent == null) 	 return null;
 		return (parent.containsKey(name))?
 		parent.getJsonObject(name) : null; 
 	}
 	
 	public static JsonNumber getNumber(final JsonObject parent, final String name) {
+		if(parent == null) 	 return null;
 		return (parent.containsKey(name))?
 		parent.getJsonNumber(name) : null; 
 	}
 	
 	public static Boolean getBoolean(final JsonObject parent, final String name) {
+		if(parent == null) 	 return null;
 		return (parent.containsKey(name))?
 		parent.getBoolean(name) : null; 
 	}
 
 	public static String getString(final JsonObject parent, final String name) {
+		if(parent == null) 	 return null;
 		return (parent.containsKey(name))?
 		parent.getString(name) : null; 
 	}

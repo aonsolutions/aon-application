@@ -1,25 +1,31 @@
 package net.aonsolutions.aon.tbai;
 
+import static net.aonsolutions.aon.tbai.toolkit.DataToolkit.isEmpty;
+import static net.aonsolutions.aon.tbai.toolkit.DataToolkit.isPresent;
+import static net.aonsolutions.aon.tbai.toolkit.DataToolkit.parseDate;
 import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getArray;
 import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getNumber;
 import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getObject;
 import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getString;
 import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.read;
-import static net.aonsolutions.aon.tbai._enums.Territory.ARABA;
-import static net.aonsolutions.aon.tbai._enums.Territory.BIZKAIA;
-import static net.aonsolutions.aon.tbai._enums.Territory.GIPUZKOA;
-import static net.aonsolutions.aon.tbai.toolkit.DataToolkit.parseDate;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import javax.json.JsonWriter;
+import javax.json.JsonWriterFactory;
+import javax.json.stream.JsonGenerator;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -35,6 +41,8 @@ import net.aonsolutions.aon.tbai.emision.EmisionInvoice.TbaiEmisionInvoiceBuilde
 import net.aonsolutions.aon.tbai.emision.araba.ArabaEmisionValidator;
 import net.aonsolutions.aon.tbai.emision.bizkaia.BizkaiaEmisionValidator;
 import net.aonsolutions.aon.tbai.emision.gipuzkoa.GipuzkoaEmisionValidator;
+import net.aonsolutions.aon.tbai.exceptions.json.JsonNotFoundException;
+import net.aonsolutions.aon.tbai.exceptions.json.JsonParseException;
 import net.aonsolutions.aon.tbai.exceptions.validation.ValidationException;
 import net.aonsolutions.aon.tbai.exceptions.xml.XMLCreationException;
 import ticketbai.emision.Cabecera;
@@ -45,12 +53,20 @@ import ticketbai.emision.TicketBai;
 
 public class TbaiMain {
 	
-	public static EmisionInvoice jsonToInvoice(final InputStream is) {
+	public static EmisionInvoice jsonToInvoice(final InputStream is) throws JsonParseException, JsonNotFoundException {
 	
-		final JsonObject json = read(is);		
-		final String date = 				getString(json, "date");
+		if(isEmpty(is)) throw new JsonParseException("Cannot parse JSON file");	
+		final JsonObject json ;
+				
+		try{json = read(is);}
+		catch(Exception e) {throw new JsonNotFoundException("Json not found");}
 		
+		//prettyPrint(json);
+		
+		final String date = 				getString(json, "date");
 		final JsonObject receiver_o = 		getObject(json, "receiver");
+		
+		
 		final JsonObject address_o = 		getObject(receiver_o,"address");	
 		final String rec_zip = 				getString(address_o, "zip");
 		final String rec_address = 			getString(address_o, "address");
@@ -58,7 +74,10 @@ public class TbaiMain {
 		final String rec_city = 			getString(address_o, "city");
 		final String rec_document = 		getString(receiver_o,"document");
 		final String rec_name = 			getString(receiver_o,"name");	
-		final String rec_total_address = 	rec_address + ". " + rec_city + ", " + rec_province; 
+		
+		String rec_total_address = 	"";
+		if(isPresent(rec_address) && isPresent(rec_city) && isPresent(rec_province))
+		rec_total_address = rec_address + ". " + rec_city + ", " + rec_province; 		
 		
 		//final JsonArray taxes = 			getArray (json,"taxes");		
 		final String number = 				getString(json,"number");
@@ -71,9 +90,12 @@ public class TbaiMain {
 		final String sen_address = 			getString(sender_address_o, "address");
 		final String sen_province = 		getString(sender_address_o, "province");
 		final String sen_city = 			getString(sender_address_o, "city");			
-		final String sen_total_address = 	sen_address + ". " + sen_city + ", " + sen_province; 
 		final String sen_document = 		getString(sender_o, "document");
 		final String sen_name = 			getString(sender_o, "name");
+		
+		String sen_total_address = 	"";
+		if(isPresent(sen_address) && isPresent(sen_city) && isPresent(sen_province))
+		sen_total_address = sen_address + ". " + sen_city + ", " + sen_province; 
 		
 		final String series = 				getString(json, "series");	
 		final JsonArray details = 			getArray (json,  "details");
@@ -82,21 +104,44 @@ public class TbaiMain {
 		//final JsonArray finances = 		getArray (json,  "finances");
 		//final String transaction = 		getString(json, "transaction");
 	
-		final Entity   sender =    new Entity(sen_document, sen_name, Country.valueOf(sen_country), IDtype.NIF_IVA,"0", sen_zip, sen_total_address);		
+		final Entity   sender = new Entity();
+		sender	.setNif(sen_document)
+				.setName(sen_name)
+				.setCountry((sen_country == null) ? null : Country.valueOf(sen_country))
+				.setId_type(IDtype.NIF_IVA)
+				.setId("0")
+				.setZip(sen_zip)
+				.setAddress(sen_total_address);
+		
 		final ArrayList<Entity> receivers = new ArrayList<>();
-		receivers.add(new Entity(rec_document,rec_name,Country.ES, IDtype.NIF_IVA, "0",rec_zip,rec_total_address));
+		Entity receiver = new Entity();
+		receiver	.setNif(rec_document)
+					.setName(rec_name)
+					.setId_type(IDtype.NIF_IVA)
+					.setId("0")
+					.setZip(rec_zip)
+					.setAddress(rec_total_address);
+		receivers.add(receiver);
 		
 		final ArrayList<InvoiceDetailData> detail_list = new ArrayList<>();
-		for (JsonValue det : details) {
-			final JsonObject o = 			(JsonObject) det;
-			final String description = 		getString(o, "description");
-			final Double quantity = 		getNumber(o, "quantity")	.doubleValue();
-			final Double price = 			getNumber(o, "price")		.doubleValue();
-			final Double discount = 		getNumber(o, "discount")	.doubleValue();
-			final Double total_amount = 	getNumber(o, "amount")		.doubleValue();
-			
-			detail_list.add(new InvoiceDetailData(description, quantity,price, discount, total_amount));
-		}	
+		if(!isEmpty(details)) {
+			for (JsonValue det : details) {
+				final JsonObject o = 			(JsonObject) det;
+				final String description = 		getString(o, "description");
+				
+				final JsonNumber jquantity = 		getNumber(o, "quantity");
+				final JsonNumber jprice = 			getNumber(o, "price");
+				final JsonNumber jdiscount = 		getNumber(o, "discount");
+				final JsonNumber jtotal_amount = 	getNumber(o, "amount");
+						
+				final Double quantity = 		(isEmpty(jquantity)) 	 ? null : 	jquantity.doubleValue();
+				final Double price = 			(isEmpty(jprice))    	 ? null : 	jprice.doubleValue();
+				final Double discount = 		(isEmpty(jdiscount)) 	 ? null : 	jdiscount.doubleValue();
+				final Double total_amount =		(isEmpty(jtotal_amount)) ? null : 	jtotal_amount.doubleValue();
+				
+				detail_list.add(new InvoiceDetailData(description, quantity,price, discount, total_amount));
+			}	
+		}
 		
 		final TbaiEmisionInvoiceBuilder builder = new TbaiEmisionInvoiceBuilder();		
 		final EmisionInvoice invoice = 
@@ -113,7 +158,7 @@ public class TbaiMain {
 			.setOperation_date		(parseDate(date, "yyyy-MM-dd"))
 			.setDescription			(category)
 			.setDetails				(detail_list)
-			.setTotal_amount		(total.doubleValue())
+			.setTotal_amount		((isEmpty(total))? null : total.doubleValue())
 			.setSupported_retention	(null)
 			.setTax_base_cost		(null)
 			.setId_keys				(new ArrayList<>())
@@ -123,6 +168,19 @@ public class TbaiMain {
 		return invoice;
 	}
 	
+	private static void prettyPrint(JsonObject json) {
+		 Map<String, Object> properties = new HashMap<>(1);
+         properties.put(JsonGenerator.PRETTY_PRINTING, true);
+
+         StringWriter sw = new StringWriter();
+		JsonWriterFactory writerFactory = Json.createWriterFactory(properties);
+		JsonWriter jsonWriter = writerFactory.createWriter(sw);
+
+		jsonWriter.writeObject(json);
+		System.out.println("\n" + sw.toString());
+		jsonWriter.close();
+	}
+
 	public static void createEmisionTBAI(final EmisionInvoice i,final String name,Territory territory) throws XMLCreationException, ValidationException {
 		try {			
 			switch (territory) {
@@ -147,7 +205,11 @@ public class TbaiMain {
 			final JAXBContext jaxbContext     = JAXBContext.newInstance( TicketBai.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	 		
 			final OutputStream os = new FileOutputStream( "./" + name);
+			
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( tbai, os );
+			jaxbMarshaller.marshal( tbai, System.out);
+			
 		} 
 		catch (JAXBException | FileNotFoundException e) {throw new XMLCreationException("ERROR WHILE ACCESSING DISK: Aborting...", e);} 
 	}

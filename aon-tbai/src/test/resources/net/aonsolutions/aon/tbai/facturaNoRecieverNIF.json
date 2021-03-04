@@ -1,0 +1,94 @@
+
+ 
+  {
+    "date": "2020-12-28T08:11:03.021Z",
+    "comments": [],
+    "receiver": {
+      "address": {
+        "zip": "01008",
+        "address": "AVDA. GASTEIZ, 50",
+        "province": "ALAVA",
+        "city": "VITORIA-GASTEIZ"
+      },
+      "name": "EMPRESA PRUEBA"
+    },
+    "taxes": [
+      {
+        "percentage": 21,
+        "quota": 25.2,
+        "tax": "IVA",
+        "type": "IVA",
+        "base": 120
+      },
+      {
+        "percentage": 10,
+        "quota": 1.9,
+        "tax": "IVA",
+        "type": "IVA",
+        "base": 19
+      },
+      {
+        "percentage": 19,
+        "quota": 26.41,
+        "tax": "IRPF",
+        "type": "IRPF",
+        "base": 139
+      }
+    ],
+    "type": "emitida",
+    "reference": "AAA/13",
+    "number": "13",
+    "total": 149.69,
+    "sender": {
+      "address": {
+        "zip": "01470",
+        "country": "ES",
+        "address": "Felix Murga 23 6B1",
+        "province": "Álava",
+        "city": "Amurrio"
+      },
+      "document": "12847564Y",
+      "name": "JAMONES URRUTIA S.L"
+    },
+    "series": "AAA",
+    "details": [
+      {
+        "amount": 120,
+        "quantity": 1,
+        "price": 120,
+        "vat": 21,
+        "description": "AAAAAAA",
+        "discount": 0,
+        "irpf": false,
+        "suplidos": false
+      },
+      {
+        "amount": 19,
+        "quantity": 2,
+        "price": 10,
+        "vat": 10,
+        "description": "BBBBBBB",
+        "discount": 5,
+        "irpf": false,
+        "suplidos": false
+      }
+    ],
+    "id": 90,
+    "category": "700000000",
+    "finances": [
+      {
+        "amount": 149.69,
+        "paymethod": "CASH",
+        "iban": "ES6621000418401234567891",
+        "due_date": "2020-12-28T08:11:03.021Z"
+      }
+    ],
+    "transaction": "NAC",
+    "status": "inbox",
+    "suplidos": {
+      "total": 10,
+      "active": true,
+      "description": "Prueba suplido"
+    }
+  }
+

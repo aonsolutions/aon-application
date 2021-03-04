@@ -26,6 +26,7 @@ public class Entity {
 		this.zip = zip;
 		this.address = address;
 	}
+	public Entity() {}
 
 	public Optional<String> getNif() 					{return Optional.ofNullable(nif);}
 	public Entity setNif(final String nif) 				{this.nif = nif;     return this;}
