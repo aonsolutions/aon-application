@@ -164,9 +164,18 @@ import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
+import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.DefaultPayrollTemplate;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases.Contingency_bases_builder;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll.DefaultPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollAccrual;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollDeduction;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -232,6 +241,8 @@ import com.esferalia.aon.salary.bonus.Bonuses;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.cost.Costs;
 import com.esferalia.aon.salary.deduction.Deductions;
+import com.esferalia.aon.salary.deduction.IDeduction;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -249,6 +260,7 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.ReportUtils;
@@ -1721,42 +1733,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public String getSalaryDraftReceipt(String domain, final SalaryDraft draft, String mime)
 			throws IllegalArgumentException {
 
 		try {
-			ReportManager reportManager = new StatelessReportManager();
-			reportManager.setOutputFormat(OutputFormat.PDF);
-
-			ICollectionProvider provider = new ICollectionProvider() {
-
-				@Override
-				public Collection<?> getCollection() {
-					try {
-						return getCollection(true);
-					} catch (ManagerBeanException e) {
-									return null;
-					}
-				}
-
-				@Override
-				public Collection<?> getCollection(boolean arg0)
-						throws ManagerBeanException {
-					return Collections.singletonList(getSalary(domain, draft));
-				}
-
-			};
-
-			reportManager.setCollectionProvider(provider);
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-
-			String salaryReport = getSalaryReport(domain, toSalaryType(draft.getType()));
-
-			reportManager.execute(reportOut, salaryReport);
+			
+			ISalary salary = getSalary(domain, draft);
+			
+			
+			try {
+				DraftPayrollBuilder.generatePayroll(reportOut, salary);
+			} catch (SalaryException | CanNotCreatePdfException e) {
+				e.printStackTrace();
+			}
+			
 
 			byte reportByteArray[] = reportOut.toByteArray();
 
@@ -1774,12 +1769,68 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			return dataUri;
 
-		} catch (ReportException e) {
-			throw new IllegalArgumentException(e);
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public String getSalaryDraftReceipt(String domain, final SalaryDraft draft, String mime)
+//			throws IllegalArgumentException {
+//
+//		try {
+//			ReportManager reportManager = new StatelessReportManager();
+//			reportManager.setOutputFormat(OutputFormat.PDF);
+//
+//			ICollectionProvider provider = new ICollectionProvider() {
+//
+//				@Override
+//				public Collection<?> getCollection() {
+//					try {
+//						return getCollection(true);
+//					} catch (ManagerBeanException e) {
+//									return null;
+//					}
+//				}
+//
+//				@Override
+//				public Collection<?> getCollection(boolean arg0)
+//						throws ManagerBeanException {
+//					return Collections.singletonList(getSalary(domain, draft));
+//				}
+//
+//			};
+//
+//			reportManager.setCollectionProvider(provider);
+//
+//			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
+//
+//			String salaryReport = getSalaryReport(domain, toSalaryType(draft.getType()));
+//
+//			reportManager.execute(reportOut, salaryReport);
+//
+//			byte reportByteArray[] = reportOut.toByteArray();
+//
+//			ByteArrayInputStream reportInput = new ByteArrayInputStream(
+//					reportByteArray);
+//
+//			Writer stringWriter = new StringWriter();
+//			encodeURIComponent(mime, reportInput, stringWriter);
+//
+//			reportOut.close();
+//			reportInput.close();
+//			stringWriter.flush();
+//			String dataUri = stringWriter.toString();
+//			stringWriter.close();
+//
+//			return dataUri;
+//
+//		} catch (ReportException e) {
+//			throw new IllegalArgumentException(e);
+//		} catch (IOException e) {
+//			throw new IllegalArgumentException(e);
+//		}
+//	}
 
 	@SuppressWarnings("unchecked")
 	@Override
