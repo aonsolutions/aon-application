@@ -211,7 +211,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 						 .setDomain(getDomain().getId())
 						 .setApp(aonApp)
 						 .setActive(true));
-			} else if(!domainApp.isEmpty()) {
+			} else if(!apps.contains(aonApp) && !domainApp.isEmpty()) {
 				AON_SOLUTIONS.saveDomainApp(getDomain().getName(), getDomain().getId(), getUser().getLogin(), domainApp.setActive(false), true);
 			}
 		}
