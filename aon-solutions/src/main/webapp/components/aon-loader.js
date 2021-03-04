@@ -21,7 +21,11 @@ export class AonLoader extends AonElement {
 	connectedCallback () {
 		this.innerHTML = `
 			<div id="${this.PROGRESS}" class="aonProgress"></div>
-			<div id="${this.LOADING}" class="aonLoading"></div>
+			<div id="${this.LOADING}" class="aonLoading">
+				<div class="bounce1"></div>
+				<div class="bounce2"></div>
+				<div class="bounce3"></div>
+			</div>
 		`;
 	}
 

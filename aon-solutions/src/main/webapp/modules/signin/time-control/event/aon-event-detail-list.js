@@ -16,6 +16,7 @@ import { UserAction } from "../../../user/userEnums.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
+import { dateCustomDayHour } from "../utils.js";
 
 
 
@@ -202,6 +203,8 @@ export class AonEventDetailList extends AonElement {
         const resp = await this.getData();
         aonTable.removeAllLi();
         resp.map((res, idx) => {
+          let newDate = dateCustomDayHour(res.date);
+          if(newDate){res.dateParse = newDate;}
           let options = {
             paddingTopTitle: "5px",
             iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.dateParse}</span>`,

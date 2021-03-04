@@ -188,7 +188,7 @@ const openFileDesktop = (url) => open(url);
 export const webkitRequestMobile = () => {
   let result = false;
   try {
-    if ("undefined" !== typeof webkit && webkit.messageHandlers.cordova_iab) {
+    if ("undefined" !== typeof window.cordova_iab) {
       result = true;
     }
   } catch (e) {}

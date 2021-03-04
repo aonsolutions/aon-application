@@ -2,7 +2,7 @@ import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList } from "../../../services/service.js";
 import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, timeHour, waitEl } from "../../../services/utils.js";
 import { PresenceFilterInput, SigninSidenav } from "../signinEnums.js";
-import { StringTwoLetters } from "./utils.js";
+import { dateCustomDayHour, StringTwoLetters } from "./utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
@@ -144,7 +144,7 @@ export class AonPresenceList extends AonElement {
         const resp = await this.getData();
         aonTable.removeAllLi();
         resp.map((res, idx) => {
-          res.dateParse = setDateTimestamp(res.last_date);
+          res.dateParse = dateCustomDayHour(res.last_date) || setDateTimestamp(res.last_date);
           let options = {
             iconHtmlCustom: `${res.lettersHtml} <span style="float: right;color: rgba(0,0,0,.54);">${res.duration}</span>`,
             title: `${res.name}`,

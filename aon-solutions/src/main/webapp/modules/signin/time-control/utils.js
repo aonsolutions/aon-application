@@ -1,3 +1,5 @@
+import { addDays, setTime } from "../../../services/utils.js";
+
 export const StringTwoLetters = (str) => {
   let newStr = "";
   if (str) {
@@ -17,3 +19,16 @@ export const StringTwoLetters = (str) => {
 };
 
 export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());
+
+export const dateCustomDayHour = (d) => {
+  const date = new Date(d);
+  const now = new Date();
+  let day = null;
+  if(date.getDay() === now.getDay()){
+    day = "hoy";
+  } else if(date.getDay() === addDays(now, -1).getDay()){
+    day = "ayer";
+  }
+  if(day) return firstLetters(day)+", "+ setTime(date);
+  return null;
+}

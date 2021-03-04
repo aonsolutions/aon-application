@@ -38,14 +38,18 @@ export class AonSign extends AonElement {
         this.build();
       }
     });
+  }
 
+  disconnectedCallback(){
+    this.timeStop();
   }
 
   build(){
-
+    this.style.textAlign= "center";
     if(this.isMobile()){
-      this.style.textAlign= "center";
       this.parentNode.style.marginLeft = 0;
+    } else {
+      this.parentNode.style.paddingLeft = 0;
     }
 
     if(this._taskHolders.length > 1){
@@ -71,7 +75,6 @@ export class AonSign extends AonElement {
     }
 
     let time = this.createElement('div');
-    // time.style.marginLeft = '47px';
     time.style.fontSize = '30px';
     time.id = this.TIME;
     time.innerHTML = "00:00:00";
@@ -94,22 +97,56 @@ export class AonSign extends AonElement {
     button.style.width = '120px';
 		button.innerHTML = 'ENTRADA';
     if(this.isMobile()){
-      button.style.fontWeight = 'bold';
       button.style.width = "60%";
       button.style.borderRadius = "12px";
-    } else {
-      button.style.marginRight = '10px';
     }
 		button.addEventListener('click', async () => {
       this.disabledButton(true);
-      await getPosition().then(async(position) => {
-        let signin = {status: 'in', task_holder: this._taskHolder};
-        if(position && position.latitude && position.longitude)
-          signin.coordinates = position.latitude + ',' + position.longitude;
-        await saveTimeControl(signin).then(r => this.buildSignin(r));
-      });
+      try{
+        await getPosition().then(async(position) => {
+          let signin = {status: 'in', task_holder: this._taskHolder};
+          if(position && position.latitude && position.longitude)
+            signin.coordinates = position.latitude + ',' + position.longitude;
+          await saveTimeControl(signin).then(r => this.buildSignin(r));
+        });
+      } catch (error) {
+        console.log(error);
+        if(error){ this.getToastEl(error); }
+      }
       this.disabledButton(false);
     });
+		content.appendChild(button);
+	}
+
+  vuelta() {
+    this.clearElement(this.CONTENT);
+    let content = document.getElementById(this.CONTENT);
+
+		let button = document.createElement('button');
+    button.className = 'aonButton';
+		button.style.backgroundColor = '#86D364';
+    button.style.width = '120px';
+    button.style.padding = '1rem 1rem';
+		button.innerHTML = 'VUELTA';
+    if(this.isMobile()){
+      button.style.width = "60%";
+      button.style.borderRadius = "12px";
+    } 
+		button.addEventListener('click', async () => {
+      this.disabledButton(true);
+      try {
+        await getPosition().then(async(position) => {
+          let signin = {status: 'in', task_holder: this._taskHolder};
+          if(position)
+            signin.coordinates = position.latitude + ',' + position.longitude;
+          await saveTimeControl(signin).then(r => this.buildSignin(r));
+        });
+      } catch (error) {
+        console.log(error);
+        if(error){ this.getToastEl(error); }
+      }
+      this.disabledButton(false);
+		});
 		content.appendChild(button);
 	}
 
@@ -124,18 +161,19 @@ export class AonSign extends AonElement {
     button.style.width = '100px';
     button.style.padding = '1rem 1rem';
 		button.innerHTML = 'SALIDA';
-    if(this.isMobile()){
-      button.style.fontWeight = 'bold';
-      button.style.borderRadius = "6px";
-    } 
 		button.addEventListener('click', async () => {
       this.disabledButton(true);
-      await getPosition().then(async(position) => {
-        let signin = {status: 'out', task_holder: this._taskHolder};
-        if(position)
-          signin.coordinates = position.latitude + ',' + position.longitude;
-        await saveTimeControl(signin).then(r => this.buildSignin(r));
-      });
+      try{
+        await getPosition().then(async(position) => {
+          let signin = {status: 'out', task_holder: this._taskHolder};
+          if(position)
+            signin.coordinates = position.latitude + ',' + position.longitude;
+          await saveTimeControl(signin).then(r => this.buildSignin(r));
+        });
+      } catch (error) {
+        console.log(error);
+        if(error){ this.getToastEl(error); }
+      }
       this.disabledButton(false);
 		});
 		content.appendChild(button);
@@ -147,51 +185,22 @@ export class AonSign extends AonElement {
     button2.style.width = '100px';
     button2.style.padding = '1rem 1rem';
 		button2.innerHTML = 'PAUSA';
-    if(this.isMobile()){
-      button2.style.fontWeight = 'bold';
-      button2.style.borderRadius = "6px";
-    } 
 		button2.addEventListener('click', async() => {
       this.disabledButton(true);
-      await getPosition().then(async(position) => {
-        let signin = {status: 'pause', task_holder: this._taskHolder};
-        if(position)
-          signin.coordinates = position.latitude + ',' + position.longitude;
-        await saveTimeControl(signin).then(r => this.buildSignin(r));
-      });
+      try{
+        await getPosition().then(async(position) => {
+          let signin = {status: 'pause', task_holder: this._taskHolder};
+          if(position)
+            signin.coordinates = position.latitude + ',' + position.longitude;
+          await saveTimeControl(signin).then(r => this.buildSignin(r));
+        });
+      } catch (error) {
+        console.log(error);
+        if(error){ this.getToastEl(error); }
+      }
       this.disabledButton(false);
 		});
 		content.appendChild(button2);
-	}
-
-	vuelta() {
-    this.clearElement(this.CONTENT);
-    let content = document.getElementById(this.CONTENT);
-
-		let button = document.createElement('button');
-    button.className = 'aonButton';
-		button.style.backgroundColor = '#86D364';
-    button.style.width = '120px';
-    button.style.padding = '1rem 1rem';
-		button.innerHTML = 'VUELTA';
-    if(this.isMobile()){
-      button.style.fontWeight = 'bold';
-      button.style.width = "22%";
-      button.style.borderRadius = "12px";
-    } else {
-      button.style.marginRight = '10px';
-    }
-		button.addEventListener('click', async () => {
-      this.disabledButton(true);
-      await getPosition().then(async(position) => {
-        let signin = {status: 'in', task_holder: this._taskHolder};
-        if(position)
-          signin.coordinates = position.latitude + ',' + position.longitude;
-        await saveTimeControl(signin).then(r => this.buildSignin(r));
-      });
-      this.disabledButton(false);
-		});
-		content.appendChild(button);
 	}
 
   disabledButton(disabled){
@@ -222,22 +231,34 @@ export class AonSign extends AonElement {
   }
 
   timeAction(time) {
+
     let timeDiv = document.getElementById(this.TIME);
     if(timeDiv){
       timeDiv.innerHTML = timePaser(time);
+      timeDiv.style.cursor = "default";
     } else this.timeStop();
     this._timeAction = setTimeout( () => this.timeAction(time + 1000), 1000);
   }
 
   divLastTime(signin){
     if(signin && signin.last_date){
+      let textStatus = "entrada";
+      switch(signin.status){
+        case "pause":
+          textStatus = 'pausa';
+        break;
+        case "out":
+          textStatus = 'salida';
+        break;
+      }
       const id = 'lastTimeUser';
       const div = this.getElement(id) || this.createElement('div');
       div.id = id;
       div.style.marginTop = "10px"; 
       div.style.color = "grey"; 
       div.style.fontSize = "12px"; 
-      div.innerHTML = `Ult. conexión ${setDateTimestampDay(signin.last_date)}`;
+      div.style.cursor = "default";
+      div.innerHTML = `Ult. ${textStatus} ${setDateTimestampDay(signin.last_date)}`;
       let content = document.getElementById(this.CONTENT);
       content.append(div);
     }
@@ -247,5 +268,12 @@ export class AonSign extends AonElement {
     clearTimeout(this._timeAction);
   }
 
+  getToastEl(error){
+    try {
+      error = JSON.parse(error)
+      const aonApp = document.querySelector('aon-application');
+      this.getElement(aonApp.TOAST).start({ message: error.message, type: error.type });
+    } catch (e) {}
+  }
 }
 window.customElements.define('aon-sign', AonSign);
