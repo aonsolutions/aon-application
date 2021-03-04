@@ -111,11 +111,10 @@ export class AonLogin extends AonElement {
 			<aon-toast id="aonLoginToast"></aon-toast>
 			`;
 
-    if(!webkitRequestMobile()){ // si es app
+    this.buildLogo();
+    if(!webkitRequestMobile() && this.isMobile()){ // si es app
       this.buildAppLogo();
-    } 
-
-    // this.buildAppLogo();
+    }
 
     this.aonDialogLoginRemember();
 
@@ -148,7 +147,7 @@ export class AonLogin extends AonElement {
     playStore.target = "_blank";
     const imgPlayStore = this.createElement('img');
     imgPlayStore.src= "assets/playstore.png";
-    imgPlayStore.style.height = "40px";
+    imgPlayStore.style.height = "38px";
     playStore.appendChild(imgPlayStore);
     div.appendChild(playStore);
 
@@ -179,11 +178,9 @@ export class AonLogin extends AonElement {
     let logo = document.getElementById("aonLoginLogoImg");
     if (window.location.href.includes("ayudat")) {
       logo.src = "assets/ayudat-logo4.png";
-    } else if (
-      window.location.href.includes("translogia") ||
-      window.location.href.includes("tedi")
-    ) {
-      logo.src = "../assets/ayudat-logo4.png";
+    } else if (window.location.href.includes("translogia") ||
+        window.location.href.includes("tedi")) {
+      logo.src = "assets/ayudat-logo4.png";
     } else logo.src = "assets/aon-logo.png";
   }
 
