@@ -286,7 +286,7 @@ export class AonParent extends AonElement {
 
 		this.clearElement('aonMenu');
 		let aonMenu = this.getElement('aonMenu');
-		aonMenu.build();
+		aonMenu.init();
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
 		});
@@ -303,4 +303,6 @@ export class AonParent extends AonElement {
 		});
 	}
 }
-window.customElements.define('aon-parent', AonParent);
+if(!window.customElements.get('aon-parent')){
+	window.customElements.define('aon-parent', AonParent);
+}

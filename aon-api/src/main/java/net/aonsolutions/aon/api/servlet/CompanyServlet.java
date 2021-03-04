@@ -166,24 +166,24 @@ public class CompanyServlet extends AonApiHttpServlet{
 					.setActive(true);
 			if(Module.ACCOUNTING.equals(r)) {
 				dapp.setApp(AonApp.ACCOUNTING);
-				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
+				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp, false);
 			} else if(Module.AON_FINANCE.equals(r)) {
 				dapp.setApp(AonApp.INVOICE);
-				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
+				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp, false);
 			} else if(Module.CALL_CENTER.equals(r)) {
 				dapp.setApp(AonApp.MESSENGER);
-				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
+				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp, false);
 			} else if(Module.COMUNICA.equals(r)) {
 				
 			} else if(Module.DOCUMENT.equals(r)) {
 				dapp.setApp(AonApp.DOCUMENTAL);
-				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
+				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp, false);
 			} else if(Module.FISCAL.equals(r)) {
 				dapp.setApp(AonApp.FISCAL);
-				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
+				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp, false);
 			} else if(Module.PAYROLL.equals(r)) {
 				dapp.setApp(AonApp.PAYROLL);
-				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
+				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp, false);
 			}
 			if(dapp.getApp() != null && dapp.getActive())
 				array.put(dapp.getApp().name().toLowerCase());
@@ -196,7 +196,10 @@ public class CompanyServlet extends AonApiHttpServlet{
 		JSONArray array = getData().optJSONArray("apps");
 		LinkedList<AonApp> apps = new LinkedList<>();
 		for(int i = 0; i < array.length(); i++) {
-			apps.add(AonApp.safeValueOf(array.getString(i)));;
+			AonApp app = AonApp.safeValueOf(array.optString(i));
+			if(app != null) {
+				apps.add(AonApp.safeValueOf(array.optString(i)));
+			}
 		}
 		LinkedList<DomainApp> activeDomainApps = new LinkedList<DomainApp>();
 		
@@ -209,12 +212,12 @@ public class CompanyServlet extends AonApiHttpServlet{
 						 .setApp(aonApp)
 						 .setActive(true));
 			} else if(!domainApp.isEmpty()) {
-				AON_SOLUTIONS.saveDomainApp(getDomain().getName(), getDomain().getId(), getUser().getLogin(), domainApp.setActive(false));
+				AON_SOLUTIONS.saveDomainApp(getDomain().getName(), getDomain().getId(), getUser().getLogin(), domainApp.setActive(false), true);
 			}
 		}
 
 		for (DomainApp domainApp : activeDomainApps) {
-			AON_SOLUTIONS.saveDomainApp(getDomain().getName(), getDomain().getId(), getUser().getLogin(), domainApp);
+			AON_SOLUTIONS.saveDomainApp(getDomain().getName(), getDomain().getId(), getUser().getLogin(), domainApp, true);
 		}
 
 		return new JSONObject();

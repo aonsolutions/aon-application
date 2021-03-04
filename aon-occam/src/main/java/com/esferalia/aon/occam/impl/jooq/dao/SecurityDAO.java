@@ -207,12 +207,12 @@ public class SecurityDAO {
 		return auth;
 	}
 	
-	public static DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp) {
+	public static DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp, boolean old) {
 		if (domainApp == null) throw new AonCoreException("DomainApp can not be null");
 		if (domainApp.getDomain() == null) throw new AonCoreException("DomainApp.domain can not be null"); 
 		if (domainApp.getApp() == null) throw new AonCoreException("DomainApp.app can not be null");
 		// Se chequea que no exista una fila para ese dominio y app
-		saveDomainModule(ctx, domainApp);
+		if(old) saveDomainModule(ctx, domainApp);
 		DomainApp exists = getDomainAppStream(ctx, p -> p.getDomainProperty().eq(domainApp.getDomain())
 	 			.and(p.getAppProperty().eq( domainApp.getApp().value())))
 				.findFirst()

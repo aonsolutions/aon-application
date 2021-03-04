@@ -146,7 +146,7 @@ export class AonLogin extends AonElement {
     playStore.href = "https://play.google.com/store/apps/details?id=aon.solutions";
     playStore.target = "_blank";
     const imgPlayStore = this.createElement('img');
-    imgPlayStore.src= "assets/playstore.png";
+    imgPlayStore.src= this.android() ? "assets/playstore.png" : "assets/playstore-disabled.png";
     imgPlayStore.style.height = "38px";
     playStore.appendChild(imgPlayStore);
     div.appendChild(playStore);
@@ -155,7 +155,7 @@ export class AonLogin extends AonElement {
     appStore.href = "https://itunes.apple.com/es/app/aon-solutions/id1538461097";
     appStore.target = "_blank";
     const imgAppStore = this.createElement('img');
-    imgAppStore.src= "assets/appstore.png";
+    imgAppStore.src= this.iOS() ? "assets/appstore.png" : "assets/appstore-disabled.png";
     imgAppStore.style.height = "40px";
     imgAppStore.style.filter = "grayscale(100%)";
     appStore.appendChild(imgAppStore);

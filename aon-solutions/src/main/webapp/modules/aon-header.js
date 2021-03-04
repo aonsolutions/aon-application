@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, getToken} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
@@ -39,16 +39,26 @@ export class AonHeader extends AonElement {
 
 	constructor () {
 		super();
-		this.BASE_ID = 'aonHeader';
-		getTimeControl().then(r => {
-			this.activeTimecontrol = true;
-			this.timeControlStatus(r);
-		}).catch(e => {
-			this.activeTimecontrol = false;
-		});
 	}
 
 	connectedCallback () {
+		this.initialize();
+		if(getToken()){
+			getTimeControl().then(r => {
+				this.activeTimecontrol = true;
+				this.timeControlStatus(r);
+			}).catch(e => {
+				this.activeTimecontrol = false;
+			});
+			this.build();
+		}
+  }
+
+	initialize() {
+		this.BASE_ID = 'aonHeader';
+	}
+
+	build() {
 		this.innerHTML = `
 			<div id="aonHeaderWeb" class="aonHeader" >
 				<span>
@@ -83,10 +93,6 @@ export class AonHeader extends AonElement {
 			<aon-dialog-menu id="aonHeaderDialogUserOption" > </aon-dialog-menu>
 			`;
 
-			this.build();
-  }
-
-	build() {
 		let aonHeaderWeb = document.getElementById('aonHeaderWeb');
 
 		this.buildLogo();

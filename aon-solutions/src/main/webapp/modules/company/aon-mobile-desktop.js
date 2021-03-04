@@ -195,7 +195,6 @@ export class AonMobileDesktop extends AonElement {
 		div2.appendChild(titleB);
 
 		this.appendChild(div2);
-
 		getTimeControl().then(r => {
 			let div3 = document.createElement('div');
 			div3.style.marginLeft = '25px';
@@ -271,5 +270,6 @@ export class AonMobileDesktop extends AonElement {
 	}
 
 }
-
-window.customElements.define('aon-mobile-desktop', AonMobileDesktop);
+if(!window.customElements.get('aon-mobile-desktop')){
+	window.customElements.define('aon-mobile-desktop', AonMobileDesktop);
+}

@@ -67,25 +67,24 @@ export class AonModule extends AonElement {
 			rootPanel(this.isMobile()
 			 	? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 			 	: '<aon-parent id="aonParent"></aon-parent>');
-			
+
 			window.dispatchEvent( new Event('userAuth') );
 
 		} else {
 			this.getElement(this.AON_LOGIN).style.display = 'block';
 			this.getElement(this.AON_HOME).style.display = 'none';
 		}
-		
+
 
 	}
 
 	setWindowApp(){
 		window.setPosition = (pos) => setPosition(pos);
-		
+
 		window.setTokenFCM =  (tk) =>  window.tokenFCM = tk;
-		
+
 		window.setNotificationAction = (data) =>  {
-		    console.log("data Notification1>", typeof data, data);
-			alert(JSON.stringify(data));
+			console.log("data Notification1>", typeof data, data);
 		}
 	}
 
@@ -106,11 +105,11 @@ export class AonModule extends AonElement {
 			} else if(window.tokenFCM) {
 				token = window.tokenFCM;
 			}
-	
+
 			if(token) await saveAuthDevice({tokenFCM:token});
 			console.log("TOKEN FCM", token);
 		} catch(e){}
   	}
-	
+
 }
 window.customElements.define('aon-module',  AonModule);

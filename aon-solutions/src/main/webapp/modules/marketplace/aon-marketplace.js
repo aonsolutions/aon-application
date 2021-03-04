@@ -34,8 +34,11 @@ export class AonMarketplace extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		getDomainUserRoles({}).then(r => {
-			this.apps = r.domainApps;
-			this.build(new DomainUserRoles(r));
+			const dur = new DomainUserRoles(r);
+			for(let i in dur.getDomainApps()){
+				this.apps.push(dur.getDomainApps()[i]);
+			}
+			this.build(dur);
 		});
 	}
 
@@ -46,20 +49,23 @@ export class AonMarketplace extends AonElement {
 	}
 
 	build(dur) {
-		let contratar = document.createElement('button');
-		contratar.className = 'aonButton';
-		contratar.style.width = '110px';
-		contratar.style.padding = '0.3rem 0.8rem';
-		contratar.style.borderRadius = '25px';
-		contratar.innerHTML = MSG.AON_MSG_CONTRACT;
-		contratar.style.backgroundColor = '#12ccd1';
-		contratar.style.position = 'absolute';
-		contratar.style.right = '70px';
-		contratar.style.top = '15px';
-		contratar.addEventListener('click', () => {
+		let cbutton = document.createElement('button');
+		cbutton.id = 'aonMarketplaceContractButton';
+		cbutton.className = 'aonButton';
+		cbutton.style.width = '110px';
+		cbutton.style.padding = '0.3rem 0.8rem';
+		cbutton.style.borderRadius = '25px';
+		cbutton.innerHTML = MSG.AON_MSG_CONTRACT;
+		cbutton.style.backgroundColor = '#12ccd1';
+		cbutton.style.position = 'absolute';
+		cbutton.style.right = '70px';
+		cbutton.style.top = '15px';
+		cbutton.addEventListener('click', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
 			this.save();
 		});
-		this.appendChild(contratar);
+		this.appendChild(cbutton);
 
 		this.buildTitle('Packs');
 		this.buildApps(Packs, dur);
@@ -149,7 +155,9 @@ export class AonMarketplace extends AonElement {
 				contratar.style.backgroundColor = 'gray';
 			}
 
-			contratar.addEventListener('click', () => {
+			contratar.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
 				contratado = !contratado;
 				this.activate(app, contratado, false);
 			});
@@ -268,13 +276,13 @@ export class AonMarketplace extends AonElement {
 			return dur.hasParentInvoice();
 		else if(App.MESSENGER === app)
 			return dur.hasParentMessenger();
-		else if(App.PACK_SUITE)
+		else if(App.PACK_SUITE === app)
 			return dur.hasParentPackSuite();
-		else if(App.PACK_PORTAL)
+		else if(App.PACK_PORTAL === app)
 			return dur.hasParentPackPortal();
-		else if(App.PACK_PAYROLL)
+		else if(App.PACK_PAYROLL === app)
 			return dur.hasParentPackPayroll();
-		else if(App.PACK_FISCAL_ACCOUNTING)
+		else if(App.PACK_FISCAL_ACCOUNTING === app)
 			return dur.hasParentPackFiscalAccounting();
 		else return dur.hasParentApp(app);
 	}

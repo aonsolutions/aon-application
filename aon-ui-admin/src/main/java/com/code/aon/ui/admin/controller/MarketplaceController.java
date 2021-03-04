@@ -67,7 +67,7 @@ public class MarketplaceController implements Serializable {
 	public void contract() {
 		domainApps.entrySet().stream().forEach(r -> {
 			if(!AonApp.OCR.equals(r.getKey()))
-				AON_SOLUTIONS.saveDomainApp(getDomain().getName(), getDomain().getId(), getLogin(), r.getValue());
+				AON_SOLUTIONS.saveDomainApp(getDomain().getName(), getDomain().getId(), getLogin(), r.getValue(), false);
 		});
 	}
 

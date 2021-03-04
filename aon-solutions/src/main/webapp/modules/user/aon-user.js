@@ -1,9 +1,10 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getDomainApps, getUser, getUserAppRole, setUserAppRole, setUser, deleteUser,
-	 changePassword, getAuth} from  '../../services/service.js';
-import {EnterpriseApps, EmployeeApps, getApp} from  '../../services/app.js';
+	 changePassword, getAuth, getDomainUserRoles} from  '../../services/service.js';
+import {AllApps, EnterpriseApps, EmployeeApps, getApp} from  '../../services/app.js';
 import {ToolbarType} from '../../models/enums.js';
 import {UserAction} from './userEnums.js';
+import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-card.js';
 import '../../components/aon-icon.js';
@@ -23,6 +24,8 @@ export class AonUser extends AonElement {
 	TOOLBAR;
 
 	_user;
+	dur;
+	apps;
 
 	static get observedAttributes() {
 		return ['user', 'company', 'apps'];
@@ -42,14 +45,6 @@ export class AonUser extends AonElement {
 
 	set user(user) {
 		this.setAttribute('user', user);
-	}
-
-	get apps() {
-		return this.getAttribute('apps');
-	}
-
-	set apps(apps) {
-		this.setAttribute('apps', apps);
 	}
 
 	get showApps() {
@@ -101,15 +96,12 @@ export class AonUser extends AonElement {
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		this.initialize();
 		if('user' === name){
-			this.initUser();
+			// this.initUser();
 		}
 		if('company' === name) {
 			// let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
-		}
-
-		if('apps' === name) {
-			this.initApps();
 		}
 	}
 
@@ -118,11 +110,7 @@ export class AonUser extends AonElement {
 	}
 
 	connectedCallback () {
-		this.id = this.id || 'aonUser';
-		this.SWITCH = this.id + 'Switch';
-		this.SELECT = this.id + 'Select';
-		this.TOOLBAR = this.id + 'Toolbar';
-
+		this.initialize();
 		this._user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
 
 		this.innerHTML = `
@@ -136,17 +124,33 @@ export class AonUser extends AonElement {
 			</div>
 		`;
 
-		this.buildUserToolbar();
-		this.build();
+		getDomainUserRoles({}).then(r => {
+			this.dur = new DomainUserRoles(r);
+			this.buildUserToolbar();
+			this.build();
+			this.initUser();
+			this.initApps();
+		});
   }
 
+	initialize() {
+		this.id = this.id || 'aonUser';
+		this.SWITCH = this.SWITCH || this.id + 'Switch';
+		this.SELECT = this.SELECT || this.id + 'Select';
+		this.TOOLBAR = this.TOOLBAR || this.id + 'Toolbar';
+		this.apps = this.apps || [];
+	}
+
+	getDur() {
+		return this.dur;
+	}
+
 	initApps() {
-		let apps = this.getAttribute('apps') ? JSON.parse(this.getAttribute('apps')) : undefined;
 		this.clearElement('aonUserRoleTable');
 		if(this.isPersonalizado()) {
 			this.buildAppSelect(undefined);
 		}
-		apps.forEach((app, i) => {
+		this.apps.forEach((app, i) => {
 			let application = getApp(app);
 			if(application){
 				this.buildAppSelect(application);
@@ -159,9 +163,11 @@ export class AonUser extends AonElement {
 		this._user = user;
 		this.buildUserToolbar();
 		let aonUserName = document.getElementById('aonConfigurationUserCardName');
-		aonUserName.setAttribute('value', user && user.name && user.email ? user.name : '');
+		if(aonUserName)
+			aonUserName.setAttribute('value', user && user.name && user.email ? user.name : '');
 		let aonUserSurname = document.getElementById('aonConfigurationUserCardSurname');
-		aonUserSurname.setAttribute('value', user && user.surname ? user.surname : '');
+		if(aonUserSurname)
+			aonUserSurname.setAttribute('value', user && user.surname ? user.surname : '');
 		let aonUserDocument = document.getElementById('aonConfigurationUserCardDocument');
 		if(user && user.document && !user.document.isEmpty()) {
 			aonUserDocument.disabled = true;
@@ -178,12 +184,13 @@ export class AonUser extends AonElement {
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
 		card2.setVisible(this.hasSecurity());
 
-		if(user && !this.hasAttribute('apps') && this.hasAttribute('showApps')) {
+		if(user && this.hasAttribute('showApps')) {
 			this.buildPermissionButtons();
-
-			getDomainApps().then(apps => {
-				this.setAttribute('apps', JSON.stringify(apps));
-			});
+			for (let key in AllApps){
+				if(this.hasApp(AllApps[key])){
+					this.apps.push(AllApps[key].app);
+				}
+			}
 		}
 
 		if(this.hasAttribute('showInfo')) {
@@ -209,11 +216,10 @@ export class AonUser extends AonElement {
 		});
 
 		card2.addTitleButton('Empresa', MATERIAL_ICONS.BUSINESS, this.isEnterprise(), () => {
-			let apps = this.getAttribute('apps') ? JSON.parse(this.getAttribute('apps')) : undefined;
 			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
 
 			let roles = [{ role: 'ENTERPRISE', active: true, user: user.id}];
-			apps.forEach((app, i) => {
+			this.apps.forEach((app, i) => {
 				let application = getApp(app);
 
 				if(application && EnterpriseApps.includes(application.app)){
@@ -227,13 +233,12 @@ export class AonUser extends AonElement {
 		});
 
 		card2.addTitleButton('Empleado', MATERIAL_ICONS.PERSON, this.isEmployee(), () => {
-			let apps = this.getAttribute('apps') ? JSON.parse(this.getAttribute('apps')) : undefined;
 			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
 
 			let enterprise = { role: 'ENTERPRISE', active: false, user: user.id};
 			let employee = { role: 'EMPLOYEE', active: true, user: user.id};
 			let roles = [enterprise, employee];
-			apps.forEach((app, i) => {
+			this.apps.forEach((app, i) => {
 				let application = getApp(app);
 				if(application && EmployeeApps.includes(application.app)){
 					let rol = {app:application.app, role: application.app.toUpperCase(), active: true, user: user.id};
@@ -420,10 +425,7 @@ export class AonUser extends AonElement {
 		setUser(this._user).then(r => {
 			this.setAttribute('user', JSON.stringify(r));
 			this._user = r;
-			getDomainApps().then(apps => {
-				this.setAttribute('apps', JSON.stringify(apps));
-				this.initApps();
-			});
+			this.initApps();
 		}).catch(e => {
 			if(!this.isOnlyAuth()) {
 				let aonApplication = document.querySelector('aon-application');
@@ -684,8 +686,25 @@ export class AonUser extends AonElement {
 				&& this._user.id != null;
 	}
 
-
-
+	hasApp(app) {
+		if(AllApps.ACCOUNTING.app === app.app)
+			return this.getDur().hasAccounting();
+		else if(AllApps.FISCAL.app === app.app)
+			return this.getDur().hasFiscal();
+		else if(AllApps.PAYROLL.app === app.app)
+			return this.getDur().hasPayroll();
+		else if(AllApps.COMUNICA.app === app.app)
+			return this.getDur().hasComunica();
+		else if(AllApps.DOCUMENTAL.app === app.app)
+			return this.getDur().hasDocumental();
+		else if(AllApps.TIMECONTROL.app === app.app)
+			return this.getDur().hasTimeControl();
+		else if(AllApps.INVOICE.app === app.app)
+			return this.getDur().hasInvoice();
+		else if(AllApps.MESSENGER.app === app.app)
+			return this.getDur().hasMessenger();
+		else return this.getDur().hasApp(app.app.toUpperCase());
+	}
 }
 
 window.customElements.define('aon-user', AonUser);

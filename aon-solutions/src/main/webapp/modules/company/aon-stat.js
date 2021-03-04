@@ -47,4 +47,6 @@ export class AonStat extends AonElement {
     return div;
   }
 }
-window.customElements.define('aon-stat', AonStat);
+if(!window.customElements.get('aon-stat')){
+  window.customElements.define('aon-stat', AonStat);
+}

@@ -82,7 +82,7 @@ public interface ISecurity {
 	// DOMAIN APP
 	
 	public Stream<DomainApp> getDomainAppStream(AONContext ctx, DomainAppFilter filter);
-	public DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp);
+	public DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp, boolean old);
 	public boolean isOCRActive(AONContext ctx,int domain); 
 	
 	// USER APP ROLE

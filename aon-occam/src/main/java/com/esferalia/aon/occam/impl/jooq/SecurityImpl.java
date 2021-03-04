@@ -257,9 +257,9 @@ public class SecurityImpl implements ISecurity {
 	}
 
 	@Override
-	public DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp) {
+	public DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp, boolean old) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.saveDomainApp(ctx, domainApp));
+				configuration -> SecurityDAO.saveDomainApp(ctx, domainApp, old));
 	}
 
 	@Override

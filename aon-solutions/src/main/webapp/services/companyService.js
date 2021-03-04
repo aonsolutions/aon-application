@@ -4,7 +4,7 @@ import { API_URL } from "../environments/environments.js";
 let companies;
 let company;
 
-let domainUserRoles;
+let durum;
 
 
 export const getCompanies = () => {
@@ -63,18 +63,21 @@ export const getCompanyAddress = (data) => get(`${API_URL}/company/address`, dat
 // export const getDomainUserRoles = (data) => get(`${API_URL}/company/approles`, data);
 
 export const getDomainUserRoles = (data) => {
+  console.log(JSON.stringify(durum));
   let company = JSON.parse(localStorage.getItem("company"));
 
   return new Promise((resolve, reject) => {
-    if (domainUserRoles && company && domainUserRoles.domain === company.id && !data.reload) {
-      resolve(domainUserRoles);
+    if (durum && company && durum.domain === company.id && !data.reload) {
+      resolve(durum);
     } else {
       request("GET", `${API_URL}/company/approles`, getToken(), data, (result, error) => {
         try{
           if (error) reject(error);
           else {
-            domainUserRoles = JSON.parse(result);
-            resolve(domainUserRoles);
+            console.log("CAMBIO DURUM");
+            console.log(JSON.stringify(durum));
+            durum = JSON.parse(result);
+            resolve(durum);
           }
         } catch(e){reject(e);}
       });

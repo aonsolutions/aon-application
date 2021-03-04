@@ -235,9 +235,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 
-	public static DomainApp saveDomainApp(String domainName, Integer domainId, String login, DomainApp domainApp) {
+	public static DomainApp saveDomainApp(String domainName, Integer domainId, String login, DomainApp domainApp, boolean old) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
-			return getSecurity().saveDomainApp(ctx, domainApp);
+			return getSecurity().saveDomainApp(ctx, domainApp, old);
 		}
 	}
 

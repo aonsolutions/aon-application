@@ -37,7 +37,7 @@ public class OCRConfigurationController implements Serializable {
 					.setDomain(DomainManager.getCurrentDomain())
 					.setApp(AonApp.OCR)
 					.setActive(isActive())
-				);
+				, false);
 	}
 
 	

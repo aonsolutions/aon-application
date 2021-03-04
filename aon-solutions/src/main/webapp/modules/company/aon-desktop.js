@@ -1,9 +1,12 @@
 import {AonElement} from '../../components/AonElement.js';
 import { Apps, Services, OtherServices, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
-import {getDomainApps, setDomainApp, getDomainNotice} from  '../../services/service.js';
+import {getDomainApps, setDomainApp, getDomainNotice, getDomainUserRoles} from  '../../services/service.js';
 import {bidoq} from  '../../services/bidoq.js';
 import {startModule, rootPanel} from '../../services/gwtLoader.js';
+import {DomainUserRoles} from '../../models/DomainUserRoles.js';
+// MODULES
+import {AonAccounting} from '../accounting/aon-accounting.js';
 
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
@@ -11,14 +14,14 @@ import '../../components/aon-application.js';
 import '../marketplace/aon-marketplace.js';
 import '../invoice/aon-invoice-panel.js';
 import '../documental/aon-documental.js';
-import '../contable/aon-contable.js';
-import '../fiscal/aon-fiscal.js';
 import '../laboral/aon-laboral.js';
 import '../comunic@/aon-comunica.js';
 import '../signin/aon-signin.js';
 import './aon-stat.js';
 
 export class AonDesktop extends AonElement {
+
+	dur;
 
 	static get observedAttributes() {
 		return ['company'];
@@ -48,36 +51,46 @@ export class AonDesktop extends AonElement {
 		this.setAttribute('user', user);
 	}
 
+	constructor () {
+		super();
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
+		this.initialize();
 		if('company' === name){
 			let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 			if(company) {
-				getDomainApps(company.domain).then(r => {
+				getDomainUserRoles({}).then(r => {
+					this.dur = new DomainUserRoles(r);
 					getDomainNotice().then(notice => {
-						this.build(r, notice);
+						this.build(notice);
 					});
 				});
 			}
 		}
 	}
 
-	constructor () {
-		super();
+	initialize(){
 		this.id = 'aonDesktop';
+	}
+
+	getDur() {
+		return this.dur;
 	}
 
 	connectedCallback () {
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		if(company) {
-			getDomainApps(company.domain).then(r => {
+			getDomainUserRoles({}).then(r => {
+				this.dur = new DomainUserRoles(r);
 				getDomainNotice().then(notice => {
-					this.build(r, notice);
+					this.build(notice);
 				});
 			});
 		}
   }
 
-	build(r, notice) {
+	build(notice) {
 		this.innerHTML = `
 			<aon-application id="aonDesktopMain" title="Desktop" main="true"></aon-application>
 		`;
@@ -134,8 +147,7 @@ export class AonDesktop extends AonElement {
 
 		let appOptions = [];
 		for (let key in Apps){
-
-			if(r.includes(Apps[key].app)) {
+			if(this.isApp(Apps[key])) {
 				let option = {
 					name: Apps[key].title,
 					aonIcon: {
@@ -147,7 +159,7 @@ export class AonDesktop extends AonElement {
 				appOptions.push(option);
 			}
 		}
-		aonDesktop.addSidenavOptions('APLICACIONES CONTRATADAS', appOptions);
+		aonDesktop.addSidenavOptions('APLICACIONES DISPONIBLES', appOptions);
 
 		// let serviceOptions = [];
 		// for (let key in Services){
@@ -209,7 +221,7 @@ export class AonDesktop extends AonElement {
 		divSlide.innerHTML = '<aon-stat></aon-stat>'
 		div.appendChild(divSlide);
 
-		div.appendChild(this.buildTitle('CONTRATADOS'));
+		div.appendChild(this.buildTitle('DISPONIBLES'));
 
 		let ul = document.createElement('ul');
 		ul.className = 'list-group';
@@ -219,7 +231,7 @@ export class AonDesktop extends AonElement {
 
 
 		for (let key in Apps){
-			if(r.includes(Apps[key].app)) {
+			if(this.isApp(Apps[key])) {
 				let li = document.createElement('li');
 				li.className = 'list-group-item aonAppLi';
 				li.style.borderRight = '0px';
@@ -276,14 +288,6 @@ export class AonDesktop extends AonElement {
 			}
   	}
 		div.appendChild(ul);
-
-		div.appendChild(this.buildTitle('DISPONIBLES'));
-
-		this.buildDisponibles(div, r);
-
-		div.appendChild(this.buildTitle('OTROS SERVICIOS'));
-
-		this.buildOtherServices(div, r);
 	}
 
 	buildTitle(title) {
@@ -295,106 +299,14 @@ export class AonDesktop extends AonElement {
 		return div;
 	}
 
-	buildDisponibles(el, r) {
-		let ul = document.createElement('ul');
-		ul.className = 'list-group';
-		el.appendChild(ul);
-		for (let key in Apps){
-			if(!r.includes(Apps[key].app))
-				this.buildListElement(ul, Apps, key, r);
-		}
-		for (let key in Services){
-			if(!r.includes(Services[key].app)){
-				this.buildListElement(ul, Services, key, r);
-			}
-		}
-	}
-
-	buildOtherServices(el, r) {
-		let ul = document.createElement('ul');
-		ul.className = 'list-group';
-		el.appendChild(ul);
-		for (let key in OtherServices){
-			this.buildListElement(ul, OtherServices, key, r);
-		}
-	}
-
-	buildListElement(ul, apps, key, r){
-		let li = document.createElement('li');
-		li.className = 'list-group-item aonAppLi';
-		ul.appendChild(li);
-		let span = document.createElement('span');
-		span.style.margin = '20px';
-		li.appendChild(span);
-
-		if(apps[key].icon) {
-			let dispId = "aonDesktopDisponibles" + apps[key].app;
-			span.innerHTML = `<aon-icon id="${dispId}" icon="${apps[key].icon}" color="lightgrey" size="30px"></aon-icon>`;
-
-			li.addEventListener('mouseover', () => {
-				this.getElement(dispId).setAttribute('color', apps[key].color);
-			});
-
-			li.addEventListener('mouseleave', () => {
-				this.getElement(dispId).setAttribute('color', 'lightgrey');
-			});
-		} else {
-			let img = document.createElement('img');
-			img.style.width = '30px';
-			img.src = apps[key].logo;
-			span.appendChild(img);
-		}
-
-		let span2 = document.createElement('span');
-		span2.className = 'aonAppTitle';
-		span2.innerHTML = apps[key].title;
-		span.appendChild(span2);
-
-		let buttons = document.createElement('span');
-		buttons.style.position = 'absolute';
-		buttons.style.right = '10px';
-
-		let moreInfo = document.createElement('a');
-		moreInfo.style.margin = '10px';
-		moreInfo.style.color = 'gray';
-		moreInfo.style.cursor = 'pointer';
-		moreInfo.innerHTML = 'Más Info';
-		moreInfo.addEventListener('click', () => {
-			window.open(apps[key].moreInfo ? apps[key].moreInfo : 'https://www.aonsolutions.es/');
-		});
-		buttons.appendChild(moreInfo);
-		let contratado = r.includes(apps[key].app)
-		let contratar = document.createElement('button');
-		contratar.className = 'aonButton';
-		contratar.style.width = '110px';
-		contratar.style.padding = '0.3rem 0.8rem';
-		contratar.style.borderRadius = '25px';
-		contratar.innerHTML = contratado ? 'Desactivar' : 'Contratar';
-		contratar.style.backgroundColor = '#002469';
-		contratar.style.opacity = contratado ? '0.3' : '1';
-		if(OtherServices[key])  {
-			buttons.style.right = '120px';
-			contratar.disabled = true;
-			contratar.style.backgroundColor= 'lightgrey';
-		}
-		contratar.addEventListener('click', () => {
-			rootPanel('<aon-marketplace></aon-marketplace>');
-		});
-		if(!OtherServices[key])  {
-			buttons.appendChild(contratar);
-		}
-		span.appendChild(buttons);
-
-		return li;
-	}
-
 	appSelection(app) {
 		switch(app){
 			case Apps.DOCUMENTAL.app:
 				rootPanel('<aon-documental></aon-documental>')
 				break;
 			case Apps.ACCOUNTING.app:
-				this.development('Panel Contable');
+				//this.development('Panel Contable');
+				this.rootPanel(new AonAccounting());
 				//rootPanel('<aon-contable></aon-contable>');
 				break;
 			case Apps.FISCAL.app:
@@ -428,6 +340,27 @@ export class AonDesktop extends AonElement {
 		d.open();
 	}
 
+	isApp(app) {
+		if(Apps.ACCOUNTING.app === app.app)
+			return this.getDur().isAccounting();
+		else if(Apps.FISCAL.app === app.app)
+			return this.getDur().isFiscal();
+		else if(Apps.PAYROLL.app === app.app)
+			return this.getDur().isPayroll();
+		else if(Apps.COMUNICA.app === app.app)
+			return this.getDur().isComunica();
+		else if(Apps.DOCUMENTAL.app === app.app)
+			return this.getDur().isDocumental();
+		else if(Apps.TIMECONTROL.app === app.app)
+			return this.getDur().isTimecontrol();
+		else if(Apps.INVOICE.app === app.app)
+			return this.getDur().isInvoice();
+		else if(Apps.MESSENGER.app === app.app)
+			return this.getDur().isMessenger();
+		else return false;
+	}
 }
 
-window.customElements.define('aon-desktop', AonDesktop);
+if(!window.customElements.get('aon-desktop')){
+	window.customElements.define('aon-desktop', AonDesktop);
+}
