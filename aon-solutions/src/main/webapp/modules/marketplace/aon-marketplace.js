@@ -216,7 +216,7 @@ export class AonMarketplace extends AonElement {
 				message: 'Datos Guardados Correctamente'
 			});
 			getDomainUserRoles({reload:true}).then(r => {
-				this.build(new DomainUserRoles(r));
+				//this.build(new DomainUserRoles(r));
 			});
 		});
 	}
