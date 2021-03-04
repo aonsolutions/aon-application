@@ -6,6 +6,7 @@ import java.util.Date;
 @SuppressWarnings("serial")
 public class DigitalCertificate implements Serializable {
 	
+	private Integer id;
 	private Byte type;
 	private Boolean confidential;
 	private String password;
@@ -15,6 +16,14 @@ public class DigitalCertificate implements Serializable {
 	
 	public DigitalCertificate() {
 		super();
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public Byte getType() {

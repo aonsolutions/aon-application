@@ -292,7 +292,8 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	}
 	
 	private void insertRows() {
-		insertSEPECertificateRow();
+		if(!mainDigitalCertificatesObject.hasMoraThanOneSEPECertificates())
+			insertSEPECertificateRow();
 		insertTGSSCertificateRow();
 	}
 
@@ -458,6 +459,9 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		mainFlowPanel.setWidth("350px");
 		
 		TextBox fileNameTB = new TextBox();
+		if(mainDigitalCertificatesObject.hasMoraThanOneSEPECertificates() && AonStringUtils.equals(certificateTypeStr, "0"))
+			fileNameTB.setEnabled(false);
+		
 		fileNameTB.getElement().getStyle().setWidth(305, Unit.PX);
 		if(mainDigitalCertificatesObject.hasData(Byte.parseByte(certificateTypeStr)))
 			fileNameTB.setValue(mainDigitalCertificatesObject.getDescription(Byte.parseByte(certificateTypeStr)));
@@ -483,6 +487,9 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		Hidden token = new Hidden("token", Wnd.getToken());
 		
 		FileUpload fileU = new FileUpload();
+		if(mainDigitalCertificatesObject.hasMoraThanOneSEPECertificates() && AonStringUtils.equals(certificateTypeStr, "0"))
+			fileU.setEnabled(false);
+		
 		fileU.setName("uploader");
 		fileU.getElement().setPropertyString("multiple", "multiple");
 		fileU.getElement().setPropertyString("accept", ".p12");
@@ -550,10 +557,100 @@ public class MainDigitalCertificates extends MainEntryPoint{
 
 	private void fillCertificatesRows(List<DigitalCertificate> digitalCertificates) {
 		for(DigitalCertificate digitalCertificate : digitalCertificates) {
-			if(digitalCertificate.getType() == (byte) 0)
-				fillSEPECertificateRow(digitalCertificate);	
+			if(digitalCertificate.getType() == (byte) 0) {
+				if(mainDigitalCertificatesObject.hasMoraThanOneSEPECertificates())
+					createAndfillSEPECertificateRow(digitalCertificate);
+				else
+					fillSEPECertificateRow(digitalCertificate);
+			}
 			if(digitalCertificate.getType() == (byte) 1)
 				fillTGSSCertificateRow(digitalCertificate);	
+		}
+	}
+
+	private void createAndfillSEPECertificateRow(DigitalCertificate digitalCertificate) {
+		// Insert new row
+		int row = digitalCertificatesDataTable.insertRow(digitalCertificatesDataTable.getRowCount());
+		
+		// Type Label
+		Label typeL = new Label("Certificado Empresa (SEPE)");
+		
+		// Confidential CheckBox
+		CheckBox confidentialCB = new CheckBox();
+		confidentialCB.addValueChangeHandler((e) -> {
+			mainDigitalCertificatesObject.setConfidential((byte)0, e.getValue());
+			this.accept.setVisible(true);
+		});
+		
+		// Password TextBox
+		HorizontalPanel hPanel = new HorizontalPanel();
+		
+		PasswordTextBox passwordTB = new PasswordTextBox();
+		passwordTB.addValueChangeHandler(e -> {
+			mainDigitalCertificatesObject.setPassword((byte)0, e.getValue());
+			this.accept.setVisible(true);
+		});
+		hPanel.add(passwordTB);
+		
+		if(!mainDigitalCertificatesObject.hasData(Byte.parseByte("0"))) {
+			AonTableButton showPassBtn = new AonTableButton("Mostrar", AON.CSS.aonIconShowPass());
+			showPassBtn.addClickHandler(e -> {
+				String type = passwordTB.getElement().getAttribute("type");
+				if(StringUtils.isBlank(type) || (type != "text" || !type.equals("text")))
+					passwordTB.getElement().setAttribute("type", "text");
+				else
+					passwordTB.getElement().setAttribute("type", "password");
+			});
+			
+			showPassBtn.getElement().getStyle().setMarginLeft(5, Unit.PX);
+			showPassBtn.getElement().getStyle().setMarginTop(4, Unit.PX);
+			hPanel.add(showPassBtn);
+		}
+		
+		// Upload & Download FormPanel
+		HorizontalPanel hFormPanel = new HorizontalPanel();
+		
+		Widget formPanel = createFormPanel("0");
+		hFormPanel.add(formPanel);
+		
+		AonTableButton deleteCertificate = new AonTableButton("");
+		if(mainDigitalCertificatesObject.hasData(Byte.parseByte("0")) && !mainDigitalCertificatesObject.hasMoraThanOneSEPECertificates()) {
+			deleteCertificate = new AonTableButton("Eliminar Cert", AON.CSS.aonIconDelete());
+			deleteCertificate.getElement().getStyle().setMarginTop(5, Unit.PX);
+			deleteCertificate.addClickHandler(e -> {
+				mainDigitalCertificatesObject.deleteDigitalCertificate("0",
+	    				s -> {
+	    					this.accept.setVisible(false);
+	    					initPreview();
+	    					insertRows();
+	    					fillCertificatesRows(mainDigitalCertificatesObject.getDigitalCertificateList());
+	    				}, f -> {});
+			});
+			
+			
+			hFormPanel.add(deleteCertificate);
+		}
+		
+		
+		// Attach DateBoxEx
+		Label dateL = new Label();
+		dateL.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		
+		//Add to table
+		digitalCertificatesDataTable.setWidget(row, 0, typeL);
+		digitalCertificatesDataTable.setWidget(row, 1, confidentialCB);
+		digitalCertificatesDataTable.setWidget(row, 2, hPanel);
+		digitalCertificatesDataTable.setWidget(row, 3, hFormPanel);
+		digitalCertificatesDataTable.setWidget(row, 4, dateL);
+		
+		confidentialCB.setValue(digitalCertificate.getConfidential());
+		passwordTB.setValue(digitalCertificate.getPassword());
+		dateL.setText(formatFullDate.format(digitalCertificate.getCreationDate()));
+		
+		if(mainDigitalCertificatesObject.hasMoraThanOneSEPECertificates()) {
+			confidentialCB.setEnabled(false);
+			passwordTB.setEnabled(false);
+			deleteCertificate.setVisible(false);
 		}
 	}
 
@@ -564,9 +661,15 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	}
 	
 	private void fillTGSSCertificateRow(DigitalCertificate digitalCertificate) {
-		((CheckBox) digitalCertificatesDataTable.getWidget(1, 1)).setValue(digitalCertificate.getConfidential());
-		((PasswordTextBox)((HorizontalPanel) digitalCertificatesDataTable.getWidget(1, 2)).getWidget(0)).setValue(digitalCertificate.getPassword());
-		((Label) digitalCertificatesDataTable.getWidget(1, 4)).setText(formatFullDate.format(digitalCertificate.getCreationDate()));
+		if(mainDigitalCertificatesObject.hasMoraThanOneSEPECertificates()) {
+			((CheckBox) digitalCertificatesDataTable.getWidget(0, 1)).setValue(digitalCertificate.getConfidential());
+			((PasswordTextBox)((HorizontalPanel) digitalCertificatesDataTable.getWidget(0, 2)).getWidget(0)).setValue(digitalCertificate.getPassword());
+			((Label) digitalCertificatesDataTable.getWidget(0, 4)).setText(formatFullDate.format(digitalCertificate.getCreationDate()));
+		}else {
+			((CheckBox) digitalCertificatesDataTable.getWidget(1, 1)).setValue(digitalCertificate.getConfidential());
+			((PasswordTextBox)((HorizontalPanel) digitalCertificatesDataTable.getWidget(1, 2)).getWidget(0)).setValue(digitalCertificate.getPassword());
+			((Label) digitalCertificatesDataTable.getWidget(1, 4)).setText(formatFullDate.format(digitalCertificate.getCreationDate()));
+		}
 	}
 	
 	private void insertSecondaryUsersRows() {

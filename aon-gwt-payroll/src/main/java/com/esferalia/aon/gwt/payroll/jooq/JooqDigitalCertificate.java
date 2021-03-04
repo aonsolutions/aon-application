@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -70,22 +71,25 @@ public class JooqDigitalCertificate {
 		
 		Integer registryEntepriseId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
 		
-		Record employeeCertificateRecord = dslContext.select().from(RATTACH).where(RATTACH.REGISTRY.eq(registryEntepriseId)).and(RATTACH.TYPE.eq((byte)4)).fetchOne();
-		if(null != employeeCertificateRecord) {
-			DigitalCertificate tgssDigitalCertiticate = new DigitalCertificate();
-			tgssDigitalCertiticate.setType((byte)0);
-			tgssDigitalCertiticate.setDescription(employeeCertificateRecord.get(RATTACH.DESCRIPTION));
-			tgssDigitalCertiticate.setConfidential(employeeCertificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? false : true);
-			tgssDigitalCertiticate.setHasCertificate(null == employeeCertificateRecord.get(RATTACH.DATA) ? false : true);
-			tgssDigitalCertiticate.setCreationDate(null == employeeCertificateRecord.get(RATTACH.CREATION_DATE) ? null : new java.util.Date(employeeCertificateRecord.get(RATTACH.CREATION_DATE).getTime()));
-		
-			String tgssDigitalCertificatePassword = dslContext.select(RADDINFO.VALUE).from(RADDINFO).where(RADDINFO.REGISTRY.eq(registryEntepriseId)).and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD")).fetchOne(RADDINFO.VALUE);
+		Result<Record> employeeCertificateRecords = dslContext.select().from(RATTACH).where(RATTACH.REGISTRY.eq(registryEntepriseId)).and(RATTACH.TYPE.eq((byte)4)).fetch();
+		if(employeeCertificateRecords.isNotEmpty()) {
+			for(Record employeeCertificateRecord : employeeCertificateRecords) {
+				DigitalCertificate tgssDigitalCertiticate = new DigitalCertificate();
+				tgssDigitalCertiticate.setId(employeeCertificateRecord.get(RATTACH.ID));
+				tgssDigitalCertiticate.setType((byte)0);
+				tgssDigitalCertiticate.setDescription(employeeCertificateRecord.get(RATTACH.DESCRIPTION));
+				tgssDigitalCertiticate.setConfidential(employeeCertificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? false : true);
+				tgssDigitalCertiticate.setHasCertificate(null == employeeCertificateRecord.get(RATTACH.DATA) ? false : true);
+				tgssDigitalCertiticate.setCreationDate(null == employeeCertificateRecord.get(RATTACH.CREATION_DATE) ? null : new java.util.Date(employeeCertificateRecord.get(RATTACH.CREATION_DATE).getTime()));
 			
-			if(null != tgssDigitalCertificatePassword)
-				tgssDigitalCertiticate.setPassword(tgssDigitalCertificatePassword);
-		
-			// Add certificate to list
-			digitalCertificates.add(tgssDigitalCertiticate);		
+				String tgssDigitalCertificatePassword = dslContext.select(RADDINFO.VALUE).from(RADDINFO).where(RADDINFO.REGISTRY.eq(registryEntepriseId)).and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD")).fetchOne(RADDINFO.VALUE);
+				
+				if(null != tgssDigitalCertificatePassword)
+					tgssDigitalCertiticate.setPassword(tgssDigitalCertificatePassword);
+			
+				// Add certificate to list
+				digitalCertificates.add(tgssDigitalCertiticate);
+			}
 		}
 		
 		return digitalCertificates;

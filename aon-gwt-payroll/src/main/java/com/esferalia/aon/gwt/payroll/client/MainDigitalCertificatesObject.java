@@ -250,4 +250,13 @@ public class MainDigitalCertificatesObject {
 		else
 			return "2";
 	}
+	
+	public boolean hasMoraThanOneSEPECertificates() {
+		int sepeCertificates = 0;
+		for(DigitalCertificate digitalCertificate : digitalCertificateList) {
+			if(digitalCertificate.getType() == (byte)0)
+				sepeCertificates++;
+		}
+		return sepeCertificates > 1;
+	}
 }
