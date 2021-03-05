@@ -1,0 +1,27 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:style>
+
+		.widthAll{
+			width: 100%;
+		}
+		
+		.heightAll{
+			height: 100%;
+		}
+		
+		.margin{
+			margin: 0 10px;
+		}
+		
+	</ui:style>
+
+	<g:ScrollPanel ui:field="scrollPanel" styleName="{style.widthAll}">
+		<c:DataGrid ui:field="salaryDG" styleName="{style.margin} {style.heightAll}"></c:DataGrid>
+	</g:ScrollPanel>
+			
+</ui:UiBinder> 
+
