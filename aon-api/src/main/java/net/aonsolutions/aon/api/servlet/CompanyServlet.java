@@ -206,12 +206,12 @@ public class CompanyServlet extends AonApiHttpServlet{
 		for (AonApp aonApp : AonApp.values()) {
 			DomainApp domainApp = AON_SOLUTIONS.getDomainApp(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> 
 			f.getDomainProperty().eq(getDomain().getId()).and(f.getAppProperty().eq(aonApp.value()))).findFirst().orElse(new DomainApp());
-			if(apps.contains(aonApp) && (domainApp.isEmpty() || !domainApp.isActive())) {
+			if(apps.contains(aonApp)) {
 				 activeDomainApps.add(domainApp
 						 .setDomain(getDomain().getId())
 						 .setApp(aonApp)
 						 .setActive(true));
-			} else if(!apps.contains(aonApp) && !domainApp.isEmpty()) {
+			} else if(!domainApp.isEmpty()) {
 				AON_SOLUTIONS.saveDomainApp(getDomain().getName(), getDomain().getId(), getUser().getLogin(), domainApp.setActive(false), true);
 			}
 		}
