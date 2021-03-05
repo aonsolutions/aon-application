@@ -112,6 +112,7 @@ public class ActivityDialog extends AonCustomDialog {
 
 	public ActivityDialog() {	
 		activity = new ActivityImplementation();
+		activity.cccWidget.setDialogHeight();
 		
 		setCaption("Nueva Actividad");
 		setWidget(binder.createAndBindUi(this));

@@ -54,7 +54,7 @@
 		
 		.tittle{
 			position: relative;
-			top: -0.7em;
+			top: -1.2em;
 			left: 20px;
 			width: 130px;
 			padding: 0 5px;
@@ -115,8 +115,7 @@
 		    </g:VerticalPanel>
 	   	</g:HTMLPanel>
 		
-	    <aon:CCC ui:field="cccWidget"></aon:CCC>
-	    
+	    <aon:CCC ui:field="cccWidget"></aon:CCC>    
 	</g:VerticalPanel>
 			
 </ui:UiBinder> 

@@ -115,6 +115,11 @@ public abstract class CCC extends ResizeComposite {
 		scrollPanel.setHeight((clientHeight - 550) + "px");
 	}
 	
+	public void setDialogHeight() {
+		Integer clientHeight = Window.getClientHeight();
+		scrollPanel.setHeight((clientHeight - 650) + "px");
+	}
+	
 	public void calculateScrollPanelHeightMainCCC() {
 		Integer clientHeight = Window.getClientHeight();
 		scrollPanel.setHeight((clientHeight - 350) + "px");
