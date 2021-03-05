@@ -5,6 +5,10 @@
 /* ICONS */
 @url iconAdd aonIconAdd;
 .aon_icon_add { background-image: iconAdd;}
+@url iconEmail aonIconEmail;
+.aon_icon_email { background-image: iconEmail;}
+@url iconDrive aonIconDrive;
+.aon_icon_drive { background-image: iconDrive;}
 @url iconVisibility aonIconVisibility;
 .aon_icon_visibility { background-image: iconVisibility;}
 @url iconVisibilityOff aonIconVisibilityOff;
