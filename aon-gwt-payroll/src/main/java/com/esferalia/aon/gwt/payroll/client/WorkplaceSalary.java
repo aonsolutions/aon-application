@@ -2,62 +2,56 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
-import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.cell.client.ValueUpdater;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.dom.client.ContextMenuHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
-import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.DefaultSelectionEventManager;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
-public class WorkplaceSalary extends Composite implements ContextMenuHandler {
+public class WorkplaceSalary extends Composite {
+	
+	// --------------------------------------------- Salary Table Impl ----------------------------------------------
+	
+	private class SalaryTableImpl extends SalaryTable {
 
+		@Override
+		protected void onSelectionSalaryChange(boolean isSomethingSelected) {
+			enableDisableButtons(isSomethingSelected);
+		}
+		
+	}
+	
+	// -------------------------------------------------- UiBinder --------------------------------------------------
+	
 	private static EmployeeSalaryUiBinder uiBinder = GWT.create(EmployeeSalaryUiBinder.class);
 
 	interface EmployeeSalaryUiBinder extends UiBinder<Widget, WorkplaceSalary> {}
@@ -67,41 +61,60 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		void onPublishSalaries(SalaryInfo salary, String type);
 	}
 	
+	// ----------------------------------------------- ScheduledCommand ---------------------------------------------
+	
+	class NewEmailEmployeesCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onEmailEmployees();
+		}
+	}
+	
+	class NewEmailEnterpriseCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onEmailEnterprise();
+		}
+	}
+	
+	class NewContextMenu extends ContextMenu {
+				
+		private MenuItem newEmailEmployees = null;
+		private MenuItem newEmailEnterprise = null;
+		
+		public NewContextMenu() {
+			
+			newEmailEmployees = addItem("Email empleados", new NewEmailEmployeesCommand(), 
+					AON.CSS.aonIconEmail(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			newEmailEmployees.ensureDebugId("newEmailEmployees");
+			
+			newEmailEnterprise = addItem("Email empresa", new NewEmailEnterpriseCommand(), 
+					AON.CSS.aonIconEmail(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			newEmailEnterprise.ensureDebugId("newEmailEnterprise");
+		}
+	}
+	
+	// -------------------------------------------------- UiFields --------------------------------------------------
+	
 	@UiField
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		String suggestBox();
+		String container();
+		String cmd_btn();
 	}
 	
 	@UiField
-	Button deleteButton;
+	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
-	Button saveButton;
+	VerticalPanel mainContainer;
 	
 	@UiField
-	Button publishButton;
-	
-	@UiField
-	Button bidoqPublishButton;
-	
-	
-	@UiField
-	Button emailEnterpriseButton;
-	
-	@UiField
-	Button emailEmployeesButton;
-	
-	@UiField
-	HTMLPanel mainContainer;
-	
-	@UiField
-	Label workplaceNameLabel;
-
-	@UiField
-	DisclosurePanel collapsePanel;
-	
+	HTMLPanel filterSalaryPanel;
+		
 	@UiField
 	SuggestBox employeeSB;
 	
@@ -126,320 +139,54 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	@UiField
 	ListBox yearTTo;
 	
-	@UiField
-	Button filterButton;
+	// -------------------------------------------------- Variables -------------------------------------------------
 	
-	@UiField
-	HTMLPanel mainTablePanel;
+	private WorkplaceSalaryObject workplaceSalaryObject;
 	
-	@UiField(provided = true)
-	DataGrid<SalaryInfo> salaryDataGrid;
-
+	private List<Listener> listeners;
+	
 	private List<SalaryInfo> salaries = Collections.emptyList();
 	
+	private SalaryTable salaryTable;
+	
+	private NewContextMenu contextMenu;
+	
+	private AonToolbar toolbar;
+	private AonToolbarButton deleteButton;
+	private AonToolbarButton pdfButton;
+	private AonToolbarButton publishButton;
+	private AonToolbarButton bidoqPublishButton;
+	private AonToolbarButton email;
+
+	// ------------------------------------------------- Constructor ------------------------------------------------
+
 	public WorkplaceSalary() {
-		provideSalaryDataGrid();
-		
-		//Inicializamos la vista del calendario
+		toolbar = getToolbarPanel();
+		salaryTable = new SalaryTableImpl();
 		initWidget(uiBinder.createAndBindUi(this)); 
+		
+		contextMenu = new NewContextMenu();
+		
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		dockLayoutPanel.addStyleName(style.container());
+		mainContainer.add(salaryTable);
+		
+		salaryTable.setWorkplaceView();
 		
 		listeners = new LinkedList<Listener>();
 		
-		initCollapsePanel();
+		initFilterPanel();
 	}
 	
-	private void provideSalaryDataGrid() {
-		salaries  = Collections.emptyList();
+	private void initFilterPanel() {
+		filterSalaryPanel.addStyleName(AON.CSS.aonSearchPanel());
+		filterSalaryPanel.addStyleName(AON.CSS.aonScrollArea());
+		filterSalaryPanel.addStyleName(AON.CSS.aonMarginBottom());
+		filterSalaryPanel.addStyleName(AON.CSS.aonMarginLeft());
+		filterSalaryPanel.addStyleName(AON.CSS.aonMarginRight());
+		filterSalaryPanel.addStyleName(AON.CSS.aonBlockCenter());
 		
-		// Resource Style CellTable
-		salaryDataGrid = new CustomDataGrid<SalaryInfo>(Integer.MAX_VALUE, SalaryInfo.KEY_PROVIDER);
-		salaryDataGrid.setWidth("100%");
-		
-		//Do not refresh the headers every time the dataGrid is updated.
-		salaryDataGrid.setAutoHeaderRefreshDisabled(true);
-		
-		// Set the message to display when the table is empty.
-		salaryDataGrid.setEmptyTableWidget(new Label("No existen nominas".toUpperCase()));
-		
-		// Add a selection model so we can select cells.
-	    this.selectionModel = new MultiSelectionModel<SalaryInfo>(SalaryInfo.KEY_PROVIDER);
-	    salaryDataGrid.setSelectionModel(this.selectionModel, DefaultSelectionEventManager.<SalaryInfo> createCheckboxManager());
-		
-	    // Initialize the columns.
-	    addColumns(this.selectionModel);
-	    
-	    new ListDataProvider<SalaryInfo>(Collections.emptyList()).addDataDisplay(salaryDataGrid);
-	    
-	    // Add style to table header
-	    addStyleToHeader();
-	}
-	
-	public void addStyleToHeader() {
-		salaryDataGrid.getHeader(0).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDataGrid.getHeader(1).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDataGrid.getHeader(2).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDataGrid.getHeader(3).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDataGrid.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDataGrid.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDataGrid.getHeader(6).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDataGrid.getHeader(7).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDataGrid.getHeader(8).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	    salaryDataGrid.getHeader(9).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	}
-	
-	
-	private void initCollapsePanel() {
-		collapsePanel.setOpen(false);
-		monthTillT.setEnabled(false);
-		yearTillT.setEnabled(false);
-		monthTTo.setEnabled(false);
-		yearTTo.setEnabled(false);
-	}
-	
-	private void addColumns(MultiSelectionModel<SalaryInfo> selectionModel) {
-		selectionModel.addSelectionChangeHandler(new Handler() {
-	        
-	        @Override
-	        public void onSelectionChange(SelectionChangeEvent event) {
-	            if(selectionModel.getSelectedSet().size() > 0) {
-	            	deleteButton.setEnabled(true);
-	            	saveButton.setEnabled(true);
-	            	publishButton.setEnabled(true);
-	            	bidoqPublishButton.setEnabled(true);
-	            	emailEnterpriseButton.setEnabled(true);
-	            	emailEmployeesButton.setEnabled(true);
-	            }else {
-	            	deleteButton.setEnabled(false);
-	            	saveButton.setEnabled(false);
-	            	publishButton.setEnabled(false);
-	            	bidoqPublishButton.setEnabled(false);
-	            	emailEnterpriseButton.setEnabled(false);
-	            	emailEmployeesButton.setEnabled(false);
-	            }
-	            
-	        }
-	    });
-	    
-	    // Checkbox column. This table will uses a checkbox column for selection.
-	    // Alternatively, you can call cellTable.setSelectionEnabled(true) to enable
-	    // mouse selection.
-	    Column<SalaryInfo, Boolean> checkColumn = new Column<SalaryInfo, Boolean>(
-	        new CheckboxCell(true, false)) {
-	      @Override
-	      public Boolean getValue(SalaryInfo object) {
-	        // Get the value from the selection model.
-	        return selectionModel.isSelected(object);
-	      }
-	    };
-    
-	    // Checkbox at the header row to select/deselect all persons
-	    CheckboxCell selectAllHeaderCB = new CheckboxCell(true,true); //the checkbox is true true for dependsOnSelection and handlesSelection for it to work
-	    Header<Boolean> selectAllHeader = new Header<Boolean>(selectAllHeaderCB)
-	    {
-	      @Override
-	      public Boolean getValue()
-	      {
-	        //return true only when all items are selected
-	    	boolean value = false;
-	    	
-	    	if(null != workplaceSalaryObject.getWorkplaceSalaries())
-	    		value = selectionModel.getSelectedSet().size() == workplaceSalaryObject.getWorkplaceSalaries().size();
-	        
-	    	return value; 
-	      }
-	    };
-	    
-	    selectAllHeader.setUpdater(new ValueUpdater<Boolean>(){
-	      @Override
-	      public void update(Boolean value)
-	      {
-	        // Select/deselect all persons
-	    	if(null != workplaceSalaryObject.getWorkplaceSalaries())
-		        for (SalaryInfo person : workplaceSalaryObject.getWorkplaceSalaries())
-		          selectionModel.setSelected(person, value);
-	        
-	      }
-	    });
-	    
-	    // Add Selection Column to table
-	    salaryDataGrid.addColumn(checkColumn,selectAllHeader);
-	    salaryDataGrid.setColumnWidth(checkColumn, 5, Unit.PCT);
-	    checkColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		
-		//----------------------------------------------------------------------
-	    //							CREATE COLUMNS
-	    //----------------------------------------------------------------------
-		
-		// Create employee name column.
-	    TextColumn<SalaryInfo> employeeNameColumn = new TextColumn<SalaryInfo>() {
-	      @Override
-	      public String getValue(SalaryInfo salaryInfo) {
-	        return salaryInfo.getEmployeeName();
-	      }
-	    };
-
-	    // Make the employee name column sortable.
-	    employeeNameColumn.setSortable(true);
-	    salaryDataGrid.setColumnWidth(employeeNameColumn, 30, Unit.PCT);
-	    
-	    // Create workplace name column.
-	    TextColumn<SalaryInfo> workplaceNameColumn = new TextColumn<SalaryInfo>() {
-	      @Override
-	      public String getValue(SalaryInfo salaryInfo) {
-	        return salaryInfo.getWorkplaceName();
-	      }
-	    };
-
-	    // Make the workplace name column sortable.
-	    workplaceNameColumn.setSortable(true);
-	    
-	    // Create start date column.
-	    TextColumn<SalaryInfo> startDateColumn = new TextColumn<SalaryInfo>() {
-	      @Override
-	      public String getValue(SalaryInfo salaryInfo) {
-	    	  return formatFullDate.format(salaryInfo.getStartDate());
-	      }
-	    };
-
-	    // Make the  start date column sortable.
-	    startDateColumn.setSortable(true);
-	    salaryDataGrid.setColumnWidth(startDateColumn, 10, Unit.PCT);
-	    
-	    // Create end date column.
-	    TextColumn<SalaryInfo> endDateColumn = new TextColumn<SalaryInfo>() {
-	      @Override
-	      public String getValue(SalaryInfo salaryInfo) {
-	    	  return formatFullDate.format(salaryInfo.getEndDate());
-	      }
-	    };
-
-	    // Make the end date column sortable.
-	    endDateColumn.setSortable(true);
-	    salaryDataGrid.setColumnWidth(endDateColumn, 10, Unit.PCT);
-	    
-	    // Create type column.
-	    TextColumn<SalaryInfo> typeColumn = new TextColumn<SalaryInfo>() {
-	      @Override
-	      public String getValue(SalaryInfo salaryInfo) {
-	        return salaryInfo.getType().getDescription();
-	      }
-	    };
-	    
-	    // Make the type column sortable.
-	    typeColumn.setSortable(true);
-	    salaryDataGrid.setColumnWidth(typeColumn, 10, Unit.PCT);
-	    
-	    // Create total payment column.
-	    TextColumn<SalaryInfo> totalPaymentColumn = new TextColumn<SalaryInfo>() {
-	      @Override
-	      public String getValue(SalaryInfo salaryInfo) {
-	    	  if(null == salaryInfo.getTotalPayment() || 0 == salaryInfo.getTotalPayment())
-	    		  return "00,00";
-	    	  return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalPayment());
-	      }
-	    };
-	 
-	    totalPaymentColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-	    salaryDataGrid.setColumnWidth(totalPaymentColumn, 10, Unit.PCT);
-	    
-	    // Create total deduction column.
-	    TextColumn<SalaryInfo> totalDeductionColumn = new TextColumn<SalaryInfo>() {
-	      @Override
-	      public String getValue(SalaryInfo salaryInfo) {
-	    	  if(null == salaryInfo.getTotalDecuction() || 0 == salaryInfo.getTotalDecuction())
-	    		  return "00,00";
-	    	  return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalDecuction());
-	      }
-	    };
-	    
-	    totalDeductionColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-	    salaryDataGrid.setColumnWidth(totalDeductionColumn, 10, Unit.PCT);
-	    
-	    // Create total liquid column.
-	    TextColumn<SalaryInfo> totalLiquidColumn = new TextColumn<SalaryInfo>() {
-	      @Override
-	      public String getValue(SalaryInfo salaryInfo) {
-	    	  if(null == salaryInfo.getTotalLiquid() || 0 == salaryInfo.getTotalLiquid())
-	    		  return "00,00";
-	    	  return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalLiquid())+" "+String.valueOf("\u20AC");
-	      }
-	    };
-	    
-	    totalLiquidColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-	    salaryDataGrid.setColumnWidth(totalLiquidColumn, 10, Unit.PCT);
-	    
-	    ActionCell<SalaryInfo> draftActionCell = new ActionCell<SalaryInfo>("", new ActionCell.Delegate<SalaryInfo>() {
-
-			@Override
-			public void execute(SalaryInfo salary) {
-				EmployeeTree.showSalaryDraft(salary.getContract(),
-						salary.getWorkplaceId(), salary.getStartDate(),
-						salary.getEndDate());
-			}
-			
-		});
-	    
-	    Column<SalaryInfo, SalaryInfo> draftColumn = new Column<SalaryInfo, SalaryInfo>(draftActionCell) {
-
-			@Override
-			public SalaryInfo getValue(SalaryInfo object) {
-				return object;
-			}
-			
-			@Override
-			public void render(Context context, SalaryInfo object, SafeHtmlBuilder sb) {
-				if(null != object) {
-					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-edit\" style=\"border: none !important; height: 20px;\"></button>");
-				}
-			}
-		};
-		
-		draftColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		salaryDataGrid.setColumnWidth(draftColumn, 5, Unit.PCT);
-		
-	    // Add the columns.
-		salaryDataGrid.addColumn(employeeNameColumn, "Empleado");
-		salaryDataGrid.addColumn(workplaceNameColumn, "C. Trabajo");
-	    
-		salaryDataGrid.addColumn(typeColumn, "Tipo");
-		salaryDataGrid.addColumn(startDateColumn, "F. Inicio");
-		salaryDataGrid.addColumn(endDateColumn, "F. Fin");
-	    
-		salaryDataGrid.addColumn(totalPaymentColumn, "Bruto");
-		salaryDataGrid.addColumn(totalDeductionColumn, "Deducciones");
-		salaryDataGrid.addColumn(totalLiquidColumn, "L"+String.valueOf("\u00ED")+"quido");
-	    
-		salaryDataGrid.addColumn(draftColumn, "");
-	      
-	}
-	
-	// --------------------------------------------------
-	//				setEnterpriseSalaryObject
-	// --------------------------------------------------
-
-	private WorkplaceSalaryObject workplaceSalaryObject;
-	private MultiSelectionModel<SalaryInfo> selectionModel;
-	private List<Listener> listeners;
-	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
-	
-	public void setWorkplaceSalaryObject(WorkplaceSalaryObject workplaceSalaryObject) {
-		this.workplaceSalaryObject = workplaceSalaryObject;
-		this.workplaceSalaryObject.getWorkplaceSalariesDB(
-				s -> {
-					//Workplace Name Title
-					if(!this.workplaceSalaryObject.getWorkplaceSalaries().isEmpty())
-						workplaceNameLabel.setText(this.workplaceSalaryObject.getWorkplaceSalaries().get(0).getWorkplaceName());
-				    
-					initListBox();
-					initSuggestBox();
-					this.noDateRB.setValue(true, false);
-					initSalariesTable();
-					
-					salaryDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					mainTablePanel.getElement().getStyle().setHeight(725, Unit.PX);
-				}, 
-				f -> {}
-		);
+		initListBox();
 	}
 	
 	private void initListBox() {
@@ -451,26 +198,51 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		yearTTo.clear();
 		
 		// Add types to typeList
-		typeList.addItem("Todas");
-		typeList.addItem("Nomina");
-		typeList.addItem("Extra");
-		typeList.addItem("Atraso");
-		typeList.addItem("Finiquito");
+		typeList.addItem("Todas", "-1");
+		typeList.addItem("Nomina", "0");
+		typeList.addItem("Extra", "1");
+		typeList.addItem("Atraso", "3");
+		typeList.addItem("Finiquito", "2");
 		
 		// Add months to listboxes
 		String[] monthList = new String[] {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
-		for(String month : monthList) {
-			monthTillT.addItem(month);
-			monthTTo.addItem(month);
+		for(int i=0; i<monthList.length; i++) {
+			monthTillT.addItem(monthList[i], i+"");
+			monthTTo.addItem(monthList[i], i+"");
 		}
-		
+	}
+	
+	// ------------------------------------------ Set WorkplaceSalaryObject -----------------------------------------
+
+	public void setWorkplaceSalaryObject(WorkplaceSalaryObject workplaceSalaryObject) {
+		this.workplaceSalaryObject = workplaceSalaryObject;
+		this.workplaceSalaryObject.getWorkplaceSalariesDB(
+				s -> {
+					initDatesListBox();
+					initSuggestBox();
+					filterCurrentYearSalaries();
+					setNewToolbarTitle();
+				}, 
+				f -> {}
+		);
+	}
+
+	private void initDatesListBox() {
 		// Add year to listboxes
-		Integer actualYear = new Date().getYear() + 1900;
-		Integer firstPayroll = (null == this.workplaceSalaryObject.getWorkplaceSalaries() || this.workplaceSalaryObject.getWorkplaceSalaries().isEmpty()) ? new Date().getYear() + 1900 : this.workplaceSalaryObject.getWorkplaceSalaries().get(this.workplaceSalaryObject.getWorkplaceSalaries().size()-1).getStartDate().getYear() + 1900;
+		yearTillT.clear();
+		yearTTo.clear();
+		
+		List<SalaryInfo> workplaceSalaries = this.workplaceSalaryObject.getWorkplaceSalaries();
+		
+		Integer actualYear = DateUtils.getYear();
+		Integer firstPayroll = (null == workplaceSalaries || workplaceSalaries.isEmpty()) ? DateUtils.getYear() : DateUtils.getYear(workplaceSalaries.get(workplaceSalaries.size()-1).getStartDate());
 		Integer diffYears = actualYear - firstPayroll;
+		
 		for(int i = 0; i <= diffYears; i++) {
-			yearTillT.addItem((actualYear - i)+"");
-			yearTTo.addItem((actualYear - i)+"");
+			Integer year = actualYear - i;
+			String yearStr = year.toString();
+			yearTillT.addItem(yearStr, yearStr);
+			yearTTo.addItem(yearStr, yearStr);
 		}
 	}
 
@@ -480,155 +252,250 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		List<String> employeesNamesSuggest = new ArrayList<String>();
 		for(String name : employeesNames)
 			employeesNamesSuggest.add(name+"");
+		
 		MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) this.employeeSB.getSuggestOracle();
 		orclNames.addAll(employeesNamesSuggest);
 		this.employeeSB.setAutoSelectEnabled(true);
-		this.employeeSB.addStyleName(style.suggestBox());
 		this.employeeSB.setValue("");
 	}
+	
+	private void filterCurrentYearSalaries() {
+		SalaryInfoFilter filter = workplaceSalaryObject.getFilter();
+		
+		filter.setNoDateFilter(false);
+		filter.setDateMYFilter(false);
+		filter.setDateTTFilter(true);
+		
+		Date firstDayOfYear = DateUtils.getFirstDayOfYear();
+		Date lastDayOfYear = DateUtils.getLastDayOfYear(DateUtils.getFirstDayOfYear());
+		
+		dateTTRB.setValue(true);
+		
+		setSelectedValueLB(monthTillT, DateUtils.getMonth(firstDayOfYear) + "");
+		setSelectedValueLB(monthTTo, DateUtils.getMonth(lastDayOfYear) + "");
+		
+		setSelectedValueLB(yearTillT, DateUtils.getYear(firstDayOfYear) + "");
+		setSelectedValueLB(yearTTo, DateUtils.getYear(lastDayOfYear) + "");
+		
+		filter.setDateTillT(firstDayOfYear);
+		filter.setDateTTo(lastDayOfYear);
+		
+		// Salary Type
+		Integer salaryType = Integer.parseInt(typeList.getSelectedValue());
+		filter.setSalaryType(salaryType);
+		
+		filter.setEmployeeId(null);
+		
+		this.workplaceSalaryObject.getFilterSalariesDB(
+				s -> {
+					salaryTable.setSalariesList(workplaceSalaryObject.getWorkplaceSalaries());
+					initSalariesTable();
+				}, f -> { }
+		);
+	}
+	
+	private void setNewToolbarTitle() {
+		List<SalaryInfo> workplaceSalaries = this.workplaceSalaryObject.getWorkplaceSalaries();
+		String workplaceName = null;
+		
+		if(null != workplaceSalaries && !workplaceSalaries.isEmpty())
+			workplaceName = workplaceSalaries.get(0).getWorkplaceName();
+		
+		if(AonStringUtils.isNotBlank(workplaceName)) toolbar.setTitle("N" + String.valueOf("\u00F3") + "minas : " + workplaceName);
+	}
+
+	// ---------------------------------------------- Init SalaryTable ----------------------------------------------
 
 	private void initSalariesTable() {
-		//Reset Selection Model 
-		selectionModel.clear();
-		
 		//Show buttons
-		this.saveButton.setVisible(true);
 		this.publishButton.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		this.bidoqPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
-		this.emailEmployeesButton.setVisible(true);
 		
 		//Disable buttons till any salary selected
-		deleteButton.setEnabled(false);
-		saveButton.setEnabled(false);
-		publishButton.setEnabled(false);
-		bidoqPublishButton.setEnabled(false);
-		emailEnterpriseButton.setEnabled(false);
-		emailEmployeesButton.setEnabled(false);
+		enableDisableButtons(false);
 		
-		// Create a data provider.
-	    ListDataProvider<SalaryInfo> dataProvider = new ListDataProvider<SalaryInfo>();
-
-	    // Connect the table to the data provider.
-	    dataProvider.addDataDisplay(salaryDataGrid);
-	    
-	    // Add the data to the data provider, which automatically pushes it to the
-	    // widget.
-	    List<SalaryInfo> salaryList = dataProvider.getList();
-	    salaryList.clear();
-	    
-	    this.salaries = this.workplaceSalaryObject.getWorkplaceSalaries();
-	    
-	    for (SalaryInfo salary : this.salaries) {
-	    	salaryList.add(salary);
-	    }   
-		
-		addSortColums(salaryList);
-	    
-		// Set page size
-	    salaryDataGrid.setPageSize(salaries.size());
-	    
-	    // Add style to table header
-	    addStyleToHeader();
-	}
-
-	private void addSortColums(List<SalaryInfo> salaryList) {
-		ListHandler<SalaryInfo> columnSortHandler = new ListHandler<SalaryInfo>(salaryList);
-	    columnSortHandler.setComparator(salaryDataGrid.getColumn(1), new Comparator<SalaryInfo>() {
-	          public int compare(SalaryInfo o1, SalaryInfo o2) {
-	            if (o1 == o2) {
-	              return 0;
-	            }
-
-	            if (o1 != null) {
-	              return (o2 != null) ? o1.getEmployeeName().compareTo(o2.getEmployeeName()) : 1;
-	            }
-	            return -1;
-	          }
-	        });
-	    
-	    columnSortHandler.setComparator(salaryDataGrid.getColumn(2), new Comparator<SalaryInfo>() {
-	          public int compare(SalaryInfo o1, SalaryInfo o2) {
-	            if (o1 == o2) {
-	              return 0;
-	            }
-
-	            if (o1 != null) {
-	              return (o2 != null) ? o1.getWorkplaceName().compareTo(o2.getWorkplaceName()) : 1;
-	            }
-	            return -1;
-	          }
-	        });
-	    
-	    columnSortHandler.setComparator(salaryDataGrid.getColumn(4), new Comparator<SalaryInfo>() {
-	          public int compare(SalaryInfo o1, SalaryInfo o2) {
-	            if (o1 == o2) {
-	              return 0;
-	            }
-
-	            if (o1 != null) {
-	              return (o2 != null) ? o1.getStartDate().compareTo(o2.getStartDate()) : 1;
-	            }
-	            return -1;
-	          }
-	        });
-	    
-	    columnSortHandler.setComparator(salaryDataGrid.getColumn(5), new Comparator<SalaryInfo>() {
-	          public int compare(SalaryInfo o1, SalaryInfo o2) {
-	            if (o1 == o2) {
-	              return 0;
-	            }
-
-	            if (o1 != null) {
-	              return (o2 != null) ? o1.getEndDate().compareTo(o2.getEndDate()) : 1;
-	            }
-	            return -1;
-	          }
-	        });
-	    
-	    columnSortHandler.setComparator(salaryDataGrid.getColumn(3), new Comparator<SalaryInfo>() {
-	          public int compare(SalaryInfo o1, SalaryInfo o2) {
-	            if (o1 == o2) {
-	              return 0;
-	            }
-
-	            if (o1 != null) {
-	              return (o2 != null) ? o1.getType().getDescription().compareTo(o2.getType().getDescription()) : 1;
-	            }
-	            return -1;
-	          }
-	        });
-	    
-	    salaryDataGrid.addColumnSortHandler(columnSortHandler);
-
-	    // We know that the data is sorted alphabetically by default.
-	    salaryDataGrid.getColumn(5).setDefaultSortAscending(false);
-	    salaryDataGrid.getColumnSortList().push(salaryDataGrid.getColumn(5));   
+		salaryTable.initSalariesTable();
 	}
 	
-	// --------------------------------------------------
-	//					UiHandlers
-	// --------------------------------------------------
+	// ------------------------------------------------ Ui Handlers -------------------------------------------------
+
+	@UiHandler("employeeSB")
+	public void onFilterEmployee(ValueChangeEvent<String> event) {
+		filterSalaries();
+	}
 	
-	@UiHandler("deleteButton")
-	public void onDeleteSalary(ClickEvent event) {
+	@UiHandler("typeList")
+	public void onFilterTypeChange(ChangeEvent event) {
+		filterSalaries();
+	}
+	
+	@UiHandler("noDateRB")
+	public void onNoDateRBCahnge(ValueChangeEvent<Boolean> event) {
+		if(event.getValue()) {
+			monthTillT.setEnabled(false);
+			yearTillT.setEnabled(false);
+			monthTTo.setEnabled(false);
+			yearTTo.setEnabled(false);
+			filterSalaries();
+		}
+	}
+	
+	@UiHandler("dateTTRB")
+	public void onDateTTRBCahnge(ValueChangeEvent<Boolean> event) {
+		if(event.getValue()) {
+			monthTillT.setEnabled(true);
+			yearTillT.setEnabled(true);
+			monthTTo.setEnabled(true);
+			yearTTo.setEnabled(true);
+			filterSalaries();
+		}
+	}
+	
+	@UiHandler({"monthTillT", "yearTillT", "monthTTo", "yearTTo"})
+	public void onFilterDatesChange(ChangeEvent event) {
+		filterSalaries();
+	}
+	
+	// ---------------------------------------------- Filter Salaries ------------------------------------------------
+	
+	private void filterSalaries() {
+		SalaryInfoFilter filter = workplaceSalaryObject.getFilter();
+		if(noDateRB.getValue()) {
+			filter.setNoDateFilter(true);
+			filter.setDateMYFilter(false);
+			filter.setDateTTFilter(false);
+		} else if(dateTTRB.getValue()) {
+			filter.setNoDateFilter(false);
+			filter.setDateMYFilter(false);
+			filter.setDateTTFilter(true);
+			
+			Integer yearTillTValue = Integer.parseInt(yearTillT.getSelectedValue());
+			Integer monthTillTValue = Integer.parseInt(monthTillT.getSelectedValue());
+			filter.setDateTillT(DateUtils.getDate(monthTillTValue, yearTillTValue));
+			
+			Integer yearTToValue = Integer.parseInt(yearTTo.getSelectedValue());
+			Integer monthTToValue = Integer.parseInt(monthTTo.getSelectedValue());
+			filter.setDateTTo(DateUtils.getDate(monthTToValue, yearTToValue));
+		}
+		
+		// Salary Type
+		Integer salaryType = Integer.parseInt(typeList.getSelectedValue());
+		filter.setSalaryType(salaryType);
+		
+		
+		//Check if exist employee filter
+		String nameSurname = employeeSB.getValue();
+		if(nameSurname.length() > 0) {
+			EmployeeInfo employeeInfo = workplaceSalaryObject.getEmployeeDataByNameSurname(nameSurname);
+			filter.setEmployeeId(employeeInfo.getEmployeeId());
+			filter.setWorkplaceId(null);
+			filter.setEnterpriseId(null);
+		}else
+			filter.setEmployeeId(null);
+		
+		this.workplaceSalaryObject.getFilterSalariesDB(
+				s -> {
+					salaryTable.setSalariesList(workplaceSalaryObject.getWorkplaceSalaries());
+					initSalariesTable();
+				}, f -> { }
+		);
+	}
+	
+	// --------------------------------------------- Auxiliar Methods ------------------------------------------------
+	
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+	
+	void onPublish(String type) {
+		for (Listener listener : listeners)
+			for(SalaryInfo salary : salaryTable.getSelectedSalaries())
+			listener.onPublishSalaries(salary, type);
+	}
+
+	public void hideEnterpriseSiteButtons() {
+		deleteButton.getElement().getStyle().setDisplay(Display.NONE);
+		email.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void enableDisableButtons(boolean isSomethingSelected) {
+		deleteButton.setEnabled(isSomethingSelected);
+    	pdfButton.setEnabled(isSomethingSelected);
+    	publishButton.setEnabled(isSomethingSelected);
+    	bidoqPublishButton.setEnabled(isSomethingSelected);
+    	email.setEnabled(isSomethingSelected);
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
+	
+	// ------------------------------------------------- Toolbar -----------------------------------------------------
+	
+	private AonToolbar getToolbarPanel() {
+
+		AonToolbar toolbar = new AonToolbar("N" + String.valueOf("\u00F3") + "minas");
+
+		deleteButton = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
+		deleteButton.addClickHandler(e -> {
+			onDelete(e);
+		});	
+		toolbar.add(deleteButton);
+		
+		pdfButton = new AonToolbarButton( AON.MSG.printPDF(), AON.CSS.aonIconPdf());
+		pdfButton.addClickHandler(e -> {
+			onPDF(e);
+		});	
+		toolbar.add(pdfButton);
+		
+		publishButton = new AonToolbarButton( "Drive", AON.CSS.aonIconDrive());
+		publishButton.addClickHandler(e -> {
+			onPublish(e);
+		});	
+		toolbar.add(publishButton);
+		
+		bidoqPublishButton = new AonToolbarButton( "Bidow", "aon-icon-bidoq");
+		bidoqPublishButton.addClickHandler(e -> {
+			onBidoqPublish(e);
+		});	
+		toolbar.add(bidoqPublishButton);
+		
+		email = new AonToolbarButton(AON.MSG.email(), AON.CSS.aonIconEmail());
+		email.addClickHandler(e -> {
+			onEmail(e);
+		});	
+		toolbar.add(email);
+		
+		return toolbar;
+
+	}
+
+	private void onDelete(ClickEvent e) {
 		workplaceSalaryObject.delete(
-				selectionModel.getSelectedSet(), 
+				salaryTable.getSelectedSalaries(), 
 				s -> {
 					setWorkplaceSalaryObject(workplaceSalaryObject);
 				}, 
 				f -> {}
 		);
 	}
-	
-	@UiHandler("saveButton")
-	public void onPrintSalary(ClickEvent event) {
+
+	private void onPDF(ClickEvent e) {
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "salary_exporter/";
-		String query = "?type=salary&selectedSalaries=" + selectionModel.getSelectedSet().size()
-	            + "&enterprise=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId()
+		String query = "?type=salary&selectedSalaries=" + salaryTable.getSelectedSalaries().size()
+	            + "&enterprise=" + ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId()
 		        ;
 			
-		for(int i=0; i<selectionModel.getSelectedSet().size(); i++) {
-			query += "&salary"+i+"Id=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[i]).getId();
+		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++) {
+			query += "&salary"+i+"Id=" + ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId();
 		}
 		
 		query += "&name=salaries.pdf";
@@ -637,32 +504,35 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		
 		Window.open(fileDownloadURL+paramsBase64, "_blank", null);
 	}
-
+	
 	private static native String b64decode(String a) /*-{
 	  return window.btoa(a);
 	}-*/;
-	
-	@UiHandler("publishButton")
-	public void onPublichalary(ClickEvent event) {
+
+	private void onPublish(ClickEvent e) {
 		onPublish("drive");
 	}
-	
-	@UiHandler("bidoqPublishButton")
-	public void onBidoqPublichalary(ClickEvent event) {
+
+	private void onBidoqPublish(ClickEvent e) {
 		onPublish("bidoq");
 	}
-	
-	@UiHandler("emailEnterpriseButton")
-	public void onEmailSalary(ClickEvent event) {
-		Integer enterpriseID = ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
+
+	private void onEmail(ClickEvent e) {
+		NativeEvent nativeEvent = e.getNativeEvent();
+		contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		contextMenu.show();
+	}
+
+	private void onEmailEnterprise() {
+		Integer enterpriseID = ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
 		
 		// PARAMS TO DOWNLOAD PAYROLLS
 		String url = GWT.getModuleBaseURL()+ "salary_exporter/";
-		String query = "?type=salary&selectedSalaries=" + selectionModel.getSelectedSet().size()
-	            + "&enterprise=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
+		String query = "?type=salary&selectedSalaries=" + salaryTable.getSelectedSalaries().size()
+	            + "&enterprise=" + ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
 			
-		for(int i=0; i<selectionModel.getSelectedSet().size(); i++) {
-			query += "&salary"+i+"Id=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[i]).getId();
+		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++) {
+			query += "&salary"+i+"Id=" + ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId();
 		}
 		
 		query += "&name=salaries.pdf";
@@ -703,17 +573,16 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		dialog.center();
 		dialog.show();
 	}
-	
-	@UiHandler("emailEmployeesButton")
-	public void onEmailEmployeesSalary(ClickEvent event) {
-		Integer enterpriseID = ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
+
+	private void onEmailEmployees() {
+		Integer enterpriseID = ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
 		
 		// PARAMS TO DOWNLOAD PAYROLLS
-		String query = "?type=salary&selectedSalaries=" + selectionModel.getSelectedSet().size()
-	            + "&enterprise=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[0]).getEnterpriseId();
+		String query = "?type=salary&selectedSalaries=" + salaryTable.getSelectedSalaries().size()
+	            + "&enterprise=" + ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
 			
-		for(int i=0; i<selectionModel.getSelectedSet().size(); i++) {
-			query += "&salary"+i+"Id=" + ((SalaryInfo)selectionModel.getSelectedSet().toArray()[i]).getId();
+		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++) {
+			query += "&salary"+i+"Id=" + ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId();
 		}
 		
 		query += "&name=salaries.pdf";
@@ -724,7 +593,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		
 		// CHECK SELECTED EMPLOYEES EMAILS
 		workplaceSalaryObject.checkEmployeesEmails(
-				selectionModel.getSelectedSet(), 
+				salaryTable.getSelectedSalaries(), 
 				s -> {
 					if(workplaceSalaryObject.getCheckEmailEmployeesStatus().length() != 0) {
 						WarningDialog warningDialog = new WarningDialog("REVISAR EMAILS", workplaceSalaryObject.getCheckEmailEmployeesStatus());
@@ -764,139 +633,6 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 				}, 
 				f -> {}
 		);
-		
-	}
-	
-	@UiHandler("collapsePanel")
-	public void onOpenPanel(OpenEvent<DisclosurePanel> event) {
-		mainTablePanel.getElement().getStyle().setHeight(575, Unit.PX);
-		salaryDataGrid.redraw();
-	}
-	
-	@UiHandler("collapsePanel")
-	public void onClosePanel(CloseEvent<DisclosurePanel> event) {
-		mainTablePanel.getElement().getStyle().setHeight(725, Unit.PX);
-		salaryDataGrid.redraw();
-	}
-	
-	@UiHandler("employeeSB")
-	public void onFilterEmployee(ValueChangeEvent<String> event) {
-		if(!StringUtils.isBlank(event.getValue()) || event.getValue().length() == 0)
-			filterButton.click();
-	}
-	
-	@UiHandler("typeList")
-	public void onFilterTypeChange(ChangeEvent event) {
-		filterButton.click();
-	}
-	
-	@UiHandler("noDateRB")
-	public void onNoDateRBCahnge(ValueChangeEvent<Boolean> event) {
-		if(event.getValue()) {
-			monthTillT.setEnabled(false);
-			yearTillT.setEnabled(false);
-			monthTTo.setEnabled(false);
-			yearTTo.setEnabled(false);
-			filterButton.click();
-		}
-	}
-	
-	@UiHandler("dateTTRB")
-	public void onDateTTRBCahnge(ValueChangeEvent<Boolean> event) {
-		if(event.getValue()) {
-			monthTillT.setEnabled(true);
-			yearTillT.setEnabled(true);
-			monthTTo.setEnabled(true);
-			yearTTo.setEnabled(true);
-			filterButton.click();
-		}
-	}
-	
-	@UiHandler({"monthTillT", "yearTillT", "monthTTo", "yearTTo"})
-	public void onFilterDatesChange(ChangeEvent event) {
-		filterButton.click();
-	}
-	
-	@UiHandler("filterButton")
-	public void onFilterButtonClick(ClickEvent event) {
-		SalaryInfoFilter filter = this.workplaceSalaryObject.getFilter();
-		if(noDateRB.getValue()) {
-			filter.setNoDateFilter(true);
-			filter.setDateMYFilter(false);
-			filter.setDateTTFilter(false);
-		} else if(dateTTRB.getValue()) {
-			filter.setNoDateFilter(false);
-			filter.setDateMYFilter(false);
-			filter.setDateTTFilter(true);
-			Integer yearTillTValue = Integer.parseInt(yearTillT.getSelectedValue()) - 1900;
-			Integer monthTillTValue = monthTillT.getSelectedIndex();
-			filter.setDateTillT(new Date(yearTillTValue, monthTillTValue, 1));
-			Integer yearTToValue = Integer.parseInt(yearTTo.getSelectedValue()) - 1900;
-			Integer monthTToValue = monthTTo.getSelectedIndex();
-			filter.setDateTTo(new Date(yearTToValue, monthTToValue, 1));
-		}
-		
-		// Salary Type
-		Integer salaryType = getSalaryType(this.typeList.getSelectedIndex());
-		filter.setSalaryType(salaryType);
-		
-		//Check if exist employee filter
-		String nameSurname = this.employeeSB.getValue();
-		String name = nameSurname.split(", ")[0];
-		String surname = nameSurname.split(", ")[1];
-		if(nameSurname.length() > 0) {
-			EmployeeInfo employeeInfo = this.workplaceSalaryObject.getEmployeeDataByNameSurname(name, surname);
-			filter.setEmployeeId(employeeInfo.getEmployeeId());
-			filter.setWorkplaceId(null);
-			filter.setEnterpriseId(null);
-		}else
-			filter.setEmployeeId(null);
-		
-		
-		this.workplaceSalaryObject.getFilterSalariesDB(
-				s -> {
-					initSalariesTable();
-				}, f -> { }
-		);
-
-	}
-	
-	// --------------------------------------------------
-	//					Aux Methods
-	// --------------------------------------------------
-	
-	@Override
-	public void onContextMenu(ContextMenuEvent event) {
-	}
-
-	public void addListener(Listener listener) {
-		listeners.add(listener);
-	}
-	
-	void onPublish(String type) {
-		for (Listener listener : listeners)
-			for(SalaryInfo salary : selectionModel.getSelectedSet())
-			listener.onPublishSalaries(salary, type);
-	}
-	
-	private Integer getSalaryType(int selectedIndex) {
-		switch (selectedIndex) {
-		case 1:
-			return 0;
-		case 2:
-			return 1;
-		case 3:
-			return 3;
-		case 4:
-			return 2;
-		default:
-			return null;
-		}
-	}
-
-	public void hideEnterpriseSiteButtons() {
-		deleteButton.getElement().getStyle().setDisplay(Display.NONE);
-		emailEnterpriseButton.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 }

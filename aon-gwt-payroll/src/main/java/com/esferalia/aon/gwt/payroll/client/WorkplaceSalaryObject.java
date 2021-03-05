@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class WorkplaceSalaryObject {
@@ -62,10 +63,7 @@ public class WorkplaceSalaryObject {
 		employeesService.getWorkplaceActiveEmployees(workplaceId, new AsyncCallback<WorkplaceEmployees>() {
 
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void onFailure(Throwable caught) {}
 
 			@Override
 			public void onSuccess(WorkplaceEmployees result) {
@@ -185,13 +183,17 @@ public class WorkplaceSalaryObject {
 		return this.workplaceEmployees;
 	}
 	
-	public EmployeeInfo getEmployeeDataByNameSurname(String name, String surname){
-		EmployeeInfo employeeInfo = null;
-		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
-			if(name == employee.getName() && surname == employee.getSurName()) {
-				employeeInfo = employee;
+	public EmployeeInfo getEmployeeDataByNameSurname(String nameSurname){
+		String name = nameSurname.split(", ")[0].trim();
+		String surname = nameSurname.split(", ")[1].trim();
+		
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees()) {
+			if( AonStringUtils.equalsIgnoreCase(name,employee.getName().trim()) && 
+				AonStringUtils.equalsIgnoreCase(surname,employee.getSurName().trim())) {
+				return employee;
 			}
-		return employeeInfo;
+		}
+		return null;
 	}
 	
 	public String getEmailStatus(){

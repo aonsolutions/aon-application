@@ -177,7 +177,7 @@ public class JooqPayrollSalaries {
 		
 		// SalaryType
 		Condition salaryTypeCondition = SALARY.TYPE.ne((byte)5); // Always TRUE
-		if(null != filter.getSalaryType()) {
+		if(null != filter.getSalaryType() && -1 != filter.getSalaryType()) {
 			salaryTypeCondition = SALARY.TYPE.eq((byte)filter.getSalaryType().intValue());
 		}
 		

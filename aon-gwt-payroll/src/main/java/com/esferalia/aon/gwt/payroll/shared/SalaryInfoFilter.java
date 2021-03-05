@@ -10,15 +10,15 @@ public class SalaryInfoFilter implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	// Dates filter
-	private Boolean noDateFilter;
-	private Boolean dateMYFilter;
-	private Date dateMY;
-	private Boolean dateTTFilter;
+	private Boolean noDateFilter; // No date filter -> true
+	private Boolean dateMYFilter; // Obsoleto
+	private Date dateMY;		  // Obsoleto
+	private Boolean dateTTFilter; // Date filter -> from dateTillT to dateTTo
 	private Date dateTillT;
 	private Date dateTTo;
 	
 	// Salary type filter
-	private Integer salaryType; // 0 == salary // 2 == delay // 3 == settlement
+	private Integer salaryType; // -1 || null == all // 0 == salary // 2 == delay // 3 == settlement
 	
 	// Emplyee filter
 	private Integer employeeId; // employeeId == contractId;
