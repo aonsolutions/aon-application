@@ -95,24 +95,17 @@ export class AonUser extends AonElement {
 		this.setAttribute('onlyAuth', onlyAuth);
 	}
 
-	attributeChangedCallback(name, oldValue, newValue) {
-		this.initialize();
-		if('user' === name){
-			// this.initUser();
-		}
-		if('company' === name) {
-			// let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
-		}
-	}
-
 	constructor () {
 		super();
 	}
 
 	connectedCallback () {
+		this.init();
+  }
+
+	init() {
 		this.initialize();
 		this._user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
-
 		this.innerHTML = `
 			<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.AON_MSG_USER}"> </aon-toolbar>
 			<div style="display:flex;width:100%;">
@@ -131,14 +124,14 @@ export class AonUser extends AonElement {
 			this.initUser();
 			this.initApps();
 		});
-  }
+	}
 
 	initialize() {
 		this.id = this.id || 'aonUser';
 		this.SWITCH = this.SWITCH || this.id + 'Switch';
 		this.SELECT = this.SELECT || this.id + 'Select';
 		this.TOOLBAR = this.TOOLBAR || this.id + 'Toolbar';
-		this.apps = this.apps || [];
+		this.apps = [];
 	}
 
 	getDur() {
@@ -192,7 +185,6 @@ export class AonUser extends AonElement {
 				}
 			}
 		}
-
 		if(this.hasAttribute('showInfo')) {
 			let data = {
 				user: this._user.id
@@ -423,9 +415,10 @@ export class AonUser extends AonElement {
 
 	save() {
 		setUser(this._user).then(r => {
+			this.setAttribute('showInfo', 'true');
 			this.setAttribute('user', JSON.stringify(r));
 			this._user = r;
-			this.initApps();
+			this.init();
 		}).catch(e => {
 			if(!this.isOnlyAuth()) {
 				let aonApplication = document.querySelector('aon-application');
@@ -585,7 +578,7 @@ export class AonUser extends AonElement {
 
 	isApp(app) {
 		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-		return user.roles && user.roles.includes(app.toUpperCase())
+		return user && user.roles && user.roles.includes(app.toUpperCase())
 	}
 
 	getAccess(app) {

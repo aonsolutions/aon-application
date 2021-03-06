@@ -19,14 +19,10 @@ export class AonCompanyList extends AonElement {
   }
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		this.initialize();
 		if('filter' === name) {
 			this.init();
 		}
-	}
-
-	constructor () {
-		super();
-		this.AON_COMPANY_TABLE = 'aonCompanyTable';
 	}
 
 	connectedCallback () {
@@ -35,6 +31,10 @@ export class AonCompanyList extends AonElement {
 			`;
 		this.build();
  	}
+
+	initialize() {
+		this.AON_COMPANY_TABLE = 'aonCompanyTable';
+	}
 
 	build() {
 	 let aonTable = this.getElement(this.AON_COMPANY_TABLE);
@@ -66,4 +66,7 @@ export class AonCompanyList extends AonElement {
 			: {};
 	}
 }
-window.customElements.define('aon-company-list', AonCompanyList);
+
+if(!window.customElements.get('aon-company-list')){
+	window.customElements.define('aon-company-list', AonCompanyList);
+}

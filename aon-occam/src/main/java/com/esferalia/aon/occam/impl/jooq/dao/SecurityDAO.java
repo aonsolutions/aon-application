@@ -308,6 +308,11 @@ public class SecurityDAO {
 				.from(USER).where(USER.ID.eq(userId)).fetchOne().getValue(USER.PASSWORD);
 	}
 
+	public static void updateUserPassword(AONContext ctx, Integer userId, String password) {
+		ctx.getDslContext().update(USER).set(USER.PASSWORD, password).where(USER.ID.eq(userId)).execute();
+	}
+
+	
 	public static User getUser(AONContext ctx) {
 		return getUser(ctx,ctx.getUser());
 	}
@@ -321,7 +326,7 @@ public class SecurityDAO {
 			.set(USER.AUTH, user.getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
-			.execute();
+			.returning(USER.ID).fetchOne().getId();
 		
 		return user.setId(id);
 	}
@@ -1272,6 +1277,35 @@ public class SecurityDAO {
 				.isPresent();
 		}
 		return false;
+	}
+	
+	@Deprecated
+	public static void saveUserFinancePortal(AONContext ctx, Integer userId) {
+		
+		Integer profile = ctx.getDslContext().select().from(PROFILE)
+				.where(PROFILE.DOMAIN.isNull()
+				.and(PROFILE.NAME.eq("Portal Gestion"))).fetch().stream().map(r-> r.getValue(PROFILE.ID)).findFirst().orElse(null);
+		
+		ctx.getDslContext().select(DOMAIN_APPLICATION.ID)
+				.from(DOMAIN_APPLICATION)
+				.where(DOMAIN_APPLICATION.DOMAIN.eq(ctx.getDomainId()))
+				.fetch().stream().map(r -> r.getValue(DOMAIN_APPLICATION.ID)).forEach(domainApplication -> {
+					Integer applicationUser = ctx.getDslContext().insertInto(APPLICATION_USER)
+							.set(APPLICATION_USER.DOMAIN, ctx.getDomainId())
+							.set(APPLICATION_USER.USER_ID, userId)
+							.set(APPLICATION_USER.DOMAIN_APPLICATION, domainApplication)
+							.set(APPLICATION_USER.ACTIVE, (byte)1)
+							.returning(APPLICATION_USER.ID).fetchOne().getId();
+
+
+						if(profile != null) {
+							ctx.getDslContext().insertInto(APPLICATION_USER_PROFILE)
+							.set(APPLICATION_USER_PROFILE.DOMAIN, ctx.getDomainId())
+							.set(APPLICATION_USER_PROFILE.APPLICATION_USER, applicationUser)
+							.set(APPLICATION_USER_PROFILE.PROFILE, profile)
+							.execute();
+						}
+				});
 	}
 	
 }

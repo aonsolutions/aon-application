@@ -54,6 +54,7 @@ export class AonSign extends AonElement {
 
     if(this._taskHolders.length > 1){
       let company = this.createElement('div');
+      company.style.marginLeft = '20px';
       company.style.width = '200px';
       this.appendChild(company);
       let select = new AonSelect();

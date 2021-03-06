@@ -423,6 +423,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static void updateUserPassword(String domainName, int domainId, String login, Integer userId, String password) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getSecurity().updateUserPassword(ctx, userId, password);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static UserScope getUserScope(String domainName, Integer domainId, String login, Integer userId, Integer scope ) {
 		AONContext ctx = null;

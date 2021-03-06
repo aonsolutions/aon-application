@@ -146,6 +146,11 @@ public class SecurityImpl implements ISecurity {
 	}
 
 	@Override
+	public void updateUserPassword(AONContext ctx, Integer userId, String password) {
+		SecurityDAO.updateUserPassword(ctx, userId, password);
+	}
+
+	@Override
 	public UserScope getUserScope(AONContext ctx, Integer userId, Integer scope) {
 		return SecurityDAO.getUserScope(ctx, userId, scope);
 	}
@@ -342,6 +347,13 @@ public class SecurityImpl implements ISecurity {
 	public AuthDevice getAuthDevice(AONContext ctx, AuthDeviceFilter adf) {
 	    return  ctx.getDslContext().transactionResult(
 	            configuration -> AuthDeviceDAO.getAuthDevice(ctx, adf));
+	}
+
+	@Override @Deprecated
+	public void saveUserFinancePortal(AONContext ctx, Integer userId) {
+		ctx.getDslContext().transaction(
+	            configuration -> SecurityDAO.saveUserFinancePortal(ctx, userId)
+	    );
 	}
 	
 }

@@ -43,15 +43,8 @@ export class AonHeader extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-		if(getToken()){
-			getTimeControl().then(r => {
-				this.activeTimecontrol = true;
-				this.timeControlStatus(r);
-			}).catch(e => {
-				this.activeTimecontrol = false;
-			});
-			this.build();
-		}
+		this.activeTimecontrol = false;
+		this.build();
   }
 
 	initialize() {
@@ -213,6 +206,7 @@ export class AonHeader extends AonElement {
 	}
 
 	timeControlStatus(signin) {
+		this.activeTimecontrol = true;
 		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
 		if(!aonUserConnected) {
 			aonUserConnected = document.createElement('div');

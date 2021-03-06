@@ -36,17 +36,10 @@
   font-size: 16px;
 }
 
-.aonMobileSidenav {
-  width: 0px;
+.aonMobileApplicationContent {
+  display: flex;
   position: fixed;
-  z-index: 1;
   top: 101px;
-  bottom: 59px;
-  left: 0;
-  background-color: #fff;
-  border-right: 1px solid #ddd;
-  transition-duration: 500ms;
-  overflow-x: hidden;
 }
 
 .aonMobileContent {

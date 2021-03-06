@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Person;
@@ -34,9 +35,12 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -389,7 +393,8 @@ public class UserServlet extends AonApiHttpServlet {
 			}
 			if(auth.getAuth() != null) {
 				if(user == null || user.getId() == null) {
-					user = createUser(getDomain(), getData(), login, auth.getAuth());
+					user = createUser(getDomain(), getData(), login, auth);
+					
 				} else AON_SOLUTIONS.assignAuthToUser(getDomain().getName(), getDomain().getId(), user, auth.getAuth());
 
 				js.put("id", user.getId());
@@ -437,11 +442,11 @@ public class UserServlet extends AonApiHttpServlet {
 		return AON_SOLUTIONS.updateAuth(auth);
 	}
 	
-	private User createUser(Domain domain, JSONObject json, String login, byte[] auth) {
+	private User createUser(Domain domain, JSONObject json, String login, Auth auth) {
 		Company cp = AON.getCompany(getDomain().getName(), getDomain().getId(), login, f -> f.getDomainProperty().eq(getDomain().getId()));
 		
 		User user = new User()
-			.setAuth(auth)
+			.setAuth(auth.getAuth())
 			.setActive(true)
 			.setDomain(domain.getId())
 			.setLogin(login)
@@ -469,7 +474,27 @@ public class UserServlet extends AonApiHttpServlet {
 				user.setRegistry(registryId);
 			}
 		}	
-		return AON.insertUser(domain.getName(), domain.getId(), "", user);
+		user = AON.insertUser(domain.getName(), domain.getId(), "", user);
+		AON.updateUserPassword(domain.getName(), domain.getId(),getUser().getLogin(), user.getId(), auth.getPassword());
+		Scope s = getScope();
+		if(s != null) {
+			AON.insertUserScope(getDomain().getName(), getDomain().getId(), getUser().getLogin(), new UserScope()
+					.setDomain(getDomain().getId())
+					.setScope(s.getId())
+					.setUserId(user.getId()));
+		}
+		
+		ApplicationParameter a = AON.getApplicationParameter(getDomain().getName(), getDomain().getId(), getUser().getLogin(), AppParam.AON_PORTAL);
+		ApplicationParameter appParam = new ApplicationParameter()
+				.setDomain(getDomain().getId())
+				.setValue("288")
+				.setName(AppParam.AON_PORTAL.getValue());
+
+		if(a == null && a.getId() == null)
+			AON.insertApplicationParameter(getDomain().getName(), getDomain().getId(), getUser().getLogin(), appParam);
+	
+		AON_SOLUTIONS.saveUserFinancePortal(getDomain(), getUser().getLogin(), user.getId());		
+		return user;
 	}
 	
 	private String ramdonLogin() {
@@ -511,6 +536,29 @@ public class UserServlet extends AonApiHttpServlet {
 		template.merge(context, writer);
 
 		return writer.toString();
+	}
+	
+	private Scope getScope() {
+		Scope s = AON.getScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(),
+				f -> f.getDomainProperty().eq(getDomain().getId()).and(f.getDescriptionProperty().eq("GENERAL")))
+				.findFirst().orElse(null);
+		if(s == null && getDomain().getParentId() != null) {
+			s =   AON.getScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(),
+					f -> f.getDomainProperty().eq(getDomain().getParentId()).and(f.getDescriptionProperty().eq("GENERAL")))
+					.findFirst().orElse(null);
+		}
+		
+		if(s== null){
+			s = AON.getScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(),
+					f -> f.getDomainProperty().eq(getDomain().getId()))
+					.findFirst().orElse(null);
+		}
+		if(s == null && getDomain().getParentId() != null) {
+			s = AON.getScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(),
+					f -> f.getDomainProperty().eq(getDomain().getParentId()))
+					.findFirst().orElse(null);
+		}
+		return s;
 	}
 	
 }

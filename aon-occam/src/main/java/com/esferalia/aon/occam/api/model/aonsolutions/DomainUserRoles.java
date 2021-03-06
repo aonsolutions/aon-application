@@ -303,7 +303,7 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public Boolean isAon() {
-		return hasApp(AonApp.AIO) && (isAdmin() || hasRole(AonRole.AON));
+		return hasApp(AonApp.AIO) && (isAdmin() || hasRole(AonRole.AIO));
 	}
 	
 	public Boolean isBidoq() {

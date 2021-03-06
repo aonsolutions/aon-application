@@ -589,7 +589,6 @@ export class AonInvoice extends AonElement {
 			}
 		});
 		nif.addEventListener('select', (event) => {
-			alert(event.detail.registry);
 			let registry = event.detail.registry;
 			let name = document.getElementById('name');
 			name.value = registry.name;

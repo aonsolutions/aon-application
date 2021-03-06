@@ -45,7 +45,7 @@ export class AonMarketplace extends AonElement {
 	initialize() {
 		this.id = this.id || 'aonMarketplace';
 		this.APP = this.id + 'App';
-		this.apps = [];
+		this.apps = [App.AIO];
 	}
 
 	build(dur) {
@@ -256,6 +256,8 @@ export class AonMarketplace extends AonElement {
 			return dur.hasPackPayroll();
 		else if(App.PACK_FISCAL_ACCOUNTING === app)
 			return dur.hasPackFiscalAccounting();
+		else if(App.AIO === app)
+			return true;
 		else return dur.hasApp(app);
 	}
 
@@ -284,6 +286,8 @@ export class AonMarketplace extends AonElement {
 			return dur.hasParentPackPayroll();
 		else if(App.PACK_FISCAL_ACCOUNTING === app)
 			return dur.hasParentPackFiscalAccounting();
+			else if(App.AIO === app)
+				return true;
 		else return dur.hasParentApp(app);
 	}
 
@@ -310,6 +314,8 @@ export class AonMarketplace extends AonElement {
 			return dur.hasPackSuite();
 		else if(App.PACK_FISCAL_ACCOUNTING === app)
 			return dur.hasPackSuite();
+		else if(App.AIO === app)
+			return true;
 		else return false;
 	}
 }

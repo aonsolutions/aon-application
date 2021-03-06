@@ -51,6 +51,7 @@ public interface ISecurity {
 	public LinkedList<Domain> getCompaniesByScope(AONContext ctx, Integer scope);
 	public User getUser(AONContext ctx, Integer userId);
 	public String getUserPassword(AONContext ctx, Integer userId);
+	public void updateUserPassword(AONContext ctx, Integer userId, String password);
 	public UserScope getUserScope(AONContext ctx, Integer userId, Integer scope);
 	public void deleteUserScope(AONContext ctx, UserScopeFilter filter);
 	public Integer[] getUserScopes(AONContext ctx, Integer userId);
@@ -105,4 +106,7 @@ public interface ISecurity {
 	public AuthDevice saveAuthDevice(AONContext ctx, AuthDevice ad);
 	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter ad);
 	public AuthDevice getAuthDevice(AONContext ctx, AuthDeviceFilter adf);
+	
+	@Deprecated
+	public void saveUserFinancePortal(AONContext ctx, Integer userId);
 }

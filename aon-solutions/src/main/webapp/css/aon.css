@@ -492,6 +492,20 @@ button:disabled, button[disabled]{
   margin-left: 15px;
 }
 
+.aonSidenav {
+  position: relative;
+  flex-basis: 0px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  z-index: 1;
+  left: 0;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  transition-duration: 500ms;
+  overflow-x: hidden;
+  height: calc(100vh - 102px);
+}
+
 .sidenav {
   height: 100%;
   width: 0px;
@@ -505,12 +519,17 @@ button:disabled, button[disabled]{
   height: calc(100vh - 102px);
 }
 
+.aonSidenav::-webkit-scrollbar {
+  display: none;
+}
+
 .sidenav::-webkit-scrollbar {
   display: none;
 }
 
 .aonContent {
   position: relative;
+  width: 100%;
   display: block;
   transition: 0.5s;
   height: calc(100vh - 102px);
@@ -998,4 +1017,8 @@ button:disabled, button[disabled]{
 
 .aonLi #iconLocation > button {
   bottom: 9px;
+}
+
+.aonFlex {
+  display: flex;
 }

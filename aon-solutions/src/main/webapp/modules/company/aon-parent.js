@@ -14,16 +14,10 @@ export class AonParent extends AonElement {
 
 	companies;
 	selected;
-	activeTimecontrol;
 
 	constructor () {
 		super();
 		this.id = 'aonParent';
-		getTimeControl().then(r => {
-			this.activeTimecontrol = true;
-		}).catch(e => {
-			this.activeTimecontrol = false;
-		});
 	}
 
 	connectedCallback () {
@@ -57,13 +51,14 @@ export class AonParent extends AonElement {
 			rejectedCount = notice.invoice.rejected.count;
 		}
 
-		let taskOptions = [{
-				name: 'Documentos sin leer',
-				icon: 'snippet_folder',
-				fn: () => {}
-			},{
+		let taskOptions = [
+			{
 				name: 'Notificaciones',
 				icon: 'notifications',
+				fn: () => {}
+			},{
+				name: 'Documentos',
+				icon: 'snippet_folder',
 				fn: () => {}
 			},{
 				name: MSG.AON_MSG_PENDING_INVOICES,
@@ -94,10 +89,7 @@ export class AonParent extends AonElement {
 			}
 		];
 		aonParent.addSidenavOptions('TAREAS PENDIENTES', taskOptions);
-		if(this.activeTimecontrol) {
-			aonParent.addSidenavWidgetHTML('CONTROL HORARIO',
-		 		'<aon-sign></aon-sign>');
-		}
+
 		let filterOptions = [{
 				name: 'Activas',
 				icon: 'domain',
@@ -121,6 +113,12 @@ export class AonParent extends AonElement {
 			}
 		];
 		aonParent.addSidenavOptions('FILTROS', filterOptions);
+
+		getTimeControl().then(r => {
+			aonParent.addSidenavWidgetHTML('CONTROL HORARIO','<aon-sign></aon-sign>');
+			let aonHeader = document.getElementById('aonHeader');
+			aonHeader.timeControlStatus(r);
+		});
 	}
 
 	init(filter) {

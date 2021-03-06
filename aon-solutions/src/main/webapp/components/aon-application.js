@@ -118,14 +118,13 @@ export class AonApplication extends AonElement {
 			<!-- AON APPLICATION LOADER -->
 			<aon-loader id="${this.LOADER}"> </aon-loader>
 
-			<!-- AON APPLICATION MENU (SIDENAV) -->
-			<div id="${this.SIDENAV}" class="${
-      this.isMobile() ? "aonMobileSidenav" : "sidenav"
-    }"></div>
+      <div class="${this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex'}">
+        <!-- AON APPLICATION MENU (SIDENAV) -->
+         <div id="${this.SIDENAV}" class="aonSidenav"></div>
 
-			<!-- AON APPLICATION CONTENT -->
-			<div id="${this.CONTENT}"></div>
-
+			   <!-- AON APPLICATION CONTENT -->
+			   <div id="${this.CONTENT}"></div>
+      </div>
 			<aon-dialog-menu id="${this.OPTION_DIALOG}"> </aon-dialog-menu>
 			<aon-dialog id="${this.DIALOG}"> </aon-dialog>
 			<aon-toast id="${this.TOAST}"> </aon-toast>
@@ -135,17 +134,13 @@ export class AonApplication extends AonElement {
     toolbar.toogleSidenav(() => this.toogleSidenav());
 
     let sidenav = this.getElement(this.SIDENAV);
-    sidenav.style.width =
-      this.isMobile() || this.isSidenavBlock() ? "0px" : "250px";
+    sidenav.style.flexBasis = this.isMobile() || this.isSidenavBlock() ? "0px" : "250px";
 
     let content = this.getElement(this.CONTENT);
     content.className =
       this.isMobile() || this.isSidenavBlock()
         ? "aonMobileContent"
         : "aonContent";
-
-    content.style.marginLeft =
-      this.isMobile() || this.isSidenavBlock() ? "0px" : "250px";
 
     if (this.hasAttribute("drag_and_drop")) {
       content.addEventListener("dragover", (event) => {
@@ -189,7 +184,6 @@ export class AonApplication extends AonElement {
 
     if (this.hasAttribute("main")) {
       toolbar.style.display = "none";
-      sidenav.style.top = "60px";
       sidenav.style.height = "calc(100vh - 61px)";
       content.style.height = "calc(100vh - 61px)";
     }
@@ -229,12 +223,10 @@ export class AonApplication extends AonElement {
     } else {
       let sidenav = this.getElement(this.SIDENAV);
       let content = this.getElement(this.CONTENT);
-      if (sidenav.style.width === "250px") {
-        sidenav.style.width = "0px";
-        content.style.marginLeft = "0px";
+      if (sidenav.style.flexBasis === "250px") {
+        sidenav.style.flexBasis = "0px";
       } else {
-        sidenav.style.width = "250px";
-        content.style.marginLeft = this.isMobile() ? "0px" : "250px";
+        sidenav.style.flexBasis = "250px";
       }
     }
   }
@@ -242,8 +234,7 @@ export class AonApplication extends AonElement {
   closeSidenav() {
     let sidenav = this.getElement(this.SIDENAV);
     let content = this.getElement(this.CONTENT);
-    sidenav.style.width = "0px";
-    content.style.marginLeft = "0px";
+    sidenav.style.flexBasis = "0px";
   }
 
   addSidenavWidget(title, element) {

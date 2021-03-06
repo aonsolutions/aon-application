@@ -447,4 +447,11 @@ public class AON_SOLUTIONS {
 			getTimeControl().deleteLocation(ctx, lc);
 		}
 	}
+	
+	@Deprecated
+	public static void saveUserFinancePortal(Domain domain, String login, Integer userId) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getSecurity().saveUserFinancePortal(ctx, userId);
+		}
+	}
 }

@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import { Apps, Services, OtherServices, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
-import {getDomainApps, setDomainApp, getDomainNotice, getDomainUserRoles} from  '../../services/service.js';
+import {getDomainApps, setDomainApp, getDomainNotice, getDomainUserRoles, getTimeControl} from  '../../services/service.js';
 import {bidoq} from  '../../services/bidoq.js';
 import {startModule, rootPanel} from '../../services/gwtLoader.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -78,6 +78,7 @@ export class AonDesktop extends AonElement {
 	}
 
 	connectedCallback () {
+		this.initialize();
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		if(company) {
 			getDomainUserRoles({}).then(r => {
@@ -144,21 +145,21 @@ export class AonDesktop extends AonElement {
 		];
 		aonDesktop.addSidenavOptions('TAREAS PENDIENTES', taskOptions);
 
-		let appOptions = [];
-		for (let key in Apps){
-			if(this.isApp(Apps[key])) {
-				let option = {
-					name: Apps[key].title,
-					aonIcon: {
-					 	icon: Apps[key].icon,
-					 	color: Apps[key].color
-					},
-					fn: () => this.appSelection(Apps[key].app)
-				}
-				appOptions.push(option);
-			}
-		}
-		aonDesktop.addSidenavOptions('APLICACIONES DISPONIBLES', appOptions);
+		// let appOptions = [];
+		// for (let key in Apps){
+		// 	if(this.isApp(Apps[key])) {
+		// 		let option = {
+		// 			name: Apps[key].title,
+		// 			aonIcon: {
+		// 			 	icon: Apps[key].icon,
+		// 			 	color: Apps[key].color
+		// 			},
+		// 			fn: () => this.appSelection(Apps[key].app)
+		// 		}
+		// 		appOptions.push(option);
+		// 	}
+		// }
+		// aonDesktop.addSidenavOptions('APLICACIONES DISPONIBLES', appOptions);
 
 		// let serviceOptions = [];
 		// for (let key in Services){
@@ -202,6 +203,13 @@ export class AonDesktop extends AonElement {
 			}
 		];
 		aonDesktop.addSidenavOptions('VISTA CLÁSICA', classicOptions);
+
+		getTimeControl().then(r => {
+			aonDesktop.addSidenavWidgetHTML('CONTROL HORARIO','<aon-sign></aon-sign>');
+			let aonHeader = document.getElementById('aonHeader');
+			aonHeader.timeControlStatus(r);
+		});
+
 
 		let div = document.createElement('div');
 		div.style.marginLeft = '100px';

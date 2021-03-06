@@ -33,6 +33,7 @@ export const Role = {
 	BANK: 'BANK',				                        // ACCESO AL SERVICIO BANK
 	CONVENIOS: 'CONVENIOS',			                // ACCESO AL SERVICIO CONVENIOS
 	AON: 'AON',
+  AIO: 'AIO',
 	BIDOQ: 'BIDOQ',
   EMPLOYEE: 'EMPLOYEE',	                  		// USUARIO TIPO EMPLEADO
   ENTERPRISE: 'ENTERPRISE',		       	        // USUARIO TIPO EMPRESA

@@ -73,4 +73,6 @@ export class AonCompany extends AonElement {
 
 }
 
-window.customElements.define('aon-company', AonCompany);
+if(!window.customElements.get('aon-company')){
+	window.customElements.define('aon-company', AonCompany);
+}
