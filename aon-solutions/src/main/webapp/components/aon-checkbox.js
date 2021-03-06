@@ -111,6 +111,6 @@ export class AonCheckbox extends AonElement {
 		return this.value && this.value === 'true';
 	}
 }
-if(!window.customElements.get('aon-card')){
-	window.customElements.define('aon-card',  AonCheckbox);
+if(!window.customElements.get('aon-checkbox')){
+	window.customElements.define('aon-checkbox',  AonCheckbox);
 }
