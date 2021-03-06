@@ -7,7 +7,7 @@
 	
 	
  	  <ui:define name="menu">
- 	  	<aon:if test="#{!desktop.portalActive}">
+ 	  	<aon:if test="#{!desktop.portalActive and !desktop.portalNewSuiteActive}">
 	  		<aon:if test="#{!userUtils.newAONTheme}">				
 				<ui:include src="/facelet/homepage/menu.xhtml" />
 			</aon:if>

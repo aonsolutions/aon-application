@@ -23,7 +23,7 @@ export class AonDesktop extends AonElement {
 	dur;
 
 	static get observedAttributes() {
-		return ['company'];
+		return [];
 	}
 
 	get id() {
@@ -54,21 +54,6 @@ export class AonDesktop extends AonElement {
 		super();
 	}
 
-	attributeChangedCallback(name, oldValue, newValue) {
-		this.initialize();
-		if('company' === name){
-			let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
-			if(company) {
-				getDomainUserRoles({}).then(r => {
-					this.dur = new DomainUserRoles(r);
-					getDomainNotice().then(notice => {
-						this.build(notice);
-					});
-				});
-			}
-		}
-	}
-
 	initialize(){
 		this.id = 'aonDesktop';
 	}
@@ -79,15 +64,12 @@ export class AonDesktop extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
-		if(company) {
-			getDomainUserRoles({}).then(r => {
-				this.dur = new DomainUserRoles(r);
-				getDomainNotice().then(notice => {
-					this.build(notice);
-				});
+		getDomainUserRoles({}).then(r => {
+			this.dur = new DomainUserRoles(r);
+			getDomainNotice().then(notice => {
+				this.build(notice);
 			});
-		}
+		});
   }
 
 	build(notice) {
@@ -184,12 +166,12 @@ export class AonDesktop extends AonElement {
 		let classicOptions = [
 			{
 				name: 'aonSolutions',
-				img: '../assets/apps/aon.png',
+				img: 'assets/apps/aon.png',
 				fn: () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
 			},
 			{
 				name: 'Bidoq',
-				img: '../assets/apps/bidoq.png',
+				img: 'assets/apps/bidoq.png',
 				fn: () =>{
 					bidoq().then(r => {
 						let data = JSON.parse(r);
@@ -202,6 +184,15 @@ export class AonDesktop extends AonElement {
 				}
 			}
 		];
+
+		if(localStorage.getItem('aon_jsf')){
+			classicOptions.push({
+				name: 'aonGestion',
+				img: 'assets/apps/aon.png',
+				fn: () => loadManagementPanel(this.getElement('aonDesktopMainContent'))
+			});
+		}
+
 		aonDesktop.addSidenavOptions('VISTA CLÁSICA', classicOptions);
 
 		getTimeControl().then(r => {
@@ -220,7 +211,7 @@ export class AonDesktop extends AonElement {
 		banner.style.marginTop = '20px';
 
 		let bannerImg = document.createElement('img');
-		bannerImg.src = '../assets/img/atp_img_publi.jpg';
+		bannerImg.src = 'assets/img/atp_img_publi.jpg';
 		bannerImg.style.width = '100%';
 		bannerImg.style.maxWidth = '1117px';
 		banner.appendChild(bannerImg);

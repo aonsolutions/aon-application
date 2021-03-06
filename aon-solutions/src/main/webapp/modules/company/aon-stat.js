@@ -24,7 +24,7 @@ export class AonStat extends AonElement {
     div.style.marginTop = '10px';
 
     let bannerImg = document.createElement('img');
-    bannerImg.src = '../assets/img/atp_img_publi.jpg';
+    bannerImg.src = 'assets/img/atp_img_publi.jpg';
     bannerImg.style.width = '100%';
 
     div.appendChild(bannerImg);

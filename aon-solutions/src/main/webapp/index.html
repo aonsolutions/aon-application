@@ -60,16 +60,17 @@
 
 		if (window.location.href.includes('ayudat')) {
 			link.href = 'assets/ayudat-favicon.png';
-		} else if (window.location.href.includes('translogia') || window.location.href.includes('tedi')) {
+		} else if (window.location.href.includes('translogia') || window.location.href.includes('tedi')
+			|| window.location.href.includes('aonsolutions.org')) {
 			link.href = 'assets/ayudat-favicon.png';
 			//link.href = 'assets/tedi-favicon.png';
 		} else {
-			link.href = 'assets/favicon.ico';
+			link.href = 'assets/favicon-black.ico';
 		}
 		document.getElementsByTagName('head')[0].appendChild(link);
 		localStorage.setItem('aon_solutions', true);
 
-		
+
 	</script>
 </head>
 

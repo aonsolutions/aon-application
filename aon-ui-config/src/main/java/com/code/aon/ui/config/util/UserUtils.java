@@ -59,6 +59,10 @@ public class UserUtils implements Serializable {
 	public boolean isNewAONTheme() {
 		return getLoggedUser().getToolbar() == Toolbar.AON_SOLUTIONS;
 	}
+	
+	public boolean isAonNewSuite() {
+		return getLoggedUser().getToolbar() == Toolbar.ARSYS;
+	}
 
 	public boolean isPasswordExpired() {
 		if (passwordExpired == null) {

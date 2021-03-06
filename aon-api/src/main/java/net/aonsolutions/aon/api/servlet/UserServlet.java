@@ -127,10 +127,14 @@ public class UserServlet extends AonApiHttpServlet {
 		if(userId != null) {
 			user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(userId));
 		} else {
-			AonToken aonToken = SECURITY.getAonToken(getToken());
-			user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> 
-				(f.getDomainProperty().eq(getDomain().getId()).or(f.getDomainProperty().eq(getDomain().getParentId())))
-				.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
+			if(AonStringUtils.isBlank(getToken())) {
+				user = getUser();
+			} else {
+				AonToken aonToken = SECURITY.getAonToken(getToken());
+				user = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> 
+					(f.getDomainProperty().eq(getDomain().getId()).or(f.getDomainProperty().eq(getDomain().getParentId())))
+					.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
+			}
 		}
 		return getUserRoles(getDomain(), user);
 	}
