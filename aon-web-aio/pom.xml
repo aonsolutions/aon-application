@@ -464,6 +464,12 @@
     </dependency>
     <dependency>
       <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.external.sources</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.aonsolutions</groupId>
       <artifactId>aon.api</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>

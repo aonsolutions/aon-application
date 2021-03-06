@@ -82,6 +82,7 @@
 		<module>aon-sii</module>
 		<module>aon-seres</module>
 		<module>aon-tbai</module>
+		<module>aon-external-sources</module>
 
 		<!-- ENTITY -->
 		<module>aon-carrier</module>
