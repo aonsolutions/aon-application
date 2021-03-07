@@ -2559,8 +2559,6 @@ public class SalaryDraft extends ResizeComposite
 
 	@UiField
 	ListBox settlePreviewListBox;
-	@UiField
-	ListBox salaryPreviewListBox;
 
 	private int zoom;
 	private Scope scope;
@@ -2882,11 +2880,6 @@ public class SalaryDraft extends ResizeComposite
 		printSettle();
 	}
 
-	@UiHandler("salaryPreviewListBox")
-	void onSalaryPreviewChange(ChangeEvent event) {
-		printSalary();
-	}
-
 	private void setDbVisible(boolean visible) {
 		dbCgcBaseLabel.setVisible(visible);
 		dbCgpBaseLabel.setVisible(visible);
@@ -2913,7 +2906,6 @@ public class SalaryDraft extends ResizeComposite
 		zoomListBox.setVisible(false);
 		closePreviewButton.setVisible(false);
 		settlePreviewListBox.setVisible(false);
-		salaryPreviewListBox.setVisible(false);
 		
 		fxButton.setVisible(true);
 		undoButton.setVisible(true);
@@ -2940,7 +2932,6 @@ public class SalaryDraft extends ResizeComposite
 		zoomListBox.setVisible(true);
 		closePreviewButton.setVisible(true);
 		settlePreviewListBox.setVisible(isSettle());
-		salaryPreviewListBox.setVisible(isSalary() || isExtra());
 
 
 		fxButton.setVisible(false);
@@ -2974,7 +2965,6 @@ public class SalaryDraft extends ResizeComposite
 		irpfPreviewButton.setVisible(false);
 		printPreviewButton.setVisible(false);
 		settlePreviewListBox.setVisible(false);
-		salaryPreviewListBox.setVisible(false);
 
 	}
 
@@ -3456,7 +3446,6 @@ public class SalaryDraft extends ResizeComposite
 
 			@Override
 			public void onClick(ClickEvent event) {
-				salaryPreviewListBox.setSelectedIndex(1);
 				printPreview();
 			}
 		});
@@ -4678,51 +4667,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private void printSalary() {
-		
-		SalaryType type = SalaryType.valueOf(salaryPreviewListBox.getSelectedValue());
-		switch (type) {
-		case CLASSIC_NEW:
-			Reports.classic_new(salaryDraftObject,  dataURI -> {
-				SalaryDraft.this.showPreview();
-				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
-			});
-			break;
-		case STANDARD:
-			Reports.standard(salaryDraftObject,  dataURI -> {
-				SalaryDraft.this.showPreview();
-				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
-			});
-			break;
-		case STANDARD_NEW:
-			Reports.standard_new(salaryDraftObject,  dataURI -> {
-				SalaryDraft.this.showPreview();
-				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
-			});
-			break;
-		case STANDARD_COLS:
-			Reports.standard_cols(salaryDraftObject,  dataURI -> {
-				SalaryDraft.this.showPreview();
-				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
-			});
-			break;
-		case RECIBE:
-			Reports.recibe(salaryDraftObject,  dataURI -> {
-				SalaryDraft.this.showPreview();
-				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
-			});
-			break;
-		case RECIBE_CRA:
-			Reports.recibe_cra(salaryDraftObject,  dataURI -> {
-				SalaryDraft.this.showPreview();
-				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
-			});
-			break;
-		default:
-			print();
-			break;
-		}
-
-		
+		print();
 	}
 
 	private void irpfPrint() {
@@ -4760,10 +4705,6 @@ public class SalaryDraft extends ResizeComposite
 			
 			@Override
 			public Void visitSalary(Type type) {
-//				Reports.classic_new(salaryDraftObject,  dataURI -> {
-//					SalaryDraft.this.showPreview();
-//					SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
-//				});
 				printSalary();
 				return null;
 			}

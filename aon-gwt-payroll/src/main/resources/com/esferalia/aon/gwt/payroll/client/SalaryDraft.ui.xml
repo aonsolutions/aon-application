@@ -358,16 +358,6 @@
 									<g:item value="{A3}">TABULADA (&Beta;)</g:item>
 									<g:item value="{LETTER}">CARTA (&Beta;)</g:item>
 								</g:ListBox>
-
-								<g:ListBox debugId="salaryPreviewListBox" ui:field="salaryPreviewListBox" visible="false">
-									<g:item value="{JASPER}">CL&Aacute;SICO</g:item>
-									<g:item value="{CLASSIC_NEW}">CL&Aacute;SICO (&Beta;)</g:item>
-									<!-- g:item value="{STANDARD}">EST&Aacute;NDAR I (&Beta;)</g:item -->
-									<g:item value="{STANDARD_NEW}">EST&Aacute;NDAR (&Beta;)</g:item>
-									<!-- g:item value="{STANDARD_COLS}">EST&Aacute;NDAR COLUMNADO (&Beta;)</g:item -->
-									<!-- g:item value="{RECIBE}">FACTURA (&Beta;)</g:item -->
-									<g:item value="{RECIBE_CRA}">FACTURA CRA (&Beta;)</g:item>
-								</g:ListBox>
 								
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
