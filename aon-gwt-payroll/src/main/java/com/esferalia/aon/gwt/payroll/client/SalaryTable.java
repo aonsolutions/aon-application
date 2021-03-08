@@ -122,11 +122,6 @@ public abstract class SalaryTable extends ResizeComposite {
 			public Boolean getValue(SalaryInfo salaryInfo) {
 				return selectionModel.isSelected(salaryInfo);
 			}
-			
-			@Override
-			public void render(Context context, SalaryInfo object, SafeHtmlBuilder sb) {
-				sb.appendHtmlConstant("<input type=\"checkbox\" tabindex=\"-1\" style=\"margin-left: 0;\">");
-			}
 	    };
     
 	    CheckboxCell selectAllHeaderCB = new CheckboxCell(true,true);
@@ -141,10 +136,10 @@ public abstract class SalaryTable extends ResizeComposite {
 	    		return value; 
 	    	}
 	    	
-	    	@Override
-	    	public void render(Context context, SafeHtmlBuilder sb) {
-	    		sb.appendHtmlConstant("<input type=\"checkbox\" tabindex=\"-1\" style=\"margin-left: 0;\">");
-	    	}
+//	    	@Override
+//	    	public void render(Context context, SafeHtmlBuilder sb) {
+//	    		sb.appendHtmlConstant("<input type=\"checkbox\" tabindex=\"-1\" style=\"margin-left: 0;\">");
+//	    	}
 	    };
 	    
 	    selectAllHeader.setUpdater(new ValueUpdater<Boolean>() {
@@ -396,8 +391,8 @@ public abstract class SalaryTable extends ResizeComposite {
 	// ----------------------------------------------- Aux Methods ------------------------------------------------
 
 	private void setScrollPanelHeight() {
-		scrollPanel.setHeight((Window.getClientHeight() - 260) + "px");
-		salaryDG.setHeight((Window.getClientHeight() - 270) + "px");
+		scrollPanel.setHeight((Window.getClientHeight() - 235) + "px");
+		salaryDG.setHeight((Window.getClientHeight() - 245) + "px");
 	}
 	
 	public void setWorkplaceView() {
