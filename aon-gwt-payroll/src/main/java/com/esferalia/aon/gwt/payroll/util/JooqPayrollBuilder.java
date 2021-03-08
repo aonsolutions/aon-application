@@ -154,8 +154,8 @@ public class JooqPayrollBuilder {
 			{
 				dpb.setAccrual_total(s.getTotalPayment());
 				HashMap<Integer, ArrayList<DefaultPayrollAccrual>> paymentMap = new HashMap<Integer, ArrayList<DefaultPayrollAccrual>>();
-				s.getPayments().stream().sorted(Comparator.comparing(Payment::getDescription)).filter(p -> p.getAmount() != 0d).forEach(p -> {
-					DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(p.getAmount(), p.getDescription().replaceAll("[.*?]", ""));
+				s.getPayments().stream().sorted(Comparator.comparing(p -> p.getDescription())).filter(p -> p.getAmount() != 0d).forEach(p -> {
+					DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(p.getAmount(), p.getDescription().replaceAll("\\[\\d*\\]", ""));
 					if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
 						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<DefaultPayrollAccrual>());
 					paymentMap.get(p.getPaymentType().ordinal()).add(accrual);
@@ -311,6 +311,7 @@ public class JooqPayrollBuilder {
 					});
 					cbb.setMonthly_amount(Optional.ofNullable(s.getRemuneration()));
 				}
+				
 				//SETTING PERCENTAGES
 				{
 					data.keySet().stream().filter(k -> AonStringUtils.containsIgnoreCase(k, "PORCENTAJE")).forEach(k -> {
