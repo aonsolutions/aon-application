@@ -51,6 +51,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -1898,8 +1899,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		else
 			deckPanelExtras.showWidget(0);
 		
+		checkTypeOfExistingExtra();
+		
 	}
-	
+
 	private void createSalaryTable() {
 		clearSalaryTable();
 		salaryTableEditors.clear();
@@ -1917,6 +1920,30 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				countExtras++;
 		}
 		return countExtras > 1;
+	}
+	
+	private void checkTypeOfExistingExtra() {
+		for (Extra extra : agreementDraftObject.getExtras()) {
+			String issueDate = extra.getIssueDate();
+			if(AonStringUtils.isNotBlank(issueDate)) {
+				String issueMonthDate = issueDate.split("/")[1];
+				Integer monthIssue = Integer.parseInt(issueMonthDate);
+				if(AonNumberUtils.equals(monthIssue, 6) || AonNumberUtils.equals(monthIssue, 7) || AonNumberUtils.equals(monthIssue, 12)) {
+					Date startDate = parseExtraDate(extra.getStartDate());
+					Date endDate = parseExtraDate(extra.getEndDate());
+					int daysBetween = DateUtils.getDaysBetween(startDate, endDate);
+					if(daysBetween > 186) {
+						this.payPeriod.setSelectedIndex(0);
+						this.payPeriodLabel.setText(this.payPeriod.getSelectedItemText());
+						break;
+					}else {
+						this.payPeriod.setSelectedIndex(1);
+						this.payPeriodLabel.setText(this.payPeriod.getSelectedItemText());
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	// ------------------------------------------
