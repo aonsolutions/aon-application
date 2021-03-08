@@ -215,14 +215,20 @@ public class PDFToolkit {
 		String line = "";
 		
 		for (int i = 0; i < words.size(); i++) {
-			
 			float fw = (font.getStringWidth(line + " " + words.get(i)) / 1000.0f) * fontSize;
-			if(fw < max) line += words.get(i);
+			if(fw < max) {
+				System.out.println("NO SE PASA: " + line);
+				line += " " + words.get(i);
+				if(i == words.size() - 1) lines.add(line); 
+			}
 			else {
+				System.out.println("SE PASA: " + line);
 				lines.add(line);
 				line = "" + words.get(i);
 			}
+			System.out.println("LINEAS: " + lines);
 		}
+		if(lines.size() == 0) lines.add(line);
 		
 		return lines;
 	}

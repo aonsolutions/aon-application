@@ -29,7 +29,7 @@ public class PayrollBundle  extends ListResourceBundle{
 	        { "TOTAL DEVENGADO", "Total devengado" },
 	        { "DEDUCCIONES", "Deducciones" },
 	        { "TOTAL DEDUCIR", "Total deducir" },
-	        { "TOTAL PERCIBIR", "Liquido total a percibir" },
+	        { "TOTAL PERCIBIR", "Líquido total a percibir" },
 	        { "FIRMA EMPRESA", "Sello y firma de la empresa" },
 	        { "FIRMA TRABAJADOR", "'recibí'" },
 	        { "TITULO PIE", "Determinación de las bases de cotización a la Seguridad Social y conceptos de recaudación conjunta" },
