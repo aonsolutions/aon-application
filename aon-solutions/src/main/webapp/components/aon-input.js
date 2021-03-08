@@ -264,16 +264,16 @@ export class AonInput extends AonElement {
 
     label.appendChild(span);
 
-    if('password' === this.getAttribute('type')){
+    if('password' === this.getAttribute('type') && !this.isDisabled() && !this.isReadonly()){
       let icon = document.createElement('i');
     	icon.setAttribute('id', this.getAttribute('id') + 'Icon');
     	icon.className =  'material-icons';
       icon.style.marginLeft = "-35px";
       icon.style.pointer = "pointer";
-    	icon.innerHTML = 'visibility'; 
+    	icon.innerHTML = 'visibility';
       icon.addEventListener('click', (e)=> {
         const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-        icon.innerHTML =  type === 'password' ? 'visibility' : 'visibility_off'; 
+        icon.innerHTML =  type === 'password' ? 'visibility' : 'visibility_off';
         input.type = type;
       });
     	label.appendChild(icon);

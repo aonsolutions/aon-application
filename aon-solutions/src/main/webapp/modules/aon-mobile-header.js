@@ -37,15 +37,8 @@ export class AonMobileHeader extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-		if(getToken()){
-			getTimeControl().then(r => {
-				this.activeTimecontrol = true;
-				this.timeControlStatus(r);
-			}).catch(e => {
-				this.activeTimecontrol = false;
-			});
-			this.build();
-		}
+		this.activeTimecontrol = false;
+		this.build();
   }
 
 	initialize() {
@@ -119,6 +112,7 @@ export class AonMobileHeader extends AonElement {
 	}
 
 	timeControlStatus(signin) {
+		this.activeTimecontrol = true;
 		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
 		if(!aonUserConnected) {
 			aonUserConnected = document.createElement('div');
@@ -170,11 +164,11 @@ export class AonMobileHeader extends AonElement {
 		let aonLogo = document.getElementById('aonMobileLogo');
 
 		if(window.location.href.includes('ayudat')){
-			aonLogo.src = '../assets/ayudat-logo2.png';
+			aonLogo.src = 'assets/ayudat-logo2.png';
 		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
-			aonLogo.src = '../assets/ayudat-logo3.png';
+			aonLogo.src = 'assets/ayudat-logo3.png';
 //			aonLogo.style.top = '0px';
-		} else aonLogo.src = '../assets/aon-logo2.png';
+		} else aonLogo.src = 'assets/aon-logo2.png';
 		aonLogo.addEventListener('click', () => {
 			rootPanel('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
 		});

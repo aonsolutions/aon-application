@@ -107,24 +107,24 @@ export class DomainUserRoles {
 	}
 
   hasOldModule(mod) {
-  	return getOldDomainModules().includes(mod) || getOldParentDomainModules().includes(mod);
+  	return (getOldDomainModules() && getOldDomainModules().includes(mod)) || (getOldParentDomainModules() && getOldParentDomainModules().includes(mod));
   }
 
   hasOldRole(oldRole) {
-		return this.getOldUserRoles().includes(oldRole);
+		return this.getOldUserRoles() && this.getOldUserRoles().includes(oldRole);
 	}
 
   hasApp(aonApp) {
-  	return this.getDomainApps().includes(aonApp) || this.getParentDomainApps().includes(aonApp);
+  	return (this.getDomainApps() && this.getDomainApps().includes(aonApp)) || (this.getParentDomainApps() && this.getParentDomainApps().includes(aonApp));
 	}
 
   hasParentApp(aonApp) {
-    return this.getParentDomainApps().includes(aonApp);
+    return this.getParentDomainApps() && this.getParentDomainApps().includes(aonApp);
   }
 
   hasRole(aonRole) {
-  	return this.getDomainUserRoles().includes(aonRole)
-  	  || (this.isParentUser() && this.getParentDomainUserRoles().includes(aonRole));
+  	return (this.getDomainUserRoles() && this.getDomainUserRoles().includes(aonRole))
+  	  || (this.isParentUser() && this.getParentDomainUserRoles() && this.getParentDomainUserRoles().includes(aonRole));
 	}
 
 	isAdmin() {

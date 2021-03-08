@@ -9,6 +9,7 @@ export class Invoice {
   transaction;
   category;
   total;
+  name;
   sender;
   receiver;
   details;
@@ -76,6 +77,7 @@ export class Invoice {
       this.category = invoice.category || '',
       this.transaction = invoice.transaction || 'NAC',
       this.status = invoice.status || 'inbox',
+      this.name = invoice.name;
       this.sender = invoice.sender || {
         document: '',
         name: '',

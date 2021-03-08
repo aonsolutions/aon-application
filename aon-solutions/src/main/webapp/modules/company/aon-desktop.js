@@ -163,13 +163,25 @@ export class AonDesktop extends AonElement {
 		// }
 		// aonDesktop.addSidenavOptions('SERVICIOS CONTRATADOS', serviceOptions);
 
-		let classicOptions = [
-			{
+		let classicOptions = [];
+
+		if(!localStorage.getItem('aon_jsf') && this.getDur().isAon()){
+			classicOptions.push({
 				name: 'aonSolutions',
 				img: 'assets/apps/aon.png',
 				fn: () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
-			},
-			{
+			});
+		}
+		if(localStorage.getItem('aon_jsf')){
+			classicOptions.push({
+				name: 'aonGestion',
+				img: 'assets/apps/aon.png',
+				fn: () => loadManagementPanel(this.getElement('aonDesktopMainContent'))
+			});
+		}
+
+		if(this.getDur().isBidoq()){
+			classicOptions.push({
 				name: 'Bidoq',
 				img: 'assets/apps/bidoq.png',
 				fn: () =>{
@@ -182,18 +194,11 @@ export class AonDesktop extends AonElement {
 						}
 					});
 				}
-			}
-		];
-
-		if(localStorage.getItem('aon_jsf')){
-			classicOptions.push({
-				name: 'aonGestion',
-				img: 'assets/apps/aon.png',
-				fn: () => loadManagementPanel(this.getElement('aonDesktopMainContent'))
 			});
 		}
 
-		aonDesktop.addSidenavOptions('VISTA CLÁSICA', classicOptions);
+		if(classicOptions.length > 0)
+			aonDesktop.addSidenavOptions('VISTA CLÁSICA', classicOptions);
 
 		getTimeControl().then(r => {
 			aonDesktop.addSidenavWidgetHTML('CONTROL HORARIO','<aon-sign></aon-sign>');
@@ -311,7 +316,6 @@ export class AonDesktop extends AonElement {
 				//rootPanel('<aon-fiscal></aon-fiscal>');
 				break;
 			case Apps.PAYROLL.app:
-				this.development('Panel Laboral');
 				rootPanel('<aon-laboral></aon-laboral>');
 				break;
 			case Apps.COMUNICA.app:

@@ -372,11 +372,19 @@ public class UserServlet extends AonApiHttpServlet {
 	private JSONObject setUser() throws Exception {
 		JSONObject js = new JSONObject();
 		String email = getData().optString("email");
-		String login = ramdonLogin();
+
 		if(Utils.isEmail(email)) {
+			User usr = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(getData().getInt("id")));
+			String login = ramdonLogin();
+			String pass = null;
+			if(usr != null && usr.getId() != null) {
+				login = usr.getLogin();
+				pass = AON_SOLUTIONS.getUserPassword(getDomain().getName(), getDomain().getId(), usr.getId());
+			}
+
 			Auth auth = AON_SOLUTIONS.getAuth(email);
 			if(auth.getUuid() == null) {
-				auth = createAuth(getDomain(), getData(), login);
+				auth = createAuth(getDomain(), getData(), login, pass);
 				sendAuthCreateInfoMail(email, login);
 			} else updateAuth(auth, getData());
 			
@@ -424,8 +432,11 @@ public class UserServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private Auth createAuth(Domain domain, JSONObject json, String login) {
-		String pass = Utils.createPasswordHash(json.optString("email"), login);
+	private Auth createAuth(Domain domain, JSONObject json, String login, String pass) {
+		if(pass == null) {
+			pass = Utils.createPasswordHash(json.optString("email"), login);
+		}
+
 		Auth auth = new Auth()
 			.setEmail(json.optString("email"))
 			.setPassword(pass)
@@ -456,7 +467,8 @@ public class UserServlet extends AonApiHttpServlet {
 			.setLogin(login)
 			.setName(json.opt("name") != null ? json.getString("name") : login)
 			.setShared(json.optBoolean("shared"))
-			.setEnterprise(cp.getId());
+			.setEnterprise(cp.getId())
+			.setToolbar(UserToolbar.AON_SOLUTIONS);
 		
 		if(json.opt("document") != null) {
 			String document = json.optString("document");

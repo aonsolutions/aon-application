@@ -1,8 +1,9 @@
 import {AonElement} from '../../components/AonElement.js';
 import {AonApplication} from '../../components/aon-application.js';
-import {insertInvoice, deleteInvoices, actionMobile} from '../../services/service.js';
+import {insertInvoice, deleteInvoices, actionMobile, getDomainUserRoles} from '../../services/service.js';
 import {Invoice} from './Invoice.js';
 import {InvoiceAction} from './invoiceEnums.js';
+import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import './aon-invoice.js';
 import './aon-mobile-invoice.js';
@@ -19,6 +20,7 @@ import { getReader } from '../../services/utils.js';
 
 export class AonInvoicePanel extends AonElement {
 
+	dur;
 	selected;
 	_filter;
 
@@ -42,12 +44,15 @@ export class AonInvoicePanel extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		this.innerHTML = `
-			<aon-application id='${this.INVOICE}' title='${MSG.AON_MSG_INVOICES}' drag_and_drop='true'></aon-application>
+			<aon-application id='${this.INVOICE}' title='${MSG.AON_MSG_BILLING}' drag_and_drop='true'></aon-application>
 			<aon-dialog-menu id='aonDialogAddOption'> </aon-dialog-menu>
 			<input id='${this.INPUT_FILE}' style='display:none;' type='file' name='file' multiple>
 			<input id='${this.INPUT_CAMERA}' type='file' accept='image/*' capture='camera' hidden />
 		`;
-		this.build();
+		getDomainUserRoles({}).then(r => {
+			this.dur = new DomainUserRoles(r);
+			this.build();
+		});
 	}
 
 	initialize() {
@@ -61,12 +66,16 @@ export class AonInvoicePanel extends AonElement {
 		};
 	}
 
+	getDur(){
+		return this.dur;
+	}
+
   build(){
 		let aonInvoice = this.getElement(this.INVOICE);
 
 		let input = this.getElement(this.INPUT_FILE);
 		input.addEventListener('change', () => this.preview(input.files));
-		
+
 		this.getElement(this.INPUT_CAMERA).addEventListener('change',  ({target}) => this.preview(target.files));
 
 		aonInvoice.addEventListener('drop', (event) => {
@@ -104,7 +113,18 @@ export class AonInvoicePanel extends AonElement {
 				fn: () => this.aonInvoiceList({status:'trash'})
 			}
 		];
-		aonInvoice.addSidenavOptions(MSG.AON_MSG_PENDINGS.toUpperCase(), pendingOptions);
+		aonInvoice.addSidenavOptions(MSG.AON_MSG_PENDING_DOCUMENTS.toUpperCase(), pendingOptions);
+
+		if(this.getDur().isAlpha()){
+			let budgetOptions = [
+				{
+					name: MSG.AON_MSG_PENDINGS,
+					icon: 'pending_actions',
+					fn: () => {}
+				}
+			];
+			aonInvoice.addSidenavOptions(MSG.AON_MSG_BUDGETS.toUpperCase(), budgetOptions);
+		}
 
 		let accountingOptions = [
 			{
@@ -123,7 +143,7 @@ export class AonInvoicePanel extends AonElement {
 				fn: () => this.aonInvoiceList({status:'accounting', type:'ticket', page:1, per_page: 50})
 			}
 		];
-		aonInvoice.addSidenavOptions(MSG.AON_MSG_ACCOUNTEDS.toUpperCase(), accountingOptions);
+		aonInvoice.addSidenavOptions(MSG.AON_MSG_INVOICES.toUpperCase(), accountingOptions);
 
 		let settingOptions = [
 			{
@@ -132,6 +152,14 @@ export class AonInvoicePanel extends AonElement {
 				fn: () => {this.aonInvoicePrint()}
 			}
 		];
+		if(this.getDur().isAlpha()){
+			settingOptions.push({
+				name: MSG.AON_MSG_SII_TICKETBAI,
+				icon: 'settings',
+				fn: () => {}
+			})
+		}
+
 		aonInvoice.addSidenavOptions(MSG.AON_MSG_SETTING.toUpperCase(), settingOptions);
 
 		let filter = {status:'inbox'};

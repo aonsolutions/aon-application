@@ -63,19 +63,18 @@ export const getCompanyAddress = (data) => get(`${API_URL}/company/address`, dat
 // export const getDomainUserRoles = (data) => get(`${API_URL}/company/approles`, data);
 
 export const getDomainUserRoles = (data) => {
-  console.log(JSON.stringify(durum));
-  let company = JSON.parse(localStorage.getItem("company"));
 
+  let company = JSON.parse(localStorage.getItem("company"));
   return new Promise((resolve, reject) => {
-    if (durum && company && durum.domain === company.id && !data.reload) {
+    if(!company && !localStorage.getItem("aon_domain_id")){
+      resolve({});
+    } else if (durum && company && durum.domain === company.id && !data.reload) {
       resolve(durum);
     } else {
       request("GET", `${API_URL}/company/approles`, getToken(), data, (result, error) => {
         try{
           if (error) reject(error);
           else {
-            console.log("CAMBIO DURUM");
-            console.log(JSON.stringify(durum));
             durum = JSON.parse(result);
             resolve(durum);
           }

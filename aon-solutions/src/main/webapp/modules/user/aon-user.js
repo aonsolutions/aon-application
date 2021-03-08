@@ -395,9 +395,10 @@ export class AonUser extends AonElement {
 	}
 
 	editPassword() {
-		let content = this.parentElement;
-		let application = content.parentElement;
+		let application = document.querySelector('aon-application');
+		console.log(application.DIALOG);
 		let d = document.getElementById(application.DIALOG);
+		console.log(d);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle("Cambiar Contraseña");

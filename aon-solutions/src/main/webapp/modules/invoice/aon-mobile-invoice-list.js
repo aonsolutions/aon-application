@@ -95,12 +95,14 @@ export class AonMobileInvoiceList extends AonElement {
     else if(inv.isTicket()) i.innerHTML = 'receipt';
     else i.innerHTML = 'archive';
 
-    let receiver = inv.receiver && inv.receiver.name && !inv.receiver.name.isEmpty() ? inv.receiver.name.toUpperCase() : 'ACCREEDORES VARIOS';
-    let sender =  inv.sender && inv.sender.name && !inv.sender.name.isEmpty() ? inv.sender.name.toUpperCase() : 'PROVEEDORES VARIOS';
-
+    if(!inv.name){
+      let receiver = inv.receiver && inv.receiver.name && !inv.receiver.name.isEmpty() ? inv.receiver.name.toUpperCase() : 'ACCREEDORES VARIOS';
+      let sender =  inv.sender && inv.sender.name && !inv.sender.name.isEmpty() ? inv.sender.name.toUpperCase() : 'PROVEEDORES VARIOS';
+      inv.name = inv.isEmitida() ? receiver : sender;
+    }
     let div = document.createElement('div');
     div.className = 'aonListText';
-    div.innerHTML = inv.isEmitida() ?  receiver : sender;
+    div.innerHTML = inv.name;
 
     let span3 = document.createElement('span');
     span3.className = 'aonLiSpanSubtitle';
@@ -116,9 +118,17 @@ export class AonMobileInvoiceList extends AonElement {
   }
 
   aonInvoice(invoice, i) {
-		setIndex(i);
-		let aip = document.querySelector('aon-invoice-panel');
-		aip.aonInvoice(invoice.type, invoice);
+    if(this.getFilter().status !== 'accounting') {
+			setIndex(i);
+			let aip = document.querySelector('aon-invoice-panel');
+			aip.aonInvoice(invoice.type, invoice);
+		} else {
+			getInvoice(invoice.id).then((inv) => {
+				setIndex(i);
+				let aip = document.querySelector('aon-invoice-panel');
+				aip.aonInvoice(invoice.type, inv);
+			});
+		}
 	}
 
   getFilter() {

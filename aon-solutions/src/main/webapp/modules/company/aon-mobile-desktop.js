@@ -200,6 +200,8 @@ export class AonMobileDesktop extends AonElement {
 			div3.style.marginLeft = '25px';
 			div3.innerHTML = '<aon-sign></aon-sign>'
 			this.appendChild(div3);
+			let aonHeader = document.getElementById('aonHeader');
+			aonHeader.timeControlStatus(r);
 		});
 
 	}
