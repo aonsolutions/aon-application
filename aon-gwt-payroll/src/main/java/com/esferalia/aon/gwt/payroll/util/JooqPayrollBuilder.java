@@ -48,14 +48,14 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class JooqPayrollBuilder {
 	/**
 	 * Method to generate a PDF payroll from database data and place it on the OutputStream passed as parameter
-	 * @param serverName The database server name
+	 * @param domain The database domain name
 	 * @param outputStream The output stream which the PDF will be written on
 	 * @param salaryIds The IDs of the salaries in database
 	 */
-	public static void generatePayroll(String serverName, OutputStream outputStream, Integer[] salaryIds) {
+	public static void generatePayroll(String domainName, OutputStream outputStream, Integer... salaryIds) {
 		DefaultPayrollTemplate dpt = new DefaultPayrollTemplate();
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
-		try (AONContext aonContext = AONContext.getAONContext(serverName, "")) {	
+		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {	
 			fillPayroll(outputStream, dpt, dpb, aonContext, salaryIds);
 		}
 	}
@@ -263,11 +263,6 @@ public class JooqPayrollBuilder {
 					deductionMap.get(1).add(new DefaultPayrollDeduction(0d, "Formación profesional", 0d));
 				if (!inserted.contains("IRPF"))
 					deductionMap.get(2).add(new DefaultPayrollDeduction(0d, "Retribuciones dinerarias", 0d));
-				System.out.println(inserted);
-				for (DefaultPayrollDeduction d : deductionMap.get(1))
-				System.out.println(d.getDescription() + " : " + d.getAmount());
-				for (DefaultPayrollDeduction d : deductionMap.get(2))
-					System.out.println(d.getDescription() + " : " + d.getAmount());
 				dpb.setDeductions(deductionMap);
 				
 			}

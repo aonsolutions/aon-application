@@ -392,7 +392,6 @@ public class DefaultPayrollTemplate {
 								try {
 									String entry_txt =  PdfFormats.to_latin_number(n.getAmount().orElse(null)) + " " + words.getString("MONEDA") + " por " + n.getDescription().orElse("");
 									String entry_percent = PdfFormats.to_latin_number(n.getPercent().orElse(null))+ " % " ;
-									System.out.println(n);
 									PDFToolkit.drawText(contents,entry_txt,x + 9,y,PdfColors.BLACK, PdfFonts.HELVETICA, fontSize);
 									PDFToolkit.drawText(contents,entry_percent,x + 345,y,PdfColors.BLACK, PdfFonts.HELVETICA, fontSize-1);
 								} catch (IOException e) {e.printStackTrace();}
@@ -412,6 +411,7 @@ public class DefaultPayrollTemplate {
 		PDFToolkit.drawTextRight(contents,new PDRectangle(x + 265,y, 200, 25),deduction_total_title,PdfColors.BLACK,PdfFonts.HELVETICA, fontSize, 5, 5);
 		
 		if(logo.isPresent()) {
+			
 			byte[] bytes =  logo.get().readAllBytes();
 			BufferedImage img = PDFToolkit.create_image_from_bytes(bytes);
 			float[] scales = PDFToolkit.reescale(img.getWidth(), img.getHeight(), 150, 50);
