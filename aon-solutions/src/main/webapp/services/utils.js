@@ -88,7 +88,7 @@ export const setValueName = (name, value) => {
   return el;
 }
 
-const addZero = (value, length) => value.toString().length < length ? addZero("0" + value, length) : value;
+export const addZero = (value, length) => value.toString().length < length ? addZero("0" + value, length) : value;
 
 export const timePaser = (time) =>{
   let msecPerMinute = 1000 * 60;
@@ -102,16 +102,9 @@ export const timePaser = (time) =>{
   time = time - (minutes * msecPerMinute );
 
   let seconds = Math.floor(time / 1000 );
-
-  return (hours < 10 ? '0' : '') + hours + ':'
-    + (minutes < 10 ? '0' : '') + minutes + ':'
-    + (seconds < 10 ? '0' : '') + seconds;
+  return  addZero(hours, 2) + ':'+ addZero(minutes, 2) + ':'+ addZero(seconds, 2);
 }
 
-export const timeHour = (time) => {
-  let arr = timePaser(time).split(":");
-  return  `${arr[0]}:${arr[1]}`;
-}
 
 export const formatDate = (d) => {
   let date = new Date(d);
@@ -140,13 +133,6 @@ export const addYear = (date, year) => {
   result.setFullYear( result.getFullYear() + year);
   return result;
 }
-
-export const firstDayWeek = (d) => {
-  let result = new Date(d);
-  return result.getDate() - result.getDay() + 1; 
-}
-
-export const lastDayWeek = (d) => firstDayWeek(new Date(d)) + 6;
 
 export const formatDateOrigin = (d) => {
   let date = new Date(d);
@@ -196,3 +182,4 @@ export const getDayMonth = (date) => {
   return day + '-' + month;
 }
 
+export const formatNumber = (value, decimals, locale = "de-DE") => new Intl.NumberFormat(locale, { minimumFractionDigits: decimals || 0}).format(value.replace(",", "."));

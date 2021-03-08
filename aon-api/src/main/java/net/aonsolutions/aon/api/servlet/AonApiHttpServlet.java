@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.itextpdf.text.pdf.codec.Base64.InputStream;
 
 import net.aonsolutions.aon.api.ewok.IConstants;
 
@@ -170,6 +172,16 @@ public class AonApiHttpServlet extends HttpServlet{
         resp.setContentType(mimetype.getName());
 		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "." + mimetype.getExtension() +"\";");
 		FileInputStream fileInpurOs =  new FileInputStream(file);
+		AonIOUtils.copy(fileInpurOs, resp.getOutputStream());
+		resp.flushBuffer();
+		fileInpurOs.close();
+	}
+	
+	public void responseFile(HttpServletRequest req, HttpServletResponse resp, byte[] fileByte, MimeType mimetype) throws IOException {
+		addCorsHeader(resp);
+        resp.setContentType(mimetype.getName());
+    	resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"informe.pdf\";");
+    	ByteArrayInputStream fileInpurOs = new ByteArrayInputStream(fileByte);
 		AonIOUtils.copy(fileInpurOs, resp.getOutputStream());
 		resp.flushBuffer();
 		fileInpurOs.close();

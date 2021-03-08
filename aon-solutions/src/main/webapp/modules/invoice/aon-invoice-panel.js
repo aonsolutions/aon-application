@@ -255,7 +255,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	async attach(file){
-		if (fileDataUri.length > 0) {
+		if (file) {
 			const data = {
 				file,
 				invoice: new Invoice('recibida')

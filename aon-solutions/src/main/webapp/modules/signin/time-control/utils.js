@@ -1,4 +1,4 @@
-import { addDays, setTime } from "../../../services/utils.js";
+import { addDays, setTime, timePaser } from "../../../services/utils.js";
 
 export const StringTwoLetters = (str) => {
   let newStr = "";
@@ -31,4 +31,9 @@ export const dateCustomDayHour = (d) => {
   }
   if(day) return firstLetters(day)+", "+ setTime(date);
   return null;
+}
+
+export const timeHour = (time) => {
+  let arr = timePaser(time).split(":");
+  return  `${arr[0]}:${arr[1]}`;
 }

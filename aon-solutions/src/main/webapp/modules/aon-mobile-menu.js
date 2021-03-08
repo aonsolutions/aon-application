@@ -13,11 +13,11 @@ import "./comunic@/aon-comunica.js";
 import "./documental/aon-documental.js";
 import "./signin/aon-signin.js";
 import "./invoice/aon-invoice-panel.js";
-
+import "./laboral/aon-laboral.js";
 
 export class AonMobileMenu extends AonElement {
 
-  CAMERA_INPUT;
+  // CAMERA_INPUT;
   TYPE_IMG;
 
   _roles;
@@ -60,7 +60,7 @@ export class AonMobileMenu extends AonElement {
 
   connectedCallback() {
     this.id = this.id || 'aonMobileMenu';
-    this.CAMERA_INPUT = this.id + "CameraInput";
+    // this.CAMERA_INPUT = this.id + "CameraInput";
   }
 
 
@@ -95,68 +95,81 @@ export class AonMobileMenu extends AonElement {
       rootPanel('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>')
     );
 
-    if(this._roles && this._roles.isDocumental()) {
-      count++;
-      this.addMenuButton('Documental', 'snippet_folder', () =>
-        rootPanel("<aon-documental></aon-documental>")
-      );
-    }
-
-    if(this._roles && this._roles.isTimecontrol()) {
-      count++;
-      this.addMenuButton('Timecontrol', 'alarm_on', () =>
-        rootPanel("<aon-signin></aon-signin>")
-      );
-    }
-
-    if(this._roles && this._roles.isInvoice()) {
-      count++;
-      this.addMenuButton('Invoice', 'receipt', () =>
-        rootPanel("<aon-invoice-panel></aon-invoice-panel>")
-      );
-    }
-
-    if(this._roles && this._roles.isComunica() && this._roles.isMessenger() && count === 4){
-      count++;
-      this.addMenuButton('More', 'more_horiz', ({ target }) => {
-        let top = target.getBoundingClientRect().top;
-        const left = target.getBoundingClientRect().left;
-        const height = window.innerHeight;
-
-        if (height - top < height / 2) top = top - 80;
-
-        let d = this.getElement(this.id + 'dialogMenu');
-
-        let options = [
-          {
-            name: "Comunica",
-            icon: "alternate_email",
-            fn: () => rootPanel("<aon-comunica></aon-comunica>"),
-          },
-          {
-            name: "Solicitudes",
-            icon: "message",
-            fn: () => alert('en desarrollo')
-          }
-        ];
-        d.setMenuOptions(options, top, left);
-        d.open();
-      });
-    } else {
-      if(this._roles && this._roles.isComunica()) {
+    if(this._roles){
+      if(this._roles.isDocumental()) {
         count++;
-        this.addMenuButton('Comunica', 'alternate_email', () =>
-          rootPanel("<aon-comunica></aon-comunica>")
+        this.addMenuButton('Documental', 'snippet_folder', () =>
+          rootPanel("<aon-documental></aon-documental>")
         );
       }
-
-      if(this._roles && this._roles.isMessenger()) {
+  
+      if(this._roles.isTimecontrol()) {
         count++;
-        this.addMenuButton('Messenger', 'message', () =>
-          alert('en desarrollo')
+        this.addMenuButton('Timecontrol', 'alarm_on', () =>
+          rootPanel("<aon-signin></aon-signin>")
         );
       }
+  
+      if(this._roles.isInvoice()) {
+        count++;
+        this.addMenuButton('Invoice', 'receipt', () =>
+          rootPanel("<aon-invoice-panel></aon-invoice-panel>")
+        );
+      }
+  
+      if(this._roles.isComunica() && this._roles.isMessenger() && count === 4){
+        count++;
+        this.addMenuButton('More', 'more_horiz', ({ target }) => {
+          let top = target.getBoundingClientRect().top;
+          const left = target.getBoundingClientRect().left;
+          const height = window.innerHeight;
+  
+          if (height - top < height / 2) top = top - 80;
+  
+          let d = this.getElement(this.id + 'dialogMenu');
+  
+          let options = [
+            {
+              name: "Comunica",
+              icon: "alternate_email",
+              fn: () => rootPanel("<aon-comunica></aon-comunica>"),
+            },
+            {
+              name: "Solicitudes",
+              icon: "message",
+              fn: () => alert('en desarrollo')
+            }
+          ];
+          d.setMenuOptions(options, top, left);
+          d.open();
+        });
+      } else {
+        if(this._roles.isComunica()) {
+          count++;
+          this.addMenuButton('Comunica', 'alternate_email', () =>
+            rootPanel("<aon-comunica></aon-comunica>")
+          );
+        }
+  
+        if(this._roles.isMessenger()) {
+          count++;
+          this.addMenuButton('Messenger', 'message', () =>
+            alert('en desarrollo')
+          );
+        }
+      }
     }
+
+    if(count <= 4 && this._roles && this._roles.isPayroll()) {
+      count++;
+      let buttonICon = this.addMenuButtonAonIcon('Payroll', 'aon_seg_social', () =>
+        rootPanel("<aon-laboral></aon-laboral>")
+      );
+      buttonICon.querySelector('button').style.bottom = "5px";
+      let svg = buttonICon.querySelector('svg');
+      if(svg)svg.style.height = "20px";
+    }
+
     if(count <= 4) {
       count++;
       this.addMenuButton('Configuration', 'settings', () =>
@@ -195,6 +208,29 @@ export class AonMobileMenu extends AonElement {
     button.icon = icon;
     button.addEventListener("click", action);
     span.appendChild(button);
+    return button;
+  }
+
+
+  addMenuButtonAonIcon(name, icon, action) {
+    let menu = this.getElement(`${this.id}Sidenav`);
+    let n = (window.innerWidth / 5 - 40) / 2;
+    let span = document.createElement('span');
+    span.id = this.id + name;
+    span.style.top = '10px';
+    span.style.position = 'relative';
+    span.style.marginLeft = n;
+    if(menu.childNodes.length < 5){
+      span.style.marginRight = n;
+    }
+    menu.appendChild(span);
+
+    let button = new AonIconButton();
+    button.id = span.id + 'Button';
+    button.aonIcon = icon;
+    button.addEventListener("click", action);
+    span.appendChild(button);
+    return button;
   }
 
   loading(load) {

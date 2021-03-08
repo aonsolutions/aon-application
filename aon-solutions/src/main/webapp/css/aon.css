@@ -977,6 +977,12 @@ button:disabled, button[disabled]{
   color: #FF9002;
 }
 
+
+.profile-letters.fin{
+  border: 2px solid #FF2D00;
+  color: #FF2D00;
+}
+
 .aonNone {
   display: none;
 }

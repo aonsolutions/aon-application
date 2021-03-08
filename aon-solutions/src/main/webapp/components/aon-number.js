@@ -10,7 +10,6 @@ export class AonNumber extends AonElement {
     ICON_LABEL;
     INPUT;
     DESCRIPTION;
-    LOCALE;
 
     static get observedAttributes() {
         return ['value', 'disabled', 'readonly', 'visible', 'options', 'description'];
@@ -140,7 +139,6 @@ export class AonNumber extends AonElement {
         this.ICON_LABEL = this.id + 'IconLabel';
         this.INPUT = this.id + 'Input';
         this.DESCRIPTION = this.id + 'Description';
-        this.LOCALE = 'de-DE';
     }
 
     connectedCallback() {
@@ -250,7 +248,7 @@ export class AonNumber extends AonElement {
         let newValue = value;
         let decimals = this.decimals || 0;
         if (this.format) {
-            newValue = new Intl.NumberFormat(this.LOCALE, { minimumFractionDigits: decimals }).format(value.replace(",", "."));
+            newValue = formatNumber(value, decimals);
         }
         return newValue;
     }

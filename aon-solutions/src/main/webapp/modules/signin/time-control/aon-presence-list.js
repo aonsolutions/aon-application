@@ -1,8 +1,8 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList } from "../../../services/service.js";
-import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, timeHour, waitEl } from "../../../services/utils.js";
+import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
 import { PresenceFilterInput, SigninSidenav } from "../signinEnums.js";
-import { dateCustomDayHour, StringTwoLetters } from "./utils.js";
+import { dateCustomDayHour, StringTwoLetters, timeHour } from "./utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";

@@ -1,8 +1,7 @@
 import { AonElement } from "../../../components/AonElement.js";
 import {
   getContracts,
-  getContratoPdf,
-  getCopyBasicPdf,
+  getContratoPdf
 } from "../../../services/service.js";
 import { setDate } from "../../../services/utils.js";
 import "../../../components/aon-table.js";

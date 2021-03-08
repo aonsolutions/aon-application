@@ -312,7 +312,7 @@ export class AonDesktop extends AonElement {
 				break;
 			case Apps.PAYROLL.app:
 				this.development('Panel Laboral');
-				//rootPanel('<aon-laboral></aon-laboral>');
+				rootPanel('<aon-laboral></aon-laboral>');
 				break;
 			case Apps.COMUNICA.app:
 				rootPanel('<aon-comunica></aon-comunica>');

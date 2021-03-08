@@ -214,7 +214,7 @@ export class DomainUserRoles {
 	}
 
 	isPayrollPortal() {
-		return this.asApp(App.PAYROLL) && (this.isAdmin() || this.hasRole(Role.PAYROLL_PORTAL));
+		return this.hasApp(App.PAYROLL) && (this.isAdmin() || this.hasRole(Role.PAYROLL_PORTAL));
 	}
 
   isPayrollManager() {

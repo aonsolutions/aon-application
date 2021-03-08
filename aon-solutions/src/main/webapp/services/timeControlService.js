@@ -1,8 +1,14 @@
 import { post, get, remove } from "./request.js";
 import { API_URL } from "../environments/environments.js";
-import { addDays, formatDateOrigin, firstDayWeek, lastDayWeek} from "./utils.js";
+import { addDays, formatDateOrigin} from "./utils.js";
 
-let taskHolders;
+
+const firstDayWeek = (d) => {
+  let result = new Date(d);
+  return result.getDate() - result.getDay() + 1; 
+}
+
+const lastDayWeek = (d) => firstDayWeek(new Date(d)) + 6;
 
 export const getTimeControl = (data) => get(`${API_URL}/timecontrol`, data);
 export const saveTimeControl = (data) => post(`${API_URL}/timecontrol`, data);
@@ -11,30 +17,28 @@ export const deleteTimeControl = (data) => remove(`${API_URL}/timecontrol`, data
 export const getTimeControlDetail = (data) => get(`${API_URL}/timecontrol/list-holder-detail`, data);
 
 export const getStatus = (data) =>
-  new Promise((resolve) => {
-    let jsonValues = [
-      {
-        name: "Entrada",
-        value: "in",
-      },
-      {
-        name: "Salida",
-        value: "out",
-      },
-      {
-        name: "Pausa",
-        value: "pause",
-      },
-    ];
-    if (data) {
-      jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
-    }
-    resolve(jsonValues);
-  });
+new Promise((resolve) => {
+  let jsonValues = [
+    {
+      name: "Entrada",
+      value: "in",
+    },
+    {
+      name: "Salida",
+      value: "out",
+    },
+    {
+      name: "Pausa",
+      value: "pause",
+    },
+  ];
+  if (data) {
+    jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
+  }
+  resolve(jsonValues);
+});
 
-// export const getTaskHolders = (data) =>
-//   get(`${API_URL}/timecontrol/taskholder`, data);
-
+let taskHolders;
 export const getTaskHolders = (data) => {
   data = data || {};
   return new Promise((resolve, reject) => {

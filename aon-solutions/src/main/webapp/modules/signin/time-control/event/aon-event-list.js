@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { setFullDate, setValueName, sortBy, timeHour,  setDateTpDay } from "../../../../services/utils.js";
+import { setFullDate, setValueName, sortBy, setDateTpDay } from "../../../../services/utils.js";
 import {
   getGroups,
   getPeriod,
@@ -9,7 +9,7 @@ import {
 import { ToolbarType } from "../../../../models/enums.js";
 import { UserAction } from "../../../user/userEnums.js";
 import { EventListFilterInput, SigninSidenav } from "../../signinEnums.js";
-import { firstLetters } from "../utils.js";
+import { firstLetters, timeHour} from "../utils.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
