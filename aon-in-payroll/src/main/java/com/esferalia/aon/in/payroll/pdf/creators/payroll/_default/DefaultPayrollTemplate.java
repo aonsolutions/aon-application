@@ -1,8 +1,13 @@
 package com.esferalia.aon.in.payroll.pdf.creators.payroll._default;
 
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.BLACK;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts.HELVETICA;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts.HELVETICA_BOLD;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.TEXT_ALIGNMENT.LEFT;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.TEXT_ALIGNMENT.RIGHT;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,6 +24,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfText;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
@@ -228,17 +234,8 @@ public class DefaultPayrollTemplate {
 		
 		float headerFontSize = fontSize;
 		
-//		if (enterprise.length()>45
-//				|| employee.length()>45)
-//			headerFontSize = 8f;
-//		else if (enterprise.length()>50
-//				|| employee.length()>50)
-//			headerFontSize = 7f;
-//		else if (enterprise.length()>60
-//				|| employee.length()>60)
-//			headerFontSize = 6f;
-			enterprise = PDFToolkit.cropped_string(enterprise, 250, PdfFonts.HELVETICA_BOLD, fontSize);
-			employee = PDFToolkit.cropped_string(employee, 250, PdfFonts.HELVETICA_BOLD, fontSize);
+		enterprise = PDFToolkit.cropped_string(enterprise, 250, PdfFonts.HELVETICA_BOLD, fontSize);
+		employee = PDFToolkit.cropped_string(employee, 250, PdfFonts.HELVETICA_BOLD, fontSize);
 		
 		PDFToolkit.drawBorderedBox(contents,x - 10,y - 85, 575, 120,PdfColors.LIGHT_GRAY);
 		PDFToolkit.drawTextCenter(contents,new PDRectangle(x, y + 4, 530, 100),title, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, 12, 12);
@@ -263,12 +260,12 @@ public class DefaultPayrollTemplate {
 		PDFToolkit.drawText(contents, profes_group,x + 280, y, PdfColors.BLACK, PdfFonts.HELVETICA, headerFontSize);
 
 		y -= 13.5;
-		PDFToolkit.drawText(contents,ccc,x,y,PdfColors.BLACK, PdfFonts.HELVETICA, headerFontSize);
+		PDFToolkit.drawText(contents,cif,x,y,PdfColors.BLACK, PdfFonts.HELVETICA, headerFontSize);
 		PDFToolkit.drawText(contents,cotiz_group,x + 280,y, PdfColors.BLACK, PdfFonts.HELVETICA, headerFontSize);
 	
 
 		x += 100;
-		PDFToolkit.drawText(contents,cif,x,y,PdfColors.BLACK,PdfFonts.HELVETICA, headerFontSize);
+		PDFToolkit.drawText(contents,ccc,x,y,PdfColors.BLACK,PdfFonts.HELVETICA, headerFontSize);
 		PDFToolkit.drawText(contents,antiqu_date,x+280,y,PdfColors.BLACK, PdfFonts.HELVETICA, headerFontSize);
 		
 
@@ -327,16 +324,21 @@ public class DefaultPayrollTemplate {
 					String accrual_total_txt = PdfFormats.to_latin_number(local_total)  + " " + words.getString("MONEDA");
 					
 					//BUILD 
-					PDFToolkit.drawText(contents, accrual_txt,x,y, PdfColors.BLACK, PdfFonts.HELVETICA_BOLD, fontSize+1);
-					PDFToolkit.drawTextRight(contents, new PDRectangle(x + 355, y - 5, 100, 10), accrual_total_txt, PdfColors.BLACK, PdfFonts.HELVETICA, fontSize-1, 5, 5);
+					PDFToolkit.drawText(contents, accrual_txt,x,y, BLACK, HELVETICA_BOLD, fontSize+1);
+					PDFToolkit.drawTextRight(contents, new PDRectangle(x + 355, y - 5, 100, 10), accrual_total_txt, BLACK, PdfFonts.HELVETICA, fontSize-1, 5, 5);
 					PDFToolkit.drawBox(contents,x,y - 2, 455, .2f, PdfColors.BLACK);
 					y -= 12;
 	
 					m.getValue().stream().forEach(n -> {
-						try {
-							String entry_txt = PdfFormats.to_latin_number(n.getAmount().orElse(null)) + " " + words.getString("MONEDA") + " por " + n.getDescription().orElse("");
-							PDFToolkit.drawText(contents,entry_txt,x + 9,y, PdfColors.BLACK, PdfFonts.HELVETICA, fontSize) ;
-						} catch (IOException e) {e.printStackTrace();}
+							String entry_value = PdfFormats.to_latin_number(n.getAmount().orElse(null)) + " " + words.getString("MONEDA");
+							String entry_txt = " por " + n.getDescription().orElse("");
+							
+							PdfText text = new PdfText(x , y, 60, 15, contents,entry_value, BLACK, HELVETICA, fontSize, RIGHT);
+							text.draw();
+							
+							PdfText t2 = new PdfText(x + 64, y, 300, 15, contents, entry_txt, BLACK, HELVETICA, fontSize, LEFT);
+							t2.draw();
+
 						y -= 10.5f;
 					});
 					}
@@ -579,6 +581,12 @@ public class DefaultPayrollTemplate {
 			PDFToolkit.drawTextRight(contents,new PDRectangle(x + 451, y - 5, 30, 10),total_contingencies_title,PdfColors.BLACK,PdfFonts.HELVETICA_BOLD,6.5f,5,5);
 			PDFToolkit.drawTextRight(contents,new PDRectangle(x + 518, y - 5, 30, 10),total_contingencies_amount,PdfColors.BLACK,PdfFonts.HELVETICA_BOLD,6.5f,3,5);
 			
+			
+			Date d = new Date();
+			String vs = PdfFormats.formatDate(d, "'v.'MM.dd.hhmm").get();
+			
+			PdfText version = new PdfText(5f, 2f, 200f, 10f, contents, vs, BLACK, HELVETICA, 7f, LEFT);
+			version.draw();
 
 		}
 	}

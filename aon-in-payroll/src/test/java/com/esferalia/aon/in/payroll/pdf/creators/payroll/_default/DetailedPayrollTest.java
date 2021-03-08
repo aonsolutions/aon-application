@@ -50,7 +50,7 @@ public class DetailedPayrollTest {
 		
 		for(Integer key : keys) {
 			for (int i = 0; i < random(10); i++) {
-				DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(999999999.99,"Descripcion por defecto.");
+				DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(random(999),"Descripcion por defecto.");
 				ac.get(key).add(accrual);
 			}
 		}
@@ -70,7 +70,7 @@ public class DetailedPayrollTest {
 			for (int i = 0; i < random(3); i++) {
 				DefaultPayrollDeduction deduction =
 						new DefaultPayrollDeduction(
-								999999999.99,
+								9999.99,
 								"Descripcion por defecto",
 								99.99
 						);
@@ -82,26 +82,26 @@ public class DetailedPayrollTest {
 		//CREATE CONTIGENCIES
 		Contingency_bases_builder con_builder = new Contingency_bases_builder();
 		
-		con_builder.setMonthly_amount(Optional.of(999999999.99))
-		.setExtra_proration_amount(Optional.of(999999999.99))
-		.setCommon_cont_base(Optional.of(999999999.99))
+		con_builder.setMonthly_amount(Optional.of(9999.99))
+		.setExtra_proration_amount(Optional.of(9999.99))
+		.setCommon_cont_base(Optional.of(9999.99))
 		.setCommon_cont_type(Optional.of(99.99))
-		.setCommon_cont_ap_enterprise(Optional.of(999999999.99))
-		.setProfessional_cont_base(Optional.of(999999999.99))
+		.setCommon_cont_ap_enterprise(Optional.of(9999.99))
+		.setProfessional_cont_base(Optional.of(9999.99))
 		.setAt_ep_type(Optional.of(99.99))
-		.setAt_ep_ap_enterprise(Optional.of(999999999.99))
+		.setAt_ep_ap_enterprise(Optional.of(9999.99))
 		.setUnemployment_type(Optional.of(99.99))
-		.setUnemployment_ap_enterprise(Optional.of(999999999.99))
+		.setUnemployment_ap_enterprise(Optional.of(9999.99))
 		.setProfes_form_type(Optional.of(99.99))
-		.setProfes_form_ap_enterprise(Optional.of(999999999.99))
+		.setProfes_form_ap_enterprise(Optional.of(9999.99))
 		.setFogasa_type(Optional.of(99.99))
-		.setFogasa_ap_enterprise(Optional.of(999999999.99))
-		.setForce_majeure_base(Optional.of(999999999.99))
+		.setFogasa_ap_enterprise(Optional.of(9999.99))
+		.setForce_majeure_base(Optional.of(9999.99))
 		.setForce_majeure_type(Optional.of(99.99))
-		.setForce_majeure_ap_enterprise(Optional.of(999999999.99))
-		.setNo_struct_base(Optional.of(999999999.99))
+		.setForce_majeure_ap_enterprise(Optional.of(9999.99))
+		.setNo_struct_base(Optional.of(9999.99))
 		.setNo_struct_type(Optional.of(99.99))
-		.setNo_struct_ap_enterprise(Optional.of(999999999.99))
+		.setNo_struct_ap_enterprise(Optional.of(9999.99))
 		.setIrpf_esp(Optional.of(99999.99))
 		.setIrpf_retrib_diner(Optional.of(99999.99))
 		.setTotal(Optional.of(99999.99));
@@ -125,9 +125,9 @@ public class DetailedPayrollTest {
 		.setTotal_days(Optional.of(999999999))
 		.setAccruals(Optional.of(ac))
 		.setDeductions(Optional.of(de))
-		.setAccrual_total(Optional.of(999999999.99))
-		.setDeduction_total(Optional.of(999999999.99))
-		.setPayroll_total(Optional.of(999999999.99))
+		.setAccrual_total(Optional.of(99999.99))
+		.setDeduction_total(Optional.of(9999.99))
+		.setPayroll_total(Optional.of(9999.99))
 		.setPayrollType(Optional.of(PayrollTypes.Type.EXTRAS))
 		.setContingencies(Optional.of(con_builder.build()));
 		
