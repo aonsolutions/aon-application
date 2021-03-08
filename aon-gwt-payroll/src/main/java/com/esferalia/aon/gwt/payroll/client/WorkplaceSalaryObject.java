@@ -36,9 +36,14 @@ public class WorkplaceSalaryObject {
 		this.workplaceEmployees = new WorkplaceEmployees();
 	}
 
-	public void getWorkplaceSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
+	public void getSalaries(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
-		employeesService.getWorkplaceSalaries(workplaceId, new AsyncCallback<List<SalaryInfo>>(){
+		if(filter.getEmployeeId() == null)
+			filter.setWorkplaceId(workplaceId);
+		else
+			filter.setWorkplaceId(null);
+		
+		employeesService.getSalaries(filter, new AsyncCallback<List<SalaryInfo>>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -48,7 +53,6 @@ public class WorkplaceSalaryObject {
 			@Override
 			public void onSuccess(List<SalaryInfo> result) {
 				workplaceSalaries = result;
-				//success.accept(result);
 				getWorkplaceEmployeesDB(
 						s -> {
 							success.accept(result);
@@ -73,34 +77,13 @@ public class WorkplaceSalaryObject {
 		});
 	}
 	
-	public void getFilterSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){		
-		if(filter.getEmployeeId() == null)
-			filter.setWorkplaceId(workplaceId);
-		
-		employeesService.getFilterSalaries(filter, new AsyncCallback<List<SalaryInfo>>(){
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(List<SalaryInfo> result) {
-				workplaceSalaries = result;
-				success.accept(result);
-			}
-			
-		});
-		
-	}
-	
-	public void delete(Set<SalaryInfo> salaries, Consumer<String> success, Consumer<Throwable> failure) {
+	public void deleteSalaries(Set<SalaryInfo> salaries, Consumer<Void> success, Consumer<Throwable> failure) {
 		ArrayList<Integer> ids = new ArrayList<Integer>();
 		for(SalaryInfo salary : salaries) {
 			ids.add(salary.getId());
 		}
 		
-		employeesService.deleteSalariesDB(ids, new AsyncCallback<String>(){
+		employeesService.deleteSalaries(ids, new AsyncCallback<Void>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -108,7 +91,7 @@ public class WorkplaceSalaryObject {
 			}
 
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(Void result) {
 				success.accept(result);
 			}
 			

@@ -20,6 +20,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -29,13 +30,14 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public class WorkplaceSalary extends Composite {
 	
@@ -52,9 +54,9 @@ public class WorkplaceSalary extends Composite {
 	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 	
-	private static EmployeeSalaryUiBinder uiBinder = GWT.create(EmployeeSalaryUiBinder.class);
+	private static WorkplaceSalaryUiBinder uiBinder = GWT.create(WorkplaceSalaryUiBinder.class);
 
-	interface EmployeeSalaryUiBinder extends UiBinder<Widget, WorkplaceSalary> {}
+	interface WorkplaceSalaryUiBinder extends UiBinder<Widget, WorkplaceSalary> {}
 	
 	//Listener to Publish Salaries
 	static interface Listener {
@@ -122,10 +124,7 @@ public class WorkplaceSalary extends Composite {
 	ListBox typeList;
 	
 	@UiField
-	RadioButton noDateRB;
-	
-	@UiField
-	RadioButton dateTTRB;
+	ListBox dateFilterList;
 	
 	@UiField
 	ListBox monthTillT;
@@ -138,6 +137,9 @@ public class WorkplaceSalary extends Composite {
 	
 	@UiField
 	ListBox yearTTo;
+	
+	@UiField
+	Label datesMessage;
 	
 	// -------------------------------------------------- Variables -------------------------------------------------
 	
@@ -186,12 +188,15 @@ public class WorkplaceSalary extends Composite {
 		filterSalaryPanel.addStyleName(AON.CSS.aonMarginRight());
 		filterSalaryPanel.addStyleName(AON.CSS.aonBlockCenter());
 		
+		showHideDatesMessage(false);
+		
 		initListBox();
 	}
 	
 	private void initListBox() {
 		// Clear listboxies
 		typeList.clear();
+		dateFilterList.clear();
 		monthTillT.clear();
 		yearTillT.clear();
 		monthTTo.clear();
@@ -210,13 +215,22 @@ public class WorkplaceSalary extends Composite {
 			monthTillT.addItem(monthList[i], i+"");
 			monthTTo.addItem(monthList[i], i+"");
 		}
+		
+		// Date Filter list
+		dateFilterList.addItem("Personalizado");
+		dateFilterList.addItem("Mes actual");
+		dateFilterList.addItem("Mes anterior");
+		dateFilterList.addItem("Tres meses");
+		dateFilterList.addItem("Seis meses");
+		dateFilterList.addItem("A" + String.valueOf("\u00F1") + "o actual");
+		dateFilterList.addItem("A" + String.valueOf("\u00F1") + "o anterior");
 	}
 	
 	// ------------------------------------------ Set WorkplaceSalaryObject -----------------------------------------
 
 	public void setWorkplaceSalaryObject(WorkplaceSalaryObject workplaceSalaryObject) {
 		this.workplaceSalaryObject = workplaceSalaryObject;
-		this.workplaceSalaryObject.getWorkplaceSalariesDB(
+		this.workplaceSalaryObject.getSalaries(
 				s -> {
 					initDatesListBox();
 					initSuggestBox();
@@ -262,23 +276,17 @@ public class WorkplaceSalary extends Composite {
 	private void filterCurrentYearSalaries() {
 		SalaryInfoFilter filter = workplaceSalaryObject.getFilter();
 		
-		filter.setNoDateFilter(false);
-		filter.setDateMYFilter(false);
-		filter.setDateTTFilter(true);
+		Date startDate = DateUtils.addMonths2Date(DateUtils.getFirstDayOfMonth(), -1);
+		Date endDate = DateUtils.getLastDayOfMonth();
 		
-		Date firstDayOfYear = DateUtils.getFirstDayOfYear();
-		Date lastDayOfYear = DateUtils.getLastDayOfYear(DateUtils.getFirstDayOfYear());
+		setSelectedValueLB(monthTillT, DateUtils.getMonth(startDate) + "");
+		setSelectedValueLB(monthTTo, DateUtils.getMonth(endDate) + "");
 		
-		dateTTRB.setValue(true);
+		setSelectedValueLB(yearTillT, DateUtils.getYear(startDate) + "");
+		setSelectedValueLB(yearTTo, DateUtils.getYear(endDate) + "");
 		
-		setSelectedValueLB(monthTillT, DateUtils.getMonth(firstDayOfYear) + "");
-		setSelectedValueLB(monthTTo, DateUtils.getMonth(lastDayOfYear) + "");
-		
-		setSelectedValueLB(yearTillT, DateUtils.getYear(firstDayOfYear) + "");
-		setSelectedValueLB(yearTTo, DateUtils.getYear(lastDayOfYear) + "");
-		
-		filter.setDateTillT(firstDayOfYear);
-		filter.setDateTTo(lastDayOfYear);
+		filter.setDateTillT(startDate);
+		filter.setDateTTo(endDate);
 		
 		// Salary Type
 		Integer salaryType = Integer.parseInt(typeList.getSelectedValue());
@@ -286,7 +294,7 @@ public class WorkplaceSalary extends Composite {
 		
 		filter.setEmployeeId(null);
 		
-		this.workplaceSalaryObject.getFilterSalariesDB(
+		this.workplaceSalaryObject.getSalaries(
 				s -> {
 					salaryTable.setSalariesList(workplaceSalaryObject.getWorkplaceSalaries());
 					initSalariesTable();
@@ -321,6 +329,12 @@ public class WorkplaceSalary extends Composite {
 
 	@UiHandler("employeeSB")
 	public void onFilterEmployee(ValueChangeEvent<String> event) {
+		if(AonStringUtils.isBlank(event.getValue()))
+			filterSalaries();
+	}
+	
+	@UiHandler("employeeSB")
+	public void onFilterEmployeeSelection(SelectionEvent<Suggestion> event) {
 		filterSalaries();
 	}
 	
@@ -329,63 +343,43 @@ public class WorkplaceSalary extends Composite {
 		filterSalaries();
 	}
 	
-	@UiHandler("noDateRB")
-	public void onNoDateRBCahnge(ValueChangeEvent<Boolean> event) {
-		if(event.getValue()) {
-			monthTillT.setEnabled(false);
-			yearTillT.setEnabled(false);
-			monthTTo.setEnabled(false);
-			yearTTo.setEnabled(false);
-			filterSalaries();
-		}
-	}
-	
-	@UiHandler("dateTTRB")
-	public void onDateTTRBCahnge(ValueChangeEvent<Boolean> event) {
-		if(event.getValue()) {
-			monthTillT.setEnabled(true);
-			yearTillT.setEnabled(true);
-			monthTTo.setEnabled(true);
-			yearTTo.setEnabled(true);
-			filterSalaries();
-		}
+	@UiHandler("dateFilterList")
+	public void onDateFilterListCahnge(ChangeEvent event) {
+		int dateFilterType = dateFilterList.getSelectedIndex();
+		if(dateFilterType == 0)
+			enableDisableDatesListBox(true);
+		else
+			enableDisableDatesListBox(false);
+		
+		filterSalaries();
 	}
 	
 	@UiHandler({"monthTillT", "yearTillT", "monthTTo", "yearTTo"})
 	public void onFilterDatesChange(ChangeEvent event) {
-		filterSalaries();
+		if(checkFilterDates()) {
+			showHideDatesMessage(false);
+			filterSalaries();
+		} else {
+			showHideDatesMessage(true);
+		}
 	}
-	
+
 	// ---------------------------------------------- Filter Salaries ------------------------------------------------
 	
 	private void filterSalaries() {
 		SalaryInfoFilter filter = workplaceSalaryObject.getFilter();
-		if(noDateRB.getValue()) {
-			filter.setNoDateFilter(true);
-			filter.setDateMYFilter(false);
-			filter.setDateTTFilter(false);
-		} else if(dateTTRB.getValue()) {
-			filter.setNoDateFilter(false);
-			filter.setDateMYFilter(false);
-			filter.setDateTTFilter(true);
-			
-			Integer yearTillTValue = Integer.parseInt(yearTillT.getSelectedValue());
-			Integer monthTillTValue = Integer.parseInt(monthTillT.getSelectedValue());
-			filter.setDateTillT(DateUtils.getDate(monthTillTValue, yearTillTValue));
-			
-			Integer yearTToValue = Integer.parseInt(yearTTo.getSelectedValue());
-			Integer monthTToValue = Integer.parseInt(monthTTo.getSelectedValue());
-			filter.setDateTTo(DateUtils.getDate(monthTToValue, yearTToValue));
-		}
+		
+		// Date Filter
+		filter.setDateTillT(getDateTillT());
+		filter.setDateTTo(getDateTTo());
 		
 		// Salary Type
 		Integer salaryType = Integer.parseInt(typeList.getSelectedValue());
 		filter.setSalaryType(salaryType);
 		
-		
 		//Check if exist employee filter
 		String nameSurname = employeeSB.getValue();
-		if(nameSurname.length() > 0) {
+		if(AonStringUtils.isNotBlank(nameSurname)) {
 			EmployeeInfo employeeInfo = workplaceSalaryObject.getEmployeeDataByNameSurname(nameSurname);
 			filter.setEmployeeId(employeeInfo.getEmployeeId());
 			filter.setWorkplaceId(null);
@@ -393,7 +387,7 @@ public class WorkplaceSalary extends Composite {
 		}else
 			filter.setEmployeeId(null);
 		
-		this.workplaceSalaryObject.getFilterSalariesDB(
+		this.workplaceSalaryObject.getSalaries(
 				s -> {
 					salaryTable.setSalariesList(workplaceSalaryObject.getWorkplaceSalaries());
 					initSalariesTable();
@@ -401,6 +395,41 @@ public class WorkplaceSalary extends Composite {
 		);
 	}
 	
+	private Date getDateTillT() {
+		int dateFilterType = dateFilterList.getSelectedIndex();
+		switch (dateFilterType) {
+		case 1: // Mes actual
+			return DateUtils.getFirstDayOfMonth();
+		case 2: // Mes anterior
+			return DateUtils.addMonths2Date(DateUtils.getFirstDayOfMonth(), -1);
+		case 3: // Tres meses
+			return DateUtils.addMonths2Date(DateUtils.getFirstDayOfMonth(), -2);
+		case 4: // Seis meses
+			return DateUtils.addMonths2Date(DateUtils.getFirstDayOfMonth(), -5);
+		case 5: // Año actual
+			return DateUtils.getFirstDayOfYear();
+		case 6: // Año anterior
+			return DateUtils.addYears2Date(DateUtils.getFirstDayOfYear(), -1);
+		default:
+			Integer yearTillTValue = Integer.parseInt(yearTillT.getSelectedValue());
+			Integer monthTillTValue = Integer.parseInt(monthTillT.getSelectedValue());
+			return DateUtils.getFirstDayOfMonth(DateUtils.getDate(monthTillTValue, yearTillTValue));
+		}
+	}
+
+	private Date getDateTTo() {
+		int dateFilterType = dateFilterList.getSelectedIndex();
+		if(0 == dateFilterType) {
+			Integer yearTToValue = Integer.parseInt(yearTTo.getSelectedValue());
+			Integer monthTToValue = Integer.parseInt(monthTTo.getSelectedValue());
+			return DateUtils.getLastDayOfMonth(DateUtils.getDate(monthTToValue, yearTToValue));
+		} else if(2 == dateFilterType) { // Mes anterior
+			return DateUtils.getLastDayOfMonth(DateUtils.addMonths2Date(DateUtils.getFirstDayOfMonth(), -1));
+		}
+		
+		return DateUtils.getLastDayOfMonth();
+	}
+
 	// --------------------------------------------- Auxiliar Methods ------------------------------------------------
 	
 	public void addListener(Listener listener) {
@@ -424,6 +453,29 @@ public class WorkplaceSalary extends Composite {
     	publishButton.setEnabled(isSomethingSelected);
     	bidoqPublishButton.setEnabled(isSomethingSelected);
     	email.setEnabled(isSomethingSelected);
+	}
+	
+	private void enableDisableDatesListBox(boolean isEnabled) {
+		monthTillT.setEnabled(isEnabled);
+		yearTillT.setEnabled(isEnabled);
+		monthTTo.setEnabled(isEnabled);
+		yearTTo.setEnabled(isEnabled);
+	}
+	
+	private void showHideDatesMessage(boolean isVisible) {
+		datesMessage.setVisible(isVisible);
+	}
+	
+	private boolean checkFilterDates() {
+		Integer yearTillTValue = Integer.parseInt(yearTillT.getSelectedValue());
+		Integer monthTillTValue = Integer.parseInt(monthTillT.getSelectedValue());
+		Date startDate = DateUtils.getDate(monthTillTValue, yearTillTValue);
+		
+		Integer yearTToValue = Integer.parseInt(yearTTo.getSelectedValue());
+		Integer monthTToValue = Integer.parseInt(monthTTo.getSelectedValue());
+		Date endDate = DateUtils.getDate(monthTToValue, yearTToValue);
+		
+		return startDate.before(endDate) || startDate.equals(endDate);
 	}
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {
@@ -466,6 +518,7 @@ public class WorkplaceSalary extends Composite {
 		bidoqPublishButton.addClickHandler(e -> {
 			onBidoqPublish(e);
 		});	
+		bidoqPublishButton.setVisible(false);
 		toolbar.add(bidoqPublishButton);
 		
 		email = new AonToolbarButton(AON.MSG.email(), AON.CSS.aonIconEmail());
@@ -479,7 +532,7 @@ public class WorkplaceSalary extends Composite {
 	}
 
 	private void onDelete(ClickEvent e) {
-		workplaceSalaryObject.delete(
+		workplaceSalaryObject.deleteSalaries(
 				salaryTable.getSelectedSalaries(), 
 				s -> {
 					setWorkplaceSalaryObject(workplaceSalaryObject);
