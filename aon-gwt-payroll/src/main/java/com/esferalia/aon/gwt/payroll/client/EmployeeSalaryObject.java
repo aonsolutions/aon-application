@@ -33,9 +33,11 @@ public class EmployeeSalaryObject {
 		this.emailStatus = "";
 	}
 	
-	public void getEmployeeSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
+	public void getSalaries(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
-		employeesService.getEmployeeSalaries(employee.getId(), new AsyncCallback<List<SalaryInfo>>(){
+		filter.setEmployeeId(employee.getId());
+		
+		employeesService.getSalaries(filter, new AsyncCallback<List<SalaryInfo>>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -51,31 +53,13 @@ public class EmployeeSalaryObject {
 		});
 	}
 	
-	public void getFilterSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
-		filter.setEmployeeId(this.employee.getId());
-		employeesService.getFilterSalaries(filter, new AsyncCallback<List<SalaryInfo>>(){
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(List<SalaryInfo> result) {
-				employeeSalaries = result;
-				success.accept(result);
-			}
-			
-		});
-	}
-	
-	public void delete(Set<SalaryInfo> salaries, Consumer<String> success, Consumer<Throwable> failure) {
+	public void deleteSalaries(Set<SalaryInfo> salaries, Consumer<Void> success, Consumer<Throwable> failure) {
 		ArrayList<Integer> ids = new ArrayList<Integer>();
 		for(SalaryInfo salary : salaries) {
 			ids.add(salary.getId());
 		}
 		
-		employeesService.deleteSalariesDB(ids, new AsyncCallback<String>(){
+		employeesService.deleteSalaries(ids, new AsyncCallback<Void>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -83,7 +67,7 @@ public class EmployeeSalaryObject {
 			}
 
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(Void result) {
 				success.accept(result);
 			}
 			
