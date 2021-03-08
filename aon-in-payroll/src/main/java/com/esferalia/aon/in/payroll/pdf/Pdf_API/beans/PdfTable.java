@@ -104,7 +104,7 @@ public class PdfTable extends PdfComponent{
 	}
 
 	public void create_box(int start,int end, int rows) throws IOException {
-		
+
 		jump(cell_height);
 		if(start < 0 ) start = 0;
 		if(start >= columns) start = columns - 1;

@@ -54,7 +54,7 @@ public class PayrollPrintServlet extends HttpServlet {
 			ids[i] = Integer.parseInt(req.getParameterValues("id")[i]);
 		
 		resp.setContentType(MimeType.MIME_PDF.getName());
-		resp.setHeader("Content-disposition", "attachment; filename=\""+req.getParameter("name")+"\";");
+//		resp.setHeader("Content-disposition", "attachment; filename=\""+req.getParameter("name")+"\";");
 		JooqPayrollBuilder.generatePayroll(req.getServerName(), resp.getOutputStream(), ids);
 		
 	}

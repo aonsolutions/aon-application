@@ -30,7 +30,7 @@ public class PayrollBundle_eus  extends ListResourceBundle{
 	        { "TOTAL DEDUCIR", "Total deducir" },
 	        { "TOTAL PERCIBIR", "Liquido total a percibir" },
 	        { "FIRMA EMPRESA", "Sello y firma de la empresa" },
-	        { "FIRMA TRABAJADOR", "'El 'DD' de 'MMMM' recibí'" },
+	        { "FIRMA TRABAJADOR", "'recibí'" },
 	        { "TITULO PIE", "Langileak Gizarte Segurantzara egindako ekarpenak eta zerga-bilketa" },
 	        { "TITULO PIE 2", "bateratuko kontzeptuak" },
 	        { "BASE", "Oinarri" },

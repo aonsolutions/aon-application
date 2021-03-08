@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -33,6 +35,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
@@ -75,6 +78,23 @@ public class JooqPayrollBuilder {
 		
 
 	}
+	
+	public static void generatePayroll(OutputStream outputStream, String domainName, Integer domainId, String nif) {
+		DefaultPayrollTemplate dpt = new DefaultPayrollTemplate();
+		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
+		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, "")) {
+			
+			DSLContext ctx = aonContext.getDslContext();
+			List<Integer> idList = ctx.select(SALARY.ID)
+			.from(SALARY)
+			.where(SALARY.EMPLOYEE_DOCUMENT.eq(nif))
+			.fetchStreamInto(SALARY).map(id -> id.getId()).collect(Collectors.toList());
+			
+			fillPayroll(outputStream, dpt, dpb, aonContext, idList.toArray(new Integer[idList.size()]));
+		}
+		
+
+	}
 
 	private static void fillPayroll(OutputStream outputStream, DefaultPayrollTemplate dpt, DefaultPayrollBuilder dpb,
 			AONContext aonContext, Integer[] salaryIds) {
@@ -108,7 +128,7 @@ public class JooqPayrollBuilder {
 				if (s.getEnterpriseAddress() != null) {
 					List<String> address = null;
 					try {
-						address = PDFToolkit.divide_string_to_fit(s.getEnterpriseAddress(), 200, PdfFonts.HELVETICA, 9f);
+						address = PDFToolkit.divide_string_to_fit(s.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -134,8 +154,8 @@ public class JooqPayrollBuilder {
 			{
 				dpb.setAccrual_total(s.getTotalPayment());
 				HashMap<Integer, ArrayList<DefaultPayrollAccrual>> paymentMap = new HashMap<Integer, ArrayList<DefaultPayrollAccrual>>();
-				s.getPayments().stream().forEach(p -> {
-					DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(p.getAmount(), p.getDescription());
+				s.getPayments().stream().sorted(Comparator.comparing(Payment::getDescription)).filter(p -> p.getAmount() != 0d).forEach(p -> {
+					DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(p.getAmount(), p.getDescription().replaceAll("[.*?]", ""));
 					if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
 						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<DefaultPayrollAccrual>());
 					paymentMap.get(p.getPaymentType().ordinal()).add(accrual);
@@ -147,7 +167,9 @@ public class JooqPayrollBuilder {
 			//DEDUCTIONS
 			{
 				dpb.setDeduction_total(s.getTotalDeduction());
-
+				
+				ArrayList<String> inserted = new ArrayList<String>();
+				
 				HashMap<Integer, ArrayList<DefaultPayrollDeduction>> deductionMap = new HashMap<Integer, ArrayList<DefaultPayrollDeduction>>();
 				s.getDeductions().forEach(d -> {
 					DeductionType dt = d.getDeductionType();
@@ -160,12 +182,94 @@ public class JooqPayrollBuilder {
 						else
 							percent = -1d;
 					}
-					DefaultPayrollDeduction dpd = new DefaultPayrollDeduction(d.getAmount(), d.getDescription(), percent);
-					if (!deductionMap.containsKey(dt.ordinal()))
-						deductionMap.put(dt.ordinal(), new ArrayList<DefaultPayrollDeduction>());
-					deductionMap.get(dt.ordinal()).add(dpd);
+					
+					int type = 0;
+					switch (dt.ordinal()) {
+					case 0:
+					case 1:
+					case 2:
+					case 3:
+					case 4:
+					case 5:
+						type = 1;
+						break;
+					case 6:
+						type = 2;
+						break;
+					case 7:
+						type = 3;
+						break;
+					case 8:
+						type = 4;
+						break;
+					default:
+						type = 5;
+					}
+					
+					String desc = d.getDescription();
+					
+					if(desc == null || desc.isEmpty()) {
+						switch (dt.ordinal()) {
+						case 0:
+							desc = "Contingencias comunes";
+							break;
+						case 2:
+							desc = "Desempleo";
+							break;
+						case 3:
+							desc = "Formación profesional";
+							break;
+						case 4:
+							desc = "Horas extraordinarias (Estruc.)";
+							break;
+						case 5:
+							desc = "Horas extraordinarias (No Estruc.)";
+							break;
+						case 6:
+							desc = "Retribuciones dinerarias";
+							break;
+						case 7:
+							desc = "Anticipo";
+							break;
+						case 8:
+							desc = "En especie";
+							break;
+						case 10:
+							desc = "Embargo";
+							break;
+						default:
+							desc = "Otras deducciones";
+					}
+					}
+						
+					
+					DefaultPayrollDeduction dpd = new DefaultPayrollDeduction(d.getAmount(), desc, percent);
+					if (!deductionMap.containsKey(type))
+						deductionMap.put(type, new ArrayList<DefaultPayrollDeduction>());
+					deductionMap.get(type).add(dpd);
+					inserted.add(getDeductionType(dt.ordinal()));
 				});
+				
+				if (deductionMap.get(1)==null)
+					deductionMap.put(1, new ArrayList<DefaultPayrollDeduction>());
+				if (deductionMap.get(2)==null)
+					deductionMap.put(2, new ArrayList<DefaultPayrollDeduction>());
+				
+				if (!inserted.contains("CGC"))
+					deductionMap.get(1).add(new DefaultPayrollDeduction(0d, "Contingencias comunes", 0d));
+				if (!inserted.contains("DESMPL"))
+					deductionMap.get(1).add(new DefaultPayrollDeduction(0d, "Desempleo", 0d));
+				if (!inserted.contains("FP"))
+					deductionMap.get(1).add(new DefaultPayrollDeduction(0d, "Formación profesional", 0d));
+				if (!inserted.contains("IRPF"))
+					deductionMap.get(2).add(new DefaultPayrollDeduction(0d, "Retribuciones dinerarias", 0d));
+				System.out.println(inserted);
+				for (DefaultPayrollDeduction d : deductionMap.get(1))
+				System.out.println(d.getDescription() + " : " + d.getAmount());
+				for (DefaultPayrollDeduction d : deductionMap.get(2))
+					System.out.println(d.getDescription() + " : " + d.getAmount());
 				dpb.setDeductions(deductionMap);
+				
 			}
 			//COSTS
 			{

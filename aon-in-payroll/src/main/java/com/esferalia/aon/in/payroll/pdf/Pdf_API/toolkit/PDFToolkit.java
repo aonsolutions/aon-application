@@ -208,11 +208,12 @@ public class PDFToolkit {
 		
 		for(int i = 0; i < words.size(); i++) {
 			float fw = (font.getStringWidth(line + " " + words.get(i)) / 1000.0f) * fontSize;
-			if(fw < max) 	line +=  " " + words.get(i).trim();
+			if(fw <= max) line +=  " " + words.get(i).trim();
 			else {
 				if(line.equals("")) lines.add(words.get(i));
 				else lines.add(line.trim());
 				line = "";
+				i--;
 			}
 		}if(!line.equals("")) lines.add(line.trim());
 		return lines;
