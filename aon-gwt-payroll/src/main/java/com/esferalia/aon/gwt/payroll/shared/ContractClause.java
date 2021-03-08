@@ -49,7 +49,7 @@ public class ContractClause implements Serializable {
 	}
 
 	public String getName() {
-		return name;
+		return null == name ? "" : name;
 	}
 
 	public void setName(String name) {
