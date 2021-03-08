@@ -9,6 +9,6 @@ public class PdfColors {
 	public final static Color BLUE = new Color(0x3a5b9e);
 	public final static Color RED = new Color(0xf44336);
 	public final static Color GREEN = new Color(0x27AE60);
-	public final static Color LIGHT_GRAY = new Color(0xf1f1f1);
+	public final static Color LIGHT_GRAY = new Color(0xE7E7E7);
 	public final static Color GRAY = new Color(0xADADAD);
 }

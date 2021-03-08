@@ -21,7 +21,7 @@ public class PdfImage extends PdfComponent{
 
 	@Override
 	public void draw() {
-		try {PDFToolkit.drawImage(doc, stream, img, margin_x, margin_y);} 
+		try {PDFToolkit.drawImage(doc, stream, img, margin_x, margin_y,width,height);} 
 		catch (IOException e) {e.printStackTrace();}
 	}
 	

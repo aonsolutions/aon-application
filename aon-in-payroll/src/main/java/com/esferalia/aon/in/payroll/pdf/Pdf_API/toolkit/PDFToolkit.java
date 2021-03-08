@@ -14,6 +14,7 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
+import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -24,6 +25,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
@@ -202,20 +204,26 @@ public class PDFToolkit {
 
 	//DIVIDE A STRING TO FIT A WIDTH
 	public static List<String> divide_string_to_fit(String text, float max, PDFont font, float fontSize) throws IOException{
+		return get_lines(text, max, font, fontSize);
+	}
+	
+	//PUZZLES ARE MY PASSION
+	public static List<String> get_lines(String text, float max, PDFont font, float fontSize) throws  IOException{
+		
 		ArrayList<String> lines = new ArrayList<>();
 		ArrayList<String> words = (ArrayList<String>) StringToolkit.to_words(text);
 		String line = "";
 		
-		for(int i = 0; i < words.size(); i++) {
+		for (int i = 0; i < words.size(); i++) {
+			
 			float fw = (font.getStringWidth(line + " " + words.get(i)) / 1000.0f) * fontSize;
-			if(fw <= max) line +=  " " + words.get(i).trim();
+			if(fw < max) line += words.get(i);
 			else {
-				if(line.equals("")) lines.add(words.get(i));
-				else lines.add(line.trim());
-				line = "";
-				i--;
+				lines.add(line);
+				line = "" + words.get(i);
 			}
-		}if(!line.equals("")) lines.add(line.trim());
+		}
+		
 		return lines;
 	}
 	
