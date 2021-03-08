@@ -182,21 +182,14 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void getEmployeeSalaries(String currentDomainName, Integer employeeId,
+		public void getSalaries(String currentDomainName, SalaryInfoFilter filter,
 				AsyncCallback<List<SalaryInfo>> callback) {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
-		public void deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<String> callback) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void getWorkplaceSalaries(String currentDomainName, Integer workplaceId,
-				AsyncCallback<List<SalaryInfo>> callback) {
+		public void deleteSalaries(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<Void> callback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -209,22 +202,8 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void getEnterpriseSalaries(String currentDomainName, Integer enterpriseId,
-				AsyncCallback<List<SalaryInfo>> callback) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public void getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId,
 				AsyncCallback<List<EmployeeInfo>> callback) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void getFilterSalaries(String currentDomainName, SalaryInfoFilter filter,
-				AsyncCallback<List<SalaryInfo>> callback) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -511,22 +490,15 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void getEmployeeSalaries(String currentDomainName, Integer employeeId,
+					public void getSalaries(String currentDomainName, SalaryInfoFilter filter,
 							AsyncCallback<List<SalaryInfo>> callback) {
 						// TODO Auto-generated method stub
 						
 					}
 					
 					@Override
-					public void deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids,
-							AsyncCallback<String> callback) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void getWorkplaceSalaries(String currentDomainName, Integer workplaceId,
-							AsyncCallback<List<SalaryInfo>> callback) {
+					public void deleteSalaries(String currentDomainName, ArrayList<Integer> ids,
+							AsyncCallback<Void> callback) {
 						// TODO Auto-generated method stub
 						
 					}
@@ -539,22 +511,8 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void getEnterpriseSalaries(String currentDomainName, Integer enterpriseId,
-							AsyncCallback<List<SalaryInfo>> callback) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
 					public void getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId,
 							AsyncCallback<List<EmployeeInfo>> callback) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void getFilterSalaries(String currentDomainName, SalaryInfoFilter filter,
-							AsyncCallback<List<SalaryInfo>> callback) {
 						// TODO Auto-generated method stub
 						
 					}

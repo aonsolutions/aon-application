@@ -642,24 +642,16 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<SalaryInfo> getEmployeeSalaries(String currentDomainName, Integer employeeId) {
+	public List<SalaryInfo> getSalaries(String currentDomainName, SalaryInfoFilter filter) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
-	public String deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids) {
+	public void deleteSalaries(String currentDomainName, ArrayList<Integer> ids) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
-		return null;
-	}
-
-	@Override
-	public List<SalaryInfo> getWorkplaceSalaries(String currentDomainName, Integer workplaceId) {
-		// TODO Auto-generated method stub
-		System.out.println("Auto-generated method stub");
-		return null;
 	}
 
 	@Override
@@ -670,21 +662,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<SalaryInfo> getEnterpriseSalaries(String currentDomainName, Integer enterpriseId) {
-		// TODO Auto-generated method stub
-		System.out.println("Auto-generated method stub");
-		return null;
-	}
-
-	@Override
 	public List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId) {
-		// TODO Auto-generated method stub
-		System.out.println("Auto-generated method stub");
-		return null;
-	}
-
-	@Override
-	public List<SalaryInfo> getFilterSalaries(String currentDomainName, SalaryInfoFilter filter) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;

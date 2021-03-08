@@ -427,32 +427,22 @@ public class DomainEmployeesServiceAsync {
 		
 	}
 	
-	public void getEmployeeSalaries(Integer employeeId, AsyncCallback<List<SalaryInfo>> callback) {
-		employeesServiceAsync.getEmployeeSalaries(getCurrentDomainName(), employeeId, callback);
+	// ----- Payroll Salaries
+	
+	public void getSalaries(SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
+		employeesServiceAsync.getSalaries(getCurrentDomainName(), filter, callback);
 	}
 	
-	public void deleteSalariesDB(ArrayList<Integer> ids, AsyncCallback<String> callback) {
-		employeesServiceAsync.deleteSalariesDB(getCurrentDomainName(), ids, callback);
+	public void deleteSalaries(ArrayList<Integer> ids, AsyncCallback<Void> callback) {
+		employeesServiceAsync.deleteSalaries(getCurrentDomainName(), ids, callback);
 	}
 	
-	public void getWorkplaceSalaries(Integer workplaceId, AsyncCallback<List<SalaryInfo>> callback) {
-		employeesServiceAsync.getWorkplaceSalaries(getCurrentDomainName(), workplaceId, callback);
-	}
-
 	public void getWorkplaceActiveEmployees(Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
 		employeesServiceAsync.getWorkplaceActiveEmployees(getCurrentDomainName(), workplaceId, callback);
 	}
 	
-	public void getEnterpriseSalaries(Integer enterpriseId, AsyncCallback<List<SalaryInfo>> callback) {
-		employeesServiceAsync.getEnterpriseSalaries(getCurrentDomainName(), enterpriseId, callback);
-	}
-
 	public void getEnterpriseActiveEmployees(Integer enterpriseId, AsyncCallback<List<EmployeeInfo>> callback) {
 		employeesServiceAsync.getEnterpriseActiveEmployees(getCurrentDomainName(), enterpriseId, callback);
-	}
-	
-	public void getFilterSalaries(SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
-		employeesServiceAsync.getFilterSalaries(getCurrentDomainName(), filter, callback);
 	}
 	
 	// ----- New employee calendar

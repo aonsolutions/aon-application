@@ -165,17 +165,9 @@ import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.DefaultPayrollTemplate;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases.Contingency_bases_builder;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll.DefaultPayrollBuilder;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollAccrual;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollDeduction;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -241,8 +233,6 @@ import com.esferalia.aon.salary.bonus.Bonuses;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.cost.Costs;
 import com.esferalia.aon.salary.deduction.Deductions;
-import com.esferalia.aon.salary.deduction.IDeduction;
-import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -260,7 +250,6 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.ReportUtils;
@@ -5262,57 +5251,23 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	// ----- Payroll Salaries
+	
 	@Override
-	public List<SalaryInfo> getEmployeeSalaries(String currentDomainName, Integer employeeId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqPayrollSalaries.getEmployeeSalaries(connection, employeeId);
+	public List<SalaryInfo> getSalaries(String domainName, SalaryInfoFilter filter) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqPayrollSalaries.getSalaries(connection, filter);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
 		}
 	}
 
 	@Override
-	public String deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqPayrollSalaries.deleteSalaries(connection, ids);
+	public void deleteSalaries(String domainName, ArrayList<Integer> ids) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqPayrollSalaries.deleteSalaries(connection, ids);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	}
-
-	@Override
-	public List<SalaryInfo> getWorkplaceSalaries(String currentDomainName, Integer workplaceId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqPayrollSalaries.getWorkplaceSalaries(connection, workplaceId);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
 		}
 	}
 
@@ -5335,47 +5290,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<SalaryInfo> getEnterpriseSalaries(String currentDomainName, Integer enterpriseId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqPayrollSalaries.getEnterpriseSalaries(connection, enterpriseId);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	}
-
-	@Override
 	public List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
 			return JooqPayrollSalaries.getEnterpriseActiveEmployees(connection, enterpriseId);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	}
-
-	@Override
-	public List<SalaryInfo> getFilterSalaries(String currentDomainName, SalaryInfoFilter filter) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqPayrollSalaries.getFilterEmployeeSalaries(connection, filter);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {

@@ -191,20 +191,14 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 			String tc2, boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation);
 
 	String resetCalendar(String currentDomainName, Integer employeeId);
+	
+	List<SalaryInfo> getSalaries(String currentDomainName, SalaryInfoFilter filter);
 
-	List<SalaryInfo> getEmployeeSalaries(String currentDomainName, Integer employeeId);
-
-	String deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids);
-
-	List<SalaryInfo> getWorkplaceSalaries(String currentDomainName, Integer workplaceId);
+	void deleteSalaries(String currentDomainName, ArrayList<Integer> ids);
 
 	WorkplaceEmployees getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId);
 
-	List<SalaryInfo> getEnterpriseSalaries(String currentDomainName, Integer enterpriseId);
-
 	List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId);
-
-	List<SalaryInfo> getFilterSalaries(String currentDomainName, SalaryInfoFilter filter);
 
 	EmployeeCalendarInfo getEmployeeCalendarInfo(String currentDomainName, Integer contractId);
 
@@ -263,6 +257,5 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
 
 	void sendContractoCBSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo);
-	
 
 }

@@ -215,20 +215,13 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void resetCalendar(String currentDomainName, Integer employeeId, AsyncCallback<String> callback);
 
-	void getEmployeeSalaries(String currentDomainName, Integer employeeId, AsyncCallback<List<SalaryInfo>> callback);
+	void getSalaries(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback);
 
-	void deleteSalariesDB(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<String> callback);
+	void deleteSalaries(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<Void> callback);
 
-	void getWorkplaceSalaries(String currentDomainName, Integer workplaceId, AsyncCallback<List<SalaryInfo>> callback);
-
-	void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId,
-			AsyncCallback<WorkplaceEmployees> callback);
-
-	void getEnterpriseSalaries(String currentDomainName, Integer enterpriseId, AsyncCallback<List<SalaryInfo>> callback);
+	void getWorkplaceActiveEmployees(String currentDomainName, Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback);
 
 	void getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId, AsyncCallback<List<EmployeeInfo>> callback);
-
-	void getFilterSalaries(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback);
 
 	void getEmployeeCalendarInfo(String currentDomainName, Integer contractId, AsyncCallback<EmployeeCalendarInfo> callback);
 
