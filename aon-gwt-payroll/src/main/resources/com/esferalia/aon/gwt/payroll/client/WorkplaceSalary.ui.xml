@@ -27,8 +27,12 @@
 			font-weight: bold;
 		}
 		
+		.warning {
+			color: red;
+		}
+		
 		.sb{
-			width: 300px;
+			width: 200px;
 		}
 		
 		.cmd_btn{
@@ -47,23 +51,23 @@
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label styleName="{style.label}">Empleado</g:Label>
 						<g:SuggestBox styleName="aon-inputText {style.sb}" ui:field="employeeSB"/>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label styleName="{style.label}">Tipo nómina</g:Label>
 						<g:ListBox ui:field="typeList" styleName="aon-selectOneMenu"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label styleName="{style.label}">Periodo</g:Label>
-						<g:RadioButton name="dateFilter" ui:field="noDateRB">Cualquier fecha</g:RadioButton>
-						<g:RadioButton name="dateFilter" ui:field="dateTTRB">Desde/Hasta</g:RadioButton>
+						<g:ListBox ui:field="dateFilterList" styleName="aon-selectOneMenu"/>
+						<g:Label styleName="{style.label}">Desde/Hasta</g:Label>
 						<g:ListBox ui:field="monthTillT" styleName="aon-selectOneMenu"/>
 						<g:ListBox ui:field="yearTillT" styleName="aon-selectOneMenu"/>
 						<g:ListBox ui:field="monthTTo" styleName="aon-selectOneMenu"/>
 						<g:ListBox ui:field="yearTTo" styleName="aon-selectOneMenu"/>
+						<g:Label ui:field="datesMessage" styleName="{style.label} {style.warning}">Periodo incorrecto</g:Label>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</g:VerticalPanel>
 		</g:center>
 	</g:DockLayoutPanel>
+	
 </ui:UiBinder> 
 
