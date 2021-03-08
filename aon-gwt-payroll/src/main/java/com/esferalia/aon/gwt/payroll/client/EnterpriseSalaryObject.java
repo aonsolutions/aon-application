@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EnterpriseSalaryObject {
@@ -37,9 +38,14 @@ public class EnterpriseSalaryObject {
 		this.filter = new SalaryInfoFilter();
 	}
 
-	public void getEnterpriseSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
+	public void getSalaries(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
-		employeesService.getEnterpriseSalaries(enterpriseId, new AsyncCallback<List<SalaryInfo>>(){
+		if(filter.getEmployeeId() == null && filter.getWorkplaceId() == null)
+			filter.setEnterpriseId(enterpriseId);
+		else
+			filter.setEnterpriseId(null);
+		
+		employeesService.getSalaries(filter, new AsyncCallback<List<SalaryInfo>>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -57,17 +63,13 @@ public class EnterpriseSalaryObject {
 			}
 			
 		});
-		
 	}
 	
 	public void getEnterpriseEmployeesDB(Consumer<List<EmployeeInfo>> success, Consumer<Throwable> failure){
 		employeesService.getEnterpriseActiveEmployees(enterpriseId, new AsyncCallback<List<EmployeeInfo>>() {
 
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void onFailure(Throwable caught) {}
 
 			@Override
 			public void onSuccess(List<EmployeeInfo> result) {
@@ -77,34 +79,13 @@ public class EnterpriseSalaryObject {
 		});
 	}
 	
-	public void getFilterSalariesDB(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
-		if(null == filter.getWorkplaceId() && null == filter.getEmployeeId() && null == filter.getEnterpriseId())
-			filter.setEnterpriseId(enterpriseId);
-		
-		employeesService.getFilterSalaries(filter, new AsyncCallback<List<SalaryInfo>>(){
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(List<SalaryInfo> result) {
-				enterpriseSalaries = result;
-				success.accept(result);
-			}
-			
-		});
-		
-	}
-	
-	public void delete(Set<SalaryInfo> salaries, Consumer<String> success, Consumer<Throwable> failure) {
+	public void deleteSalaries(Set<SalaryInfo> salaries, Consumer<Void> success, Consumer<Throwable> failure) {
 		ArrayList<Integer> ids = new ArrayList<Integer>();
 		for(SalaryInfo salary : salaries) {
 			ids.add(salary.getId());
 		}
 		
-		employeesService.deleteSalariesDB(ids, new AsyncCallback<String>(){
+		employeesService.deleteSalaries(ids, new AsyncCallback<Void>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -112,7 +93,7 @@ public class EnterpriseSalaryObject {
 			}
 
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(Void result) {
 				success.accept(result);
 			}
 			
@@ -203,24 +184,26 @@ public class EnterpriseSalaryObject {
 		return names;
 	}
 	
-	public EmployeeInfo getEmployeeDataByNameSurname(String name, String surname){
-		EmployeeInfo employeeInfo = null;
-		for(EmployeeInfo employee : enterpriseEmployees)
-			if(name == employee.getName() && surname == employee.getSurName()) {
-				employeeInfo = employee;
+	public EmployeeInfo getEmployeeDataByNameSurname(String nameSurname){
+		String name = nameSurname.split(", ")[0].trim();
+		String surname = nameSurname.split(", ")[1].trim();
+		
+		for(EmployeeInfo employee : enterpriseEmployees) {
+			if( AonStringUtils.equalsIgnoreCase(name,employee.getName().trim()) && 
+				AonStringUtils.equalsIgnoreCase(surname,employee.getSurName().trim())) {
+				return employee;
 			}
-		return employeeInfo;
+		}
+		return null;
 	}
 
 	public Workplace getWorkplaceByDescription(String workplaceDescription) {
-		Workplace workplaceInfo = null;
-		
 		for(Workplace workplace : workplaces) {
-			if(workplaceDescription == workplace.getDescription())
-				workplaceInfo = workplace;
+			if(AonStringUtils.equalsIgnoreCase(workplaceDescription, workplace.getDescription()))
+				return workplace;
 		}
 		
-		return workplaceInfo;
+		return null;
 	}
 	
 	public Integer getEnterpriseId() {
