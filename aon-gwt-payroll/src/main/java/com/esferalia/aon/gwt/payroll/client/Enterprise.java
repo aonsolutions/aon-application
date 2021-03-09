@@ -317,6 +317,7 @@ public abstract class Enterprise extends ResizeComposite {
 		this.enterprisePaysheetModel.addItem("Estandar (2 columnas)", "salary_dualColumn");
 		this.enterprisePaysheetModel.addItem("Factura Simple", "salary_invoiceSimple");
 		this.enterprisePaysheetModel.addItem("Factura (Agrupada CRA)", "salary_invoiceCraGroup");
+		this.enterprisePaysheetModel.addItem("aon Solutions (MacLeod)", "salary_connorMacleod");
 		
 		//COST MODEL
 		this.enterpriseCostModel.addItem("Por defecto", "salaryExpense");

@@ -24,6 +24,8 @@ public enum SalaryTemplate implements IResourceable {
 	,INVOICE_SIMPLE("salary_invoiceSimple")
 	
 	,INVOICE_CRA_GROUP("salary_invoiceCraGroup")
+
+	,AON_SOLUTIONS_MACLEOD("salary_connorMacleod")
 	
 	;      
 	

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +18,7 @@ import org.jooq.Condition;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.company.enumeration.SalaryTemplate;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
@@ -28,6 +30,7 @@ import com.esferalia.aon.jooq.tables.Salary;
 import com.esferalia.aon.jooq.tables.Workplace;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.utils.ReportUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.client.util.Base64;
 
 @SuppressWarnings("serial")
@@ -63,6 +66,16 @@ public class SalaryPDFServlet extends HttpServlet {
 //		Map<String, String> params = createParams(paramsStr);
 		
 		try {
+			// TODO : SalaryType????
+			SalaryType salaryType = req.getParameter(PayrollPrintService.Parameter.TYPE.getName()).equals("settle") ? SalaryType.SETTLE : SalaryType.SALARY;
+			Integer enterpriseID = Integer.parseInt(req.getParameter(PayrollPrintService.Parameter.ENTERPRISE.getName()));
+			String salaryReport = getReportKey(domain, enterpriseID, salaryType);
+			if ( AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.AON_SOLUTIONS_MACLEOD.getValue() )) {
+				String macLeodPath = req.getServletPath().replace("salary_exporter", "salary_connor_macleod");
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(macLeodPath);
+				dispatcher.forward(req, resp);
+				return;
+			}
 			
 			Integer selectedSalaries = req.getParameterValues(PayrollPrintService.Parameter.ID.getName()).length;
 			Condition condition = getConditionSalaryIds(req.getParameterValues(PayrollPrintService.Parameter.ID.getName()), selectedSalaries);
@@ -91,10 +104,6 @@ public class SalaryPDFServlet extends HttpServlet {
 			
 			OutputStream os = resp.getOutputStream();
 			
-			// TODO : SalaryType????
-			SalaryType salaryType = req.getParameter(PayrollPrintService.Parameter.TYPE.getName()).equals("settle") ? SalaryType.SETTLE : SalaryType.SALARY;
-			Integer enterpriseID = Integer.parseInt(req.getParameter(PayrollPrintService.Parameter.ENTERPRISE.getName()));
-			String salaryReport = getReportKey(domain, enterpriseID, salaryType); 
 			
 			// TODO: Bufff !!!!!!!!!!!!!!!
 			ReportUtils.domain.set(domain);

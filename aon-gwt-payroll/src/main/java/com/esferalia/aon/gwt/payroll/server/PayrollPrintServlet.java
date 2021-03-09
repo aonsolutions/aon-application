@@ -19,12 +19,12 @@ import com.google.api.client.util.Base64;
 
 //http://ayudat.aonsolutions.net:8080/aon-aio/aon_gwt_payroll//print_payroll/
 
-//@SuppressWarnings("serial")
-//@WebServlet(name = "Salary-PDF", 
-//	urlPatterns = { 
-//			"/aon_gwt_aio/salary_exporter/*",
-//			"/aon_gwt_payroll/salary_exporter/*" 
-//	})
+@SuppressWarnings("serial")
+@WebServlet(name = "Salary-MacLeod", 
+	urlPatterns = { 
+			"/aon_gwt_aio/salary_connor_macleod/*",
+			"/aon_gwt_payroll/salary_connor_macleod/*" 
+	})
 public class PayrollPrintServlet extends HttpServlet {
 
 	@Override
