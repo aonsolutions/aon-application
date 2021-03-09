@@ -464,33 +464,33 @@ public class DefaultPayrollTemplate {
 			String comm_cont_base = 			PdfFormats.to_latin_number(contigencies.get().getCommon_cont_base().orElse(0.00)) + " " + words.getString("MONEDA");
 			String comm_cont_type = 			PdfFormats.to_latin_number(contigencies.get().getCommon_cont_type().orElse(0.00)) + " %";
 			if (comm_cont_type.contains("-1"))
-				comm_cont_type = "%";
+				comm_cont_type = "";
 			String comm_cont_ap_ent = 			PdfFormats.to_latin_number(contigencies.get().getCommon_cont_ap_enterprise().orElse(0.00)) + " " + words.getString("MONEDA");
 			String extra_prorration_amount =    PdfFormats.to_latin_number(contigencies.get().getExtra_proration_amount().orElse(0.00)) + " " + words.getString("MONEDA");
 			String prof_contingencies_base = 	PdfFormats.to_latin_number(contigencies.get().getProfessional_cont_base().orElse(0.00)) + " " + words.getString("MONEDA");
 			String at_ep_type = 				PdfFormats.to_latin_number(contigencies.get().getAt_ep_type().orElse(0.00)) + " %";
 			if (at_ep_type.contains("-1"))
-				at_ep_type = "%";
+				at_ep_type = "";
 			String at_ep_ap_ent =				PdfFormats.to_latin_number(contigencies.get().getAt_ep_ap_enterprise().orElse(0.00)) + " " + words.getString("MONEDA");
 			String unemployment_type = 			PdfFormats.to_latin_number(contigencies.get().getUnemployment_type().orElse(0.00)) + " " + " %";
 			if (unemployment_type.contains("-1"))
-				unemployment_type = "%";
+				unemployment_type = "";
 			String unemployment_ap_ent = 		PdfFormats.to_latin_number(contigencies.get().getUnemployment_ap_enterprise().orElse(0.00)) + " " + words.getString("MONEDA");
 			String profes_form_type = 			PdfFormats.to_latin_number(contigencies.get().getProfes_form_type().orElse(0.00)) + " %";
 			String profes_form_ap_ent = 		PdfFormats.to_latin_number(contigencies.get().getProfes_form_ap_enterprise().orElse(0.00)) + " " + words.getString("MONEDA");
 			String fogasa_type = 				PdfFormats.to_latin_number(contigencies.get().getFogasa_type().orElse(0.00)) + " %";
 			if (fogasa_type.contains("-1"))
-				fogasa_type = "%";
+				fogasa_type = "";
 			String fogasa_ap_ent = 				PdfFormats.to_latin_number(contigencies.get().getFogasa_ap_enterprise().orElse(0.00)) + " " + words.getString("MONEDA");
 			String force_majeure_base = 		PdfFormats.to_latin_number(contigencies.get().getForce_majeure_base().orElse(0.00)) + " " + words.getString("MONEDA");
 			String force_majeure_type = 		PdfFormats.to_latin_number(contigencies.get().getForce_majeure_type().orElse(0.00)) + " %";
 			if (force_majeure_type.contains("-1"))
-				force_majeure_type = "%";
+				force_majeure_type = "";
 			String force_majeure_ap_ent = 		PdfFormats.to_latin_number(contigencies.get().getForce_majeure_ap_enterprise().orElse(0.00)) + " " + words.getString("MONEDA");
 			String no_struct_base = 			PdfFormats.to_latin_number(contigencies.get().getNo_struct_base().orElse(0.00)) + " " + words.getString("MONEDA");
 			String no_struct_type = 			PdfFormats.to_latin_number(contigencies.get().getNo_struct_type().orElse(0.00)) + " %";
 			if (no_struct_type.contains("-1"))
-				no_struct_type = "%";
+				no_struct_type = "";
 			String no_struct_ap_ent = 			PdfFormats.to_latin_number(contigencies.get().getNo_struct_ap_enterprise().orElse(0.00)) + " " + words.getString("MONEDA");
 			String total_irpf = 				PdfFormats.to_latin_number(contigencies.get().getIrpf_esp().orElse(0.00) + contigencies.get().getIrpf_retrib_diner().orElse(0.00)) + " " + words.getString("MONEDA");
 			String total_contingencies_amount =	PdfFormats.to_latin_number(contigencies.get().getTotal().orElse(0.00)) + " " + words.getString("MONEDA");

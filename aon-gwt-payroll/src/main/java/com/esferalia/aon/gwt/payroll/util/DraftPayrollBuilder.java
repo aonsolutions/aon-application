@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -53,19 +54,16 @@ public class DraftPayrollBuilder {
 				if (salary.getEnterpriseAddress() != null) {
 					List<String> address = null;
 					try {
-						address = PDFToolkit.divide_string_to_fit(salary.getEnterpriseAddress(), 200, PdfFonts.HELVETICA, 9f);
+						address = PDFToolkit.divide_string_to_fit(salary.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
-
 					if (address != null && address.size() > 1) {
 						dpb.setAddress(address.get(0));
-						String address2 = "";
-						for (int i = 1; i < address.size(); i++)
-							address2.concat(address.get(i));
-						dpb.setAddress_2(address2);
-					} else
+						dpb.setAddress_2(address.get(1));
+					} else {
 						dpb.setAddress(salary.getEnterpriseAddress());
+					}
 				}
 			}
 			//EMPLOYEE RELATED DATA
@@ -98,8 +96,8 @@ public class DraftPayrollBuilder {
 				dpb.setAccrual_total(salary.getTotalPayment());
 				Collection<IPayment> payments = salary.getPaymentS();
 				Map<Integer, ArrayList<DefaultPayrollAccrual>> accruals = new HashMap<Integer, ArrayList<DefaultPayrollAccrual>>();
-				payments.forEach(p -> {
-					DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(p.getAmount(), p.getDescription());
+				payments.stream().sorted(Comparator.comparing(p -> p.getDescription())).filter(p -> p.getAmount() != 0).forEach(p -> {
+					DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(p.getAmount(), p.getDescription().replaceAll("\\[\\d*\\]", ""));
 					if (!accruals.containsKey(p.getType().ordinal()))
 						accruals.put(p.getType().ordinal(), new ArrayList<DefaultPayrollAccrual>());
 					accruals.get(p.getType().ordinal()).add(accrual);
@@ -109,6 +107,9 @@ public class DraftPayrollBuilder {
 			//DEDUCTIONS
 			{
 				dpb.setDeduction_total(salary.getTotalDeduction());
+				
+				ArrayList<String> inserted = new ArrayList<String>();
+				
 				Collection<IDeduction> deductions = salary.getDeductionS();
 				HashMap<Integer, ArrayList<DefaultPayrollDeduction>> deductionsMap = new HashMap<Integer, ArrayList<DefaultPayrollDeduction>>();
 				deductions.forEach(d -> {
@@ -118,11 +119,87 @@ public class DraftPayrollBuilder {
 						percent = Double.parseDouble(d.getDescription().replaceAll("\\s", "").replaceAll("%", ""));
 					} catch (NumberFormatException e) {}
 					
-					DefaultPayrollDeduction deduction = new DefaultPayrollDeduction(d.getAmount(), d.getType().getName(new Locale("es")), percent);
-					if (!deductionsMap.containsKey(d.getType().ordinal()))
-						deductionsMap.put(d.getType().ordinal(), new ArrayList<DefaultPayrollDeduction>());
-					deductionsMap.get(d.getType().ordinal()).add(deduction);
+					int type = 0;
+					switch (d.getType().ordinal()) {
+					case 0:
+					case 1:
+					case 2:
+					case 3:
+					case 4:
+					case 5:
+						type = 1;
+						break;
+					case 6:
+						type = 2;
+						break;
+					case 7:
+						type = 3;
+						break;
+					case 8:
+						type = 4;
+						break;
+					default:
+						type = 5;
+					}
+					
+					String desc =d.getType().getName(new Locale("es"));
+					
+					if(desc == null || desc.isEmpty()) {
+						switch (d.getType().ordinal()) {
+						case 0:
+							desc = "Contingencias comunes";
+							break;
+						case 2:
+							desc = "Desempleo";
+							break;
+						case 3:
+							desc = "Formación profesional";
+							break;
+						case 4:
+							desc = "Horas extraordinarias (Estruc.)";
+							break;
+						case 5:
+							desc = "Horas extraordinarias (No Estruc.)";
+							break;
+						case 6:
+							desc = "Retribuciones dinerarias";
+							break;
+						case 7:
+							desc = "Anticipo";
+							break;
+						case 8:
+							desc = "En especie";
+							break;
+						case 10:
+							desc = "Embargo";
+							break;
+						default:
+							desc = "Otras deducciones";
+					}
+					}
+					
+					DefaultPayrollDeduction deduction = new DefaultPayrollDeduction(d.getAmount(), desc, percent);
+					if (!deductionsMap.containsKey(type))
+						deductionsMap.put(type, new ArrayList<DefaultPayrollDeduction>());
+					deductionsMap.get(type).add(deduction);
+					inserted.add(getDeductionType(d.getType().ordinal()));
 				});
+				
+
+				if (deductionsMap.get(1)==null)
+					deductionsMap.put(1, new ArrayList<DefaultPayrollDeduction>());
+				if (deductionsMap.get(2)==null)
+					deductionsMap.put(2, new ArrayList<DefaultPayrollDeduction>());
+				
+				if (!inserted.contains("CGC"))
+					deductionsMap.get(1).add(new DefaultPayrollDeduction(0d, "Contingencias comunes", 0d));
+				if (!inserted.contains("DESMPL"))
+					deductionsMap.get(1).add(new DefaultPayrollDeduction(0d, "Desempleo", 0d));
+				if (!inserted.contains("FP"))
+					deductionsMap.get(1).add(new DefaultPayrollDeduction(0d, "Formación profesional", 0d));
+				if (!inserted.contains("IRPF"))
+					deductionsMap.get(2).add(new DefaultPayrollDeduction(0d, "Retribuciones dinerarias", 0d));
+
 				dpb.setDeductions(deductionsMap);
 			}
 			//COSTS
@@ -203,5 +280,33 @@ public class DraftPayrollBuilder {
 			
 			dpt.print(outputStream, dpb.build(), Optional.empty(), Optional.ofNullable(new Locale("es")));
 
+	}
+	
+	
+	private static String getDeductionType (Integer type) {
+		switch (type) {
+			case 0:
+				return "CGC";
+			case 2:
+				return "DESMPL";
+			case 3:
+				return "FP";
+			case 4:
+				return "ESTR";
+			case 5:
+				return "NO_ESTR";
+			case 6:
+				return "IRPF";
+			case 7:
+				return "ADELANTO";
+			case 8:
+				return "EN_ESPECIE";
+			case 9:
+				return "OTRO";
+			case 10:
+				return "EMBARGO";
+			default:
+				return null;
+		}
 	}
 }
