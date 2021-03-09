@@ -219,9 +219,9 @@ public class DefaultPayrollTemplate {
 		
 		//HEADER CONTENT
 		String title = 			words.getString("TITULO").replace("*",replace).toUpperCase();
-		String enterprise = 	words.getString("EMPRESA") + "" + payroll.getEnterprise().orElse("");
-		String employee = 		words.getString("TRABAJADOR") + "" + payroll.getEmployee().orElse("");
-		String address = 		words.getString("DOMICILIO") + ": " + payroll.getAddress().orElse("");
+		String enterprise = 	"" + payroll.getEnterprise().orElse("");
+		String employee = 		"" + payroll.getEmployee().orElse("");
+		String address = 		payroll.getAddress().orElse("");
 		String nif = 			words.getString("NIF") + ": " + payroll.getNif().orElse("");
 		String nss = 			words.getString("NSS") + ": " + payroll.getNss().orElse("");
 		String profes_group = 	words.getString("G.PROFESIONAL") + ": " + payroll.getProfessional_group().orElse("");
@@ -429,11 +429,11 @@ public class DefaultPayrollTemplate {
 		PDFToolkit.drawTextRight(contents,new PDRectangle(x + 355,y, 200, 25),deduction_total,PdfColors.BLACK,PdfFonts.HELVETICA, fontSize, 5, 5);
 		PDFToolkit.drawTextRight(contents,new PDRectangle(x + 265,y, 200, 25),deduction_total_title,PdfColors.BLACK,PdfFonts.HELVETICA, fontSize, 5, 5);
 		
+		PdfText ent = new PdfText(x, y + 7, 150, 25, contents, enterprise_sign, BLACK, HELVETICA, fontSize-2, CENTER);
+		ent.draw();
+		y-=10;
+		
 		if(logo.isPresent()) {
-			
-			PdfText ent = new PdfText(x, y, 150, 25, contents, enterprise_sign, BLACK, HELVETICA, fontSize-2, CENTER);
-			ent.draw();
-			y-=10;
 			
 			byte[] bytes =  logo.get().readAllBytes();
 			BufferedImage img = PDFToolkit.create_image_from_bytes(bytes);
@@ -607,7 +607,7 @@ public class DefaultPayrollTemplate {
 			
 			
 			Date d = new Date();
-			String vs = "v0.32-AK";
+			String vs = "v0.33-AK";
 			
 			PdfText version = new PdfText(5f, 1f, 200f, 10f, contents, vs, BLACK, HELVETICA , 5f, LEFT);
 			version.draw();

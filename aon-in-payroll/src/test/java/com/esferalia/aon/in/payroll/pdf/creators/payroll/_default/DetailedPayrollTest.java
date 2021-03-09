@@ -2,6 +2,7 @@ package com.esferalia.aon.in.payroll.pdf.creators.payroll._default;
 
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
@@ -21,19 +23,10 @@ import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultP
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollDeduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
 
-
 public class DetailedPayrollTest {
-
-	//CHECKS IF IS CREATED DIRECTORY
-	private void checkDirectory() {
-		File dir = new File("./pdf_out/");
-		if(!dir.exists()) dir.mkdir();
-	}
-	
 	
 	@Test
 	public void random_print_test() {		
-		checkDirectory();
 		
 		System.out.println("\n\n-----------------------------------");
 		System.out.println(" PAYROLL CREATOR");
@@ -133,7 +126,7 @@ public class DetailedPayrollTest {
 		
 		try { 
 			System.out.println(" Printing PDF file..... \n");
-			PdfMaker.print_default_payroll("./pdf_out/payrollRandom.pdf", builder.build(), DetailedPayrollTest.class.getResourceAsStream("HOR.png"),new Locale("Es"));
+			PdfMaker.print_default_payroll(new ByteArrayOutputStream(), builder.build(), DetailedPayrollTest.class.getResourceAsStream("HOR.png"),new Locale("Es"));
 			System.out.println(" >> DONE.");
 		} 
 		catch (CanNotCreatePdfException e) {

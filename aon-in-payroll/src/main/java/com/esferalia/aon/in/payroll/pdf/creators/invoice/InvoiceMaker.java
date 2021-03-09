@@ -16,7 +16,6 @@ import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.JsonParseException;
 import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.Invoice;
@@ -29,7 +28,7 @@ import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 public class InvoiceMaker {
 	
 	//CREATE THE PDF WITH A JSON
-	public void create_with_json(InputStream json, PrintInvoiceConfiguration config, InputStream qr_code) throws CanNotCreatePdfException, JsonParseException {
+	public void create_with_json(OutputStream out, InputStream json, PrintInvoiceConfiguration config, InputStream qr_code) throws CanNotCreatePdfException, JsonParseException {
 
 		JSONParser parser = new JSONParser();
 		try {
@@ -106,7 +105,7 @@ public class InvoiceMaker {
 					qr_code
 			);
 			
-			InvoiceTemplate.create(new FileOutputStream("Invoice.pdf"), bill_obj, config.getAdjustImage());
+			InvoiceTemplate.create(out, bill_obj, config.getAdjustImage());
 		} catch (CanNotCreatePdfException e) {throw e;}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -115,7 +114,7 @@ public class InvoiceMaker {
 	}
 	
 	//CREATE DEMO
-	public void demoPdf(PrintInvoiceConfiguration config, InputStream qr_code) throws IOException, CanNotCreatePdfException {
+	public void demoPdf(OutputStream out, PrintInvoiceConfiguration config, InputStream qr_code) throws IOException, CanNotCreatePdfException {
 		Invoice bill_obj = new Invoice(
 				config.getBackgroundImage(),
 				config.getDetailed(),
@@ -133,7 +132,7 @@ public class InvoiceMaker {
 				qr_code
 		);
 
-		InvoiceTemplate.create(new FileOutputStream("demo_bill.pdf"), bill_obj, config.getAdjustImage());
+		InvoiceTemplate.create(out, bill_obj, config.getAdjustImage());
 	}
 	
 	//CREATE PDF WITH OBJECT

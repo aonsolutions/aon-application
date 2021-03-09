@@ -1,5 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.creators.enterprisePayroll;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,19 +20,11 @@ import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.Enterp
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.github.javafaker.Faker;
 
-
 public class EnterprisePayrollTest_v2 {
-
-	//CHECKS IF IS CREATED DIRECTORY
-	private void checkDirectory() {
-		File dir = new File("./pdf_out/");
-		if(!dir.exists()) dir.mkdir();
-	}
-	
 	
 	@Test
 	public void testEnterprisePayroll() {
-		checkDirectory();
+
 		try {
 			
 			System.out.println("\n\n-----------------------------------");
@@ -127,7 +120,7 @@ public class EnterprisePayrollTest_v2 {
 			ss_entries.put(f.pokemon().location(),categoria6);
 
 			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", f.zelda().game() + " S.L",	entries, ss_entries);
-			PdfMaker.print_enterprise_payroll(payroll, new FileOutputStream("./pdf_out/Enterprise_payroll.pdf"),Optional.of(new Locale("Es")));
+			PdfMaker.print_enterprise_payroll(payroll, new ByteArrayOutputStream(),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {
 			e.printStackTrace();
@@ -189,7 +182,7 @@ public class EnterprisePayrollTest_v2 {
 			ss_entries.put("Bilbao",categoria6);
 
 			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", "AON SOLUTIONS S.L",	entries, ss_entries);
-			PdfMaker.print_enterprise_payroll(payroll, new FileOutputStream("Enterprise_payroll.pdf"),Optional.of(new Locale("Es")));
+			PdfMaker.print_enterprise_payroll(payroll, new ByteArrayOutputStream(),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {
 			e.printStackTrace();

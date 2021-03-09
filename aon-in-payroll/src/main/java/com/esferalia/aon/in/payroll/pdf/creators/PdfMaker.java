@@ -21,9 +21,9 @@ import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 public class PdfMaker {
 
 	// CREATE THE INVOICE WITH A JSON
-	public static void print_invoice(InputStream json, PrintInvoiceConfiguration config, InputStream qr_code)
+	public static void print_invoice(OutputStream out,InputStream json, PrintInvoiceConfiguration config, InputStream qr_code)
 			throws CanNotCreatePdfException, JsonParseException {
-		new InvoiceMaker().create_with_json(json, config, qr_code);
+		new InvoiceMaker().create_with_json(out,json, config, qr_code);
 	}
 
 	// CREATE THE INVOICE WITH A JAVA OBJECT
@@ -33,9 +33,9 @@ public class PdfMaker {
 	}
 
 	// CREATE DEMO INVOICE
-	public static void print_demo_invoice(PrintInvoiceConfiguration config, InputStream qr_code)
+	public static void print_demo_invoice(OutputStream out,PrintInvoiceConfiguration config, InputStream qr_code)
 			throws IOException, CanNotCreatePdfException {
-		new InvoiceMaker().demoPdf(config, qr_code);
+		new InvoiceMaker().demoPdf(out,config, qr_code);
 	}
 
 	// CREATE ENTERPRISE PAYROLL
@@ -50,11 +50,6 @@ public class PdfMaker {
 		new DefaultPayrollTemplate().print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
 	}
 
-	public static void print_default_payroll(String out, DefaultPayroll payroll, InputStream logo, Locale language)
-			throws CanNotCreatePdfException {
-		new DefaultPayrollTemplate().print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
-	}
- 
 	// CREATE BUDGET
 	public static void print_budget(OutputStream out, Budget budget) throws CanNotCreatePdfException {
 		BudgetTemplate.print(out, budget, Optional.of(new Locale("Es")));
