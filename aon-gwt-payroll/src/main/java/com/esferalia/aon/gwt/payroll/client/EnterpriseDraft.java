@@ -372,7 +372,7 @@ public class EnterpriseDraft extends Composite {
 		});
 		toolbar.add(newButton);
 		
-		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndo() );
+		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll() );
 		undoAllButton.addClickHandler(e -> {
 			onUndoAll(e);
 		});
