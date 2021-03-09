@@ -14,6 +14,7 @@ public class AonCompany implements Serializable {
 	private Domain parentDomain;
     private Company company;
     Administration administration;
+	private boolean shared;
 	
 	public AonCompany() {
 
@@ -54,6 +55,15 @@ public class AonCompany implements Serializable {
 		this.administration = administration;
 		return this;
 	}
+	
+	public boolean isShared() {
+		return shared;
+	}
+
+	public AonCompany setShared(boolean shared) {
+		this.shared = shared;
+		return this;
+	}
 
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject()
@@ -65,6 +75,7 @@ public class AonCompany implements Serializable {
 			.put("administration", getAdministration() != null ? getAdministration().name() : Administration.COMMON_TERRITORY.name())
 			.put("type", getDomain().getDomainType().name())
 			.put("parent",getDomain().isParent())
+			.put("shared", isShared())
 			.put("parentId",getDomain().getParentId());
 		return json;
 	}

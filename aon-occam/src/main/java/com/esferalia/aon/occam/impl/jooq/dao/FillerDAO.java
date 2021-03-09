@@ -44,6 +44,7 @@ import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.function.Function;
 
@@ -654,7 +655,7 @@ public class FillerDAO {
 		public AonCompany apply(Record r) {
 			com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
 			com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
-			
+
 			Domain d = new Domain()
 					.setId(r.getValue(domain.ID))
 					.setName(r.getValue(domain.NAME))
@@ -698,7 +699,7 @@ public class FillerDAO {
 				.setParentDomain(new com.esferalia.aon.occam.api.model.Domain()
 					.setId(r.getValue(parent.ID))
 					.setName(r.getValue(parent.NAME)))
-			
+				.setShared(r.getValue(USER.SHARED) == 1)
 				.setCompany(company)
 				.setAdministration(Administration.safeValueOf(AonNumberUtils.toInteger(r.getValue(APP_PARAM.VALUE))));
 		}

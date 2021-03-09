@@ -1,3 +1,6 @@
+import {clearCompanyService} from './companyService.js';
+import {clearRegistryService} from './registryService.js';
+
 import './AonStringUtils.js';
 
 import './AonDateUtils.js';

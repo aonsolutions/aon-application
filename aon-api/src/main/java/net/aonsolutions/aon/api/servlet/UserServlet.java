@@ -374,7 +374,11 @@ public class UserServlet extends AonApiHttpServlet {
 		String email = getData().optString("email");
 
 		if(Utils.isEmail(email)) {
-			User usr = AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(getData().getInt("id")));
+			
+			User usr = getData().opt("id") != null 
+					? AON.getUser(getDomain().getName(), getDomain().getId(), "", f -> f.getIdProperty().eq(getData().getInt("id")))
+					: new User();
+			
 			String login = ramdonLogin();
 			String pass = null;
 			if(usr != null && usr.getId() != null) {

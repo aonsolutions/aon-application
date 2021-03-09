@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.ActionDenied.ACTION_DENIED;
+import static com.esferalia.aon.jooq.tables.ActionFavorite.ACTION_FAVORITE;
 import static com.esferalia.aon.jooq.tables.ApplicationRole.APPLICATION_ROLE;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
@@ -339,12 +341,22 @@ public class SecurityDAO {
 		deleteUserWorkgroups(ctx, user);
 		deleteApplicationUser(ctx, user);
 		deleteMailAccount(ctx, user);
+		deleteActionDenied(ctx, user);
+		deleteActionFavorite(ctx, user);
 		deleteUser(ctx, user);
 		return user;
 	}
 	
 	private static void deleteMailAccount(AONContext ctx, User user) {
-		ctx.getDslContext().delete(MAIL_ACCOUNT).where(MAIL_ACCOUNT.USER_ID.eq(user.getId()));
+		ctx.getDslContext().delete(MAIL_ACCOUNT).where(MAIL_ACCOUNT.USER_ID.eq(user.getId())).execute();
+	}
+	
+	private static void deleteActionDenied(AONContext ctx, User user) {
+		ctx.getDslContext().delete(ACTION_DENIED).where(ACTION_DENIED.USER_ID.eq(user.getId())).execute();
+	}
+	
+	private static void deleteActionFavorite(AONContext ctx, User user) {
+		ctx.getDslContext().delete(ACTION_FAVORITE).where(ACTION_FAVORITE.USER_ID.eq(user.getId())).execute();
 	}
 	
 	private static void deleteApplicationUser(AONContext ctx, User user) {

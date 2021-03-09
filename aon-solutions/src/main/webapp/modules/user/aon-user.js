@@ -55,6 +55,14 @@ export class AonUser extends AonElement {
 		this.setAttribute('showApps', showApps);
 	}
 
+	get share() {
+		return this.getAttribute('share');
+	}
+
+	set showShare(share) {
+		this.setAttribute('share', share);
+	}
+
 	get showPassword() {
 		return this.getAttribute('showPassword');
 	}
@@ -337,7 +345,7 @@ export class AonUser extends AonElement {
 		let email = document.getElementById('aonConfigurationUserCardEmail');
 		email.onChange(() => {
 			this._user.email = email.getAttribute('value');
-			this._user.share = this.hasAttribute('share');
+			this._user.shared = this.hasAttribute('share');
 			if(this.isAutosave()){
 				this.save();
 			} else {

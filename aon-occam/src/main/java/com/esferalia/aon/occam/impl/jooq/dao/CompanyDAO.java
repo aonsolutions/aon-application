@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -239,12 +240,14 @@ public class CompanyDAO {
 			.from(COMPANY)
 			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
 			.join(domain).on(COMPANY.DOMAIN.eq(domain.ID))
+			.join(USER).on(USER.DOMAIN.eq(domain.ID).or(USER.DOMAIN.eq(domain.PARENT)))
 			.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
 			.leftOuterJoin(APP_PARAM).on(domain.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
 			.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
-			.where(domain.ID.in(domains)
+			.where(USER.AUTH.eq(auth).and(
+					domain.ID.in(domains)
 					.or(domain.PARENT.in(domains)
-						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes)))))
+						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes))))))
 			.orderBy(REGISTRY.NAME)
 //			.limit(perPage)
 //			.offset(perPage * (page -1))
