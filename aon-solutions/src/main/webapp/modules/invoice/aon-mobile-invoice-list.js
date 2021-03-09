@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Paymethods} from '../../services/paymethod.js';
-import {getInvoices} from '../../services/service.js';
+import {getInvoices, getInvoice} from '../../services/service.js';
 import {Invoice} from './Invoice.js';
 
 import {setInvoices, setIndex} from './InvoiceCache.js';

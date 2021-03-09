@@ -218,7 +218,7 @@ export class AonMobileMenu extends AonElement {
       return {
         name: app.title,
         icon: "snippet_folder",
-        fn: () => rootPanel("<aon-signin></aon-signin>")
+        fn: () => rootPanel("<aon-documental></aon-documental>")
       };
     else if(PAYROLL.app === app.app)
       return {

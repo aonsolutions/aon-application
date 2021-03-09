@@ -63,6 +63,9 @@ export class AonMobileDesktop extends AonElement {
 			let company = JSON.parse(localStorage.getItem('company'));
 			localStorage.setItem('aon_domain_id', company.id);
 			localStorage.setItem('aon_domain_name', company.domain);
+			getUser().then(user => {
+				localStorage.setItem('aon_domain_login', user.login);
+			});
 			getDomainNotice().then(notice => {
 				this.buildNotifications(notice);
 			});
@@ -94,6 +97,11 @@ export class AonMobileDesktop extends AonElement {
 				if(companies.length > 0) {
 					let company = companies[0];
 					localStorage.setItem('company', JSON.stringify(company));
+					localStorage.setItem("aon_domain_id", company.id);
+					localStorage.setItem("aon_domain_name", company.domain);
+					getUser().then(user => {
+						localStorage.setItem('aon_domain_login', user.login);
+					});
 					searchSuggestion.title = 'Empresa Seleccionada';
 					searchSuggestion.value = company.name;
 					searchSuggestion.readonly = true;
