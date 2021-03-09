@@ -240,6 +240,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-undo.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconUndo();
+	
+	@Source("icons/aon-icon-undo-all.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconUndoAll();
 
 	@Source("icons/aon-icon-redo.svg")
 	@MimeType("image/svg+xml")

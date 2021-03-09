@@ -63,6 +63,8 @@
 .aon_icon_history { background-image: iconHistory;}
 @url iconUndo aonIconUndo;
 .aon_icon_undo { background-image: iconUndo;}
+@url iconUndoAll aonIconUndoAll;
+.aon_icon_undo_all { background-image: iconUndoAll;}
 @url iconRedo aonIconRedo;
 .aon_icon_redo { background-image: iconRedo;}
 @url iconAccept aonIconAccept;
