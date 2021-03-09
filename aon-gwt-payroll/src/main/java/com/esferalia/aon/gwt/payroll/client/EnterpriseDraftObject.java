@@ -6,9 +6,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
-import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
@@ -19,7 +17,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EnterpriseDraftObject extends AbstractDraftObject {
 
-	private DomainEnterprisesServiceAsync enterprisesService;
+	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	private Enterprise enterprise;
 	
 	private Map<Integer, String> scopes;
@@ -29,9 +27,7 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
-	public EnterpriseDraftObject(Enterprise enterprise, DomainEnterprisesServiceAsync enterprisesService) {
-		
-		this.enterprisesService = enterprisesService;
+	public EnterpriseDraftObject(Enterprise enterprise) {
 		this.enterprise = enterprise;
 		this.undoManager = new UndoManager<Undoable>();
 	}
@@ -451,19 +447,4 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		enterpriseInfo.setEnterpriseAgreementId(agreementId);
 	}
 		
-	// ------------------------------------------------- AUX METHODS -------------------------------------------------
-	
-	public boolean checkDocumentValidation(String document_type_string, String document_string) {
-		if("DNI".equals(document_type_string)){
-			Dni dni = new Dni(document_string);
-			if(dni.checkDNI())
-				return true;
-			else
-				return false;
-		}else if("" == document_string) {
-			return false;
-		}else
-			return true;
-	}	
-
 }

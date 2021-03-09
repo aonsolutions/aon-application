@@ -2243,9 +2243,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	@Override
 	public void onEnterpriseSelected(Enterprise enterprise) {
-		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
-		EnterpriseDraftObject enterpriseDraftObject = new EnterpriseDraftObject(enterprise,
-				domainEnterprisesServiceAsync);
+		EnterpriseDraftObject enterpriseDraftObject = new EnterpriseDraftObject(enterprise);
 
 		employeeDetail.setWidget(getEnterpriseDraft());
 		getEnterpriseDraft().setEnterpriseDraftObject(enterpriseDraftObject);
