@@ -15,16 +15,39 @@ import net.aonsolutions.aon.tbai.emision.EmisionInvoice;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.exceptions.json.JsonNotFoundException;
 import net.aonsolutions.aon.tbai.exceptions.json.JsonParseException;
+import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
 import net.aonsolutions.aon.tbai.exceptions.validation.ValidationException;
 import net.aonsolutions.aon.tbai.toolkit.ConsoleToolkit;
+import net.aonsolutions.aon.tbai.toolkit.DataToolkit;
 
 public class TbaiEmisionGipuzkoaTest {
 
+//	@Test
+//	public void SuccessTest() {
+//		Date d = new Date();
+//		start_console(1);
+//		test_title("Success");
+//
+//		try {
+//			final InputStream is = TbaiEmisionGipuzkoaTest.class.getResourceAsStream("factura.json");
+//			final EmisionInvoice invoice = TbaiMain.jsonToInvoice(is);
+//			TbaiMain.createEmisionTBAI(invoice, "JSONtoTBAI.xml", GIPUZKOA);
+//		} catch (StatusCodeException e) {
+//			log("SERVER ERROR: ", e.getMessage(), d);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			log("", "Test failed.", d);
+//			fail("Unexpected exception " + e);
+//		}
+//		System.out.println();
+//		log("", "Test passed successfully.", d);
+//	}
+	
 	@Test
-	public void SuccessTest() {
+	public void TbaiNotAcceptedTest() {
 		Date d = new Date();
 		start_console(1);
-		test_title("Success");
+		test_title("TBAI NOT ACCEPTED");
 
 		try {
 			final InputStream is = TbaiEmisionGipuzkoaTest.class.getResourceAsStream("factura.json");
@@ -32,13 +55,16 @@ public class TbaiEmisionGipuzkoaTest {
 			TbaiMain.createEmisionTBAI(invoice, "JSONtoTBAI.xml", GIPUZKOA);
 		} catch (StatusCodeException e) {
 			log("SERVER ERROR: ", e.getMessage(), d);
+		} catch (TbaiResponseException e) {
+			System.out.println();
+			log("Test passed successfully", "[" + DataToolkit.int_format(e.getCode() + 0d,2) + "] " + e.getMessage(), d); return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
-		System.out.println();
-		log("", "Test passed successfully.", d);
+		fail("Unexpected path");
+		log("", "Test failed.", d);
 	}
 
 	@Test

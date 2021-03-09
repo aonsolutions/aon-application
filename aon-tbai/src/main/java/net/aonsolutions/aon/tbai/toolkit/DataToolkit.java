@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +33,24 @@ public class DataToolkit {
 		} catch (Exception e){return null;}		
 	}
 
+
+	//RETURN LATIN VERSION OF A NUMBER WITH . AND , (STRING)
+	public static String to_latin_number(Double number){
+		if(number == null) return "";
+		DecimalFormat formater = new DecimalFormat("###,###.00");
+		return formater.format(number);
+	}
+	
+	//RETURN X DIGIT VERSION OF A NUMBER (STRING)
+	public static String int_format(Double number,int digits){
+		if(number == null) return "";
+		String format = "";
+		for (int i = 0; i < digits; i++) format += "0";
+		
+		DecimalFormat formater = new DecimalFormat(format);
+		return formater.format(number);
+	}
+	
 	//IS SOMETHINNG EMPTY
 	public static boolean isEmpty(Object o) {
 		

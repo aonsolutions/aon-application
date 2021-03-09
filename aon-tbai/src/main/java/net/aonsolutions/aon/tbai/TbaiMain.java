@@ -46,6 +46,7 @@ import net.aonsolutions.aon.tbai.emision.gipuzkoa.GipuzkoaEmisionValidator;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.exceptions.json.JsonNotFoundException;
 import net.aonsolutions.aon.tbai.exceptions.json.JsonParseException;
+import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
 import net.aonsolutions.aon.tbai.exceptions.validation.ValidationException;
 import net.aonsolutions.aon.tbai.exceptions.xml.XMLCreationException;
 import net.aonsolutions.aon.tbai.responses.ResponseHandler;
@@ -171,7 +172,7 @@ public class TbaiMain {
 		return invoice;
 	}
 
-	public static void createEmisionTBAI(final EmisionInvoice i,final String name,Territory territory) throws XMLCreationException, ValidationException, StatusCodeException {
+	public static void createEmisionTBAI(final EmisionInvoice i,final String name,Territory territory) throws XMLCreationException, ValidationException, StatusCodeException, TbaiResponseException {
 		try {			
 			switch (territory) {
 				case ARABA:				ArabaEmisionValidator.validate(i); 		break;
@@ -207,7 +208,7 @@ public class TbaiMain {
 		catch (JAXBException | FileNotFoundException e) {throw new XMLCreationException("ERROR WHILE ACCESSING DISK: Aborting...", e);} 
 	}
 	
-	public static void sendXML(InputStream xml) throws StatusCodeException {
+	public static void sendXML(InputStream xml) throws StatusCodeException, TbaiResponseException {
 		URL url;
 		try {
 			url = new URL("https://tbai-prep.egoitza.gipuzkoa.eus/WAS/HACI/HTBRecepcionFacturasWEB/rest/recepcionFacturas/alta");

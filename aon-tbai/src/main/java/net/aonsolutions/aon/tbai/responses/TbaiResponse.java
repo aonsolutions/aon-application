@@ -9,7 +9,7 @@ public class TbaiResponse {
 	private Integer status;
 	private String 	description;
 	private String 	description_eus;
-	private String 	validation_code;
+	private Integer validation_code;
 	private String 	validation_description;
 	private String 	validation_description_eus;
 
@@ -27,8 +27,8 @@ public class TbaiResponse {
 	public Optional<String> getDescription_eus() 					{return Optional.ofNullable(description_eus);}
 	public TbaiResponse setDescription_eus(String description_eus) 	{this.description_eus = description_eus;	return this;}
 
-	public Optional<String> getValidation_code() 					{return Optional.ofNullable(validation_code);}
-	public TbaiResponse setValidation_code(String validation_code) 	{this.validation_code = validation_code;	return this;}
+	public Optional<Integer> getValidation_code() 						{return Optional.ofNullable(validation_code);}
+	public TbaiResponse setValidation_code(Integer validation_code) 	{this.validation_code = validation_code;	return this;}
 
 	public Optional<String> getValidation_description() 									{return Optional.ofNullable(validation_description);}
 	public TbaiResponse setValidation_description(String validation_description) 			{this.validation_description = validation_description;			return this;}

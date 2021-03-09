@@ -13,6 +13,8 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
+import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
+import net.aonsolutions.aon.tbai.toolkit.DataToolkit;
 
 public class ResponseHandler {
 
@@ -63,7 +65,24 @@ public class ResponseHandler {
 		}
 	}
 
-	public static void HandleTbaiResponse(byte[] bytes){
+	public static void HandleTbaiResponse(byte[] bytes) throws TbaiResponseException{
+		TbaiResponse response = getTbaiResponse(bytes);
+		
+		Integer status = response.getStatus().orElse(-1);
+		switch (status) {
+			case -1: throw new TbaiResponseException(-1, "NO RESPONSE FOUND");
+			case  0: break;
+			case  1: throw new TbaiResponseException(1,  "TBAI NOT ACCEPTED");  
+			default: throw new TbaiResponseException(status, "UNKNOWN RESPONSE: "  + response.getDescription().orElse("-"));
+		}	
+		
+		Integer validation_code = response.getValidation_code().orElse(-1);
+		switch (validation_code) {
+			default: throw new TbaiResponseException(validation_code, response.getValidation_description().orElse("-"));
+		}
+	}
+	
+	private static TbaiResponse getTbaiResponse(byte[] bytes) {
 		try {
 			System.out.println("\t Parsing XML response.... ");
 			
@@ -73,39 +92,64 @@ public class ResponseHandler {
 			Document doc = dBuilder.parse(is);
 
 			System.out.println("\t XML version: \t " + doc.getXmlVersion());
-			System.out.println("\t XML Response:");
 			
-			Node   ns2 		 		= doc.getFirstChild();
-			String estado 	 		= doc.getElementsByTagName("Estado").item(0).getTextContent();
-			String fecha_str 		= doc.getElementsByTagName("FechaRecepcion").item(0).getTextContent();
-			String descripcion 		= doc.getElementsByTagName("Descripcion").item(0).getTextContent();
-			String descripcion_eus 	= doc.getElementsByTagName("Azalpena").item(0).getTextContent();
-			String validation_code 	= doc.getElementsByTagName("Codigo").item(0).getTextContent();
-			String validation_desc	= doc.getElementsByTagName("Descripcion").item(1).getTextContent();
-			String validation_desc_eus	= doc.getElementsByTagName("Azalpena").item(1).getTextContent();
+			Node   ns2;
+			try{ns2 = doc.getFirstChild();}
+			catch(Exception e) {ns2 = null;}
+			
+			String estado;
+			try{estado = doc.getElementsByTagName("Estado").item(0).getTextContent();}
+			catch(Exception e) {estado = null;}
+			
+			String fecha_str;
+			try{fecha_str = doc.getElementsByTagName("FechaRecepcion").item(0).getTextContent();}
+			catch(Exception e) {fecha_str = null;}
+			
+			String descripcion;
+			try{descripcion = doc.getElementsByTagName("Descripcion").item(0).getTextContent();}
+			catch(Exception e) {descripcion = null;}
+			
+			String descripcion_eus;
+			try{descripcion_eus = doc.getElementsByTagName("Azalpena").item(0).getTextContent();}
+			catch(Exception e) {descripcion_eus = null;}
+			
+			String validation_code;
+			try{validation_code = doc.getElementsByTagName("Codigo").item(0).getTextContent();}
+			catch(Exception e) {validation_code = null;}
+			
+			String validation_desc;
+			try{validation_desc = doc.getElementsByTagName("Descripcion").item(1).getTextContent();}
+			catch(Exception e) {validation_desc = null;}
+			
+			String validation_desc_eus;
+			try{validation_desc_eus = doc.getElementsByTagName("Azalpena").item(1).getTextContent();}
+			catch(Exception e) {validation_desc_eus = null;}
 			
 			
 			System.out.println("\t Status code: \t" + estado);
 			System.out.println("\t Reception date: \t" + fecha_str);
 			System.out.println("\t Description: \t" + descripcion);
 			System.out.println("\t Azalpena: \t" + descripcion_eus);
-			System.out.println("\t Validation code: \t" + validation_code);
-			System.out.println("\t Validation description: \t" + validation_desc);
-			System.out.println("\t Validation azalpena: \t" + validation_desc_eus);
+			System.out.println("\n\t Validation results: ");
+			System.out.println("\t-------------------------");
+			System.out.println("\t Code: \t" + validation_code);
+			System.out.println("\t Description: \t" + validation_desc);
+			System.out.println("\t Azalpena: \t" + validation_desc_eus);
 	
 			
 			TbaiResponse response = new TbaiResponse();
 			response
-			.setStatus(null)
-			.setDescription(null)
-			.setDescription_eus(null)
-			.setReception_date(null)
-			.setValidation_code(null)
-			.setValidation_description(null)
-			.setValidation_description_eus(null);
+			.setStatus(Integer.parseInt(estado))
+			.setDescription(descripcion)
+			.setDescription_eus(descripcion_eus)
+			.setReception_date(DataToolkit.parseDate(fecha_str, "dd-MM-yyyy hh:mm:ss"))
+			.setValidation_code(Integer.parseInt(validation_code))
+			.setValidation_description(validation_desc)
+			.setValidation_description_eus(validation_desc_eus);
 			
+			return response;
 		}catch(IOException | ParserConfigurationException | SAXException e) {e.printStackTrace();}
-		
+		return null;
 	}
 
 }
