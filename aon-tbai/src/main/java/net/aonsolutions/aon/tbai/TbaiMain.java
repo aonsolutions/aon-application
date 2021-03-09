@@ -1,5 +1,7 @@
 package net.aonsolutions.aon.tbai;
 
+import static net.aonsolutions.aon.tbai.responses.ResponseHandler.HandleStatusCode;
+import static net.aonsolutions.aon.tbai.responses.ResponseHandler.HandleTbaiResponse;
 import static net.aonsolutions.aon.tbai.toolkit.DataToolkit.isEmpty;
 import static net.aonsolutions.aon.tbai.toolkit.DataToolkit.isPresent;
 import static net.aonsolutions.aon.tbai.toolkit.DataToolkit.parseDate;
@@ -9,23 +11,23 @@ import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getObject;
 import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getString;
 import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.read;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import javax.json.JsonWriter;
-import javax.json.JsonWriterFactory;
-import javax.json.stream.JsonGenerator;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -41,10 +43,13 @@ import net.aonsolutions.aon.tbai.emision.EmisionInvoice.TbaiEmisionInvoiceBuilde
 import net.aonsolutions.aon.tbai.emision.araba.ArabaEmisionValidator;
 import net.aonsolutions.aon.tbai.emision.bizkaia.BizkaiaEmisionValidator;
 import net.aonsolutions.aon.tbai.emision.gipuzkoa.GipuzkoaEmisionValidator;
+import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.exceptions.json.JsonNotFoundException;
 import net.aonsolutions.aon.tbai.exceptions.json.JsonParseException;
 import net.aonsolutions.aon.tbai.exceptions.validation.ValidationException;
 import net.aonsolutions.aon.tbai.exceptions.xml.XMLCreationException;
+import net.aonsolutions.aon.tbai.responses.ResponseHandler;
+import net.aonsolutions.aon.tbai.toolkit.DataToolkit;
 import ticketbai.emision.Cabecera;
 import ticketbai.emision.Factura;
 import ticketbai.emision.HuellaTBAI;
@@ -61,11 +66,8 @@ public class TbaiMain {
 		try{json = read(is);}
 		catch(Exception e) {throw new JsonNotFoundException("Json not found");}
 		
-		//prettyPrint(json);
-		
 		final String date = 				getString(json, "date");
 		final JsonObject receiver_o = 		getObject(json, "receiver");
-		
 		
 		final JsonObject address_o = 		getObject(receiver_o,"address");	
 		final String rec_zip = 				getString(address_o, "zip");
@@ -78,8 +80,7 @@ public class TbaiMain {
 		String rec_total_address = 	"";
 		if(isPresent(rec_address) && isPresent(rec_city) && isPresent(rec_province))
 		rec_total_address = rec_address + ". " + rec_city + ", " + rec_province; 		
-		
-		//final JsonArray taxes = 			getArray (json,"taxes");		
+			
 		final String number = 				getString(json,"number");
 		final JsonNumber total = 			getNumber(json,"total");
 		
@@ -99,8 +100,10 @@ public class TbaiMain {
 		
 		final String series = 				getString(json, "series");	
 		final JsonArray details = 			getArray (json,  "details");
-		//final JsonNumber id =				getNumber(json, "id");
 		final String category =  			getString(json, "category");
+		
+		//final JsonNumber id =				getNumber(json, "id");
+		//final JsonArray taxes = 			getArray (json,"taxes");	
 		//final JsonArray finances = 		getArray (json,  "finances");
 		//final String transaction = 		getString(json, "transaction");
 	
@@ -159,29 +162,16 @@ public class TbaiMain {
 			.setDescription			(category)
 			.setDetails				(detail_list)
 			.setTotal_amount		((isEmpty(total))? null : total.doubleValue())
-			.setSupported_retention	(null)
-			.setTax_base_cost		(null)
+			.setSupported_retention	(null)												//NOT COMPULSORY
+			.setTax_base_cost		(null)												//NOT COMPULSORY
 			.setId_keys				(new ArrayList<>())
-			.setBreakdown			(null)
+			.setBreakdown			(null)  
 			.build();
 		
 		return invoice;
 	}
-	
-	private static void prettyPrint(JsonObject json) {
-		 Map<String, Object> properties = new HashMap<>(1);
-         properties.put(JsonGenerator.PRETTY_PRINTING, true);
 
-         StringWriter sw = new StringWriter();
-		JsonWriterFactory writerFactory = Json.createWriterFactory(properties);
-		JsonWriter jsonWriter = writerFactory.createWriter(sw);
-
-		jsonWriter.writeObject(json);
-		System.out.println("\n" + sw.toString());
-		jsonWriter.close();
-	}
-
-	public static void createEmisionTBAI(final EmisionInvoice i,final String name,Territory territory) throws XMLCreationException, ValidationException {
+	public static void createEmisionTBAI(final EmisionInvoice i,final String name,Territory territory) throws XMLCreationException, ValidationException, StatusCodeException {
 		try {			
 			switch (territory) {
 				case ARABA:				ArabaEmisionValidator.validate(i); 		break;
@@ -204,16 +194,58 @@ public class TbaiMain {
 			
 			final JAXBContext jaxbContext     = JAXBContext.newInstance( TicketBai.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	 		
+			
 			final OutputStream os = new FileOutputStream( "./" + name);
+			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( tbai, os );
-			jaxbMarshaller.marshal( tbai, System.out);
+			jaxbMarshaller.marshal( tbai, bos );
 			
+			sendXML(new ByteArrayInputStream(bos.toByteArray()));		
 		} 
 		catch (JAXBException | FileNotFoundException e) {throw new XMLCreationException("ERROR WHILE ACCESSING DISK: Aborting...", e);} 
 	}
 	
+	public static void sendXML(InputStream xml) throws StatusCodeException {
+		URL url;
+		try {
+			url = new URL("https://tbai-prep.egoitza.gipuzkoa.eus/WAS/HACI/HTBRecepcionFacturasWEB/rest/recepcionFacturas/alta");
+			URLConnection con = url.openConnection();
+			HttpURLConnection http = (HttpURLConnection)con;
+			
+			http.setRequestMethod("POST"); 
+			con.setRequestProperty("Content-Type", "application/xml; charset=utf-8;");
+			http.setDoOutput(true);
+			
+			OutputStream os = http.getOutputStream();
+			os.write(xml.readAllBytes());
+			os.close();
+			
+			System.out.println("\n\tServer status: \t" + http.getResponseCode() + ": " +http.getResponseMessage());			
+			System.out.println("\tMethod used: \t" + http.getRequestMethod());
+			System.out.println("\tEncoding used: \t" + http.getRequestProperty("Content-Type"));
+			
+			HandleStatusCode(http.getResponseCode());
+			
+			System.out.println("\n\t-------------------------------------------------------------------------------------------------------------------------------------------------");
+			System.out.println("\t SERVICE RESPONSE: ");
+			System.out.println("\t-------------------------------------------------------------------------------------------------------------------------------------------------");
+			
+			InputStream response = (InputStream) http.getContent();
+			byte[] bytes = response.readAllBytes();
+			HandleTbaiResponse(bytes);			
+			DataToolkit.buildFile(bytes, "./response.xml");
+		} 
+		catch (MalformedURLException e) {e.printStackTrace();} 
+		catch (IOException e) {e.printStackTrace();}	
+	}
+//	
+//	public static void main(String[] args) {
+//		try {for (int i = 0; i < 1; i++) sendXML(new FileInputStream("/home/akrck02/eclipse-workspace/aon.parent/aon-tbai/JSONtoTBAI.xml"));} 
+//		catch (FileNotFoundException e) {e.printStackTrace();}
+//	}
+//	
 	public static void createAnulacionTBAI(){/*TO DO uwu*/}
 
 }

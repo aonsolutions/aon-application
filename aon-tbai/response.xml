@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:TicketBaiResponse xmlns:ns2="urn:ticketbai:emision">
+    <Salida>
+        <FechaRecepcion>09-03-2021 13:08:05</FechaRecepcion>
+        <Estado>01</Estado>
+        <Descripcion>Rechazado</Descripcion>
+        <Azalpena>Baztertua</Azalpena>
+        <ResultadosValidacion>
+            <Codigo>001</Codigo>
+            <Descripcion>Error: No se ha utilizado certificado de cliente</Descripcion>
+            <Azalpena>Akatsa: Ez da erabili bezeroaren ziurtagiririk</Azalpena>
+        </ResultadosValidacion>
+    </Salida>
+</ns2:TicketBaiResponse>

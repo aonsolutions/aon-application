@@ -152,7 +152,6 @@ public class GipuzkoaEmisionValidator {
 			if(isEmpty(importe_total))		throw new Exception("Detail total_amount not found");
 				
 		}
-		
 	}
 
 	private static void validateTbaiPrint(HuellaTBAI huellaTBAI) throws Exception{

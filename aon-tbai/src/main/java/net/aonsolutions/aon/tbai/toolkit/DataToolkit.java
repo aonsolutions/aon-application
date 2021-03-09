@@ -1,5 +1,9 @@
 package net.aonsolutions.aon.tbai.toolkit;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,4 +64,17 @@ public class DataToolkit {
 		for (Entry<Pattern, Integer> entry : patterns.entrySet()) {if ( entry.getKey().matcher(ipf).matches()) { identity = entry.getValue().toString(); break; }}
 		return isPresent(identity);
 	}
+	
+	//BUILD A FILE FROM ARRAY OF BYTES
+		public static void buildFile (byte[] arr_bytes, String docName) {
+			File f=new File(docName);
+			try {
+				FileOutputStream fos=new FileOutputStream(f);
+				fos.write(arr_bytes);
+				fos.close();
+			}
+			catch (FileNotFoundException e) {System.err.println("Archivo no encontrado");}
+			catch (IOException e) {System.err.println("Error al escribir");}
+			
+		}
 }

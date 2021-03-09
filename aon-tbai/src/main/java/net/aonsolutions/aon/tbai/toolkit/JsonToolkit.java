@@ -1,11 +1,17 @@
 package net.aonsolutions.aon.tbai.toolkit;
 
 import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
+import javax.json.JsonWriter;
+import javax.json.JsonWriterFactory;
+import javax.json.stream.JsonGenerator;
 
 public class JsonToolkit {
 
@@ -43,4 +49,19 @@ public class JsonToolkit {
 		return (parent.containsKey(name))?
 		parent.getString(name) : null; 
 	}
+	
+	
+	private static void prettyPrint(JsonObject json) {
+		 Map<String, Object> properties = new HashMap<>(1);
+         properties.put(JsonGenerator.PRETTY_PRINTING, true);
+
+         StringWriter sw = new StringWriter();
+		JsonWriterFactory writerFactory = Json.createWriterFactory(properties);
+		JsonWriter jsonWriter = writerFactory.createWriter(sw);
+
+		jsonWriter.writeObject(json);
+		System.out.println("\n" + sw.toString());
+		jsonWriter.close();
+	}
+
 }

@@ -12,6 +12,7 @@ import java.util.Date;
 import org.junit.Test;
 
 import net.aonsolutions.aon.tbai.emision.EmisionInvoice;
+import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.exceptions.json.JsonNotFoundException;
 import net.aonsolutions.aon.tbai.exceptions.json.JsonParseException;
 import net.aonsolutions.aon.tbai.exceptions.validation.ValidationException;
@@ -29,6 +30,8 @@ public class TbaiEmisionGipuzkoaTest {
 			final InputStream is = TbaiEmisionGipuzkoaTest.class.getResourceAsStream("factura.json");
 			final EmisionInvoice invoice = TbaiMain.jsonToInvoice(is);
 			TbaiMain.createEmisionTBAI(invoice, "JSONtoTBAI.xml", GIPUZKOA);
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
@@ -50,6 +53,9 @@ public class TbaiEmisionGipuzkoaTest {
 			TbaiMain.createEmisionTBAI(invoice, "JSONtoTBAI.xml", GIPUZKOA);
 		} catch (JsonNotFoundException e) {
 			log("Test passed successfully", e.getMessage(), d);
+			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -73,6 +79,9 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (JsonParseException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
@@ -95,6 +104,9 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
@@ -116,6 +128,9 @@ public class TbaiEmisionGipuzkoaTest {
 			TbaiMain.createEmisionTBAI(invoice, "JSONtoTBAI.xml", GIPUZKOA);
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
+			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -140,15 +155,18 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void WrongSenderNifTest() {
 		Date d = new Date();
@@ -162,13 +180,16 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
 
 	@Test
@@ -184,13 +205,16 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
 
 	@Test
@@ -207,13 +231,16 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
 
 	@Test
@@ -230,13 +257,16 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
 
 	@Test
@@ -253,15 +283,18 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void NoInvoiceTotalTest() {
 		Date d = new Date();
@@ -276,15 +309,18 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void NoInvoiceDetails() {
 		Date d = new Date();
@@ -299,15 +335,18 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
-	}	
-	
+		log("", "Test failed.", d);
+	}
+
 	@Test
 	public void NoInvoiceDetailAmount() {
 		Date d = new Date();
@@ -315,12 +354,16 @@ public class TbaiEmisionGipuzkoaTest {
 		test_title("No invoice detail amount");
 
 		try {
-			final InputStream is = TbaiEmisionGipuzkoaTest.class.getResourceAsStream("facturaNoInvoiceDetailAmount.json");
+			final InputStream is = TbaiEmisionGipuzkoaTest.class
+					.getResourceAsStream("facturaNoInvoiceDetailAmount.json");
 			final EmisionInvoice invoice = TbaiMain.jsonToInvoice(is);
 
 			TbaiMain.createEmisionTBAI(invoice, "JSONtoTBAI.xml", GIPUZKOA);
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
+			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -328,9 +371,9 @@ public class TbaiEmisionGipuzkoaTest {
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void NoInvoiceDetailQuantity() {
 		Date d = new Date();
@@ -338,12 +381,16 @@ public class TbaiEmisionGipuzkoaTest {
 		test_title("No invoice detail quantity");
 
 		try {
-			final InputStream is = TbaiEmisionGipuzkoaTest.class.getResourceAsStream("facturaNoInvoiceDetailQuantity.json");
+			final InputStream is = TbaiEmisionGipuzkoaTest.class
+					.getResourceAsStream("facturaNoInvoiceDetailQuantity.json");
 			final EmisionInvoice invoice = TbaiMain.jsonToInvoice(is);
 
 			TbaiMain.createEmisionTBAI(invoice, "JSONtoTBAI.xml", GIPUZKOA);
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
+			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -351,9 +398,9 @@ public class TbaiEmisionGipuzkoaTest {
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void NoInvoiceDetailPrice() {
 		Date d = new Date();
@@ -361,12 +408,16 @@ public class TbaiEmisionGipuzkoaTest {
 		test_title("No invoice detail price");
 
 		try {
-			final InputStream is = TbaiEmisionGipuzkoaTest.class.getResourceAsStream("facturaNoInvoiceDetailPrice.json");
+			final InputStream is = TbaiEmisionGipuzkoaTest.class
+					.getResourceAsStream("facturaNoInvoiceDetailPrice.json");
 			final EmisionInvoice invoice = TbaiMain.jsonToInvoice(is);
 
 			TbaiMain.createEmisionTBAI(invoice, "JSONtoTBAI.xml", GIPUZKOA);
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
+			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -374,9 +425,9 @@ public class TbaiEmisionGipuzkoaTest {
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void NoInvoiceDetailDescription() {
 		Date d = new Date();
@@ -384,12 +435,16 @@ public class TbaiEmisionGipuzkoaTest {
 		test_title("No invoice detail description");
 
 		try {
-			final InputStream is = TbaiEmisionGipuzkoaTest.class.getResourceAsStream("facturaNoInvoiceDetailDescription.json");
+			final InputStream is = TbaiEmisionGipuzkoaTest.class
+					.getResourceAsStream("facturaNoInvoiceDetailDescription.json");
 			final EmisionInvoice invoice = TbaiMain.jsonToInvoice(is);
 
 			TbaiMain.createEmisionTBAI(invoice, "JSONtoTBAI.xml", GIPUZKOA);
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
+			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -397,9 +452,9 @@ public class TbaiEmisionGipuzkoaTest {
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void NoInvoiceCategory() {
 		Date d = new Date();
@@ -414,15 +469,18 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void NoRecievers() {
 		Date d = new Date();
@@ -437,15 +495,18 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void NoRecieverAddress() {
 		Date d = new Date();
@@ -456,6 +517,9 @@ public class TbaiEmisionGipuzkoaTest {
 			final EmisionInvoice invoice = TbaiMain.jsonToInvoice(is);
 
 			TbaiMain.createEmisionTBAI(invoice, "JSONtoTBAI.xml", GIPUZKOA);
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
@@ -465,9 +529,9 @@ public class TbaiEmisionGipuzkoaTest {
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void NoRecieverNIF() {
 		Date d = new Date();
@@ -482,15 +546,18 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void WrongRecieverNIF() {
 		Date d = new Date();
@@ -505,15 +572,18 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void NoRecieverName() {
 		Date d = new Date();
@@ -527,32 +597,35 @@ public class TbaiEmisionGipuzkoaTest {
 		} catch (ValidationException e) {
 			log("Test passed successfully", e.getMessage(), d);
 			return;
+		} catch (StatusCodeException e) {
+			log("SERVER ERROR: ", e.getMessage(), d);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log("", "Test failed.", d);
 			fail("Unexpected exception " + e);
 		}
 		fail("Unexpected path");
-		log("","Test failed.",d);
+		log("", "Test failed.", d);
 	}
-	
+
 	@Test
 	public void NoSignature() {
 		Date d = new Date();
 		start_console(1);
 		test_title("No signature");
-		
+
 		ConsoleToolkit.log_warning("Not implemented yet.");
-		//fail("Not implemented yet");
+		// fail("Not implemented yet");
 	}
-	
+
 	@Test
 	public void WrongChainingProcess() {
 		Date d = new Date();
 		start_console(1);
 		test_title("No signature");
-		
+
 		ConsoleToolkit.log_warning("Not implemented yet.");
-		//fail("Not implemented yet");
+		// fail("Not implemented yet");
 	}
 }
