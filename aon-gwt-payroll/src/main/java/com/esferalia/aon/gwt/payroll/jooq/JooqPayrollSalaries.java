@@ -42,25 +42,6 @@ public class JooqPayrollSalaries {
 		return SETTINGS;
 	}
 	
-	// --------------------------------------------------------------------------------------------
-	//									CONTRACT BY REGISTRY ID
-	// --------------------------------------------------------------------------------------------
-	
-	public static Integer getContractByRegistry(Connection connection, Integer registryId) {
-		return getContractByRegistryDB(DSL.using(connection, getDefaultSettings()), registryId);
-	}
-
-	private static Integer getContractByRegistryDB(DSLContext dslContext, Integer registryId) {
-		// Get current date
-		Date currentDate = new Date(new java.util.Date().getTime());
-		
-		Integer contractId = dslContext.select(CONTRACT.ID).from(CONTRACT)
-			.where(CONTRACT.PERSON.eq(registryId))
-			.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(currentDate)))
-			.fetchOne(CONTRACT.ID);
-		
-		return contractId;
-	}
 
 	// --------------------------------------------------------------------------------------------
 	//									SALARY METHODS
@@ -68,6 +49,10 @@ public class JooqPayrollSalaries {
 	
 	public static List<SalaryInfo> getSalaries(Connection connection, SalaryInfoFilter filter) {
 		return getSalariesDB(DSL.using(connection, getDefaultSettings()), filter);
+	}
+	
+	public static List<SalaryInfo> getSalariesByDocument(Connection connection, SalaryInfoFilter filter,  String document) {
+		return getSalariesByDocumentDB(DSL.using(connection, getDefaultSettings()), filter, document);
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -117,6 +102,72 @@ public class JooqPayrollSalaries {
 		// Get salaries
 		Result<Record> salaryRecords = dslContext.select().from(SALARY)
 				.where(contractsCondition)
+				.and(salaryTypeCondition)
+				.and(datesCondition)
+				.orderBy(SALARY.END_DATE.desc())
+				.fetch();
+		
+		// Enterprise Id
+		Integer enterpriseId = null;
+		
+		if(salaryRecords.isNotEmpty()) {
+			Integer contractId = salaryRecords.get(0).get(SALARY.CONTRACT);
+			enterpriseId = getEnterpriseId(dslContext, contractId);
+		}
+		
+		for(Record salaryRecord : salaryRecords) {
+			
+			SalaryInfo salaryInfo = new SalaryInfo();
+			salaryInfo.setId(salaryRecord.get(SALARY.ID));
+			salaryInfo.setDomain(salaryRecord.get(SALARY.DOMAIN));
+			salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
+			salaryInfo.setStartDate(salaryRecord.get(SALARY.START_DATE));
+			salaryInfo.setEndDate(salaryRecord.get(SALARY.END_DATE));
+			salaryInfo.setType(Salary.Type.values()[salaryRecord.get(SALARY.TYPE)]);
+			salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
+			salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
+			salaryInfo.setTotalPayment(salaryRecord.get(SALARY.TOTAL_PAYMENT));
+			salaryInfo.setTotalDeduction(salaryRecord.get(SALARY.TOTAL_DEDUCTION));
+			salaryInfo.setTotalLiquid(salaryRecord.get(SALARY.TOTAL_LIQUID));
+			
+			Integer contractId = salaryRecord.get(SALARY.CONTRACT);
+			
+			Record workplaceRecord = getWorkplaceRecord(dslContext, contractId);
+			
+			String workplaceName = workplaceRecord.get(WORKPLACE.DESCRIPTION);
+			Integer workplaceId =  workplaceRecord.get(WORKPLACE.ID);
+			
+			// Workplace
+			salaryInfo.setWorkplaceName(workplaceName);
+			salaryInfo.setWorkplaceId(workplaceId);
+			
+			// Enterprise ID
+			salaryInfo.setEnterpriseId(enterpriseId);
+			
+			// Add to salaries list
+			salaries.add(salaryInfo);
+
+		}
+		
+		return salaries;
+	}
+	
+	
+	private static List<SalaryInfo> getSalariesByDocumentDB(DSLContext dslContext, SalaryInfoFilter filter,  String document) {
+		List<SalaryInfo> salaries = new ArrayList<SalaryInfo>();
+		// SalaryType
+		Condition salaryTypeCondition = getSalaryTypeCondition(filter);
+		// Dates
+		Condition datesCondition = getDatesCondition(filter);
+		
+		// Get salaries
+		Result<Record> salaryRecords = dslContext.select().from(SALARY)
+				.innerJoin(CONTRACT)
+				.on(CONTRACT.ID.eq(SALARY.CONTRACT))
+				.innerJoin(REGISTRY)
+				.on(REGISTRY.ID.eq(CONTRACT.PERSON))
+				.where(REGISTRY.DOMAIN.eq(filter.getWorkplaceId()))
+				.and(REGISTRY.DOCUMENT.eq(document))
 				.and(salaryTypeCondition)
 				.and(datesCondition)
 				.orderBy(SALARY.END_DATE.desc())

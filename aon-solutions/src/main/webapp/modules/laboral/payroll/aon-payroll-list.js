@@ -118,8 +118,8 @@ export class AonPayrollList extends AonElement {
       aonTable.removeColumns();
       aonTable.addColumn("Nombre", "string", "name", "30%");
       aonTable.addColumn("C. Trabajo", "string", "workplaceName", "20%");
-      aonTable.addColumn("F. Inicio", "date", "startDate", "10%");
-      aonTable.addColumn("F. Fin", "date", "endDate", "10%");
+      aonTable.addColumn("F. Inicio", "date", "startDateParse", "10%");
+      aonTable.addColumn("F. Fin", "date", "endDateParse", "10%");
       aonTable.addColumn("Bruto", "number", "totalPayment", "10%");
       aonTable.addColumn("Deducciones", "number", "totalDeduction", "10%");
       aonTable.addColumn("Líquido", "number", "totalLiquid", "10%");
@@ -144,8 +144,8 @@ export class AonPayrollList extends AonElement {
         resp.map((res, idx) => {
           let options = {
             paddingTopTitle: "5px",
-            iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.totalPayment}</span>`,
-            title: `${res.dateParse}`,
+            iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.totalLiquid}</span>`,
+            title: `${res.endDateParse}`,
           };
           if (res.contractType) options.option = this.getOptions(res);
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
@@ -195,11 +195,11 @@ export class AonPayrollList extends AonElement {
                 lettersHtml,
                 contract,
                 name: employeeName,
-                endDate,
-                dateParse: endDate,
+                startDateParse: startDate,
+                endDateParse:  endDate,
                 id,
-                totalDeduction,
-                totalLiquid,
+                totalDeduction: formatNumber(totalDeduction.toString(), 2),
+                totalLiquid: formatNumber(totalLiquid.toString(), 2),
                 totalPayment: formatNumber(totalPayment.toString(), 2),
                 type,
                 workplaceName,

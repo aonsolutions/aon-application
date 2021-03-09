@@ -1,22 +1,15 @@
 package com.esferalia.aon.gwt.payroll.server;
 
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
-
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.richfaces.json.JSONException;
 import org.richfaces.json.JSONObject;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
@@ -26,13 +19,19 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.seg.social.toolkit.Toolkit;
-
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -42,7 +41,6 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)  {
-		LOGGER.info("[GET] CONTRACT SERVLET");
 		try {
 			String path = req.getPathInfo() != null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo() : "/";
 			switch (path) {
@@ -87,56 +85,68 @@ public class ContractServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private Object getAllEmployeesInfo() {
-		System.out.println("GET GET EMPLOYEE INFO");
-		try {
-			Connection conn = AonServletUtils.getConnection(getDomain().getName());
-			String jsonInString = null;
-			boolean allEmployees = getParams().optBoolean("allEmployees");  
-			jsonInString = new Gson().toJson(JooqContrataContract.getAllEmployeesInfo(conn, getDomain().getId(), allEmployees));
-			return new JsonParser().parse(jsonInString);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	private Object getAllEmployeesInfo() throws SQLException {
+		LOGGER.info("[GET] EMPLOYEE INFO");
+		Connection conn = AonServletUtils.getConnection(getDomain().getName());
+		boolean allEmployees = getParams().optBoolean("allEmployees");  
+		
+		String jsonInString = new Gson().toJson(JooqContrataContract.getAllEmployeesInfo(conn, getDomain().getId(), allEmployees));
+		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
 	
-	private Object getEmployeeSalaries() {
-		try {
-			Connection conn = AonServletUtils.getConnection(getDomain().getName());
-			System.out.println("GET EMPLOYEE SALARIES");
-			Integer contractId = JooqPayrollSalaries.getContractByRegistry(conn, getUser().getRegistry());
-//			contractId = 18783;
-			if(contractId!=null) {
-				String jsonInString = new Gson().toJson(getSalaries(conn,  Optional.empty(),  Optional.ofNullable(contractId)));
-				if(jsonInString!=null) return new JsonParser().parse(jsonInString);
-			} 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return new JSONObject();
-	}
-	
-	private Object getEnterpriseSalaries() {
-		System.out.println("GET ENTERPRISE SALARIES");
-		try {
-			Connection conn = AonServletUtils.getConnection(getDomain().getName());
-			Company company = AON.getCompany(getDomain().getName(), getDomain().getId(), "", f->f.getDomainProperty().eq(getDomain().getId()));
-			String jsonInString = new Gson().toJson(getSalaries(conn, Optional.ofNullable(company.getId()), Optional.empty()));
-			if(jsonInString!=null) return new JsonParser().parse(jsonInString);
-		} catch (Exception e) {
-			e.printStackTrace();
+	private Object getEmployeeSalaries() throws SQLException {
+		LOGGER.info("[GET]  EMPLOYEE SALARIES");
+		AonToken aonToken = SECURITY.getAonToken(getToken());
+		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+		
+		String document = auth.getDocument(); 
+		if(document==null) {
+			document = AON.getRegistry(getDomain().getName(), getDomain().getId(), "", f->f.getIdProperty().eq(getUser().getRegistry())).getDocument();
 		}
 		
+		Connection conn = AonServletUtils.getConnection(getDomain().getName());
+		SalaryInfoFilter filter = getFilter();
+		filter.setWorkplaceId(getDomain().getId());
+		String jsonInString = new Gson().toJson(JooqPayrollSalaries.getSalariesByDocument(conn, filter, document));
+		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
+		return new JSONObject();
+	}
+	
+	private Object getEnterpriseSalaries() throws SQLException {
+		LOGGER.info("[GET] ENTERPRISE SALARIES");
+		Connection conn = AonServletUtils.getConnection(getDomain().getName());
+		Company company = AON.getCompany(getDomain().getName(), getDomain().getId(), "", f->f.getDomainProperty().eq(getDomain().getId()));
+	
+		String jsonInString = new Gson().toJson(getSalaries(conn, Optional.ofNullable(company.getId()), Optional.empty()));
+		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
 	
 	private List<SalaryInfo> getSalaries(Connection conn, Optional<Integer> companyId, Optional<Integer> contractId) {
 	
-		SalaryInfoFilter filter = new SalaryInfoFilter();
+		SalaryInfoFilter filter = getFilter();
 		if(!companyId.isEmpty()) filter.setEnterpriseId(companyId.get().intValue());
 		else if(!contractId.isEmpty())filter.setEmployeeId(contractId.get().intValue());
+		
+		return JooqPayrollSalaries.getSalaries(conn, filter);
+	}
+	
+	private File getSalaryPdf(HttpServletRequest req) throws JSONException, IOException {
+		LOGGER.info("[GET] SALARY PDF");
+		String param = new String(Base64.getDecoder().decode(req.getParameter("json")));
+		
+		JSONObject json = new JSONObject(param);
+		String domainName = json.getString("domain_name");
+		Integer salaryId = json.optInt("salaryId");
+	
+		File file = File.createTempFile("nomina", "pdf");
+		JooqPayrollBuilder.generatePayroll(domainName,  new FileOutputStream(file), salaryId);
+		return file;
+	}
+	
+	private SalaryInfoFilter getFilter() {
+		SalaryInfoFilter filter = new SalaryInfoFilter();
 		
 		if(!getParams().optString("startDate").isEmpty()) {
 			filter.setDateTillT(Toolkit.parseDate(getParams().optString("startDate"), "yyyy-MM-dd"));
@@ -144,26 +154,8 @@ public class ContractServlet extends AonApiHttpServlet {
 		if(!getParams().optString("endDate").isEmpty()) {
 			filter.setDateTTo(Toolkit.parseDate(getParams().optString("endDate"), "yyyy-MM-dd")); 
 		} 
-		
 		if(!getParams().optString("salaryType").isEmpty()) filter.setSalaryType(getParams().optInt("salaryType"));
-		return JooqPayrollSalaries.getSalaries(conn, filter);
-	}
-	
-	private byte[] getSalaryPdf(HttpServletRequest req) {
-		System.out.println("GET SALARY PDF");
-		try {
-			String param = req.getParameter("json");
-			param = new String(Base64.getDecoder().decode(param));
-			JSONObject json = new JSONObject(param);
-			String domainName = json.getString("domain_name");
-			Integer salaryId = json.optInt("salaryId");
-			ByteArrayOutputStream outputstream = new ByteArrayOutputStream();
-			JooqPayrollBuilder.generatePayroll(domainName, outputstream, salaryId);
-			return outputstream.toByteArray();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+		return filter;
 	}
 
 }
