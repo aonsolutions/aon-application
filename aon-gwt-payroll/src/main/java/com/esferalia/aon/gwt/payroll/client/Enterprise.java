@@ -2,21 +2,29 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.shared.Dni;
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.TableCellElement;
-import com.google.gwt.dom.client.TableElement;
+import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -40,7 +48,6 @@ public abstract class Enterprise extends ResizeComposite {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		String hide();
 		String warningColor();
 	}
 	
@@ -56,16 +63,13 @@ public abstract class Enterprise extends ResizeComposite {
 	Label documentType;
 	
 	@UiField
-	SuggestBox document;
+	TextBox document;
 	
 	@UiField 
 	Label documentStatus;
 	
 	@UiField 
-	TableCellElement nationalityLabelCell;
-	
-	@UiField 
-	TableCellElement nationalityCell;
+	Label nationalityLabel;
 	
 	@UiField (provided = true)
 	SuggestBox nationality;
@@ -74,7 +78,7 @@ public abstract class Enterprise extends ResizeComposite {
 	ListBox streetType;
 	
 	@UiField
-	SuggestBox address;
+	TextBox address;
 	
 	@UiField
 	TextBox addressNum;
@@ -101,18 +105,9 @@ public abstract class Enterprise extends ResizeComposite {
 	TextBox enterpriseWeb;
 	
 	@UiField
-	HorizontalPanel enterpriseScopePanel;
+	HTMLPanel enterpriseScopePanel;
 	
 	// TABLA OTRO DATOS
-	
-	@UiField
-	TableElement enterpriseOthersTable;
-	
-	@UiField
-	Label enterpriseActivity;
-	
-	@UiField
-	Label enterpriseWorkplace;
 	
 	@UiField
 	ListBox enterprisePaysheetModel;
@@ -124,7 +119,7 @@ public abstract class Enterprise extends ResizeComposite {
 	ListBox enterprisePaysheetSendType;
 	
 	@UiField
-	HorizontalPanel enterprisePaysheetSendPanel;
+	HTMLPanel enterprisePaysheetSendPanel;
 	
 	@UiField
 	TextBox enterprisePaysheetSendEmail;
@@ -272,6 +267,7 @@ public abstract class Enterprise extends ResizeComposite {
 	public abstract void onEnterprisePaysheetSendTypeChange();
 	public abstract void onEnterprisePaysheetSendEmailChange();
 	public abstract void onEnterpriseAgreementChange();
+	public abstract void onEnterpriseScopeChange(Integer scopeId);
 	
 	// ------------------------------------------------------ METODOS DE LA CLASE --------------------------------------------------
 
@@ -298,8 +294,6 @@ public abstract class Enterprise extends ResizeComposite {
 		this.enterpriseWeb.setValue(null);
 		this.enterpriseScopePanel.clear();
 		
-		this.enterpriseActivity.setText("");
-		this.enterpriseWorkplace.setText("");
 		this.enterprisePaysheetModel.clear();
 		this.enterpriseCostModel.clear();
 		this.enterprisePaysheetSendType.clear();
@@ -332,6 +326,129 @@ public abstract class Enterprise extends ResizeComposite {
 		this.enterprisePaysheetSendType.addItem("Email", "EMAIL");
 		this.enterprisePaysheetSendType.addItem("Papel", "PAPER");
 		this.enterprisePaysheetSendType.addItem("Otro", "OTHERS");
+	}
+	
+	public void checkDocument() {
+		String value = document.getValue();
+		
+		if(AonStringUtils.isNotBlank(value)) {
+			String documentTypeValue = checkDocumentType();
+		
+			documentType.setText(documentTypeValue);
+			showNationality();
+		
+			if(checkDocumentValidation()) {
+				documentStatus.removeStyleName(AON.CSS.aonIconValid());
+				documentStatus.addStyleName(AON.CSS.aonIconInvalid());
+			}else {
+				documentStatus.removeStyleName(AON.CSS.aonIconInvalid());
+				documentStatus.addStyleName(AON.CSS.aonIconValid());
+			}
+		}else {
+			documentStatus.removeStyleName(AON.CSS.aonIconValid());
+			documentStatus.addStyleName(AON.CSS.aonIconInvalid());
+		}
+	}
+	
+	private String checkDocumentType() {
+
+		String value = document.getValue();
+		
+		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
+		RegExp niePattern = RegExp.compile("[A-Z]{1}\\d{7}[A-Z]{1}");
+		RegExp cifPattern = RegExp.compile("[A-Z]{1}\\d{8}");
+
+		if (dniPattern.test(value.toUpperCase()))
+			return "DNI";
+		else if (niePattern.test(value.toUpperCase()))
+			return "NIE";
+		else if (cifPattern.test(value.toUpperCase()))
+			return "CIF";
+		else
+			return "Pasaporte";
+	}
+	
+	private void showNationality() {
+		String documentType = checkDocumentType();
+		
+		if (	AonStringUtils.equals(documentType, "CIF") || 
+				AonStringUtils.equals(documentType, "Pasaporte") || 
+				AonStringUtils.equals(documentType, "NIE")) {
+			
+			nationalityLabel.getElement().getStyle().clearDisplay();
+			nationality.getElement().getStyle().clearDisplay();
+			
+		} else {
+			nationalityLabel.getElement().getStyle().setDisplay(Display.NONE);
+			nationality.getElement().getStyle().setDisplay(Display.NONE);
+			nationality.setValue("ESPA\u00D1A");
+		}
+	}
+	
+	private boolean checkDocumentValidation() {
+		String value = document.getValue();
+		String documentType = checkDocumentType();
+		
+		if(AonStringUtils.isBlank(value)) {
+			return false;
+		} else if(AonStringUtils.equals(documentType, "DNI")){
+			Dni dni = new Dni(value);
+			return dni.checkDNI();
+		} else
+			return true;
+	}	
+	
+	public void checkPaysheetSendType(String email) {
+		String paysheetSendType = String.valueOf(enterprisePaysheetSendType.getSelectedValue());
+		
+		if(AonStringUtils.isNotBlank(paysheetSendType) && AonStringUtils.equals(paysheetSendType, "EMAIL")) {
+			enterprisePaysheetSendPanel.getElement().getStyle().clearDisplay();
+			enterprisePaysheetSendEmail.setValue(email);
+		}else {
+			enterprisePaysheetSendPanel.getElement().getStyle().setDisplay(Display.NONE);
+		}	
+	}
+
+	public void initializeScopeCell(Map<Integer, String> enterprisecopes) {
+		Widget enterpriseScopeWidget;
+		
+		if(enterprisecopes.size() == 0)
+			enterpriseScopeWidget = createEmptyListLabel();
+		else {
+			ListBox scopeListBox = new ListBox();
+			scopeListBox.setStyleName("aon-selectOneMenu");
+			scopeListBox.getElement().getStyle().setWidth(100, Unit.PCT);
+			
+			for(Entry<Integer, String> entry : enterprisecopes.entrySet())
+				scopeListBox.addItem(entry.getValue(), entry.getKey().toString());
+			
+			scopeListBox.addChangeHandler(e -> {
+				Integer scopeId = Integer.valueOf(scopeListBox.getSelectedValue());
+				onEnterpriseScopeChange(scopeId);
+			});
+			
+			enterpriseScopeWidget = scopeListBox;
+		}
+		
+		enterpriseScopePanel.add(enterpriseScopeWidget);
+	}
+
+	public void initializeAgreementCell(List<Agreement> enterpriseAgreements) {
+		enterpriseAgreement.addItem("-", "-1");
+		
+		for (Agreement agreement : enterpriseAgreements)
+			enterpriseAgreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
+	}
+	
+	public Label createEmptyListLabel() {
+		Label label = new Label();
+		
+		label.setText("No hay entradas disponibles");
+		label.setStyleName("aon-inputText");
+		label.addStyleName(style.warningColor());
+		label.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		
+		return label;
 	}
 
 }
