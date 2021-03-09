@@ -220,7 +220,6 @@ export class AonEventDetailList extends AonElement {
   }
 
   async getData() {
-    this.aonSigninEl.startLoader();
     let data = [];
     try {
       let filter = null;
@@ -232,7 +231,6 @@ export class AonEventDetailList extends AonElement {
       if (datos) {
         sortBy(datos, "date", "desc").forEach(async (resp) => {
           removeEmpty(resp);
-          const name = resp.task_holder.name;
           if (!this.TASK_HOLDER) this.TASK_HOLDER = resp.task_holder;
           const newStatus = resp.status.toLowerCase();
           const status = await getStatus(newStatus);
@@ -249,7 +247,6 @@ export class AonEventDetailList extends AonElement {
             lettersHtml,
             textStatus,
             status: newStatus,
-            name: `${name}`,
             nameLocation,
             dateParse: setDateTimestamp(resp.date),
           };

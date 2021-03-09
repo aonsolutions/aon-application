@@ -141,13 +141,19 @@ export class AonPayrollList extends AonElement {
       try {
         const resp = await this.getData();
         aonTable.removeAllLi();
+
+        let isEmployee = this.aonLaboralParentEl.isEmployee();
+        
         resp.map((res, idx) => {
           let options = {
             paddingTopTitle: "5px",
             iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.totalLiquid}</span>`,
             title: `${res.endDateParse}`,
           };
-          if (res.contractType) options.option = this.getOptions(res);
+          if(!isEmployee){
+            options.title = res.name;
+            options.subtitle = res.endDateParse;
+          }
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
         });
       } catch (e) {
@@ -170,7 +176,9 @@ export class AonPayrollList extends AonElement {
         datos = await getEnterpriseSalaries(filter);
       }
       if (!isEmptyObject(datos)) {
-        sortBy(datos, 'endDate', 'desc').map(
+        sortBy(datos, 'endDate', 'desc')
+        .filter(({endDate})=> new Date(endDate) <= new Date())
+        .map(
           async ({
             contract,
             employeeName,

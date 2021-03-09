@@ -1,5 +1,5 @@
 import { AonElement } from './AonElement.js';
-
+import { formatNumber } from '../services/utils.js';
 import './aon-icon-button.js';
 
 export class AonNumber extends AonElement {

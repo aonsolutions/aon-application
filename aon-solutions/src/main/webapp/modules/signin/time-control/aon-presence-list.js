@@ -144,13 +144,13 @@ export class AonPresenceList extends AonElement {
         const resp = await this.getData();
         aonTable.removeAllLi();
         resp.map((res, idx) => {
-          res.dateParse = dateCustomDayHour(res.last_date) || setDateTimestamp(res.last_date);
+          let dateParse = dateCustomDayHour(res.last_date) || setDateTimestamp(res.last_date);
+
           let options = {
             iconHtmlCustom: `${res.lettersHtml} <span style="float: right;color: rgba(0,0,0,.54);">${res.duration}</span>`,
             title: `${res.name}`,
-            subtitle: `${res.dateParse} <span style="float: right;">${res.nameLocation}</span> `,
+            subtitle: `${dateParse} <span style="float: right;">${res.nameLocation}</span> `,
           };
-          if (res.contractType) options.option = this.getOptions(res);
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
         });
       } catch (e) {
@@ -160,7 +160,6 @@ export class AonPresenceList extends AonElement {
   }
 
   async getData() {
-    this.aonSigninEl.startLoader();
     let data = [];
     try {
       let filter = null;
@@ -208,7 +207,6 @@ export class AonPresenceList extends AonElement {
     } catch (e) {
       console.log(e);
     }
-    this.aonSigninEl.stopLoader();
     return data;
   }
 

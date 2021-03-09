@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -89,8 +90,8 @@ public class ContractServlet extends AonApiHttpServlet {
 		LOGGER.info("[GET] EMPLOYEE INFO");
 		Connection conn = AonServletUtils.getConnection(getDomain().getName());
 		boolean allEmployees = getParams().optBoolean("allEmployees");  
-		
-		String jsonInString = new Gson().toJson(JooqContrataContract.getAllEmployeesInfo(conn, getDomain().getId(), allEmployees));
+		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		String jsonInString = gjson.toJson(JooqContrataContract.getAllEmployeesInfo(conn, getDomain().getId(), allEmployees));
 		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
@@ -108,7 +109,8 @@ public class ContractServlet extends AonApiHttpServlet {
 		Connection conn = AonServletUtils.getConnection(getDomain().getName());
 		SalaryInfoFilter filter = getFilter();
 		filter.setWorkplaceId(getDomain().getId());
-		String jsonInString = new Gson().toJson(JooqPayrollSalaries.getSalariesByDocument(conn, filter, document));
+		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		String jsonInString = gjson.toJson(JooqPayrollSalaries.getSalariesByDocument(conn, filter, document));
 		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
@@ -117,14 +119,13 @@ public class ContractServlet extends AonApiHttpServlet {
 		LOGGER.info("[GET] ENTERPRISE SALARIES");
 		Connection conn = AonServletUtils.getConnection(getDomain().getName());
 		Company company = AON.getCompany(getDomain().getName(), getDomain().getId(), "", f->f.getDomainProperty().eq(getDomain().getId()));
-	
-		String jsonInString = new Gson().toJson(getSalaries(conn, Optional.ofNullable(company.getId()), Optional.empty()));
+		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		String jsonInString = gjson.toJson(getSalaries(conn, Optional.ofNullable(company.getId()), Optional.empty()));
 		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
 	
 	private List<SalaryInfo> getSalaries(Connection conn, Optional<Integer> companyId, Optional<Integer> contractId) {
-	
 		SalaryInfoFilter filter = getFilter();
 		if(!companyId.isEmpty()) filter.setEnterpriseId(companyId.get().intValue());
 		else if(!contractId.isEmpty())filter.setEmployeeId(contractId.get().intValue());

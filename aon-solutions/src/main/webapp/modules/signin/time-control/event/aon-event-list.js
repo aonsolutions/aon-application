@@ -204,7 +204,6 @@ export class AonEventList extends AonElement {
   }
 
   async getData() {
-    this.aonSigninEl.startLoader();
     let data = [];
     let group = await this.getGroupValue();
     try {
@@ -215,7 +214,6 @@ export class AonEventList extends AonElement {
         sortBy(datos, 'start_date', 'asc').map(
           async (r) => {
             if(!this.TASK_HOLDER)  this.TASK_HOLDER = r.task_holder;
-            const name = this.TASK_HOLDER.name;
             const newStatus = r.status.toLowerCase();
             const textStatus = await getStatus(newStatus);
             const numbDate =   this.getTimeNumber(group.value, r.start_date);
@@ -225,7 +223,6 @@ export class AonEventList extends AonElement {
               lettersHtml,
               textStatus: textStatus.name,
               status: newStatus,
-              name: `${name}`,
               last_location: r.last_location,
               duration: timeHour(Number(r.time)),
             };
@@ -236,7 +233,6 @@ export class AonEventList extends AonElement {
     } catch (e) {
       console.log(e);
     }
-    this.aonSigninEl.stopLoader();
     this.paintName();
     return data;
   }
