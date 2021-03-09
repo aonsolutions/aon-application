@@ -229,12 +229,12 @@ public class EmployeeSalary extends Composite {
 
 	public void setEmployeeSalaryObject(EmployeeSalaryObject employeeSalaryObject) {
 		this.employeeSalaryObject = employeeSalaryObject;
+		setNewToolbarTitle();
 		this.employeeSalaryObject.getSalaries(
 				s -> {
 					initDatesListBox();
 					setSettlePDFVisibility();
 					filterCurrentYearSalaries();
-					setNewToolbarTitle();
 				}, 
 				f -> {}
 		);
@@ -289,12 +289,7 @@ public class EmployeeSalary extends Composite {
 	}
 	
 	private void setNewToolbarTitle() {
-		List<SalaryInfo> workplaceSalaries = this.employeeSalaryObject.getEmployeeSalaries();
-		String employeeName = null;
-		
-		if(null != workplaceSalaries && !workplaceSalaries.isEmpty())
-			employeeName = workplaceSalaries.get(0).getEmployeeName();
-		
+		String employeeName = this.employeeSalaryObject.getEmployeeName();
 		if(AonStringUtils.isNotBlank(employeeName)) toolbar.setTitle("N" + String.valueOf("\u00F3") + "minas : " + employeeName);
 	}
 

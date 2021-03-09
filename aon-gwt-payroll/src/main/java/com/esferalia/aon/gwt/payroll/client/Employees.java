@@ -311,14 +311,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		final TreeItem enterpriseItem = new TreeItem(imageItemHTML(images.enterprise(), enterprise.getName()));
 		enterpriseItem.ensureDebugId(getId(enterprise));
 		
-
 		enterpriseItem.setUserObject(enterprise);
 		tree.addItem(enterpriseItem);
 
 		addImageItem(enterpriseItem, "Costes", images.costs());
 		// Nominas Beta Empresa
-				addImageItem(enterpriseItem, "N\u00F3minas", images.salaries())
-					.setUserObject(new EnterpriseSalaryObject(enterprise, employeesService));
+		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries())
+			.setUserObject(new EnterpriseSalaryObject(enterprise));
 
 		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
 //		addImageItem(enterpriseItem, "N\u00F3minas (Old)", images.salaries());
@@ -737,7 +736,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		addImageItem(workplaceItem, "Costes", images.costs());
 		
 		addImageItem(workplaceItem, "N\u00F3minas", images.salaries())
-			.setUserObject(new WorkplaceSalaryObject(workplace.getId(), employeesService));
+			.setUserObject(new WorkplaceSalaryObject(workplace));
 
 		addImageItem(workplaceItem, "Calendario", images.laboralCalendar())
 				.setUserObject(new CalendarDraftObjectData(workplace.getId(), employeesService));
@@ -1432,9 +1431,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		employeeItem.ensureDebugId(getId(employee));
 
 		TreeItem salarytItem = addImageItem(employeeItem, "N\u00F3minas", images.salaries());
-		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(
-				employee, 
-				employeesService);
+		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(employee);
 		salarytItem.setUserObject(employeeSalaryObject);
 		salarytItem.ensureDebugId(getId(employee)+"-employeesalary");
 		

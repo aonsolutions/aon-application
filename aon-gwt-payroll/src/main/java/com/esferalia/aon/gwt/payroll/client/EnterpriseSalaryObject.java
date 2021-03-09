@@ -17,23 +17,25 @@ public class EnterpriseSalaryObject {
 	
 	//Starting Service
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	final DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	
-	private DomainEmployeesServiceAsync employeesService;
-	private Integer enterpriseId;
-	private List<SalaryInfo> enterpriseSalaries;
-	private SalaryInfoFilter filter;
-	private List<Workplace> workplaces;
+	private Enterprise enterprise;
+	
 	private List<EmployeeInfo> enterpriseEmployees;
-	private String emailStatus;
+	private List<SalaryInfo> enterpriseSalaries;
+	private List<Workplace> workplaces;
+	
+	private SalaryInfoFilter filter;
+	
 	private String checkEmailEmployeesStatus;
+	private String emailStatus;
 	
 	public EnterpriseSalaryObject() {
 		super();
 	}
 
-	public EnterpriseSalaryObject(Enterprise enterprise, DomainEmployeesServiceAsync employeesService) {
-		this.enterpriseId = enterprise.getId();
-		this.employeesService = employeesService;
+	public EnterpriseSalaryObject(Enterprise enterprise) {
+		this.enterprise = enterprise;
 		this.workplaces = enterprise.getWorkplaces();
 		this.filter = new SalaryInfoFilter();
 	}
@@ -41,7 +43,7 @@ public class EnterpriseSalaryObject {
 	public void getSalaries(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
 		if(filter.getEmployeeId() == null && filter.getWorkplaceId() == null)
-			filter.setEnterpriseId(enterpriseId);
+			filter.setEnterpriseId(enterprise.getId());
 		else
 			filter.setEnterpriseId(null);
 		
@@ -66,7 +68,7 @@ public class EnterpriseSalaryObject {
 	}
 	
 	public void getEnterpriseEmployeesDB(Consumer<List<EmployeeInfo>> success, Consumer<Throwable> failure){
-		employeesService.getEnterpriseActiveEmployees(enterpriseId, new AsyncCallback<List<EmployeeInfo>>() {
+		employeesService.getEnterpriseActiveEmployees(enterprise.getId(), new AsyncCallback<List<EmployeeInfo>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {}
@@ -206,8 +208,8 @@ public class EnterpriseSalaryObject {
 		return null;
 	}
 	
-	public Integer getEnterpriseId() {
-		return this.enterpriseId;
+	public String getEnterpriseName() {
+		return this.enterprise.getName();
 	}
 	
 	public String getEmailStatus(){

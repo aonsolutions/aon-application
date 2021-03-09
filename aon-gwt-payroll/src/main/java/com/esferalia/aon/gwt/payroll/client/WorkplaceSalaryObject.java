@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
@@ -16,22 +17,24 @@ public class WorkplaceSalaryObject {
 	
 	//Starting Service
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	final DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	
-	private DomainEmployeesServiceAsync employeesService;
-	private Integer workplaceId;
-	private List<SalaryInfo> workplaceSalaries;
-	private SalaryInfoFilter filter;
+	private Workplace workplace;
+	
 	private WorkplaceEmployees workplaceEmployees;
-	private String emailStatus;
+	private List<SalaryInfo> workplaceSalaries;
+	
+	private SalaryInfoFilter filter;
+	
 	private String checkEmailEmployeesStatus;
+	private String emailStatus;
 	
 	public WorkplaceSalaryObject() {
 		super();
 	}
-
-	public WorkplaceSalaryObject(Integer workplaceId, DomainEmployeesServiceAsync employeesService) {
-		this.workplaceId = workplaceId;
-		this.employeesService = employeesService;
+	
+	public WorkplaceSalaryObject(Workplace workplace) {
+		this.workplace = workplace;
 		this.filter = new SalaryInfoFilter();
 		this.workplaceEmployees = new WorkplaceEmployees();
 	}
@@ -39,7 +42,7 @@ public class WorkplaceSalaryObject {
 	public void getSalaries(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
 		if(filter.getEmployeeId() == null)
-			filter.setWorkplaceId(workplaceId);
+			filter.setWorkplaceId(workplace.getId());
 		else
 			filter.setWorkplaceId(null);
 		
@@ -64,7 +67,7 @@ public class WorkplaceSalaryObject {
 	}
 	
 	public void getWorkplaceEmployeesDB(Consumer<WorkplaceEmployees> success, Consumer<Throwable> failure){
-		employeesService.getWorkplaceActiveEmployees(workplaceId, new AsyncCallback<WorkplaceEmployees>() {
+		employeesService.getWorkplaceActiveEmployees(workplace.getId(), new AsyncCallback<WorkplaceEmployees>() {
 
 			@Override
 			public void onFailure(Throwable caught) {}
@@ -152,6 +155,10 @@ public class WorkplaceSalaryObject {
 			}
 			
 		});
+	}
+	
+	public String getWorkplaceName() {
+		return this.workplace.getDescription();
 	}
 	
 	public List<SalaryInfo> getWorkplaceSalaries() {

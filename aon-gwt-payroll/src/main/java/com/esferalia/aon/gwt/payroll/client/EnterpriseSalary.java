@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -29,7 +28,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -237,12 +235,12 @@ public class EnterpriseSalary extends Composite {
 
 	public void setEnterpriseSalaryObject(EnterpriseSalaryObject enterpriseSalaryObject) {
 		this.enterpriseSalaryObject = enterpriseSalaryObject;
+		setNewToolbarTitle();
 		this.enterpriseSalaryObject.getSalaries(
 				s -> {
 					initDatesListBox();
 					initSuggestBox();
 					filterCurrentYearSalaries();
-					setNewToolbarTitle();
 				}, 
 				f -> {}
 		);
@@ -322,13 +320,8 @@ public class EnterpriseSalary extends Composite {
 	}
 	
 	private void setNewToolbarTitle() {
-		List<SalaryInfo> workplaceSalaries = this.enterpriseSalaryObject.getEnterpriseSalaries();
-		String workplaceName = null;
-		
-		if(null != workplaceSalaries && !workplaceSalaries.isEmpty())
-			workplaceName = workplaceSalaries.get(0).getWorkplaceName();
-		
-		if(AonStringUtils.isNotBlank(workplaceName)) toolbar.setTitle("N" + String.valueOf("\u00F3") + "minas : " + workplaceName);
+		String entepriseName = this.enterpriseSalaryObject.getEnterpriseName();
+		if(AonStringUtils.isNotBlank(entepriseName)) toolbar.setTitle("N" + String.valueOf("\u00F3") + "minas : " + entepriseName);
 	}
 	
 	// ---------------------------------------------- Init SalaryTable ----------------------------------------------

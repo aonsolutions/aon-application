@@ -19,6 +19,13 @@
 			display: flex;
 			gap: 10px;
 			align-items: center;
+		}
+		
+		.flexWrap{
+			flex-wrap: wrap;
+		}
+		
+		.flexMargin{
 			margin: 5px 0;
 		}
 		
@@ -48,15 +55,17 @@
 		<g:center>
 			<g:VerticalPanel ui:field="mainContainer" styleName="{style.container}">
 				<g:HTMLPanel ui:field="filterSalaryPanel" styleName="{style.flexColumn}">
-					<g:HTMLPanel styleName="{style.flex}">
+					<g:HTMLPanel styleName="{style.flex} {style.flexWrap} {style.flexMargin}">
 						<g:Label styleName="{style.label}">C. Trabajo</g:Label>
 						<g:SuggestBox styleName="aon-inputText {style.sb}" ui:field="workplaceSB"/>
 						<g:Label styleName="{style.label}">Empleado</g:Label>
 						<g:SuggestBox styleName="aon-inputText {style.sb}" ui:field="employeeSB"/>
-						<g:Label styleName="{style.label}">Tipo nómina</g:Label>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:Label styleName="{style.label}">Tipo nómina</g:Label>
 						<g:ListBox ui:field="typeList" styleName="aon-selectOneMenu"/>
+						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
+					<g:HTMLPanel styleName="{style.flex} {style.flexMargin}">
 						<g:Label styleName="{style.label}">Periodo</g:Label>
 						<g:ListBox ui:field="dateFilterList" styleName="aon-selectOneMenu"/>
 						<g:Label styleName="{style.label}">Desde/Hasta</g:Label>

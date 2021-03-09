@@ -27,7 +27,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -39,9 +38,9 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public class WorkplaceSalary extends Composite {
 	
@@ -234,12 +233,12 @@ public class WorkplaceSalary extends Composite {
 
 	public void setWorkplaceSalaryObject(WorkplaceSalaryObject workplaceSalaryObject) {
 		this.workplaceSalaryObject = workplaceSalaryObject;
+		setNewToolbarTitle();
 		this.workplaceSalaryObject.getSalaries(
 				s -> {
 					initDatesListBox();
 					initSuggestBox();
 					filterCurrentYearSalaries();
-					setNewToolbarTitle();
 				}, 
 				f -> {}
 		);
@@ -307,12 +306,7 @@ public class WorkplaceSalary extends Composite {
 	}
 	
 	private void setNewToolbarTitle() {
-		List<SalaryInfo> workplaceSalaries = this.workplaceSalaryObject.getWorkplaceSalaries();
-		String workplaceName = null;
-		
-		if(null != workplaceSalaries && !workplaceSalaries.isEmpty())
-			workplaceName = workplaceSalaries.get(0).getWorkplaceName();
-		
+		String workplaceName = this.workplaceSalaryObject.getWorkplaceName();
 		if(AonStringUtils.isNotBlank(workplaceName)) toolbar.setTitle("N" + String.valueOf("\u00F3") + "minas : " + workplaceName);
 	}
 

@@ -14,21 +14,23 @@ public class EmployeeSalaryObject {
 	
 	//Starting Service
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
-
-	private DomainEmployeesServiceAsync employeesService;
+	final DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+	
 	private Employee employee;
+	
 	private List<SalaryInfo> employeeSalaries;
+	
 	private SalaryInfoFilter filter;
-	private String emailStatus;
+	
 	private String checkEmailEmployeesStatus;
+	private String emailStatus;
 	
 	public EmployeeSalaryObject() {
 		super();
 	}
 
-	public EmployeeSalaryObject(Employee employee, DomainEmployeesServiceAsync employeesService) {
+	public EmployeeSalaryObject(Employee employee) {
 		this.employee = employee;
-		this.employeesService = employeesService;
 		this.filter = new SalaryInfoFilter();
 		this.emailStatus = "";
 	}
@@ -128,6 +130,10 @@ public class EmployeeSalaryObject {
 			}
 			
 		});
+	}
+	
+	public String getEmployeeName(){
+		return this.employee.getFullname();
 	}
 	
 	public List<SalaryInfo> getEmployeeSalaries() {
