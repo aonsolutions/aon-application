@@ -21,12 +21,14 @@ import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultP
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases.Contingency_bases_builder;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonStringUtils;
 /**
  * Class containing method/s to print payrolls from a Salary and a SalaryDraft object
  */
@@ -96,12 +98,28 @@ public class DraftPayrollBuilder {
 				dpb.setAccrual_total(salary.getTotalPayment());
 				Collection<IPayment> payments = salary.getPaymentS();
 				Map<Integer, ArrayList<DefaultPayrollAccrual>> accruals = new HashMap<Integer, ArrayList<DefaultPayrollAccrual>>();
-				payments.stream().sorted(Comparator.comparing(p -> p.getDescription())).filter(p -> p.getAmount() != 0).forEach(p -> {
+				
+				Map<Integer, HashMap<String, DefaultPayrollAccrual>> accrualsSet = new HashMap<Integer, HashMap<String, DefaultPayrollAccrual>>();
+				
+				payments.stream().sorted(Comparator.comparing(p -> p.getDescription())).filter(DraftPayrollBuilder::filter).forEach(p -> {
 					DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(p.getAmount(), p.getDescription().replaceAll("\\[\\d*\\]", ""));
-					if (!accruals.containsKey(p.getType().ordinal()))
-						accruals.put(p.getType().ordinal(), new ArrayList<DefaultPayrollAccrual>());
-					accruals.get(p.getType().ordinal()).add(accrual);
+					if (!accrualsSet.containsKey(p.getType().ordinal()))
+						accrualsSet.put(p.getType().ordinal(), new HashMap<String, DefaultPayrollAccrual>());
+					if (accrualsSet.get(p.getType().ordinal()).containsKey(p.getDescription())) {
+						DefaultPayrollAccrual repAcc = accrualsSet.get(p.getType().ordinal()).get(p.getDescription());
+						
+						repAcc = new DefaultPayrollAccrual(repAcc.getAmount().get() + p.getAmount() , repAcc.getDescription().get());
+						accrual = repAcc;
+					}
+					accrualsSet.get(p.getType().ordinal()).put(p.getDescription(), accrual);
 				});
+				
+				accrualsSet.keySet().forEach(k -> {
+					ArrayList<DefaultPayrollAccrual> list = new ArrayList<DefaultPayrollAccrual>();
+					list.addAll(accrualsSet.get(k).values());
+					accruals.put(k, list);
+				});
+				
 				dpb.setAccruals(accruals);
 			}
 			//DEDUCTIONS
@@ -178,10 +196,20 @@ public class DraftPayrollBuilder {
 					}
 					}
 					
+					
 					DefaultPayrollDeduction deduction = new DefaultPayrollDeduction(d.getAmount(), desc, percent);
+					
+					System.out.println(deduction.getDescription()+" : "+deduction.getAmount());
+					
 					if (!deductionsMap.containsKey(type))
 						deductionsMap.put(type, new ArrayList<DefaultPayrollDeduction>());
-					deductionsMap.get(type).add(deduction);
+					
+					if (deductionsMap.get(type).stream().anyMatch(p -> p.getDescription().get().equalsIgnoreCase(deduction.getDescription().get()))) {
+						DefaultPayrollDeduction ded = deductionsMap.get(type).stream().filter(p -> p.getDescription().get().equalsIgnoreCase(deduction.getDescription().get())).findFirst().get();
+						ded.setAmount(ded.getAmount().get()+deduction.getAmount().get());
+					}	
+					else
+						deductionsMap.get(type).add(deduction);
 					inserted.add(getDeductionType(d.getType().ordinal()));
 				});
 				
@@ -283,6 +311,8 @@ public class DraftPayrollBuilder {
 	}
 	
 	
+	
+	
 	private static String getDeductionType (Integer type) {
 		switch (type) {
 			case 0:
@@ -309,4 +339,9 @@ public class DraftPayrollBuilder {
 				return null;
 		}
 	}
+
+	private static boolean filter (IPayment payment) {
+		return !(payment.getAmount() == 0 || AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));
+	}
+
 }

@@ -23,6 +23,10 @@ public class DefaultPayrollAccrual {
 				+ "description: " + description 
 				+ "}";
 	}
+
+	public void setAmount(Double amount) {
+		this.amount = Optional.ofNullable(amount);
+	}
 	
 	
 	

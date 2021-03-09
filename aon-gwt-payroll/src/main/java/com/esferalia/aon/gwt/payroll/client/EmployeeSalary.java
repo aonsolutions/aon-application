@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
@@ -26,7 +27,10 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -527,20 +531,31 @@ public class EmployeeSalary extends Composite {
 	}
 
 	private void onPDF(ClickEvent e) {
+		
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "salary_exporter/";
-		String query = "?type=salary&selectedSalaries=" + salaryTable.getSelectedSalaries().size()
-	            + "&enterprise=" + ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId()
-		        ;
-			
+
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(fileDownloadURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden(PayrollPrintService.Parameter.TYPE.getName(), "salary"));
+		flowPanel.add(new Hidden(PayrollPrintService.Parameter.ENTERPRISE.getName(), String.valueOf(((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId())));
+		
+		
 		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++) {
-			query += "&salary"+i+"Id=" + ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId();
+			flowPanel.add(new Hidden(PayrollPrintService.Parameter.ID.getName(), ""+((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId()));
 		}
+		flowPanel.add(new Hidden(PayrollPrintService.Parameter.NAME.getName(), "salaries.pdf"));
 		
-		query += "&name=salaries.pdf";
+		formPanel.add(flowPanel);
 		
-		String paramsBase64 = b64decode(query);
-		
-		Window.open(fileDownloadURL+paramsBase64, "_blank", null);
+		formPanel.addSubmitCompleteHandler(e1 -> {
+			mainContainer.remove(formPanel);
+		});
+		mainContainer.add(formPanel);
+
+		formPanel.submit();
 	}
 	
 	private void onPDFSettle(ClickEvent e) {

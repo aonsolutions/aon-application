@@ -23,6 +23,7 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.report.StatelessReportManager;
 import com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.SiteFilter;
+import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
 import com.esferalia.aon.jooq.tables.Salary;
 import com.esferalia.aon.jooq.tables.Workplace;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -46,18 +47,25 @@ public class SalaryPDFServlet extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException{
+		doPost(req, resp);
+	}
+	
+	
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String domain = req.getServerName();
 		String requestURI = req.getRequestURI();
 		String extension = AonServletUtils.getExtn(requestURI);
 		String salaryRequestStr = AonServletUtils.getFileName(requestURI);
 		
-		String paramsStr = decode(salaryRequestStr.getBytes());
-		Map<String, String> params = createParams(paramsStr);
+//		String paramsStr = decode(salaryRequestStr.getBytes());
+//		Map<String, String> params = createParams(paramsStr);
 		
 		try {
 			
-			Integer selectedSalaries = Integer.parseInt(params.get("selectedSalaries"));
-			Condition condition = getConditionSalaryIds(params, selectedSalaries);
+			Integer selectedSalaries = req.getParameterValues(PayrollPrintService.Parameter.ID.getName()).length;
+			Condition condition = getConditionSalaryIds(req.getParameterValues(PayrollPrintService.Parameter.ID.getName()), selectedSalaries);
 			extension = "pdf";
 			
 			DSL.orderBy(Workplace.WORKPLACE.ID, Salary.SALARY.EMPLOYEE_NAME);
@@ -84,8 +92,8 @@ public class SalaryPDFServlet extends HttpServlet {
 			OutputStream os = resp.getOutputStream();
 			
 			// TODO : SalaryType????
-			SalaryType salaryType = params.get("type").equals("settle") ? SalaryType.SETTLE : SalaryType.SALARY;
-			Integer enterpriseID = Integer.parseInt(params.get("enterprise"));
+			SalaryType salaryType = req.getParameter(PayrollPrintService.Parameter.TYPE.getName()).equals("settle") ? SalaryType.SETTLE : SalaryType.SALARY;
+			Integer enterpriseID = Integer.parseInt(req.getParameter(PayrollPrintService.Parameter.ENTERPRISE.getName()));
 			String salaryReport = getReportKey(domain, enterpriseID, salaryType); 
 			
 			// TODO: Bufff !!!!!!!!!!!!!!!
@@ -101,19 +109,16 @@ public class SalaryPDFServlet extends HttpServlet {
 			throw new ServletException(e);
 		}
 	}
-	
-	private Condition getConditionSalaryIds(Map<String, String> params, Integer selectedSalaries) {
+
+
+
+	private Condition getConditionSalaryIds(String[] ids, Integer selectedSalaries) {
 		ArrayList<Integer> _selectedSalaries = new ArrayList<>();
 
-		if(0 != selectedSalaries) {
-			for(int i=0; i<selectedSalaries; i++) {
-				String idString = params.get("salary"+i+"Id");
-				
-				if(idString.contains("."))
-					idString = idString.split("\\.")[0];
-				
-				_selectedSalaries.add(Integer.parseInt(idString));
-			}
+		for (String strId : ids) {
+			try {
+				_selectedSalaries.add(Integer.parseInt(strId));
+			} catch (NumberFormatException e) {}
 		}
 		
 		Condition condition ;
@@ -122,21 +127,21 @@ public class SalaryPDFServlet extends HttpServlet {
 		return condition;
 	}
 
-	private Map<String, String> createParams(String paramsStr) {
-		HashMap<String, String> paramsMap = new HashMap<String, String>();
-		
-		String params = paramsStr.substring(1);
-		
-		String[] paramsArr = params.split("&");
-		for(int i=0; i < paramsArr.length; i++) {
-			String key = paramsArr[i].split("=")[0];
-			String value = paramsArr[i].split("=")[1];
-			
-			paramsMap.put(key, value);
-		}
-		
-		return paramsMap;
-	}
+//	private Map<String, String> createParams(String paramsStr) {
+//		HashMap<String, String> paramsMap = new HashMap<String, String>();
+//		
+//		String params = paramsStr.substring(1);
+//		
+//		String[] paramsArr = params.split("&");
+//		for(int i=0; i < paramsArr.length; i++) {
+//			String key = paramsArr[i].split("=")[0];
+//			String value = paramsArr[i].split("=")[1];
+//			
+//			paramsMap.put(key, value);
+//		}
+//		
+//		return paramsMap;
+//	}
 
 	protected String getReportKey(String domain, final Integer enterpriseID,
 			SalaryType salaryType) throws SQLException {
