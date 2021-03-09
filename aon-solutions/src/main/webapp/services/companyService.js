@@ -3,9 +3,17 @@ import { API_URL } from "../environments/environments.js";
 
 let companies;
 let company;
-
 let durum;
 
+export const clearCompanyService = () => {
+  clearCompanies();
+  clearCompany();
+  clearDurum();
+}
+
+export const clearCompanies = () => companies = undefined;
+export const clearCompany = () => companies = undefined;
+export const clearDurum = () => durum = undefined;
 
 export const getCompanies = () => {
   return new Promise((resolve, reject) => {
@@ -32,10 +40,6 @@ export const getCompanies = () => {
     }
   });
 };
-
-export const clearCompanies = () => {
-  companies = undefined;
-}
 
 export const getCompany = () => {
   return new Promise((resolve, reject) => {

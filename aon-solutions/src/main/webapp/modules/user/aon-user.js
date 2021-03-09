@@ -348,6 +348,7 @@ export class AonUser extends AonElement {
 						this._user.document = auth.document || "";
 						this._user.phone = auth.phone || "";
 						this.setAttribute('user', JSON.stringify(this._user));
+						this.initUser();
 					}
 				});
 			}

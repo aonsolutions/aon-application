@@ -4,6 +4,14 @@ import { API_URL } from "../environments/environments.js";
 let customers;
 let domain;
 
+export const clearRegistryService = () => {
+  clearCustomers();
+  clearDomain();
+}
+
+export const clearCustomers = () => customers = undefined;
+export const clearDomain = () => domain = undefined;
+
 // export const getCustomers = (data) => get(`${API_URL}/customer`, data);
 
 export const getCustomers = (data) => {

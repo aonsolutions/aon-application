@@ -92,7 +92,7 @@ export class AonDialogMenu extends AonElement {
 			if(item.aonIcon) {
 				let ai = document.createElement('span');
 				ai.style.verticalAlign = 'middle';
-				ai.innerHTML = `<aon-icon icon="${item.aonIcon}"></aon-icon>`;
+				ai.innerHTML = `<aon-icon icon="${item.aonIcon}" size="15"></aon-icon>`;
 				li.appendChild(ai);
 			} else {
 				let ic = document.createElement('i');

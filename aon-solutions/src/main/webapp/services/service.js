@@ -31,3 +31,8 @@ export * from './authDeviceService.js';
 export * from './request.js';
 
 export * from './laboralService.js';
+
+export const clear = () => {
+  clearCompanyService();
+  clearRegistryService();
+}

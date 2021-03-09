@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, getToken} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, getToken, clearDurum} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
@@ -150,7 +150,7 @@ export class AonHeader extends AonElement {
 			localStorage.removeItem('aon_domain_id');
 			localStorage.removeItem('aon_domain_name');
 			localStorage.removeItem('aon_domain_login');
-
+			clearDurum();
 			rootPanel('<aon-parent id="aonParent"></aon-parent>');
 		});
 		if(this.activeTimecontrol) {

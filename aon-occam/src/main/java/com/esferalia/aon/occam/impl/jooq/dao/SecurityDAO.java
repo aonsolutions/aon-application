@@ -337,8 +337,23 @@ public class SecurityDAO {
 		deleteUserAppRoles(ctx, user);
 		deleteUserScopes(ctx, user);
 		deleteUserWorkgroups(ctx, user);
+		deleteApplicationUser(ctx, user);
+		deleteMailAccount(ctx, user);
 		deleteUser(ctx, user);
 		return user;
+	}
+	
+	private static void deleteMailAccount(AONContext ctx, User user) {
+		ctx.getDslContext().delete(MAIL_ACCOUNT).where(MAIL_ACCOUNT.USER_ID.eq(user.getId()));
+	}
+	
+	private static void deleteApplicationUser(AONContext ctx, User user) {
+		ctx.getDslContext().select()
+		.from(APPLICATION_USER).where(APPLICATION_USER.USER_ID.eq(user.getId()))
+		.fetchInto(APPLICATION_USER).stream().forEach(au -> {
+			ctx.getDslContext().delete(APPLICATION_USER_PROFILE).where(APPLICATION_USER_PROFILE.APPLICATION_USER.eq(au.getId())).execute();
+			ctx.getDslContext().delete(APPLICATION_USER).where(APPLICATION_USER.ID.eq(au.getId())).execute();
+		});
 	}
 	
 	private static void deleteUser(AONContext ctx, UserFilter filter) {

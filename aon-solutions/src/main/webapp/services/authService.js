@@ -1,5 +1,5 @@
 import { request, post, get } from "./request.js";
-import { clearCompanies } from "./companyService.js"
+import { clear } from "./service.js"
 import { API_URL } from "../environments/environments.js";
 
 export const login = (data) => {
@@ -21,7 +21,7 @@ export const closeSession = () => {
   localStorage.clear();
   document.getElementById("aonLogin").style.display = "block";
   document.getElementById("aonHome").style.display = "none";
-  clearCompanies();
+  clear();
 };
 
 export const rememberPassword = (email) => post(`${API_URL}/remember`, {email});
