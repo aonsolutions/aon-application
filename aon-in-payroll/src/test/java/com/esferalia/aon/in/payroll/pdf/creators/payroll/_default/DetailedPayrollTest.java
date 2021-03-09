@@ -70,9 +70,9 @@ public class DetailedPayrollTest {
 			for (int i = 0; i < random(3); i++) {
 				DefaultPayrollDeduction deduction =
 						new DefaultPayrollDeduction(
-								9999.99,
+								random(9999),
 								"Descripcion por defecto",
-								99.99
+								random(99)
 						);
 				de.get(key).add(deduction);
 			}
@@ -109,12 +109,12 @@ public class DetailedPayrollTest {
 		
 		//BUILD PAYROLL
 		builder
-		.setEnterprise(Optional.of("DEMO EMPRESA S.L"))
+		.setEnterprise(Optional.of("DEMO EMPRESA HERMANOS DE LA PAZ Y ASOCIADOS S.L"))
 		.setAddress(Optional.of("Calle Duque de Wellington, 522 (01010)"))
 		.setAddress_2(Optional.of("Vitoria-Gazteiz"))
 		.setCif(Optional.of("58595859M"))
 		.setCcc(Optional.of("8935713546370"))
-		.setEmployee(Optional.of("Iker Gónzalez"))
+		.setEmployee(Optional.of("Iker Gónzalez Con Apellido Inventado de la Fuente Pérez Abech"))
 		.setNif(Optional.of("47227931-F"))
 		.setNss(Optional.of("11004767999"))
 		.setProfessional_group(Optional.of("Director"))

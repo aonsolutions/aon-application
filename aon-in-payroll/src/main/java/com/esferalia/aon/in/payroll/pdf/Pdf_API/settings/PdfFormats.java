@@ -20,7 +20,7 @@ public class PdfFormats {
 	//RETURN LATIN VERSION OF A NUMBER WITH . AND , (STRING)
 	public static String to_latin_number(Double number){
 		if(number == null) return "";
-		DecimalFormat formater = new DecimalFormat("###,###.##");
+		DecimalFormat formater = new DecimalFormat("###,###.00");
 		return formater.format(number);
 	}
 	
