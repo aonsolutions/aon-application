@@ -355,6 +355,8 @@ public class WorkplaceSalary extends Composite {
 		else
 			enableDisableDatesListBox(false);
 		
+		showHideDatesMessage(false);
+		
 		filterSalaries();
 	}
 	
@@ -376,6 +378,12 @@ public class WorkplaceSalary extends Composite {
 		// Date Filter
 		filter.setDateTillT(getDateTillT());
 		filter.setDateTTo(getDateTTo());
+		
+		setSelectedValueLB(monthTillT, DateUtils.getMonth(filter.getDateTillT()) + "");
+		setSelectedValueLB(monthTTo, DateUtils.getMonth(filter.getDateTTo()) + "");
+		
+		setSelectedValueLB(yearTillT, DateUtils.getYear(filter.getDateTillT()) + "");
+		setSelectedValueLB(yearTTo, DateUtils.getYear(filter.getDateTTo()) + "");
 		
 		// Salary Type
 		Integer salaryType = Integer.parseInt(typeList.getSelectedValue());

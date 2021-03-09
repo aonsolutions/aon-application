@@ -24,7 +24,6 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -42,9 +41,9 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public class EnterpriseSalary extends Composite {
 	
@@ -382,6 +381,8 @@ public class EnterpriseSalary extends Composite {
 		else
 			enableDisableDatesListBox(false);
 		
+		showHideDatesMessage(false);
+		
 		filterSalaries();
 	}
 	
@@ -403,6 +404,12 @@ public class EnterpriseSalary extends Composite {
 		// Date Filter
 		filter.setDateTillT(getDateTillT());
 		filter.setDateTTo(getDateTTo());
+		
+		setSelectedValueLB(monthTillT, DateUtils.getMonth(filter.getDateTillT()) + "");
+		setSelectedValueLB(monthTTo, DateUtils.getMonth(filter.getDateTTo()) + "");
+		
+		setSelectedValueLB(yearTillT, DateUtils.getYear(filter.getDateTillT()) + "");
+		setSelectedValueLB(yearTTo, DateUtils.getYear(filter.getDateTTo()) + "");
 		
 		// Salary Type
 		Integer salaryType = Integer.parseInt(typeList.getSelectedValue());
