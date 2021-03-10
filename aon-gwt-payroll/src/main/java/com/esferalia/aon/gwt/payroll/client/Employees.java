@@ -948,6 +948,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	 * Workplace Item has been expanded +.
 	 */
 	private void onWorkplaceOpen(final TreeItem workplaceItem) {
+		onWorkplaceOpen(workplaceItem, getEmployeeLimit(), () -> {} );
+	}
+	private void onWorkplaceOpen(final TreeItem workplaceItem, final int limit, Runnable callback) {
 
 		Workplace workplace = (Workplace) workplaceItem.getUserObject();
 
@@ -994,11 +997,11 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			});
 		}
 		if (workplaceItem.getChildCount() > getEmployeesOffset(workplaceItem)) {
+			callback.run();
 			return;
 		} // end-if: Employees of this workplace already loaded .
 
-		final int limit = getEmployeeLimit();
-
+		
 		employeesService.getEmployees(workplace.getId(), getFromDate(), namePattern, 0, limit,
 				new AsyncCallback<List<Employee>>() {
 					@Override
@@ -1011,11 +1014,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					@Override
 					public void onSuccess(List<Employee> employees) {
 						loadEmployess(workplaceItem, employees, limit);
+						callback.run();
 					}
 				});
 
 	}
 
+	
 	private void onEmployeeOpen(TreeItem employeeItem) {
 
 //		final TreeItem salariesItem = employeeItem.getChild(EMPLOYEE_SALARIES_INDEX);
@@ -2047,34 +2052,69 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	
 	// ------------------------------------------------------------------------
 	
+	private void load() {
+		
+		for ( int i = 0; i < tree.getItemCount(); i++ ) {
+			TreeItem enterpriseItem = tree.getItem(i);	
+			loadEnterprise(enterpriseItem);
+		}
+		
+	}
+	
+	private void loadEnterprise(TreeItem enterpriseItem) {
+		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
+		for ( int i = workplacesOffset; i < enterpriseItem.getChildCount(); i++ ) {			
+			TreeItem workplaceItem = enterpriseItem.getChild(i);	
+			loadWorkplace(workplaceItem);
+		}
+	}
+
+	private void loadWorkplace(TreeItem workplaceItem) {
+		int employeesOffset = getEmployeesOffset(workplaceItem);
+		for ( int i = employeesOffset; i < workplaceItem.getChildCount(); i++ ) {
+			return;
+		}
+		onWorkplaceOpen(workplaceItem);
+	}
+
 	private void filter( String pattern ) {
 		
 		for ( int i = 0; i < tree.getItemCount(); i++ ) {
 			TreeItem enterpriseItem = tree.getItem(i);	
 
-			boolean visible = filterEnterprise( pattern, enterpriseItem);
-			enterpriseItem.setVisible(visible);
-			enterpriseItem.setState(visible);
+			//enterpriseItem.setVisible(false);
+			//enterpriseItem.setState(false); // close
+
+			filterEnterprise( pattern, enterpriseItem, workplaceItem -> {
+				//enterpriseItem.setVisible(true);
+				enterpriseItem.setState(true); // open
+			});
 		}
 		
 	}
 	
-	private boolean filterEnterprise( String pattern, TreeItem enterpriseItem ) {
-		boolean found = false;
+	private void filterEnterprise( String pattern, TreeItem enterpriseItem , Consumer<TreeItem> found) {
 		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
 		for ( int i = workplacesOffset; i < enterpriseItem.getChildCount(); i++ ) {			
 			TreeItem workplaceItem = enterpriseItem.getChild(i);	
 
-			boolean visible  = filterWorkplace( pattern, workplaceItem);
-			workplaceItem.setVisible(visible);
-			workplaceItem.setState(visible);	
-			found |= visible;
+			workplaceItem.setVisible(false);	// hides
+			workplaceItem.setState(false);		// close
+
+			loadAndfilterWorkplace( pattern, workplaceItem, employeeItem -> {
+				workplaceItem.setVisible(true);	// display
+				workplaceItem.setState(true); 	// open	
+				found.accept( workplaceItem );
+			});
 		}
-		return found;
 	}
 	
-	private boolean filterWorkplace( String pattern, TreeItem workplaceItem ) {
-		boolean found = false;
+	private void loadAndfilterWorkplace( String pattern, TreeItem workplaceItem, Consumer<TreeItem> found ) {
+		onWorkplaceOpen(workplaceItem, Integer.MAX_VALUE, () -> filterWorkplace(pattern, workplaceItem, found) );
+	}
+	
+	
+	private void filterWorkplace( String pattern, TreeItem workplaceItem, Consumer<TreeItem> found ) {
 		int employeesOffset = getEmployeesOffset(workplaceItem);
 		for ( int i = employeesOffset; i < workplaceItem.getChildCount(); i++ ) {
 			TreeItem employeeItem = workplaceItem.getChild(i);
@@ -2085,13 +2125,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			AonStringUtils.isBlank(pattern)
 			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getFullname(), pattern)
 			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getDocument(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getSocialSecurity(), pattern)
 			;
 			
 			employeeItem.setVisible(visible);
-			found |= visible;
+			if ( visible ) 
+				found.accept(employeeItem);
 		}
-		return found;
 	}
-
 	
 }
