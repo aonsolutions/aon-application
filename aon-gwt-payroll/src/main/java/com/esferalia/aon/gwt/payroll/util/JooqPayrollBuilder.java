@@ -63,7 +63,7 @@ public class JooqPayrollBuilder {
 	 * @param outputStream The output stream which the PDF will be written on
 	 * @param salaryIds The IDs of the salaries in database
 	 */
-	public static void generatePayroll(String domainName, String user, OutputStream outputStream, Integer enterpriseId, Integer... salaryIds) {
+	public static void generatePayroll(Integer enterpriseId, String domainName, String user, OutputStream outputStream, Integer... salaryIds) {
 		DefaultPayrollTemplate dpt = new DefaultPayrollTemplate();
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
 		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
@@ -71,12 +71,12 @@ public class JooqPayrollBuilder {
 		}
 	}
 	
-	public static void generatePayroll(String domainName, OutputStream outputStream,Integer enterpriseId, Integer... salaryIds) {
-		generatePayroll(domainName, "", outputStream, enterpriseId, salaryIds);
+	public static void generatePayroll(Integer enterpriseId, String domainName, OutputStream outputStream, Integer... salaryIds) {
+		generatePayroll(enterpriseId, domainName, "", outputStream, salaryIds);
 	}
 	
 	public static void generatePayroll(String domainName, OutputStream outputStream, Integer... salaryIds) {
-		generatePayroll(domainName, "", outputStream, null, salaryIds);
+		generatePayroll(null, domainName, "", outputStream, salaryIds);
 	}
 
 	private static void fillPayroll(OutputStream outputStream, DefaultPayrollTemplate dpt, DefaultPayrollBuilder dpb,
