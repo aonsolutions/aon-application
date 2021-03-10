@@ -1736,7 +1736,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			
 			try {
-				DraftPayrollBuilder.generatePayroll(reportOut, salary);
+				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
 			} catch (SalaryException | CanNotCreatePdfException e) {
 				e.printStackTrace();
 			}

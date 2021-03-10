@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.util;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 
 import java.io.ByteArrayInputStream;
@@ -9,18 +10,19 @@ import java.io.OutputStream;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.DSLContext;
 
+import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
@@ -31,17 +33,26 @@ import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultP
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollAccrual;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollDeduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.occam.api.model.Salary.Cost;
 import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.common.util.concurrent.AtomicDouble;
 /**
  * Class containing method/s to print payrolls from database data
  */
@@ -52,48 +63,16 @@ public class JooqPayrollBuilder {
 	 * @param outputStream The output stream which the PDF will be written on
 	 * @param salaryIds The IDs of the salaries in database
 	 */
-	public static void generatePayroll(String domainName, OutputStream outputStream, Integer... salaryIds) {
+	public static void generatePayroll(String domainName, String user, OutputStream outputStream, Integer enterpriseId, Integer... salaryIds) {
 		DefaultPayrollTemplate dpt = new DefaultPayrollTemplate();
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
-		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {	
+		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			fillPayroll(outputStream, dpt, dpb, aonContext, salaryIds);
 		}
 	}
 	
-	public static void generatePayroll(OutputStream outputStream, String domainName, Integer domainId, String nif, Date startDate, Date endDate) {
-		DefaultPayrollTemplate dpt = new DefaultPayrollTemplate();
-		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
-		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, "")) {
-			
-			DSLContext ctx = aonContext.getDslContext();
-			List<Integer> idList = ctx.select(SALARY.ID)
-			.from(SALARY)
-			.where(SALARY.EMPLOYEE_DOCUMENT.eq(nif))
-			.and(SALARY.START_DATE.between(startDate, endDate))
-			.and(SALARY.END_DATE.between(startDate, endDate))
-			.fetchStreamInto(SALARY).map(id -> id.getId()).collect(Collectors.toList());
-			
-			fillPayroll(outputStream, dpt, dpb, aonContext, idList.toArray(new Integer[idList.size()]));
-		}
-		
-
-	}
-	
-	public static void generatePayroll(OutputStream outputStream, String domainName, Integer domainId, String nif) {
-		DefaultPayrollTemplate dpt = new DefaultPayrollTemplate();
-		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
-		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, "")) {
-			
-			DSLContext ctx = aonContext.getDslContext();
-			List<Integer> idList = ctx.select(SALARY.ID)
-			.from(SALARY)
-			.where(SALARY.EMPLOYEE_DOCUMENT.eq(nif))
-			.fetchStreamInto(SALARY).map(id -> id.getId()).collect(Collectors.toList());
-			
-			fillPayroll(outputStream, dpt, dpb, aonContext, idList.toArray(new Integer[idList.size()]));
-		}
-		
-
+	public static void generatePayroll(String domainName, OutputStream outputStream, Integer enterpriseId, Integer... salaryIds) {
+		generatePayroll(domainName, "", outputStream, enterpriseId, salaryIds);
 	}
 
 	private static void fillPayroll(OutputStream outputStream, DefaultPayrollTemplate dpt, DefaultPayrollBuilder dpb,
@@ -103,6 +82,8 @@ public class JooqPayrollBuilder {
 				p -> p.getIdProperty().in(salaryIds));
 
 		Collection<DefaultPayroll> payrolls = salaries.map(s -> {
+			System.out.println("\t"+s.getId());
+			
 			//PAYROLL RELATED DATA
 			{
 				dpb.setLiquid_period_start(s.getStartDate());
@@ -125,7 +106,16 @@ public class JooqPayrollBuilder {
 				dpb.setCif(s.getEnterpriseDocument());
 				dpb.setEnterprise(s.getEnterpriseName());
 				//ADDRESS FITTING
-				if (s.getEnterpriseAddress() != null) {
+				
+				Registry registry = AON.getRegistry(aonContext.getDomainName()
+						, aonContext.getDomainId()
+						, ""
+						, p -> p.getDocumentProperty().eq(s.getEnterpriseDocument()).and(p.getDomainProperty().eq(aonContext.getDomainId())));
+				
+				
+				RAddress raddress = AON.getRAddress(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(), p -> p.getRegistryProperty().eq(registry.getId()).and(p.getDomainProperty().eq(aonContext.getDomainId())));
+				String add = raddress.getFullAddress() != null ? raddress.getFullAddress() : s.getEnterpriseAddress();
+				if (add != null) {
 					List<String> address = null;
 					try {
 						address = PDFToolkit.divide_string_to_fit(s.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
@@ -133,7 +123,7 @@ public class JooqPayrollBuilder {
 						e1.printStackTrace();
 					}
 					if (address != null && address.size() > 1) {
-						dpb.setAddress(address.get(0));
+						dpb.setAddress(address.get(0) != null ? address.get(0).trim() : null);
 						dpb.setAddress_2(address.get(1));
 					} else {
 						dpb.setAddress(s.getEnterpriseAddress());
@@ -154,11 +144,18 @@ public class JooqPayrollBuilder {
 			{
 				dpb.setAccrual_total(s.getTotalPayment());
 				HashMap<Integer, ArrayList<DefaultPayrollAccrual>> paymentMap = new HashMap<Integer, ArrayList<DefaultPayrollAccrual>>();
-				s.getPayments().stream().sorted(Comparator.comparing(p -> p.getDescription())).filter(p -> p.getAmount() != 0d).forEach(p -> {
+				s.getPayments().stream().filter(JooqPayrollBuilder::filter).sorted(Comparator.comparing(p -> {
+					return !(p.getDescription() == null || p.getDescription().isEmpty()) ? p.getDescription() : "zzzzzz"; //Nulls or empties down
+				})).forEach(p -> {
 					DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(p.getAmount(), p.getDescription().replaceAll("\\[\\d*\\]", ""));
 					if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
 						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<DefaultPayrollAccrual>());
-					paymentMap.get(p.getPaymentType().ordinal()).add(accrual);
+					 
+					if (paymentMap.get(p.getPaymentType().ordinal()).stream().anyMatch(acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().get()))) {
+						DefaultPayrollAccrual repAcc = paymentMap.get(p.getPaymentType().ordinal()).stream().findFirst().get();
+						repAcc.setAmount(repAcc.getAmount().orElse(0d)+p.getAmount());
+					} else
+						paymentMap.get(p.getPaymentType().ordinal()).add(accrual);
 				});
 				dpb.setAccruals(paymentMap);
 			}
@@ -171,7 +168,9 @@ public class JooqPayrollBuilder {
 				ArrayList<String> inserted = new ArrayList<String>();
 				
 				HashMap<Integer, ArrayList<DefaultPayrollDeduction>> deductionMap = new HashMap<Integer, ArrayList<DefaultPayrollDeduction>>();
-				s.getDeductions().forEach(d -> {
+				s.getDeductions().stream().sorted(Comparator.comparing(d -> {
+					return !(d.getDescription() == null || d.getDescription().isEmpty()) ? d.getDescription() : chooseDescription(d.getDeductionType());
+				})).forEach(d -> {
 					DeductionType dt = d.getDeductionType();
 					List<ContextData> percList = data.get("PORCENTAJE_" + getDeductionType(dt.ordinal()));
 					ContextData cd = percList != null ? percList.get(0) : null;
@@ -183,70 +182,24 @@ public class JooqPayrollBuilder {
 							percent = -1d;
 					}
 					
-					int type = 0;
-					switch (dt.ordinal()) {
-					case 0:
-					case 1:
-					case 2:
-					case 3:
-					case 4:
-					case 5:
-						type = 1;
-						break;
-					case 6:
-						type = 2;
-						break;
-					case 7:
-						type = 3;
-						break;
-					case 8:
-						type = 4;
-						break;
-					default:
-						type = 5;
-					}
+					int type = chooseType(dt);
 					
 					String desc = d.getDescription();
 					
 					if(desc == null || desc.isEmpty()) {
-						switch (dt.ordinal()) {
-						case 0:
-							desc = "Contingencias comunes";
-							break;
-						case 2:
-							desc = "Desempleo";
-							break;
-						case 3:
-							desc = "Formación profesional";
-							break;
-						case 4:
-							desc = "Horas extraordinarias (Estruc.)";
-							break;
-						case 5:
-							desc = "Horas extraordinarias (No Estruc.)";
-							break;
-						case 6:
-							desc = "Retribuciones dinerarias";
-							break;
-						case 7:
-							desc = "Anticipo";
-							break;
-						case 8:
-							desc = "En especie";
-							break;
-						case 10:
-							desc = "Embargo";
-							break;
-						default:
-							desc = "Otras deducciones";
-					}
+						desc = chooseDescription(dt);
 					}
 						
 					
 					DefaultPayrollDeduction dpd = new DefaultPayrollDeduction(d.getAmount(), desc, percent);
 					if (!deductionMap.containsKey(type))
 						deductionMap.put(type, new ArrayList<DefaultPayrollDeduction>());
-					deductionMap.get(type).add(dpd);
+					
+					if (deductionMap.get(type).stream().anyMatch(ded -> AonStringUtils.equalsIgnoreCase(ded.getDescription().get(), dpd.getDescription().get()))) {
+						DefaultPayrollDeduction ded = deductionMap.get(type).stream().filter(d1 -> AonStringUtils.equalsIgnoreCase(d1.getDescription().get(), dpd.getDescription().get())).findFirst().get();
+						ded.setAmount(ded.getAmount().get()+dpd.getAmount().get());
+					} else
+						deductionMap.get(type).add(dpd);
 					inserted.add(getDeductionType(dt.ordinal()));
 				});
 				
@@ -267,6 +220,7 @@ public class JooqPayrollBuilder {
 				
 			}
 			//COSTS
+			Double totalEnterprise = 0d;
 			{
 				Contingency_bases_builder cbb = new Contingency_bases_builder();
 				//INITIALIZING CONTINGENCIES, JUST IN CASE
@@ -297,18 +251,41 @@ public class JooqPayrollBuilder {
 				}
 				//SETTING AMOUNTS
 				{
-					s.getCosts().forEach(c -> {
+					Double common_cont_ap_enterprise = 0d;
+					Double at_ep_ap_enterprise = 0d;
+					Double unemployment_ap_enterprise = 0d;
+					Double profes_form_ap_enterprise = 0d;
+					Double fogasa_ap_enterprise = 0d;
+					Double force_majeure_ap_enterprise = 0d;
+					Double no_struct_ap_enterprise = 0d;
+					
+					for (Cost c : s.getCosts()) {
+						totalEnterprise += (c.getAmount() != null ? c.getAmount() : 0d);
 						if (c.getCostType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal())
-							cbb.setCommon_cont_ap_enterprise(Optional.ofNullable(c.getAmount()));
-						else if (c.getCostType().ordinal() == DeductionType.IT.ordinal())
-							cbb.setAt_ep_ap_enterprise(Optional.ofNullable(c.getAmount()));
+							common_cont_ap_enterprise += (c.getAmount() != null ? c.getAmount() : 0d);
+						else if (c.getCostType().ordinal() == DeductionType.IT.ordinal()
+								|| c.getCostType().ordinal() == DeductionType.IMS.ordinal())
+							at_ep_ap_enterprise += (c.getAmount() != null ? c.getAmount() : 0d);
 						else if (c.getCostType().ordinal() == DeductionType.UNEMPLOYMENT.ordinal())
-							cbb.setUnemployment_ap_enterprise(Optional.ofNullable(c.getAmount()));
+							unemployment_ap_enterprise += (c.getAmount() != null ? c.getAmount() : 0d);
 						else if (c.getCostType().ordinal() == DeductionType.JOB_TRAINING.ordinal())
-							cbb.setProfes_form_ap_enterprise(Optional.ofNullable(c.getAmount()));
+							profes_form_ap_enterprise += (c.getAmount() != null ? c.getAmount() : 0d);
 						else if (c.getCostType().ordinal() == DeductionType.FOGASA.ordinal())
-							cbb.setFogasa_ap_enterprise(Optional.ofNullable(c.getAmount()));
-					});
+							fogasa_ap_enterprise += (c.getAmount() != null ? c.getAmount() : 0d);
+						else if (c.getCostType().ordinal() == DeductionType.STRUCTURAL_OVERTIME.ordinal())
+							force_majeure_ap_enterprise += (c.getAmount() != null ? c.getAmount() : 0d);
+						else if (c.getCostType().ordinal() == DeductionType.NON_STRUCTURAL_OVERTIME.ordinal())
+							no_struct_ap_enterprise += (c.getAmount() != null ? c.getAmount() : 0d);
+					}
+					
+					cbb.setCommon_cont_ap_enterprise(Optional.ofNullable(common_cont_ap_enterprise));
+					cbb.setAt_ep_ap_enterprise(Optional.ofNullable(at_ep_ap_enterprise));
+					cbb.setUnemployment_ap_enterprise(Optional.ofNullable(unemployment_ap_enterprise));
+					cbb.setProfes_form_ap_enterprise(Optional.ofNullable(profes_form_ap_enterprise));
+					cbb.setFogasa_ap_enterprise(Optional.ofNullable(fogasa_ap_enterprise));
+					cbb.setForce_majeure_ap_enterprise(Optional.ofNullable(force_majeure_ap_enterprise));
+					cbb.setNo_struct_ap_enterprise(Optional.ofNullable(no_struct_ap_enterprise));
+					
 					cbb.setMonthly_amount(Optional.ofNullable(s.getRemuneration()));
 				}
 				
@@ -358,19 +335,29 @@ public class JooqPayrollBuilder {
 				dpb.setContingencies(cbb.build());
 			}
 			dpb.setPayroll_total(s.getTotalLiquid());
-
+			
 			return dpb.build();
 		}).collect(Collectors.toList());
-
-		Attach attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
-				f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
-						.and(f.getDomainProperty().eq(aonContext.getDomainId())),
-				AttachType.REGISTRY);
+				
 		
+		//LOGO
 		Optional<InputStream> optLogo = Optional.empty();
-		if (attach1 != null && attach1.getData() != null)
-			optLogo = Optional.ofNullable(new ByteArrayInputStream(attach1.getData()));
-
+		{
+			
+			Attach attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
+					f -> f.getTypeProperty().eq(RegistryAttachmentType.SIGNATURE.value())
+							.and(f.getDomainProperty().eq(aonContext.getDomainId())),
+					AttachType.REGISTRY);
+			if (attach1 == null || attach1.getData() == null)
+				attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
+					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
+							.and(f.getDomainProperty().eq(aonContext.getDomainId())),
+					AttachType.REGISTRY);
+			
+			if (attach1 != null && attach1.getData() != null)
+				optLogo = Optional.ofNullable(new ByteArrayInputStream(attach1.getData()));
+		}
+		//PRINT
 		try {
 			dpt.print(outputStream, payrolls, optLogo, Optional.ofNullable(new Locale("es")));
 		} catch (CanNotCreatePdfException | IOException e) {
@@ -409,4 +396,66 @@ public class JooqPayrollBuilder {
 				return null;
 		}
 	}
+	
+	private static int chooseType (DeductionType dt) {
+		switch (dt.ordinal()) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			return 1;
+		case 6:
+			return 2;
+		case 7:
+			return  3;
+		case 8:
+			return 4;
+		default:
+			return 5;
+		}
+	}
+	
+	private static String chooseDescription (DeductionType dt) {
+		switch (dt.ordinal()) {
+		case 0:
+			return "Contingencias comunes";
+		case 1:
+			return "Contingencias profesionales";
+		case 2:
+			return "Desempleo";
+		case 3:
+			return "Formación profesional";
+		case 4:
+			return "Horas extraordinarias (Estruc.)";
+		case 5:
+			return "Horas extraordinarias (No Estruc.)";
+		case 6:
+			return "Retribuciones dinerarias";
+		case 7:
+			return "Anticipo";
+		case 8:
+			return "En especie";
+		case 10:
+			return "Embargo";
+		default:
+			return "Otras deducciones";
+		}
+	}
+	
+	private static boolean filter (Payment payment) {
+		return !(payment.getAmount() == 0 && payment.getQuote() == 0);
+	}
+	
+	private static <T extends Enum<?>> T typeOf(Byte ordinal, Class<T> type) {
+	if ( ordinal == null )
+		return null;
+	try {
+		return type.getEnumConstants()[ordinal];
+	} catch ( Exception e ) {
+		return null;
+	}
+}
+	
 }

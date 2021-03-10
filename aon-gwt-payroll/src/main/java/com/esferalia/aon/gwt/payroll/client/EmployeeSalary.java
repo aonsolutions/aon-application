@@ -544,7 +544,8 @@ public class EmployeeSalary extends Composite {
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden(PayrollPrintService.Parameter.TYPE.getName(), "salary"));
 		flowPanel.add(new Hidden(PayrollPrintService.Parameter.ENTERPRISE.getName(), String.valueOf(((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId())));
-		
+		flowPanel.add(new Hidden(PayrollPrintService.Parameter.DOMAIN.getName(), Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden(PayrollPrintService.Parameter.USER.getName(), Wnd.getCurrentUser()));
 		
 		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++) {
 			flowPanel.add(new Hidden(PayrollPrintService.Parameter.ID.getName(), ""+((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId()));

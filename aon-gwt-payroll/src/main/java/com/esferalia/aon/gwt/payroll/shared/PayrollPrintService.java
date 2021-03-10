@@ -5,7 +5,9 @@ public interface PayrollPrintService {
 		TYPE ("type"),
 		ENTERPRISE ("enterprise"),
 		ID ("id"),
-		NAME ("name");
+		NAME ("name"),
+		DOMAIN ("domain"),
+		USER ("user");
 		
 		private String name;
 		
