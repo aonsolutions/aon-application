@@ -401,7 +401,7 @@ public abstract class SalaryTable extends ResizeComposite {
 	
 	public void setEmployeeView() {
 		salaryDG.removeColumn(1);
-		salaryDG.removeColumn(2);
+		salaryDG.removeColumn(1);
 	}
 	
 	// ---------------------------------------------- Setter Methods ----------------------------------------------
