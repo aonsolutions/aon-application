@@ -205,7 +205,7 @@ export class AonConfiguration extends AonElement {
       this.buildCreateUser(true)
     );
     aonConfiguration.addToolbarOption("UserAdd", "add", () =>
-      this.buildCreateUser(true)
+      this.buildCreateUser(false)
     );
 
     aonConfiguration.setContentHTML("<aon-user-list> </aon-user-list>");

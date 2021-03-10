@@ -529,6 +529,10 @@ export class AonApplication extends AonElement {
     return this.parentNode;
   }
 
+  getDialog() {
+    return this.getElement(this.DIALOG);
+  }
+
   getChild() {
     let el = this.getElement(this.CONTENT);
     if (el) el = el.firstChild;

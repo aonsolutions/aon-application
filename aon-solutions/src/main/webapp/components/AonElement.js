@@ -1,3 +1,5 @@
+// import {webkitRequestMobile} from '../services/service';
+
 export class AonElement extends HTMLElement{
   ROOT_PANEL;
 
@@ -7,25 +9,31 @@ export class AonElement extends HTMLElement{
   }
 
   isMobile() {
-    return this.iOS() || this.android() || this.blackBerry() || this.windowsPhone() || (window.innerWidth <= 850 && window.innerHeight <= 912);
+    return this.iOS() || this.android() || this.blackBerry() || this.windowsPhone() || (window.innerWidth <= 850 && window.innerHeight <= 912) ; //|| webkitRequestMobile();
   }
 
   iOS() {
     return navigator.platform.toLowerCase().includes('ipad')
+      || navigator.userAgent.toLowerCase().includes('ipad')
       || navigator.platform.toLowerCase().includes('iphone')
-      || navigator.platform.toLowerCase().includes('ipod');
+      || navigator.userAgent.toLowerCase().includes('iphone')
+      || navigator.platform.toLowerCase().includes('ipod')
+      || navigator.userAgent.toLowerCase().includes('ipod');
   }
 
   android() {
-    return navigator.platform.toLowerCase().includes('android');
+    return navigator.platform.toLowerCase().includes('android')
+      || navigator.userAgent.toLowerCase().includes('android');
   }
 
   blackBerry() {
-    return navigator.platform.toLowerCase().includes('blackberry');
+    return navigator.platform.toLowerCase().includes('blackberry')
+      || navigator.userAgent.toLowerCase().includes('blackberry');
   }
 
   windowsPhone() {
-    return navigator.platform.toLowerCase().includes('windows phone');
+    return navigator.platform.toLowerCase().includes('windows phone')
+      || navigator.userAgent.toLowerCase().includes('windows phone');
   }
 
   getElement(id) {
@@ -59,5 +67,9 @@ export class AonElement extends HTMLElement{
   rootPanelHtml(html) {
     this.clearElement(this.ROOT_PANEL);
     this.getElement(this.ROOT_PANEL).innerHTML = html;
+  }
+
+  getApplication() {
+    return document.querySelector('aon-application');
   }
 }

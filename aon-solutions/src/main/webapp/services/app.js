@@ -243,7 +243,7 @@ export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVO
 
 export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, PAYROLL, INVOICE, COMUNICA, MESSENGER];
 
-export const EmployeeApps = ['documental', 'timecontrol', 'payroll', 'messenger'];
+export const EmployeeApps = ['documental', 'timecontrol', 'payroll', 'messenger', 'invoice'];
 export const EnterpriseApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'invoice', 'timecontrol', 'management', 'messenger', 'ocr', 'aio'];
 
 export const Apps = { ACCOUNTING, FISCAL,PAYROLL, COMUNICA, DOCUMENTAL,

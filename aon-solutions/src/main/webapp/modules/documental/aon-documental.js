@@ -28,13 +28,32 @@ export class AonDocumental extends AonElement {
     _tags;
     _categories;
     _scopes;
-    _roles;
+
+    dur;
 
     DOCUMENTAL;
   	INPUTFILE;
 
   	constructor () {
   		super();
+    }
+
+    connectedCallback () {
+      this.initialize();
+      this.innerHTML = `
+        <aon-application id="${this.DOCUMENTAL}" title="${MSG.AON_MSG_DOCUMENTARY}"></aon-application>
+        <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
+      `;
+      getDomainUserRoles({}).then(r => {
+        this.dur = new DomainUserRoles(r);
+        this.build();
+        //this._roles.isBidoq() {
+          //this.buildBidoq();
+        //}
+      });
+    }
+
+    initialize() {
       this.DOCUMENTAL = 'aonDocumental';
       this.INPUTFILE = this.DOCUMENTAL + 'InputFile';
       this._filter = {
@@ -45,24 +64,14 @@ export class AonDocumental extends AonElement {
       };
     }
 
-    connectedCallback () {
-      this.innerHTML = `
-        <aon-application id="${this.DOCUMENTAL}" title="${MSG.AON_MSG_DOCUMENTARY}"></aon-application>
-        <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
-      `;
-      getDomainUserRoles({}).then(r => {
-        this._roles = new DomainUserRoles(r);
-        this.build();
-        //this._roles.isBidoq() {
-          //this.buildBidoq();
-        //}
-      });
+    getDur() {
+      return this.dur;
     }
 
     build(){
       let aonDocumental = this.getElement(this.DOCUMENTAL);
 
-      if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()) {
+      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
         aonDocumental.drag_and_drop = true;
       }
 
@@ -77,17 +86,18 @@ export class AonDocumental extends AonElement {
   		});
 
       if(this.isMobile()) {
-        if(this._roles.isDocumentalPortal() || this._roles.isDocumentalManager())
+        if(this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
           aonDocumental.addFloatOption(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
       } else {
-        if(this._roles.isDocumentalPortal() || this._roles.isDocumentalManager()){
+        if(this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager()){
           aonDocumental.addToolbarOption2(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
         }
         aonDocumental.addSearchOption();
         aonDocumental.addEventListener('search', (event) => this.search(event.detail));
       }
 
-      this.addDocumentOptions();
+      if(this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
+        this.addDocumentOptions();
       this.addTypeOptions();
       this.addCategoryOptions();
       this.addTagOptions();
@@ -120,7 +130,7 @@ export class AonDocumental extends AonElement {
     }
 
     addTypeOptions() {
-      if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()) {
+      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
         let typeOptions = [{
             name: MSG.AON_MSG_ENTERPRISE,
             icon: MATERIAL_ICONS.BUSINESS,
@@ -140,7 +150,7 @@ export class AonDocumental extends AonElement {
             this.aonDocumentalList();
           }
         }];
-        if(this._roles.isDocumentalManager()) {
+        if(this.getDur().isDocumentalManager()) {
           typeOptions.push({
             name: MSG.AON_MSG_ASESOR,
             icon: 'work',
@@ -152,22 +162,21 @@ export class AonDocumental extends AonElement {
             }
           });
         }
-        let aonDocumental = this.getElement(this.DOCUMENTAL);
-        aonDocumental.addSidenavOptions2(DocumentalSidenav.TYPES, typeOptions);
-
+        let application = this.getApplication();
+        application.addSidenavOptions2(DocumentalSidenav.TYPES, typeOptions);
       }
     }
 
     addCategoryOptions() {
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
-      if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
-        aonDocumental.addSidenavOptions2(DocumentalSidenav.CATEGORIES, [], () => this.createCategory());
-      } else aonDocumental.addSidenavOptions2(DocumentalSidenav.CATEGORIES, []);
+      let application = this.getApplication();
+      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
+        application.addSidenavOptions2(DocumentalSidenav.CATEGORIES, [], () => this.createCategory());
+      } else application.addSidenavOptions2(DocumentalSidenav.CATEGORIES, []);
       this.loadCategories();
     }
 
     loadCategories() {
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      let application = this.getApplication();
       getCategories({domain: localStorage.getItem('aon_domain_id')}).then( categories => {
         this._categories = categories.map(c => {
           return {
@@ -175,7 +184,7 @@ export class AonDocumental extends AonElement {
             name: c.name
           }
         });
-        this.clearElement(aonDocumental.SIDENAV + DocumentalSidenav.CATEGORIES.id + 'List');
+        this.clearElement(application.SIDENAV + DocumentalSidenav.CATEGORIES.id + 'List');
         categories.forEach((item, i) => {
           let option = {
             name: item.name,
@@ -186,7 +195,7 @@ export class AonDocumental extends AonElement {
               this.aonDocumentalList();
             }
           };
-          if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
+          if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
             option.actions = [{
                 id: 'Delete',
                 icon: 'delete',
@@ -198,13 +207,12 @@ export class AonDocumental extends AonElement {
               }
             ];
           }
-          aonDocumental.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
+          application.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
         });
       });
     }
 
     loadScopes() {
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
       getScopes().then( scopes => {
         this._scopes = scopes.map(s => {
           return {
@@ -216,8 +224,7 @@ export class AonDocumental extends AonElement {
     }
 
     createCategory() {
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
-      let d = document.getElementById(aonDocumental.DIALOG);
+      let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
       if(!this.isMobile()) d.width = '400px';
       d.setTitle(MSG.AON_MSG_ADD_CATEGORY);
@@ -234,8 +241,7 @@ export class AonDocumental extends AonElement {
     }
 
     editCategory(category) {
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
-      let d = document.getElementById(aonDocumental.DIALOG);
+      let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
   		if(!this.isMobile()) d.width = '400px';
   		d.setTitle(MSG.AON_MSG_EDIT_CATEGORY);
@@ -253,8 +259,7 @@ export class AonDocumental extends AonElement {
     }
 
     deleteCategory(category) {
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
-      let d = document.getElementById(aonDocumental.DIALOG);
+      let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
   		if(!this.isMobile()) d.width = '400px';
   		d.setTitle(MSG.AON_MSG_DELETE_CATEGORY);
@@ -268,15 +273,15 @@ export class AonDocumental extends AonElement {
     }
 
     addTagOptions() {
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
-      if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
-        aonDocumental.addSidenavOptions2(DocumentalSidenav.TAGS, [], () => this.createTag());
-      } else aonDocumental.addSidenavOptions2(DocumentalSidenav.TAGS, []);
+      let application = this.getApplication();
+      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
+        application.addSidenavOptions2(DocumentalSidenav.TAGS, [], () => this.createTag());
+      } else application.addSidenavOptions2(DocumentalSidenav.TAGS, []);
       this.loadTags();
     }
 
     loadTags() {
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
+      let application = this.getApplication();
       getTags({domain: localStorage.getItem('aon_domain_id')}).then( tags => {
         this._tags = tags.map(t => {
           return {
@@ -284,7 +289,7 @@ export class AonDocumental extends AonElement {
             name: t.name
           }
         });
-        this.clearElement(aonDocumental.SIDENAV + DocumentalSidenav.TAGS.id + 'List');
+        this.clearElement(application.SIDENAV + DocumentalSidenav.TAGS.id + 'List');
         tags.forEach((item, i) => {
           let option = {
             name: item.name,
@@ -295,7 +300,7 @@ export class AonDocumental extends AonElement {
               this.aonDocumentalList();
             }
           };
-          if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
+          if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
             option.actions = [{
                 id: 'Delete',
                 icon: 'delete',
@@ -308,14 +313,13 @@ export class AonDocumental extends AonElement {
             ];
           }
 
-          aonDocumental.addSidenavOptionsListValue(DocumentalSidenav.TAGS, option);
+          application.addSidenavOptionsListValue(DocumentalSidenav.TAGS, option);
         });
       });
     }
 
     createTag() {
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
-      let d = document.getElementById(aonDocumental.DIALOG);
+      let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
       if(!this.isMobile()) d.width = '400px';
       d.setTitle(MSG.AON_MSG_ADD_TAG);
@@ -332,8 +336,7 @@ export class AonDocumental extends AonElement {
     }
 
     editTag(tag) {
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
-      let d = document.getElementById(aonDocumental.DIALOG);
+      let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
       if(!this.isMobile()) d.width = '400px';
       d.setTitle(MSG.AON_MSG_EDIT_TAG);
@@ -351,8 +354,7 @@ export class AonDocumental extends AonElement {
     }
 
     deleteTag(tag) {
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
-      let d = document.getElementById(aonDocumental.DIALOG);
+      let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
       if(!this.isMobile()) d.width = '400px';
       d.setTitle(MSG.AON_MSG_DELETE_TAG);
@@ -378,13 +380,13 @@ export class AonDocumental extends AonElement {
   			documentalList.setFilter(filter);
   			documentalList.init();
   		} else {
-  			let aonDocumental = this.getElement(this.DOCUMENTAL);
+        let application = this.getApplication();
   			if(this.isMobile()) {
-          aonDocumental.setContentHTML(filter
+          application.setContentHTML(filter
   					? `<aon-mobile-documental-list id="aonDocumentalList" filter='${JSON.stringify(filter)}'></aon-mobile-documental-list>`
   					: `<aon-mobile-documental-list id="aonDocumentalList"></aon-mobile-documental-list>`);
   			}  else {
-  				aonDocumental.setContentHTML(filter
+  				application.setContentHTML(filter
   					? `<aon-documental-list id="aonDocumentalList" filter='${JSON.stringify(filter)}'></aon-documental-list>`
   					: `<aon-documental-list id="aonDocumentalList"></aon-documental-list>`);
   			}
@@ -392,11 +394,11 @@ export class AonDocumental extends AonElement {
   	}
 
     aonDocument(doc) {
-      let aonDocumental = document.getElementById('aonDocumental');
+      let application = this.getApplication();
       if(this.isMobile()) {
-        aonDocumental.setContentHTML(`<aon-mobile-document document='${JSON.stringify(doc)}'> </aon-mobile-invoice>`);
+        application.setContentHTML(`<aon-mobile-document document='${JSON.stringify(doc)}'> </aon-mobile-invoice>`);
       } else {
-        aonDocumental.setContentHTML(`<aon-document document='${JSON.stringify(doc)}'> </aon-document>`);
+        application.setContentHTML(`<aon-document document='${JSON.stringify(doc)}'> </aon-document>`);
       }
     }
 
@@ -406,14 +408,13 @@ export class AonDocumental extends AonElement {
     }
 
     upload(files) {
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
-      let d = document.getElementById(aonDocumental.DIALOG);
+      let d = document.getElementById(this.getApplication().DIALOG);
       d.clear();
       if(!this.isMobile()) d.width = '400px';
       d.setTitle(MSG.AON_MSG_UPLOAD_FILE);
       d.setContent(this.uploadOption(files.length === 1));
       let selType = this.getElement("aonDocumentalUploadType");
-      selType.value = this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()
+      selType.value = this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()
         ? 'enterprise' : 'employee';
       d.addAcceptAction(() => {
         let data = {
@@ -504,9 +505,9 @@ export class AonDocumental extends AonElement {
       selType.title = MSG.AON_MSG_TYPE;
 
       let typeOptions = EMPLOYEE_TYPE_OPTION;
-      if(this._roles.isDocumentalManager()) {
+      if(this.getDur().isDocumentalManager()) {
         typeOptions = ASESOR_TYPE_OPTION;
-      } else if(this._roles.isDocumentalPortal()){
+      } else if(this.getDur().isDocumentalPortal()){
         typeOptions = ENTERPRISE_TYPE_OPTION;
       };
       selType.setOptions(typeOptions);
@@ -534,11 +535,11 @@ export class AonDocumental extends AonElement {
           type: d.type
         };
 
-        let aonDocumental = this.getElement(this.DOCUMENTAL);
-        aonDocumental.startLoader();
+        const application = this.getApplication();
+        application.startLoader();
 
         uploadFileDocumental(data).then((r) => {
-          aonDocumental.stopLoader();
+          application.stopLoader();
           this.aonDocumentalList()
           //this.getInvoice().id = r.id;
         });
@@ -548,16 +549,11 @@ export class AonDocumental extends AonElement {
     // BIDOQ
 
     async buildBidoq() {
-        const aonDocumental = document.getElementById('aonDocumental');
-
-        const folders = await this.getFolders();
-        console.log("folders" + folders);
-        aonDocumental.dataset['folders'] = JSON.stringify(folders);
-
-        // const tags = await this.getTags();
-        // aonDocumental.dataset['tags'] = JSON.stringify(tags);
-        this.addBidoqOptions(aonDocumental, folders);
-
+      const application = this.getApplication();
+      const folders = await this.getFolders();
+      console.log("folders" + folders);
+      application.dataset['folders'] = JSON.stringify(folders);
+      this.addBidoqOptions(application, folders);
     }
 
     async getFolders() {
@@ -579,23 +575,22 @@ export class AonDocumental extends AonElement {
         }
     }
 
-    addBidoqOptions(aonDocumental, folders) {
-        const categoryOptions = folders.map((folder) => {
-            const option = {
-                name: folder.carpeta,
-                icon: 'folder',
-                fn: () => this.showBidoqFiles({folder: folder.carpetaID})
-            };
-
-            return option;
-        });
-
-        aonDocumental.addSidenavOptions('BIDOQ', categoryOptions);
+    addBidoqOptions(folders) {
+      const categoryOptions = folders.map((folder) => {
+        const option = {
+          name: folder.carpeta,
+          icon: 'folder',
+          fn: () => this.showBidoqFiles({folder: folder.carpetaID})
+        };
+        return option;
+      });
+      this.getApplication().addSidenavOptions('BIDOQ', categoryOptions);
     }
 
     showBidoqFiles(data) {
-      let aonDocumental = this.getElement('aonDocumental');
-      let d = document.getElementById(aonDocumental.DIALOG);
+
+      this.getApplication().getDialog();
+      let d = this.getElement(this.getApplication().DIALOG);
       d.clear();
       if(!this.isMobile()) d.width = '400px';
       d.setTitle("BIDOQ");
@@ -605,7 +600,6 @@ export class AonDocumental extends AonElement {
     }
 
     async bidoq(additionalData){
-
       bidoq().then(r => {
         let data2 = JSON.parse(r);
         console.log(JSON.stringify(data2));
