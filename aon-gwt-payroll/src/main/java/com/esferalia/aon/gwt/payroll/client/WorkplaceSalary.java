@@ -223,10 +223,11 @@ public class WorkplaceSalary extends Composite {
 		dateFilterList.addItem("Personalizado");
 		dateFilterList.addItem("Mes actual");
 		dateFilterList.addItem("Mes anterior");
-		dateFilterList.addItem("Tres meses");
-		dateFilterList.addItem("Seis meses");
+		dateFilterList.addItem(String.valueOf("\u00DA") + "ltimo trimestre");
+		dateFilterList.addItem(String.valueOf("\u00DA") + "ltimo semestre");
 		dateFilterList.addItem("A" + String.valueOf("\u00F1") + "o actual");
 		dateFilterList.addItem("A" + String.valueOf("\u00F1") + "o anterior");
+		dateFilterList.setSelectedIndex(0);
 	}
 	
 	// ------------------------------------------ Set WorkplaceSalaryObject -----------------------------------------
@@ -431,6 +432,8 @@ public class WorkplaceSalary extends Composite {
 			return DateUtils.getLastDayOfMonth(DateUtils.getDate(monthTToValue, yearTToValue));
 		} else if(2 == dateFilterType) { // Mes anterior
 			return DateUtils.getLastDayOfMonth(DateUtils.addMonths2Date(DateUtils.getFirstDayOfMonth(), -1));
+		} else if(6 == dateFilterType) { // Año anterior
+			return DateUtils.getLastDayOfYear(DateUtils.addYears2Date(DateUtils.getFirstDayOfMonth(), -1));
 		}
 		
 		return DateUtils.getLastDayOfMonth();
