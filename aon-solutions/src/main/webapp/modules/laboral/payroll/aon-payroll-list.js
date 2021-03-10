@@ -1,10 +1,11 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { formatNumber, isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
+import { formatNumber, isEmptyObject, formatDate, sortBy, waitEl, geMonthYear } from "../../../services/utils.js";
 import { getEmployeeSalaries, getEnterpriseSalaries } from "../../../services/service.js";
 import {  PresenceFilterInput, SigninSidenav } from "../../signin/signinEnums.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
+import { firstLetters } from "../../signin/time-control/utils.js";
 export class AonPayrollList extends AonElement {
   TABLE_ID;
   static get observedAttributes() {
@@ -93,10 +94,10 @@ export class AonPayrollList extends AonElement {
     //   }
     // });
 
-    this.getElement("startDate").addEventListener("change",(ev)=>{
+    this.getElement("startDate").addEventListener("change", (ev)=>{
       periodEl.value = "personalized";
     });
-    this.getElement("endDate").addEventListener("change",(ev)=>{
+    this.getElement("endDate").addEventListener("change", (ev)=>{
       periodEl.value = "personalized";
     });
   }
@@ -118,8 +119,8 @@ export class AonPayrollList extends AonElement {
       aonTable.removeColumns();
       aonTable.addColumn("Nombre", "string", "name", "30%");
       aonTable.addColumn("C. Trabajo", "string", "workplaceName", "20%");
-      aonTable.addColumn("F. Inicio", "date", "startDateParse", "10%");
-      aonTable.addColumn("F. Fin", "date", "endDateParse", "10%");
+      aonTable.addColumn("F. Inicio", "date", "startDate", "10%");
+      aonTable.addColumn("F. Fin", "date", "endDate", "10%");
       aonTable.addColumn("Bruto", "number", "totalPayment", "10%");
       aonTable.addColumn("Deducciones", "number", "totalDeduction", "10%");
       aonTable.addColumn("Líquido", "number", "totalLiquid", "10%");
@@ -127,6 +128,8 @@ export class AonPayrollList extends AonElement {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
+          res.startDate = formatDate(res.startDate);
+          res.endDate = formatDate(res.endDate);
           aonTable.addRow(res, (el) => this.aonEvent(el, res));
         });
       } catch (e) {
@@ -145,14 +148,16 @@ export class AonPayrollList extends AonElement {
         let isEmployee = this.aonLaboralParentEl.isEmployee();
         
         resp.map((res, idx) => {
-          let options = {
-            paddingTopTitle: "5px",
-            iconHtmlCustom: `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.totalLiquid}</span>`,
-            title: `${res.endDateParse}`,
-          };
-          if(!isEmployee){
+          let options = {};
+          let dateParse = firstLetters(geMonthYear(res.endDate));
+          if(isEmployee){
+            options.paddingTopTitle = "5px";
+            options.iconHtmlCustom = `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.totalLiquid}</span>`;
+            options.title = `${dateParse}`;
+          } else {
+            options.iconHtmlCustom = `${res.lettersHtml}`;
             options.title = res.name;
-            options.subtitle = res.endDateParse;
+            options.subtitle = `${dateParse} <span style="float: right;">${res.totalLiquid}</span> `;
           }
           aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
         });
@@ -191,8 +196,7 @@ export class AonPayrollList extends AonElement {
             type,
             workplaceName,
           }) => {
-              const typeText = this.getTypeSalaryText(type);
-              const lettersType = (typeText).substr(0,1);
+              const lettersType = this.getTypeSalaryText(type).substr(0,1);
               let color = "";
               if("E"===lettersType)      color = "in"
               else if("F"===lettersType) color = "fin"; 
@@ -200,15 +204,15 @@ export class AonPayrollList extends AonElement {
 
               const lettersHtml = `<div class="profile-letters ${color}">${lettersType}</div>`;
               const obj = {
+                id,
                 lettersHtml,
                 contract,
                 name: employeeName,
-                startDateParse: startDate,
-                endDateParse:  endDate,
-                id,
-                totalDeduction: formatNumber(totalDeduction.toString(), 2),
-                totalLiquid: formatNumber(totalLiquid.toString(), 2),
-                totalPayment: formatNumber(totalPayment.toString(), 2),
+                startDate,
+                endDate,
+                totalDeduction: formatNumber(totalDeduction, 2, "EUR"),
+                totalLiquid: formatNumber(totalLiquid, 2, "EUR"),
+                totalPayment: formatNumber(totalPayment, 2, "EUR"),
                 type,
                 workplaceName,
               };

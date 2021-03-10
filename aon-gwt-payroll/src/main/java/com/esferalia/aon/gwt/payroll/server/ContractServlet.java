@@ -51,7 +51,6 @@ public class ContractServlet extends AonApiHttpServlet {
 				default:
 					responseJson(req, resp, path);
 			}
-
 		} catch (Exception e) {
 			error(req, resp, e);
 		}

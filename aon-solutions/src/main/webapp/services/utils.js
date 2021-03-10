@@ -181,5 +181,14 @@ export const getDayMonth = (date) => {
   const month = months[d.getMonth()];
   return day + '-' + month;
 }
+export const geMonthYear = (date) => {
+  const d = new Date(date)
+  const month = months[d.getMonth()];
+  return month+". "+ d.getFullYear();
+}
 
-export const formatNumber = (value, decimals, locale = "de-DE") => new Intl.NumberFormat(locale, { minimumFractionDigits: decimals || 0}).format(value.replace(",", "."));
+export const formatNumber = (value, decimals = 0, simbolo = undefined, locale = "de-DE") => {
+  let options = { minimumFractionDigits: decimals, maximumFractionDigits: decimals};
+  if(simbolo){ options.style = 'currency'; options.currency = simbolo};
+  return  new Intl.NumberFormat(locale, options).format(value.toString().replace(",", "."));
+}

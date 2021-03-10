@@ -7,7 +7,7 @@ export class AonElement extends HTMLElement{
   }
 
   isMobile() {
-    return this.iOS() || this.android() || this.blackBerry() || this.windowsPhone() || (window.innerWidth <= 850 && window.innerHeight <= 850);
+    return this.iOS() || this.android() || this.blackBerry() || this.windowsPhone() || (window.innerWidth <= 850 && window.innerHeight <= 912);
   }
 
   iOS() {
