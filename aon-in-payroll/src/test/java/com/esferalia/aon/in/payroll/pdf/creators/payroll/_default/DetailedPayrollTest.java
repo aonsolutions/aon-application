@@ -4,6 +4,8 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,11 +40,11 @@ public class DetailedPayrollTest {
 		//CREATE ACCRUALS
 		Map<Integer,ArrayList<DefaultPayrollAccrual>> ac = new HashMap<Integer,ArrayList<DefaultPayrollAccrual>>();
 		
-		for(int i = 0; i < random(5); i++) ac.put((int) random(61),new ArrayList<DefaultPayrollAccrual>());
+		for(int i = 0; i < random(5)-1; i++) ac.put((int) i+1,new ArrayList<DefaultPayrollAccrual>());
 		Set<Integer> keys = ac.keySet();
 		
 		for(Integer key : keys) {
-			for (int i = 0; i < random(10); i++) {
+			for (int i = 0; i < random(10)-1; i++) {
 				DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(random(999),"Descripcion por defecto.");
 				ac.get(key).add(accrual);
 			}
@@ -63,7 +65,7 @@ public class DetailedPayrollTest {
 			for (int i = 0; i < random(3); i++) {
 				DefaultPayrollDeduction deduction =
 						new DefaultPayrollDeduction(
-								random(9999),
+								random(10),
 								"Descripcion por defecto",
 								random(99)
 						);
@@ -115,7 +117,7 @@ public class DetailedPayrollTest {
 		.setAntiquity(Optional.of(new Date()))
 		.setLiquid_period_start(Optional.of(new Date()))
 		.setLiquid_period_end(Optional.of(new Date()))
-		.setTotal_days(Optional.of(999999999))
+		.setTotal_days(Optional.of(30))
 		.setAccruals(Optional.of(ac))
 		.setDeductions(Optional.of(de))
 		.setAccrual_total(Optional.of(99999.99))
@@ -126,19 +128,21 @@ public class DetailedPayrollTest {
 		
 		try { 
 			System.out.println(" Printing PDF file..... \n");
-			PdfMaker.print_default_payroll(new ByteArrayOutputStream(), builder.build(), DetailedPayrollTest.class.getResourceAsStream("HOR.png"),new Locale("Es"));
+			PdfMaker.print_default_payroll(new FileOutputStream("./payroll.pdf"), builder.build(), DetailedPayrollTest.class.getResourceAsStream("HOR.png"),new Locale("Es"));
 			System.out.println(" >> DONE.");
 		} 
 		catch (CanNotCreatePdfException e) {
 			e.printStackTrace(); 
 			fail("Can not create the payroll");
-		}
+		} catch (FileNotFoundException e) {e.printStackTrace();}
 		
 	}
 	
 
 	//RANDOM BETWEEN 0 AND Y
 	public double random(double y){
-		return 1 + Math.random()*(y-1);
+		//return 3d;
+		Double r = 1 + Math.random()*(y-1);
+		return 3;
 	}
 }

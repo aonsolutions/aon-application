@@ -44,4 +44,13 @@ public class PdfFormats {
 		formattedDate = Optional.of(dateFormatter.format(date));
 		return formattedDate;
 	}
+	
+	//FORMAT DATE TO STRING IN A SPECIFIC FORMAT (OPTIONAL)
+	public static Optional<String> formatDate(Optional<Date> date, String format) {
+		if(date.isEmpty()) return Optional.of("");
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
+		Optional<String> formattedDate;
+		formattedDate = Optional.of(dateFormatter.format(date.get()));
+		return formattedDate;
+	}
 }
