@@ -1174,7 +1174,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private AonToolbarButton redoButton;
 	private AonToolbarButton fxButton;
 	private AonToolbarButton printPreviewButton;
-	
+	private AonToolbarButton serviAgreementPDFButton;
+	private AonToolbarButton serviAgreementXLSButton;
 	
 	public AgreementDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -1847,6 +1848,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		setDescription();
 		
 		fxButton.setEnabled(false);
+		
 	}
 
 	@Override
@@ -1900,6 +1902,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			deckPanelExtras.showWidget(0);
 		
 		checkTypeOfExistingExtra();
+		
+		// ServiAgreements Buttons
+		boolean isServiAgreement = this.agreementDraftObject.isServiAgreement();
+		setVisible(serviAgreementPDFButton.getElement(), isServiAgreement);
+		setVisible(serviAgreementXLSButton.getElement(), isServiAgreement);
 		
 	}
 
@@ -4490,6 +4497,28 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		});
 		toolbar.add(printPreviewButton);
 		
+		serviAgreementPDFButton = new AonToolbarButton("ServiConvenios PDF", AON.CSS.aonIconPdf() );
+		serviAgreementPDFButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				String url = GWT.getModuleBaseURL() + "servi_agreement?fileType=pdf&ssNumber=" + agreementDraftObject.getSSNumber();
+				Window.open( url, "_blank", "status=0,toolbar=0,menubar=0,location=0");
+			}
+		});
+		serviAgreementPDFButton.setVisible(false);
+		toolbar.add(serviAgreementPDFButton);
+		
+		serviAgreementXLSButton = new AonToolbarButton("ServiConvenios XLS", AON.CSS.aonIconExcel() );
+		serviAgreementXLSButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				String url = GWT.getModuleBaseURL() + "servi_agreement?fileType=xls&ssNumber=" + agreementDraftObject.getSSNumber();
+				Window.open( url, "_blank", "status=0,toolbar=0,menubar=0,location=0");
+			}
+		});
+		serviAgreementXLSButton.setVisible(false);
+		toolbar.add(serviAgreementXLSButton);
+		
 		fxButton = new AonToolbarButton("fx", AON.CSS.aonIconFx() );
 		fxButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -4525,6 +4554,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		undoAllButton.ensureDebugId("undoAllButton");
 		acceptButton.ensureDebugId("acceptButton");
 		printPreviewButton.ensureDebugId("printPreviewButton");
+		serviAgreementPDFButton.ensureDebugId("serviAgreementPDFButton");
+		serviAgreementXLSButton.ensureDebugId("serviAgreementXLSButton");
 		
 		return toolbar;
 	}

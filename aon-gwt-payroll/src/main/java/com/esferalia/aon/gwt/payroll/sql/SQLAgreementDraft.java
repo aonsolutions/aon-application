@@ -646,7 +646,7 @@ public class SQLAgreementDraft {
 
 		int agreementId = insertAgreement(conn, domainId, draft);
 		draft.setId(agreementId);
-
+		
 		SalaryTable salaryTable = draft.getDraftSalaryTable();
 
 		for (Variable variable : salaryTable.getVariables(0)) {
@@ -684,6 +684,9 @@ public class SQLAgreementDraft {
 				JooqAgreement.insertExtra(conn, domainId, draft.getId(), extra);
 			}
 		}
+		
+		// Insert ServiAgreement AGREEMENT_DATA
+		JooqAgreement.insertServiAgreementData(conn, domainId, draft.getId(), draft.getIsServiAgreement());
 	}
 
 	public static void update(Connection conn, AgreementDraft draft,

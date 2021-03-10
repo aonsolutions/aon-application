@@ -63,6 +63,7 @@ public class Agreement implements Serializable, HasId<Integer>, HasDomain<Intege
 	
 	private boolean levelsWithoutCategories;
 	private boolean hasContracts;
+	private boolean isServiAgreement;
 	
 	private Set<Level> levels;
 	private Map<Integer, Set<String>> categories;
@@ -132,6 +133,14 @@ public class Agreement implements Serializable, HasId<Integer>, HasDomain<Intege
 	
 	public boolean getHasContract() {
 		return this.hasContracts;
+	}
+	
+	public void setIsServiAgreement(boolean isServiAgreement) {
+		this.isServiAgreement = isServiAgreement;
+	}
+	
+	public boolean getIsServiAgreement() {
+		return this.isServiAgreement;
 	}
 	
 	public Set<Level> getLevels() {

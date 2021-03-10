@@ -371,6 +371,10 @@ public class AgreementDraftObject {
 		return agreementDraft.getSSNumber();
 	}
 
+	public boolean isServiAgreement() {
+		return agreementDraft.getIsServiAgreement();
+	}
+	
 	public Date getStartDate() {
 		return agreementDraft.getStartDate();
 	}

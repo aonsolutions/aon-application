@@ -191,6 +191,7 @@ public class Agreements extends ResizeComposite implements
 		agreement.setDescription("CONVENIO NO GUARDADO " + -newId);
 		agreement.setSSNumber(null);
 		agreement.setDomain(getDomain());
+		agreement.setIsServiAgreement(false);
 
 		return agreement;
 	}

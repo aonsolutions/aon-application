@@ -421,7 +421,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			draft.setDomain(agreement.getDomain());
 			draft.setDescription(agreement.getDescription());
 			draft.setSSNumber(agreement.getSSNumber());
-
+			draft.setIsServiAgreement(agreement.getIsServiAgreement());
+			
 			draft.setStartDate(DateUtils.getFirstDayOfMonth());
 			draft.setEndDate(DateUtils.getLastDayOfMonth());
 			
