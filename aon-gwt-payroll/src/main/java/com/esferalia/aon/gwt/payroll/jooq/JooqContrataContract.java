@@ -44,6 +44,7 @@ import org.jooq.Record;
 import org.jooq.Record10;
 import org.jooq.Record2;
 import org.jooq.Result;
+import org.jooq.SelectConditionStep;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -2256,6 +2257,53 @@ public class JooqContrataContract {
 		employeeContractInfo.setScopeMap(scopeMap);
 		
 		return employeeContractInfo;
+	}
+	
+	
+	public static List<EmployeeInfo> getEmployeesByWorkplace(Connection conn, Integer workplaceId, Boolean allEmployees) {
+		return getEmployeesByWorkplaceDB(DSL.using(conn, getDefaultSettings()), workplaceId, allEmployees);
+	}
+
+	private static List<EmployeeInfo> getEmployeesByWorkplaceDB(DSLContext dslContext, Integer workplaceId, Boolean allEmployees) {
+		List<EmployeeInfo> employeeList = new ArrayList<EmployeeInfo>();
+
+		SelectConditionStep<Record> condt = dslContext.select()
+				.from(CONTRACT)
+				.innerJoin(PERSON)
+				.on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+				.where(CONTRACT.WORKPLACE.eq(workplaceId))
+				.and(CONTRACT.ID.gt(0));
+		if(!allEmployees){
+			// ------------------------------------------------ Get active contracts from domainId or ends in the last two months
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			cal.add(Calendar.MONTH, -1);
+			Date contract_endDate = new Date(cal.getTimeInMillis());
+			condt.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(contract_endDate)));
+		}
+		
+		Result<Record> queryEnd = condt.groupBy(PERSON.REGISTRY).fetch();
+
+		for(Record r : queryEnd) {
+			EmployeeInfo employeeData = new EmployeeInfo();
+			employeeData.setEmployeeId(r.get(PERSON.REGISTRY));
+			employeeData.setDomain(r.get(PERSON.DOMAIN));
+			employeeData.setSsNumber(r.get(PERSON.SOCIAL_SECURITY_NUM));
+			employeeData.setName(r.get(PERSON.NAME));
+			employeeData.setSurName(r.get(PERSON.FIRST_SURNAME));
+			employeeData.setSecondSurName(r.get(PERSON.SECOND_SURNAME));
+			employeeData.setContractId(r.get(CONTRACT.ID));
+			// REGISTRY TABLE
+			Record registryTable = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(r.get(PERSON.REGISTRY))).fetchOne();
+		
+			employeeData.setDocument(registryTable.get(REGISTRY.DOCUMENT));
+			employeeData.setDocumentType(registryTable.get(REGISTRY.DOCUMENT_TYPE));
+			employeeData.setNationality(registryTable.get(REGISTRY.NATIONALITY));
+			
+			employeeList.add(employeeData);
+		}
+		
+		return employeeList;
 	}
 	
 	// --------------------------------------- AUX METHODS -----------------------------

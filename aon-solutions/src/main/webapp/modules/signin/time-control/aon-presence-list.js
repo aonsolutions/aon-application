@@ -45,7 +45,7 @@ export class AonPresenceList extends AonElement {
   initialize(){
     this.id = this.id || "aonPresenceList";
     this.TABLE_ID = this.id + "Table";
-    this.aonSigninEl = this.getElement("aonSignin");
+    this.aonSigninEl = this.getApplication();
     this.aonSigninParentEl = this.aonSigninEl.getParent();
     this.aonSigninEl.addToolbarTitle("Presencia");
     this.aonSigninParentEl.periodSideNavDisplay(true);

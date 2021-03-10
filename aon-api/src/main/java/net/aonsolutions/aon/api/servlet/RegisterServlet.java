@@ -26,9 +26,9 @@ public class RegisterServlet extends AonApiHttpServlet{
 		super.doPost(req, resp);
 
 		try {
-			Auth auth = createAuth();
-			Domain domain = createDomain(auth.getSchema());
-			User user = createUser(domain , auth);
+//			Auth auth = createAuth();
+//			Domain domain = createDomain(auth.getSchema());
+//			User user = createUser(domain , auth);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -56,7 +56,7 @@ export class AonEventList extends AonElement {
     this.id = this.id || "aonEventList";
     this.TABLE_ID = this.id + "Table";
     this.TOOLBAR = this.id + "Toolbar";
-    this.aonSigninEl = this.getElement("aonSignin");
+    this.aonSigninEl = this.getApplication();
     this.aonSigninParentEl = this.aonSigninEl.getParent();
     this.aonSigninParentEl.periodSideNavDisplay(true);
   }

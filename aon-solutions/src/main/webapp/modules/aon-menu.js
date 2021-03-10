@@ -1,12 +1,10 @@
 import {AonElement} from '../components/AonElement.js';
 import {startModule, rootPanel} from '../services/gwtLoader.js';
 import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu} from  '../services/app.js';
-import {getDomainUserRoles, setDomainApp} from  '../services/service.js';
+import {getDomainUserRoles} from  '../services/service.js';
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
-
 import '../components/aon-icon.js';
 import '../components/aon-icon-button.js';
-
 import './comunic@/aon-comunica.js';
 import './messenger/aon-messenger.js';
 import './signin/aon-signin.js';
@@ -205,7 +203,7 @@ export class AonMenu extends AonElement {
 		ul.appendChild(li);
 
 		if(localStorage.getItem('aon_domain_id') && localStorage.getItem('company')){
-			let company = JSON.parse(localStorage.getItem('company'));
+			// let company = JSON.parse(localStorage.getItem('company'));
 			for (let item in MenuApps){
 				if(this.isApp(MenuApps[item])){
 					ul.appendChild(this.buildApp(MenuApps[item]));
@@ -365,13 +363,7 @@ export class AonMenu extends AonElement {
 
 	development(title) {
 		let aonApplication = document.querySelector('aon-application');
-		let d = document.getElementById(aonApplication.DIALOG);
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(title);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
-		d.open();
+		aonApplication.development(title);
 	}
 
 	getSubApps(app){

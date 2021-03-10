@@ -46,7 +46,7 @@ export class AonLocationAdd extends AonElement {
     this.NAME = "Ubicación";
     this.id = this.id || "aonLocationAdd";
     this.TOOLBAR = this.id + "Toolbar";
-    this.aonSigninEl = this.getElement("aonSignin");
+    this.aonSigninEl = this.getApplication();
     this.TOAST = this.getElement(`${this.aonSigninEl.TOAST}`);
   }
 

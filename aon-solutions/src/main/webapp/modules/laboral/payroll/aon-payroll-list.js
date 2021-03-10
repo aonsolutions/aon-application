@@ -1,11 +1,12 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { formatNumber, isEmptyObject, formatDate, sortBy, waitEl, geMonthYear } from "../../../services/utils.js";
-import { getEmployeeSalaries, getEnterpriseSalaries } from "../../../services/service.js";
+import { formatNumber, isEmptyObject, formatDate, sortBy, waitEl, geMonthYear, setValueName } from "../../../services/utils.js";
+import { firstLetters } from "../../signin/time-control/utils.js";
+import { getEmployeeSalaries, getEnterpriseSalaries, getPeriodLaboral, getWorkplaceCCCs, getAllEmployeesWorkplace } from "../../../services/service.js";
 import {  PresenceFilterInput, SigninSidenav } from "../../signin/signinEnums.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
-import { firstLetters } from "../../signin/time-control/utils.js";
+
 export class AonPayrollList extends AonElement {
   TABLE_ID;
   static get observedAttributes() {
@@ -51,8 +52,10 @@ export class AonPayrollList extends AonElement {
   
   async build(){
     this.paintView();
-    // this.buildToolbar();
-    // await this.buildFilter();
+    if(!this.aonLaboralParentEl.isEmployee()){
+      this.buildToolbar();
+      await this.buildFilter();
+    }
     await this.getTable();
   }
 
@@ -78,28 +81,49 @@ export class AonPayrollList extends AonElement {
 
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
-    aonFilter.setInputs(PresenceFilterInput);
+    aonFilter.setInputs([
+      {
+        type: "select",
+        id: "workplace",
+        name: "workplace",
+        title: "Centro de trabajo",
+      },
+      {
+        type: "select",
+        id: "employee",
+        name: "employee",
+        title: "Trabajador",
+      },
+      ...PresenceFilterInput
+    ]);
     aonFilter.addEventListener("applyFilter", ({detail}) => {
-      if(detail) this.aonLaboralParentEl.setDataFilter(detail);
+      if(detail)this.aonLaboralParentEl.setDataFilter(detail);
     });
-
-    // let periodEl = this.getElement("period");
-    // periodEl.options = JSON.stringify(await getPeriod());
-
-    // periodEl.addEventListener('change', ({detail}) => {
-    //   if(detail){
-    //     const {startDate, endDate} = detail;
-    //     setValueName('startDate', startDate);
-    //     setValueName('endDate', endDate);
-    //   }
-    // });
-
-    this.getElement("startDate").addEventListener("change", (ev)=>{
-      periodEl.value = "personalized";
+  
+    // ----------WORKPLACES ------------
+    let workplaces = await getWorkplaceCCCs();
+    let workplaceEl = this.getElement("workplace");
+    workplaceEl.options = JSON.stringify( workplaces.map(({workplace})=> ({ name: workplace.description, value: workplace.id})) );
+    workplaceEl.addEventListener('change', ({detail}) => {
+      if(detail) this.getEmployees(detail);
     });
-    this.getElement("endDate").addEventListener("change", (ev)=>{
-      periodEl.value = "personalized";
+    // ----------WORKPLACES END ------------
+
+  
+    //------------------PERIOD---------
+    let periodEl = this.getElement("period");
+    periodEl.options = JSON.stringify(await getPeriodLaboral());
+    periodEl.addEventListener('change', ({detail}) => {
+      if(detail){
+        const {startDate, endDate} = detail;
+        setValueName('startDate', startDate);
+        setValueName('endDate', endDate);
+      }
     });
+     // ----------PERIOD END ------------
+
+    this.getElement("startDate").addEventListener("change", (ev)=>periodEl.value = "personalized");
+    this.getElement("endDate").addEventListener("change", (ev)=>periodEl.value = "personalized");
   }
 
   async getTable() {
@@ -108,7 +132,6 @@ export class AonPayrollList extends AonElement {
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
     this.aonLaboralEl.stopLoader();
-    this.aonLaboralParentEl.changeFilter();
   }
 
 
@@ -232,6 +255,18 @@ export class AonPayrollList extends AonElement {
     if(parent) parent.getSalary({salaryId:data.id});
   }
 
+  async getEmployees(detail){
+    try {
+      let employeeEl = this.getElement("employee");
+      let employees = await getAllEmployeesWorkplace({workplace: detail.value, allEmployees:true});
+      employeeEl.options = JSON.stringify( 
+        employees.map(({name, surName, contractId})=> ({name:surName+" "+name, value:contractId}))
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   getTypeSalaryText(type){
     let newType = "";
     switch(type){
@@ -250,6 +285,7 @@ export class AonPayrollList extends AonElement {
     }
     return newType;
   }
+  
 }
 
 window.customElements.define("aon-payroll-list", AonPayrollList);

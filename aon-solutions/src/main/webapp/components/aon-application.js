@@ -544,6 +544,16 @@ export class AonApplication extends AonElement {
       this.hasAttribute("sidenav") && "block" === this.getAttribute("sidenav")
     );
   }
+
+  development(title, subtitle='Esta opción está en desarrollo...') {
+		let d = this.getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(title);
+		d.setContentHTML('Esta opción está en desarrollo...');
+		d.addAcceptAction(() => {});
+		d.open();
+	}
 }
 if(!window.customElements.get('aon-application')){
   window.customElements.define("aon-application", AonApplication);

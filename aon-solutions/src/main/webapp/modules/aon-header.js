@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, getToken, clearDurum} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 import {rootPanel} from '../services/gwtLoader.js';
 

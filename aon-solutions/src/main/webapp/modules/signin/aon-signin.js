@@ -51,7 +51,7 @@ export class AonSignin extends AonElement {
     this.innerHTML = `
 			<aon-application id="${this.AON_SIGNIN}" title="Control Horario"></aon-application>
     `;
-    this.aonSigninEl = this.getElement(this.AON_SIGNIN);
+    this.aonSigninEl = this.getApplication();
   }
   
   buildToolbar() {

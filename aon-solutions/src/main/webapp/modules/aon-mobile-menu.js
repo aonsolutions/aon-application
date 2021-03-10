@@ -197,20 +197,33 @@ export class AonMobileMenu extends AonElement {
     aonEl.style.display = block;
   }
 
+
   isApp(app) {
-    if(DOCUMENTAL.app === app.app)
-      return this.getDur().isDocumental();
-    else if(PAYROLL.app === app.app)
-      return this.getDur().isPayroll();
-    else if(COMUNICA.app === app.app)
-      return this.getDur().isComunica();
-    else if(TIMECONTROL.app === app.app)
-      return this.getDur().isTimecontrol();
-    else if(INVOICE.app === app.app)
-      return this.getDur().isInvoice();
-    else if(MESSENGER.app === app.app)
-      return this.getDur().isMessenger();
-    else return false;
+    const dur = this.getDur();
+    let permission = false;
+    if(dur){
+      switch(app.app){
+        case DOCUMENTAL.app:
+          permission = dur.isDocumental();
+          break;
+        case PAYROLL.app:
+          permission = dur.isPayroll();
+          break;
+        case COMUNICA.app:
+          permission = dur.isComunica();
+          break;
+        case TIMECONTROL.app:
+          permission = dur.isTimecontrol();
+          break;
+        case INVOICE.app:
+          permission = dur.isInvoice();
+          break;
+        case MESSENGER.app:
+          permission = dur.isMessenger();
+          break;
+      }
+    }
+    return permission;
   }
 
   getAppInfo(app) {

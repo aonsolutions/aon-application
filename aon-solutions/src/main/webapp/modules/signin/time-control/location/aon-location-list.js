@@ -33,7 +33,7 @@ export class AonLocationList extends AonElement {
 
   constructor() {
     super();
-    this.aonSigninEl = this.getElement("aonSignin");
+    this.aonSigninEl = this.getApplication();
     this.aonSigninParentEl = this.aonSigninEl.getParent();
     this.aonSigninToolbar = this.getElement(
       `${this.aonSigninEl.id}Toolbar`

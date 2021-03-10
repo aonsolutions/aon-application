@@ -3,12 +3,12 @@ import { API_URL } from "../environments/environments.js";
 import { addDays, formatDateOrigin} from "./utils.js";
 
 
-const firstDayWeek = (d) => {
+export const firstDayWeek = (d) => {
   let result = new Date(d);
   return result.getDate() - result.getDay() + 1; 
 }
 
-const lastDayWeek = (d) => firstDayWeek(new Date(d)) + 6;
+export const lastDayWeek = (d) => firstDayWeek(new Date(d)) + 6;
 
 export const getTimeControl = (data) => get(`${API_URL}/timecontrol`, data);
 export const saveTimeControl = (data) => post(`${API_URL}/timecontrol`, data);
@@ -105,37 +105,37 @@ export const getPeriod = (data) => {
         endDate: formatDateOrigin(addDays(now, -1))
       },
       {
-        name: "Ésta semana",
+        name: "Semana actual",
         value: "this_week",
         startDate: formatDateOrigin( new Date().setDate(dayWeekFirst) ),
         endDate: formatDateOrigin( new Date().setDate(dayWeekLast) )
       },
       {
-        name: "Semana pasada",
+        name: "Semana anterior",
         value: "last_week",
         startDate: formatDateOrigin(  new Date().setDate(dayWeekFirst -7)  ),
         endDate: formatDateOrigin( new Date().setDate(dayWeekLast -7) )
       },
       {
-        name: "Éste mes",
+        name: "Mes actual",
         value: "this_month",
         startDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth(), 1)),
         endDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth() + 1, 0))
       },
       {
-        name: "Mes pasado",
+        name: "Mes anterior",
         value: "last_month",
         startDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth() -1), 1)),
         endDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth()-1) + 1, 0))
       },
       {
-        name: "Éste año",
+        name: "Año actual",
         value: "this_year",
         startDate: formatDateOrigin(new Date(now.getFullYear(), 0, 1)),
         endDate: formatDateOrigin(new Date(now.getFullYear(), 12, 0))
       },
       {
-        name: "Año pasado",
+        name: "Año anterior",
         value: "last_year",
         startDate: formatDateOrigin(new Date(now.getFullYear()-1, 0, 1)),
         endDate:formatDateOrigin(new Date(now.getFullYear()-1, 12, 0))

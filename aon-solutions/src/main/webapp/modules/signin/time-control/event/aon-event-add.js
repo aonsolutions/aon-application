@@ -51,7 +51,7 @@ export class AonEventAdd extends AonElement {
     super();
     this.id = this.id || "aonEventAdd";
     this.TOOLBAR = this.id + "Toolbar";
-    this.aonSigninEl = this.getElement("aonSignin");
+    this.aonSigninEl = this.getApplication();
     this.aonSigninEl.addToolbarTitle("Registrar evento");
     this.TOAST = this.getElement(`${this.aonSigninEl.TOAST}`);
     this.aonSigninParentEl = this.aonSigninEl.getParent();
@@ -223,18 +223,11 @@ export class AonEventAdd extends AonElement {
   setValues() {
     if (this.data) {
       let data = this.data;
-      if (data.coordinates) {
-        data.coordinates =
-          data.coordinates.latitude + "," + data.coordinates.longitude;
-      }
-      if (data.location && data.location.id) {
-        data.location = data.location.id;
-      }
       let date = new Date(data.date);
-      if (!date.isValid()) {
-        date = new Date();
-      }
-
+      if (data.coordinates) {data.coordinates = data.coordinates.latitude + "," + data.coordinates.longitude;}
+      if (data.location && data.location.id) {data.location = data.location.id;}
+      if (data.task_holder) {data.name = data.task_holder.name;}
+      if (!date.isValid()) {date = new Date();}
       data.date = date;
       data.time = setTime(date);
 

@@ -1,7 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { getDomainUserRoles, getSalaryPdf } from "../../services/service.js";
-import { setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 
 class AonLaboral extends AonElement {
@@ -34,51 +33,38 @@ class AonLaboral extends AonElement {
     paintView(){
         this.innerHTML = `
         <aon-application id="${this.AON_LABORAL}" title="LABORAL"></aon-application>`;
-        this.aonLaboralEl = this.getElement(this.AON_LABORAL);
+        this.aonLaboralEl = this.getApplication();
     }
 
     buildToolbar(){
-
-        let aonLaboral = document.getElementById(this.AON_LABORAL);
-
-        let employerOptions = [
+        let laboralOptions = [
             {
                 name: 'Nóminas',
                 icon: 'text_snippet',
                 fn: () => this.showView("aonPayrollList")
             }
         ];
-        aonLaboral.addSidenavOptions('EMPLEADOS', employerOptions);
-
-        // let actionsOptions = [
-        //     {
-        //         name: 'Crear alta',
-        //         icon: 'event_available',
-        //         fn: () => this.loadNew('alta')
-        //     },
-        //     {
-        //         name: 'Crear baja',
-        //         icon: 'event_busy',
-        //         fn: () => this.loadNew('baja')
-        //     }
-        // ];
-        // aonLaboral.addSidenavOptions('ACCIONES', actionsOptions);
-        // getSalaryPdf({salaryId:39777});
-    }
-
-    changeFilter(){
-      try {
-        const filterParent = this._filter;
-        for(const obj in filterParent){
-          setValueName(obj, filterParent[obj]);
-        }
-      } catch (error) {}
+        if(!this.isEmployee()){
+          laboralOptions.push({
+            name: 'Costes de empresa',
+            icon: 'assignment',
+            fn: () =>  this.aonLaboralEl.development("Costes de empresa")
+          });
+        } 
+        this.aonLaboralEl.addSidenavOptions('LABORAL', laboralOptions);
     }
 
   async getSalary(data){
     this.aonLaboralEl.startLoading();
 		await getSalaryPdf(data);
 		this.aonLaboralEl.stopLoading();
+  }
+
+  async setDataFilter(data){
+    try {
+      this._filter = {...this._filter, ...data};
+      this.aonLaboralEl.getChild().filter = true;
+    } catch (error) {}
   }
 
   showView(view, data, filter = undefined){
@@ -102,5 +88,6 @@ class AonLaboral extends AonElement {
   isEmployee(){
     return !this._roles.isPayrollManager() && !this._roles.isPayrollPortal();
   }
+
 }
 window.customElements.define('aon-laboral', AonLaboral);

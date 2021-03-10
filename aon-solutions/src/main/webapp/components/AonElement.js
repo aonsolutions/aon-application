@@ -1,4 +1,4 @@
-// import {webkitRequestMobile} from '../services/service';
+import {webkitRequestMobile} from '../services/service.js';
 
 export class AonElement extends HTMLElement{
   ROOT_PANEL;
@@ -9,7 +9,7 @@ export class AonElement extends HTMLElement{
   }
 
   isMobile() {
-    return this.iOS() || this.android() || this.blackBerry() || this.windowsPhone() || (window.innerWidth <= 850 && window.innerHeight <= 912) ; //|| webkitRequestMobile();
+    return this.iOS() || this.android() || this.blackBerry() || this.windowsPhone()  || this.isAppMobile() || (window.innerWidth <= 850 && window.innerHeight <= 912);
   }
 
   iOS() {
@@ -19,6 +19,10 @@ export class AonElement extends HTMLElement{
       || navigator.userAgent.toLowerCase().includes('iphone')
       || navigator.platform.toLowerCase().includes('ipod')
       || navigator.userAgent.toLowerCase().includes('ipod');
+  }
+  
+  isAppMobile(){
+    return webkitRequestMobile();
   }
 
   android() {
