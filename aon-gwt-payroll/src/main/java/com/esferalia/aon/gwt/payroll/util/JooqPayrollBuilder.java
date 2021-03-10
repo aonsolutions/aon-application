@@ -71,6 +71,10 @@ public class JooqPayrollBuilder {
 		}
 	}
 	
+	public static void generatePayroll(String domainName, OutputStream outputStream,Integer enterpriseId, Integer... salaryIds) {
+		generatePayroll(domainName, "", outputStream, enterpriseId, salaryIds);
+	}
+	
 	public static void generatePayroll(String domainName, OutputStream outputStream, Integer... salaryIds) {
 		generatePayroll(domainName, "", outputStream, null, salaryIds);
 	}
