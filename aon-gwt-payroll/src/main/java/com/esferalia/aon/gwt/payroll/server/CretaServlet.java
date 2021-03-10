@@ -194,7 +194,7 @@ public class CretaServlet extends HttpServlet
 			os.println("{");
 			
 			os.printf("\"__progress\":[");
-			os.printf("\r\n{\"percent\": 0.00, \"msg\":\"%s\"}", CretaService.Message.BEGIN);
+			os.printf("\r\n{\"percent\": 0.00, \"msg\":\"...\"}", CretaService.Message.BEGIN);
 			os.flush();
 			
 			ProgressCallback progressCb = new ProgressCallback() {
@@ -233,7 +233,7 @@ public class CretaServlet extends HttpServlet
 			} catch (EmptyBasesException e) {
 				bases = "";
 			}
-			os.printf(",\r\n{\"percent\": 100.00, \"msg\":\"%s\"}", CretaService.Message.END);
+			os.printf(",\r\n{\"percent\": 100.00, \"msg\":\":-)\"}", CretaService.Message.END);
 			os.flush();
 			os.printf("],\r\n");
 			os.printf("\"full_bases\":\"%s\",\r\n", bases);

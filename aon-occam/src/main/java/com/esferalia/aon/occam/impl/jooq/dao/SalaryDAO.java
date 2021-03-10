@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.SalaryProperties;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryDAO {
 
@@ -499,8 +500,8 @@ public class SalaryDAO {
 					
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(salaryDataIter), 
-					r -> r.get(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
-					r -> r.get(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
+					r -> AonStringUtils.equals(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) ),
+					r -> AonStringUtils.equals(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) )
 					.forEachOrdered(salaryDataRecord->
 						salary.setContextData(
 						salaryDataRecord.get(SALARY_DATA.NAME), 
@@ -512,8 +513,8 @@ public class SalaryDAO {
 					
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(contractDataIter), 
-					r -> r.get(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
-					r -> r.get(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
+					r -> AonStringUtils.equals(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) ),
+					r -> AonStringUtils.equals(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) )
 					.forEachOrdered(contractDataRecord->
 						salary.addContextData(
 						contractDataRecord.get(CONTRACT_DATA.NAME), 
@@ -526,8 +527,8 @@ public class SalaryDAO {
 
 					Seq.limitWhile(
 					Seq.skipUntil(Seq.seq(salaryImlicitDataIter), 
-					r -> r.get(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
-					r -> r.get(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
+					r -> AonStringUtils.equals(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) ),
+					r -> AonStringUtils.equals(r.get(SALARY.EMPLOYEE_DOCUMENT), employeeDocument) )
 					.forEachOrdered(salaryRecord-> {
 						Optional.ofNullable(salaryRecord.get(SALARY.TOTAL_PAYMENT))
 						.ifPresent( d ->  {
