@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -89,6 +90,16 @@ public class ServiAgreementsFilter {
 	
 	public static void main(String[] args) {
 		ServiAgreementsFilter.getServiAgreementsMap(true);
+	}
+	
+	public static String getServiAgreementCode(String ssNumber) {
+		Map<String, String> serviAgreementMap = getServiAgreementsMap(true);
+		for(Entry<String, String> entry : serviAgreementMap.entrySet()) {
+			String entrySSNumber = entry.getKey().split(" - ")[0].trim();
+			if(AonStringUtils.equalsIgnoreCase(entrySSNumber, ssNumber))
+				return entry.getValue();
+		}
+		return null;
 	}
 	
 }

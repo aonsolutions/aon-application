@@ -24,11 +24,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -66,56 +64,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class AgreementParser {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 	private static Integer DOMAIN_ID = 0;
-	
-	private static List<String> agreementCodes = new ArrayList<String>() {{
-		add("c0000000");
-		add("c0000001");
-		add("c0000002");
-		add("c0000017");
-		add("c0000022");
-		add("c0000023");
-		add("c0000047");
-		add("c0000055");
-		add("c0000065");
-		add("c0000080");
-		add("c0000086");
-		add("c0000087");
-		add("c0000088");
-		add("c0000131");
-		add("c0000139");
-		add("c0000183");
-		add("c0000184");
-		add("c0000218");
-		add("c0000233");
-		add("c0000235");
-		add("c0000268");
-		add("c0000286");
-		add("c0000300");
-		add("c0000310");
-		add("c0000332");
-		add("c0000429");
-		add("c0000474");
-		add("c0000645");
-		add("c0000649");
-		add("c0000679");
-		add("c0000710");
-		add("c0000741");
-		add("c0000836");
-		add("c0000905");
-		add("c0001091");
-		add("c0001093");
-		add("c0001124");
-		add("c0001285");
-		add("c0001313");
-		add("c0001385");
-		add("c0001393");
-		add("c0001672");
-		add("c0001710");
-		add("c0001911");
-		add("c0001931");
-		add("c0001940");
-		add("c0002060");
-	}};
 	
 	@SuppressWarnings("serial")
 	private static Map<String, String> variablesNameMap = new HashMap<String, String>(){{
@@ -439,7 +387,7 @@ public class AgreementParser {
 			getAgreementLevelData(dslContext, document, agreement);
 			
 			// Insert Agreement to DataBase
-			insertResult = insertAgreementDB(dslContext, agreement);
+			insertResult = insertAgreementDB(dslContext, agreement, agreementCode);
 			
 //			System.out.println("serviAgreementsMap.put(\"" + agreement.getSSCode() + " - " + agreement.getAgreementDescription().toUpperCase() + "\",  \"" + agreement.getServiAgreementCode() + "\");"  );
 			
@@ -772,7 +720,7 @@ public class AgreementParser {
 		}
 	}
 	
-	private static Pair<Integer,Map<String, String>> insertAgreementDB(DSLContext dslContext, Agreement agreement) {
+	private static Pair<Integer,Map<String, String>> insertAgreementDB(DSLContext dslContext, Agreement agreement, String agreementCode) {
 		Pair<Integer,Map<String, String>> result = new Pair<Integer, Map<String,String>>(-1, new HashMap<String, String>());
 		// Variables not insert
 		Map<String, String> mapVarNotInsert = new HashMap<String, String>();
@@ -961,6 +909,18 @@ public class AgreementParser {
 		.set(AGREEMENT_EXTRA.END_DATE, "31/12")
 		.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
 		.execute();
+		
+		// Set agreement_data is ServiAgreement
+		
+		if(!AonStringUtils.contains(agreementCode, 'a'))
+			dslContext.insertInto(AGREEMENT_DATA)
+				.set(AGREEMENT_DATA.DOMAIN, DOMAIN_ID)
+				.set(AGREEMENT_DATA.NAME, "SERVIAGREEMENT")
+				.set(AGREEMENT_DATA.AGREEMENT, agreementId)
+				.set(AGREEMENT_DATA.EXPRESSION, "TRUE")
+				.set(AGREEMENT_DATA.START_DATE, parseDateToSql(agreement.getStartDate()))
+				.set(AGREEMENT_DATA.END_DATE, parseDateToSql(auxEndDate))
+				.execute();
 		
 		result.setFirst(agreementId);
 		result.setSecond(mapVarNotInsert);
