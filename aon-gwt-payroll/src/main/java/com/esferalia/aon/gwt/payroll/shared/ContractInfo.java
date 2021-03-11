@@ -62,6 +62,9 @@ public class ContractInfo implements Serializable{
 	private Integer partialityCoefId;
 	private Double partialityCoef;
 	
+	private Integer salariesCount;
+	private ArrayList<ContractSalaryInfo> contractSalariesInfo;
+	
 	public ContractInfo() {
 		super();
 		this.contractId = null;
@@ -101,6 +104,9 @@ public class ContractInfo implements Serializable{
 		this.colectiveAgreement = null;
 		this.md_ctz = null;
 		this.partialityCoef = null;
+		
+		this.salariesCount = null;
+		this.contractSalariesInfo = new ArrayList<ContractSalaryInfo>();
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -420,6 +426,22 @@ public class ContractInfo implements Serializable{
 
 	public void setPartialityCoefId(Integer partialityCoefId) {
 		this.partialityCoefId = partialityCoefId;
+	}
+
+	public void setSalariesCount(Integer salariesCount) {
+		this.salariesCount = salariesCount;
+	}
+	
+	public Integer getSalariesCount() {
+		return this.salariesCount;
+	}
+	
+	public ArrayList<ContractSalaryInfo> getContractSalariesInfo() {
+		return contractSalariesInfo;
+	}
+
+	public void setContractSalariesInfo(ArrayList<ContractSalaryInfo> contractSalariesInfo) {
+		this.contractSalariesInfo = contractSalariesInfo;
 	}
 
 	public String toString(){

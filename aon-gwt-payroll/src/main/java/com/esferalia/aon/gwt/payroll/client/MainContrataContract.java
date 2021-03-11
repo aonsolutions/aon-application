@@ -457,7 +457,7 @@ public class MainContrataContract extends MainEntryPoint {
 
 	    startDateColumn.setSortable(true);
 	    startDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    trashEmployeeDataGrid.setColumnWidth(startDateColumn, 10, Unit.PCT);
+	    trashEmployeeDataGrid.setColumnWidth(startDateColumn, 8, Unit.PCT);
 	    
 	    TextColumn<EmployeeContractInfo> endDateColumn = new TextColumn<EmployeeContractInfo>() {
 		      @Override
@@ -471,7 +471,18 @@ public class MainContrataContract extends MainEntryPoint {
 
 		endDateColumn.setSortable(true);
 		endDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		trashEmployeeDataGrid.setColumnWidth(endDateColumn, 10, Unit.PCT);
+		trashEmployeeDataGrid.setColumnWidth(endDateColumn, 8, Unit.PCT);
+		
+		TextColumn<EmployeeContractInfo> salaryNumColumn = new TextColumn<EmployeeContractInfo>() {
+		      @Override
+		      public String getValue(EmployeeContractInfo employeeContractInfo) {
+		    	  return employeeContractInfo.getContractInfo().getSalariesCount() + "";
+		      }
+		    };
+
+		salaryNumColumn.setSortable(true);
+		salaryNumColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		trashEmployeeDataGrid.setColumnWidth(salaryNumColumn, 9, Unit.PCT);
 		
 		ActionCell<EmployeeContractInfo> draftActionCell = new ActionCell<EmployeeContractInfo>("", new ActionCell.Delegate<EmployeeContractInfo>() {
 
@@ -569,6 +580,7 @@ public class MainContrataContract extends MainEntryPoint {
 		trashEmployeeDataGrid.addColumn(workplaceColumn, "Centro Trabajo");
 		trashEmployeeDataGrid.addColumn(startDateColumn, "Fecha Inicio");
 		trashEmployeeDataGrid.addColumn(endDateColumn, "Fecha Fin");
+		trashEmployeeDataGrid.addColumn(salaryNumColumn, "N" + String.valueOf("\u00B0") + " n" + String.valueOf("\u00F3") + "minas");
 		trashEmployeeDataGrid.addColumn(draftColumn, "");
 		trashEmployeeDataGrid.addColumn(restoreColumn, "");      
 	}
@@ -595,6 +607,7 @@ public class MainContrataContract extends MainEntryPoint {
 		trashEmployeeDataGrid.getHeader(6).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		trashEmployeeDataGrid.getHeader(7).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		trashEmployeeDataGrid.getHeader(8).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		trashEmployeeDataGrid.getHeader(9).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -868,6 +881,7 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 	
 	private void redrawTable() {
+		this.employeeSB.setValue("");
 		this.inactiveContractsCB.setValue(false);
 		this.workplaceLB.setSelectedIndex(0);
 		this.mainContrataContractObject.getEmployeesInfo(false,

@@ -14,18 +14,20 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx.DefaultFormat;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.BankSwift;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.BankSwift;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
+import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
@@ -52,11 +54,13 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -1806,23 +1810,35 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void onDeleteContract(ClickEvent event) {
-		AonConfirmDialog confirmDialog = new AonConfirmDialog();
-		confirmDialog.confirm(
-				"BORRADO", 
-				String.valueOf("\u00BF") + "Desea eliminar este contrato?",
-				new AonConfirmDialogCallback() {
+		new AonAcceptDialog("BORRADO", getMessageWidget(), new AonAcceptDialogCallback() {
+			
+			@Override
+			public void onCancel() {}
+			
+			@Override
+			public void onAccept() {
+				contrataEmployeeObject.deleteContract(s -> {
+					onListShow(true);
+				}, f-> {});
+			}
+		});
+	}
 
-					@Override
-					public void onAccept() {
-						contrataEmployeeObject.deleteContract(s -> {
-							onListShow(true);
-						}, f-> {});
-					}
-
-					@Override
-					public void onCancel() {
-						// TODO Auto-generated method stub
-					}});
+	private Widget getMessageWidget() {
+		ContractInfo contractData = contrataEmployeeObject.getContractData();
+		EmployeeInfo employeeData = contrataEmployeeObject.getEmployeeData();
+		
+		String message = "Este contrato ser" + String.valueOf("\u00E1") + " eliminado de forma permanente.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>?";
+		
+		if(contractData.getSalariesCount() > 0) {
+			message = "Este contrato contiene n" + String.valueOf("\u00F3") + "minas existentes. Si lo elimina se enviar" + String.valueOf("\u00E1") + " a la papelera.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>? <br><br>";
+			message += "<b>N" + String.valueOf("\u00F3") + "minas:</b><br><br>";
+			for(ContractSalaryInfo salaryInfo : contractData.getContractSalariesInfo())
+				message += "&emsp;" + salaryInfo.getType() + "&emsp;(" + formatFullDate.format(salaryInfo.getStart()) + " - " + formatFullDate.format(salaryInfo.getEnd()) + ")&emsp;Percibido : " + salaryInfo.getTotalLiquid() + String.valueOf("\u20AC") + "<br>";
+		}
+		
+		HTML label = new HTML(message);
+		return label;
 	}
 
 	private void onExportContract(ClickEvent event) {
