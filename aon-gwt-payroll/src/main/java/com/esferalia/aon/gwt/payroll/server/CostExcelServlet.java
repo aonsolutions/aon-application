@@ -4,14 +4,10 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,37 +18,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellUtil;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.jooq.JooqCost;
-import com.esferalia.aon.gwt.payroll.shared.MainCost;
-import com.esferalia.aon.in.payroll.csv.EnterprisePayrollCSV;
 import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayroll;
-import com.esferalia.aon.jooq.tables.Workplace;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.ibm.icu.util.Calendar;
 
 @SuppressWarnings("serial")
@@ -115,8 +91,9 @@ public class CostExcelServlet extends HttpServlet {
 //		response.setHeader("Content-disposition", "attachment; filename=\"Costes."+ MimeType.CSV.getExtension()+ "\";");
 		
 		try (ServletOutputStream sos = response.getOutputStream();
-			Connection connection = AonServletUtils.getConnection(_domainName);
-			AONContext aonContext = new AONContext(connection) ) {
+//			Connection connection = AonServletUtils.getConnection(_domainName);
+//			AONContext aonContext = new AONContext(connection);
+			AONContext aonContext = AONContext.getAONContext(_domainName, "")) {
 			ctx = aonContext.getDslContext();
 			
 			Condition condition = 
@@ -126,8 +103,19 @@ public class CostExcelServlet extends HttpServlet {
 
 			if ( _workplaceId != null &&  Integer.parseInt(_workplaceId) != 0)
 				condition = condition.and(WORKPLACE.ID.eq(Integer.parseInt(_workplaceId)));
-			if ( _enterpriseId != null )
-				condition = condition.and(WORKPLACE.ENTERPRISE.eq(Integer.parseInt(_enterpriseId)));
+			
+			Integer enterpriseId = null;
+			try {
+				enterpriseId = Integer.parseInt(_enterpriseId);
+			} catch (NumberFormatException | NullPointerException e) {}
+			if (enterpriseId == null || enterpriseId == 0)
+				enterpriseId = AON.getWorkplace(aonContext.getDomainName()
+						, aonContext.getDomainId()
+						, aonContext.getUser()
+						, w -> w.getIdProperty().eq(Integer.parseInt(_workplaceId)))
+						.getEnterprise();
+			
+			condition = condition.and(WORKPLACE.ENTERPRISE.eq(enterpriseId));
 			
 //			List<Byte> _types = new ArrayList<Byte>();
 //			_types.add((_salary.equals("1")) ? (byte) 0 : (byte) -1);
@@ -138,23 +126,63 @@ public class CostExcelServlet extends HttpServlet {
 			Stream<EnterprisePayroll> stream = EnterprisePayrollExcel.getEnterprisePayrolls(ctx, condition);
 			
 //			Stream<com.esferalia.aon.in.payroll.csv.EnterprisePayrollCSV.EnterprisePayroll> stream = EnterprisePayrollCSV.getEnterprisePayrolls(ctx, condition);
-
+			String dateString = "";
+			try {
+				Integer month = Integer.parseInt(_month);
+			if (month != null)
+				month++;
+			Integer year = Integer.parseInt(_year);
+			dateString = getDateString(month, year);
+			} catch (NumberFormatException | NullPointerException e) {}
 			
 			List<IEnterprisePayroll> list = stream.collect(Collectors.toList());
-			EnterprisePayrollExcel.write(sos, list, Optional.empty());
+			String entName = EnterprisePayrollExcel.getEnterpriseName(_domainName, enterpriseId, Integer.parseInt(_workplaceId));
+			EnterprisePayrollExcel.write(sos, list, Optional.empty(), entName, dateString);
 //			EnterprisePayrollExcel.writeDiff(sos, list, Optional.empty());
 //			EnterprisePayrollCSV.write(sos, list);
 
 			sos.flush();
 			response.flushBuffer();
 
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
 	}
 	
+	
+	private static String getDateString (Integer month, Integer year) {
+		if (month == null || year == null)
+			return "";
+		else {
+			switch (month) {
+			case 1:
+				return "Enero de "+year;
+			case 2:
+				return "Febrero de "+year;
+			case 3:
+				return "Marzo de "+year;
+			case 4:
+				return "Abril de "+year;
+			case 5:
+				return "Mayo de "+year;
+			case 6:
+				return "Junio de "+year;
+			case 7:
+				return "Julio de "+year;
+			case 8:
+				return "Agosto de "+year;
+			case 9:
+				return "Septiembre de "+year;
+			case 10:
+				return "Octubre de "+year;
+			case 11:
+				return "Noviembre de "+year;
+			case 12:
+				return "Diciembre de "+year;
+			default:
+				return "";
+			}
+		}
+	}
 	
 	
 }

@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.excel;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
+import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
@@ -15,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,12 +33,16 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 
 import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
+import com.esferalia.aon.jooq.tables.records.SalaryCostRecord;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class EnterprisePayrollExcel {
@@ -67,7 +73,7 @@ public class EnterprisePayrollExcel {
 //			"CONT. COMUNES", "DESEMPLEO", "FORM. PROF." };
 
 	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
-			Optional<LinkedHashMap<String, String>> header) throws IOException {
+			Optional<LinkedHashMap<String, String>> header, String enterpriseName, String dateString) throws IOException {
 		Workbook wb = new XSSFWorkbook();
 
 		Font headerFont = wb.createFont();
@@ -204,8 +210,9 @@ public class EnterprisePayrollExcel {
 						.allMatch(p -> ((IEnterprisePayroll) p).getJobTraining() == null);
 
 				LinkedHashMap<String, String> finalHeader = new LinkedHashMap<String, String>();
-
-				row = sheet.createRow(0);
+				
+				
+				
 				if (header.isPresent()) {
 					LinkedHashMap<String, String> customHeader = header.get();
 					finalHeader.putAll(customHeader);
@@ -241,7 +248,7 @@ public class EnterprisePayrollExcel {
 					if (!thereIsUnemployment)
 						finalHeader.remove("unemployment");
 
-					row = sheet.createRow(0);
+					row = sheet.createRow(1);
 
 					Iterator<String> headersIt = finalHeader.keySet().iterator();
 
@@ -382,6 +389,14 @@ public class EnterprisePayrollExcel {
 
 					column = 0;
 				}
+				
+				
+				sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, row.getLastCellNum()-1));
+				row = sheet.createRow(0);
+				Cell enterpriseCell = row.createCell(0);
+				enterpriseCell.setCellType(CellType.STRING);
+				enterpriseCell.setCellStyle(headerCellStyle);
+				enterpriseCell.setCellValue(enterpriseName+" - "+dateString);
 				
 				{	
 					int lastColumn = sheet.getRow(sheet.getLastRowNum()).getLastCellNum();
@@ -577,7 +592,6 @@ public class EnterprisePayrollExcel {
 						tCell.setCellStyle(doubleCellStyle);
 					}
 				}
-
 
 				for (int i = 0; i < finalHeader.size(); i++) {
 					sheet.autoSizeColumn(i);
@@ -899,7 +913,80 @@ public class EnterprisePayrollExcel {
 //		wb.close();
 //
 //	}
+	
+//	public static Stream<EnterprisePayroll> getEnterprisePayrolls(DSLContext ctx, Date month_year)
+//			throws IOException {
+//		
+//		
+//	}
+	
+	
+	//MÉTODO NUEVO NO TERMINADO
+	/*
+	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, final int month, final int year)
+			throws IOException {
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month-1);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		java.sql.Date dayOne = new java.sql.Date(calendar.getTime().getTime());
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		java.sql.Date lastDay = new java.sql.Date(calendar.getTime().getTime());
+		
+		
+		aonContext.getDslContext().select(SALARY.ID)
+		.from(SALARY).innerJoin(CONTRACT).onKey()
+		.innerJoin(WORKPLACE).onKey()
+		.where(SALARY.ISSUE_DATE.between(dayOne, lastDay));
+		
+		
+		
+		Stream<Salary> salaries = AON.getSalaries(aonContext, s -> s.getIssueDateProperty().between(dayOne, lastDay));
+		return salaries.map(s -> {
+			
+			
+			EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
+			enterprisePayroll.employee = s.getEmployeeName();
+			enterprisePayroll.workplace = null; //no workplace
 
+			enterprisePayroll.irpf = s.getTotalIrpf();
+
+			enterprisePayroll.cgcBase = s.getCommonContingenciesBase();
+			enterprisePayroll.irpfBase = s.getIrpfBase();
+
+			enterprisePayroll.raw = s.getTotalPayment();
+			enterprisePayroll.liquid = s.getTotalLiquid();
+			enterprisePayroll.employeeSS = s.getTotalSSContributions();
+
+			enterprisePayroll.enterpriseSS = s.getCosts().stream().mapToDouble(Cost::getAmount).sum();
+			
+			enterprisePayroll.totalSS = enterprisePayroll.employeeSS + enterprisePayroll.enterpriseSS;
+			enterprisePayroll.totalCost = enterprisePayroll.enterpriseSS + enterprisePayroll.irpf + enterprisePayroll.raw;
+
+			enterprisePayroll.bonuses = s.getCosts().stream().mapToDouble(Cost::getAmount).sum();
+			
+			Double cgc = s.getDeductions().stream()
+					.filter(d -> d.getDeductionType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal())
+					.mapToDouble(d -> d.getAmount())
+					.sum();
+			Double unemployment = s.getDeductions().stream()
+					.filter(d -> d.getDeductionType().ordinal() == DeductionType.UNEMPLOYMENT.ordinal())
+					.mapToDouble(d -> d.getAmount())
+					.sum();
+			Double jobTraining = s.getDeductions().stream()
+					.filter(d -> d.getDeductionType().ordinal() == DeductionType.JOB_TRAINING.ordinal())
+					.mapToDouble(d -> d.getAmount())
+					.sum();
+			
+				enterprisePayroll.cgc = cgc;
+				enterprisePayroll.unemployment = unemployment;
+				enterprisePayroll.jobTraining = jobTraining;
+
+			return enterprisePayroll;	
+		});
+	}
+	*/
 	public static Stream<EnterprisePayroll> getEnterprisePayrolls(DSLContext ctx, Condition condition)
 			throws IOException {
 		
@@ -908,6 +995,8 @@ public class EnterprisePayrollExcel {
 //		pruebaSegSocial.employee = "DAVID CASTAÑO, SANCHEZ";
 //		pruebaSegSocial.employeeSS = 3d;
 //		pruebaSegSocial.enterpriseSS = 0d;
+		
+		
 		
 
 		Map<Integer, Double> bonusesMap = ctx.select().from(SALARY).innerJoin(CONTRACT)
@@ -949,9 +1038,16 @@ public class EnterprisePayrollExcel {
 					enterprisePayroll.raw = record.get(SALARY.TOTAL_PAYMENT);
 					enterprisePayroll.liquid = record.get(SALARY.TOTAL_LIQUID);
 					enterprisePayroll.employeeSS = record.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
-					enterprisePayroll.enterpriseSS = record.get(SALARY.TOTAL_ENTERPRISE);
+//					enterprisePayroll.enterpriseSS = record.get(SALARY.TOTAL_ENTERPRISE);
+					
+					enterprisePayroll.enterpriseSS = ctx.select().from(SALARY_COST)
+					.where(SALARY_COST.SALARY.eq(record.get(SALARY.ID)))
+					.fetchStreamInto(SALARY_COST)
+					.mapToDouble(SalaryCostRecord::getAmount)
+					.sum();
+					
 					enterprisePayroll.totalSS = enterprisePayroll.employeeSS + enterprisePayroll.enterpriseSS;
-					enterprisePayroll.totalCost = enterprisePayroll.totalSS + enterprisePayroll.irpf;
+					enterprisePayroll.totalCost = enterprisePayroll.enterpriseSS + enterprisePayroll.irpf + enterprisePayroll.raw;
 
 					enterprisePayroll.bonuses = bonusesMap.get(record.get(SALARY.ID));
 
@@ -982,7 +1078,21 @@ public class EnterprisePayrollExcel {
 		cell.setCellFormula(CellReference.convertNumToColString(column-2)+(sheet.getLastRowNum()+1)+"-"+CellReference.convertNumToColString(column-1)+(sheet.getLastRowNum()+1));
 		cell.setCellStyle(ssCellStyle);
 	}
-
+	
+	public static String getEnterpriseName (String domainName, Integer enterpriseId, Integer workplaceId) {
+		
+		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
+			AtomicInteger eId = new AtomicInteger(enterpriseId);
+			if (enterpriseId == null || enterpriseId == 0)
+				eId.set(AON.getWorkplace(aonContext.getDomainName()
+						, aonContext.getDomainId()
+						, "", w -> w.getIdProperty().eq(workplaceId)).getEnterprise());
+			return AON.getRegistry(aonContext.getDomainName()
+					, aonContext.getDomainId()
+					, aonContext.getUser()
+					, r -> r.getIdProperty().eq(eId.get())).getName();
+		}
+	}
 	public static class EnterprisePayroll implements IEnterprisePayroll {
 		private String employee;
 		private String workplace;
