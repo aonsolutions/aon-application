@@ -1,0 +1,30 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style>
+	
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			padding: 10px 20px;
+			max-width: 500px;
+		}
+		
+		.flex{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 10px;
+			margin-top: 20px;
+		}
+		
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.flexColumn}" ui:field='toolbar'>
+		<g:ScrollPanel ui:field="scrollPanel"/>
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.flex}"/>
+	</g:HTMLPanel>
+</ui:UiBinder> 
