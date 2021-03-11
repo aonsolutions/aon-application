@@ -1,14 +1,15 @@
 package com.esferalia.aon.in.payroll.pdf.creators.payroll._default;
 
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.BLACK;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.BLUE;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.LIGHT_GRAY;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts.HELVETICA;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts.HELVETICA_BOLD;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats.formatDate;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats.to_latin_number;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.TEXT_ALIGNMENT.CENTER;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.TEXT_ALIGNMENT.LEFT;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.TEXT_ALIGNMENT.RIGHT;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT.CENTER;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT.LEFT;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT.RIGHT;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.getDouble;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.getInteger;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.getString;
@@ -42,8 +43,10 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.poi.hssf.util.HSSFColor.BLUE;
 
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfBox;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfImage;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfText;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
@@ -290,7 +293,7 @@ public class DefaultPayrollTemplate {
 		x = 25;
 		y = 675;
 
-		String title = text("DEVENGOS").toUpperCase() + ".";
+		String title = text("DEVENGOS").toUpperCase();
 		String totals = text("TOTALES").toUpperCase();
 		String accrual_total_title = "A." + text("TOTAL DEVENGADO").toUpperCase() + ":";
 		String accrual_total = to_latin_number(p.getAccrual_total().orElse(0.00)) + " " + text("MONEDA");
@@ -343,7 +346,7 @@ public class DefaultPayrollTemplate {
 	private void draw_deductions() throws IOException {
 		
 		//DEDUCTIONS CONTENT
-		String title =						text("DEDUCCIONES").toUpperCase() + ".";
+		String title =						text("DEDUCCIONES").toUpperCase();
 		String deduction_total_title = 		"B. " + text("TOTAL DEDUCIR").toUpperCase() + ": ";
 		String deduction_total = 			to_latin_number(getDouble(p.getDeduction_total())) + " " + text("MONEDA");
 		String payroll_total_title = 		text("TOTAL PERCIBIR").toUpperCase() + " (A-B): ";
@@ -377,16 +380,16 @@ public class DefaultPayrollTemplate {
 						n ->{								
 							String entry_value 		= to_latin_number(n.getAmount().orElse(null)) + " " + text("MONEDA");
 							String entry_txt 		= " por " + n.getDescription().orElse("");
-							String entry_percent 	= to_latin_number(n.getPercent().orElse(null))+ " % " ;
+							String entry_percent 	= (n.getPercent().isEmpty())? "" : to_latin_number(n.getPercent().get())+ " % " ;
 								
 							if(n.getAmount().isPresent() && n.getAmount().get() != 0) {
-								PdfText quantity = new PdfText(x ,y,60,15,contents,entry_value,BLACK,HELVETICA,fontSize,RIGHT);
+								PdfText quantity = new PdfText(x ,y,60,15,contents,entry_percent,BLACK,HELVETICA,fontSize,RIGHT);
 								quantity.draw();
 										
 								PdfText t2 = new PdfText(x + 64,y,270,15,contents,entry_txt,BLACK,HELVETICA,fontSize,LEFT);
 								t2.draw();
 										
-								PdfText t3 = new PdfText(x + 64 + 270,y,60,15,contents,entry_percent,BLACK,HELVETICA,fontSize,RIGHT);
+								PdfText t3 = new PdfText(x + 64 + 270,y,60,15,contents,entry_value,BLACK,HELVETICA,fontSize,RIGHT);
 								t3.draw();
 				
 								y -= 10;
@@ -408,12 +411,11 @@ public class DefaultPayrollTemplate {
 		y-=10;
 		
 		if(logo.isPresent()) {
-			
 			byte[] bytes =  logo.get().readAllBytes();
-			BufferedImage img = create_image_from_bytes(bytes);
-			float[] scales = PDFToolkit.reescale(img.getWidth(),img.getHeight(),150,50);
-			drawImage(doc,contents,new ByteArrayInputStream(bytes),x+5,y - scales[1]/2 - 10,scales[0],scales[1]);
+			PdfImage img = new PdfImage(x + 20, y - 50, 170, 70, 0, 0, contents, doc, bytes);
 			
+			PdfBox box = new PdfBox( x + 20, y - 50 , 170, 70, BLACK, contents);			
+			img.scale(170, 70, LEFT).draw();
 		}
 		
 		y -= 15;
@@ -580,7 +582,7 @@ public class DefaultPayrollTemplate {
 			
 			
 			Date d = new Date();
-			String vs = "v0.35-AK";
+			String vs = "v0.36-AK";
 			
 			PdfText version = new PdfText(5f,1f,200f,10f,contents,vs,BLACK,HELVETICA ,5f,LEFT);
 			version.draw();

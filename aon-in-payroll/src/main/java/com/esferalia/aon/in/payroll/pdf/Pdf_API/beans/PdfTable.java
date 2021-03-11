@@ -4,7 +4,7 @@ import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.BLACK;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.GRAY;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.WHITE;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts.HELVETICA;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.TEXT_ALIGNMENT.CENTER;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT.CENTER;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -14,14 +14,14 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.TEXT_ALIGNMENT;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT;
 
 public class PdfTable extends PdfComponent{
 	
 	private int columns;
 	
 	private String[] headers;
-	private TEXT_ALIGNMENT[] alignments;
+	private ALIGNMENT[] alignments;
 	private float[] pixels;
 	private float[] sizes;
 	private Object[] cells;
@@ -57,7 +57,7 @@ public class PdfTable extends PdfComponent{
 		text_color = BLACK;
 		header_color = BLACK;
 		header_text_color = WHITE;
-		alignments = new TEXT_ALIGNMENT[columns];
+		alignments = new ALIGNMENT[columns];
 	}
 
 	private void calculate_pixels(float spacing) {
@@ -71,7 +71,7 @@ public class PdfTable extends PdfComponent{
 		}
 	}
 
-	public void set_alignment(TEXT_ALIGNMENT[] alignments) {
+	public void set_alignment(ALIGNMENT[] alignments) {
 		
 		for (int i = 0; i < columns; i++) {
 			try{this.alignments[i] = alignments[i];}
@@ -86,7 +86,7 @@ public class PdfTable extends PdfComponent{
 		
 		for (int i = 0; i < columns; i++) {
 			String text_content = (headers.length <= i)? "": headers[i];
-			TEXT_ALIGNMENT align = (alignments[i] != null)? alignments[i] : CENTER;
+			ALIGNMENT align = (alignments[i] != null)? alignments[i] : CENTER;
 			float height = ( font.getFontDescriptor().getCapHeight()) / 1000 * header_fontsize;
 			
 			PdfBox box = new PdfBox(pixels[i],y,width / (100 / sizes[i]),header_height,header_color,this.stream);
@@ -126,7 +126,7 @@ public class PdfTable extends PdfComponent{
 	public void new_row(String[] text_bundle) throws IOException {
 		
 		for (int i = 0; i < pixels.length; i++) {
-			TEXT_ALIGNMENT align = (alignments[i] != null && alignments.length >= i)? alignments[i] : CENTER;
+			ALIGNMENT align = (alignments[i] != null && alignments.length >= i)? alignments[i] : CENTER;
 			String text_content = (text_bundle.length <= i)? "" : text_bundle[i];
 			float height = ( font.getFontDescriptor().getCapHeight()) / 1000 * fontsize;
 			
@@ -139,7 +139,7 @@ public class PdfTable extends PdfComponent{
 	public void new_row() throws IOException {
 							
 		for (int i = 0; i < pixels.length; i++) {
-			TEXT_ALIGNMENT align = (alignments[i] != null && alignments.length >= i)? alignments[i] : CENTER;
+			ALIGNMENT align = (alignments[i] != null && alignments.length >= i)? alignments[i] : CENTER;
 			String text_content = (cells[i] == null)? "" : cells[i].toString();
 			float height = ( font.getFontDescriptor().getCapHeight()) / 1000 * fontsize;
 			

@@ -65,9 +65,9 @@ public class DetailedPayrollTest {
 			for (int i = 0; i < random(3); i++) {
 				DefaultPayrollDeduction deduction =
 						new DefaultPayrollDeduction(
-								random(10),
+								random(100000),
 								"Descripcion por defecto",
-								random(99)
+								random(100)
 						);
 				de.get(key).add(deduction);
 			}
@@ -128,7 +128,7 @@ public class DetailedPayrollTest {
 		
 		try { 
 			System.out.println(" Printing PDF file..... \n");
-			PdfMaker.print_default_payroll(new FileOutputStream("./payroll.pdf"), builder.build(), DetailedPayrollTest.class.getResourceAsStream("HOR.png"),new Locale("Es"));
+			PdfMaker.print_default_payroll(new FileOutputStream("./payroll.pdf"), builder.build(), DetailedPayrollTest.class.getResourceAsStream("logo.png"),new Locale("Es"));
 			System.out.println(" >> DONE.");
 		} 
 		catch (CanNotCreatePdfException e) {

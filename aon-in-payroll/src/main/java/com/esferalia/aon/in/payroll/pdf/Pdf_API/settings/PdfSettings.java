@@ -2,7 +2,7 @@ package com.esferalia.aon.in.payroll.pdf.Pdf_API.settings;
 
 public class PdfSettings {
 
-	public static enum TEXT_ALIGNMENT {
+	public static enum ALIGNMENT {
 	    CENTER,
 	    LEFT,
 	    RIGHT;

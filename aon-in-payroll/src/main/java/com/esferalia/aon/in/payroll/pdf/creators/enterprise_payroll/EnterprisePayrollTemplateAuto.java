@@ -10,8 +10,8 @@ import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts.HELVETI
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts.HELVETICA_BOLD;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats.to_latin_number;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.PAGE_TYPE.HORIZONTAL;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.TEXT_ALIGNMENT.LEFT;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.TEXT_ALIGNMENT.RIGHT;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT.LEFT;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT.RIGHT;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,7 +32,7 @@ import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfTable;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfText;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.TEXT_ALIGNMENT;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.ColManager;
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayrollEntry;
@@ -120,7 +120,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		
 		float[] sizes = new float[cols];
 		String[] headers = new String[cols];
-		TEXT_ALIGNMENT[] alignments = new TEXT_ALIGNMENT[cols];
+		ALIGNMENT[] alignments = new ALIGNMENT[cols];
 		
 		int current = 0;
 		if(t.mg.isActive("trabajador")) 		current = set_column(current,sizes,headers,alignments,tb,"Trabajador",LEFT);
@@ -139,7 +139,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		return create_table(t,sizes,headers,alignments);
 	}
 	
-	private static int set_column(int current, float[] sizes, String[] headers, TEXT_ALIGNMENT[] alignments, float tb, String text, TEXT_ALIGNMENT align) {
+	private static int set_column(int current, float[] sizes, String[] headers, ALIGNMENT[] alignments, float tb, String text, ALIGNMENT align) {
 		sizes[current] = tb;
 		headers[current] = text;
 		alignments[current] = align;
@@ -147,7 +147,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		return current;
 	}
 
-	private static PdfTable create_table(EnterprisePayrollTemplateAuto t, float[] sizes, String[] headers,TEXT_ALIGNMENT[] alignments) throws IOException {
+	private static PdfTable create_table(EnterprisePayrollTemplateAuto t, float[] sizes, String[] headers,ALIGNMENT[] alignments) throws IOException {
 		
 		PdfTable table = new PdfTable(t.x, t.y, t.contents, 816, 15, 1,sizes,headers);
 		table.header_height = 20;

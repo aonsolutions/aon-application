@@ -10,7 +10,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.TEXT_ALIGNMENT;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 
 public class PdfText extends PdfComponent{
@@ -19,10 +19,10 @@ public class PdfText extends PdfComponent{
 	private Color  color;
 	private PDFont font;
 	private Float font_size;
-	private TEXT_ALIGNMENT alignment;
+	private ALIGNMENT alignment;
 	private List<String> lines;
 	
-	public PdfText(float x, float y, float width, float height, float margin_x, float margin_y, PDPageContentStream stream, String content, Color color, PDFont font, Float font_size,TEXT_ALIGNMENT alignment) {
+	public PdfText(float x, float y, float width, float height, float margin_x, float margin_y, PDPageContentStream stream, String content, Color color, PDFont font, Float font_size,ALIGNMENT alignment) {
 		super(x, y, width, height, margin_x, margin_y, stream);
 		this.content = content;
 		this.color = color;
@@ -32,7 +32,7 @@ public class PdfText extends PdfComponent{
 		get_lines();
 	}
 
-	public PdfText(float x, float y, float width, float height, PDPageContentStream stream, String content, Color color, PDFont font, Float font_size, TEXT_ALIGNMENT alignment) {
+	public PdfText(float x, float y, float width, float height, PDPageContentStream stream, String content, Color color, PDFont font, Float font_size, ALIGNMENT alignment) {
 		super(x, y, width, height, 0, 0, stream);
 		
 		float fh = (font.getFontDescriptor().getCapHeight()) / 1000 * font_size;
@@ -48,7 +48,7 @@ public class PdfText extends PdfComponent{
 		get_lines();
 	}
 	
-	public PdfText(float x, float y, float margin_x, float width, float height, PDPageContentStream stream, String content, Color color, PDFont font, Float font_size, TEXT_ALIGNMENT alignment) {
+	public PdfText(float x, float y, float margin_x, float width, float height, PDPageContentStream stream, String content, Color color, PDFont font, Float font_size, ALIGNMENT alignment) {
 		super(x, y, width, height, margin_x, 0, stream);
 		
 		float fh = (font.getFontDescriptor().getCapHeight()) / 1000 * font_size;
@@ -63,7 +63,7 @@ public class PdfText extends PdfComponent{
 		get_lines();
 	}
 
-	public PdfText(float width, float height, float margin_x, float margin_y, String content, PdfFile file, boolean primary, TEXT_ALIGNMENT alignment) {
+	public PdfText(float width, float height, float margin_x, float margin_y, String content, PdfFile file, boolean primary, ALIGNMENT alignment) {
 		super(file.x, file.y, width, height, margin_x, margin_y, file.contents);
 
 		this.content = content;
@@ -75,7 +75,7 @@ public class PdfText extends PdfComponent{
 		get_lines();
 	}
 	
-	public PdfText(float width, float height, float margin_x, String content, PdfFile file, boolean primary, TEXT_ALIGNMENT alignment) {
+	public PdfText(float width, float height, float margin_x, String content, PdfFile file, boolean primary, ALIGNMENT alignment) {
 		super(file.x, file.y, width, height, margin_x, 0, file.contents);
 		float fh = (font.getFontDescriptor().getCapHeight()) / 1000 * font_size;
 		
@@ -154,11 +154,11 @@ public class PdfText extends PdfComponent{
 		this.font_size = font_size;
 	}
 
-	public TEXT_ALIGNMENT getAlignment() {
+	public ALIGNMENT getAlignment() {
 		return alignment;
 	}
 
-	public void setAlignment(TEXT_ALIGNMENT alignment) {
+	public void setAlignment(ALIGNMENT alignment) {
 		this.alignment = alignment;
 	}	
 	
