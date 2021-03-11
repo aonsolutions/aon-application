@@ -476,6 +476,9 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return (StringUtils.startsWith(className, "com.code.aon")
 				&& !StringUtils.startsWith(key, "com.code.aon.audit.")
 				&& !StringUtils
+				.startsWith(className,
+						"com.code.aon.ui.config.controller.ContractSwitcher")
+				&& !StringUtils
 						.startsWith(className,
 								"com.code.aon.ui.audit.controller.ApplicationOptionController")
 				&& !StringUtils.startsWith(className,

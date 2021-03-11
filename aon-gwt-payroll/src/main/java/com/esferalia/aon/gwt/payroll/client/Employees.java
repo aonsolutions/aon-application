@@ -64,6 +64,7 @@ import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -188,6 +189,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	@UiField
 	OptionsToolbar toolbar;
 
+
 	private Images images;
 	private List<Listener> listeners;
 	private DomainEmployeesServiceAsync employeesService;
@@ -203,13 +205,16 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	private Storage storage;
 
+	private Timer searchTimer ;
+
 	/**
 	 * The last scroll position.
 	 */
 	private int lastScrollPos = 0;
 
 	private List<TreeItem> employeeCentinels;
-
+	
+	
 
 	public Employees() {
 		this(false, true);
@@ -274,6 +279,14 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 				Employees.this.onAvaiableEmployees(result);
 			}
 		});
+		
+		searchTimer = new Timer() {
+			
+			@Override
+			public void run() {
+				filter(toolbar.getSearchTextBox().getValue());
+			}
+		};
 
 	}
 
@@ -470,7 +483,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	@Override
 	public void onScroll(ScrollEvent event) {
-
 		// If scrolling up, ignore the event.
 		int oldScrollPos = lastScrollPos;
 		lastScrollPos = scrollPanel.getVerticalScrollPosition();
@@ -1396,7 +1408,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	private void loadEmployess(TreeItem workplaceItem, List<Employee> employees, int limit) {
-		
 		for (Employee employee : employees) {
 			if (employee.getId() < 0)
 				continue;
@@ -2047,11 +2058,18 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	
 	@Override
 	public void onKeyUpSearchTextBox(KeyUpEvent event) {
-		filter(toolbar.getSearchTextBox().getValue());
+		//filter(toolbar.getSearchTextBox().getValue());
+		searchTimer.schedule(1000);
 	}
 	
 	// ------------------------------------------------------------------------
 	
+	public void search(String pattern) {
+		select(pattern);
+	}
+	
+	// ------------------------------------------------------------------------
+
 	private void load() {
 		
 		for ( int i = 0; i < tree.getItemCount(); i++ ) {
@@ -2087,23 +2105,23 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			filterEnterprise( pattern, enterpriseItem, workplaceItem -> {
 				//enterpriseItem.setVisible(true);
-				enterpriseItem.setState(true); // open
+				enterpriseItem.setState(true, false); // open
 			});
 		}
 		
 	}
-	
+
 	private void filterEnterprise( String pattern, TreeItem enterpriseItem , Consumer<TreeItem> found) {
 		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
 		for ( int i = workplacesOffset; i < enterpriseItem.getChildCount(); i++ ) {			
 			TreeItem workplaceItem = enterpriseItem.getChild(i);	
 
 			workplaceItem.setVisible(false);	// hides
-			workplaceItem.setState(false);		// close
+			workplaceItem.setState(false, false);		// close
 
 			loadAndfilterWorkplace( pattern, workplaceItem, employeeItem -> {
 				workplaceItem.setVisible(true);	// display
-				workplaceItem.setState(true); 	// open	
+				workplaceItem.setState(true, false); 	// open	
 				found.accept( workplaceItem );
 			});
 		}
@@ -2129,9 +2147,85 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			;
 			
 			employeeItem.setVisible(visible);
-			if ( visible ) 
+			if ( visible ) {
 				found.accept(employeeItem);
+			}
 		}
+	}
+	
+	
+	private void select( String pattern ) {
+		
+		for ( int i = 0; i < tree.getItemCount(); i++ ) {
+			TreeItem enterpriseItem = tree.getItem(i);	
+			selectEmployee( pattern, enterpriseItem, 0, workplaceItem -> {
+				enterpriseItem.setState(true); // open
+			});
+		}
+	}
+	
+	
+	private void selectEmployee( String pattern, TreeItem enterpriseItem , int index, Consumer<TreeItem> found) {
+		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
+		int i = workplacesOffset + index ; 
+		if ( i >= enterpriseItem.getChildCount() )
+			return;
+		
+		TreeItem workplaceItem = enterpriseItem.getChild(i);	
+		
+		loadAndFindemployee( pattern, 
+		workplaceItem, 
+		employeeItem -> {
+			workplaceItem.setVisible(true);	// display
+			workplaceItem.setState(true); 	// open	
+			
+			employeeItem.setState(true); // open
+			tree.setSelectedItem(employeeItem, true);
+			
+			found.accept( workplaceItem );
+		},
+		() -> {
+			selectEmployee(pattern, enterpriseItem, index+1, found);
+		});
+		
+		return ;
+	}
+
+	private void loadAndFindemployee( String pattern, TreeItem workplaceItem, Consumer<TreeItem> found, Runnable lost) {
+		onWorkplaceOpen(
+		workplaceItem, 
+		Integer.MAX_VALUE, 
+		() -> { 
+			
+			TreeItem employeeItem = findEmployee(pattern, workplaceItem );
+			if ( employeeItem != null )
+				found.accept(employeeItem);
+			else 
+				lost.run();
+		}
+		);
+	}
+	
+	private TreeItem findEmployee( String pattern, TreeItem workplaceItem) {
+		int employeesOffset = getEmployeesOffset(workplaceItem);
+		for ( int i = employeesOffset; i < workplaceItem.getChildCount(); i++ ) {
+			TreeItem employeeItem = workplaceItem.getChild(i);
+
+			EmployeeDraftObject employee = (EmployeeDraftObject) employeeItem.getUserObject();
+			
+			boolean found  = 
+			AonStringUtils.isBlank(pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getFullname(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getDocument(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getSocialSecurity(), pattern)
+			;
+			
+			if ( found )
+				return employeeItem;
+		}
+		
+		return null;
+		
 	}
 	
 }

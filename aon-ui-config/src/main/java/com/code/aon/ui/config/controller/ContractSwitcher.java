@@ -54,6 +54,8 @@ public class ContractSwitcher implements
 	private int page;
 	private Integer pageLimit;
 	private String beanName;
+	
+	private ContractData contractData;
 
 	public ContractSwitcher() {
 		try {
@@ -271,6 +273,21 @@ public class ContractSwitcher implements
 	public String getDomainNameURL() throws ManagerBeanException {
 		return ((DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER)).getDomainNameURL();
 	}
+	
+	public void select(ContractData contractData) throws ManagerBeanException  {
+		this.contractData = contractData;	
+	}
+	
+	public String getEmployeePattern() throws ManagerBeanException  {
+		if ( AonStringUtils.isNotBlank(contractData.getDocument()))
+			return contractData.getDocument();
+		if ( AonStringUtils.isNotBlank(contractData.getSsNumber()))
+			return contractData.getSsNumber();
+		if ( AonStringUtils.isNotBlank(contractData.getFullName()))
+			return contractData.getFullName();
+		return null;
+	}
+	
 	
 	public static boolean containsAll (String str, String searchStr) {
 		return AonStringUtils.isNotBlank(str) 

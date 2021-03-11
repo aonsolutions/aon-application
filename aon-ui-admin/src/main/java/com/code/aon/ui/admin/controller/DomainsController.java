@@ -162,7 +162,8 @@ public class DomainsController extends BasicController {
 		if ( contractSwitcher.getModel().isRowAvailable() ) {
 			ContractData contractData = (ContractData) contractSwitcher.getModel().getRowData();
 			DomainSwitcher domainSwitcher = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-
+			
+			contractSwitcher.select(contractData);
 			domainSwitcher.select(contractData.getDomainId(), contractData.getDomainDescription());
 			if ( domainSwitcher.isAdminDomain() ) {
 				setConfigurationMenu();

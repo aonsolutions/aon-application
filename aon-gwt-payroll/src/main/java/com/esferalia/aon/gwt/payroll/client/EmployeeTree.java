@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.common.shared.Constants.EMPLOYEE_SEARCH_PARAM;
+import static com.esferalia.aon.gwt.payroll.client.MainEntryPoint.getParameter;
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
 
 import java.util.ArrayList;
@@ -21,7 +23,6 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.metrics.StatsEventLogger;
-import com.esferalia.aon.gwt.common.client.widget.ComboBox;
 import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -29,7 +30,6 @@ import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.client.widget.ComboBox.Format;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractBaseCretaDetail;
@@ -37,7 +37,6 @@ import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractCCCCretaRequestCom
 import com.esferalia.aon.gwt.payroll.client.MainCreta.SyncCallback;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
-import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
@@ -87,7 +86,6 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -2083,7 +2081,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		logEvent("richStylesInjected");
 
-		employees = new Employees(true, true);
+		employees = new Employees(true, true) {
+			@Override
+			public void onEnterprise(Enterprise enterprise) {
+				super.onEnterprise(enterprise);
+				String employeeSearch = 
+				getParameter(GWT.getModuleName(), EMPLOYEE_SEARCH_PARAM);
+				if ( AonStringUtils.isNotBlank(employeeSearch) )
+					employees.search(employeeSearch);
+			}
+		};
+		
+
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
 		logEvent("uiCreatedAndBound");
