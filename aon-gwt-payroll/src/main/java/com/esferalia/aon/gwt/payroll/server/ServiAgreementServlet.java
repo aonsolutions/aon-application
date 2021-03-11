@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.esferalia.aon.payroll.agreement.ServiAgreement;
 import com.esferalia.aon.payroll.agreement.ServiAgreement.Extension;
 import com.esferalia.aon.payroll.agreement.ServiAgreementsFilter;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ServiAgreement-Servlet", urlPatterns = { "/aon_gwt_payroll/servi_agreement/*" })
@@ -30,8 +31,12 @@ public class ServiAgreementServlet extends HttpServlet {
 		String serviAgreemntCode = ServiAgreementsFilter.getServiAgreementCode(ssNumber);
 		
 		try {
-			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition:", "attachment;filename=\""+ ssNumber + "." + fileType + "\"");
+			if(AonStringUtils.equalsIgnoreCase(fileType, "pdf"))
+				response.setContentType("application/pdf");
+			else if (AonStringUtils.equalsIgnoreCase(fileType, "xls"))
+				response.setContentType("application/vnd.ms-excel");
+			
+			response.setHeader("Content-Disposition", "attachment;filename=" + ssNumber + "." + fileType);
 			ServletOutputStream output = response.getOutputStream();
 			
 			InputStream file = ServiAgreement.get_online_file(serviAgreemntCode, getExtention(fileType));

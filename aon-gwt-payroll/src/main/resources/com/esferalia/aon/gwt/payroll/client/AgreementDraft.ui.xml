@@ -345,6 +345,12 @@
 		.textCenter{
 			text-align: center;
 		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
 
 	</ui:style>
 
@@ -375,7 +381,10 @@
 										</g:Label>
 									</g:customCell>
 									<g:customCell styleName="{style.field}">
-										<g:TextBox debugId='ssNumberTextBox' ui:field='ssNumberTextBox' styleName="gwt-TextBox {style.textCenter}"/>
+										<g:HTMLPanel styleName="{style.flex}">
+											<g:TextBox debugId='ssNumberTextBox' ui:field='ssNumberTextBox' styleName="gwt-TextBox {style.textCenter}"/>
+											<g:HTMLPanel ui:field="serviAgreementPanel" styleName="{style.flex}"></g:HTMLPanel>
+										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
 							</g:Grid>
