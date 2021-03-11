@@ -99,4 +99,9 @@ public abstract class PdfComponent {
 	}
 	
 	
+	//------------HELP INFO------------
+		public static String describe() {
+			String info = "PdfComponent:\t\t\tAbstract component father of most beans.";
+			return info;
+		}	
 }

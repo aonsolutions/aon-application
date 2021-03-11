@@ -106,4 +106,11 @@ public class PdfFile {
 		return words.getString(name);
 	}
 	
+	//------------HELP INFO------------
+		public static String describe() {
+			String info =
+			"PdfFile: \t\t\t\t\tRepresents the basic pdf file template." + 
+			"";
+			return info;
+		}	
 }

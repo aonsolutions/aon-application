@@ -1,0 +1,67 @@
+package com.esferalia.aon.in.payroll.pdf.Pdf_API;
+
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.end_section;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.jump;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.log;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.slog;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.start_section;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.tab;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.title;
+
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfBox;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfComponent;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfFile;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfImage;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfPage;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfTable;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfText;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.StringToolkit;
+
+public class PdfAPI {
+	public static String version = "1.2-AK";
+		
+	public static void help() {
+		title("Pdf API v" + version + " by Akrck02");
+		tab(2);
+		jump(1);
+		slog(" A pdfbox based API for pdf designing and printing.");
+		
+		jump(1);
+		start_section(" PDF beans: ");
+			slog(PdfFile.describe());	
+			slog(PdfComponent.describe());
+			slog(PdfPage.describe());
+			slog(PdfBox.describe());					
+			slog(PdfText.describe());	
+			slog(PdfImage.describe());
+			slog(PdfTable.describe());
+		end_section();	
+		
+		log("Pdfbox version","2.0.19");
+		jump(1);
+		slog("All the classes have help(  ) method to guide you so use 'Class.help(  );' for help :D");
+		
+		PdfColors.help();
+		PdfFonts.help();
+		PdfSettings.help();
+		PdfFormats.help();
+		
+		title("Pdf API Toolkits");
+		PDFToolkit.help();
+		OptionalToolkit.help();
+		StringToolkit.help();
+	}
+	
+
+
+	public static void main(String[] args) {
+		help();
+	}
+}

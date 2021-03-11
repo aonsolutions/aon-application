@@ -1,5 +1,11 @@
 package com.esferalia.aon.in.payroll.pdf.Pdf_API.settings;
 
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.jump;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.slog;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.start_section;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.tb;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.untab;
+
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,15 +14,7 @@ import java.util.Optional;
 
 public class PdfFormats {
 
-	public final static DecimalFormat two_digit_decimal = new DecimalFormat("0.00");
-	
-	
-	//FORMAT A DOUBLE
-	public static String format_two_digit_decimal(double num) {
-		return two_digit_decimal.format(num);
-	}
-	
-	
+
 	//RETURN LATIN VERSION OF A NUMBER WITH . AND , (STRING)
 	public static String to_latin_number(Double number){
 		if(number == null) return "";
@@ -52,5 +50,19 @@ public class PdfFormats {
 		Optional<String> formattedDate;
 		formattedDate = Optional.of(dateFormatter.format(date.get()));
 		return formattedDate;
+	}
+	
+	//--------------HELP INFO----------------------------------
+	public static void help() {
+		jump(1);
+
+		start_section("Pdf data format methods:");
+		slog("to_latin_number()" 	+ tb(4) + "Converts a double into a latin format decimal String");
+		slog("parseDate()" 			+ tb(5) + "Converts String to date");
+		slog("formatDate()" 		+ tb(5) + "Converts date to String");
+
+		jump(1);
+		untab();
+	
 	}
 }

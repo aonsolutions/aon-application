@@ -32,5 +32,13 @@ public class PdfBox {
 		PDFToolkit.drawBorderedBox(stream, x, y, width, height, color);
 	}
 	
+	public void border(Color c) throws IOException {
+		PDFToolkit.drawBorderedBox(stream, x, y, width, height, c);
+	}
 	
+	//------------HELP INFO------------
+		public static String describe() {
+			String info = "PdfBox: \t\t\t\t\tImaginary box.";
+			return info;
+		}	
 }

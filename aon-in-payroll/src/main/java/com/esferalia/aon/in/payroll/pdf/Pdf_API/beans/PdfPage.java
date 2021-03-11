@@ -54,4 +54,18 @@ public class PdfPage{
 	}
 	
 	
+	public float getWidth() {
+		return page.getMediaBox().getWidth();
+	}
+	
+	
+	public float getHeight() {
+		return page.getMediaBox().getHeight();
+	}
+	
+	//HELP INFO
+	public static String describe() {
+		String info = "PdfPage:\t\t\t\t\tPage inside a pdf.";
+		return info;
+	}
 }

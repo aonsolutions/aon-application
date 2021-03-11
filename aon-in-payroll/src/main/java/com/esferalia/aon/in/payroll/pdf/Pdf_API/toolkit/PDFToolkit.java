@@ -16,6 +16,13 @@ import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.jump;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.log_warning;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.slog;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.start_section;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.tb;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.untab;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -34,9 +41,6 @@ import javax.imageio.ImageIO;
 import java.util.List;
 
 public class PDFToolkit {
-
-
-	public final static DecimalFormat df = PdfFormats.two_digit_decimal;
 
 	//CREATE AN HORIZONTAL PAGE
 	public static PDPage createHorizontalPage() {
@@ -109,26 +113,13 @@ public class PDFToolkit {
 		contents.endText();
 	}
 
-	//DRAWS AN IMAGE
-	public static void drawImage(PDDocument doc, PDPageContentStream contents, String route, float x, float y, float width, float height) throws IOException {
-		contents.drawImage(PDImageXObject.createFromFile(route, doc), x, y, width, height);
-	}
 
 	public static void drawImage(PDDocument doc, PDPageContentStream contents, byte[] logo, float x, float y) throws IOException {
 		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo, null), x, y);
 	}
 
-
 	public static void drawImage(PDDocument doc, PDPageContentStream contents, byte[] logo, float x, float y, float width, float height) throws IOException {
 		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo, null), x, y, width, height);
-	}
-
-	public static void drawImage(PDDocument doc, PDPageContentStream contents, InputStream logo, float x, float y, float width, float height) throws IOException {
-		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo.readAllBytes(), "image"), x, y, width, height);
-	}
-
-	public static void drawImage(PDDocument doc, PDPageContentStream contents, InputStream logo, float x, float y) throws IOException {
-		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo.readAllBytes(), "image"), x, y);
 	}
 	
 	//DRAW A BOX
@@ -147,6 +138,7 @@ public class PDFToolkit {
 	}
 
 	//GET PDF FORM FIELDS
+	@Deprecated
 	public static List<PDField> get_form_fields(PDDocument doc) {
 		PDDocumentCatalog pdCatalog = doc.getDocumentCatalog();
 		PDAcroForm pdAcroForm = pdCatalog.getAcroForm();
@@ -154,6 +146,7 @@ public class PDFToolkit {
 	}
 
 	//GET FIELD RECTANGLE
+	@Deprecated
 	public static Optional<PDRectangle> get_field_rectangle(Optional<PDField> field, int widget_index) {
 		if (field.isEmpty()) return Optional.empty();
 		PDField f = field.get();
@@ -161,36 +154,14 @@ public class PDFToolkit {
 		return Optional.of(f.getWidgets().get(widget_index).getRectangle());
 	}
 
-	//GET FIELD RECTANGLES
-	public static ArrayList<Optional<PDRectangle>> get_field_rectangles(Optional<PDField> field) {
-		ArrayList<Optional<PDRectangle>> rectangles = new ArrayList<>();
-		if (field.isPresent()) {
-			for (int i = 0; i < field.get().getWidgets().size(); i++)
-				rectangles.add(get_field_rectangle(field, i));
-
-		}
-
-		return rectangles;
-	}
-
 	//GET FIELD PAGE
+	@Deprecated
 	public static Optional<PDPage> get_field_page(Optional<PDField> field, int widget_index) {
 		if (field.isEmpty()) return Optional.empty();
 		PDField f = field.get();
 		if (widget_index >= f.getWidgets().size()) return Optional.empty();
 		return Optional.of(f.getWidgets().get(widget_index).getPage());
 	}
-
-	//GET FIELD PAGES
-	public static ArrayList<Optional<PDPage>> get_field_pages(Optional<PDField> field) {
-		ArrayList<Optional<PDPage>> pages = new ArrayList<>();
-		if (field.isPresent()) {
-			for (int i = 0; i < field.get().getWidgets().size(); i++)
-				pages.add(get_field_page(field, i));
-		}
-		return pages;
-	}
-
 
 	//OPEN PAGE IN APPEND MODE
 	public static PDPageContentStream open_in_append_mode(PDDocument doc, PDPage page) {
@@ -200,13 +171,7 @@ public class PDFToolkit {
 			return null;
 		}
 	}
-	
-
-	//DIVIDE A STRING TO FIT A WIDTH
-	public static List<String> divide_string_to_fit(String text, float max, PDFont font, float fontSize) throws IOException{
-		return get_lines(text, max, font, fontSize);
-	}
-	
+		
 	//PUZZLES ARE MY PASSION
 	public static List<String> get_lines(String text, float max, PDFont font, float fontSize) throws  IOException{
 		
@@ -265,5 +230,47 @@ public class PDFToolkit {
 		return null;
 	}
 
+	//------------HELP INFO------------
+	public static void help() {
+		jump(1);
+
+		start_section("Pdf Toolkit: 									General PDF API core.");
+		slog("This toolkit contains the basic methods for PDF printing");
+		slog("and pdfbox abstractions.");
+		jump(1);
+		log_warning("To create PDF elements use PdfAPI beans");
+		slog("they are easier to implement and use and give you advanced methods by default.");
+		jump(2);
+		
+		slog("Available methods");
+		slog("-----------------------------------------------------------------------------------------------------------------------------------------------");
+		slog("create_horizontal_page()" 	+ tb(4) + "Creates an horizontal page. (use PdfPage instead)");
+		slog("create_vertical_page()" 		+ tb(5) + "Creates an vertical page. (use PdfPage instead)");		
+		slog("drawText()" 					+ tb(7) + "Draws a text. (use PdfText instead)");		
+		slog("drawTextRight()" 				+ tb(6) + "Draws a right aligned text. (use PdfText instead)");		
+		slog("drawTextLeft()" 				+ tb(6) + "Draws a left aligned text. (use PdfText instead)");		
+		slog("drawTextCenter()" 			+ tb(6) + "Draws a center aligned text. (use PdfText instead)");		
+		slog("drawImage()" 					+ tb(7) + "Draws an image. (use PdfImage instead)");		
+		slog("drawBox()" 					+ tb(7) + "Draws a box. (use PdfBox instead)");		
+		slog("drawImage()" 					+ tb(7) + "Draws a bordered box. (use PdfBox instead)");		
+		slog("open_in_append_mode()" 		+ tb(4) + "Opens a PDF file in append mode.");	
+		slog("get_lines()" 					+ tb(7) + "Divides a String in lines based in font, max-width and font size.");	
+		slog("cropped_string()" 			+ tb(6) + "Crops a String based in font, max-width and font size.");	
+		slog("reescale()" 					+ tb(7) + "Scales an image maintaining aspect ratio. (use PdfImage instead)");	
+		slog("create_image_from_bytes()" 	+ tb(3) + "Create BufferedImage from byte array.");	
+		
+		jump(1);
+		log_warning("Discouraged methods: ");
+		slog("-----------------------------------------------------------------------------------------------------------------------------------------------");
+		slog("get_form_fields()");
+		slog("get_form_rectangle()");
+		slog("get_form_page()");
+		
+		
+		jump(1);
+		untab();
+	
+	}	
 }
+
 

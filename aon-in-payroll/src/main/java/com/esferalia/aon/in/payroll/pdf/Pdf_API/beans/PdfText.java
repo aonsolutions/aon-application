@@ -91,7 +91,7 @@ public class PdfText extends PdfComponent{
 
 	private void get_lines() {
 		try {
-			this.lines = PDFToolkit.divide_string_to_fit(content, width - margin_x, font, font_size);
+			this.lines = PDFToolkit.get_lines(content, width - margin_x, font, font_size);
 		} catch (IOException e) {e.printStackTrace();
 		}
 	}
@@ -162,6 +162,10 @@ public class PdfText extends PdfComponent{
 		this.alignment = alignment;
 	}	
 	
-	
+	//HELP INFO
+	public static String describe() {
+		String info = "PdfText:\t\t\t\t\tNormal text.";
+		return info;
+	}
 }
 

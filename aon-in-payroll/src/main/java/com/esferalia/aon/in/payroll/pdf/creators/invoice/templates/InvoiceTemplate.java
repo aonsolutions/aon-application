@@ -15,6 +15,8 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.get_lines;
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -105,7 +107,7 @@ public class InvoiceTemplate {
 					x = 50;
 				}
 				
-				ArrayList<String> divided = (ArrayList<String>) PDFToolkit.divide_string_to_fit(entry.getDescription(), 240, PdfFonts.HELVETICA, 8);
+				ArrayList<String> divided = (ArrayList<String>) get_lines(entry.getDescription(), 240, PdfFonts.HELVETICA, 8);
 				
 				float dy = y;
 				

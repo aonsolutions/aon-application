@@ -10,9 +10,9 @@ import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats.to_la
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT.CENTER;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT.LEFT;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT.RIGHT;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.getDouble;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.getInteger;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.getString;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.safeDouble;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.safeInteger;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.safeString;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.createVerticalPage;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.create_image_from_bytes;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.cropped_string;
@@ -74,8 +74,6 @@ public class DefaultPayrollTemplate {
 	float x;
 	float y;
 	ResourceBundle words;
-	
-	
 
 	// PRINT THE PDF
 	public void print(OutputStream os,DefaultPayroll payroll,Optional<InputStream> logo,Optional<Locale> language) throws CanNotCreatePdfException {
@@ -206,18 +204,18 @@ public class DefaultPayrollTemplate {
 		
 		//HEADER CONTENT
 		String title = 			text("TITULO").replace("*",replace).toUpperCase();
-		String enterprise = 	getString(p.getEnterprise());
-		String employee = 		getString(p.getEmployee());
-		String address = 		getString(p.getAddress());
+		String enterprise = 	safeString(p.getEnterprise());
+		String employee = 		safeString(p.getEmployee());
+		String address = 		safeString(p.getAddress());
 		
-		String nif = 			text("NIF") 				+ ": " + getString(p.getNif());
-		String nss = 			text("NSS") 				+ ": " + getString(p.getNss());
-		String profes_group = 	text("G.PROFESIONAL") 		+ ": " + getString(p.getProfessional_group());
-		String ccc = 			text("CCC") 				+ ": " + getString(p.getCcc());
-		String cif = 			text("CIF") 				+ ": " + getString(p.getCif());
-		String cotiz_group = 	text("G.COTIZ") 			+ ": " + getString(p.getQuotation_group());
-		String antiqu_date = 	text("FECHA ANTIGUEDAD") 	+ ": " + getString(formatDate(p.getAntiquity().get(),date_format));
-		String day_total = 		text("TOTAL DIAS") 			+ ": " + getInteger(p.getTotal_days());
+		String nif = 			text("NIF") 				+ ": " + safeString(p.getNif());
+		String nss = 			text("NSS") 				+ ": " + safeString(p.getNss());
+		String profes_group = 	text("G.PROFESIONAL") 		+ ": " + safeString(p.getProfessional_group());
+		String ccc = 			text("CCC") 				+ ": " + safeString(p.getCcc());
+		String cif = 			text("CIF") 				+ ": " + safeString(p.getCif());
+		String cotiz_group = 	text("G.COTIZ") 			+ ": " + safeString(p.getQuotation_group());
+		String antiqu_date = 	text("FECHA ANTIGUEDAD") 	+ ": " + safeString(formatDate(p.getAntiquity().get(),date_format));
+		String day_total = 		text("TOTAL DIAS") 			+ ": " + safeInteger(p.getTotal_days());
 		
 		String liquid_period = text("PERIODO LIQUIDACION")  + ": del " 
 								+ formatDate(p.getLiquid_period_start(),date_l_format).get() 
@@ -248,7 +246,7 @@ public class DefaultPayrollTemplate {
 		drawText(contents,nss,x + 380,y,BLACK,HELVETICA,headerFontSize);
 
 		y -= 13.5;
-		drawText(contents,getString(p.getAddress_2()),x,y,BLACK,HELVETICA,headerFontSize);
+		drawText(contents,safeString(p.getAddress_2()),x,y,BLACK,HELVETICA,headerFontSize);
 		drawText(contents,profes_group,x + 280,y,BLACK,HELVETICA,headerFontSize);
 
 		y -= 13.5;
@@ -289,7 +287,6 @@ public class DefaultPayrollTemplate {
 
 	// DRAW ACCRUALS
 	private  void draw_accruals() throws IOException {
-
 		x = 25;
 		y = 675;
 
@@ -307,7 +304,7 @@ public class DefaultPayrollTemplate {
 		Optional<Map<Integer,ArrayList<DefaultPayrollAccrual>>> accruals = p.getAccruals();
 		accruals.get().entrySet().stream().sorted(Map.Entry.<Integer,ArrayList<DefaultPayrollAccrual>>comparingByKey()).forEach(m -> {
 			try {
-				double local_total = m.getValue().stream().mapToDouble(accrual -> getDouble(accrual.getAmount())).sum();
+				double local_total = m.getValue().stream().mapToDouble(accrual -> safeDouble(accrual.getAmount())).sum();
 				if (local_total != 0) {
 					String accrual_txt = m.getKey() + ". " + get_type(m.getKey(),lang);
 					String accrual_total_txt = to_latin_number(local_total)  + " " + text("MONEDA");
@@ -319,7 +316,7 @@ public class DefaultPayrollTemplate {
 	
 					m.getValue().stream().forEach(n -> {
 							String entry_value = to_latin_number(n.getAmount().orElse(null)) + " " + text("MONEDA");
-							String entry_txt = " por " + getString(n.getDescription());
+							String entry_txt = " por " + safeString(n.getDescription());
 							
 							PdfText text = new PdfText(x ,y,60,15,contents,entry_value,BLACK,HELVETICA,fontSize,RIGHT);
 							text.draw();
@@ -332,7 +329,6 @@ public class DefaultPayrollTemplate {
 				}
 			} catch (IOException | UnknownCraException e) {e.printStackTrace();}
 			y -= 5;
-
 		});
 
 		y -= 5;
@@ -348,9 +344,9 @@ public class DefaultPayrollTemplate {
 		//DEDUCTIONS CONTENT
 		String title =						text("DEDUCCIONES").toUpperCase();
 		String deduction_total_title = 		"B. " + text("TOTAL DEDUCIR").toUpperCase() + ": ";
-		String deduction_total = 			to_latin_number(getDouble(p.getDeduction_total())) + " " + text("MONEDA");
+		String deduction_total = 			to_latin_number(safeDouble(p.getDeduction_total())) + " " + text("MONEDA");
 		String payroll_total_title = 		text("TOTAL PERCIBIR").toUpperCase() + " (A-B): ";
-		String payroll_total = 				to_latin_number(getDouble(p.getPayroll_total())) + " " + text("MONEDA");
+		String payroll_total = 				to_latin_number(safeDouble(p.getPayroll_total())) + " " + text("MONEDA");
 		String enterprise_sign = 			text("FIRMA EMPRESA").toUpperCase();
 		String employee_sign = 				formatDate(new Date(),text("FIRMA TRABAJADOR")).get();
 		
@@ -365,7 +361,7 @@ public class DefaultPayrollTemplate {
 		deductions.get().entrySet().stream().sorted(Map.Entry.<Integer,ArrayList<DefaultPayrollDeduction>>comparingByKey()).forEach(m -> {	
 			try {
 
-					double local_total = m.getValue().stream().mapToDouble(accrual->getDouble(accrual.getAmount())).sum();
+					double local_total = m.getValue().stream().mapToDouble(accrual->safeDouble(accrual.getAmount())).sum();
 					String deduction_txt = m.getKey() + ". " + getType(m.getKey());
 					String deduction_total_txt = to_latin_number(local_total) + " " + text("MONEDA");
 						
@@ -400,24 +396,26 @@ public class DefaultPayrollTemplate {
 			catch (IOException e) {e.printStackTrace();}
 			y -= 5;
 		});
-		
 		y -= 15;
 		
 		drawTextRight(contents,new PDRectangle(x + 350,y,200,25),deduction_total,BLACK,HELVETICA,fontSize,5,5);
 		drawTextRight(contents,new PDRectangle(x + 265,y,200,25),deduction_total_title,BLACK,HELVETICA,fontSize,5,5);
 		
-		PdfText ent = new PdfText(x,y + 7,150,25,contents,enterprise_sign,BLACK,HELVETICA,fontSize-2,CENTER);
+		PdfText ent = new PdfText(x,y-2,150,25,contents,enterprise_sign,BLACK,HELVETICA,fontSize-2,CENTER);
 		ent.draw();
 		y-=10;
 		
 		if(logo.isPresent()) {
 			byte[] bytes =  logo.get().readAllBytes();
-			PdfImage img = new PdfImage(x + 20, y - 50, 170, 70, 0, 0, contents, doc, bytes);
+			PdfImage img = new PdfImage(x + 20, y - 60, 170, 70, 0, 0, contents, doc, bytes);
 			
-			PdfBox box = new PdfBox( x + 20, y - 50 , 170, 70, BLACK, contents);			
+			PdfBox box = new PdfBox(x + 20, y - 60 , 170, 70, BLACK, contents);			
 			img.scale(170, 70, LEFT).draw();
+			
+			//box.border();
+			//img.border(LIGHT_GRAY);
+			
 		}
-		
 		y -= 15;
 		
 		PdfBox b = new PdfBox(495,y-3,80,22,LIGHT_GRAY,contents);
@@ -461,43 +459,43 @@ public class DefaultPayrollTemplate {
 			final String total_contingencies_title =	text("TOTAL APORTACIONES");
 			final Contingency_bases conts = 			contigencies.get();
 			
-			final String monthly_ammount =  			to_latin_number(getDouble(conts.getMonthly_amount())) 	+  " " 	+ text("MONEDA");
-			final String comm_cont_base = 				to_latin_number(getDouble(conts.getCommon_cont_base())) +  " " 	+ text("MONEDA");
-			String comm_cont_type = 					to_latin_number(getDouble(conts.getCommon_cont_type())) +  " %" ;
+			final String monthly_ammount =  			to_latin_number(safeDouble(conts.getMonthly_amount())) 	+  " " 	+ text("MONEDA");
+			final String comm_cont_base = 				to_latin_number(safeDouble(conts.getCommon_cont_base())) +  " " 	+ text("MONEDA");
+			String comm_cont_type = 					to_latin_number(safeDouble(conts.getCommon_cont_type())) +  " %" ;
 			if (comm_cont_type.contains("-1"))     		comm_cont_type = "";
 			
-			final String comm_cont_ap_ent = 			to_latin_number(getDouble(conts.getCommon_cont_ap_enterprise()))  + " " + text("MONEDA");
-			final String extra_prorration_amount =    	to_latin_number(getDouble(conts.getExtra_proration_amount())) 	  + " " + text("MONEDA");
-			final String prof_contingencies_base = 		to_latin_number(getDouble(conts.getProfessional_cont_base())) 	  + " " + text("MONEDA");
-			String at_ep_type = 						to_latin_number(getDouble(conts.getAt_ep_type())) + " %";
+			final String comm_cont_ap_ent = 			to_latin_number(safeDouble(conts.getCommon_cont_ap_enterprise()))  + " " + text("MONEDA");
+			final String extra_prorration_amount =    	to_latin_number(safeDouble(conts.getExtra_proration_amount())) 	  + " " + text("MONEDA");
+			final String prof_contingencies_base = 		to_latin_number(safeDouble(conts.getProfessional_cont_base())) 	  + " " + text("MONEDA");
+			String at_ep_type = 						to_latin_number(safeDouble(conts.getAt_ep_type())) + " %";
 			if (at_ep_type.contains("-1"))				at_ep_type = "";
 			
-			final String at_ep_ap_ent =					to_latin_number(getDouble(conts.getAt_ep_ap_enterprise())) + " " + text("MONEDA");
-				  String unemployment_type = 			to_latin_number(getDouble(conts.getUnemployment_type()))   + " %";
+			final String at_ep_ap_ent =					to_latin_number(safeDouble(conts.getAt_ep_ap_enterprise())) + " " + text("MONEDA");
+				  String unemployment_type = 			to_latin_number(safeDouble(conts.getUnemployment_type()))   + " %";
 			if (unemployment_type.contains("-1"))		unemployment_type = "";
 			
-			final String unemployment_ap_ent = 			to_latin_number(getDouble(conts.getUnemployment_ap_enterprise())) + " " + text("MONEDA");
-			final String profes_form_type = 			to_latin_number(getDouble(conts.getProfes_form_type())) + " %";
-			final String profes_form_ap_ent = 			to_latin_number(getDouble(conts.getProfes_form_ap_enterprise())) + " " + text("MONEDA");
-				  String fogasa_type = 					to_latin_number(getDouble(conts.getFogasa_type())) + " %";
+			final String unemployment_ap_ent = 			to_latin_number(safeDouble(conts.getUnemployment_ap_enterprise())) + " " + text("MONEDA");
+			final String profes_form_type = 			to_latin_number(safeDouble(conts.getProfes_form_type())) + " %";
+			final String profes_form_ap_ent = 			to_latin_number(safeDouble(conts.getProfes_form_ap_enterprise())) + " " + text("MONEDA");
+				  String fogasa_type = 					to_latin_number(safeDouble(conts.getFogasa_type())) + " %";
 			if (fogasa_type.contains("-1"))				fogasa_type = "";
 			
-			String fogasa_ap_ent = 						to_latin_number(getDouble(conts.getFogasa_ap_enterprise())) + " " + text("MONEDA");
-			String force_majeure_base = 				to_latin_number(getDouble(conts.getForce_majeure_base())) + " " + text("MONEDA");
-			String force_majeure_type = 				to_latin_number(getDouble(conts.getForce_majeure_type())) + " %";
+			String fogasa_ap_ent = 						to_latin_number(safeDouble(conts.getFogasa_ap_enterprise())) + " " + text("MONEDA");
+			String force_majeure_base = 				to_latin_number(safeDouble(conts.getForce_majeure_base())) + " " + text("MONEDA");
+			String force_majeure_type = 				to_latin_number(safeDouble(conts.getForce_majeure_type())) + " %";
 			if (force_majeure_type.contains("-1"))		force_majeure_type = "";
 			
-			String force_majeure_ap_ent = 				to_latin_number(getDouble(conts.getForce_majeure_ap_enterprise())) + " " + text("MONEDA");
-			String no_struct_base = 					to_latin_number(getDouble(conts.getNo_struct_base())) + " " + text("MONEDA");
-			String no_struct_type = 					to_latin_number(getDouble(conts.getNo_struct_type())) + " %";
+			String force_majeure_ap_ent = 				to_latin_number(safeDouble(conts.getForce_majeure_ap_enterprise())) + " " + text("MONEDA");
+			String no_struct_base = 					to_latin_number(safeDouble(conts.getNo_struct_base())) + " " + text("MONEDA");
+			String no_struct_type = 					to_latin_number(safeDouble(conts.getNo_struct_type())) + " %";
 			if (no_struct_type.contains("-1"))			no_struct_type = "";
 			
-			String no_struct_ap_ent = 					to_latin_number(getDouble(conts.getNo_struct_ap_enterprise())) + " " + text("MONEDA");
-			String total_irpf = 						to_latin_number(getDouble(conts.getIrpf_esp()) + conts.getIrpf_retrib_diner().orElse(0.00)) + " " + text("MONEDA");
-			String total_contingencies_amount =			to_latin_number(getDouble(conts.getTotal())) + " " + text("MONEDA");
+			String no_struct_ap_ent = 					to_latin_number(safeDouble(conts.getNo_struct_ap_enterprise())) + " " + text("MONEDA");
+			String total_irpf = 						to_latin_number(safeDouble(conts.getIrpf_esp()) + conts.getIrpf_retrib_diner().orElse(0.00)) + " " + text("MONEDA");
+			String total_contingencies_amount =			to_latin_number(safeDouble(conts.getTotal())) + " " + text("MONEDA");
 			
-			Double irpf_esp 	= getDouble(conts.getIrpf_esp()) ;
-			Double irpf_ret_din = getDouble(conts.getIrpf_retrib_diner());
+			Double irpf_esp 	= safeDouble(conts.getIrpf_esp()) ;
+			Double irpf_ret_din = safeDouble(conts.getIrpf_retrib_diner());
 					
 			if(irpf_esp != 0) irpf_title += 		to_latin_number(irpf_esp) + " " + text("MONEDA") + " " + text("EN ESPECIE") + " ";
 			if(irpf_ret_din != 0) irpf_title += 	to_latin_number(irpf_ret_din) + " " + text("MONEDA") + " " + text("EN RETRIBUCIONES DINERARIAS");
@@ -582,7 +580,7 @@ public class DefaultPayrollTemplate {
 			
 			
 			Date d = new Date();
-			String vs = "v0.36-AK";
+			String vs = "v0.37-MA";
 			
 			PdfText version = new PdfText(5f,1f,200f,10f,contents,vs,BLACK,HELVETICA ,5f,LEFT);
 			version.draw();

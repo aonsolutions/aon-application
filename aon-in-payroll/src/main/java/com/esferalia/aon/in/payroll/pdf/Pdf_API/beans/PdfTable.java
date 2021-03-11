@@ -188,4 +188,10 @@ public class PdfTable extends PdfComponent{
 				+ ", \n\tx: \t\t" + x + ", \n\ty: \t\t" + y + ", \n\theight: \t\t" + height + ", \n\tmargin_x: \t\t"
 				+ margin_x + ", \n\tmargin_y: \t\t" + margin_y + ", \n\tstream: \t\t" + stream + "\n}";
 	}	
+
+	//------------HELP INFO------------
+		public static String describe() {
+			String info = "PdfTable:\t\t\t\t\tAutomatic table.";
+			return info;
+		}	
 }
