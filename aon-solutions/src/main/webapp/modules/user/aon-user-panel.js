@@ -52,7 +52,7 @@ export class AonUserPanel extends AonElement {
 		aonUserPanel.removeToolbarOptions();
 
 		aonUserPanel.addToolbarOption('UserShare', 'share', () => this.buildCreateUser(true));
-		aonUserPanel.addToolbarOption('UserAdd', 'add', () => this.buildCreateUser(true));
+		aonUserPanel.addToolbarOption('UserAdd', 'add', () => this.buildCreateUser(false));
 
 		let filterOptions = this._roles.isParentUser() ? [{
 				name: 'Empresa',
