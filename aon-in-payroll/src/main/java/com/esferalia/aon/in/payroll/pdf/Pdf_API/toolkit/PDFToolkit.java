@@ -171,7 +171,13 @@ public class PDFToolkit {
 			return null;
 		}
 	}
-		
+	
+
+	//DIVIDE A STRING TO FIT A WIDTH
+	public static List<String> divide_string_to_fit(String text, float max, PDFont font, float fontSize) throws IOException{
+		return get_lines(text, max, font, fontSize);
+	}
+	
 	//PUZZLES ARE MY PASSION
 	public static List<String> get_lines(String text, float max, PDFont font, float fontSize) throws  IOException{
 		
