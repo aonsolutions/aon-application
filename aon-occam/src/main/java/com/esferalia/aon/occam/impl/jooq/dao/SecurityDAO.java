@@ -328,6 +328,7 @@ public class SecurityDAO {
 			.set(USER.AUTH, user.getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
+			.set(USER.TOOLBAR, user.getToolbar().value())
 			.returning(USER.ID).fetchOne().getId();
 		
 		return user.setId(id);

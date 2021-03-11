@@ -92,41 +92,41 @@
     opacity: 0.12;
 }
 
-.pure-material-switch:hover > input:focus {
+.aonSwitch:hover > input:focus {
     opacity: 0.16;
 }
 
 /* Active */
-.pure-material-switch > input:active {
+.aonSwitch > input:active {
     opacity: 1;
     transform: scale(0);
     transition: transform 0s, opacity 0s;
 }
 
-.pure-material-switch > input:active + span::before {
+.aonSwitch > input:active + span::before {
     background-color: rgba(0, 36, 105, 0.6);
     /* rgba(var(--pure-material-primary-rgb, 33, 150, 243), 0.6);*/
 }
 
-.pure-material-switch > input:checked:active + span::before {
+.aonSwitch > input:checked:active + span::before {
     background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.38);
 }
 
 /* Disabled */
-.pure-material-switch > input:disabled {
+.aonSwitch > input:disabled {
     opacity: 0;
 }
 
-.pure-material-switch > input:disabled + span {
+.aonSwitch > input:disabled + span {
     color: rgb(var(--pure-material-onsurface-rgb, 0, 0, 0));
     opacity: 0.38;
     cursor: default;
 }
 
-.pure-material-switch > input:disabled + span::before {
+.aonSwitch > input:disabled + span::before {
     background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.38);
 }
 
-.pure-material-switch > input:checked:disabled + span::before {
+.aonSwitch > input:checked:disabled + span::before {
     background-color: rgba(0, 36, 105, 0.6);
 }

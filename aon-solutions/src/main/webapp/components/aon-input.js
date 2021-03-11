@@ -30,14 +30,6 @@ export class AonInput extends AonElement {
     this.setAttribute("id", id);
   }
 
-  get required() {
-    return this.getAttribute("required");
-  }
-
-  set required(required) {
-    this.setAttribute("required", required);
-  }
-
   get name() {
     return this.getAttribute("name");
   }
@@ -152,6 +144,11 @@ export class AonInput extends AonElement {
           input.value = "";
         }
       }
+
+      let desc = this.getElement(this.DESCRIPTION);
+      if(desc && input.value.length > 0) {
+        desc.classList.add('aonInputNotEmpty');
+      } else if(desc) desc.classList.remove('aonInputNotEmpty');
     }
 
     if ("disabled" === name) {
@@ -222,7 +219,7 @@ export class AonInput extends AonElement {
     label.style.width = "100%";
 
     let input = document.createElement("input");
-    input.required = this.getAttribute("required");
+    input.required = true;
     input.id = this.getAttribute("id") + "Input";
     input.name = this.getAttribute("name");
     if (this.getAttribute("pattern")) {

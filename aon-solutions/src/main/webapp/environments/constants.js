@@ -23,3 +23,5 @@ export const AON_APPLICATION = 'aonApplication';
 export const AON_ACCOUNTING = 'aonAccounting';
 export const AON_MARKETPLACE_PANEL = 'aonMarketplacePanel';
 export const ROOT_PANEL = 'rootPanel';
+
+export const TYPE = 'type';

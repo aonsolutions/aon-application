@@ -158,3 +158,5 @@ export const AON_MSG_SII_TICKETBAI = 'SII / TicketBAI';
 export const AON_MSG_ACTIVATE = 'Activar';
 export const AON_MSG_DEACTIVATE = 'Desactivar';
 export const AON_MSG_CONTRACT = 'Contratar';
+
+export const AON_MSG_BUSINESS_NAME = 'Razón Social';

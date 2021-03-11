@@ -98,7 +98,7 @@ export class AonAltaDirecta extends AonElement {
                 z-index: 9;
               }
             </style>
-            ${toolbar} 
+            ${toolbar}
         `;
 
         const form = `
@@ -158,12 +158,12 @@ export class AonAltaDirecta extends AonElement {
                 <div class="aonCol-sm-2 aonCol-md-1 aonCol-xs-1">
                     <aon-icon-button id="iconSegSocial" aonIcon="aon_seg_social"> </aon-icon-button>
                 </div>
-            </div>  
+            </div>
             <div class="aonCol-sm-12 aonCol-md-12 aonCol-xs-12">
                 <aon-input name="nombre" id="nombre" description="Nombre" type="text" disabled="true"></aon-input>
             </div>
         `);
-        const buttonSubmit = this.isMobile() ? `<div class="aonCol-sm-12 aonCol-md-12"><br/> <div class="offset-4" id="${this.id}DivSubmit"> 
+        const buttonSubmit = this.isMobile() ? `<div class="aonCol-sm-12 aonCol-md-12"><br/> <div class="offset-4" id="${this.id}DivSubmit">
         </div>` : '';
         let aonContratoCard = this.getElement(`${this.id}ContratoCard`);
         aonContratoCard.setContentHTML(`
@@ -270,7 +270,7 @@ export class AonAltaDirecta extends AonElement {
         this.listOcupacion();
         this.listConvenios();
     }
-    
+
     eventListener() {
         let aonAltaDirectaSubmit = this.getElement(`${this.id}Submit`);
         if (aonAltaDirectaSubmit) aonAltaDirectaSubmit.addEventListener('click', () => this.formSubmit());
@@ -442,10 +442,8 @@ export class AonAltaDirecta extends AonElement {
             if (tipo_jornada) {
                 //si es parcial
                 div_parcial.hidden = false;
-                coefparcial.required = true;
             } else {
                 div_parcial.hidden = true;
-                coefparcial.required = false;
             }
         }
     }

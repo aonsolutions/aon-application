@@ -159,7 +159,7 @@ export class AonNumber extends AonElement {
         label.style.width = '100%';
 
         let input = document.createElement('input');
-        input.required = this.getAttribute('required');
+        input.required = true;//this.getAttribute('required');
         input.id = this.getAttribute('id') + 'Input';
         input.name = this.getAttribute('name');
         input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
