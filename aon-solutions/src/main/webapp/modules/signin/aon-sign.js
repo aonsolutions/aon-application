@@ -101,21 +101,7 @@ export class AonSign extends AonElement {
       button.style.width = "60%";
       button.style.borderRadius = "12px";
     }
-		button.addEventListener('click', async () => {
-      this.disabledButton(true);
-      try{
-        await getPosition().then(async(position) => {
-          let signin = {status: 'in', task_holder: this._taskHolder};
-          if(position && position.latitude && position.longitude)
-            signin.coordinates = position.latitude + ',' + position.longitude;
-          await saveTimeControl(signin).then(r => this.buildSignin(r));
-        });
-      } catch (error) {
-        console.log(error);
-        if(error){ this.getToastEl(error); }
-      }
-      this.disabledButton(false);
-    });
+    button.addEventListener('click', () => this.saveTimeCtrl('in'));
 		content.appendChild(button);
 	}
 
@@ -133,21 +119,7 @@ export class AonSign extends AonElement {
       button.style.width = "60%";
       button.style.borderRadius = "12px";
     } 
-		button.addEventListener('click', async () => {
-      this.disabledButton(true);
-      try {
-        await getPosition().then(async(position) => {
-          let signin = {status: 'in', task_holder: this._taskHolder};
-          if(position)
-            signin.coordinates = position.latitude + ',' + position.longitude;
-          await saveTimeControl(signin).then(r => this.buildSignin(r));
-        });
-      } catch (error) {
-        console.log(error);
-        if(error){ this.getToastEl(error); }
-      }
-      this.disabledButton(false);
-		});
+    button.addEventListener('click', () => this.saveTimeCtrl('in'));
 		content.appendChild(button);
 	}
 
@@ -162,21 +134,7 @@ export class AonSign extends AonElement {
     button.style.width = '100px';
     button.style.padding = '1rem 1rem';
 		button.innerHTML = 'SALIDA';
-		button.addEventListener('click', async () => {
-      this.disabledButton(true);
-      try{
-        await getPosition().then(async(position) => {
-          let signin = {status: 'out', task_holder: this._taskHolder};
-          if(position)
-            signin.coordinates = position.latitude + ',' + position.longitude;
-          await saveTimeControl(signin).then(r => this.buildSignin(r));
-        });
-      } catch (error) {
-        console.log(error);
-        if(error){ this.getToastEl(error); }
-      }
-      this.disabledButton(false);
-		});
+    button.addEventListener('click', () => this.saveTimeCtrl('out'));
 		content.appendChild(button);
 
 		let button2 = document.createElement('button');
@@ -186,23 +144,23 @@ export class AonSign extends AonElement {
     button2.style.width = '100px';
     button2.style.padding = '1rem 1rem';
 		button2.innerHTML = 'PAUSA';
-		button2.addEventListener('click', async() => {
-      this.disabledButton(true);
-      try{
-        await getPosition().then(async(position) => {
-          let signin = {status: 'pause', task_holder: this._taskHolder};
-          if(position)
-            signin.coordinates = position.latitude + ',' + position.longitude;
-          await saveTimeControl(signin).then(r => this.buildSignin(r));
-        });
-      } catch (error) {
-        console.log(error);
-        if(error){ this.getToastEl(error); }
-      }
-      this.disabledButton(false);
-		});
+		button2.addEventListener('click', () => this.saveTimeCtrl('pause'));
 		content.appendChild(button2);
 	}
+
+  async saveTimeCtrl(status){
+    let signin = {status, task_holder: this._taskHolder}
+    this.disabledButton(true);
+    try{
+      await getPosition().then(async(position) => {
+        if(position && position.latitude && position.longitude){signin.coordinates = position.latitude + ',' + position.longitude;}
+        await saveTimeControl(signin).then(r => this.buildSignin(r));
+      });
+    } catch (error) {
+      if(error){ this.getToastEl(error); }
+    }
+    this.disabledButton(false);
+  }
 
   disabledButton(disabled){
     let content = document.getElementById(this.CONTENT);
@@ -271,10 +229,10 @@ export class AonSign extends AonElement {
 
   getToastEl(error){
     try {
-      error = JSON.parse(error)
+      const errors = typeof error === "object" ? error : JSON.parse(error);
       const aonApp = document.querySelector('aon-application');
-      this.getElement(aonApp.TOAST).start({ message: error.message, type: error.type });
-    } catch (e) {}
+      this.getElement(aonApp.TOAST).start({ message: errors.message, type: errors.type });
+    } catch (error) {}
   }
 }
 window.customElements.define('aon-sign', AonSign);

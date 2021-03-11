@@ -40,12 +40,12 @@ new Promise((resolve) => {
 
 let taskHolders;
 export const getTaskHolders = (data) => {
-  data = data || {};
+  const newData = data || {};
   return new Promise((resolve, reject) => {
-    if (taskHolders && !data.reload) {
+    if (taskHolders && !newData.reload) {
       resolve(taskHolders);
     } else {
-      get(`${API_URL}/timecontrol/taskholder`, data)
+      get(`${API_URL}/timecontrol/taskholder`, newData)
         .then(r => {
           taskHolders = r;
           resolve(taskHolders);

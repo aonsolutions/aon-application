@@ -550,7 +550,7 @@ export class AonApplication extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(title);
-		d.setContentHTML('Esta opción está en desarrollo...');
+		d.setContentHTML(subtitle);
 		d.addAcceptAction(() => {});
 		d.open();
 	}

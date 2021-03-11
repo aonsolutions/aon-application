@@ -18,6 +18,7 @@ const successCallback = ({ coords, timestamp }) => {
 
 const errorCallback = (error) => {
   let msg = null;
+
   switch (error.code) {
     case error.PERMISSION_DENIED:
       msg = "El usuario denegó la solicitud de geolocalización.";
@@ -32,23 +33,31 @@ const errorCallback = (error) => {
     case error.UNKNOWN_ERROR:
       msg = "Un error desconocido ocurrió.";
       break;
+    case 999:
+      msg = "Inactive location";
+      break;
   }
-  return msg;
+  if (msg) {
+    console.warn(msg);
+    alert(msg);
+    // const toast = document.querySelector('aon-toast');
+    // if(toast){
+    //   toast.start({message:msg, type:"error"});
+    // }
+  }
 };
 
 export const getPosition = async () => {
   let result = null;
-  let isApp = await actionMobile({ action: "setPosition" });
-
+  const isApp = await actionMobile({ action: "setPosition" });
   if (isApp) {
     result = await sleepPosition();
   } else {
-    try {
-      result = await getCurrent().then(successCallback);
-    } catch (e) {
-      console.warn(errorCallback(e));
-    }
+    result = await getCurrent()
+      .then(successCallback)
+      .catch((e) => e);
   }
+  if (result && result.code) errorCallback(result);
   return result;
 };
 

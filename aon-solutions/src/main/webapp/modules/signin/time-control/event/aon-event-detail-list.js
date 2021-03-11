@@ -229,7 +229,7 @@ export class AonEventDetailList extends AonElement {
 
       const datos = await getTimeControlDetail(filter);
       if (datos) {
-        sortBy(datos, "date", "desc").forEach(async (resp) => {
+        await sortBy(datos, "date", "desc").map(async (resp) => {
           removeEmpty(resp);
           if (!this.TASK_HOLDER) this.TASK_HOLDER = resp.task_holder;
           const newStatus = resp.status.toLowerCase();

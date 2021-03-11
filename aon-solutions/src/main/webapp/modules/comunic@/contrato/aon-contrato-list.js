@@ -8,7 +8,7 @@ import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 
 export class AonContratoList extends AonElement {
-  ID;
+  TABLE_ID;
   static get observedAttributes() {
     return ["filter"];
   }
@@ -27,9 +27,9 @@ export class AonContratoList extends AonElement {
 
   constructor() {
     super();
-    this.aonComunica = this.getElement("aonComunica");
-    this.aonComunicaToolbar = this.getElement("aonComunicaToolbar");
-    this.ID = "aonContratoTable";
+    this.aonComunica = this.getApplication();
+    this.aonComunicaToolbar = this.getElement(this.aonComunica.TOOLBAR);
+    this.TABLE_ID = "aonContratoTable";
   }
 
   connectedCallback() {
@@ -39,8 +39,8 @@ export class AonContratoList extends AonElement {
 
   paintView() {
     if (this.isMobile())
-      this.innerHTML = ` <aon-mobile-list id='${this.ID}' />`;
-    else this.innerHTML = ` <aon-table id='${this.ID}' />`;
+      this.innerHTML = ` <aon-mobile-list id='${this.TABLE_ID}' />`;
+    else this.innerHTML = ` <aon-table id='${this.TABLE_ID}' />`;
   }
 
   async build() {
@@ -52,7 +52,7 @@ export class AonContratoList extends AonElement {
   }
 
   async getTableDesk() {
-    // const aonCtaTable = this.getElement(this.ID);
+    // const aonCtaTable = this.getElement(this.TABLE_ID);
     // aonCtaTable.addColumn('Tipo', 'string', 'tipo', '20%');
     // aonCtaTable.addColumn('Cuenta de cotización', 'string', 'ccc', '40%');
     // aonCtaTable.addColumn('Provincia', 'string', 'geozone', '35%');
@@ -79,7 +79,7 @@ export class AonContratoList extends AonElement {
   }
 
   async getTableMobile() {
-    const aonCtaTable = this.getElement(this.ID);
+    const aonCtaTable = this.getElement(this.TABLE_ID);
     if (aonCtaTable) {
       aonCtaTable.createAonDialog();
       try {
@@ -89,7 +89,7 @@ export class AonContratoList extends AonElement {
           let options = {
             icon: "assignment",
             title: ` ${res.surName} ${res.name}`,
-            subtitle: `(${res.document}) ${res.startDate}`,
+            subtitle: `(${res.document}) ${setDate(res.startDate)}`,
           };
           if (res.contractType) options.option = this.getOptions(res);
           aonCtaTable.addLi(options, idx);
@@ -126,8 +126,7 @@ export class AonContratoList extends AonElement {
             employeeInfo.contractType = contractType;
           }
           if (startDate) {
-            employeeInfo.fecha = startDate;
-            employeeInfo.startDate = setDate(startDate);
+            employeeInfo.startDate = startDate;
           }
           if(completeCCC){
             employeeInfo.regime = completeCCC.toString().substr(0,4);
@@ -142,13 +141,25 @@ export class AonContratoList extends AonElement {
     } catch (e) {
       console.log(e);
     }
+    
+    //delete
+    // data.push({
+    //   contractType:"401",
+    //   startDate: "2020-09-09",
+    //   regime: "0111",
+    //   ctaCti: "01105360062",
+    //   surName: "VASQUEZ",
+    //   name:"RAY",
+    //   document: "Y7514970X",
+    //   ssNumber:"291136796369"
+    // });
 
     return data;
   }
 
   async getContratoPdf(data, el) {
     this.aonComunica.startLoading();
-    const { document: ipf, fecha } = data;
+    const { document: ipf, startDate: fecha } = data;
     await getContratoPdf({ ipf, fecha });
     this.aonComunica.stopLoading();
   }

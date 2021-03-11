@@ -135,7 +135,7 @@ export class AonMobileHeader extends AonElement {
 
 	aonFichar(signin) {
 		getPosition().then(position => {
-			if(position) {
+			if(position && position.latitude) {
 				signin.coordinates = position.latitude + ',' + position.longitude;
 			}
 			saveTimeControl(signin).then(r => {
@@ -143,7 +143,6 @@ export class AonMobileHeader extends AonElement {
 				if(aonSign) {
 					aonSign.buildSignin(r);
 				}
-
 				this.timeControlStatus(r);
 			});
 		});

@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import solutions.aon.seg.social.toolkit.Toolkit;
 import solutions.aon.sepe.Sepe;
+import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 
@@ -87,6 +88,7 @@ public class ComunicaPdfServlet extends HttpServlet{
 		byte[] PDF = null;
 		User user = AON_SOLUTIONS.getUser(domain, token);
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+		if(certificate.getCertificate()==null) throw new Exception("Certificate Null");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		switch (route) {
 			case "get-ta":
@@ -108,10 +110,11 @@ public class ComunicaPdfServlet extends HttpServlet{
 	}
 
 	//router sepe
-	private byte[] routerSepe(String route, Domain domain, String token, JSONObject json) throws Exception {
+	private byte[] routerSepe(String route, Domain domain, String token, JSONObject json)  throws SepeException, Exception {
 		byte[] PDF = null;
 		User user = AON_SOLUTIONS.getUser(domain, token);
 		Certificate certificate = AON.getCertificateSEPE(domain.getName(), domain.getId(),  user.getLogin());
+		if(certificate.getCertificate()==null) throw new Exception("Certificate Null");
 		final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
 		switch (route) {
 			case "get-contrato":

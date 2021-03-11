@@ -211,7 +211,7 @@ export class AonEventList extends AonElement {
       try {filter = {...this.aonSigninParentEl._filter};} catch (error) {}
       let datos = await getTaskHolderTimeControl(filter);
       if(datos){
-        sortBy(datos, 'start_date', 'asc').map(
+        await sortBy(datos, 'start_date', 'asc').map(
           async (r) => {
             if(!this.TASK_HOLDER)  this.TASK_HOLDER = r.task_holder;
             const newStatus = r.status.toLowerCase();

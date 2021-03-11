@@ -36,6 +36,7 @@ export class AonSignin extends AonElement {
     this.AON_SIGNIN = "aonSignin";
     this._filter = { 
       period: "today",
+      group:"DAY",
       startDate: formatDateOrigin(new Date()),
       endDate: formatDateOrigin(new Date())
     };

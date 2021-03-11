@@ -133,7 +133,7 @@ export class AonLocationList extends AonElement {
     let data = [];
     try {
       let resp = await getLocation(this.data);
-      resp.map(async ({ id, description, coordinates, radio }) => {
+      resp.map(({ id, description, coordinates, radio }) => {
         data.push({
           id,
           description,

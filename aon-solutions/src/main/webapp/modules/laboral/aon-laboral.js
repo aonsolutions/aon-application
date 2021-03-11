@@ -1,6 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { getDomainUserRoles, getSalaryPdf } from "../../services/service.js";
+import { formatDateOrigin, setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 
 class AonLaboral extends AonElement {
@@ -22,9 +23,16 @@ class AonLaboral extends AonElement {
     initialize(){
         this.AON_LABORAL = "aonLaboral";
     }
-    
 
     build() {
+        if(!this.isEmployee()){
+          let now = new Date();
+          this._filter = { 
+            period: "personalized",
+            startDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth() -1), 1)),
+            endDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth() + 1, 0))
+          };
+        }
         this.paintView();
         this.buildToolbar();
         this.showView("aonPayrollList");
@@ -67,6 +75,15 @@ class AonLaboral extends AonElement {
     } catch (error) {}
   }
 
+  changeFilter(){
+    try {
+      const filterParent = this._filter;
+      for(const obj in filterParent){
+        setValueName(obj, filterParent[obj]);
+      }
+    } catch (error) {}
+  }
+
   showView(view, data, filter = undefined){
     return new Promise(async(resolve)=>{
       let aonView = undefined;
@@ -80,7 +97,6 @@ class AonLaboral extends AonElement {
         if(filter) aonView.filter = filter;
         this.aonLaboralEl.setContent(aonView);
       }
-      
       resolve(true);
     });
   }

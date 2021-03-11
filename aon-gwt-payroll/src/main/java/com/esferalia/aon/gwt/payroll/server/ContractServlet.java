@@ -66,21 +66,22 @@ public class ContractServlet extends AonApiHttpServlet {
 		try {
 			switch (path) {
 			case "/":
-				super.doGet(req, resp);
 				response(req, resp, getAllEmployeesInfo());
 				break;
+			case "/employee/workplace":
+				response(req, resp, getAllEmployeesWorkplace());
+				break;
 			case "/employee/salaries":
-				super.doGet(req, resp);
 				response(req, resp, getEmployeeSalaries());
 				break;
 			case "/enterprise/salaries":
-				super.doGet(req, resp);
 				response(req, resp, getEnterpriseSalaries());
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			error(req, resp, e);
 		}
 	}
@@ -90,7 +91,18 @@ public class ContractServlet extends AonApiHttpServlet {
 		Connection conn = AonServletUtils.getConnection(getDomain().getName());
 		boolean allEmployees = getParams().optBoolean("allEmployees");  
 		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		String jsonInString = gjson.toJson(JooqContrataContract.getAllEmployeesInfo(conn, getDomain().getId(), allEmployees));
+		String jsonInString = gjson.toJson(JooqContrataContract.getEmployeesInfo(conn, getDomain().getId(), allEmployees));
+		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
+		return new JSONObject();
+	}
+	
+	private Object getAllEmployeesWorkplace() throws SQLException {
+		LOGGER.info("[GET] EMPLOYEE WORKPLACE");
+		Connection conn = AonServletUtils.getConnection(getDomain().getName());
+		boolean allEmployees = getParams().optBoolean("allEmployees");  
+		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		Integer workplaceId =  getParams().optInt("workplace");  
+		String jsonInString = gjson.toJson(JooqContrataContract.getEmployeesByWorkplace(conn, workplaceId, allEmployees));
 		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
@@ -119,16 +131,16 @@ public class ContractServlet extends AonApiHttpServlet {
 		Connection conn = AonServletUtils.getConnection(getDomain().getName());
 		Company company = AON.getCompany(getDomain().getName(), getDomain().getId(), "", f->f.getDomainProperty().eq(getDomain().getId()));
 		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		String jsonInString = gjson.toJson(getSalaries(conn, Optional.ofNullable(company.getId()), Optional.empty()));
+		String jsonInString = gjson.toJson(getSalaries(conn, Optional.ofNullable(company.getId())));
 		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
 	
-	private List<SalaryInfo> getSalaries(Connection conn, Optional<Integer> companyId, Optional<Integer> contractId) {
+	private List<SalaryInfo> getSalaries(Connection conn, Optional<Integer> companyId) {
 		SalaryInfoFilter filter = getFilter();
-		if(!companyId.isEmpty()) filter.setEnterpriseId(companyId.get().intValue());
-		else if(!contractId.isEmpty())filter.setEmployeeId(contractId.get().intValue());
-		
+		if(!getParams().optString("employee").isEmpty()) filter.setEmployeeId(getParams().optInt("employee")); //employee == contractId
+		else if(!getParams().optString("workplace").isEmpty()) filter.setWorkplaceId(getParams().optInt("workplace"));
+		else if(!companyId.isEmpty()) filter.setEnterpriseId(companyId.get().intValue());
 		return JooqPayrollSalaries.getSalaries(conn, filter);
 	}
 	
@@ -141,7 +153,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		Integer salaryId = json.optInt("salaryId");
 	
 		File file = File.createTempFile("nomina", "pdf");
-		JooqPayrollBuilder.generatePayroll(domainName,  new FileOutputStream(file), salaryId);
+		JooqPayrollBuilder.generatePayroll(domainName, new FileOutputStream(file), salaryId);
 		return file;
 	}
 	
@@ -155,6 +167,7 @@ public class ContractServlet extends AonApiHttpServlet {
 			filter.setDateTTo(Toolkit.parseDate(getParams().optString("endDate"), "yyyy-MM-dd")); 
 		} 
 		if(!getParams().optString("salaryType").isEmpty()) filter.setSalaryType(getParams().optInt("salaryType"));
+	
 		return filter;
 	}
 

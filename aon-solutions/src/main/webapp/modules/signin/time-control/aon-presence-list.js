@@ -167,7 +167,7 @@ export class AonPresenceList extends AonElement {
 
       const datos = await getTimeControlList(filter);
       if (datos) {
-        sortBy(datos, 'last_date', 'desc').map(
+        await sortBy(datos, 'last_date', 'desc').map(
           async ({
             time,
             last_date,

@@ -45,7 +45,7 @@ export class AonPayrollList extends AonElement {
   initialize(){
     this.id = this.id || "aonPayrollList";
     this.TABLE_ID = this.id + "Table";
-    this.aonLaboralEl = this.getElement("aonLaboral");
+    this.aonLaboralEl = this.getApplication();
     this.aonLaboralParentEl = this.aonLaboralEl.getParent();
     this.aonLaboralEl.addToolbarTitle("Nóminas");
   }
@@ -55,6 +55,7 @@ export class AonPayrollList extends AonElement {
     if(!this.aonLaboralParentEl.isEmployee()){
       this.buildToolbar();
       await this.buildFilter();
+      this.aonLaboralParentEl.changeFilter();
     }
     await this.getTable();
   }
@@ -206,8 +207,7 @@ export class AonPayrollList extends AonElement {
       if (!isEmptyObject(datos)) {
         sortBy(datos, 'endDate', 'desc')
         .filter(({endDate})=> new Date(endDate) <= new Date())
-        .map(
-          async ({
+        .map(({
             contract,
             employeeName,
             endDate,
@@ -219,13 +219,8 @@ export class AonPayrollList extends AonElement {
             type,
             workplaceName,
           }) => {
-              const lettersType = this.getTypeSalaryText(type).substr(0,1);
-              let color = "";
-              if("E"===lettersType)      color = "in"
-              else if("F"===lettersType) color = "fin"; 
-              else if("A"===lettersType) color = "pause";
-
-              const lettersHtml = `<div class="profile-letters ${color}">${lettersType}</div>`;
+              const lettersType = this.getTypeSalaryText(type);
+              const lettersHtml = `<div class="profile-letters ${lettersType.color}">${lettersType.typeReduce}</div>`;
               const obj = {
                 id,
                 lettersHtml,
@@ -268,22 +263,26 @@ export class AonPayrollList extends AonElement {
   }
 
   getTypeSalaryText(type){
-    let newType = "";
+    let obj = {color:"",  type:"" ,typeReduce:""};
     switch(type){
       case "SALARY":
-        newType="NOMINA";
+        obj.type="NOMINA";
       break;
       case "EXTRA":
-        newType="EXTRA";
+        obj.type="EXTRA";
+        obj.color = "in";
       break;
       case "SETTLE":
-        newType="FINIQUITO";
+        obj.type="FINIQUITO";
+        obj.color = "fin";
       break;
       case "DELAY":
-        newType="ATRASOS";
+        obj.type="ATRASOS";
+        obj.color = "pause";
       break;
     }
-    return newType;
+    if(obj.type) obj.typeReduce = obj.type.toString().substr(0,1);
+    return obj;
   }
   
 }
