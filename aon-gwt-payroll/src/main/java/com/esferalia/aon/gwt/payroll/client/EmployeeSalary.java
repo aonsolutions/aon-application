@@ -538,6 +538,14 @@ public class EmployeeSalary extends Composite {
 
 	private void onPDF(ClickEvent e) {
 		
+		onPDF("salary", "salaries");
+	}
+	
+	private void onPDFSettle(ClickEvent e) {
+		onPDF("settle", "settleLetter");
+	}
+	
+	private void onPDF(String type, String name ) {
 		String fileDownloadURL = GWT.getModuleBaseURL()+ "salary_exporter/";
 
 		FormPanel formPanel = new FormPanel("_blank");
@@ -545,7 +553,7 @@ public class EmployeeSalary extends Composite {
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		
 		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.add(new Hidden(PayrollPrintService.Parameter.TYPE.getName(), "salary"));
+		flowPanel.add(new Hidden(PayrollPrintService.Parameter.TYPE.getName(), type));
 		flowPanel.add(new Hidden(PayrollPrintService.Parameter.ENTERPRISE.getName(), String.valueOf(((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId())));
 		flowPanel.add(new Hidden(PayrollPrintService.Parameter.DOMAIN.getName(), Wnd.getCurrentDomainNameURL()));
 		flowPanel.add(new Hidden(PayrollPrintService.Parameter.USER.getName(), Wnd.getCurrentUser()));
@@ -553,7 +561,7 @@ public class EmployeeSalary extends Composite {
 		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++) {
 			flowPanel.add(new Hidden(PayrollPrintService.Parameter.ID.getName(), ""+((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId()));
 		}
-		flowPanel.add(new Hidden(PayrollPrintService.Parameter.NAME.getName(), "salaries.pdf"));
+		flowPanel.add(new Hidden(PayrollPrintService.Parameter.NAME.getName(), name + ".pdf"));
 		
 		formPanel.add(flowPanel);
 		
@@ -563,13 +571,7 @@ public class EmployeeSalary extends Composite {
 		mainContainer.add(formPanel);
 
 		formPanel.submit();
-	}
-	
-	private void onPDFSettle(ClickEvent e) {
-		String fileDownloadURL = GWT.getModuleBaseURL()+ "salary_exporter/";
-		String query = "?type=settle&selectedSalaries=1&enterprise=" + settleEnterpriseId + "&salary0Id=" + settleId + "&name=settleLetter.pdf";
-		String paramsBase64 = b64decode(query);
-		Window.open(fileDownloadURL+paramsBase64, "_blank", null);
+		
 	}
 	
 	private static native String b64decode(String a) /*-{
