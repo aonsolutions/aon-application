@@ -45,7 +45,7 @@ export class AonComunica extends AonElement {
 		this.innerHTML = `
 			<aon-application id="${this.AON_COMUNICA}" title="COMUNIC@"></aon-application>
 		`;
-		this.aonComunicaEl = this.getElement(this.AON_COMUNICA);
+		this.aonComunicaEl = this.getApplication();
 	}
 
 	buildToolbar(){
@@ -116,14 +116,13 @@ export class AonComunica extends AonElement {
 
 	async deleteMov(data, el) {
 		if (confirm(`Estas seguro de anular el movimiento de ${data.name} ?`)) {
-			const toast = this.getElement(this.aonComunicaEl.TOAST);
 			this.aonComunicaEl.startLoader();
 			try {
 				await postDeleteMov(data);
-				toast.start({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
+				this.aonComunicaEl.getToast().start({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
 				if (el) el.remove(); //delete td
 			} catch (error) {
-				toast.start({ message: error, type: 'error' });
+				this.aonComunicaEl.getToast().start({ message: error, type: 'error' });
 			}
 			this.aonComunicaEl.stopLoader();
 		}
@@ -131,15 +130,25 @@ export class AonComunica extends AonElement {
 
 	async getTa(data, el) {
 		this.aonComunicaEl.startLoading();
-		const { regime, ctaCti, nss, fra } = data;
-		await getTA({ regime, ctaCti, nss, fra }); // open pdf
+		try {
+			const { regime, ctaCti, nss, fra } = data;
+			await getTA({ regime, ctaCti, nss, fra }); // open pdf
+		} catch (error) {
+			console.log(error);
+			this.aonComunicaEl.getToast().start({ message: error, type: 'error' });
+		}
 		this.aonComunicaEl.stopLoading();
 	}
 
 	async getIdc(data, el) {
 		this.aonComunicaEl.startLoading();
-		const { regime, ctaCti, nss, fra } = data;
-		await getIDC({ regime, ctaCti, nss, fra }); // open pdf
+		try {
+			const { regime, ctaCti, nss, fra } = data;
+			await getIDC({ regime, ctaCti, nss, fra }); // open pdf
+		} catch (error) {
+			console.log(error);
+			this.aonComunicaEl.getToast().start({ message: error, type: 'error' });
+		}
 		this.aonComunicaEl.stopLoading();
 	}
 

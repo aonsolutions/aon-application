@@ -165,6 +165,9 @@ export class AonSignin extends AonElement {
               aonView = new AonEventDetailList();
               if(data){
                 const startDate = formatDateOrigin(data.start_date);
+                if(data.task_holder && data.task_holder.id){
+                  aonView.TASK_HOLDER = data.task_holder;
+                }
                 aonView.DATE_TASK = {startDate, endDate:startDate};
               }
           break;

@@ -231,7 +231,6 @@ export class AonEventDetailList extends AonElement {
       if (datos) {
         await sortBy(datos, "date", "desc").map(async (resp) => {
           removeEmpty(resp);
-          if (!this.TASK_HOLDER) this.TASK_HOLDER = resp.task_holder;
           const newStatus = resp.status.toLowerCase();
           const status = await getStatus(newStatus);
           const textStatus = status.name;
@@ -273,6 +272,13 @@ export class AonEventDetailList extends AonElement {
       }
       else this.aonSigninEl.addTitleToolSection(name);
     }
+
+    let elIcon = this.getElement('iconPhone');
+    if(elIcon){
+      let buttonEl = elIcon.querySelector('button');
+      buttonEl.style.top = "4px";
+      buttonEl.querySelector('i').style.fontSize="20px";
+    } 
   }
 
   aonEvent(el, data) {

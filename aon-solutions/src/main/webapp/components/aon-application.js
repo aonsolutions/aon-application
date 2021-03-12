@@ -538,6 +538,10 @@ export class AonApplication extends AonElement {
     if (el) el = el.firstChild;
     return el;
   }
+  
+  getToast(){
+    return this.getElement(this.TOAST);
+  }
 
   isSidenavBlock() {
     return (

@@ -40,20 +40,16 @@ export class AonDialogMenu extends AonElement {
 		dialog.style.paddingTop = '0px';
 
 		content.style.position = 'absolute';
-	  content.style.width = '200px';
+	  	content.style.width = '200px';
 		content.style.padding = '0px';
 
 		dialog.onclick = (event) => {
-			if (event.target === dialog) {
-				this.close();
-  		}
+			if (event.target === dialog) this.close();
 		}
 
 		dialog.oncontextmenu = (event) => {
 			event.preventDefault();
-			if (event.target === dialog) {
-				this.close();
-  		}
+			if (event.target === dialog) this.close();
 		}
 	}
 
@@ -70,6 +66,24 @@ export class AonDialogMenu extends AonElement {
 	setContentHTML(html) {
 		let content = this.getElement(this.CONTENT);
 		content.innerHTML = html;
+	}
+
+	setContentTitle(title){
+		let content = this.getElement(this.CONTENT);
+		let p = this.createElement('p');
+		p.innerHTML = title;
+		p.style.fontWeight = "600";
+		p.style.padding = "10px 10px 5px";
+		p.style.whiteSpace = "nowrap";
+		p.style.textTransform = "uppercase";
+		p.style.textOverflow = "ellipsis";
+		p.style.overflow = "hidden";
+		p.style.margin = "auto";
+		p.style.textAlign = "center";
+
+		if(content.children.length > 0) {
+			content.insertBefore(p, content.firstElementChild);
+		} else content.appendChild(p);
 	}
 
 	setMenuOptions(options, top, left) {
@@ -94,7 +108,7 @@ export class AonDialogMenu extends AonElement {
 				ai.style.verticalAlign = 'middle';
 				ai.innerHTML = `<aon-icon icon="${item.aonIcon}" size="15"></aon-icon>`;
 				li.appendChild(ai);
-			} else {
+			} else if(item.icon){
 				let ic = document.createElement('i');
 				ic.className = 'material-icons';
 				ic.style.verticalAlign = 'middle';

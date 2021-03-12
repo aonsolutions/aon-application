@@ -274,6 +274,13 @@ export class AonEventList extends AonElement {
       }
       else this.aonSigninEl.addTitleToolSection(name);
     }
+
+    let elIcon = this.getElement('iconPhone');
+    if(elIcon){
+      let buttonEl = elIcon.querySelector('button');
+      buttonEl.style.top = "4px";
+      buttonEl.querySelector('i').style.fontSize="20px";
+    } 
   }
 
   aonEvent({target}, data) {

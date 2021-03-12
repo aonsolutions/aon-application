@@ -27,6 +27,7 @@ export class AonEventAdd extends AonElement {
   TOAST;
   TITLE;
   TOOLBAR;
+  START_DATE
   static get observedAttributes() {
     return ["data"];
   }
@@ -52,9 +53,9 @@ export class AonEventAdd extends AonElement {
     this.id = this.id || "aonEventAdd";
     this.TOOLBAR = this.id + "Toolbar";
     this.aonSigninEl = this.getApplication();
-    this.aonSigninEl.addToolbarTitle("Registrar evento");
-    this.TOAST = this.getElement(`${this.aonSigninEl.TOAST}`);
+    this.TOAST = this.aonSigninEl.getToast();
     this.aonSigninParentEl = this.aonSigninEl.getParent();
+    this.aonSigninEl.addToolbarTitle("Registrar evento");
     this.aonSigninParentEl.periodSideNavDisplay(false);
   }
 
@@ -243,18 +244,21 @@ export class AonEventAdd extends AonElement {
 
   async save() {
     this.aonSigninEl.startLoading();
-    let formValues = this.getFormValues();
-    const data = {
-      ...formValues,
-      task_holder: this.data.task_holder.id,
-      date: new Date(
-        formatDateOrigin(formValues.date) + " " + formValues.time
-      ).getTime(),
-    };
     try {
-      const { id } = await saveTimeControlDetail(data);
+      let formValues = this.getFormValues();
+      const data = {
+        ...formValues,
+        task_holder: this.data.task_holder.id,
+        date: new Date(
+          formatDateOrigin(formValues.date) + " " + formValues.time
+        ).getTime(),
+      };
+      const { id, date:start_date } = await saveTimeControlDetail(data);
       if (id) {
         setValueName("id", id);
+      }
+      if(start_date){
+        this.START_DATE =  formatDateOrigin(new Date(start_date));
       }
       this.TOAST.start({
         message: "Datos guardados!",
@@ -290,10 +294,9 @@ export class AonEventAdd extends AonElement {
 
   back() {
     let data= undefined;
-    if(this.data) data= {...this.data, start_date:this.data.date};
+    if(this.data) data = {...this.data, start_date:this.data.date};
+    if(this.START_DATE) data.start_date = this.START_DATE;
     this.aonSigninParentEl.showView("aonEventDetailList", data);
-
-    // this.aonSigninEl.back();
   }
 }
 

@@ -368,6 +368,9 @@ button:disabled, button[disabled]{
   text-transform: uppercase;
   font-size: 1.2em;
   color: #5f6368;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .aonTable {

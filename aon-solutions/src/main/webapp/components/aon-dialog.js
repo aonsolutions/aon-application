@@ -169,7 +169,7 @@ export class AonDialog extends AonElement {
 				ai.style.verticalAlign = 'middle';
 				ai.innerHTML = `<aon-icon icon="${item.aonIcon}"></aon-icon>`;
 				li.appendChild(ai);
-			} else {
+			} else if(item.icon) {
 				let ic = document.createElement('i');
 				ic.className = 'material-icons';
 				ic.style.verticalAlign = 'middle';

@@ -89,8 +89,24 @@ export class AonMobileHeader extends AonElement {
 						icon: 'input',
 						fn: () => closeSession()
 					}];
+
+					// if(r && r.task_holder){
+						// let style = "font-weight: 600;padding: 10px 10px 0px 10px;white-space: nowrap;text-transform: uppercase;text-overflow: ellipsis;overflow: hidden;margin: auto;";
+						// options.unshift({
+						// 	name:  `${r.task_holder.name}`,
+						// 	icon: 'face',
+						// 	fn: () => {}
+						// });
+					// }
+
 					d.setMenuOptions(options, top, left);
 					d.open();
+
+					if(r && r.task_holder){
+						d.setContentTitle(r.task_holder.name)
+					}
+
+				
 				});
 			} else {
 				const top  = aonHeaderUserButton.getBoundingClientRect().top;
