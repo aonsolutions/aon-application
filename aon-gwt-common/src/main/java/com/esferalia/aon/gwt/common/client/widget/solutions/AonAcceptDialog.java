@@ -7,7 +7,6 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -39,7 +38,7 @@ public class AonAcceptDialog extends AonCustomDialog {
 	public AonAcceptDialog(String caption, Widget widget, AonAcceptDialogCallback callback) {
 		setCaption(caption);
 		setWidget(uiBinder.createAndBindUi(this));
-		initView(widget);
+		scrollPanel.add(widget);
 		getButtonsPanel(callback);
 		
 		center();
@@ -50,11 +49,6 @@ public class AonAcceptDialog extends AonCustomDialog {
 	        	okButton.setFocus(true);        	
 	        }
 	    });
-	}
-
-	private void initView(Widget widget) {
-		scrollPanel.setHeight((Window.getClientHeight()/2 - 100) + "px");
-		scrollPanel.add(widget);
 	}
 	
 	private void getButtonsPanel(AonAcceptDialogCallback callback) {
@@ -101,7 +95,5 @@ public class AonAcceptDialog extends AonCustomDialog {
     	
     	buttonsPanel.add(cancelButton);
 	}
-	
-	
-	
+		
 }

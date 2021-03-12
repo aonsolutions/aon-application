@@ -9,8 +9,14 @@
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
-			padding: 10px 20px;
-			max-width: 500px;
+			padding: 20px;
+			min-width: 400px;
+    		max-width: 600px;
+		}
+		
+		.scrollHeight{
+			max-height: 300px;
+    		min-height: 30px;
 		}
 		
 		.flex{
@@ -24,7 +30,7 @@
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.flexColumn}" ui:field='toolbar'>
-		<g:ScrollPanel ui:field="scrollPanel"/>
+		<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollHeight}"/>
 		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.flex}"/>
 	</g:HTMLPanel>
 </ui:UiBinder> 
