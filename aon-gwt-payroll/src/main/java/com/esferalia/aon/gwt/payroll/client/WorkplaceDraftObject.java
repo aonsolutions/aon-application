@@ -180,55 +180,24 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 		return this.activities;
 	}
 	
-	public Integer getWorkplaceAddressIndex(){
-		Integer index = 0;
-		
-		if(!getWorkplaceAddresses().isEmpty() && null != workplaceInfo.getAddressId()) {
-			for(Integer value : getWorkplaceAddresses().keySet()){
-				if(value.equals(workplaceInfo.getAddressId())) {
-					index++;
-					break;
-				}
-				index++;
-			}
-		}
-		
-		return index;
+	public String getWorkplaceAddress(){
+		Integer addressId = workplaceInfo.getAddressId();
+		return null == addressId ? null : addressId.toString();
 	}
 	
-	public Integer getWorkplaceEconomicConcert(){
-		return (int) workplaceInfo.getEconomicConcert() + 1;
+	public String getWorkplaceEconomicConcert(){
+		Integer economicConcert = (int)workplaceInfo.getEconomicConcert();
+		return economicConcert.toString();
 	} 
 	
-	public Integer getWorkplaceAgreementIndex(){
-		Integer index = 0;
-		
-		if(!getWorkplaceAgreements().isEmpty() && null != workplaceInfo.getAgreementId()) {
-			for(Agreement agreement : getWorkplaceAgreements()) {
-				if(agreement.getId().equals(workplaceInfo.getAgreementId())) {
-					index++;
-					break;
-				}
-				index++;
-			}
-		}
-		
-		return index;
+	public String getWorkplaceAgreement(){
+		Integer agreeementId = workplaceInfo.getAgreementId();
+		return null == agreeementId ? null : agreeementId.toString();
 	}
 	
-	public Integer getWorkplaceActivityIndex(){
-		Integer index = 0;
-		
-		if(!getWorkplaceActivities().isEmpty() && null != workplaceInfo.getActivityId()) {
-			for(Integer value : getWorkplaceActivities().keySet()){
-				if(value.equals(workplaceInfo.getActivityId())) {
-					index++;
-					break;
-				}
-				index++;
-			}
-		}
-		return index;
+	public String getWorkplaceActivity(){
+		Integer activityId = workplaceInfo.getActivityId();
+		return null == activityId ? null : activityId.toString();
 	}
 	
 	public void setWorkplaceDescription(String description) {

@@ -1,69 +1,56 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.function.Consumer;
-
-import com.esferalia.aon.gwt.common.shared.StringUtils;
-import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.BorderStyle;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Style.VerticalAlign;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class WorkplaceDraft extends Composite {
 	
 	private class WorkplaceImplementation extends Workplace{
-		
+
 		@Override
 		public void onWorkplaceDescriptionChange() {
-			String value = workplace.workplaceDescription.getValue();
-			
-			if(StringUtils.isBlank(value)) {
-				WarningDialog warningDialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
-				warningDialog.center();
-				warningDialog.show();
-				
-				//Set last good value
-				workplace.workplaceDescription.setValue(workplaceDraftObject.getWorkplaceDescription());
-			}
+			String workplacedescription = workplaceDescription.getValue();
+			if(AonStringUtils.isBlank(workplacedescription)) {
+				AonMessageDialog.warning("Este campo es obligatorio");
+				workplaceDescription.setValue(workplaceDraftObject.getWorkplaceDescription());
+			} else
+				workplaceDraftObject.setWorkplaceDescription(workplacedescription);
+		}
+
+		@Override
+		public void onWorkplaceAddressChange(Integer addressId) {
+			workplaceDraftObject.setWorkplaceAddress(AonNumberUtils.equals(-1, addressId) ? null : addressId);
 		}
 
 		@Override
 		public void onWorkplaceEconomicConcertChange() {
-			Byte economicConcert = Byte.valueOf(workplaceEconomicConcert.getSelectedValue());
+			Byte economicConcert = Byte.valueOf(this.workplaceEconomicConcert.getSelectedValue());
 			workplaceDraftObject.setWorkplaceEconomicConcert(economicConcert);
-			saving();
 		}
 
 		@Override
-		public void onWorkplaceAgreementChange() {
-			if (this.workpalceAgreement.getSelectedIndex() == 0 ) {
-				workplaceDraftObject.setWorkplaceAgreement(null);
-				saving();
-				return;
-			}
-			
-			Integer agreementId = Integer.valueOf(this.workpalceAgreement.getSelectedValue()); 
-			workplaceDraftObject.setWorkplaceAgreement(agreementId);
-			saving();
+		public void onWorkplaceAgreementChange(Integer agreementId) {
+			workplaceDraftObject.setWorkplaceAgreement(AonNumberUtils.equals(-1, agreementId) ? null : agreementId);
+		}
+
+		@Override
+		public void onWorkplaceActivityChange(Integer activityId) {
+			workplaceDraftObject.setWorkplaceActivity(AonNumberUtils.equals(-1, activityId) ? null : activityId);
 		}
 		
 	}
@@ -77,71 +64,44 @@ public class WorkplaceDraft extends Composite {
 	// -------------------------------------------------- UiFields --------------------------------------------------
 
 	@UiField
-	Button newContractButton;
-	
-	@UiField
-	Label saveStatus;
-	
-	@UiField
-	Button redoButton;
+	MyStyle style;
 
-	@UiField
-	Button undoButton;
-
-	@UiField
-	Button undoAllButton;
+	interface MyStyle extends CssResource {
+		String container();
+	}
 	
-	@UiField (provided = true)
-	Workplace workplace;
+	@UiField
+	DockLayoutPanel dockLayoutPanel;
+	
+	@UiField
+	HTMLPanel centerContainer;
 	
 	// ------------------------------------------------------ VARIABLES DE LA CLASE --------------------------------------------------
 
-	private Timer saveTimer;
-	
 	private WorkplaceDraftObject workplaceDraftObject;
+	
+	private Workplace workplace;
 
-	private Consumer<WorkplaceInfo> onSaved ;
+	private AonToolbar toolbar;
+	private AonToolbarButton accept;
+	private AonToolbarButton newContract;
+	private AonToolbarButton undoAll;
+	private AonToolbarButton undo;
+	private AonToolbarButton redo;
 	
 	// ------------------------------------------------ CONSTRUCTOR ------------------------------------------------------
 
 	public WorkplaceDraft() {
 		workplace = new WorkplaceImplementation();
+		toolbar = getToolbarPanel();
 		
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		saveStatus.setTitle("Cada cambio que hagas se guarda autom\u00E1ticamente");
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		dockLayoutPanel.addStyleName(style.container());
 		
-		onSaved = this::onSavedNoop;
-	}
-
-	// ------------------------------------------------- UiHandlers ------------------------------------------------------
-
-	@UiHandler("newContractButton")
-	void onNewContractClick(ClickEvent event) {
-		EmployeeTree.showNewContract();
-	}
-	
-	@UiHandler("undoButton")
-	void onUndoButtonClick(ClickEvent event) {
-		workplaceDraftObject.undo();
-		initializeView();
-		saving();
-	}
-
-	@UiHandler("undoAllButton")
-	void onUndoAllButtonClick(ClickEvent event) {
-		while ( workplaceDraftObject.canUndo() )
-			workplaceDraftObject.undo();
-		initializeView();
-		saving();
-	}
-
-	@UiHandler("redoButton")
-	void onRedoButtonClick(ClickEvent event) {
-		workplaceDraftObject.redo();
-		initializeView();
-		saving();
+		centerContainer.add(workplace);
 	}
 
 	// ------------------------------------------------------ METODOS DE LA CLASE --------------------------------------------------
@@ -149,276 +109,151 @@ public class WorkplaceDraft extends Composite {
 	public void setWorkplaceDraftObject(WorkplaceDraftObject workplaceDraftObject) {
 		this.workplaceDraftObject = workplaceDraftObject;
 		this.workplaceDraftObject.initializeWorkplace(
-				s -> { initializeView();
-				   	   initializeUndoRedo();
-					   initializeScheduler();
+				s -> { 
+						initializeView();
+				   	   	initializeUndoRedo();
 					 }
 				, f -> {}
 		);
 	}
 	
 	private void initializeView() {
-		//SOCPE HIDE
-		workplace.generalDataTable.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
-
-		resetElements();
+		workplace.initializeView();
 		initializeListBox();
 		fillWorkplaceInfo();	
 	}
 	
-	private void resetElements() {
-		// Clear general elements
-		workplace.workplaceDescription.setValue("");
-		workplace.workplaceAddressPanel.clear();
-
-		// Clear payroll elements
-		workplace.workplaceCalendarPanel.clear();
-		workplace.workpalceAgreement.clear();
-		workplace.workplaceActivityPanel.clear();
-	}
-
 	private void initializeUndoRedo() {
-		undoButton.setEnabled(workplaceDraftObject.canUndo());
-		undoAllButton.setEnabled(workplaceDraftObject.canUndo());
-		redoButton.setEnabled(workplaceDraftObject.canRedo());
+		undo.setEnabled(workplaceDraftObject.canUndo());
+		undoAll.setEnabled(workplaceDraftObject.canUndo());
+		redo.setEnabled(workplaceDraftObject.canRedo());
 
 		workplaceDraftObject.addUndoManagerListener( (undoManager) -> {
-			undoButton.setEnabled(undoManager.canUndo());
-			undoAllButton.setEnabled(undoManager.canUndo());
-			redoButton.setEnabled(undoManager.canRedo());
+			undo.setEnabled(undoManager.canUndo());
+			undoAll.setEnabled(undoManager.canUndo());
+			redo.setEnabled(undoManager.canRedo());
 		});
 	}
-	
 
 	private void initializeListBox() {
 		//DIRECCION
-		initializeAddressCell();
+		workplace.initializeAddressCell(workplaceDraftObject.getWorkplaceAddresses());
 		
 		//CALENDARIO
-		initializeCalendarCell();
+		workplace.initializeCalendarCell(workplaceDraftObject.getWorkplaceInfo().getCalendarDescription(), workplaceDraftObject.getCalendarDraftObjectData());
 		
 		// CONVENIO
-		initializeAgreementCell();
+		workplace.initializeAgreementCell(workplaceDraftObject.getWorkplaceAgreements());
 		
 		//ACTIVIDADES
-		initializeActivityCell();
-	}
-
-	private void initializeAddressCell() {
-		Widget workplaceAddressWidget;
-		
-		if(workplaceDraftObject.getWorkplaceAddresses().values().size() == 0)
-			workplaceAddressWidget = createEmptyListLabel();
-		else{
-			ListBox addressListBox = new ListBox();
-			addressListBox.addItem("-", "-1");
-			for(Entry<Integer, String> entry : workplaceDraftObject.getWorkplaceAddresses().entrySet())
-				addressListBox.addItem(entry.getValue(), entry.getKey().toString());
-			
-			addressListBox.setStyleName("aon-selectOneMenu");
-			addressListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
-			
-			addressListBox.addChangeHandler(new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					if(addressListBox.getSelectedIndex() == 0) {
-						WarningDialog warningDialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
-						warningDialog.center();
-						warningDialog.show();
-						
-						ListBox wokplaceAddressLB = (ListBox) workplace.workplaceAddressPanel.getWidget(0);
-						wokplaceAddressLB.setSelectedIndex(workplaceDraftObject.getWorkplaceAddressIndex());
-						
-						return;
-					}
-					Integer activityId = Integer.valueOf(addressListBox.getSelectedValue());
-					workplaceDraftObject.setWorkplaceAddress(activityId);
-					saving();
-				}
-			});
-			
-			// If only one activity, selected it and fire event
-			//if(addressListBox.getItemCount() != 0 && addressListBox.getItemCount() == 1){
-			//	addressListBox.setSelectedIndex(1);
-			//	DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressListBox);
-			//}
-			
-			workplaceAddressWidget = addressListBox;
-		}
-		
-		workplace.workplaceAddressPanel.add(workplaceAddressWidget);
-	}
-	
-	private void initializeCalendarCell() {
-		HTMLPanel hPanel = new HTMLPanel("");
-		hPanel.getElement().getStyle().setDisplay(Display.FLEX);
-		Label calendarLabel;
-		
-		if(StringUtils.isBlank(workplaceDraftObject.getWorkplaceInfo().getCalendarDescription()))
-			calendarLabel = createEmptyListLabel();
-		else
-			calendarLabel = new Label(workplaceDraftObject.getWorkplaceInfo().getCalendarDescription());
-		
-		calendarLabel.getElement().getStyle().setPadding(1.99, Unit.PX);
-		calendarLabel.getElement().getStyle().setMarginRight(5.00, Unit.PX);
-		hPanel.add(calendarLabel);
-		
-		Button calendarButton = new Button();
-		calendarButton.setStyleName("aon-editDataTable-button aon-icon-calendar");
-		calendarButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				EmployeeTree.showWorkplaceCalendar(workplaceDraftObject.getCalendarDraftObjectData());
-			}
-		});
-		
-		hPanel.add(calendarButton);
-		
-		workplace.workplaceCalendarPanel.add(hPanel);
-	}
-	
-	private void initializeAgreementCell() {
-		this.workplace.workpalceAgreement.addItem("-", "-1");
-		List<Agreement> agreements = workplaceDraftObject.getWorkplaceAgreements();
-		for (Agreement agreement : agreements)
-			this.workplace.workpalceAgreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
-	}
-
-	private void initializeActivityCell() {
-		Widget workplaceActivityWidget;
-		
-		if(workplaceDraftObject.getWorkplaceActivities().values().size() == 0)
-			workplaceActivityWidget = createEmptyListLabel();
-		else{
-			ListBox activityListBox = new ListBox();
-			activityListBox.addItem("-", "-1");
-			for(Entry<Integer, String> entry : workplaceDraftObject.getWorkplaceActivities().entrySet())
-				activityListBox.addItem(entry.getValue(), entry.getKey().toString());
-			
-			activityListBox.setStyleName("aon-selectOneMenu");
-			activityListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
-			
-			activityListBox.addChangeHandler(new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					Integer activityId = Integer.valueOf(activityListBox.getSelectedValue());
-					workplaceDraftObject.setWorkplaceActivity(activityId);
-					saving();
-				}
-			});
-			
-			// If only one activity, selected it and fire event
-			//if(activityListBox.getItemCount() != 0 && activityListBox.getItemCount() == 2){
-			//	activityListBox.setSelectedIndex(1);
-			//	DomEvent.fireNativeEvent(Document.get().createChangeEvent(), activityListBox);
-			//}
-			
-			workplaceActivityWidget = activityListBox;
-		}
-		
-		workplace.workplaceActivityPanel.add(workplaceActivityWidget);
+		workplace.initializeActivityCell(workplaceDraftObject.getWorkplaceActivities());
 	}
 
 	private void fillWorkplaceInfo() {
 		workplace.workplaceDescription.setValue(workplaceDraftObject.getWorkplaceDescription());
-		
-		if(!workplaceDraftObject.getWorkplaceAddresses().isEmpty()) {
-			ListBox wokplaceAddressLB = (ListBox) workplace.workplaceAddressPanel.getWidget(0);
-			wokplaceAddressLB.setSelectedIndex(workplaceDraftObject.getWorkplaceAddressIndex());
-		}
-		
-		workplace.workplaceEconomicConcert.setSelectedIndex(workplaceDraftObject.getWorkplaceEconomicConcert());
-		
-		if(!workplaceDraftObject.getWorkplaceAgreements().isEmpty()) {
-			workplace.workpalceAgreement.setSelectedIndex(workplaceDraftObject.getWorkplaceAgreementIndex());
-		}
-		
-		if(!workplaceDraftObject.getWorkplaceActivities().isEmpty()) {
-			ListBox wokplaceActivityLB = (ListBox) workplace.workplaceActivityPanel.getWidget(0);
-			wokplaceActivityLB.setSelectedIndex(workplaceDraftObject.getWorkplaceActivityIndex());
-		}
-		
-		workplace.workplaceDescription.addKeyUpHandler(e-> {
-			
-			String value = workplace.workplaceDescription.getValue();
-			String saved = workplaceDraftObject.getWorkplaceInfo().getDescription();
-			
-			if (AonStringUtils.equals(value, saved) || StringUtils.isBlank(value))
-				return;
-			
-			workplaceDraftObject.setWorkplaceDescription(workplace.workplaceDescription.getValue());
-			saving();
-		});
-		
+		if(!workplaceDraftObject.getWorkplaceAddresses().isEmpty()) 
+			setSelectedValueLB((ListBox) workplace.workplaceAddressPanel.getWidget(0), workplaceDraftObject.getWorkplaceAddress());
+		setSelectedValueLB(workplace.workplaceEconomicConcert, workplaceDraftObject.getWorkplaceEconomicConcert());	
+		if(!workplaceDraftObject.getWorkplaceAgreements().isEmpty()) 
+			setSelectedValueLB((ListBox) workplace.workplaceAgreementPanel.getWidget(0), workplaceDraftObject.getWorkplaceAgreement());
+		if(!workplaceDraftObject.getWorkplaceActivities().isEmpty())
+			setSelectedValueLB((ListBox) workplace.workplaceActivityPanel.getWidget(0), workplaceDraftObject.getWorkplaceActivity());
 	}
 	
-	public Label createEmptyListLabel() {
-		Label label = new Label();
-		
-		label.setText("No hay entradas disponibles");
-		label.setStyleName("aon-inputText");
-		label.addStyleName(workplace.style.warningColor());
-//		label.getElement().getStyle().setWidth(99.7, Unit.PCT);	
-		label.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
-		
-		return label;
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
 	}
 	
-	public Label createEmptyListLabel(String labelMessage) {
-		Label label = new Label();
-		
-		label.setText(labelMessage);
-		label.setStyleName("aon-inputText");
-		label.addStyleName(workplace.style.warningColor());
-		label.getElement().getStyle().setWidth(99.7, Unit.PCT);	
-		label.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
-		
-		return label;
-	}
+	// ----------------------------------------------- TOOLBAR ------------------------------------------------
 	
-	// ----------------------------------------------- CALLBACK TO SAVE ------------------------------------------------
-	
-	private void initializeScheduler() {
-		saveStatus.setText("");
+	private AonToolbar getToolbarPanel() {
 		
-		saveTimer = new Timer() {
+		AonToolbar toolbar = new AonToolbar("Centro de trabajo");
+
+		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		accept.setAccessKey('G');
+		accept.addClickHandler(new ClickHandler() {
 			@Override
-			public void run() {
-				save();
+			public void onClick(ClickEvent event) {
+				onAccept(event);
 			}
-		};		
+		});
+		toolbar.add(accept);
+		
+		newContract = new AonToolbarButton( "Nuevo contrato", AON.CSS.aonIconAdd() );
+		newContract.setAccessKey('N');
+		newContract.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onNewContract(event);
+			}
+		});
+		toolbar.add(newContract);
+		
+		undoAll = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll() );
+		undoAll.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onUndoAll(event);
+			}
+		});
+		toolbar.add(undoAll);
+		
+		undo = new AonToolbarButton( AON.MSG.undo(), AON.CSS.aonIconUndo() );
+		undo.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onUndo(event);
+			}
+		});
+		toolbar.add(undo);
+		
+		redo = new AonToolbarButton( "Rehacer", AON.CSS.aonIconRedo() );
+		redo.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onRedo(event);
+			}
+		});
+		toolbar.add(redo);
+
+		return toolbar;
+
 	}
 	
-	public WorkplaceDraft setOnSaved(Consumer<WorkplaceInfo> onSaved) {
-		this.onSaved = onSaved;
-		return this;
-	}
-	
-	private void saving() {
-		saveStatus.setText("Guardando...");
-		saveTimer.schedule(2500);
-	}
-	
-	private void save() {
-		saveStatus.setText("Guardando...");
+	private void onAccept(ClickEvent event) {
 		workplaceDraftObject.updateWorkplace(
-				r -> { 
-					saved();
-				}, 
-				t -> {
-					saveStatus.setText("Error, los cambios no se han guardado");
-				}
+				r -> {}, 
+				t -> {}
 		);
 	}
 	
-	private void saved() {
-		saveStatus.setText("Todos los cambios guardados");	
-		onSaved.accept(workplaceDraftObject.getWorkplaceInfo());
+	private void onNewContract(ClickEvent event) {
+		EmployeeTree.showNewContract();
 	}
 
-	protected void onSavedNoop(WorkplaceInfo workplaceInfo) {}
+	private void onUndoAll(ClickEvent event) {
+		while ( workplaceDraftObject.canUndo() )
+			workplaceDraftObject.undo();
+		initializeView();
+	}
+
+	private void onUndo(ClickEvent event) {
+		workplaceDraftObject.undo();
+		initializeView();
+	}
+	
+	private void onRedo(ClickEvent event) {
+		workplaceDraftObject.redo();
+		initializeView();
+	}
 	
 }
