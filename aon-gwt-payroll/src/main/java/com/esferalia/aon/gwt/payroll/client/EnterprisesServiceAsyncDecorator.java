@@ -212,6 +212,14 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
+	public void getDeleteAgreementMessage(String domain, Agreement agreement, 
+			AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.getDeleteAgreementMessage(domain, agreement, 
+				new AsyncCallbackWrapper<String>(callback));
+	}
+	
+	@Override
 	public void copyAgreement(String domain, Agreement agreement,
 			AsyncCallback<Agreement> callback) {
 		AON.start();

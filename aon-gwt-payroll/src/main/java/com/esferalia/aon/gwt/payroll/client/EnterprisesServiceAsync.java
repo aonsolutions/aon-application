@@ -55,6 +55,7 @@ public interface EnterprisesServiceAsync {
 	void deleteDeductionConcept(String domain, Deduction deduction, AsyncCallback<Void> callback);
 	void deleteAgreement(String domain, Agreement agreement, AsyncCallback<Void> callback);
 	void updateAgreementId(String domain, Agreement agreement, AsyncCallback<Void> callback);
+	void getDeleteAgreementMessage(String domain, Agreement agreement, AsyncCallback<String> callback);
 	void copyAgreement(String domain, Agreement agreement, AsyncCallback<Agreement> callback);
 	void getWorkplacesExtras(String domain, List<Integer> workplaceIds, AsyncCallback<List<Extra>> callback);
 	void getAgreement(String domain, Integer agreementId, AsyncCallback<Agreement> callback);

@@ -17,6 +17,10 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.payroll.calculator.jooq.JooqCommon.getDefaultSettings;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PRORATION;
@@ -1645,6 +1649,96 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		
 		return String.format("__%d", Math.abs(paymentId));
 
+	}
+
+	public static String getDeleteAgreementMessage(Connection conn, Agreement agreement) {
+		DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL, getDefaultSettings());
+		
+		String message = "Este convenio contiene contratos asociados. Si lo elimina se enviar" + String.valueOf("\u00E1") + " a la papelera.<br>" + String.valueOf("\u00BF") + "Desea eliminar el convenio de <b>" + agreement.getDescription() + "</b>?";
+		
+		List<Integer> agreementContracts = dslContext.select(CONTRACT.ID).from(CONTRACT)
+			.where(CONTRACT.AGREEMENT_LEVEL.in(
+					dslContext.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+						.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId()))
+						.fetch(AGREEMENT_LEVEL.ID)
+			)).fetch(CONTRACT.ID);
+		
+		Result<Record> infoRecords = dslContext.select().from(CONTRACT)
+			.innerJoin(ENTERPRISE_CCC)
+			.on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+			.innerJoin(ENTERPRISE_ACTIVITY)
+			.on(ENTERPRISE_ACTIVITY.ID.eq(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY))
+			.innerJoin(REGISTRY)
+			.on(REGISTRY.ID.eq(ENTERPRISE_ACTIVITY.ENTERPRISE))
+			.innerJoin(PERSON)
+			.on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+			.where(CONTRACT.ID.in(agreementContracts))
+			.orderBy(ENTERPRISE_ACTIVITY.ENTERPRISE)
+			.fetch();
+		
+		if(infoRecords.isNotEmpty()) {
+			Integer enterpriseId = infoRecords.get(0).get(REGISTRY.ID);
+			message += "<br><br>";
+			message += "<b>" + infoRecords.get(0).get(REGISTRY.NAME) + "</b><br><br>";
+			for(Record infoRecord : infoRecords) {
+				if(AonNumberUtils.equals(enterpriseId, infoRecord.get(REGISTRY.ID)))
+					message += "&emsp;" + getFullName(infoRecord) + " (" + getDocument(dslContext, infoRecord.get(CONTRACT.PERSON)) + "CCC: " + getCompleteCCC(infoRecord) + ")<br>";
+				else {
+					message += "<br><b>" + infoRecords.get(0).get(REGISTRY.NAME) + "</b><br><br>";
+					message += "&emsp;" + getFullName(infoRecord) + " (" + getDocument(dslContext, infoRecord.get(CONTRACT.PERSON)) + "CCC: " + getCompleteCCC(infoRecord) + ")<br>";
+					enterpriseId = infoRecord.get(REGISTRY.ID);
+				}
+			}
+		}
+		
+		return message;
+	}
+
+	private static String getFullName(Record infoRecord) {
+		String fullName = "";
+		String firstSurname = infoRecord.get(PERSON.FIRST_SURNAME);
+		String secondSurname = infoRecord.get(PERSON.SECOND_SURNAME);
+		String name = infoRecord.get(PERSON.NAME);
+		
+		fullName += AonStringUtils.isBlank(firstSurname) ? "" : firstSurname + " ";
+		fullName += AonStringUtils.isBlank(secondSurname) ? "" : secondSurname + ", ";
+		fullName += AonStringUtils.isBlank(name) ? "" : name;
+		
+		return fullName;
+	}
+
+	private static String getDocument(DSLContext dslContext, Integer registryId) {
+		String document = dslContext.select(REGISTRY.DOCUMENT).from(REGISTRY).where(REGISTRY.ID.eq(registryId)).fetchOne(REGISTRY.DOCUMENT);
+		return AonStringUtils.isBlank(document) ? "" : document + " - ";
+	}
+	
+	private static String getCompleteCCC(Record infoRecord) {
+		return getCCCRegimeCode(infoRecord.get(ENTERPRISE_CCC.TYPE))+infoRecord.get(ENTERPRISE_CCC.CCC);
+	}
+	
+	private static String getCCCRegimeCode(Byte cccRegime) {
+		switch (cccRegime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		case 8:
+			return "0112";
+		default:
+			return "0111";
+		}
 	}
 
 }

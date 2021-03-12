@@ -64,6 +64,8 @@ public interface EnterprisesService extends RemoteService {
 	 * @param value: if value > 0 move to Agreements. Else, move to Trash
 	 */	
 	void updateAgreementId(String domain, Agreement agreement);
+	
+	String getDeleteAgreementMessage(String domain, Agreement agreement);
 
 	void deleteBonusConcept(String domain, Bonus bonus);
 
@@ -279,6 +281,5 @@ public interface EnterprisesService extends RemoteService {
 	DomainUserRoles getDomainUserRoles(String currentDomainName, String currentUser);
 
 	boolean hasCertificateSEPE(String currentDomainName, String currentUser);
-
 	
 }

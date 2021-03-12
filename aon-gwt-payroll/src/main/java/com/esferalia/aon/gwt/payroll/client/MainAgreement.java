@@ -11,7 +11,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAgreementsToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Listener;
@@ -32,6 +34,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
@@ -547,31 +550,59 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	@Override
 	public void onAgreementDelete(Agreement agreement) {
 		if(agreement.getHasContract()) {
-			agreements.getAgreementsTree().getEnterpriseService().updateAgreementId(
-					agreement, new AsyncCallback<Void>() {
+			agreements.getAgreementsTree().getEnterpriseService().getDeleteAgreementMessage(
+					agreement, new AsyncCallback<String>() {
+	
+						@Override
+						public void onFailure(Throwable caught) {}
+	
+						@Override
+						public void onSuccess(String message) {
+							new AonAcceptDialog("BORRADO", new HTML(message), new AonAcceptDialogCallback() {
+								
+								@Override
+								public void onCancel() {}
+								
+								@Override
+								public void onAccept() {
+									agreements.getAgreementsTree().getEnterpriseService().updateAgreementId(
+											agreement, new AsyncCallback<Void>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					Window.alert("No ha sido posible enviar el Convenio a la papelera.");
-				}
+										@Override
+										public void onFailure(Throwable caught) {
+											Window.alert("No ha sido posible enviar el Convenio a la papelera.");
+										}
 
-				@Override
-				public void onSuccess(Void result) {
-					MainAgreement.this.agreements.reloadAgreements();
-				}
-			});
+										@Override
+										public void onSuccess(Void result) {
+											MainAgreement.this.agreements.reloadAgreements();
+										}
+									});
+								}
+							});
+						}});	
 		} else {
-			agreements.getAgreementsTree().getEnterpriseService().deleteAgreement(
-					agreement, new AsyncCallback<Void>() {
-
+			String message = "Este convenio ser" + String.valueOf("\u00E1") + " eliminado de forma permanente.<br>" + String.valueOf("\u00BF") + "Desea eliminar el convenio de <b>" + agreement.getDescription() + "</b>?";
+			new AonAcceptDialog("BORRADO", new HTML(message), new AonAcceptDialogCallback() {
+				
 				@Override
-				public void onFailure(Throwable caught) {
-					Window.alert("No ha sido posible eliminar el Convenio.");
-				}
-
+				public void onCancel() {}
+				
 				@Override
-				public void onSuccess(Void result) {
-					MainAgreement.this.agreements.reloadAgreements();
+				public void onAccept() {
+					agreements.getAgreementsTree().getEnterpriseService().deleteAgreement(
+							agreement, new AsyncCallback<Void>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("No ha sido posible eliminar el Convenio.");
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							MainAgreement.this.agreements.reloadAgreements();
+						}
+					});
 				}
 			});
 		}

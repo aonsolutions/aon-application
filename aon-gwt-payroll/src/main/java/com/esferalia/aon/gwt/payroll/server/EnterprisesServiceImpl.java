@@ -505,6 +505,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+
+	@Override
+	public String getDeleteAgreementMessage(String domain, Agreement agreement) {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			return JooqAgreement.getDeleteAgreementMessage(connection, agreement);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	@Override
 	public Agreement copyAgreement(String domain, Agreement agreement) {
 		
@@ -3010,5 +3020,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	protected static Date toSqlDate(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
 	}
+
 
 }
