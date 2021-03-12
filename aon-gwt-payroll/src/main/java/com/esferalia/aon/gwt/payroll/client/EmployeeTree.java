@@ -2693,7 +2693,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private WorkplaceDraft getWorkplaceDraft() {
 		if (workplaceDraft == null)
-			workplaceDraft = new WorkplaceDraft().setOnSaved(w -> refreshWorkplace());
+			workplaceDraft = new WorkplaceDraft();
 		return workplaceDraft;
 	}
 
@@ -3330,7 +3330,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	protected static void showNewWorkplace() {
 		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 
-		WorkplaceDialog workplaceDialog = new WorkplaceDialog().setOnSaved(w -> refreshEnterprise());
+		WorkplaceDialog workplaceDialog = new WorkplaceDialog();
 		WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(getEmployeeTree().enterprise,
 				enterprisesService);
 		workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
