@@ -32,7 +32,7 @@ export const removeEmpty = (obj) => {
 };
 
 //order by obj, campo, order asc or desc
-export const sortBy = (obj, value, orderBy='asc') =>  obj.sort((a, b) => 'asc' === orderBy.toLocaleLowerCase() ? a[value] - b[value] : b[value] - a[value]);
+export const sortBy = (obj, value, orderBy='asc') =>  obj.sort((a, b) => 'asc' === orderBy.toLocaleLowerCase() ? (typeof a[value] === 'string') - (typeof b[value] === 'string') || a[value] > b[value] || -(a[value] < b[value]) : (typeof b[value] === 'string') - (typeof a[value] === 'string') || b[value] > a[value] || -(b[value] < a[value]));
 
 export const waitEl = (selector)=> new Promise((resolve,reject)=>{
   let i = 0;

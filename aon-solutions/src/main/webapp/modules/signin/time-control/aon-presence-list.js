@@ -165,9 +165,9 @@ export class AonPresenceList extends AonElement {
       let filter = null;
       try {filter = {...this.aonSigninParentEl._filter};} catch (error) {}
 
-      const datos = await getTimeControlList(filter);
+      const  datos = await getTimeControlList(filter);
       if (datos) {
-        await sortBy(datos, 'last_date', 'desc').map(
+        await sortBy(datos, 'last_date', 'asc').map(
           async ({
             time,
             last_date,

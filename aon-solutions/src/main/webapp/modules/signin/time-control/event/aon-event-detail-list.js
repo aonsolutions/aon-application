@@ -260,10 +260,17 @@ export class AonEventDetailList extends AonElement {
     return data;
   }
 
-  paintName(){
+  async paintName(){
     if(this.TASK_HOLDER) {
-      const {name} = this.TASK_HOLDER;
-      if(this.isMobile()) this.getElement(this.TOOLBAR).title = `<a href="tel:+34000000000">${name}</a>`;
+      const {name, id: task_holder} = this.TASK_HOLDER;
+      if(this.isMobile()) {
+        const auth = await this.aonSigninParentEl.getAuth({task_holder});
+        let iconPhone = "";
+        if(!this.aonSigninParentEl.isEmployee() && auth && auth.phone) {
+          iconPhone = `<a href="tel:+34${auth.phone}"><aon-icon-button id="iconPhone" icon="phone_in_talk" noHover="true" color="green"></aon-icon-button></a>`;
+        }
+        this.getElement(this.TOOLBAR).title = `${name}${iconPhone}`;
+      }
       else this.aonSigninEl.addTitleToolSection(name);
     }
   }

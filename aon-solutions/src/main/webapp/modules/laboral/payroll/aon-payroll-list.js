@@ -94,6 +94,7 @@ export class AonPayrollList extends AonElement {
         id: "employee",
         name: "employee",
         title: "Trabajador",
+        hidden:true
       },
       ...PresenceFilterInput
     ]);
@@ -205,7 +206,7 @@ export class AonPayrollList extends AonElement {
         datos = await getEnterpriseSalaries(filter);
       }
       if (!isEmptyObject(datos)) {
-        sortBy(datos, 'endDate', 'desc')
+        sortBy(datos, 'employeeName', 'asc') 
         .filter(({endDate})=> new Date(endDate) <= new Date())
         .map(({
             contract,
@@ -254,9 +255,14 @@ export class AonPayrollList extends AonElement {
     try {
       let employeeEl = this.getElement("employee");
       let employees = await getAllEmployeesWorkplace({workplace: detail.value, allEmployees:true});
-      employeeEl.options = JSON.stringify( 
-        employees.map(({name, surName, contractId})=> ({name:surName+" "+name, value:contractId}))
-      );
+      if(employees.length>0) {
+        employeeEl.options = JSON.stringify( 
+          sortBy(employees, 'surName', 'asc').map(({name, surName, contractId})=> ({name:surName+" "+name, value:contractId}))
+        );
+        employeeEl.hidden =  false;
+      }
+      else employeeEl.hidden =  true;
+
     } catch (error) {
       console.log(error);
     }

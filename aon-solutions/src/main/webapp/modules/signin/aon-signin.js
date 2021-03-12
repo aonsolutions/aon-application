@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 
 import {AonPresenceList} from "./time-control/aon-presence-list.js";
-import { getDomainUserRoles, getPeriod, getTaskHolders } from "../../services/service.js";
+import { getAuth, getDomainUserRoles, getPeriod, getTaskHolders } from "../../services/service.js";
 import { formatDateOrigin, isEmptyObject, setValueName } from "../../services/utils.js";
 import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
 import { AonLocationList } from "./time-control/location/aon-location-list.js";
@@ -16,6 +16,7 @@ import "../../components/aon-application.js";
 export class AonSignin extends AonElement {
   AON_SIGNIN;
   TASK_HOLDER;
+  AUTHS;
   _filter;
   _roles;
   constructor() {
@@ -40,6 +41,7 @@ export class AonSignin extends AonElement {
       startDate: formatDateOrigin(new Date()),
       endDate: formatDateOrigin(new Date())
     };
+    this.AUTHS=[];
   }
 
   async build() {
@@ -182,6 +184,15 @@ export class AonSignin extends AonElement {
     });
   }
 
+  async getAuth({task_holder}){
+    let auth = this.AUTHS.find(d => d.task_holder === task_holder);
+    if(!auth){
+      auth = await getAuth({task_holder}).catch(e=>null);
+      this.AUTHS.push({...auth, task_holder});
+    } 
+    return auth;
+  }
+  
   async getTaskHolder(){
     if(isEmptyObject(this.TASK_HOLDER)){
       const domain_id = parseInt(localStorage.getItem("aon_domain_id"));
