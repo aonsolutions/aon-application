@@ -7,10 +7,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonAuthServlet", urlPatterns = {"/ms/api/auth/*"})
@@ -26,6 +29,10 @@ public class AuthServlet extends AonApiHttpServlet{
 			Auth auth = new Auth();
 			if(getParams().opt("email") != null) {
 				auth = AON_SOLUTIONS.getAuth(getParams().optString("email"));
+			} else if(getParams().opt("task_holder") != null){
+				TaskHolder th = AON.getTaskHolder(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f-> f.getIdProperty().eq(getParams().optInt("task_holder")));
+				User user = AON.getUser(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
+				auth = AON_SOLUTIONS.getAuth(user.getAuth());	
 			} else {
 				AonToken aonToken = SECURITY.getAonToken(getToken());
 				auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
