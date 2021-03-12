@@ -4542,6 +4542,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	
 	private void getServiAgreementPanel() {
 		Label serviAgreementLabel = new Label("Vinculado con ServiConvenios");
+		serviAgreementLabel.getElement().getStyle().setMarginLeft(10, Unit.PX);
 		serviAgreementPanel.add(serviAgreementLabel);
 		
 		serviAgreementPDFButton = new AonToolbarButton("ServiConvenios PDF", AON.CSS.aonIconPdf() );
