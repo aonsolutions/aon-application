@@ -120,16 +120,18 @@ export const AON_LOADING = 'aonLoading';
 
 // aon-input.css
 
-export const OMRS_INPUT_GROUP = 'omrs-input-group';
-export const OMRS_INPUT_UNDERLINED = 'omrs-input-underlined';
-export const OMRS_INPUT_FILLED = 'omrs-input-filled';
-export const OMRS_INPUT_LABEL = 'omrs-input-label'
-export const OMRS_INPUT_DANGER = 'omrs-input-danger';
-export const OMRS_INPUT_HELPER = 'omrs-input-helper';
+export const AON_INPUT_GROUP = 'aonInputGroup';
+export const AON_INPUT_UNDERLINED = 'aonInputUnderlined';
+export const AON_INPUT_FILLED = 'aonInputFilled';
+export const AON_INPUT_LABEL = 'aonInputLabel'
+export const AON_INPUT_DANGER = 'aonInputDanger';
+export const AON_INPUT_HELPER = 'aonInputHelper';
 export const AON_INPUT_LIST_OPTIONS = 'aonInputListOptions';
 export const AON_INPUT_LIST_OPTIONS_UL = 'aonInputListOptionsUl';
 export const AON_INPUT_LIST_OPTIONS_ITEM = 'aonInputListOptionsItem';
-
+export const AON_INPUT_NOT_EMPTY = 'aonInputNotEmpty';
+export const IS_VISIBLE = 'aon-visible';
+export const AON_INPUT_ICON_LABEL = 'aonInputIconLabel';
 // aon-input-loading.css
 
 export const AON_ICON_CONTAINER = 'aonIconContainer';

@@ -2,6 +2,11 @@ import { AonElement } from './AonElement.js';
 import { formatNumber } from '../services/utils.js';
 import './aon-icon-button.js';
 
+import * as CONSTANT from "../../environments/constants.js";
+import * as MSG from "../../environments/msg.js";
+import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import * as CSS from "../../environments/css.js";
+
 export class AonNumber extends AonElement {
 
     SPAN;
@@ -148,13 +153,13 @@ export class AonNumber extends AonElement {
     build() {
         let div = document.createElement('div');
         div.id = this.DIV;
-        div.className = 'omrs-input-group';
+        div.className = CSS.AON_INPUT_GROUP;
         div.style.width = '100%';
         this.appendChild(div);
 
         let label = document.createElement('label');
         label.id = this.getAttribute('id') + 'Label';
-        label.className = 'omrs-input-underlined';
+        label.className = CSS.AON_INPUT_UNDERLINED;
         label.style.marginBottom = '0px';
         label.style.width = '100%';
 
@@ -208,7 +213,7 @@ export class AonNumber extends AonElement {
 
         let span = document.createElement('span');
         span.id = this.DESCRIPTION;
-        span.className = 'omrs-input-label';
+        span.className = CSS.AON_INPUT_LABEL;
         span.innerHTML = this.getAttribute('description');
 
         label.appendChild(span);

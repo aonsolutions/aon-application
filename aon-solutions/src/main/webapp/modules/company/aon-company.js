@@ -1,6 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 
 import '../../components/aon-card.js';
+import '../../components/aon-address.js';
 import '../../components/aon-input.js';
 
 
@@ -48,7 +49,7 @@ export class AonCompany extends AonElement {
 				<aon-input class="aonWidth75" id="aonConfigurationGeneralName" description="Razón Social" value="${company.name}"></aon-input>
 			</form>
 			<form action="#" class="aon-margin-0">
-				<aon-input type="address" class="aon-width-100" id="aonConfigurationGeneralAddress" description="Dirección"></aon-input>
+				<aon-address class="aon-width-100" id="aonConfigurationGeneralAddress" title="Dirección"></aon-address>
 			</form>
 		`);
 

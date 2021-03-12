@@ -88,9 +88,8 @@ export class AonSign extends AonElement {
   }
 
   entrada() {
-    this.clearElement(this.CONTENT);
-		let content = document.getElementById(this.CONTENT);
-
+		let content = this.getElement(this.CONTENT);
+    this.clearElement(content);
 		let button = document.createElement('button');
     button.className = 'aonButton';
 		button.style.backgroundColor = '#86D364';
@@ -106,9 +105,8 @@ export class AonSign extends AonElement {
 	}
 
   vuelta() {
-    this.clearElement(this.CONTENT);
-    let content = document.getElementById(this.CONTENT);
-
+    let content = this.getElement(this.CONTENT);
+    this.clearElement(content);
 		let button = document.createElement('button');
     button.className = 'aonButton';
 		button.style.backgroundColor = '#86D364';
@@ -118,14 +116,14 @@ export class AonSign extends AonElement {
     if(this.isMobile()){
       button.style.width = "60%";
       button.style.borderRadius = "12px";
-    } 
+    }
     button.addEventListener('click', () => this.saveTimeCtrl('in'));
 		content.appendChild(button);
 	}
 
 	salida() {
-    this.clearElement(this.CONTENT);
-    let content = document.getElementById(this.CONTENT);
+    let content = this.getElement(this.CONTENT);
+    this.clearElement(content);
 
 		let button = document.createElement('button');
     button.className = 'aonButton';
@@ -213,9 +211,9 @@ export class AonSign extends AonElement {
       const id = 'lastTimeUser';
       const div = this.getElement(id) || this.createElement('div');
       div.id = id;
-      div.style.marginTop = "10px"; 
-      div.style.color = "grey"; 
-      div.style.fontSize = "12px"; 
+      div.style.marginTop = "10px";
+      div.style.color = "grey";
+      div.style.fontSize = "12px";
       div.style.cursor = "default";
       div.innerHTML = `Ult. ${textStatus} ${setDateTimestampDay(signin.last_date)}`;
       let content = document.getElementById(this.CONTENT);

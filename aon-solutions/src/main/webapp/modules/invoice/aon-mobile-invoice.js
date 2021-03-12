@@ -274,7 +274,7 @@ export class AonMobileInvoice extends AonInvoice {
     // ADDRESS
     let tdAddress = document.createElement('td');
     tdAddress.setAttribute('colspan', '2');
-    tdAddress.innerHTML = `<aon-input id="address" type="address" description="Dirección"></aon-input>`;
+    tdAddress.innerHTML = `<aon-address id="address" description="Dirección"></aon-address>`;
     tr3.appendChild(tdAddress);
     let address = document.getElementById('address');
     address.buildAddressValue(this.isEmitida()

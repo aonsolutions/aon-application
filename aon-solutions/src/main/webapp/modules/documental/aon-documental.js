@@ -184,7 +184,7 @@ export class AonDocumental extends AonElement {
             name: c.name
           }
         });
-        this.clearElement(application.SIDENAV + DocumentalSidenav.CATEGORIES.id + 'List');
+        this.clearElementById(application.SIDENAV + DocumentalSidenav.CATEGORIES.id + 'List');
         categories.forEach((item, i) => {
           let option = {
             name: item.name,
@@ -289,7 +289,7 @@ export class AonDocumental extends AonElement {
             name: t.name
           }
         });
-        this.clearElement(application.SIDENAV + DocumentalSidenav.TAGS.id + 'List');
+        this.clearElementById(application.SIDENAV + DocumentalSidenav.TAGS.id + 'List');
         tags.forEach((item, i) => {
           let option = {
             name: item.name,

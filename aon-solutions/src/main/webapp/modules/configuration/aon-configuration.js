@@ -5,6 +5,7 @@ import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import "../../components/aon-application.js";
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
+import "../../components/aon-address.js";
 import "../marketplace/aon-marketplace.js";
 import "../user/aon-user-list.js";
 import "../user/aon-user.js";
@@ -169,7 +170,7 @@ export class AonConfiguration extends AonElement {
           }"></aon-input>
         </form>
         <form action="#" class="aon-margin-0">
-          <aon-input type="address" class="aon-width-100" id="aonConfigurationGeneralAddress" description="Dirección" ></aon-input>
+          <aon-address class="aon-width-100" id="aonConfigurationGeneralAddress" title="Dirección" ></aon-address>
         </form>
       `);
 

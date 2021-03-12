@@ -115,7 +115,7 @@ export class AonSuggestion extends AonElement {
   }
 
   buildOptions(options) {
-    this.clearElement(this.OPTIONS);
+    this.clearElementById(this.OPTIONS);
     let div = this.getElement(this.OPTIONS);
     div.classList.add('is-visible');
 

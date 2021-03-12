@@ -147,7 +147,7 @@ export class AonUser extends AonElement {
 	}
 
 	initApps() {
-		this.clearElement('aonUserRoleTable');
+		this.clearElementById('aonUserRoleTable');
 		if(this.isPersonalizado()) {
 			this.buildAppSelect(undefined);
 		}

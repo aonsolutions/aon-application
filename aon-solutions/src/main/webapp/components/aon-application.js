@@ -486,7 +486,7 @@ export class AonApplication extends AonElement {
   }
 
   setContent(element) {
-    this.clearElement(this.CONTENT);
+    this.clearElementById(this.CONTENT);
     this.getElement(this.CONTENT).appendChild(element);
   }
 

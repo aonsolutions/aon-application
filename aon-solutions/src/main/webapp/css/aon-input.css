@@ -1,95 +1,80 @@
 :root {
-	--omrs-color-ink-lowest-contrast: rgba(47, 60, 85, 0.18);
-	--omrs-color-ink-low-contrast: rgba(60, 60, 67, 0.3);
-	--omrs-color-ink-medium-contrast: rgba(19, 19, 21, 0.6);
-	--omrs-color-interaction: #002469;
-	--omrs-color-interaction-minus-two: rgba(73, 133, 224, 0.12);
-	--omrs-color-danger: #b50706;
-	--omrs-color-bg-low-contrast: #eff1f2;
-	--omrs-color-ink-high-contrast: #121212;
-	--omrs-color-bg-high-contrast: #ffffff;
+	--aon-color-ink-low-contrast: rgba(60, 60, 67, 0.3);
+	--aon-color-ink-medium-contrast: rgba(19, 19, 21, 0.6);
+	--aon-color-interaction: #002469;
+	--aon-color-interaction-minus-two: rgba(73, 133, 224, 0.12);
+	--aon-color-danger: #b50706;
+	--aon-color-bg-low-contrast: #eff1f2;
+	--aon-color-ink-high-contrast: #121212;
+	--aon-color-bg-high-contrast: #ffffff;
 }
 
 /** END: Non Openmrs CSS **/
-.omrs-input-group {
+.aonInputGroup {
   margin-bottom: 1.5rem;
   position: relative;
   width: 20.4375rem;
 }
 
 /* Input*/
-.omrs-input-underlined > input,
-.omrs-input-filled > input {
+.aonInputUnderlined > input,
+.aonInputFilled > input {
 	border: none;
-	border-bottom: 1px solid var(--omrs-color-ink-medium-contrast);
+	border-bottom: 1px solid var(--aon-color-ink-medium-contrast);
 	width: 100%;
 	height: 3rem;
 	font-size: 1.0625rem;
-	padding-left: 0.875rem;
+	padding-left: 5px;
 	line-height: 147.6%;
 	padding-top: 1rem;
 	padding-bottom: 0rem;
 }
 
-.omrs-input-underlined > input:focus,
-.omrs-input-filled > input:focus {
+.aonInputUnderlined > input:focus,
+.aonInputFilled > input:focus {
 	outline: none;
 }
 
-.omrs-input-underlined > .omrs-input-label,
-.omrs-input-filled > .omrs-input-label {
+.aonInputUnderlined > .aonInputLabel,
+.aonInputFilled > .aonInputLabel {
 	position: absolute;
-	top: 0.9375rem;
-	left: 0.875rem;
+	top: 20px;
+	left: 5px;
 	line-height: 147.6%;
-	color: var(--omrs-color-ink-medium-contrast);
+	color: var(--aon-color-ink-medium-contrast);
 	transition: top .2s;
 }
 
-.omrs-input-underlined > svg,
-.omrs-input-filled > svg {
+.aonInputUnderlined > svg,
+.aonInputFilled > svg {
 	position: absolute;
 	top: 0.9375rem;
 	right: 0.875rem;
-	fill: var(--omrs-color-ink-medium-contrast);
+	fill: var(--aon-color-ink-medium-contrast);
 }
 
-.omrs-input-underlined > .omrs-input-helper,
-.omrs-input-filled > .omrs-input-helper {
+.aonInputUnderlined > .aonInputHelper,
+.aonInputFilled > .aonInputHelper {
 	font-size: 0.9375rem;
-	color: var(--omrs-color-ink-medium-contrast);
+	color: var(--aon-color-ink-medium-contrast);
 	letter-spacing: 0.0275rem;
 	margin: 0.125rem 0.875rem;
 }
 
-.omrs-input-underlined > input:hover,
-.omrs-input-filled > input:hover {
-	background: var(--omrs-color-interaction-minus-two);
-	border-color: var(--omrs-color-ink-high-contrast);
+.aonInputUnderlined > input:hover,
+.aonInputFilled > input:hover {
+	background: var(--aon-color-interaction-minus-two);
+	border-color: var(--aon-color-ink-high-contrast);
 }
 
-.omrs-input-underlined > input:focus + .omrs-input-label,
-.omrs-input-underlined > input:valid + .omrs-input-label,
-.omrs-input-filled > input:focus + .omrs-input-label,
-.omrs-input-filled > input:valid + .omrs-input-label {
+.aonInputUnderlined > input:focus + .aonInputLabel,
+.aonInputUnderlined > input:valid + .aonInputLabel,
+.aonInputFilled > input:focus + .aonInputLabel,
+.aonInputFilled > input:valid + .aonInputLabel {
 	top: 0;
 	font-size: 0.9375rem;
 	margin-bottom: 32px;;
 }
-
-/* input:disabled + .omrs-input-label,
-input:read-only + .omrs-input-label {
-	top: 0;
-	font-size: 0.9375rem;
-	margin-bottom: 32px;;
-}
-
-.omrs-input-filled > input:read-only + .omrs-input-label,
-.omrs-input-filled > input:disabled + .omrs-input-label {
-	top: 0;
-	font-size: 0.9375rem;
-	margin-bottom: 32px;
-} */
 
 .aonInputNotEmpty {
 	top: 0 !important;
@@ -97,58 +82,58 @@ input:read-only + .omrs-input-label {
 	margin-bottom: 32px;
 }
 
-.omrs-input-underlined:not(.omrs-input-danger) > input:focus + .omrs-input-label,
-.omrs-input-filled:not(.omrs-input-danger) > input:focus + .omrs-input-label {
-	color: var(--omrs-color-interaction);
+.aonInputUnderlined:not(.aonInputDanger) > input:focus + .aonInputLabel,
+.aonInputFilled:not(.aonInputDanger) > input:focus + .aonInputLabel {
+	color: var(--aon-color-interaction);
 }
 
-.omrs-input-underlined:not(.omrs-input-danger) > input:focus,
-.omrs-input-filled:not(.omrs-input-danger) > input:focus {
-	border-color: var(--omrs-color-interaction);
+.aonInputUnderlined:not(.aonInputDanger) > input:focus,
+.aonInputFilled:not(.aonInputDanger) > input:focus {
+	border-color: var(--aon-color-interaction);
 }
 
-.omrs-input-underlined:not(.omrs-input-danger) > input:focus ~ svg,
-.omrs-input-filled:not(.omrs-input-danger) > input:focus ~ svg {
-	fill: var(--omrs-color-ink-high-contrast);
+.aonInputUnderlined:not(.aonInputDanger) > input:focus ~ svg,
+.aonInputFilled:not(.aonInputDanger) > input:focus ~ svg {
+	fill: var(--aon-color-ink-high-contrast);
 }
 
 /** DISABLED **/
 
-.omrs-input-underlined > input:disabled {
-	background: var(--omrs-color-bg-low-contrast);
+.aonInputUnderlined > input:disabled {
+	background: var(--aon-color-bg-low-contrast);
 	cursor: not-allowed;
 }
 
-.omrs-input-underlined > input:disabled + .omrs-input-label,
-.omrs-input-underlined > input:disabled ~ .omrs-input-helper{
-	color: var(--omrs-color-ink-low-contrast);
+.aonInputUnderlined > input:disabled + .aonInputLabel,
+.aonInputUnderlined > input:disabled ~ .aonInputHelper{
+	color: var(--aon-color-ink-low-contrast);
 }
 
-.omrs-input-underlined > input:disabled ~ svg {
-	fill: var(--omrs-color-ink-low-contrast);
+.aonInputUnderlined > input:disabled ~ svg {
+	fill: var(--aon-color-ink-low-contrast);
 }
 
 
 /** DANGER **/
 
-.omrs-input-underlined.omrs-input-danger > .omrs-input-label, .omrs-input-underlined.omrs-input-danger > .omrs-input-helper,
-.omrs-input-filled.omrs-input-danger > .omrs-input-label, .omrs-input-filled.omrs-input-danger > .omrs-input-helper{
-	color: var(--omrs-color-danger);
+.aonInputUnderlined.aonInputDanger > .aonInputLabel, .aonInputUnderlined.aonInputDanger > .aonInputHelper,
+.aonInputFilled.aonInputDanger > .aonInputLabel, .aonInputFilled.aonInputDanger > .aonInputHelper{
+	color: var(--aon-color-danger);
 }
 
-.omrs-input-danger > svg {
-	fill: var(--omrs-color-danger);
+.aonInputDanger > svg {
+	fill: var(--aon-color-danger);
 }
 
-.omrs-input-danger > input {
-	border-color: var(--omrs-color-danger);
+.aonInputDanger > input {
+	border-color: var(--aon-color-danger);
 }
 
-.omrs-input-underlined > input {
-	background: var(--omrs-color-bg-high-contrast);
+.aonInputUnderlined > input {
+	background: var(--aon-color-bg-high-contrast);
 }
-.omrs-input-filled > input {
-	background: var(--omrs-color-bg-low-contrast);
+.aonInputFilled > input {
+	background: var(--aon-color-bg-low-contrast);
 }
 
 
@@ -193,4 +178,11 @@ input:read-only + .omrs-input-label {
 
 .aonInputListOptionsItem:hover {
 	 background-color: #f1f1f1;
+}
+
+.aonInputIconLabel {
+	position: absolute;
+	top: 10px;
+	right: 0px;
+	margin-bottom:0px;
 }

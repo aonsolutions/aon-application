@@ -9,7 +9,7 @@ export class AonImports extends AonElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<aon-application id="aonImports" title="Carga de Dastos"></aon-application>
+			<aon-application id="aonImports" title="Carga de Datos"></aon-application>
 		`;
     this.build();
  	}

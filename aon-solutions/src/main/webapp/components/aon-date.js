@@ -178,7 +178,7 @@ export class AonDate extends AonElement {
   }
 
   buildCalendar() {
-    this.clearElement(this.DATEPICKER_DAYS);
+    this.clearElementById(this.DATEPICKER_DAYS);
     let datepickerDaysTable = this.getElement(this.DATEPICKER_DAYS);
     let trDays = this.createElement('tr');
     datepickerDaysTable.appendChild(trDays);

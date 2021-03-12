@@ -15,6 +15,7 @@ import '../../components/aon-date.js';
 import '../../components/aon-select.js';
 import '../../components/aon-suggestion.js';
 import '../../components/aon-input.js';
+import "../../components/aon-address.js";
 import '../../components/aon-number.js';
 import '../../components/aon-checkbox.js';
 import '../../components/aon-icon-button.js';
@@ -653,7 +654,7 @@ export class AonInvoice extends AonElement {
 		// ADDRESS
 		let tdAddress = document.createElement('td');
 		tdAddress.setAttribute('colspan', this._invoice.isEmitida() ? '4' : '6');
-		tdAddress.innerHTML = `<aon-input id="address" type="address" description="Dirección"></aon-input>`;
+		tdAddress.innerHTML = `<aon-address id="address" title="Dirección"></aon-address>`;
 		tr3.appendChild(tdAddress);
 		let address = document.getElementById('address');
 		address.buildAddressValue(this.isEmitida()
@@ -1184,8 +1185,8 @@ export class AonInvoice extends AonElement {
 	}
 
 	printTaxes() {
-		this.clearElement('aonInvoiceItemTaxesCardTable');
-		this.clearElement('aonInvoiceItemIRPFCardTable');
+		this.clearElementById('aonInvoiceItemTaxesCardTable');
+		this.clearElementById('aonInvoiceItemIRPFCardTable');
 		for(let i = 0; i < this._invoice.taxes.length; i++) {
 			this.printTax(this._invoice.taxes[i], i);
 		}
@@ -1255,7 +1256,7 @@ export class AonInvoice extends AonElement {
 					this._invoice.taxes.splice(i, 1);
 				}
 			}
-			this.clearElement('aonInvoiceItemIRPFCardTable');
+			this.clearElementById('aonInvoiceItemIRPFCardTable');
 		}
 		this.updateTaxesTotal();
 		this.save();

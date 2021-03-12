@@ -20,7 +20,7 @@ export class AonElement extends HTMLElement{
       || navigator.platform.toLowerCase().includes('ipod')
       || navigator.userAgent.toLowerCase().includes('ipod');
   }
-  
+
   isAppMobile(){
     return webkitRequestMobile();
   }
@@ -48,9 +48,17 @@ export class AonElement extends HTMLElement{
     return document.createElement(tag);
   }
 
-  clearElement(id) {
-    const elem = document.getElementById(id);
+  clear() {
+    this.clearElement(this);
+  }
+
+  clearElement(elem) {
     if(elem) elem.innerHTML = '';
+  }
+
+  clearElementById(id) {
+    const elem = document.getElementById(id);
+    this.clearElement(elem);
   }
 
   hideElement(id) {
@@ -64,12 +72,12 @@ export class AonElement extends HTMLElement{
   }
 
   rootPanel(element) {
-    this.clearElement(this.ROOT_PANEL);
+    this.clearElementById(this.ROOT_PANEL);
     this.getElement(this.ROOT_PANEL).appendChild(element);
   }
 
   rootPanelHtml(html) {
-    this.clearElement(this.ROOT_PANEL);
+    this.clearElementById(this.ROOT_PANEL);
     this.getElement(this.ROOT_PANEL).innerHTML = html;
   }
 

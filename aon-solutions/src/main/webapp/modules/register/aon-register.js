@@ -3,6 +3,7 @@ import { serializeForm } from "../../services/utils.js";
 import { registerUser } from '../../services/service.js';
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
+import "../../components/aon-address.js";
 import "../../components/aon-checkbox.js";
 import '../../components/aon-toast.js';
 
@@ -52,7 +53,7 @@ export class AonRegister extends AonElement {
                 <aon-input name="company_name" id="company_name" description="Razón Social"></aon-input>
             </div>
             <div class="aonCol-sm-6 aonCol-md-6">
-                <aon-input name="company_address" id="company_address" description="Dirección"></aon-input>
+                <aon-address name="company_address" id="company_address" title="Dirección"></aon-address>
             </div>
             <div class="aonCol-sm-6 aonCol-md-6">
                 <aon-input name="company_iban" id="company_iban" description="Iban"></aon-input>
