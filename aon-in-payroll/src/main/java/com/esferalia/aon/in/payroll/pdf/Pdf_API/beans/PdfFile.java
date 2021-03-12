@@ -18,6 +18,37 @@ import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.PAGE_TYPE;
 
+/**
+ * <p><b>Description:</b> 
+ * 		<i>This class represents a PDF file.
+ * 			<br> It contains basic data of a PDF file an every template should extend of it.
+ * 
+ * 			<h4>important parameters: </h4>
+ * 			&nbsp; <b>x:</b>    	  	&nbsp; The general PDF x value (the one you must change); <br>
+ * 			&nbsp; <b>y:</b>         	&nbsp; The general PDF y value (the one you must change); <br>
+ * 			&nbsp; <b>page:</b> 	  	&nbsp; Automatic page index; <br>
+ * 			&nbsp; <b>doc:</b>  	  	&nbsp; The PdfBox document; <br>
+ * 			&nbsp; <b>contents:</b>  	&nbsp; The PdfBox content stream; <br>
+ * 			&nbsp; <b>words:</b>  		&nbsp; The PDF resource bundle (texts)<br>
+ * 			&nbsp; <b>out:</b>  	  	&nbsp; The OutputStream<br>
+ * 			&nbsp; <b>lang:</b>  		&nbsp; The PDF Locale<br>
+ * 			&nbsp; <b>y_limit:</b>   	&nbsp; The limit of page jump
+ * 
+ * 			<h4>default parameters: </h4>
+ * 			&nbsp; <b>font:</b>         &nbsp; Default font<br>
+ * 			&nbsp; <b>fontsize</b>      &nbsp; Default fontsize<br>
+ * 			&nbsp; <b>primary</b>       &nbsp; Primary color<br>
+ * 			&nbsp; <b>secondary</b>     &nbsp; Secondary color<br>
+ *  	</i>
+ *  </p>
+ * @see java.io.OutputStream
+ * @see java.awt.Color
+ * @see java.util.Locale
+ * @see java.util.ResourceBundle
+ * @see org.apache.pdfbox.model.PDDocument
+ * @version 1.0-AK
+ * @author akrck02
+ */
 public class PdfFile {
 	
 	public float x; 
@@ -37,6 +68,15 @@ public class PdfFile {
 	public Color primary;
 	public Color secondary;
 	
+	
+	/**
+	 * <p><b>Description:</b> <i>The constructor. </i></p>
+	 * @param x 
+	 * @param y 
+	 * @param doc	
+	 * @param words	
+	 * @param out  
+	 */
 	public PdfFile(float x, float y, PDDocument doc, ResourceBundle words, OutputStream out) {
 		this.x = x;
 		this.y = y;
@@ -52,6 +92,15 @@ public class PdfFile {
 		this.out = out;
 	}
 	
+	/**
+	 * <p><b>Description:</b> <i>The constructor. </i></p>
+	 * @param x 
+	 * @param y 
+	 * @param doc	
+	 * @param words	
+	 * @param out  
+	 * @param y_limit  
+	 */
 	public PdfFile(float x, float y, PDDocument doc, ResourceBundle words, OutputStream out,
 			float y_limit) {
 		this.x = x;
@@ -68,6 +117,9 @@ public class PdfFile {
 		this.out = out;
 	}
 
+	/**
+	 * <p><b>Description:</b> <i>Set the default values. </i></p> 
+	 */
 	public void set_defaults(PDFont font, float fontsize, Color primary, Color secondary) {
 		this.font = font;
 		this.fontsize = fontsize;
@@ -75,7 +127,9 @@ public class PdfFile {
 		this.secondary = secondary;
 	}
 	
-
+	/**
+	 * <p><b>Description:</b> <i>Creates and adds a new page to the file. </i></p> 
+	 */
 	public void new_page(PAGE_TYPE type) throws IOException {
 		
 		if(contents != null) contents.close();
@@ -85,22 +139,36 @@ public class PdfFile {
 		this.page++;
 	}
 	
-	
+	/**
+	 * <p><b>Description:</b> <i>Returns if y value exceed y_limit. </i></p> 
+	 * @return if jumps
+	 */
 	public boolean jump() {
 		return y < y_limit;
 	}
 	
+	/**
+	 * <p><b>Description:</b> <i>Closes the PDF. </i></p> 
+	 */
 	public void close() throws IOException {
 		if(contents != null) contents.close();
 		if(doc != null) doc.close();
 	}
 	
 	
+	/**
+	 * <p><b>Description:</b> <i>Prints the PDF. </i></p> 
+	 */
 	public void print() throws IOException {
 		if(contents != null)  contents.close();
 		if(doc != null) doc.save(out);
 	}
 
+	
+	/**
+	 * <p><b>Description:</b> <i>Gets text from bundle. </i></p> 
+	 * @return text 
+	 */
 	public String text(String name) {
 		if(words == null) return "";
 		return words.getString(name);

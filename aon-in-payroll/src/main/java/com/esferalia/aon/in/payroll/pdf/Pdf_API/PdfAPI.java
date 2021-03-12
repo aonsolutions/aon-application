@@ -24,9 +24,20 @@ import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.StringToolkit;
 
+/**
+ * 
+<p>A powerful API to create PDFs based on PDFBOX</p>
+@author akrck02
+@version 1.3-AK
+
+**/
 public class PdfAPI {
-	public static String version = "1.2-AK";
+	public static String version = "1.3-AK";
 		
+	/**
+	 * <h1>Get help for the API bases</h1> 
+	 * <p>Shows basic information of the API.</p>
+	 */
 	public static void help() {
 		title("Pdf API v" + version + " by Akrck02");
 		tab(2);
@@ -46,21 +57,8 @@ public class PdfAPI {
 		
 		log("Pdfbox version","2.0.19");
 		jump(1);
-		slog("All the classes have help(  ) method to guide you so use 'Class.help(  );' for help :D");
-		
-		PdfColors.help();
-		PdfFonts.help();
-		PdfSettings.help();
-		PdfFormats.help();
-		
-		title("Pdf API Toolkits");
-		PDFToolkit.help();
-		OptionalToolkit.help();
-		StringToolkit.help();
+		slog("All the classes have Javadoc descriptions to make this API developer friendly :)");
 	}
-	
-
-
 	public static void main(String[] args) {
 		help();
 	}

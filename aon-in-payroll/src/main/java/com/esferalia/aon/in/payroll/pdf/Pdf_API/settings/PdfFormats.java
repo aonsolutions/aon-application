@@ -1,11 +1,5 @@
 package com.esferalia.aon.in.payroll.pdf.Pdf_API.settings;
 
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.jump;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.slog;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.start_section;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.tb;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.untab;
-
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,28 +8,36 @@ import java.util.Optional;
 
 public class PdfFormats {
 
-
-	//RETURN LATIN VERSION OF A NUMBER WITH . AND , (STRING)
+	/**
+	 * <p><b>Description:</b> <i>Convert double to Latin number. </i></p>
+	 * @return the latin number String [Format:  ###,##0.00]
+	 */
 	public static String to_latin_number(Double number){
 		if(number == null) return "";
 		DecimalFormat formater = new DecimalFormat("###,##0.00");
 		return formater.format(number);
 	}
 	
-	//PARSE A DATE WITH AN SPECIFIC FORMAT
-	public static Date parseDate(String dateStr, String format) {
+	/**
+	 * <p><b>Description:</b> <i>Parse a date with specific format. </i></p>
+	 * @return a date
+	 */
+	public static Date parseDate(String date_string, String format) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
 		Date formattedDate;
 
 		try {
-			formattedDate = dateFormatter.parse(dateStr);
+			formattedDate = dateFormatter.parse(date_string);
 			return formattedDate;
 		} catch (ParseException e) {
 			return null;
 		}
 	}
 	
-	//FORMAT DATE TO STRING IN A SPECIFIC FORMAT
+	/**
+	 * <p><b>Description:</b> <i>Format a date with specific format. </i></p>
+	 * @return formatted date String (Optional)
+	 */
 	public static Optional<String> formatDate(Date date, String format) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
 		Optional<String> formattedDate;
@@ -43,26 +45,16 @@ public class PdfFormats {
 		return formattedDate;
 	}
 	
-	//FORMAT DATE TO STRING IN A SPECIFIC FORMAT (OPTIONAL)
+	/**
+	 * <p><b>Description:</b> <i>Format a date with specific format. </i></p>
+	 * @param date (Optional)
+	 * @return formatted date String (Optional)
+	 */
 	public static Optional<String> formatDate(Optional<Date> date, String format) {
 		if(date.isEmpty()) return Optional.of("");
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);
 		Optional<String> formattedDate;
 		formattedDate = Optional.of(dateFormatter.format(date.get()));
 		return formattedDate;
-	}
-	
-	//--------------HELP INFO----------------------------------
-	public static void help() {
-		jump(1);
-
-		start_section("Pdf data format methods:");
-		slog("to_latin_number()" 	+ tb(4) + "Converts a double into a latin format decimal String");
-		slog("parseDate()" 			+ tb(5) + "Converts String to date");
-		slog("formatDate()" 		+ tb(5) + "Converts date to String");
-
-		jump(1);
-		untab();
-	
 	}
 }

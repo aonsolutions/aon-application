@@ -53,9 +53,9 @@ public class DemoTemplate extends PdfFile {
 		temp.y = 20;
 		
 		FileInputStream logo = new FileInputStream("/home/akrck02/Pictures/7285.jpg");
-		PdfImage img = new PdfImage( 20f, temp.y, 500f, 500f, 0f, 0f, temp.contents, temp.doc, logo.readAllBytes());
+		PdfImage img = new PdfImage( 20f, temp.y, 150f, 50f, ALIGNMENT.CENTER, temp.contents, temp.doc, logo.readAllBytes());
 		
-		img.scale(150, 50, ALIGNMENT.RIGHT).draw();
+		img.draw();
 		PdfBox b = new PdfBox(20f, temp.y, 150f, 50f, BLUE, temp.contents);
 		b.border();
 	}

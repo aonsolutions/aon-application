@@ -49,6 +49,7 @@ import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfImage;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfText;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases;
@@ -407,13 +408,10 @@ public class DefaultPayrollTemplate {
 		
 		if(logo.isPresent()) {
 			byte[] bytes =  logo.get().readAllBytes();
-			PdfImage img = new PdfImage(x + 20, y - 60, 170, 70, 0, 0, contents, doc, bytes);
+			PdfImage img = new PdfImage(x + 20, y - 60, 170, 70, ALIGNMENT.CENTER, contents, doc, bytes);
 			
 			PdfBox box = new PdfBox(x + 20, y - 60 , 170, 70, BLACK, contents);			
 			img.scale(170, 70, LEFT).draw();
-			
-			//box.border();
-			//img.border(LIGHT_GRAY);
 			
 		}
 		y -= 15;
@@ -579,8 +577,7 @@ public class DefaultPayrollTemplate {
 			drawTextRight(contents,new PDRectangle(x + 518,y - 5,30,10),total_contingencies_amount,BLACK,HELVETICA_BOLD,6.5f,3,5);
 			
 			
-			Date d = new Date();
-			String vs = "v0.37-MA";
+			String vs = "v0.38-AK";
 			
 			PdfText version = new PdfText(5f,1f,200f,10f,contents,vs,BLACK,HELVETICA ,5f,LEFT);
 			version.draw();

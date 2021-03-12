@@ -1,62 +1,67 @@
 package com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.imageio.ImageIO;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
-import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfBox;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfImage;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfPage;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfText;
 
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.jump;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.log_warning;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.slog;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.start_section;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.tb;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.untab;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Optional;
-
-import javax.imageio.ImageIO;
-
-import java.util.List;
-
+/**
+ * <p><b>Description:</b> <i>This toolkit contains the basic methods for PDF printing and pdfbox abstractions.</i></p>
+ * @author akrck02
+ * @warning To create PDF elements use PdfAPI beans they are easier to implement and use and give you advanced methods by default.
+ */
 public class PDFToolkit {
 
-	//CREATE AN HORIZONTAL PAGE
+	/**
+	 * <p><b>Description:</b> <i>Creates an horizontal dinA4 page.</i></p>
+	 * <p><b>warning:</b> Use PdfPage instead</p>
+	 * @return PDPage page
+	 * @see PdfPage
+	 */
 	public static PDPage createHorizontalPage() {
 		float POINTS_PER_INCH = 72;
 		float POINTS_PER_MM = 1 / (10 * 2.54f) * POINTS_PER_INCH;
 		return new PDPage(new PDRectangle(297 * POINTS_PER_MM, 210 * POINTS_PER_MM));
 	}
-
-	//CREATE AN VERTICAL PAGE
+	
+	/** 
+	 * <p><b>Description:</b> <i>Creates an vertical dinA4 page.</i></p>
+	 * <p><b>Warning:</b> Use PdfPage instead</p>
+	 * @return PDPage page
+	 * @see PdfPage
+	 */
 	public static PDPage createVerticalPage() {
 		float POINTS_PER_INCH = 72;
 		float POINTS_PER_MM = 1 / (10 * 2.54f) * POINTS_PER_INCH;
 		return new PDPage(new PDRectangle(210 * POINTS_PER_MM, 297 * POINTS_PER_MM));
 	}
 
-	//DRAWS A TEXT
+	/**
+	 * <p><b>Description:</b> <i>Draws a text. </i></p>
+	 * <p><b>Warning:</b> Use PdfText instead</p>
+	 * @return void
+	 * @see PdfText
+	 */
 	public static void drawText(PDPageContentStream contents, String content, Float x, Float y, Color color, PDFont font, float fontSize) throws IOException {
 		contents.setNonStrokingColor(color);
 		contents.beginText();
@@ -66,7 +71,12 @@ public class PDFToolkit {
 		contents.endText();
 	}
 
-	//DRAWS A RIGHT ALIGNED TEXT
+	/**
+	 * <p><b>Description:</b> <i>Draws a right aligned text. </i></p>
+	 * <p><b>Warning:</b> Use PdfText instead</p>
+	 * @return void
+	 * @see PdfText
+	 */
 	public static void drawTextRight(PDPageContentStream contents, PDRectangle box, String content, Color color, PDFont font, float fontSize, float x_margin, float y_margin) throws IOException {
 		float w = box.getWidth();
 		float fw = (font.getStringWidth(content) / 1000.0f) * fontSize;
@@ -82,7 +92,12 @@ public class PDFToolkit {
 		contents.endText();
 	}	
 	
-	//DRAWS A LEFT ALIGNED TEXT
+	/**
+	 * <p><b>Description:</b> <i>Draws a left aligned text. </i></p>
+	 * <p><b>Warning:</b> Use PdfText instead.</p>
+	 * @return void
+	 * @see PdfText
+	 */
 	public static void drawTextLeft(PDPageContentStream contents, PDRectangle box, String content, Color color, PDFont font, float fontSize, float x_margin, float y_margin) throws IOException {
 
 		float x = box.getLowerLeftX() + x_margin;
@@ -96,7 +111,12 @@ public class PDFToolkit {
 		contents.endText();
 	}	
 
-	//DRAWS A CENTERED TEXT
+	/**
+	 * <p><b>Description:</b> <i>Draws a center aligned text. </i></p>
+	 * <p><b>Warning:</b> Use PdfText instead.</p>
+	 * @return void
+	 * @see PdfText
+	 */
 	public static void drawTextCenter(PDPageContentStream contents, PDRectangle box, String content, Color
 			color, PDFont font, float fontSize, float y_margin) throws IOException {
 		float w = box.getWidth();
@@ -113,31 +133,56 @@ public class PDFToolkit {
 		contents.endText();
 	}
 
-
+	/**
+	 * <p><b>Description:</b> <i>Draws an image in natural size.</i></p>
+	 * <p><b>warning:</b> Use PdfImage instead</p>
+	 * @return void
+	 * @see PdfImage
+	 */
 	public static void drawImage(PDDocument doc, PDPageContentStream contents, byte[] logo, float x, float y) throws IOException {
 		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo, null), x, y);
 	}
 
+	/**
+	 * <p><b>Description:</b> <i>Draws an image.</i></p>
+	 * <p><b>warning:</b> Use PdfImage instead</p>
+	 * @return void
+	 * @see PdfImage
+	 */
 	public static void drawImage(PDDocument doc, PDPageContentStream contents, byte[] logo, float x, float y, float width, float height) throws IOException {
 		contents.drawImage(PDImageXObject.createFromByteArray(doc, logo, null), x, y, width, height);
 	}
 	
-	//DRAW A BOX
+	/**
+	 * <p><b>Description:</b> <i>Draws a box.</i></p>
+	 * <p><b>warning:</b> Use PdfBox instead</p>
+	 * @return void
+	 * @see PdfBox
+	 */
 	public static void drawBox(PDPageContentStream contents, float x, float y, float width, float height, Color color) throws IOException {
 		contents.setNonStrokingColor(color);
 		contents.addRect(x, y, width, height);
 		contents.fill();
 	}
 	
-	//DRAW A BORDERED BOX
+	/**
+	 * <p><b>Description:</b> <i>Draws a bordered box.</i></p>
+	 * <p><b>warning:</b> Use PdfBox instead</p>
+	 * @return void
+	 * @see PdfBox
+	 */
 	public static void drawBorderedBox(PDPageContentStream contents, float x, float y, float width, float height, Color color) throws IOException {
 		contents.setStrokingColor(color);
 		contents.addRect(x, y, width, height);
 		contents.setLineWidth(2);
 		contents.stroke();
 	}
-
-	//GET PDF FORM FIELDS
+	
+	/**
+	 * <p><b>Description:</b> <i>Gets fields of a form.</i></p>
+	 * @return List of PDFields
+	 * @deprecated this method is no longer in use.
+	 */
 	@Deprecated
 	public static List<PDField> get_form_fields(PDDocument doc) {
 		PDDocumentCatalog pdCatalog = doc.getDocumentCatalog();
@@ -145,7 +190,11 @@ public class PDFToolkit {
 		return pdAcroForm.getFields();
 	}
 
-	//GET FIELD RECTANGLE
+	/**
+	 * <p><b>Description:</b> <i> Gets a box of a form field.</i></p>
+	 * @return PDRectangle (Optional)
+	 * @deprecated this method is no longer in use.
+	 */
 	@Deprecated
 	public static Optional<PDRectangle> get_field_rectangle(Optional<PDField> field, int widget_index) {
 		if (field.isEmpty()) return Optional.empty();
@@ -154,7 +203,11 @@ public class PDFToolkit {
 		return Optional.of(f.getWidgets().get(widget_index).getRectangle());
 	}
 
-	//GET FIELD PAGE
+	/**
+	 * <p><b>Description:</b> <i> Gets the page of a form field.</i></p>
+	 * @return PDPage (Optional)
+	 * @deprecated this method is no longer in use.
+	 */
 	@Deprecated
 	public static Optional<PDPage> get_field_page(Optional<PDField> field, int widget_index) {
 		if (field.isEmpty()) return Optional.empty();
@@ -163,22 +216,30 @@ public class PDFToolkit {
 		return Optional.of(f.getWidgets().get(widget_index).getPage());
 	}
 
-	//OPEN PAGE IN APPEND MODE
+	/**
+	 * <p><b>Description:</b> <i>Open a PDF file in append mode.</i></p>
+	 * @return PDPageContentStream (the pdf file stream)
+	 */
 	public static PDPageContentStream open_in_append_mode(PDDocument doc, PDPage page) {
-		try {
-			return new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
-		} catch (IOException e) {
-			return null;
-		}
+		try {return new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);} 
+		catch (IOException e) {return null;}
 	}
 	
-
-	//DIVIDE A STRING TO FIT A WIDTH
-	public static List<String> divide_string_to_fit(String text, float max, PDFont font, float fontSize) throws IOException{
-		return get_lines(text, max, font, fontSize);
-	}
+	/**
+	 * <p><b>Description:</b> <i> Gets lines of an String.</i></p>
+	 * <p><b>warning:</b> Use get_lines() instead</p>
+	 * @return List of Strings
+	 * @deprecated this method is no longer in use.
+	 * @see PDFToolkit.get_lines()
+	 */
+	@Deprecated
+	public static List<String> divide_string_to_fit(String text, float max, PDFont font, float fontSize) throws IOException{return get_lines(text, max, font, fontSize);}
 	
-	//PUZZLES ARE MY PASSION
+	/**
+	 * <p><b>Description:</b> <i> Gets lines of an String based on max width, font size, and font. <q>puzzles are my passion</q><i></p>
+	 * @param max  &nbsp; maximum width
+	 * @return List of Strings
+	 */
 	public static List<String> get_lines(String text, float max, PDFont font, float fontSize) throws  IOException{
 		
 		ArrayList<String> lines = new ArrayList<>();
@@ -197,11 +258,14 @@ public class PDFToolkit {
 			}
 		}
 		if(lines.size() == 0) lines.add(line);
-		
 		return lines;
 	}
 	
-	//CROP TEXT WITH ...
+	/**
+	 * <p><b>Description:</b> <i>Crops a String based on max width, font size, and font.<i></p>
+	 * @param max  &nbsp; maximum width
+	 * @return List of Strings
+	 */
 	public static String cropped_string(String text, double width, PDFont font, float fontSize) throws IOException {
 		if(text == null) return text;
 
@@ -215,7 +279,17 @@ public class PDFToolkit {
 		return  (txt.equals(text))? text : text + "..." ;
 	}	
 		
-	//REESCALE
+	/**
+	 * <p><b>Description:</b> <i> Reescale an image.</i></p>
+	 * <p><b>warning:</b> Use PdfImage instead</p>
+	 * @return float array 
+	 * <h4>Positions: </h4>
+	 * <ol start='0'>
+	 * <li>scaled width</li>
+	 * <li>scaled height</li>
+	 * </ol>
+	 * @see PdfImage
+	 */
 	public static float[] reescale(float width, float height, float maxWidth, float maxHeight) {
 		
 		float rel = width / height;
@@ -228,7 +302,11 @@ public class PDFToolkit {
 		return new float[] {width,height};
 	}
 	
-	//BYTE ARRAY TO IMAGE
+	/**
+	 * <p><b>Description:</b> <i> Create a BufferedImage from byte array.</i></p>
+	 * @param  imageData byte array
+	 * @return BufferedImage
+	 */
 	public static BufferedImage create_image_from_bytes(byte[] imageData) {
 	    ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
 	    try {return ImageIO.read(bais);} 
@@ -236,47 +314,6 @@ public class PDFToolkit {
 		return null;
 	}
 
-	//------------HELP INFO------------
-	public static void help() {
-		jump(1);
-
-		start_section("Pdf Toolkit: 									General PDF API core.");
-		slog("This toolkit contains the basic methods for PDF printing");
-		slog("and pdfbox abstractions.");
-		jump(1);
-		log_warning("To create PDF elements use PdfAPI beans");
-		slog("they are easier to implement and use and give you advanced methods by default.");
-		jump(2);
-		
-		slog("Available methods");
-		slog("-----------------------------------------------------------------------------------------------------------------------------------------------");
-		slog("create_horizontal_page()" 	+ tb(4) + "Creates an horizontal page. (use PdfPage instead)");
-		slog("create_vertical_page()" 		+ tb(5) + "Creates an vertical page. (use PdfPage instead)");		
-		slog("drawText()" 					+ tb(7) + "Draws a text. (use PdfText instead)");		
-		slog("drawTextRight()" 				+ tb(6) + "Draws a right aligned text. (use PdfText instead)");		
-		slog("drawTextLeft()" 				+ tb(6) + "Draws a left aligned text. (use PdfText instead)");		
-		slog("drawTextCenter()" 			+ tb(6) + "Draws a center aligned text. (use PdfText instead)");		
-		slog("drawImage()" 					+ tb(7) + "Draws an image. (use PdfImage instead)");		
-		slog("drawBox()" 					+ tb(7) + "Draws a box. (use PdfBox instead)");		
-		slog("drawImage()" 					+ tb(7) + "Draws a bordered box. (use PdfBox instead)");		
-		slog("open_in_append_mode()" 		+ tb(4) + "Opens a PDF file in append mode.");	
-		slog("get_lines()" 					+ tb(7) + "Divides a String in lines based in font, max-width and font size.");	
-		slog("cropped_string()" 			+ tb(6) + "Crops a String based in font, max-width and font size.");	
-		slog("reescale()" 					+ tb(7) + "Scales an image maintaining aspect ratio. (use PdfImage instead)");	
-		slog("create_image_from_bytes()" 	+ tb(3) + "Create BufferedImage from byte array.");	
-		
-		jump(1);
-		log_warning("Discouraged methods: ");
-		slog("-----------------------------------------------------------------------------------------------------------------------------------------------");
-		slog("get_form_fields()");
-		slog("get_form_rectangle()");
-		slog("get_form_page()");
-		
-		
-		jump(1);
-		untab();
-	
-	}	
 }
 
 

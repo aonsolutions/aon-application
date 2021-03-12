@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.util;
 
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.get_lines;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 
@@ -122,7 +123,7 @@ public class JooqPayrollBuilder {
 				if (add != null) {
 					List<String> address = null;
 					try {
-						address = PDFToolkit.divide_string_to_fit(s.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
+						address = get_lines(s.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}

@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.util;
 
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.get_lines;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,7 +66,7 @@ public class DraftPayrollBuilder {
 				if (salary.getEnterpriseAddress() != null) {
 					List<String> address = null;
 					try {
-						address = PDFToolkit.divide_string_to_fit(salary.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
+						address = get_lines(salary.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}

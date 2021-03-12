@@ -16,6 +16,13 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT;
 
+/**
+ * <p><b>Description:</b><i> This class represents a table.</i><br>
+ * <i>This is an automatic version of old PdfTable, it calculates the number of columns according to the headers.</i></p>
+ * <i><b>Warning:</b> This is an Alpha component, be careful, it can be changed.</i><br>
+ * @version 2.0-AK
+ * @author akrck02
+ */
 public class PdfTable extends PdfComponent{
 	
 	private int columns;
@@ -61,7 +68,6 @@ public class PdfTable extends PdfComponent{
 	}
 
 	private void calculate_pixels(float spacing) {
-		
 		pixels = new float[columns];
 		float d = this.x;
 		
@@ -72,7 +78,6 @@ public class PdfTable extends PdfComponent{
 	}
 
 	public void set_alignment(ALIGNMENT[] alignments) {
-		
 		for (int i = 0; i < columns; i++) {
 			try{this.alignments[i] = alignments[i];}
 			catch(Exception e) {}
@@ -80,10 +85,9 @@ public class PdfTable extends PdfComponent{
 	}
 
 	@Override
-	public void draw() {System.out.println("PdfAPI.autotable : METHOD DRAW(): Not compatible yet.");}
+	public void draw() {System.out.println("PdfAPI.PdfTable : METHOD DRAW(): Not compatible yet.");}
 
 	public void draw_header() throws IOException {
-		
 		for (int i = 0; i < columns; i++) {
 			String text_content = (headers.length <= i)? "": headers[i];
 			ALIGNMENT align = (alignments[i] != null)? alignments[i] : CENTER;
