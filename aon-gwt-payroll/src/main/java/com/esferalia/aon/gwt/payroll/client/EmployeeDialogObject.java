@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.shared.Dni;
-import com.esferalia.aon.gwt.common.shared.SocialSecurity;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -23,18 +21,19 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDialogObject {
+	
+	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+	
 	private Workplace workplace;
 	
 	private EmployeeContractInfo employeeContractData;
 	private EmployeeInfo employeeData;
 	private ContractInfo contractData;
 	
-	private DomainEmployeesServiceAsync employeesService;
-	private DomainEnterprisesServiceAsync enterprisesService;
-	
-	private List<Agreement> agreements;
 	private WorkplaceEmployees workplaceEmployees;
 	
+	private List<Agreement> agreements;
 	private List<Workplace> workplaces;
 	private ActivitiesCCC activitiesCCC;
 	
@@ -42,22 +41,17 @@ public class EmployeeDialogObject {
 	
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------
 	
-	public EmployeeDialogObject(Workplace workplace, DomainEmployeesServiceAsync employeesService,
-			DomainEnterprisesServiceAsync enterprisesService) {
-		
+	public EmployeeDialogObject(Workplace workplace) {
 		super();
+		
 		this.workplace = workplace;
-		this.employeesService = employeesService;
-		this.enterprisesService = enterprisesService;
-		this.workplaces = new ArrayList<>();
-		this.payMethodsMap = new HashMap<String, String>();
 		
 		this.employeeContractData = new EmployeeContractInfo();
 		this.employeeData = new EmployeeInfo();
 		this.contractData = new ContractInfo();
 		
-		Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
-		contractData.setContractJourneyDuration(journies);
+		this.workplaces = new ArrayList<>();
+		this.payMethodsMap = new HashMap<String, String>();
 	}
 	
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
@@ -66,17 +60,15 @@ public class EmployeeDialogObject {
 		employeesService.getWorkplaceEmployees(workplace, new AsyncCallback<WorkplaceEmployees>() {
 
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
+			public void onFailure(Throwable caught) {}
 
 			@Override
 			public void onSuccess(WorkplaceEmployees result) {
 				workplaceEmployees = result;
 				getAgreements(
 						r ->{
-							success.accept(result);},
-						f->{}
+							success.accept(result);
+						}, f->{}
 				);
 			}
 		});
@@ -90,15 +82,13 @@ public class EmployeeDialogObject {
 				agreements = result;
 				getWorkplaces(
 					r->{
-						success.accept(result);},
-					f->{}
+						success.accept(result);
+					}, f->{}
 				);
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -110,15 +100,13 @@ public class EmployeeDialogObject {
 				workplaces = result;
 				getActivitiesCCC(
 					r->{
-						success.accept(result);},
-					f->{}
+						success.accept(result);
+					}, f->{}
 				);	
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -136,9 +124,7 @@ public class EmployeeDialogObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -152,9 +138,7 @@ public class EmployeeDialogObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -193,13 +177,11 @@ public class EmployeeDialogObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
+			public void onFailure(Throwable caught) {}
 		});	
 	}
 	
-	public void createEmployeeContract(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
+	public void createEmployeeContract(Consumer<Integer> success, Consumer<Throwable> failure){
 		employeeContractData.setEmployeeInfo(employeeData);
 		employeeContractData.setContractInfo(contractData);
 		
@@ -207,7 +189,7 @@ public class EmployeeDialogObject {
 			
 			@Override
 			public void onSuccess(EmployeeContractInfo result) {
-				success.accept(result);
+				success.accept(result.getContractInfo().getContractId());
 			}
 
 			@Override
@@ -227,101 +209,6 @@ public class EmployeeDialogObject {
 	
 	public ContractInfo getContractData() {
 		return this.contractData;
-	}
-	
-	public EmployeeInfo getEmployeeDataByDocument(String document){
-		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees()){
-			if(document == employee.getDocument()) {
-				employeeData = employee;
-				return employeeData;
-			}
-		}
-		return this.employeeData;
-	}
-	
-	public boolean checkDocumentValidation(String document_type_string, String document_string) {
-		if("DNI".equals(document_type_string)){
-			Dni dni = new Dni(document_string);
-			if(dni.checkDNI())
-				return true;
-			else
-				return false;
-		}else if("" == document_string) {
-			return true;
-		}else
-			return true;
-	}
-	
-	public EmployeeInfo getEmployeeDataBySSNum(String ssNum){
-		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
-			if(ssNum == employee.getSsNumber()) {
-				employeeData = employee;
-				return employeeData;
-			}
-		return this.employeeData;
-	}
-	
-	public boolean checkSSNumValidation(String ssNum_string) {
-		if(null == ssNum_string)
-			return false;
-		
-		SocialSecurity ss = new SocialSecurity(ssNum_string);
-		if(ss.checkSS())
-			return true;
-		else
-			return false;
-	}
-	
-	public EmployeeInfo getEmployeeDataByNameSurname(String nameSurname){
-		String name = nameSurname.split(", ")[0];
-		String surname = nameSurname.split(", ")[1];
-		
-		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
-			if(name == employee.getName() && surname == employee.getSurName()) {
-				employeeData = employee;
-				return employeeData;
-			}
-		return this.employeeData;
-	}
-	
-	public Integer getContractSSRegimen() {
-		return this.contractData.getSsRegimen() == null ? 0 : (int) this.contractData.getSsRegimen();
-	}
-		
-	public Integer getContractType() {
-		if(null == this.contractData.getContractType())
-			return -1;
-		else
-			return Integer.parseInt(this.contractData.getContractType());
-	}
-	
-	public Integer getContractQuoteGroup() {
-		return Integer.parseInt(null == this.contractData.getQuoteGroup() ? "0" : this.contractData.getQuoteGroup());
-	}
-	
-	public Integer getContractOcupation() {
-		return getCharIndex(this.contractData.getOcupation());
-	}
-	
-	private int getCharIndex(String ocupation) {
-		switch (ocupation) {
-		case "a":
-			return 1;
-		case "b":
-			return 2;
-		case "d":
-			return 3;
-		case "e":
-			return 4;
-		case "f":
-			return 5;
-		case "g":
-			return 6;
-		case "h":
-			return 7;
-		default:
-			return 0;
-		}
 	}
 	
 	public WorkplaceEmployees getWorkplaceEmployees(){
@@ -380,6 +267,52 @@ public class EmployeeDialogObject {
 			agreementId = contractData.getAgreementId();
 		
 		return agreementId;
+	}
+	
+	public EmployeeInfo getEmployeeDataByDocument(String document){
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees()){
+			if(document == employee.getDocument()) {
+				employeeData = employee;
+				return employeeData;
+			}
+		}
+		return this.employeeData;
+	}
+	
+	public EmployeeInfo getEmployeeDataBySSNum(String ssNum){
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
+			if(ssNum == employee.getSsNumber()) {
+				employeeData = employee;
+				return employeeData;
+			}
+		return this.employeeData;
+	}
+	
+	public EmployeeInfo getEmployeeDataByNameSurname(String nameSurname){
+		String name = nameSurname.split(", ")[0];
+		String surname = nameSurname.split(", ")[1];
+		
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
+			if(name == employee.getName() && surname == employee.getSurName()) {
+				employeeData = employee;
+				return employeeData;
+			}
+		return this.employeeData;
+	}
+	
+	public Integer getContractSSRegimen() {
+		return this.contractData.getSsRegimen() == null ? 0 : (int) this.contractData.getSsRegimen();
+	}
+		
+	public Integer getContractType() {
+		if(null == this.contractData.getContractType())
+			return -1;
+		else
+			return Integer.parseInt(this.contractData.getContractType());
+	}
+	
+	public Double getContractPartialityCoef() {
+		return this.contractData.getPartialityCoef();
 	}
 	
 	// ---------------------------------------------- SETTERS  -------------------------------------------------

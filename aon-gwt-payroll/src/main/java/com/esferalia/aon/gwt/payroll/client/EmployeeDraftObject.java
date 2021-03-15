@@ -26,6 +26,10 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDraftObject extends AbstractDraftObject{
+	
+	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+	
 	private Workplace workplace;
 	private Employee employee;
 		
@@ -33,43 +37,34 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	private EmployeeInfo employeeData;
 	private ContractInfo contractData;
 	
-	private DomainEmployeesServiceAsync employeesService;
-	private DomainEnterprisesServiceAsync enterprisesService;
+	private EmployeeCalendarDraftObject employeeCalendar;
 	
 	private List<Agreement> agreements;
 	private List<Workplace> workplaces;
-	
 	private ActivitiesCCC activitiesCCC;
 	
 	private Map<String, String> payMethodsMap;
 	
-	private EmployeeCalendarDraftObject employeeCalendar;
+	// ------------------------------------------------ CLASS METHODS -------------------------------------------------	
 	
-
-		
-	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
-	
-	public EmployeeDraftObject(Workplace workplace, Employee employee, DomainEmployeesServiceAsync employeesService, 
-			DomainEnterprisesServiceAsync enterprisesService) {
-		this.employeesService = employeesService;
-		this.enterprisesService = enterprisesService;
+	public EmployeeDraftObject(Workplace workplace, Employee employee) {
 
 		this.workplace = workplace;
 		this.employee = employee;
-		
-		this.agreements = new ArrayList<>();
-		this.workplaces = new ArrayList<>();
 		
 		this.employeeContractData = new EmployeeContractInfo();
 		this.employeeData = new EmployeeInfo();
 		this.contractData = new ContractInfo();
 		
+		this.agreements = new ArrayList<>();
+		this.workplaces = new ArrayList<>();
 		this.payMethodsMap = new HashMap<String, String>();
 		
 		this.undoManager = new UndoManager<Undoable>();
 	}
 	
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
+	
 	public void checkStatus(Consumer<EmployeeStatus> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeStatus(employee.getId(), new AsyncCallback<EmployeeStatus>() {
 			@Override
@@ -92,8 +87,6 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				employeeContractData = result;
 				employeeData = result.getEmployeeInfo();
 				contractData = result.getContractInfo();
-				employeeContractData.setEmployeeInfo(employeeData);
-				employeeContractData.setContractInfo(contractData);
 
 				getAgreements(
 						r ->{success.accept(result);},
@@ -122,9 +115,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
+			public void onFailure(Throwable caught) {}
 		});	
 	}
 	
@@ -141,9 +132,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -161,9 +150,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -177,9 +164,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -193,15 +178,13 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
+			public void onFailure(Throwable caught) {}
 		});	
 	}
 	
 	public void updateEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
-//		new_employeeContractData.setContractInfo(new_contractData);
-//		new_employeeContractData.setEmployeeInfo(new_employeeData);
+		employeeContractData.setEmployeeInfo(employeeData);
+		employeeContractData.setContractInfo(contractData);
 		
 		employeesService.setEmployeeInfoDataBase(this.employeeContractData, new AsyncCallback<EmployeeContractInfo>() {
 			
@@ -266,16 +249,23 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			}
 		});
 	}
-	
 
 	// ---------------------------------------------- GETTERS  -------------------------------------------------
 	
-	public Employee getEmployee() {
-		return employee;
-	}
-	
 	public EmployeeContractInfo getEmployeeContractInfo() {
 		return this.employeeContractData;
+	}
+	
+	public EmployeeInfo getEmployeeData() {
+		return this.employeeData;
+	}
+	
+	public ContractInfo getContractData() {
+		return this.contractData;
+	}
+	
+	public Employee getEmployee() {
+		return employee;
 	}
 	
 	public List<Workplace> getWorkplaces() {
@@ -350,15 +340,15 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return this.contractData.getWorkplaceId();
 	}
 	
-	public String getContractType() {
-		return this.contractData.getContractType();
-	}
-	
-	public Integer getContractTypeN() {
+	public Integer getContractType() {
 		if(null == this.contractData.getContractType())
 			return -1;
 		else
 			return Integer.parseInt(this.contractData.getContractType());
+	}
+	
+	public Double getContractPartialityCoef() {
+		return this.contractData.getPartialityCoef();
 	}
 	
 	public Integer getContractModel() {
@@ -698,6 +688,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				partialityCoef );
 		
 		contractData.setPartialityCoef(partialityCoef);
+	}
+	
+	public void setAgreementSSNumber(String colectiveAgreement) {
+		add(contractData::setAgreementColective, 
+				contractData.getAgreementColective(), 
+				colectiveAgreement );
+		
+		contractData.setAgreementColective(colectiveAgreement);
 	}
 	
 	public void setContractJourneyDuration(TreeMap<Date, ArrayList<JourneyDuration>> contractJourneyDuration) {

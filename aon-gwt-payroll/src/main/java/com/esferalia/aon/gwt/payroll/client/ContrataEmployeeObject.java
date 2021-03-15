@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.shared.Dni;
-import com.esferalia.aon.gwt.common.shared.SocialSecurity;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -31,39 +29,35 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ContrataEmployeeObject {
+	
+	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+	
 	private Workplace workplace;
 	
 	private EmployeeContractInfo employeeContractData;
 	private EmployeeInfo employeeData;
 	private ContractInfo contractData;
 	
-	private List<Agreement> agreements;
 	private WorkplaceEmployees workplaceEmployees;
 	
+	private List<Agreement> agreements;
 	private List<Workplace> workplaces;
 	private ActivitiesCCC activitiesCCC;
 	
 	private Map<String, String> payMethodsMap;
 	
-	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
-	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-	
-	
-	
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------
 	
 	public ContrataEmployeeObject() {
-		
 		super();
-		this.workplaces = new ArrayList<>();
-		this.payMethodsMap = new HashMap<String, String>();
 		
 		this.employeeContractData = new EmployeeContractInfo();
 		this.employeeData = new EmployeeInfo();
 		this.contractData = new ContractInfo();
 		
-		Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
-		contractData.setContractJourneyDuration(journies);
+		this.workplaces = new ArrayList<>();
+		this.payMethodsMap = new HashMap<String, String>();
 	}
 	
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
@@ -72,17 +66,15 @@ public class ContrataEmployeeObject {
 		employeesService.getWorkplaceEmployees(workplace, new AsyncCallback<WorkplaceEmployees>() {
 
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
+			public void onFailure(Throwable caught) {}
 
 			@Override
 			public void onSuccess(WorkplaceEmployees result) {
 				workplaceEmployees = result;
 				getAgreements(
 						r ->{
-							success.accept(result);},
-						f->{}
+							success.accept(result);
+						}, f->{}
 				);
 			}
 		});
@@ -96,15 +88,13 @@ public class ContrataEmployeeObject {
 				agreements = result;
 				getWorkplaces(
 					r->{
-						success.accept(result);},
-					f->{}
+						success.accept(result);
+					}, f->{}
 				);
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -116,15 +106,13 @@ public class ContrataEmployeeObject {
 				workplaces = result;
 				getActivitiesCCC(
 					r->{
-						success.accept(result);},
-					f->{}
+						success.accept(result);
+					}, f->{}
 				);	
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -142,9 +130,7 @@ public class ContrataEmployeeObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -158,9 +144,7 @@ public class ContrataEmployeeObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -199,9 +183,7 @@ public class ContrataEmployeeObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
+			public void onFailure(Throwable caught) {}
 		});	
 	}
 	
@@ -222,28 +204,8 @@ public class ContrataEmployeeObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
+			public void onFailure(Throwable caught) {}
 		});
-		
-//		employeesService.setEmployeeInfoDataBase(this.employeeContractData, new AsyncCallback<EmployeeContractInfo>() {
-//			
-//			@Override
-//			public void onSuccess(EmployeeContractInfo result) {
-//				employeeContractData = result;
-//				employeeData = result.getEmployeeInfo();
-//				contractData = result.getContractInfo();
-//				employeeContractData.setEmployeeInfo(employeeData);
-//				employeeContractData.setContractInfo(contractData);
-//				success.accept(result);
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				failure.accept(caught);
-//			}
-//		});
 	}
 	
 	public void setEmployeeContract(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
@@ -259,24 +221,6 @@ public class ContrataEmployeeObject {
 				contractData = result.getContractInfo();
 				employeeContractData.setEmployeeInfo(employeeData);
 				employeeContractData.setContractInfo(contractData);
-				success.accept(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
-	public void createEmployeeContract(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
-		employeeContractData.setEmployeeInfo(employeeData);
-		employeeContractData.setContractInfo(contractData);
-		
-		employeesService.createEmployeeContract(employeeContractData, new AsyncCallback<EmployeeContractInfo>() {
-			
-			@Override
-			public void onSuccess(EmployeeContractInfo result) {
 				success.accept(result);
 			}
 
@@ -551,19 +495,6 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-//	public void fillContract(Consumer<String> success, Consumer<Throwable> failure) {
-//		employeesService.fillContract(contractData.getContractId(), getContractType(), getFormativeLevel(), new AsyncCallback<String>() {
-//			@Override
-//			public void onSuccess(String result) {
-//				success.accept(result);
-//			}
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				failure.accept(caught);
-//			}
-//		});
-//	}
-	
 	public void checkStatus(Consumer<EmployeeStatus> success, Consumer<Throwable> failure) {
 		
 		employeesService.getEmployeeStatus(contractData.getContractId(), new AsyncCallback<EmployeeStatus>() {
@@ -589,9 +520,7 @@ public class ContrataEmployeeObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -605,9 +534,7 @@ public class ContrataEmployeeObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
+			public void onFailure(Throwable caught) {}
 		});
 	}
 	
@@ -630,9 +557,7 @@ public class ContrataEmployeeObject {
 							}
 							
 							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub	
-							}
+							public void onFailure(Throwable caught) {}
 						});
 					}
 					
@@ -660,9 +585,7 @@ public class ContrataEmployeeObject {
 							}
 							
 							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub	
-							}
+							public void onFailure(Throwable caught) {}
 						});
 					}
 					
@@ -690,9 +613,7 @@ public class ContrataEmployeeObject {
 							}
 							
 							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub	
-							}
+							public void onFailure(Throwable caught) {}
 						});
 					}
 					
@@ -732,105 +653,6 @@ public class ContrataEmployeeObject {
 	
 	public ContractInfo getContractData() {
 		return this.contractData;
-	}
-	
-	public EmployeeInfo getEmployeeDataByDocument(String document){
-		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees()){
-			if(document == employee.getDocument()) {
-				employeeData = employee;
-				return employeeData;
-			}
-		}
-		return this.employeeData;
-	}
-	
-	public boolean checkDocumentValidation(String document_type_string, String document_string) {
-		if("DNI".equals(document_type_string)){
-			Dni dni = new Dni(document_string);
-			if(dni.checkDNI())
-				return true;
-			else
-				return false;
-		}else if("" == document_string) {
-			return true;
-		}else
-			return true;
-	}
-	
-	public EmployeeInfo getEmployeeDataBySSNum(String ssNum){
-		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
-			if(ssNum == employee.getSsNumber()) {
-				employeeData = employee;
-				return employeeData;
-			}
-		return this.employeeData;
-	}
-	
-	public boolean checkSSNumValidation(String ssNum_string) {
-		if(null == ssNum_string)
-			return false;
-		
-		SocialSecurity ss = new SocialSecurity(ssNum_string);
-		if(ss.checkSS())
-			return true;
-		else
-			return false;
-	}
-	
-	public EmployeeInfo getEmployeeDataByNameSurname(String nameSurname){
-		String name = nameSurname.split(", ")[0];
-		String surname = nameSurname.split(", ")[1];
-		
-		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
-			if(name == employee.getName() && surname == employee.getSurName()) {
-				employeeData = employee;
-				return employeeData;
-			}
-		return this.employeeData;
-	}
-	
-	public Integer getContractSSRegimen() {
-		return this.contractData.getSsRegimen() == null ? 0 : (int) this.contractData.getSsRegimen();
-	}
-		
-	public Integer getContractType() {
-		if(null == this.contractData.getContractType())
-			return -1;
-		else
-			return Integer.parseInt(this.contractData.getContractType());
-	}
-	
-	public Integer getContractQuoteGroup() {
-		return Integer.parseInt(null == this.contractData.getQuoteGroup() ? "0" : this.contractData.getQuoteGroup());
-	}
-	
-	public Integer getContractOcupation() {
-		return getCharIndex(this.contractData.getOcupation());
-	}
-	
-	public Double getContractPartialityCoef() {
-		return this.contractData.getPartialityCoef();
-	}
-	
-	private int getCharIndex(String ocupation) {
-		switch (ocupation) {
-		case "a":
-			return 1;
-		case "b":
-			return 2;
-		case "d":
-			return 3;
-		case "e":
-			return 4;
-		case "f":
-			return 5;
-		case "g":
-			return 6;
-		case "h":
-			return 7;
-		default:
-			return 0;
-		}
 	}
 	
 	public WorkplaceEmployees getWorkplaceEmployees(){
@@ -891,6 +713,52 @@ public class ContrataEmployeeObject {
 			agreementId = contractData.getAgreementId();
 		
 		return agreementId;
+	}
+	
+	public EmployeeInfo getEmployeeDataByDocument(String document){
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees()){
+			if(document == employee.getDocument()) {
+				employeeData = employee;
+				return employeeData;
+			}
+		}
+		return this.employeeData;
+	}
+	
+	public EmployeeInfo getEmployeeDataBySSNum(String ssNum){
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
+			if(ssNum == employee.getSsNumber()) {
+				employeeData = employee;
+				return employeeData;
+			}
+		return this.employeeData;
+	}
+	
+	public EmployeeInfo getEmployeeDataByNameSurname(String nameSurname){
+		String name = nameSurname.split(", ")[0];
+		String surname = nameSurname.split(", ")[1];
+		
+		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees())
+			if(name == employee.getName() && surname == employee.getSurName()) {
+				employeeData = employee;
+				return employeeData;
+			}
+		return this.employeeData;
+	}
+	
+	public Integer getContractSSRegimen() {
+		return this.contractData.getSsRegimen() == null ? 0 : (int) this.contractData.getSsRegimen();
+	}
+		
+	public Integer getContractType() {
+		if(null == this.contractData.getContractType())
+			return -1;
+		else
+			return Integer.parseInt(this.contractData.getContractType());
+	}
+	
+	public Double getContractPartialityCoef() {
+		return this.contractData.getPartialityCoef();
 	}
 	
 	// ---------------------------------------------- SETTERS  -------------------------------------------------
@@ -1115,13 +983,6 @@ public class ContrataEmployeeObject {
 	// --------------------------------------------------------- AUXILIAR METHODS --------------------------------------------------------------
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 
-	public void resetEmptyInfo() {
-		this.employeeContractData = new EmployeeContractInfo();
-		this.employeeData = new EmployeeInfo();
-		this.contractData = new ContractInfo();
-		this.contractData.setWorkplaceId(workplace.getId());
-	}
-
 	public Date getContractStartDate() {
 		return this.contractData.getStartDate();
 	}
@@ -1134,29 +995,6 @@ public class ContrataEmployeeObject {
 		employeeContractData = employeeContractInfo;
 		employeeData = employeeContractInfo.getEmployeeInfo();
 		contractData = employeeContractInfo.getContractInfo();
-	}
-
-	public void updateEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){	
-		this.employeeContractData.setContractInfo(getContractData());
-		this.employeeContractData.setEmployeeInfo(getEmployeeData());
-		
-		employeesService.setEmployeeInfoDataBase(this.employeeContractData, new AsyncCallback<EmployeeContractInfo>() {
-			
-			@Override
-			public void onSuccess(EmployeeContractInfo result) {
-				employeeContractData = result;
-				employeeContractData.setEmployeeInfo(result.getEmployeeInfo());
-				employeeContractData.setContractInfo(result.getContractInfo());
-				contractData = result.getContractInfo();
-				employeeData = result.getEmployeeInfo();
-				success.accept(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
 	}
 
 	public void addContractOtherData(String name, String value) {
@@ -1190,6 +1028,10 @@ public class ContrataEmployeeObject {
 
 	public String getFormativeLevel() {
 		return this.employeeContractData.getContractSpecificData().getFormativeLevel();
+	}
+
+	public void setAgreementSSNumber(String colectiveAgreement) {
+		contractData.setAgreementColective(colectiveAgreement);
 	}
 		
 }
