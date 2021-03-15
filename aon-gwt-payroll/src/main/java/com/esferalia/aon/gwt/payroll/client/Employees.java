@@ -1442,7 +1442,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 
 		employeeItem.setHTML(imageItemHTML(current ? images.employee() : images.oldemployee(), text.toString()));
-		EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(((Workplace) workplaceItem.getUserObject()), employee, employeesService, enterprisesService);
+		EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(((Workplace) workplaceItem.getUserObject()), employee);
 		employeeItem.setUserObject(employeeDraftObject);
 		employeeItem.ensureDebugId(getId(employee));
 

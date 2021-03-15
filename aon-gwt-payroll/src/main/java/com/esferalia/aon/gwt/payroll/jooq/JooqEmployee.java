@@ -105,6 +105,7 @@ public class JooqEmployee {
 		
 		ContractInfo contractData = employeeContractData.getContractInfo();
 		EmployeeInfo employeeData = employeeContractData.getEmployeeInfo();
+		
 		Municipalities municipalities = new Municipalities();
 		
 //		System.out.println(contractData.toString());
@@ -501,7 +502,10 @@ public class JooqEmployee {
 				.execute();
 		}
 		
-		return null;
+		contractData.setContractId(contractId);
+		employeeContractData.setContractInfo(contractData);
+		
+		return employeeContractData;
 	}
 	
 	private static Record getEmployeeRecord(DSLContext dslContext, Integer contractId) {

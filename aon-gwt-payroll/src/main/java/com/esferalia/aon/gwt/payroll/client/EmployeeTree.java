@@ -192,18 +192,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		@Override
 		public void execute() {
-			// Create a remote service proxy to talk to the server-side Employees
-			// service.
-			employeesService = DomainEmployeesServiceAsync.newInstance();
-			enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-
-			EmployeeDialog employeeDialog = new EmployeeDialog() {
+			EmployeeDialog employeeDialog = new EmployeeDialog(true) {
 				@Override
-				protected void onAccept() {
+				protected void onAccept(Integer contractId) {
 				}
 			};
-			EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(workplace, employeesService,
-					enterprisesService);
+			EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(workplace);
 			employeeDialog.setEmployeeDialogObject(employeeDialogObject);
 			workplaceContextMenu.hide();
 			employeeDialog.center();
@@ -3347,16 +3341,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	protected static void showNewContract() {
-		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
-		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-
-		EmployeeDialog employeeDialog = new EmployeeDialog() {
+		EmployeeDialog employeeDialog = new EmployeeDialog(true) {
 			@Override
-			protected void onAccept() {
+			protected void onAccept(Integer contractId) {
 			}
 		};
-		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(getEmployeeTree().workplace,
-				employeesService, enterprisesService);
+		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(getEmployeeTree().workplace);
 		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
 		employeeDialog.center();
 		employeeDialog.show();

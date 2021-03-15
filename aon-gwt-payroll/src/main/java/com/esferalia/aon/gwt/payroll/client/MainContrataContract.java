@@ -1144,17 +1144,19 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 
 	private void onNewContract(ClickEvent event) {
-		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
-		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-		
 		EmployeeDialog employeeDialog = new EmployeeDialog(true) {
 			@Override
-			protected void onAccept() {
-				redrawTable();
+			protected void onAccept(Integer contractId) {
+				mainContrataContractObject.getEmployeeInfo(contractId, employeeContractInfo -> {
+	        		contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+	        		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
+		    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
+		    		deckPanel.showWidget(1);
+	        	}, f -> {});
 			}
 		};
 		
-		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(null, employeesService, enterprisesService);
+		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(null);
 		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
 		employeeDialog.setModal(true);
 		employeeDialog.setAnimationEnabled(true);
