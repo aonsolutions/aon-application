@@ -447,39 +447,61 @@ public class ContractInfo implements Serializable{
 	public String toString(){
 		String result = "";
 		
-		result += "---------------- NEW CONTRACT INFO ---------------- \n";
-		result += " **** Contract Table **** \n";
-		result += "Contract Id : " + contractId + "\n";
-		result += "Workplace Id : " + getWorkplaceId() + "\n";
-		result += "Enterprise CCC Id : " + cccId + "\n";
-		result += "Start Date : " + startDate + "\n";
-		result += "End Date : " + endDate + "\n";
-		result += "Seniority Date : " + seniorityDate + "\n";
-		result += "Enterprise Activity Id : " + activityId + "\n";
-		result += "SS Regimen : " + ssRegimen + "\n";
-		result += "Agreement Category : " + agreementCategory + "\n";
-		result += "Agreement Level Id : " + agreementLevelId + "\n";
-		result += "Agreement Id : " + agreementId + "\n";
-		result += " **** Enterprise CCC Table **** \n";
-		result += "Enterprise CCC Type : " + cccType + "\n";
-		result += " **** Contract Data Table **** \n";
-		result += "Contract Type Id : " + contracttypeId + "\n";
-		result += "Contract Type : " + contractType + "\n";
-		result += "Quote Group Id : " + quotegroupId + "\n";
-		result += "Quote Group : " + quoteGroup + "\n";
-		result += "Ocupation Id : " + ocupationId + "\n";
-		result += "Ocupation : "+ ocupation + "\n";
-		result += "Journey Type Id : " + journeytypeId + "\n";
-		result += "Journey Type : " + journeyType + "\n";
-		result += " **** Contract Info Table **** \n";
-		result += "Contract Model Id : " + contractmodelId + "\n";
-		result += "Contract Model : " + contractModel + "\n";
-		result += "Reta Id : " + retaId + "\n";
-		result += "Old Start Date : " + oldStartDate + "\n";
-		result += "Old End Date : " + oldEndDate + "\n";
+		result += "---------------- CONTRACT INFO ---------------- \n";
+		
+		if(ssRegimen == null || ssRegimen == (byte)3)
+			result += toStringFreelancerContract();
+		else
+			result += toStringContract();
+		
+		result += "\n";
 		
 		return result;
 		
+	}
+
+	private String toStringFreelancerContract() {
+		String result = "";
+		
+		result += "SS Regimen : " + ssRegimen + "\n";
+		result += "Workplace Id : " + workplaceId + "\n";
+		result += "Start Date : " + startDate + "\n";
+		result += "End Date : " + endDate + "\n";
+		result += "Seniority Date : " + seniorityDate + "\n";
+		result += "Agreement Id : " + agreementId + "\n";
+		result += "Agreement Colective : " + colectiveAgreement + "\n";
+		result += "Agreement Level Id : " + agreementLevelId + "\n";
+		result += "Agreement Category : " + agreementCategory + "\n";
+		result += "Journey Type : " + journeyType + "\n";
+		
+		return result;
+	}
+	
+	private String toStringContract() {
+		String result = "";
+		
+		result += "SS Regimen : " + ssRegimen + "\n";
+		result += "Activity Id : " + activityId + "\n";
+		result += "CCC Id : " + cccId + "\n";
+		result += "CCC Type : " + cccType + "\n";
+		
+		if(cccType == (byte) 7) result += "MdCTZ : " + md_ctz + "\n";
+		
+		result += "Workplace Id : " + workplaceId + "\n";
+		result += "ContractType : " + contractType + "\n";
+		result += "Contract Modality : " + contractModel + "\n";
+		result += "Start Date : " + startDate + "\n";
+		result += "End Date : " + endDate + "\n";
+		result += "Seniority Date : " + seniorityDate + "\n";
+		result += "Agreement Id : " + agreementId + "\n";
+		result += "Agreement Colective : " + colectiveAgreement + "\n";
+		result += "Agreement Level Id : " + agreementLevelId + "\n";
+		result += "Agreement Category : " + agreementCategory + "\n";
+		result += "Quote Group : " + quoteGroup + "\n";
+		result += "Ocupation : " + ocupation + "\n";
+		result += "Partiality Coef : " + partialityCoef + "\n";
+		
+		return result;
 	}
 
 }

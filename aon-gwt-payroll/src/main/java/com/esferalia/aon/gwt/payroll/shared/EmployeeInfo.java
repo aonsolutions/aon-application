@@ -447,47 +447,29 @@ public class EmployeeInfo implements Serializable{
 	public String toString(){
 		String result = "";
 		
-		result += "---------------- (NEW) EMPLOYEE INFO ---------------- \n";
-		result += " **** Person Table **** \n";
-		result += "Registry Id : " + employeeId + "\n";
-		result += "Birth Date : " + birthdate + "\n";
-		result += "Gender : " + gender + "\n";
+		result += "---------------- EMPLOYEE INFO ---------------- \n";
+		result += "Document : " + document + "\n";
+		result += "Nationality : " + nationality + "\n";
 		result += "SS Number : " + ssNumber + "\n";
 		result += "Name : " + name + "\n";
 		result += "Surname : " + surName + "\n";
 		result += "Second Surname : " + secondSurName + "\n";
-		result += " **** Registry Table **** \n";
-		result += "Document : " + document + "\n";
-		result += "Document Type : " + documentType + "\n";
-		result += "Nationality : " + nationality + "\n";
-		result += " **** Raddress Table **** \n";
-		result += "Raddress Id : " + raddressId + "\n";
+		result += "Birth Date : " + birthdate + "\n";
+		result += "Gender : " + gender + "\n";
+		result += "Civil Status : " + civilStatus + "\n";
 		result += "Street Type : " + streetType + "\n";
 		result += "Address : " + address + "\n";
 		result += "Address Number : " + addresNum + "\n";
 		result += "Address Zip : " + addressZip + "\n";
+		result += "Address Province : " + addressProvinces + "\n";
 		result += "Address City : " + addressCity + "\n";
-		result += " **** Geozone Table **** \n";
-		result += "Geozone Id : " + geozoneId + "\n";
-		result += "Province : " + addressProvinces + "\n";
-		result += " **** Rmedia Table **** \n";
-		result += "Mobile Id : " + mobileId + "\n";
 		result += "Mobile : " + mobile + "\n";
-		result += "Phone Id : " + phoneId + "\n";
 		result += "Phone : "+ phone + "\n";
-		result += "Email Id : " + emailId + "\n";
 		result += "Emai : " + email + "\n";
-		result += " **** RPayMethod Table **** \n";
-		result += "RPayMethod Id : " + rpaymethodId + "\n";
-		result += " **** PayMethod Table **** \n";
 		result += "Pay Method Id : " + paymethodId + "\n";
-		result += "Pay Method : " + payMethodTypeB + "\n";
-		result += " **** RBank Table **** \n";
-		result += "RBank Id : " + rbankId + "\n";
 		result += "Account : " + account + "\n";
-		result += "Bic : " + bic + "\n";
+		result += "Bic : " + bic + "\n\n";
 		
 		return result;
-		
 	}
 }

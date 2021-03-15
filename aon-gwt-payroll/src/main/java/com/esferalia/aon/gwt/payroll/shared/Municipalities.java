@@ -8151,11 +8151,20 @@ public class Municipalities {
 		return zipMunicipalities;
 	}
 	
-	public ArrayList<String> getMunicipalitiesByProvinceCode(String provinceCode){
+	public ArrayList<String> getMunicipalitiesByProvinceCodeArr(String provinceCode){
 		ArrayList<String> provinceMunicipalities = new ArrayList<String>();
 		for(Entry<String, String> e: this.municipalities.entrySet()) {
 			if(provinceCode.equals(e.getKey().substring(0, 2)))
 				provinceMunicipalities.add(e.getValue());
+		}
+		return provinceMunicipalities;
+	}
+	
+	public HashMap<String, String> getMunicipalitiesByProvinceCode(String provinceCode){
+		HashMap<String, String> provinceMunicipalities = new HashMap<String, String>();
+		for(Entry<String, String> e: this.municipalities.entrySet()) {
+			if(provinceCode.equals(e.getKey().substring(0, 2)))
+				provinceMunicipalities.put(e.getKey(), e.getValue());
 		}
 		return provinceMunicipalities;
 	}
@@ -8170,17 +8179,19 @@ public class Municipalities {
 	
 	public Integer getMunicipalityIndex(String provinceCode, String municipalityCode){
 		ArrayList<String> provinceMunicipalities = new ArrayList<String>();
+		
 		for(Entry<String, String> e: this.municipalities.entrySet()) {
-			if(provinceCode.equals(e.getKey().substring(0, 2)))
+			if(AonStringUtils.equalsIgnoreCase(provinceCode, e.getKey().substring(0, 2)))
 				provinceMunicipalities.add(e.getKey());
 		}
 		
 		Integer idx = 0;
 		for(String key: provinceMunicipalities) {
-			if(key.equals(municipalityCode))
+			if(AonStringUtils.equalsIgnoreCase(key, municipalityCode))
 				return idx;
 			idx++;
 		}
+		
 		return -1;
 	}
 }

@@ -346,7 +346,7 @@ public class EnterpriseDraft extends Composite {
 		String provinceCode = enterprise.addressProvince.getSelectedValue();
 		enterprise.addressCity.clear();
 		enterprise.addressCity.addItem("-");;
-		ArrayList<String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
+		ArrayList<String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCodeArr(provinceCode);
 		municipalitiesOfProvince.forEach(m -> {enterprise.addressCity.addItem(m);});
 	}
 	
