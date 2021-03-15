@@ -129,17 +129,16 @@ export class AonSignin extends AonElement {
   showView(view, data, filter = undefined){
     return new Promise(async(resolve)=>{
       let aonView = undefined;
-      if("aonPresenceList" === view && this.isEmployee()) {
-        const taskHolder = await this.getTaskHolder().catch(e=>null);
-        if(taskHolder){
-          data = {taskHolderId:taskHolder.id};
+
+      if(this.isEmployee()){
+        if("aonPresenceList" === view) {
+          view = "aonEventList";
+        } else if( "aonLocationAdd" === view){
+         resolve(true);
+         return;
         }
-        view = "aonEventList";
-      } else if( "aonLocationAdd" === view && this.isEmployee()){
-       resolve(true);
-       return;
       }
-  
+
       if(!this.getElement(view)){
         switch(view){
           case "aonPresenceList":
@@ -147,27 +146,18 @@ export class AonSignin extends AonElement {
           break;
           case "aonEventList":
             aonView = new AonEventList();
-            if(data && data.taskHolderId) this._filter.taskHolderId = data.taskHolderId;
-          break;
-          case "aonLocationAdd":
-              aonView = new AonLocationAdd();
-              if(data){
-                if(data.coordinates && data.coordinates.latitude && data.coordinates.longitude){
-                  data = {...data, latitude:data.coordinates.latitude, longitude: data.coordinates.longitude}
-                  aonView.data = {...data, latitude:data.coordinates.latitude, longitude: data.coordinates.longitude};
-                }
-                if(data.add){
-                  aonView.add = data.add;
-                }
-              } 
+            if(data && data.taskHolderId){
+              this.TASK_HOLDER = {id: data.taskHolderId, name: data.name};
+            } else {
+              this.TASK_HOLDER = await this.getTaskHolder().catch(e=>null);
+            }
+            if(data && data.status && !isEmptyObject(this.TASK_HOLDER)) {this.TASK_HOLDER.status = data.status;}
+            this._filter.taskHolderId = this.TASK_HOLDER.id;
           break;
           case "aonEventDetailList":
               aonView = new AonEventDetailList();
               if(data){
                 const startDate = formatDateOrigin(data.start_date);
-                if(data.task_holder && data.task_holder.id){
-                  aonView.TASK_HOLDER = data.task_holder;
-                }
                 aonView.DATE_TASK = {startDate, endDate:startDate};
               }
           break;
@@ -175,7 +165,21 @@ export class AonSignin extends AonElement {
             aonView = new AonEventAdd();
             if (data) {
               aonView.data = data;
+            } else if (this.TASK_HOLDER) {
+              aonView.data = {task_holder: this.TASK_HOLDER};
             }
+          break;
+          case "aonLocationAdd":
+            aonView = new AonLocationAdd();
+            if(data){
+              if(data.coordinates && data.coordinates.latitude && data.coordinates.longitude){
+                data = {...data, latitude:data.coordinates.latitude, longitude: data.coordinates.longitude}
+                aonView.data = {...data, latitude:data.coordinates.latitude, longitude: data.coordinates.longitude};
+              }
+              if(data.add){
+                aonView.add = data.add;
+              }
+            } 
           break;
         }
         aonView.id = view;
@@ -198,12 +202,13 @@ export class AonSignin extends AonElement {
   
   async getTaskHolder(){
     if(isEmptyObject(this.TASK_HOLDER)){
-      const domain_id = parseInt(localStorage.getItem("aon_domain_id"));
+      const domainId = parseInt(localStorage.getItem("aon_domain_id"));
       const result = await getTaskHolders({reload:true});
-      this.TASK_HOLDER = result.find(r=> r.domain_id === domain_id);
+      this.TASK_HOLDER = result.find(({domain_id})=> domain_id === domainId);
     }
     return this.TASK_HOLDER;
   }
+  
   
   isEmployee(){
     return !this._roles.isTimecontrolManager() && !this._roles.isTimecontrolPortal();

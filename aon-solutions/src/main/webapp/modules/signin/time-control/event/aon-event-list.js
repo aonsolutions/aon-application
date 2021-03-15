@@ -18,7 +18,6 @@ import "../../../../components/aon-filter.js";
 
 export class AonEventList extends AonElement {
   TABLE_ID;
-  TASK_HOLDER;
   static get observedAttributes() {
     return ["filter", "data"];
   }
@@ -213,7 +212,6 @@ export class AonEventList extends AonElement {
       if(datos){
         await sortBy(datos, 'start_date', 'asc').map(
           async (r) => {
-            if(!this.TASK_HOLDER)  this.TASK_HOLDER = r.task_holder;
             const newStatus = r.status.toLowerCase();
             const textStatus = await getStatus(newStatus);
             const numbDate =   this.getTimeNumber(group.value, r.start_date);
@@ -262,18 +260,24 @@ export class AonEventList extends AonElement {
   }
 
   async paintName(){
-    if(this.TASK_HOLDER) {
-      const {name, id: task_holder} = this.TASK_HOLDER;
-      if(this.isMobile()) {
-        const auth = await this.aonSigninParentEl.getAuth({task_holder});
-        let iconPhone = "";
-        if(!this.aonSigninParentEl.isEmployee() && auth && auth.phone) {
-          iconPhone = `<a href="tel:+34${auth.phone}"><aon-icon-button id="iconPhone" icon="phone_in_talk" noHover="true" color="green"></aon-icon-button></a>`;
-        }
-        this.getElement(this.TOOLBAR).title = `${name}${iconPhone}`;
-      }
-      else this.aonSigninEl.addTitleToolSection(name);
+    const taskHolder = this.aonSigninParentEl.TASK_HOLDER;
+    if(taskHolder) {
+      if(this.isMobile()) await this.paintNameMobile(taskHolder);
+      else this.aonSigninEl.addTitleToolSection(taskHolder.name);
     }
+  }
+
+  async paintNameMobile(taskHolder){
+    let iconPhone = "";
+    if(!this.aonSigninParentEl.isEmployee()) {
+      const auth = await this.aonSigninParentEl.getAuth({task_holder: taskHolder.id});
+      if(auth && auth.phone){
+        let color = "black";
+        if(taskHolder.status && "in"===taskHolder.status) color = "green";
+        iconPhone = `<a href="tel:+34${auth.phone}"><aon-icon-button id="iconPhone" icon="phone_in_talk" noHover="true" color="${color}"></aon-icon-button></a>`;
+      }
+    }
+    this.getElement(this.TOOLBAR).title = `${taskHolder.name}${iconPhone}`;
 
     let elIcon = this.getElement('iconPhone');
     if(elIcon){

@@ -22,7 +22,6 @@ import { dateCustomDayHour } from "../utils.js";
 
 export class AonEventDetailList extends AonElement {
   TABLE_ID;
-  TASK_HOLDER;
   DATE_TASK;
   static get observedAttributes() {
     return ["filter", "data"];
@@ -66,7 +65,6 @@ export class AonEventDetailList extends AonElement {
 
   connectedCallback() {
     this.initialize();
-    this.aonSigninEl.addToolbarTitle("Detalle");
     this.build();
   }
 
@@ -75,6 +73,7 @@ export class AonEventDetailList extends AonElement {
     this.TABLE_ID = this.id + "Table";
     this.TOOLBAR = this.id + "Toolbar";
     this.aonSigninEl = this.getApplication();
+    this.aonSigninEl.addToolbarTitle("Detalle");
     this.aonSigninParentEl = this.aonSigninEl.getParent();
     this.aonSigninParentEl.periodSideNavDisplay(true);
   }
@@ -260,18 +259,24 @@ export class AonEventDetailList extends AonElement {
   }
 
   async paintName(){
-    if(this.TASK_HOLDER) {
-      const {name, id: task_holder} = this.TASK_HOLDER;
-      if(this.isMobile()) {
-        const auth = await this.aonSigninParentEl.getAuth({task_holder});
-        let iconPhone = "";
-        if(!this.aonSigninParentEl.isEmployee() && auth && auth.phone) {
-          iconPhone = `<a href="tel:+34${auth.phone}"><aon-icon-button id="iconPhone" icon="phone_in_talk" noHover="true" color="green"></aon-icon-button></a>`;
-        }
-        this.getElement(this.TOOLBAR).title = `${name}${iconPhone}`;
-      }
-      else this.aonSigninEl.addTitleToolSection(name);
+    const taskHolder = this.aonSigninParentEl.TASK_HOLDER;
+    if(taskHolder) {
+      if(this.isMobile()) await this.paintNameMobile(taskHolder);
+      else this.aonSigninEl.addTitleToolSection(taskHolder.name);
     }
+  }
+
+  async paintNameMobile(taskHolder){
+    let iconPhone = "";
+    if(!this.aonSigninParentEl.isEmployee()) {
+      const auth = await this.aonSigninParentEl.getAuth({task_holder: taskHolder.id});
+      if(auth && auth.phone){
+        let color = "black";
+        if(taskHolder.status && "in"===taskHolder.status) color = "green";
+        iconPhone = `<a href="tel:+34${auth.phone}"><aon-icon-button id="iconPhone" icon="phone_in_talk" noHover="true" color="${color}"></aon-icon-button></a>`;
+      }
+    }
+    this.getElement(this.TOOLBAR).title = `${taskHolder.name}${iconPhone}`;
 
     let elIcon = this.getElement('iconPhone');
     if(elIcon){
@@ -285,9 +290,6 @@ export class AonEventDetailList extends AonElement {
     if (el && "add_location" === el.target.textContent) {
       this.aonSigninParentEl.showView("aonLocationAdd", {coordinates:data.coordinates});
     } else {
-      if (!data && this.TASK_HOLDER) {
-        data = { task_holder: this.TASK_HOLDER, name: this.TASK_HOLDER.name };
-      }
       this.aonSigninParentEl.showView("aonEventAdd", data);
     }
   }

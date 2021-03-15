@@ -28,6 +28,7 @@ export class AonEventAdd extends AonElement {
   TITLE;
   TOOLBAR;
   START_DATE
+  TASK_HOLDER;
   static get observedAttributes() {
     return ["data"];
   }
@@ -57,6 +58,7 @@ export class AonEventAdd extends AonElement {
     this.aonSigninParentEl = this.aonSigninEl.getParent();
     this.aonSigninEl.addToolbarTitle("Registrar evento");
     this.aonSigninParentEl.periodSideNavDisplay(false);
+    this.TASK_HOLDER = this.aonSigninParentEl.TASK_HOLDER;
   }
 
   connectedCallback() {
@@ -227,11 +229,10 @@ export class AonEventAdd extends AonElement {
       let date = new Date(data.date);
       if (data.coordinates) {data.coordinates = data.coordinates.latitude + "," + data.coordinates.longitude;}
       if (data.location && data.location.id) {data.location = data.location.id;}
-      if (data.task_holder) {data.name = data.task_holder.name;}
       if (!date.isValid()) {date = new Date();}
       data.date = date;
       data.time = setTime(date);
-
+      data.name = this.TASK_HOLDER.name;
       for (const property in data) {
         const value = data[property];
         if (value) setValueName(property, value);
@@ -248,7 +249,7 @@ export class AonEventAdd extends AonElement {
       let formValues = this.getFormValues();
       const data = {
         ...formValues,
-        task_holder: this.data.task_holder.id,
+        task_holder: this.TASK_HOLDER.id,
         date: new Date(
           formatDateOrigin(formValues.date) + " " + formValues.time
         ).getTime(),
