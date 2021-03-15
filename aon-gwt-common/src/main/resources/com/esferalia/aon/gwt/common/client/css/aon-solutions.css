@@ -720,6 +720,8 @@
 }
 .aon_toolbar_button_container {
 	margin-left: 1em;
+	display: flex;
+	align-items: center;
 }
 
 .aon_toolbar_small_button_container {
