@@ -225,10 +225,6 @@ export class AonInvoicePanel extends AonElement {
 		let d = document.getElementById('aonDialogAddOption');
 
 		let options = [{
-				name: 'Emitidas',
-				icon: 'unarchive',
-				fn: () => this.aonInvoice('emitida')
-			}, {
 				name: 'Recibidas',
 				icon: 'archive',
 				fn: () => this.aonInvoice('recibida')
@@ -237,6 +233,23 @@ export class AonInvoicePanel extends AonElement {
 				icon: 'receipt',
 				fn: () => this.aonInvoice('ticket')
 			}];
+
+		if(this.getDur().isAlpha()) {
+			options = [{
+					name: 'Emitidas',
+					icon: 'unarchive',
+					fn: () => this.aonInvoice('emitida')
+				}, {
+					name: 'Recibidas',
+					icon: 'archive',
+					fn: () => this.aonInvoice('recibida')
+				}, {
+					name: 'Tickets/Justificantes',
+					icon: 'receipt',
+					fn: () => this.aonInvoice('ticket')
+				}];
+		}
+
 		if(this.isMobile()) {
 			options.push({
 				name: 'Camara',

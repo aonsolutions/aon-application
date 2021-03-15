@@ -3,11 +3,11 @@ import {Transactions} from '../../services/transaction.js';
 import {Paymethods} from '../../services/paymethod.js';
 import {TaxType, TaxIVAPercentage, TaxIRPFPercentage, InvoiceAction} from './invoiceEnums.js';
 import {getInvoiceCategories} from '../../services/invoiceCategory.js';
-import {insertInvoice, deleteInvoices, getUserAppRole, getCustomers, getGlobalRegistries, getInvoiceAccounts, sendInvoiceMail} from '../../services/service.js';
+import {insertInvoice, deleteInvoices, getUserAppRole, getRegistries, getGlobalRegistries, getInvoiceAccounts, sendInvoiceMail} from '../../services/service.js';
 import {isNumber, round} from '../../services/utils.js';
 import {Invoice} from './Invoice.js';
 import {getNextInvoice, getPreviousInvoice} from './InvoiceCache.js';
-import {ToolbarType} from '../../models/enums.js';
+import {ToolbarType, RegistryType} from '../../models/enums.js';
 
 import '../../components/aon-toolbar.js';
 import '../../components/aon-card.js';
@@ -575,15 +575,12 @@ export class AonInvoice extends AonElement {
 		}
 		nif.addEventListener('keyup', () => {
 			if(nif.value.length > 2) {
-				getCustomers().then( r => {
-					let options = nif.buildOptions(r.filter(f => f.document.includes(nif.value))
-						.map(r => {return {name: r.document, value: r.document, registry: r};}));
-					// if(options.length == 0) {
-					// 	getGlobalRegistries({document:nif.value}).then( registries =>
-					// 		nif.buildOptions(registries.map(r => {return {name: r.document, value: r.document, registry: r};}))
-					// 	);
-					// } else
-					name.buildOptions(options);
+				let data = {
+					types: this.isEmitida() ? [RegistryType.CUSTOMER] : [RegistryType.SUPPLIER, RegistryType.CREDITOR],
+					document: nif.value
+				};
+				getRegistries(data).then(r => {
+					nif.buildOptions(r.map(r => {return {name: r.document, value: r.document, registry: r};}));
 				});
 			} else {
 				nif.closeOptions();
@@ -619,15 +616,12 @@ export class AonInvoice extends AonElement {
 		}
 		name.addEventListener('keyup', () => {
 			if(name.value.length > 2) {
-				getCustomers().then( r => {
-					let options = r.filter(f => f.name.toUpperCase().includes(name.value.toUpperCase()))
-						.map(r => {return {name: r.name, value: r.name, registry: r};});
-					// if(options.length == 0) {
-					// 	getGlobalRegistries({name:name.value}).then( registries =>
-					// 	 	name.buildOptions(registries.map(r => {return {name: r.name, value: r.name, registry: r};}))
-					// 	);
-					// } else
-					name.buildOptions(options);
+				let data = {
+					types: this.isEmitida() ? [RegistryType.CUSTOMER] : [RegistryType.SUPPLIER, RegistryType.CREDITOR],
+					name: name.value
+				};
+				getRegistries(data).then(r => {
+					name.buildOptions(r.map(r => {return {name: r.name, value: r.document, registry: r};}));
 				});
 			} else {
 				name.closeOptions();

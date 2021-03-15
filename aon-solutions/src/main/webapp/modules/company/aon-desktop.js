@@ -165,7 +165,7 @@ export class AonDesktop extends AonElement {
 
 		let classicOptions = [];
 
-		if(!localStorage.getItem('aon_jsf') && this.getDur().isAon()){
+		if(!localStorage.getItem('aon_jsf')){ // && this.getDur().isAon()){
 			classicOptions.push({
 				name: 'aonSolutions',
 				img: 'assets/apps/aon.png',

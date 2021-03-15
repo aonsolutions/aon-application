@@ -9,9 +9,8 @@
 	--aon-color-bg-high-contrast: #ffffff;
 }
 
-/** END: Non Openmrs CSS **/
 .aonInputGroup {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   position: relative;
   width: 20.4375rem;
 }
@@ -171,7 +170,7 @@
 	/* height: 30px; */
 	line-height: 25px;
 	margin: 0;
-	padding: 0 20px;
+	padding: 0 10px;
 	cursor: pointer;
 	width: 100%;
 }

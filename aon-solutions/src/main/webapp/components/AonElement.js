@@ -1,5 +1,7 @@
 import {webkitRequestMobile} from '../services/service.js';
 
+import * as AON_TAG from "../../environments/aonTag.js";
+
 export class AonElement extends HTMLElement{
   ROOT_PANEL;
 
@@ -82,6 +84,6 @@ export class AonElement extends HTMLElement{
   }
 
   getApplication() {
-    return document.querySelector('aon-application');
+    return document.querySelector(AON_TAG.AON_APPLICATION);
   }
 }

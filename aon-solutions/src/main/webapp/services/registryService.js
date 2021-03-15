@@ -12,7 +12,7 @@ export const clearRegistryService = () => {
 export const clearCustomers = () => customers = undefined;
 export const clearDomain = () => domain = undefined;
 
-// export const getCustomers = (data) => get(`${API_URL}/customer`, data);
+export const getRegistries = (data) => get(`${API_URL}/suggestion/registry`, data);
 
 export const getCustomers = (data) => {
   data = data || {};

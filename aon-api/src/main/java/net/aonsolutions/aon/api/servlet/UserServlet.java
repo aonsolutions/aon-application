@@ -472,7 +472,7 @@ public class UserServlet extends AonApiHttpServlet {
 			.setName(json.opt("name") != null ? json.getString("name") : login)
 			.setShared(json.optBoolean("shared"))
 			.setEnterprise(cp.getId())
-			.setToolbar(UserToolbar.AON_SOLUTIONS);
+			.setToolbar(UserToolbar.GOOGLE);
 		
 		if(json.opt("document") != null) {
 			String document = json.optString("document");

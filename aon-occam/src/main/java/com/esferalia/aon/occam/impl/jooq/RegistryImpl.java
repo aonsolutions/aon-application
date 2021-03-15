@@ -45,14 +45,17 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
+import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
 
 public class RegistryImpl implements IRegistry{
@@ -228,7 +231,7 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getCustomerStream(ctx, filter));
+				configuration -> CustomerDAO.getStream(ctx, filter));
 	}
 	
 	@Override
@@ -420,5 +423,12 @@ public class RegistryImpl implements IRegistry{
 	public RDirStaff insertRDirStaff(AONContext ctx, RDirStaff rdirstaff) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.insertRDirStaff(ctx, rdirstaff));
+	}
+
+	@Override
+	public Stream<Registry> getSuggestionRegistries(AONContext ctx, LinkedList<RegistryType> list,
+			RegistryFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistrySuggestionDAO.getSuggestionRegistries(ctx, list, filter));
 	}
 }

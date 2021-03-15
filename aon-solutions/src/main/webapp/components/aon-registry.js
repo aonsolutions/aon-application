@@ -1,6 +1,6 @@
 import { AonElement } from './AonElement.js';
-
-import { getCustomers } from '../services/service.js';
+import { RegistryType } from '../models/enums.js';
+import { getRegistries } from '../services/service.js';
 
 import * as EVENT from "../../environments/aonEvent.js";
 import * as AON_TAG from "../../environments/aonTag.js";
@@ -13,20 +13,14 @@ export class AonRegistry extends AonElement {
 
   OPTIONS;
 
+  types;
+
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
 
 	set id(id) {
 		this.setAttribute(CONSTANT.ID, id);
-	}
-
-  get type() {
-		return this.getAttribute(CONSTANT.TYPE);
-	}
-
-	set type(type) {
-		this.setAttribute(CONSTANT.TYPE, type);
 	}
 
 	get value() {
@@ -68,7 +62,7 @@ export class AonRegistry extends AonElement {
     div.appendChild(table);
 
     let tdNif = document.createElement('td');
-		tdNif.setAttribute('colspan', '1');
+		tdNif.setAttribute('colspan', '2');
 		tdNif.innerHTML = `<aon-input id="${this.NIF}" description="NIF"></aon-input>`;
     table.appendChild(tdNif);
     let nif = this.getElement(this.NIF);
@@ -76,9 +70,9 @@ export class AonRegistry extends AonElement {
     nif.addEventListener('keyup', () => {
       console.log(nif.value);
       if(nif.value.length > 2) {
-				getCustomers().then( r => {
-					this.buildOptions(r.filter(f => f.document.toUpperCase().includes(nif.value.toUpperCase()))
-						.map(r => {return {name: r.document + ' - ' + r.name, value: r.document, registry: r};}));
+        let data = { types: this.types, document: nif.value};
+				getRegistries(data).then(r => {
+					this.buildOptions(r.map(r => {return {name: r.document + ' - ' + r.name, value: r.document, registry: r};}));
 				});
 			} else {
 				this.closeOptions();
@@ -86,7 +80,7 @@ export class AonRegistry extends AonElement {
     });
 
     let tdName = document.createElement('td');
-    tdName.setAttribute('colspan', '3');
+    tdName.setAttribute('colspan', '4');
     tdName.innerHTML = `<aon-input id="${this.NAME}" description="${MSG.AON_MSG_BUSINESS_NAME}"></aon-input>`;
     table.appendChild(tdName);
     let name = this.getElement(this.NAME);
@@ -94,15 +88,15 @@ export class AonRegistry extends AonElement {
     name.addEventListener('keyup', () => {
       // get options!!
       if(name.value.length > 2) {
-        getCustomers().then( r => {
-          this.buildOptions(r.filter(f => f.name.toUpperCase().includes(name.value.toUpperCase()))
-            .map(r => {return {name: r.document + ' - ' + r.name, value: r.document, registry: r};}));
-        });
+        console.log(this.types);
+        let data = { types: this.types, name: name.value};
+				getRegistries(data).then(r => {
+					this.buildOptions(r.map(r => {return {name: r.document + ' - ' + r.name, value: r.document, registry: r};}));
+				});
       } else {
         this.closeOptions();
       }
     });
-
 
 		let options = this.createElement('div');
 		options.id = this.OPTIONS;
@@ -127,8 +121,15 @@ export class AonRegistry extends AonElement {
         li.addEventListener('click', (e) => {
           div.classList.remove('is-visible');
           this.value = options[i].value;
-          let input = this.getElement(this.INPUT);
-          input.value = options[i].name;
+          // let input = this.getElement(this.INPUT);
+          // input.value = options[i].name;
+
+          let nif = this.getElement(this.NIF);
+          nif.value = options[i].registry.document;
+
+          let name = this.getElement(this.NAME);
+          name.value = options[i].registry.name;
+
           this.dispatchEvent(new CustomEvent('select', { detail: options[i] }));
         });
         ul.appendChild(li);
@@ -151,6 +152,10 @@ export class AonRegistry extends AonElement {
     if (div.classList.contains('is-visible')) {
       div.classList.remove('is-visible');
     }
+  }
+
+  setTypes(types){
+    this.types = types;
   }
 }
 

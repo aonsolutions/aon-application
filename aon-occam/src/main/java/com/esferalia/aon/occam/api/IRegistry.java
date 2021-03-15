@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
+import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
@@ -147,5 +148,7 @@ public interface IRegistry {
 	
 	public Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter);
 	public RDirStaff insertRDirStaff(AONContext ctx, RDirStaff rdirstaff);
+	
+	public Stream<Registry> getSuggestionRegistries(AONContext ctx, LinkedList<RegistryType> list, RegistryFilter filter);
 	
 }
