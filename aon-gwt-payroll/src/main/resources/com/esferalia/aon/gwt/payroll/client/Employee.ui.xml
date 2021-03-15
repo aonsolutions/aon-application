@@ -261,7 +261,7 @@
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de contrato</g:Label>
 							</td>
 							<td colspan="6" ui:field="contractTypeNode" debugId="contractTypeNode">
-								<g:ListBox ui:field="contractType" debugId="contractType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="contractTypeLB" debugId="contractType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 							<td ui:field="contractFreelancerNode" debugId="contractFreelancerNode" colspan="6">
 								<g:Label ui:field="contractTypeFreelance" debugId="contractTypeFreelance"
