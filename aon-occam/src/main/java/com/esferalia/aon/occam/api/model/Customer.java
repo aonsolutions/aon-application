@@ -7,7 +7,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
-public class Customer extends Registry implements Serializable, HasAudit {
+public class Customer extends Registry implements Serializable, HasAudit, IScopable<Customer>, IAccountId<Customer> {
 
 	private static final long serialVersionUID = -1763053163676341615L;
 	
@@ -81,9 +81,11 @@ public class Customer extends Registry implements Serializable, HasAudit {
 		return this;
 	}
 	
+	@Override 
 	public Integer getScope() {
 		return scope;
 	}
+	@Override 
 	public Customer setScope(Integer scope) {
 		this.scope = scope;
 		return this;
@@ -128,10 +130,11 @@ public class Customer extends Registry implements Serializable, HasAudit {
 		this.deliveryValuated = deliveryValuated;
 		return this;
 	}
-	
+	@Override
 	public Integer getAccount() {
 		return account;
 	}
+	@Override
 	public Customer setAccount(Integer account) {
 		this.account = account;
 		return this;

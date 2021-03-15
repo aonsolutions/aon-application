@@ -31,6 +31,8 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
@@ -47,6 +49,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 
 public interface IRegistry {
@@ -148,7 +151,31 @@ public interface IRegistry {
 	
 	public Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter);
 	public RDirStaff insertRDirStaff(AONContext ctx, RDirStaff rdirstaff);
+
+	// **************************************************
+	// *************************************** [CUSTOMER]
+	// **************************************************
+	public Stream<Customer> getCustomers(AONContext ctx, CustomerFilter filter, int ofs, int limit);
+	public CustomerFull getCustomerFull(AONContext ctx, Integer id);
+	public CustomerFull save(AONContext ctx, CustomerFull customerFull);
 	
+	// **************************************************
+	// *************************************** [CREDITOR]
+	// **************************************************
+	public Stream<Creditor> getCreditors(AONContext ctx, CreditorFilter filter, int ofs, int limit);
+	public CreditorFull getCreditorFull(AONContext ctx, Integer id);
+	public CreditorFull save(AONContext ctx, CreditorFull creditorFull);
+
+	// **************************************************
+	// *************************************** [SUPPLIER]
+	// **************************************************
+	public Stream<Supplier> getSuppliers(AONContext ctx, SupplierFilter filter, int ofs, int limit);
+	public SupplierFull getSupplierFull(AONContext ctx, Integer id);
+	public SupplierFull save(AONContext ctx, SupplierFull supplierFull);
+
+	// **************************************************
+	// **************************** [REGISTRY SUGGESTION]
+	// **************************************************
 	public Stream<Registry> getSuggestionRegistries(AONContext ctx, LinkedList<RegistryType> list, RegistryFilter filter);
 	
 }

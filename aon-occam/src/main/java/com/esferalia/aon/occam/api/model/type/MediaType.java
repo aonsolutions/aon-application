@@ -4,14 +4,30 @@ import java.io.Serializable;
 
 public enum MediaType implements Serializable {
 
-	 UNKNOWN		{@Override public void visit(IMediaTypeVisitor visitor) { visitor.visitUnknown();}}
-	,FIXED_PHONE 	{@Override public void visit(IMediaTypeVisitor visitor) { visitor.visitFixedPhone();}}
-	,CELLULAR 		{@Override public void visit(IMediaTypeVisitor visitor) { visitor.visitCellular();}}
-	,FAX 			{@Override public void visit(IMediaTypeVisitor visitor) { visitor.visitFax();}}
-	,EMAIL 			{@Override public void visit(IMediaTypeVisitor visitor) { visitor.visitEmail();}}
-	,WEB 			{@Override public void visit(IMediaTypeVisitor visitor) { visitor.visitWeb();}}
+	 UNKNOWN( "-----" )
+	 	{@Override public void visit(IMediaTypeVisitor visitor) { visitor.visitUnknown();}}
+	,FIXED_PHONE("Tel\u00E9fono")
+		{@Override public void visit(IMediaTypeVisitor visitor) { visitor.visitFixedPhone();}}
+	,CELLULAR("M\u00F3vil")
+		{@Override public void visit(IMediaTypeVisitor visitor) { visitor.visitCellular();}}
+	,FAX("Fax")
+		{@Override public void visit(IMediaTypeVisitor visitor) { visitor.visitFax();}}
+	,EMAIL("eMail")
+		{@Override public void visit(IMediaTypeVisitor visitor) { visitor.visitEmail();}}
+	,WEB("Web")
+		{@Override public void visit(IMediaTypeVisitor visitor) { visitor.visitWeb();}}
 	;
 	
+	private String description;
+	
+	private MediaType(String description) {
+		this.description = description;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+
 	public byte value() {
 		return (byte) this.ordinal();
 	}

@@ -167,7 +167,7 @@ public class AonAccountBox extends ResizeComposite implements HasValue<String>
 											SafeHtmlBuilder bld = new SafeHtmlBuilder();
 											String ds = account.getFullName();
 											int i = AonStringUtils.indexOfIgnoreCase(ds, request.getQuery());
-											bld.appendHtmlConstant("<span class=\"" 
+											bld.appendHtmlConstant("<span style=\"white-space: pre;\" class=\""
 													+ ((account.getDomain() != domain)
 														?AON.CSS.aonIconLevelTop()
 														:AON.CSS.aonIconLevelThis() )

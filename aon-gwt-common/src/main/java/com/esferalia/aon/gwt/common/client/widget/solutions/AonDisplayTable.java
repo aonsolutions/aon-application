@@ -62,4 +62,18 @@ public class AonDisplayTable extends FlowPanel {
 		return row;
 	}
 
+	public FlowPanel addFooterRow() {
+		FlowPanel footer = new FlowPanel();
+		footer.setStyleName(AON.CSS.aonDisplayTableFooterRow());
+		add(footer);
+		return footer;
+	}
+
+	public AonDisplayTable addLabelWidgetRow(Widget label, Widget widget) {
+		AonDisplayTableRow row = new AonDisplayTableRow();
+		add(row);
+		row.addCell(label, AON.CSS.aonTableLabel());
+		row.addCell(widget);
+		return this;
+	}
 }

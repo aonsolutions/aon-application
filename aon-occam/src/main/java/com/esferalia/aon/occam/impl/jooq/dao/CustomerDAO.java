@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
@@ -106,6 +107,17 @@ public class CustomerDAO {
 			.map(new CustomerFiller());
 	}
 	
+	public static Stream<Customer> getStream(AONContext ctx, CustomerFilter filter, int offset, int limit){
+		return select(ctx,filter)
+				.orderBy(REGISTRY.NAME)
+				.offset(offset)
+				.limit(limit)
+				
+				.fetch()
+				.stream()
+				.map(new CustomerFiller());
+	}
+
 	public static Customer get(AONContext ctx, Integer id){
 		return getStream(ctx, p -> p.getIdProperty().eq(id))
 			.findFirst()
@@ -117,7 +129,7 @@ public class CustomerDAO {
 		CustomerAutoComplete.autoComplete(ctx, customer);
 		CustomerValidation.validate(ctx, customer);
 		boolean nullId = (customer.getId() == null); 
-		customer = (Customer) RegistryDAO.save(ctx, customer);
+		customer = RegistryDAO.save(ctx, customer);
 		if (nullId || get(ctx, customer.getId()) == null ) {
 			customer = insert(ctx, customer);
 		} else {
@@ -204,6 +216,27 @@ public class CustomerDAO {
 	ctx.log().info("ACCOUNT " + account + " LINKED TO CUSTOMER " + customerId);
 	}
 
+	// ******************************************
+	// ********** FULL CUSTOMER *****************
+	// ******************************************
+	public static CustomerFull getFull(AONContext ctx, Integer id){
+		CustomerFull full = new CustomerFull();
+		full.setRegistry(CustomerDAO.get(ctx, id));  
+		RegistryDAO.fillChilds(ctx, full);
+		if (full.getRegistry() != null && full.getRegistry().getAccount() != null) {
+			full.setAccount(AccountDAO.get(ctx, full.getRegistry().getAccount()));	
+		}
+		return full;
+	}
+
+	public static CustomerFull save(AONContext ctx, CustomerFull customerFull) {
+		ctx.checkWrite();
+		CustomerAutoComplete.autoComplete(ctx, customerFull.getRegistry());
+		CustomerValidation.validate(ctx, customerFull.getRegistry());
+		customerFull.setRegistry(CustomerDAO.save(ctx, customerFull.getRegistry()));
+		RegistryDAO.saveChilds(ctx, customerFull);
+		return getFull(ctx, customerFull.getId());
+	}
 	// *************************************************
 	// ********** TEST PURPOSE METHODS *****************
 	// *************************************************

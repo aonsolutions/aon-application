@@ -5,6 +5,7 @@ import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FinanceParams;
+import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -19,6 +20,27 @@ import com.google.gwt.json.client.JSONString;
 public class JsonParams extends JSONObject {
 	private static final DateTimeFormat FORMATTER = DateTimeFormat.getFormat("dd/MM/yyyy");
 	 
+	public static String convert(RegistryParams params) {
+		JSONObject json = new JSONObject();
+		JSONNull JSON_NULL = JSONNull.getInstance();
+		json.put(IRequestParamsNames.DOMAIN_NAME	,new JSONString( params.getDomainName()));
+		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
+		json.put(IRequestParamsNames.USER   		,new JSONString( params.getUser()));
+		json.put(IRequestParamsNames.SECURITY_LEVEL ,params.getSecurityLevel() == null?JSON_NULL :new JSONNumber( params.getSecurityLevel().value()));
+		json.put(IRequestParamsNames.HAS_CONFIDENTIALITY_ROLE,new JSONNumber( params.hasConfidentialityRole()?1:0));
+		json.put(IRequestParamsNames.ID 			,params.getId() 				== null? JSON_NULL : new JSONNumber( params.getId()));
+		json.put(IRequestParamsNames.DOCUMENT_TYPE	,params.getDocumentType()	== null? JSON_NULL : new JSONNumber( params.getDocumentType().ordinal()));
+		json.put(IRequestParamsNames.DOCUMENT_COUNTRY,params.getDocumentCountry()	== null? JSON_NULL : new JSONString( params.getDocumentCountry().getIso2()));
+		json.put(IRequestParamsNames.DOCUMENT		,params.getDocument() 			== null? JSON_NULL : new JSONString( params.getDocument()));
+		json.put(IRequestParamsNames.NAME		,params.getName() 			== null? JSON_NULL : new JSONString( params.getName()));
+		json.put(IRequestParamsNames.ALIAS		,params.getAlias() 			== null? JSON_NULL : new JSONString( params.getAlias()));
+		json.put(IRequestParamsNames.ACTIVE	,new JSONNumber( params.isActive()?1:0));
+		json.put(IRequestParamsNames.INACTIVE	,new JSONNumber( params.isInactive()?1:0));
+		json.put(IRequestParamsNames.BLOCKED	,new JSONNumber( params.isBlocked()?1:0));
+		json.put(IRequestParamsNames.ORDER_BY		,new JSONNumber( params.getOrder()));		
+		return json.toString();
+	}
+
 	public static String convert(AccountParams params) {
 		JSONObject json = new JSONObject();
 		JSONNull JSON_NULL = JSONNull.getInstance();

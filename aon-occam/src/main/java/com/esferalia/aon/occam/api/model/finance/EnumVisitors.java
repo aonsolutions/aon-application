@@ -18,6 +18,12 @@ public class EnumVisitors {
 		void visitSettled();
 	}
 	
+	public static interface IRegistryStatusVisitor {
+		void visitActive();
+		void visitInactive();
+		void visitBlocked();
+	}
+
 	public static interface IFinanceTrackingTypeVisitor {
 		void visitBatched();
 		void visitPaid();

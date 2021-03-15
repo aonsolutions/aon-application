@@ -21,6 +21,7 @@ public class RegistryMedia implements Serializable {
 	private Integer raddress;
 	
 	private boolean dirty;
+	private boolean removed;
 	
 	public Integer getId() {
 		return id;
@@ -117,6 +118,13 @@ public class RegistryMedia implements Serializable {
 	}
 	public RegistryMedia setDirty(boolean dirty) {
 		this.dirty = dirty;
+		return this;
+	}
+	public boolean isRemoved() {
+		return removed;
+	}
+	public RegistryMedia setRemoved(boolean removed) {
+		this.removed = removed;
 		return this;
 	}
 }

@@ -178,8 +178,8 @@ public class RegistryMediaDAO {
 			.returning(RMEDIA.ID)
 			.fetchOne()
 			.getValue(RMEDIA.ID);
-		media.setId(id);
-		ctx.log().info("INSERT REGISTRY MEDIA id: " + media.getId());
+		media.setId(id).setDirty(false);
+		ctx.log().info("INSERT REGISTRY MEDIA ( registry: "+ media.getRegistry() +") id: " + media.getId());
 		return media; 
 	}
 	
@@ -199,7 +199,8 @@ public class RegistryMediaDAO {
 			.set(RMEDIA.RADDRESS,media.getRaddress())
 			.where(RMEDIA.ID.eq(media.getId()))
 			.execute();
-		ctx.log().info("UPDATE MEDIA id: " + media.getId() + ". (" + count + " rows)");
+		ctx.log().info("UPDATE MEDIA ( registry: "+ media.getRegistry() +") id: " + media.getId() + ". (" + count + " rows)");
+		media.setDirty(false);
 		return media; 
 	}
 	

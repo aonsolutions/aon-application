@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -115,6 +116,17 @@ public class SupplierDAO {
 			.map(new SupplierFiller());
 	}
 	
+	public static Stream<Supplier> getStream(AONContext ctx, SupplierFilter filter, int offset, int limit){
+		return select(ctx,filter)
+				.orderBy(REGISTRY.NAME)
+				.offset(offset)
+				.limit(limit)
+				
+				.fetch()
+				.stream()
+				.map(new SupplierFiller());
+	}
+
 	public static Supplier get(AONContext ctx, Integer id){
 		return getStream(ctx, p -> p.getIdProperty().eq(id))
 			.findFirst()
@@ -126,7 +138,7 @@ public class SupplierDAO {
 		SupplierAutoComplete.autoComplete(ctx, supplier);
 		SupplierValidation.validate(ctx, supplier);
 		boolean nullId = (supplier.getId() == null); 
-		supplier = (Supplier) RegistryDAO.save(ctx, supplier);
+		supplier = RegistryDAO.save(ctx, supplier);
 		if (nullId || get(ctx, supplier.getId()) == null ) {
 			supplier = insert(ctx, supplier);
 		} else {
@@ -211,6 +223,28 @@ public class SupplierDAO {
 			.where(SUPPLIER.REGISTRY.eq(registry))
 			.execute();
 		ctx.log().info("ACCOUNT " + account + " LINKED TO SUPPLIER " + registry);
+	}
+
+	// ******************************************
+	// ********** FULL CREDITOR *****************
+	// ******************************************
+	public static SupplierFull getFull(AONContext ctx, Integer id){
+		SupplierFull full = new SupplierFull();
+		full.setRegistry(SupplierDAO.get(ctx, id));  
+		RegistryDAO.fillChilds(ctx, full);
+		if (full.getRegistry() != null && full.getRegistry().getAccount() != null) {
+			full.setAccount(AccountDAO.get(ctx, full.getRegistry().getAccount()));	
+		}
+		return full;
+	}
+	
+	public static SupplierFull save(AONContext ctx, SupplierFull supplierFull) {
+		ctx.checkWrite();
+		SupplierAutoComplete.autoComplete(ctx, supplierFull.getRegistry());
+		SupplierValidation.validate(ctx, supplierFull.getRegistry());
+		supplierFull.setRegistry(SupplierDAO.save(ctx, supplierFull.getRegistry()));
+		RegistryDAO.saveChilds(ctx, supplierFull);
+		return getFull(ctx, supplierFull.getId());
 	}
 
 	// *************************************************

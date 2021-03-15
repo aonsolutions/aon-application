@@ -217,7 +217,7 @@ public class AbstractOccamTest {
 		registry = RegistryDAO.save(ctx, registry);
 		ctx.log().info("Registry insertado correctamente");
 
-		RegistryAddress address = AonFaker.getRegistryAddress(ctx,registry.getId());
+		RegistryAddress address = AonFaker.getRegistryAddress(ctx,registry);
 		address.setDomain(newDomainId);
 		address = RegistryAddressDAO.save(ctx, address);
 		ctx.log().info("Registry Address insertado correctamente");
@@ -277,7 +277,7 @@ public class AbstractOccamTest {
 			.getId();
 		ctx.log().info("Perfil de usuario en la aplicación insertada correctamente");
 		
-		int enterpriseId = ctx.getDslContext()
+		ctx.getDslContext()
 				.insertInto(ENTERPRISE)
 				.set(ENTERPRISE.REGISTRY, registry.getId())
 				.set(ENTERPRISE.DOMAIN, newDomainId)

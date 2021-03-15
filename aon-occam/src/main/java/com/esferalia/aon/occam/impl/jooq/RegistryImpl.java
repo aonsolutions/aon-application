@@ -33,6 +33,8 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
@@ -49,6 +51,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryType;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
@@ -56,6 +59,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
 
 public class RegistryImpl implements IRegistry{
@@ -425,6 +429,69 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryOldDAO.insertRDirStaff(ctx, rdirstaff));
 	}
 
+	// **************************************************
+	// *************************************** [CUSTOMER]
+	// **************************************************
+	@Override
+	public Stream<Customer> getCustomers(AONContext ctx, CustomerFilter filter, int ofs, int limit) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getStream(ctx, filter, ofs, limit));
+	}
+	@Override
+	public CustomerFull getCustomerFull(AONContext ctx, Integer id) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getFull(ctx, id));
+	}
+
+	@Override
+	public CustomerFull save(AONContext ctx, CustomerFull customerFull) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.save(ctx, customerFull));
+	}
+
+	// **************************************************
+	// *************************************** [CREDITOR]
+	// **************************************************
+	@Override
+	public Stream<Creditor> getCreditors(AONContext ctx, CreditorFilter filter, int ofs, int limit) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CreditorDAO.getStream(ctx, filter, ofs, limit));
+	}
+	@Override
+	public CreditorFull getCreditorFull(AONContext ctx, Integer id) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CreditorDAO.getFull(ctx, id));
+	}
+
+	@Override
+	public CreditorFull save(AONContext ctx, CreditorFull creditorFull) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CreditorDAO.save(ctx, creditorFull));
+	}
+
+	// **************************************************
+	// *************************************** [SUPPLIER]
+	// **************************************************
+	@Override
+	public Stream<Supplier> getSuppliers(AONContext ctx, SupplierFilter filter, int ofs, int limit) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> SupplierDAO.getStream(ctx, filter, ofs, limit));
+	}
+	@Override
+	public SupplierFull getSupplierFull(AONContext ctx, Integer id) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> SupplierDAO.getFull(ctx, id));
+	}
+
+	@Override
+	public SupplierFull save(AONContext ctx, SupplierFull supplierFull) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> SupplierDAO.save(ctx, supplierFull));
+	}
+
+	// **************************************************
+	// **************************** [REGISTRY SUGGESTION]
+	// **************************************************
 	@Override
 	public Stream<Registry> getSuggestionRegistries(AONContext ctx, LinkedList<RegistryType> list,
 			RegistryFilter filter) {

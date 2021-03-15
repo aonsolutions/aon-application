@@ -273,6 +273,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_invalid")
 	String aonIconInvalid();
 	
+	@ClassName("aon_icon_block")
+	String aonIconBlock();
+
+	@ClassName("aon_icon_confidential")
+	String aonIconConfidential();
+
 	@ClassName("aon_icon_unknown")
 	String aonIconUnknown();
 	
@@ -357,6 +363,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_display_table_cell")
 	String aonDisplayTableCell();
+	
+	@ClassName("aon_display_table_footer_row")
+	String aonDisplayTableFooterRow();
 	
 	@ClassName("aon_display_grid")
 	String aonDisplayGrid();
@@ -525,6 +534,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_margin_right_double")
 	String aonMarginRightDouble();
+
+	@ClassName("aon_box_sizing_border_box")
+	String aonBoxSizingBorderBox();
 
 	@ClassName("aon_border")
 	String aonBorder();

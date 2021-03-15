@@ -59,8 +59,7 @@ public class TediProblems extends ScrollPanel {
 					container.setStyleName(AON.CSS.aonMarginTop());
 					container.addStyleName(AON.CSS.aonMarginBottom());
 					flowPanel.add(container);
-					TediContextVisitor tediContextVisitor = new TediContextVisitor(callback.getCurrentDomainName(),
-							callback.getCurrentDomainId(),callback.getCurrentUser(), callback.getConfiguration(), container);
+					TediContextVisitor tediContextVisitor = new TediContextVisitor(callback.getModuleOptions(), container);
 					error.getContext().getKey().visit(tediContextVisitor, new ICallback() {
 
 						@Override

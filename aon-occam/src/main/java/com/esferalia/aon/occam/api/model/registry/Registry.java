@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class Registry implements Serializable{
 	
@@ -23,6 +24,9 @@ public class Registry implements Serializable{
 	private Country nationality;
 	private SecurityLevel securityLevel;
 	
+	private boolean dirty;
+	private boolean selected;
+	
 	/**
 	 * @deprecated Use RegistryFull to access registry data.
 	 */
@@ -33,6 +37,7 @@ public class Registry implements Serializable{
 		return id;
 	}
 	public Registry setId(Integer id) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.id , id) );
 		this.id = id;
 		return this;
 	}
@@ -41,6 +46,7 @@ public class Registry implements Serializable{
 		return domain;
 	}
 	public Registry setDomain(Domain domain) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.domain, domain) );
 		this.domain = domain;
 		return this;
 	}
@@ -49,6 +55,7 @@ public class Registry implements Serializable{
 		return document;
 	}
 	public Registry setDocument(String document) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.document, document) );
 		this.document = document;
 		return this;
 	}
@@ -57,6 +64,7 @@ public class Registry implements Serializable{
 		return documentType;
 	}
 	public Registry setDocumentType(DocumentType documentType) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.documentType, documentType) );
 		this.documentType = documentType;
 		return this;
 	}
@@ -65,6 +73,7 @@ public class Registry implements Serializable{
 		return documentCountry;
 	}
 	public Registry setDocumentCountry(Country documentCountry) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.documentCountry, documentCountry) );
 		this.documentCountry = documentCountry;
 		return this;
 	}
@@ -73,6 +82,7 @@ public class Registry implements Serializable{
 		return name;
 	}
 	public Registry setName(String name) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.name, name) );
 		this.name = name;
 		return this;
 	}
@@ -81,6 +91,7 @@ public class Registry implements Serializable{
 		return alias;
 	}
 	public Registry setAlias(String alias) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.alias, alias) );
 		this.alias = alias;
 		return this;
 	}
@@ -89,6 +100,7 @@ public class Registry implements Serializable{
 		return legalPerson;
 	}
 	public Registry setLegalPerson(boolean legalPerson) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.legalPerson, legalPerson) );
 		this.legalPerson = legalPerson;
 		return this;
 	}
@@ -97,6 +109,7 @@ public class Registry implements Serializable{
 		return nationality;
 	}
 	public Registry setNationality(Country nationality) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.nationality, nationality) );
 		this.nationality = nationality;
 		return this;
 	}
@@ -105,6 +118,7 @@ public class Registry implements Serializable{
 		return securityLevel;
 	}
 	public Registry setSecurityLevel(SecurityLevel securityLevel) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.securityLevel, securityLevel) );
 		this.securityLevel = securityLevel;
 		return this;
 	}
@@ -113,6 +127,22 @@ public class Registry implements Serializable{
 	}
 	public Registry setConfidential(boolean confidential) {
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+		return this;
+	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
+	public Registry setDirty(boolean dirty) {
+		this.dirty = dirty;
+		return this;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+	public Registry setSelected(boolean selected) {
+		this.selected = selected;
 		return this;
 	}
 
@@ -149,6 +179,20 @@ public class Registry implements Serializable{
 				;
 	}
 		
+	public Registry get() {
+		return new Registry()
+			.setId(getId())
+			.setDomain(getDomain())
+			.setDocument(getDocument())
+			.setDocumentType(getDocumentType())
+			.setDocumentCountry(getDocumentCountry())
+			.setName(getName())
+			.setAlias(getAlias())
+			.setLegalPerson(isLegalPerson())
+			.setNationality(getNationality())
+			.setSecurityLevel(getSecurityLevel());
+	}
+
 	public <T extends Registry> T copy(Registry registry, T child) {
 		if (registry != null) {
 			child.setId(registry.getId());
@@ -164,5 +208,4 @@ public class Registry implements Serializable{
 		}
 		return child;
 	}
-	
 }

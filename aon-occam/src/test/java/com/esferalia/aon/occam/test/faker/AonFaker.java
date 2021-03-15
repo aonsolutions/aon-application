@@ -39,7 +39,7 @@ public class AonFaker {
 		registry.setName( faker.company().name() );
 		registry.setAlias( faker.company().profession() );
 		registry.setNationality( AonRandom.gt(5) ? Country.ES: AonRandom.randomEnum(Country.class));
-		registry.setConfidential( !AonRandom.gt(98) );
+		registry.setConfidential( !AonRandom.gt(3) );
 		return registry;
 	}
 
@@ -64,8 +64,8 @@ public class AonFaker {
 			// TODO
 			.setInvoicingGroup( null )
 			.setProjectGrouped( AonRandom.gt(4) )
-			.setDeliveryGrouped( AonRandom.gt(90) )
-			.setDeliveryValuated( AonRandom.gt(90) )
+			.setDeliveryGrouped( AonRandom.gt(50) )
+			.setDeliveryValuated( AonRandom.gt(50) )
 			// TODO
 			.setAccount( account == null? null : account.getId() );
 		
@@ -114,15 +114,14 @@ public class AonFaker {
 	public static RegistryAddress getRegistryAddress( AONContext ctx) {
 		return getRegistryAddress(ctx, null); 
 	}
-	public static RegistryAddress getRegistryAddress( AONContext ctx, Integer registryId ) {
-		if (registryId == null) {
-			Registry registry = AonRandom.getRegistry(ctx);
-			registryId = registry.getId();
+	public static RegistryAddress getRegistryAddress( AONContext ctx, Registry registry ) {
+		if (registry == null) {
+			registry = AonRandom.getRegistry(ctx);
 		}
 		GeoZone geozone = AonRandom.getGeozone(ctx,30);
 		RegistryAddress address = new RegistryAddress()
 			.setDomain(ctx.getDomainId())
-			.setRegistry(registryId)
+			.setRegistry(registry.getId())
 			.setMain(AonRandom.gt(50))
 			.setStreetType(AonRandom.randomEnum(StreetType.class,75))
 			.setRecipient( AonRandom.name(20, RADDRESS.RECIPIENT.getDataType().length()) )
@@ -150,7 +149,7 @@ public class AonFaker {
 		RegistryMedia media = new RegistryMedia();
 		media.setDomain(ctx.getDomainId());
 		media.setRegistry(registry.getId());
-		MediaType mediaType = AonRandom.randomEnum(MediaType.class); 
+		MediaType mediaType = AonRandom.randomEnum(MediaType.class, 5); 
 		media.setMedia(mediaType);
 		if (mediaType != null) {
 			mediaType.visit(new IMediaTypeVisitor() {

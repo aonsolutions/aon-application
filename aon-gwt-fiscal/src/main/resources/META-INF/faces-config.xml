@@ -10,6 +10,22 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- =================== REGISTRY ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_customer</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/customer.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_supplier</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/supplier.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gwt_creditor</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/creditor.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 	<!-- =================== FINANCE ========================== -->
 	<navigation-rule>
 		<navigation-case>

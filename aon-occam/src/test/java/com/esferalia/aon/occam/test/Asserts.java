@@ -3,15 +3,21 @@ package com.esferalia.aon.occam.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 
 public class Asserts {
 	
@@ -22,6 +28,18 @@ public class Asserts {
 		if ( expected != null) assertNotNull(msg,actual);
 	}
 	
+	public static void assertEqualsList(String msg,List<?> expected, List<?> actual) {
+		if ( (expected == null || expected.isEmpty()) 
+			&& ( (actual != null && !actual.isEmpty()))) 
+			fail( msg + " actual List is not Empty");
+		if ( (expected != null && !expected.isEmpty()) 
+			&& (actual == null || actual.isEmpty()))  
+			fail( msg + " actual List is Empty");
+		if ( expected != null && actual != null) {
+			assertEquals(" sizes not fit", expected.size(), actual.size());	
+		}
+	}
+
 	public static void assertEqualsRegistry (Registry expected, Registry actual) {
 		assertEqualsNulls( "Registry", expected, actual);
 		assertEquals("Id", expected.getId(), actual.getId());
@@ -36,12 +54,34 @@ public class Asserts {
 		assertEquals("SecurityLevel",expected.getSecurityLevel() , actual.getSecurityLevel());
 	}
 	
-	public static void assertEqualsRegistryFull (RegistryFull expected, RegistryFull actual) {
+	public static void assertEqualsRegistryFull (RegistryFull<?> expected, RegistryFull<?> actual) {
 		assertEqualsNulls( "RegistryFull", expected, actual);
-		
+		assertEqualsNulls( "RegistryFull Registry", expected.getRegistry(), actual.getRegistry());
+		assertEqualsList( "RegistryFull Addresses Size",expected.getAddresses(), actual.getAddresses());
+		assertEqualsList( "RegistryFull Medias Size",expected.getMedias(), actual.getMedias());
+		for (int i = 0; i < expected.getAddresses().size(); i++) {
+			assertEqualsRegistryAddress(expected.getAddresses().get(i), actual.getAddresses().get(i));	
+		}
+		assertEquals( "RegistryFull Medias Size", expected.getMedias().size(), actual.getMedias().size());
+		for (int i = 0; i < expected.getMedias().size(); i++) {
+			assertEqualsRegistryMedia(expected.getMedias().get(i), actual.getMedias().get(i));	
+		}
+	}
+	
+	public static void assertEqualsCreditorFull (CreditorFull expected, CreditorFull actual) {
+		assertEqualsRegistryFull (expected, actual);
+		assertEqualsCreditor(expected.getRegistry(), actual.getRegistry());
 	}
 
-		
+	public static void assertEqualsCustomerFull (CustomerFull expected, CustomerFull actual) {
+		assertEqualsRegistryFull (expected, actual);
+		assertEqualsCustomer(expected.getRegistry(), actual.getRegistry());
+	}
+
+	public static void assertEqualsSupplierFull (SupplierFull expected, SupplierFull actual) {
+		assertEqualsRegistryFull (expected, actual);
+		assertEqualsSupplier(expected.getRegistry(), actual.getRegistry());
+	}
 
 	public static void assertEqualsCustomer(Customer expected, Customer actual) {
 		assertEqualsNulls( "Customer", expected, actual);

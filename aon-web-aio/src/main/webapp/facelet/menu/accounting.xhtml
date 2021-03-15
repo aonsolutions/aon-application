@@ -186,6 +186,38 @@
 											value="#{bundle.accounting_period_module}" />
 									</aon:div>
 								</aon:if>
+								<aon:if test="#{domainSwitcher.alphaUser}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_customer-accounting"
+											action="gwt_customer-accounting"
+											title="Clientes">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="Clientes" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_supplier-accounting"
+											action="gwt_supplier-accounting"
+											title="Proveedores">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="Proveedores" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_creditor-accounting"
+											action="gwt_creditor-accounting"
+											title="Acreedores">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="Acreedores" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 

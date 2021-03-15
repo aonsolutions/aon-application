@@ -80,6 +80,7 @@ public class RegistryAddressDAO {
 					.setGeozoneName(r.getValue(GEOZONE.NAME))
 					.setAlias(r.getValue(RADDRESS.ALIAS))
 					.setMunicipalityCode(r.getValue(RADDRESS.MUNICIPALITY_CODE))
+					.setDirty(false)
 					;
 		}
 	}
@@ -217,30 +218,31 @@ public class RegistryAddressDAO {
 			.returning(RADDRESS.ID)
 			.fetchOne()
 			.getValue(RADDRESS.ID);
-		address.setId(id);
+		address.setId(id).setDirty(false);
 		ctx.log().info("INSERT REGISTRY ADDRESS ( registry: "+ address.getRegistry() +") id: " + address.getId());
 		return address;
 	}
 	private static RegistryAddress update(AONContext ctx, RegistryAddress address){
 		int count = ctx.getDslContext().update(RADDRESS)
-				.set(RADDRESS.DOMAIN,address.getDomain())
-				.set(RADDRESS.REGISTRY,address.getRegistry())
-				.set(RADDRESS.TYPE,address.isMain()?MAIN_ADDRESS:DELEGATION_ADDRESS)
-				.set(RADDRESS.RECIPIENT,address.getRecipient())
-				.set(RADDRESS.STREET_TYPE,address.getStreetType()==null?null:address.getStreetType().getAeatCode())
-				.set(RADDRESS.ADDRESS,address.getAddress())	
-				.set(RADDRESS.NUMBER,address.getNumber())	
-				.set(RADDRESS.ADDRESS2,address.getAddress2())
-				.set(RADDRESS.ADDRESS3,address.getAddress3())
-				.set(RADDRESS.ZIP,address.getZip())
-				.set(RADDRESS.CITY,address.getCity())
-				.set(RADDRESS.GEOZONE,address.getGeozone())	
-				.set(RADDRESS.ALIAS,address.getAlias())
-				.set(RADDRESS.MUNICIPALITY_CODE,address.getMunicipalityCode())
-				.where(RADDRESS.ID.eq(address.getId()))
-				.execute();
-			ctx.log().info("UPDATE REGISTRY ADDRESS ( registry: "+ address.getRegistry() +") id: " + address.getId() + ". (" + count + " rows)");
-			return address;
+			.set(RADDRESS.DOMAIN,address.getDomain())
+			.set(RADDRESS.REGISTRY,address.getRegistry())
+			.set(RADDRESS.TYPE,address.isMain()?MAIN_ADDRESS:DELEGATION_ADDRESS)
+			.set(RADDRESS.RECIPIENT,address.getRecipient())
+			.set(RADDRESS.STREET_TYPE,address.getStreetType()==null?null:address.getStreetType().getAeatCode())
+			.set(RADDRESS.ADDRESS,address.getAddress())	
+			.set(RADDRESS.NUMBER,address.getNumber())	
+			.set(RADDRESS.ADDRESS2,address.getAddress2())
+			.set(RADDRESS.ADDRESS3,address.getAddress3())
+			.set(RADDRESS.ZIP,address.getZip())
+			.set(RADDRESS.CITY,address.getCity())
+			.set(RADDRESS.GEOZONE,address.getGeozone())	
+			.set(RADDRESS.ALIAS,address.getAlias())
+			.set(RADDRESS.MUNICIPALITY_CODE,address.getMunicipalityCode())
+			.where(RADDRESS.ID.eq(address.getId()))
+			.execute();
+		ctx.log().info("UPDATE REGISTRY ADDRESS ( registry: "+ address.getRegistry() +") id: " + address.getId() + ". (" + count + " rows)");
+		address.setDirty(false);
+		return address;
 	}
 	
 	public static void delete(AONContext ctx, Integer id){

@@ -12,6 +12,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	ValidationSaveEmptyStatus.class,
 	CRUDETest.class,
 	CRUDEExistingRegistryTest.class,
+	CRUDEFullTest.class,
 })
 public class CreditorTestSuite {
 

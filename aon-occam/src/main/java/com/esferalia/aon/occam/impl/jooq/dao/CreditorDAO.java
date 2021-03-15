@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -115,6 +116,17 @@ public class CreditorDAO {
 			.stream()
 			.map(new CreditorFiller());
 	}
+	public static Stream<Creditor> getStream(AONContext ctx, CreditorFilter filter, int offset, int limit){
+		return select(ctx,filter)
+				.orderBy(REGISTRY.NAME)
+				.offset(offset)
+				.limit(limit)
+				
+				.fetch()
+				.stream()
+				.map(new CreditorFiller());
+	}
+	
 	
 	public static Creditor get(AONContext ctx, Integer id){
 		return getStream(ctx, p -> p.getIdProperty().eq(id))
@@ -127,7 +139,7 @@ public class CreditorDAO {
 		CreditorAutoComplete.autoComplete(ctx, creditor);
 		CreditorValidation.validate(ctx, creditor);
 		boolean nullId = (creditor.getId() == null); 
-		creditor = (Creditor) RegistryDAO.save(ctx, creditor);
+		creditor = RegistryDAO.save(ctx, creditor);
 		if (nullId || get(ctx, creditor.getId()) == null ) {
 			creditor = insert(ctx, creditor);
 		} else {
@@ -208,6 +220,28 @@ public class CreditorDAO {
 		ctx.log().info("ACCOUNT " + account + " LINKED TO CREDITOR " + registry);
 	}
 
+	// ******************************************
+	// ********** FULL CREDITOR *****************
+	// ******************************************
+	public static CreditorFull getFull(AONContext ctx, Integer id){
+		CreditorFull full = new CreditorFull();
+		full.setRegistry(CreditorDAO.get(ctx, id));  
+		RegistryDAO.fillChilds(ctx, full);
+		if (full.getRegistry() != null && full.getRegistry().getAccount() != null) {
+			full.setAccount(AccountDAO.get(ctx, full.getRegistry().getAccount()));	
+		}
+		return full;
+	}
+
+	public static CreditorFull save(AONContext ctx, CreditorFull creditorFull) {
+		ctx.checkWrite();
+		CreditorAutoComplete.autoComplete(ctx, creditorFull.getRegistry());
+		CreditorValidation.validate(ctx, creditorFull.getRegistry());
+		creditorFull.setRegistry(CreditorDAO.save(ctx, creditorFull.getRegistry()));
+		RegistryDAO.saveChilds(ctx, creditorFull);
+		creditorFull = getFull(ctx, creditorFull.getId());
+		return creditorFull;
+	}
 	// *************************************************
 	// ********** TEST PURPOSE METHODS *****************
 	// *************************************************

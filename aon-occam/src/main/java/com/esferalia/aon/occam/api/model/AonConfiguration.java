@@ -178,6 +178,9 @@ public class AonConfiguration implements Serializable {
 	public LinkedList<GeoZone> getGeozones() {
 		return geozones;
 	}
+	public boolean hasGeozones() {
+		return this.geozones != null && this.geozones.size() > 0;
+	}
 	public AonConfiguration setGeozones(LinkedList<GeoZone> geozones) {
 		this.geozones = geozones;
 		return this;
@@ -217,6 +220,10 @@ public class AonConfiguration implements Serializable {
 		this.availableScopes = availableScopes;
 		return this;
 	}
+	public boolean hasAvailableScopes() {
+		return getAvailableScopes() != null &&  getAvailableScopes().size() > 0;
+	}
+			
 	public Tax getDefaultVatPercent() {
 		return defaultVatPercent;
 	}

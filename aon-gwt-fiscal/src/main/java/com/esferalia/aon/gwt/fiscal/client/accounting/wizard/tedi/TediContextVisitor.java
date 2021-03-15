@@ -7,12 +7,12 @@ import java.util.logging.Logger;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -59,31 +59,19 @@ public class TediContextVisitor implements ITediContextVisitor {
 	}
 
 	private static AccountEntryServiceAsync SERVICE;
-	private String currentDomainName;
-	private int currentDomain;
-	private String currentUser;
-	private AonConfiguration configuration;
+	private AccountEntryModuleOptions options;
 	private SimplePanel container;
 
-	public TediContextVisitor(String domainName, int domain, String user,AonConfiguration configuration, SimplePanel container) {
-		this.currentDomainName = domainName;
-		this.currentDomain = domain;
-		this.currentUser = user;
-		this.configuration = configuration;
+	
+	public TediContextVisitor(AccountEntryModuleOptions moduleOptions, SimplePanel container) {
+		this.options = moduleOptions;
 		this.container = container;
 		AccountEntryServiceAsync serviceRaw = GWT.create(AccountEntryService.class);
 		SERVICE = new AccountEntryServiceAsyncDecorator(serviceRaw);
 	}
 
-	private String getCurrentDomainName() {
-		return currentDomainName;
-	}
-
-	private int getCurrentDomain() {
-		return currentDomain;
-	}
-	private String getCurrentUser() {
-		return currentUser;
+	private AccountEntryModuleOptions getOptions() {
+		return this.options;
 	}
 
 	public SimplePanel getContainer() {
@@ -199,7 +187,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 					if (ar != null) {
 						LOGGER.info( ar.getId() + " " + ar.getAccountCode() + " " + ar.getName());
 					}
-					SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), ar, null,
+					SERVICE.initializeInvoice(getOptions().getDomainName(), getOptions().getDomain(), getOptions().getUser(), ar, null,
 							callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
 						
 						@Override
@@ -244,7 +232,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 				@Override
 				public void onAccept(AccountingRegistry registry) {
 					final AccountingRegistry ar = registry;
-					SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), ar, null,
+					SERVICE.initializeInvoice(getOptions().getDomainName(), getOptions().getDomain(), getOptions().getUser(), ar, null,
 							callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
 	
 								@Override
@@ -438,8 +426,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 	}
 
 	private void showRegistryDialog(String label, ITediCallback<AccountingRegistry> callback) {
-		final AonAccountingRegistryBox registryBox = new AonAccountingRegistryBox(getCurrentDomainName(), getCurrentDomain(),
-				getCurrentUser(),configuration, false);
+		final AonAccountingRegistryBox registryBox = new AonAccountingRegistryBox(getOptions(), false);
 		registryBox.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
 			@Override
 			public void onSelection(SelectionEvent<AccountingRegistry> event) {
@@ -516,7 +503,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 						
 					}
 					// TODO Inicializar los datos del registry.
-					registryBox.showDialog(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(),configuration,ar);
+					registryBox.showDialog(getOptions(),ar);
 				}
 			});
 			dialog.setContent("", newCreditor);		

@@ -41,6 +41,12 @@ public class AonRandom {
     public static boolean gt( int threshold) {
 		return faker.random().nextInt(0,100) > threshold;
 	}
+    
+    public static String lorem( int nullThreshold, int maxLength ) {
+    	return ( gt(nullThreshold) )
+        		?faker.lorem().characters(0, maxLength)
+        		:null;
+    }
 
     public static String name( int nullThreshold, int length ) {
     	return ( gt(nullThreshold) )
@@ -56,6 +62,9 @@ public class AonRandom {
     public static int number( int from, int to) {
     	return faker.random().nextInt(from, to);
     }
+    public static int getInt( int from, int to) {
+    	return number(from, to);
+    }
     public static double getDouble( int from, int to) {
     	return getDouble(from, to , 2);
     }
@@ -70,7 +79,7 @@ public class AonRandom {
     }	
 
     public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
-    	return randomEnum(clazz,100);
+    	return randomEnum(clazz,0);
     }	
     public static <T extends Enum<?>> T randomEnum(Class<T> clazz, int nullThreshold){
     	return gt(nullThreshold)
@@ -79,7 +88,7 @@ public class AonRandom {
     }	
 
 	public static Tariff getTariff(AONContext ctx) {
-		return getTariff(ctx, 100);
+		return getTariff(ctx, 0);
 	}
 	public static Tariff getTariff(AONContext ctx, int nullThreshold){
 		return gt(nullThreshold)
@@ -88,7 +97,7 @@ public class AonRandom {
 	}
 
 	public static GeoZone getGeozone(AONContext ctx) {
-		return getGeozone(ctx, 100);
+		return getGeozone(ctx, 0);
 	}
 	public static GeoZone getGeozone(AONContext ctx, int nullThreshold){
 		return gt(nullThreshold)

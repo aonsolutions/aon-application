@@ -253,10 +253,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		undeductible.setValue(false);
 		
 		registryBox = new AonAccountingRegistryBox(
-				invoiceCallback.getCurrentDomainName()
-				,invoiceCallback.getCurrentDomainId()
-				,invoiceCallback.getCurrentUser()
-				,invoiceCallback.getConfiguration()
+				invoiceCallback.getModuleOptions()
 				,true);
 		registryBox.addStyleName(AON.CSS.aonFlexGrow1());
 		

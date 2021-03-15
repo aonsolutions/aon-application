@@ -1,0 +1,36 @@
+package com.esferalia.aon.gwt.common.client;
+
+import java.util.LinkedList;
+
+import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.RegistryParams;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+public interface RegistryServiceAsync {
+
+	// **************************************************
+	// *************************************** [CUSTOMER]
+	// **************************************************
+	void getCustomers(String domainName, int domain, String user, RegistryParams params, int ofs, int limit, AsyncCallback<LinkedList<Customer>> asyncCallback);
+	void getCustomerFull(String domainName, int domain, String user, Integer id, AsyncCallback<CustomerFull> callback);
+	void save(String domainName, int domain, String user, CustomerFull customerFull, AsyncCallback<CustomerFull> callback);
+
+	// **************************************************
+	// *************************************** [CREDITOR]
+	// **************************************************
+	void getCreditors(String domainName, int domain, String user, RegistryParams params, int ofs, int limit, AsyncCallback<LinkedList<Creditor>> asyncCallback);
+	void getCreditorFull(String domainName, int domain, String user, Integer id, AsyncCallback<CreditorFull> callback);
+	void save(String domainName, int domain, String user, CreditorFull creditorFull, AsyncCallback<CreditorFull> callback);
+
+	// **************************************************
+	// *************************************** [SUPPLIER]
+	// **************************************************
+	void getSuppliers(String domainName, int domain, String user, RegistryParams params, int ofs, int limit, AsyncCallback<LinkedList<Supplier>> asyncCallback);
+	void getSupplierFull(String domainName, int domain, String user, Integer id, AsyncCallback<SupplierFull> callback);
+	void save(String domainName, int domain, String user, SupplierFull supplierFull, AsyncCallback<SupplierFull> callback);
+}

@@ -17,7 +17,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	ValidationSaveEmptyNationality.class,
 	ValidationSaveLegalEntity.class,
 	CRUDETest.class,
-	CRUDEFullTest.class,
 })
 public class RegistryTestSuite {
 	

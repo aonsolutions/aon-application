@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -69,7 +70,9 @@ public class RegistryDAO {
 					.setAlias(record.getValue(registry.ALIAS))
 					.setLegalPerson(AonEnumUtils.getBoolean(record.getValue(registry.TYPE)))
 					.setNationality(Country.safeValueOf(record.getValue(registry.NATIONALITY)) )
-					.setSecurityLevel(SecurityLevel.safeValueOf(record.getValue(registry.SECURITY_LEVEL)));
+					.setSecurityLevel(SecurityLevel.safeValueOf(record.getValue(registry.SECURITY_LEVEL)))
+					.setDirty(false)
+					;
 		}
 	}
 	private static SelectConditionStep<Record> select(AONContext ctx, RegistryFilter filter) {
@@ -94,15 +97,18 @@ public class RegistryDAO {
 	}
 
 	public static <R extends Registry> R save(AONContext ctx, R registry) {
-		return (registry.getId() == null)
-			?insert(ctx, registry)
-			:update(ctx, registry);
+		ctx.checkWrite();
+		RegistryAutoComplete.autoComplete(ctx, registry);
+		RegistryValidation.validate(ctx, registry);
+		if (registry.isDirty()) {
+			registry = (registry.getId() == null)?insert(ctx, registry):update(ctx, registry);
+		} else {
+			ctx.log().info("NOT SAVED REGISTRY (not dirty) id: " + registry.getId());
+		}
+		return registry;
 	}
 	
 	private static <R extends Registry> R insert(AONContext ctx, R registry) {
-		ctx.checkWrite();
-		RegistryAutoComplete.autoComplete(ctx, registry);
-		RegistryValidation.validate(ctx, registry); 
 		Integer id = ctx.getDslContext().insertInto(REGISTRY)
 			.set(REGISTRY.DOMAIN, registry.getDomain().getId())
 			.set(REGISTRY.DOCUMENT,registry.getDocument())
@@ -124,9 +130,6 @@ public class RegistryDAO {
 	}
 
 	private static <R extends Registry> R update(AONContext ctx, R registry) {
-		ctx.checkWrite();
-		RegistryAutoComplete.autoComplete(ctx, registry);
-		RegistryValidation.validate(ctx, registry); 
 		int count = ctx.getDslContext().update(REGISTRY)
 			.set(REGISTRY.DOCUMENT,registry.getDocument())
 			.set(REGISTRY.DOCUMENT_TYPE,registry.getDocumentType()==null?null:registry.getDocumentType().value())
@@ -156,48 +159,47 @@ public class RegistryDAO {
 	// *************************************************
 	// ********** FULL REGISTRY *****************
 	// *************************************************
+/*	
 	public static RegistryFull getFull(AONContext ctx, Integer id){
-		Registry registry = getStream(ctx, p -> p.getIdProperty().eq(id))
-			.findFirst()
-			.orElse(null);
-		RegistryFull full = null;
-		if (registry != null) {
-			full = new RegistryFull()
-				.setRegistry(registry)
-				.setAddresses( RegistryAddressDAO.getStreamByRegistry(ctx, registry.getId()).collect(Collectors.toCollection(LinkedList::new)))
-				.setMedias( RegistryMediaDAO.getStreamByRegistry(ctx, registry.getId()).collect(Collectors.toCollection(LinkedList::new)))
-			;
-		}
+		return getFull(ctx, id, null);
+	}
+ */
+
+	public static <R extends RegistryFull<?>> R fillChilds(AONContext ctx, R full){
+		full.setAddresses( RegistryAddressDAO.getStreamByRegistry(ctx, full.getId()).collect(Collectors.toCollection(LinkedList::new)))
+			.setMedias( RegistryMediaDAO.getStreamByRegistry(ctx, full.getId()).collect(Collectors.toCollection(LinkedList::new)))
+		;
 		return full;
 	}
-
-	public static RegistryFull save(AONContext ctx, RegistryFull registryFull) {
-		if (registryFull == null) throw new IllegalArgumentException("registryFull is null");
-		if (registryFull.getRegistry() == null) throw new IllegalArgumentException("registryFull.registry is null");
-		if (registryFull.isNew()) {
-			ctx.log().info("INSERT REGISTRY FULL");
-		} else {
-			ctx.log().info("UPDATE REGISTRY FULL");
-		}
-		// Registry 
-		registryFull.setRegistry( registryFull.isNew()
-			?insert(ctx, registryFull.getRegistry())
-			:update(ctx, registryFull.getRegistry())
-		);
-		// Registry Medias
-		if (registryFull.hasMedias()) {
-			for (RegistryMedia media : registryFull.getMedias()) {
-				if (media.isDirty()) {
-					media.setRegistry(registryFull.getId());
-					RegistryMediaDAO.save(ctx, media);
+	public static <R extends RegistryFull<?>> R saveChilds(AONContext ctx, R registryFull) {
+		// Registry Addresses
+		if (registryFull.hasAddresses()) {
+			for (RegistryAddress address : registryFull.getAddresses()) {
+				if (address.isRemoved()) {
+					RegistryAddressDAO.delete(ctx, address.getId());
+				} else if (address.isDirty()) {
+					address.setRegistry(registryFull.getId());
+					address.setDomain(registryFull.getDomain());
+					address = RegistryAddressDAO.save(ctx, address);
 				}
 			}
 		}
-		RegistryFull ret = getFull(ctx, registryFull.getId()); 
-		return ret;
+		// Registry Medias
+		if (registryFull.hasMedias()) {
+			for (RegistryMedia media : registryFull.getMedias()) {
+				if (media.isRemoved()) {
+					RegistryMediaDAO.delete(ctx, media.getId());
+				} else if (media.isDirty()) {
+					media.setRegistry(registryFull.getId());
+					media.setDomain(registryFull.getDomain());
+					media = RegistryMediaDAO.save(ctx, media);
+				}
+			}
+		}
+		return registryFull;
 	}
 	
-	public static void delete(AONContext ctx, RegistryFull registryFull) {
+	public static <R extends RegistryFull<?>> void delete(AONContext ctx, R registryFull) {
 		// Registry Medias
 		if (registryFull.hasMedias()) {
 			for (RegistryMedia media : registryFull.getMedias()) {

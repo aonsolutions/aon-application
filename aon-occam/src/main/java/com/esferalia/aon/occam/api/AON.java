@@ -121,6 +121,7 @@ import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
+import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.Signature;
@@ -177,6 +178,8 @@ import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Question;
@@ -194,6 +197,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -247,6 +251,7 @@ import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
+import com.esferalia.aon.occam.server.registry.RegistryUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -6185,5 +6190,112 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	// **************************************************
+	// *************************************** [CUSTOMER]
+	// **************************************************
+	public static LinkedList<Customer> getCustomers(String domainName, int domain, String user, RegistryParams params, int ofs, int limit) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().getCustomers(ctx, p -> RegistryUtils.getFilter(p, params), ofs, limit)
+				.collect(Collectors.toCollection(LinkedList::new));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static CustomerFull getCustomerFull(String domainName, int domain, String user, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().getCustomerFull(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static CustomerFull save(String domainName, int domain, String user, CustomerFull customerFull) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().save(ctx, customerFull);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	// **************************************************
+	// *************************************** [CREDITOR]
+	// **************************************************
+	public static LinkedList<Creditor> getCreditors(String domainName, int domain, String user, RegistryParams params, int ofs, int limit) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().getCreditors(ctx, p -> RegistryUtils.getFilter(p, params), ofs, limit)
+				.collect(Collectors.toCollection(LinkedList::new));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static CreditorFull getCreditorFull(String domainName, int domain, String user, Integer id){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().getCreditorFull(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static CreditorFull save(String domainName, int domain, String user, CreditorFull creditorFull) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().save(ctx, creditorFull);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	// **************************************************
+	// *************************************** [SUPPLIER]
+	// **************************************************
+	public static LinkedList<Supplier> getSuppliers(String domainName, int domain, String user, RegistryParams params, int ofs, int limit) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().getSuppliers(ctx, p -> RegistryUtils.getFilter(p, params), ofs, limit)
+				.collect(Collectors.toCollection(LinkedList::new));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static SupplierFull getSupplierFull(String domainName, int domain, String user, Integer id){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().getSupplierFull(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static SupplierFull save(String domainName, int domain, String user, SupplierFull supplierFull) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().save(ctx, supplierFull);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	
 }

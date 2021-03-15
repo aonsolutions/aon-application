@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<meta name="gwt:property" content="locale=es_ES" />
+	<aon:valueParam name="entryPoint" default="Customer" />
+	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
+	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
+	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
+<style>
+body {
+	margin: 0;
+}
+</style>
+
+	<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
+	<ui:include src="/facelet/homepage/menu.xhtml" />
+
+	<div id="rootPanel"
+		style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;">
+	</div>
+
+	<script type="text/javascript">
+	<![CDATA[
+	 	function getCurrentDomain() {
+			return #{gwtDomain};
+		}
+		function getCurrentDomainName() {
+	       	return "#{gwtDomainName}"
+	  	}
+		function getCurrentUser() {
+	       	return "#{gwtUser}"
+	  	}
+
+		var search = "/aon_gwt_fiscal.nocache.js";
+		var scripts = window.document.getElementsByTagName("script");
+		for (var i = 0; i < scripts.length; ++i) {
+			var script = scripts[i]; 
+			if (script.src != null && script.src.indexOf(search) != -1) {
+				var parent = script.parentNode;
+				parent.removeChild(script);
+				break;
+			}
+		}
+
+		var iframes = window.document.getElementsByTagName("iframe");
+		for (var i = 0; i < iframes.length; ++i) {
+			var iframe = iframes[i]; 
+			if (iframe.src != null && iframe.id == "aon_gwt_fiscal") {
+				var parent = iframe.parentNode;
+				parent.removeChild(iframe);
+				break;
+			}
+		}
+
+	    	 
+		function startModule() {
+			if (window.document.createElement && window.document.getElementsByTagName) {
+				var script = window.document.createElement("script");
+				script.type = "text/javascript";
+				script.defer = "true";
+				script.src = "aon_gwt_fiscal/aon_gwt_fiscal.nocache.js?entryPoint=#{entryPoint}";
+				var heads = window.document.getElementsByTagName("head");
+				if (heads && heads[0]) {
+					heads[0].appendChild(script);
+					triggerModuleStart();
+				}
+			}
+		}
+	
+	    function triggerModuleStart(){
+	        try{
+	        	aon_gwt_fiscal.onInjectionDone("aon_gwt_fiscal");
+	        	if ( !window.document.createEventObject ) {
+	            	var evt = window.document.createEvent("HTMLEvents");
+	            	evt.initEvent("DOMContentLoaded", true, true);
+	            	window.document.dispatchEvent(evt);
+	           	}
+	        } catch ( e ) {
+	        	// window.setTimeout("triggerModuleStart()", 100 );
+	        } 
+	    }
+	    
+		startModule();
+	]]>
+	</script>
+
+</ui:composition>

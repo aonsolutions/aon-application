@@ -4,10 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.HasAudit;
+import com.esferalia.aon.occam.api.model.IAccountId;
+import com.esferalia.aon.occam.api.model.IScopable;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
-public class Creditor extends Registry implements Serializable, HasAudit {
+public class Creditor extends Registry implements Serializable, HasAudit, IScopable<Creditor>, IAccountId<Creditor> {
 
 	private static final long serialVersionUID = -8387527011020131042L;
 
@@ -66,17 +68,21 @@ public class Creditor extends Registry implements Serializable, HasAudit {
 		return this;
 	}
 
+	@Override
 	public Integer getScope() {
 		return scope;
 	}
+	@Override
 	public Creditor setScope(Integer scope) {
 		this.scope = scope;
 		return this;
 	}
 
+	@Override
 	public Integer getAccount() {
 		return account;
 	}
+	@Override
 	public Creditor setAccount(Integer account) {
 		this.account = account;
 		return this;

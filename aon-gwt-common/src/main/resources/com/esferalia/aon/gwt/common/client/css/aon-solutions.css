@@ -181,6 +181,10 @@
 .aon_icon_valid { background-image: iconValid;}
 @url iconInvalid aonIconInvalid;
 .aon_icon_invalid { background-image: iconInvalid;}
+@url iconBlock aonIconBlock;
+.aon_icon_block { background-image: iconBlock;}
+@url iconConfidential aonIconConfidential;
+.aon_icon_confidential { background-image: iconConfidential;}
 @url iconUnknown aonIconUnknown;
 .aon_icon_unknown { background-image: iconUnknown;}
 @url iconEurope aonIconEurope;
@@ -271,6 +275,10 @@
 	display:table-cell;
 	padding: 2px;
 	vertical-align: middle;
+}
+
+.aon_display_table_footer_row {
+	display:table-footer-group;
 }
 
 .aon_display_grid {
@@ -526,7 +534,9 @@
 .aon_pointer_events_auto {
 	pointer-events: auto;
 }
-
+.aon_box_sizing_border_box {
+	box-sizing: border-box;
+}
 .aon_border {
 	border: #c4c4c4 1px solid;
 }
@@ -624,7 +634,6 @@
 .aon_grid {
 	border-collapse: collapse;
 	width: 100%;
-	padding: 0px 1.5em 0em 1.5em;
 	box-sizing: border-box;
 }
 .aon_grid td {
@@ -1085,6 +1094,9 @@
 	text-align: left;
 	text-transform: uppercase;
 	width: auto;
+}
+.aon_cancel_button:hover, .aon_cancel_button:focus	{
+	background-color: #FBEDB6;
 }
 
 .aon_cancel_button_small {

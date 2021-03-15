@@ -17,11 +17,10 @@ public class AonDisplayGrid extends FlowPanel {
 			return cell;
 		}
 		public AonDisplayGridCell addCell(String ... style ) {
-			AonDisplayGridCell cell = new AonDisplayGridCell();
+			AonDisplayGridCell cell = addCell();
 			for (String st : style) {
 				cell.addStyleName(st);
 			}
-			add(cell);
 			return cell;
 		}
 		public AonDisplayGridHeaderRow addCell( Widget widget ) {

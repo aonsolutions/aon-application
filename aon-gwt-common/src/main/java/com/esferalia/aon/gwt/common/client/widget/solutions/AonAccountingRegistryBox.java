@@ -6,9 +6,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AccountingRegistryService;
 import com.esferalia.aon.gwt.common.client.AccountingRegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.AccountingRegistryServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryFullPanel.AonAccountingRegistryFullPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryPanel.AonAccountingRegistryPanelCallback;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -62,17 +62,19 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 	protected static final String END_STRONG = "</strong>";
 	
 	private static final int MIN_CHARACTERS = 3;
-	private static final int MAX_CHARACTERS = 9;
+	private static final int MAX_CHARACTERS = 14;
 
 	private AccountingRegistryServiceAsync SERVICE;
 
-	private Integer id;
-	private String description;
+//	private Integer id;
+//	private String description;
+	private AccountingRegistry accountingRegistry;
 	
 	private FlowPanel rooPanel; 
-	private SuggestBox accountingRegistry;
+	private SuggestBox accountingRegistryBox;
 	private TextBox accountingRegistryTextBox;
-	private AonTableButton dataButton;
+//	private AonTableButton dataButton;
+	private AonTableButton dataBisButton;
 	private InlineLabel descriptionLabel;
 	private boolean required = true;
 	
@@ -135,18 +137,19 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 		
 	}
 	
-	public AonAccountingRegistryBox(final String domainName, final int domain,final String user) {
-		this(domainName,domain,user,null,true);
-	}
-	public AonAccountingRegistryBox(final String domainName, final int domain, final String user,final AonConfiguration config) {
-		this(domainName,domain,user,config,true);
-	}
+//	public AonAccountingRegistryBox(final String domainName, final int domain,final String user) {
+//		this(domainName,domain,user,null,true);
+//	}
+//	public AonAccountingRegistryBox(final String domainName, final int domain, final String user,final AonConfiguration config) {
+//		this(domainName,domain,user,config,true);
+//	}
 	
-	public AonAccountingRegistryBox(final String domainName, final int domain, final String user,final AonConfiguration config, boolean showDescription) {
+	public AonAccountingRegistryBox(AonModuleOptions<?> options, boolean showDescription) {
 		AccountingRegistryServiceAsync commonServiceRaw = GWT.create(AccountingRegistryService.class);
 		SERVICE = new AccountingRegistryServiceAsyncDecorator(commonServiceRaw);
 		
-		dataButton = new AonTableButton(AON.MSG.titular(),AON.CSS.aonIconAdd());
+//		dataButton = new AonTableButton(AON.MSG.titular(),AON.CSS.aonIconAdd());
+		dataBisButton = new AonTableButton(AON.MSG.titular(),AON.CSS.aonIconAdd());
 		
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
@@ -155,7 +158,7 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 				if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					SERVICE.getAccountingRegistries(domainName,domain,user,request.getQuery()
+					SERVICE.getAccountingRegistries(options.getDomainName(),options.getDomain(),options.getUser(),request.getQuery()
 							,new AsyncCallback<LinkedList<AccountingRegistry>>() {
 		
 								public void onFailure(Throwable caught) {
@@ -184,7 +187,7 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 		};
 		accountingRegistryTextBox = new TextBox();
 		suggestionDisplay =  new AccountingRegistrySuggestionDisplay();
-		accountingRegistry = new SuggestBox(oracle,accountingRegistryTextBox,suggestionDisplay);
+		accountingRegistryBox = new SuggestBox(oracle,accountingRegistryTextBox,suggestionDisplay);
 		accountingRegistryTextBox.setStyleName(AON.CSS.aonInputText());
 		accountingRegistryTextBox.setVisibleLength(9);
 		accountingRegistryTextBox.setMaxLength(9);
@@ -192,49 +195,57 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 		descriptionLabel.addStyleName(AON.CSS.aonMarginLeft() );
 		descriptionLabel.addStyleName(AON.CSS.aonBold());
 		descriptionLabel.setVisible(showDescription);
-		dataButton.getElement().setTabIndex(-1);
+//		dataButton.getElement().setTabIndex(-1);
+		dataBisButton.getElement().setTabIndex(-1);
 		
-		accountingRegistry.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+		accountingRegistryBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
 				AccountingRegistrySuggestion selected = (AccountingRegistrySuggestion) event.getSelectedItem();
 				select( selected.getAccountingRegistry() );
 			}
 		});
-		accountingRegistry.addKeyUpHandler( new KeyUpHandler() {
+		accountingRegistryBox.addKeyUpHandler( new KeyUpHandler() {
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				if ( config != null &&	(isControlF3(event) || isPlusKeyAlone(event))) {
-					showDialog(domainName,domain,user,config,null);
+				if ( isControlF3(event) || isPlusKeyAlone(event) ) {
+					showDialog(options,null);
 				}
 			}
 		});
-		accountingRegistry.addValueChangeHandler( new ValueChangeHandler<String>() {
+		accountingRegistryBox.addValueChangeHandler( new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				if ( AonStringUtils.isBlank( accountingRegistry.getValue() )) {
+				if ( AonStringUtils.isBlank( accountingRegistryBox.getValue() )) {
 					select( null );	
 				}
 			}
 		});
-		dataButton.addClickHandler(new ClickHandler() {
+//		dataButton.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				showDialog(options,null);
+//			}
+//		});
+		
+		dataBisButton.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				if ( config != null) {
-					showDialog(domainName,domain,user,config,null);
-				}
+				showNewDialog(options);
 			}
 		});
-		
+
 		rooPanel = new FlowPanel();
 		rooPanel.setStyleName(AON.CSS.aonNowrap() );
 		rooPanel.addStyleName(AON.CSS.aonFlexBlockInline());
 		rooPanel.addStyleName(AON.CSS.aonInline() );
-		rooPanel.add(accountingRegistry);
-		rooPanel.add(dataButton);
+		rooPanel.add(accountingRegistryBox);
+//		rooPanel.add(dataButton);
+		rooPanel.add(dataBisButton);
 		rooPanel.add(descriptionLabel);
 		initWidget(rooPanel);
 	}
@@ -257,14 +268,15 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 	
 	private void select(AccountingRegistry accountingRegistry) {
 		if (accountingRegistry != null) {
+			this.accountingRegistry = accountingRegistry;
 			accountingRegistryTextBox.removeStyleName(AON.CSS.aonInputTextError() );
-			id = accountingRegistry.getId();
 			descriptionLabel.setText(accountingRegistry.getName());
 			descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
-			dataButton.removeStyleName(AON.CSS.aonIconAdd());
-			dataButton.addStyleName(AON.CSS.aonIconEdit());
+//			dataButton.removeStyleName(AON.CSS.aonIconAdd());
+//			dataButton.addStyleName(AON.CSS.aonIconEdit());
+			dataBisButton.addStyleName(AON.CSS.aonIconEdit());
 		} else {
-			id = null;
+			this.accountingRegistry = accountingRegistry;
 			if (isRequired()) {
 				accountingRegistryTextBox.addStyleName(AON.CSS.aonInputTextError() );
 			} else {
@@ -272,32 +284,39 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 			}
 			descriptionLabel.setText(null);
 			descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
-			dataButton.addStyleName(AON.CSS.aonIconAdd());
-			dataButton.removeStyleName(AON.CSS.aonIconEdit());
+//			dataButton.addStyleName(AON.CSS.aonIconAdd());
+//			dataButton.removeStyleName(AON.CSS.aonIconEdit());
+			dataBisButton.addStyleName(AON.CSS.aonIconAdd());
+			dataBisButton.removeStyleName(AON.CSS.aonIconEdit());
 		}
 		SelectionEvent.fire(AonAccountingRegistryBox.this, accountingRegistry );
 	}
 	
 	public void setValue(AccountingRegistry accountingRegistry, boolean fireEvents) {
 		if (accountingRegistry != null && accountingRegistry.getId() != null) {
-			id = accountingRegistry.getId();
+			this.accountingRegistry = accountingRegistry;
 			accountingRegistryTextBox.removeStyleName(AON.CSS.aonInputTextError() );
 			accountingRegistryTextBox.setValue(accountingRegistry.getAccountCode(),fireEvents);
-			description = accountingRegistry.getName();
-			descriptionLabel.setText(description);
+			descriptionLabel.setText(accountingRegistry.getName());
 			descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
-			dataButton.removeStyleName(AON.CSS.aonIconAdd());
-			dataButton.addStyleName(AON.CSS.aonIconEdit());
+//			dataButton.removeStyleName(AON.CSS.aonIconAdd());
+//			dataButton.addStyleName(AON.CSS.aonIconEdit());
+			dataBisButton.removeStyleName(AON.CSS.aonIconAdd());
+			dataBisButton.addStyleName(AON.CSS.aonIconEdit());
 		} else {
-			id = null;
+			this.accountingRegistry = accountingRegistry;
 			if (isRequired()) {
 				accountingRegistryTextBox.addStyleName(AON.CSS.aonInputTextError() );
+			} else {
+				accountingRegistryTextBox.removeStyleName(AON.CSS.aonInputTextError() );
 			}
 			accountingRegistryTextBox.setValue(null,fireEvents);
 			descriptionLabel.setText(null);
 			descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
-			dataButton.addStyleName(AON.CSS.aonIconAdd());
-			dataButton.removeStyleName(AON.CSS.aonIconEdit());
+//			dataButton.addStyleName(AON.CSS.aonIconAdd());
+//			dataButton.removeStyleName(AON.CSS.aonIconEdit());
+			dataBisButton.addStyleName(AON.CSS.aonIconAdd());
+			dataBisButton.removeStyleName(AON.CSS.aonIconEdit());
 		}
 	}
 	
@@ -307,12 +326,13 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 
 	private void reset() {
 		accountingRegistryTextBox.removeStyleName(AON.CSS.aonInputTextError() );
-		id = null;
-		description = null;
+		this.accountingRegistry = null;
 		descriptionLabel.setText(null);
 		descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
-		dataButton.addStyleName(AON.CSS.aonIconAdd());
-		dataButton.removeStyleName(AON.CSS.aonIconEdit());
+//		dataButton.addStyleName(AON.CSS.aonIconAdd());
+//		dataButton.removeStyleName(AON.CSS.aonIconEdit());
+		dataBisButton.addStyleName(AON.CSS.aonIconAdd());
+		dataBisButton.removeStyleName(AON.CSS.aonIconEdit());
 	}
 
 	public boolean isRequired() {
@@ -323,24 +343,24 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 	}
 
 	public Integer getId() {
-		return id;
+		return this.accountingRegistry==null?null:this.accountingRegistry.getId();
 	}
 
 	@Override
 	public String getValue() {
-		return accountingRegistry.getValue();
+		return accountingRegistryBox.getValue();
 	}
 
-	public void setValue(Integer id, String code,String description) {
-		this.id = id;
-		this.description = description;
-		this.descriptionLabel.setText(description);
-		setValue(code,false);
-	}
+//	public void setValue(Integer id, String code,String description) {
+//		this.id = id;
+//		this.description = description;
+//		this.descriptionLabel.setText(description);
+//		setValue(code,false);
+//	}
 
 	@Override
 	public void setValue(String value) {
-		accountingRegistry.setValue(value);
+		accountingRegistryBox.setValue(value);
 		if (AonStringUtils.isEmpty(value)) {
 			reset();
 		}
@@ -353,12 +373,12 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 
 	@Override
 	public void setValue(String value, boolean fireEvents) {
-		accountingRegistry.setValue(value,fireEvents);
+		accountingRegistryBox.setValue(value,fireEvents);
 	}
 
 	@Override
 	public String getDescription() {
-		return description;	
+		return this.accountingRegistry==null?null:this.accountingRegistry.getName();	
 	}
 
 	// --------------------------------------------------------- HANDLERS
@@ -395,7 +415,7 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
-		return accountingRegistry.addValueChangeHandler(handler);
+		return accountingRegistryBox.addValueChangeHandler(handler);
 	}
 
 	@Override
@@ -429,7 +449,7 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 		}
 		int i = AonStringUtils.indexOfIgnoreCase(text, query);
 		SafeHtmlBuilder bld = new SafeHtmlBuilder();
-		bld.appendHtmlConstant("<span class=\""
+		bld.appendHtmlConstant("<span style=\"white-space: pre;\" class=\""
 				+ AON.CSS.aonTabIcon()		
 				+ AonStringUtils.SPACE
 				+ icon 
@@ -449,22 +469,25 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 
 	@Override
 	public boolean isEnabled() {
-		return accountingRegistry.isEnabled();
+		return accountingRegistryBox.isEnabled();
 	}
 
 	@Override
 	public void setEnabled(boolean enabled) {
-		accountingRegistry.setEnabled(enabled);
+		accountingRegistryBox.setEnabled(enabled);
 	}
 	
-	public void showDialog(final String domainName, final int domain, final String user,final AonConfiguration config, AccountingRegistry ar) {
+	public void showDialog(AonModuleOptions<?> options, AccountingRegistry ar) {
 		final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption(AON.MSG.titular());
-		final AonAccountingRegistryPanel accountPanel = new AonAccountingRegistryPanel( domainName, domain, user
-				, id
-				,config
-				, ar
-				, new AonAccountingRegistryPanelCallback() {
+		final AonAccountingRegistryPanel accountPanel = new AonAccountingRegistryPanel( 
+				options.getDomainName(), 
+				options.getDomain(), 
+				options.getUser(), 
+				getId(),
+				options.getConfiguration(), 
+				ar, 
+				new AonAccountingRegistryPanelCallback() {
 			
 			@Override
 			public void onCancel() {
@@ -495,5 +518,50 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 	        }
 	    });		
 	}
+	
+	public void showNewDialog(AonModuleOptions<?> options) {
+		final AonSimpleDialog dialog = new AonSimpleDialog();
+		dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+		dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+		dialog.setCaption(AON.MSG.titular());
+		AccountingRegistryType type = AccountingRegistryType.CREDITOR;
+		Integer id = null; 
+		if (this.accountingRegistry != null) {
+			id = this.accountingRegistry.getId();
+			type = this.accountingRegistry.getType();
+		}
+		final AonAccountingRegistryFullPanel AccountingRegistryFullPanel = new AonAccountingRegistryFullPanel(options, type, id
+				, new AonAccountingRegistryFullPanelCallback() {
+
+					@Override
+					public void onAccept(AccountingRegistry registry) {
+						dialog.hide();
+						setValue(registry,false);
+						select(registry);
+					}
+
+					@Override
+					public void onCancel() {
+						dialog.hide();
+						setFocus(true);
+					}
+
+					@Override
+					public void setFocus(boolean b) {
+						AonAccountingRegistryBox.this.setFocus(b);
+					}
+			
+		});		
+		dialog.add( AccountingRegistryFullPanel );
+		dialog.center();
+		dialog.show();
+		
+		Scheduler.get().scheduleDeferred(new Command() {
+	        public void execute() {
+	        	AccountingRegistryFullPanel.setFocus(true);
+	        }
+	    });		
+	}
+
 }
    

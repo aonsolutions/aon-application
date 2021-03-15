@@ -611,6 +611,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Tipo")
 	String type();
 	
+	@DefaultMessage("Dato")
+	String data();
+
 	@DefaultMessage("Empresa")
 	String enterprise();
 
@@ -700,7 +703,7 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Nombre")
 	String name();
-
+	
 	@DefaultMessage("Alias / Nombre comercial")
 	String alias();
 	
@@ -1627,8 +1630,23 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Domicilio fiscal")
 	String fiscalAddress();
 	
+	@DefaultMessage("Direcciones")
+	String addresses();
+
 	@DefaultMessage("Direcci\u00F3n")
 	String address();
+
+	@DefaultMessage("A\u00F1adir direcci\u00F3n")
+	String addAddress();
+
+	@DefaultMessage("Contactos")
+	String contacts();
+
+	@DefaultMessage("A\u00F1adir contacto")
+	String addContact();
+
+	@DefaultMessage("A\u00F1adir contacto")
+	String deleteContact();
 
 	@DefaultMessage("Valor nominal")
 	String nominalValue();
@@ -3961,6 +3979,6 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Ocultar / Mostrar caracter\u00EDsticas de la factura")
 	String invoiceParams();
-	
+
 }
 

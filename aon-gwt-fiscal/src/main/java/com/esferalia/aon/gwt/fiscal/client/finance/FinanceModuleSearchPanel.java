@@ -224,7 +224,7 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 		});
 		
 
-		registryBox = new AonAccountingRegistryBox(opt.getDomainName(),opt.getDomain(),opt.getUser(), opt.getConfiguration(), true);
+		registryBox = new AonAccountingRegistryBox(opt, true);
 		registryBox.setRequired(false);
 		
 		registryBox.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
