@@ -20,10 +20,10 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfBox;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfImage;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfPage;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfText;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfBox;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfImage;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfPage;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfText;
 
 /**
  * <p><b>Description:</b> <i>This toolkit contains the basic methods for PDF printing and pdfbox abstractions.</i></p>
@@ -99,7 +99,6 @@ public class PDFToolkit {
 	 * @see PdfText
 	 */
 	public static void drawTextLeft(PDPageContentStream contents, PDRectangle box, String content, Color color, PDFont font, float fontSize, float x_margin, float y_margin) throws IOException {
-
 		float x = box.getLowerLeftX() + x_margin;
 		float y = y_margin + box.getLowerLeftY();
 

@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.Pdf_API.beans;
+package com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic;
 
 import java.io.IOException;
 

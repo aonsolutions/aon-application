@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.Pdf_API.beans;
+package com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic;
 
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.drawTextCenter;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.drawTextLeft;
@@ -69,7 +69,6 @@ public class PdfText extends PdfComponent{
 	 */
 	public PdfText(float x, float y, float width, float height, PDPageContentStream stream, String content, Color color, PDFont font, Float font_size, ALIGNMENT alignment) {
 		super(x, y, width, height, 0, 0, stream);
-		
 		float fh = (font.getFontDescriptor().getCapHeight()) / 1000 * font_size;
 		
 		this.content = content;
@@ -79,7 +78,6 @@ public class PdfText extends PdfComponent{
 		this.alignment = alignment;
 		this.margin_x = 0;
 		this.margin_y = (height - fh*2)/2;
-		this.y = y;
 		get_lines();
 	}
 	
@@ -101,14 +99,12 @@ public class PdfText extends PdfComponent{
 		super(x, y, width, height, margin_x, 0, stream);
 		
 		float fh = (font.getFontDescriptor().getCapHeight()) / 1000 * font_size;
-		
 		this.content = content;
 		this.color = color;
 		this.font = font;
 		this.font_size = font_size;
 		this.alignment = alignment;
 		this.margin_y = (height - fh)/2;
-		this.y = y;
 		get_lines();
 	}
 	
@@ -126,11 +122,11 @@ public class PdfText extends PdfComponent{
 			float fh = (font.getFontDescriptor().getCapHeight()) / 1000 * font_size;
 			for (String line : lines) {
 				switch (alignment) {
-					case CENTER:	drawTextCenter(stream, new PDRectangle(x, y, width, height), line, color, font, font_size, margin_y);		   	break;
-					case RIGHT: 	drawTextRight(stream, new PDRectangle(x, y, width, height), line, color, font, font_size, margin_x, margin_y); 	break;
-					default: 		drawTextLeft(stream, new PDRectangle(x, y, width, height), line, color, font, font_size, margin_x, margin_y);	break;
+					case CENTER:	drawTextCenter(stream, new PDRectangle(x(), y(), width, height), line, color, font, font_size, margin_y);		   	break;
+					case RIGHT: 	drawTextRight(stream, new PDRectangle(x(), y(), width, height), line, color, font, font_size, margin_x, margin_y); 	break;
+					default: 		drawTextLeft(stream, new PDRectangle(x(), y(), width, height), line, color, font, font_size, margin_x, margin_y);	break;
 				}	
-				y -= fh + 4;
+				down(fh + 4);
 				height += fh + 4;
 			}
 		} catch (IOException e) {e.printStackTrace();}

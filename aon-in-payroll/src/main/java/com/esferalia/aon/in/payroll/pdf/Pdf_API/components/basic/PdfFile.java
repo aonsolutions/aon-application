@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.Pdf_API.beans;
+package com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic;
 
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.BLACK;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.GRAY;
@@ -14,8 +14,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.Pointer;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.PAGE_TYPE;
 
 /**
@@ -46,13 +45,12 @@ import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.PAGE_TYPE;
  * @see java.util.Locale
  * @see java.util.ResourceBundle
  * @see org.apache.pdfbox.model.PDDocument
- * @version 1.0-AK
+ * @version 1.1-AK
  * @author akrck02
  */
 public class PdfFile {
 	
-	public float x; 
-	public float y;
+	public Pointer pointer;
 	public int page;
 	
 	public PDDocument doc;
@@ -78,8 +76,7 @@ public class PdfFile {
 	 * @param out  
 	 */
 	public PdfFile(float x, float y, PDDocument doc, ResourceBundle words, OutputStream out) {
-		this.x = x;
-		this.y = y;
+		this.pointer = Pointer.instance(x, y);
 		this.page = 0;
 		this.doc = doc;
 		this.words = words;
@@ -103,8 +100,7 @@ public class PdfFile {
 	 */
 	public PdfFile(float x, float y, PDDocument doc, ResourceBundle words, OutputStream out,
 			float y_limit) {
-		this.x = x;
-		this.y = y;
+		this.pointer = Pointer.instance(x, y);
 		this.page = 0;
 		this.doc = doc;
 		this.words = words;
@@ -144,7 +140,7 @@ public class PdfFile {
 	 * @return if jumps
 	 */
 	public boolean jump() {
-		return y < y_limit;
+		return pointer.y() < y_limit;
 	}
 	
 	/**
@@ -174,11 +170,25 @@ public class PdfFile {
 		return words.getString(name);
 	}
 	
+	/** <p><b>Description:</b> <i>Move down the pointer. </i></p> */
+	public void down(float pixels) 		{pointer.down(pixels);}
+	
+	/** <p><b>Description:</b> <i>Move up the pointer. </i></p> */
+	public void up(float pixels) 		{pointer.up(pixels);}
+	
+	/** <p><b>Description:</b> <i>Move left the pointer. </i></p> */
+	public void left(float pixels) 		{pointer.left(pixels);}
+	
+	/** <p><b>Description:</b> <i>Move right the pointer. </i></p> */
+	public void right(float pixels) 	{pointer.right(pixels);}
+	
+	
+	public float y() {return pointer.y();}
+	public void  y(float y) {pointer.y(y);}
+	
+	public float x() {return pointer.x();}
+	public void  x(float x) {pointer.x(x);}
+	
 	//------------HELP INFO------------
-		public static String describe() {
-			String info =
-			"PdfFile: \t\t\t\t\tRepresents the basic pdf file template." + 
-			"";
-			return info;
-		}	
+	public static String describe() { return "PdfFile: \t\t\t\t\tRepresents the basic pdf file template." ;}	
 }

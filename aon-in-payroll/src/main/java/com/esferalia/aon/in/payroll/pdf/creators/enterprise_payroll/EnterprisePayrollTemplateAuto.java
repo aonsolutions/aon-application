@@ -9,14 +9,13 @@ import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.RED;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts.HELVETICA;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts.HELVETICA_BOLD;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats.to_latin_number;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.PAGE_TYPE.HORIZONTAL;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT.LEFT;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT.RIGHT;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.PAGE_TYPE.HORIZONTAL;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -27,9 +26,9 @@ import java.util.ResourceBundle;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfFile;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfTable;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfText;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.advanced.PdfTable;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfFile;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfText;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT;
@@ -72,15 +71,15 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		String header_txt = t.payroll.getHeader().orElse("Nómina de empresa");
 		String subheader_txt = t.payroll.getSubheader().orElse("");
 		
-		t.x = 7;
-		t.y = 550;
+		t.x(7);
+		t.y(550);
 
-		PdfText header = new PdfText(t.x, t.y, 200, 30, 5, 8, t.contents, header_txt, BLACK,HELVETICA_BOLD, 18f, LEFT);
-		t.y -= 20;
+		PdfText header = new PdfText(t.x(), t.y(), 200, 30, 5, 8, t.contents, header_txt, BLACK,HELVETICA_BOLD, 18f, LEFT);
+		t.down(20);
 
-		PdfText subheader = new PdfText(t.x, t.y, 200, 20, 5, 5, t.contents, subheader_txt, BLACK, HELVETICA_BOLD, 12f, LEFT);
-		PdfText date = new PdfText(t.x + 700, t.y, 130, 20, 5, 5, t.contents, date_txt, BLACK, HELVETICA,12f, RIGHT);
-		t.y -= 30;
+		PdfText subheader = new PdfText(t.x(), t.y(), 200, 20, 5, 5, t.contents, subheader_txt, BLACK, HELVETICA_BOLD, 12f, LEFT);
+		PdfText date = new PdfText(t.x() + 700, t.y(), 130, 20, 5, 5, t.contents, date_txt, BLACK, HELVETICA,12f, RIGHT);
+		t.down(30);
 		
 		
 		header.draw();
@@ -116,8 +115,6 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		}
 		else c = (100 - tb) / (cols);
 		
-		
-		
 		float[] sizes = new float[cols];
 		String[] headers = new String[cols];
 		ALIGNMENT[] alignments = new ALIGNMENT[cols];
@@ -149,14 +146,14 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 
 	private static PdfTable create_table(EnterprisePayrollTemplateAuto t, float[] sizes, String[] headers,ALIGNMENT[] alignments) throws IOException {
 		
-		PdfTable table = new PdfTable(t.x, t.y, t.contents, 816, 15, 1,sizes,headers);
+		PdfTable table = new PdfTable(t.x(), t.y(), t.contents, 816, 15, 1,sizes,headers);
 		table.header_height = 20;
 		table.fontsize = 9;
 		table.header_fontsize = 8;
 		
 		table.set_alignment(alignments);
 		table.draw_header();
-		t.y = table.getY();
+		t.y (table.y());
 		
 		return table;
 	}
@@ -166,8 +163,8 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		Map<String, Map<String, EnterprisePayrollEntry>> entries = t.payroll.getEntries().orElse(new HashMap<>());
 		entries.entrySet().stream().forEach(category -> {
 						
-			PdfText category_title = new PdfText(t.x + 100, table.getY() , 100, 20, 5, 6, t.contents, category.getKey(), BLACK,HELVETICA_BOLD, 9f, RIGHT);
-			PdfText month_title = new PdfText(t.x, table.getY(), 100, 20, 5, 6, t.contents,PdfFormats.formatDate(t.payroll.getMonth().orElse(null), "MMMM, yyyy").orElse(""), BLACK,HELVETICA_BOLD, 9f, LEFT);
+			PdfText category_title = new PdfText(t.x() + 100, table.y() , 100, 20, 5, 6, t.contents, category.getKey(), BLACK,HELVETICA_BOLD, 9f, RIGHT);
+			PdfText month_title = new PdfText(t.x(), table.y(), 100, 20, 5, 6, t.contents,PdfFormats.formatDate(t.payroll.getMonth().orElse(null), "MMMM, yyyy").orElse(""), BLACK,HELVETICA_BOLD, 9f, LEFT);
 
 			category_title.draw();
 			month_title.draw();
@@ -198,20 +195,15 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		if(subtotal_aon.stream().mapToDouble(p-> p).sum() != 0) {
 			table.add_to_cell(0, "SUBTOTAL");
 			
-			for (int i = 2; i < subtotal_aon.size(); i++) 
-				table.add_to_cell(i, to_latin_number(subtotal_aon.get(i)));
-			
+			for (int i = 2; i < subtotal_aon.size(); i++) table.add_to_cell(i, to_latin_number(subtotal_aon.get(i)));
 			table.new_row();
 		}
 		
 		if(subtotal_ss.stream().mapToDouble(p-> p).sum() != 0) {
 			table.add_to_cell(0, "SUBTOTAL SS");
-			
 			table.fontsize = 7.5f;
 			
-			for (int i = 2; i < subtotal_ss.size(); i++) 
-				table.add_to_cell(i, to_latin_number(subtotal_ss.get(i)));
-			
+			for (int i = 2; i < subtotal_ss.size(); i++) table.add_to_cell(i, to_latin_number(subtotal_ss.get(i)));
 			table.new_row();
 		}
 		table.fontsize = 9;	
@@ -225,7 +217,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		else if (e.Has_aon()) 	draw_entry_only_aon(t, e, table);
 		else if (e.Has_ss())  	draw_entry_only_ss(t, e, table);
 
-		t.y = table.getY();
+		t.y(table.y());
 		check(t,table);
 	}
 
@@ -292,7 +284,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		table.pain_cell(table.get_column("Coste total"), 	(costeTotal != null && costeTotalSS != null && costeTotal.equals(costeTotalSS)) ? 					GREEN : RED);
 
 		table.new_row();
-		t.y = table.getY();
+		t.y(table.y());
 	}
 
 	private static void draw_entry_only_aon(EnterprisePayrollTemplateAuto t, EnterprisePayrollEntry e, PdfTable table) throws IOException {
@@ -332,7 +324,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		table.pain_cell(table.get_column("Coste total"), BLUE);
 		
 		table.new_row();
-		t.y = table.getY();
+		t.y(table.y());
 	}
 
 	private static void draw_entry_only_ss(EnterprisePayrollTemplateAuto t, EnterprisePayrollEntry e, PdfTable table) throws IOException {
@@ -373,23 +365,23 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		table.pain_cell(table.get_column("Coste total"), GREEN);
 		
 		table.new_row();
-		t.y = table.getY();
+		t.y(table.y());
 	}
 
 	private static void check(EnterprisePayrollTemplateAuto t, PdfTable table) throws IOException {
 		if (t.jump()) {
 			new PdfText(720, 20, 100, 20, t.contents, t.text("PAGE") + " " + t.page , GRAY, HELVETICA, t.fontsize, RIGHT).draw();
 			t.new_page(HORIZONTAL);
-			table.setStream(t.contents);
+			table.stream(t.contents);
 
 			draw_header(t);		
-			table.setY(500);
+			table.y(500);
 			table.draw_header();	
 		}
 	}
 	
 	private static void draw_totals(EnterprisePayrollTemplateAuto t, PdfTable table) throws IOException {
-		
+		check(t, table);
 		table.header_color = LIGHT_GRAY;
 		table.create_box(0, 10, 3);
 		table.header_color = BLACK;

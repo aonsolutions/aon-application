@@ -14,9 +14,9 @@ import java.util.ResourceBundle;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfBox;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfFile;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfImage;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfBox;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfFile;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfImage;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
@@ -50,13 +50,15 @@ public class DemoTemplate extends PdfFile {
 
 	
 	private static void draw_text_bundle(DemoTemplate temp) throws IOException {
-		temp.y = 20;
+		temp.y(20);
 		
 		FileInputStream logo = new FileInputStream("/home/akrck02/Pictures/7285.jpg");
-		PdfImage img = new PdfImage( 20f, temp.y, 150f, 50f, ALIGNMENT.CENTER, temp.contents, temp.doc, logo.readAllBytes());
+		PdfImage img = new PdfImage( 20f, temp.y(), 150f, 50f, ALIGNMENT.CENTER, temp.contents, temp.doc, logo.readAllBytes());
 		
 		img.draw();
-		PdfBox b = new PdfBox(20f, temp.y, 150f, 50f, BLUE, temp.contents);
+		logo.close();
+		
+		PdfBox b = new PdfBox(20f, temp.y(), 150f, 50f, BLUE, temp.contents);
 		b.border();
 	}
 

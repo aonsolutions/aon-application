@@ -45,9 +45,9 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.poi.hssf.util.HSSFColor.BLUE;
 
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfBox;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfImage;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfText;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfBox;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfImage;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfText;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;

@@ -8,13 +8,13 @@ import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.st
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.tab;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit.title;
 
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfBox;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfComponent;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfFile;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfImage;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfPage;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfTable;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.PdfText;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.advanced.PdfTable;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfBox;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfComponent;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfFile;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfImage;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfPage;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfText;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;

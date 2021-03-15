@@ -1,4 +1,4 @@
-package com.esferalia.aon.in.payroll.pdf.Pdf_API.beans;
+package com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic;
 
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.create_image_from_bytes;
 
@@ -9,7 +9,6 @@ import java.io.InputStream;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 
@@ -69,7 +68,7 @@ public class PdfImage extends PdfComponent{
 	 */
 	@Override
 	public void draw() {
-		try {PDFToolkit.drawImage(doc, stream, img, x, y,width,height);} 
+		try {PDFToolkit.drawImage(doc, stream, img, x(), y(),width,height);} 
 		catch (IOException e) {e.printStackTrace();}
 	}
 	
@@ -84,16 +83,12 @@ public class PdfImage extends PdfComponent{
 		this.height = sizes[1];
 		
 		switch (align) {
-			case CENTER: 	
-				this.x += max_width/2 - width/2;
-				break;
-			case RIGHT:  
-				this.x += max_width - width;	
-				break;
+			case CENTER: 	this.right(max_width/2 - width/2);		break;
+			case RIGHT:  	this.right(max_width - width);			break;
 			default: break;
 		}
 		
-		if(buff.getHeight() <= max_height) y += max_height/2 - height/2;
+		if(buff.getHeight() <= max_height) up(max_height/2 - height/2);
 		return this;
 	}
 
