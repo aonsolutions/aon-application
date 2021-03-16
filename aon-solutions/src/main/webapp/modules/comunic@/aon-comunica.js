@@ -115,7 +115,7 @@ export class AonComunica extends AonElement {
 	}
 
 	async deleteMov(data, el) {
-		if (confirm(`Estas seguro de anular el movimiento de ${data.name} ?`)) {
+	    this.aonComunicaEl.confirmDialog("Anular movimiento", `Estas seguro de anular el movimiento de ${data.name} ?`, async() => {
 			this.aonComunicaEl.startLoader();
 			try {
 				await postDeleteMov(data);
@@ -125,7 +125,7 @@ export class AonComunica extends AonElement {
 				this.aonComunicaEl.getToast().start({ message: error, type: 'error' });
 			}
 			this.aonComunicaEl.stopLoader();
-		}
+        });
 	}
 
 	async getTa(data, el) {

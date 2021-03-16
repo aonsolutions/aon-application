@@ -1,3 +1,5 @@
+import { extensionsEnums } from "./extensionsEnums.js";
+
 const formatParams = (params) => {
   return (
     "?" +
@@ -133,8 +135,6 @@ export const remove = (url, data) => {
 
 export const getToken = () => localStorage.getItem("aon_session_id");
 
-export const openPDF = async (url, data) =>  await openFile(url, data);
-
 export const openFile = async (url, data) => {
   const token = getToken();
   const domainId = localStorage.getItem("aon_domain_id");
@@ -167,15 +167,19 @@ const openFileMobile = async (url) =>
         const reader = new FileReader();
         reader.readAsDataURL(result);
         reader.onload = function () {
+          let fileName =  "document";
           const base64Data = reader.result.toString();
           const base64Str = base64Data.replace(/^data:.+;base64,/, "");
-          const mime = base64Data.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
-          let name = base64Str.substring(base64Str.lastIndexOf('/') - 10, base64Str.length);
-          if(!name) name="document";
+          const contentType = base64Data.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0];
+          const extension = extensionsEnums[contentType];
+          if(contentType&&extension) fileName = `${fileName}.${extension}`;
+          
+          console.log("contentType>",contentType);
+          
           const obj = {
             fileBase64: base64Str,
-            fileName: name,
-            contentType:mime[1],
+            fileName,
+            contentType,
             action: "fileDownload",
           };
           resolve(obj);

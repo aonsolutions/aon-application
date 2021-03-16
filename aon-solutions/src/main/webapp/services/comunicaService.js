@@ -1,4 +1,4 @@
-import { post, get, openPDF } from "./request.js";
+import { post, get, openFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 export const getWorkplaceCCCs = () => get(`${API_URL}/workplace_ccc`);
@@ -188,13 +188,13 @@ export const getOcupacion = () =>
     ]);
   });
 
-export const getTA = (data) => openPDF(`${API_URL}/comunica/pdf/get-ta`, data);
+export const getTA = (data) => openFile(`${API_URL}/comunica/pdf/get-ta`, data);
 
 export const getCertCorriente = (data) =>
-  openPDF(`${API_URL}/comunica/pdf/cert-corriente`, data);
+  openFile(`${API_URL}/comunica/pdf/cert-corriente`, data);
 
 export const getIDC = (data) =>
-  openPDF(`${API_URL}/comunica/pdf/get-idc`, data);
+  openFile(`${API_URL}/comunica/pdf/get-idc`, data);
 
 export const postAltaDirecta = (data) =>
   post(`${API_URL}/comunica/alta-directa`, data); //ALTA DIRECTA

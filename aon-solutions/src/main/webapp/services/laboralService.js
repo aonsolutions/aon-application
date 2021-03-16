@@ -1,12 +1,12 @@
 
-import { get, openPDF } from "./request.js";
+import { get, openFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 import { addMonth, formatDateOrigin } from "./utils.js";
 
 export const getEmployeeSalaries = (data) => get(`${API_URL}/contract/employee/salaries`, data);
 export const getEnterpriseSalaries = (data) => get(`${API_URL}/contract/enterprise/salaries`, data);
 export const getAllEmployeesWorkplace = (data) => get(`${API_URL}/contract/employee/workplace`, data);
-export const getSalaryPdf = (data) => openPDF(`${API_URL}/contract/salary/pdf`, data);
+export const getSalaryPdf = (data) => openFile(`${API_URL}/contract/salary/pdf`, data);
 
 
 export const getPeriodLaboral = (data) => {

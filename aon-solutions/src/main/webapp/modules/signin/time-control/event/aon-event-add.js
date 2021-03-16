@@ -272,9 +272,9 @@ export class AonEventAdd extends AonElement {
     this.aonSigninEl.stopLoading();
   }
 
-  async delete() {
-    const data = this.getFormValues();
-    if (confirm(`Estas seguro de eliminarlo?`)) {
+  delete() {
+    this.aonSigninEl.confirmDialog("Eliminar", "Estas seguro de eliminarlo?", async()=>{
+      const data = this.getFormValues();
       this.aonSigninEl.startLoader();
       try {
         await deleteTimeControl(data);
@@ -284,7 +284,7 @@ export class AonEventAdd extends AonElement {
         this.TOAST.start({ message: error, type: "error" });
       }
       this.aonSigninEl.stopLoader();
-    }
+    });
   }
 
   formRead() {
@@ -294,7 +294,7 @@ export class AonEventAdd extends AonElement {
   }
 
   back() {
-    let data= undefined;
+    let data = undefined;
     if(this.data) data = {...this.data, start_date:this.data.date};
     if(this.START_DATE) data.start_date = this.START_DATE;
     this.aonSigninParentEl.showView("aonEventDetailList", data);

@@ -554,14 +554,21 @@ export class AonApplication extends AonElement {
   }
 
   development(title, subtitle='Esta opción está en desarrollo...') {
-		let d = this.getDialog();
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(title);
-		d.setContentHTML(subtitle);
-		d.addAcceptAction(() => {});
-		d.open();
+		this.confirmDialog(title, subtitle, () => {});
 	}
+
+  confirmDialog(title, subtitle, fn){
+      let d = this.getDialog();
+      if(d){
+        d.clear();
+        d.setContentHTML(subtitle);
+        if (!this.isMobile()) d.width = '400px';
+        d.setTitle(title);
+        d.open();
+        d.addAcceptAction(() => fn());
+      }
+  }
+
 }
 if(!window.customElements.get('aon-application')){
   window.customElements.define("aon-application", AonApplication);

@@ -48,7 +48,7 @@ export class AonFilter extends AonElement {
 
   openFilter() {
     let d = this.getElement(this.DIALOG);
-    d.open();
+    if(d)d.open();
   }
 
   setInputs(inputs) {

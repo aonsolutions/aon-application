@@ -13,11 +13,10 @@ import {
 import { SigninSidenav, PresenceFilterInput } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { UserAction } from "../../../user/userEnums.js";
+import { dateCustomDayHour } from "../utils.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 import "../../../../components/aon-filter.js";
-import { dateCustomDayHour } from "../utils.js";
-
 
 
 export class AonEventDetailList extends AonElement {

@@ -72,15 +72,8 @@ export class AonPresenceList extends AonElement {
   buildToolbar() {
     this.aonSigninEl.removeToolbarOptions();
     const filterEl = this.getElement(`${this.id}Filter`);
-    this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
-      filterEl.openFilter()
-    );
-
-    this.aonSigninEl.addToolbarOption2({
-      name: "Excel",
-      aonIcon: "aon_excel",
-      id: "excel",
-    }, (e) => this.getTimeControlExcel()
+    this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) => filterEl.openFilter());
+    this.aonSigninEl.addToolbarOption2(SigninSidenav.EXCEL, (e) => this.getTimeControlExcel()
    );
   }
 

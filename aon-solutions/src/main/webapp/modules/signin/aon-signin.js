@@ -18,7 +18,7 @@ export class AonSignin extends AonElement {
   TASK_HOLDER;
   AUTHS;
   _filter;
-  _roles;
+  dur;
   constructor() {
     super();
   }
@@ -27,7 +27,7 @@ export class AonSignin extends AonElement {
   connectedCallback() {
     this.initialize();
     getDomainUserRoles({reload:true}).then(r=>{
-      this._roles = new DomainUserRoles(r);
+      this.dur = new DomainUserRoles(r);
       this.build();
     })
 
@@ -42,6 +42,10 @@ export class AonSignin extends AonElement {
       endDate: formatDateOrigin(new Date())
     };
     this.AUTHS=[];
+  }
+
+  getDur() {
+    return this.dur;
   }
 
   async build() {
@@ -143,7 +147,7 @@ export class AonSignin extends AonElement {
         switch(view){
           case "aonPresenceList":
               aonView = new AonPresenceList();
-          break;
+            break;
           case "aonEventList":
             aonView = new AonEventList();
             if(data && data.taskHolderId){
@@ -153,14 +157,14 @@ export class AonSignin extends AonElement {
             }
             if(data && data.status && !isEmptyObject(this.TASK_HOLDER)) {this.TASK_HOLDER.status = data.status;}
             this._filter.taskHolderId = this.TASK_HOLDER.id;
-          break;
+            break;
           case "aonEventDetailList":
               aonView = new AonEventDetailList();
               if(data){
                 const startDate = formatDateOrigin(data.start_date);
                 aonView.DATE_TASK = {startDate, endDate:startDate};
               }
-          break;
+            break;
           case "aonEventAdd":
             aonView = new AonEventAdd();
             if (data) {
@@ -168,7 +172,7 @@ export class AonSignin extends AonElement {
             } else if (this.TASK_HOLDER) {
               aonView.data = {task_holder: this.TASK_HOLDER};
             }
-          break;
+            break;
           case "aonLocationAdd":
             aonView = new AonLocationAdd();
             if(data){
@@ -180,7 +184,7 @@ export class AonSignin extends AonElement {
                 aonView.add = data.add;
               }
             } 
-          break;
+            break;
         }
         aonView.id = view;
         if(filter) aonView.filter = filter;
@@ -211,7 +215,7 @@ export class AonSignin extends AonElement {
   
   
   isEmployee(){
-    return !this._roles.isTimecontrolManager() && !this._roles.isTimecontrolPortal();
+    return !this.getDur().isTimecontrolManager() && !this.getDur().isTimecontrolPortal();
   }
 
 }

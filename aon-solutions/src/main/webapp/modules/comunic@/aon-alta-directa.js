@@ -41,7 +41,7 @@ export class AonAltaDirecta extends AonElement {
         this.ACTION = 'CREATE';
         this.id = this.id || 'aonAltaDirecta';
         this.TOOLBAR = this.id + 'Toolbar';
-        this.aonComunica = this.getElement('aonComunica');
+        this.aonComunica = this.getApplication();
         this.aonComunicaParentEl = this.aonComunica.getParent();
         this.aonComunicaToolbar = this.getElement('aonComunicaToolbar');
         this.aonComunicaToolbar.setAttribute('option', 'Comunicar contrato');
@@ -634,13 +634,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     formSubmit() {
-        let dialog = this.getElement(this.aonComunica.DIALOG);
-        dialog.clear();
-        dialog.setContentHTML('Desea comunicar a la seguridad social?');
-        if (!this.isMobile()) dialog.width = '400px';
-        dialog.setTitle("Comunicar");
-
-        dialog.addAcceptAction(() => {
+        this.aonComunica.confirmDialog("Comunicar", "Desea comunicar a la seguridad social?", () => {
             switch (this.ACTION) {
                 case "CREATE":
                     this.save();
@@ -652,7 +646,6 @@ export class AonAltaDirecta extends AonElement {
                     break;
             }
         });
-        dialog.open();
     }
 
     async save() {

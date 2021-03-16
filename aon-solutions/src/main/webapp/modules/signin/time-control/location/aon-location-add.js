@@ -238,14 +238,14 @@ export class AonLocationAdd extends AonElement {
         this.TOAST.start({ message: `Datos guardados!`, type: "success" });
         if (id) { setValueName("id", id); }
       } catch (error) {
-        this.TOAST.start({ message: error, type: "error" });
+        this.TOAST.start({ message: error, type: "error"});
       }
       this.aonSigninEl.stopLoading();
     }
   }
 
   async delete() {
-    if (confirm(`Estas seguro de eliminar ${this.NAME}?`)) {
+    this.aonSigninEl.confirmDialog("Eliminar", `Estas seguro de eliminar ${this.NAME}?`, async()=>{
       this.aonSigninEl.startLoading();
       try {
         const data = this.getFormValues();
@@ -253,10 +253,10 @@ export class AonLocationAdd extends AonElement {
         this.TOAST.start({ message: `Datos eliminados!` });
         this.back();
       } catch (error) {
-        this.TOAST.start({ message: error, type: "error" });
+        this.TOAST.start({ message: error, type: "error"});
       }
       this.aonSigninEl.stopLoading();
-    }
+    });
   }
 
   back() {

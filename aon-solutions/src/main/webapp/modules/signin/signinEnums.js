@@ -19,6 +19,11 @@ export const SigninSidenav = {
     icon: "tune",
     id: "filter",
   },
+  EXCEL:{
+    name: "Excel",
+    aonIcon: "aon_excel",
+    id: "excel",
+  },
   PERIOD: {
     TODAY: {
       icon: "today",
