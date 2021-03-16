@@ -533,12 +533,16 @@ export class AonApplication extends AonElement {
     return this.getElement(this.DIALOG);
   }
 
+  getOptionDialog() {
+    return this.getElement(this.OPTION_DIALOG);
+  }
+
   getChild() {
     let el = this.getElement(this.CONTENT);
     if (el) el = el.firstChild;
     return el;
   }
-  
+
   getToast(){
     return this.getElement(this.TOAST);
   }

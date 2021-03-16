@@ -159,3 +159,9 @@ export const AON_MSG_DEACTIVATE = 'Desactivar';
 export const AON_MSG_CONTRACT = 'Contratar';
 
 export const AON_MSG_BUSINESS_NAME = 'Nome da Empresa';
+export const AON_MSG_TITULAR_DATA = 'Datos do Titular';
+
+export const AON_MSG_PAYSHEET = 'Nómina';
+export const AON_MSG_PAYSHEETS = 'Nóminas';
+export const AON_MSG_COMPANY_COSTS = 'Custos da Empresa';
+export const AON_MSG_SEPA_FILES = 'Ficheiros SEPA';

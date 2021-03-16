@@ -159,3 +159,8 @@ export const AON_MSG_DEACTIVATE = 'Desactivar';
 export const AON_MSG_CONTRACT = 'Contractar';
 
 export const AON_MSG_BUSINESS_NAME = 'Raó Social';
+export const AON_MSG_TITULAR_DATA = 'Titular Data';
+export const AON_MSG_PAYSHEET = 'Nòmina';
+export const AON_MSG_PAYSHEETS = 'Nòminas';
+export const AON_MSG_COMPANY_COSTS = `Costos d'Empresa`;
+export const AON_MSG_SEPA_FILES = 'Fitxers SEPA';

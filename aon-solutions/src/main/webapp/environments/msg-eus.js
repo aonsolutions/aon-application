@@ -159,3 +159,8 @@ export const AON_MSG_DEACTIVATE = 'Desaktibatu';
 export const AON_MSG_CONTRACT = 'Kontratatu';
 
 export const AON_MSG_BUSINESS_NAME = 'Izen Sozial';
+export const AON_MSG_TITULAR_DATA = 'Titularraren Datuak';
+export const AON_MSG_PAYSHEET = 'Nomina';
+export const AON_MSG_PAYSHEETS = 'Nominak';
+export const AON_MSG_COMPANY_COSTS = 'Enpresaren kostuak';
+export const AON_MSG_SEPA_FILES = 'SEPA Fitxategiak';

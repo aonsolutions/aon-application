@@ -116,37 +116,39 @@ export class AonSuggestion extends AonElement {
 
   buildOptions(options) {
     this.clearElementById(this.OPTIONS);
-    let div = this.getElement(this.OPTIONS);
-    div.classList.add('is-visible');
+    if(options && options.length > 0){
+      let div = this.getElement(this.OPTIONS);
+      div.classList.add('is-visible');
 
-    if (options.length === 0) return div;
 
-    let ul = this.createElement('ul');
-    ul.className = 'aonInputListOptionsUl';
-    ul.setAttribute('for', this.getAttribute('id') + 'Icon');
-    for (let i = 0; i < options.length; i++) {
-      let li = this.createElement('li');
-      li.className = 'aonInputListOptionsItem'
-      li.innerHTML = options[i].name;
-      li.addEventListener('click', (e) => {
-        div.classList.remove('is-visible');
-        this.value = options[i].value;
-        let input = this.getElement(this.INPUT);
-        input.value = options[i].name;
-        this.dispatchEvent(new CustomEvent('select', { detail: options[i] }));
-      });
-      ul.appendChild(li);
-    }
-    div.appendChild(ul)
 
-    document.addEventListener('click', function (event) {
-      let isClickInside = div.contains(event.target);
-      if (!isClickInside) {
-        if (div.classList.contains('is-visible')) {
+      let ul = this.createElement('ul');
+      ul.className = 'aonInputListOptionsUl';
+      ul.setAttribute('for', this.getAttribute('id') + 'Icon');
+      for (let i = 0; i < options.length; i++) {
+        let li = this.createElement('li');
+        li.className = 'aonInputListOptionsItem'
+        li.innerHTML = options[i].name;
+        li.addEventListener('click', (e) => {
           div.classList.remove('is-visible');
-        }
+          this.value = options[i].value;
+          let input = this.getElement(this.INPUT);
+          input.value = options[i].name;
+          this.dispatchEvent(new CustomEvent('select', { detail: options[i] }));
+        });
+        ul.appendChild(li);
       }
-    });
+      div.appendChild(ul)
+
+      document.addEventListener('click', function (event) {
+        let isClickInside = div.contains(event.target);
+        if (!isClickInside) {
+          if (div.classList.contains('is-visible')) {
+            div.classList.remove('is-visible');
+          }
+        }
+      });
+    } else this.closeOptions();
   }
 
   addIcon(icon, color) {

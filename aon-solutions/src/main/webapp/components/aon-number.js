@@ -2,6 +2,8 @@ import { AonElement } from './AonElement.js';
 import { formatNumber } from '../services/utils.js';
 import './aon-icon-button.js';
 
+import * as EVENT from "../../environments/aonEvent.js";
+import * as AON_TAG from "../../environments/aonTag.js";
 import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";
 import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
@@ -113,6 +115,10 @@ export class AonNumber extends AonElement {
             let input = this.getElement(this.INPUT);
             if (newValue && 'undefined' !== newValue && input && !isNaN(newValue)) input.value = this.onBlur(newValue);
             if (input && newValue === '') input.value = '';
+            let desc = this.getElement(this.DESCRIPTION);
+            if(desc && input.value.length > 0) {
+              desc.classList.add(CSS.AON_INPUT_NOT_EMPTY);
+            } else if(desc) desc.classList.remove(CSS.AON_INPUT_NOT_EMPTY);
         }
         if ('disabled' === name) {
             this.getElement(this.getAttribute('id') + 'Input').setAttribute('disabled', this.isDisabled());
@@ -215,7 +221,9 @@ export class AonNumber extends AonElement {
         span.id = this.DESCRIPTION;
         span.className = CSS.AON_INPUT_LABEL;
         span.innerHTML = this.getAttribute('description');
-
+        if(input.value && CONSTANT.EMPTY !== input.value) {
+          span.classList.add(CSS.AON_INPUT_NOT_EMPTY);
+        }
         label.appendChild(span);
         label.style.display = this.isVisible() ? 'block' : 'none';
 

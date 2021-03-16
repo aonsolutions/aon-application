@@ -179,8 +179,7 @@ export class AonDocumentalList extends AonElement {
 	}
 
 	removeDocumentalActions() {
-		let ad = document.querySelector('aon-documental');
-		let aonDocumental = this.getElement(ad.DOCUMENTAL);
+		let aonDocumental = this.getApplication();
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.removeSeparators();
 		aonDocumental.removeToolbarOption(DocumentalAction.EDIT);
