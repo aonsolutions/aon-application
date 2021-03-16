@@ -17,7 +17,7 @@ export const COMPANY_COSTS = {
 export const SEPA_FILES = {
   id: 'SepaFiles',
   name: MSG.AON_MSG_SEPA_FILES,
-  icon: 'insert_drive_file'
+  icon: 'account_balance'
 }
 
 export const PayrollOptions = {

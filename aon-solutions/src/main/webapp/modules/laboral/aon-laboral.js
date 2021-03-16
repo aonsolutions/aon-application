@@ -4,6 +4,7 @@ import { getDomainUserRoles, getSalaryPdf } from "../../services/service.js";
 import { formatDateOrigin, setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
+import { AonMobileDocumentalList } from "../documental/aon-mobile-documental-list.js";
 import { PayrollOptions } from "./PayrollEnums.js";
 
 class AonLaboral extends AonElement {
@@ -89,16 +90,21 @@ class AonLaboral extends AonElement {
     } catch (error) {}
   }
 
+
+  aonDocumentalList(){
+    this.showView('aonSepaFilesList')
+  }
+
   showView(view, data, filter = undefined){
     return new Promise(async(resolve)=>{
       let aonView = undefined;
       if(!this.getElement(view)){
         switch(view){
-          case "aonPayrollList":
+          case 'aonPayrollList':
             aonView = new AonPayrollList();
             break;
-          case "aonSepaFilesList":
-            aonView = new AonDocumentalList();
+          case 'aonSepaFilesList':
+            aonView = this.isMobile() ? new AonMobileDocumentalList() : new AonDocumentalList();
             aonView.setFilter({type: 'system'});
             break;
         }

@@ -48,8 +48,6 @@ export class AonMobileInvoiceList extends AonElement {
       setInvoices(invoices);
       this.innerHTML = '';
 
-      this.buildTitle();
-
       let ul = this.createElement('ul');
       ul.id = 'invoiceMobileListUL'
       ul.className = 'list-group';
@@ -58,14 +56,6 @@ export class AonMobileInvoiceList extends AonElement {
         ul.appendChild(this.buildLi(invoice, i));
       });
     });
-  }
-
-  buildTitle() {
-    let span = this.createElement('span');
-    span.style.marginLeft = '25px';
-    span.style.color = 'gray';
-    span.innerHTML = this.getInvoiceTitle();
-    this.appendChild(span);
   }
 
   getInvoiceTitle() {

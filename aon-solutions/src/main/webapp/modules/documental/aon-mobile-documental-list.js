@@ -35,6 +35,9 @@ export class AonMobileDocumentalList extends AonMobileList {
   }
 
   init() {
+    let application = this.getApplication();
+    let toolbar = this.getElement(application.TOOLBAR);
+    toolbar.removeButtons();
     this.build();
     getDocuments(this.getFilter()).then(documents => {
       documents.forEach((doc, i) => this.addRow(doc, i));
@@ -67,9 +70,7 @@ export class AonMobileDocumentalList extends AonMobileList {
   }
 
   aonDocument(doc, i) {
-		let ad = document.querySelector('aon-documental');
-		ad.aonDocument(doc);
+    this.getApplication().setContentHTML(`<aon-mobile-document document='${JSON.stringify(doc)}'> </aon-mobile-invoice>`);
 	}
-
 }
 window.customElements.define('aon-mobile-documental-list', AonMobileDocumentalList);

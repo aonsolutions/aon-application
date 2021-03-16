@@ -290,7 +290,7 @@ export class AonDocument extends AonElement {
   }
 
   buildDocumentToolbar() {
-    let aonDocumental = this.getElement('aonDocumental');
+    let aonDocumental = this.getApplication();
     let documentToolbar = this.getElement(this.TOOLBAR);
     documentToolbar.removeButtons();
     if(!this.isMobile()){
@@ -309,12 +309,14 @@ export class AonDocument extends AonElement {
 
 
   back() {
-    let ad = document.querySelector('aon-documental');
-		ad.aonDocumentalList();
+    let aonDocumental = this.getApplication();
+    let aonDocumentalToolbar = this.getElement(aonDocumental.TOOLBAR);
+    aonDocumentalToolbar.removeButtons();
+    aonDocumental.getParent().aonDocumentalList();
   }
 
   next() {
-    let aonDocumental = this.getElement('aonDocumental');
+    let aonDocumental = this.getApplication();
 		let d = document.getElementById(aonDocumental.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
@@ -325,7 +327,7 @@ export class AonDocument extends AonElement {
   }
 
   previous() {
-    let aonDocumental = this.getElement('aonDocumental');
+    let aonDocumental = this.getApplication();
 		let d = document.getElementById(aonDocumental.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
@@ -336,7 +338,7 @@ export class AonDocument extends AonElement {
   }
 
   send() {
-    let aonDocumental = this.getElement('aonDocumental');
+    let aonDocumental = this.getApplication();
 		let d = document.getElementById(aonDocumental.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
@@ -347,7 +349,7 @@ export class AonDocument extends AonElement {
   }
 
   remove() {
-    let aonDocumental = this.getElement('aonDocumental');
+    let aonDocumental = this.getApplication();
     let d = document.getElementById(aonDocumental.DIALOG);
     d.clear();
     if(!this.isMobile()) d.width = '400px';

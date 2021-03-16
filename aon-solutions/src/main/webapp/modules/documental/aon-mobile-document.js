@@ -46,7 +46,7 @@ export class AonMobileDocument extends AonDocument {
   }
 
   buildOptions() {
-    let aonDocumental = this.getElement('aonDocumental');
+    let aonDocumental = this.getApplication();
     let aonDocumentalToolbar = this.getElement(aonDocumental.TOOLBAR);
     aonDocumentalToolbar.removeButtons();
     aonDocumental.addToolbarOption('Options', 'more_vert', () => {
