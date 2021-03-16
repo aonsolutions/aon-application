@@ -3980,5 +3980,11 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Ocultar / Mostrar caracter\u00EDsticas de la factura")
 	String invoiceParams();
 
+	@DefaultMessage("Acercar")
+	String zoomIn();
+	
+	@DefaultMessage("Alejar")
+	String zoomOut();
+
 }
 

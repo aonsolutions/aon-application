@@ -503,22 +503,17 @@ public class RawdocModule extends MainEntryPoint {
 	}
 	
 	public void showViewer( MimeType mimeType, String url ) {
-		LOGGER.info("1");
 		attachPanelContainer.setWidget(initializeAttachPanel());
-		LOGGER.info("2");
 		openAttach();
-		LOGGER.info("3");
 		if ( mimeType != null && mimeType.isPDF()) {
-			LOGGER.info("4");
 			FullViewer viewer = new FullViewer(url, ViewerDefaultScale.PAGE_WIDTH);
 			attachPanelTableCell2.add(viewer);
 		} else if ( mimeType != null && mimeType.isImage()) {
-			LOGGER.info("5");
 			AonScalableImage scalableImage = new AonScalableImage();
+			scalableImage.setImage( url );
 			attachPanelTableCell2.add(scalableImage);
-			scalableImage.setImage( url );	
+			
 		} else {
-			LOGGER.info("6");
 			ScrollPanel labelPanel = new ScrollPanel();
 			Label unknown = new Label("No se ha podido determinar un visor para este tipo de documento.");
 			unknown.setStyleName(AON.CSS.aonBlockMessage());
@@ -527,7 +522,6 @@ public class RawdocModule extends MainEntryPoint {
 			labelPanel.setWidget(unknown);
 			attachPanelTableCell2.add(labelPanel);
 		}
-		LOGGER.info("7");
 	}
 
 	public void clearFootInfo( ) {

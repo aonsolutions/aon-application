@@ -794,6 +794,7 @@ public class AccountingInvoiceDAO {
 			ctx.log().info("------ [END OK] INSERT INVOICE");
 			return entries;
 		} catch (IOException t) {
+			t.printStackTrace();
 			ctx.log().info("------ [END FAIL] INSERT INVOICE [" + t.getMessage() + "]");
 			throw new AonCoreException( t );
 		} catch (Throwable t) {
@@ -834,14 +835,14 @@ public class AccountingInvoiceDAO {
 				}
 			}
 		} else {
-			
+			String data = new String(attach.getData());
 			// Si se cambia este método de sitio, se debería tener en cuenta  
 			// que attach.data puede ser ya binario y no necesite unserialize.
-			
-			String data = new String(attach.getData());
-			DataUrlSerializer serializer = new DataUrlSerializer();
-			DataUrl unserialized = serializer.unserialize(data);
-			attach.setData( unserialized.getData() );
+			if ( !accInvoice.isFromRawdoc()) {
+				DataUrlSerializer serializer = new DataUrlSerializer();
+				DataUrl unserialized = serializer.unserialize(data);
+				attach.setData( unserialized.getData() );
+			}
 		}
 		if (attach.getData() != null) {
 			Integer attachId = AttachmentDAO.insertInvoiceAttach(ctx, accInvoice.getAttach());
@@ -1111,25 +1112,25 @@ public class AccountingInvoiceDAO {
 				@Override
 				public void visitSupplier(AccountingRegistry reg) {
 					Account account = createAccountAndFill(reg);
-					RegistryOldDAO.updateSupplierAccount(ctx,reg.getId(),account.getId());
+					SupplierDAO.updateSupplierAccount(ctx, reg.getId(),account.getId());
 				}
 				
 				@Override
 				public void visitCustomer(AccountingRegistry reg) {
 					Account account = createAccountAndFill(reg);
-					RegistryOldDAO.updateCustomerAccount(ctx,reg.getId(),account.getId());
+					CustomerDAO.updateCustomerAccount(ctx, reg.getId(),account.getId());
 				}
 				
 				@Override
 				public void visitCreditor(AccountingRegistry reg) {
 					Account account = createAccountAndFill(reg);
-					RegistryOldDAO.updateCreditorAccount(ctx,reg.getId(),account.getId());
+					CreditorDAO.updateCreditorAccount(ctx, reg.getId(),account.getId());
 				}
 				
 				@Override
 				public void visitUndedCreditor(AccountingRegistry reg) {
 					Account account = createAccountAndFill(reg);
-					RegistryOldDAO.updateCreditorAccount(ctx,reg.getId(),account.getId());
+					CreditorDAO.updateCreditorAccount(ctx, reg.getId(),account.getId());
 				}
 				
 				private Account createAccountAndFill(AccountingRegistry reg) {
