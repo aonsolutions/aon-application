@@ -1,4 +1,4 @@
-import { post, get, remove } from "./request.js";
+import { post, get, remove, openFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 import { addDays, formatDateOrigin} from "./utils.js";
 
@@ -15,6 +15,8 @@ export const saveTimeControl = (data) => post(`${API_URL}/timecontrol`, data);
 export const saveTimeControlDetail = (data) => post(`${API_URL}/timecontrol/save`, data);
 export const deleteTimeControl = (data) => remove(`${API_URL}/timecontrol`, data);
 export const getTimeControlDetail = (data) => get(`${API_URL}/timecontrol/list-holder-detail`, data);
+
+export const getTimeControlExcel = (data) => openFile(`${API_URL}/timecontrol/excel`, data);
 
 export const getStatus = (data) =>
 new Promise((resolve) => {

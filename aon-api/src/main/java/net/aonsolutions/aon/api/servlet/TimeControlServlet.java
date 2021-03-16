@@ -1,17 +1,17 @@
 package net.aonsolutions.aon.api.servlet;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.Timestamp;
+import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
@@ -25,9 +25,10 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-
+import net.aonsolutions.aon.api.excel.TimeControlExcel;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 @SuppressWarnings("serial")
@@ -57,6 +58,9 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				break;
 			case "/taskholder":
 				response(req, resp, getTaskHolders());
+				break;
+			case "/excel":
+				responseFile(req, resp, getTimeControlExcel(req), MimeType.MS_EXCEL);
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -287,6 +291,30 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				.setStatus(TimeControlStatus.safeValueOf(getData().optString("status")));
 		
 		return AON_SOLUTIONS.saveTimeControlDetail(tcd.getDomain(), "", tcd).toJSON();
+	}
+	
+	private File getTimeControlExcel(HttpServletRequest req) throws Exception {
+		LOGGER.info("[GET] TIME-CONTROL SERVLET EXCEL");
+
+		String param = req.getParameter("json");
+		param = new String(Base64.getDecoder().decode(param));
+		JSONObject json = new JSONObject(param);
+		String domainName = json.getString("domain_name");
+		Integer domainId = json.getInt("domain_id");
+				
+		Domain domain = AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
+
+		Date startDate = null;
+		Date endDate = null;
+		
+	
+		if(!json.optString("startDate").isEmpty()) startDate = Toolkit.parseDate(json.optString("startDate"), "yyyy-MM-dd");
+		if(!json.optString("endDate").isEmpty()) endDate = Toolkit.parseDate(json.optString("endDate"), "yyyy-MM-dd");
+	
+		File file = File.createTempFile("timecontrol", "");
+		TimeControlExcel.excelTimeControl(domain, new FileOutputStream(file), startDate, endDate);
+		return file;
+
 	}
 	
 }

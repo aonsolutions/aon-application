@@ -1,6 +1,6 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { getPeriod, getStatus, getTimeControlList } from "../../../services/service.js";
-import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
+import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel } from "../../../services/service.js";
+import { formatDateOrigin, isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
 import { PresenceFilterInput, SigninSidenav } from "../signinEnums.js";
 import { dateCustomDayHour, StringTwoLetters, timeHour } from "./utils.js";
 import "../../../components/aon-table.js";
@@ -75,6 +75,13 @@ export class AonPresenceList extends AonElement {
     this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
       filterEl.openFilter()
     );
+
+    this.aonSigninEl.addToolbarOption2({
+      name: "Excel",
+      aonIcon: "aon_excel",
+      id: "excel",
+    }, (e) => this.getTimeControlExcel()
+   );
   }
 
 
@@ -218,6 +225,23 @@ export class AonPresenceList extends AonElement {
       parent.showView("aonEventList", data, true);
     }
   }
+
+
+	async getTimeControlExcel() {
+		this.aonSigninEl.startLoading();
+		try {
+      let startYear = new Date().getFullYear();
+      let {startDate} = this.aonSigninParentEl._filter;
+			if(startDate) startYear = new Date(startDate).getFullYear();
+      startDate = startYear+"-01-01"; 
+
+			await getTimeControlExcel({startDate, endDate:startDate}); 
+		} catch (error) {
+			console.log(error);
+			this.aonSigninEl.getToast().start({ message: error, type: 'error' });
+		}
+		this.aonSigninEl.stopLoading();
+	}
 }
 
 window.customElements.define("aon-presence-list", AonPresenceList);

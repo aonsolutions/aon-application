@@ -135,6 +135,7 @@ export class AonDate extends AonElement {
     previous.style.top = '5px';
     previous.addEventListener('click', (ev) => {
       ev.stopPropagation();
+      ev.preventDefault();
       this.previousMonth();
     });
 
@@ -155,6 +156,7 @@ export class AonDate extends AonElement {
     next.style.top = '5px';
     next.addEventListener('click', (ev) => {
       ev.stopPropagation();
+      ev.preventDefault();
       this.nextMonth();
     });
 

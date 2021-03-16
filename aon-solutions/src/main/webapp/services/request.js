@@ -133,7 +133,9 @@ export const remove = (url, data) => {
 
 export const getToken = () => localStorage.getItem("aon_session_id");
 
-export const openPDF = async (url, data) => {
+export const openPDF = async (url, data) =>  await openFile(url, data);
+
+export const openFile = async (url, data) => {
   const token = getToken();
   const domainId = localStorage.getItem("aon_domain_id");
   const domainName = localStorage.getItem("aon_domain_name");
@@ -155,22 +157,25 @@ export const openPDF = async (url, data) => {
   return;
 };
 
+
+
 const openFileMobile = async (url) =>
   new Promise((resolve, reject) => {
     requestFile("GET", url, (result, error) => {
       if (error) reject(error);
       else {
-        const contentType = "application/pdf";
         const reader = new FileReader();
         reader.readAsDataURL(result);
         reader.onload = function () {
-          const base64Str = reader.result
-            .toString()
-            .replace(/^data:.+;base64,/, "");
+          const base64Data = reader.result.toString();
+          const base64Str = base64Data.replace(/^data:.+;base64,/, "");
+          const mime = base64Data.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
+          let name = base64Str.substring(base64Str.lastIndexOf('/') - 10, base64Str.length);
+          if(!name) name="document";
           const obj = {
             fileBase64: base64Str,
-            fileName: "document.pdf",
-            contentType,
+            fileName: name,
+            contentType:mime[1],
             action: "fileDownload",
           };
           resolve(obj);
