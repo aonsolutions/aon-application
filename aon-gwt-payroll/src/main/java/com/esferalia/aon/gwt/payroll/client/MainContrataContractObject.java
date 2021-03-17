@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainContrataContractObject {
@@ -152,10 +152,10 @@ public class MainContrataContractObject {
 		List<Integer> contractIds = new ArrayList<Integer>();
 		
 		for(Entry<String, Integer> entry : employeesFilterMap.entrySet()) {
-			if(StringUtils.containsIgnoreCase(entry.getKey(), value) ||
-			   StringUtils.contains(entry.getKey(), value) ||
-			   StringUtils.equals(entry.getKey(), value) ||
-			   StringUtils.equalsIgnoreCase(entry.getKey(), value)) {
+			if( AonStringUtils.containsIgnoreCase(entry.getKey(), value) ||
+				AonStringUtils.contains(entry.getKey(), value) ||
+				AonStringUtils.equals(entry.getKey(), value) ||
+				AonStringUtils.equalsIgnoreCase(entry.getKey(), value)) {
 				
 				contractIds.add(entry.getValue());
 			}

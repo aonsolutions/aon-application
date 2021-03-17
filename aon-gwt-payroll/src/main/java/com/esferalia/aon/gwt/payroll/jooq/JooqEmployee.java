@@ -981,7 +981,7 @@ public class JooqEmployee {
 		
 		Integer rAddressId = null;
 		
-		if(null != employeeData.getAddressProvinces()) {
+		if(null != employeeData.getAddressProvinces() && !AonStringUtils.equalsIgnoreCase(employeeData.getAddressProvinces(),"-1")) {
 			
 			Result<Record> geozone = null;
 			
@@ -1077,6 +1077,10 @@ public class JooqEmployee {
 				.set(GEOTREE.PARENT, (Integer) null)
 				.set(GEOTREE.CHILD, geozoneParentId)
 				.execute();
+			}
+		} else {
+			if(employeeData.getRaddressId() != null) {
+				dslContext.delete(RADDRESS).where(RADDRESS.ID.eq(employeeData.getRaddressId())).execute();
 			}
 		}
 		

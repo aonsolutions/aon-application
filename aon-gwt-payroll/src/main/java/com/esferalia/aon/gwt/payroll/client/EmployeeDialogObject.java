@@ -39,7 +39,7 @@ public class EmployeeDialogObject {
 	
 	private Map<String, String> payMethodsMap;
 	
-	// ------------------------------------------------- CLASS METHODS -------------------------------------------------
+	// ------------------------------------------------- Constructor
 	
 	public EmployeeDialogObject(Workplace workplace) {
 		super();
@@ -54,13 +54,10 @@ public class EmployeeDialogObject {
 		this.payMethodsMap = new HashMap<String, String>();
 	}
 	
-	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
+	// ------------------------------------------------- Database Methods
 	
 	public void getWorkplaceEmployees(Consumer<WorkplaceEmployees> success, Consumer<Throwable> failure) {
 		employeesService.getWorkplaceEmployees(workplace, new AsyncCallback<WorkplaceEmployees>() {
-
-			@Override
-			public void onFailure(Throwable caught) {}
 
 			@Override
 			public void onSuccess(WorkplaceEmployees result) {
@@ -71,6 +68,10 @@ public class EmployeeDialogObject {
 						}, f->{}
 				);
 			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+			
 		});
 	}
 	
@@ -89,6 +90,7 @@ public class EmployeeDialogObject {
 			
 			@Override
 			public void onFailure(Throwable caught) {}
+			
 		});
 	}
 	
@@ -107,6 +109,7 @@ public class EmployeeDialogObject {
 			
 			@Override
 			public void onFailure(Throwable caught) {}
+			
 		});
 	}
 	
@@ -125,6 +128,7 @@ public class EmployeeDialogObject {
 			
 			@Override
 			public void onFailure(Throwable caught) {}
+			
 		});
 	}
 	
@@ -139,7 +143,22 @@ public class EmployeeDialogObject {
 			
 			@Override
 			public void onFailure(Throwable caught) {}
+			
 		});
+	}
+	
+	public void getAgreement(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {	
+		enterprisesService.getAgreement(agreementId, new AsyncCallback<Agreement>() {
+			
+			@Override
+			public void onSuccess(Agreement result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+			
+		});	
 	}
 	
 	public void initializeEmployee(Integer contractId, Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
@@ -155,30 +174,13 @@ public class EmployeeDialogObject {
 				contractData.setStartDate(null);
 				contractData.setEndDate(null);
 				
-				Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
-				contractData.setContractJourneyDuration(journies);
-				
 				success.accept(result);
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
-	public void getAgreement(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {	
-		enterprisesService.getAgreement(agreementId, new AsyncCallback<Agreement>() {
-			
-			@Override
-			public void onSuccess(Agreement result) {
-				success.accept(result);
-			}
-			
-			@Override
 			public void onFailure(Throwable caught) {}
-		});	
+			
+		});
 	}
 	
 	public void createEmployeeContract(Consumer<Integer> success, Consumer<Throwable> failure){
@@ -193,15 +195,29 @@ public class EmployeeDialogObject {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
+			public void onFailure(Throwable caught) {}
+			
 		});
 	}
 	
-	// ---------------------------------------------- GETTERS  -------------------------------------------------
+	// ------------------------------------------------- Auxiliar Methods
 	
-	// TABLA DATOS CONTRATO
+	public void resetEmptyInfo() {
+		this.employeeContractData = new EmployeeContractInfo();
+		this.employeeData = new EmployeeInfo();
+		this.contractData = new ContractInfo();
+		this.contractData.setWorkplaceId(workplace.getId());
+	}
+
+	public Date getContractStartDate() {
+		return this.contractData.getStartDate();
+	}
+	
+	public Date getContractEndDate() {
+		return this.contractData.getEndDate();
+	}
+	
+	// ------------------------------------------------- Getters
 	
 	public EmployeeInfo getEmployeeData() {
 		return this.employeeData;
@@ -215,22 +231,6 @@ public class EmployeeDialogObject {
 		return this.workplaceEmployees;
 	}
 	
-	public Map<Integer, String> getActivities() {
-		return activitiesCCC.getActivities();
-	}
-	
-	public Map<String, String> getPayMethods() {
-		return payMethodsMap;
-	}
-	
-	public Map<Integer, CCCInfo> getCCCs() {
-		return activitiesCCC.getCccs();
-	}
-	
-	public List<Workplace> getWorkplaces() {
-		return this.workplaces;
-	}
-	
 	public List<Agreement> getActiveAgreements(){
 		List<Agreement> activeAgreements = new ArrayList<>();
 		for(Agreement a : this.agreements){
@@ -238,6 +238,23 @@ public class EmployeeDialogObject {
 				activeAgreements.add(a);
 		}
 		return activeAgreements;
+	}
+	
+	
+	public Map<Integer, String> getActivities() {
+		return activitiesCCC.getActivities();
+	}
+	
+	public Map<Integer, CCCInfo> getCCCs() {
+		return activitiesCCC.getCccs();
+	}
+	
+	public Map<String, String> getPayMethods() {
+		return payMethodsMap;
+	}
+	
+	public List<Workplace> getWorkplaces() {
+		return this.workplaces;
 	}
 	
 	public Workplace getWorkplaceObj() {
@@ -268,6 +285,8 @@ public class EmployeeDialogObject {
 		
 		return agreementId;
 	}
+	
+	// ------------------------------------------------- Get Employee by info
 	
 	public EmployeeInfo getEmployeeDataByDocument(String document){
 		for(EmployeeInfo employee : workplaceEmployees.getWorkplaceEmployees()){
@@ -300,22 +319,7 @@ public class EmployeeDialogObject {
 		return this.employeeData;
 	}
 	
-	public Integer getContractSSRegimen() {
-		return this.contractData.getSsRegimen() == null ? 0 : (int) this.contractData.getSsRegimen();
-	}
-		
-	public Integer getContractType() {
-		if(null == this.contractData.getContractType())
-			return -1;
-		else
-			return Integer.parseInt(this.contractData.getContractType());
-	}
-	
-	public Double getContractPartialityCoef() {
-		return this.contractData.getPartialityCoef();
-	}
-	
-	// ---------------------------------------------- SETTERS  -------------------------------------------------
+	// ------------------------------------------------- Setters
 	
 	// CONTRACT TABLE
 	
@@ -404,7 +408,7 @@ public class EmployeeDialogObject {
 	}
 	
 	public void setContractModel(Integer ordinal) {
-		contractData.setContractModel(ordinal);//ModelOption.values()[ordinal].toString());	
+		contractData.setContractModel(ordinal); //ModelOption.values()[ordinal].toString());	
 	}
 	
 	public void setContractStartDate(Date start_date) {
@@ -488,15 +492,15 @@ public class EmployeeDialogObject {
 	public void setEmployeeAddressZip(String zip_code) {
 		employeeData.setAddressZip(zip_code);
 	}
-
-	public void setEmployeeAddressCity(String city) {
-		employeeData.setAddressCity(city);
-	}
-
+	
 	public void setEmployeeAddressProvince(String province) {
 		employeeData.setAddressProvinces(province);
 	}
 
+	public void setEmployeeAddressCity(String city) {
+		employeeData.setAddressCity(city);
+	}
+	
 	public void setEmployeeMobile(String mobile) {
 		employeeData.setMobile(mobile);
 	}
@@ -513,8 +517,8 @@ public class EmployeeDialogObject {
 		employeeData.setPayMethodType(payMethodType);
 	}
 	
-	public void setEmployeePayMethod(byte payMethodType) {
-		employeeData.setPayMethodTypeB(payMethodType);
+	public void setEmployeePayMethodId(Integer paymethodId) {
+		this.employeeData.setPaymethodId(paymethodId);
 	}
 	
 	public void setEmployeeBIC(String bic) {
@@ -527,29 +531,6 @@ public class EmployeeDialogObject {
 
 	public void setEmployeeAccount(String rbankAccount) {
 		employeeData.setAccount(rbankAccount);
-	}
-
-	// -----------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------- AUXILIAR METHODS --------------------------------------------------------------
-	// -----------------------------------------------------------------------------------------------------------------------------------------
-
-	public void resetEmptyInfo() {
-		this.employeeContractData = new EmployeeContractInfo();
-		this.employeeData = new EmployeeInfo();
-		this.contractData = new ContractInfo();
-		this.contractData.setWorkplaceId(workplace.getId());
-	}
-
-	public Date getContractStartDate() {
-		return this.contractData.getStartDate();
-	}
-	
-	public Date getContractEndDate() {
-		return this.contractData.getEndDate();
-	}
-
-	public void setEmployeePayMethodId(Integer paymethodId) {
-		this.employeeData.setPaymethodId(paymethodId);
 	}
 		
 }

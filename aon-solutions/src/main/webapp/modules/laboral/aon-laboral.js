@@ -104,6 +104,7 @@ class AonLaboral extends AonElement {
             aonView = new AonPayrollList();
             break;
           case 'aonSepaFilesList':
+            this.removeToolbarOptions();
             aonView = this.isMobile() ? new AonMobileDocumentalList() : new AonDocumentalList();
             aonView.setFilter({type: 'system'});
             break;
@@ -114,6 +115,12 @@ class AonLaboral extends AonElement {
       }
       resolve(true);
     });
+  }
+
+  removeToolbarOptions() {
+    let application = this.getApplication();
+    let toolbar = this.getElement(application.TOOLBAR);
+    toolbar.removeButtons();
   }
 
   isEmployee(){

@@ -3353,7 +3353,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	protected static void invokeRefreshWorkplace() {
-		getEmployeeTree().employees.refresh(getEmployeeTree().workplace);
+		if(null != getEmployeeTree().workplace)
+			getEmployeeTree().employees.refresh(getEmployeeTree().workplace);
 	}
 
 	protected static void invokeRefreshEnterprise() {

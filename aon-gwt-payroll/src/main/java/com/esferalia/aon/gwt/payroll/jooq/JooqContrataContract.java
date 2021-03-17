@@ -1304,6 +1304,7 @@ public class JooqContrataContract {
 			contractData.setStartDate(contractPerRegWorkplaceRecord.get(CONTRACT.START_DATE));
 			contractData.setEndDate(contractPerRegWorkplaceRecord.get(CONTRACT.END_DATE));
 			contractData.setSsRegimen(contractPerRegWorkplaceRecord.get(CONTRACT.SS_REGIME));
+			contractData.setAgreementCategory(contractPerRegWorkplaceRecord.get(CONTRACT.CATEGORY_DESCRIPTION));
 			
 			// ENTERPRISE CCC
 			Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)

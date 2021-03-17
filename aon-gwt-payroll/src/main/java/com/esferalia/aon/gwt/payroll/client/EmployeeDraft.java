@@ -17,17 +17,21 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.gwt.pdfjs.client.Viewer;
@@ -262,11 +266,58 @@ public class EmployeeDraft extends Composite {
 		}
 	}
 	
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// ------------------------------------------------- UiBinder
 	
 	interface EmployeeDraftUiBinder extends UiBinder<Widget, EmployeeDraft> {}
 	
 	private static EmployeeDraftUiBinder uiBinder = GWT.create(EmployeeDraftUiBinder.class);
+	
+	// ------------------------------------------------- ScheduledCommand
+	
+	class NewPeculiaritiesCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			EmployeePeculiaritiesDialog dialog = new EmployeePeculiaritiesDialog(employeeDraftObject.getContractId(), employeeDraftObject.getContractStartDate());
+			dialog.center();
+			dialog.show();
+		}
+	}
+	
+	class NewBonificationsCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			SSBonusDraft dialog = new SSBonusDraft(employeeDraftObject.getContractId());
+			dialog.setPopupPositionAndShow((x,y) -> dialog.center() );
+		}
+	}
+	
+	class NewContextMenu extends ContextMenu {
+				
+		private MenuItem peculiarities = null;
+		private MenuItem bonifications = null;
+		
+		public NewContextMenu() {
+			
+			peculiarities = addItem("Peculiaridades de cotizaci" + String.valueOf("\u00F3") + "n", new NewPeculiaritiesCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			peculiarities.ensureDebugId("peculiarities");
+			
+			bonifications = addItem("Bonificaciones", new NewBonificationsCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			bonifications.ensureDebugId("bonifications");
+		}
+	}
+	
+	// ------------------------------------------------- UiFields
+	
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String cmd_btn();
+	}
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
@@ -280,7 +331,8 @@ public class EmployeeDraft extends Composite {
 	@UiField
 	Viewer pdfViewer;
 	
-	// ------------------------------------------------------ VARIABLES DE LA CLASE -------------------------------------------------
+	// ------------------------------------------------- Class variables
+	
 	private EmployeeDraftObject employeeDraftObject;
 	
 	private AonToolbar toolbar;
@@ -291,17 +343,18 @@ public class EmployeeDraft extends Composite {
 	private AonToolbarButton ta;
 	private AonToolbarButton idc;
 	private AonToolbarButton afi;
-	private AonToolbarButton peculiarities;
-	private AonToolbarButton bonifications;
+	private AonToolbarButton tgss;
 	private AonToolbarButton closePDF;
 	private AonToolbarButton downloadPDF;
 	private ListBox zoomListBox;
 	private MonthListBox idcMonthListBox;
 	private int zoom;
 	
+	private NewContextMenu contextMenu;
+	
 	private Consumer<EmployeeContractInfo> onSaved ;
 
-	// --------------------------------------------------------- CONSTRUCTOR --------------------------------------------------------
+	// ------------------------------------------------- Constructor
 
 	public EmployeeDraft() {
 		this.zoom = Constants.DEFAULT_ZOOM;
@@ -309,6 +362,8 @@ public class EmployeeDraft extends Composite {
 		employee = new EmployeeImplementation();
 		
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		contextMenu = new NewContextMenu();
 		
 		toolbar = getToolbarPanel();
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
@@ -320,60 +375,23 @@ public class EmployeeDraft extends Composite {
 		initZoomList();
 	}
 		
-	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
-	
-	public void setEndDate(Date endDate) {
-		employee.setEndDate(endDate);
-	}
-	
-	public void setStartDate(Date endDate) {
-		employee.setStartDate(endDate);
-	}
-
-	public void setOcupation(String occupation) {
-		switch (occupation) {
-		case "a":
-			employee.occupation.setSelectedIndex(1);
-		case "b":
-			employee.occupation.setSelectedIndex(2);
-		case "d":
-			employee.occupation.setSelectedIndex(3);
-		case "e":
-			employee.occupation.setSelectedIndex(4);
-		case "f":
-			employee.occupation.setSelectedIndex(5);
-		case "g":
-			employee.occupation.setSelectedIndex(6);
-		case "h":
-			employee.occupation.setSelectedIndex(7);
-		default:
-			employee.occupation.setSelectedIndex(0);
-		}
-		
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.occupation);
-		
-	}
-	
-	public void setTaVisible(boolean visible ) {
-		ta.setVisible(visible);
-	}
-
-	public void setIdcVisible(boolean visible ) {
-		idc.setVisible(visible);
-	}
+	// ------------------------------------------------- setEmployeeDraft
 
 	public void setEmployeeDraftObject(EmployeeDraftObject employeeDraftObject) {
 		showEmployee();
 		this.employeeDraftObject = employeeDraftObject;
 		this.employeeDraftObject.initializeEmployee(
 			r -> {
-					initializeUndoRedo();
+					employee.initializeView();
 					initializeIdcMonthListBox();
 					initializeView();
+					initializeUndoRedo();
 			}, t -> {}
 		);
 	
 	}
+	
+	// ------------------------------------------------- Initialize view
 	
 	private void initializeIdcMonthListBox() {
 		Date firstMonth = DateUtils.getFirstDayOfMonth(employeeDraftObject.getContractStartDate());
@@ -385,6 +403,7 @@ public class EmployeeDraft extends Composite {
 	}
 	
 	private void initializeUndoRedo() {
+		employeeDraftObject.clearUndoMaganager();
 		undo.setEnabled(employeeDraftObject.canUndo());
 		undoAll.setEnabled(employeeDraftObject.canUndo());
 		redo.setEnabled(employeeDraftObject.canRedo());
@@ -430,7 +449,6 @@ public class EmployeeDraft extends Composite {
 	
 	private void initIbans() {
 		employee.initIbans(employeeDraftObject.getExistingIban());
-
 	}
 	
 	private void initFocus() {
@@ -441,6 +459,8 @@ public class EmployeeDraft extends Composite {
 	        }
 		});
 	}
+	
+	// ------------------------------------------------- Initialize existing employee
 	
 	public void initExistingEmployee( boolean hasPayroll){
 		fillExistingEmployee();
@@ -462,7 +482,7 @@ public class EmployeeDraft extends Composite {
 		employee.first_surname.setValue(employeeData.getSurName());
 		employee.second_surname.setValue(employeeData.getSecondSurName());
 		
-		employee.birth_date.setValue(employeeData.getBirthdate());
+		employee.birth_date.setValue(employeeData.getBirthdate(), true);
 		setSelectedValueLB(employee.gender, String.valueOf(employeeData.getGender()));
 		setSelectedValueLB(employee.civilStatus, employeeData.getCivilStatus()+"");
 		
@@ -522,7 +542,7 @@ public class EmployeeDraft extends Composite {
 	}
 
 	private void fillContractTable(ContractInfo contractData) {
-		setSelectedValueLB(employee.ssRegimeType, employeeDraftObject.getContractSSRegimen()+"");
+		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
 		
 		setSelectedValueLB(employee.activityCCC, contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
 		
@@ -534,10 +554,11 @@ public class EmployeeDraft extends Composite {
 		
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
 		
-		setSelectedValueLB(employee.contractTypeLB, employeeDraftObject.getContractType()+"");
+		setSelectedValueLB(employee.contractTypeLB, contractData.getContractType());
 		
-		Integer contractTypeInt = employeeDraftObject.getContractType();
+		Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
 		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
+			employee.showPartialTimeContract();
 			if(employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().size() == 0) {
 				employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
@@ -547,7 +568,8 @@ public class EmployeeDraft extends Composite {
 			} else {
 				employee.journeyDuration.setText(employeeDraftObject.getContractData().getContractJourneyDuration().getJourneyText());
 			}
-		}
+		} else
+			employee.showElementsFullTimeContract();
 		
 		employee.updateModality(contractTypeInt);
 		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
@@ -567,8 +589,10 @@ public class EmployeeDraft extends Composite {
 		
 		setSelectedValueLB(employee.quote_group, contractData.getQuoteGroup());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
-		employee.partiality_coef.setValue(employeeDraftObject.getContractPartialityCoef());	
+		employee.partiality_coef.setValue(contractData.getPartialityCoef());	
 	}
+	
+	// ------------------------------------------------- Auxiliar Methods
 
 	private void getAgreementLevels(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
 		employee.level.clear();
@@ -580,7 +604,6 @@ public class EmployeeDraft extends Composite {
 				for (String categoryRecord : agreement.getCategoriesMap().get(levelRecord.getId()))
 					employee.level.addItem(levelRecord.getDescription() + " - " + categoryRecord, String.valueOf(levelRecord.getId()));
 
-			employeeDraftObject.setContractAgreementId(agreement.getId());
 			success.accept(agreement);
 		},
 		(throwable) -> {
@@ -616,6 +639,8 @@ public class EmployeeDraft extends Composite {
 		zoomListBox.setSelectedIndex(selectedIndex);
 		
 	}
+	
+	// ------------------------------------------------- Toolbar panel
 	
 	private AonToolbar getToolbarPanel() {
 		
@@ -684,23 +709,14 @@ public class EmployeeDraft extends Composite {
 		});
 		toolbar.add(afi);
 		
-		peculiarities = new AonToolbarButton( "Peculiaridades de cotizacion", AON.CSS.aonIconTgss() );
-		peculiarities.addClickHandler(new ClickHandler() {
+		tgss = new AonToolbarButton( "TGSS", AON.CSS.aonIconTgss() );
+		tgss.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				onPeculiarities(event);
+				onTgss(event);
 			}
 		});
-		toolbar.add(peculiarities);
-		
-		bonifications = new AonToolbarButton( "Bonificaciones de Contrato", AON.CSS.aonIconTgss() );
-		bonifications.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onBonifications(event);
-			}
-		});
-		toolbar.add(bonifications);
+		toolbar.add(tgss);
 		
 		closePDF = new AonToolbarButton( AON.MSG.closed(), AON.CSS.aonIconClose() );
 		closePDF.setAccessKey('I');
@@ -737,26 +753,17 @@ public class EmployeeDraft extends Composite {
 		});
 		toolbar.add(downloadPDF);
 		
-		
 		return toolbar;
-
 	}
 
 	private void onSaveContract(ClickEvent event) {
-		if(employee.checkIfSaveIsPossible())
+		if(employee.checkIfSaveEmployeeIsPossible())
 			employeeDraftObject.updateEmployee(
 					r -> { 
 						saved();
 					}, 
-					t -> {
-						
-					}
+					t -> {}
 			);
-	}
-	
-	private void saved() {
-		EmployeeTree.invokeRefreshWorkplace();
-		onSaved.accept(employeeDraftObject.getEmployeeContractInfo());
 	}
 
 	private void onUndoAll(ClickEvent event) {
@@ -824,17 +831,11 @@ public class EmployeeDraft extends Composite {
 		dialog.show();
 	}
 	
-	private void onPeculiarities(ClickEvent event) {
-		EmployeePeculiaritiesDialog dialog = new EmployeePeculiaritiesDialog(this.employeeDraftObject.getContractId(), this.employeeDraftObject.getContractStartDate());
-		dialog.center();
-		dialog.show();
+	private void onTgss(ClickEvent event) {
+		NativeEvent nativeEvent = event.getNativeEvent();
+		contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		contextMenu.show();
 	}
-	
-	private void onBonifications(ClickEvent event) {
-		SSBonusDraft dialog = new SSBonusDraft(this.employeeDraftObject.getContractId());
-		dialog.setPopupPositionAndShow((x,y) -> dialog.center() );
-	}
-	
 
 	private void onClosePDF(ClickEvent event) {
 		showEmployee();
@@ -844,6 +845,8 @@ public class EmployeeDraft extends Composite {
 		String fileName = employeeDraftObject.getEmployeeFullName() + " IDC.pdf";
 		pdfViewer.download(fileName);
 	}
+	
+	// ------------------------------------------------- Toolbar panel auxiliar methods
 	
 	private void showTa() {
 		employeeDraftObject.downloadTa(
@@ -870,16 +873,13 @@ public class EmployeeDraft extends Composite {
 				idcMonthListBox.setSelected(month, true);
 				pdfViewer.setDocument(dataURI, zoom / 100.00);
 		}, 
-		(trowable)-> {
-			
-		}
+		(trowable) -> {}
 		);
 	}
 
 	private void showPdf() {
 		afi.setVisible(false);
-		peculiarities.setVisible(false);
-		bonifications.setVisible(false);
+		tgss.setVisible(false);
 		ta.setVisible(false);
 		idc.setVisible(false);
 		undo.setVisible(false);
@@ -895,8 +895,7 @@ public class EmployeeDraft extends Composite {
 
 	private void showEmployee() {
 		afi.setVisible(true);
-		peculiarities.setVisible(true);
-		bonifications.setVisible(true);
+		tgss.setVisible(true);
 		undo.setVisible(true);
 		redo.setVisible(true);
 		undoAll.setVisible(true);
@@ -911,9 +910,15 @@ public class EmployeeDraft extends Composite {
 		showWidget(employee);
 	}
 	
-	
 	private void showWidget(Widget widget) {
 		deckPanel.showWidget(deckPanel.getWidgetIndex(widget));
+	}
+	
+	// ------------------------------------------------- Callback saved for check status
+	
+	private void saved() {
+		EmployeeTree.invokeRefreshWorkplace();
+		onSaved.accept(employeeDraftObject.getEmployeeContractInfo());
 	}
 	
 	public EmployeeDraft setOnSaved(Consumer<EmployeeContractInfo> onSaved) {
@@ -923,5 +928,44 @@ public class EmployeeDraft extends Composite {
 	
 	protected void onSavedNoop(EmployeeContractInfo employeeContractInfo) {}
 	
+	// ------------------------------------------------- CheckStatus(EmployeeDraftObject) - EmployeeTree
+	
+	public void setEndDate(Date endDate) {
+		employee.setEndDate(endDate);
+	}
+	
+	public void setStartDate(Date endDate) {
+		employee.setStartDate(endDate);
+	}
 
+	public void setOcupation(String occupation) {
+		switch (occupation) {
+		case "a":
+			employee.occupation.setSelectedIndex(1);
+		case "b":
+			employee.occupation.setSelectedIndex(2);
+		case "d":
+			employee.occupation.setSelectedIndex(3);
+		case "e":
+			employee.occupation.setSelectedIndex(4);
+		case "f":
+			employee.occupation.setSelectedIndex(5);
+		case "g":
+			employee.occupation.setSelectedIndex(6);
+		case "h":
+			employee.occupation.setSelectedIndex(7);
+		default:
+			employee.occupation.setSelectedIndex(0);
+		}
+		
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.occupation);
+	}
+	
+	public void setTaVisible(boolean visible ) {
+		ta.setVisible(visible);
+	}
+
+	public void setIdcVisible(boolean visible ) {
+		idc.setVisible(visible);
+	}
 }
