@@ -87,6 +87,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_DAY
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TODAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_DAYS;
@@ -3908,6 +3909,29 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return sum;
 	}
 
+	private double getAverageVariable(String name, Date start, Date end) {
+		List<ITimedVariable<Double>> vars = this.contractExpressionContext.getVariables(name);
+		
+		int days = 0;
+		double sum = 0.00;
+		
+		Period p = new Period(start, end);
+		for (ITimedVariable<Double> var : vars) {
+			Period period = var.getPeriod();
+			Period intersect = period.intersect(p);
+			if (intersect == null)
+				continue;
+
+			Double value = var.getValue(period);
+			if (value == null)
+				continue;
+			days += days(intersect);
+			sum += value * days(intersect);
+		}
+
+		return sum / days;
+	}
+
 	private boolean containsVariable(Object name) {
 		return this.contractExpressionContext.containsVariable(name, this.contractStartDate, this.contractEndDate);
 	}
@@ -4338,6 +4362,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		fixItDaysWhenIfDays(ctx);
 		
 		loadWeekHoursContextVariable(ctx);
+
+		loadTotalsContextVars(ctx);
 
 		List<Period> contract = getMonths(contractStartDate, contractEndDate);
 		
@@ -4779,6 +4805,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			} else {
 			}
 
+
 			ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
 				@Override
 				public Period getPeriod() {
@@ -4890,6 +4917,33 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		}
 
+	}
+
+	private void loadTotalsContextVars(ContractExpressionContext ctx) {
+		ITimedVariable<Double> totalWorkedDays = new ITimedVariable<Double>() {
+			@Override
+			public Period getPeriod() {
+				return new Period(
+						SQLContractSalaryCalculatorContext.this.startDate, 
+						SQLContractSalaryCalculatorContext.this.getEnd());
+			}
+
+			@Override
+			public Double getValue(Period p) {
+				double workDays = getWorkDays(ctx, p);
+				try {
+					double avgPartialFactor = getAverageVariable(
+							PARTIAL_FACTOR.getName(), 
+							SQLContractSalaryCalculatorContext.this.startDate, 
+							SQLContractSalaryCalculatorContext.this.getEnd());
+					return workDays * ( avgPartialFactor == 0.00 ? 1.00 : avgPartialFactor );
+				} catch (ExpressionExceptionWrapper e) {
+				}
+				return workDays;
+			}
+
+		};
+		ctx.putVariable(TOTAL_WORKED_DAYS, totalWorkedDays);
 	}
 	
 	private void fixItDaysWhenIfDays(ContractExpressionContext ctx) {

@@ -272,6 +272,9 @@ public enum ContextVariable implements IResourceable {
 	
 //	DO_DAYS("JORNADAS_REALES", VariableType.DOUBLE, false),
 	IF_DAYS("JORNADAS_TEORICAS", VariableType.DOUBLE, false),
+
+	
+	TOTAL_WORKED_DAYS("DIAS_TRABAJADOS_TOTALES", VariableType.DOUBLE, false),
 	;
 
 	public static final String ALL = "_P";
