@@ -21,4 +21,10 @@ public class StringToolkit {
 		words.removeIf(p -> p.length() < 1);
 		return words;
 	}
+	
+	
+	public static String append(String text,String append,int times) {
+		for (int i = 0; i < times; i++) text += append;
+		return text;
+	}
 }

@@ -9,7 +9,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
@@ -92,11 +91,7 @@ public class ResponseHandler {
 			Document doc = dBuilder.parse(is);
 
 			System.out.println("\t XML version: \t " + doc.getXmlVersion());
-			
-			Node   ns2;
-			try{ns2 = doc.getFirstChild();}
-			catch(Exception e) {ns2 = null;}
-			
+						
 			String estado;
 			try{estado = doc.getElementsByTagName("Estado").item(0).getTextContent();}
 			catch(Exception e) {estado = null;}

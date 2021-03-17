@@ -48,7 +48,17 @@ public class PdfTable extends PdfComponent{
 	public Color header_text_color;
 	
 	public PdfTable(float x, float y, PDPageContentStream stream, float width, float cell_height, float spacing, float[] sizes, String[] headers) {
-		super(x, y, width, 0, 0, 0, stream);
+		this.start_pointer();
+		this.x(x);
+		this.y(y);
+		
+		this.width(width);
+		this.height(0);
+		
+		this.margin_x(0);
+		this.margin_y(0);
+		
+		this.stream(stream);
 		this.columns = sizes.length;
 		this.headers = headers;
 		this.sizes = sizes;
@@ -95,8 +105,8 @@ public class PdfTable extends PdfComponent{
 			ALIGNMENT align = (alignments[i] != null)? alignments[i] : CENTER;
 			float height = ( font.getFontDescriptor().getCapHeight()) / 1000 * header_fontsize;
 			
-			PdfBox box = new PdfBox(pixels[i],y(), width / (100 / sizes[i]),header_height,header_color,this.stream);
-			PdfText text = new PdfText(pixels[i], y(), width / (100 / sizes[i]), header_height, 5, (header_height - height)/2, stream, text_content, header_text_color, font, header_fontsize, align);
+			PdfBox box = new PdfBox(pixels[i],y(), width / (100 / sizes[i]),header_height,header_color,this.stream());
+			PdfText text = new PdfText(pixels[i], y(), width / (100 / sizes[i]), header_height, 5, (header_height - height)/2, stream(), text_content, header_text_color, font, header_fontsize, align);
 			
 			box.draw();
 			text.draw();
@@ -105,7 +115,7 @@ public class PdfTable extends PdfComponent{
 	}
 	
 	public void draw_line() throws IOException {
-		PdfBox box = new PdfBox(pixels[0]+5,y()+5,width,.2f,GRAY,this.stream);
+		PdfBox box = new PdfBox(pixels[0]+5,y()+5,width,.2f,GRAY,this.stream());
 		box.draw();
 	}
 
@@ -123,7 +133,7 @@ public class PdfTable extends PdfComponent{
 			start -= end; 
 		}
 		
-		PdfBox box = new PdfBox(pixels[start],y() - (header_height*rows/2),pixels[end] - pixels[start] + (width / (100 / sizes[end])),header_height*rows,header_color,this.stream);
+		PdfBox box = new PdfBox(pixels[start],y() - (header_height*rows/2),pixels[end] - pixels[start] + (width / (100 / sizes[end])),header_height*rows,header_color,this.stream());
 		box.draw();
 		
 		
@@ -136,7 +146,7 @@ public class PdfTable extends PdfComponent{
 			String text_content = (text_bundle.length <= i)? "" : text_bundle[i];
 			float height = ( font.getFontDescriptor().getCapHeight()) / 1000 * fontsize;
 			
-			PdfText text = new PdfText(pixels[i], y(), width / (100 / sizes[i]), cell_height, 5, (cell_height - height)/2, stream, text_content, (colors[i] == null)? text_color : colors[i], font, fontsize, align);
+			PdfText text = new PdfText(pixels[i], y(), width / (100 / sizes[i]), cell_height, 5, (cell_height - height)/2, stream(), text_content, (colors[i] == null)? text_color : colors[i], font, fontsize, align);
 			text.draw();
 		}
 		down(cell_height); 		
@@ -149,7 +159,7 @@ public class PdfTable extends PdfComponent{
 			String text_content = (cells[i] == null)? "" : cells[i].toString();
 			float height = ( font.getFontDescriptor().getCapHeight()) / 1000 * fontsize;
 			
-			PdfText text = new PdfText(pixels[i], y(), width / (100 / sizes[i]), cell_height, 5, (cell_height - height)/2, stream, text_content,(colors[i] == null)? text_color : colors[i], font, fontsize, align);
+			PdfText text = new PdfText(pixels[i], y(), width / (100 / sizes[i]), cell_height, 5, (cell_height - height)/2, stream(), text_content,(colors[i] == null)? text_color : colors[i], font, fontsize, align);
 			text.draw();
 		}
 		
@@ -191,8 +201,8 @@ public class PdfTable extends PdfComponent{
 				+ ", \n\tcell_height: \t\t" + cell_height + ", \n\tcells: \t\t" + Arrays.toString(cells)
 				+ ", \n\tfont: \t\t" + font + ", \n\tfontsize: \t\t" + fontsize + ", \n\ttext_color: \t\t" + text_color
 				+ ", \n\theader_color: \t\t" + header_color + ", \n\theader_text_color: \t\t" + header_text_color
-				+ ", \n\tx: \t\t" + x() + ", \n\ty: \t\t" + y() + ", \n\theight: \t\t" + height + ", \n\tmargin_x: \t\t"
-				+ margin_x + ", \n\tmargin_y: \t\t" + margin_y + ", \n\tstream: \t\t" + stream + "\n}";
+				+ ", \n\tx: \t\t" + x() + ", \n\ty: \t\t" + y() + ", \n\theight: \t\t" + height() + ", \n\tmargin_x: \t\t"
+				+ margin_x() + ", \n\tmargin_y: \t\t" + margin_y() + ", \n\tstream: \t\t" + stream() + "\n}";
 	}	
 
 	//------------HELP INFO------------

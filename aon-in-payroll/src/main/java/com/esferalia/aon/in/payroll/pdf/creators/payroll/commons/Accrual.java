@@ -1,13 +1,13 @@
-package com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans;
+package com.esferalia.aon.in.payroll.pdf.creators.payroll.commons;
 
 import java.util.Optional;
 
-public class DefaultPayrollAccrual {
+public class Accrual {
 	
 	private Optional<Double> amount;
 	private Optional<String> description;
 	
-	public DefaultPayrollAccrual(Double amount, String description) {
+	public Accrual(Double amount, String description) {
 		super();
 		this.amount = Optional.ofNullable(amount);
 		this.description = Optional.ofNullable(description);

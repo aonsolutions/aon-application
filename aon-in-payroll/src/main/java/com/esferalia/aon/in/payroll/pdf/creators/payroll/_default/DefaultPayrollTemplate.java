@@ -1,7 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.creators.payroll._default;
 
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.BLACK;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.BLUE;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors.LIGHT_GRAY;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts.HELVETICA;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts.HELVETICA_BOLD;
@@ -14,11 +13,9 @@ import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.s
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.safeInteger;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.safeString;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.createVerticalPage;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.create_image_from_bytes;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.cropped_string;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.drawBorderedBox;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.drawBox;
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.drawImage;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.drawText;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.drawTextCenter;
 import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.drawTextRight;
@@ -26,7 +23,6 @@ import static com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.CraTypes
 import static com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.DeductionTypes.getType;
 import static java.util.ResourceBundle.getBundle;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +39,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.poi.hssf.util.HSSFColor.BLUE;
 
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfImage;
@@ -54,9 +49,9 @@ import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollAccrual;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollDeduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.UnknownCraException;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Accrual;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Deduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
 
 public class DefaultPayrollTemplate {
@@ -80,7 +75,7 @@ public class DefaultPayrollTemplate {
 	public void print(OutputStream os,DefaultPayroll payroll,Optional<InputStream> logo,Optional<Locale> language) throws CanNotCreatePdfException {
 		try (PDDocument doc = print(payroll,logo,language)) {
 			doc.save(os);
-		} catch (Exception e) {throw new CanNotCreatePdfException(e);}
+			} catch (Exception e) {throw new CanNotCreatePdfException(e);}
 	}
 	
 	// PRINT THE PDF FROM COLLECTION
@@ -270,8 +265,8 @@ public class DefaultPayrollTemplate {
 	// CHECK IF JUMPS
 	private boolean calculate() throws IOException {
 
-		Optional<Map<Integer,ArrayList<DefaultPayrollAccrual>>> accruals = p.getAccruals();
-		Optional<Map<Integer,ArrayList<DefaultPayrollDeduction>>> deductions = p.getDeductions();
+		Optional<Map<Integer,ArrayList<Accrual>>> accruals = p.getAccruals();
+		Optional<Map<Integer,ArrayList<Deduction>>> deductions = p.getDeductions();
 
 		double sum = 0;
 
@@ -302,8 +297,8 @@ public class DefaultPayrollTemplate {
 		
 		y -= 20;
 
-		Optional<Map<Integer,ArrayList<DefaultPayrollAccrual>>> accruals = p.getAccruals();
-		accruals.get().entrySet().stream().sorted(Map.Entry.<Integer,ArrayList<DefaultPayrollAccrual>>comparingByKey()).forEach(m -> {
+		Optional<Map<Integer,ArrayList<Accrual>>> accruals = p.getAccruals();
+		accruals.get().entrySet().stream().sorted(Map.Entry.<Integer,ArrayList<Accrual>>comparingByKey()).forEach(m -> {
 			try {
 				double local_total = m.getValue().stream().mapToDouble(accrual -> safeDouble(accrual.getAmount())).sum();
 				if (local_total != 0) {
@@ -354,12 +349,12 @@ public class DefaultPayrollTemplate {
 		x =  23.5f;
 		
 		//BUILD DEDUCTIONS
-		Optional<Map<Integer,ArrayList<DefaultPayrollDeduction>>> deductions = p.getDeductions();		
+		Optional<Map<Integer,ArrayList<Deduction>>> deductions = p.getDeductions();		
 		drawText(contents,title,x,y-20 ,BLACK,HELVETICA_BOLD,fontSize+3);
 		y -= 40;
 		
 		//FOR EACH DEDUCTION
-		deductions.get().entrySet().stream().sorted(Map.Entry.<Integer,ArrayList<DefaultPayrollDeduction>>comparingByKey()).forEach(m -> {	
+		deductions.get().entrySet().stream().sorted(Map.Entry.<Integer,ArrayList<Deduction>>comparingByKey()).forEach(m -> {	
 			try {
 
 					double local_total = m.getValue().stream().mapToDouble(accrual->safeDouble(accrual.getAmount())).sum();
@@ -408,11 +403,8 @@ public class DefaultPayrollTemplate {
 		
 		if(logo.isPresent()) {
 			byte[] bytes =  logo.get().readAllBytes();
-			PdfImage img = new PdfImage(x + 20, y - 60, 170, 70, ALIGNMENT.CENTER, contents, doc, bytes);
-			
-			PdfBox box = new PdfBox(x + 20, y - 60 , 170, 70, BLACK, contents);			
+			PdfImage img = new PdfImage(x + 20, y - 60, 170, 70, ALIGNMENT.CENTER, contents, doc, bytes);	
 			img.scale(170, 70, LEFT).draw();
-			
 		}
 		y -= 15;
 		
@@ -577,7 +569,7 @@ public class DefaultPayrollTemplate {
 			drawTextRight(contents,new PDRectangle(x + 518,y - 5,30,10),total_contingencies_amount,BLACK,HELVETICA_BOLD,6.5f,3,5);
 			
 			
-			String vs = "v0.38-AK";
+			String vs = "v0.39-AK";
 			
 			PdfText version = new PdfText(5f,1f,200f,10f,contents,vs,BLACK,HELVETICA ,5f,LEFT);
 			version.draw();

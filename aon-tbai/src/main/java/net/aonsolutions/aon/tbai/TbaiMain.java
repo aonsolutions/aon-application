@@ -49,7 +49,6 @@ import net.aonsolutions.aon.tbai.exceptions.json.JsonParseException;
 import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
 import net.aonsolutions.aon.tbai.exceptions.validation.ValidationException;
 import net.aonsolutions.aon.tbai.exceptions.xml.XMLCreationException;
-import net.aonsolutions.aon.tbai.responses.ResponseHandler;
 import net.aonsolutions.aon.tbai.toolkit.DataToolkit;
 import ticketbai.emision.Cabecera;
 import ticketbai.emision.Factura;

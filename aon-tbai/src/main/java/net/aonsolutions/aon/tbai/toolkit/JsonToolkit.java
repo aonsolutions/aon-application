@@ -51,6 +51,7 @@ public class JsonToolkit {
 	}
 	
 	
+	@SuppressWarnings("unused")
 	private static void prettyPrint(JsonObject json) {
 		 Map<String, Object> properties = new HashMap<>(1);
          properties.put(JsonGenerator.PRETTY_PRINTING, true);

@@ -70,6 +70,56 @@ public class PDFToolkit {
 		contents.showText(content);
 		contents.endText();
 	}
+	
+	/**
+	 * <p><b>Description:</b> <i>Draws a justified text. </i></p>
+	 * <p><b>Warning:</b> Use PdfText instead</p>
+	 * @return void
+	 * @see PdfText
+	 */
+	public static void drawTextJustified(ArrayList<String> lines,float max, float fontSize, PDFont font,float x,float y,Color color,PDPageContentStream stream) throws IOException {
+		for (int i = 0; i < lines.size()-1; i++, y -= 10) drawTextJustified(lines.get(i), max, fontSize, font, x, y, stream); 
+	}
+
+	/**
+	 * <p><b>Description:</b> <i>Draws a justified line. </i></p>
+	 * <p><b>Warning:</b> Use PdfText instead</p>
+	 * @return void
+	 * @see PdfText
+	 */
+	public static void drawTextJustified(String line,float max,float fontSize,PDFont font, float x, float y, PDPageContentStream stream) throws IOException {
+
+		stream.beginText();
+		float charSpacing = 0;
+		if (line.length() > 1){
+			float size = fontSize * font.getStringWidth(line) / 1000;
+			float free = max - size;
+			if (free > 0)	charSpacing = free / (line.length() - 1);
+		}
+		
+		stream.setFont(font, fontSize);
+		stream.newLineAtOffset(x, y);
+		stream.setCharacterSpacing(charSpacing);
+		stream.showText(line);
+		stream.endText();
+	}
+	
+	/**
+	 * <p><b>Description:</b> <i>Get the width of a text according to font and font size. </i></p>
+	 * @return void
+	 */
+	public static float font_width(List<String> texts ,float fontSize, PDFont font ) throws IOException {
+		float fw = 0;
+		for(String text : texts) fw += font_width(text, fontSize, font);
+		return fw;			
+	}
+	
+	/**
+	 * <p><b>Description:</b> <i>Get the width of a text according to font and font size. </i></p>
+	 * @return void
+	 */
+	public static float font_width(String string ,float fontSize, PDFont font ) throws IOException 
+	{return (font.getStringWidth(string) / 1000.0f) * fontSize;}
 
 	/**
 	 * <p><b>Description:</b> <i>Draws a right aligned text. </i></p>

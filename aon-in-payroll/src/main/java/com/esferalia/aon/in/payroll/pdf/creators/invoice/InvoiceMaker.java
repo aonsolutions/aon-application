@@ -1,7 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.creators.invoice;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

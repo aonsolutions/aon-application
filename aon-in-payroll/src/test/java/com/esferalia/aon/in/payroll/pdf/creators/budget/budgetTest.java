@@ -2,11 +2,9 @@ package com.esferalia.aon.in.payroll.pdf.creators.budget;
 
 import static org.junit.Assert.fail;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
@@ -25,8 +23,8 @@ public class budgetTest {
 		ArrayList<Budget_item> products = new ArrayList<>();
 		ArrayList<Term> terms = new ArrayList<>();
 
-		for (int i = 0; i < 400; i++) {
-			Budget_item it = new Budget_item("Producto Ejemplo " + i, i * 10000000 + .99);
+		for (int i = 0; i < 10; i++) {
+			Budget_item it = new Budget_item("Producto Ejemplo " + i, i * 10 + .99);
 			products.add(it);
 
 			Term term = new Term("CONDICION ECONOMICA NÚMERO 1",
@@ -34,14 +32,14 @@ public class budgetTest {
 					+ "de la primera parte. La parte contratante de la segunda parte será considerada como "
 					+ "la parte contratante de la segunda parte. Siendo la tercera parte considerada como la cuarta "
 					+ "parte mientras que la quinta parte será considerada parte de la tercera parte, siendo esta tercera "
-					+ "parte parte de la primera y segunda parte");
+					+ "parte parte de la primera y segunda parteLa parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante La parte contratante de la primera parte será considerada como la parte contratante ");
 			
 			terms.add(term);
 		}
 
 		Budget budget = new Budget("2018/000012/0", client, products, terms, 99.99, 99.99, 99.99, 99.99, 99.99);
 
-		try {PdfMaker.print_budget(new ByteArrayOutputStream(), budget);}
+		try {PdfMaker.print_budget(new FileOutputStream("./budget.pdf"), budget);}
 		catch (Exception e) {
 			e.printStackTrace();
 			fail("Unexpected exception " + e);

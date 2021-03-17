@@ -23,8 +23,8 @@ import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfExcep
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.DefaultPayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases.Contingency_bases_builder;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll.DefaultPayrollBuilder;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollAccrual;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollDeduction;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Accrual;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Deduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -107,17 +107,17 @@ public class DraftPayrollBuilder {
 			{
 				
 				dpb.setAccrual_total(salary.getTotalPayment());
-				HashMap<Integer, ArrayList<DefaultPayrollAccrual>> paymentMap = new HashMap<Integer, ArrayList<DefaultPayrollAccrual>>();
+				HashMap<Integer, ArrayList<Accrual>> paymentMap = new HashMap<Integer, ArrayList<Accrual>>();
 				Collection<IPayment> payments = salary.getPaymentS();
 				payments.stream().filter(DraftPayrollBuilder::filter).sorted(Comparator.comparing(p -> {
 					return !(p.getDescription() == null || p.getDescription().isEmpty()) ? p.getDescription() : "zzzzzz"; //Nulls or empties down
 				})).forEach(p -> {
-					DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(p.getAmount(), p.getDescription().replaceAll("\\[\\d*\\]", ""));
+					Accrual accrual = new Accrual(p.getAmount(), p.getDescription().replaceAll("\\[\\d*\\]", ""));
 					if (!paymentMap.containsKey(p.getType().ordinal()))
-						paymentMap.put(p.getType().ordinal(), new ArrayList<DefaultPayrollAccrual>());
+						paymentMap.put(p.getType().ordinal(), new ArrayList<Accrual>());
 					 
 					if (paymentMap.get(p.getType().ordinal()).stream().anyMatch(acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().get()))) {
-						DefaultPayrollAccrual repAcc = paymentMap.get(p.getType().ordinal()).stream().findFirst().get();
+						Accrual repAcc = paymentMap.get(p.getType().ordinal()).stream().findFirst().get();
 						repAcc.setAmount(repAcc.getAmount().orElse(0d)+p.getAmount());
 					} else
 						paymentMap.get(p.getType().ordinal()).add(accrual);
@@ -160,7 +160,7 @@ public class DraftPayrollBuilder {
 				ArrayList<String> inserted = new ArrayList<String>();
 				
 				Collection<IDeduction> deductions = salary.getDeductionS();
-				HashMap<Integer, ArrayList<DefaultPayrollDeduction>> deductionsMap = new HashMap<Integer, ArrayList<DefaultPayrollDeduction>>();
+				HashMap<Integer, ArrayList<Deduction>> deductionsMap = new HashMap<Integer, ArrayList<Deduction>>();
 				deductions.stream().sorted(Comparator.comparing(d -> d.getType().getName(new Locale("es")))).forEach(d -> {
 					Double percent = null;
 					
@@ -228,16 +228,16 @@ public class DraftPayrollBuilder {
 					}
 					
 					
-					DefaultPayrollDeduction deduction = new DefaultPayrollDeduction(d.getAmount(), desc, percent);
+					Deduction deduction = new Deduction(d.getAmount(), desc, percent);
 					
 					System.out.println(deduction.getDescription()+" : "+deduction.getAmount());
 					
 					if (!deductionsMap.containsKey(type))
-						deductionsMap.put(type, new ArrayList<DefaultPayrollDeduction>());
+						deductionsMap.put(type, new ArrayList<Deduction>());
 					
 					if (deductionsMap.get(type).stream()
 							.anyMatch(p -> AonStringUtils.equalsIgnoreCase(p.getDescription().get(), deduction.getDescription().get()))) {
-						DefaultPayrollDeduction ded = deductionsMap.get(type).stream()
+						Deduction ded = deductionsMap.get(type).stream()
 								.filter(p -> AonStringUtils.equalsIgnoreCase(deduction.getDescription().get(),p.getDescription().get())).findFirst().get();
 						ded.setAmount(ded.getAmount().get()+deduction.getAmount().get());
 					} else
@@ -247,18 +247,18 @@ public class DraftPayrollBuilder {
 				
 
 				if (deductionsMap.get(1)==null)
-					deductionsMap.put(1, new ArrayList<DefaultPayrollDeduction>());
+					deductionsMap.put(1, new ArrayList<Deduction>());
 				if (deductionsMap.get(2)==null)
-					deductionsMap.put(2, new ArrayList<DefaultPayrollDeduction>());
+					deductionsMap.put(2, new ArrayList<Deduction>());
 				
 				if (!inserted.contains("CGC"))
-					deductionsMap.get(1).add(new DefaultPayrollDeduction(0d, "Contingencias comunes", 0d));
+					deductionsMap.get(1).add(new Deduction(0d, "Contingencias comunes", 0d));
 				if (!inserted.contains("DESMPL"))
-					deductionsMap.get(1).add(new DefaultPayrollDeduction(0d, "Desempleo", 0d));
+					deductionsMap.get(1).add(new Deduction(0d, "Desempleo", 0d));
 				if (!inserted.contains("FP"))
-					deductionsMap.get(1).add(new DefaultPayrollDeduction(0d, "Formación profesional", 0d));
+					deductionsMap.get(1).add(new Deduction(0d, "Formación profesional", 0d));
 				if (!inserted.contains("IRPF"))
-					deductionsMap.get(2).add(new DefaultPayrollDeduction(0d, "Retribuciones dinerarias", 0d));
+					deductionsMap.get(2).add(new Deduction(0d, "Retribuciones dinerarias", 0d));
 
 				dpb.setDeductions(deductionsMap);
 			}

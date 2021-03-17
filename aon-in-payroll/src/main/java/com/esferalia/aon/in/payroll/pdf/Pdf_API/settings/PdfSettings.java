@@ -12,7 +12,8 @@ public class PdfSettings {
 	public static enum ALIGNMENT {
 	    CENTER,
 	    LEFT,
-	    RIGHT;
+	    RIGHT,
+	    JUSTIFY;
 	}
 	
 	/**
@@ -21,6 +22,15 @@ public class PdfSettings {
 	public static enum PAGE_TYPE{
 		HORIZONTAL,
 		VERTICAL
+	}
+	
+	/**
+	 * <p><b>Description:</b> <i>Text vertical align.</i></p>
+	 */
+	public static enum VERTICAL_ALIGNMENT{
+		UP,
+		DOWN,
+		CENTER
 	}
 	
 	/**

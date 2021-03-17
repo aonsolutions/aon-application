@@ -1,14 +1,14 @@
-package com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans;
+package com.esferalia.aon.in.payroll.pdf.creators.payroll.commons;
 
 import java.util.Optional;
 
-public class DefaultPayrollDeduction {
+public class Deduction {
 	
 	private Optional<Double> amount;
 	private Optional<String> description;
 	private Optional<Double> percent;
 	
-	public DefaultPayrollDeduction(Double amount, String description, Double percent) {
+	public Deduction(Double amount, String description, Double percent) {
 		super();
 		this.amount = Optional.ofNullable(amount);
 		this.description = Optional.ofNullable(description);

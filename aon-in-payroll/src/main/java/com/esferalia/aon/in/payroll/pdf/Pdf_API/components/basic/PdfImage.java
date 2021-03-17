@@ -37,7 +37,18 @@ public class PdfImage extends PdfComponent{
 	 * @param img  		the image byte array
 	 */
 	public PdfImage(float x, float y, float width, float height, ALIGNMENT align,PDPageContentStream stream, PDDocument doc, byte[] img) {
-		super(x, y, width, height, 0, 0, stream);		
+		this.start_pointer();
+		this.x(x);
+		this.y(y);
+		
+		this.width(width);
+		this.height(height);
+		
+		this.margin_x(0);
+		this.margin_y(0);
+		
+		this.stream(stream);
+		
 		this.doc = doc;
 		this.img = img;
 		this.scale(width, height, align);
@@ -56,7 +67,17 @@ public class PdfImage extends PdfComponent{
 	 * @param img  		the image byte array
 	 */
 	public PdfImage(float x, float y, float width, float height, ALIGNMENT align,PDPageContentStream stream, PDDocument doc, InputStream img) {
-		super(x, y, width, height, 0, 0, stream);		
+		this.x(x);
+		this.y(y);
+		
+		this.width(width);
+		this.height(height);
+		
+		this.margin_x(0);
+		this.margin_y(0);
+		
+		this.stream(stream);
+		
 		this.doc = doc;
 		try {this.img = img.readAllBytes();}
 		catch (IOException e) {e.printStackTrace();}
@@ -68,7 +89,7 @@ public class PdfImage extends PdfComponent{
 	 */
 	@Override
 	public void draw() {
-		try {PDFToolkit.drawImage(doc, stream, img, x(), y(),width,height);} 
+		try {PDFToolkit.drawImage(doc, stream(), img, x(), y(),width(),height());} 
 		catch (IOException e) {e.printStackTrace();}
 	}
 	
@@ -79,16 +100,16 @@ public class PdfImage extends PdfComponent{
 		BufferedImage buff = create_image_from_bytes(img);	
 		float[] sizes = PDFToolkit.reescale(buff.getWidth(), buff.getHeight(), max_width, max_height);		
 		
-		this.width = sizes[0];
-		this.height = sizes[1];
+		this.width(sizes[0]);
+		this.height(sizes[1]);
 		
 		switch (align) {
-			case CENTER: 	this.right(max_width/2 - width/2);		break;
-			case RIGHT:  	this.right(max_width - width);			break;
+			case CENTER: 	this.right(max_width/2 - width()/2);		break;
+			case RIGHT:  	this.right(max_width - width());			break;
 			default: break;
 		}
 		
-		if(buff.getHeight() <= max_height) up(max_height/2 - height/2);
+		if(buff.getHeight() <= max_height) up(max_height/2 - height()/2);
 		return this;
 	}
 

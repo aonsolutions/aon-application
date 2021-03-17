@@ -1,5 +1,15 @@
 package com.esferalia.aon.in.payroll.pdf.creators.invoice;
 
+import static junit.framework.Assert.fail;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+
+import org.junit.Test;
+
 import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.JsonParseException;
@@ -9,19 +19,6 @@ import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceFinance;
 import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceTax;
 import com.esferalia.aon.in.payroll.pdf.creators.invoice.templates.InvoiceTemplate;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
-
-
-import org.junit.Ignore;
-import org.junit.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-
-import static junit.framework.Assert.fail;
 
 public class InvoiceTest {
 	
@@ -72,7 +69,7 @@ public class InvoiceTest {
 	}
 
 	@Test
-	public void EnterpriseBillCreationTestWithJSONTest() {
+	public void EnterpriseBillCreationTestWithJSONTest() throws FileNotFoundException {
 		
 		System.out.println("\n\n-----------------------------------");
 		System.out.println(" INVOICE CREATOR (JSON MODE)");

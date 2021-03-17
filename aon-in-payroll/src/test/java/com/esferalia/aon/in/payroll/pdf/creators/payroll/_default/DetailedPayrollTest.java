@@ -3,9 +3,6 @@ package com.esferalia.aon.in.payroll.pdf.creators.payroll._default;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,15 +11,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases.Contingency_bases_builder;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll.DefaultPayrollBuilder;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollAccrual;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollDeduction;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Accrual;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Deduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
 
 public class DetailedPayrollTest {
@@ -38,33 +34,33 @@ public class DetailedPayrollTest {
 		DefaultPayrollBuilder builder = new DefaultPayrollBuilder();
 		
 		//CREATE ACCRUALS
-		Map<Integer,ArrayList<DefaultPayrollAccrual>> ac = new HashMap<Integer,ArrayList<DefaultPayrollAccrual>>();
+		Map<Integer,ArrayList<Accrual>> ac = new HashMap<Integer,ArrayList<Accrual>>();
 		
-		for(int i = 0; i < random(5)-1; i++) ac.put((int) i+1,new ArrayList<DefaultPayrollAccrual>());
+		for(int i = 0; i < random(5)-1; i++) ac.put((int) i+1,new ArrayList<Accrual>());
 		Set<Integer> keys = ac.keySet();
 		
 		for(Integer key : keys) {
 			for (int i = 0; i < random(10)-1; i++) {
-				DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(random(999),"Descripcion por defecto.");
+				Accrual accrual = new Accrual(random(999),"Descripcion por defecto.");
 				ac.get(key).add(accrual);
 			}
 		}
 		System.out.println(" Preparing accruals.....");
 		
 		///CREATE DEDUCTIONS
-		Map<Integer,ArrayList<DefaultPayrollDeduction>> de = new HashMap<Integer,ArrayList<DefaultPayrollDeduction>>();
+		Map<Integer,ArrayList<Deduction>> de = new HashMap<Integer,ArrayList<Deduction>>();
 		
-		de.put(1,new ArrayList<DefaultPayrollDeduction>());
-		de.put(2,new ArrayList<DefaultPayrollDeduction>());
-		de.put(3,new ArrayList<DefaultPayrollDeduction>());
-		de.put(4,new ArrayList<DefaultPayrollDeduction>());
-		de.put(5,new ArrayList<DefaultPayrollDeduction>());
+		de.put(1,new ArrayList<Deduction>());
+		de.put(2,new ArrayList<Deduction>());
+		de.put(3,new ArrayList<Deduction>());
+		de.put(4,new ArrayList<Deduction>());
+		de.put(5,new ArrayList<Deduction>());
 		
 		keys = de.keySet();
 		for(Integer key : keys) {
 			for (int i = 0; i < random(3); i++) {
-				DefaultPayrollDeduction deduction =
-						new DefaultPayrollDeduction(
+				Deduction deduction =
+						new Deduction(
 								random(100000),
 								"Descripcion por defecto",
 								random(100)
@@ -128,14 +124,13 @@ public class DetailedPayrollTest {
 		
 		try { 
 			System.out.println(" Printing PDF file..... \n");
-			PdfMaker.print_default_payroll(new FileOutputStream("./payroll.pdf"), builder.build(), DetailedPayrollTest.class.getResourceAsStream("logo.png"),new Locale("Es"));
+			PdfMaker.print_default_payroll(new ByteArrayOutputStream(), builder.build(), DetailedPayrollTest.class.getResourceAsStream("logo.png"),new Locale("Es"));
 			System.out.println(" >> DONE.");
 		} 
 		catch (CanNotCreatePdfException e) {
 			e.printStackTrace(); 
 			fail("Can not create the payroll");
-		} catch (FileNotFoundException e) {e.printStackTrace();}
-		
+		} 
 	}
 	
 
@@ -143,6 +138,6 @@ public class DetailedPayrollTest {
 	public double random(double y){
 		//return 3d;
 		Double r = 1 + Math.random()*(y-1);
-		return 3;
+		return r;
 	}
 }

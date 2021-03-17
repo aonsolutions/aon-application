@@ -16,41 +16,20 @@ import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
  *  	</i>
  *  </p>
  * @author akrck02
- * @version 0.3-AK
+ * @version 0.4-AK
  */
 public abstract class PdfComponent {
 
-	protected Pointer pointer;
+	private Pointer pointer;
+	private float width;
+	private float height;
+	private float margin_x;
+	private float margin_y;
+	private PDPageContentStream stream;
 	
-	protected float width;
-	protected float height;
-	
-	protected float margin_x;
-	protected float margin_y;
-	
-	protected PDPageContentStream stream;
+	protected PdfComponent() {}	
 	public abstract void draw();
 	
-	/**
-	 * <p><b>Description:</b> <i>The constructor. </i></p>
-	 * @param x 
-	 * @param y 
-	 * @param width
-	 * @param height
-	 * @param margin_x
-	 * @param margin_y
-	 * @param stream the PDPageContentStream
-	 */
-	public PdfComponent(float x, float y, float width, float height, float margin_x, float margin_y,
-			PDPageContentStream stream) {
-		this.pointer = Pointer.instance(x, y);
-		this.width = width;
-		this.height = height;
-		this.margin_x = margin_x;
-		this.margin_y = margin_y;
-		this.stream = stream;
-	}
-
 	/**
 	 * <p><b>Description:</b> <i>Draws the imaginary box the element is in. </i></p>
 	 */
@@ -66,7 +45,8 @@ public abstract class PdfComponent {
 		try {PDFToolkit.drawBorderedBox(stream, x(), y(), width, height, border_color);} 
 		catch (IOException e) {e.printStackTrace();}
 	}
-
+	
+	public void  start_pointer() {pointer = new Pointer(0, 0);}
 	
 	public void  right(float d)	{this.pointer.x(x() + d);}
 	public void  left(float d)	{this.pointer.x(x() - d);}
@@ -74,32 +54,27 @@ public abstract class PdfComponent {
 	public void  up(float d)	{this.pointer.y(y() + d);}
 	public void  down(float d)	{this.pointer.y(y() - d);}
 	
+	public float x() 										{return pointer.x();}
+	public PdfComponent	 x(float x) 						{this.pointer.x(x); 		return this;}
+
+	public float y() 										{return pointer.y();}
+	public PdfComponent  y(float y) 						{this.pointer.y(y);			return this;}
 	
-	public float x() 		{return pointer.x();}
-	public void	 x(float x) {this.pointer.x(x);}
+	public float width() 									{return width;}
+	public PdfComponent  width(float width) 				{this.width = width; 		return this;}
 
-	public float y() 		{return pointer.y();}
-	public void  y(float y) {this.pointer.y(y);}
+	public float height() 									{return height;}
+	public PdfComponent  height(float height) 				{this.height = height; 		return this;}
 
+	public float margin_x() 								{return margin_x;}
+	public PdfComponent  margin_x(float margin_x) 			{this.margin_x = margin_x;	return this;}
+
+	public float margin_y() 								{return margin_y;}
+	public PdfComponent  margin_y(float margin_y) 			{this.margin_y = margin_y;	return this;}
+
+	public PDPageContentStream stream() 					{return stream;}
+	public PdfComponent stream(PDPageContentStream stream) 	{this.stream = stream; 	return this;}
 	
-	public float width() 			{return width;}
-	public void  width(float width) {this.width = width;}
-
-	public float height() 				{return height;}
-	public void  height(float height) 	{this.height = height;}
-
-	public float margin_x() 				{return margin_x;}
-	public void  margin_x(float margin_x) 	{this.margin_x = margin_x;}
-
-	public float margin_y() 				{return margin_y;}
-	public void  margin_y(float margin_y) 	{this.margin_y = margin_y;}
-
-	public PDPageContentStream stream() {return stream;}
-	public void stream(PDPageContentStream stream) {this.stream = stream;}
-	
-	//------------HELP INFO------------
-	public static String describe() {
-		String info = "PdfComponent:\t\t\tAbstract component father of most beans.";
-		return info;
-	}	
+	public static String describe() {return "PdfComponent:\t\t\tAbstract component father of most beans.";}	
+		
 }

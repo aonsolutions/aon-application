@@ -13,7 +13,7 @@ public class PayrollBundle  extends ListResourceBundle{
 	    	{ "FORMATO FECHA", "dd/MM/yyyy"},
 	        { "TITULO","Recibo individual justificativo del pago de *" },
 	        { "DOMICILIO", "Domicilio" },
-	        { "CIF", "CIF" },
+	        { "CIF", "NIF" },
 	        { "CCC", "CCC" },
 	        { "NIF", "NIF" },
 	        { "NSS", "NSS" },

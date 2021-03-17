@@ -124,7 +124,6 @@ public class TbaiEmisionGipuzkoaTest {
 		test_title("Null invoice");
 
 		try {
-			final InputStream is = TbaiEmisionGipuzkoaTest.class.getResourceAsStream("factura.json");
 			final EmisionInvoice invoice = null;
 			TbaiMain.createEmisionTBAI(invoice, "JSONtoTBAI.xml", GIPUZKOA);
 		} catch (ValidationException e) {
@@ -637,7 +636,7 @@ public class TbaiEmisionGipuzkoaTest {
 
 	@Test
 	public void NoSignature() {
-		Date d = new Date();
+		//Date d = new Date();
 		start_console(1);
 		test_title("No signature");
 
@@ -647,7 +646,7 @@ public class TbaiEmisionGipuzkoaTest {
 
 	@Test
 	public void WrongChainingProcess() {
-		Date d = new Date();
+		//Date d = new Date();
 		start_console(1);
 		test_title("No signature");
 

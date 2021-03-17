@@ -120,7 +120,7 @@ public class EnterprisePayrollTest_v2 {
 			ss_entries.put(f.pokemon().location(),categoria6);
 
 			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", f.zelda().game() + " S.L",	entries, ss_entries);
-			PdfMaker.print_enterprise_payroll(payroll, new ByteArrayOutputStream(),Optional.of(new Locale("Es")));
+			PdfMaker.print_enterprise_payroll(payroll,new ByteArrayOutputStream(),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {
 			e.printStackTrace();
@@ -182,7 +182,7 @@ public class EnterprisePayrollTest_v2 {
 			ss_entries.put("Bilbao",categoria6);
 
 			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", "AON SOLUTIONS S.L",	entries, ss_entries);
-			PdfMaker.print_enterprise_payroll(payroll, new ByteArrayOutputStream(),Optional.of(new Locale("Es")));
+			PdfMaker.print_enterprise_payroll(payroll,new ByteArrayOutputStream(),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {
 			e.printStackTrace();

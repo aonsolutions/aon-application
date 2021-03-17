@@ -1,6 +1,9 @@
 package com.esferalia.aon.in.payroll.pdf.creators.exceptions;
 
 public class JsonParseException extends Exception{
+
+	private static final long serialVersionUID = 1L;
+
 	public JsonParseException() {
 	}
 

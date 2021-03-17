@@ -4,6 +4,7 @@ import net.aonsolutions.aon.tbai.exceptions.TbaiException;
 
 public class TbaiResponseException extends TbaiException{
 	
+	private static final long serialVersionUID = 1L;
 	private Integer code;
 
 	public TbaiResponseException(Integer code,String message) {

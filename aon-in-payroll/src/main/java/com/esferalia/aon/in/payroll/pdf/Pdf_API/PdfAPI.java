@@ -15,24 +15,16 @@ import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfFile;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfImage;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfPage;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfText;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.ConsoleToolkit;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.StringToolkit;
 
 /**
  * 
 <p>A powerful API to create PDFs based on PDFBOX</p>
 @author akrck02
-@version 1.3-AK
+@version 1.4-AK
 
 **/
 public class PdfAPI {
-	public static String version = "1.3-AK";
+	public static String version = "1.4-AK";
 		
 	/**
 	 * <h1>Get help for the API bases</h1> 

@@ -1,10 +1,5 @@
 package net.aonsolutions.aon.tbai.toolkit;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Optional;
-
 import com.esferalia.aon.occam.api.model.type.Country;
 
 import ticketbai.emision.CountryType2;

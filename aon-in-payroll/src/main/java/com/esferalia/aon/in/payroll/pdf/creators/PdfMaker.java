@@ -16,42 +16,96 @@ import com.esferalia.aon.in.payroll.pdf.creators.invoice.InvoiceMaker;
 import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.Invoice;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.DefaultPayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll;
+import com.esferalia.aon.in.payroll.pdf.creators.settlement.SettlementTemplate;
+import com.esferalia.aon.in.payroll.pdf.creators.settlement.beans.Settlement;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 
 public class PdfMaker {
 
-	// CREATE THE INVOICE WITH A JSON
+	/**
+	 *  CREATE THE INVOICE WITH A JSON
+	 * @param out
+	 * @param json
+	 * @param config
+	 * @param qr_code
+	 * @throws CanNotCreatePdfException
+	 * @throws JsonParseException
+	 */
 	public static void print_invoice(OutputStream out,InputStream json, PrintInvoiceConfiguration config, InputStream qr_code)
 			throws CanNotCreatePdfException, JsonParseException {
 		new InvoiceMaker().create_with_json(out,json, config, qr_code);
 	}
 
-	// CREATE THE INVOICE WITH A JAVA OBJECT
+	/**
+	 *  CREATE THE INVOICE WITH A JAVA OBJECT
+	 * @param out
+	 * @param bill_obj
+	 * @param adapt_background
+	 * @throws IOException
+	 * @throws CanNotCreatePdfException
+	 */
 	public static void print_invoice(OutputStream out, Invoice bill_obj, boolean adapt_background)
 			throws IOException, CanNotCreatePdfException {
 		new InvoiceMaker().create(out, bill_obj, adapt_background);
 	}
 
-	// CREATE DEMO INVOICE
+	/**
+	 *  CREATE DEMO INVOICE
+	 * @param out
+	 * @param config
+	 * @param qr_code
+	 * @throws IOException
+	 * @throws CanNotCreatePdfException
+	 */
 	public static void print_demo_invoice(OutputStream out,PrintInvoiceConfiguration config, InputStream qr_code)
 			throws IOException, CanNotCreatePdfException {
 		new InvoiceMaker().demoPdf(out,config, qr_code);
 	}
 
-	// CREATE ENTERPRISE PAYROLL
+	/**
+	 *  CREATE ENTERPRISE PAYROLL
+	 * @param payroll
+	 * @param out
+	 * @param locale
+	 * @throws IOException
+	 * @throws CanNotCreatePdfException
+	 */
 	public static void print_enterprise_payroll(EnterprisePayroll payroll, OutputStream out, Optional<Locale> locale)
 			throws IOException, CanNotCreatePdfException {
 		EnterprisePayrollTemplateAuto.print(payroll, out, locale);
 	}
 
-	// CREATE PAYROLL
+	/** CREATE PAYROLL
+	 * 
+	 * @param out
+	 * @param payroll
+	 * @param logo
+	 * @param language
+	 * @throws CanNotCreatePdfException
+	 */
 	public static void print_default_payroll(OutputStream out, DefaultPayroll payroll, InputStream logo,
 			Locale language) throws CanNotCreatePdfException {
 		new DefaultPayrollTemplate().print(out, payroll, Optional.ofNullable(logo), Optional.ofNullable(language));
 	}
 
-	// CREATE BUDGET
+	/** CREATE BUDGET
+	 * 
+	 * @param out
+	 * @param budget
+	 * @throws CanNotCreatePdfException
+	 */
 	public static void print_budget(OutputStream out, Budget budget) throws CanNotCreatePdfException {
 		BudgetTemplate.print(out, budget, Optional.of(new Locale("Es")));
 	}
+	
+	/**	CREATE SETTLEMENT
+	 * 
+	 * @param out
+	 * @param settlement
+	 * @throws CanNotCreatePdfException
+	 */
+	public static void print_settlement(OutputStream out, Settlement settlement, Locale locale) throws CanNotCreatePdfException {
+		SettlementTemplate.print(out, settlement,locale);
+	}	
+
 }

@@ -6,14 +6,12 @@ import static net.aonsolutions.aon.tbai.emision._beans.validators.EntityValidato
 import static net.aonsolutions.aon.tbai.emision._beans.validators.EntityValidator.validateNombre;
 import static net.aonsolutions.aon.tbai.toolkit.DataToolkit.isEmpty;
 
-import java.util.Date;
 import java.util.List;
 
 import net.aonsolutions.aon.tbai.emision.EmisionInvoice;
 import net.aonsolutions.aon.tbai.exceptions.validation.ValidationException;
 import ticketbai.emision.Cabecera;
 import ticketbai.emision.CabeceraFacturaType;
-import ticketbai.emision.ClavesType;
 import ticketbai.emision.DatosFacturaType;
 import ticketbai.emision.Destinatarios;
 import ticketbai.emision.DetallesFacturaType;
@@ -118,13 +116,14 @@ public class GipuzkoaEmisionValidator {
 	private static void validateDatosFactura(DatosFacturaType datos_factura) throws Exception {
 		if(isEmpty(datos_factura)) throw new Exception("Invoice data not found");
 		
-		ClavesType 			claves 						= datos_factura.getClaves();
-		String 				base_imponible_a_coste		= datos_factura.getBaseImponibleACoste();
+		//ClavesType 			claves 						= datos_factura.getClaves();
+		//String 				base_imponible_a_coste		= datos_factura.getBaseImponibleACoste();
+		//String 				fecha_operacion 			= datos_factura.getFechaOperacion();
+		//String 				retencion_soportada 		= datos_factura.getRetencionSoportada();
+		
 		String 				descripcion 				= datos_factura.getDescripcionFactura();
 		DetallesFacturaType detalles 					= datos_factura.getDetallesFactura();
-		String 				fecha_operacion 			= datos_factura.getFechaOperacion();
 		String 				importe_total 				= datos_factura.getImporteTotalFactura();
-		String 				retencion_soportada 		= datos_factura.getRetencionSoportada();
 		
 		// validateClaves(claves);
 		validateDetalles(detalles);

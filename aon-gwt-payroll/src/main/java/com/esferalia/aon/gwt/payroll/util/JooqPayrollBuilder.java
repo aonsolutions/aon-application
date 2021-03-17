@@ -31,8 +31,8 @@ import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.DefaultPayroll
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases.Contingency_bases_builder;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll.DefaultPayrollBuilder;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollAccrual;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayrollDeduction;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Accrual;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Deduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -148,16 +148,16 @@ public class JooqPayrollBuilder {
 			//PAYMENTS
 			{
 				dpb.setAccrual_total(s.getTotalPayment());
-				HashMap<Integer, ArrayList<DefaultPayrollAccrual>> paymentMap = new HashMap<Integer, ArrayList<DefaultPayrollAccrual>>();
+				HashMap<Integer, ArrayList<Accrual>> paymentMap = new HashMap<Integer, ArrayList<Accrual>>();
 				s.getPayments().stream().filter(JooqPayrollBuilder::filter).sorted(Comparator.comparing(p -> {
 					return !(p.getDescription() == null || p.getDescription().isEmpty()) ? p.getDescription() : "zzzzzz"; //Nulls or empties down
 				})).forEach(p -> {
-					DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(p.getAmount(), p.getDescription().replaceAll("\\[\\d*\\]", ""));
+					Accrual accrual = new Accrual(p.getAmount(), p.getDescription().replaceAll("\\[\\d*\\]", ""));
 					if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
-						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<DefaultPayrollAccrual>());
+						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<Accrual>());
 					 
 					if (paymentMap.get(p.getPaymentType().ordinal()).stream().anyMatch(acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().get()))) {
-						DefaultPayrollAccrual repAcc = paymentMap.get(p.getPaymentType().ordinal()).stream().findFirst().get();
+						Accrual repAcc = paymentMap.get(p.getPaymentType().ordinal()).stream().findFirst().get();
 						repAcc.setAmount(repAcc.getAmount().orElse(0d)+p.getAmount());
 					} else
 						paymentMap.get(p.getPaymentType().ordinal()).add(accrual);
@@ -172,7 +172,7 @@ public class JooqPayrollBuilder {
 				
 				ArrayList<String> inserted = new ArrayList<String>();
 				
-				HashMap<Integer, ArrayList<DefaultPayrollDeduction>> deductionMap = new HashMap<Integer, ArrayList<DefaultPayrollDeduction>>();
+				HashMap<Integer, ArrayList<Deduction>> deductionMap = new HashMap<Integer, ArrayList<Deduction>>();
 				s.getDeductions().stream().sorted(Comparator.comparing(d -> {
 					return !(d.getDescription() == null || d.getDescription().isEmpty()) ? d.getDescription() : chooseDescription(d.getDeductionType());
 				})).forEach(d -> {
@@ -196,12 +196,12 @@ public class JooqPayrollBuilder {
 					}
 						
 					
-					DefaultPayrollDeduction dpd = new DefaultPayrollDeduction(d.getAmount(), desc, percent);
+					Deduction dpd = new Deduction(d.getAmount(), desc, percent);
 					if (!deductionMap.containsKey(type))
-						deductionMap.put(type, new ArrayList<DefaultPayrollDeduction>());
+						deductionMap.put(type, new ArrayList<Deduction>());
 					
 					if (deductionMap.get(type).stream().anyMatch(ded -> AonStringUtils.equalsIgnoreCase(ded.getDescription().get(), dpd.getDescription().get()))) {
-						DefaultPayrollDeduction ded = deductionMap.get(type).stream().filter(d1 -> AonStringUtils.equalsIgnoreCase(d1.getDescription().get(), dpd.getDescription().get())).findFirst().get();
+						Deduction ded = deductionMap.get(type).stream().filter(d1 -> AonStringUtils.equalsIgnoreCase(d1.getDescription().get(), dpd.getDescription().get())).findFirst().get();
 						ded.setAmount(ded.getAmount().get()+dpd.getAmount().get());
 					} else
 						deductionMap.get(type).add(dpd);
@@ -209,18 +209,18 @@ public class JooqPayrollBuilder {
 				});
 				
 				if (deductionMap.get(1)==null)
-					deductionMap.put(1, new ArrayList<DefaultPayrollDeduction>());
+					deductionMap.put(1, new ArrayList<Deduction>());
 				if (deductionMap.get(2)==null)
-					deductionMap.put(2, new ArrayList<DefaultPayrollDeduction>());
+					deductionMap.put(2, new ArrayList<Deduction>());
 				
 				if (!inserted.contains("CGC"))
-					deductionMap.get(1).add(new DefaultPayrollDeduction(0d, "Contingencias comunes", 0d));
+					deductionMap.get(1).add(new Deduction(0d, "Contingencias comunes", 0d));
 				if (!inserted.contains("DESMPL"))
-					deductionMap.get(1).add(new DefaultPayrollDeduction(0d, "Desempleo", 0d));
+					deductionMap.get(1).add(new Deduction(0d, "Desempleo", 0d));
 				if (!inserted.contains("FP"))
-					deductionMap.get(1).add(new DefaultPayrollDeduction(0d, "Formación profesional", 0d));
+					deductionMap.get(1).add(new Deduction(0d, "Formación profesional", 0d));
 				if (!inserted.contains("IRPF"))
-					deductionMap.get(2).add(new DefaultPayrollDeduction(0d, "Retribuciones dinerarias", 0d));
+					deductionMap.get(2).add(new Deduction(0d, "Retribuciones dinerarias", 0d));
 				dpb.setDeductions(deductionMap);
 				
 			}

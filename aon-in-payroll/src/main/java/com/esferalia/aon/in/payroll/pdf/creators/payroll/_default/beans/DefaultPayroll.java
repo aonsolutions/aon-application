@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Accrual;
+import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Deduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
 
 
@@ -26,8 +28,8 @@ public class DefaultPayroll {
  	private Optional <Date>   liquid_period_start;
  	private Optional <Date>   liquid_period_end;
  	private Optional <Integer> total_days;
- 	private Optional <Map<Integer,ArrayList<DefaultPayrollAccrual>>> accruals;
- 	private Optional <Map<Integer,ArrayList<DefaultPayrollDeduction>>> deductions;
+ 	private Optional <Map<Integer,ArrayList<Accrual>>> accruals;
+ 	private Optional <Map<Integer,ArrayList<Deduction>>> deductions;
  	private Optional <Double> accrual_total;
  	private Optional <Double> deduction_total;
  	private Optional <Double> payroll_total;
@@ -50,8 +52,8 @@ public class DefaultPayroll {
 	public Optional<Date> 		getLiquid_period_start() {return liquid_period_start;}
 	public Optional<Date> 		getLiquid_period_end() {return liquid_period_end;}
 	public Optional<Integer> 	getTotal_days() {return total_days;}
-	public Optional<Map<Integer, ArrayList<DefaultPayrollAccrual>>> getAccruals() {return accruals;}
-	public Optional<Map<Integer, ArrayList<DefaultPayrollDeduction>>> getDeductions() {return deductions;}
+	public Optional<Map<Integer, ArrayList<Accrual>>> getAccruals() {return accruals;}
+	public Optional<Map<Integer, ArrayList<Deduction>>> getDeductions() {return deductions;}
 	public Optional<Double> 	getAccrual_total() {return accrual_total;}
 	public Optional<Double> 	getDeduction_total() {return deduction_total;}
 	public Optional<Double> 	getPayroll_total() {return payroll_total;}
@@ -75,8 +77,8 @@ public class DefaultPayroll {
  	 	private Optional <Date>   liquid_period_start;
  	 	private Optional <Date>   liquid_period_end;
  	 	private Optional <Integer> total_days;
- 	 	private Optional <Map<Integer,ArrayList<DefaultPayrollAccrual>>> accruals;
- 	 	private Optional <Map<Integer,ArrayList<DefaultPayrollDeduction>>> deductions;
+ 	 	private Optional <Map<Integer,ArrayList<Accrual>>> accruals;
+ 	 	private Optional <Map<Integer,ArrayList<Deduction>>> deductions;
  	 	private Optional <Double> accrual_total;
  	 	private Optional <Double> deduction_total;
  	 	private Optional <Double> payroll_total;
@@ -165,11 +167,11 @@ public class DefaultPayroll {
 			this.total_days =Optional.ofNullable(total_days );
 			return this;
 		}
-		public DefaultPayrollBuilder setAccruals(Map<Integer, ArrayList<DefaultPayrollAccrual>> accruals) {
+		public DefaultPayrollBuilder setAccruals(Map<Integer, ArrayList<Accrual>> accruals) {
 			this.accruals =Optional.ofNullable(accruals );
 			return this;
 		}
-		public DefaultPayrollBuilder setDeductions(Map<Integer, ArrayList<DefaultPayrollDeduction>> deductions) {
+		public DefaultPayrollBuilder setDeductions(Map<Integer, ArrayList<Deduction>> deductions) {
 			this.deductions =Optional.ofNullable(deductions );
 			return this;
 		}
@@ -250,11 +252,11 @@ public class DefaultPayroll {
 			this.total_days = total_days; 
 			return this;
 		}
-		public DefaultPayrollBuilder setAccruals(Optional<Map<Integer, ArrayList<DefaultPayrollAccrual>>> accruals) {
+		public DefaultPayrollBuilder setAccruals(Optional<Map<Integer, ArrayList<Accrual>>> accruals) {
 			this.accruals = accruals; 
 			return this;
 		}
-		public DefaultPayrollBuilder setDeductions(Optional<Map<Integer, ArrayList<DefaultPayrollDeduction>>> deductions) {
+		public DefaultPayrollBuilder setDeductions(Optional<Map<Integer, ArrayList<Deduction>>> deductions) {
 			this.deductions = deductions; 
 			return this;
 		}
