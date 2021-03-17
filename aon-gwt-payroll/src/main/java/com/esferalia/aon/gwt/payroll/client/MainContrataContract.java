@@ -340,6 +340,18 @@ public class MainContrataContract extends MainEntryPoint {
 	    workplaceColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	    employeeDataGrid.setColumnWidth(workplaceColumn, 15, Unit.PCT);
 	    
+	    TextColumn<EmployeeContractInfo> categoryColumn = new TextColumn<EmployeeContractInfo>() {
+	      @Override
+	      public String getValue(EmployeeContractInfo employeeContractInfo) {
+	    	  return employeeContractInfo.getContractInfo().getAgreementCategory();
+	      }
+
+	    };
+
+	    categoryColumn.setSortable(true);
+	    categoryColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    employeeDataGrid.setColumnWidth(categoryColumn, 10, Unit.PCT);
+	    
 	    TextColumn<EmployeeContractInfo> startDateColumn = new TextColumn<EmployeeContractInfo>() {
 	      @Override
 	      public String getValue(EmployeeContractInfo employeeContractInfo) {
@@ -371,6 +383,7 @@ public class MainContrataContract extends MainEntryPoint {
 	    employeeDataGrid.addColumn(ssNumberColumn, "N" + String.valueOf("\u00B0") + " SS");
 	    employeeDataGrid.addColumn(contractTypeColumn, "Tipo Contrato");
 	    employeeDataGrid.addColumn(workplaceColumn, "Centro Trabajo");
+	    employeeDataGrid.addColumn(categoryColumn, "Categor" + String.valueOf("\u00ED") + "a");
 	    employeeDataGrid.addColumn(startDateColumn, "Fecha Inicio");
 	    employeeDataGrid.addColumn(endDateColumn, "Fecha Fin");
 	      
@@ -597,6 +610,7 @@ public class MainContrataContract extends MainEntryPoint {
 		employeeDataGrid.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		employeeDataGrid.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		employeeDataGrid.getHeader(6).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		employeeDataGrid.getHeader(7).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 	
 		trashEmployeeDataGrid.getHeader(0).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		trashEmployeeDataGrid.getHeader(1).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
@@ -835,6 +849,20 @@ public class MainContrataContract extends MainEntryPoint {
 		              return 0;
 		            }
 	
+		            if (o1 != null && AonStringUtils.isNotBlank(o1.getContractInfo().getAgreementCategory())) {
+		              return (o2 != null && AonStringUtils.isNotBlank(o2.getContractInfo().getAgreementCategory())) ? o1.getContractInfo().getAgreementCategory().compareTo(o2.getContractInfo().getAgreementCategory()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+	    
+	    columnSortHandler.setComparator(dataGrid.getColumn(6), new Comparator<EmployeeContractInfo>() {
+	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
 		            if (o1 != null) {
 		              return (o2 != null) ? o1.getContractInfo().getStartDate().compareTo(o2.getContractInfo().getStartDate()) : 1;
 		            }
@@ -843,7 +871,7 @@ public class MainContrataContract extends MainEntryPoint {
 	         }
 	    });
 	    
-	    columnSortHandler.setComparator(dataGrid.getColumn(6), new Comparator<EmployeeContractInfo>() {
+	    columnSortHandler.setComparator(dataGrid.getColumn(7), new Comparator<EmployeeContractInfo>() {
 	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
 		            if (o1.getContractInfo().getEndDate() == o2.getContractInfo().getEndDate()) {
 		              return 0;
