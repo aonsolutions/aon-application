@@ -411,10 +411,8 @@ export class AonApplication extends AonElement {
           });
         this.selected = id;
         li.style.backgroundColor = "#ddd";
-        if (!this.isMobile()) {
-          let toolbar = this.getElement(this.TOOLBAR);
-          toolbar.setAttribute("option", option.name);
-        }
+        let toolbar = this.getElement(this.TOOLBAR);
+        toolbar.setAttribute("option", option.name);
         option.fn();
         if (this.isMobile()) {
           this.closeSidenav();

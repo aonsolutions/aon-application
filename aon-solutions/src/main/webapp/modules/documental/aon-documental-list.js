@@ -53,6 +53,10 @@ export class AonDocumentalList extends AonElement {
 	}
 
  	build() {
+		let application = this.getApplication();
+		let toolbar = this.getElement(application.TOOLBAR);
+		toolbar.removeButtons();
+
 		let aonDocumentalTable = this.getElement(this.TABLE);
 		aonDocumentalTable.addColumn(MSG.AON_MSG_DATE, 'date', 'date', '20%');
 		aonDocumentalTable.addColumn(MSG.AON_MSG_NAME, 'string', 'title', '60%');
@@ -109,8 +113,7 @@ export class AonDocumentalList extends AonElement {
 
 	aonDocument(doc, i) {
 		this.removeDocumentalActions();
-		let ad = document.querySelector('aon-documental');
-		ad.aonDocument(doc);
+		this.getApplication().setContentHTML(`<aon-document document='${JSON.stringify(doc)}'> </aon-document>`);
 	}
 
 	downloadFiles() {
@@ -127,8 +130,8 @@ export class AonDocumentalList extends AonElement {
 	}
 
 	editFiles() {
-		let aonDocumental = this.getElement('aonDocumental');
-		let parent = document.querySelector('aon-documental');
+		let aonDocumental = this.getApplication();
+		let parent = aonDocumental.getParent();
 		let d = document.getElementById(aonDocumental.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
@@ -148,7 +151,7 @@ export class AonDocumentalList extends AonElement {
 	}
 
 	sendFiles() {
-		let aonDocumental = this.getElement('aonDocumental');
+		let aonDocumental = this.getApplication();
 		let d = document.getElementById(aonDocumental.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
@@ -168,8 +171,7 @@ export class AonDocumentalList extends AonElement {
 
 	addDocumentalActions() {
 		this.removeDocumentalActions();
-		let ad = document.querySelector('aon-documental');
-		let aonDocumental = this.getElement(ad.DOCUMENTAL);
+		let aonDocumental = this.getApplication();
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.addSeparator();
 		if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal())

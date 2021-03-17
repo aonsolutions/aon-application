@@ -1554,8 +1554,8 @@ public class TrabajadoresTramos {
 			grupoCotizacion.visit();		
 		else if ( ereTotal )
 			grupoCotizacion.visit();		
-		else if ( ereParcial )
-			;		
+		//else if ( ereParcial )
+		//	; 
 		else if ( artistas )
 			;		
 		else if (tiempoCompleto)

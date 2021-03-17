@@ -126,8 +126,13 @@ export class AonParent extends AonElement {
 		aonParent.startLoader();
 		getCompanies()
 		.then( companies => {
-        this.build(companies.filter(f => this.companyFilter(f, filter)));
 				aonParent.stopLoader();
+				if(companies.length ===1){
+					this.companySelection(companies[0]);
+				} else {
+      		this.build(companies.filter(f => this.companyFilter(f, filter)));
+				}
+
       }, () => closeSession()
     );
   }

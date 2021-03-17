@@ -1965,7 +1965,9 @@ public class Bases {
 						Period p = new Period(toDate(desde), toDate(hasta));
 						for ( String var: variables ) {
 							try {								
-								h05 = get(var, salary, p);								
+								h05 = get(var, salary, p);			
+								if ( h05 == 0.00 )
+									continue;
 							} catch (NoSuchVariableException e) {
 								continue;
 							}
