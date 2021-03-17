@@ -624,8 +624,11 @@ public class ContextFunctions {
 
 	public static Double fractionate(ExpressionContext context, Double amount) {
 		double totalWorkedDays = 0.00;
-		for ( ITimedVariable<?> var: context.getVariables(ContextVariable.WORKED_DAYS) )
+
+		for ( ITimedVariable<?> var: context.getVariables(ContextVariable.TOTAL_WORKED_DAYS) ) {
 			totalWorkedDays += ((Number) var.getValue(var.getPeriod())).doubleValue();
+			break;
+		}
 		
 		if ( totalWorkedDays == 0.00 )
 			throw new ExpressionExceptionWrapper(new UndefinedContextVariablesException(ContextVariable.WORKED_DAYS));
