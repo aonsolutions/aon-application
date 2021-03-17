@@ -173,9 +173,6 @@ const openFileMobile = async (url) =>
           const contentType = base64Data.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0];
           const extension = extensionsEnums[contentType];
           if(contentType&&extension) fileName = `${fileName}.${extension}`;
-          
-          console.log("contentType>",contentType);
-          
           const obj = {
             fileBase64: base64Str,
             fileName,
