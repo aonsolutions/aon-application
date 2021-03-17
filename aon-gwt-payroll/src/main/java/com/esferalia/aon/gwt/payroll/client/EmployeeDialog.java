@@ -329,11 +329,13 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		
 	}	
 
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// ------------------------------------------------- UiBinder
 	
 	interface Binder extends UiBinder<Widget, EmployeeDialog> {}
 	
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	// ------------------------------------------------- UiFields
 	
 	@UiField (provided = true)
 	Employee employee;
@@ -341,7 +343,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	@UiField
 	HTMLPanel buttonsPanel;
 	
-	// -------------------------------------------- Variables de la clase---------------------------------------------
+	// ------------------------------------------------- Class variables
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
@@ -350,7 +352,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
 	
-	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
+	// ------------------------------------------------- Constructor
 	
 	public EmployeeDialog(Boolean hideEmployeePanel) {
 		employee = new EmployeeImplementation();
@@ -361,17 +363,16 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		getButtonsPanel();
 		
 		employee.hideClearEmployee();
-		employee.addReformatAccount();
 		
 		if(hideEmployeePanel)
 			employee.hideEmployeeTable();
 	}
 	
-	// -------------------------------------------------- UiHandlers --------------------------------------------------
+	// ------------------------------------------------- Abstract Methods
 	
 	protected abstract void onAccept(Integer contractId);
 	
-	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
+	// ------------------------------------------------- setEmployeeDialogObject
 	
 	public void setEmployeeDialogObject(EmployeeDialogObject employeeDialogObject) {
 		this.employeeDialogObject = employeeDialogObject;
@@ -382,6 +383,8 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 				t -> {}
 		);
 	}
+	
+	// ------------------------------------------------- Initialize view
 	
 	private void initLogicWindow() {
 		initSuggestBox();
@@ -440,7 +443,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		});
 	}
 	
-	// ----------------------------------------- METODOS AUXILIARES (EMPLOYEE) -------------------------------------------
+	// ------------------------------------------------- Initialize existing employee
 	
 	private void initializeExistingEmployee(Integer contractId, boolean contractActive) {
 		employeeDialogObject.initializeEmployee(contractId,
@@ -496,7 +499,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	private void fillExistingContract() {
 		ContractInfo contractData = employeeDialogObject.getContractData();
 		
-		//RETA, había algo mas que determinaba si era o no RETA
 		if (null != contractData.getSsRegimen() && contractData.getSsRegimen() == 3) { 
 			employee.showElementsFreelancerTable();
 			fillContractFreelancerTable(contractData);
@@ -526,7 +528,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	}
 	
 	private void fillContractTable(ContractInfo contractData) {	
-		setSelectedValueLB(employee.ssRegimeType, employeeDialogObject.getContractSSRegimen()+"");
+		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
 		
 		setSelectedValueLB(employee.activityCCC, contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
 		
@@ -538,9 +540,9 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
 		
-		setSelectedValueLB(employee.contractTypeLB, employeeDialogObject.getContractType()+"");
+		setSelectedValueLB(employee.contractTypeLB, contractData.getContractType());
 		
-		Integer contractTypeInt = employeeDialogObject.getContractType();
+		Integer contractTypeInt =  Integer.parseInt(contractData.getContractType());
 		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
 			if(employeeDialogObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().size() == 0) {
 				employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
@@ -569,8 +571,10 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		
 		setSelectedValueLB(employee.quote_group, contractData.getQuoteGroup());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
-		employee.partiality_coef.setValue(employeeDialogObject.getContractPartialityCoef());
+		employee.partiality_coef.setValue(contractData.getPartialityCoef());
 	}
+	
+	// ------------------------------------------------- Auxiliar Methods
 	
 	private void getAgreementLevels(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
 		employee.level.clear();
@@ -607,7 +611,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	    lBox.setSelectedIndex(indexToFind);
 	}
 	
-	// ----------------------------------------------- CALLBACK TO SAVE ------------------------------------------------
+	// ------------------------------------------------- Buttons panel
 		
 	private void getButtonsPanel() {
 		closeBtnDialog = new Button();

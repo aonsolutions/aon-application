@@ -117,7 +117,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		@Override
 		public void onContractMdCTZhange(String mdCtz) {
-			contrataEmployeeObject.setMdCTZ(mdCtz);
+			contrataEmployeeObject.setContractMdCtz(mdCtz);
 		}
 		
 		@Override
@@ -317,11 +317,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}	
 
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// ------------------------------------------------- UiBinder
 	
 	private static ContrataEmployeeDraftUiBinder uiBinder = GWT.create(ContrataEmployeeDraftUiBinder.class);
 
 	interface ContrataEmployeeDraftUiBinder extends UiBinder<Widget, ContrataEmployee> {}
+	
+	// ------------------------------------------------- UiFields
 	
 	@UiField (provided = true)
 	Employee employee;
@@ -382,7 +384,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	ResultsPanel resultsPanel;
 	
-	// -------------------------------------------- Variables de la clase---------------------------------------------
+	// ------------------------------------------------- Class variables
+	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	private ContrataEmployeeObject contrataEmployeeObject;
@@ -404,7 +407,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private boolean hasCertificateSEPE;
 	
-	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
+	// ------------------------------------------------- Constructor
 	
 	public ContrataEmployee() {
 		this.zoom = Constants.DEFAULT_ZOOM;
@@ -469,10 +472,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		initFootPanel();
 		initResultsPanel();
 	}
+	
+	// ------------------------------------------------- Initialize preview
 
 	private void setDefaultEmployeeView() {
 		employee.hideClearEmployee();
-		employee.addReformatAccount();
 	}
 	
 	private void showEmployee() {
@@ -607,107 +611,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		resultsPanel = new ResultsPanel();		
 	}
 
-	// ------------------------------------------------- RESULTS PANEL --------------------------------------------------
-	
-	private void checkStatus(ContrataEmployeeObject contrataEmployeeObject) {
-		contrataEmployeeObject.checkStatus(employeeStatus -> {
-			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
-
-				@Override
-				public void run() {
-					contrataEmployeeObject.checkStatus(employeeStatus -> {
-						removeAll();
-						employeeStatus.visit(this);
-					}, throwable -> {
-					});
-				}
-				
-				@Override
-				protected void saltraCredentialsFound() {
-					contrataEmployeeObject.checkStatus(employeeStatus -> {
-						removeAll();
-						employeeStatus.visit(this);
-						selectResultsPanel();
-						ifSistemaREDEnabled(employeeStatus, () -> {
-							ContrataEmployee.this.setTGSSVisible(true);
-							//ContrataEmployee.this.setOnSaved(e -> run());
-						}, () -> {
-							ContrataEmployee.this.setTGSSVisible(false);
-
-						});
-						ifSistemaREDError(employeeStatus, 
-								ContrataEmployee.this::showFootPanel, 
-								ContrataEmployee.this::closeFootPanel);
-
-					}, throwable -> {
-						closeFootPanel();
-						ContrataEmployee.this.setTGSSVisible(false);
-
-					});
-				}
-			};
-
-			employeeStatus.visit(sistemaREDResults);
-			resultsPanel.setWidget(sistemaREDResults);
-			selectResultsPanel();
-
-			ifSistemaREDEnabled(employeeStatus, () -> {
-				ContrataEmployee.this.setTGSSVisible(true);
-			}, () -> {
-				ContrataEmployee.this.setTGSSVisible(false);
-			});
-			
-			ifSistemaREDError(employeeStatus, this::showFootPanel, this::closeFootPanel);
-
-		}, throwable -> {
-			closeFootPanel();
-			ContrataEmployee.this.setTGSSVisible(false);
-		});
-	}
-	
-	private void showResultsPanel() {
-		InlineLabel tab = new InlineLabel("Resultados");
-		tab.addStyleName(AON.AON_ICON_TIME);
-		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
-		footTabPanel.add(resultsPanel, tab);
-		footTabPanel.selectTab(resultsPanel);
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
-	}
-	
-	private void selectResultsPanel() {
-		InlineLabel tab = new InlineLabel("Resultados");
-		tab.addStyleName(AON.AON_ICON_TIME);
-		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
-		footTabPanel.add(resultsPanel, tab);
-		footTabPanel.selectTab(resultsPanel);
-	}
-
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-
-	private void maximizeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
-	}
-
-	private void showFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
-	}
-	
-	private void setTGSSVisible( boolean visible ) {
-		idc.setVisible(visible);
-		ta.setVisible(visible);
-	}
-	
-	private void setSEPEVisible( boolean visible ) {
-		cbc.setVisible(visible);
-		cto.setVisible(visible);
-	}
-	// -------------------------------------------------- UiHandlers --------------------------------------------------
+	// ------------------------------------------------- Abstract methods
 	
 	protected abstract void onListShow(boolean reloadEmployees);
 	
-	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
+	// ------------------------------------------------- setContrataEmployeeObject
 	
 	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeObject, EmployeeContractInfo employeeContractInfo) {
 		this.contrataEmployeeObject = contrataEmployeeObject;
@@ -727,7 +635,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	    }.run( 1000 );
 		
 	    tabLayOutPanel.selectTab(0, false);
-		employee.restartEmployee();
+		employee.initializeView();
 		
 		footTabPanel.clear();
 		splitLayoutPanel.setWidgetSize(footPanel, 25);
@@ -737,6 +645,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		this.contrataEmployeeObject.getAgreements(
 				r -> {
+					employee.initializeView();
 					initLogicWindow();
 					initExistingEmployee(employeeContractInfo.getContractInfo().hasPayroll());
 				}, 
@@ -747,10 +656,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		checkCertificateSEPE();
 	}
 	
-	private void checkCertificateSEPE() {
-		setVisible(cbc.getElement(), hasCertificateSEPE);
-		setVisible(cto.getElement(), hasCertificateSEPE);
-	}
+	// ------------------------------------------------- Initialize view
 
 	private void initLogicWindow() {
 		initActivitiesCCC();
@@ -790,7 +696,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 	}
 
-	// ----------------------------------------------- METODOS AUXILIARES ------------------------------------------------
+	// ------------------------------------------------- Initialize existing employee
 	
 	public void initExistingEmployee( boolean hasPayroll){
 		fillExistingEmployee();
@@ -812,7 +718,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employee.first_surname.setValue(employeeData.getSurName());
 		employee.second_surname.setValue(employeeData.getSecondSurName());
 		
-		employee.birth_date.setValue(employeeData.getBirthdate());
+		employee.birth_date.setValue(employeeData.getBirthdate(), true);
 		setSelectedValueLB(employee.gender, String.valueOf(employeeData.getGender()));
 		setSelectedValueLB(employee.civilStatus, employeeData.getCivilStatus()+"");
 		
@@ -846,7 +752,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		} else {
 			employee.hideElementsFreelancerTable();
 			fillContractTable(contractData);
-			fillContractOtherData(contrataEmployeeObject.getContractType());
+			fillContractOtherData(Integer.parseInt(contractData.getContractType()));
 		}
 	}
 	
@@ -872,7 +778,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void fillContractTable(ContractInfo contractData) {
-		setSelectedValueLB(employee.ssRegimeType, contrataEmployeeObject.getContractSSRegimen()+"");
+		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
 		
 		setSelectedValueLB(employee.activityCCC, contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
 		
@@ -884,10 +790,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
 		
-		setSelectedValueLB(employee.contractTypeLB, contrataEmployeeObject.getContractType()+"");
+		setSelectedValueLB(employee.contractTypeLB, contractData.getContractType());
 		
-		Integer contractTypeInt = contrataEmployeeObject.getContractType();
+		Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
 		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
+			employee.showPartialTimeContract();
 			if(contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().size() == 0) {
 				employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
@@ -897,7 +804,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			} else {
 				employee.journeyDuration.setText(contrataEmployeeObject.getContractData().getContractJourneyDuration().getJourneyText());
 			}
-		}
+		} else
+			employee.showElementsFullTimeContract();
 
 		employee.updateModality(contractTypeInt);
 		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
@@ -917,15 +825,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		setSelectedValueLB(employee.quote_group, contractData.getQuoteGroup());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
-		employee.partiality_coef.setValue(contrataEmployeeObject.getContractPartialityCoef());	
+		employee.partiality_coef.setValue(contractData.getPartialityCoef());	
 	}
 	
-	private void fillContractOtherData(Integer contractType) {
-		if(-1 == contractType)
-			tabLayOutPanel.getTabWidget(1).setVisible(false);
-		else
-			tabLayOutPanel.getTabWidget(1).setVisible(true);
-	}
+	// ------------------------------------------------- Auxiliar Methods
 	
 	private void getAgreementLevels(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
 		employee.level.clear();
@@ -962,94 +865,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	    lBox.setSelectedIndex(indexToFind);
 	}
 	
-	// ----------------------------------------------- MESSAGES RESULT ------------------------------------------------
-	
-	private void paintMessagesResult(Messages messages) {
-		Tree treeErrorMessages = new Tree();
-		treeErrorMessages.setAnimationEnabled(true);
-		
-		//Errors
-		for(Message errorMessage : messages.getErrorMessages()) {
-			Label errorLabel =  new Label();
-			errorLabel.setText(errorMessage.getDescription() + " -> " + errorMessage.getMessage());
-			treeErrorMessages.add(errorLabel);
-		}
-		
-		footTabPanel.add(treeErrorMessages, "Errores");
-		splitLayoutPanel.setWidgetSize(footPanel, 200);
+	private void fillContractOtherData(Integer contractType) {
+		if(-1 == contractType)
+			tabLayOutPanel.getTabWidget(1).setVisible(false);
+		else
+			tabLayOutPanel.getTabWidget(1).setVisible(true);
 	}
 	
-	// ------------------------------------------------ PDF -------------------------------------------------------------
-	
-	private void showTa() {
-
-		contrataEmployeeObject.downloadTa(
-		(dataURI) -> {
-				showPdf();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
-		}, 
-		(trowable)-> {
-			
-		}
-		);
-	}
-
-	private void showIdc() {
-
-		contrataEmployeeObject.downloadIdc(
-		(dataURI) -> {
-				showPdf();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
-		}, 
-		(trowable)-> {
-			
-		}
-		);
-	}
-	
-	private void showCbc() {
-
-		contrataEmployeeObject.downloadCbc(
-		(dataURI) -> {
-				showPdf();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
-		}, 
-		(trowable)-> {
-			
-		}
-		);
-	}
-	
-	private void showCto() {
-
-		contrataEmployeeObject.downloadCto(
-		(dataURI) -> {
-				showPdf();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
-		}, 
-		(trowable)-> {
-			
-		}
-		);
-	}
-	
-	private void showPdf() {
-		ta.setVisible(false);
-		idc.setVisible(false);
-		cbc.setVisible(false);
-		cto.setVisible(false);
-		afi.setVisible(false);
-		saveContract.setVisible(false);
-		deleteContract.setVisible(false);
-		listEmployees.setVisible(false);
-
-		zoomListBox.setVisible(true);
-		closePDF.setVisible(true);
-		downloadPDF.setVisible(true);
-
-		tabLayOutPanel.getElement().getStyle().setDisplay(Display.NONE);
-		pdfViewer.getElement().getStyle().clearDisplay();
-	}
+	// ------------------------------------------------- Toolbar panel
 	
 	private AonToolbar getToolbarPanel() {
 		AonToolbar toolbar = new AonToolbar("Contrato");
@@ -1219,28 +1042,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			}
 		});
 	}
-
-	private Widget getMessageWidget() {
-		ContractInfo contractData = contrataEmployeeObject.getContractData();
-		EmployeeInfo employeeData = contrataEmployeeObject.getEmployeeData();
-		
-		String message = "Este contrato ser" + String.valueOf("\u00E1") + " eliminado de forma permanente.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>?";
-		
-		if(contractData.getSalariesCount() > 0) {
-			message = "Este contrato contiene n" + String.valueOf("\u00F3") + "minas existentes. Si lo elimina se enviar" + String.valueOf("\u00E1") + " a la papelera.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>? <br><br>";
-			message += "<b>N" + String.valueOf("\u00F3") + "minas:</b><br><br>";
-			for(ContractSalaryInfo salaryInfo : contractData.getContractSalariesInfo())
-				message += "&emsp;" + salaryInfo.getType() + "&emsp;(" + formatFullDate.format(salaryInfo.getStart()) + " - " + formatFullDate.format(salaryInfo.getEnd()) + ")&emsp;Percibido : " + salaryInfo.getTotalLiquid() + String.valueOf("\u20AC") + "<br>";
-		}
-		
-		HTML label = new HTML(message);
-		return label;
-	}
-
+	
 	private void onExportContract(ClickEvent event) {
 		contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 		contrataEmployeeObject.setContractOtherInfo(s -> {
-//			showContract();
 			String fileDownloadURL = GWT.getModuleBaseURL()+ "contract_export/";
 			String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
 		            + "&contractId=" + contrataEmployeeObject.getContractData().getContractId()
@@ -1274,13 +1079,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					}
 			
 					@Override
-					protected void onPartialityCoefContract(String partialityCoef, Date date) {
-//						Window.alert("onPartialityCoefContract");
-					}
+					protected void onPartialityCoefContract(String partialityCoef, Date date) {}
 
 					@Override
 					protected void onOcupationContract(String ocupation, Date date) {
-//						Window.alert("onOcupationContract");
 						contrataEmployeeObject.cambioOcupacion(ocupation, date, s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Ocupacion", "El cambio de ocupacion ha sido notificado a la Seguridad Social.");
@@ -1289,7 +1091,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 					@Override
 					protected void onQuoteContract(String quoteGroup, Date date) {
-//						Window.alert("onQuoteContract");
 						contrataEmployeeObject.cambioGrupCtz(quoteGroup, date, s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Grupo cotizacion", "El cambio de grupo de cotizacion ha sido notificado a la Seguridad Social.");
@@ -1298,7 +1099,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 					@Override
 					protected void onChangeContract(String contract, Date date) {
-//						Window.alert("onChangeContract");
 						contrataEmployeeObject.cambioCatProf(contract, date, s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Tipo contrato", "El cambio de tipo de contrato ha sido notificado a la Seguridad Social.");
@@ -1307,7 +1107,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 					@Override
 					protected void onEndContract() {
-//						Window.alert("onEndContract");
 						contrataEmployeeObject.sendEmployeeBaja(s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Baja", "La baja de este trabajador ha sido notificada a la Seguridad Social.");
@@ -1316,7 +1115,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 					@Override
 					protected void onStartContract() {
-//						Window.alert("onStartContract");
 						contrataEmployeeObject.sendEmployeeAlta(s -> {
 							AonConfirmDialog dialog = new AonConfirmDialog();
 							dialog.info("AVISO: Alta", "El alta de este trabajador ha sido notificado a la Seguridad Social.");
@@ -1353,8 +1151,208 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		String fileName = contrataEmployeeObject.getEmployeeFullName() + " IDC.pdf";
 		pdfViewer.download(fileName);
 	}
+	
+	// ------------------------------------------------- Toolbar panel auxiliar methods
+	
+	private void showTa() {
 
+		contrataEmployeeObject.downloadTa(
+		(dataURI) -> {
+				showPdf();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+		}, 
+		(trowable)-> {
+			
+		}
+		);
+	}
+
+	private void showIdc() {
+
+		contrataEmployeeObject.downloadIdc(
+		(dataURI) -> {
+				showPdf();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+		}, 
+		(trowable)-> {
+			
+		}
+		);
+	}
+	
+	private void showCbc() {
+
+		contrataEmployeeObject.downloadCbc(
+		(dataURI) -> {
+				showPdf();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+		}, 
+		(trowable)-> {
+			
+		}
+		);
+	}
+	
+	private void showCto() {
+
+		contrataEmployeeObject.downloadCto(
+		(dataURI) -> {
+				showPdf();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+		}, 
+		(trowable)-> {
+			
+		}
+		);
+	}
+	
+	private void showPdf() {
+		ta.setVisible(false);
+		idc.setVisible(false);
+		cbc.setVisible(false);
+		cto.setVisible(false);
+		afi.setVisible(false);
+		saveContract.setVisible(false);
+		deleteContract.setVisible(false);
+		listEmployees.setVisible(false);
+
+		zoomListBox.setVisible(true);
+		closePDF.setVisible(true);
+		downloadPDF.setVisible(true);
+
+		tabLayOutPanel.getElement().getStyle().setDisplay(Display.NONE);
+		pdfViewer.getElement().getStyle().clearDisplay();
+	}
+	
+	// ------------------------------------------------- CheckStatus(contrataEmployeeObject)
+	
+	private void checkStatus(ContrataEmployeeObject contrataEmployeeObject) {
+		contrataEmployeeObject.checkStatus(employeeStatus -> {
+			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
+
+				@Override
+				public void run() {
+					contrataEmployeeObject.checkStatus(employeeStatus -> {
+						removeAll();
+						employeeStatus.visit(this);
+					}, throwable -> {
+					});
+				}
+				
+				@Override
+				protected void saltraCredentialsFound() {
+					contrataEmployeeObject.checkStatus(employeeStatus -> {
+						removeAll();
+						employeeStatus.visit(this);
+						selectResultsPanel();
+						maximizeFootPanel();
+						ifSistemaREDEnabled(employeeStatus, () -> {
+							ContrataEmployee.this.setTGSSVisible(true);
+							//ContrataEmployee.this.setOnSaved(e -> run());
+						}, () -> {
+							ContrataEmployee.this.setTGSSVisible(false);
+
+						});
+						ifSistemaREDError(employeeStatus, 
+								ContrataEmployee.this::showFootPanel, 
+								ContrataEmployee.this::closeFootPanel);
+
+					}, throwable -> {
+						closeFootPanel();
+						ContrataEmployee.this.setTGSSVisible(false);
+
+					});
+				}
+			};
+
+			employeeStatus.visit(sistemaREDResults);
+			resultsPanel.setWidget(sistemaREDResults);
+			selectResultsPanel();
+
+			ifSistemaREDEnabled(employeeStatus, () -> {
+				ContrataEmployee.this.setTGSSVisible(true);
+			}, () -> {
+				ContrataEmployee.this.setTGSSVisible(false);
+			});
+			
+			ifSistemaREDError(employeeStatus, this::showFootPanel, this::closeFootPanel);
+
+		}, throwable -> {
+			closeFootPanel();
+			ContrataEmployee.this.setTGSSVisible(false);
+		});
+	}
+	
+	// ------------------------------------------------- CheckStatus auxiliar methods
+	
+	private void selectResultsPanel() {
+		InlineLabel tab = new InlineLabel("Resultados");
+		tab.addStyleName(AON.AON_ICON_TIME);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		footTabPanel.add(resultsPanel, tab);
+		footTabPanel.selectTab(resultsPanel);
+	}
+
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+
+	private void maximizeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 100);
+	}
+
+	private void showFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+	}
+	
+	private void setTGSSVisible( boolean visible ) {
+		idc.setVisible(visible);
+		ta.setVisible(visible);
+	}
+	
+	// ------------------------------------------------- SEPE status
+	
 	public void setHasCertificateSEPE(boolean hasCertificateSEPE) {
 		this.hasCertificateSEPE = hasCertificateSEPE;
 	}
+	
+	private void checkCertificateSEPE() {
+		setVisible(cbc.getElement(), hasCertificateSEPE);
+		setVisible(cto.getElement(), hasCertificateSEPE);
+	}
+	
+	// ------------------------------------------------- Messages panel
+	
+	private void paintMessagesResult(Messages messages) {
+		Tree treeErrorMessages = new Tree();
+		treeErrorMessages.setAnimationEnabled(true);
+		
+		//Errors
+		for(Message errorMessage : messages.getErrorMessages()) {
+			Label errorLabel =  new Label();
+			errorLabel.setText(errorMessage.getDescription() + " -> " + errorMessage.getMessage());
+			treeErrorMessages.add(errorLabel);
+		}
+		
+		footTabPanel.add(treeErrorMessages, "Errores");
+		splitLayoutPanel.setWidgetSize(footPanel, 200);
+	}
+	
+	private Widget getMessageWidget() {
+		ContractInfo contractData = contrataEmployeeObject.getContractData();
+		EmployeeInfo employeeData = contrataEmployeeObject.getEmployeeData();
+		
+		String message = "Este contrato ser" + String.valueOf("\u00E1") + " eliminado de forma permanente.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>?";
+		
+		if(contractData.getSalariesCount() > 0) {
+			message = "Este contrato contiene n" + String.valueOf("\u00F3") + "minas existentes. Si lo elimina se enviar" + String.valueOf("\u00E1") + " a la papelera.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>? <br><br>";
+			message += "<b>N" + String.valueOf("\u00F3") + "minas:</b><br><br>";
+			for(ContractSalaryInfo salaryInfo : contractData.getContractSalariesInfo())
+				message += "&emsp;" + salaryInfo.getType() + "&emsp;(" + formatFullDate.format(salaryInfo.getStart()) + " - " + formatFullDate.format(salaryInfo.getEnd()) + ")&emsp;Percibido : " + salaryInfo.getTotalLiquid() + String.valueOf("\u20AC") + "<br>";
+		}
+		
+		HTML label = new HTML(message);
+		return label;
+	}
+
 }

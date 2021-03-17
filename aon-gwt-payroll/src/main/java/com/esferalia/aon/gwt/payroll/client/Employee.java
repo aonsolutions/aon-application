@@ -41,6 +41,7 @@ import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -60,13 +61,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Employee extends ResizeComposite {
 
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// ------------------------------------------------- UiBinder
 
-	private static EmployeeDraftUiBinder uiBinder = GWT.create(EmployeeDraftUiBinder.class);
+	private static EmployeeUiBinder uiBinder = GWT.create(EmployeeUiBinder.class);
 
-	interface EmployeeDraftUiBinder extends UiBinder<Widget, Employee> {}
+	interface EmployeeUiBinder extends UiBinder<Widget, Employee> {}
 
-	// -------------------------------------------------- UiFields --------------------------------------------------
+	// ------------------------------------------------- UiFields
 
 	@UiField
 	MyStyle style;
@@ -249,10 +250,12 @@ public abstract class Employee extends ResizeComposite {
 	@UiField
 	Label journeyDuration;
 	
+	// ------------------------------------------------- Class variables
+	
 	private ContractType contractType;
 	private Municipalities municipalities;
 
-	// --------------------------------------------------------- CONSTRUCTOR --------------------------------------------------------
+	// ------------------------------------------------- Constructor
 
 	public Employee() {
 		//Initialize Nationality SuggestBox
@@ -270,11 +273,10 @@ public abstract class Employee extends ResizeComposite {
 		this.municipalities = new Municipalities();
 		
 		initializeView();
+		addReformatAccount();
 	}
 	
-	// ------------------------------------------------------------------------
-	//								UiHandlers
-	// ------------------------------------------------------------------------
+	// ------------------------------------------------- UiHandlers
 	
 	// TABLA DATOS CONTRATO
 	
@@ -307,8 +309,7 @@ public abstract class Employee extends ResizeComposite {
 			showNationality(document_type);	
 			
 			onEmployeeDocumentChange(document, document_type);
-		}
-		
+		}	
 	}
 	
 	@UiHandler("nationality")
@@ -399,8 +400,7 @@ public abstract class Employee extends ResizeComposite {
 				showMdCtzContract();
 			else
 				hideMdCtzContract();
-		}
-		
+		}	
 	}
 	
 	@UiHandler("mdCTZLB")
@@ -432,15 +432,6 @@ public abstract class Employee extends ResizeComposite {
 			
 			onContractTypeChange(contractType);
 		}
-	}
-	
-	public void updateModality(Integer contractTypeInt) {
-		this.modality.clear();
-		this.modality.addItem("-", "-1");
-		
-		List<ModelRecord> contractTypeModels = this.contractType.getModelsContractType(contractTypeInt);
-		for (ModelRecord model : contractTypeModels)
-			this.modality.addItem(model.getModelDescription(), model.getEnumeration().toString());
 	}
 
 	@UiHandler("modality")
@@ -624,18 +615,18 @@ public abstract class Employee extends ResizeComposite {
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressProvince);
 		}
 	}
-
-	@UiHandler("addressMunicipality")
-	void onAddressMunicipalityChangeValue(ChangeEvent event) {
-		String addressMunicipality = municipalities.getZipByMunicipalityName(this.addressMunicipality.getSelectedItemText()).toString();
-		onEmployeeAddressMunicipalityChange(addressMunicipality);
-	}
-
+	
 	@UiHandler("addressProvince")
 	void onAddressProvinceChangeValue(ChangeEvent event) {
 		String addressProvinceCode = String.valueOf(this.addressProvince.getSelectedValue());
 		updateMunicipalities();
 		onEmployeeAddressProvinceChange(addressProvinceCode);
+	}
+
+	@UiHandler("addressMunicipality")
+	void onAddressMunicipalityChangeValue(ChangeEvent event) {
+		String addressMunicipality = municipalities.getZipByMunicipalityName(this.addressMunicipality.getSelectedItemText()).toString();
+		onEmployeeAddressMunicipalityChange(addressMunicipality);
 	}
 
 	@UiHandler("mobile")
@@ -688,9 +679,7 @@ public abstract class Employee extends ResizeComposite {
 		onEmployeeAccountChange(account, bankAlias, bankSwift);
 	}
 
-	// ------------------------------------------------------------------------
-	//							Abstraact Methods
-	// ------------------------------------------------------------------------
+	// ------------------------------------------------- Abstract methods
 	
 	// TABLA DATOS CONTRATO
 	
@@ -742,21 +731,20 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onEmployeeBICChange(String bic);
 	public abstract void onEmployeeAccountChange(String account, String bankAlias, String bankSwift);
 
-
-	// ------------------------------------------------------------------------
-	//							Class Methods
-	// ------------------------------------------------------------------------
-
+	// ------------------------------------------------- Methods preview
+	
 	public void initializeView() {
 		resetElements();
 		initializeListBox();
 		initDisplayElements();
 	}
 
-	public void resetElements() {
+	private void resetElements() {
+		
 		// TABLA DATOS CONTRATO
 		
 		this.document.setValue("");
+		this.nationality.setValue("");
 		this.security_social_num.setValue("");
 		this.name.setValue("");
 		this.first_surname.setValue("");
@@ -789,8 +777,8 @@ public abstract class Employee extends ResizeComposite {
 		this.addressNum.setValue("");
 		this.addressInfo.setValue("");
 		this.addressZip.setValue("");
-		this.addressMunicipality.clear();
 		this.addressProvince.clear();
+		this.addressMunicipality.clear();
 		this.mobile.setValue("");
 		this.phone.setValue("");
 		this.email.setValue("");
@@ -799,41 +787,6 @@ public abstract class Employee extends ResizeComposite {
 		this.bic.setValue("");
 	}
 	
-	public void restartEmployee() {
-		// TABLA DATOS CONTRATO
-		
-		this.document.setValue("");
-		this.security_social_num.setValue("");
-		this.name.setValue("");
-		this.first_surname.setValue("");
-		this.second_surname.setValue("");
-		this.ssRegimeType.setSelectedIndex(0);
-		
-		this.start_date.setValue(null);
-		this.end_date.setValue(null);
-		this.seniority_date.setValue(null);
-		
-		this.category.setValue("");
-		
-		this.journeyDuration.setText("");
-
-		// TABLA DATOS EMPLEADO
-		
-		this.birth_date.setValue(null);
-		
-		this.address.setValue("");
-		this.addressNum.setValue("");
-		this.addressInfo.setValue("");
-		this.addressZip.setValue("");
-		
-		this.mobile.setValue("");
-		this.phone.setValue("");
-		this.email.setValue("");
-		
-		this.account.setValue("");
-		this.bic.setValue("");
-	}
-
 	private void initializeListBox() {
 		// TABLA DATOS CONTRATO
 		
@@ -901,17 +854,10 @@ public abstract class Employee extends ResizeComposite {
 		}
 		
 		//PROVINCIA
-		this.addressProvince.addItem("-");
+		this.addressProvince.addItem("-", "-1");
 		for(Entry<String, String> provinces : ProvinceContract.getProvinces().entrySet())
 			this.addressProvince.addItem(provinces.getValue(), provinces.getKey());
 
-		
-		// TIPO DE PAGO
-//		this.payMethod.addItem("-", "-1");
-//		this.payMethod.addItem("EFECTIVO", "0");
-////		this.payMethod.addItem("GIRO", "1");
-//		this.payMethod.addItem("CHEQUE", "4");
-//		this.payMethod.addItem("TRANSFERENCIA", "5");	
 	}
 	
 	private void initDisplayElements() {
@@ -929,165 +875,29 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 	}
-
-	public void showElementsFreelancerTable() {
-		this.contractDataTable.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+	
+	// ------------------------------------------------- Fill default fields
+	
+	public void fillDefaultFields() {
+		//SS REGIME
+		ssRegimeType.setSelectedIndex(0);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), ssRegimeType);
 		
-		this.contractTypeNode.getStyle().setDisplay(Display.NONE);
-		this.contractFreelancerNode.getStyle().clearDisplay();
+		//GENDER
+		gender.setSelectedIndex(0);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), gender);
 		
-		this.contractDataTable.getRows().getItem(5).getStyle().setDisplay(Display.NONE);
+		//CIVIL STATUS
+		civilStatus.setSelectedIndex(5);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), civilStatus);
 		
-		this.contractDataTable.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
-		
-		this.contractDataTable.getRows().getItem(14).getStyle().clearDisplay();
-		
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
+		//STREET_TYPE
+		street_type.setSelectedIndex(14); //Calle
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), street_type);
 	}
 	
-	public void hideElementsFreelancerTable() {
-		this.contractDataTable.getRows().getItem(4).getStyle().clearDisplay();
-		
-		this.contractTypeNode.getStyle().clearDisplay();
-		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
-		
-		this.contractDataTable.getRows().getItem(5).getStyle().clearDisplay();
-		
-		this.contractDataTable.getRows().getItem(8).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
-		
-		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
-	}
+	// ------------------------------------------------- Initialize SuggestBox
 	
-	public void showElementsPartialTimeContract() {
-		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();	
-	}
-	
-	public void showElementsFullTimeContract() {
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
-	}
-	
-	private void showPartialTimeContract() {
-		showElementsPartialTimeContract();
-		journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-		journeyDuration.addStyleName(style.journeyDurationWarning());
-		journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-		journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
-		journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
-		journeyDuration.setTitle("Las horas se deben definir en el calendario del empleado.");
-	}
-	
-	public void showMdCtzContract() {
-		this.contractDataTable.getRows().getItem(5).getStyle().clearDisplay();	
-	}
-	
-	public void hideMdCtzContract() {
-		this.contractDataTable.getRows().getItem(5).getStyle().setDisplay(Display.NONE);
-	}
-
-	public void setEndDate(Date endDate) {
-		end_date.setValue(endDate, false);
-		onContractEndDateChange(endDate);
-	}
-	
-	public void setStartDate(Date endDate) {
-		start_date.setValue(endDate, false);
-		onContractStartDateChange(endDate);
-	}
-
-	public void setOcupation(String str) {
-		switch (str) {
-		case "a":
-			occupation.setSelectedIndex(1);
-		case "b":
-			occupation.setSelectedIndex(2);
-		case "d":
-			occupation.setSelectedIndex(3);
-		case "e":
-			occupation.setSelectedIndex(4);
-		case "f":
-			occupation.setSelectedIndex(5);
-		case "g":
-			occupation.setSelectedIndex(6);
-		case "h":
-			occupation.setSelectedIndex(7);
-		default:
-			occupation.setSelectedIndex(0);
-		}
-		onContractOccupationChange(str);
-		
-	}
-
-	public void hideClearEmployee() {
-		clear_employee.getElement().getStyle().setDisplay(Display.NONE);
-	}
-	
-	public void showClearEmployee() {
-		clear_employee.getElement().getStyle().clearDisplay();
-	}
-
-	public void addReformatAccount() {
-		account.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				reformatAccount(account);
-			}
-		});
-	}
-	
-	public void reformatAccount(SuggestBox accountField) {
-	    String accountText = accountField.getText();
-	    accountText = accountText.replaceAll("\\W+", "");
-	    if (accountText.length() >= 24) {
-	    	accountField.setText(accountText.substring(0, 4) + "  " + accountText.substring(4, 8) + "  " + accountText.substring(8, 12) + "  " + accountText.substring(12, 16)
-	    	+ "  " + accountText.substring(16, 20) + "  " + accountText.substring(20, 24));
-	    }
-	}
-	
-	public boolean checkIfSaveIsPossible() {
-		Byte ssRegime = Byte.valueOf(this.ssRegimeType.getSelectedValue());
-		
-		if(ssRegime == (byte) 3) { // RETA
-			String nameValue = name.getValue();
-			String workplaceValue = workplace.getSelectedValue();
-			
-			return 	AonStringUtils.isNotBlank(nameValue) && 
-					!AonStringUtils.equalsIgnoreCase(workplaceValue, "-1");
-		} else {
-			String nameValue = name.getValue();
-			String activityValue = activityCCC.getSelectedValue();
-			String workplaceValue = workplace.getSelectedValue();
-			String contractTypeValue = contractTypeLB.getSelectedValue();
-			
-			return 	AonStringUtils.isNotBlank(nameValue) && 
-					!AonStringUtils.equalsIgnoreCase(activityValue, "-1") && 
-					!AonStringUtils.equalsIgnoreCase(workplaceValue, "-1") &&
-					!AonStringUtils.equalsIgnoreCase(contractTypeValue, "-1");
-		}
-	}
-	
-	public boolean checkDates() {
-		Date startDate = DateUtils.copyDateOnly(start_date.getValue());
-		Date endDate = null == end_date.getValue() ? null : DateUtils.copyDateOnly(end_date.getValue());
-		
-		if(null == endDate)
-			return true;
-		
-		else if(endDate.after(startDate) || endDate.equals(startDate))
-			return true;
-		
-		else
-			return false;
-	}
-	
-	public void hideEmployeeTable() {
-		employeeTablePanel.getElement().getStyle().setDisplay(Display.NONE);
-	}
-
 	public void initSuggestBox(WorkplaceEmployees workplaceEmployees) {
 		//DOCUMENT
 		List<String> employeesDocuments = workplaceEmployees.getWorkplaceEmployeesDocument();
@@ -1134,32 +944,8 @@ public abstract class Employee extends ResizeComposite {
 			for(CCCInfo cccInfo :  cccs.values())
 				if(cccInfo.getActivityId() == entry.getKey())
 					activityCCC.addItem(entry.getValue() + " - " + getCCCType(cccInfo.getType()) + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone(), cccInfo.getActivityId() + "/" + cccInfo.getCccId() + "/" + cccInfo.getType());
-	
 	}
 	
-	private String getCCCType(Byte type) {
-		switch (type) {
-			case (byte) 0:
-				return "PRINCIPAL";
-			case (byte) 1:
-				return "FORMACION Y APRENDIZAJE";
-			case (byte) 3:
-				return "REPRESENTANTES DE COMERCIO";
-			case (byte) 4:
-				return "ASIMILADOS R.GENERAL";
-			case (byte) 5:
-				return "BECARIOS";
-			case (byte) 6:
-				return "EMPLEADOS DE HOGAR";
-			case (byte) 7:
-				return "TRABAJADOR CUENTA AJENA";
-			case (byte) 8:
-				return "ARTISTA";
-			default:
-				return "PRINCIPAL";
-		}
-	}
-
 	public void initWorkplaces(List<Workplace> workplaces) {
 		//WORKPLACE
 		workplace.addItem("-", "-1");
@@ -1189,29 +975,193 @@ public abstract class Employee extends ResizeComposite {
 		}
 	}
 	
-	public void unblockVariablesExistingContract(){
-		document.setEnabled(true);
-		nationality.setEnabled(true);
-		security_social_num.setEnabled(true);
-		name.setEnabled(true);
-		first_surname.setEnabled(true);
-		second_surname.setEnabled(true);
-		
-		birth_date.setEnabled(true);
-		gender.setEnabled(true);
-		street_type.setEnabled(true);
-		address.setEnabled(true);
-		addressNum.setEnabled(true);
-		addressZip.setEnabled(true);
-		addressMunicipality.setEnabled(true);
-		addressProvince.setEnabled(true);
-		mobile.setEnabled(true);
-		phone.setEnabled(true);
-		email.setEnabled(true);
-		payMethod.setEnabled(true);
-		bic.setEnabled(true);
-		account.setEnabled(true);
+	// ------------------------------------------------- Initialize SuggestBox (Auxiliar methods)
+	
+	private String getCCCType(Byte type) {
+		switch (type) {
+			case (byte) 0:
+				return "PRINCIPAL";
+			case (byte) 1:
+				return "FORMACION Y APRENDIZAJE";
+			case (byte) 3:
+				return "REPRESENTANTES DE COMERCIO";
+			case (byte) 4:
+				return "ASIMILADOS R.GENERAL";
+			case (byte) 5:
+				return "BECARIOS";
+			case (byte) 6:
+				return "EMPLEADOS DE HOGAR";
+			case (byte) 7:
+				return "TRABAJADOR CUENTA AJENA";
+			case (byte) 8:
+				return "ARTISTA";
+			default:
+				return "PRINCIPAL";
+		}
 	}
+	
+	// ------------------------------------------------- Show/hide employee table
+	
+	public void hideEmployeeTable() {
+		employeeTablePanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	// ------------------------------------------------- Show/hide clearEmployee
+
+	public void hideClearEmployee() {
+		clear_employee.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	public void showClearEmployee() {
+		clear_employee.getElement().getStyle().clearDisplay();
+	}
+	
+	// ------------------------------------------------- Show/hide methods freelancer
+
+	public void showElementsFreelancerTable() {
+		this.contractDataTable.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		
+		this.contractTypeNode.getStyle().setDisplay(Display.NONE);
+		this.contractFreelancerNode.getStyle().clearDisplay();
+		
+		this.contractDataTable.getRows().getItem(5).getStyle().setDisplay(Display.NONE);
+		
+		this.contractDataTable.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		
+		this.contractDataTable.getRows().getItem(14).getStyle().clearDisplay();
+		
+		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
+	}
+	
+	public void hideElementsFreelancerTable() {
+		this.contractDataTable.getRows().getItem(4).getStyle().clearDisplay();
+		
+		this.contractTypeNode.getStyle().clearDisplay();
+		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
+		
+		this.contractDataTable.getRows().getItem(5).getStyle().clearDisplay();
+		
+		this.contractDataTable.getRows().getItem(8).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
+		
+		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
+	}
+	
+	// ------------------------------------------------- Show/hide methods partial/full time
+	
+	public void showElementsFullTimeContract() {
+		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
+	}
+	
+	public void showPartialTimeContract() {
+		showElementsPartialTimeContract();
+		journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+		journeyDuration.addStyleName(style.journeyDurationWarning());
+		journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+		journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
+		journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+		journeyDuration.setTitle("Las horas se deben definir en el calendario del empleado.");
+	}
+	
+	private void showElementsPartialTimeContract() {
+		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();	
+	}
+	
+	// ------------------------------------------------- Show/hide mdCtz methods
+	
+	public void showMdCtzContract() {
+		this.contractDataTable.getRows().getItem(5).getStyle().clearDisplay();	
+	}
+	
+	public void hideMdCtzContract() {
+		this.contractDataTable.getRows().getItem(5).getStyle().setDisplay(Display.NONE);
+	}
+	
+	// ------------------------------------------------- CheckStatus(EmployeeDraftObject) - EmployeeTree
+
+	public void setEndDate(Date endDate) {
+		end_date.setValue(endDate, false);
+		onContractEndDateChange(endDate);
+	}
+	
+	public void setStartDate(Date endDate) {
+		start_date.setValue(endDate, false);
+		onContractStartDateChange(endDate);
+	}
+
+	public void setOcupation(String str) {
+		switch (str) {
+		case "a":
+			occupation.setSelectedIndex(1);
+		case "b":
+			occupation.setSelectedIndex(2);
+		case "d":
+			occupation.setSelectedIndex(3);
+		case "e":
+			occupation.setSelectedIndex(4);
+		case "f":
+			occupation.setSelectedIndex(5);
+		case "g":
+			occupation.setSelectedIndex(6);
+		case "h":
+			occupation.setSelectedIndex(7);
+		default:
+			occupation.setSelectedIndex(0);
+		}
+		onContractOccupationChange(str);
+		
+	}
+	
+	// ------------------------------------------------- Account methods
+
+	private void addReformatAccount() {
+		account.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				reformatAccount(account);
+			}
+		});
+	}
+	
+	public void reformatAccount(SuggestBox accountField) {
+	    String accountText = accountField.getText();
+	    accountText = accountText.replaceAll("\\W+", "");
+	    if (accountText.length() >= 24) {
+	    	accountField.setText(accountText.substring(0, 4) + "  " + accountText.substring(4, 8) + "  " + accountText.substring(8, 12) + "  " + accountText.substring(12, 16)
+	    	+ "  " + accountText.substring(16, 20) + "  " + accountText.substring(20, 24));
+	    }
+	}
+	
+	public void initIbans(ArrayList<String> employeeIbans) {
+		List<String> employeesIbanSuggest = new ArrayList<String>();
+		for(String iban : employeeIbans)
+			employeesIbanSuggest.add(iban);
+		MultiWordSuggestOracle orclIbans = (MultiWordSuggestOracle) account.getSuggestOracle();
+		orclIbans.addAll(employeesIbanSuggest);
+		account.setAutoSelectEnabled(false);
+	}
+
+	private String getBankSwift(String account) {
+		if(AonStringUtils.isNotBlank(account)) {
+			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
+			return bankSwiftEntry.getSwift();
+		}
+		return null;
+	}
+
+	private String getBankAlias(String account) {
+		if(AonStringUtils.isNotBlank(account)) {
+			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
+			return bankSwiftEntry.getBankName();
+		}
+		return null;
+	}
+	
+	// ------------------------------------------------- Employee table methods
 	
 	public void resetEmployeeInfo() {
 		document.setValue(null);
@@ -1228,7 +1178,6 @@ public abstract class Employee extends ResizeComposite {
 		address.setValue(null);
 		addressNum.setValue(null);
 		addressZip.setValue(null);
-		
 		addressProvince.setSelectedIndex(0);
 		addressMunicipality.clear();
 		
@@ -1240,6 +1189,62 @@ public abstract class Employee extends ResizeComposite {
 		account.setValue(null);
 		bic.setValue(null);
 	}
+	
+	public void blockVariablesExistingContract(){
+		document.setEnabled(false);
+		nationality.setEnabled(false);
+		security_social_num.setEnabled(false);
+		name.setEnabled(false);
+		first_surname.setEnabled(false);
+		second_surname.setEnabled(false);
+		
+		birth_date.setEnabled(false);
+		gender.setEnabled(false);
+		
+		street_type.setEnabled(false);
+		address.setEnabled(false);
+		addressNum.setEnabled(false);
+		addressZip.setEnabled(false);
+		addressProvince.setEnabled(false);
+		addressMunicipality.setEnabled(false);
+		
+		mobile.setEnabled(false);
+		phone.setEnabled(false);
+		email.setEnabled(false);
+		
+		payMethod.setEnabled(false);
+		bic.setEnabled(false);
+		account.setEnabled(false);
+	}
+	
+	public void unblockVariablesExistingContract(){
+		document.setEnabled(true);
+		nationality.setEnabled(true);
+		security_social_num.setEnabled(true);
+		name.setEnabled(true);
+		first_surname.setEnabled(true);
+		second_surname.setEnabled(true);
+		
+		birth_date.setEnabled(true);
+		gender.setEnabled(true);
+		
+		street_type.setEnabled(true);
+		address.setEnabled(true);
+		addressNum.setEnabled(true);
+		addressZip.setEnabled(true);
+		addressProvince.setEnabled(true);
+		addressMunicipality.setEnabled(true);
+		
+		mobile.setEnabled(true);
+		phone.setEnabled(true);
+		email.setEnabled(true);
+		
+		payMethod.setEnabled(true);
+		bic.setEnabled(true);
+		account.setEnabled(true);
+	}
+	
+	// ------------------------------------------------- Auxiliar methods
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {
 	    String text = str;
@@ -1285,16 +1290,6 @@ public abstract class Employee extends ResizeComposite {
 			return true;
 	}
 	
-	private void addSuccessStyle(Widget widget) {
-		widget.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-		widget.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-	}
-	
-	private void addWarningStyle(Widget widget) {
-		widget.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-		widget.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-	}
-	
 	public void showNationality(String document_type_str) {
 		if (document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE") {
 			nationalityLabelCell.getStyle().clearDisplay();
@@ -1305,14 +1300,6 @@ public abstract class Employee extends ResizeComposite {
 			nationality.setValue("ESPA" + String.valueOf("\u00D1") + "A");
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), nationality);
 		}
-	}
-	
-	private String getIso2(String country) {
-		for (int i = 0; i < Country.values().length; i++)
-			if (Country.values()[i].getName() == country)
-				return Country.values()[i].getIso2();
-		
-		return null;
 	}
 	
 	public boolean checkSSNumValidation(String ssNum_string) {
@@ -1326,6 +1313,54 @@ public abstract class Employee extends ResizeComposite {
 			return false;
 	}
 	
+	public void updateModality(Integer contractTypeInt) {
+		this.modality.clear();
+		this.modality.addItem("-", "-1");
+		
+		List<ModelRecord> contractTypeModels = this.contractType.getModelsContractType(contractTypeInt);
+		for (ModelRecord model : contractTypeModels)
+			this.modality.addItem(model.getModelDescription(), model.getEnumeration().toString());
+	}
+	
+	private String getIso2(String country) {
+		for (int i = 0; i < Country.values().length; i++)
+			if (Country.values()[i].getName() == country)
+				return Country.values()[i].getIso2();
+		
+		return null;
+	}
+	
+	public void updateMunicipalities() {
+		String provinceCode = addressProvince.getSelectedValue();
+		addressMunicipality.clear();
+		addressMunicipality.addItem("-" , "-1");;
+		HashMap<String, String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
+		municipalitiesOfProvince.entrySet().forEach(e -> {addressMunicipality.addItem(e.getValue(), e.getKey());});
+	}
+	
+	private Integer getYears(Date actualDay, Date birthDate) {
+		DateUtils.resetTime(actualDay);
+		DateUtils.resetTime(birthDate);
+		
+		DateTimeFormat formatter = DateTimeFormat.getFormat("yyyyMMdd");                         
+	    int d1 = Integer.parseInt(formatter.format(birthDate));                            
+	    int d2 = Integer.parseInt(formatter.format(actualDay));                          
+	    int age = (d2 - d1) / 10000;                                                       
+	    return age;                   
+	}
+	
+	// ------------------------------------------------- Add success/warning style
+	
+	private void addSuccessStyle(Widget widget) {
+		widget.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+		widget.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+	}
+	
+	private void addWarningStyle(Widget widget) {
+		widget.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+		widget.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+	}
+	
 	private void addWarningDateStyle(Widget widget) {
 		widget.getElement().getStyle().clearDisplay();
 		widget.setTitle("La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
@@ -1334,106 +1369,12 @@ public abstract class Employee extends ResizeComposite {
 		widget.getElement().getStyle().setMarginTop(3.00, Unit.PX);
 	}
 	
-	@SuppressWarnings("deprecation")
-	private Integer getYears(Date actualDay, Date birthDate) {
-		DateUtils.resetTime(actualDay);
-		DateUtils.resetTime(birthDate);
-		
-		Integer age = actualDay.getYear() - birthDate.getYear() - 1;
-		
-		if(actualDay.getMonth() >= birthDate.getMonth()) {
-			age++;
-			
-			if(actualDay.getDate() < birthDate.getDate())
-				age--;
-		}
-		
-		return age;
+	// ------------------------------------------------- Save methods
+	
+	public boolean checkIfSaveEmployeeIsPossible() {
+		return checkIfNewEmployeeIsPossible() && checkAddress();
 	}
 	
-	public void updateMunicipalities() {
-		String provinceCode = addressProvince.getSelectedValue();
-		addressMunicipality.clear();
-		addressMunicipality.addItem("-");;
-		HashMap<String, String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
-		municipalitiesOfProvince.entrySet().forEach(e -> {addressMunicipality.addItem(e.getValue(), e.getKey());});
-	}
-	
-	private String getBankSwift(String account) {
-		if(AonStringUtils.isNotBlank(account)) {
-			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
-			return bankSwiftEntry.getSwift();
-		}
-		return null;
-	}
-
-	private String getBankAlias(String account) {
-		if(AonStringUtils.isNotBlank(account)) {
-			BankSwift bankSwiftEntry = BankSwift.safeValueOf("B" + AonStringUtils.substring(account, 4, 8));
-			return bankSwiftEntry.getBankName();
-		}
-		return null;
-	}
-	
-	public ContractType getContractType() {
-		return this.contractType;
-	}
-	
-	public Municipalities getMunicipalities() {
-		return this.municipalities;
-	}
-
-	public void fillDefaultFields() {
-		//SS REGIME
-		ssRegimeType.setSelectedIndex(0);
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), ssRegimeType);
-		
-		//GENDER
-		gender.setSelectedIndex(0);
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), gender);
-		
-		//CIVIL STATUS
-		civilStatus.setSelectedIndex(5);
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), civilStatus);
-		
-		//STREET_TYPE
-		street_type.setSelectedIndex(14); //Calle
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), street_type);
-	}
-	
-	public void blockVariablesExistingContract(){
-		document.setEnabled(false);
-		nationality.setEnabled(false);
-		security_social_num.setEnabled(false);
-		name.setEnabled(false);
-		first_surname.setEnabled(false);
-		second_surname.setEnabled(false);
-		
-		birth_date.setEnabled(false);
-		gender.setEnabled(false);
-		street_type.setEnabled(false);
-		address.setEnabled(false);
-		addressNum.setEnabled(false);
-		addressZip.setEnabled(false);
-		addressMunicipality.setEnabled(false);
-		addressProvince.setEnabled(false);
-		mobile.setEnabled(false);
-		phone.setEnabled(false);
-		email.setEnabled(false);
-		payMethod.setEnabled(false);
-		bic.setEnabled(false);
-		account.setEnabled(false);
-	}
-
-	public void initIbans(ArrayList<String> employeeIbans) {
-		List<String> employeesIbanSuggest = new ArrayList<String>();
-		for(String iban : employeeIbans)
-			employeesIbanSuggest.add(iban);
-		MultiWordSuggestOracle orclIbans = (MultiWordSuggestOracle) account.getSuggestOracle();
-		orclIbans.addAll(employeesIbanSuggest);
-		account.setAutoSelectEnabled(false);
-	}
-
 	public boolean checkIfNewEmployeeIsPossible() {
 		if(checkIfSaveIsPossible())
 			if(checkDates())
@@ -1450,22 +1391,57 @@ public abstract class Employee extends ResizeComposite {
 		}
 	}
 	
-	public boolean checkIfSaveEmployeeIsPossible() {
-		return checkIfNewEmployeeIsPossible() && checkAddress();
+	private boolean checkIfSaveIsPossible() {
+		Byte ssRegime = Byte.valueOf(this.ssRegimeType.getSelectedValue());
+		
+		if(ssRegime == (byte) 3) { // RETA
+			String nameValue = name.getValue();
+			String workplaceValue = workplace.getSelectedValue();
+			
+			return 	AonStringUtils.isNotBlank(nameValue) && 
+					!AonStringUtils.equalsIgnoreCase(workplaceValue, "-1");
+		} else {
+			String nameValue = name.getValue();
+			String activityValue = activityCCC.getSelectedValue();
+			String workplaceValue = workplace.getSelectedValue();
+			String contractTypeValue = contractTypeLB.getSelectedValue();
+			
+			return 	AonStringUtils.isNotBlank(nameValue) && 
+					!AonStringUtils.equalsIgnoreCase(activityValue, "-1") && 
+					!AonStringUtils.equalsIgnoreCase(workplaceValue, "-1") &&
+					!AonStringUtils.equalsIgnoreCase(contractTypeValue, "-1");
+		}
 	}
 	
-	public boolean checkAddress() {
+	private boolean checkDates() {
+		Date startDate = DateUtils.copyDateOnly(start_date.getValue());
+		Date endDate = null == end_date.getValue() ? null : DateUtils.copyDateOnly(end_date.getValue());
+		
+		if(null == endDate)
+			return true;
+		
+		else if(endDate.after(startDate) || endDate.equals(startDate))
+			return true;
+		
+		else
+			return false;
+	}
+	
+	private boolean checkAddress() {
 		String addressZipValue = addressZip.getValue();
 		String addressProvinceValue = addressProvince.getSelectedValue();
-		String addressMunicipalityValye = addressMunicipality.getSelectedValue();
+		String addressMunicipalityValue = addressMunicipality.getSelectedValue();
 		
-		if(AonStringUtils.isNotBlank(addressZipValue) && !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") && !AonStringUtils.equalsIgnoreCase(addressMunicipalityValye, "-1"))
+		if(AonStringUtils.isNotBlank(addressZipValue) || !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") || !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")) {
+			if(AonStringUtils.isNotBlank(addressZipValue) && !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") && !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1"))
+				return true;
+			else {
+				AonConfirmDialog dialog = new AonConfirmDialog();
+				dialog.info("AVISO: Campos direccion obligatorios", "Si rellena la direccion del trabajador, debera rellenar los campos azules correcta y obligatoriamente.");	
+				return false;
+			}
+		} else
 			return true;
-		else {
-			AonConfirmDialog dialog = new AonConfirmDialog();
-			dialog.info("AVISO: Campos obligatorios", "Hay que rellenar los campos azules correcta y obligatoriamente.");	
-			return false;
-		}
 	}
 	
 }

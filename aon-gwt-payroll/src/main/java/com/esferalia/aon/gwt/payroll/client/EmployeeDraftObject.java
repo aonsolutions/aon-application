@@ -9,13 +9,10 @@ import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
-import com.esferalia.aon.gwt.common.shared.Dni;
-import com.esferalia.aon.gwt.common.shared.SocialSecurity;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
-import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -45,7 +42,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	private Map<String, String> payMethodsMap;
 	
-	// ------------------------------------------------ CLASS METHODS -------------------------------------------------	
+	// ------------------------------------------------- Constructor
 	
 	public EmployeeDraftObject(Workplace workplace, Employee employee) {
 
@@ -63,10 +60,15 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		this.undoManager = new UndoManager<Undoable>();
 	}
 	
-	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
+	public void clearUndoMaganager() {
+		this.undoManager.discardAll();
+	}
+	
+	// ------------------------------------------------- Database Methods
 	
 	public void checkStatus(Consumer<EmployeeStatus> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeStatus(employee.getId(), new AsyncCallback<EmployeeStatus>() {
+			
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept( caught );
@@ -76,6 +78,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			public void onSuccess(EmployeeStatus result) {
 				 success.accept(result);
 			}
+			 
 		});
 	}
 		
@@ -98,8 +101,8 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
 			}
+			
 		});
-		
 	}
 
 	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
@@ -116,6 +119,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			
 			@Override
 			public void onFailure(Throwable caught) {}
+			
 		});	
 	}
 	
@@ -133,6 +137,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			
 			@Override
 			public void onFailure(Throwable caught) {}
+			
 		});
 	}
 	
@@ -151,6 +156,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			
 			@Override
 			public void onFailure(Throwable caught) {}
+			
 		});
 	}
 	
@@ -165,6 +171,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			
 			@Override
 			public void onFailure(Throwable caught) {}
+			
 		});
 	}
 	
@@ -179,6 +186,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			
 			@Override
 			public void onFailure(Throwable caught) {}
+			
 		});	
 	}
 	
@@ -202,6 +210,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
 			}
+			
 		});
 	}
 	
@@ -219,8 +228,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 						@Override
 						public void onSuccess(String result) {
 							success.accept(result);
-						}
-				
+						}	
 			});
 	}
 	
@@ -249,8 +257,56 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			}
 		});
 	}
+	
+	// ------------------------------------------------- Auxiliar Methods (AFI Changes)
+	
+	public Integer getContractId(){
+		return this.contractData.getContractId();
+	}
+	
+	public Integer getDomainId(){
+		return this.employeeData.getDomain();
+	}
+	
+	public Integer getWorkplaceId(){
+		return this.contractData.getWorkplaceId();
+	}
+	
+	public Boolean hasPayroll(){
+		return this.contractData.hasPayroll();
+	}
+	
+	public Date getPayrollDate() {
+		return this.contractData.getPayrollDate();
+	}
+	
+	public Date getContractStartDate() {
+		return this.contractData.getStartDate();
+	}
+	
+	public Date getContractEndDate() {
+		return this.contractData.getEndDate();
+	}
+	
+	// ------------------------------------------------- Auxiliar Methods
+	
+	public void setEmployeeCalendar(EmployeeCalendarDraftObject employeeCalendarDraftobject) {
+		this.employeeCalendar = employeeCalendarDraftobject;
+	}
+	
+	public EmployeeCalendarDraftObject getEmployeeCalendar() {
+		return this.employeeCalendar;
+	}
+	
+	public ArrayList<String> getExistingIban(){
+		ArrayList<String> ibans = new ArrayList<String>();
+		for(Rbank rbank : employeeData.getRbanks())
+			ibans.add(rbank.getIban());
+		
+		return ibans;
+	}
 
-	// ---------------------------------------------- GETTERS  -------------------------------------------------
+	// ------------------------------------------------- Getters
 	
 	public EmployeeContractInfo getEmployeeContractInfo() {
 		return this.employeeContractData;
@@ -268,225 +324,38 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return employee;
 	}
 	
-	public List<Workplace> getWorkplaces() {
-		return this.workplaces;
+	public List<Agreement> getActiveAgreements(){
+		List<Agreement> activeAgreements = new ArrayList<>();
+		for(Agreement a : this.agreements){
+			if(a.getId() >= 0)
+				activeAgreements.add(a);
+		}
+		return activeAgreements;
 	}
 	
-	public List<Agreement> getAgreements(){
-		return this.agreements;
+	public List<Workplace> getWorkplaces() {
+		return this.workplaces;
 	}
 	
 	public Map<Integer, String> getActivities() {
 		return activitiesCCC.getActivities();
 	}
 	
-	public Map<String, String> getPayMethods() {
-		return payMethodsMap;
-	}
-	
 	public Map<Integer, CCCInfo> getCCCs() {
 		return activitiesCCC.getCccs();
 	}
 	
-	//AFI CHANGES
-	
-	public Integer getContractId(){
-		return this.contractData.getContractId();
-	}
-	
-	public Integer getDomainId(){
-		return this.employeeData.getDomain();
-	}
-	
-	public Boolean hasPayroll(){
-		return this.contractData.hasPayroll();
-	}
-	
-	//CONTRACT TABLE
-	
-	public String getEmployeeDocument(){
-		return this.employeeData.getDocument();
-	}
-	
-	public String getEmployeeNationality() {
-		return this.employeeData.getNationality();
-	}
-	
-	public String getEmployeeSSNumber() {
-		return this.employeeData.getSsNumber();
-	}
-	
-	public String getEmployeeName() {
-		return this.employeeData.getName();
-	}
-	
-	public String getEmployeeSurname() {
-		return this.employeeData.getSurName();
-	}
-	
-	public String getEmployeeSecondSurname() {
-		return this.employeeData.getSecondSurName();
+	public Map<String, String> getPayMethods() {
+		return payMethodsMap;
 	}
 	
 	public String getEmployeeFullName() {
 		return this.employeeData.getFullName();
 	}
 	
-	public Integer getContractSSRegimen() {
-		return (int)this.contractData.getSsRegimen();
-	}
-	
-	public Integer getWorkplaceId(){
-		return this.contractData.getWorkplaceId();
-	}
-	
-	public Integer getContractType() {
-		if(null == this.contractData.getContractType())
-			return -1;
-		else
-			return Integer.parseInt(this.contractData.getContractType());
-	}
-	
-	public Double getContractPartialityCoef() {
-		return this.contractData.getPartialityCoef();
-	}
-	
-	public Integer getContractModel() {
-		return this.contractData.getContractModel();
-	}
-	
-	public Date getContractStartDate() {
-		return this.contractData.getStartDate();
-	}
-	
-	public Date getContractEndDate() {
-		return this.contractData.getEndDate();
-	}
-	
-	public Date getContractSeniorityDate() {
-		return this.contractData.getSeniorityDate();
-	}
-	
-	public Integer getContractAgreement() {
-		return this.contractData.getAgreementId();
-	}
-	
-	public Integer getContractAgreementLevelId() {
-		return this.contractData.getAgreementLevelId();
-	}
-	
-	public String getContractAgreementCategory() {
-		return this.contractData.getAgreementCategory();
-	}
-	
-	public Integer getContractQuoteGroup() {
-		return null == this.contractData.getQuoteGroup() ? 0 : Integer.parseInt(this.contractData.getQuoteGroup());
-	}
-	
-	public Integer getContractOcupation() {
-		return getCharIndex(this.contractData.getOcupation());
-	}
-	
-	public Integer getContractJourneyType() {
-		return (int)this.contractData.getJourneyType();
-	}
-	
-	public ContractJourneyDuration getContractJourneyDuration() {
-		return this.contractData.getContractJourneyDuration();
-	}
-	
-	//PERSON TABLE
-	
-	public Date getEmployeeBirthDate() {
-		return this.employeeData.getBirthdate();
-	}
-	
-	public Integer getEmployeeGender() {
-		return (int) this.employeeData.getGender();
-	}
-	
-	public Integer getEmployeeCivilStatus() {
-		return (int) this.employeeData.getCivilStatus();
-	}
-	
-	public String getEmployeeAddressStreetType(){
-		return this.employeeData.getStreetType();
-	}
-	
-	public String getEmployeeAddress() {
-		return this.employeeData.getAddress();
-	}
-	
-	public String getEmployeeAddressNumber() {
-		return this.employeeData.getAddresNum();
-	}
-	
-	public String getEmployeeAddressInfo() {
-		return this.employeeData.getAddressInfo();
-	}
-	
-	public String getEmployeeAddressZip() {
-		return this.employeeData.getAddressZip();
-	}
-	
-	public String getEmployeeAddressCity() {
-		return this.employeeData.getAddressCity();
-	}
-	
-	public String getEmployeeAddressProvince() {
-		return this.employeeData.getAddressProvinces();
-	}
-	
-	public String getEmployeeMobile() {
-		return this.employeeData.getMobile();
-	}
-	
-	public String getEmployeePhone() {
-		return this.employeeData.getPhone();
-	}
-	
-	public String getEmployeeEmail() {
-		return this.employeeData.getEmail();
-	}
-	
-	public Integer getEmployeePayMethod() {
-		return getPayMethodIndex(this.employeeData.getPayMethodType());
-	}
-	
-	private int getPayMethodIndex(String payMethodType) {
-		switch (payMethodType) {
-		case "EFECTIVO":
-			return 1;
-//		case "GIRO":
-//			return 2;
-		case "CHEQUE":
-			return 2;
-		case "TRANSFERENCIA":
-			return 3;
-		default:
-			return 0;
-		}
-	}
-	
-	public String getEmployeeBIC() {
-		return this.employeeData.getBic();
-	}
-	
-	public String getEmployeeAccount() {
-		return this.employeeData.getAccount();
-	}
-	
-	// ---------------------------------------------- SETTERS  -------------------------------------------------
+	// ------------------------------------------------- Setters
 	
 	// CONTRACT TABLE
-	
-	public void setEmployeeDocument(String document) {
-		add(employeeData::setDocument, 
-				employeeData.getDocument(), 
-				document );
-		
-		employeeData.setDocument(document);
-	}
 	
 	public void setEmployeeDocumentType(String document_type) {
 		Byte documentType = null;
@@ -504,6 +373,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				documentType );
 		
 		employeeData.setDocumentType(documentType);
+	}
+	
+	public void setEmployeeDocument(String document) {
+		add(employeeData::setDocument, 
+				employeeData.getDocument(), 
+				document );
+		
+		employeeData.setDocument(document);
 	}
 	
 	public void setNationality(String nationality) {
@@ -546,18 +423,28 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		employeeData.setSecondSurName(second_surname);
 	}
 	
-	public void setSSRegime(int ssRegime) {
-		Byte ssRegimeB;
-		if(1 == ssRegime)
-			ssRegimeB = (byte) 3;
-		else
-			ssRegimeB = (byte) ssRegime;
-		
+	public void setSSRegime(byte ssRegime) {
 		add(contractData::setSsRegimen, 
 				contractData.getSsRegimen(), 
-				ssRegimeB );
+				ssRegime );
 		
-		contractData.setSsRegimen(ssRegimeB);
+		contractData.setSsRegimen(ssRegime);
+	}
+	
+	public void setActivityInfo(String activityInfo) {
+		Integer activityId = null;
+		Integer cccId = null;
+		Byte cccType = null;
+		
+		if(null != activityInfo) {
+			activityId = Integer.parseInt(activityInfo.split("/")[0]);
+			cccId = Integer.parseInt(activityInfo.split("/")[1]);
+			cccType = Byte.parseByte(activityInfo.split("/")[2]);
+		}
+		
+		setContractActivityId(activityId);
+		setContractCCCId(cccId);
+		setContractCCCType(cccType);
 	}
 	
 	public void setContractActivityId(Integer activityID) {
@@ -576,20 +463,28 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setCccId(cccId);
 	}
 	
-	public void setContractWorkplaceId(Integer workplaceId) {
-		add(contractData::setWorkplaceId, 
-				contractData.getWorkplaceId(), 
-				workplaceId );
-		
-		contractData.setWorkplaceId(workplaceId);
-	}
-
 	public void setContractCCCType(byte cccType) {
 		add(contractData::setCccType, 
 				contractData.getCccType(), 
 				cccType );
 		
 		contractData.setCccType(cccType);
+	}
+	
+	public void setMdCtzInfo(String mdCtz) {
+		add(contractData::setMdctz, 
+				contractData.getMdctz(), 
+				mdCtz );
+		
+		contractData.setMdctz(mdCtz);
+	}
+	
+	public void setContractWorkplaceId(Integer workplaceId) {
+		add(contractData::setWorkplaceId, 
+				contractData.getWorkplaceId(), 
+				workplaceId );
+		
+		contractData.setWorkplaceId(workplaceId);
 	}
 	
 	public void setContractType(String contract_type) {
@@ -601,7 +496,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	}
 	
 	public void setContractModel(Integer contractModelId) {
-		//Falta buscar en ModelOption el String correspondiente a ese ID
+		//ModelOption.values()[ordinal].toString());
 		add(contractData::setContractModel, 
 				contractData.getContractModel(), 
 				contractModelId );
@@ -639,6 +534,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				agreement_table_id );
 		
 		contractData.setAgreementId(agreement_table_id);
+	}
+	
+	public void setAgreementSSNumber(String colectiveAgreement) {
+		add(contractData::setAgreementColective, 
+				contractData.getAgreementColective(), 
+				colectiveAgreement );
+		
+		contractData.setAgreementColective(colectiveAgreement);
 	}
 	
 	public void setContractAgreementLevelId(Integer agreement_level_table_id) {
@@ -688,14 +591,6 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				partialityCoef );
 		
 		contractData.setPartialityCoef(partialityCoef);
-	}
-	
-	public void setAgreementSSNumber(String colectiveAgreement) {
-		add(contractData::setAgreementColective, 
-				contractData.getAgreementColective(), 
-				colectiveAgreement );
-		
-		contractData.setAgreementColective(colectiveAgreement);
 	}
 	
 	public void setContractJourneyDuration(TreeMap<Date, ArrayList<JourneyDuration>> contractJourneyDuration) {
@@ -808,12 +703,12 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		employeeData.setEmail(email);
 	}
 	
-	public void setEmployeePayMethod(byte payMethodType) {
-		add(employeeData::setPayMethodTypeB, 
-				employeeData.getPayMethodTypeB(), 
-				payMethodType );
+	public void setEmployeePayMethodId(Integer paymethodId) {
+		add(employeeData::setPaymethodId, 
+				employeeData.getPaymethodId(), 
+				paymethodId );
 		
-		employeeData.setPayMethodTypeB(payMethodType);
+		employeeData.setPaymethodId(paymethodId);
 	}
 
 	public void setEmployeeAccount(String rbankAccount) {
@@ -842,141 +737,6 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	public void setEmployeeRbankId(Integer rbankId) {
 		employeeData.setRbankId(rbankId);
-	}
-	
-	// ---------------------------------------------- AUX METHODS  -------------------------------------------------
-	
-
-	
-	public void setEmployeeCalendar(EmployeeCalendarDraftObject employeeCalendarDraftobject) {
-		this.employeeCalendar = employeeCalendarDraftobject;
-	}
-	
-	public Date getPayrollDate() {
-		return this.contractData.getPayrollDate();
-	}
-
-	
-	public EmployeeCalendarDraftObject getEmployeeCalendar() {
-		return this.employeeCalendar;
-	}
-	
-	public List<Agreement> getActiveAgreements(){
-		List<Agreement> activeAgreements = new ArrayList<>();
-		for(Agreement a : this.agreements){
-			if(a.getId() >= 0)
-				activeAgreements.add(a);
-		}
-		return activeAgreements;
-	}
-	
-	public void setActivityInfo(String activityInfo) {
-		Integer activityId = null;
-		Integer cccId = null;
-		Byte cccType = null;
-		
-		if(null != activityInfo) {
-			activityId = Integer.parseInt(activityInfo.split("/")[0]);
-			cccId = Integer.parseInt(activityInfo.split("/")[1]);
-			cccType = Byte.parseByte(activityInfo.split("/")[2]);
-		}
-		
-		setContractActivityId(activityId);
-		setContractCCCId(cccId);
-		setContractCCCType(cccType);
-	}
-	
-	public void setMdCtzInfo(String mdCtz) {
-		this.contractData.setMdctz(mdCtz);
-	}
-	
-	public int getCccId() {
-		return this.contractData.getCccId();
-	}
-
-	public int getCccType() {
-		return this.contractData.getCccType();
-	}
-	
-	public int getActivityId() {
-		return this.contractData.getActivityId();
-	}
-
-	public int getCharIndex(String ocupation) {
-		switch (ocupation) {
-		case "a":
-			return 1;
-		case "b":
-			return 2;
-		case "d":
-			return 3;
-		case "e":
-			return 4;
-		case "f":
-			return 5;
-		case "g":
-			return 6;
-		case "h":
-			return 7;
-		default:
-			return 0;
-		}
-	}
-	
-	public boolean checkDocumentValidation(String document_type_string, String document_string) {
-		if("DNI".equals(document_type_string)){
-			Dni dni = new Dni(document_string);
-			if(dni.checkDNI())
-				return true;
-			else
-				return false;
-		}else if("" == document_string) {
-			return false;
-		}else
-			return true;
-	}
-	
-	public boolean checkSSNumValidation(String ssNum_string) {
-		SocialSecurity ss = new SocialSecurity(ssNum_string);
-		if(ss.checkSS())
-			return true;
-		else
-			return false;
-	}
-	
-	public Rbank getRbank(String iban) {
-		for(Rbank rbank : employeeData.getRbanks()) {
-			if(rbank.getIban().equals(iban))
-				return rbank;
-		}
-		
-		return null;
-	}
-	
-	public ArrayList<String> getExistingIban(){
-		ArrayList<String> ibans = new ArrayList<String>();
-		for(Rbank rbank : employeeData.getRbanks())
-			ibans.add(rbank.getIban());
-		
-		return ibans;
-	}
-
-	public void setEmployeePayMethodId(Integer paymethodId) {
-		employeeData.setPaymethodId(paymethodId);
-	}
-
-	public Integer getPaymethodId() {
-		return employeeData.getPaymethodId();
-	}
-
-	public String getMdCtz() {
-		// TODO Auto-generated method stub
-		return contractData.getMdctz();
-	}
-
-	public Double getPartalityCoef() {
-		// TODO Auto-generated method stub
-		return contractData.getPartialityCoef();
 	}
 	
 }
