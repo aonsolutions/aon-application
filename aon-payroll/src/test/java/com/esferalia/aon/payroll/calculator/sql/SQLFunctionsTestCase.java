@@ -1085,6 +1085,93 @@ public class SQLFunctionsTestCase extends
 	}
 
 	@Test
+	public void testFractionFunctionXII() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		
+		ContractRecord contract = newContract(
+				aonContext, 
+				firstDayOfYear, 
+				Collections.emptyMap());
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY,0);
+		calendar.set(Calendar.MINUTE,0);
+		calendar.set(Calendar.SECOND,0);
+		calendar.set(Calendar.MILLISECOND,0);
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+		calendar.set(Calendar.MONTH,Calendar.APRIL);
+		
+		Date aprilStart = new Date(calendar.getTimeInMillis());
+		calendar.set(Calendar.DAY_OF_MONTH, 15);
+		Date april15 =  new Date(calendar.getTimeInMillis());
+		
+		calendar.set(Calendar.DAY_OF_MONTH, 16);
+		Date april16 =  new Date(calendar.getTimeInMillis());
+		
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date aprilEnd = new Date(calendar.getTimeInMillis());
+
+//		addData(aonContext, contract, firstDayOfYear, april15, new HashMap<String, String>(){
+//			{
+//				put(ContextVariable.MONDAY_HOURS.getName(), "4.00");
+//				put(ContextVariable.TUESDAY_HOURS.getName(), "4.00");
+//				put(ContextVariable.WEDNESDAY_HOURS.getName(), "4.00");
+//				put(ContextVariable.THURSDAY_HOURS.getName(), "4.00");
+//				put(ContextVariable.FRIDAY_HOURS.getName(), "4.00");
+//			}
+//		});
+//		
+//		addData(aonContext, contract, april16, null, new HashMap<String, String>(){
+//			{
+//				put(ContextVariable.MONDAY_HOURS.getName(), "2.00");
+//				put(ContextVariable.TUESDAY_HOURS.getName(), "2.00");
+//				put(ContextVariable.WEDNESDAY_HOURS.getName(), "2.00");
+//				put(ContextVariable.THURSDAY_HOURS.getName(), "2.00");
+//				put(ContextVariable.FRIDAY_HOURS.getName(), "2.00");
+//			}
+//		});
+		
+		addData(aonContext, contract, firstDayOfYear, april15, new HashMap<String, String>(){
+			{
+				put(ContextVariable.PARTIAL_FACTOR.getName(), "0.50");
+			}
+		});
+		
+		addData(aonContext, contract, april16, null, new HashMap<String, String>(){
+			{
+				put(ContextVariable.PARTIAL_FACTOR.getName(), "0.25");
+			}
+		});
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				aprilStart, 
+				aprilEnd, 
+				aprilEnd, 
+				contract);
+		//@formatter:on
+		
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("FRACCIONAR(1000.00)", 
+				aprilStart
+				,aprilEnd, 
+				Double.class);
+	
+		Assert.assertEquals(2, results.size());
+		
+		Assert.assertEquals(aprilStart, results.get(0).getPeriod().getStart());
+		Assert.assertEquals(april15, results.get(0).getPeriod().getEnd());
+		Assert.assertEquals(1000.00/3*2, results.get(0).getValue());
+
+		Assert.assertEquals(april16, results.get(1).getPeriod().getStart());
+		Assert.assertEquals(aprilEnd, results.get(1).getPeriod().getEnd());
+		Assert.assertEquals(1000.00/3, results.get(1).getValue());
+	}
+
+	@Test
 	public void testSumFunction() throws ExpressionException, SQLException {
 
 		Connection connection = getConnection();
