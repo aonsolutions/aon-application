@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
@@ -26,7 +27,9 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	private static final long serialVersionUID = -6555645829679341214L;
 
-	// --------------------------------------------------------- CONFIGURATION
+	// **************************************************
+	// ********************************** [CONFIGURATION]
+	// **************************************************
 	@Override
 	public AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain,String user) {
 		return AON.getConfiguration(currentDomainName, currentDomain,user, null);
@@ -36,12 +39,17 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.getConfiguration(currentDomainName, currentDomain,user, atDate);
 	}
 
-	// -------------------------------------------------------------- SECURITY
+	// **************************************************
+	// *************************************** [SECURITY]
+	// **************************************************
 	@Override
 	public User getCurrentUser(String domainName, int domain,String user) throws AonCoreException {
 		return AON.getUser(domainName,domain,user); 		
 	}
-	// -------------------------------------------------------------- ENTERPRISE
+	
+	// **************************************************
+	// ************************************* [ENTERPRISE]
+	// **************************************************
 	@Override
 	public LinkedList<Enterprise> getParentEnterprises(String domainName, int domain,String user,String query) throws AonCoreException {
 		return AON.getParentEnterprises(domainName, domain,user, query);		
@@ -62,6 +70,9 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.getCompanyBanks(domainName, domain,user);
 	}
 
+	// **************************************************
+	// **************************************** [ACCOUNT]
+	// **************************************************
 	@Override
 	public LinkedList<Account> getAccounts(String domainName, int domain,String user,String query) throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
@@ -100,7 +111,26 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return ACCOUNTING.getAccountNextCode(domainName, domain,user, prefix);
 	}
 
-	// -------------------------------------------------------------- CREDITOR
+	// **************************************************
+	// ************************************* [PAY_METHOD]
+	// **************************************************
+	
+	@Override
+	public LinkedList<PayMethod> getPayMethods(String domainName, int domain, String user) {
+		return AON.getPayMethods(domainName, domain, user);
+	}
+	@Override
+	public PayMethod savePayMethod(String domainName, int domain, String user, PayMethod payMethod) throws AonCoreException {
+		return AON.savePayMethod(domainName, domain, user, payMethod);
+	}
+	@Override
+	public void deletePayMethod(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deletePayMethod(domainName, domain, user, id);
+	}
+
+	// **************************************************
+	// *************************************** [CREDITOR]
+	// **************************************************
 	@Override
 	public LinkedList<Creditor> getBasicCreditors(String domainName, int domain,String user, String query) throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
@@ -114,7 +144,9 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 				).collect(Collectors.toCollection(LinkedList::new));
 	}
 
-	
+	// **************************************************
+	// **************************************** [INVOICE]
+	// **************************************************
 	@Override
 	public LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName, int domain, String user, String query)
 			throws AonCoreException {

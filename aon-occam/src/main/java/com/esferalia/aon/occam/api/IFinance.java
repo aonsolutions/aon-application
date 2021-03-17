@@ -91,10 +91,6 @@ public interface IFinance {
 	// 	***********************************************
 	public Stream<InvoiceRegistry> getInvoiceRegistries(AONContext ctx, RegistryFilter filter);
 	public Stream<Product> getInvoiceProducts(AONContext ctx, ProductFilter filter);
-	
-	public PayMethod getPayMethod(AONContext ctx, String name);
-	public PayMethod insertPayMethod(AONContext ctx, PayMethod paymethod);
-
 	public Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId);
 	
 	// 	***********************************************
@@ -130,6 +126,14 @@ public interface IFinance {
 	void rawdocToRejected(AONContext ctx, Integer rawdocId, String reason);
 	void rawdocToInbox(AONContext ctx, Integer rawdocId);
 	boolean rawdocHasData(AONContext ctx, Integer rawdocId);
+	
+	// 	***********************************************
+	// 	************************** PAY_METHOD *********
+	// 	***********************************************
+	public PayMethod getPayMethod(AONContext ctx, String name);
+	public LinkedList<PayMethod> getPayMethods(AONContext ctx);
+	public PayMethod savePayMethod(AONContext ctx, PayMethod payMethod);
+	public void deletePayMethod(AONContext ctx,Integer id);
 	
 }
 	

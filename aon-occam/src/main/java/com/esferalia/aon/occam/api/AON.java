@@ -5649,28 +5649,6 @@ public class AON {
 		}
 	}
 	
-	public static PayMethod getPayMethod(String domainName, Integer domain, String login, String name) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, login);
-			return getFinance().getPayMethod(ctx, name);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static PayMethod insertPayMethod(String domainName, Integer domain, String login, PayMethod paymethod) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, login);
-			return getFinance().insertPayMethod(ctx, paymethod);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
 	// ------------------------------------- COMMISSION
 
 	public static Stream<Commission> getCommissionStream(String domainName, Integer domainId, String login, CommissionFilter filter) {
@@ -6297,5 +6275,50 @@ public class AON {
 		}
 	}
 	
+	// **************************************************
+	// ************************************* [PAY_METHOD]
+	// **************************************************
+	public static LinkedList<PayMethod> getPayMethods(String domainName, Integer domain, String user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getFinance().getPayMethods(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	
+	public static PayMethod getPayMethod(String domainName, Integer domain, String user, String name) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getFinance().getPayMethod(ctx, name);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static PayMethod savePayMethod(String domainName, Integer domain, String user, PayMethod paymethod) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getFinance().savePayMethod(ctx, paymethod);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void deletePayMethod(String domainName, Integer domain, String user, Integer id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			getFinance().deletePayMethod(ctx, id); 
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 }

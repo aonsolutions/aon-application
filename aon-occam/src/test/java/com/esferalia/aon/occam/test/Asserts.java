@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -173,4 +174,11 @@ public class Asserts {
 		assertEquals("Active",expected.isActive(), actual.isActive());
 	}
 	
+	public static void assertEqualsPayMethod(PayMethod expected, PayMethod actual) {
+		assertEqualsNulls( "PayMethod", expected, actual);
+		assertEquals("Id",expected.getId(), actual.getId());
+		assertEquals("Domain",expected.getDomain(), actual.getDomain());
+		assertEquals("Name",expected.getName(), actual.getName());
+		assertEquals("Type",expected.getType(), actual.getType());
+	}
 }

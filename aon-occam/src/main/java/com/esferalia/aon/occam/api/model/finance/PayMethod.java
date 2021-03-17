@@ -9,24 +9,22 @@ public class PayMethod implements Serializable {
 	private static final long serialVersionUID = -7471690013821688320L;
 	
 	private Integer id;
-	private int domain;
+	private Integer domain;
 	private String name;
 	private PayMethodType type;
 
 	public Integer getId() {
 		return id;
 	}
-
 	public PayMethod setId(Integer id) {
 		this.id = id;
 		return this;
 	}
 
-	public int getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
-
-	public PayMethod setDomain(int domain) {
+	public PayMethod setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -34,7 +32,6 @@ public class PayMethod implements Serializable {
 	public String getName() {
 		return name;
 	}
-
 	public PayMethod setName(String name) {
 		this.name = name;
 		return this;
@@ -43,7 +40,6 @@ public class PayMethod implements Serializable {
 	public PayMethodType getType() {
 		return type;
 	}
-	
 	public PayMethod setType(PayMethodType type) {
 		this.type = type;
 		return this;

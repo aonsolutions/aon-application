@@ -65,9 +65,10 @@ public class AccountDAO {
 	}
 
 	private static Stream<AccountRecord> getAccountStream(AONContext ctx, AccountFilter filter) {
+		ctx.checkRead();
 		return getAccountSelect(ctx, filter) 
-				.fetch()
-				.stream();
+			.fetch()
+			.stream();
 	}
 	public static Stream<Account> getAccounts(AONContext ctx, AccountFilter filter) {
 		ctx.checkRead();
@@ -90,10 +91,12 @@ public class AccountDAO {
 	}
 
 	public static Account get(AONContext ctx, Integer accountId) {
+		ctx.checkRead();
 		Condition condition = ACCOUNT.ID.equal(accountId);
 		return get(ctx, condition);
 	}
 	public static Account get(AONContext ctx, String code) {
+		ctx.checkRead();
 		Condition condition = ACCOUNT.CODE.equal(code);
 		return get(ctx, condition);
 	}

@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -20,6 +21,7 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.MediaType.IMediaTypeVisitor;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
@@ -191,5 +193,12 @@ public class AonFaker {
 		return tariff;
 	}
 	
+	public static PayMethod getPayMethod( AONContext ctx ) {
+		PayMethod payMethod = new PayMethod();
+		payMethod.setDomain(ctx.getDomainId());
+		payMethod.setName( faker.lorem().characters(1, 10));
+		payMethod.setType( AonRandom.randomEnum(PayMethodType.class, 5));
+		return payMethod;
+	}
 }
 

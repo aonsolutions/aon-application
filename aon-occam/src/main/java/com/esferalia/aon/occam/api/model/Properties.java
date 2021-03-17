@@ -1350,4 +1350,13 @@ public interface Properties {
 		Property<Integer> getRattachProperty();
 		Property<Integer> getTagProperty();		
 	}
+	
+	public interface PayMethodProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<Byte> getTypeProperty();
+		
+	}
+	
 }

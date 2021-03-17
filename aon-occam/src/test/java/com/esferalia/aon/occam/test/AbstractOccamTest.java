@@ -202,8 +202,10 @@ public class AbstractOccamTest {
 		ctx.log().info("Aplicacion de dominio insertada correctamente");
 
 		
-		Module[] modules = new Module[] {Module.CRM,Module.MANAGEMENT,Module.WAREHOUSE,Module.GROUPWARE,
-				Module.ACCOUNTING,Module.FISCAL,Module.PAYROLL,Module.DOCUMENT,Module.POS,Module.CALL_CENTER};
+		Module[] modules = new Module[] {
+			 Module.CRM			,Module.MANAGEMENT	,Module.WAREHOUSE	,Module.GROUPWARE
+			,Module.ACCOUNTING	,Module.FISCAL		,Module.PAYROLL		,Module.DOCUMENT
+			,Module.POS			,Module.CALL_CENTER	,Module.SUITE_PORTAL};
 		for (Module module : modules) {
 			ctx.getDslContext().insertInto(DOMAIN_APPLICATION_MODULE)
 				.set(DOMAIN_APPLICATION_MODULE.DOMAIN, newDomainId)

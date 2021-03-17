@@ -341,7 +341,7 @@ public class FinanceDAO {
 		int daysBetwenPymnts = ((rPayMethod == null) || (rPayMethod.getDaysBetwenPymnts() == 0)) ? 0 : rPayMethod.getDaysBetwenPymnts();
 		PayMethod payMethod = null;
 		if (rPayMethod != null && rPayMethod.getPayMethod() != null) {
-			payMethod = PayMethodDAO.getPayMethod(ctx, rPayMethod.getPayMethod());
+			payMethod = PayMethodDAO.get(ctx, rPayMethod.getPayMethod());
 		}
 		double paymentPrice = AonMathUtils.round(invoice.getTotal() / numberOfPymnts);
 		for (int i = 0; i < numberOfPymnts; i++) {

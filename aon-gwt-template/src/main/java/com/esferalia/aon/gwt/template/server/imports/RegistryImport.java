@@ -362,14 +362,14 @@ public class RegistryImport extends Import {
 					if(p == null || p.getId() == null) {
 						r.getPaymethod().setDomain(domain.getId());
 						if(r.getPaymethod().getType() == null) r.getPaymethod().setType(PayMethodType.OTHER);
-						p = AON.insertPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod());
+						p = AON.savePayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod());
 					}
 				} else if(r.getPaymethod().getType() != null) {
 					p = AON.getPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod().getType().getDescription().toUpperCase());
 					if(p == null || p.getId() == null) {
 						r.getPaymethod().setDomain(domain.getId());
 						r.getPaymethod().setName(r.getPaymethod().getType().getDescription().toUpperCase());
-						p = AON.insertPayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod());
+						p = AON.savePayMethod(domain.getName(), domain.getId(), user.getLogin(), r.getPaymethod());
 					}
 				}	
 				Integer pId = p.getId();

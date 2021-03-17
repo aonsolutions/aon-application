@@ -196,18 +196,6 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
-	public PayMethod getPayMethod(AONContext ctx, String name) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> PayMethodDAO.getPayMethod(ctx, name));
-	}
-
-	@Override
-	public PayMethod insertPayMethod(AONContext ctx, PayMethod paymethod) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> PayMethodDAO.insertPayMethod(ctx, paymethod));
-	}
-
-	@Override
 	public Invoice insertInvoice(AONContext ctx, Invoice invoice) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			InvoiceDAO.insert(ctx, invoice));		
@@ -397,4 +385,30 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(configuration
 				-> RawdocDAO.hasData(ctx, rawdocId));
 	}
+	
+	
+	// ------------------------------------- PAY METHOD
+	@Override
+	public PayMethod getPayMethod(AONContext ctx, String name) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> PayMethodDAO.get(ctx, name));
+	}
+	
+	@Override
+	public LinkedList<PayMethod> getPayMethods(AONContext ctx) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> PayMethodDAO.getOrderByNames(ctx));
+	}
+
+	@Override
+	public PayMethod savePayMethod(AONContext ctx, PayMethod paymethod) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> PayMethodDAO.save(ctx, paymethod));
+	}
+	@Override
+	public void deletePayMethod(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> PayMethodDAO.delete(ctx, id));
+	}
+	
 }

@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.api.model.Properties.LocationProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailTemplateProperties;
 import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionProperties;
+import com.esferalia.aon.occam.api.model.Properties.PayMethodProperties;
 import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
@@ -583,9 +584,14 @@ public interface Filter {
 	public interface TariffFilter{
 		Filter filter(TariffProperties properties);
 	}
+	
 	@FunctionalInterface
 	public interface RattachTagFilter{
 		Filter filter(RattachTagProperties properties);
 	}
 	
+	@FunctionalInterface
+	public interface PayMethodFilter{
+		Filter filter(PayMethodProperties properties);
+	}
 }

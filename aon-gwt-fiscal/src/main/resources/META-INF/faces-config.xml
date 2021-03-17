@@ -2,7 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-	<!-- =================== FINANCE ========================== -->
+	<!-- =================== RAWDOC ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_rawdoc</from-outcome>
@@ -28,6 +28,10 @@
 
 	<!-- =================== FINANCE ========================== -->
 	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_payMethod</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/finance/payMethod.xhtml</to-view-id>
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>gwt_finance</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/finance/finance.xhtml</to-view-id>

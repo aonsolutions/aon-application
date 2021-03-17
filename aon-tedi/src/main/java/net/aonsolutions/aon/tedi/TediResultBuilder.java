@@ -446,7 +446,7 @@ public class TediResultBuilder {
 		ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 		// ----
 		TediResult result = new TediResult(tedi, ai);
-		aonCtx.setPayMethods(PayMethodDAO.getPayMethodsById(ctx));
+		aonCtx.setPayMethods(PayMethodDAO.getOrderByIds(ctx));
 		TediInvoiceTransfer.toAon(ctx, aonCtx,result);
 		fillVats(ctx, aonCtx, result);
 		if (ai.getInvoice().getFinances() == null || ai.getInvoice().getFinances().size() == 0) {
