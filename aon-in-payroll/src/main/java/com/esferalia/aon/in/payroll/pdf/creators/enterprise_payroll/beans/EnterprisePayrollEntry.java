@@ -96,7 +96,7 @@ public class EnterprisePayrollEntry{
 		this.tipoSS = 			ss_en.getTipoSS();
 		this.devengadoSS = 		ss_en.getDevengadoSS();
 		this.ssTrabSS =			ss_en.getSsTrabSS();
-		this.irpfSS = 			ss_en.getIrpfSS();
+		this.irpfSS = 			ss_en.getIrpfSS(); 
 		this.deduccionesSS = 	ss_en.getDeduccionesSS();
 		this.liquidoSS = 		ss_en.getLiquidoSS();
 		this.ssEmprSS = 		ss_en.getSsEmprSS();
@@ -104,7 +104,8 @@ public class EnterprisePayrollEntry{
 		this.ssTotalSS = 		ss_en.getSsTotalSS();
 		this.bonificacionesSS = ss_en.getBonificacionesSS();
 	}
-
+	
+	//GETTERS
 	public Optional<String> getEmpleado() {return empleado;}
 	public Optional<String> getEmpleadoSS() {return empleadoSS;}
 
@@ -137,6 +138,41 @@ public class EnterprisePayrollEntry{
 	
 	public Optional<Double> getBonificaciones() {return bonificaciones;}
 	public Optional<Double> getBonificacionesSS() {return bonificacionesSS;}
+	
+	//SETTERS
+	public void setEmpleado(Optional<String> empleado) {this.empleado = empleado;}
+	public void setEmpleadoSS(Optional<String> empleadoSS) {this.empleadoSS = empleadoSS;}
+
+	public void setTipo(Optional<String> tipo) {this.tipo = tipo;}
+	public void setTipoSS(Optional<String> tipoSS) {this.tipoSS = tipoSS;}
+
+	public void setDevengado(Optional<Double> devengado) {this.devengado = devengado;}
+	public void setDevengadoSS(Optional<Double> devengadoSS) {this.devengadoSS = devengadoSS;}
+
+	public void setSsTrab(Optional<Double> ssTrab) {this.ssTrab = ssTrab;}
+	public void setSsTrabSS(Optional<Double> ssTrabSS) {this.ssTrabSS = ssTrabSS;}
+
+	public void setIrpf(Optional<Double> irpf) {this.irpf = irpf;}
+	public void setIrpfSS(Optional<Double> irpfSS) {this.irpfSS = irpfSS;}
+
+	public void setDeducciones(Optional<Double> deducciones) {this.deducciones = deducciones;}
+	public void setDeduccionesSS(Optional<Double> deduccionesSS) {this.deduccionesSS = deduccionesSS;}
+
+	public void setLiquido(Optional<Double> liquido) {this.liquido = liquido;}
+	public void setLiquidoSS(Optional<Double> liquidoSS) {this.liquidoSS = liquidoSS;}
+
+	public void setSsEmpr(Optional<Double> ssEmpr) {this.ssEmpr = ssEmpr;}
+	public void setSsEmprSS(Optional<Double> ssEmprSS) {this.ssEmprSS = ssEmprSS;}
+
+	public void setCosteTotal(Optional<Double> costeTotal) {this.costeTotal = costeTotal;}
+	public void setCosteTotalSS(Optional<Double> costeTotalSS) {this.costeTotalSS = costeTotalSS;}
+
+	public void setSsTotal(Optional<Double> ssTotal) {this.ssTotal = ssTotal;}
+	public void setSsTotalSS(Optional<Double> ssTotalSS) {this.ssTotalSS = ssTotalSS;}
+
+	public void setBonificaciones(Optional<Double> bonificaciones) {this.bonificaciones = bonificaciones;}
+	public void setBonificacionesSS(Optional<Double> bonificacionesSS) {this.bonificacionesSS = bonificacionesSS;}
+	
 
 	public boolean Has_ss(){
 		return empleadoSS.isPresent() || tipoSS.isPresent() || devengadoSS.isPresent() 
@@ -144,6 +180,7 @@ public class EnterprisePayrollEntry{
 				|| liquidoSS.isPresent() || ssEmprSS.isPresent() || ssTotalSS.isPresent()
 				|| bonificacionesSS.isPresent();
 	}
+
 	public boolean Has_aon(){
 		return empleado.isPresent() || tipo.isPresent() || devengado.isPresent() 
 				|| ssTrab.isPresent() || irpf.isPresent() || deducciones.isPresent()

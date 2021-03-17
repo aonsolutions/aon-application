@@ -189,6 +189,11 @@ public class PdfTable extends PdfComponent{
 		return -1;
 	}
 	
+	public boolean has_column(int o) {
+		try {return headers[o] != null;}
+		catch(Exception e) {return false;}
+	}
+	
 	public void jump(float pixels) {
 		down(pixels);
 	}
