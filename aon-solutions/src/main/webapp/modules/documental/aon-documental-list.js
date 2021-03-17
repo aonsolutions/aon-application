@@ -53,10 +53,6 @@ export class AonDocumentalList extends AonElement {
 	}
 
  	build() {
-		let application = this.getApplication();
-		let toolbar = this.getElement(application.TOOLBAR);
-		toolbar.removeButtons();
-
 		let aonDocumentalTable = this.getElement(this.TABLE);
 		aonDocumentalTable.addColumn(MSG.AON_MSG_DATE, 'date', 'date', '20%');
 		aonDocumentalTable.addColumn(MSG.AON_MSG_NAME, 'string', 'title', '60%');

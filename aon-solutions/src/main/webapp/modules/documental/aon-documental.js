@@ -69,8 +69,7 @@ export class AonDocumental extends AonElement {
     }
 
     build(){
-      let aonDocumental = this.getElement(this.DOCUMENTAL);
-
+      let aonDocumental = this.getApplication();
       if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
         aonDocumental.drag_and_drop = true;
       }
@@ -84,7 +83,6 @@ export class AonDocumental extends AonElement {
   				this.upload(event.dataTransfer.files);
   			}
   		});
-
       if(this.isMobile()) {
         if(this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
           aonDocumental.addFloatOption(DocumentalAction.UPLOAD, () => this.addDocumentalFile());
