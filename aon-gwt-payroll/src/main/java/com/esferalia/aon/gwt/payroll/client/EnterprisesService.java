@@ -281,5 +281,7 @@ public interface EnterprisesService extends RemoteService {
 	DomainUserRoles getDomainUserRoles(String currentDomainName, String currentUser);
 
 	boolean hasCertificateSEPE(String currentDomainName, String currentUser);
+
+	String getDeleteCCCMessage(String currentDomainName, ArrayList<Integer> cccIds);
 	
 }

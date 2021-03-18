@@ -76,6 +76,7 @@ public interface EnterprisesServiceAsync {
 	void getActivityInfoDataBase(Integer activityId, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 	void updateActivityInfoDataBase(ActivityInfo activityInfo, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 	void createActivityInfoDataBase(ActivityInfo activityInfo, String domain, AsyncCallback<ActivityInfo> asyncCallback);
+	void getDeleteCCCMessage(String currentDomainName, ArrayList<Integer> cccIds, AsyncCallback<String> asyncCallback);
 	void getCNAE2009(String domain, AsyncCallback<Map<String, String>> asyncCallback);
 	void getEnterpiseAddresses(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
 	void getEnterpiseCalendars(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
@@ -183,5 +184,6 @@ public interface EnterprisesServiceAsync {
 	void getServiAgreements(String currentDomainName, String currentUser, AsyncCallback<Map<String, String>> asyncCallback);
 	void getDomainUserRoles(String currentDomainName, String currentUser, AsyncCallback<DomainUserRoles> asyncCallback);
 	void hasCertificateSEPE(String currentDomainName, String currentUser, AsyncCallback<Boolean> asyncCallback);
+	
 	
 }

@@ -19,6 +19,7 @@ public class CCCInfo implements Serializable{
 	private String activityDescription;
 	private Integer cccId;
 	private Boolean useByContracts;
+	private Boolean useByCras;
 	private String enterpriseDesciption;
 	private Integer enterpriseId;
 	private List<Date> CRADates;
@@ -47,7 +48,7 @@ public class CCCInfo implements Serializable{
 		this.cccId = cccId;
 	}
 	
-	public CCCInfo(String ccc, String cccRegime, String cccAccount, Byte type, String geozone, String geozoneCode, Integer activityId, Integer cccId, Boolean useByContracts) {
+	public CCCInfo(String ccc, String cccRegime, String cccAccount, Byte type, String geozone, String geozoneCode, Integer activityId, Integer cccId, Boolean useByContracts, Boolean useByCras) {
 		super();
 		this.ccc = ccc;
 		this.cccRegimeCode = cccRegime;
@@ -58,6 +59,7 @@ public class CCCInfo implements Serializable{
 		this.activityId = activityId;
 		this.cccId = cccId;
 		this.useByContracts = useByContracts;
+		this.useByCras = useByCras;
 	}
 
 	public CCCInfo(String ccc, String cccRegime, String account, Byte typeCode, String province, String provinceCode, int activityId, Integer cccId, Boolean useByContracts) {
@@ -158,6 +160,10 @@ public class CCCInfo implements Serializable{
 
 	public Boolean isUseByContracts() {
 		return useByContracts;
+	}
+	
+	public Boolean isUseByCRAs() {
+		return useByCras;
 	}
 
 	public void setUseByContracts(Boolean useByContracts) {

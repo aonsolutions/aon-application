@@ -1679,6 +1679,19 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+	
+	@Override
+	public String getDeleteCCCMessage(String domain, ArrayList<Integer> cccIds) {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
+			return JooqActivity.getDeleteCCCMessage(connection, cccIds);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+
 
 	@Override
 	public Map<String, String> getCNAE2009(String domain) {
@@ -3020,6 +3033,5 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	protected static Date toSqlDate(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
 	}
-
 
 }

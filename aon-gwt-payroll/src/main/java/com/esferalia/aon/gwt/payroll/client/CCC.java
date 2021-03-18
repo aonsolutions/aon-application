@@ -4,6 +4,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
@@ -25,7 +26,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -255,10 +255,9 @@ public abstract class CCC extends ResizeComposite {
 			@Override
 			public void onClick(ClickEvent event) {
 				if(cccInfo.isUseByContracts()) {
-					WarningDialog warnignDialog = new WarningDialog("AVISO", "No se puede eliminar una cuenta de cotización que esta "
+					AonConfirmDialog dialog = new AonConfirmDialog();
+					dialog.info("AVISO: Contratos asociados",  "No se puede eliminar una cuenta de cotizaci" + String.valueOf("\u00F3") + "n que esta "
 							+ "siendo usada por un centro de trabajo y/o por un contrato");
-					warnignDialog.center();
-					warnignDialog.show();
 				}else {
 					onDeleteCCC(cccInfo.getCccId());
 					initPreview();

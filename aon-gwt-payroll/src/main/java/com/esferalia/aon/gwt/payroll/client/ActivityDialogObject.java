@@ -39,8 +39,8 @@ public class ActivityDialogObject {
 		this.activityInfo.deleteCCC(cccId);
 	}
 	
-	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone, String geozoneCode, Boolean useByContracts) {
-		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone, geozoneCode, useByContracts);
+	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone, String geozoneCode, Boolean useByContracts, Boolean useByCras) {
+		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone, geozoneCode, useByContracts, useByCras);
 	}
 	
 	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone, String geozoneCode) {

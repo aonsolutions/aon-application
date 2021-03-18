@@ -2,10 +2,13 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -18,6 +21,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -68,7 +72,7 @@ public class ActivityDraft extends Composite{
 
 		@Override
 		public void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account, String province, String provinceCode) {
-			activityDraftObject.insertCCC(cccId, account, cccRegimeCode, account, cccRegime, province, provinceCode, false);
+			activityDraftObject.insertCCC(cccId, account, cccRegimeCode, account, cccRegime, province, provinceCode, false, false);
 		}
 
 		@Override
@@ -130,7 +134,11 @@ public class ActivityDraft extends Composite{
 		this.activityDraftObject = activityDraftObject;
 		this.newId = -1;
 		
-		this.activityDraftObject.initializeActivity(
+		initializeActivity();
+	}
+	
+	private void initializeActivity() {
+		activityDraftObject.initializeActivity(
 				r -> {
 					initSuggestBox();
 					fillActivityInfo();
@@ -139,7 +147,6 @@ public class ActivityDraft extends Composite{
 					
 				}, t -> {}
 			);
-		
 	}
 	
 	private void initSuggestBox() {
@@ -191,25 +198,60 @@ public class ActivityDraft extends Composite{
 	
 	private void onAccept(ClickEvent event) {
 		if(checkIfSaveIsPossible()){
-			activityDraftObject.updateActivity(
-					s -> {
-						this.activityDraftObject.initializeActivity(
-								r -> {
-									initSuggestBox();
-									fillActivityInfo();
-									activity.cccWidget.resetPreview();
-									activity.onInsertRows();
+			Map<Integer, CCCInfo> deleteCCCs = activityDraftObject.getDeleteCCCs();
+			if(!deleteCCCs.isEmpty()) {
+				boolean hasContractsOrCras = hasContractOrCra(deleteCCCs);
+				if(hasContractsOrCras) {
+					activityDraftObject.getDeleteCCCMessage(deleteCCCs.keySet(),
+							message -> {
+								new AonAcceptDialog("BORRADO", new HTML(message), new AonAcceptDialogCallback() {
 									
-								}, t -> {}
-							);
-					},
-					f -> {}
-			);
+									@Override
+									public void onCancel() {
+										initializeActivity();
+									}
+									
+									@Override
+									public void onAccept() {
+										updateActivity();
+									}
+								});
+							},
+							f -> {});
+				} else 
+					updateActivity();
+			} else
+				updateActivity();
+			
 		}else{
 			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
 			dialog.center();
 			dialog.show();
 		}
+	}
+	
+	private boolean hasContractOrCra(Map<Integer, CCCInfo> deleteCCCs) {
+		for(CCCInfo cccInfo : deleteCCCs.values())
+			if(cccInfo.isUseByContracts() || cccInfo.isUseByCRAs())
+				return true;
+		return false;
+	}
+
+	private void updateActivity() {
+		activityDraftObject.updateActivity(
+				s -> {
+					this.activityDraftObject.initializeActivity(
+							r -> {
+								initSuggestBox();
+								fillActivityInfo();
+								activity.cccWidget.resetPreview();
+								activity.onInsertRows();
+								
+							}, t -> {}
+						);
+				},
+				f -> {}
+		);
 	}
 	
 	private boolean checkIfSaveIsPossible() {

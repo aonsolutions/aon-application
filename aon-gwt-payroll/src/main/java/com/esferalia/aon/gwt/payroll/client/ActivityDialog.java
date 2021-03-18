@@ -67,7 +67,7 @@ public class ActivityDialog extends AonCustomDialog {
 
 		@Override
 		public void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account, String province, String provinceCode) {
-			activityDialogObject.insertCCC(newId, account, cccRegimeCode, account, cccRegime, province, provinceCode, false);
+			activityDialogObject.insertCCC(newId, account, cccRegimeCode, account, cccRegime, province, provinceCode, false, false);
 		}
 
 		@Override

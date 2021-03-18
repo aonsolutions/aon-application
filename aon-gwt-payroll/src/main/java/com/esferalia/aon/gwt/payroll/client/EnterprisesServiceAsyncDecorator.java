@@ -293,6 +293,13 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.createActivityInfoDataBase(activityInfo, domain,
 				new AsyncCallbackWrapper<ActivityInfo>(callback));
 	}
+	
+	@Override
+	public void getDeleteCCCMessage(String domainName, ArrayList<Integer> cccIds, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.getDeleteCCCMessage(domainName, cccIds,
+				new AsyncCallbackWrapper<String>(callback));
+	}
 
 	@Override
 	public void getCNAE2009(String domain, AsyncCallback<Map<String, String>> callback) {

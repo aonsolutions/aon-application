@@ -184,6 +184,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.createActivityInfoDataBase(activityInfo, getCurrentDomainName(), asyncCallback);
 	}
 	
+	public void getDeleteCCCMessage(ArrayList<Integer> cccIds, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.getDeleteCCCMessage(getCurrentDomainName(), cccIds, asyncCallback);
+	}
+	
 	public void getCNAE2009(AsyncCallback<Map<String, String>> asyncCallback) {
 		enterprisesServiceAsync.getCNAE2009(getCurrentDomainName(), asyncCallback);
 	}

@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -52,13 +54,17 @@ public class ActivityDraftObject extends AbstractDraftObject {
 	public Map<Integer, CCCInfo> getCCCs() {
 		return this.activityInfo.getCccs();
 	}
+	
+	public Map<Integer, CCCInfo> getDeleteCCCs() {
+		return this.activityInfo.getDeleteCccs();
+	}
 
 	public void deleteCCC(Integer cccId) {
 		this.activityInfo.deleteCCC(cccId);
 	}
 	
-	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone, String geozoneCode, Boolean useByContracts) {
-		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone, geozoneCode, useByContracts);
+	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone, String geozoneCode, Boolean useByContracts, Boolean useByCras) {
+		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone, geozoneCode, useByContracts, useByCras);
 	}
 	
 	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone, String geozoneCode) {
@@ -101,6 +107,25 @@ public class ActivityDraftObject extends AbstractDraftObject {
 		});
 	}
 	
+	public void getDeleteCCCMessage(Set<Integer> cccIdSet, Consumer<String> success, Consumer<Throwable> failure) {
+		ArrayList<Integer> cccIds = new ArrayList<Integer>();
+		cccIds.addAll(cccIdSet);
+		
+		enterprisesService.getDeleteCCCMessage(cccIds, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+		
+	}
+	
 	// ------------------------------------------------- SET METHODS -------------------------------------------------
 	public void setActivityDescription(String description) {
 		this.activityInfo.setDescription(description);
@@ -125,5 +150,5 @@ public class ActivityDraftObject extends AbstractDraftObject {
 	public void setActivityActive(Boolean active) {
 		this.activityInfo.setActive(active);
 	}
-	
+
 }

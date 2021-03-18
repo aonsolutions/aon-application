@@ -124,8 +124,8 @@ public class ActivityInfo implements Serializable{
 		this.cccs.remove(cccId);
 	}
 
-	public void insertCCC(Integer cccId, String ccc, String cccRegime, String cccAccount, Byte type, String geozone, String geozoneCode, Boolean useByContracts) {
-		this.cccs.put(cccId, new CCCInfo(ccc, cccRegime, cccAccount, type, geozone, geozoneCode, getId(), cccId, useByContracts));
+	public void insertCCC(Integer cccId, String ccc, String cccRegime, String cccAccount, Byte type, String geozone, String geozoneCode, Boolean useByContracts, Boolean useByCras) {
+		this.cccs.put(cccId, new CCCInfo(ccc, cccRegime, cccAccount, type, geozone, geozoneCode, getId(), cccId, useByContracts, useByCras));
 	}
 	
 	public void insertCCC(Integer cccId, String ccc, String cccRegime, String cccAccount, Byte type, String geozone, String geozoneCode) {

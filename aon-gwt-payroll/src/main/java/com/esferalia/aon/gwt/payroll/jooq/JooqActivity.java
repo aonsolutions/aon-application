@@ -2,26 +2,36 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
+import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record2;
 import org.jooq.Result;
+import org.jooq.SQLDialect;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqActivity {
 
@@ -137,6 +147,15 @@ public class JooqActivity {
 			if(null != contractRecord && !contractRecord.isEmpty())
 				useByContracts = true;
 			
+			Boolean useByCras = false;
+			
+			Result<Record> craBatchDetailRecords = dslContext.select().from(CRA_BATCH_DETAIL)
+					.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.eq(cccId))
+					.fetch();
+			
+			if(null != craBatchDetailRecords && !craBatchDetailRecords.isEmpty())
+				useByCras = true;
+			
 			String geozone = null;
 			String geozoneCode = null;
 			if(null != geozoneId) {
@@ -149,7 +168,7 @@ public class JooqActivity {
 				geozoneCode = geozoneName.get(0).get(GEOZONE.CODE);
 			}
 			
-			activityInfo.insertCCC(cccId, ccc, cccRegimeCode, ccc, cccRegime, geozone, geozoneCode, useByContracts);
+			activityInfo.insertCCC(cccId, ccc, cccRegimeCode, ccc, cccRegime, geozone, geozoneCode, useByContracts, useByCras);
 		}
 		
 		return activityInfo;
@@ -194,10 +213,21 @@ public class JooqActivity {
 		Boolean hasHerefity = domainRecord.get(DOMAIN.ENABLEHEREDITY) == (byte)0 ? false : true;
 		
 		//ENTERPRISE_CCC
-		for(Integer cccId : activityInfo.getDeleteCccs().keySet())
+		for(Integer cccId : activityInfo.getDeleteCccs().keySet()) {
+//			dslContext.update(CONTRACT)
+//				.set(CONTRACT.ENTERPRISE_CCC, DSL.val(null, CONTRACT.ENTERPRISE_CCC))
+//				.set(CONTRACT.ENTERPRISE_ACTIVITY, DSL.val(null, CONTRACT.ENTERPRISE_ACTIVITY))
+//				.where(CONTRACT.ENTERPRISE_CCC.eq(cccId))
+//				.execute();
+			
+			dslContext.delete(CRA_BATCH_DETAIL)
+				.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.eq(cccId))
+				.execute();
+			
 			dslContext.delete(ENTERPRISE_CCC)
 				.where(ENTERPRISE_CCC.ID.eq(cccId))
 				.execute();
+		}
 		
 		for(Entry<Integer, CCCInfo> entry : activityInfo.getCccs().entrySet()) {
 			Integer cccId = entry.getKey();
@@ -379,4 +409,103 @@ public class JooqActivity {
 			return "General";
 		}
 	}
+
+	public static String getDeleteCCCMessage(Connection conn, ArrayList<Integer> cccIds) {
+		DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL, getDefaultSettings());
+		
+		String message = "Las cuentas de cotizacion que se quieren eliminar contienen CRAs generados asociados. Si continua se desvincular" + String.valueOf("\u00E1") + "n dichos CRAs de dichas cuentas de cotizacion.<br>" + String.valueOf("\u00BF") + "Desea eliminar la cuentas cuentas de cotizacion <b>(" + getCCCsStr(dslContext, cccIds) + ")</b>?<br>";
+		
+//		message += getContractCCCs(dslContext, cccIds);
+		message += getCRACCCs(dslContext, cccIds);
+		
+		return message;
+	}
+
+	private static String getCCCsStr(DSLContext dslContext, ArrayList<Integer> cccIds) {
+		String cccIdsStr = "";
+		
+		for(Integer cccId : cccIds) {
+			Result<Record2<Byte, String>> enterpriseCCCRecords = dslContext.select(ENTERPRISE_CCC.TYPE, ENTERPRISE_CCC.CCC).from(ENTERPRISE_CCC).where(ENTERPRISE_CCC.ID.eq(cccId)).fetch();
+			for(Record2<Byte, String> enterpriseCCCRecord : enterpriseCCCRecords) {
+				cccIdsStr += getCCCRegimeCode(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC) + ", ";
+			}
+		}
+		
+		cccIdsStr.trim();
+		cccIdsStr = cccIdsStr.substring(0, cccIdsStr.length()-2);
+		
+		return cccIdsStr;
+	}
+	
+	private static String getContractCCCs(DSLContext dslContext, ArrayList<Integer> cccIds) {
+		String message = "";
+		
+		for(Integer cccId : cccIds) {
+			Result<Record> infoRecords = dslContext.select().from(CONTRACT)
+					.innerJoin(ENTERPRISE_CCC)
+					.on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+					.innerJoin(REGISTRY)
+					.on(REGISTRY.ID.eq(CONTRACT.PERSON))
+					.innerJoin(PERSON)
+					.on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+					.where(CONTRACT.ENTERPRISE_CCC.eq(cccId))
+					.fetch();
+			
+			if(infoRecords.isNotEmpty()) {
+				String completeCCC = getCCCRegimeCode(infoRecords.get(0).get(ENTERPRISE_CCC.TYPE)) + infoRecords.get(0).get(ENTERPRISE_CCC.CCC);
+				message += "<br><b>Contratos - " + completeCCC + "</b><br><br>";
+				
+				for(Record infoRecord : infoRecords) {
+					message += "&emsp;" + getFullName(infoRecord) + " (" + getDocument(infoRecord) + ")<br>";
+				}
+			}
+		}
+		
+		return message;
+	}
+	
+	private static String getCRACCCs(DSLContext dslContext, ArrayList<Integer> cccIds) {
+		DateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
+		String message = "";
+		
+		for(Integer cccId : cccIds) {
+			Result<Record> craBatchRecords = dslContext.select().from(CRA_BATCH)
+				.where(CRA_BATCH.ID.in(
+						dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
+							.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.eq(cccId))
+							.fetch(CRA_BATCH_DETAIL.CRA_BATCH))).fetch();
+		
+			if(craBatchRecords.isNotEmpty()) {
+				Record2<Byte, String> enterpriseCCCRecord = dslContext.select(ENTERPRISE_CCC.TYPE, ENTERPRISE_CCC.CCC).from(ENTERPRISE_CCC).where(ENTERPRISE_CCC.ID.eq(cccId)).fetchOne();
+				String completeCCC = getCCCRegimeCode(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);
+				message += "<br><b>CRAs - " + completeCCC + "</b><br><br>";
+				
+				for(Record craBatchRecord : craBatchRecords) {
+					message += "&emsp;CRA (" + formatDate.format(craBatchRecord.get(CRA_BATCH.OUTCOME_FILE_DATE)) + ")<br>";
+				}
+			}
+		}
+		
+		return message;
+	}
+	
+	private static String getFullName(Record infoRecord) {
+		String fullName = "";
+		String firstSurname = infoRecord.get(PERSON.FIRST_SURNAME);
+		String secondSurname = infoRecord.get(PERSON.SECOND_SURNAME);
+		String name = infoRecord.get(PERSON.NAME);
+		
+		fullName += AonStringUtils.isBlank(firstSurname) ? "" : firstSurname + " ";
+		fullName += AonStringUtils.isBlank(secondSurname) ? "" : secondSurname + ", ";
+		fullName += AonStringUtils.isBlank(name) ? "" : name;
+		
+		return fullName;
+	}
+
+	private static String getDocument(Record infoRecord) {
+		String document = infoRecord.get(REGISTRY.DOCUMENT);
+		return AonStringUtils.isBlank(document) ? "" : document;
+	}
+
+	
 }
