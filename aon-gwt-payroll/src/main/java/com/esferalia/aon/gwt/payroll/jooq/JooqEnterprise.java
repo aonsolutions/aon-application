@@ -840,9 +840,6 @@ public class JooqEnterprise {
 			
 			Date findEndPeriod = new Date(endPeriod.getTimeInMillis());
 			
-			if(cccCode == "48008719931" || completeCCCAccount == "48008719931" || cccCode.equals("48008719931") || completeCCCAccount.equals("48008719931"))
-				System.out.println("ENCONTRADO");
-			
 			Result<Record> currentSalariesPeriod = dslContext.select().from(SALARY)
 				.where(SALARY.CCC.eq(cccCode)
 //						.or(SALARY.CCC.isNull())

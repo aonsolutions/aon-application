@@ -36,7 +36,6 @@ import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.jooq.tables.records.CraBatchRecord;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.google.api.services.gmail.Gmail.Users.Settings.GetAutoForwarding;
 
 public class JooqCRA {
 	

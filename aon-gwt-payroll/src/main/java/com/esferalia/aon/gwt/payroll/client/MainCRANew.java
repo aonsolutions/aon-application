@@ -725,7 +725,7 @@ public class MainCRANew extends MainEntryPoint {
 		
 		this.allCCCsCB.setValue(false);
 		this.emitCCCsCB.setValue(false);
-		this.peddingCCCsCB.setValue(false);
+		this.peddingCCCsCB.setValue(true);
 	}
 	
 	private void setTableHeights() {
@@ -1026,7 +1026,6 @@ public class MainCRANew extends MainEntryPoint {
 	@UiHandler({"month","year"})
 	public void onMonthChange(ChangeEvent event) {
 		findingDate = DateUtils.getDate(Integer.parseInt(month.getSelectedValue()), Integer.parseInt(year.getSelectedValue()));
-		
 		this.mainCRAObjectNew.getEnterprisesCCCInfo(findingDate.getTime(),
 				s -> {
 					clearSelectionModel();
@@ -1082,7 +1081,6 @@ public class MainCRANew extends MainEntryPoint {
 	@UiHandler({"monthTillT", "yearTillT"})
 	public void onFilterDatesChange(ChangeEvent event) {
 		findingDateCRA = DateUtils.getDate(Integer.parseInt(monthTillT.getSelectedValue()), Integer.parseInt(yearTillT.getSelectedValue()));
-
 		mainCRAObjectNew.getCRAs(findingDateCRA.getTime(),
 				s -> {
 					initCRATable();
