@@ -2470,11 +2470,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	@Override
 	public void onEmployeeDraftSelected(EmployeeDraftObject employeeDraftObject) {
 		getEmployeeDraft().setOnSaved(e -> {
+			checkStatus(e);
+			refreshWorkplace();
 		});
 		employeeDetail.setWidget(getEmployeeDraft());
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
 		singlenton.employee = employeeDraftObject.getEmployee();
-
+		
 		checkStatus(employeeDraftObject);
 	}
 

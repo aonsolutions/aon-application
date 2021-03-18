@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -352,7 +351,7 @@ public class EmployeeDraft extends Composite {
 	
 	private NewContextMenu contextMenu;
 	
-	private Consumer<EmployeeContractInfo> onSaved ;
+	private Consumer<EmployeeDraftObject> onSaved ;
 
 	// ------------------------------------------------- Constructor
 
@@ -917,16 +916,15 @@ public class EmployeeDraft extends Composite {
 	// ------------------------------------------------- Callback saved for check status
 	
 	private void saved() {
-		EmployeeTree.invokeRefreshWorkplace();
-		onSaved.accept(employeeDraftObject.getEmployeeContractInfo());
+		onSaved.accept(employeeDraftObject);
 	}
 	
-	public EmployeeDraft setOnSaved(Consumer<EmployeeContractInfo> onSaved) {
+	public EmployeeDraft setOnSaved(Consumer<EmployeeDraftObject> onSaved) {
 		this.onSaved = onSaved;
 		return this;
 	}
 	
-	protected void onSavedNoop(EmployeeContractInfo employeeContractInfo) {}
+	protected void onSavedNoop(EmployeeDraftObject employeeDraftObject) {}
 	
 	// ------------------------------------------------- CheckStatus(EmployeeDraftObject) - EmployeeTree
 	

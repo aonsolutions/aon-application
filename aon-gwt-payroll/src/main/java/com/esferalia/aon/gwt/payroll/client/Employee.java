@@ -1194,54 +1194,12 @@ public abstract class Employee extends ResizeComposite {
 		document.setEnabled(false);
 		nationality.setEnabled(false);
 		security_social_num.setEnabled(false);
-		name.setEnabled(false);
-		first_surname.setEnabled(false);
-		second_surname.setEnabled(false);
-		
-		birth_date.setEnabled(false);
-		gender.setEnabled(false);
-		
-		street_type.setEnabled(false);
-		address.setEnabled(false);
-		addressNum.setEnabled(false);
-		addressZip.setEnabled(false);
-		addressProvince.setEnabled(false);
-		addressMunicipality.setEnabled(false);
-		
-		mobile.setEnabled(false);
-		phone.setEnabled(false);
-		email.setEnabled(false);
-		
-		payMethod.setEnabled(false);
-		bic.setEnabled(false);
-		account.setEnabled(false);
 	}
 	
 	public void unblockVariablesExistingContract(){
 		document.setEnabled(true);
 		nationality.setEnabled(true);
 		security_social_num.setEnabled(true);
-		name.setEnabled(true);
-		first_surname.setEnabled(true);
-		second_surname.setEnabled(true);
-		
-		birth_date.setEnabled(true);
-		gender.setEnabled(true);
-		
-		street_type.setEnabled(true);
-		address.setEnabled(true);
-		addressNum.setEnabled(true);
-		addressZip.setEnabled(true);
-		addressProvince.setEnabled(true);
-		addressMunicipality.setEnabled(true);
-		
-		mobile.setEnabled(true);
-		phone.setEnabled(true);
-		email.setEnabled(true);
-		
-		payMethod.setEnabled(true);
-		bic.setEnabled(true);
-		account.setEnabled(true);
 	}
 	
 	// ------------------------------------------------- Auxiliar methods
