@@ -4930,7 +4930,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			@Override
 			public Double getValue(Period p) {
-				double workDays = getWorkDays(ctx, p);
+				List<Period> periods = getPeriods(WORKED_DAYS);
+				double workDays = 0.00;
+				for ( Period period : periods )
+					workDays += getWorkDays(ctx, period);			
+				
 				try {
 					double avgPartialFactor = getAverageVariable(
 							PARTIAL_FACTOR.getName(), 

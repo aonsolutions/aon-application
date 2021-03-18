@@ -4,6 +4,7 @@ import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDa
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_PAYMENTS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.watson.util.AonStringUtils.isNotBlank;
 import static java.util.Calendar.DAY_OF_MONTH;
@@ -544,6 +545,16 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 					// Number days = (Number) var.getValue(var.getPeriod());
 					// ctx.setVariable(WORKED_DAYS, days.doubleValue() / months,
 					// var.getPeriod().getStart(), var.getPeriod().getEnd());
+				}
+
+				for (ITimedVariable<Object> var : ctx.getVariables(TOTAL_WORKED_DAYS, month.getStart(), month.getEnd())) {
+					List<ITimedResult<Double>> totalWorkedDays = ctx.eval(String.format("%s/%d", TOTAL_WORKED_DAYS, months),
+							var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class);
+					for (ITimedResult<Double> totalWorkedDay : totalWorkedDays) {
+						ctx.setVariable(TOTAL_WORKED_DAYS, totalWorkedDay.getValue(), totalWorkedDay.getPeriod().getStart(),
+								totalWorkedDay.getPeriod().getEnd());
+	
+					}
 				}
 			}
 			
