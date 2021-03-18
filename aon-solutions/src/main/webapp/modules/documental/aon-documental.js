@@ -105,7 +105,8 @@ export class AonDocumental extends AonElement {
 
     addDocumentOptions() {
       let aonDocumental = this.getElement(this.DOCUMENTAL);
-      let documentOptions = [{
+      let documentOptions = [
+        {
           name: MSG.AON_MSG_ALL_FILES,
           icon: 'insert_drive_file',
           fn: () => {
@@ -124,7 +125,7 @@ export class AonDocumental extends AonElement {
         //     this._filter.type = 'system';
         //     this.aonDocumentalList();
         //   }
-        }];
+      ];
       aonDocumental.addSidenavOptions2(DocumentalSidenav.DOCUMENTS, documentOptions);
     }
 
