@@ -157,9 +157,7 @@ export const openFile = async (url, data) => {
   return;
 };
 
-
-
-const openFileMobile = async (url) =>
+export const openFileMobile = async (url) =>
   new Promise((resolve, reject) => {
     requestFile("GET", url, (result, error) => {
       if (error) reject(error);
@@ -188,7 +186,7 @@ const openFileMobile = async (url) =>
     });
   });
 
-const openFileDesktop = (url) => open(url);
+export const openFileDesktop = (url) => open(url);
 
 //if true is mobile APP
 export const webkitRequestMobile = () => {
@@ -196,7 +194,7 @@ export const webkitRequestMobile = () => {
   try {
     if ("undefined" !== typeof window.cordova_iab || ("undefined" !== typeof window.webkit && window.webkit.messageHandlers) ) {
       result = true;
-    } 
+    }
   } catch (e) {}
   return result;
 };

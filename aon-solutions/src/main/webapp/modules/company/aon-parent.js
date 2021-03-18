@@ -292,17 +292,16 @@ export class AonParent extends AonElement {
 		aonMenu.init();
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
-		});
+			getUserAppRole().then(user => {
+				let aonHeader = document.getElementById('aonHeader');
+				aonHeader.setAttribute('company', JSON.stringify(company));
+				aonHeader.setAttribute('user', JSON.stringify(user));
 
-		getUserAppRole().then(user => {
-			let aonHeader = document.getElementById('aonHeader');
-			aonHeader.setAttribute('company', JSON.stringify(company));
-			aonHeader.setAttribute('user', JSON.stringify(user));
-
-			rootPanel('<aon-desktop id="aonDesktop"></aon-desktop>');
-			let aonDesktop = document.getElementById('aonDesktop');
-			aonDesktop.setAttribute('company', JSON.stringify(company));
-			aonDesktop.setAttribute('user', JSON.stringify(user));
+				rootPanel('<aon-desktop id="aonDesktop"></aon-desktop>');
+				let aonDesktop = document.getElementById('aonDesktop');
+				aonDesktop.setAttribute('company', JSON.stringify(company));
+				aonDesktop.setAttribute('user', JSON.stringify(user));
+			});
 		});
 	}
 }

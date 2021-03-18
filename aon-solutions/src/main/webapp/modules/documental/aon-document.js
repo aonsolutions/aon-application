@@ -3,7 +3,7 @@ import {ToolbarType} from '../../models/enums.js';
 import {DocumentalAction, ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
 import {deleteFile, getCategories, getScopes, getTags, updateFile,
-  getDomainUserRoles} from '../../services/service.js';
+  getDomainUserRoles, openFileUrl} from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import {AonSelect} from '../../components/aon-select.js';
@@ -368,7 +368,7 @@ export class AonDocument extends AonElement {
   }
 
   download() {
-    open(this.document.file.url);
+    openFileUrl(this.document.file.url);
   }
 
   updateCategory(category) {
