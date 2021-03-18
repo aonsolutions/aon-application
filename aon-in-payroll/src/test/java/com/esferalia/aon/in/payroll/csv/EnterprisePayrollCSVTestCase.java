@@ -24,6 +24,10 @@ public class EnterprisePayrollCSVTestCase {
 		private String employee;
 		@JsonProperty("Centro de trabajo")
 		private String workplace;
+		@JsonProperty("Tipo")
+		private String salaryType;
+		
+		
 		@JsonProperty("Bruto")
 		private Double raw;
 		@JsonProperty("Seg. Social empleado")
@@ -46,12 +50,41 @@ public class EnterprisePayrollCSVTestCase {
 		@JsonProperty("Base IRPF")
 		private Double irpfBase;
 		
-		@JsonProperty("Contingencias comunes")
+		@JsonProperty("Contingencias comunes empleado")
 		private Double cgc;
+		@JsonProperty("Contingencias profesionales empleado")
+		private Double cgp;
 		@JsonProperty("Desempleo")
 		private Double unemployment;
-		@JsonProperty("Formación profesional")
+		@JsonProperty("Formación profesional empleado")
 		private Double jobTraining;
+		@JsonProperty("Anticipos")
+		private Double advancedPayment;
+		@JsonProperty("Otras deducciones empleado")
+		private Double otherDeductions;
+		@JsonProperty("Fuerza mayor empleado")
+		private Double estruc;
+		@JsonProperty("No estructurales empleado")
+		private Double noEstruct;
+		@JsonProperty("Embargos")
+		private Double embargos;
+		
+		@JsonProperty("Cont. com. empresa")
+		private Double cgcEnterprise;
+		@JsonProperty("Cont. prof. empresa")
+		private Double cgpEnterprise;
+		@JsonProperty("Desempleo empresa")
+		private Double unemploymentEnterprise;
+		@JsonProperty("Form. prof. empresa")
+		private Double jobTrainingEnterprise;
+		@JsonProperty("Fogasa")
+		private Double fogasaEnterprise;
+		@JsonProperty("Fuerza mayor empresa")
+		private Double estrucEnterprise;
+		@JsonProperty("No estructurales empresa")
+		private Double noEstructEnterprise;
+
+		
 		
 		@Override
 		public String getEmployee() {
@@ -127,6 +160,76 @@ public class EnterprisePayrollCSVTestCase {
 		public Double getJobTraining() {
 			return jobTraining;
 		}
+
+		@Override
+		public Double getCgp() {
+			return cgp;
+		}
+
+		@Override
+		public Double getAdvancedPayment() {
+			return advancedPayment;
+		}
+
+		@Override
+		public Double getOtherDeductions() {
+			return otherDeductions;
+		}
+
+		@Override
+		public Double getCgcEnterprise() {
+			return cgcEnterprise;
+		}
+
+		@Override
+		public Double getCgpEnterprise() {
+			return cgpEnterprise;
+		}
+
+		@Override
+		public Double getUnemploymentEnterprise() {
+			return unemploymentEnterprise;
+		}
+
+		@Override
+		public Double getJobTrainingEnterprise() {
+			return jobTrainingEnterprise;
+		}
+
+		@Override
+		public Double getFogasaEnterprise() {
+			return fogasaEnterprise;
+		}
+
+		@Override
+		public Double getEstrucEnterprise() {
+			return estrucEnterprise;
+		}
+
+		@Override
+		public Double getNoEstructEnterprise() {
+			return noEstructEnterprise;
+		}
+
+		@Override
+		public String getSalaryType() {
+			return salaryType;
+		}
+
+		@Override
+		public Double getEstruc() {
+			return estruc;
+		}
+
+		@Override
+		public Double getNoEstruct() {
+			return noEstruct;
+		}
+
+		@Override
+		public Double getEmbargos() {
+			return embargos;
+		}
 		
 	}
 	
@@ -145,6 +248,7 @@ public class EnterprisePayrollCSVTestCase {
 				EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
 				enterprisePayroll.workplace = workplace;
 				enterprisePayroll.employee = employee;
+				enterprisePayroll.salaryType = "Nómina";
 				enterprisePayroll.raw = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.employeeSS = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.irpf = number.randomDouble(2, 0, 2000);
@@ -153,6 +257,26 @@ public class EnterprisePayrollCSVTestCase {
 				enterprisePayroll.totalCost = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.totalSS = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.bonuses = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.cgcBase = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.irpfBase = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.cgc = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.cgp = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.unemployment = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.jobTraining = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.advancedPayment = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.otherDeductions = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.estruc = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.noEstruct = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.embargos = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.cgcEnterprise = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.cgpEnterprise = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.unemploymentEnterprise = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.jobTrainingEnterprise = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.fogasaEnterprise = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.estrucEnterprise = number.randomDouble(2, 0, 2000);
+				enterprisePayroll.noEstructEnterprise = number.randomDouble(2, 0, 2000);
+				
+				
 				payrollList.add(enterprisePayroll);
 			}
 		}

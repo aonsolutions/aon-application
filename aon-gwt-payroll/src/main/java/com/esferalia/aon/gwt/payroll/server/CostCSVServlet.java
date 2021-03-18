@@ -50,6 +50,7 @@ import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayroll;
 import com.esferalia.aon.jooq.tables.Workplace;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -137,7 +138,19 @@ public class CostCSVServlet extends HttpServlet {
 			
 //			Stream<EnterprisePayroll> stream = EnterprisePayrollExcel.getEnterprisePayrolls(ctx, condition);
 			
-			Stream<com.esferalia.aon.in.payroll.csv.EnterprisePayrollCSV.EnterprisePayroll> stream = EnterprisePayrollCSV.getEnterprisePayrolls(ctx, condition);
+			//getEnterprisePayrolls(AONContext aonContext, final int month,final int year, Integer enterpriseId, Integer workplaceId)
+			Integer enterpriseId = null;
+			try {
+				enterpriseId = Integer.parseInt(_enterpriseId);
+			} catch (NumberFormatException | NullPointerException e) {}
+			if (enterpriseId == null || enterpriseId == 0)
+				enterpriseId = AON.getWorkplace(aonContext.getDomainName()
+						, aonContext.getDomainId()
+						, aonContext.getUser()
+						, w -> w.getIdProperty().eq(Integer.parseInt(_workplaceId)))
+						.getEnterprise();
+			Stream<com.esferalia.aon.in.payroll.csv.EnterprisePayrollCSV.EnterprisePayroll> stream =
+					EnterprisePayrollCSV.getEnterprisePayrolls(aonContext, Integer.parseInt(_month)+1, Integer.parseInt(_year), enterpriseId, Integer.parseInt(_workplaceId));
 
 			
 			List<IEnterprisePayroll> list = stream.collect(Collectors.toList());

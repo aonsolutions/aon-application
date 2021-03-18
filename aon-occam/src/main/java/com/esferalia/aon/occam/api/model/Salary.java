@@ -338,12 +338,33 @@ public class Salary implements Serializable {
 		
 	}
 	
+	public static class Embargo {
+		Double amount;
+		String description;
+
+		public Embargo(Double amount, String description) {
+			super();
+			this.amount = amount;
+			this.description = description;
+		}
+
+		public Double getAmount() {
+			return amount;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+		
+	}
+	
 	
 	private Integer id;
 	private SalaryType salaryType;
 
 	private Date startDate;
 	private Date endDate;
+	private Date issueDate;
 	private int salaryDays;
 
 	// Enterprise related data
@@ -379,8 +400,10 @@ public class Salary implements Serializable {
 	private Double professionalContingenciesBase;
 	private Double estructuralOvertimeBase;
 	private Double nonEstructuralOvertimeBase;
+	private Double extraProrationBase;
 
 	private List<Cost> costs;
+	private List<Embargo> embargos;
 	private List<Bonus> bonuses;
 	private List<Payment> payments;
 	private List<Deduction> deductions;
@@ -388,6 +411,7 @@ public class Salary implements Serializable {
 
 	public Salary() {
 		costs = new ArrayList<Cost>();
+		embargos = new ArrayList<Embargo>();
 		bonuses = new ArrayList<Bonus>();
 		payments = new ArrayList<Payment>();
 		deductions = new ArrayList<Deduction>();
@@ -486,6 +510,15 @@ public class Salary implements Serializable {
 
 	public Salary setEmployeeSeniorityDate(Date employeeSeniorityDate) {
 		this.employeeSeniorityDate = employeeSeniorityDate;
+		return this;
+	}
+
+	public Date getIssueDate() {
+		return issueDate;
+	}
+
+	public Salary setIssueDate(Date issueDate) {
+		this.issueDate = issueDate;
 		return this;
 	}
 
@@ -635,6 +668,15 @@ public class Salary implements Serializable {
 		return this;
 	}
 
+	public Double getExtraProrationBase() {
+		return extraProrationBase;
+	}
+
+	public Salary setExtraProrationBase(Double extraProrationBase) {
+		this.extraProrationBase = extraProrationBase;
+		return this;
+	}
+
 	public int getSalaryDays() {
 		return salaryDays;
 	}
@@ -670,6 +712,15 @@ public class Salary implements Serializable {
 			Double amount) {
 		System.out.println(code + " = " + amount);
 		bonuses.add(new Bonus(amount, description));
+	}
+	
+	public List<Embargo> getEmbargos() {
+		return Collections.unmodifiableList(embargos);
+	}
+	
+	public void addEmbargo(String description,
+			Double amount) {
+		embargos.add(new Embargo(amount, description));
 	}
 	
 	public List<Payment> getPayments() {

@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.ExcelType.SUMMARY;
+import static com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.ExcelType.COMPLETE;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -26,6 +28,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayroll;
+import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.ExcelType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -47,6 +50,7 @@ public class CostExcelServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
+		String excelType = request.getParameter("excelType");
 		String _domainName = request.getServerName();
 		String _month = request.getParameter("month");
 		String _year = request.getParameter("year");
@@ -123,7 +127,8 @@ public class CostExcelServlet extends HttpServlet {
 //			_types.add((_settle.equals("1")) ? (byte) 2 : (byte) -1);
 //			_types.add((_delay.equals("1")) ? (byte) 3 : (byte) -1);
 			
-			Stream<EnterprisePayroll> stream = EnterprisePayrollExcel.getEnterprisePayrolls(ctx, condition);
+//			Stream<EnterprisePayroll> stream = EnterprisePayrollExcel.getEnterprisePayrolls(ctx, condition);
+			Stream<EnterprisePayroll> stream =EnterprisePayrollExcel.getEnterprisePayrolls(aonContext, Integer.parseInt(_month)+1, Integer.parseInt(_year), enterpriseId, Integer.parseInt(_workplaceId));
 			
 //			Stream<com.esferalia.aon.in.payroll.csv.EnterprisePayrollCSV.EnterprisePayroll> stream = EnterprisePayrollCSV.getEnterprisePayrolls(ctx, condition);
 			String dateString = "";
@@ -134,10 +139,14 @@ public class CostExcelServlet extends HttpServlet {
 			Integer year = Integer.parseInt(_year);
 			dateString = getDateString(month, year);
 			} catch (NumberFormatException | NullPointerException e) {}
-			
 			List<IEnterprisePayroll> list = stream.collect(Collectors.toList());
 			String entName = EnterprisePayrollExcel.getEnterpriseName(_domainName, enterpriseId, Integer.parseInt(_workplaceId));
-			EnterprisePayrollExcel.write(sos, list, Optional.empty(), entName, dateString);
+			
+			ExcelType type = SUMMARY;
+			if (excelType != null && excelType.equals("complete"))
+				type = COMPLETE;
+			
+			EnterprisePayrollExcel.write(sos, list, Optional.empty(), entName, dateString, type);
 //			EnterprisePayrollExcel.writeDiff(sos, list, Optional.empty());
 //			EnterprisePayrollCSV.write(sos, list);
 

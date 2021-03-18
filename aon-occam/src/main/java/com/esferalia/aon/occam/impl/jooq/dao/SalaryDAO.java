@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Supplier;
@@ -239,12 +238,23 @@ public class SalaryDAO {
 		.orderBy(SALARY_BONUS.SALARY)
 		.fetchLazy();
 		//@formatter:on
+		
+		Cursor<Record> embargoCursor = 
+				ctx.getDslContext()
+				.select()
+				.from(SALARY)
+				.join(SALARY_EMBARGO)
+				.onKey()
+				.where(conditions)
+				.orderBy(SALARY_EMBARGO.SALARY)
+				.fetchLazy();
 
 		BackIterator<Record> paymentIter = new BackIterator<>(paymentCursor.iterator());
 		BackIterator<Record> dataIter = new BackIterator<>(dataCursor.iterator());
 		BackIterator<Record> costIter = new BackIterator<>(costCursor.iterator());
 		BackIterator<Record> deductionIter = new BackIterator<>(deductionCursor.iterator());
 		BackIterator<Record> bonusIter = new BackIterator<>(bonusCursor.iterator());
+		BackIterator<Record> embargoIter = new BackIterator<>(embargoCursor.iterator());
 
 		//@formatter:off
 		return Seq.seq(rootCursor)
@@ -253,6 +263,7 @@ public class SalaryDAO {
 				.setId(rootRecord.get(SALARY.ID))		
 				.setStartDate(rootRecord.get(SALARY.START_DATE))
 				.setEndDate(rootRecord.get(SALARY.END_DATE))
+				.setIssueDate(rootRecord.get(SALARY.ISSUE_DATE))
 				.setSalaryDays(rootRecord.get(SALARY.TIME_UNITS))
 				.setEmployeeName(rootRecord.get(SALARY.EMPLOYEE_NAME))
 				.setEnterpriseCCC(rootRecord.get(SALARY.CCC))
@@ -277,6 +288,8 @@ public class SalaryDAO {
 				.setEmployeeCategory(rootRecord.get(SALARY.CATEGORY))
 				.setSalaryType(rootRecord.get(SALARY.TYPE))
 				.setEmployeeQuoteGroup(rootRecord.get(SALARY.QUOTE_GROUP))
+				.setRemuneration(rootRecord.get(SALARY.REMUNERATION))
+				.setExtraProrationBase(rootRecord.get(SALARY.PRO_EXT_BASE))
 				;
 				
 				int salaryId = rootRecord.get(SALARY.ID);
@@ -354,6 +367,18 @@ public class SalaryDAO {
 							)
 				);
 				bonusIter.back();
+				
+				Seq.limitWhile(
+				Seq.skipUntil(Seq.seq(embargoIter), 
+				r -> r.get(SALARY_EMBARGO.SALARY) >= salaryId ),
+				r -> r.get(SALARY_EMBARGO.SALARY) == salaryId )
+				.forEachOrdered(embargoRecord ->
+					salary.addEmbargo(
+							embargoRecord.get(SALARY_EMBARGO.DESCRIPTION),
+							embargoRecord.get(SALARY_EMBARGO.AMOUNT)
+							)
+				);
+				embargoIter.back();
 
 				return salary;
 				}
@@ -658,6 +683,11 @@ public class SalaryDAO {
 		public Property<Boolean> getIsSettlementProperty() {
 			return new FilterDAO.PropertyValueDAO<Byte>(SALARY.TYPE,
 					SalaryType.SETTLE.value());
+		}
+
+		@Override
+		public Property<Date> getIssueDateProperty() {
+			return new FilterDAO.DatePropertyDAO(SALARY.ISSUE_DATE);
 		}
 	}
 

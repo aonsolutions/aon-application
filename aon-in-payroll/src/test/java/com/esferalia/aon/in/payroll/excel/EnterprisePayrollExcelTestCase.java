@@ -42,6 +42,7 @@ public class EnterprisePayrollExcelTestCase {
 	public static class EnterprisePayroll implements IEnterprisePayroll {
 		private String employee;
 		private String workplace;
+		private String salaryType;
 
 		private Double raw;
 		private Double employeeSS;
@@ -56,8 +57,22 @@ public class EnterprisePayrollExcelTestCase {
 		private Double irpfBase;
 
 		private Double cgc;
+		private Double cgp;
 		private Double unemployment;
 		private Double jobTraining;
+		private Double advancedPayment;
+		private Double otherDeductions;
+		private Double estruc;
+		private Double noEstruct;
+		private Double embargos;
+
+		private Double cgcEnterprise;
+		private Double cgpEnterprise;
+		private Double unemploymentEnterprise;
+		private Double jobTrainingEnterprise;
+		private Double fogasaEnterprise;
+		private Double estrucEnterprise;
+		private Double noEstructEnterprise;
 
 		@Override
 		public String getEmployee() {
@@ -67,6 +82,11 @@ public class EnterprisePayrollExcelTestCase {
 		@Override
 		public String getWorkplace() {
 			return workplace;
+		}
+		
+		@Override
+		public String getSalaryType() {
+			return salaryType;
 		}
 
 		@Override
@@ -125,6 +145,11 @@ public class EnterprisePayrollExcelTestCase {
 		}
 
 		@Override
+		public Double getCgp() {
+			return cgp;
+		}
+
+		@Override
 		public Double getUnemployment() {
 			return unemployment;
 		}
@@ -132,6 +157,66 @@ public class EnterprisePayrollExcelTestCase {
 		@Override
 		public Double getJobTraining() {
 			return jobTraining;
+		}
+
+		@Override
+		public Double getAdvancedPayment() {
+			return advancedPayment;
+		}
+
+		@Override
+		public Double getOtherDeductions() {
+			return otherDeductions;
+		}
+
+		@Override
+		public Double getCgcEnterprise() {
+			return cgcEnterprise;
+		}
+
+		@Override
+		public Double getCgpEnterprise() {
+			return cgpEnterprise;
+		}
+
+		@Override
+		public Double getUnemploymentEnterprise() {
+			return unemploymentEnterprise;
+		}
+
+		@Override
+		public Double getJobTrainingEnterprise() {
+			return jobTrainingEnterprise;
+		}
+
+		@Override
+		public Double getFogasaEnterprise() {
+			return fogasaEnterprise;
+		}
+
+		@Override
+		public Double getEstrucEnterprise() {
+			return estrucEnterprise;
+		}
+
+		@Override
+		public Double getNoEstructEnterprise() {
+			return noEstructEnterprise;
+		}
+
+		@Override
+		public Double getEstruc() {
+			return estruc;
+		}
+
+		@Override
+		public Double getNoEstruct() {
+			return noEstruct;
+		}
+
+		@Override
+		public Double getEmbargos() {
+			return embargos;
 		}
 
 	}
@@ -171,7 +256,7 @@ public class EnterprisePayrollExcelTestCase {
 		try {
 			EnterprisePayrollExcel.write(
 					new FileOutputStream("src/test/resources/com/esferalia/aon/in/payroll/excel/prueba1.xlsx"),
-					payrollList, Optional.empty(), "", "");
+					payrollList, Optional.empty(), "", "", EnterprisePayrollExcel.ExcelType.COMPLETE);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
@@ -209,7 +294,7 @@ public class EnterprisePayrollExcelTestCase {
 			try {
 				EnterprisePayrollExcel.write(
 						new FileOutputStream("src/test/resources/com/esferalia/aon/in/payroll/excel/prueba2.xlsx"),
-						payrolls, Optional.empty(), "", "");
+						payrolls, Optional.empty(), "", "", EnterprisePayrollExcel.ExcelType.COMPLETE);
 			} catch (IOException e) {
 				fail(e.getMessage());
 			}
@@ -234,7 +319,7 @@ public class EnterprisePayrollExcelTestCase {
 
 			EnterprisePayrollExcel.write(
 					new FileOutputStream("src/test/resources/com/esferalia/aon/in/payroll/excel/prueba3.xlsx"),
-					payrolls, Optional.empty(), "", "");
+					payrolls, Optional.empty(), "", "", EnterprisePayrollExcel.ExcelType.COMPLETE);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		} catch (SQLException e1) {
