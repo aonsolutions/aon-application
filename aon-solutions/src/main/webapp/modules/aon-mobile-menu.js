@@ -57,8 +57,11 @@ export class AonMobileMenu extends AonElement {
   eventListener(){
     window.addEventListener('userAuth', ()=>{
       this.build();
-			this.reload();
 		});
+    window.addEventListener('resize', () => {
+      this.reload();
+    });
+
   }
 
   connectedCallback() {
@@ -78,6 +81,7 @@ export class AonMobileMenu extends AonElement {
     let dialogMenu = new AonDialogMenu();
     dialogMenu.id = this.id + 'dialogMenu';
     this.appendChild(dialogMenu);
+
     this.buildMenu();
   }
 
@@ -97,7 +101,6 @@ export class AonMobileMenu extends AonElement {
   async buildMenu(){
     await waitEl(`#${this.id}Sidenav`);
     let count = 1;
-
     this.addMenuButton({
       name: 'Home',
       icon: 'home',
@@ -172,7 +175,7 @@ export class AonMobileMenu extends AonElement {
     span.style.top = '10px';
     span.style.position = 'relative';
     span.style.marginLeft = n;
-    if(menu.childNodes.length < 5){
+    if(menu.childNodes && menu.childNodes.length < 5){
       span.style.marginRight = n;
     }
     menu.appendChild(span);
