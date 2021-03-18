@@ -114,15 +114,16 @@ export class AonDocumental extends AonElement {
             this._filter.type = 'all';
             this.aonDocumentalList();
           }
-        },{
-          name: MSG.AON_MSG_SYSTEM_MESSAGES,
-          icon: 'settings',
-          fn: () => {
-            this._filter.category = undefined;
-            this._filter.tag = undefined;
-            this._filter.type = 'system';
-            this.aonDocumentalList();
-          }
+        }
+        // ,{
+        //   name: MSG.AON_MSG_SYSTEM_MESSAGES,
+        //   icon: 'settings',
+        //   fn: () => {
+        //     this._filter.category = undefined;
+        //     this._filter.tag = undefined;
+        //     this._filter.type = 'system';
+        //     this.aonDocumentalList();
+        //   }
         }];
       aonDocumental.addSidenavOptions2(DocumentalSidenav.DOCUMENTS, documentOptions);
     }

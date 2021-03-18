@@ -61,11 +61,12 @@ class AonLaboral extends AonElement {
       let companyCosts = PayrollOptions.COMPANY_COSTS;
       companyCosts.fn = () =>  this.aonLaboralEl.development("Costes de empresa");
       laboralOptions.push(companyCosts);
+
+      let sepa = PayrollOptions.SEPA_FILES;
+      sepa.fn = () => this.showView("aonSepaFilesList");
+      laboralOptions.push(sepa);
+      this.aonLaboralEl.addSidenavOptions('LABORAL', laboralOptions);
     }
-    let sepa = PayrollOptions.SEPA_FILES;
-    sepa.fn = () => this.showView("aonSepaFilesList");
-    laboralOptions.push(sepa);
-    this.aonLaboralEl.addSidenavOptions('LABORAL', laboralOptions);
   }
 
   async getSalary(data){

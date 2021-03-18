@@ -125,7 +125,7 @@ export class AonMenu extends AonElement {
 			case Apps.PAYROLL.app:
 				if(this.getDur().isPayrollManager()) {
 					this.buildAppMenu(Apps.PAYROLL);
-				} else this.development('Panel Laboral');
+				} else rootPanel('<aon-laboral></aon-laboral>');
 				break;
 			case Apps.COMUNICA.app:
 				rootPanel('<aon-comunica></aon-comunica>');
@@ -350,8 +350,7 @@ export class AonMenu extends AonElement {
 				this.development('Panel Fiscal');
 				//rootPanel('<aon-fiscal></aon-fiscal>');
 			} else if(Apps.PAYROLL.app === app.app) {
-				this.development('Panel Laboral');
-				//rootPanel('<aon-laboral></aon-laboral>');
+				rootPanel('<aon-laboral></aon-laboral>');
 			}
 		});
 		let closeButton = document.getElementById('aon-menu-sidenav-app-close-button');
