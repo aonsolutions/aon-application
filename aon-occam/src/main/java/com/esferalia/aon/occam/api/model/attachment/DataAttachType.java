@@ -7,7 +7,8 @@ public enum DataAttachType implements Serializable {
 	
 	REQUEST,
 	RESPONSE_OK,
-	RESPONSE_ERROR;
+	RESPONSE_ERROR,
+	DIGITAL_CERTIFICATE;
 	
 	public byte value() {
 		return (byte) this.ordinal();

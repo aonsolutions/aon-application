@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.ContactData.CONTACT_DATA;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
@@ -32,6 +33,7 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.occam.api.model.attachment.DataAttachSource.SISTEMA_RED;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.DIGITAL_CERTIFICATE;
 
 import java.util.ArrayList;
@@ -80,6 +82,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -1147,11 +1150,12 @@ public class SecurityDAO {
 	
 	
 	public static Optional<Certificate> getCertificate(AONContext aonContext, UserFilter userFilter ) {
-		return getCertificate(aonContext.getDslContext(), userFilter);
+		return 
+		getUserCertificate(aonContext.getDslContext(), userFilter).or(()->getDomainCertificate(aonContext.getDslContext(), userFilter));
 	}
 	
 	
-	public static Optional<Certificate> getCertificate(DSLContext dslContext, UserFilter userFilter ) {
+	public static Optional<Certificate> getUserCertificate(DSLContext dslContext, UserFilter userFilter ) {
 		SelectOnConditionStep<Record> select = 
 		dslContext
 		.select()
@@ -1173,6 +1177,30 @@ public class SecurityDAO {
 		;
 	}
 	
+	
+	public static Optional<Certificate> getDomainCertificate(DSLContext dslContext, UserFilter userFilter ) {
+		SelectOnConditionStep<Record> select = 
+		dslContext
+		.select()
+		.from(USER)
+		.innerJoin(DATA_ATTACH).on(
+		USER.DOMAIN.eq(DATA_ATTACH.DOMAIN)
+		,DATA_ATTACH.SOURCE.eq((byte)SISTEMA_RED.ordinal())
+		,DATA_ATTACH.TYPE.eq((byte)DataAttachType.DIGITAL_CERTIFICATE.ordinal())
+		);
+				
+		return 
+		USER_PROPERTIES
+		.build(select, userFilter)
+		.fetchOptional()
+		.map(r -> new Certificate()
+		.setType(MimeType.PKCS12.name())
+		.setCertificate(r.get(DATA_ATTACH.DATA))
+		.setPassword(r.get(DATA_ATTACH.DESCRIPTION))
+		)
+		;
+	}
+
 	public static Certificate insertCertificate(AONContext aonContext, UserFilter userFilter, Certificate certificate ) {
 		return insertCertificate(aonContext.getDslContext(), userFilter, certificate);
 	}
