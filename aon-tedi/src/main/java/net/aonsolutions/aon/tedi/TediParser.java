@@ -417,28 +417,11 @@ public class TediParser {
 			}
 		}		
 	};
+	
 	private static Consumer<TediParserContext> INVOICE_TICKET_REGISTRY = (ctx) -> {
 		TediResult result = ctx.getTediResult();
-		AonConfiguration aonCtx = ctx.getAonConfiguration();
 		 if (ctx.getTediResult().getTedi().isTicket()) {
-			if (fillRegistry(ctx, ar -> !result.getInvoice().isSales() && ar.getType() == AccountingRegistryType.CREDITOR)){
-				if (aonCtx.getDefaultCreditor() != null) {
-					AccountingRegistry ar = aonCtx.getDefaultCreditor();
-					AccountingInvoice ai = result.getAccountingInvoice();
-					Invoice invoice = result.getInvoice();
-					TediInvoice tedi = result.getTedi();
-					ai.setRegistry(ar);
-					ai.setSuggestedAccounts(AccountingInvoiceDAO.getSuggestedAccounts(ctx.getAONContext(), ar.getId()));
-					invoice
-						.setRegistry(ar.getId())
-						.setTransaction(ar.getTransaction());
-					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx.getAONContext(), ai.getInvoice(), aonCtx));
-					if (tedi.getSender() != null) {
-						invoice.setRegistryDocument(tedi.getSender().getDocument());
-						invoice.setRegistryName(tedi.getSender().getName());
-					}
-				}
-			};
+			fillRegistry(ctx, ar -> !result.getInvoice().isSales() && ar.getType() == AccountingRegistryType.CREDITOR);
 		}
 	};
 	
