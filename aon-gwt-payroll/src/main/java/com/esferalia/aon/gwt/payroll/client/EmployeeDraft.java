@@ -399,6 +399,7 @@ public class EmployeeDraft extends Composite {
 		idcMonthListBox.setLastMonth(lastMonth);
 		int months = DateUtils.getMonths(lastMonth, firstMonth);
 		idcMonthListBox.setVisibleRange(0, months+1);
+		idcMonthListBox.ensureDebugId("idcMonthListBox");
 	}
 	
 	private void initializeUndoRedo() {
@@ -741,6 +742,7 @@ public class EmployeeDraft extends Composite {
 		idcMonthListBox.addChangeHandler(e -> {
 			showIdc(idcMonthListBox.getSelectedMonth());
 		});
+		toolbar.add(idcMonthListBox);
 		
 		downloadPDF = new AonToolbarButton( AON.MSG.download(), AON.CSS.aonIconPdf() );
 		downloadPDF.setAccessKey('D');
