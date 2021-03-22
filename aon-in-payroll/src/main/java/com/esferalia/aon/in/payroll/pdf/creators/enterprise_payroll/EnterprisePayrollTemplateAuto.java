@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.advanced.PdfTable;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.components.basic.PdfFile;
@@ -420,6 +419,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 	}
 	
 	private static void draw_totals(EnterprisePayrollTemplateAuto t, PdfTable table) throws IOException {
+		t.y_limit += 50; 
 		check(t, table);
 		table.header_color = LIGHT_GRAY;
 		table.create_box(0, 10, 3);
@@ -435,8 +435,6 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 				table.add_to_cell(i, to_latin_number(total_aon.get(i)));
 			table.new_row();
 		}
-		
-		
 		
 		if(total_ss.stream().mapToDouble(p-> p).sum() != 0) {
 			table.add_to_cell(0, "TOTAL SS:");

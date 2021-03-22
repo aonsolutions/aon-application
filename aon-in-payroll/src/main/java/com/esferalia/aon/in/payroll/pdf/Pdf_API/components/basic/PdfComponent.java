@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.beans.Pointer;
+import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfSettings.BORDER_POSITION;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 
 /**
@@ -45,6 +46,22 @@ public abstract class PdfComponent {
 		try {PDFToolkit.drawBorderedBox(stream, x(), y(), width, height, border_color);} 
 		catch (IOException e) {e.printStackTrace();}
 	}
+	
+	public void border(Color border_color,BORDER_POSITION position,float size) {
+		try {
+			switch (position) {
+				case ALL :		PDFToolkit.drawBorderedBox(stream, x(), y(), width, height, border_color,size); break;
+				case BOTTOM:	PDFToolkit.drawBorderedBox(stream, x(), y(), width, size, border_color,size); break;
+				case LEFT:		PDFToolkit.drawBorderedBox(stream, x(), y(), size,  height, border_color,size); break;
+				case RIGHT:		PDFToolkit.drawBorderedBox(stream, x() + width - size, y(), size, height, border_color,size); break;
+				case TOP: 		PDFToolkit.drawBorderedBox(stream, x(), y() + height - size, width, size, border_color,size); break;
+				case NONE:      break;		
+				default: this.border(border_color); break;
+			}
+		} 
+		catch (IOException e) {e.printStackTrace();}
+	}
+	
 	
 	public void  start_pointer() {pointer = new Pointer(0, 0);}
 	

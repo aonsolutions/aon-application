@@ -2,6 +2,7 @@ package com.esferalia.aon.in.payroll.pdf.creators.settlement.beans;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Accrual;
@@ -22,8 +23,8 @@ public class Settlement {
 	private String  end_cause;
 	private Boolean exist_representative;
 	
-	private ArrayList<Accrual> accruals;
-	private ArrayList<Deduction> deductions;
+	private Map<Integer,ArrayList<Accrual>> accruals;
+	private Map<Integer,ArrayList<Deduction>> deductions;
 	
 	private Double accrual_total;
 	private Double deduction_total;
@@ -62,14 +63,14 @@ public class Settlement {
 	public Optional<String> end_cause() 									{return Optional.ofNullable(end_cause);}
 	public Settlement setEnd_cause(String end_cause) 						{this.end_cause = end_cause;						return this;}
 	
-	public Optional<Boolean> isExist_representative() 						{return Optional.ofNullable(exist_representative);}
+	public Optional<Boolean> exist_representative() 						{return Optional.ofNullable(exist_representative);}
 	public Settlement setExist_representative(boolean exist_representative) {this.exist_representative = exist_representative;	return this;}
 	
-	public ArrayList<Accrual> getAccruals() 								{return accruals;}
-	public Settlement setAccruals(ArrayList<Accrual> accruals) 				{this.accruals = accruals;							return this;}
+	public Map<Integer,ArrayList<Accrual>> getAccruals() 					{return accruals;}
+	public Settlement setAccruals(Map<Integer,ArrayList<Accrual>> accruals) {this.accruals = accruals;							return this;}
 	
-	public ArrayList<Deduction> getDeductions() 							{return deductions;}
-	public Settlement setDeductions(ArrayList<Deduction> deductions) 		{this.deductions = deductions;						return this;}
+	public Map<Integer,ArrayList<Deduction>> getDeductions() 							{return deductions;}
+	public Settlement setDeductions(Map<Integer,ArrayList<Deduction>> deductions) 		{this.deductions = deductions;						return this;}
 	
 	public Optional<Double> getAccrual_total() 								{return Optional.ofNullable(accrual_total);}
 	public Settlement setAccrual_total(double accrual_total) 				{this.accrual_total = accrual_total;				return this;}
@@ -102,8 +103,8 @@ public class Settlement {
 		private String  end_cause;
 		private boolean exist_representative;
 		
-		private ArrayList<Accrual> accruals;
-		private ArrayList<Deduction> deductions;
+		private Map<Integer,ArrayList<Accrual>> accruals;
+		private Map<Integer,ArrayList<Deduction>> deductions;
 		
 		private double accrual_total;
 		private double deduction_total;
@@ -121,34 +122,35 @@ public class Settlement {
 		public SettlementBuilder setEnd_date(Date end_date) 							{this.end_date = end_date;							return this;}
 		public SettlementBuilder setEnd_cause(String end_cause) 						{this.end_cause = end_cause;						return this;}
 		public SettlementBuilder setExist_representative(boolean exist_representative) 	{this.exist_representative = exist_representative;	return this;}
-		public SettlementBuilder setAccruals(ArrayList<Accrual> accruals) 				{this.accruals = accruals;							return this;}
-		public SettlementBuilder setDeductions(ArrayList<Deduction> deductions) 		{this.deductions = deductions;						return this;}
+		
+		public SettlementBuilder setAccruals(Map<Integer,ArrayList<Accrual>> accruals) 			{this.accruals = accruals;							return this;}
+		public SettlementBuilder setDeductions(Map<Integer,ArrayList<Deduction>> deductions) 	{this.deductions = deductions;						return this;}
+		
 		public SettlementBuilder setAccrual_total(double accrual_total) 				{this.accrual_total = accrual_total;				return this;}
 		public SettlementBuilder setDeduction_total(double deduction_total) 			{this.deduction_total = deduction_total;			return this;}
 		public SettlementBuilder setTotal(double total) 								{this.total = total;								return this;}
 		public SettlementBuilder setDate(Date date) 									{this.date = date;									return this;}
 		public SettlementBuilder setLocation(String location) 							{this.location = location;							return this;}
 		
-		
 		public Settlement build() {
 			return instance()
-					.setEnterprise_name(this.enterprise_name)
-					.setEnterprise_NIF(this.enterprise_NIF)
-					.setEnterprise_address(this.enterprise_address)
-					.setEmployee_name(this.employee_name)
-					.setEmployee_NIF(this.employee_NIF)
-					.setEmployee_category(this.employee_category)
-					.setEmployee_antiquity(this.employee_antiquity)
-					.setEnd_date(this.end_date)
-					.setEnd_cause(this.end_cause)
-					.setExist_representative(this.exist_representative)
-					.setAccruals(this.accruals)
-					.setDeductions(this.deductions)
-					.setAccrual_total(this.accrual_total)
-					.setDeduction_total(this.deduction_total)
-					.setLocation(this.location)
-					.setDate(this.date)
-					.setTotal(this.total);
+					.setEnterprise_name			(this.enterprise_name)
+					.setEnterprise_NIF			(this.enterprise_NIF)
+					.setEnterprise_address		(this.enterprise_address)
+					.setEmployee_name			(this.employee_name)
+					.setEmployee_NIF			(this.employee_NIF)
+					.setEmployee_category		(this.employee_category)
+					.setEmployee_antiquity		(this.employee_antiquity)
+					.setEnd_date				(this.end_date)
+					.setEnd_cause				(this.end_cause)
+					.setExist_representative	(this.exist_representative)
+					.setAccruals				(this.accruals)
+					.setDeductions				(this.deductions)
+					.setAccrual_total			(this.accrual_total)
+					.setDeduction_total			(this.deduction_total)
+					.setLocation				(this.location)
+					.setDate					(this.date)
+					.setTotal					(this.total);
 		};
 		
 	}

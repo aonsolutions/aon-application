@@ -136,23 +136,20 @@ public class PdfText extends PdfComponent {
 	@Override
 	public void draw() {
 		try {
-			float fh = (font.getFontDescriptor().getCapHeight()) / 1000 * font_size;
-			for (int i = 0; i < lines.size(); i++)  {
+			float fh = (font.getFontDescriptor().getCapHeight()) / 1000 * font_size;				
+				String line = lines.get(0);
+				if(lines.size() > 1) line = PDFToolkit.cropped_string(lines.get(0), width(), font, font_size()) + "...";
+
+				line = line.trim();
 				
-				String line = lines.get(i);
 				switch (horizontal_alignment) {
 					case CENTER: 	drawTextCenter(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, font_size, margin_y()); 				break;
 					case RIGHT:  	drawTextRight(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, font_size, margin_x(), margin_y()); 	break;
-					case JUSTIFY:
-						if(i < lines.size() -1) drawTextJustified(line, width(), font_size, font, x(), y(), stream());
-						else drawTextLeft(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, font_size, 0,0);
-						break;
+					case JUSTIFY:	drawTextJustified(line, width(), font_size, font, x(), y(), stream()); break;
 					default: drawTextLeft(stream(), new PDRectangle(x(), y(), width(), height()), line, color, font, font_size,margin_x(), margin_y()); break;
 				}
 				
-			down(fh + line_spacing);
-			height(height() + fh + line_spacing);
-			}
+			down(fh + line_spacing);	
 			height(height() + fh + line_spacing);
 		} catch (IOException e) {e.printStackTrace();}
 	}

@@ -4,8 +4,8 @@ import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import org.junit.Test;
@@ -50,8 +50,8 @@ public class SettlementTest {
 		.setExist_representative		(true)
 		.setEnd_cause					(end_cause.toUpperCase())
 		.setEnd_date					(end_date)
-		.setAccruals					(new ArrayList<>())
-		.setDeductions					(new ArrayList<>())
+		.setAccruals					(new HashMap<>())
+		.setDeductions					(new HashMap<>())
 		.setAccrual_total				(accrual_total)
 		.setDeduction_total				(deduction_total)
 		.setDate						(new Date())

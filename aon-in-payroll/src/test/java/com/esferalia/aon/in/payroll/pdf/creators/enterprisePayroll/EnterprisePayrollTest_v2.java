@@ -1,7 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.creators.enterprisePayroll;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -120,7 +119,7 @@ public class EnterprisePayrollTest_v2 {
 			ss_entries.put(f.pokemon().location(),categoria6);
 
 			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", f.zelda().game() + " S.L",	entries, ss_entries);
-			PdfMaker.print_enterprise_payroll(payroll,new ByteArrayOutputStream(),Optional.of(new Locale("Es")));
+			PdfMaker.print_enterprise_payroll(payroll,new FileOutputStream("ListadoCostesPDF.pdf"),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {
 			e.printStackTrace();

@@ -227,6 +227,13 @@ public class PDFToolkit {
 		contents.stroke();
 	}
 	
+	public static void drawBorderedBox(PDPageContentStream contents, float x, float y, float width, float height, Color color, float size) throws IOException {
+		contents.setStrokingColor(color);
+		contents.addRect(x, y, width, height);
+		contents.setLineWidth(size);
+		contents.stroke();
+	}
+	
 	/**
 	 * <p><b>Description:</b> <i>Gets fields of a form.</i></p>
 	 * @return List of PDFields
