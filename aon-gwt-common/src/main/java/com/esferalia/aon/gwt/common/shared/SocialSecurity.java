@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.common.shared;
 
 import java.io.Serializable;
 
-import com.google.gwt.user.client.Window;
-
 @SuppressWarnings("serial")
 public class SocialSecurity implements Serializable{
 	
@@ -23,15 +21,19 @@ public class SocialSecurity implements Serializable{
 		
 		String controlCode = this.socialSecurity.substring(10, 12);;
 		String ssNumberWithoutCode = this.socialSecurity.substring(0, 10);
-		long ssNumber = Long.parseLong(ssNumberWithoutCode);
-		
-		long calculateControlCode = ssNumber % 97;
-		String calculateControlCodeStr = String.valueOf(calculateControlCode);
-		
-		if(calculateControlCodeStr.length() == 1)
-			calculateControlCodeStr = "0"+calculateControlCodeStr;
-		
-		return (controlCode == calculateControlCodeStr) ? true : false;
+		try {
+			long ssNumber = Long.parseLong(ssNumberWithoutCode);
+			
+			long calculateControlCode = ssNumber % 97;
+			String calculateControlCodeStr = String.valueOf(calculateControlCode);
+			
+			if(calculateControlCodeStr.length() == 1)
+				calculateControlCodeStr = "0"+calculateControlCodeStr;
+			
+			return (controlCode == calculateControlCodeStr) ? true : false;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 }
