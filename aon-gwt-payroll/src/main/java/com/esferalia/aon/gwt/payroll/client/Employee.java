@@ -1191,9 +1191,20 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	public void blockVariablesExistingContract(){
-		document.setEnabled(false);
+		String documentStr = this.document.getValue().trim();
+		if(AonStringUtils.isNotBlank(documentStr)) {
+			String document_type = checkDocumentType(documentStr);
+			document.setEnabled(!checkDocumentValidation(document_type, documentStr));
+		} else
+			document.setEnabled(true);
+		
 		nationality.setEnabled(false);
-		security_social_num.setEnabled(false);
+		
+		String ssNum = this.security_social_num.getValue().trim();
+		if(AonStringUtils.isNotBlank(ssNum))
+			security_social_num.setEnabled(!checkSSNumValidation(ssNum));
+		else
+			security_social_num.setEnabled(false);
 	}
 	
 	public void unblockVariablesExistingContract(){
