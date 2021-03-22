@@ -24,7 +24,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -263,8 +262,8 @@ public class EmployeeSalary extends Composite {
 	private void filterCurrentYearSalaries() {
 		SalaryInfoFilter filter = employeeSalaryObject.getFilter();
 		
-		Date startDate = DateUtils.addMonths2Date(DateUtils.getFirstDayOfMonth(), -1);
-		Date endDate = DateUtils.getLastDayOfMonth();
+		Date startDate = DateUtils.addYears2Date(DateUtils.getFirstDayOfMonth(), -1);
+		Date endDate = DateUtils.getLastDayOfYear(new Date());
 		
 		setSelectedValueLB(monthTillT, DateUtils.getMonth(startDate) + "");
 		setSelectedValueLB(monthTTo, DateUtils.getMonth(endDate) + "");
