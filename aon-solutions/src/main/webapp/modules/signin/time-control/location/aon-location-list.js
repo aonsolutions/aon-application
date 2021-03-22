@@ -1,6 +1,6 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { getLocation } from "../../../../services/service.js";
-import { SigninSidenav } from "../../signinEnums.js";
+import { SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
 
@@ -79,7 +79,7 @@ export class AonLocationList extends AonElement {
   }
 
   async getTable() {
-    this.aonSigninToolbar.setAttribute("option", "Ubicación");
+    this.aonSigninToolbar.setAttribute("option", "Ubicaciones");
     this.aonSigninEl.startLoader();
     if (this.isMobile()) {
       await this.getTableMobile();
@@ -153,7 +153,7 @@ export class AonLocationList extends AonElement {
   add(el, data) {
     let newData = data;
     if (!data) newData = {add:true};
-    this.aonSigninParentEl.showView("aonLocationAdd", newData);
+    this.aonSigninParentEl.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, newData);
   }
 }
 window.customElements.define("aon-location-list", AonLocationList);

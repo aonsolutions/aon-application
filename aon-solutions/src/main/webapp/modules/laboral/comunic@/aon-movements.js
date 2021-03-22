@@ -1,8 +1,8 @@
-import { AonElement } from '../../components/AonElement.js';
-
-import '../../components/aon-dialog-menu.js';
+import { AonElement } from '../../../components/AonElement.js';
 import { AonAltaDirecta } from './aon-alta-directa.js';
 import { AonMovementsList } from './aon-movements-list.js';
+import '../../../components/aon-dialog-menu.js';
+
 
 export class AonMovements extends AonElement {
 
@@ -16,8 +16,8 @@ export class AonMovements extends AonElement {
 
     constructor() {
         super();
-        this.id = this.id || 'aonComunicaMovements';
-        this.aonComunicaEl =  this.getElement('aonComunica');
+        this.id = this.id || 'aonMovements';
+        this.applicationEl = this.getApplication();
     }
 
 
@@ -27,18 +27,18 @@ export class AonMovements extends AonElement {
 
     build() {
         this.paintView();
-        this.aonComunicaEl.removeToolbarOptions();
+        this.applicationEl.removeToolbarOptions();
         if (this.isMobile()) {
-            let floatButton = this.getElement(`${this.aonComunicaEl.id}FloatSpan`);
+            let floatButton = this.getElement(`${this.applicationEl.id}FloatSpan`);
             if (!floatButton) {
-                this.aonComunicaEl.addFloatOption({
+                this.applicationEl.addFloatOption({
                     id: 'AddAlta',
                     name: 'addalta',
                     icon: 'add'
                 }, () =>  this.aonAltaDirecta()); 
             }
         } else {
-            this.aonComunicaEl.addToolbarOption('Add', 'add', () => this.aonAltaDirecta());
+            this.applicationEl.addToolbarOption('Add', 'add', () => this.aonAltaDirecta());
         }
         this.aonList();
     }
@@ -48,17 +48,17 @@ export class AonMovements extends AonElement {
     }
 
     async aonList(filter) {
-        this.getElement(this.aonComunicaEl.TOOLBAR).setAttribute('option', 'Movimientos');
-        if (filter) this.aonComunicaEl.setFilter(filter);
+        this.getElement(this.applicationEl.TOOLBAR).setAttribute('option', 'Movimientos');
+        if (filter) this.applicationEl.setFilter(filter);
         else {
             let aonMovementsList = new AonMovementsList();
             aonMovementsList.id = this.id+"List";
-            this.aonComunicaEl.setContent(aonMovementsList);
+            this.applicationEl.setContent(aonMovementsList);
         }
     }
 
     aonAltaDirecta() {
-        this.aonComunicaEl.setContent(new AonAltaDirecta());
+        this.applicationEl.setContent(new AonAltaDirecta());
     }
 
 }

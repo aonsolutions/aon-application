@@ -8,7 +8,7 @@ import {
 } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { UserAction } from "../../../user/userEnums.js";
-import { EventListFilterInput, SigninSidenav } from "../../signinEnums.js";
+import { EVENT_LIST_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
 import { firstLetters, timeHour} from "../utils.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
@@ -123,7 +123,7 @@ export class AonEventList extends AonElement {
 
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
-    aonFilter.setInputs(EventListFilterInput);
+    aonFilter.setInputs(EVENT_LIST_FILTER);
     aonFilter.addEventListener("applyFilter", ({detail}) => {
       if(detail) this.aonSigninParentEl.setDataFilter(detail);
     });
@@ -288,11 +288,11 @@ export class AonEventList extends AonElement {
   }
 
   aonEvent({target}, data) {
-    this.aonSigninParentEl.showView("aonEventDetailList", data);
+    this.aonSigninParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
   }
 
   back(){
-    this.aonSigninParentEl.showView("aonPresenceList", undefined, true);
+    this.aonSigninParentEl.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST, undefined, true);
   }
 }
 window.customElements.define("aon-event-list", AonEventList);

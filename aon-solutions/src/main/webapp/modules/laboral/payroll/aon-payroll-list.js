@@ -2,10 +2,12 @@ import { AonElement } from "../../../components/AonElement.js";
 import { formatNumber, isEmptyObject, formatDate, sortBy, waitEl, geMonthYear, setValueName } from "../../../services/utils.js";
 import { firstLetters } from "../../signin/time-control/utils.js";
 import { getEmployeeSalaries, getEnterpriseSalaries, getPeriodLaboral, getWorkplaceCCCs, getAllEmployeesWorkplace } from "../../../services/service.js";
-import {  PresenceFilterInput, SigninSidenav } from "../../signin/signinEnums.js";
+import {  PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
+import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
+
 
 export class AonPayrollList extends AonElement {
   TABLE_ID;
@@ -43,7 +45,7 @@ export class AonPayrollList extends AonElement {
   }
 
   initialize(){
-    this.id = this.id || "aonPayrollList";
+    this.id = this.id ||  PAYROLL_VIEWS.AON_PAYROLL_LIST;
     this.TABLE_ID = this.id + "Table";
     this.aonLaboralEl = this.getApplication();
     this.aonLaboralParentEl = this.aonLaboralEl.getParent();
@@ -83,20 +85,8 @@ export class AonPayrollList extends AonElement {
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
     aonFilter.setInputs([
-      {
-        type: "select",
-        id: "workplace",
-        name: "workplace",
-        title: "Centro de trabajo",
-      },
-      {
-        type: "select",
-        id: "employee",
-        name: "employee",
-        title: "Trabajador",
-        hidden:true
-      },
-      ...PresenceFilterInput
+      ...PAYROLL_FILTER,
+      ...PRESENCE_FILTER
     ]);
     aonFilter.addEventListener("applyFilter", ({detail}) => {
       if(detail)this.aonLaboralParentEl.setDataFilter(detail);

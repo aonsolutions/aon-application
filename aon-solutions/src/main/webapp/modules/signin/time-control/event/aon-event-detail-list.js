@@ -10,7 +10,7 @@ import {
   getPeriod,
   getTimeControlDetail,
 } from "../../../../services/service.js";
-import { SigninSidenav, PresenceFilterInput } from "../../signinEnums.js";
+import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { UserAction } from "../../../user/userEnums.js";
 import { dateCustomDayHour } from "../utils.js";
@@ -133,7 +133,7 @@ export class AonEventDetailList extends AonElement {
 
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
-    aonFilter.setInputs(PresenceFilterInput);
+    aonFilter.setInputs(PRESENCE_FILTER);
     aonFilter.addEventListener("applyFilter", ({ detail }) => {
       if (detail) this.aonSigninParentEl.setDataFilter(detail);
     });
@@ -287,14 +287,14 @@ export class AonEventDetailList extends AonElement {
 
   aonEvent(el, data) {
     if (el && "add_location" === el.target.textContent) {
-      this.aonSigninParentEl.showView("aonLocationAdd", {coordinates:data.coordinates});
+      this.aonSigninParentEl.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, {coordinates:data.coordinates});
     } else {
-      this.aonSigninParentEl.showView("aonEventAdd", data);
+      this.aonSigninParentEl.showView(SIGNIN_VIEWS.AON_EVENT_ADD, data);
     }
   }
 
   back() {
-    this.aonSigninParentEl.showView("aonEventList", undefined, true);
+    this.aonSigninParentEl.showView(SIGNIN_VIEWS.AON_EVENT_LIST, undefined, true);
   }
 }
 window.customElements.define("aon-event-detail-list", AonEventDetailList);

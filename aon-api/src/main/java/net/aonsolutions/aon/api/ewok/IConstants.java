@@ -78,6 +78,7 @@ public interface IConstants {
 	String VAT = "vat";
 	String WITHHOLDING = "withholding";
 	String CALLBACK = "callback";
+	String CLASS_NAME = "class_name";
 	
 	String SESSION_ID = "session_id";
 	String CONTENT_DISPOSITION = "Content-disposition";

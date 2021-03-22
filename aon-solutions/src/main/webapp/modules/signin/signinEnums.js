@@ -48,7 +48,7 @@ export const SigninSidenav = {
   },
 };
 
-export const PresenceFilterInput = [
+export const PRESENCE_FILTER = [
   {
     type: "select",
     id: "period",
@@ -69,12 +69,22 @@ export const PresenceFilterInput = [
   },
 ];
 
-export const EventListFilterInput = [
+export const EVENT_LIST_FILTER = [
   {
     type: "select",
     id: "group",
     name: "group",
     title: "Agrupar por ",
   },
-  ...PresenceFilterInput
+  ...PRESENCE_FILTER
 ];
+
+
+export const SIGNIN_VIEWS = {
+  AON_PRESENCE_LIST:"aonPresenceList",
+  AON_EVENT_LIST:"aonEventList",
+  AON_EVENT_DETAIL_LIST:"aonEventDetailList",
+  AON_EVENT_ADD:"aonEventAdd",
+  AON_LOCATION_LIST:"aonLocationList",
+  AON_LOCATION_ADD:"aonLocationAdd",
+};

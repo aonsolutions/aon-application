@@ -88,26 +88,28 @@ export class AonSign extends AonElement {
   }
 
   entrada() {
-		let content = this.getElement(this.CONTENT);
-    this.clearElement(content);
-		let button = document.createElement('button');
-    button.className = 'aonButton';
-		button.style.backgroundColor = '#86D364';
-    button.style.padding = '1rem 1rem';
-    button.style.width = '120px';
-		button.innerHTML = 'ENTRADA';
-    if(this.isMobile()){
-      button.style.width = "60%";
-      button.style.borderRadius = "12px";
+    let content = this.getElement(this.CONTENT);
+		if(content){
+      this.clearElement(content);
+      let button = this.createElement('button');
+      button.className = 'aonButton';
+      button.style.backgroundColor = '#86D364';
+      button.style.padding = '1rem 1rem';
+      button.style.width = '120px';
+      button.innerHTML = 'ENTRADA';
+      if(this.isMobile()){
+        button.style.width = "60%";
+        button.style.borderRadius = "12px";
+      }
+      button.addEventListener('click', () => this.saveTimeCtrl('in'));
+      content.appendChild(button);
     }
-    button.addEventListener('click', () => this.saveTimeCtrl('in'));
-		content.appendChild(button);
 	}
 
   vuelta() {
     let content = this.getElement(this.CONTENT);
     this.clearElement(content);
-		let button = document.createElement('button');
+		let button = this.createElement('button');
     button.className = 'aonButton';
 		button.style.backgroundColor = '#86D364';
     button.style.width = '120px';
@@ -125,7 +127,7 @@ export class AonSign extends AonElement {
     let content = this.getElement(this.CONTENT);
     this.clearElement(content);
 
-		let button = document.createElement('button');
+		let button = this.createElement('button');
     button.className = 'aonButton';
 		button.style.backgroundColor = '#DC4D30';
 		button.style.marginRight = '10px';
@@ -135,7 +137,7 @@ export class AonSign extends AonElement {
     button.addEventListener('click', () => this.saveTimeCtrl('out'));
 		content.appendChild(button);
 
-		let button2 = document.createElement('button');
+		let button2 = this.createElement('button');
     button2.className = 'aonButton';
 		button2.style.backgroundColor = '#F39F1D';
 		button2.style.marginRight = '10px';
@@ -161,14 +163,15 @@ export class AonSign extends AonElement {
   }
 
   disabledButton(disabled){
-    let content = document.getElementById(this.CONTENT);
+    let content = this.getElement(this.CONTENT);
     if(content) [...content.querySelectorAll('button')].map(el => el.disabled = disabled);
   }
 
   buildSignin(signin) {
-		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
+		const aonUserConnected = this.getElement('aonHeaderUserConnected');
+    const timeEl = this.getElement(this.TIME);
     if(signin.status === 'in') {
-      let time = signin.time + (new Date().getTime() - signin.in_date);
+      const time = signin.time + (new Date().getTime() - signin.in_date);
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#86D364';
       this.salida();
       this.timeStop();
@@ -177,19 +180,19 @@ export class AonSign extends AonElement {
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#F39F1D';
       this.vuelta();
       this.timeStop();
-      this.getElement(this.TIME).innerHTML = timePaser(signin.time);
+      if(timeEl)timeEl.innerHTML = timePaser(signin.time);
     } else {
       if(aonUserConnected) aonUserConnected.style.backgroundColor = '#DC4D30';
       this.entrada();
       this.timeStop();
-      this.getElement(this.TIME).innerHTML = timePaser(signin.time);
+      if(timeEl)timeEl.innerHTML = timePaser(signin.time);
     }
     this.divLastTime(signin);
   }
 
   timeAction(time) {
 
-    let timeDiv = document.getElementById(this.TIME);
+    let timeDiv = this.getElement(this.TIME);
     if(timeDiv){
       timeDiv.innerHTML = timePaser(time);
       timeDiv.style.cursor = "default";
@@ -198,7 +201,8 @@ export class AonSign extends AonElement {
   }
 
   divLastTime(signin){
-    if(signin && signin.last_date){
+    let content = this.getElement(this.CONTENT);
+    if(content && signin && signin.last_date){
       let textStatus = "entrada";
       switch(signin.status){
         case "pause":
@@ -216,7 +220,6 @@ export class AonSign extends AonElement {
       div.style.fontSize = "12px";
       div.style.cursor = "default";
       div.innerHTML = `Ult. ${textStatus} ${setDateTimestampDay(signin.last_date)}`;
-      let content = document.getElementById(this.CONTENT);
       content.append(div);
     }
   }
@@ -230,7 +233,7 @@ export class AonSign extends AonElement {
       const errors = typeof error === "object" ? error : JSON.parse(error);
       const aonApp = document.querySelector('aon-application');
       this.getElement(aonApp.TOAST).start({ message: errors.message, type: errors.type });
-    } catch (error) {}
+    } catch (errs) {}
   }
 }
 window.customElements.define('aon-sign', AonSign);

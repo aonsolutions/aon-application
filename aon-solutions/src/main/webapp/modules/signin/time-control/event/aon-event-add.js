@@ -20,6 +20,7 @@ import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-date.js";
 import "../../../../components/aon-select.js";
+import { SIGNIN_VIEWS } from "../../signinEnums.js";
 
 
 export class AonEventAdd extends AonElement {
@@ -75,36 +76,20 @@ export class AonEventAdd extends AonElement {
   }
 
   paintView() {
-    const initHtml = `
-            <style>
-              .aonCard{
-                position: relative;
-                display: -ms-flexbox;
-                display: flex;
-                -ms-flex-direction: column;
-                flex-direction: column;
-                min-width: 0;
-                word-wrap: break-word;
-                background-color: #fff;
-                background-clip: border-box;
-                border: 1px solid rgba(0,0,0,.125);
-                border-radius: .25rem;
-              }
-            </style>
-        `;
+
     const aonToolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}"> </aon-toolbar>`;
-    const aonCardCoordinate = ` <div class="aonCol-sm-12"><aon-card id="${this.id}CardCoordinate" title="Coordenadas" visible="false"></aon-card> </div>`;
+    const aonCardCoordinate = ` <div class="aonCol-sm-12"><aon-card id="${this.id}CardCoordinate" title="Coordenadas" visible="false" flex="true"></aon-card> </div>`;
     const form = `
         <form id="${this.id}Form" action="#" onsubmit="return false;">
             <div id="${this.id}Div">
                 <div class="aonCol-sm-12">
-                    <aon-card id="${this.id}CardEvent" title="Datos del evento"></aon-card>
+                    <aon-card id="${this.id}CardEvent" title="Datos del evento" flex="true"></aon-card>
                 </div>
                 ${aonCardCoordinate}
             </div>
         </form>`;
 
-    this.innerHTML = aonToolbar + initHtml + form;
+    this.innerHTML = aonToolbar + form;
 
     this.aonSigninEl.removeToolbarOptions();
 
@@ -297,7 +282,7 @@ export class AonEventAdd extends AonElement {
     let data = undefined;
     if(this.data) data = {...this.data, start_date:this.data.date};
     if(this.START_DATE) data.start_date = this.START_DATE;
-    this.aonSigninParentEl.showView("aonEventDetailList", data);
+    this.aonSigninParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
   }
 }
 

@@ -1,7 +1,7 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel } from "../../../services/service.js";
-import { formatDateOrigin, isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
-import { PresenceFilterInput, SigninSidenav } from "../signinEnums.js";
+import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
+import { PRESENCE_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../signinEnums.js";
 import { dateCustomDayHour, StringTwoLetters, timeHour } from "./utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
@@ -80,7 +80,7 @@ export class AonPresenceList extends AonElement {
 
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
-    aonFilter.setInputs(PresenceFilterInput);
+    aonFilter.setInputs(PRESENCE_FILTER);
     aonFilter.addEventListener("applyFilter", ({detail}) => {
       if(detail) this.aonSigninParentEl.setDataFilter(detail);
     });
@@ -210,31 +210,31 @@ export class AonPresenceList extends AonElement {
     return data;
   }
 
-  aonEvent({ target }, data) {
-    const parent = this.aonSigninParentEl;
-    if ("add_location" === target.textContent) {
-      parent.showView("aonLocationAdd", data);
-    } else {
-      parent.showView("aonEventList", data, true);
-    }
-  }
-
-
 	async getTimeControlExcel() {
 		this.aonSigninEl.startLoading();
 		try {
       let startYear = new Date().getFullYear();
       let {startDate} = this.aonSigninParentEl._filter;
-			if(startDate) startYear = new Date(startDate).getFullYear();
+			if(startDate) {startYear = new Date(startDate).getFullYear();} 
       startDate = startYear+"-01-01"; 
+      const endDate = startYear+"-12-31"; 
 
-			await getTimeControlExcel({startDate, endDate:startDate}); 
+			await getTimeControlExcel({startDate, endDate}); 
 		} catch (error) {
 			console.log(error);
 			this.aonSigninEl.getToast().start({ message: error, type: 'error' });
 		}
 		this.aonSigninEl.stopLoading();
 	}
+
+  aonEvent({ target }, data) {
+    const parent = this.aonSigninParentEl;
+    if ("add_location" === target.textContent) {
+      parent.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, data);
+    } else {
+      parent.showView(SIGNIN_VIEWS.AON_EVENT_LIST, data, true);
+    }
+  }
 }
 
 window.customElements.define("aon-presence-list", AonPresenceList);

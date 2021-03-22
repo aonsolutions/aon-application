@@ -296,20 +296,12 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	private File getTimeControlExcel(HttpServletRequest req) throws Exception {
 		LOGGER.info("[GET] TIME-CONTROL SERVLET EXCEL");
 
-		String param = req.getParameter("json");
-		param = new String(Base64.getDecoder().decode(param));
-		JSONObject json = new JSONObject(param);
-		String domainName = json.getString("domain_name");
-		Integer domainId = json.getInt("domain_id");
-				
-		Domain domain = AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
-
+		Domain domain = AON.getDomain(getDomain().getName(), getDomain().getId(), "", f -> f.getNameProperty().eq(getDomain().getName()));
 		Date startDate = null;
 		Date endDate = null;
 		
-	
-		if(!json.optString("startDate").isEmpty()) startDate = Toolkit.parseDate(json.optString("startDate"), "yyyy-MM-dd");
-		if(!json.optString("endDate").isEmpty()) endDate = Toolkit.parseDate(json.optString("endDate"), "yyyy-MM-dd");
+		if(!getParams().optString("startDate").isEmpty()) startDate = Toolkit.parseDate(getParams().optString("startDate"), "yyyy-MM-dd");
+		if(!getParams().optString("endDate").isEmpty()) endDate = Toolkit.parseDate(getParams().optString("endDate"), "yyyy-MM-dd");
 	
 		File file = File.createTempFile("timecontrol", "");
 		TimeControlExcel.excelTimeControl(domain, new FileOutputStream(file), startDate, endDate);

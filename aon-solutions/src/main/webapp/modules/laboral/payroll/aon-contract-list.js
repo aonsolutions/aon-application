@@ -1,13 +1,10 @@
 import { AonElement } from "../../../components/AonElement.js";
-import {
-  getContracts,
-  getContratoPdf
-} from "../../../services/service.js";
+import {getContracts} from "../../../services/service.js";
 import { setDate } from "../../../services/utils.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 
-export class AonContratoList extends AonElement {
+export class AonContractList extends AonElement {
   TABLE_ID;
   static get observedAttributes() {
     return ["filter"];
@@ -27,9 +24,10 @@ export class AonContratoList extends AonElement {
 
   constructor() {
     super();
-    this.aonComunica = this.getApplication();
-    this.aonComunicaToolbar = this.getElement(this.aonComunica.TOOLBAR);
-    this.TABLE_ID = "aonContratoTable";
+    this.id = this.id || "aonContractList";
+    this.TABLE_ID = this.id + "Table";
+    this.aonLaboral = this.getApplication();
+    this.aonLaboralToolbar = this.getElement(this.aonLaboral.TOOLBAR);
   }
 
   connectedCallback() {
@@ -44,39 +42,14 @@ export class AonContratoList extends AonElement {
   }
 
   async build() {
-    this.aonComunicaToolbar.setAttribute("option", "Contratos");
-    this.aonComunica.startLoader();
+    this.aonLaboralToolbar.setAttribute("option", "Contratos");
+    this.aonLaboral.startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
-    this.aonComunica.stopLoader();
+    this.aonLaboral.stopLoader();
   }
 
-  async getTableDesk() {
-    // const aonCtaTable = this.getElement(this.TABLE_ID);
-    // aonCtaTable.addColumn('Tipo', 'string', 'tipo', '20%');
-    // aonCtaTable.addColumn('Cuenta de cotización', 'string', 'ccc', '40%');
-    // aonCtaTable.addColumn('Provincia', 'string', 'geozone', '35%');
-    // aonCtaTable.addColumn('Opción', 'fn', 'option', '5%');
-    // if (aonCtaTable) {
-    // 	try {
-    // 		const resp = await this.getData();
-    // 		aonCtaTable.removeRows();
-    // 		resp.map(res => {
-    // 			aonCtaTable.addRow({
-    // 				...res,
-    // 				ccc: `${res.cccRegimeCode} - ${res.ccc}`,
-    // 				option: this.getOptions(res)
-    // 			});
-    // 		})
-    // 	} catch (e) {
-    // 		const toast = this.getElement(`aonComunicaToast`);
-    // 		if ("invalidCertificate" === e) {
-    // 			if (toast) toast.start({ message: e, type: 'error' });
-    // 			this.getElement('aonComunicaSidenavCertificados').click()
-    // 		}
-    // 	}
-    // }
-  }
+  async getTableDesk() {}
 
   async getTableMobile() {
     const aonCtaTable = this.getElement(this.TABLE_ID);
@@ -105,13 +78,18 @@ export class AonContratoList extends AonElement {
       {
         name: "Contrato",
         aonIcon: "aon_cto",
-        fn: (el) => this.getContratoPdf(res, el),
+        fn: (el) => this.aonLaboral.getParent().getContratoPdf(res, el),
       },
       {
         name: "Obtener TA",
         aonIcon: "aon_ta",
-        fn: (el) => this.aonComunica.getParent().getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
+        fn: (el) => this.aonLaboral.getParent().getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
       },
+			{
+				name: 'Obtener IDC',
+				aonIcon: 'aon_idc',
+				fn: (el) => this.aonLaboral.getParent().getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
+			}
     ];
   }
 
@@ -143,25 +121,18 @@ export class AonContratoList extends AonElement {
     }
     
     //delete
-    // data.push({
-    //   contractType:"401",
-    //   startDate: "2020-09-09",
-    //   regime: "0111",
-    //   ctaCti: "01105360062",
-    //   surName: "VASQUEZ",
-    //   name:"RAY",
-    //   document: "Y7514970X",
-    //   ssNumber:"291136796369"
-    // });
+    data.push({
+      contractType:"401",
+      startDate: "2020-09-09",
+      regime: "0111",
+      ctaCti: "01105360062",
+      surName: "VASQUEZ",
+      name:"RAY",
+      document: "Y7514970X",
+      ssNumber:"291136796369"
+    });
 
     return data;
   }
-
-  async getContratoPdf(data, el) {
-    this.aonComunica.startLoading();
-    const { document: ipf, startDate: fecha } = data;
-    await getContratoPdf({ ipf, fecha });
-    this.aonComunica.stopLoading();
-  }
 }
-window.customElements.define("aon-contrato-list", AonContratoList);
+window.customElements.define("aon-contract-list", AonContractList);

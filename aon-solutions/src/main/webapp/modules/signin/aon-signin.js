@@ -5,7 +5,7 @@ import { getAuth, getDomainUserRoles, getPeriod, getTaskHolders } from "../../se
 import { formatDateOrigin, isEmptyObject, setValueName } from "../../services/utils.js";
 import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
 import { AonLocationList } from "./time-control/location/aon-location-list.js";
-import { SigninSidenav } from "./signinEnums.js";
+import { SigninSidenav, SIGNIN_VIEWS } from "./signinEnums.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { AonEventList } from "./time-control/event/aon-event-list.js";
 import { AonEventDetailList } from "./time-control/event/aon-event-detail-list.js";
@@ -51,7 +51,7 @@ export class AonSignin extends AonElement {
   async build() {
     this.paintView();
     this.buildToolbar();
-    this.showView("aonPresenceList");
+    this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
   }
 
   paintView() {
@@ -65,15 +65,11 @@ export class AonSignin extends AonElement {
     const options = [
       {
         ...SigninSidenav.PRESENCE,
-        fn: () => this.showView("aonPresenceList")
+        fn: () => this.showView( SIGNIN_VIEWS.AON_PRESENCE_LIST)
       },
       {
         ...SigninSidenav.LOCATION,
-        fn: () =>{
-          this.aonSigninEl.setContent(new AonLocationList());
-          this.periodSideNavDisplay(false);
-        }
-
+        fn: () =>this.showView(SIGNIN_VIEWS.AON_LOCATION_LIST)
       },
     ];
 
@@ -135,20 +131,17 @@ export class AonSignin extends AonElement {
       let aonView = undefined;
 
       if(this.isEmployee()){
-        if("aonPresenceList" === view) {
-          view = "aonEventList";
-        } else if( "aonLocationAdd" === view){
-         resolve(true);
-         return;
-        }
+        if(SIGNIN_VIEWS.AON_PRESENCE_LIST === view) {
+          view = SIGNIN_VIEWS.AON_EVENT_LIST;
+        } else if( SIGNIN_VIEWS.AON_LOCATION_ADD === view){ resolve(true);return; }
       }
 
       if(!this.getElement(view)){
         switch(view){
-          case "aonPresenceList":
+          case SIGNIN_VIEWS.AON_PRESENCE_LIST:
               aonView = new AonPresenceList();
             break;
-          case "aonEventList":
+          case SIGNIN_VIEWS.AON_EVENT_LIST:
             aonView = new AonEventList();
             if(data && data.taskHolderId){
               this.TASK_HOLDER = {id: data.taskHolderId, name: data.name};
@@ -158,31 +151,32 @@ export class AonSignin extends AonElement {
             if(data && data.status && !isEmptyObject(this.TASK_HOLDER)) {this.TASK_HOLDER.status = data.status;}
             this._filter.taskHolderId = this.TASK_HOLDER.id;
             break;
-          case "aonEventDetailList":
+          case SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST:
               aonView = new AonEventDetailList();
               if(data){
                 const startDate = formatDateOrigin(data.start_date);
                 aonView.DATE_TASK = {startDate, endDate:startDate};
               }
             break;
-          case "aonEventAdd":
+          case SIGNIN_VIEWS.AON_EVENT_ADD:
             aonView = new AonEventAdd();
-            if (data) {
-              aonView.data = data;
-            } else if (this.TASK_HOLDER) {
+            if (data) { aonView.data = data;} 
+            else if (this.TASK_HOLDER) {
               aonView.data = {task_holder: this.TASK_HOLDER};
             }
             break;
-          case "aonLocationAdd":
+          case SIGNIN_VIEWS.AON_LOCATION_LIST:
+              aonView = new AonLocationList();
+              this.periodSideNavDisplay(false);
+            break;
+          case SIGNIN_VIEWS.AON_LOCATION_ADD:
             aonView = new AonLocationAdd();
             if(data){
               if(data.coordinates && data.coordinates.latitude && data.coordinates.longitude){
                 data = {...data, latitude:data.coordinates.latitude, longitude: data.coordinates.longitude}
                 aonView.data = {...data, latitude:data.coordinates.latitude, longitude: data.coordinates.longitude};
               }
-              if(data.add){
-                aonView.add = data.add;
-              }
+              if(data.add){ aonView.add = data.add;}
             } 
             break;
         }

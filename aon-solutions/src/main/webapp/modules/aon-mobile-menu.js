@@ -12,7 +12,6 @@ import {
 import {MobileMenuApps, DOCUMENTAL, TIMECONTROL, INVOICE, COMUNICA, MESSENGER,
    PAYROLL} from "../services/app.js"
 
-import "./comunic@/aon-comunica.js";
 import "./documental/aon-documental.js";
 import "./signin/aon-signin.js";
 import "./invoice/aon-invoice-panel.js";
@@ -241,12 +240,6 @@ export class AonMobileMenu extends AonElement {
         name: app.title,
         aonIcon: "aon_seg_social",
         fn: () => rootPanel("<aon-laboral></aon-laboral>"),
-      };
-    else if(COMUNICA.app === app.app)
-      return {
-        name: app.title,
-        icon: "alternate_email",
-        fn: () => rootPanel("<aon-comunica></aon-comunica>")
       };
     else if(TIMECONTROL.app === app.app)
       return {

@@ -9,6 +9,24 @@ export const getIpfxnaf = (data) => get(`${API_URL}/comunica/ipfxnaf`, data);
 
 export const getNafxipf = (data) => get(`${API_URL}/comunica/nafxipf`, data);
 
+export const getTA = (data) => openFile(`${API_URL}/comunica/pdf/get-ta`, data);
+
+export const getCertCorriente = (data) =>
+  openFile(`${API_URL}/comunica/pdf/cert-corriente`, data);
+
+export const getIDC = (data) =>
+  openFile(`${API_URL}/comunica/pdf/get-idc`, data);
+
+export const postAltaDirecta = (data) =>
+  post(`${API_URL}/comunica/alta-directa`, data); //ALTA DIRECTA
+export const postUpdateCto = (data) =>
+  post(`${API_URL}/comunica/update-contrato`, data); //ALTA DIRECTA
+export const postDeleteMov = (data) =>
+  post(`${API_URL}/comunica/delete-mov`, data); //DELETE MOV
+
+export const getEmployee = (data) =>
+  get(`${API_URL}/comunica/get-employee`, data);
+
 export const getPersonas = (dni) =>
   new Promise((resolve) => {
     let jsonValues = [
@@ -188,20 +206,6 @@ export const getOcupacion = () =>
     ]);
   });
 
-export const getTA = (data) => openFile(`${API_URL}/comunica/pdf/get-ta`, data);
-
-export const getCertCorriente = (data) =>
-  openFile(`${API_URL}/comunica/pdf/cert-corriente`, data);
-
-export const getIDC = (data) =>
-  openFile(`${API_URL}/comunica/pdf/get-idc`, data);
-
-export const postAltaDirecta = (data) =>
-  post(`${API_URL}/comunica/alta-directa`, data); //ALTA DIRECTA
-export const postUpdateCto = (data) =>
-  post(`${API_URL}/comunica/update-contrato`, data); //ALTA DIRECTA
-export const postDeleteMov = (data) =>
-  post(`${API_URL}/comunica/delete-mov`, data); //DELETE MOV
 
 export const getConvenios = () =>
   new Promise((resolve) => {
@@ -210,8 +214,6 @@ export const getConvenios = () =>
     ]);
   });
 
-export const getEmployee = (data) =>
-  get(`${API_URL}/comunica/get-employee`, data);
 
 export const getAllTipoCtz = () =>
   new Promise((resolve) => {

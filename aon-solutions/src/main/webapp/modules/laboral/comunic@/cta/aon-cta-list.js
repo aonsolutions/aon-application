@@ -1,11 +1,12 @@
-import { AonElement } from "../../../components/AonElement.js";
+import { AonElement } from "../../../../components/AonElement.js";
 import {
   getCertCorriente,
   getWorkplaceCCCs,
   getTipoCtz,
-} from "../../../services/service.js";
-import "../../../components/aon-table.js";
-import "../../../components/aon-mobile-list.js";
+} from "../../../../services/service.js";
+import "../../../../components/aon-table.js";
+import "../../../../components/aon-mobile-list.js";
+
 
 export class AonCtaList extends AonElement {
   TABLE_ID;
@@ -27,7 +28,8 @@ export class AonCtaList extends AonElement {
 
   constructor() {
     super();
-    this.aonComunicaEl = this.getElement("aonComunica");
+    this.id = this.id || "aonCtaList";
+    this.applicationEl = this.getApplication();
     this.TABLE_ID = "aonCtaTable";
   }
 
@@ -37,14 +39,14 @@ export class AonCtaList extends AonElement {
 
   async build() {
     this.paintView();
-    this.aonComunicaEl.startLoader();
+    this.applicationEl.startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
-    this.aonComunicaEl.stopLoader();
+    this.applicationEl.stopLoader();
   }
   
   paintView() {
-    this.aonComunicaEl.removeToolbarOptions();
+    this.applicationEl.removeToolbarOptions();
     if (this.isMobile())
       this.innerHTML = ` <aon-mobile-list id='${this.TABLE_ID}' />`;
     else this.innerHTML = ` <aon-table id='${this.TABLE_ID}' />`;
@@ -140,10 +142,10 @@ export class AonCtaList extends AonElement {
   }
 
   async getCertCorriente(data, el) {
-    this.aonComunicaEl.startLoading();
+    this.applicationEl.startLoading();
     const { ccc, cccRegimeCode: regimen } = data;
     await getCertCorriente({ ccc, regimen }); // open pdf
-    this.aonComunicaEl.stopLoading();
+    this.applicationEl.stopLoading();
   }
 }
 window.customElements.define("aon-cta-list", AonCtaList);

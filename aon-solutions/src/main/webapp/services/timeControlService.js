@@ -2,7 +2,6 @@ import { post, get, remove, openFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 import { addDays, formatDateOrigin} from "./utils.js";
 
-
 export const firstDayWeek = (d) => {
   let result = new Date(d);
   return result.getDate() - result.getDay() + 1; 

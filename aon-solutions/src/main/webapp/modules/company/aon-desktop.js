@@ -1,9 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
-import { Apps, Services, OtherServices, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
-	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
-import {getDomainApps, setDomainApp, getDomainNotice, getDomainUserRoles, getTimeControl} from  '../../services/service.js';
+import { Apps} from  '../../services/app.js';
+import {getDomainNotice, getDomainUserRoles, getTimeControl} from  '../../services/service.js';
 import {bidoq} from  '../../services/bidoq.js';
-import {startModule, rootPanel} from '../../services/gwtLoader.js';
+import {rootPanel} from '../../services/gwtLoader.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 
@@ -14,7 +13,6 @@ import '../marketplace/aon-marketplace.js';
 import '../invoice/aon-invoice-panel.js';
 import '../documental/aon-documental.js';
 import '../laboral/aon-laboral.js';
-import '../comunic@/aon-comunica.js';
 import '../signin/aon-signin.js';
 import './aon-stat.js';
 
@@ -317,9 +315,6 @@ export class AonDesktop extends AonElement {
 				break;
 			case Apps.PAYROLL.app:
 				rootPanel('<aon-laboral></aon-laboral>');
-				break;
-			case Apps.COMUNICA.app:
-				rootPanel('<aon-comunica></aon-comunica>');
 				break;
 			case Apps.INVOICE.app:
 				rootPanel('<aon-invoice-panel></aon-invoice-panel>');

@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -42,14 +41,14 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)  {
+		super.doGet(req, resp);
 		try {
-			String path = req.getPathInfo() != null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo() : "/";
-			switch (path) {
+			switch (getPath()) {
 				case "/salary/pdf":
 					responseFile(req, resp, getSalaryPdf(req), MimeType.PDF);
 					break;
 				default:
-					responseJson(req, resp, path);
+					responseJson(req, resp);
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -61,24 +60,23 @@ public class ContractServlet extends AonApiHttpServlet {
 		doGet(req, resp);
 	}
 	
-	private void responseJson(HttpServletRequest req, HttpServletResponse resp, String path) {
-		super.doGet(req, resp);
+	private void responseJson(HttpServletRequest req, HttpServletResponse resp) {
 		try {
-			switch (path) {
-			case "/":
-				response(req, resp, getAllEmployeesInfo());
-				break;
-			case "/employee/workplace":
-				response(req, resp, getAllEmployeesWorkplace());
-				break;
-			case "/employee/salaries":
-				response(req, resp, getEmployeeSalaries());
-				break;
-			case "/enterprise/salaries":
-				response(req, resp, getEnterpriseSalaries());
-				break;
-			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+			switch (getPath()) {
+				case "/":
+					response(req, resp, getAllEmployeesInfo());
+					break;
+				case "/employee/workplace":
+					response(req, resp, getAllEmployeesWorkplace());
+					break;
+				case "/employee/salaries":
+					response(req, resp, getEmployeeSalaries());
+					break;
+				case "/enterprise/salaries":
+					response(req, resp, getEnterpriseSalaries());
+					break;
+				default:
+					throw new Exception("La ruta introducida es incorrecta.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -146,14 +144,11 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 	private File getSalaryPdf(HttpServletRequest req) throws JSONException, IOException {
 		LOGGER.info("[GET] SALARY PDF");
-		String param = new String(Base64.getDecoder().decode(req.getParameter("json")));
-		
-		JSONObject json = new JSONObject(param);
-		String domainName = json.getString("domain_name");
-		Integer salaryId = json.optInt("salaryId");
+
+		Integer salaryId =  getParams().optInt("salaryId");
 	
-		File file = File.createTempFile("nomina", "pdf");
-		JooqPayrollBuilder.generatePayroll(domainName, new FileOutputStream(file), salaryId);
+		File file = File.createTempFile("nomina", "");
+		JooqPayrollBuilder.generatePayroll(getDomain().getName(), new FileOutputStream(file), salaryId);
 		return file;
 	}
 	

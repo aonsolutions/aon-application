@@ -9,7 +9,7 @@ const formatParams = (params) => {
   );
 };
 
-export const request = (method, url, token, sendData, fn) => {
+const xmlHttpRequestAon = (method, url, token, sendData) =>{
   let xhr = new XMLHttpRequest();
   if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
   xhr.open(method, url);
@@ -30,6 +30,11 @@ export const request = (method, url, token, sendData, fn) => {
   xhr.setRequestHeader("domain_login", domainLogin);
   xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  return xhr;
+}
+
+export const request = (method, url, token, sendData, fn) => {
+  let xhr = xmlHttpRequestAon(method, url, token, sendData);
   xhr.send(JSON.stringify(sendData));
   xhr.onload = () => {
     if (xhr.status != 200) {
@@ -42,7 +47,6 @@ export const request = (method, url, token, sendData, fn) => {
       fn(xhr.response);
     }
   };
-
   xhr.onprogress = (event) => {
     if (event.lengthComputable) {
       console.log(`Received ${event.loaded} of ${event.total} bytes`);
@@ -87,17 +91,23 @@ export const requestBidoq = (method, url, sendData, fn) => {
   };
 };
 
-export const requestFile = (method, url, fn) => {
-  const xhr = new XMLHttpRequest();
-  xhr.open(method, url);
-  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.responseType = "blob";
-  xhr.send();
+export const requestFile = (method, url, sendData, fn) => {
+  const xhr = xmlHttpRequestAon(method, url, getToken(), sendData);
+  xhr.onreadystatechange = () =>  {
+     if(xhr.readyState == 2 && xhr.status == 200) {xhr.responseType = "blob";}
+  }
   xhr.onload = () => {
-    xhr.status != 200 ? fn(undefined, xhr.response) : fn(xhr.response);
+    let fileName = "document";
+    try {fileName = xhr.getResponseHeader('Content-Disposition').split('filename=')[1].split(';')[0].toString().replace(/"/g, '')} catch (e) {}
+    if(xhr.status != 200){
+      let response =  typeof  xhr.response === "string" ? JSON.parse(xhr.response) : xhr.response;
+      fn(undefined,  response)
+    } else {
+      fn({blob:xhr.response,fileName});
+    }
   };
-  xhr.onerror = () => {};
+  xhr.send(JSON.stringify(sendData));
+  xhr.onerror = () => {console.log("error");};
 };
 
 export const get = (url, data) => {
@@ -135,56 +145,55 @@ export const remove = (url, data) => {
 
 export const getToken = () => localStorage.getItem("aon_session_id");
 
-export const openFile = async (url, data) => {
-  const token = getToken();
-  const domainId = localStorage.getItem("aon_domain_id");
-  const domainName = localStorage.getItem("aon_domain_name");
-  const datos = {
-    ...data,
-    domain_name: domainName,
-    session_id: token,
-    domain_id: domainId,
+const blobToBase64 = blob => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(blob);
+  reader.onload = () => resolve(reader.result);
+  reader.onerror = error => reject(error);
+});
+
+/**
+ * 
+ * @param {String} base64Data 
+ * @param {String} fileName 
+ * @returns {Object} Object {fileBase64, fileName, contentType, action}
+ */
+const objFileMobile = (base64Data, fileName = undefined) => {
+  const base64Str = base64Data.replace(/^data:.+;base64,/, "");
+  const contentType = base64Data.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0];
+  if(!fileName){
+    fileName = "document";
+    const extension = extensionsEnums[contentType];
+    if(contentType&&extension) fileName = `${fileName}.${extension}`;
+  }
+  return {
+    fileBase64: base64Str,
+    fileName,
+    contentType,
+    action: "fileDownload",
   };
-  const json = btoa(JSON.stringify(datos));
-  const newUrl = `${url}?json=${json}`;
+}
 
-  if (webkitRequestMobile())
-    await openFileMobile(newUrl)
-      .then(async (obj) => await actionRequestMobile(obj))
-      .catch((e) => null);
-  else openFileDesktop(newUrl);
-
-  return;
-};
-
-export const openFileMobile = async (url) =>
-  new Promise((resolve, reject) => {
-    requestFile("GET", url, (result, error) => {
-      if (error) reject(error);
-      else {
-        const reader = new FileReader();
-        reader.readAsDataURL(result);
-        reader.onload = function () {
-          let fileName =  "document";
-          const base64Data = reader.result.toString();
-          const base64Str = base64Data.replace(/^data:.+;base64,/, "");
-          const contentType = base64Data.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0];
-          const extension = extensionsEnums[contentType];
-          if(contentType&&extension) fileName = `${fileName}.${extension}`;
-          const obj = {
-            fileBase64: base64Str,
-            fileName,
-            contentType,
-            action: "fileDownload",
-          };
-          resolve(obj);
-        };
-        reader.onerror = function () {
-          reject(true);
-        };
+export const openFile = async (url, data) => new Promise(async (resolve, reject) => {
+  requestFile("GET", url, data, async(result, error) => {
+    if (error) reject(error);
+    else {
+      const {blob, fileName} = result;
+      if (webkitRequestMobile()){
+         //------------ IS MOBILE APP---------
+        const base64Data = await blobToBase64(blob).catch(e=>reject(e));
+        const obj = objFileMobile(base64Data, fileName);
+        await actionRequestMobile(obj);
+      } else {
+        // ------------IS DESKTOP---------------
+        const newUrl = URL.createObjectURL(blob);
+        openFileDesktop(newUrl);
+        setTimeout(()=>{ URL.revokeObjectURL(url);},50);
       }
-    });
+      resolve(true);
+    }
   });
+});
 
 export const openFileDesktop = (url) => open(url);
 
@@ -214,3 +223,33 @@ export const actionRequestMobile = (data) => {
     resolve(result);
   });
 };
+
+const requestFileUrl = (method, url, fn) => {
+  const xhr = new XMLHttpRequest();
+  xhr.open(method, url);
+  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.responseType = "blob";
+  xhr.send();
+  xhr.onload = () => {
+    xhr.status != 200 ? fn(undefined, xhr.response) : fn(xhr.response);
+  };
+  xhr.onerror = () => {};
+};
+
+export const openFileMobile = async (url) => new Promise((resolve, reject) => {
+    requestFileUrl("GET", url, (result, error) => {
+      if (error) reject(error);
+      else {
+        const reader = new FileReader();
+        reader.readAsDataURL(result);
+        reader.onload = function () {
+          const obj = objFileMobile(reader.result.toString());
+          resolve(obj);
+        };
+        reader.onerror = function () {
+          reject(true);
+        };
+      }
+    });
+});

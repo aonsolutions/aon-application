@@ -1,8 +1,8 @@
-import { AonElement } from "../../components/AonElement.js";
-import { setDate } from "../../services/utils.js";
-import { getMovements, getEmployee } from "../../services/service.js";
-import "../../components/aon-table.js";
-import "../../components/aon-mobile-list.js";
+import { AonElement } from "../../../components/AonElement.js";
+import { setDate } from "../../../services/utils.js";
+import { getMovements, getEmployee } from "../../../services/service.js";
+import "../../../components/aon-table.js";
+import "../../../components/aon-mobile-list.js";
 
 export class AonMovementsList extends AonElement {
   TABLE_ID;
@@ -24,10 +24,11 @@ export class AonMovementsList extends AonElement {
 
   constructor() {
     super();
-    this.TABLE_ID = "aonMovementTable";
-    this.aonComunicaEl = this.getElement("aonComunica");
-    this.aonComunicaParentEl = this.aonComunicaEl.getParent();
-    this.toastEl = this.getElement(this.aonComunicaEl.TOAST);
+    this.id = this.id || "aonMovementsList";
+    this.TABLE_ID = this.id + "Table";
+    this.applicationEl = this.getApplication();
+    this.aonComunicaParentEl = this.applicationEl.getParent();
+    this.toastEl = this.getElement(this.applicationEl.TOAST);
   }
 
   connectedCallback() {
@@ -35,7 +36,7 @@ export class AonMovementsList extends AonElement {
   }
 
   disconnectedCallback() {
-    if (this.aonComunicaEl) this.aonComunicaEl.removeFloatOption();
+    if (this.applicationEl) this.applicationEl.removeFloatOption();
   }
 
   paintView() {
@@ -46,10 +47,10 @@ export class AonMovementsList extends AonElement {
 
   async build() {
     this.paintView();
-    this.aonComunicaEl.startLoader();
+    this.applicationEl.startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
-    this.aonComunicaEl.stopLoader();
+    this.applicationEl.stopLoader();
   }
 
   async getTableDesk() {
@@ -99,8 +100,8 @@ export class AonMovementsList extends AonElement {
 
   async aonMovement({ target: el }, { regime, ctaCti, nss, prev, situation }) {
     let id = "aonAltaDirecta";
-    this.aonComunicaEl.startLoader();
-    this.aonComunicaEl.setContentHTML(
+    this.applicationEl.startLoader();
+    this.applicationEl.setContentHTML(
       `<aon-alta-directa id="${id}"></aon-alta-directa>`
     );
     try {
@@ -117,7 +118,7 @@ export class AonMovementsList extends AonElement {
         }
       }
     } catch (error) {}
-    this.aonComunicaEl.stopLoader();
+    this.applicationEl.stopLoader();
   }
 
   async getData() {
@@ -144,7 +145,6 @@ export class AonMovementsList extends AonElement {
         } else {
           tipo_mov = `${tipo_mov} Consolidada`;
         }
-
         const status = `<span style="font-weight: 700;color: ${color};">${tipo_mov}</span>`;
         return {
           ...res,

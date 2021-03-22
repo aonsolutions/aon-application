@@ -5,12 +5,12 @@ export class AonCard extends AonElement {
 
  	CARD;
 	TITLE;
-  TITLE_SECTION1;
-  TITLE_SECTION2;
+	TITLE_SECTION1;
+	TITLE_SECTION2;
 	CONTENT;
 
 	static get observedAttributes() {
-		return ['visible'];
+		return ['visible', 'flex'];
 	}
 
 	get id() {
@@ -37,6 +37,14 @@ export class AonCard extends AonElement {
 		this.setAttribute('visible', visible);
 	}
 
+	get flex() {
+		return "true" == this.getAttribute('flex');
+	}
+
+	set flex(v) {
+		this.setAttribute('flex', v);
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		if('visible' === name){
 			if(this.getAttribute('visible') != undefined && 'false' == this.getAttribute('visible')){
@@ -44,7 +52,7 @@ export class AonCard extends AonElement {
 			} else {
 				this.style.display = 'block';
 			}
-		}
+		} 
 	}
 
 	constructor () {
@@ -61,25 +69,27 @@ export class AonCard extends AonElement {
 	}
 
 	build() {
+	
 		let div = this.createElement('div');
 		div.id = this.CARD;
-    div.className = 'aonCard';
+    	div.className = 'aonCard';
+		if(this.flex) div.classList.add("aonCardFlex");
 		this.appendChild(div);
 
 		let title = this.createElement('div');
 		title.id = this.TITLE;
 		title.className = 'aonCardTitle';
 
-    let section1 = this.createElement('section');
-    section1.id = this.TITLE_SECTION1;
-    section1.className = 'aonCardTitleSection';
-    section1.innerHTML = this.title;
-    title.appendChild(section1);
+		let section1 = this.createElement('section');
+		section1.id = this.TITLE_SECTION1;
+		section1.className = 'aonCardTitleSection';
+		section1.innerHTML = this.title;
+		title.appendChild(section1);
 
-    let section2 = this.createElement('section');
-    section2.id = this.TITLE_SECTION2;
-    section2.className = 'aonCardTitleSection aonCardTitleSectionEnd';
-    title.appendChild(section2);
+		let section2 = this.createElement('section');
+		section2.id = this.TITLE_SECTION2;
+		section2.className = 'aonCardTitleSection aonCardTitleSectionEnd';
+		title.appendChild(section2);
 
 		div.appendChild(title);
 

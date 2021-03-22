@@ -144,6 +144,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		JSONObject json = new JSONObject();
 		json.put(IConstants.MESSAGE, e.getMessage());
 		json.put(IConstants.TYPE, IConstants.ERROR);
+		json.put(IConstants.CLASS_NAME, e.getClass().getSimpleName());
 		addCorsHeader(resp);
 		giveBack(req, resp, json, new JSONObject());
 	}

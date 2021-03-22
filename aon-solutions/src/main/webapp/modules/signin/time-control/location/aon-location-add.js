@@ -70,37 +70,18 @@ export class AonLocationAdd extends AonElement {
   }
 
   paintView() {
-    let initHtml = `
-            <style>
-              .aonCard{
-                position: relative;
-                display: -ms-flexbox;
-                display: flex;
-                -ms-flex-direction: column;
-                flex-direction: column;
-                min-width: 0;
-                word-wrap: break-word;
-                background-color: #fff;
-                background-clip: border-box;
-                border: 1px solid rgba(0,0,0,.125);
-                border-radius: .25rem;
-              }
-              .gm-inset{
-                display: none !important;
-              }
-            </style>
-        `;
+
     const aonToolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}"> </aon-toolbar>`;
     const form = `
         <form id="${this.id}Form" action="#" onsubmit="return false;">
             <div id="${this.id}Div">
                 <div class="aonCol-sm-12">
-                    <aon-card id="${this.id}Card" title="Datos de la ${this.NAME}"></aon-card>
+                    <aon-card id="${this.id}Card" title="Datos de la ${this.NAME}" flex="true"></aon-card>
                 </div>
             </div>
         </form>`;
 
-    this.innerHTML = aonToolbar + initHtml + form;
+    this.innerHTML = aonToolbar + form;
 
     this.aonSigninEl.removeToolbarOptions();
 

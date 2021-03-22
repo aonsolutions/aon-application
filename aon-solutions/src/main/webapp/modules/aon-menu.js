@@ -5,7 +5,6 @@ import {getDomainUserRoles} from  '../services/service.js';
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import '../components/aon-icon.js';
 import '../components/aon-icon-button.js';
-import './comunic@/aon-comunica.js';
 import './messenger/aon-messenger.js';
 import './signin/aon-signin.js';
 import './faqs/aon-faqs.js';
@@ -126,9 +125,6 @@ export class AonMenu extends AonElement {
 				if(this.getDur().isPayrollManager()) {
 					this.buildAppMenu(Apps.PAYROLL);
 				} else rootPanel('<aon-laboral></aon-laboral>');
-				break;
-			case Apps.COMUNICA.app:
-				rootPanel('<aon-comunica></aon-comunica>');
 				break;
 			case Apps.INVOICE.app:
 				rootPanel('<aon-invoice-panel></aon-invoice-panel>');

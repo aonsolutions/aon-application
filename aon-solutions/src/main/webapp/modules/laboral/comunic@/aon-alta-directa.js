@@ -1,16 +1,16 @@
-import { AonElement } from '../../components/AonElement.js';
-import { INPUTS_ALL } from '../../environments/constants.js';
-import { setValueName, serializeForm, formatDateOrigin } from '../../services/utils.js';
-import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../services/service.js'
-import '../../components/aon-card.js';
-import '../../components/aon-input.js';
-import '../../components/aon-number.js';
-import '../../components/aon-date.js';
-import '../../components/aon-suggestion.js';
-import '../../components/aon-select.js';
-import '../../components/aon-switch.js';
-import '../../components/aon-icon-button.js';
-import { ToolbarType } from '../../models/enums.js';
+import { AonElement } from '../../../components/AonElement.js';
+import { INPUTS_ALL } from '../../../environments/constants.js';
+import { setValueName, serializeForm, formatDateOrigin } from '../../../services/utils.js';
+import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../../services/service.js'
+import '../../../components/aon-card.js';
+import '../../../components/aon-input.js';
+import '../../../components/aon-number.js';
+import '../../../components/aon-date.js';
+import '../../../components/aon-suggestion.js';
+import '../../../components/aon-select.js';
+import '../../../components/aon-switch.js';
+import '../../../components/aon-icon-button.js';
+import { ToolbarType } from '../../../models/enums.js';
 
 export class AonAltaDirecta extends AonElement {
     _contrato;
@@ -41,17 +41,17 @@ export class AonAltaDirecta extends AonElement {
         this.ACTION = 'CREATE';
         this.id = this.id || 'aonAltaDirecta';
         this.TOOLBAR = this.id + 'Toolbar';
-        this.aonComunica = this.getApplication();
-        this.aonComunicaParentEl = this.aonComunica.getParent();
-        this.aonComunicaToolbar = this.getElement('aonComunicaToolbar');
-        this.aonComunicaToolbar.setAttribute('option', 'Comunicar contrato');
-        this.TOAST = this.getElement(this.aonComunica.TOAST);
+        this.applicationEl = this.getApplication();
+        this.applicationElParentEl = this.applicationEl.getParent();
+        this.applicationElToolbar = this.getElement(this.applicationEl.TOOLBAR);
+        this.applicationElToolbar.setAttribute('option', 'Comunicar contrato');
+        this.TOAST = this.getElement(this.applicationEl.TOAST);
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if ("data" == name && newValue) {
             const textEdit =  'Modificar contrato';
-            this.aonComunicaToolbar.setAttribute('option', textEdit);
+            this.applicationElToolbar.setAttribute('option', textEdit);
             const toolbarEl = this.getElement(this.TOOLBAR);
             if(toolbarEl){
                 toolbarEl.title = textEdit
@@ -74,51 +74,24 @@ export class AonAltaDirecta extends AonElement {
 
     paintView() {
         const toolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="Alta directa"> </aon-toolbar>`;
-        const initHtml = `
-            <style>
-              .aonCard{
-                position: relative;
-                display: -ms-flexbox;
-                display: flex;
-                -ms-flex-direction: column;
-                flex-direction: column;
-                min-width: 0;
-                word-wrap: break-word;
-                background-color: #fff;
-                background-clip: border-box;
-                border: 1px solid rgba(0,0,0,.125);
-                border-radius: .25rem;
-              }
-              #searchDniTitle{
-                font-size: 12px;
-              }
-              .coefParcilD{
-                position: absolute;
-                top: 50%;
-                z-index: 9;
-              }
-            </style>
-            ${toolbar}
-        `;
-
         const form = `
         <form id="${this.id}Form" action="#" onsubmit="return false;">
             <div id="${this.id}Div">
                 <div class="aonCol-sm-12">
-                    <aon-card id="${this.id}EmpresaCard" title="Datos de la empresa"></aon-card>
+                    <aon-card id="${this.id}EmpresaCard" title="Datos de la empresa" flex="true"></aon-card>
                 </div>
                 <div class="aonCol-sm-12 aonCol-md-6">
-                    <aon-card id="${this.id}TrabajadorCard" title="Datos del trabajador"></aon-card>
+                    <aon-card id="${this.id}TrabajadorCard" title="Datos del trabajador" flex="true"></aon-card>
                 </div>
                 <div class="aonCol-sm-12 aonCol-md-6">
-                    <aon-card id="${this.id}ContratoCard" title="Datos del contrato"></aon-card>
+                    <aon-card id="${this.id}ContratoCard" title="Datos del contrato" flex="true"></aon-card>
                 </div>
             </div>
         </form>`;
 
-        this.innerHTML = initHtml + form;
+        this.innerHTML = toolbar + form;
 
-        this.aonComunica.removeToolbarOptions();
+        this.applicationEl.removeToolbarOptions();
 
         let aonEmpresaCard = this.getElement(`${this.id}EmpresaCard`);
         aonEmpresaCard.setContentHTML(`
@@ -190,7 +163,7 @@ export class AonAltaDirecta extends AonElement {
                     <aon-number id="horas" description="Horas" format="true" decimals="2"></aon-number>
                 </div>
                 <div class="aonCol-sm-3">
-                    <aon-number name="coefparcial" id="coefparcial" description="Coeficiente Parcial"></aon-number>
+                    <aon-number name="coefparcial" id="coefparcial" description="Coef. Parcial"></aon-number>
                 </div>
             </div>
             <aon-input name="situation" id="situation" description="situation" value="AL" visible="false"></aon-input>
@@ -222,13 +195,13 @@ export class AonAltaDirecta extends AonElement {
             id: 'Idc',
             name: 'Obtener IDC',
             aonIcon: 'aon_idc',
-        }, () => this.aonComunicaParentEl.getIdc(this.data));
+        }, () => this.applicationElParentEl.getIdc(this.data));
 
         toolbar.addButton2({
             id: 'Ta',
             name: 'Obtener TA',
             aonIcon: 'aon_ta',
-        }, () => this.aonComunicaParentEl.getTa(this.data));
+        }, () => this.applicationElParentEl.getTa(this.data));
 
         toolbar.addButton2({
             id: 'Delete',
@@ -236,7 +209,7 @@ export class AonAltaDirecta extends AonElement {
             icon: 'delete_forever',
         }, async () => {
             try {
-                await this.aonComunicaParentEl.deleteMov(this.data);
+                await this.applicationElParentEl.deleteMov(this.data);
                 this.back();
             } catch (error) {
                 console.log(error);
@@ -388,7 +361,7 @@ export class AonAltaDirecta extends AonElement {
 
         //hidden toolbar button
         let buttonToolbar = { "Idc": false, "Ta": false };
-        if (this.aonComunicaParentEl.anularCondition(obj.situation, obj.fecha)) buttonToolbar["Delete"] = false;
+        if (this.applicationElParentEl.anularCondition(obj.situation, obj.fecha)) buttonToolbar["Delete"] = false;
         this.hiddenButtonToolbar(buttonToolbar);
         //end hidden toolbar
 
@@ -410,7 +383,9 @@ export class AonAltaDirecta extends AonElement {
         let coefparcialInput = this.getElement('coefparcialInput')
         let span = document.createElement('span');
         span.innerHTML = '0,';
-        span.classList = 'coefParcilD';
+        span.style.position = "absolute";
+        span.style.top = "50%";
+        span.style.zIndex = "9";
         coefparcialInput.parentNode.insertBefore(span, coefparcialInput);
     }
 
@@ -634,7 +609,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     formSubmit() {
-        this.aonComunica.confirmDialog("Comunicar", "Desea comunicar a la seguridad social?", () => {
+        this.applicationEl.confirmDialog("Comunicar", "Desea comunicar a la seguridad social?", () => {
             switch (this.ACTION) {
                 case "CREATE":
                     this.save();
@@ -649,20 +624,20 @@ export class AonAltaDirecta extends AonElement {
     }
 
     async save() {
-        this.aonComunica.startLoading();
+        this.applicationEl.startLoading();
         try {
             await postAltaDirecta(this.getContrato());
             this.TOAST.start({ message: 'Alta procesada!', type: 'success', delay: 3000 });
-            this.aonComunicaParentEl._movements = undefined;
-            this.back();
+            // this.applicationElParentEl._movements = undefined;
+            // this.back();
         } catch (error) {
             this.TOAST.start({ message: error, type: 'error' });
         }
-        this.aonComunica.stopLoading();
+        this.applicationEl.stopLoading();
     }
 
     async update() {
-        this.aonComunica.startLoading();
+        this.applicationEl.startLoading();
         let cto_new = this.getContrato();
         const cto_old = this._contrato;
         for (const property in cto_new) {
@@ -673,16 +648,16 @@ export class AonAltaDirecta extends AonElement {
         try {
             await postUpdateCto(cto_new);
             this.TOAST.start({ message: 'Contrato modificado!', type: 'primary', delay: 3000 });
-            this.aonComunicaParentEl._movements = undefined;
+            this.applicationElParentEl._movements = undefined;
             this.back();
         } catch (error) {
             this.TOAST.start({ message: error, type: 'error' });
         }
-        this.aonComunica.stopLoading();
+        this.applicationEl.stopLoading();
     }
 
     back() {
-        this.aonComunica.setContentHTML(`<aon-movements></aon-movements>`);
+        this.applicationEl.setContentHTML(`<aon-movements></aon-movements>`);
     }
 
     async getNaf() {
