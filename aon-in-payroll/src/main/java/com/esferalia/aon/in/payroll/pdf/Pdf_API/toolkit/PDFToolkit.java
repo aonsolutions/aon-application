@@ -313,7 +313,7 @@ public class PDFToolkit {
 	/**
 	 * <p><b>Description:</b> <i>Crops a String based on max width, font size, and font.<i></p>
 	 * @param max  &nbsp; maximum width
-	 * @return List of Strings
+	 * @return String
 	 */
 	public static String cropped_string(String text, double width, PDFont font, float fontSize) throws IOException {
 		if(text == null) return text;

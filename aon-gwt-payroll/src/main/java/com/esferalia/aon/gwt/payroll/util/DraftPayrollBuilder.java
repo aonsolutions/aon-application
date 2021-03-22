@@ -1,21 +1,16 @@
 package com.esferalia.aon.gwt.payroll.util;
 
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.get_lines;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
-
-import org.jooq.DSLContext;
 
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
@@ -26,11 +21,6 @@ import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultP
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Accrual;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Deduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -65,11 +55,9 @@ public class DraftPayrollBuilder {
 				//ADDRESS FITTING
 				if (salary.getEnterpriseAddress() != null) {
 					List<String> address = null;
-					try {
-						address = get_lines(salary.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+					if (salary.getEnterpriseAddress()!=null)
+						address = Arrays.asList(Utilities.separateString(salary.getEnterpriseAddress(), 40));
+//						address = get_lines(salary.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
 					if (address != null && address.size() > 1) {
 						dpb.setAddress(address.get(0) != null ? address.get(0).trim() : null);
 						dpb.setAddress_2(address.get(1));
@@ -112,7 +100,17 @@ public class DraftPayrollBuilder {
 				payments.stream().filter(DraftPayrollBuilder::filter).sorted(Comparator.comparing(p -> {
 					return !(p.getDescription() == null || p.getDescription().isEmpty()) ? p.getDescription() : "zzzzzz"; //Nulls or empties down
 				})).forEach(p -> {
-					Accrual accrual = new Accrual(p.getAmount(), p.getDescription().replaceAll("\\[\\d*\\]", ""));
+					
+					String description = p.getDescription().replaceAll("\\[\\d*\\]", "");
+					if (description.length() > 50) {
+						try {
+							description = PDFToolkit.cropped_string(description, 260, PdfFonts.HELVETICA, 9f);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}	
+					}
+					
+					Accrual accrual = new Accrual(p.getAmount(), description);
 					if (!paymentMap.containsKey(p.getType().ordinal()))
 						paymentMap.put(p.getType().ordinal(), new ArrayList<Accrual>());
 					 
@@ -123,35 +121,6 @@ public class DraftPayrollBuilder {
 						paymentMap.get(p.getType().ordinal()).add(accrual);
 				});
 				dpb.setAccruals(paymentMap);
-				
-				
-				
-//				dpb.setAccrual_total(salary.getTotalPayment());
-//				Collection<IPayment> payments = salary.getPaymentS();
-//				Map<Integer, ArrayList<DefaultPayrollAccrual>> accruals = new HashMap<Integer, ArrayList<DefaultPayrollAccrual>>();
-//				
-//				Map<Integer, HashMap<String, DefaultPayrollAccrual>> accrualsSet = new HashMap<Integer, HashMap<String, DefaultPayrollAccrual>>();
-//				
-//				payments.stream().sorted(Comparator.comparing(p -> p.getDescription())).filter(DraftPayrollBuilder::filter).forEach(p -> {
-//					DefaultPayrollAccrual accrual = new DefaultPayrollAccrual(p.getAmount(), p.getDescription().replaceAll("\\[\\d*\\]", ""));
-//					if (!accrualsSet.containsKey(p.getType().ordinal()))
-//						accrualsSet.put(p.getType().ordinal(), new HashMap<String, DefaultPayrollAccrual>());
-//					if (accrualsSet.get(p.getType().ordinal()).containsKey(p.getDescription())) {
-//						DefaultPayrollAccrual repAcc = accrualsSet.get(p.getType().ordinal()).get(p.getDescription());
-//						
-//						repAcc = new DefaultPayrollAccrual(repAcc.getAmount().get() + p.getAmount() , repAcc.getDescription().get());
-//						accrual = repAcc;
-//					}
-//					accrualsSet.get(p.getType().ordinal()).put(p.getDescription(), accrual);
-//				});
-//				
-//				accrualsSet.keySet().forEach(k -> {
-//					ArrayList<DefaultPayrollAccrual> list = new ArrayList<DefaultPayrollAccrual>();
-//					list.addAll(accrualsSet.get(k).values());
-//					accruals.put(k, list);
-//				});
-//				
-//				dpb.setAccruals(accruals);
 			}
 			//DEDUCTIONS
 			{
@@ -242,7 +211,7 @@ public class DraftPayrollBuilder {
 						ded.setAmount(ded.getAmount().get()+deduction.getAmount().get());
 					} else
 						deductionsMap.get(type).add(deduction);
-					inserted.add(getDeductionType(d.getType().ordinal()));
+					inserted.add(Utilities.getDeductionType(d.getType().ordinal()));
 				});
 				
 
@@ -259,6 +228,22 @@ public class DraftPayrollBuilder {
 					deductionsMap.get(1).add(new Deduction(0d, "Formación profesional", 0d));
 				if (!inserted.contains("IRPF"))
 					deductionsMap.get(2).add(new Deduction(0d, "Retribuciones dinerarias", 0d));
+				
+				
+				//EMBARGOS (placed at 'Other deductions' -type 5- field on 'Deductions')
+				{
+					salary.getEmbargoS().forEach(e -> {
+						Deduction emb = new Deduction(e.getAmount(), e.getDescription(), null);
+						if (deductionsMap.containsKey(5))
+							deductionsMap.get(5).add(emb);
+						else {
+							ArrayList<Deduction> deducts = new ArrayList<Deduction>();
+							deducts.add(emb);
+							deductionsMap.put(5, deducts);
+						}
+					});
+				}
+				
 
 				dpb.setDeductions(deductionsMap);
 			}
@@ -291,7 +276,7 @@ public class DraftPayrollBuilder {
 					cbb.setUnemployment_ap_enterprise(Optional.empty());
 					cbb.setUnemployment_type(Optional.empty());
 				}
-				//COSTS
+				//PICKING THEM UP
 				Collection<IDeduction> costs = salary.getCostS();
 				
 				cbb.setMonthly_amount(Optional.ofNullable(salary.getRemuneration()));
@@ -368,7 +353,7 @@ public class DraftPayrollBuilder {
 			}	
 			dpb.setPayroll_total(salary.getTotalLiquid());
 			
-			Optional<InputStream> optLogo = getSignature(domainName);
+			Optional<InputStream> optLogo = Utilities.getSignature(domainName);
 			
 			
 			dpt.print(outputStream, dpb.build(), optLogo, Optional.ofNullable(new Locale("es")));
@@ -377,56 +362,12 @@ public class DraftPayrollBuilder {
 	
 	
 	
-	
-	private static String getDeductionType (Integer type) {
-		switch (type) {
-			case 0:
-				return "CGC";
-			case 2:
-				return "DESMPL";
-			case 3:
-				return "FP";
-			case 4:
-				return "ESTR";
-			case 5:
-				return "NO_ESTR";
-			case 6:
-				return "IRPF";
-			case 7:
-				return "ADELANTO";
-			case 8:
-				return "EN_ESPECIE";
-			case 9:
-				return "OTRO";
-			case 10:
-				return "EMBARGO";
-			default:
-				return null;
-		}
-	}
 
 	private static boolean filter (IPayment payment) {
 		return !(payment.getAmount() == 0 && !AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));
 	}
 	
-	private static Optional<InputStream> getSignature(String domainName) {
-		
-		Optional<InputStream> optLogo = Optional.empty();
-		
-		try (AONContext aonContext = AONContext.getAONContext(domainName, "")) {
-			Attach attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
-					f -> f.getTypeProperty().eq(RegistryAttachmentType.SIGNATURE.value())
-							.and(f.getDomainProperty().eq(aonContext.getDomainId())),
-					AttachType.REGISTRY);
-			if (attach1 == null || attach1.getData() == null)
-				attach1 = AON.getAttach(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
-					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
-							.and(f.getDomainProperty().eq(aonContext.getDomainId())),
-					AttachType.REGISTRY);
-			if (attach1 != null && attach1.getData() != null)
-				optLogo = Optional.ofNullable(new ByteArrayInputStream(attach1.getData()));
-		} catch (Exception e) {}
-		return optLogo;
-	}
+	
+
 
 }

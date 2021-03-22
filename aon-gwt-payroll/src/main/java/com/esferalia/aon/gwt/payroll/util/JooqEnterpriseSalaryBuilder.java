@@ -97,7 +97,7 @@ public class JooqEnterpriseSalaryBuilder {
 			condition = WORKPLACE.ID.eq(workplaceId);
 		else
 			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
-		condition = condition.and(SALARY.END_DATE.between(new java.sql.Date(startDate.getTime())
+		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
 				, new java.sql.Date(endDate.getTime())));
 		generateEnterprisePayroll(outputStream, domain, condition, startDate, enterpriseId, workplaceId);
 	}

@@ -55,6 +55,11 @@ public class CostPDFServlet extends HttpServlet {
 		String request = AonServletUtils.getFileName(req.getRequestURI());
 		String selectedSalaries = req.getParameter("selectedSalaries");
 		Integer[] salaryIds = getSalaryIds(req, selectedSalaries);
+		
+		
+		
+		
+		
 		if (salaryIds.length > 0)
 			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(resp.getOutputStream()
 					, req.getServerName()
@@ -152,80 +157,80 @@ public class CostPDFServlet extends HttpServlet {
 	}
 
 // ------------------------------------------------------------------------
-
-	public static Map<String, Map<String, EnterprisePayrollEntry>> getEnterprisePayrolls(DSLContext ctx, Condition condition)
-			throws IOException {
-
-		Map<Integer, Double> bonusesMap = ctx.select().from(SALARY).innerJoin(CONTRACT)
-				.on(CONTRACT.ID.eq(SALARY.CONTRACT)).innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
-				.innerJoin(ENTERPRISE).onKey()
-				.innerJoin(SALARY_BONUS).on(SALARY.ID.eq(SALARY_BONUS.SALARY)).where(condition)
-				.fetchStreamInto(SALARY_BONUS)
-				.collect(Collectors.toMap(s -> s.getSalary(), s -> s.getAmount(), (a1, a2) -> a1 + a2));
-
-		Map<Integer, Map<String, Double>> deductions = new HashMap<Integer, Map<String, Double>>();
-		ctx.select().from(SALARY).innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT)).innerJoin(WORKPLACE)
-				.on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID)).innerJoin(ENTERPRISE).onKey().innerJoin(SALARY_DEDUCTION)
-				.on(SALARY.ID.eq(SALARY_DEDUCTION.SALARY)).where(condition).fetchStream().forEach(s -> {
-					if (deductions.get(s.get(SALARY.ID)) != null) {
-						deductions.get(s.get(SALARY.ID)).put(s.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT),
-								s.get(SALARY_DEDUCTION.AMOUNT));
-					} else {
-						Map<String, Double> map = new HashMap<String, Double>();
-						map.put(s.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT), s.get(SALARY_DEDUCTION.AMOUNT));
-						deductions.put(s.get(SALARY.ID), map);
-
-					}
-				});
-
-		Map<String, Map<String, EnterprisePayrollEntry>> map = new HashMap<String, Map<String, EnterprisePayrollEntry>>();
-		ctx.select().from(SALARY).innerJoin(CONTRACT).onKey()
-			.innerJoin(WORKPLACE).onKey().innerJoin(ENTERPRISE).onKey().where(condition).orderBy(WORKPLACE.DESCRIPTION).fetchStream()
-			.forEach(r -> {
-				SalaryType st = typeOf(r.get(SALARY.TYPE), SalaryType.class);
-				
-				Double totalCost = null;
-				Double totalSS = null;
-				
-				try {
-					totalCost = r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS) + r.get(SALARY.TOTAL_ENTERPRISE);
-				} catch (NullPointerException e) {}
-				try {
-					totalSS = totalCost + r.get(SALARY.TOTAL_IRPF);
-				} catch (NullPointerException e) {}
-				
-				EnterprisePayrollEntry entry = new EnterprisePayrollEntry(
-						EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM
-						, r.get(SALARY.EMPLOYEE_NAME)
-						, st.getName(new Locale("es"))
-						, r.get(SALARY.TOTAL_PAYMENT)
-						, r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)
-						, r.get(SALARY.TOTAL_IRPF)
-						, r.get(SALARY.TOTAL_DEDUCTION)
-						, r.get(SALARY.TOTAL_LIQUID)
-						, r.get(SALARY.TOTAL_ENTERPRISE)
-						, totalCost
-						, totalSS
-						, bonusesMap.get(SALARY.ID));
-				entry.setEmpleado(Optional.ofNullable(r.get(SALARY.EMPLOYEE_NAME)));
-				entry.setTipo(Optional.ofNullable(st.getName(new Locale("es"))));
-				entry.setDevengado(Optional.ofNullable(r.get(SALARY.TOTAL_PAYMENT)));
-				entry.setSsTrab(Optional.ofNullable(r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)));
-				entry.setIrpf(Optional.ofNullable(r.get(SALARY.TOTAL_IRPF)));
-				entry.setDeducciones(Optional.ofNullable(r.get(SALARY.TOTAL_DEDUCTION)));
-				entry.setLiquido(Optional.ofNullable(r.get(SALARY.TOTAL_LIQUID)));
-				entry.setSsEmpr(Optional.ofNullable(r.get(SALARY.TOTAL_ENTERPRISE)));
-				entry.setSsTotal(Optional.ofNullable(entry.getSsEmpr().orElse(0d) + entry.getSsTrab().orElse(0d)));
-				entry.setCosteTotal(
-						Optional.ofNullable(entry.getIrpf().orElse(0d) + entry.getSsTotal().orElse(0d)));
-				if (!map.containsKey(r.get(WORKPLACE.DESCRIPTION)))
-					map.put(r.get(WORKPLACE.DESCRIPTION), new HashMap<String, EnterprisePayrollEntry>());
-				map.get(r.get(WORKPLACE.DESCRIPTION)).put(String.valueOf(r.get(SALARY.ID)), entry);
-				
-			});
-
-		return map;
-	}
+//	@Deprecated
+//	public static Map<String, Map<String, EnterprisePayrollEntry>> getEnterprisePayrolls(DSLContext ctx, Condition condition)
+//			throws IOException {
+//
+//		Map<Integer, Double> bonusesMap = ctx.select().from(SALARY).innerJoin(CONTRACT)
+//				.on(CONTRACT.ID.eq(SALARY.CONTRACT)).innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
+//				.innerJoin(ENTERPRISE).onKey()
+//				.innerJoin(SALARY_BONUS).on(SALARY.ID.eq(SALARY_BONUS.SALARY)).where(condition)
+//				.fetchStreamInto(SALARY_BONUS)
+//				.collect(Collectors.toMap(s -> s.getSalary(), s -> s.getAmount(), (a1, a2) -> a1 + a2));
+//
+//		Map<Integer, Map<String, Double>> deductions = new HashMap<Integer, Map<String, Double>>();
+//		ctx.select().from(SALARY).innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT)).innerJoin(WORKPLACE)
+//				.on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID)).innerJoin(ENTERPRISE).onKey().innerJoin(SALARY_DEDUCTION)
+//				.on(SALARY.ID.eq(SALARY_DEDUCTION.SALARY)).where(condition).fetchStream().forEach(s -> {
+//					if (deductions.get(s.get(SALARY.ID)) != null) {
+//						deductions.get(s.get(SALARY.ID)).put(s.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT),
+//								s.get(SALARY_DEDUCTION.AMOUNT));
+//					} else {
+//						Map<String, Double> map = new HashMap<String, Double>();
+//						map.put(s.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT), s.get(SALARY_DEDUCTION.AMOUNT));
+//						deductions.put(s.get(SALARY.ID), map);
+//
+//					}
+//				});
+//
+//		Map<String, Map<String, EnterprisePayrollEntry>> map = new HashMap<String, Map<String, EnterprisePayrollEntry>>();
+//		ctx.select().from(SALARY).innerJoin(CONTRACT).onKey()
+//			.innerJoin(WORKPLACE).onKey().innerJoin(ENTERPRISE).onKey().where(condition).orderBy(WORKPLACE.DESCRIPTION).fetchStream()
+//			.forEach(r -> {
+//				SalaryType st = typeOf(r.get(SALARY.TYPE), SalaryType.class);
+//				
+//				Double totalCost = null;
+//				Double totalSS = null;
+//				
+//				try {
+//					totalCost = r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS) + r.get(SALARY.TOTAL_ENTERPRISE);
+//				} catch (NullPointerException e) {}
+//				try {
+//					totalSS = totalCost + r.get(SALARY.TOTAL_IRPF);
+//				} catch (NullPointerException e) {}
+//				
+//				EnterprisePayrollEntry entry = new EnterprisePayrollEntry(
+//						EnterprisePayrollEntry.EnterpriseEntryType.AON_SYSTEM
+//						, r.get(SALARY.EMPLOYEE_NAME)
+//						, st.getName(new Locale("es"))
+//						, r.get(SALARY.TOTAL_PAYMENT)
+//						, r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)
+//						, r.get(SALARY.TOTAL_IRPF)
+//						, r.get(SALARY.TOTAL_DEDUCTION)
+//						, r.get(SALARY.TOTAL_LIQUID)
+//						, r.get(SALARY.TOTAL_ENTERPRISE)
+//						, totalCost
+//						, totalSS
+//						, bonusesMap.get(SALARY.ID));
+//				entry.setEmpleado(Optional.ofNullable(r.get(SALARY.EMPLOYEE_NAME)));
+//				entry.setTipo(Optional.ofNullable(st.getName(new Locale("es"))));
+//				entry.setDevengado(Optional.ofNullable(r.get(SALARY.TOTAL_PAYMENT)));
+//				entry.setSsTrab(Optional.ofNullable(r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)));
+//				entry.setIrpf(Optional.ofNullable(r.get(SALARY.TOTAL_IRPF)));
+//				entry.setDeducciones(Optional.ofNullable(r.get(SALARY.TOTAL_DEDUCTION)));
+//				entry.setLiquido(Optional.ofNullable(r.get(SALARY.TOTAL_LIQUID)));
+//				entry.setSsEmpr(Optional.ofNullable(r.get(SALARY.TOTAL_ENTERPRISE)));
+//				entry.setSsTotal(Optional.ofNullable(entry.getSsEmpr().orElse(0d) + entry.getSsTrab().orElse(0d)));
+//				entry.setCosteTotal(
+//						Optional.ofNullable(entry.getIrpf().orElse(0d) + entry.getSsTotal().orElse(0d)));
+//				if (!map.containsKey(r.get(WORKPLACE.DESCRIPTION)))
+//					map.put(r.get(WORKPLACE.DESCRIPTION), new HashMap<String, EnterprisePayrollEntry>());
+//				map.get(r.get(WORKPLACE.DESCRIPTION)).put(String.valueOf(r.get(SALARY.ID)), entry);
+//				
+//			});
+//
+//		return map;
+//	}
 	private static Pattern MONTH_PATTERN = Pattern.compile("(?<month>\\d{1,2})_(?<year>\\d{4})_(?<enterpriseid>\\d+)_(?<workplaceid>\\d+)");
 	
 	private Integer[] getSalaryIds(HttpServletRequest req, String selectedSalaries) {

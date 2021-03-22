@@ -1,14 +1,9 @@
 package com.esferalia.aon.gwt.payroll.util;
 
-import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit.get_lines;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Salary.SALARY;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -17,13 +12,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.DSLContext;
-
-import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
@@ -34,14 +25,12 @@ import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultP
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Accrual;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Deduction;
 import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
-import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.Salary.Cost;
+import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -50,17 +39,16 @@ import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.common.util.concurrent.AtomicDouble;
 /**
  * Class containing method/s to print payrolls from database data
  */
 public class JooqPayrollBuilder {
 	/**
 	 * Method to generate a PDF payroll from database data and place it on the OutputStream passed as parameter
-	 * @param domain The database domain name
+	 * @param enterpriseId The id of the enterprise
+	 * @param domainName The database domain name
+	 * @param user The user (may be empty)
 	 * @param outputStream The output stream which the PDF will be written on
 	 * @param salaryIds The IDs of the salaries in database
 	 */
@@ -71,11 +59,22 @@ public class JooqPayrollBuilder {
 			fillPayroll(outputStream, dpt, dpb, aonContext, salaryIds);
 		}
 	}
-	
+	/**
+	 * Method to generate a PDF payroll from database data and place it on the OutputStream passed as parameter
+	 * @param enterpriseId The id of the enterprise
+	 * @param domainName The database domain name
+	 * @param outputStream The output stream which the PDF will be written on
+	 * @param salaryIds The IDs of the salaries in database
+	 */
 	public static void generatePayroll(Integer enterpriseId, String domainName, OutputStream outputStream, Integer... salaryIds) {
 		generatePayroll(enterpriseId, domainName, "", outputStream, salaryIds);
 	}
-	
+	/**
+	 * Method to generate a PDF payroll from database data and place it on the OutputStream passed as parameter
+	 * @param domainName The database domain name
+	 * @param outputStream The output stream which the PDF will be written on
+	 * @param salaryIds The IDs of the salaries in database
+	 */
 	public static void generatePayroll(String domainName, OutputStream outputStream, Integer... salaryIds) {
 		generatePayroll(null, domainName, "", outputStream, salaryIds);
 	}
@@ -87,7 +86,6 @@ public class JooqPayrollBuilder {
 				p -> p.getIdProperty().in(salaryIds));
 
 		Collection<DefaultPayroll> payrolls = salaries.map(s -> {
-			System.out.println("\t"+s.getId());
 			
 			//PAYROLL RELATED DATA
 			{
@@ -120,16 +118,21 @@ public class JooqPayrollBuilder {
 				
 				RAddress raddress = AON.getRAddress(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(), p -> p.getRegistryProperty().eq(registry.getId()).and(p.getDomainProperty().eq(aonContext.getDomainId())));
 				String add = raddress.getFullAddress() != null ? raddress.getFullAddress() : s.getEnterpriseAddress();
+				
+				
 				if (add != null) {
-					List<String> address = null;
-					try {
-						address = get_lines(s.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-					if (address != null && address.size() > 1) {
-						dpb.setAddress(address.get(0) != null ? address.get(0).trim() : null);
-						dpb.setAddress_2(address.get(1));
+					String[] address = null;
+					//address = get_lines(add, 170, PdfFonts.HELVETICA, 9f);
+					address = Utilities.separateString(add, 40);
+					if (address != null && address.length > 1) {
+						dpb.setAddress(address[0] != null ? address[0].trim() : null);
+						String secline = "";
+						for (int i = 1; i<address.length; i++) {
+							secline += address[i];
+						}
+						if (secline.length() > 46)
+							secline = secline.substring(0, 45).concat("...");
+						dpb.setAddress_2(secline);
 					} else {
 						dpb.setAddress(s.getEnterpriseAddress());
 					}
@@ -152,7 +155,17 @@ public class JooqPayrollBuilder {
 				s.getPayments().stream().filter(JooqPayrollBuilder::filter).sorted(Comparator.comparing(p -> {
 					return !(p.getDescription() == null || p.getDescription().isEmpty()) ? p.getDescription() : "zzzzzz"; //Nulls or empties down
 				})).forEach(p -> {
-					Accrual accrual = new Accrual(p.getAmount(), p.getDescription().replaceAll("\\[\\d*\\]", ""));
+					
+					String description = p.getDescription().replaceAll("\\[\\d*\\]", "");
+					if (description.length() > 50) {
+						try {
+							description = PDFToolkit.cropped_string(description, 260, PdfFonts.HELVETICA, 9f);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}	
+					}
+					
+					Accrual accrual = new Accrual(p.getAmount(), description);
 					if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
 						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<Accrual>());
 					 
@@ -174,10 +187,10 @@ public class JooqPayrollBuilder {
 				
 				HashMap<Integer, ArrayList<Deduction>> deductionMap = new HashMap<Integer, ArrayList<Deduction>>();
 				s.getDeductions().stream().sorted(Comparator.comparing(d -> {
-					return !(d.getDescription() == null || d.getDescription().isEmpty()) ? d.getDescription() : chooseDescription(d.getDeductionType());
+					return !(d.getDescription() == null || d.getDescription().isEmpty()) ? d.getDescription() : Utilities.chooseDescription(d.getDeductionType());
 				})).forEach(d -> {
 					DeductionType dt = d.getDeductionType();
-					List<ContextData> percList = data.get("PORCENTAJE_" + getDeductionType(dt.ordinal()));
+					List<ContextData> percList = data.get("PORCENTAJE_" + Utilities.getDeductionType(dt.ordinal()));
 					ContextData cd = percList != null ? percList.get(0) : null;
 					Double percent = null;
 					if (cd != null) {
@@ -187,12 +200,13 @@ public class JooqPayrollBuilder {
 							percent = -1d;
 					}
 					
-					int type = chooseType(dt);
+					
+					int type = Utilities.chooseType(dt);
 					
 					String desc = d.getDescription();
 					
 					if(desc == null || desc.isEmpty()) {
-						desc = chooseDescription(dt);
+						desc = Utilities.chooseDescription(dt);
 					}
 						
 					
@@ -205,7 +219,7 @@ public class JooqPayrollBuilder {
 						ded.setAmount(ded.getAmount().get()+dpd.getAmount().get());
 					} else
 						deductionMap.get(type).add(dpd);
-					inserted.add(getDeductionType(dt.ordinal()));
+					inserted.add(Utilities.getDeductionType(dt.ordinal()));
 				});
 				
 				if (deductionMap.get(1)==null)
@@ -221,6 +235,24 @@ public class JooqPayrollBuilder {
 					deductionMap.get(1).add(new Deduction(0d, "Formación profesional", 0d));
 				if (!inserted.contains("IRPF"))
 					deductionMap.get(2).add(new Deduction(0d, "Retribuciones dinerarias", 0d));
+				
+				
+				//EMBARGOS (placed at 'Other deductions' -type 5- field on 'Deductions')
+				{
+					List<Embargo> embargos = s.getEmbargos();
+					embargos.forEach(e -> {
+						Deduction emb = new Deduction(e.getAmount(), e.getDescription(), null);
+						if (deductionMap.containsKey(5))
+							deductionMap.get(5).add(emb);
+						else {
+							ArrayList<Deduction> deducts = new ArrayList<Deduction>();
+							deducts.add(emb);
+							deductionMap.put(5, deducts);
+						}
+					});
+				}
+				
+				
 				dpb.setDeductions(deductionMap);
 				
 			}
@@ -291,7 +323,11 @@ public class JooqPayrollBuilder {
 					cbb.setForce_majeure_ap_enterprise(Optional.ofNullable(force_majeure_ap_enterprise));
 					cbb.setNo_struct_ap_enterprise(Optional.ofNullable(no_struct_ap_enterprise));
 					
-					cbb.setMonthly_amount(Optional.ofNullable(s.getRemuneration()));
+					//REMUNERATION AND PRO. EXT. BASE
+					{						
+						cbb.setExtra_proration_amount(Optional.ofNullable(s.getExtraProrationBase()));
+						cbb.setMonthly_amount(Optional.ofNullable(s.getRemuneration()));
+					}
 				}
 				
 				//SETTING PERCENTAGES
@@ -331,6 +367,7 @@ public class JooqPayrollBuilder {
 				}
 				//SETTING BASES
 				{
+					
 					cbb.setCommon_cont_base(Optional.ofNullable(s.getCommonContingenciesBase()));
 					cbb.setProfessional_cont_base(Optional.ofNullable(s.getProfessionalContingenciesBase()));
 					cbb.setIrpf_retrib_diner(Optional.ofNullable(s.getIrpfBase()));
@@ -370,97 +407,12 @@ public class JooqPayrollBuilder {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param type Ordinal of the DeductionType
-	 * @return a string containing the key name of the deduction type
-	 */
-	private static String getDeductionType (Integer type) {
-		switch (type) {
-			case 0:
-				return "CGC";
-			case 2:
-				return "DESMPL";
-			case 3:
-				return "FP";
-			case 4:
-				return "ESTR";
-			case 5:
-				return "NO_ESTR";
-			case 6:
-				return "IRPF";
-			case 7:
-				return "ADELANTO";
-			case 8:
-				return "EN_ESPECIE";
-			case 9:
-				return "OTRO";
-			case 10:
-				return "EMBARGO";
-			default:
-				return null;
-		}
-	}
 	
-	private static int chooseType (DeductionType dt) {
-		switch (dt.ordinal()) {
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-			return 1;
-		case 6:
-			return 2;
-		case 7:
-			return  3;
-		case 8:
-			return 4;
-		default:
-			return 5;
-		}
-	}
 	
-	private static String chooseDescription (DeductionType dt) {
-		switch (dt.ordinal()) {
-		case 0:
-			return "Contingencias comunes";
-		case 1:
-			return "Contingencias profesionales";
-		case 2:
-			return "Desempleo";
-		case 3:
-			return "Formación profesional";
-		case 4:
-			return "Horas extraordinarias (Estruc.)";
-		case 5:
-			return "Horas extraordinarias (No Estruc.)";
-		case 6:
-			return "Retribuciones dinerarias";
-		case 7:
-			return "Anticipo";
-		case 8:
-			return "En especie";
-		case 10:
-			return "Embargo";
-		default:
-			return "Otras deducciones";
-		}
-	}
+
 	
 	private static boolean filter (Payment payment) {
 		return !(payment.getAmount() == 0 && payment.getQuote() == 0);
 	}
-	
-	private static <T extends Enum<?>> T typeOf(Byte ordinal, Class<T> type) {
-	if ( ordinal == null )
-		return null;
-	try {
-		return type.getEnumConstants()[ordinal];
-	} catch ( Exception e ) {
-		return null;
-	}
-}
 	
 }
