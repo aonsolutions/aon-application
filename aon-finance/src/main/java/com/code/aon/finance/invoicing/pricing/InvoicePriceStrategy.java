@@ -1,5 +1,7 @@
 package com.code.aon.finance.invoicing.pricing;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -103,6 +105,21 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 			}
 			taxBreakDowns.add(breakDown);
 		}
+		
+		Collections.sort(taxBreakDowns, new Comparator<TaxBreakDown>() {
+			@Override
+			public int compare(TaxBreakDown o1, TaxBreakDown o2) {
+				int a = o1.getTaxType().ordinal();
+				int b = o2.getTaxType().ordinal();
+				if (a<b) {
+					return -1;
+				}
+				if (a>b) {
+					return 1;
+				}
+				return 0; 
+			}
+		});
 		return taxBreakDowns;
 	}
 	
