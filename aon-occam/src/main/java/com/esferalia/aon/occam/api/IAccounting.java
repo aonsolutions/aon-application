@@ -38,14 +38,10 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public interface IAccounting {
-	//		  	REGISTRY
-	public AccountingRegistry initialize(AONContext ctx, AccountingRegistry ar);
-	public Stream<AccountingRegistry> getAccountingRegistries(AONContext ctx, AccountingRegistryFilter filter);
-	public AccountingRegistry insert(AONContext ctx, AccountingRegistry reg);
-	public AccountingRegistry update(AONContext ctx, AccountingRegistry reg);
-
 	
-	// 			ACCOUNT
+	// **************************************************
+	// **************************************** [ACCOUNT]
+	// **************************************************
 	public Account getAccount(AONContext ctx,Integer accountId);		
 	public Account getAccount(AONContext ctx,String code);
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter);
@@ -54,14 +50,21 @@ public interface IAccounting {
 	public String getAccountNextCode(AONContext ctx, String prefix);
 	public Stream<Account> getAccounts(AONContext ctx, AccountParams params);
 	
-	// 			ACCOUNT PERIOD
+	// **************************************************
+	// ********************************* [ACCOUNT PERIOD]
+	// **************************************************
 	public LinkedList<AccountPeriod> getDomainPeriods(AONContext ctx);
-	public AccountPeriod fetchPeriod(AONContext ctx,Date date);
-	public AccountPeriod fetchPeriod(AONContext ctx,Integer id);
-	public AccountPeriod fetchPeriodByYear(AONContext ctx,int year);
-	public AccountPeriod insert(AONContext ctx,AccountPeriod ap);
-	public void update(AONContext ctx,AccountPeriod ap);
+	public AccountPeriod getPeriod(AONContext ctx,Date date);
+	public AccountPeriod getPeriod(AONContext ctx,Integer id);
+	public AccountPeriod getPeriodByYear(AONContext ctx,int year);
+	public AccountPeriod save(AONContext ctx,AccountPeriod ap);
 	public void delete(AONContext ctx,AccountPeriod ap);
+
+	//		  	REGISTRY
+	public AccountingRegistry initialize(AONContext ctx, AccountingRegistry ar);
+	public Stream<AccountingRegistry> getAccountingRegistries(AONContext ctx, AccountingRegistryFilter filter);
+	public AccountingRegistry insert(AONContext ctx, AccountingRegistry reg);
+	public AccountingRegistry update(AONContext ctx, AccountingRegistry reg);
 
 	// 			ACCOUNT ENTRY
 	public AccountEntry getAccountEntry(AONContext ctx,Integer id);

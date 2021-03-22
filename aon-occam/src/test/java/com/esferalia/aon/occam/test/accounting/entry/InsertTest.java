@@ -24,7 +24,7 @@ public class InsertTest extends AbstractOccamTest {
 	@Test
 	public void testInsert() throws ParseException {
 		Date now = new Date();
-		AccountPeriod period = ACCOUNTING.fetchPeriod(ctx, now );
+		AccountPeriod period = ACCOUNTING.getPeriod(ctx, now );
 		
 		AccountEntry ori = new AccountEntry()
 				.setDomain(ctx.getDomainId())

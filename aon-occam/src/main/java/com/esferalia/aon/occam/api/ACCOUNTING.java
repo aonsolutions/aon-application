@@ -48,59 +48,9 @@ public class ACCOUNTING {
 		return new AccountingImpl();
 	}
 
-	// ********************************************
-	// ********************* ACCOUNTING REGISTRY **
-	// ********************************************
-	public static AccountingRegistry initialize(String domainName, int domain, String user, AccountingRegistry ar) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getAccounting().initialize(ctx, ar);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	public static AccountingRegistry insert(String domainName,
-			int domainId, String login, AccountingRegistry reg) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getAccounting().insert(ctx, reg);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static AccountingRegistry update(String domainName,
-			int domainId, String login, AccountingRegistry reg) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getAccounting().update(ctx, reg);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Stream<AccountingRegistry> getAccountingRegistries(String domainName,
-			int domainId, String login, AccountingRegistryFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getAccounting().getAccountingRegistries(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-
-	}
-
-	// ********************************************
-	// ****************************** ACCOUNTING **
-	// ********************************************
+	// **************************************************
+	// **************************************** [ACCOUNT]
+	// **************************************************
 	public static Account getAccount(AONContext ctx, Integer id) {
 		return getAccounting().getAccount(ctx, id);
 	}
@@ -151,9 +101,7 @@ public class ACCOUNTING {
 			if (ctx != null)
 				ctx.close();
 		}
-
 	}
-
 
 	public static String getAccountNextCode(String domainName, int domain, String login, String prefix) {
 		AONContext ctx = null;
@@ -165,13 +113,15 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
-	
-	// ----------------------------- ACCOUNT PERIOD
+
+	// **************************************************
+	// ********************************* [ACCOUNT PERIOD]
+	// **************************************************
 	public static AccountPeriod getAccountPeriod(String domainName, Integer domainId, String login, Date date) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return fetchPeriod(ctx, date);
+			return getPeriod(ctx, date);
 		} finally {
 			if(ctx != null) {
 				ctx.close();
@@ -179,43 +129,6 @@ public class ACCOUNTING {
 		}
 	}
 	
-	public static AccountPeriod fetchPeriod(AONContext ctx, Date date) {
-		return getAccounting().fetchPeriod(ctx, date);
-	}
-
-	public static AccountPeriod fetchPeriodByYear(AONContext ctx, int year) {
-		return getAccounting().fetchPeriodByYear(ctx, year);
-	}
-
-	public static AccountPeriod fetchPeriod(AONContext ctx, Integer id) {
-		return getAccounting().fetchPeriod(ctx, id);
-	}
-
-	public static AccountPeriod insert(String domainName, Integer domainId, String login, AccountPeriod ap) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return insert(ctx, ap);
-		} finally {
-			if(ctx != null) {
-				ctx.close();
-			}
-		}
-	}
-	
-	public static AccountPeriod insert(AONContext ctx, AccountPeriod ap) {
-		return getAccounting().insert(ctx, ap);
-	}
-
-	public static void update(AONContext ctx, AccountPeriod ap) {
-		getAccounting().update(ctx, ap);
-	}
-
-	public static void delete(AONContext ctx, AccountPeriod ap) {
-		getAccounting().delete(ctx, ap);
-	}
-
-	// ------------------------------ ACCOUNT PERIOD
 	public static LinkedList<AccountPeriod> getDomainPeriods(String domainName,
 			int domain, String user) {
 		AONContext ctx = null;
@@ -226,6 +139,98 @@ public class ACCOUNTING {
 			if (ctx != null)
 				ctx.close();
 		}
+	}
+
+	public static AccountPeriod getPeriod(AONContext ctx, Date date) {
+		return getAccounting().getPeriod(ctx, date);
+	}
+
+	public static AccountPeriod getPeriodByYear(AONContext ctx, int year) {
+		return getAccounting().getPeriodByYear(ctx, year);
+	}
+
+	public static AccountPeriod getPeriod(AONContext ctx, Integer id) {
+		return getAccounting().getPeriod(ctx, id);
+	}
+
+	public static AccountPeriod save(String domainName, Integer domainId, String login, AccountPeriod ap) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return save(ctx, ap);
+		} finally {
+			if(ctx != null) {
+				ctx.close();
+			}
+		}
+	}
+	
+	public static AccountPeriod save(AONContext ctx, AccountPeriod ap) {
+		return getAccounting().save(ctx, ap);
+	}
+
+	public static void deleteAccountPeriod(String domainName, Integer domainId, String login, AccountPeriod ap) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			delete(ctx, ap);
+		} finally {
+			if(ctx != null) {
+				ctx.close();
+			}
+		}
+	}
+	public static void delete(AONContext ctx, AccountPeriod ap) {
+		getAccounting().delete(ctx, ap);
+	}
+
+
+	// -------------------------------- ACCOUNTING REGISTRY -------------------------------- 
+	public static AccountingRegistry initialize(String domainName, int domain, String user, AccountingRegistry ar) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().initialize(ctx, ar);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static AccountingRegistry insert(String domainName,
+			int domainId, String login, AccountingRegistry reg) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getAccounting().insert(ctx, reg);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static AccountingRegistry update(String domainName,
+			int domainId, String login, AccountingRegistry reg) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getAccounting().update(ctx, reg);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Stream<AccountingRegistry> getAccountingRegistries(String domainName,
+			int domainId, String login, AccountingRegistryFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getAccounting().getAccountingRegistries(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+
 	}
 
 	// ------------------------------ ACCOUNT ENTRY

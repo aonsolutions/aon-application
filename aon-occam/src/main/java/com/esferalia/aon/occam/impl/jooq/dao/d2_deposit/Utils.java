@@ -683,7 +683,7 @@ public class Utils {
 		params.setDomain(domainId);
 		params.setYear(year);
 		 
-		AccountPeriod period =  AccountPeriodDAO.fetchOneByYear(ctx, year);
+		AccountPeriod period =  AccountPeriodDAO.getPeriodByYear(ctx, year);
 		if (period == null) {
 //			throw new AonCoreException("Ejercicio '"+mod200.getYear()+"' no encontrado.");
 			return null;

@@ -752,6 +752,16 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Fecha de Vto.")
 	String dueDate();
+	
+	@DefaultMessage("Ejercicios contables")
+	String accountingPeriods();
+
+	@DefaultMessage("Fecha de inicio")
+	String initiationDate();
+
+	@DefaultMessage("Fecha de fin")
+	String deadline();
+
 
 //	@DefaultMessage("Contabilizar pago")
 //	String payAccount();

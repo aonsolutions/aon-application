@@ -62,7 +62,7 @@ public class AccountEntryTest {
 	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testWrongDomain() {
-		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,1974);
+		AccountPeriod period = ACCOUNTING.getPeriodByYear(ctx,1974);
 		if (period == null) {
 			period = new AccountPeriod();
 			period.setName("1974");
@@ -70,7 +70,7 @@ public class AccountEntryTest {
 			period.setDeadline( AonDateUtils.getDate(1974, 11, 31));
 			period.setStatus( AccountPeriodStatus.ACTIVE );
 			period.setDomain(ctx.getDomainId());
-			ACCOUNTING.insert(ctx, period);
+			ACCOUNTING.save(ctx, period);
 		}
 		AccountEntry accountEntry = new AccountEntry();
 		accountEntry.setDomain(100); // Other
@@ -82,7 +82,7 @@ public class AccountEntryTest {
 	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyTypeInsert() {
-		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,1974);
+		AccountPeriod period = ACCOUNTING.getPeriodByYear(ctx,1974);
 		if (period == null) {
 			period = new AccountPeriod();
 			period.setName("1974");
@@ -90,7 +90,7 @@ public class AccountEntryTest {
 			period.setDeadline( AonDateUtils.getDate(1974, 11, 31));
 			period.setStatus( AccountPeriodStatus.ACTIVE );
 			period.setDomain(ctx.getDomainId());
-			ACCOUNTING.insert(ctx, period);
+			ACCOUNTING.save(ctx, period);
 		}
 		AccountEntry accountEntry = new AccountEntry();
 		accountEntry.setDomain(ctx.getDomainId());
@@ -102,7 +102,7 @@ public class AccountEntryTest {
 	// @Test
 	@Ignore
 	public void testInsert() {
-		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,1974);
+		AccountPeriod period = ACCOUNTING.getPeriodByYear(ctx,1974);
 		if (period == null) {
 			period = new AccountPeriod();
 			period.setName("1974");
@@ -110,7 +110,7 @@ public class AccountEntryTest {
 			period.setDeadline( AonDateUtils.getDate(1974, 11, 31));
 			period.setStatus( AccountPeriodStatus.ACTIVE );
 			period.setDomain(ctx.getDomainId());
-			ACCOUNTING.insert(ctx, period);
+			ACCOUNTING.save(ctx, period);
 		}
 		Date now = new Date();
 		AccountEntry ae = new AccountEntry();

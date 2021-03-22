@@ -188,6 +188,16 @@
 								</aon:if>
 								<aon:if test="#{domainSwitcher.alphaUser}">
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_accountingPeriod"
+											action="gwt_accountingPeriod-acc"
+											title="#{bundle.accounting_period_module}">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="#{bundle.accounting_period_module}" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_customer-accounting"
 											action="gwt_customer-accounting"
 											title="Clientes">

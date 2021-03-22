@@ -22,7 +22,7 @@ public class AccountEntryTest extends AbstractOccamTest {
 	// @Test
 	@Ignore
 	public void testInsert() {
-		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,1974);
+		AccountPeriod period = ACCOUNTING.getPeriodByYear(ctx,1974);
 		if (period == null) {
 			period = new AccountPeriod();
 			period.setName("1974");
@@ -30,7 +30,7 @@ public class AccountEntryTest extends AbstractOccamTest {
 			period.setDeadline( AonDateUtils.getDate(1974, 11, 31));
 			period.setStatus( AccountPeriodStatus.ACTIVE );
 			period.setDomain(ctx.getDomainId());
-			ACCOUNTING.insert(ctx, period);
+			ACCOUNTING.save(ctx, period);
 		}
 		Date now = new Date();
 		AccountEntry ae = new AccountEntry();

@@ -16,7 +16,7 @@ public class ValidationSaveWrongDomainTest extends AbstractOccamTest {
 
 	@Test(expected=AonCoreException.class)
 	public void testWrongDomain() {
-		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,1974);
+		AccountPeriod period = ACCOUNTING.getPeriodByYear(ctx,1974);
 		if (period == null) {
 			period = new AccountPeriod();
 			period.setName("1974");
@@ -24,7 +24,7 @@ public class ValidationSaveWrongDomainTest extends AbstractOccamTest {
 			period.setDeadline( AonDateUtils.getDate(1974, 11, 31));
 			period.setStatus( AccountPeriodStatus.ACTIVE );
 			period.setDomain(ctx.getDomainId());
-			ACCOUNTING.insert(ctx, period);
+			ACCOUNTING.save(ctx, period);
 		}
 		AccountEntry accountEntry = new AccountEntry();
 		accountEntry.setDomain(100); // Other

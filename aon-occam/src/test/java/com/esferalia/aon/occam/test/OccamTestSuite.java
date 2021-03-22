@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.esferalia.aon.occam.test.accounting.AccountingTestSuite;
 import com.esferalia.aon.occam.test.accounting.account.AccountTestSuite;
 import com.esferalia.aon.occam.test.finance.FinanceTestSuite;
 import com.esferalia.aon.occam.test.product.TariffTestSuite;
@@ -26,7 +27,7 @@ import com.esferalia.aon.occam.test.registry.supplier.SupplierTestSuite;
 	CreditorTestSuite.class,
 	SupplierTestSuite.class,
 	FinanceTestSuite.class,
-//	AccountingTestSuite.class,
+	AccountingTestSuite.class,
 //	AnalyticalAccountingTestSuite.class,
 })
 public class OccamTestSuite {

@@ -632,7 +632,7 @@ public class Mod2002014DAO  {
 		params.setDomain(mod200.getDomain());
 		params.setYear(mod200.getYear());
 		 
-		AccountPeriod period =  AccountPeriodDAO.fetchOneByYear(ctx, mod200.getYear());
+		AccountPeriod period =  AccountPeriodDAO.getPeriodByYear(ctx, mod200.getYear());
 		if (period == null) {
 //			throw new AonCoreException("Ejercicio '"+mod200.getYear()+"' no encontrado.");
 			return null;

@@ -39,7 +39,7 @@ public class AnalyticalAccountingReportTest extends AbstractOccamTest {
 	
 	@Test
 	public void testGet() throws IOException {
-		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,  2020);
+		AccountPeriod period = ACCOUNTING.getPeriodByYear(ctx,  2020);
 		assertNotNull(period);
 		AccountingReportParams params = new AccountingReportParams();
 		params.setPeriod(period.getId());

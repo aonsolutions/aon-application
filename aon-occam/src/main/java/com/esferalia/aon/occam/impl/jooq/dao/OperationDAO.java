@@ -17,6 +17,10 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.GroupField;
+import org.jooq.Record1;
+import org.jooq.Record3;
+import org.jooq.Table;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -32,6 +36,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 // Para el Listado de Ventas/Ingresos y Compras/Gastos
 public class OperationDAO extends FiscalModelDAO {
 	
+	private static Field<Integer> UNIQUE_IDA_ACCOUNT;
+
 	// ---------- STREAM FUNCTIONS ----------
 	
 	// Para el Listado Compras y Gastos / Ventas e Ingresos (IRPF e IVA)
@@ -128,8 +134,71 @@ public class OperationDAO extends FiscalModelDAO {
 		// Listado IRPF: Fecha apunte + id asiento + id apunte
 		// Listado IVA: Fecha IVA +  + id asiento + id apunte
 		Field<?>[] orderBy = irpf ? new Field<?>[]{ACCOUNT_ENTRY.ENTRY_DATE, ACCOUNT_ENTRY.ID, ACCOUNT_ENTRY_DETAIL.ID}:
-			                        new Field<?>[]{INVOICE.TAX_DATE, ACCOUNT_ENTRY.ID, ACCOUNT_ENTRY_DETAIL.ID};			
-		
+			                        new Field<?>[]{INVOICE.TAX_DATE, ACCOUNT_ENTRY.ID, ACCOUNT_ENTRY_DETAIL.ID};
+
+        Field<Integer> UNIQUE_IDA_ID = DSL.max(INVOICE_DETAIL_ACCOUNT.ID).as("UNIQUE_IDA_ID");
+        Field<Integer> UNIQUE_IDA_INVOICE_DETAIL = INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL .as("UNIQUE_IDA_INVOICE_DETAIL"); 
+        Field<Integer> UNIQUE_IDA_ACCOUNT = INVOICE_DETAIL_ACCOUNT.ACCOUNT.as("UNIQUE_IDA_ACCOUNT");
+        String UNIQUE_IDA_TABLE = "UNIQUE_IDA_TABLE";
+        Table<Record3<Integer,Integer,Integer>> UNIQUE_IDA = ctx.getDslContext()
+        	.select( UNIQUE_IDA_ID, UNIQUE_IDA_INVOICE_DETAIL,UNIQUE_IDA_ACCOUNT)
+			.from( INVOICE_DETAIL_ACCOUNT )
+			.where(INVOICE_DETAIL_ACCOUNT.DOMAIN.equal(ctx.getDomainId()))
+			.groupBy(UNIQUE_IDA_INVOICE_DETAIL,UNIQUE_IDA_ACCOUNT)
+			.asTable(UNIQUE_IDA_TABLE);
+        
+        System.out.println(
+        		ctx.getDslContext()			
+				.select(  ENTERPRISE_ACTIVITY.DESCRIPTION
+						, ACCOUNT_ENTRY.ACTIVITY
+						, ACCOUNT_ENTRY.ENTRY_DATE 
+						, ACCOUNT_ENTRY_DETAIL.CONCEPT		                 
+		                , ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER
+		                , sumDebit
+						, sumCredit
+						, ACCOUNT.CODE
+						, ACCOUNT.DESCRIPTION
+						, INVOICE.ID
+		                , INVOICE.TAX_DATE
+						, INVOICE.REFERENCE_CODE 
+						, INVOICE.RDOCUMENT 
+						, INVOICE.RNAME												                
+						, sumBase
+						, sumQuota
+						, sumDeductibleQuota
+						, sumSurchargeQuota
+						, activityCount
+						,INVOICE_TAX.PERCENTAGE
+						,INVOICE_TAX.SURCHARGE						
+		                )
+				
+		                .from(ACCOUNT_ENTRY_DETAIL)
+						.join(ACCOUNT).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(ACCOUNT.ID))
+		                .join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
+		                .leftOuterJoin(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(ACCOUNT_ENTRY.ID))		                
+		                .leftOuterJoin(INVOICE).on(ACCOUNT_ENTRY_INVOICE.INVOICE.equal(INVOICE.ID)) 
+		                .leftOuterJoin(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+		                
+		                .leftOuterJoin(UNIQUE_IDA).on(UNIQUE_IDA_INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(UNIQUE_IDA_ACCOUNT.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT)))
+		                
+		                .leftOuterJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(INVOICE_TAX.TAX_TYPE.equal((byte)1)))
+		                .leftOuterJoin(ENTERPRISE_ACTIVITY).on(ACCOUNT_ENTRY.ACTIVITY.equal(ENTERPRISE_ACTIVITY.ID))
+		                
+		                .where(ACCOUNT_ENTRY.DOMAIN.equal(domain))		                
+		                .and(dateCondition)
+		                .and(ACCOUNT_ENTRY.ENTRY_TYPE.notEqual(AccountEntryType.OPERATING.getValue()))
+		                .and(condition)
+		                .and(
+			                params.getActivity() == null 
+			                	? DSL.trueCondition()
+	                			: ACCOUNT_ENTRY.ACTIVITY.equal(params.getActivity()).or(ACCOUNT_ENTRY.ACTIVITY.isNull())
+	                		)  // Actividad Null, quiere decir que el apunte o factura, se reparte entre todas las actividades		                
+		                .groupBy(groupBy)
+		                .orderBy(orderBy)
+		                .getSQL(ParamType.INLINED)
+        		);
+        
+        
 		return 	ctx.getDslContext()			
 				.select(  ENTERPRISE_ACTIVITY.DESCRIPTION
 						, ACCOUNT_ENTRY.ACTIVITY
@@ -160,8 +229,10 @@ public class OperationDAO extends FiscalModelDAO {
 		                .leftOuterJoin(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(ACCOUNT_ENTRY.ID))		                
 		                .leftOuterJoin(INVOICE).on(ACCOUNT_ENTRY_INVOICE.INVOICE.equal(INVOICE.ID)) 
 		                .leftOuterJoin(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-		                .leftOuterJoin(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(INVOICE_DETAIL_ACCOUNT.ACCOUNT.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT)))		                
-		                .leftOuterJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL).and(INVOICE_TAX.TAX_TYPE.equal((byte)1)))
+		                
+		                .leftOuterJoin(UNIQUE_IDA).on(UNIQUE_IDA_INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(UNIQUE_IDA_ACCOUNT.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT)))
+		                
+		                .leftOuterJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(INVOICE_TAX.TAX_TYPE.equal((byte)1)))
 		                .leftOuterJoin(ENTERPRISE_ACTIVITY).on(ACCOUNT_ENTRY.ACTIVITY.equal(ENTERPRISE_ACTIVITY.ID))
 		                
 		                .where(ACCOUNT_ENTRY.DOMAIN.equal(domain))		                

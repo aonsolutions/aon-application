@@ -29,6 +29,7 @@ public enum AonError implements Serializable{
 	,EMPTY_DATE_FROM("No se ha indicado una fecha 'desde'.")
 	,EMPTY_DATE_TO("No se ha indicado una fecha 'hasta'.")
 	,EMPTY_DOMAIN("El dominio es un dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_STATUS("El estado es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_SCOPE("El \u00E1mbito es un dato obligatorio, no puede estar vac\u00EDa")
 	,EMPTY_NAME("El nombre es un dato obligatorio, no puede estar vac\u00EDa")
 	,EMPTY_YEAR("El ejercicio es un dato obligatorio, no puede estar vac\u00EDo")
@@ -44,7 +45,6 @@ public enum AonError implements Serializable{
 	// --------------------- ENUMERATION -------------------------
 	// -----------------------------------------------------------
 	,SECURITY_LEVEL_INVALID("Valor incorrecto para el enumerado 'Nivel de seguridad - Confidencial' ({0})")
-	,ACCOUNT_PERIOD_TYPE_INVALID("Valor incorrecto para el enumerado 'Estado' ({0})")
 	,ACCOUNT_ENTRY_TYPE_INVALID("Valor incorrecto para el enumerado 'Tipo de asiento' ({0})")
 	
 	// -----------------------------------------------------------
@@ -89,6 +89,7 @@ public enum AonError implements Serializable{
 	,ACCOUNT_PERIOD_START_OVERLAP("Solape con la fecha de inicio y el periodo {0}")
 	,ACCOUNT_PERIOD_END_OVERLAP("Solape con la fecha fin y el periodo {0}")
 	,ACCOUNT_PERIOD_UNKOWN_FOR_DATE("No se encuentra un ejercicio contable para la fecha {0,date,dd/MM/yyyy}")
+	,ACCOUNT_PERIOD_HAS_ENTRIES("No se puede borrar el ejercicio contable porque existen {0} apuntes vinculados")
 	// --------------------------------------------- ACCOUNT_ENTRY
 	,ACCOUNT_ENTRY_WRONG_DOMAIN("El ejercicio del asiento no existe o no es v\u00E1lido para el dominio ({0}).")
 	,ACCOUNT_ENTRY_EMPTY_DATE("La fecha del asiento es un dato obligatorio, no puede estar vac\u00EDa")

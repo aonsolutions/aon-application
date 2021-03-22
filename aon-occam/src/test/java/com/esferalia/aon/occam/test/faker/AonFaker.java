@@ -1,10 +1,13 @@
 package com.esferalia.aon.occam.test.faker;
 
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+
+import java.util.Date;
 import java.util.Locale;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
@@ -16,6 +19,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -25,6 +29,8 @@ import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
@@ -33,16 +39,15 @@ public class AonFaker {
 	private static String documentRegexp = "(\\d|[XYZ])\\d{7}[A-Z]";
 	
 	public static Registry getRegistry( AONContext ctx ) {
-		Registry registry = new Registry();
-		registry.setDomain(new Domain().setId(ctx.getDomainId()));
-		registry.setDocument(faker.regexify(documentRegexp));
-		registry.setDocumentType( AonRandom.randomEnum(DocumentType.class) );
-		registry.setDocumentCountry( AonRandom.gt(5) ? Country.ES: AonRandom.randomEnum(Country.class));
-		registry.setName( faker.company().name() );
-		registry.setAlias( faker.company().profession() );
-		registry.setNationality( AonRandom.gt(5) ? Country.ES: AonRandom.randomEnum(Country.class));
-		registry.setConfidential( !AonRandom.gt(3) );
-		return registry;
+		return  new Registry()
+			.setDomain(new Domain().setId(ctx.getDomainId()))
+			.setDocument(faker.regexify(documentRegexp))
+			.setDocumentType( AonRandom.randomEnum(DocumentType.class) )
+			.setDocumentCountry( AonRandom.gt(5) ? Country.ES: AonRandom.randomEnum(Country.class))
+			.setName( faker.company().name() )
+			.setAlias( faker.company().profession() )
+			.setNationality( AonRandom.gt(5) ? Country.ES: AonRandom.randomEnum(Country.class))
+			.setConfidential( !AonRandom.gt(3) );
 	}
 
 	public static Customer getCustomer( AONContext ctx ) {
@@ -183,22 +188,34 @@ public class AonFaker {
 	}
 
 	public static Tariff getTariff( AONContext ctx ) {
-		Tariff tariff = new Tariff();
-		tariff.setDomain(ctx.getDomainId());
-		tariff.setCode( faker.number().digits( 6) );
-		tariff.setName( faker.commerce().productName());
-		tariff.setPurchase( AonRandom.gt(50) );
-		tariff.setDiscount( AonRandom.getDouble(0, 100, 2));
-		tariff.setActive( !AonRandom.gt(2) );
-		return tariff;
+		return new Tariff()
+			.setDomain(ctx.getDomainId())
+			.setCode( faker.number().digits( 6) )
+			.setName( faker.commerce().productName())
+			.setPurchase( AonRandom.gt(50) )
+			.setDiscount( AonRandom.getDouble(0, 100, 2))
+			.setActive( !AonRandom.gt(2) );
 	}
 	
 	public static PayMethod getPayMethod( AONContext ctx ) {
-		PayMethod payMethod = new PayMethod();
-		payMethod.setDomain(ctx.getDomainId());
-		payMethod.setName( faker.lorem().characters(1, 10));
-		payMethod.setType( AonRandom.randomEnum(PayMethodType.class, 5));
-		return payMethod;
+		return new PayMethod()
+			.setDomain(ctx.getDomainId())
+			.setName( faker.lorem().characters(1, 10))
+			.setType( AonRandom.randomEnum(PayMethodType.class, 5));
+	}
+	
+	public static AccountPeriod getTodayActiveAccountPeriod(AONContext ctx) {
+		return getAccountPeriod(ctx, new Date(), AccountPeriodStatus.ACTIVE); 
+	}
+
+	public static AccountPeriod getAccountPeriod(AONContext ctx, Date date, AccountPeriodStatus status) {
+		return  new AccountPeriod()
+			.setDomain(ctx.getDomainId())	
+			.setDomain(ctx.getDomainId())
+			.setName(AonNumberUtils.toString( AonDateUtils.getYear(date)))
+			.setInitiationDate(AonDateUtils.getYearFirstDay(date))
+			.setDeadline(AonDateUtils.getYearLastDay(date))
+			.setStatus(status);
 	}
 }
 

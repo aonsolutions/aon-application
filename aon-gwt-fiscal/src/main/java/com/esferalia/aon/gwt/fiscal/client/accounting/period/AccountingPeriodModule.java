@@ -1,5 +1,6 @@
-package com.esferalia.aon.gwt.fiscal.client.finance.paymethod;
+package com.esferalia.aon.gwt.fiscal.client.accounting.period;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -7,9 +8,9 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.PayMethodTypeListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
@@ -22,17 +23,14 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModuleOptions;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.finance.PayMethod;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -57,7 +55,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class PayMethodModule extends MainEntryPoint {
+public class AccountingPeriodModule extends MainEntryPoint {
 	
 	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
 		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
@@ -66,7 +64,9 @@ public class PayMethodModule extends MainEntryPoint {
 	
 	private static final int CHANGE_DISPLAY_MILLIS = 1000;
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
+	private static AccountingPeriodServiceAsync SERVICE;
 	private static CommonServiceAsync COMMON_SERVICE;
+
 	
 	private DockLayoutPanel dockLayoutPanel;
 	private SimpleLayoutPanel centerLayoutPanel;
@@ -88,7 +88,7 @@ public class PayMethodModule extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		FinanceModuleOptions options = new FinanceModuleOptions();
+		AccountingPeriodModuleOptions options = new AccountingPeriodModuleOptions();
 		options.setParentWidget(root);
 		options.setDomainName(getCurrentDomainName());
 		options.setDomain(getCurrentDomain());
@@ -96,9 +96,12 @@ public class PayMethodModule extends MainEntryPoint {
 		this.onModuleLoad( options );
 	}
 	
-	public void onModuleLoad( final FinanceModuleOptions opt ) {
+	public void onModuleLoad( final AccountingPeriodModuleOptions opt ) {
 		AON.ensureInjected();
 
+		AccountingPeriodServiceAsync serviceRaw = GWT.create(AccountingPeriodService.class);
+		SERVICE = new AccountingPeriodServiceAsyncDecorator(serviceRaw);
+		
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 
@@ -123,7 +126,7 @@ public class PayMethodModule extends MainEntryPoint {
 		}
 	}
 	
-	private void loadModule( final FinanceModuleOptions opt ) {
+	private void loadModule( final AccountingPeriodModuleOptions opt ) {
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
 		splitLayoutPanel = new SplitLayoutPanel();
 		dockLayoutPanel.add(splitLayoutPanel);
@@ -144,10 +147,12 @@ public class PayMethodModule extends MainEntryPoint {
 	}
 
 	private static enum COLS {
-		  CHK(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
-		, NAME(AON.MSG.name()			, 200,AON.CSS.aonTextCenter())
-		, TYP(AON.MSG.type()			, 200,AON.CSS.aonTextCenter())
-	    , ACT(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
+		  CHK (AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
+		, NAME(AON.MSG.name()			, 100,AON.CSS.aonTextCenter())
+		, FROM(AON.MSG.initiationDate()	, 120,AON.CSS.aonTextCenter())
+		, TO  (AON.MSG.deadline()		, 120,AON.CSS.aonTextCenter())
+		, TYP (AON.MSG.status()			, 100,AON.CSS.aonTextCenter())
+	    , ACT (AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
 		;
 
 		String headerLabel;
@@ -189,8 +194,8 @@ public class PayMethodModule extends MainEntryPoint {
 		return tab;
 	}
 
-	private Widget getToolbarPanel(final FinanceModuleOptions opt) {
-		toolbar = new AonToolbar(AON.MSG.payMethod());
+	private Widget getToolbarPanel(final AccountingPeriodModuleOptions opt) {
+		toolbar = new AonToolbar(AON.MSG.accountingPeriods());
 
 		FormPanel diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
@@ -210,7 +215,7 @@ public class PayMethodModule extends MainEntryPoint {
 		addButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				paintRow(opt, new PayMethod().setDomain(opt.getDomain()));
+				paintRow(opt, new AccountPeriod().setDomain(opt.getDomain()));
 			}
 		});
 		toolbar.add(addButton);
@@ -273,17 +278,17 @@ public class PayMethodModule extends MainEntryPoint {
 	}
 
 
-	protected void search(final FinanceModuleOptions opt) {
+	protected void search(final AccountingPeriodModuleOptions opt) {
 		container.clear();
 		tab = getTable();
 		container.add(tab);
-		COMMON_SERVICE.getPayMethods(opt.getDomainName(),opt.getDomain(),opt.getUser()
-				, new AsyncCallback<LinkedList<PayMethod>>() {
+		SERVICE.getPeriods(opt.getDomainName(),opt.getDomain(),opt.getUser()
+				, new AsyncCallback<LinkedList<AccountPeriod>>() {
 					
 					@Override
-					public void onSuccess(LinkedList<PayMethod> result) {
+					public void onSuccess(LinkedList<AccountPeriod> result) {
 						if (result != null && !result.isEmpty()) {
-							result.forEach( payMethod -> paintRow(opt,payMethod));
+							result.forEach( accountPeriod -> paintRow(opt,accountPeriod));
 						} else {
 							Label label = new Label(AON.MSG.noData());
 							label.setStyleName(AON.CSS.aonBlockMessage());
@@ -337,105 +342,129 @@ public class PayMethodModule extends MainEntryPoint {
 		splitLayoutPanel.animate(500);
 	}
 
-	private void paintRow(final FinanceModuleOptions opt, PayMethod payMethod) {
-		
-		boolean myPayMethod =  payMethod == null || payMethod.getId() == null || AonNumberUtils.equals( payMethod.getDomain() , opt.getDomain());
-		
+	private void paintRow(final AccountingPeriodModuleOptions opt, AccountPeriod accountPeriod) {
 		Label msg = new Label("");
 		msg.setStyleName(AON.CSS.aonTabIcon());
 		
 		FlowPanel buttonContainer = new FlowPanel();
 
-		if ( !myPayMethod) {
-			msg.addStyleName(AON.CSS.aonIconLevelTop());
-			Label nameLabel = new Label(payMethod.getName());
-			Label typeLabel = new Label(payMethod.getType()==null?"":payMethod.getType().getDescription());
-			tab.addRow().addCell(msg)
-				.addCell(nameLabel)
-				.addCell(typeLabel)
-				.addCell(buttonContainer);
-		} else {
-			AonTextBox nameBox = new AonTextBox();
-			nameBox.setStyleName(AON.CSS.aonBorderNone());
-			nameBox.addStyleName(AON.CSS.aonWidthAll());
-			nameBox.setValue(payMethod.getName());
-			nameBox.setEnabled(myPayMethod);
-			
-			PayMethodTypeListBox typeBox = new PayMethodTypeListBox();
-			nameBox.setStyleName(AON.CSS.aonBorderNone());
-			nameBox.addStyleName(AON.CSS.aonWidthAll());
-			typeBox.setValue(payMethod.getType());
-			typeBox.setEnabled(myPayMethod);
-			
-			nameBox.addValueChangeHandler(new ValueChangeHandler<String>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					payMethod.setName(nameBox.getValue());
-					payMethod.setType(typeBox.getValue());
-					save(opt,payMethod,msg);
-				}
-			});
-			typeBox.addChangeHandler( new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					payMethod.setName(nameBox.getValue());
-					payMethod.setType(typeBox.getValue());
-					save(opt,payMethod,msg);
-				}
-			});
-			
-			if (myPayMethod) {
-				AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
-				deleteButton.addClickHandler( new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						deleteButton.setEnabled(false);
-						AonConfirmDialog cd = new AonConfirmDialog();
-						cd.confirm(AON.MSG.confirmDeleteAction(), new AonConfirmDialogCallback() {
-							
-							@Override
-							public void onCancel() {
-								deleteButton.setEnabled(true);
-							}
-							
-							@Override
-							public void onAccept() {
-								COMMON_SERVICE.deletePayMethod(opt.getDomainName(), opt.getDomain(), opt.getUser(), payMethod.getId(), new AsyncCallback<Void>() {
-									
-									@Override
-									public void onSuccess(Void voidd) {
-										search(opt);
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										toolbar.showErrorMessage(caught.getMessage());
-									}
-								});
-							}
-						});
-						
-					}
-				});
-				buttonContainer.add(deleteButton);
-			}
-			
-			tab.addRow().addCell(msg)
-			.addCell(nameBox)
-			.addCell(typeBox)
-			.addCell(buttonContainer);
-		}
-	}
+		AonTextBox nameBox = new AonTextBox();
+		nameBox.setStyleName(AON.CSS.aonBorderNone());
+		nameBox.addStyleName(AON.CSS.aonWidthAll());
+		nameBox.setValue(accountPeriod.getName());
+		
+		AonDateBox initiationBox = new AonDateBox();
+		initiationBox.addStyleName(AON.CSS.aonBorderNone());
+		initiationBox.addStyleName(AON.CSS.aonWidthAll());
+		initiationBox.setValue(accountPeriod.getInitiationDate());
+		
+		AonDateBox deadlineBox = new AonDateBox();
+		deadlineBox.addStyleName(AON.CSS.aonBorderNone());
+		deadlineBox.addStyleName(AON.CSS.aonWidthAll());
+		deadlineBox.setValue(accountPeriod.getDeadline());
+		
+		Label statusLabel = new Label(accountPeriod.getStatus() == null ? "" :accountPeriod.getStatus().getDescription());
+		
+		Callback<AccountPeriod, Throwable> callback = new Callback<AccountPeriod, Throwable>() {
 
-	private void save(FinanceModuleOptions opt, PayMethod payMethod, Label msg) {
-		COMMON_SERVICE.savePayMethod(opt.getDomainName(), opt.getDomain(), opt.getUser(), payMethod, new AsyncCallback<PayMethod>() {
+			@Override
+			public void onFailure(Throwable reason) {
+				toolbar.showErrorMessage(reason.getMessage());
+			}
+
+			@Override
+			public void onSuccess(AccountPeriod result) {
+				nameBox.setValue(nameBox.getValue());
+				initiationBox.setValue(initiationBox.getValue());
+				deadlineBox.setValue(deadlineBox.getValue());
+				statusLabel.setText( accountPeriod.getStatus() == null ? "" :accountPeriod.getStatus().getDescription() );
+			}
+		};
+		
+		nameBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
-			public void onSuccess(PayMethod result) {
-				payMethod.setId( result.getId());
+			public void onValueChange(ValueChangeEvent<String> event) {
+				accountPeriod.setName(nameBox.getValue());
+				accountPeriod.setInitiationDate(initiationBox.getValue());
+				accountPeriod.setDeadline(deadlineBox.getValue());
+				save(opt,accountPeriod,msg, callback);
+			}
+		});
+		initiationBox.addValueChangeHandler( new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				accountPeriod.setName(nameBox.getValue());
+				accountPeriod.setInitiationDate(initiationBox.getValue());
+				accountPeriod.setDeadline(deadlineBox.getValue());
+				save(opt,accountPeriod,msg, callback);
+			}
+		});
+		deadlineBox.addValueChangeHandler( new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				accountPeriod.setName(nameBox.getValue());
+				accountPeriod.setInitiationDate(initiationBox.getValue());
+				accountPeriod.setDeadline(deadlineBox.getValue());
+				save(opt,accountPeriod,msg, callback);
+			}
+		});
+		
+		AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+		deleteButton.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				deleteButton.setEnabled(false);
+				AonConfirmDialog cd = new AonConfirmDialog();
+				cd.confirm(AON.MSG.confirmDeleteAction(), new AonConfirmDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+						deleteButton.setEnabled(true);
+					}
+					
+					@Override
+					public void onAccept() {
+						SERVICE.delete(opt.getDomainName(), opt.getDomain(), opt.getUser(), accountPeriod, new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void voidd) {
+								search(opt);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								toolbar.showErrorMessage(caught.getMessage());
+							}
+						});
+					}
+				});
+				
+			}
+		});
+		buttonContainer.add(deleteButton);
+		
+		tab.addRow().addCell(msg)
+			.addCell(nameBox)
+			.addCell(initiationBox)
+			.addCell(deadlineBox)
+			.addCell(statusLabel)
+			.addCell(buttonContainer);
+	}
+
+	private void save(AccountingPeriodModuleOptions opt, AccountPeriod accountPeriod, Label msg, Callback<AccountPeriod, Throwable> callback) {
+		SERVICE.save(opt.getDomainName(), opt.getDomain(), opt.getUser(), accountPeriod, new AsyncCallback<AccountPeriod>() {
+			
+			@Override
+			public void onSuccess(AccountPeriod result) {
+				accountPeriod.setId( result.getId());
+				accountPeriod.setName( result.getName());
+				accountPeriod.setInitiationDate( result.getInitiationDate());
+				accountPeriod.setDeadline(result.getDeadline());
+				accountPeriod.setStatus( result.getStatus());
 				msg.addStyleName(AON.CSS.aonIconValid());
 				new Timer() {
 					@Override
@@ -443,11 +472,12 @@ public class PayMethodModule extends MainEntryPoint {
 						msg.removeStyleName(AON.CSS.aonIconValid());
 					}
 				}.schedule(CHANGE_DISPLAY_MILLIS);
+				callback.onSuccess(result);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				toolbar.showErrorMessage(caught.getMessage());
+				callback.onFailure(caught);
 			}
 		});
 	}

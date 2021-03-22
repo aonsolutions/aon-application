@@ -8,12 +8,13 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	InsertTest.class,
-	ValidationSaveDeadlineOverlapTest.class,
-	ValidationSaveEmptyDeadlineTest.class,
+	ValidationSaveEmptyDomainTest.class,
 	ValidationSaveEmptyInitialDateTest.class,
-	ValidationSaveInitialDateOverlapTest.class,
+	ValidationSaveEmptyDeadlineTest.class,
 	ValidationSaveWrongRangeTest.class,
-	ValidationSaveEmptyStatusTest.class,
+	ValidationSaveInitialDateOverlapTest.class,
+	ValidationSaveDeadlineOverlapTest.class,
+	ValidationAutoCompleteStatusTest.class,
 	UpdateTest.class,
 	DeleteTest.class,
 	CheckMinDateTest.class,

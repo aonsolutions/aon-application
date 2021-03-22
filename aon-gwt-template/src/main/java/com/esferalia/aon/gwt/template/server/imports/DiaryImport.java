@@ -236,7 +236,7 @@ public class DiaryImport {
 			AccountPeriod ap = ACCOUNTING.getAccountPeriod(domain.getName(), domain.getId(), login, date);
 			if(ap == null) { 
 				Integer year = AonDateUtils.getYear(date);
-				ap = ACCOUNTING.insert(domain.getName(), domain.getId(), login, new AccountPeriod()
+				ap = ACCOUNTING.save(domain.getName(), domain.getId(), login, new AccountPeriod()
 						.setDomain(domain.getId())
 						.setName(year.toString())
 						.setInitiationDate(AonDateUtils.getYearFirstDay(year))

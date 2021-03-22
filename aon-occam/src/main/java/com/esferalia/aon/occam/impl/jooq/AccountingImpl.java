@@ -65,31 +65,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountingImpl implements IAccounting {
 
-	// --------- REGISTRY -------------------------------------------------
-	@Override
-	public AccountingRegistry initialize(AONContext ctx, AccountingRegistry ar) {
-		return 	ctx.getDslContext().transactionResult(
-			configuration -> AccountingRegistryDAO.initialize(ctx, ar));
-	}
-	
-	@Override
-	public Stream<AccountingRegistry> getAccountingRegistries(AONContext ctx, AccountingRegistryFilter filter) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> AccountingRegistryDAO.getAccountingRegistries(ctx, filter));
-	}
-	@Override
-	public AccountingRegistry insert(AONContext ctx, AccountingRegistry reg) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> AccountingRegistryDAO.insert(ctx, reg));
-	}
-	
-	@Override
-	public AccountingRegistry update(AONContext ctx, AccountingRegistry reg) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> AccountingRegistryDAO.update(ctx, reg));
-	}
-	
-	// --------- ACCOUNT -------------------------------------------------
+	// **************************************************
+	// **************************************** [ACCOUNT]
+	// **************************************************
 	@Override
 	public Account getAccount(AONContext ctx, Integer accountId) {
 		return AccountDAO.get(ctx, accountId);
@@ -120,39 +98,34 @@ public class AccountingImpl implements IAccounting {
 		return AccountDAO.getNextAccountCode(ctx, prefix);
 	}
 
-	// --------- ACCOUNT PERIOD ------------------------------------------
+	// **************************************************
+	// ********************************* [ACCOUNT PERIOD]
+	// **************************************************
 	@Override
 	public LinkedList<AccountPeriod> getDomainPeriods(AONContext ctx) {
 		return AccountPeriodDAO.getDomainPeriods(ctx)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	@Override
-	public AccountPeriod fetchPeriod(AONContext ctx, Date date) {
+	public AccountPeriod getPeriod(AONContext ctx, Date date) {
 		return AccountPeriodDAO.getPeriod(ctx, date);
 	}
 
 	@Override
-	public AccountPeriod fetchPeriod(AONContext ctx, Integer id) {
+	public AccountPeriod getPeriod(AONContext ctx, Integer id) {
 		return AccountPeriodDAO.getPeriod(ctx, id);
 	}
 
 	@Override
-	public AccountPeriod fetchPeriodByYear(AONContext ctx, int year) {
+	public AccountPeriod getPeriodByYear(AONContext ctx, int year) {
 		return AccountPeriodDAO.getPeriodByYear(ctx, year);
 	}
 
 	@Override
-	public AccountPeriod insert(AONContext ctx, AccountPeriod ap) {
+	public AccountPeriod save(AONContext ctx, AccountPeriod ap) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			AccountPeriodDAO.insert(ctx, ap)
+			AccountPeriodDAO.save(ctx, ap)
 		 );		
-	}
-
-	@Override
-	public void update(AONContext ctx, AccountPeriod ap) {
-		ctx.getDslContext().transaction(configuration -> {
-			AccountPeriodDAO.update(ctx, ap);
-		} );		
 	}
 
 	@Override
@@ -160,6 +133,30 @@ public class AccountingImpl implements IAccounting {
 		ctx.getDslContext().transaction(configuration -> {
 			AccountPeriodDAO.delete(ctx, ap);
 		} );		
+	}
+
+	// --------- REGISTRY -------------------------------------------------
+	@Override
+	public AccountingRegistry initialize(AONContext ctx, AccountingRegistry ar) {
+		return 	ctx.getDslContext().transactionResult(
+			configuration -> AccountingRegistryDAO.initialize(ctx, ar));
+	}
+	
+	@Override
+	public Stream<AccountingRegistry> getAccountingRegistries(AONContext ctx, AccountingRegistryFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> AccountingRegistryDAO.getAccountingRegistries(ctx, filter));
+	}
+	@Override
+	public AccountingRegistry insert(AONContext ctx, AccountingRegistry reg) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingRegistryDAO.insert(ctx, reg));
+	}
+	
+	@Override
+	public AccountingRegistry update(AONContext ctx, AccountingRegistry reg) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingRegistryDAO.update(ctx, reg));
 	}
 	
 	// --------- ACCOUNT ENTRY -------------------------------------------

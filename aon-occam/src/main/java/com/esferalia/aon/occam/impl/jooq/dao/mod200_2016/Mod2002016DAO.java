@@ -879,7 +879,7 @@ public class Mod2002016DAO  {
 		params.setDomain(mod200.getDomain());
 		params.setYear(mod200.getYear());
 		 
-		AccountPeriod period =  AccountPeriodDAO.fetchOneByYear(ctx, mod200.getYear());
+		AccountPeriod period =  AccountPeriodDAO.getPeriodByYear(ctx, mod200.getYear());
 		if (period == null) {
 			return null;
 		}

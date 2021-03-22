@@ -1,31 +1,32 @@
 package com.esferalia.aon.occam.test.accounting.period;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+
 import java.util.Date;
 
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
+import com.esferalia.aon.occam.test.faker.AonFaker;
+import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 
 public class ValidationSaveWrongRangeTest extends AbstractOccamTest {
 
-	@Test(expected=AonCoreException.class)
+	@Test
 	public void testPeriodWrongRange() {
-		int year = AonDateUtils.getYear( new Date() );
-		AccountPeriod period = new AccountPeriod();
-		period.setName(AonNumberUtils.toString(year));
-		period.setInitiationDate( AonDateUtils.getYearLastDay(year));
-		period.setDeadline( AonDateUtils.getYearFirstDay(year) );
-		period.setStatus( AccountPeriodStatus.ACTIVE );
-		period.setDomain(ctx.getDomainId());
-		ACCOUNTING.insert(ctx, period);
+		AccountPeriod ap = AonFaker.getTodayActiveAccountPeriod( ctx );
+		Date start = ap.getInitiationDate();
+		Date end = ap.getDeadline(); 
+		ap.setInitiationDate(end);
+		ap.setDeadline(start);
+		AonCoreException e = assertThrows(AonCoreException.class, () -> AccountPeriodDAO.save(ctx, ap) );
+		assertEquals(AonError.ACCOUNT_PERIOD_WRONG_RANGE.getMessage(),e.getMessage());
 	}
 
 }

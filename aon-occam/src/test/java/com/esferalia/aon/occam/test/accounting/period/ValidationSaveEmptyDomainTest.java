@@ -14,13 +14,13 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 
-public class ValidationSaveEmptyDeadlineTest extends AbstractOccamTest {
+public class ValidationSaveEmptyDomainTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
 		AccountPeriod ap = AonFaker.getTodayActiveAccountPeriod( ctx );
-		ap.setDeadline(null);
+		ap.setDomain(null);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> AccountPeriodDAO.save(ctx, ap) );
-		assertEquals(AonError.ACCOUNT_PERIOD_EMPTY_DEADLINE.getMessage(),e.getMessage());
+		assertEquals(AonError.EMPTY_DOMAIN.getMessage(),e.getMessage());
 	}
 }

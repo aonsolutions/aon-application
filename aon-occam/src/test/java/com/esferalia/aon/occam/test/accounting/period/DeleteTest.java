@@ -9,31 +9,24 @@ import org.junit.Test;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 
 public class DeleteTest extends AbstractOccamTest {
 
 	@Test
-	public void testDelete() {
+	public void test() {
 		int year = AonDateUtils.getYear( new Date() );
-		year = year -5;
-		AccountPeriod period = new AccountPeriod();
-		period.setName(AonNumberUtils.toString(year));
-		period.setInitiationDate( AonDateUtils.getYearFirstDay(year) );
-		period.setDeadline( AonDateUtils.getYearLastDay(year));
-		period.setDomain(ctx.getDomainId());
-		period.setStatus(AccountPeriodStatus.ACTIVE);
-		period = ACCOUNTING.insert(ctx, period);
-		
-		ACCOUNTING.delete(ctx, period);
-		
-		period = ACCOUNTING.fetchPeriod(ctx, year);
+		AccountPeriod period =  null;
+		while (period ==  null) {
+			year = year - 1;
+			period = AccountPeriodDAO.getPeriodByYear(ctx, year);
+		} 
+		AccountPeriodDAO.delete(ctx, period);
+		period = ACCOUNTING.getPeriod(ctx, year);
 		assertNull(period);
-		
 	}
 
 }
