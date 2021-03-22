@@ -4,10 +4,8 @@ package com.esferalia.aon.occam.test.accounting.period;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -26,8 +24,7 @@ public class ValidationSaveInitialDateOverlapTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
-		Collection<AccountPeriod> periods = AccountPeriodDAO.getDomainPeriods(ctx)
-				.collect(Collectors.toCollection(LinkedList::new));
+		LinkedList<AccountPeriod> periods = AccountPeriodDAO.getDomainPeriods(ctx);
 		int year = -1;
 		for ( AccountPeriod period : periods) {
 			year = AonDateUtils.getYear(period.getInitiationDate());

@@ -103,8 +103,7 @@ public class AccountingImpl implements IAccounting {
 	// **************************************************
 	@Override
 	public LinkedList<AccountPeriod> getDomainPeriods(AONContext ctx) {
-		return AccountPeriodDAO.getDomainPeriods(ctx)
-				.collect(Collectors.toCollection(LinkedList::new));
+		return AccountPeriodDAO.getDomainPeriods(ctx);
 	}
 	@Override
 	public AccountPeriod getPeriod(AONContext ctx, Date date) {

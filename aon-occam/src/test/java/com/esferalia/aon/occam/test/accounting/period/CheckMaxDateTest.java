@@ -3,10 +3,8 @@ package com.esferalia.aon.occam.test.accounting.period;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -23,12 +21,13 @@ public class CheckMaxDateTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
-		Collection<AccountPeriod> periods = AccountPeriodDAO.getDomainPeriods(ctx)
-				.collect(Collectors.toCollection(LinkedList::new));
+		LinkedList<AccountPeriod> periods = AccountPeriodDAO.getDomainPeriods(ctx);
 		int year = -1;
-		for ( AccountPeriod period : periods) {
-			year = AonDateUtils.getYear(period.getInitiationDate());
-			break;
+		if (periods != null) {
+			for ( AccountPeriod period : periods) {
+				year = AonDateUtils.getYear(period.getInitiationDate());
+				break;
+			}
 		}
 		year = ( year != -1)? (year+1):AonDateUtils.getYear(new Date()); 
 		Date lastDate1 = AonDateUtils.getYearLastDay(year);

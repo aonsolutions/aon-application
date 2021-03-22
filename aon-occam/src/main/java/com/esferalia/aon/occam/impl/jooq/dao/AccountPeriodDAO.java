@@ -1,13 +1,14 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.stream.IntStream;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -64,9 +65,11 @@ public class AccountPeriodDAO {
 			.fetch()
 			.stream()
 			.map(new FullAccountPeriodFiller())
-			.peek( period -> period.setDefaultPeriod( AonUtils.equals(
-					AonNumberUtils.toInteger( ap.getValue() ),period.getId())) 
-			);
+			.peek( period -> {
+				if (ap != null) {
+					period.setDefaultPeriod( AonUtils.equals( AonNumberUtils.toInteger( ap.getValue() ),period.getId()));	
+				}
+			});
 		
 	}
 	public static AccountPeriod getPeriod(AONContext ctx, Date entryDate) {
@@ -106,9 +109,10 @@ public class AccountPeriodDAO {
 				.findFirst()
 				.orElse(null);
 	}
-	public static Stream<AccountPeriod> getDomainPeriods(AONContext ctx) {
+	public static LinkedList<AccountPeriod> getDomainPeriods(AONContext ctx) {
 		ctx.checkRead();
-		return getPeriods(ctx,p -> p.getDomainProperty().eq(ctx.getDomainId()));
+		return getPeriods(ctx,p -> p.getDomainProperty().eq(ctx.getDomainId()))
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static AccountPeriod save(AONContext ctx, AccountPeriod ap) {
