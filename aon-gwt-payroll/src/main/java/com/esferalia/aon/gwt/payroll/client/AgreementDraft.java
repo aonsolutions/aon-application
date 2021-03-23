@@ -34,6 +34,9 @@ import com.esferalia.aon.gwt.common.shared.EmptyStringException;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
+import com.esferalia.aon.gwt.payroll.client.EnterpriseDraft.NewActivityCommand;
+import com.esferalia.aon.gwt.payroll.client.EnterpriseDraft.NewContextMenu;
+import com.esferalia.aon.gwt.payroll.client.EnterpriseDraft.NewWorkplaceCommand;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -58,6 +61,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.InputElement;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -118,6 +122,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -251,6 +256,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		String bgWhite();
 		
 		String popUpLine();
+		
+		String cmd_btn();
 
 	}
 
@@ -1039,8 +1046,178 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		}
 
 	}
+	
+	// ----------------------------------------------- ScheduledCommand ---------------------------------------------
+	
+	class AddBasicSalaryCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			AgreementPaymentDialog dialog = new AgreementPaymentDialog(0) {
+				
+				@Override
+				protected void onAccept(List<Payment> payments) {
+					Window.alert("payments size : " + payments.size());
+					for(Payment payment : payments)
+						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+					AgreementDraft.this.calculate();
+				}
+
+				@Override
+				protected void onAcceptExtra(List<Payment> paymentResultList, List<Extra> extraResultList) {}
+				
+			};
+			
+			dialog.setNextDraftPaymentId(agreementDraftObject.getNextDraftPaymentId());
+			dialog.setNextDraftExtraId(agreementDraftObject.getNextDraftExtraId());
+			dialog.setAvailablePaymens(getAvailablePayments());
+			dialog.center();
+			dialog.show();
+		}
+	}
+	
+	class AddPlusesSalaryCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			AgreementPaymentDialog dialog = new AgreementPaymentDialog(1) {
+				
+				@Override
+				protected void onAccept(List<Payment> payments) {
+					for(Payment payment : payments)
+						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+					AgreementDraft.this.calculate();
+				}
+				
+				@Override
+				protected void onAcceptExtra(List<Payment> paymentResultList, List<Extra> extraResultList) {}
+				
+			};
+			
+			dialog.setNextDraftPaymentId(agreementDraftObject.getNextDraftPaymentId());
+			dialog.setNextDraftExtraId(agreementDraftObject.getNextDraftExtraId());
+			dialog.setAvailablePaymens(getAvailablePayments());
+			dialog.center();
+			dialog.show();
+		}
+	}
+	
+	class AddPlusesExtraSalaryCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			AgreementPaymentDialog dialog = new AgreementPaymentDialog(2) {
+				
+				@Override
+				protected void onAccept(List<Payment> payments) {
+					for(Payment payment : payments)
+						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+					AgreementDraft.this.calculate();
+				}
+				
+				@Override
+				protected void onAcceptExtra(List<Payment> paymentResultList, List<Extra> extraResultList) {}
+				
+			};
+			
+			dialog.setNextDraftPaymentId(agreementDraftObject.getNextDraftPaymentId());
+			dialog.setNextDraftExtraId(agreementDraftObject.getNextDraftExtraId());
+			dialog.setAvailablePaymens(getAvailablePayments());
+			dialog.center();
+			dialog.show();
+		}
+	}
+	
+	class AddComplementsSalaryCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			AgreementPaymentDialog dialog = new AgreementPaymentDialog(3) {
+				
+				@Override
+				protected void onAccept(List<Payment> payments) {
+					for(Payment payment : payments)
+						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+					AgreementDraft.this.calculate();
+				}
+				
+				@Override
+				protected void onAcceptExtra(List<Payment> paymentResultList, List<Extra> extraResultList) {}
+				
+			};
+			
+			dialog.setNextDraftPaymentId(agreementDraftObject.getNextDraftPaymentId());
+			dialog.setNextDraftExtraId(agreementDraftObject.getNextDraftExtraId());
+			dialog.setAvailablePaymens(getAvailablePayments());
+			dialog.center();
+			dialog.show();
+		}
+	}
+	
+	class AddExtrasSalaryCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			AgreementPaymentDialog dialog = new AgreementPaymentDialog(4) {
+				
+				@Override
+				protected void onAccept(List<Payment> payments) {}
+				
+				@Override
+				protected void onAcceptExtra(List<Payment> payments, List<Extra> extras) {
+					for(Payment payment : payments)
+						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+					
+					for(Extra extra : extras)
+						AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
+					
+					AgreementDraft.this.calculate();
+				}
+				
+			};
+			
+			dialog.setNextDraftPaymentId(agreementDraftObject.getNextDraftPaymentId());
+			dialog.setNextDraftExtraId(agreementDraftObject.getNextDraftExtraId());
+			dialog.setAvailablePaymens(getAvailablePayments());
+			dialog.center();
+			dialog.show();
+		}
+	}
+	
+	class AddPaymentContextMenu extends ContextMenu {
+				
+		private MenuItem addBasicSalary = null;
+		private MenuItem addPlusesSalary = null;
+		private MenuItem addPlusesExtraSalary = null;
+		private MenuItem addComplementsSalary = null;
+		private MenuItem addExtrasSalary = null;
+		
+		public AddPaymentContextMenu() {
+			
+			addBasicSalary = addItem("Salario Base", new AddBasicSalaryCommand(), 
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			addBasicSalary.ensureDebugId("addBasicSalary");
+			
+//			addPlusesSalary = addItem("Plus Salarial", new AddPlusesSalaryCommand(), 
+//					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+//			addPlusesSalary.ensureDebugId("addPlusesSalary");
+//			
+//			addPlusesExtraSalary = addItem("Plus Extra Salarial", new AddPlusesExtraSalaryCommand(), 
+//					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+//			addPlusesExtraSalary.ensureDebugId("addPlusesExtraSalary");
+//			
+//			addComplementsSalary = addItem("Complementos y gastos", new AddComplementsSalaryCommand(), 
+//					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+//			addComplementsSalary.ensureDebugId("addComplementsSalary");
+//			
+//			addExtrasSalary = addItem("Pagas Extras", new AddExtrasSalaryCommand(), 
+//					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+//			addExtrasSalary.ensureDebugId("addExtrasSalary");
+		}
+	}
 
 	@UiField
+	
 	MyStyle style;
 
 //	@UiField
@@ -1170,12 +1347,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private FilterPatternTimer filterPatternTimer;
 	private boolean isOnCategoryTab = false;
 	
+	private AddPaymentContextMenu contextMenu;
+	
 	private AonToolbar toolbar;
 	private AonToolbarButton acceptButton;
 	private AonToolbarButton undoAllButton;
 	private AonToolbarButton undoButton;
 	private AonToolbarButton redoButton;
 	private AonToolbarButton fxButton;
+	private AonToolbarButton addPaymentButton;
 	private AonToolbarButton printPreviewButton;
 	private AonToolbarButton serviAgreementPDFButton;
 	private AonToolbarButton serviAgreementXLSButton;
@@ -1198,6 +1378,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		contextProvider = new ContextProvider();
 		contentAssistManager = new ContentAsistManager();
+		
+		contextMenu = new AddPaymentContextMenu();
 		
 		showDraft();
 		
@@ -2582,8 +2764,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			}
 		});
 	}
+	
+	private List<Payment> getAvailablePayments() {
+		return this.availablePaymens;
+	}
 
 	private Payment getPayment(String suggestionString) {
+//		Window.alert("suggestionString : " + suggestionString);
 		for (Payment payment : availablePaymens) {
 			if (StringUtils.equals(suggestionString, getSuggestionString(payment)))
 				return payment;
@@ -4525,6 +4712,17 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		toolbar.add(fxButton);
 		fxButton.setEnabled(false);
 		
+		addPaymentButton = new AonToolbarButton("A" + String.valueOf("\u00F1") + "adir Pago", AON.CSS.aonIconAddBlock());
+		addPaymentButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				contextMenu.show();
+			}
+		});
+		toolbar.add(addPaymentButton);
+		
 		CheckBox changesCheck = new CheckBox();
 		changesCheck.setText("Cambios");
 		changesCheck.setVisible(false);
@@ -4569,6 +4767,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		serviAgreementXLSButton.ensureDebugId("serviAgreementXLSButton");
 		
 		serviAgreementPanel.setVisible(false);
+	}
+
+	public void hideImportBlock() {
+		addPaymentButton.setVisible(false);
 	}
 	
 }

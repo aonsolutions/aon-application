@@ -314,6 +314,22 @@ public class AgreementDraftObject {
 		return payment;
 
 	}
+	
+	public int getNextDraftExtraId() {
+		return this.nextDraftExtraId;
+	}
+	
+	public void setNextDraftExtraId(int nextDraftExtraId) {
+		this.nextDraftExtraId = nextDraftExtraId;
+	}
+	
+	public int getNextDraftPaymentId() {
+		return this.nextDraftPaymentId;
+	}
+	
+	public void setNextDraftPaymentId(int newNextDraftPaymentId) {
+		this.nextDraftPaymentId = newNextDraftPaymentId;
+	}
 
 	public Integer getDraftDomain() {
 		return draftDomain;
