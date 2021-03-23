@@ -56,14 +56,14 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.ibm.icu.util.Calendar;
 
-//@SuppressWarnings("serial")
-//@WebServlet(
-//		name = "Cost-Excel", 
-//		urlPatterns = { 
-//				"/aon_gwt_aio/cost_excel/*" ,
-//				"/aon_gwt_payroll/cost_excel/*" 
-//		}
-//)
+@SuppressWarnings("serial")
+@WebServlet(
+		name = "Cost-CSV", 
+		urlPatterns = { 
+				"/aon_gwt_aio/cost_csv/*" ,
+				"/aon_gwt_payroll/cost_csv/*" 
+		}
+)
 public class CostCSVServlet extends HttpServlet {
 	
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");

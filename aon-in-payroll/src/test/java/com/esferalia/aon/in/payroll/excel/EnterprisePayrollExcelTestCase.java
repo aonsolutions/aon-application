@@ -256,7 +256,7 @@ public class EnterprisePayrollExcelTestCase {
 		try {
 			EnterprisePayrollExcel.write(
 					new FileOutputStream("src/test/resources/com/esferalia/aon/in/payroll/excel/prueba1.xlsx"),
-					payrollList, Optional.empty(), "", "", EnterprisePayrollExcel.ExcelType.COMPLETE);
+					payrollList, Optional.empty(), "", "", ExcelType.COMPLETE);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
@@ -294,7 +294,7 @@ public class EnterprisePayrollExcelTestCase {
 			try {
 				EnterprisePayrollExcel.write(
 						new FileOutputStream("src/test/resources/com/esferalia/aon/in/payroll/excel/prueba2.xlsx"),
-						payrolls, Optional.empty(), "", "", EnterprisePayrollExcel.ExcelType.COMPLETE);
+						payrolls, Optional.empty(), "", "", ExcelType.COMPLETE);
 			} catch (IOException e) {
 				fail(e.getMessage());
 			}
@@ -319,7 +319,7 @@ public class EnterprisePayrollExcelTestCase {
 
 			EnterprisePayrollExcel.write(
 					new FileOutputStream("src/test/resources/com/esferalia/aon/in/payroll/excel/prueba3.xlsx"),
-					payrolls, Optional.empty(), "", "", EnterprisePayrollExcel.ExcelType.COMPLETE);
+					payrolls, Optional.empty(), "", "", ExcelType.COMPLETE);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		} catch (SQLException e1) {

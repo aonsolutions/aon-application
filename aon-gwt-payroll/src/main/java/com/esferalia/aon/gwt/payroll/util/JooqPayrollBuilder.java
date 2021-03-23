@@ -119,30 +119,58 @@ public class JooqPayrollBuilder {
 				RAddress raddress = AON.getRAddress(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(), p -> p.getRegistryProperty().eq(registry.getId()).and(p.getDomainProperty().eq(aonContext.getDomainId())));
 				String add = raddress.getFullAddress() != null ? raddress.getFullAddress() : s.getEnterpriseAddress();
 				
+				String streetType = raddress.getStreet_type() != null ? raddress.getStreet_type() : "";
+				String address1 = raddress.getAddress() != null ? raddress.getAddress() : "";
+				String number = raddress.getNumber() != null ? raddress.getNumber() : "";
+				String address2 = raddress.getAddress2() != null || !raddress.getAddress2().isEmpty() ? ", " + raddress.getAddress2() : "";
+				String address3 = raddress.getAddress3() != null ? raddress.getAddress3() : "";
+				
+				String zip = raddress.getZip() != null ? raddress.getZip() : "";
+				String city = raddress.getCity() != null ? raddress.getCity() : "";
+				
+				String firstLine = streetType + " " + address1 + " " + number + " " + address2 + address3;
+				
+				if (firstLine.length() > 45)
+					firstLine = streetType + " " + address1 + " " + number + " " + address3;
+				
+				String sekandoRain = zip + " " + city;
+				
 				
 				if (add != null) {
-					String[] address = null;
-					//address = get_lines(add, 170, PdfFonts.HELVETICA, 9f);
-					address = Utilities.separateString(add, 40);
-					if (address != null && address.length > 1) {
-						dpb.setAddress(address[0] != null ? address[0].trim() : null);
-						String secline = "";
-						for (int i = 1; i<address.length; i++) {
-							secline += address[i];
-						}
-						if (secline.length() > 46)
-							secline = secline.substring(0, 45).concat("...");
-						dpb.setAddress_2(secline);
+					
+					if (firstLine.length() < 45 && sekandoRain.length() < 45) {
+						dpb.setAddress(firstLine);
+						dpb.setAddress_2(sekandoRain);
 					} else {
-						dpb.setAddress(s.getEnterpriseAddress());
+						String[] address = null;
+						//address = get_lines(add, 170, PdfFonts.HELVETICA, 9f);
+						address = Utilities.separateString(add, 40);
+						if (address != null && address.length > 1) {
+							dpb.setAddress(address[0] != null ? address[0].trim() : null);
+							String secline = "";
+							for (int i = 1; i<address.length; i++) {
+								secline += address[i];
+							}
+							if (secline.length() > 46)
+								secline = secline.substring(0, 45).concat("...");
+							dpb.setAddress_2(secline);
+						} else {
+							dpb.setAddress(s.getEnterpriseAddress());
+						}
 					}
+					
+					
 				}
 				
 			}
 			//EMPLOYEE RELATED DATA
 			{
-				dpb.setAntiquity(s.getEmployeeSeniorityDate());
-				dpb.setEmployee(s.getEmployeeName());
+				dpb.setAntiquity(s.getEmployeeSeniorityDate());		
+				//weird names check
+				String employeeName = s.getEmployeeName().trim();
+				if (employeeName != null && employeeName.length() > 1 && employeeName.charAt(0) == ',')
+					employeeName = employeeName.substring(1).trim();	
+				dpb.setEmployee(employeeName);
 				dpb.setNif(s.getEmployeeDocument());
 				dpb.setNss(s.getEmployeeSSNumber());
 				dpb.setProfessional_group(s.getEmployeeCategory());

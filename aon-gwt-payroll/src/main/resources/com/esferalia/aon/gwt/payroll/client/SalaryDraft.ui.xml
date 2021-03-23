@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'
-	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client" 
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"
 	xmlns:s="urn:import:com.google.gwt.dom.builder.shared" 
 	>
 

@@ -165,6 +165,7 @@ import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
+import com.esferalia.aon.gwt.payroll.util.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
@@ -822,71 +823,33 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	public String getCostReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException {
 		try {
-			ReportManager reportManager = new StatelessReportManager();
-			reportManager.setOutputFormat(OutputFormat.HTML);
-
-			SalaryType salaryTypes[] = new SalaryType[types.length];
-			for (int i = 0; i < types.length; i++)
-				salaryTypes[i] = SalaryType.values()[types[i].ordinal()];
-
-			reportManager.setCollectionProvider(getSalariesProvider(
-					domain,
-					cost,
-					salaryTypes,
-					false));
-
-			Map<Object, Object> parameters = new HashMap<Object, Object>(
-					JR_HTML_EXPORTER_PARAMS);
-
-			// Really I hate this spaghetti piece of code.
-			// For pass 'month' & 'year' to a report, we
-			// must put it in a controller ?????.
-			//SalaryExpenseController controller = (SalaryExpenseController) AonUtil
-			//		.getRegisteredBean(IPayrollConstants.SALARY_EXPENSE_CONTROLLER_NAME);
-			//controller.setShowSalaryExpenseWindow(false);
-			//controller.setYear(cost.getYear());
-			//Month month = Month.getMonthByValue(cost.getMonth());
-			//controller.setMonth(month);
-			parameters.put("#{salaryExpense.getYear}", cost.getYear());
-			parameters.put("#{salaryExpense.getMonth}", cost.getMonth());
+			ByteArrayOutputStream oos = new ByteArrayOutputStream();
 			
-
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.MONTH, cost.getMonth());
+			calendar.set(Calendar.YEAR, cost.getYear());
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			Date startDate = calendar.getTime();
 			
+			calendar.set(Calendar.DAY_OF_MONTH, Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
+			
+			Date endDate = calendar.getTime();
+			
+			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(oos, domain, startDate, endDate, cost.getEnterpriseId(), cost.getWorkplaceId());
+			
+			byte bytes [] = oos.toByteArray();
+			InputStream data = new ByteArrayInputStream(bytes);
+			
+			StringWriter writer = new StringWriter();
+			
+			encodeURIComponent(MimeType.PDF.getName(), data, writer);
+			
+			return writer.toString();
 
-			parameters
-					.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /*
-																			 * not
-																			 * round
-																			 * to
-																			 * int
-																			 */);
-			Map<Object, Object> images = new HashMap<Object, Object>();
-			parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images);
-
-			String imagesUri = String.format(
-					"jasper_image/salary/%d/%d/%d/%d/", cost.getMonth(),
-					cost.getYear(), cost.getWorkplaceId(),
-					cost.getEnterpriseId());
-
-			parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
-
-			reportManager.execute(out, IPayrollConstants.COST_REPORT,
-					parameters);
-
-			for (Entry<Object, Object> image : images.entrySet()) {
-				String name = String.format("%s%s", imagesUri, image.getKey());
-				JasperImageServlet.saveImage(name, (byte[]) image.getValue());
-			}
-
-			return out.toString();
-
-		} catch (ReportException e) {
-			throw new IllegalArgumentException(e);
-		} catch (ManagerBeanException e) {
-			throw new IllegalArgumentException(e);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")

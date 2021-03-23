@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
@@ -54,16 +56,31 @@ public class DraftPayrollBuilder {
 			
 				//ADDRESS FITTING
 				if (salary.getEnterpriseAddress() != null) {
-					List<String> address = null;
-					if (salary.getEnterpriseAddress()!=null)
-						address = Arrays.asList(Utilities.separateString(salary.getEnterpriseAddress(), 40));
-//						address = get_lines(salary.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
-					if (address != null && address.size() > 1) {
-						dpb.setAddress(address.get(0) != null ? address.get(0).trim() : null);
-						dpb.setAddress_2(address.get(1));
+					
+					Pattern zipPattern = Pattern.compile("(?<lineone>.*?)\\s*(?<zip>\\([^\\)\\(]*?\\))\\s*(?<city>.*)", Pattern.CASE_INSENSITIVE);
+					Matcher matcher = zipPattern.matcher(salary.getEnterpriseAddress());
+					if (matcher.matches()) {
+						dpb.setAddress(matcher.group("lineone"));
+						String line2 = matcher.group("zip") + " " + matcher.group("city");
+						if (line2 != null)
+							line2 = line2.replaceAll("\\(", "").replaceAll("\\)", "");
+						dpb.setAddress_2(line2);
 					} else {
-						dpb.setAddress(salary.getEnterpriseAddress());
+						List<String> address = null;
+						if (salary.getEnterpriseAddress()!=null)
+							address = Arrays.asList(Utilities.separateString(salary.getEnterpriseAddress(), 40));
+	//						address = get_lines(salary.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
+						if (address != null && address.size() > 1) {
+							dpb.setAddress(address.get(0) != null ? address.get(0).trim() : null);
+							dpb.setAddress_2(address.get(1));
+						} else {
+							dpb.setAddress(salary.getEnterpriseAddress());
+						}
 					}
+					
+					
+					
+					
 				}
 			}
 			//EMPLOYEE RELATED DATA
@@ -71,7 +88,11 @@ public class DraftPayrollBuilder {
 				dpb.setAntiquity(salary.getSeniorityDate());
 				dpb.setNif(salary.getEmployeeDocument());
 				dpb.setNss(salary.getSocialSecurityNumber());
-				dpb.setEmployee(salary.getEmployeeName());
+				//weird names check
+				String employeeName = salary.getEmployeeName().trim();
+				if (employeeName != null && employeeName.length() > 1 && employeeName.charAt(0) == ',')
+					employeeName = employeeName.substring(1).trim();
+				dpb.setEmployee(employeeName);
 				dpb.setQuotation_group(salary.getQuoteGroup());
 				dpb.setProfessional_group(salary.getCategory());
 			}

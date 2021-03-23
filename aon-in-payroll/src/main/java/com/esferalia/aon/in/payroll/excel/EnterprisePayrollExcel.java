@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -129,7 +130,51 @@ public class EnterprisePayrollExcel {
 			DEFAULT_HEADER_SUMMARY.put("totalSS", "S.S. TOTAL");
 		}
 	}
-
+	
+	
+	
+	public static void simpleEnterprisePayrollGenerator (String domainName, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date date, ExcelType excelType) {
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		Integer month = c.get(Calendar.MONTH)+1;
+		Integer year = c.get(Calendar.YEAR);
+		
+		AONContext aonContext = AONContext.getAONContext(domainName, "");
+		
+		Integer wId = null;
+		Integer eId = null;
+		if (workplaceId.isPresent())
+			wId = workplaceId.get();
+		if (enterpriseId.isPresent())
+			eId = enterpriseId.get();
+		
+		AtomicInteger atomicWorkplace = new AtomicInteger(wId);
+		if (eId == null || eId == 0)
+			eId = AON.getWorkplace(aonContext.getDomainName()
+				, aonContext.getDomainId()
+				, aonContext.getUser()
+				, w -> w.getIdProperty().eq(atomicWorkplace.get()))
+				.getEnterprise();
+		
+		
+		try {
+			Collection<IEnterprisePayroll> payrolls =
+					getEnterprisePayrolls(aonContext, month, year, eId, wId)
+					.collect(Collectors.toList());
+			
+			String enterpriseName = getEnterpriseName(domainName, eId, wId);
+			write(outputStream
+					, payrolls
+					, Optional.empty()
+					, enterpriseName
+					, getDateString(month, year)
+					, excelType);	
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 
 	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
 			Optional<LinkedHashMap<String, String>> header, String enterpriseName, String dateString, ExcelType excelType)
@@ -943,10 +988,12 @@ public class EnterprisePayrollExcel {
 						jointCell = row.createCell(empFirstCell-1, CellType.STRING);
 						jointCell.setCellStyle(jointCellStyle);
 						
-						sheet.addMergedRegion(new CellRangeAddress(1, 1, entQuoteFirstCell, empQuoteFirstCell-2));
-						Cell entQuoteCell = row.createCell(entQuoteFirstCell, CellType.STRING);
-						entQuoteCell.setCellStyle(headerCellStyle);
-						entQuoteCell.setCellValue("COTIZACIÓN EMPRESA");
+						if(empQuoteFirstCell-2 > entQuoteFirstCell) {
+							sheet.addMergedRegion(new CellRangeAddress(1, 1, entQuoteFirstCell, empQuoteFirstCell-2));
+							Cell entQuoteCell = row.createCell(entQuoteFirstCell, CellType.STRING);
+							entQuoteCell.setCellStyle(headerCellStyle);
+							entQuoteCell.setCellValue("COTIZACIÓN EMPRESA");
+						}
 						
 						jointCell = row.createCell(empQuoteFirstCell-1, CellType.STRING);
 						jointCell.setCellStyle(jointCellStyle);
@@ -1404,14 +1451,6 @@ public class EnterprisePayrollExcel {
 	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, final int month,
 			final int year, Integer enterpriseId, Integer workplaceId) throws IOException {
 
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, month - 1);
-		calendar.set(Calendar.DAY_OF_MONTH, 1);
-		java.sql.Date dayOne = new java.sql.Date(calendar.getTime().getTime());
-		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-		java.sql.Date lastDay = new java.sql.Date(calendar.getTime().getTime());
-
 		Condition condition = DSL.year(SALARY.ISSUE_DATE).eq(year).and(DSL.month(SALARY.ISSUE_DATE).eq(month))
 				.and(ENTERPRISE.REGISTRY.eq(enterpriseId));
 		if (workplaceId != null)
@@ -1540,7 +1579,9 @@ public class EnterprisePayrollExcel {
 			return enterprisePayroll;
 		});
 	}
-
+	
+	
+	@Deprecated
 	public static Stream<EnterprisePayroll> getEnterprisePayrolls(DSLContext ctx, Condition condition)
 			throws IOException {
 
@@ -1638,11 +1679,6 @@ public class EnterprisePayrollExcel {
 		}
 	}
 	
-	public static enum ExcelType {
-		COMPLETE,
-		SUMMARY
-	}
-
 	public static class EnterprisePayroll implements IEnterprisePayroll {
 		private String employee;
 		private String workplace;
@@ -1824,4 +1860,41 @@ public class EnterprisePayrollExcel {
 		}
 
 	}
+	
+	
+	private static String getDateString (Integer month, Integer year) {
+		if (month == null || year == null)
+			return "";
+		else {
+			switch (month) {
+			case 1:
+				return "Enero de "+year;
+			case 2:
+				return "Febrero de "+year;
+			case 3:
+				return "Marzo de "+year;
+			case 4:
+				return "Abril de "+year;
+			case 5:
+				return "Mayo de "+year;
+			case 6:
+				return "Junio de "+year;
+			case 7:
+				return "Julio de "+year;
+			case 8:
+				return "Agosto de "+year;
+			case 9:
+				return "Septiembre de "+year;
+			case 10:
+				return "Octubre de "+year;
+			case 11:
+				return "Noviembre de "+year;
+			case 12:
+				return "Diciembre de "+year;
+			default:
+				return "";
+			}
+		}
+	}
+	
 }

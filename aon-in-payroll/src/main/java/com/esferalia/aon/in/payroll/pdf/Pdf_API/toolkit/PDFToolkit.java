@@ -1,5 +1,8 @@
 package com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit;
 
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFormats.to_latin_number;
+import static com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.OptionalToolkit.safeDouble;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -368,6 +371,18 @@ public class PDFToolkit {
 	    try {return ImageIO.read(bais);} 
 	    catch (IOException e) {}
 		return null;
+	}
+	
+	/**
+	 * <p><b>Description:</b></p> <i> Returns the string to be written where the percentage of the costs are. </i></p>
+	 * @param percentage
+	 * @return String to be written
+	 */
+	public static String drawCostPercentage (Optional<Double> percentage) {
+		if (percentage.isEmpty())
+			return "";
+		else
+			return to_latin_number(safeDouble(percentage)) + " %";
 	}
 
 }

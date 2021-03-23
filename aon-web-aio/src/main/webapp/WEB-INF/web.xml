@@ -186,7 +186,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>Cost Export Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.payroll.server.CostExporterServlet</servlet-class>
+		<servlet-class>com.esferalia.aon.gwt.payroll.server.CostPDFServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Cost Export Servlet</servlet-name>

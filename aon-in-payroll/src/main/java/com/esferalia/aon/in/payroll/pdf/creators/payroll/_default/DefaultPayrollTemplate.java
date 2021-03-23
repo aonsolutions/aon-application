@@ -451,33 +451,33 @@ public class DefaultPayrollTemplate {
 			
 			final String monthly_ammount =  			to_latin_number(safeDouble(conts.getMonthly_amount())) 	+  " " 	+ text("MONEDA");
 			final String comm_cont_base = 				to_latin_number(safeDouble(conts.getCommon_cont_base())) +  " " 	+ text("MONEDA");
-			String comm_cont_type = 					to_latin_number(safeDouble(conts.getCommon_cont_type())) +  " %" ;
+			String comm_cont_type = 					PDFToolkit.drawCostPercentage(conts.getCommon_cont_type());
 			if (comm_cont_type.contains("-1"))     		comm_cont_type = "";
 			
 			final String comm_cont_ap_ent = 			to_latin_number(safeDouble(conts.getCommon_cont_ap_enterprise()))  + " " + text("MONEDA");
 			final String extra_prorration_amount =    	to_latin_number(safeDouble(conts.getExtra_proration_amount())) 	  + " " + text("MONEDA");
 			final String prof_contingencies_base = 		to_latin_number(safeDouble(conts.getProfessional_cont_base())) 	  + " " + text("MONEDA");
-			String at_ep_type = 						to_latin_number(safeDouble(conts.getAt_ep_type())) + " %";
+			String at_ep_type = 						PDFToolkit.drawCostPercentage(conts.getAt_ep_type());
 			if (at_ep_type.contains("-1"))				at_ep_type = "";
 			
 			final String at_ep_ap_ent =					to_latin_number(safeDouble(conts.getAt_ep_ap_enterprise())) + " " + text("MONEDA");
-				  String unemployment_type = 			to_latin_number(safeDouble(conts.getUnemployment_type()))   + " %";
+				  String unemployment_type = 			PDFToolkit.drawCostPercentage(conts.getUnemployment_type());
 			if (unemployment_type.contains("-1"))		unemployment_type = "";
 			
 			final String unemployment_ap_ent = 			to_latin_number(safeDouble(conts.getUnemployment_ap_enterprise())) + " " + text("MONEDA");
 			final String profes_form_type = 			to_latin_number(safeDouble(conts.getProfes_form_type())) + " %";
 			final String profes_form_ap_ent = 			to_latin_number(safeDouble(conts.getProfes_form_ap_enterprise())) + " " + text("MONEDA");
-				  String fogasa_type = 					to_latin_number(safeDouble(conts.getFogasa_type())) + " %";
+				  String fogasa_type = 					PDFToolkit.drawCostPercentage(conts.getFogasa_type());
 			if (fogasa_type.contains("-1"))				fogasa_type = "";
 			
 			String fogasa_ap_ent = 						to_latin_number(safeDouble(conts.getFogasa_ap_enterprise())) + " " + text("MONEDA");
 			String force_majeure_base = 				to_latin_number(safeDouble(conts.getForce_majeure_base())) + " " + text("MONEDA");
-			String force_majeure_type = 				to_latin_number(safeDouble(conts.getForce_majeure_type())) + " %";
+			String force_majeure_type = 				PDFToolkit.drawCostPercentage(conts.getForce_majeure_type());
 			if (force_majeure_type.contains("-1"))		force_majeure_type = "";
 			
 			String force_majeure_ap_ent = 				to_latin_number(safeDouble(conts.getForce_majeure_ap_enterprise())) + " " + text("MONEDA");
 			String no_struct_base = 					to_latin_number(safeDouble(conts.getNo_struct_base())) + " " + text("MONEDA");
-			String no_struct_type = 					to_latin_number(safeDouble(conts.getNo_struct_type())) + " %";
+			String no_struct_type = 					PDFToolkit.drawCostPercentage(conts.getNo_struct_type());
 			if (no_struct_type.contains("-1"))			no_struct_type = "";
 			
 			String no_struct_ap_ent = 					to_latin_number(safeDouble(conts.getNo_struct_ap_enterprise())) + " " + text("MONEDA");
@@ -581,5 +581,8 @@ public class DefaultPayrollTemplate {
 	public String text(String name) {
 		return words.getString(name);
 	}
+	
+	
+	
 
 }

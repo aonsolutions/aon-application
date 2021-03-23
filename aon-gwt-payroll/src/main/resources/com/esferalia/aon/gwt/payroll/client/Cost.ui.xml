@@ -1,6 +1,9 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:p='urn:import:net.aonsolutions.gwt.pdfjs.client'
+>
 
 	<ui:style>
 		.editor {
@@ -27,7 +30,14 @@
 				<g:MenuBar>
 					<g:MenuItem text="Archivo">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="downloadMenuItem" text="Descargar" />
+							<g:MenuItem ui:field="downloadMenuItem" text="Descargar" >
+								<g:MenuBar vertical="true">
+									<g:MenuItem ui:field="downloadPDFMenuItem" text="Documento PDF (.pdf)"/>
+									<g:MenuItem ui:field="downloadExcelMenuItem" text="Microsoft Excel (.xls)"/>
+									<g:MenuItem ui:field="downloadDetailedExcelMenuItem" text="Microsoft Excel (.xls, detallado)"/>
+									<g:MenuItem ui:field="downloadCSVMenuItem" text="Valores separados por comas (.csv)"/>
+								</g:MenuBar>
+							</g:MenuItem>
 							<g:MenuItem styleName="gwt-MenuItemSeparator">
 								<div class="menuSeparatorInner"></div>
 							</g:MenuItem>
@@ -99,17 +109,10 @@
 				<g:center>
 					<g:ScrollPanel styleName="{style.editor}" ui:field="scrollPanel">
 						<g:VerticalPanel styleName="{style.document}">
-							<g:HTML styleName="reset" ui:field='container' wordWrap='true' />
+							<p:Viewer styleName="reset" ui:field='pdfViewer' />
 						</g:VerticalPanel>
 					</g:ScrollPanel>
 				</g:center>
-				<g:south size="0">
-					<g:ScrollPanel styleName="{style.editor}" ui:field="sldScrollPanel" >
-						<g:VerticalPanel styleName="{style.document}">
-							<g:HTML styleName="reset" ui:field='sldcontainer' wordWrap='true' />
-						</g:VerticalPanel>
-					</g:ScrollPanel>
-				</g:south>
 			</g:SplitLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>
