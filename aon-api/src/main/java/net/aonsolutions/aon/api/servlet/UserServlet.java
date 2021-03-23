@@ -403,7 +403,7 @@ public class UserServlet extends AonApiHttpServlet {
 			String pass = null;
 			if(usr != null && usr.getId() != null) {
 				login = usr.getLogin();
-				pass = AON_SOLUTIONS.getUserPassword(getDomain().getName(), getDomain().getId(), usr.getId());
+//				pass = AON_SOLUTIONS.getUserPassword(getDomain().getName(), getDomain().getId(), usr.getId());
 			}
 
 			Auth auth = AON_SOLUTIONS.getAuth(email);
