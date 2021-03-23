@@ -17,6 +17,8 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqPayrollSalaries;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
+import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
+import com.esferalia.aon.in.payroll.excel.ExcelType;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
@@ -46,6 +48,9 @@ public class ContractServlet extends AonApiHttpServlet {
 			switch (getPath()) {
 				case "/salary/pdf":
 					responseFile(req, resp, getSalaryPdf(req), MimeType.PDF);
+					break;
+				case "/company/costs":
+					responseFile(req, resp, getCompanyCosts(req), MimeType.MS_EXCEL);
 					break;
 				default:
 					responseJson(req, resp);
@@ -149,6 +154,20 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 		File file = File.createTempFile("nomina", "");
 		JooqPayrollBuilder.generatePayroll(getDomain().getName(), new FileOutputStream(file), salaryId);
+		return file;
+	}
+	
+	private File getCompanyCosts(HttpServletRequest req) throws JSONException, IOException {
+		LOGGER.info("[GET] COMPANY COSTS");
+		Company company = AON.getCompany(getDomain().getName(), getDomain().getId(), "", f->f.getDomainProperty().eq(getDomain().getId()));
+		ExcelType excelType = ExcelType.COMPLETE;
+		String excelParams = getParams().optString("excelType");
+		if(excelParams.equalsIgnoreCase("SUMMARY")) excelType = ExcelType.SUMMARY;
+		
+		File file = File.createTempFile("companyCosts", "");
+		EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(
+				getDomain().getName(), new FileOutputStream(file), Optional.of(company.getId()), Optional.empty(), 
+				Toolkit.parseDate(getParams().optString("date"), "yyyy-MM-dd"), excelType);
 		return file;
 	}
 	

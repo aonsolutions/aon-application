@@ -143,8 +143,12 @@ export class AonCtaList extends AonElement {
 
   async getCertCorriente(data, el) {
     this.applicationEl.startLoading();
-    const { ccc, cccRegimeCode: regimen } = data;
-    await getCertCorriente({ ccc, regimen }); // open pdf
+    try {
+      const { ccc, cccRegimeCode: regimen } = data;
+      await getCertCorriente({ ccc, regimen }); // open pdf
+    } catch ({message, type}) {
+			if(message && type) this.applicationEl.getToast().start({ message, type});
+		}
     this.applicationEl.stopLoading();
   }
 }

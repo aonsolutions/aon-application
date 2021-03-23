@@ -142,9 +142,11 @@ public class AonApiHttpServlet extends HttpServlet{
 		e.printStackTrace();
 		resp.setStatus(400);
 		JSONObject json = new JSONObject();
-		json.put(IConstants.MESSAGE, e.getMessage());
+		String className =  e.getClass().getSimpleName();
+		String message = e.getMessage()!= null ? e.getMessage() : className;
+		json.put(IConstants.MESSAGE, message);
 		json.put(IConstants.TYPE, IConstants.ERROR);
-		json.put(IConstants.CLASS_NAME, e.getClass().getSimpleName());
+		json.put(IConstants.CLASS_NAME, className);
 		addCorsHeader(resp);
 		giveBack(req, resp, json, new JSONObject());
 	}

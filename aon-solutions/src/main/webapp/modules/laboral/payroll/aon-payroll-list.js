@@ -45,19 +45,19 @@ export class AonPayrollList extends AonElement {
   }
 
   initialize(){
-    this.id = this.id ||  PAYROLL_VIEWS.AON_PAYROLL_LIST;
+    this.id = this.id || PAYROLL_VIEWS.AON_PAYROLL_LIST;
     this.TABLE_ID = this.id + "Table";
-    this.aonLaboralEl = this.getApplication();
-    this.aonLaboralParentEl = this.aonLaboralEl.getParent();
-    this.aonLaboralEl.addToolbarTitle("Nóminas");
+    this.applicationEl = this.getApplication();
+    this.parentEl = this.getParent();
+    this.applicationEl.addToolbarTitle("Nóminas");
   }
   
   async build(){
     this.paintView();
-    if(!this.aonLaboralParentEl.isEmployee()){
+    if(!this.parentEl.isEmployee()){
       this.buildToolbar();
       await this.buildFilter();
-      this.aonLaboralParentEl.changeFilter();
+      this.parentEl.changeFilter();
     }
     await this.getTable();
   }
@@ -74,9 +74,9 @@ export class AonPayrollList extends AonElement {
   }
 
   buildToolbar() {
-    this.aonLaboralEl.removeToolbarOptions();
+    this.applicationEl.removeToolbarOptions();
     const filterEl = this.getElement(`${this.id}Filter`);
-    this.aonLaboralEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
+    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, (e) =>
       filterEl.openFilter()
     );
   }
@@ -89,7 +89,7 @@ export class AonPayrollList extends AonElement {
       ...PRESENCE_FILTER
     ]);
     aonFilter.addEventListener("applyFilter", ({detail}) => {
-      if(detail)this.aonLaboralParentEl.setDataFilter(detail);
+      if(detail)this.parentEl.setDataFilter(detail);
     });
   
     // ----------WORKPLACES ------------
@@ -119,11 +119,11 @@ export class AonPayrollList extends AonElement {
   }
 
   async getTable() {
-    this.aonLaboralEl = await waitEl("#aonLaboral");
-    this.aonLaboralEl.startLoader();
+    this.applicationEl = await waitEl("#aonLaboral");
+    this.applicationEl.startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
-    this.aonLaboralEl.stopLoader();
+    this.applicationEl.stopLoader();
   }
 
 
@@ -160,7 +160,7 @@ export class AonPayrollList extends AonElement {
         const resp = await this.getData();
         aonTable.removeAllLi();
 
-        let isEmployee = this.aonLaboralParentEl.isEmployee();
+        let isEmployee = this.parentEl.isEmployee();
         
         resp.map((res, idx) => {
           let options = {};
@@ -183,14 +183,14 @@ export class AonPayrollList extends AonElement {
   }
 
   async getData() {
-    this.aonLaboralEl.startLoader();
+    this.applicationEl.startLoader();
     let data = [];
     try {
       let filter = null;
-      try {filter = {...this.aonLaboralParentEl._filter};} catch (error) {}
+      try {filter = {...this.parentEl._filter};} catch (error) {}
 
       let datos = null;
-      if(this.aonLaboralParentEl.isEmployee()){
+      if(this.parentEl.isEmployee()){
         datos = await getEmployeeSalaries(filter);
       } else {
         datos = await getEnterpriseSalaries(filter);
@@ -232,12 +232,12 @@ export class AonPayrollList extends AonElement {
     } catch (e) {
       console.log(e);
     }
-    this.aonLaboralEl.stopLoader();
+    this.applicationEl.stopLoader();
     return data;
   }
 
   aonEvent({ target }, data) {
-    const parent = this.aonLaboralParentEl;
+    const parent = this.parentEl;
     if(parent) parent.getSalary({salaryId:data.id});
   }
 

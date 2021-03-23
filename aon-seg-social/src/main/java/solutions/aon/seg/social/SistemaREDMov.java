@@ -8,22 +8,19 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
-
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
-
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
@@ -177,57 +174,50 @@ public class SistemaREDMov {
 			String ident = identity(employee.getIpf());
 			String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
  			String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
+ 			WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
 	    	HtmlPage htmlPage = first_page_alta_baja(
-					certificateInputStream,certificatePassword, certificateType,
-					mov,  employee.getNss(), employee.getCtaCti().get(),
+					webclient, mov, employee.getNss(), employee.getCtaCti().get(),
 					employee.getRegime(),  dni, ident, employee.getFra()
 	    	);
-
-			HtmlForm jacadaForm1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			jacadaForm1.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
-			jacadaForm1.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
-			jacadaForm1.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]); 
-			jacadaForm1.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]); 
-			jacadaForm1.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(employee.getGc().get()); 
-			jacadaForm1.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(employee.getContract().get());
-
-			if(jacadaForm1.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty()) {
-				jacadaForm1.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute( employee.getColec() ); 
+	
+			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+			form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
+			form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
+			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]); 
+			form.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]); 
+			form.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(employee.getGc().get()); 
+			form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(employee.getContract().get());
+			if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty()) {
+				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute( employee.getColec() ); 
 			}
-
-		
 			if ("0163" == employee.getRegime() && !employee.getMdctz().isEmpty()) {
-				jacadaForm1.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(employee.getMdctz().get());
+				form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(employee.getMdctz().get());
 			} else {
 				if(!employee.getCoef().isEmpty()) {
 					String coef = Integer.toString(employee.getCoef().get().intValue());
-					jacadaForm1.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); 
+					form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); 
 				}
-				if (employee.getOcup()!=null) jacadaForm1.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase()); 
+				if (employee.getOcup()!=null) form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase()); 		
 			}
-
-			HtmlInput btnSubmit1 = htmlPage.querySelector("form > input[value=Continuar]");
-			htmlPage = btnSubmit1.click();
+		    
+			htmlPage = ((HtmlInput)form.querySelector("input[value=\"Continuar\"]")).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
+	
 			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
 			if(msg1!=null && msg1.getTextContent().trim().indexOf("LA MECANIZACION DE ESTE TIPO DE REGISTROS PUEDE IMPLICAR") !=-1) {
-				HtmlInput btnSubmit2 = htmlPage.querySelector("input[value=\"Continuar\"]");
-				htmlPage = btnSubmit2.click();
+				htmlPage = ((HtmlInput)htmlPage.querySelector("input[value=\"Continuar\"]")).click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}
 			
 			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
 			if(msg2!=null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") !=-1) {
-				HtmlInput btnSubmit3 = htmlPage.querySelector("input[value=\"Continuar\"]");
-				htmlPage = btnSubmit3.click();
+				htmlPage = ((HtmlInput)htmlPage.querySelector("input[value=\"Continuar\"]")).click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
-				
 			}			
-		
+
 			return employee;
 	}
-
+	
 	private static Employee sendBajaImpl(
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
 			Employee employee
@@ -238,10 +228,10 @@ public class SistemaREDMov {
 		String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
 		
 		String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
-		
+		WebClient webClient = getWebClient(certificateInputStream,certificatePassword, certificateType);
     	HtmlPage htmlPage = first_page_alta_baja(
-				certificateInputStream,certificatePassword, certificateType,
-				mov,  employee.getNss(), employee.getCtaCti().get(),
+    			webClient,
+				mov, employee.getNss(), employee.getCtaCti().get(),
 				employee.getRegime(),  dni, ident, employee.getFra()
     	);
 
@@ -517,32 +507,31 @@ public class SistemaREDMov {
 	}
 	
 	
-	private static HtmlPage first_page_alta_baja(final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
+	private static HtmlPage first_page_alta_baja(WebClient webClient,
 			Integer mov, String nss, String ctaCti, String regimen, String dni, String ident, Date fecha) throws Exception {
-		 try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
-			HtmlForm jacadaForm = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			//form fist
-			HtmlOption option = (HtmlOption) jacadaForm.querySelectorAll("select[name=cbo_ListaAltasBajas]>option").get(mov);				
-			option.click();
-			jacadaForm.getInputByName("txt_SDFPROAFI").setValueAttribute(nss.substring(0,2));
-			jacadaForm.getInputByName("txt_SDFCODAFI").setValueAttribute(nss.substring(2));
-			jacadaForm.getInputByName("txt_SDFREGAFI_ayuda").setValueAttribute(regimen);
-			jacadaForm.getInputByName("txt_SDFTIPPFI_ayuda").setValueAttribute(ident);
-			jacadaForm.getInputByName("txt_SDFNUMPFI").setValueAttribute(dni);
-			jacadaForm.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.substring(0,2));
-			jacadaForm.getInputByName("txt_SDFCTACOT").setValueAttribute(ctaCti.substring(2));
-	
-			HtmlInput btnSubmit = htmlPage.querySelector("form > input[value=Continuar]");
-			htmlPage = btnSubmit.click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			return htmlPage;
-		}
+		HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
+		HtmlUnitToolkit.manageStatusCode(htmlPage);
+		
+		HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+		//form fist
+		HtmlOption option = (HtmlOption) form.querySelectorAll("select[name=cbo_ListaAltasBajas]>option").get(mov);				
+		option.click();
+		form.getInputByName("txt_SDFPROAFI").setValueAttribute(nss.substring(0,2));
+		form.getInputByName("txt_SDFCODAFI").setValueAttribute(nss.substring(2));
+		form.getInputByName("txt_SDFREGAFI_ayuda").setValueAttribute(regimen);
+		form.getInputByName("txt_SDFTIPPFI_ayuda").setValueAttribute(ident);
+		form.getInputByName("txt_SDFNUMPFI").setValueAttribute(dni);
+		form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.substring(0,2));
+		form.getInputByName("txt_SDFCTACOT").setValueAttribute(ctaCti.substring(2));
+		HtmlSubmitInput continue_in = form.querySelector("input[value=Continuar]");
+		htmlPage = continue_in.click();
+		HtmlUnitToolkit.manageStatusCode(htmlPage);
+		return htmlPage;
 	}
 	
+	private static WebClient getWebClient(final InputStream certificateInputStream, final String certificatePassword, final String certificateType) throws InvalidCertificateException {
+		return HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType);
+	}
 	
 	private static String[] formatDate(Date fecha) {
 		String[] arr = new String[3]; 
@@ -561,43 +550,4 @@ public class SistemaREDMov {
 		return arr;
 	}
 	
-	
-//	public static void main(String[] args)  {
-//		try (final FileInputStream certificateInputStream =  new FileInputStream("src/test/resources/solutions/aon/FNMT.p12")) {			
-//				String certificatePassword = "jg@FNMT";
-//				String certificateType = "pkcs12";
-//				String regimen = "0111";
-//		     	String ctaCti = "01105360062";
-//		     	String nss = "291136796369";
-//				String ipf = "Y7514970X";
-//				String grup_ctz = "01";
-//				Date fecha = Toolkit.parseDate("29-12-2020", "dd-MM-yyyy");
-				//cambioGrupCtzImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, grup_ctz, fecha);
-//				String apellido1 = "garcia";
-//				String apellido2 = "perez";
-//				String ipf = "y7514970x";
-//				String apellido1 = "vasquez";
-//				String apellido2 = "beauperthuy";
-//				System.out.println(nafxipf(certificateInputStream, certificatePassword, certificateType, ipf, apellido1, apellido2));
-     	
-////		
-////				EmployeeBuilder builder = new EmployeeBuilder();
-////				Employee employee = builder
-////				.setRegime(regimen)
-////				.setCtaCti(ctaCti)
-////				.setNss(nss)
-////				.setIpf(ipf)
-////				.setFra(fecha)
-////				.build();
-////			    String certificatePassword = "jg@FNMT";
-////			    String certificateType = "pkcs12";
-////				
-////			    sendBaja(certificateInputStream, certificatePassword, certificateType, employee);
-////			    
-////			    System.out.println("Baja realizada");
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
 }

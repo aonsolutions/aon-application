@@ -26,8 +26,9 @@ export class AonContractList extends AonElement {
     super();
     this.id = this.id || "aonContractList";
     this.TABLE_ID = this.id + "Table";
-    this.aonLaboral = this.getApplication();
-    this.aonLaboralToolbar = this.getElement(this.aonLaboral.TOOLBAR);
+    this.applicationEl = this.getApplication();
+    this.parentEl = this.getParent();
+    this.applicationToolbarEl = this.getElement(this.applicationEl.TOOLBAR);
   }
 
   connectedCallback() {
@@ -42,11 +43,11 @@ export class AonContractList extends AonElement {
   }
 
   async build() {
-    this.aonLaboralToolbar.setAttribute("option", "Contratos");
-    this.aonLaboral.startLoader();
+    this.applicationToolbarEl.setAttribute("option", "Contratos");
+    this.applicationEl.startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
-    this.aonLaboral.stopLoader();
+    this.applicationEl.stopLoader();
   }
 
   async getTableDesk() {}
@@ -78,17 +79,17 @@ export class AonContractList extends AonElement {
       {
         name: "Contrato",
         aonIcon: "aon_cto",
-        fn: (el) => this.aonLaboral.getParent().getContratoPdf(res, el),
+        fn: (el) => this.parentEl.getContratoPdf(res, el),
       },
       {
         name: "Obtener TA",
         aonIcon: "aon_ta",
-        fn: (el) => this.aonLaboral.getParent().getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
+        fn: (el) => this.parentEl.getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
       },
 			{
 				name: 'Obtener IDC',
 				aonIcon: 'aon_idc',
-				fn: (el) => this.aonLaboral.getParent().getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
+				fn: (el) => this.parentEl.getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
 			}
     ];
   }
@@ -119,19 +120,6 @@ export class AonContractList extends AonElement {
     } catch (e) {
       console.log(e);
     }
-    
-    //delete
-    data.push({
-      contractType:"401",
-      startDate: "2020-09-09",
-      regime: "0111",
-      ctaCti: "01105360062",
-      surName: "VASQUEZ",
-      name:"RAY",
-      document: "Y7514970X",
-      ssNumber:"291136796369"
-    });
-
     return data;
   }
 }

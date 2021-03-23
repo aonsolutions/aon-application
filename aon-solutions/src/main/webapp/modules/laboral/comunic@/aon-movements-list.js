@@ -27,8 +27,7 @@ export class AonMovementsList extends AonElement {
     this.id = this.id || "aonMovementsList";
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
-    this.aonComunicaParentEl = this.applicationEl.getParent();
-    this.toastEl = this.getElement(this.applicationEl.TOAST);
+    this.parentEl = this.getParent();
   }
 
   connectedCallback() {
@@ -86,7 +85,7 @@ export class AonMovementsList extends AonElement {
               aonIcon: "aon_seg_social",
               title: `${res.name}`,
               subtitle: `${res.status} ${res.fecha}`,
-              option: this.aonComunicaParentEl.getOptions(res),
+              option: this.parentEl.getOptions(res),
             },
             idx,
             (el) => this.aonMovement(el, res)
@@ -124,7 +123,7 @@ export class AonMovementsList extends AonElement {
   async getData() {
     let data = [];
     try {
-      const movements = this.aonComunicaParentEl._movements;
+      const movements = this.parentEl._movements;
       const resp = movements || await getMovements(this.getFilter());
       data = resp
         .sort((a, b) => new Date(b.fra) - new Date(a.fra))
@@ -139,7 +138,7 @@ export class AonMovementsList extends AonElement {
         if (prev) {
           color = "#488601";
           tipo_mov = `${tipo_mov} previa`;
-        } else if (this.aonComunicaParentEl.anularCondition(situation, fra)) {
+        } else if (this.parentEl.anularCondition(situation, fra)) {
           color = "#CB8D00";
           tipo_mov = `${tipo_mov} Consolidada`;
         } else {
@@ -154,12 +153,11 @@ export class AonMovementsList extends AonElement {
           prev,
         };
       });
-      this.aonComunicaParentEl._movements = data;
-    } catch (e) {
-      console.log(e);
-      if ("InvalidCertificateException" === e || "CertificateNotFoundException" === e){
-        this.toastEl.start({ message: e, type: "error" });
-      }
+      this.parentEl._movements = data;
+    } catch (error) {
+      if(typeof error ==="string") error = JSON.parse(error);
+      const {message, type} = error;
+      this.applicationEl.getToast().start({ message, type});
     }
     return data;
   }

@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 
 import {AonPresenceList} from "./time-control/aon-presence-list.js";
-import { getAuth, getDomainUserRoles, getPeriod, getTaskHolders } from "../../services/service.js";
+import { getAuth, getDomainUserRoles, getPeriod, getTaskHolders, getWeekDayObj } from "../../services/service.js";
 import { formatDateOrigin, isEmptyObject, setValueName } from "../../services/utils.js";
 import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
 import { AonLocationList } from "./time-control/location/aon-location-list.js";
@@ -35,12 +35,6 @@ export class AonSignin extends AonElement {
 
   initialize(){
     this.AON_SIGNIN = "aonSignin";
-    this._filter = { 
-      period: "today",
-      group:"DAY",
-      startDate: formatDateOrigin(new Date()),
-      endDate: formatDateOrigin(new Date())
-    };
     this.AUTHS=[];
   }
 
@@ -49,11 +43,30 @@ export class AonSignin extends AonElement {
   }
 
   async build() {
+    this.filterInit();
     this.paintView();
     this.buildToolbar();
     this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
   }
 
+  filterInit(){
+    if(this.isEmployee()){
+      const weekDayObj = getWeekDayObj();
+      this._filter = { 
+        period: "this_week",
+        group:"DAY",
+        startDate: formatDateOrigin( new Date().setDate(weekDayObj.dayWeekFirst) ),
+        endDate: formatDateOrigin( new Date().setDate(weekDayObj.dayWeekLast) )
+      };
+    } else {
+      this._filter = { 
+        period: "today",
+        group:"DAY",
+        startDate: formatDateOrigin(new Date()),
+        endDate: formatDateOrigin(new Date())
+      };
+    }
+  }
   paintView() {
     this.innerHTML = `
 			<aon-application id="${this.AON_SIGNIN}" title="Control Horario"></aon-application>

@@ -2,6 +2,7 @@ import { AonElement } from '../../../components/AonElement.js';
 import { INPUTS_ALL } from '../../../environments/constants.js';
 import { setValueName, serializeForm, formatDateOrigin } from '../../../services/utils.js';
 import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../../services/service.js'
+import { ToolbarType } from '../../../models/enums.js';
 import '../../../components/aon-card.js';
 import '../../../components/aon-input.js';
 import '../../../components/aon-number.js';
@@ -10,7 +11,7 @@ import '../../../components/aon-suggestion.js';
 import '../../../components/aon-select.js';
 import '../../../components/aon-switch.js';
 import '../../../components/aon-icon-button.js';
-import { ToolbarType } from '../../../models/enums.js';
+
 
 export class AonAltaDirecta extends AonElement {
     _contrato;
@@ -42,10 +43,10 @@ export class AonAltaDirecta extends AonElement {
         this.id = this.id || 'aonAltaDirecta';
         this.TOOLBAR = this.id + 'Toolbar';
         this.applicationEl = this.getApplication();
-        this.applicationElParentEl = this.applicationEl.getParent();
+        this.parentEl = this.getParent();
         this.applicationElToolbar = this.getElement(this.applicationEl.TOOLBAR);
         this.applicationElToolbar.setAttribute('option', 'Comunicar contrato');
-        this.TOAST = this.getElement(this.applicationEl.TOAST);
+        this.TOAST = this.applicationEl.getToast();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -195,22 +196,21 @@ export class AonAltaDirecta extends AonElement {
             id: 'Idc',
             name: 'Obtener IDC',
             aonIcon: 'aon_idc',
-        }, () => this.applicationElParentEl.getIdc(this.data));
+        }, () => this.parentEl.getIdc(this.data));
 
         toolbar.addButton2({
             id: 'Ta',
             name: 'Obtener TA',
             aonIcon: 'aon_ta',
-        }, () => this.applicationElParentEl.getTa(this.data));
+        }, () => this.parentEl.getTa(this.data));
 
         toolbar.addButton2({
             id: 'Delete',
             name: 'Anular',
             icon: 'delete_forever',
-        }, async () => {
+        }, async (el) => {
             try {
-                await this.applicationElParentEl.deleteMov(this.data);
-                this.back();
+                await this.parentEl.deleteMov(this.data, el);
             } catch (error) {
                 console.log(error);
             }
@@ -361,7 +361,7 @@ export class AonAltaDirecta extends AonElement {
 
         //hidden toolbar button
         let buttonToolbar = { "Idc": false, "Ta": false };
-        if (this.applicationElParentEl.anularCondition(obj.situation, obj.fecha)) buttonToolbar["Delete"] = false;
+        if (this.parentEl.anularCondition(obj.situation, obj.fecha)) buttonToolbar["Delete"] = false;
         this.hiddenButtonToolbar(buttonToolbar);
         //end hidden toolbar
 
@@ -628,10 +628,12 @@ export class AonAltaDirecta extends AonElement {
         try {
             await postAltaDirecta(this.getContrato());
             this.TOAST.start({ message: 'Alta procesada!', type: 'success', delay: 3000 });
-            // this.applicationElParentEl._movements = undefined;
-            // this.back();
+            this.parentEl._movements = undefined;
+            this.back();
         } catch (error) {
-            this.TOAST.start({ message: error, type: 'error' });
+            if(typeof error ==="string") error = JSON.parse(error);
+            const {message, type} = error;
+            this.TOAST.start({ message, type});
         }
         this.applicationEl.stopLoading();
     }
@@ -648,16 +650,18 @@ export class AonAltaDirecta extends AonElement {
         try {
             await postUpdateCto(cto_new);
             this.TOAST.start({ message: 'Contrato modificado!', type: 'primary', delay: 3000 });
-            this.applicationElParentEl._movements = undefined;
+            this.parentEl._movements = undefined;
             this.back();
         } catch (error) {
-            this.TOAST.start({ message: error, type: 'error' });
+            if(typeof error ==="string") error = JSON.parse(error);
+            const {message, type} = error;
+            this.TOAST.start({ message, type});
         }
         this.applicationEl.stopLoading();
     }
 
     back() {
-        this.applicationEl.setContentHTML(`<aon-movements></aon-movements>`);
+        this.parentEl.showView("aonMovements");
     }
 
     async getNaf() {

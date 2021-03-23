@@ -2,19 +2,15 @@ package solutions.aon.seg.social.toolkit;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.Optional;
 import java.util.function.Function;
-
 import com.gargoylesoftware.css.parser.CSSException;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
-
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.internal.CSSParseException;
@@ -90,7 +86,7 @@ public class HtmlUnitToolkit {
 
 			if ((status.length() > 0) && (status.charAt(0) == '*'))
 				status = status.substring(1);
-			if (status.equals(""))
+			if (status.equals("") || status.contains("0350"))
 				return 3083;
 			if (!status.contains("*"))
 				if (!status.contains("-"))
@@ -121,10 +117,9 @@ public class HtmlUnitToolkit {
 	public static void manageStatusCode(HtmlPage htmlPage) throws SegSocialException {
 		Integer code = getSSCode(htmlPage);
 		String msg = getSSmessage(htmlPage);
-		System.out.println(code);
 		InvalidDataException.checkCode(code, msg);
 	}
-
+	
 	// MANAGES THE EXCEPTIONS OF NEW UI
 	public static void manageStatusMessage(HtmlPage document) throws SegSocialException {
 		DomNodeList<DomNode> errors = document.querySelectorAll(".mensajeError");

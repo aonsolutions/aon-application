@@ -106,7 +106,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			response(req, resp, jsonInString!=null ? new JsonParser().parse(jsonInString) : new JSONObject());
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			error(req, resp, e);
 		}
 	}
@@ -182,7 +181,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setContract(type_cto)
 		.setMdctz(md_ctz)
 		.build();
-		//return employee;
 		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	

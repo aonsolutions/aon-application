@@ -87,10 +87,22 @@ export const getGroups = (data) =>
     resolve(jsonValues);
   });
 
-export const getPeriod = (data) => {
+export const getWeekDayObj = () => {
   const now = new Date();
   const dayWeekFirst = firstDayWeek(now);
   const dayWeekLast = lastDayWeek(now);
+  return {
+    now,
+    dayWeekFirst,
+    dayWeekLast
+  }
+}
+
+export const getPeriod = (data) => {
+  const weekDayObj = getWeekDayObj();
+  const now = weekDayObj.now;
+  const dayWeekFirst = weekDayObj.dayWeekFirst;
+  const dayWeekLast = weekDayObj.dayWeekLast;
   return new Promise((resolve) => {
     let jsonValues = [
       {

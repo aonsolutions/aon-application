@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
-import { addDays, formatDateOrigin, setValueName } from "../../services/utils.js";
+import { getCompanyCosts, getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
+import { addDays, addMonth, formatDateOrigin, setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../documental/aon-mobile-documental-list.js";
@@ -10,6 +10,8 @@ import { startModule } from "../../services/gwtLoader.js";
 import { AonContractList } from "./payroll/aon-contract-list.js";
 import { AonMovements } from "./comunic@/aon-movements.js";
 import { AonCtaList } from "./comunic@/cta/aon-cta-list.js";
+import { AonMovementsList } from "./comunic@/aon-movements-list.js";
+import { AonAltaDirecta } from "./comunic@/aon-alta-directa.js";
 
 class AonLaboral extends AonElement {
 
@@ -56,7 +58,7 @@ class AonLaboral extends AonElement {
   paintView(){
     this.innerHTML = `
       <aon-application id="${this.AON_LABORAL}" title="LABORAL"></aon-application>`;
-    this.aonLaboralEl = this.getApplication();
+    this.applicationEl = this.getApplication();
   }
 
   buildToolbar(){
@@ -73,48 +75,54 @@ class AonLaboral extends AonElement {
       laboralOptions.push(contract);
 
       let companyCosts = PayrollOptions.COMPANY_COSTS;
-      companyCosts.fn = () =>  this.aonLaboralEl.development("Costes de empresa");
+      companyCosts.fn = () =>  this.getCompanyCosts();
       laboralOptions.push(companyCosts);
 
       let sepa = PayrollOptions.SEPA_FILES;
       sepa.fn = () => this.showView(PAYROLL_VIEWS.AON_SEPA_FILES_LIST);
       laboralOptions.push(sepa);
+    }
 
+    if(this.isComunica()){
       let aon_comunica = PayrollOptions.AON_COMUNICA;
       aon_comunica.fn = () => this.showView(PAYROLL_VIEWS.AON_MOVEMENTS);
       laboralOptions.push(aon_comunica);
+    }
 
+    this.applicationEl.addSidenavOptions('LABORAL', laboralOptions);
 
+    if(this.isComunica() || !this.isEmployee()){
       let aon_cta_list = PayrollOptions.AON_CCC;
       aon_cta_list.fn = () => this.showView(PAYROLL_VIEWS.AON_CTA_LIST);
       conf.push(aon_cta_list);
+      if(!this.isMobile()){
+        let aon_cert = PayrollOptions.AON_CERT;
+        aon_cert.fn = () => this.showView(PAYROLL_VIEWS.AON_CERT);
+        conf.push(aon_cert);
+      }
+      this.applicationEl.addSidenavOptions('CONFIGURACIÓN', conf);
     }
 
-    this.aonLaboralEl.addSidenavOptions('LABORAL', laboralOptions);
-
-    if(conf.length > 0){this.aonLaboralEl.addSidenavOptions('CONFIGURACIÓN', conf);}
-    
-    let iconContract = this.getElement(this.aonLaboralEl.SIDENAV + PayrollOptions.AON_CONTRACT.name + "AonIcon");
+    let iconContract = this.getElement(this.applicationEl.SIDENAV + PayrollOptions.AON_CONTRACT.name + "AonIcon");
     if(iconContract){iconContract.style.marginLeft = "3px";}
-
 
   }
 
   async getSalary(data){
-    this.aonLaboralEl.startLoading();
+    this.applicationEl.startLoading();
     try {
       await getSalaryPdf(data);
     } catch (error) {
-      this.aonLaboralEl.getToast().start({ message: error, type: 'error' });
+      this.applicationEl.getToast().start({ message: error, type: 'error' });
     }
 
-		this.aonLaboralEl.stopLoading();
+		this.applicationEl.stopLoading();
   }
 
   async setDataFilter(data){
     try {
       this._filter = {...this._filter, ...data};
-      this.aonLaboralEl.getChild().filter = true;
+      this.applicationEl.getChild().filter = true;
     } catch (error) {}
   }
 
@@ -165,25 +173,25 @@ class AonLaboral extends AonElement {
 	}
 
   async getContratoPdf(data, el) {
-    this.aonLaboralEl.startLoading();
+    this.applicationEl.startLoading();
     try {
       const { document: ipf, startDate: fecha } = data;
       await getContratoPdf({ ipf, fecha });
     } catch ({message, type}) {
-			if(message && type) this.aonLaboralEl.getToast().start({ message, type});
+			if(message && type) this.applicationEl.getToast().start({ message, type});
 		}
-    this.aonLaboralEl.stopLoading();
+    this.applicationEl.stopLoading();
   }
 
   async getTa(data, el) {
-		this.aonLaboralEl.startLoading();
+		this.applicationEl.startLoading();
 		try {
 			const { regime, ctaCti, nss, fra } = data;
 			await getTA({ regime, ctaCti, nss, fra }); // open pdf
 		} catch ({message, type}) {
-			if(message && type) this.aonLaboralEl.getToast().start({ message, type});
+			if(message && type) this.applicationEl.getToast().start({ message, type});
 		}
-		this.aonLaboralEl.stopLoading();
+		this.applicationEl.stopLoading();
 	}
 
   anularCondition(situation, fra) {
@@ -194,28 +202,42 @@ class AonLaboral extends AonElement {
 	}
 
 	async getIdc(data, el) {
-		this.aonLaboralEl.startLoading();
+		this.applicationEl.startLoading();
 		try {
 			const { regime, ctaCti, nss, fra } = data;
 			await getIDC({ regime, ctaCti, nss, fra }); // open pdf
 		} catch ({message, type}) {
-			if(message && type) this.aonLaboralEl.getToast().start({ message, type});
+			if(message && type) this.applicationEl.getToast().start({ message, type});
 		}
-    this.aonLaboralEl.stopLoading();
+    this.applicationEl.stopLoading();
   }
 
   async deleteMov(data, el) {
-    this.aonLaboralEl.confirmDialog("Anular movimiento", `Estas seguro de anular el movimiento de ${data.name} ?`, async() => {
-        this.aonLaboralEl.startLoader();
+    this.applicationEl.confirmDialog("Anular movimiento", `Estas seguro de anular el movimiento de ${data.name} ?`, async() => {
+        this.applicationEl.startLoading();
         try {
           await postDeleteMov(data);
-          this.aonLaboralEl.getToast().start({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
-          if (el) el.remove(); //delete td
-        } catch ({message, type}) {
-          if(message && type) this.aonLaboralEl.getToast().start({ message, type});
+          this.applicationEl.getToast().start({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
+          if(this._movements)this._movements = this._movements.filter(({ctaCti,fra,ipf,nss,regime,situation}) => !(ctaCti.includes(data.ctaCti) && fra.includes(data.fra) && ipf.includes(data.ipf) && nss.includes(data.nss) && regime.includes(data.regime) && situation.includes(data.situation)))
+          this.showView("aonMovements");
+        } catch (error) {
+          if(typeof error ==="string") error = JSON.parse(error);
+          const {message, type} = error;
+          this.applicationEl.getToast().start({ message, type});
         }
-      this.aonLaboralEl.stopLoader();
+      this.applicationEl.stopLoading();
     });
+  }
+
+  async getCompanyCosts(){
+    this.applicationEl.development("Costes de empresa");
+    this.applicationEl.startLoading();
+		try {
+			await getCompanyCosts({ excelType:"COMPLETE", date: formatDateOrigin(addMonth(new Date(), -1)) }); 
+		} catch ({message, type}) {
+			if(message && type) this.applicationEl.getToast().start({ message, type});
+		}
+    this.applicationEl.stopLoading();
   }
 
   showView(view, data, filter = undefined){
@@ -232,33 +254,43 @@ class AonLaboral extends AonElement {
             aonView.setFilter({type: 'system'});
             break;
           case PAYROLL_VIEWS.AON_CONTRACT_LIST:
-            this.aonLaboralEl.removeToolbarOptions();
+            this.applicationEl.removeToolbarOptions();
             if(this.isMobile()){
               aonView = new AonContractList();
             }else {
-              startModule('aon_gwt_payroll', 'MainContrata', this.aonLaboralEl.CONTENT);
+              startModule('aon_gwt_payroll', 'MainContrata', this.applicationEl.CONTENT);
             }
             break;
           case PAYROLL_VIEWS.AON_MOVEMENTS:
             aonView = new AonMovements();
             break;
           case PAYROLL_VIEWS.AON_CERT:
-            this.aonLaboralEl.removeToolbarOptions();
-            startModule('aon_gwt_payroll', 'MainDigitalCertificates', this.aonLaboralEl.CONTENT);
+            this.applicationEl.removeToolbarOptions();
+            startModule('aon_gwt_payroll', 'MainDigitalCertificates', this.applicationEl.CONTENT);
             break;
           case PAYROLL_VIEWS.AON_CTA_LIST:
-            this.aonLaboralEl.removeToolbarOptions();
+            this.applicationEl.removeToolbarOptions();
             aonView = new AonCtaList();
+            break;
+          case PAYROLL_VIEWS.AON_MOVEMENTS_LIST:
+            aonView = new AonMovementsList();
+            break;
+          case PAYROLL_VIEWS.AON_ALTA_DIRECTA:
+            aonView = new AonAltaDirecta();
             break;
         }
         if(aonView){
           aonView.id = view;
           if(filter) aonView.filter = filter;
-          this.aonLaboralEl.setContent(aonView);
+          this.applicationEl.setContent(aonView);
         }
       }
       resolve(true);
     });
+  }
+
+  isComunica(){
+    return this.getDur().isComunicaManager() || this.getDur().isComunicaPortal();
   }
 
   isEmployee(){
