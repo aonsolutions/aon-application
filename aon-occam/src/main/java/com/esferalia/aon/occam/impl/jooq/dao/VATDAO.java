@@ -779,7 +779,7 @@ public class VATDAO  {
 				
 				.setSiiStatus(rec.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE) != null ? rec.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE) : "Pendiente")
 				
-				.setBase(rec.getValue(INVOICE_TAX.BASE) != null ? rec.getValue(INVOICE_TAX.BASE) : rec.getValue(INVOICE.TAXABLE_BASE))
+				.setBase(rec.getValue(INVOICE_TAX.BASE) != null ? rec.getValue(INVOICE_TAX.BASE) : rec.getValue(INVOICE_DETAIL.TAXABLE_BASE))
 				.setPercentage(rec.getValue(INVOICE_TAX.PERCENTAGE) != null ? rec.getValue(INVOICE_TAX.PERCENTAGE) : 0.0)
 				.setQuota(rec.getValue(INVOICE_TAX.QUOTA) != null ? getQuota(rec): rec.getValue(INVOICE.VAT_QUOTA))
 				.setSurcharge(rec.getValue(INVOICE_TAX.SURCHARGE) != null ? AonMathUtils.round(rec.getValue(INVOICE_TAX.SURCHARGE)) > 0 : false)
