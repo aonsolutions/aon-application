@@ -60,6 +60,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 import org.mvel2.ConversionException;
+import org.mvel2.ast.IsDef;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
@@ -1793,13 +1794,24 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 	protected void fillTimeUnits(IContractSalaryCalculatorContext ctx) {
 		try {
+			if ( ctx.getExpressionContext().isDef(ContextVariable.TOTAL_DAYS)) {
+				salaryBuilder.setTimeUnits(ctx.getExpressionContext().getVariables(ContextVariable.TOTAL_DAYS).stream()
+					.map(var -> (Number) var.getValue(var.getPeriod()))
+					.collect(Collectors.summingDouble(number -> number.doubleValue())).intValue());
+				return;
+			}
+		
+		} catch ( Exception e ) {
+		}
+		try {
 			salaryBuilder.setTimeUnits(ctx.getExpressionContext().getVariables(ContextVariable.QUOTE_DAYS).stream()
 					.map(var -> (Number) var.getValue(var.getPeriod()))
 					.collect(Collectors.summingDouble(number -> number.doubleValue())).intValue());
+			return;
 		} catch (Exception e) {
-			salaryBuilder
-					.setTimeUnits((int) (AonDateUtils.getDaysBetweenDates(ctx.getStartDate(), ctx.getEndDate()) + 1));
 		}
+		salaryBuilder
+		.setTimeUnits((int) (AonDateUtils.getDaysBetweenDates(ctx.getStartDate(), ctx.getEndDate()) + 1));
 	}
 
 	protected void onInvalidData(String... variableNames) {

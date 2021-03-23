@@ -69,6 +69,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
@@ -146,9 +147,10 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			System.out.println(result.getPeriod().getStart() + ".." + result.getPeriod().getEnd() + " = " + result.getValue() );
 			//Assert.assertEquals( 12.00 * (2.00 + 2/12.00) * br , result.getValue());
 
-		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
-		
+		int days = (int) new Period(seniority, getToday()).daysStream().count();
+		Assert.assertEquals(days, (int)settle.getTimeUnits());
 
 		Assert.assertEquals( 12 * (2.00 + 2/12.00 + fix29Feb/12.00) * br, settle.getTotalPayment(), DELTA);
 		Assert.assertEquals( 12 * ( 2 + 2/12.00 + fix29Feb/12.00) * br, settle.getTotalLiquid(), DELTA);
@@ -1776,6 +1778,91 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		Assert.assertEquals( 1750.00 *1.10 / 12 * 3.50 * 2 , settle.getTotalPayment(), DELTA);
 	}
+
+	@Test
+	public void testSettleWithExtrasX() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+
+		
+		Date contractStart =getFirstDayOfYear(getToday());
+		Date contractEnd = getToday();
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				contractEnd,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), "\"100\"");
+						put(MONTH_DAYS.getName(), "30");
+						put(QUOTE_GROUP.getName(), "\"01\"");
+					}
+				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+						new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * 0.00/100" }, 
+				null);
+		//@formatter:off
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		
+		addPayment(aonContext, contract, contractStart, contractEnd, pagaExtra,  "PAGA EXTRA", "P_0 + P_1 + P_2", "_P", "_P", PaymentType.CRA_0004,(byte)Month.JULY.getValue() );
+		addPayment(aonContext, contract, contractStart, contractEnd, pagaExtra,  "PAGA EXTRA", "P_0 + P_1 + P_2", "_P", "_P", PaymentType.CRA_0004,(byte)Month.DECEMBER.getValue() );
+//		addPayment(aonContext, contract, contractStart, contractEnd, pagaExtra,  "PAGA EXTRA", "P_0 + P_1 + P_2", "_P", "_P", PaymentType.CRA_0004,(byte)Month.MARCH.getValue() );
+		
+		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder)
+		.calculate(getContractSalaryCalculatorContext(connection, contractStart, getLastDayOfMonth(contractStart),getLastDayOfMonth(contractStart) , contract));
+		jooqSalaryBuilder.execute();
+		
+//		 AON.getSalaries(aonContext, p->p.getContractProperty().eq(contract.getId())).findAny().ifPresent(s -> {
+//			 System.out.println(s.getStartDate());
+//			 s.getPayments().forEach( p -> System.out.println( "SALARY :" + p.getDescription() + " = " + p.getAmount() + "," + p.getQuote() ) );
+//		 });
+		
+		
+		addSSRegimeStuff(aonContext);
+
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+		
+		settleCtx.getExpressionContext().eval("TRACE('SALARIO_DIA:%f\r\n', SALARIO_DIA)", contractStart, getToday())
+		;
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println( description + ":" + amount + "_" + startDate );
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		}).calculate(settleCtx);
+		
+		
+		int months = get(getToday(), Calendar.MONTH );
+		int days = Math.min(30, get(getToday(), Calendar.DAY_OF_MONTH ));
+		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
+		int julyExtraMonths = (months >= 6 ? months -6 : months );
+		// Settle at 01/07, so we have two extras for July .
+		//if ( get(getToday(), Calendar.MONTH ) == 6 && get(getToday(), Calendar.DAY_OF_MONTH ) == 1)
+		//julyExtraMonths += 6;
+
+		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths  * 30) + days ) / 360 ;
+		
+
+		if ( months == Calendar.DECEMBER && days > 15 )
+			decemberExtra = 0.00; 
+		// 'December Extra...' have been already emitted. 
+
+		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+
+	}
+
 	// ------------------------------------------------------------------------
 
 	@Test
