@@ -5,6 +5,8 @@
 /* ICONS */
 @url iconAdd aonIconAdd;
 .aon_icon_add { background-image: iconAdd;}
+@url iconAddBlock aonIconAddBlock;
+.aon_icon_add_block { background-image: iconAddBlock;}
 @url iconEmail aonIconEmail;
 .aon_icon_email { background-image: iconEmail;}
 @url iconDrive aonIconDrive;
