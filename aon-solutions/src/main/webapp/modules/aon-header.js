@@ -180,7 +180,10 @@ export class AonHeader extends AonElement {
 						}, {
 							name: 'Cerrar Sesión',
 							icon: 'input',
-							fn: () => closeSession()
+							fn: () => {
+								this.activeTimecontrol= false;
+								closeSession();
+							}
 						}];
 						d.setMenuOptions(options, top, left);
 						d.open();

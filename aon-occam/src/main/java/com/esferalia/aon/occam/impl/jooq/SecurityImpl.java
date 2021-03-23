@@ -108,6 +108,13 @@ public class SecurityImpl implements ISecurity {
 		return SecurityDAO.getUser(ctx, login);
 	}
 	
+	
+	@Override
+	public User save(AONContext ctx, User user) {
+		return ctx.getDslContext().transactionResult(
+				Configuration -> SecurityDAO.save(ctx, user));
+	}
+	
 	@Override
 	public User insertUser(AONContext ctx, User user) {
 		return SecurityDAO.insertUser(ctx, user);

@@ -407,6 +407,12 @@ public class AON {
 		}
 	}
 	
+	public static User save(String domainName, int domainId, String login, User user) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getSecurity().save(ctx, user);
+		} 
+	}
+	
 	public static User insertUser(String domainName, int domainId, String login, User user) {
 		AONContext ctx = null;
 		try {

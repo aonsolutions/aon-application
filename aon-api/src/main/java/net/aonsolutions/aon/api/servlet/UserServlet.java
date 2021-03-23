@@ -164,7 +164,8 @@ public class UserServlet extends AonApiHttpServlet {
 				json.put("document", auth.getDocument() != null ? auth.getDocument() : "");
 				json.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
 				json.put("roles", getUserRoles(getDomain(), r));
-				
+				json.put("portal", r.isPortal());
+				json.put("shared", r.isShared());
 				jsArray.put(json);
 			} else jsArray.put(userToJSON(r, json));
 		});
@@ -187,6 +188,8 @@ public class UserServlet extends AonApiHttpServlet {
 		json.put("name", user.getName());
 		json.put("login", user.getLogin());
 		json.put("newAon", UserToolbar.AON_SOLUTIONS.equals(user.getToolbar()));
+		json.put("portal", user.isPortal());
+		json.put("shared", user.isShared());
 		
 		JSONArray scopes = new JSONArray();
 		AON.getUserScopeStream(getDomain().getName(), getDomain().getId(), getUser().getLogin(), userId, null)
@@ -282,7 +285,8 @@ public class UserServlet extends AonApiHttpServlet {
 	
 	private JSONObject setUserAppRole(){
 		JSONArray roles = getData().optJSONArray("roles");
-
+		Boolean portal = false;
+		Integer userId = !roles.isEmpty() ? roles.getJSONObject(0).optInt("user") : null;
 		for (Integer i = 0; i < roles.length(); i++) {
 			JSONObject object = roles.getJSONObject(i);
 			String app = object.optString("app");
@@ -340,6 +344,7 @@ public class UserServlet extends AonApiHttpServlet {
 					} 
 				
 					if(AonRole.EMPLOYEE.equals(uar.getRole()) || AonRole.ENTERPRISE.equals(uar.getRole())) {
+						portal = true;
 						LinkedList<AonRole> list = AonRole.EMPLOYEE.equals(uar.getRole())
 								? AonRole.getEmployeeRoles() : AonRole.getEnterpriseRoles();
 							
@@ -348,7 +353,7 @@ public class UserServlet extends AonApiHttpServlet {
 							f.getDomainProperty().eq(getDomain().getId())
 							.and(f.getUserIdProperty().eq(user))
 							.and(f.getRoleProperty().notIn(arr)));
-					}	 
+					}
 				} else {
 					if(uar.getId() != null) {
 						Integer id = uar.getId();
@@ -363,6 +368,21 @@ public class UserServlet extends AonApiHttpServlet {
 						}
 					}
 				}
+			}
+		}
+		
+		if(portal) {
+			User usr = AON.getUser(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getIdProperty().eq(userId));
+			if(usr.getEnterprise() == null) {
+				Company cp = AON.getCompany(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId()));
+				usr.setEnterprise(cp.getId());
+				AON.save(getDomain().getName(), getDomain().getId(), getUser().getLogin(), usr);
+			}
+		} else {
+			User usr = AON.getUser(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getIdProperty().eq(userId));
+			if(usr.getEnterprise() != null) {
+				usr.setEnterprise(null);
+				AON.save(getDomain().getName(), getDomain().getId(), getUser().getLogin(), usr);
 			}
 		}
 		
@@ -421,6 +441,8 @@ public class UserServlet extends AonApiHttpServlet {
 				js.put("document", auth.getDocument() != null ? auth.getDocument() : "");
 				js.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
 				js.put("roles", getUserRoles(getDomain(), user));
+				js.put("portal", user.isPortal());
+				js.put("shared", user.isShared());
 			}
 		} else {
 			throw new Exception("El email no es correcto.");
@@ -494,7 +516,7 @@ public class UserServlet extends AonApiHttpServlet {
 				user.setRegistry(registryId);
 			}
 		}	
-		user = AON.insertUser(domain.getName(), domain.getId(), "", user);
+		user = AON.save(domain.getName(), domain.getId(), "", user);
 		AON.updateUserPassword(domain.getName(), domain.getId(),getUser().getLogin(), user.getId(), auth.getPassword());
 		Scope s = getScope();
 		if(s != null) {

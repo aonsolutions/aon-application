@@ -322,6 +322,10 @@ public class SecurityDAO {
 		return getUser(ctx,ctx.getUser());
 	}
 	
+	public static User save(AONContext ctx, User user) {
+		return user.getId() != null ? updateUser(ctx, user) : insertUser(ctx, user);
+	}
+	
 	public static User insertUser(AONContext ctx, User user) {
 		Integer id = ctx.getDslContext().insertInto(USER)
 			.set(USER.NAME, user.getName())
@@ -335,6 +339,21 @@ public class SecurityDAO {
 			.returning(USER.ID).fetchOne().getId();
 		
 		return user.setId(id);
+	}
+	
+	public static User updateUser(AONContext ctx, User user) {
+		ctx.getDslContext().update(USER)
+			.set(USER.NAME, user.getName())
+			.set(USER.LOGIN, user.getLogin())
+			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
+			.set(USER.DOMAIN, user.getDomain())
+			.set(USER.AUTH, user.getAuth())
+			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
+			.set(USER.ENTERPRISE, user.getEnterprise())
+			.set(USER.TOOLBAR, user.getToolbar().value())
+			.where(USER.ID.eq(user.getId()))
+			.execute();	
+		return user;
 	}
 	
 	public static User delete(AONContext ctx, User user) {
@@ -462,7 +481,8 @@ public class SecurityDAO {
 				.setRegistry(record.getValue(USER.REGISTRY))
 				.setAuth(record.getValue(USER.AUTH))
 				.setShared(AonEnumUtils.getBoolean(record.getValue(USER.SHARED)))
-				.setToolbar(UserToolbar.safeValueOf(record.getValue(USER.TOOLBAR)));
+				.setToolbar(UserToolbar.safeValueOf(record.getValue(USER.TOOLBAR)))
+				.setEnterprise(record.getValue(USER.ENTERPRISE));
 				//.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
 		}
 		
@@ -1313,6 +1333,10 @@ public class SecurityDAO {
 				? getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getUserIdProperty().eq(userId)))
 						.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new))
 				: new LinkedList<>();	
+		
+		Long userNum = getDomainUserStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getEnterpriseProperty().isNull()).and(f.getSharedProperty().eq((byte)0))).count();
+		domain.setDefinedUsers(userNum.intValue());
+
 		return new DomainUserRoles()
 				.setDomain(domain)
 				.setUser(user)

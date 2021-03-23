@@ -18,7 +18,9 @@ public class Domain implements Serializable {
 	private boolean domainManagement;
 	private boolean active;
 	private Integer scope;
-
+	private Integer maxDefinedUsers;
+	private Integer definedUsers;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -116,6 +118,24 @@ public class Domain implements Serializable {
 	
 	public Domain setOwner(String owner) {
 		this.owner = owner;
+		return this;
+	}
+	
+	public Integer getMaxDefinedUsers() {
+		return maxDefinedUsers;
+	}
+	
+	public Domain setMaxDefinedUsers(Integer maxDefinedUsers) {
+		this.maxDefinedUsers = maxDefinedUsers;
+		return this;
+	}
+	
+	public Integer getDefinedUsers() {
+		return definedUsers;
+	}
+	
+	public Domain setDefinedUsers(Integer definedUsers) {
+		this.definedUsers = definedUsers;
 		return this;
 	}
 }

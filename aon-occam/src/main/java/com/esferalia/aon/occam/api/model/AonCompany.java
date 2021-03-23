@@ -76,7 +76,9 @@ public class AonCompany implements Serializable {
 			.put("type", getDomain().getDomainType().name())
 			.put("parent",getDomain().isParent())
 			.put("shared", isShared())
-			.put("parentId",getDomain().getParentId());
+			.put("parentId",getDomain().getParentId())
+			.put("maxDefinedUsers", getDomain().getMaxDefinedUsers());
+		
 		return json;
 	}
 }

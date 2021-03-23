@@ -660,7 +660,8 @@ public class FillerDAO {
 					.setId(r.getValue(domain.ID))
 					.setName(r.getValue(domain.NAME))
 					.setActive(r.getValue(domain.ACTIVE) == 1)
-					.setParentId(r.getValue(domain.PARENT));
+					.setParentId(r.getValue(domain.PARENT))
+					.setMaxDefinedUsers(r.getValue(domain.MAXDEFINEDUSERS));
 			Company company = new Company();
 			company.setDomain(d);
 			company.setAlias(r.getValue(REGISTRY.ALIAS));

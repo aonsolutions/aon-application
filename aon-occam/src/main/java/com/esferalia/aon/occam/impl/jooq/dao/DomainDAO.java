@@ -101,6 +101,7 @@ public class DomainDAO {
 						.setParentId(rec.getValue(DOMAIN.PARENT))
 						.setEnableHeredity(AonEnumUtils.getBoolean(rec.getValue(DOMAIN.ENABLEHEREDITY)))
 						.setDomainManagement(AonEnumUtils.getBoolean(rec.getValue(DOMAIN.DOMAINMANAGEMENT)))
+						.setMaxDefinedUsers(rec.getValue(DOMAIN.MAXDEFINEDUSERS))
 					)
 				.findFirst()
 				.orElse(null)

@@ -49,6 +49,9 @@ public class AonDomainUserRoles extends DomainUserRoles{
 		}
 		
 		json.put("domain", getDomain().getId());
+		json.put("maxDefinedUsers", getDomain().getMaxDefinedUsers());
+		json.put("definedUsers", getDomain().getDefinedUsers());
+
 		json.put("parentUser", isParentUser());
 		json.put("domainApps", domainApps);
 		json.put("oldDomainModules", oldDomainModules);

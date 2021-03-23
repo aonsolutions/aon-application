@@ -16,8 +16,7 @@ import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 
 export class AonAccounting extends AonElement {
 
-	_roles;
-
+	dur;
 	AON_ACCOUNTING;
 
 	connectedCallback () {
@@ -28,7 +27,7 @@ export class AonAccounting extends AonElement {
 
 
 		getDomainUserRoles({}).then(r => {
-			this._roles = new DomainUserRoles(r);
+			this.dur = new DomainUserRoles(r);
 			// this.build();
 		});
  	}

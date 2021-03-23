@@ -87,7 +87,10 @@ export class AonMobileHeader extends AonElement {
 					}, {
 						name: 'Cerrar Sesión',
 						icon: 'input',
-						fn: () => closeSession()
+						fn: () => {
+							this.activeTimecontrol = false;
+							closeSession()
+						}
 					}];
 
 					// if(r && r.task_holder){
@@ -106,7 +109,7 @@ export class AonMobileHeader extends AonElement {
 						d.setContentTitle(r.task_holder.name)
 					}
 
-				
+
 				});
 			} else {
 				const top  = aonHeaderUserButton.getBoundingClientRect().top;

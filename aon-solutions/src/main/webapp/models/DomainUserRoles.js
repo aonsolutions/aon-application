@@ -4,7 +4,11 @@ import {App, Role} from './enums.js';
 export class DomainUserRoles {
 
   domain;
-	user;
+
+  maxDefinedUsers;
+  definedUsers;
+
+  user;
   parentUser;
 
 	domainApps;
@@ -15,6 +19,7 @@ export class DomainUserRoles {
   oldDomainModules;
   oldParentDomainModules;
   oldUserRoles;
+
 
   constructor(data) {
     this.domain = data.domain;
@@ -28,6 +33,13 @@ export class DomainUserRoles {
     this.oldDomainModules = data.oldDomainModules;
     this.oldParentDomainModules = data.oldParentDomainModules;
     this.oldUserRoles = data.oldUserRoles;
+
+    this.maxDefinedUsers = data.maxDefinedUsers;
+    this.definedUsers = data.definedUsers;
+  }
+
+  checkUsers() {
+    return this.definedUsers < this.maxDefinedUsers;
   }
 
   getDomain() {

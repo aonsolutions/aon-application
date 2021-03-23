@@ -207,13 +207,16 @@ export class AonUser extends AonElement {
 	buildPermissionButtons() {
 		let card2 = this.getElement('aonConfigurationUserSecurityCard');
 		card2.cleanSection2();
-		card2.addTitleButton('Personalizado', MATERIAL_ICONS.TUNE, this.isPersonalizado(), () => {
-			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		if(this.getDur().checkUsers() || !user.portal || user.shared){
+			card2.addTitleButton('Personalizado', MATERIAL_ICONS.TUNE, this.isPersonalizado(), () => {
+				let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
 
-			let enterprise = { role: 'ENTERPRISE', active: false, user: user.id};
-			let employee = { role: 'EMPLOYEE', active: false, user: user.id};
-			this.saveModeRole([enterprise, employee]);
-		});
+				let enterprise = { role: 'ENTERPRISE', active: false, user: user.id};
+				let employee = { role: 'EMPLOYEE', active: false, user: user.id};
+				this.saveModeRole([enterprise, employee]);
+			});
+		}
 
 		card2.addTitleButton('Empresa', MATERIAL_ICONS.BUSINESS, this.isEnterprise(), () => {
 			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
