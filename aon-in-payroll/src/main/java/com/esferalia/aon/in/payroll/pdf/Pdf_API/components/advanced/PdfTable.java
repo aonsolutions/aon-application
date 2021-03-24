@@ -82,13 +82,17 @@ public class PdfTable extends PdfComponent{
 	private void calculate_pixels(float spacing) {
 		pixels = new float[columns];
 		float d = this.x();
-		
+	
 		for (int i = 0; i < pixels.length; i++) {
 			pixels[i] = d;
 			d += spacing + width / (100 / sizes[i]) ;
 		}
 	}
 
+	public void clear_row() {
+		cells = new Object[columns];
+	}
+	
 	public void set_alignment(ALIGNMENT[] alignments) {
 		for (int i = 0; i < columns; i++) {
 			try{this.alignments[i] = alignments[i];}
@@ -198,6 +202,12 @@ public class PdfTable extends PdfComponent{
 		down(pixels);
 	}
 
+	public boolean cell_align(int cell, ALIGNMENT alignment) {
+		if(cell >= columns || cell < 0) return false;
+		alignments[cell] = alignment;
+		return true;
+	}
+	
 	@Override
 	public String toString() {
 		return "PdfTable :\t\n{ \n\tcolumns: \t\t" + columns + ", \n\theaders: \t\t" + Arrays.toString(headers)
@@ -215,4 +225,5 @@ public class PdfTable extends PdfComponent{
 			String info = "PdfTable:\t\t\t\t\tAutomatic table.";
 			return info;
 		}	
+		
 }

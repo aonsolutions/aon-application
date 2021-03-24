@@ -31,7 +31,7 @@ public class ColManager {
 		indexes.put("devengado", 2);
 		indexes.put("ssTrab", 3);
 		indexes.put("irpf", 4);
-		indexes.put("deducciones", 5);
+		indexes.put("Otr. ded.", 5);
 		indexes.put("liquido", 6);
 		indexes.put("ssEmpr", 7);
 		indexes.put("bonificaciones", 8);

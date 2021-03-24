@@ -1,41 +1,32 @@
 package com.esferalia.aon.gwt.payroll.server;
 
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
-import static com.esferalia.aon.jooq.tables.Salary.SALARY;
-import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
-import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.jooq.Condition;
-import org.jooq.DSLContext;
 
 import com.code.aon.report.OutputFormat;
 import com.esferalia.aon.gwt.common.bean.GWT;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.Constants;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.util.JooqEnterpriseSalaryBuilder;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayrollEntry;
+import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 //@SuppressWarnings("serial")
@@ -55,8 +46,25 @@ public class CostPDFServlet extends HttpServlet {
 		String request = AonServletUtils.getFileName(req.getRequestURI());
 		String selectedSalaries = req.getParameter("selectedSalaries");
 		Integer[] salaryIds = getSalaryIds(req, selectedSalaries);
+		LinkedList<Salary.Type> typeList = new LinkedList<Salary.Type>();
 		
 		
+		Iterator<String> it = req.getParameterMap().keySet().iterator();
+		while (it.hasNext()) {
+			String n = it.next();
+			System.out.println(n+": "+req.getParameterMap().get(n));
+		}
+		
+		if (req.getParameter("salary") != null && req.getParameter("salary").equals("1"))
+			typeList.add(Salary.Type.SALARY);
+		if (req.getParameter("extra") != null && req.getParameter("extra").equals("1"))
+			typeList.add(Salary.Type.EXTRA);
+		if (req.getParameter("settle") != null && req.getParameter("settle").equals("1"))
+			typeList.add(Salary.Type.SETTLE);
+		if (req.getParameter("delay") != null && req.getParameter("delay").equals("1"))
+			typeList.add(Salary.Type.DELAY);
+		
+		Type[] types = typeList.toArray(Salary.Type[]::new);
 		
 		
 		
@@ -65,9 +73,10 @@ public class CostPDFServlet extends HttpServlet {
 					, req.getServerName()
 					, salaryIds
 					, getMonth(AonServletUtils.getFileName(req.getRequestURI()))
-					, getEnterpriseId(request));
+					, getEnterpriseId(request)
+					);
 		else
-			noIds(resp.getOutputStream(), req.getServerName(), request);
+			noIds(resp.getOutputStream(), req.getServerName(), request, types);
 		
 		
 	}
@@ -250,7 +259,8 @@ public class CostPDFServlet extends HttpServlet {
 		return _selectedSalaries.toArray(new Integer[_selectedSalaries.size()]);
 	}
 	
-	private static void noIds (OutputStream outputStream, String domainName, String request) {
+	
+	private static void noIds (OutputStream outputStream, String domainName, String request, Salary.Type[] types) {
 
 		Matcher matcher = MONTH_PATTERN.matcher(request);
 		if (matcher.matches()) {
@@ -271,7 +281,13 @@ public class CostPDFServlet extends HttpServlet {
 			int enterpriseId = Integer.parseInt(matcher.group("enterpriseid"));
 			int workplaceId = Integer.parseInt(matcher.group("workplaceid"));
 			
-			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(outputStream, domainName, startDate, endDate, enterpriseId, workplaceId);
+			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(outputStream
+					, domainName
+					, startDate
+					, endDate
+					, enterpriseId
+					, workplaceId
+					);
 		}
 
 	}

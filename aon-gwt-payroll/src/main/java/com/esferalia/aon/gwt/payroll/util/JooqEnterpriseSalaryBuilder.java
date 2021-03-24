@@ -12,8 +12,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +42,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class JooqEnterpriseSalaryBuilder {
@@ -102,8 +107,32 @@ public class JooqEnterpriseSalaryBuilder {
 		generateEnterprisePayroll(outputStream, domain, condition, startDate, enterpriseId, workplaceId);
 	}
 	
+	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, Date startDate, Date endDate, int enterpriseId, Integer workplaceId, com.esferalia.aon.gwt.payroll.shared.Salary.Type types[]) {
+		Condition condition;
+		if (workplaceId != null && workplaceId != 0)
+			condition = WORKPLACE.ID.eq(workplaceId);
+		else
+			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
+		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
+				, new java.sql.Date(endDate.getTime())));
+		
+		Collection<Integer> typeInts = Arrays.stream(types).map(t -> t.ordinal()).collect(Collectors.toList());
+		
+		condition = condition.and(SALARY.TYPE.in(typeInts));
+		generateEnterprisePayroll(outputStream, domain, condition, startDate, enterpriseId, workplaceId);
+	}
+	
 	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, Integer[] salaryIds, Date month, Integer enterpriseId) {
 		Condition condition = SALARY.ID.in(salaryIds);
+		generateEnterprisePayroll(outputStream, domain, condition, month, enterpriseId, null);
+	}
+	
+	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, Integer[] salaryIds, Date month, Integer enterpriseId, com.esferalia.aon.gwt.payroll.shared.Salary.Type types[]) {
+		Condition condition = SALARY.ID.in(salaryIds);
+		
+		Collection<Integer> typeInts = Arrays.stream(types).map(t -> t.ordinal()).collect(Collectors.toList());
+		condition = condition.and(SALARY.TYPE.in(typeInts));
+		
 		generateEnterprisePayroll(outputStream, domain, condition, month, enterpriseId, null);
 	}
 
@@ -116,23 +145,23 @@ public class JooqEnterpriseSalaryBuilder {
 				.innerJoin(SALARY_BONUS).on(SALARY.ID.eq(SALARY_BONUS.SALARY)).where(condition)
 				.fetchStreamInto(SALARY_BONUS)
 				.collect(Collectors.toMap(s -> s.getSalary(), s -> s.getAmount(), (a1, a2) -> a1 + a2));
-		Map<Integer, Map<String, Double>> deductions = new HashMap<Integer, Map<String, Double>>();
+		Map<Integer, Map<Integer, Double>> deductions = new HashMap<Integer, Map<Integer, Double>>();
 		ctx.select().from(SALARY).innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT)).innerJoin(WORKPLACE)
 				.on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID)).innerJoin(ENTERPRISE).onKey().innerJoin(SALARY_DEDUCTION)
 				.on(SALARY.ID.eq(SALARY_DEDUCTION.SALARY)).where(condition).fetchStream().forEach(s -> {
 					if (deductions.get(s.get(SALARY.ID)) != null) {
-						deductions.get(s.get(SALARY.ID)).put(s.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT),
+						deductions.get(s.get(SALARY.ID)).put(s.get(SALARY_DEDUCTION.TYPE).intValue(),
 								s.get(SALARY_DEDUCTION.AMOUNT));
 					} else {
-						Map<String, Double> map = new HashMap<String, Double>();
-						map.put(s.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT), s.get(SALARY_DEDUCTION.AMOUNT));
+						Map<Integer, Double> map = new HashMap<Integer, Double>();
+						map.put(s.get(SALARY_DEDUCTION.TYPE).intValue(), s.get(SALARY_DEDUCTION.AMOUNT));
 						deductions.put(s.get(SALARY.ID), map);
 
 					}
 				});
-		Map<String, Map<String, EnterprisePayrollEntry>> map = new HashMap<String, Map<String, EnterprisePayrollEntry>>();
+		Map<String, Map<String, EnterprisePayrollEntry>> map = new LinkedHashMap<String, Map<String, EnterprisePayrollEntry>>();
 		ctx.select().from(SALARY).innerJoin(CONTRACT).onKey()
-			.innerJoin(WORKPLACE).onKey().innerJoin(ENTERPRISE).onKey().where(condition).orderBy(WORKPLACE.DESCRIPTION).fetchStream()
+			.innerJoin(WORKPLACE).onKey().innerJoin(ENTERPRISE).onKey().where(condition).orderBy(SALARY.EMPLOYEE_NAME).fetchStream()
 			.forEach(r -> {
 				SalaryType st = typeOf(r.get(SALARY.TYPE), SalaryType.class);
 				
@@ -158,18 +187,33 @@ public class JooqEnterpriseSalaryBuilder {
 						, r.get(SALARY.TOTAL_ENTERPRISE)
 						, totalCost
 						, totalSS
-						, bonusesMap.get(SALARY.ID));
+						, bonusesMap.get(r.get(SALARY.ID)));
+				
+				Double otherDeductions;
+				try {
+					otherDeductions = deductions.get(r.get(SALARY.ID)).get(DeductionType.OTHER.ordinal());
+				} catch (NullPointerException e) {
+					otherDeductions = null;
+				}
+				
+				try {
+					Double advanced = deductions.get(r.get(SALARY.ID)).get(DeductionType.ADVANCE_PAYMENT.ordinal());
+					otherDeductions = otherDeductions != null ? otherDeductions+advanced : advanced;
+				} catch (NullPointerException e) {
+					
+				}
+				
 				entry.setEmpleado(Optional.ofNullable(r.get(SALARY.EMPLOYEE_NAME)));
 				entry.setTipo(Optional.ofNullable(st.getName(new Locale("es"))));
 				entry.setDevengado(Optional.ofNullable(r.get(SALARY.TOTAL_PAYMENT)));
 				entry.setSsTrab(Optional.ofNullable(r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)));
 				entry.setIrpf(Optional.ofNullable(r.get(SALARY.TOTAL_IRPF)));
-				entry.setDeducciones(Optional.ofNullable(r.get(SALARY.TOTAL_DEDUCTION)));
+				entry.setDeducciones(Optional.ofNullable(otherDeductions));
 				entry.setLiquido(Optional.ofNullable(r.get(SALARY.TOTAL_LIQUID)));
 				entry.setSsEmpr(Optional.ofNullable(r.get(SALARY.TOTAL_ENTERPRISE)));
-				entry.setSsTotal(Optional.ofNullable(entry.getSsEmpr().orElse(0d) + entry.getSsTrab().orElse(0d)));
+				entry.setSsTotal(Optional.ofNullable(entry.getSsEmpr().orElse(0d) + entry.getSsTrab().orElse(0d) + (otherDeductions != null ? otherDeductions : 0d)));
 				entry.setCosteTotal(
-						Optional.ofNullable(entry.getIrpf().orElse(0d) + entry.getSsTotal().orElse(0d)));
+						Optional.ofNullable(entry.getDevengado().orElse(0d) + entry.getSsEmpr().orElse(0d)));
 				if (!map.containsKey(r.get(WORKPLACE.DESCRIPTION)))
 					map.put(r.get(WORKPLACE.DESCRIPTION), new HashMap<String, EnterprisePayrollEntry>());
 				map.get(r.get(WORKPLACE.DESCRIPTION)).put(String.valueOf(r.get(SALARY.ID)), entry);

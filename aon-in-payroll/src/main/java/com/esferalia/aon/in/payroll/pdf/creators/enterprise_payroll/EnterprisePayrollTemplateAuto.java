@@ -47,6 +47,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 
 	private EnterprisePayroll payroll;
 	private ColManager mg;
+	private static byte[] logo_b;
 
 	public static void print(EnterprisePayroll payroll, OutputStream out, Optional<Locale> language) throws CanNotCreatePdfException {
 
@@ -57,6 +58,10 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 			t.set_defaults(HELVETICA, 10f, BLACK, PdfColors.GRAY);
 			t.new_page(HORIZONTAL);
 			PdfTable table = calculate_colums(t);
+			
+			InputStream logo = t.payroll.getLogo().orElse(null);
+			try {logo_b = logo.readAllBytes();} 
+			catch (IOException e) {e.printStackTrace();}
 			
 			draw_header(t);
 			draw_entries(t, table);	
@@ -102,22 +107,13 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		PdfText subheader = new PdfText(t.x(), t.y(), 600, 20, 5, 5, t.contents, subheader_txt, BLACK, HELVETICA_BOLD, 12f, LEFT);
 		PdfText date = new PdfText(t.x()-62, 22, 130, 20, 5, 5, t.contents, date_txt, GRAY, HELVETICA,9f, RIGHT);
 		t.down(30);
-		InputStream logo = t.payroll.getLogo().orElse(null);
-		byte[] bLogo = null;
-		if (logo != null)
-			try {
-				bLogo = logo.readAllBytes();
-			} catch (IOException e) {e.printStackTrace();}
-		
+
 		try {
-			BufferedImage img = PDFToolkit.create_image_from_bytes(bLogo);
+			BufferedImage img = PDFToolkit.create_image_from_bytes(logo_b);
 			float[] scales = PDFToolkit.reescale(img.getWidth(), img.getHeight(), 150, 50);
-			PDFToolkit.drawImage(t.doc,t.contents, bLogo, 670 + 150 - scales[0], t.y() + 50 - scales[1]/2, scales[0], scales[1]);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (NullPointerException e) {
-			System.err.println("Null logo");
-		}
+			PDFToolkit.drawImage(t.doc,t.contents, logo_b, 670 + 150 - scales[0], t.y() + 50 - scales[1]/2, scales[0], scales[1]);
+		} catch (IOException e) {e.printStackTrace();} 
+		catch (NullPointerException e) {System.err.println("Null logo");}
 		t.down(30);
 		
 		header.draw();
@@ -137,7 +133,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		if(t.mg.entries_for_col("devengado") > 0)		t.mg.enable("devengado");
 		if(t.mg.entries_for_col("ssTrab") > 0)			t.mg.enable("ssTrab");
 		if(t.mg.entries_for_col("irpf") > 0)			t.mg.enable("irpf");
-		if(t.mg.entries_for_col("deducciones") > 0)		t.mg.enable("deducciones");
+		if(t.mg.entries_for_col("Otr. ded.") > 0)		t.mg.enable("Otr. ded.");
 		if(t.mg.entries_for_col("liquido") > 0)			t.mg.enable("liquido");
 		if(t.mg.entries_for_col("ssEmpr") > 0)			t.mg.enable("ssEmpr");
 		if(t.mg.entries_for_col("costeTotal") > 0)		t.mg.enable("costeTotal");
@@ -163,18 +159,20 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		if(t.mg.isActive("devengado"))  		current = set_column(current,sizes,headers,alignments,c,"Devengado",RIGHT);
 		if(t.mg.isActive("ssTrab")) 			current = set_column(current,sizes,headers,alignments,c,"S.S. Trab.",RIGHT);
 		if(t.mg.isActive("irpf")) 				current = set_column(current,sizes,headers,alignments,c,"I.R.P.F",RIGHT);
-		if(t.mg.isActive("deducciones")) 		current = set_column(current,sizes,headers,alignments,c,"Deducciones",RIGHT);
+		if(t.mg.isActive("Otr. ded."))		    current = set_column(current,sizes,headers,alignments,c,"Otr. ded.",RIGHT);
 		if(t.mg.isActive("liquido"))  			current = set_column(current,sizes,headers,alignments,c,"Liquido",RIGHT);
 		if(t.mg.isActive("ssEmpr")) 	 		current = set_column(current,sizes,headers,alignments,c,"S.S. Empr.",RIGHT);
 		if(t.mg.isActive("bonificaciones")) 	current = set_column(current,sizes,headers,alignments,c,"Bonificaciones",RIGHT);
 		if(t.mg.isActive("ssTotal")) 			current = set_column(current,sizes,headers,alignments,c,"Total S.S",RIGHT);		
 		if(t.mg.isActive("costeTotal")) 		current = set_column(current,sizes,headers,alignments,c,"Coste total",RIGHT);
 		
+		t.mg.show_enabled();
 		
 		return create_table(t,sizes,headers,alignments);
 	}
 	
 	private static int set_column(int current, float[] sizes, String[] headers, ALIGNMENT[] alignments, float tb, String text, ALIGNMENT align) {
+	System.out.println("INDEX: " + current);
 		sizes[current] = tb;
 		headers[current] = text;
 		alignments[current] = align;
@@ -224,27 +222,38 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 	}
 
 	private static void draw_subtotal(EnterprisePayrollTemplateAuto t, PdfTable table) throws IOException {
+		table.clear_row();
 		ArrayList<Double> subtotal_aon = 	t.mg.get_aon_subtotal();
 		ArrayList<Double> subtotal_ss = 	t.mg.get_ss_subtotal();
 		
 		table.draw_line();
 		table.jump(15f);
+		table.cell_align(0, CENTER);
+		table.font = HELVETICA_BOLD;
+	
+		
+		boolean painted = false;
 		
 		if(subtotal_aon.stream().mapToDouble(p-> p).sum() != 0) {
-			table.add_to_cell(0, "SUBTOTAL");
-			
+			table.add_to_cell(0, "CENTRO DE TRABAJO");
+			table.add_to_cell(1, "SUBTOTAL");
 			for (int i = 2; i < subtotal_aon.size(); i++) table.add_to_cell(i, to_latin_number(subtotal_aon.get(i)));
 			table.new_row();
+			painted =! painted;
 		}
 		
 		if(subtotal_ss.stream().mapToDouble(p-> p).sum() != 0) {
-			table.add_to_cell(0, "SUBTOTAL SS");
+			if(!painted) table.add_to_cell(0, "CENTRO DE TRABAJO");
+			table.add_to_cell(1, "SUBTOTAL SS");
+
 			table.fontsize = 7.5f;
 			
 			for (int i = 2; i < subtotal_ss.size(); i++) table.add_to_cell(i, to_latin_number(subtotal_ss.get(i)));
 			table.new_row();
 		}
 		table.fontsize = 9;	
+		table.cell_align(0, LEFT);
+		table.font = HELVETICA;
 	}
 
 	private static void draw_entry(EnterprisePayrollTemplateAuto t, Entry<String, EnterprisePayrollEntry> entry, PdfTable table)
@@ -289,7 +298,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		table.add_to_cell(table.get_column("Devengado"), 		to_latin_number(devengado));
 		table.add_to_cell(table.get_column("S.S. Trab."), 		to_latin_number(ssTrab));
 		table.add_to_cell(table.get_column("I.R.P.F"), 			to_latin_number(irpf));
-		table.add_to_cell(table.get_column("Deducciones"), 		to_latin_number(deducciones));
+		table.add_to_cell(table.get_column("Otr. ded."), 		to_latin_number(deducciones));
 		table.add_to_cell(table.get_column("Liquido"), 			to_latin_number(liquido));
 		table.add_to_cell(table.get_column("S.S. Empr."), 		to_latin_number(ssEmpresa));
 		table.add_to_cell(table.get_column("Bonificaciones"), 	to_latin_number(bonificaciones));
@@ -303,7 +312,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		table.add_to_cell(table.get_column("Devengado"), 		to_latin_number(devengadoSS));
 		table.add_to_cell(table.get_column("S.S. Trab."), 		to_latin_number(ssTrabSS));
 		table.add_to_cell(table.get_column("I.R.P.F"), 			to_latin_number(irpfSS));
-		table.add_to_cell(table.get_column("Deducciones"), 		to_latin_number(deduccionesSS));
+		table.add_to_cell(table.get_column("Otr. ded."), 		to_latin_number(deduccionesSS));
 		table.add_to_cell(table.get_column("Liquido"), 			to_latin_number(liquidoSS));
 		table.add_to_cell(table.get_column("S.S. Empr."), 		to_latin_number(ssEmpresaSS));
 		table.add_to_cell(table.get_column("Bonificaciones"), 	to_latin_number(bonificacionesSS));
@@ -314,7 +323,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		table.pain_cell(table.get_column("Devengado"), 		(devengado != null && devengadoSS != null && devengado.equals(devengadoSS)) ? 						GREEN : RED);
 		table.pain_cell(table.get_column("S.S. Trab."), 	(ssTrab != null && ssTrabSS != null && ssTrab.equals(ssTrabSS)) ? 									GREEN : RED);
 		table.pain_cell(table.get_column("I.R.P.F"), 		(irpf != null && irpfSS != null && tipo.equals(irpfSS)) ? 											GREEN : RED);
-		table.pain_cell(table.get_column("Deducciones"), 	(deducciones != null && deduccionesSS != null && deducciones.equals(deduccionesSS)) ? 				GREEN : RED);
+		table.pain_cell(table.get_column("Otr. ded."), 	    (deducciones != null && deduccionesSS != null && deducciones.equals(deduccionesSS)) ? 				GREEN : RED);
 		table.pain_cell(table.get_column("Liquido"), 		(liquido != null && liquidoSS != null && liquido.equals(liquidoSS)) ? 								GREEN : RED);
 		table.pain_cell(table.get_column("S.S. Empr."), 	(ssEmpresa != null && ssEmpresaSS != null && ssEmpresa.equals(ssEmpresaSS)) ? 						GREEN : RED);
 		table.pain_cell(table.get_column("Bonificaciones"), (bonificaciones != null && bonificacionesSS != null && bonificaciones.equals(bonificacionesSS)) ? 	GREEN : RED);
@@ -343,23 +352,23 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		table.add_to_cell(table.get_column("Devengado"), 		to_latin_number(devengado));
 		table.add_to_cell(table.get_column("S.S. Trab."), 		to_latin_number(ssTrab));
 		table.add_to_cell(table.get_column("I.R.P.F"), 			to_latin_number(irpf));
-		table.add_to_cell(table.get_column("Deducciones"), 		to_latin_number(deducciones));
+		table.add_to_cell(table.get_column("Otr. ded."), 		to_latin_number(deducciones));
 		table.add_to_cell(table.get_column("Liquido"), 			to_latin_number(liquido));
 		table.add_to_cell(table.get_column("S.S. Empr."), 		to_latin_number(ssEmpresa));
 		table.add_to_cell(table.get_column("Bonificaciones"), 	to_latin_number(bonificaciones));
 		table.add_to_cell(table.get_column("Total S.S"), 		to_latin_number(ssTotal));
 		table.add_to_cell(table.get_column("Coste total"), 		to_latin_number(costeTotal));
 		
-		table.pain_cell(table.get_column("Tipo"), BLUE);
-		table.pain_cell(table.get_column("Devengado"), BLUE);
-		table.pain_cell(table.get_column("S.S. Trab."), BLUE);
-		table.pain_cell(table.get_column("I.R.P.F"), BLUE);
-		table.pain_cell(table.get_column("Deducciones"), BLUE);
-		table.pain_cell(table.get_column("Liquido"), BLUE);
-		table.pain_cell(table.get_column("S.S. Empr."), BLUE);
-		table.pain_cell(table.get_column("Bonificaciones"), BLUE);
-		table.pain_cell(table.get_column("Total S.S"), BLUE);
-		table.pain_cell(table.get_column("Coste total"), BLUE);
+		table.pain_cell(table.get_column("Tipo"), BLACK);
+		table.pain_cell(table.get_column("Devengado"), BLACK);
+		table.pain_cell(table.get_column("S.S. Trab."), BLACK);
+		table.pain_cell(table.get_column("I.R.P.F"), BLACK);
+		table.pain_cell(table.get_column("Otr. ded."), BLACK);
+		table.pain_cell(table.get_column("Liquido"), BLACK);
+		table.pain_cell(table.get_column("S.S. Empr."), BLACK);
+		table.pain_cell(table.get_column("Bonificaciones"), BLACK);
+		table.pain_cell(table.get_column("Total S.S"), BLACK);
+		table.pain_cell(table.get_column("Coste total"), BLACK);
 		
 		table.new_row();
 		t.y(table.y());
@@ -384,7 +393,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		table.add_to_cell(table.get_column("Devengado"), 		to_latin_number(devengadoSS));
 		table.add_to_cell(table.get_column("S.S. Trab."), 		to_latin_number(ssTrabSS));
 		table.add_to_cell(table.get_column("I.R.P.F"), 			to_latin_number(irpfSS));
-		table.add_to_cell(table.get_column("Deducciones"), 		to_latin_number(deduccionesSS));
+		table.add_to_cell(table.get_column("Otr. ded."), 		to_latin_number(deduccionesSS));
 		table.add_to_cell(table.get_column("Liquido"), 			to_latin_number(liquidoSS));
 		table.add_to_cell(table.get_column("S.S. Empr."), 		to_latin_number(ssEmpresaSS));
 		table.add_to_cell(table.get_column("Bonificaciones"), 	to_latin_number(bonificacionesSS));
@@ -395,7 +404,7 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 		table.pain_cell(table.get_column("Devengado"), GREEN);
 		table.pain_cell(table.get_column("S.S. Trab."), GREEN);
 		table.pain_cell(table.get_column("I.R.P.F"), GREEN);
-		table.pain_cell(table.get_column("Deducciones"), GREEN);
+		table.pain_cell(table.get_column("Otr. ded."), GREEN);
 		table.pain_cell(table.get_column("Liquido"), GREEN);
 		table.pain_cell(table.get_column("S.S. Empr."), GREEN);
 		table.pain_cell(table.get_column("Bonificaciones"), GREEN);
@@ -419,31 +428,43 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 	}
 	
 	private static void draw_totals(EnterprisePayrollTemplateAuto t, PdfTable table) throws IOException {
+		table.clear_row();
 		t.y_limit += 50; 
 		check(t, table);
-		table.header_color = LIGHT_GRAY;
-		table.create_box(0, 10, 3);
+		
 		table.header_color = BLACK;
+		table.text_color = BLACK;
+		
+		table.cell_align(0, CENTER);
 		
 		ArrayList<Double> total_aon = t.mg.get_aon_total();
 		ArrayList<Double> total_ss = t.mg.get_ss_total();
 		table.font = HELVETICA_BOLD;
 
+		boolean painted = false;
+		
+		
 		if(total_aon.stream().mapToDouble(p-> p).sum() != 0) {
-			table.add_to_cell(0, "TOTAL:");
+			table.add_to_cell(0, "EMPRESA");
+			table.add_to_cell(1, "TOTAL:");
+			
 			for (int i = 2; i < total_aon.size(); i++) 
 				table.add_to_cell(i, to_latin_number(total_aon.get(i)));
 			table.new_row();
+			
+			painted =! painted;  
 		}
 		
 		if(total_ss.stream().mapToDouble(p-> p).sum() != 0) {
-			table.add_to_cell(0, "TOTAL SS:");
+			table.add_to_cell(1, "TOTAL SS:");
 			for (int i = 2; i < total_ss.size(); i++) 
 				table.add_to_cell(i, to_latin_number(total_ss.get(i)));
-			
+
 			table.new_row();
+			if(!painted) table.add_to_cell(0, "EMPRESA");
 		}
 		table.font = HELVETICA;
+		table.cell_align(0, LEFT);
 	}
 
 	
