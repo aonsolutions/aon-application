@@ -10,6 +10,8 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -18,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -131,7 +134,13 @@ public class EnterprisePayrollExcel {
 		}
 	}
 	
-	
+	public static void simpleEnterprisePayrollGenerator (String domainName, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date startDate, Date endDate, ExcelType excelType) {
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy", new Locale("es"));
+		String strStartDate = df.format(startDate);
+		String strEndDate = df.format(endDate);
+		String dateString = "del " + strStartDate + " al " + strEndDate;
+		
+	}
 	
 	public static void simpleEnterprisePayrollGenerator (String domainName, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date date, ExcelType excelType) {
 		
@@ -149,7 +158,7 @@ public class EnterprisePayrollExcel {
 		if (enterpriseId.isPresent())
 			eId = enterpriseId.get();
 		
-		AtomicInteger atomicWorkplace = new AtomicInteger(wId);
+		AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
 		if (eId == null || eId == 0)
 			eId = AON.getWorkplace(aonContext.getDomainName()
 				, aonContext.getDomainId()
@@ -175,6 +184,12 @@ public class EnterprisePayrollExcel {
 		}
 	}
 	
+	
+	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
+			Optional<LinkedHashMap<String, String>> header, String enterpriseName, Date startDate, Date endDate, ExcelType excelType)
+			throws IOException {
+		
+	}
 
 	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
 			Optional<LinkedHashMap<String, String>> header, String enterpriseName, String dateString, ExcelType excelType)
@@ -392,7 +407,6 @@ public class EnterprisePayrollExcel {
 				boolean thereIsBonuses = !Arrays.stream(arr)
 						.allMatch(p -> ((IEnterprisePayroll) p).getBonuses() == null
 						|| ((IEnterprisePayroll) p).getBonuses() == 0d);
-				boolean thereIsTotalSS = (thereIsEmployeeSS || thereIsEnterpriseSS || thereIsBonuses);
 				/*
 				 * !Arrays.stream(arr) .allMatch(p -> ((IEnterprisePayroll) p).getTotalSS() ==
 				 * null);
@@ -452,6 +466,8 @@ public class EnterprisePayrollExcel {
 				boolean thereIsEmbargos = !Arrays.stream(arr)
 						.allMatch(p -> ((IEnterprisePayroll) p).getEmbargos() == null
 						|| ((IEnterprisePayroll) p).getEmbargos() == 0d);
+				
+				boolean thereIsTotalSS = (thereIsEmployeeSS || thereIsEnterpriseSS || thereIsBonuses || thereIsOtherDeductions);
 				
 				LinkedHashMap<String, String> finalHeader = new LinkedHashMap<String, String>();
 
@@ -739,13 +755,18 @@ public class EnterprisePayrollExcel {
 
 						int rowNum = row.getRowNum() + 1;
 						Cell totalCostCell = row.createCell(column++, CellType.FORMULA);
-						
+						String formula = "";
 						if (thereIsEnterpriseSS && !thereIsEmployeeSS)
-							totalCostCell.setCellFormula(enterpriseSSColumn + rowNum);
+							formula += enterpriseSSColumn + rowNum;
 						else if (!thereIsEnterpriseSS && thereIsEmployeeSS)
-							totalCostCell.setCellFormula(employeeSSColumn + rowNum);
+							formula += employeeSSColumn + rowNum;
 						else if (thereIsEnterpriseSS && thereIsEmployeeSS)
-							totalCostCell.setCellFormula(employeeSSColumn + rowNum + "+" + enterpriseSSColumn + rowNum);
+							formula += employeeSSColumn + rowNum + "+" + enterpriseSSColumn + rowNum;
+						
+						if (thereIsOtherDeductions)
+							formula += "+" + payroll.getOtherDeductions();
+						
+						totalCostCell.setCellFormula(formula);
 						
 						totalCostCell.setCellStyle(importantCellStyle);
 					}
@@ -1448,10 +1469,9 @@ public class EnterprisePayrollExcel {
 
 
 
-	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, final int month,
-			final int year, Integer enterpriseId, Integer workplaceId) throws IOException {
+	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) throws IOException {
 
-		Condition condition = DSL.year(SALARY.ISSUE_DATE).eq(year).and(DSL.month(SALARY.ISSUE_DATE).eq(month))
+		Condition condition = SALARY.ISSUE_DATE.ge(new java.sql.Date(startDate.getTime())).and(SALARY.ISSUE_DATE.le(new java.sql.Date(endDate.getTime())))
 				.and(ENTERPRISE.REGISTRY.eq(enterpriseId));
 		if (workplaceId != null)
 			condition.and(WORKPLACE.ID.eq(workplaceId));
@@ -1578,6 +1598,22 @@ public class EnterprisePayrollExcel {
 
 			return enterprisePayroll;
 		});
+	}
+	
+	
+	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, final int month,
+			final int year, Integer enterpriseId, Integer workplaceId) throws IOException {
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.MONTH, month-1);
+		calendar.set(Calendar.YEAR, year);
+		Date startDate = calendar.getTime();
+		
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date endDate = calendar.getTime();
+
+		return getEnterprisePayrolls(aonContext, startDate, endDate, enterpriseId, workplaceId);
 	}
 	
 	

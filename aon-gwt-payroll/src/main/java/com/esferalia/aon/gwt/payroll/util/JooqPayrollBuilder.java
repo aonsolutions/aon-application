@@ -122,7 +122,7 @@ public class JooqPayrollBuilder {
 				String streetType = raddress.getStreet_type() != null ? raddress.getStreet_type() : "";
 				String address1 = raddress.getAddress() != null ? raddress.getAddress() : "";
 				String number = raddress.getNumber() != null ? raddress.getNumber() : "";
-				String address2 = raddress.getAddress2() != null || !raddress.getAddress2().isEmpty() ? ", " + raddress.getAddress2() : "";
+				String address2 = raddress.getAddress2() != null && !raddress.getAddress2().isEmpty() ? ", " + raddress.getAddress2() : "";
 				String address3 = raddress.getAddress3() != null ? raddress.getAddress3() : "";
 				
 				String zip = raddress.getZip() != null ? raddress.getZip() : "";
