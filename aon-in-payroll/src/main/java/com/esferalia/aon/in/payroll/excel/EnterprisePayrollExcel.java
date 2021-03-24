@@ -135,10 +135,41 @@ public class EnterprisePayrollExcel {
 	}
 	
 	public static void simpleEnterprisePayrollGenerator (String domainName, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date startDate, Date endDate, ExcelType excelType) {
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy", new Locale("es"));
-		String strStartDate = df.format(startDate);
-		String strEndDate = df.format(endDate);
-		String dateString = "del " + strStartDate + " al " + strEndDate;
+		
+		AONContext aonContext = AONContext.getAONContext(domainName, "");
+		
+		Integer wId = null;
+		Integer eId = null;
+		if (workplaceId.isPresent())
+			wId = workplaceId.get();
+		if (enterpriseId.isPresent())
+			eId = enterpriseId.get();
+		
+		AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
+		if (eId == null || eId == 0)
+			eId = AON.getWorkplace(aonContext.getDomainName()
+				, aonContext.getDomainId()
+				, aonContext.getUser()
+				, w -> w.getIdProperty().eq(atomicWorkplace.get()))
+				.getEnterprise();
+		
+		
+		try {
+			Collection<IEnterprisePayroll> payrolls =
+					getEnterprisePayrolls(aonContext, startDate, endDate, eId, wId)
+					.collect(Collectors.toList());
+			
+			String enterpriseName = getEnterpriseName(domainName, eId, wId);
+			write(outputStream
+					, payrolls
+					, Optional.empty()
+					, enterpriseName
+					, startDate
+					, endDate
+					, excelType);	
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -188,7 +219,13 @@ public class EnterprisePayrollExcel {
 	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
 			Optional<LinkedHashMap<String, String>> header, String enterpriseName, Date startDate, Date endDate, ExcelType excelType)
 			throws IOException {
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy", new Locale("es"));
+		String strStartDate = df.format(startDate);
+		String strEndDate = df.format(endDate);
 		
+		String dateString = "del " + strStartDate + " al " + strEndDate;
+		
+		write(outputStream, payrolls, header, enterpriseName, dateString, excelType);
 	}
 
 	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
@@ -467,7 +504,7 @@ public class EnterprisePayrollExcel {
 						.allMatch(p -> ((IEnterprisePayroll) p).getEmbargos() == null
 						|| ((IEnterprisePayroll) p).getEmbargos() == 0d);
 				
-				boolean thereIsTotalSS = (thereIsEmployeeSS || thereIsEnterpriseSS || thereIsBonuses || thereIsOtherDeductions);
+				boolean thereIsTotalSS = (thereIsEmployeeSS || thereIsEnterpriseSS || thereIsBonuses);
 				
 				LinkedHashMap<String, String> finalHeader = new LinkedHashMap<String, String>();
 
@@ -762,9 +799,6 @@ public class EnterprisePayrollExcel {
 							formula += employeeSSColumn + rowNum;
 						else if (thereIsEnterpriseSS && thereIsEmployeeSS)
 							formula += employeeSSColumn + rowNum + "+" + enterpriseSSColumn + rowNum;
-						
-						if (thereIsOtherDeductions)
-							formula += "+" + payroll.getOtherDeductions();
 						
 						totalCostCell.setCellFormula(formula);
 						
