@@ -17,6 +17,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -26,34 +27,36 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class AgreementPaymentDialog extends AonCustomDialog {
 	
 	enum AgreementPayment implements Serializable {
-		SALARIO_BASE_ANUAL("0001  SALARIO BASE ANUAL ( SALARIO_BASE )"),
-		SALARIO_BASE_MENSUAL("0001 SALARIO BASE MENSUAL ( SALARIO_BASE )"),
-		SALARIO_BASE_DIARIO("0001 SALARIO BASE DIARIO  ( SALARIO_BASE )"),
-		SALARIO_BASE_HORAS("0001 SALARIO BASE HORA  ( SALARIO_BASE )"),
+		SALARIO_BASE_ANUAL("0001  SALARIO BASE ANUAL ( SALARIO_BASE )", "SALARIO_ANUAL / PAGAS * DIAS_TRABAJADOS / DIAS_MES"),
+		SALARIO_BASE_MENSUAL("0001 SALARIO BASE MENSUAL ( SALARIO_BASE )", "SALARIO_MENSUAL * DIAS_TRABAJADOS / DIAS_MES"),
+		SALARIO_BASE_DIARIO("0001 SALARIO BASE DIARIO  ( SALARIO_BASE )", "SALARIO_DIARIO * DIAS_TRABAJADOS"),
+		SALARIO_BASE_HORAS("0001 SALARIO BASE HORA  ( SALARIO_BASE )", "SALARIO_HORAS * HORAS_TRABAJADAS"),
 		
-		PLUS_SALARIAL_MENSUAL("0001 PLUS SALARIAL MENSUAL ( PLUS_SALARIAL )"),
-		PLUS_SALARIAL_DIARIO("0001 PLUS SALARIAL DIARIO  ( PLUS_SALARIAL )"),
-		PLUS_SALARIAL_DIARIO_LABORABLES("0001 PLUS SALARIAL DIAS REALES  ( PLUS_SALARIAL )"),
-		PLUS_SALARIAL_FIJO("0001 PLUS SALARIAL FIJO ( PLUS_SALARIAL )"),
+		PLUS_SALARIAL_MENSUAL("0001 PLUS SALARIAL MENSUAL ( PLUS_SALARIAL )", "PLUS_MENSUAL * DIAS_TRABAJADOS / DIAS_MES"),
+		PLUS_SALARIAL_DIARIO("0001 PLUS SALARIAL DIARIO  ( PLUS_SALARIAL )", "PLUS_DIARIO * DIAS_TRABAJADOS"),
+		PLUS_SALARIAL_DIARIO_LABORABLES("0001 PLUS SALARIAL DIAS REALES  ( PLUS_SALARIAL )", "PLUS_DIARIO * DIAS_EFECTIVOS"),
+		PLUS_SALARIAL_FIJO("0001 PLUS SALARIAL FIJO ( PLUS_SALARIAL )", "FRACCIONAR(PLUS_FIJO)"),
 		
-		PLUS_EXTRA_SALARIAL_MENSUAL("0001 PLUS EXTRA SALARIAL MENSUAL ( PLUS_EXTRA_SALARIAL )"),
-		PLUS_EXTRA_SALARIAL_DIARIO("0001 PLUS EXTRA SALARIAL DIARIO  ( PLUS_SALARIAL )"),
-		PLUS_EXTRA_SALARIAL_DIARIO_LABORABLES("0001 PLUS EXTRA SALARIAL DIAS REALES  ( PLUS_SALARIAL )"),
-		PLUS_EXTRA_SALARIAL_FIJO("0001 PLUS EXTRA SALARIAL FIJO ( PLUS_SALARIAL )"),
+		PLUS_EXTRA_SALARIAL_MENSUAL(null, "PLUS_XS_MENSUAL * DIAS_TRABAJADOS / DIAS_MES"),
+		PLUS_EXTRA_SALARIAL_DIARIO(null, "PLUS_XS_DIARIO * DIAS_TRABAJADOS"),
+		PLUS_EXTRA_SALARIAL_DIARIO_LABORABLES(null, "PLUS_XS_DIARIO * DIAS_EFECTIVOS"),
+		PLUS_EXTRA_SALARIAL_FIJO(null, "FRACCIONAR(PLUS_XS_FIJO)"),
 		
-		RETRIBUCION_EN_ESPECIE("0013 RETRIBUCI" + String.valueOf("\u00D3") + "N EN ESPECIE"),
-		COMPLEMENTO_PERSONAL_DE_ANTIGUEDAD("0001 COMPLEMENTO PERSONAL DE ANTIG" + String.valueOf("\u00DC") + "EDAD ( ANTIGUEDAD )"),
-		GASTOS_PERNOCTA_DIARIO("0043 GASTOS PERNOCTA"),
-		GASTOS_MANUTENCION_DIARIO("0045 GASTOS MANUTENCI" + String.valueOf("\u00D3") + "N"),
-		GASTOS_LOCOMOCION_SIN_JUSTIFICANTE("0050 GASTOS LOCOMOCI" + String.valueOf("\u00D3") + "N SIN JUSTIFICANTE "),
+		RETRIBUCION_EN_ESPECIE(null, "IMPORTE_ESPECIE"),
+		COMPLEMENTO_PERSONAL_DE_ANTIGUEDAD(null, "IMPORTE_ANTIGUEDAD"),
+		GASTOS_PERNOCTA_DIARIO(null, "G_PERNOCTA * DIAS_PERNOCTA"),
+		GASTOS_MANUTENCION_DIARIO(null, "G_MANUTENCION * DIAS_MANUNTECION"),
+		GASTOS_LOCOMOCION_SIN_JUSTIFICANTE(null, "IMPORTE_KMS * KMS"),
 		
-		PAGA_EXTRA_VERANO_NAVIDAD("0004 PAGA EXTRAORDINARIA ( PAGA_EXTRA )")
+		PAGA_EXTRA_VERANO_NAVIDAD("0004 PAGA EXTRAORDINARIA ( PAGA_EXTRA )", "SALARIO_BASE + PLUS_SALARIAL")
 		;
 		
 		private String suggestName;
+		private String expression;
 		
-		private AgreementPayment(String suggestName) {
+		private AgreementPayment(String suggestName, String expression) {
 			this.suggestName = suggestName;
+			this.expression = expression;
 		}
 		
 		public static AgreementPayment safeValueOf(String name) {
@@ -69,6 +72,10 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 
 		public String getSuggestName() {
 			return suggestName;
+		}
+		
+		public String getExpression() {
+			return expression;
 		}
 	}
 	
@@ -177,10 +184,10 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 	
 	public AgreementPaymentDialog(int widgetIndex) {
 		
+		this.widgetIndex = widgetIndex;
+		
 		setCaption(getCustomCaption());
 		setWidget(binder.createAndBindUi(this));
-		
-		this.widgetIndex = widgetIndex;
 		
 		this.paymentResultList = new ArrayList<Payment>();
 		this.extraResultList = new ArrayList<Extra>();
@@ -245,10 +252,10 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		
 		this.salaryComplementsCBs = new ArrayList<Pair<CheckBox, String>>();
 		this.salaryComplementsCBs.add(new Pair<CheckBox, String>(spiceComplementCB, "[30] RETRIBUCION EN ESPECIE"));
-		this.salaryComplementsCBs.add(new Pair<CheckBox, String>(antiquityComplementCB, "[40] COMPLEMENTO PERSONAL DE ANTIGÜEDAD"));
+		this.salaryComplementsCBs.add(new Pair<CheckBox, String>(antiquityComplementCB, "[40] COMPLEMENTO PERSONAL DE ANTIGUEDAD"));
 		this.salaryComplementsCBs.add(new Pair<CheckBox, String>(overnightComplementCB, "[43] GASTOS PERNOCTA DIARIO"));
 		this.salaryComplementsCBs.add(new Pair<CheckBox, String>(maintenanceComplementCB, "[45] GASTOS MANUTENCION DIARIO"));
-		this.salaryComplementsCBs.add(new Pair<CheckBox, String>(locomotionComplementCB, "[50] GASTOS LOCOMOCIÓN SIN JUSTIFICANTE"));
+		this.salaryComplementsCBs.add(new Pair<CheckBox, String>(locomotionComplementCB, "[50] GASTOS LOCOMOCION SIN JUSTIFICANTE"));
 		
 		this.salaryExtrasCBs = new ArrayList<Pair<CheckBox, String>>();
 		this.salaryExtrasCBs.add(new Pair<CheckBox, String>(salaryExtraCB, "[90-91] PAGA EXTRA VERANO NAVIDAD"));
@@ -374,10 +381,9 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 			
 			Payment concept = getPayment(suggestName);
 			
-//			Window.alert("concept : " + concept);
-			
 			if (concept == null) {
 				newPayment.setDescription(name);
+				newPayment.setExpression(agreementPayment.getExpression());
 				newPayment.setIrpfExpression("_P");
 				newPayment.setQuoteExpression("_P");
 				newPayment.setType(Payment.Type.DEFAULT);
@@ -387,13 +393,14 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newPayment.setName(concept.getName());
 				newPayment.setConceptId(concept.getId());
 				newPayment.setDescription(name);
-//				newPayment.setDescription(concept.getDescription());
 				newPayment.setIrpfExpression(concept.getIrpfExpression());
 				newPayment.setQuoteExpression(concept.getQuoteExpression());
 				newPayment.setSalaryType(Salary.Type.SALARY);
 				
-				if (concept.getExpression() != null)
+				if (concept.getExpression() != null && !AonStringUtils.containsIgnoreCase(name, "PLUS"))
 					newPayment.setExpression(getExpression4Payment(concept));
+				else
+					newPayment.setExpression(agreementPayment.getExpression());
 					
 			}
 				
@@ -405,7 +412,10 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		CheckBox checkBox = pair.getKey();
 		String name = pair.getValue();
 		
-		AgreementPayment agreementPayment = AgreementPayment.safeValueOf(name);
+		AgreementPayment agreementPayment = AgreementPayment.safeValueOf(normalizeName(name));
+		
+		Window.alert(normalizeName(name) + " -> " + agreementPayment);
+		
 		String suggestName = null == agreementPayment ? "" : agreementPayment.getSuggestName();
 		
 		if(checkBox.getValue()) {
@@ -419,6 +429,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 			
 			if (conceptSummer == null) {
 				newPaymentSummer.setDescription("[90] PAGA EXTRA VERANO");
+				newPaymentSummer.setExpression(agreementPayment.getExpression());
 				newPaymentSummer.setIrpfExpression("_P");
 				newPaymentSummer.setQuoteExpression("_P");
 				newPaymentSummer.setType(Payment.Type.CRA_0004);
@@ -428,14 +439,10 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newPaymentSummer.setName(conceptSummer.getName());
 				newPaymentSummer.setConceptId(conceptSummer.getId());
 				newPaymentSummer.setDescription("[90] PAGA EXTRA VERANO");
-//				newPaymentSummer.setDescription(conceptSummer.getDescription());
+				newPaymentSummer.setExpression(agreementPayment.getExpression());
 				newPaymentSummer.setIrpfExpression(conceptSummer.getIrpfExpression());
 				newPaymentSummer.setQuoteExpression(conceptSummer.getQuoteExpression());
-				newPaymentSummer.setSalaryType(Salary.Type.SALARY);
-				
-				if (conceptSummer.getExpression() != null)
-					newPaymentSummer.setExpression(getExpression4Payment(conceptSummer));
-					
+				newPaymentSummer.setSalaryType(Salary.Type.SALARY);	
 			}
 				
 			paymentResultList.add(newPaymentSummer);
@@ -443,8 +450,8 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 			Extra newExtraSummer = new Extra();
 			newExtraSummer.setId(--nextDraftExtraId);
 			newExtraSummer.setIssueDate("31/07");
-			newExtraSummer.setStartDate("01/07");
-			newExtraSummer.setEndDate("31/12");
+			newExtraSummer.setStartDate("01/01");
+			newExtraSummer.setEndDate("30/06");
 			newExtraSummer.setDomain(newPaymentSummer.getDomain());
 			newExtraSummer.setPaymentId(newPaymentSummer.getId());
 			newExtraSummer.setPaymentDescription(newPaymentSummer.getDescription());
@@ -460,7 +467,8 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 			Payment conceptWinter = getPayment(suggestName);
 			
 			if (conceptWinter == null) {
-				newPaymentSummer.setDescription("[91] PAGA EXTRA NAVIDAD");
+				newPaymentWinter.setDescription("[91] PAGA EXTRA NAVIDAD");
+				newPaymentWinter.setExpression(agreementPayment.getExpression());
 				newPaymentWinter.setIrpfExpression("_P");
 				newPaymentWinter.setQuoteExpression("_P");
 				newPaymentWinter.setType(Payment.Type.CRA_0004);
@@ -469,22 +477,18 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newPaymentWinter.setType(conceptWinter.getType());
 				newPaymentWinter.setName(conceptWinter.getName());
 				newPaymentWinter.setConceptId(conceptWinter.getId());
-				newPaymentSummer.setDescription("[91] PAGA EXTRA NAVIDAD");
-//				newPaymentWinter.setDescription(conceptWinter.getDescription());
+				newPaymentWinter.setDescription("[91] PAGA EXTRA NAVIDAD");
+				newPaymentWinter.setExpression(agreementPayment.getExpression());
 				newPaymentWinter.setIrpfExpression(conceptWinter.getIrpfExpression());
 				newPaymentWinter.setQuoteExpression(conceptWinter.getQuoteExpression());
 				newPaymentWinter.setSalaryType(Salary.Type.SALARY);
-				
-				if (conceptWinter.getExpression() != null)
-					newPaymentWinter.setExpression(getExpression4Payment(conceptWinter));
-					
 			}
 				
 			paymentResultList.add(newPaymentWinter);
 			
 			Extra newExtraWinter = new Extra();
 			newExtraWinter.setId(--nextDraftExtraId);
-			newExtraWinter.setIssueDate("31/07");
+			newExtraWinter.setIssueDate("31/12");
 			newExtraWinter.setStartDate("01/07");
 			newExtraWinter.setEndDate("31/12");
 			newExtraWinter.setDomain(newPaymentWinter.getDomain());
@@ -503,7 +507,6 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 	}
 	
 	private Payment getPayment(String suggestionPaymentString) {
-//		Window.alert("suggestionPaymentString : " + suggestionPaymentString);
 		for (Payment payment : availablePaymens) {
 			if (AonStringUtils.equalsIgnoreCase(suggestionPaymentString, getSuggestionString(payment)))
 				return payment;

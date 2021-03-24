@@ -1057,10 +1057,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				
 				@Override
 				protected void onAccept(List<Payment> payments) {
-					Window.alert("payments size : " + payments.size());
 					for(Payment payment : payments)
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					AgreementDraft.this.calculate();
+					agreementDraftObject.save(AgreementDraft.this);
 				}
 
 				@Override
@@ -1086,7 +1085,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				protected void onAccept(List<Payment> payments) {
 					for(Payment payment : payments)
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					AgreementDraft.this.calculate();
+					agreementDraftObject.save(AgreementDraft.this);
 				}
 				
 				@Override
@@ -1112,7 +1111,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				protected void onAccept(List<Payment> payments) {
 					for(Payment payment : payments)
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					AgreementDraft.this.calculate();
+					agreementDraftObject.save(AgreementDraft.this);
 				}
 				
 				@Override
@@ -1138,7 +1137,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				protected void onAccept(List<Payment> payments) {
 					for(Payment payment : payments)
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
-					AgreementDraft.this.calculate();
+					agreementDraftObject.save(AgreementDraft.this);
 				}
 				
 				@Override
@@ -1171,7 +1170,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					for(Extra extra : extras)
 						AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
 					
-					AgreementDraft.this.calculate();
+					agreementDraftObject.save(AgreementDraft.this);
 				}
 				
 			};
@@ -1198,21 +1197,21 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			addBasicSalary.ensureDebugId("addBasicSalary");
 			
-//			addPlusesSalary = addItem("Plus Salarial", new AddPlusesSalaryCommand(), 
-//					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
-//			addPlusesSalary.ensureDebugId("addPlusesSalary");
-//			
-//			addPlusesExtraSalary = addItem("Plus Extra Salarial", new AddPlusesExtraSalaryCommand(), 
-//					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
-//			addPlusesExtraSalary.ensureDebugId("addPlusesExtraSalary");
-//			
-//			addComplementsSalary = addItem("Complementos y gastos", new AddComplementsSalaryCommand(), 
-//					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
-//			addComplementsSalary.ensureDebugId("addComplementsSalary");
-//			
-//			addExtrasSalary = addItem("Pagas Extras", new AddExtrasSalaryCommand(), 
-//					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
-//			addExtrasSalary.ensureDebugId("addExtrasSalary");
+			addPlusesSalary = addItem("Plus Salarial", new AddPlusesSalaryCommand(), 
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			addPlusesSalary.ensureDebugId("addPlusesSalary");
+			
+			addPlusesExtraSalary = addItem("Plus Extra Salarial", new AddPlusesExtraSalaryCommand(), 
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			addPlusesExtraSalary.ensureDebugId("addPlusesExtraSalary");
+			
+			addComplementsSalary = addItem("Complementos y gastos", new AddComplementsSalaryCommand(), 
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			addComplementsSalary.ensureDebugId("addComplementsSalary");
+			
+			addExtrasSalary = addItem("Pagas Extras", new AddExtrasSalaryCommand(), 
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			addExtrasSalary.ensureDebugId("addExtrasSalary");
 		}
 	}
 
@@ -2770,7 +2769,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	private Payment getPayment(String suggestionString) {
-//		Window.alert("suggestionString : " + suggestionString);
 		for (Payment payment : availablePaymens) {
 			if (StringUtils.equals(suggestionString, getSuggestionString(payment)))
 				return payment;
