@@ -57,6 +57,7 @@ import com.esferalia.aon.occam.api.model.Salary.Bonus;
 import com.esferalia.aon.occam.api.model.Salary.Cost;
 import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class EnterprisePayrollExcel {
@@ -697,7 +698,24 @@ public class EnterprisePayrollExcel {
 					//SALARY TYPE
 					{
 						Cell cell = row.createCell(column++);
-						cell.setCellValue(payroll.getSalaryType());
+						
+						switch (payroll.getSalaryType()) {
+							case SALARY:
+								cell.setCellValue("NÓMINA");
+								break;
+							case EXTRA:
+								cell.setCellValue("EXTRA");
+								break;
+							case DELAY:
+								cell.setCellValue("ATRASOS");
+								break;
+							case SETTLE:
+								cell.setCellValue("FINIQUITO");
+								break;
+							default:
+								cell.setCellValue("NÓMINA");
+						}
+						
 						cell.setCellStyle(doubleCellStyle);
 					}
 					
@@ -1526,19 +1544,9 @@ public class EnterprisePayrollExcel {
 			EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
 			enterprisePayroll.employee = s.getEmployeeName();
 			enterprisePayroll.workplace = workplaces.get(s.getId());
-			switch (s.getSalaryType().ordinal()) {
-				case 1:
-					enterprisePayroll.salaryType = "PAGA EXTRA";
-					break;
-				case 2:
-					enterprisePayroll.salaryType = "FINIQUITO";
-					break;
-				case 3:
-					enterprisePayroll.salaryType = "ATRASOS";
-					break;
-				default:
-					enterprisePayroll.salaryType = "NÓMINA";
-			}
+			
+			enterprisePayroll.salaryType = s.getSalaryType();
+
 
 			enterprisePayroll.irpf = s.getTotalIrpf();
 
@@ -1752,7 +1760,7 @@ public class EnterprisePayrollExcel {
 	public static class EnterprisePayroll implements IEnterprisePayroll {
 		private String employee;
 		private String workplace;
-		private String salaryType;
+		private SalaryType salaryType;
 
 		private Double raw;
 		private Double employeeSS;
@@ -1795,7 +1803,7 @@ public class EnterprisePayrollExcel {
 		}
 		
 		@Override
-		public String getSalaryType() {
+		public SalaryType getSalaryType() {
 			return salaryType;
 		}
 

@@ -32,6 +32,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.github.javafaker.Faker;
 import com.github.javafaker.Number;
 import com.github.javafaker.Pokemon;
@@ -42,7 +43,7 @@ public class EnterprisePayrollExcelTestCase {
 	public static class EnterprisePayroll implements IEnterprisePayroll {
 		private String employee;
 		private String workplace;
-		private String salaryType;
+		private SalaryType salaryType;
 
 		private Double raw;
 		private Double employeeSS;
@@ -85,7 +86,7 @@ public class EnterprisePayrollExcelTestCase {
 		}
 		
 		@Override
-		public String getSalaryType() {
+		public SalaryType getSalaryType() {
 			return salaryType;
 		}
 

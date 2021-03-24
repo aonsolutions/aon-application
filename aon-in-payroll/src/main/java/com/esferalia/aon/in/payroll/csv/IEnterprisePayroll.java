@@ -1,10 +1,12 @@
 package com.esferalia.aon.in.payroll.csv;
 
+import com.esferalia.aon.occam.api.model.type.SalaryType;
+
 public interface IEnterprisePayroll {
 	
 	public String getEmployee();
 	public String getWorkplace();
-	public String getSalaryType();
+	public SalaryType getSalaryType();
 	
 	public Double getRaw();
 	public Double getEmployeeSS();

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.javafaker.Faker;
 import com.github.javafaker.Number;
@@ -25,7 +26,7 @@ public class EnterprisePayrollCSVTestCase {
 		@JsonProperty("Centro de trabajo")
 		private String workplace;
 		@JsonProperty("Tipo")
-		private String salaryType;
+		private SalaryType salaryType;
 		
 		
 		@JsonProperty("Bruto")
@@ -212,7 +213,7 @@ public class EnterprisePayrollCSVTestCase {
 		}
 
 		@Override
-		public String getSalaryType() {
+		public SalaryType getSalaryType() {
 			return salaryType;
 		}
 
@@ -248,7 +249,7 @@ public class EnterprisePayrollCSVTestCase {
 				EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
 				enterprisePayroll.workplace = workplace;
 				enterprisePayroll.employee = employee;
-				enterprisePayroll.salaryType = "Nómina";
+				enterprisePayroll.salaryType = typeOf(((Double)number.randomDouble(0, 0, 3)).byteValue(), SalaryType.class);
 				enterprisePayroll.raw = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.employeeSS = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.irpf = number.randomDouble(2, 0, 2000);
@@ -289,5 +290,14 @@ public class EnterprisePayrollCSVTestCase {
 	}
 	
 	
+	private static <T extends Enum<?>> T typeOf(Byte ordinal, Class<T> type) {
+		if ( ordinal == null )
+			return null;
+		try {
+			return type.getEnumConstants()[ordinal];
+		} catch ( Exception e ) {
+			return null;
+		}
+	}
 
 }
