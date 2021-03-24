@@ -699,18 +699,18 @@ public class EnterprisePayrollExcel {
 					{
 						Cell cell = row.createCell(column++);
 						
-						switch (payroll.getSalaryType()) {
-							case SALARY:
+						switch (payroll.getSalaryType().ordinal()) {
+							case 0:
 								cell.setCellValue("NÓMINA");
 								break;
-							case EXTRA:
+							case 1:
 								cell.setCellValue("EXTRA");
 								break;
-							case DELAY:
-								cell.setCellValue("ATRASOS");
-								break;
-							case SETTLE:
+							case 2:
 								cell.setCellValue("FINIQUITO");
+								break;
+							case 3:
+								cell.setCellValue("ATRASOS");
 								break;
 							default:
 								cell.setCellValue("NÓMINA");
