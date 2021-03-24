@@ -307,9 +307,8 @@ public class TrabajadoresTramos {
 					Collections.sort(cgcBasePeriods); // sort & sort & sort again .
 					
 					
-					for ( ContextVariable var : new ContextVariable [] {ContextVariable.MATERNITY_BASE, ContextVariable.DIRECT_BASE} )
-						for ( ContextData cgcData: salary.getContextData().getOrDefault(var.getName(), Collections.emptyList()) )
-							cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
+					for ( ContextData cgcData: salary.getContextData().getOrDefault(MATERNITY_BASE.getName(), Collections.emptyList()) )
+						cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
 					
 
 					for ( ContextVariable var : ContextVariable.ERE_BASES )
@@ -1413,21 +1412,17 @@ public class TrabajadoresTramos {
 		
 		boolean artistas = CCCType.ARTIST.ordinal() == cccType;
 		
-		boolean directBase = 
-		getContextData(ContextVariable.DIRECT_BASE.getName(), salary, startDate, endDate, 0.00) > 0.00;
-
-		
-		boolean iT15primerosDias = !directBase && (
+		boolean iT15primerosDias = (
 		getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_1_3.getName(), salary, startDate, endDate)
 		+ getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_4_15.getName(), salary, startDate, endDate) 
 		) > 0.00;
 		
-		boolean iTPagoDelegado = !directBase && (
+		boolean iTPagoDelegado = (
 		getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_16_20.getName(), salary, startDate, endDate)
 		+ getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_21.getName(), salary, startDate, endDate) 
 		) > 0.00;
 
-		boolean atEPPagoDelegado = !directBase && (
+		boolean atEPPagoDelegado = (
 		getSumContextData(ContextVariable.OCCUPATIONAL_DISEASE_DAYS.getName(), salary, startDate, endDate)
 		) > 0.00;
 		
@@ -1447,7 +1442,7 @@ public class TrabajadoresTramos {
 		getContextData(ContextVariable.PATERNITY_FACTOR.getName(), salary, startDate, endDate, 1.00)
 		 < 1.00;
 		
-		boolean iTPagoDirecto = directBase || (
+		boolean iTPagoDirecto = (
 		getSumContextData(ContextVariable.COMMON_DISEASE_LACK_DAYS.getName(), salary, startDate, endDate)
 		+ getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_366.getName(), salary, startDate, endDate)
 		+ getSumContextData(ContextVariable.OCCUPATIONAL_DISEASE_DAYS_366.getName(), salary, startDate, endDate)
