@@ -187,7 +187,7 @@ export const geMonthYear = (date) => {
   return month+". "+ d.getFullYear();
 }
 
-export const formatNumber = (value, decimals = 0, simbolo = undefined, locale = "de-DE") => {
+export const formatNumber = (value = 0, decimals = 0, simbolo = undefined, locale = "de-DE") => {
   let options = { minimumFractionDigits: decimals, maximumFractionDigits: decimals};
   if(simbolo){ options.style = 'currency'; options.currency = simbolo};
   return  new Intl.NumberFormat(locale, options).format(value.toString().replace(",", "."));

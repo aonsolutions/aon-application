@@ -14,7 +14,7 @@ export class AonMovements extends AonElement {
         super();
         this.id = this.id || 'aonMovements';
         this.applicationEl = this.getApplication();
-        this.parentEl = this.getParent();
+        this.applicationParentEl = this.getApplicationParent();
     }
 
 
@@ -37,11 +37,11 @@ export class AonMovements extends AonElement {
             this.applicationEl.addToolbarOption('Add', 'add', () => this.aonAltaDirecta());
         }
         this.getElement(this.applicationEl.TOOLBAR).setAttribute('option', 'Movimientos');
-        this.parentEl.showView("aonMovementsList");
+        this.applicationParentEl.showView("aonMovementsList");
     }
 
     aonAltaDirecta() {
-        this.parentEl.showView("aonAltaDirecta");
+        this.applicationParentEl.showView("aonAltaDirecta");
     }
 
 }

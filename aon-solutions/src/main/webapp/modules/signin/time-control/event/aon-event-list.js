@@ -52,16 +52,16 @@ export class AonEventList extends AonElement {
 
   constructor() {
     super();
-    this.id = this.id || "aonEventList";
+    this.id = this.id || SIGNIN_VIEWS.AON_EVENT_LIST;
     this.TABLE_ID = this.id + "Table";
     this.TOOLBAR = this.id + "Toolbar";
-    this.aonSigninEl = this.getApplication();
-    this.aonSigninParentEl = this.aonSigninEl.getParent();
-    this.aonSigninParentEl.periodSideNavDisplay(true);
+    this.applicationEl = this.getApplication();
+    this.applicationParentEl = this.getApplicationParent();
+    this.applicationParentEl.periodSideNavDisplay(true);
   }
 
   connectedCallback() {
-    this.aonSigninEl.addToolbarTitle("Resumen");
+    this.applicationEl.addToolbarTitle("Resumen");
     this.build();
   }
 
@@ -94,38 +94,38 @@ export class AonEventList extends AonElement {
   }
 
   async getTable() {
-    this.aonSigninEl.startLoader();
+    this.applicationEl.startLoader();
     if (this.isMobile()) {
       await this.getTableMobile();
     } else {
       await this.getTableDesk();
     }
-    this.aonSigninEl.stopLoader();
-    this.aonSigninParentEl.changeFilter();
+    this.applicationEl.stopLoader();
+    this.applicationParentEl.changeFilter();
   }
 
 
   buildToolbarDesk() {
-    this.aonSigninEl.removeToolbarOptions();
+    this.applicationEl.removeToolbarOptions();
     const filterEl =  this.getElement(`${this.id}Filter`);
-    this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) => filterEl.openFilter());
+    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, (e) => filterEl.openFilter());
   }
   buildToolbarMobile(){
-    this.aonSigninEl.removeToolbarOptions();
+    this.applicationEl.removeToolbarOptions();
     let toolbarEl = this.getElement(this.TOOLBAR);
     const filterEl =  this.getElement(`${this.id}Filter`);
     toolbarEl.removeButtons();
-    if(!this.aonSigninParentEl.isEmployee()){
+    if(!this.applicationParentEl.isEmployee()){
 		  toolbarEl.addButton2(UserAction.BACK, () => this.back());
     }
-    this.aonSigninEl.addToolbarOption2(SigninSidenav.FILTER, (e) => filterEl.openFilter());
+    this.applicationEl.addToolbarOption2(SigninSidenav.FILTER, (e) => filterEl.openFilter());
   }
 
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
     aonFilter.setInputs(EVENT_LIST_FILTER);
     aonFilter.addEventListener("applyFilter", ({detail}) => {
-      if(detail) this.aonSigninParentEl.setDataFilter(detail);
+      if(detail) this.applicationParentEl.setDataFilter(detail);
     });
 
     let groupEl = this.getElement('group');
@@ -156,7 +156,7 @@ export class AonEventList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       let iconBack = "";
-      if(!this.aonSigninParentEl.isEmployee()){
+      if(!this.applicationParentEl.isEmployee()){
         iconBack = "arrow_back";
       }
       aonTable.addColumnIcon(iconBack, "string", "lettersHtml", "6%", ()=>this.back());
@@ -207,7 +207,7 @@ export class AonEventList extends AonElement {
     let group = await this.getGroupValue();
     try {
       let filter = null;
-      try {filter = {...this.aonSigninParentEl._filter};} catch (error) {}
+      try {filter = {...this.applicationParentEl._filter};} catch (error) {}
       let datos = await getTaskHolderTimeControl(filter);
       if(datos){
         await sortBy(datos, 'start_date', 'asc').map(
@@ -260,17 +260,17 @@ export class AonEventList extends AonElement {
   }
 
   async paintName(){
-    const taskHolder = this.aonSigninParentEl.TASK_HOLDER;
+    const taskHolder = this.applicationParentEl.TASK_HOLDER;
     if(taskHolder) {
       if(this.isMobile()) await this.paintNameMobile(taskHolder);
-      else this.aonSigninEl.addTitleToolSection(taskHolder.name);
+      else this.applicationEl.addTitleToolSection(taskHolder.name);
     }
   }
 
   async paintNameMobile(taskHolder){
     let iconPhone = "";
-    if(!this.aonSigninParentEl.isEmployee()) {
-      const auth = await this.aonSigninParentEl.getAuth({task_holder: taskHolder.id});
+    if(!this.applicationParentEl.isEmployee()) {
+      const auth = await this.applicationParentEl.getAuth({task_holder: taskHolder.id});
       if(auth && auth.phone){
         let color = "black";
         if(taskHolder.status && "in"===taskHolder.status) color = "green";
@@ -288,11 +288,11 @@ export class AonEventList extends AonElement {
   }
 
   aonEvent({target}, data) {
-    this.aonSigninParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
+    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
   }
 
   back(){
-    this.aonSigninParentEl.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST, undefined, true);
+    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST, undefined, true);
   }
 }
 window.customElements.define("aon-event-list", AonEventList);

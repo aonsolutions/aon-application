@@ -29,7 +29,7 @@ export const AON_CERT = {
 };
 
 export const AON_COMUNICA = {
-  name: 'Comunica',
+  name: 'Comunic@',
   aonIcon: {
     icon: 'aon_seg_social',
     color: 'black'
@@ -67,6 +67,13 @@ export const PAYROLL_FILTER = [
     }
 ];
 
+export const PAYROLL_FILTER_EXCEL_TYPE = {
+  type: "select",
+  id: "excelType",
+  name: "excelType",
+  title: "Tipo",
+};
+
 export const CONTRACT_OPTIONS = {
   CONTRACT:{
     name: "Contrato",
@@ -87,6 +94,7 @@ export const PayrollOptions = {
 };
 
 export const PAYROLL_VIEWS = {
+  AON_LABORAL: "aonLaboral",
   AON_PAYROLL_LIST: "aonPayrollList",
   AON_SEPA_FILES_LIST: "aonSepaFilesList",
   AON_CONTRACT_LIST: "aonContractList",
@@ -94,5 +102,6 @@ export const PAYROLL_VIEWS = {
   AON_MOVEMENTS_LIST: "aonMovementsList",
   AON_CERT: "aonCert",
   AON_CTA_LIST: "aonCtaList",
-  AON_ALTA_DIRECT: "aonAltaDirecta"
+  AON_ALTA_DIRECT: "aonAltaDirecta",
+  AON_COMPANY_COSTS_LIST: "aon-company-costs-list"
 }

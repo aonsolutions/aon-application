@@ -81,6 +81,8 @@ export const EVENT_LIST_FILTER = [
 
 
 export const SIGNIN_VIEWS = {
+  AON_SIGN: "aonSign",
+  AON_SIGNIN: "aonSignin",
   AON_PRESENCE_LIST:"aonPresenceList",
   AON_EVENT_LIST:"aonEventList",
   AON_EVENT_DETAIL_LIST:"aonEventDetailList",

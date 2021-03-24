@@ -12,7 +12,7 @@ const GAL = 'gal';
 
 let language = localStorage.getItem('aon_language') || ES;
 
-let MSG = MSG_ES;
+let MSG = undefined;
 
 if(EN === language) {
   MSG = MSG_EN;
@@ -22,6 +22,8 @@ if(EN === language) {
   MSG = MSG_CAT;
 } else if(GAL === language) {
   MSG = MSG_GAL;
+} else {
+  MSG = MSG_ES;
 }
 
 export const AON_MSG_INVOICE = MSG.AON_MSG_INVOICE;

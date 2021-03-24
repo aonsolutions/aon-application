@@ -25,7 +25,6 @@ import { SIGNIN_VIEWS } from "../../signinEnums.js";
 
 export class AonEventAdd extends AonElement {
   ACTION;
-  TOAST;
   TITLE;
   TOOLBAR;
   START_DATE
@@ -52,14 +51,13 @@ export class AonEventAdd extends AonElement {
 
   constructor() {
     super();
-    this.id = this.id || "aonEventAdd";
+    this.id = this.id || SIGNIN_VIEWS.AON_EVENT_ADD;
     this.TOOLBAR = this.id + "Toolbar";
-    this.aonSigninEl = this.getApplication();
-    this.TOAST = this.aonSigninEl.getToast();
-    this.aonSigninParentEl = this.aonSigninEl.getParent();
-    this.aonSigninEl.addToolbarTitle("Registrar evento");
-    this.aonSigninParentEl.periodSideNavDisplay(false);
-    this.TASK_HOLDER = this.aonSigninParentEl.TASK_HOLDER;
+    this.applicationEl = this.getApplication();
+    this.applicationParentEl = this.getApplicationParent();
+    this.applicationEl.addToolbarTitle("Registrar evento");
+    this.applicationParentEl.periodSideNavDisplay(false);
+    this.TASK_HOLDER = this.applicationParentEl.TASK_HOLDER;
   }
 
   connectedCallback() {
@@ -91,7 +89,7 @@ export class AonEventAdd extends AonElement {
 
     this.innerHTML = aonToolbar + form;
 
-    this.aonSigninEl.removeToolbarOptions();
+    this.applicationEl.removeToolbarOptions();
 
     let aonCardEvent = this.getElement(`${this.id}CardEvent`);
     aonCardEvent.setContentHTML(`
@@ -158,14 +156,14 @@ export class AonEventAdd extends AonElement {
     let toolbarEl = this.getElement(this.TOOLBAR);
     toolbarEl.removeButtons();
     if (this.data && this.data.id) {
-      if(!this.aonSigninParentEl.isEmployee()){
+      if(!this.applicationParentEl.isEmployee()){
         toolbarEl.addButton2(UserAction.DELETE, () => this.delete());
       }
       toolbarEl.title = "Edición";
     } else {
       toolbarEl.title = "Registro";
     }
-    if(!this.aonSigninParentEl.isEmployee()){
+    if(!this.applicationParentEl.isEmployee()){
       toolbarEl.addButton2(UserAction.SAVE, () => this.save());
     }
     toolbarEl.addButton2(UserAction.BACK, () => this.back());
@@ -225,11 +223,11 @@ export class AonEventAdd extends AonElement {
       this.getElement("name").disabled = "disabled";
     }
     
-    if(this.aonSigninParentEl.isEmployee()) this.formRead();
+    if(this.applicationParentEl.isEmployee()) this.formRead();
   }
 
   async save() {
-    this.aonSigninEl.startLoading();
+    this.applicationEl.startLoading();
     try {
       let formValues = this.getFormValues();
       const data = {
@@ -246,29 +244,29 @@ export class AonEventAdd extends AonElement {
       if(start_date){
         this.START_DATE =  formatDateOrigin(new Date(start_date));
       }
-      this.TOAST.start({
+      this.applicationEl.getToast().start({
         message: "Datos guardados!",
         type: "success",
         delay: 3000,
       });
     } catch (error) {
-      this.TOAST.start({ message: error, type: "error" });
+      this.applicationEl.getToast().start({ message: error, type: "error" });
     }
-    this.aonSigninEl.stopLoading();
+    this.applicationEl.stopLoading();
   }
 
   delete() {
-    this.aonSigninEl.confirmDialog("Eliminar", "Estas seguro de eliminarlo?", async()=>{
+    this.applicationEl.confirmDialog("Eliminar", "Estas seguro de eliminarlo?", async()=>{
       const data = this.getFormValues();
-      this.aonSigninEl.startLoader();
+      this.applicationEl.startLoader();
       try {
         await deleteTimeControl(data);
-        this.TOAST.start({ message: `Datos eliminados!` });
+        this.applicationEl.getToast().start({ message: `Datos eliminados!` });
         this.back();
       } catch (error) {
-        this.TOAST.start({ message: error, type: "error" });
+        this.applicationEl.getToast().start({ message: error, type: "error" });
       }
-      this.aonSigninEl.stopLoader();
+      this.applicationEl.stopLoader();
     });
   }
 
@@ -282,7 +280,7 @@ export class AonEventAdd extends AonElement {
     let data = undefined;
     if(this.data) data = {...this.data, start_date:this.data.date};
     if(this.START_DATE) data.start_date = this.START_DATE;
-    this.aonSigninParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
+    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
   }
 }
 

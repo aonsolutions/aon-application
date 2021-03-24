@@ -48,16 +48,16 @@ export class AonPayrollList extends AonElement {
     this.id = this.id || PAYROLL_VIEWS.AON_PAYROLL_LIST;
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
-    this.parentEl = this.getParent();
+    this.applicationParentEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle("Nóminas");
   }
   
   async build(){
     this.paintView();
-    if(!this.parentEl.isEmployee()){
+    if(!this.applicationParentEl.isEmployee()){
       this.buildToolbar();
       await this.buildFilter();
-      this.parentEl.changeFilter();
+      this.applicationParentEl.changeFilter();
     }
     await this.getTable();
   }
@@ -89,7 +89,7 @@ export class AonPayrollList extends AonElement {
       ...PRESENCE_FILTER
     ]);
     aonFilter.addEventListener("applyFilter", ({detail}) => {
-      if(detail)this.parentEl.setDataFilter(detail);
+      if(detail)this.applicationParentEl.setDataFilter(detail);
     });
   
     // ----------WORKPLACES ------------
@@ -160,7 +160,7 @@ export class AonPayrollList extends AonElement {
         const resp = await this.getData();
         aonTable.removeAllLi();
 
-        let isEmployee = this.parentEl.isEmployee();
+        let isEmployee = this.applicationParentEl.isEmployee();
         
         resp.map((res, idx) => {
           let options = {};
@@ -187,10 +187,10 @@ export class AonPayrollList extends AonElement {
     let data = [];
     try {
       let filter = null;
-      try {filter = {...this.parentEl._filter};} catch (error) {}
+      try {filter = {...this.applicationParentEl._filter};} catch (error) {}
 
       let datos = null;
-      if(this.parentEl.isEmployee()){
+      if(this.applicationParentEl.isEmployee()){
         datos = await getEmployeeSalaries(filter);
       } else {
         datos = await getEnterpriseSalaries(filter);
@@ -210,7 +210,7 @@ export class AonPayrollList extends AonElement {
             type,
             workplaceName,
           }) => {
-              const lettersType = this.getTypeSalaryText(type);
+              const lettersType = this.applicationParentEl.getTypeSalaryText(type);
               const lettersHtml = `<div class="profile-letters ${lettersType.color}">${lettersType.typeReduce}</div>`;
               const obj = {
                 id,
@@ -237,7 +237,7 @@ export class AonPayrollList extends AonElement {
   }
 
   aonEvent({ target }, data) {
-    const parent = this.parentEl;
+    const parent = this.applicationParentEl;
     if(parent) parent.getSalary({salaryId:data.id});
   }
 
@@ -257,30 +257,6 @@ export class AonPayrollList extends AonElement {
       console.log(error);
     }
   }
-
-  getTypeSalaryText(type){
-    let obj = {color:"",  type:"" ,typeReduce:""};
-    switch(type){
-      case "SALARY":
-        obj.type="NOMINA";
-      break;
-      case "EXTRA":
-        obj.type="EXTRA";
-        obj.color = "in";
-      break;
-      case "SETTLE":
-        obj.type="FINIQUITO";
-        obj.color = "fin";
-      break;
-      case "DELAY":
-        obj.type="ATRASOS";
-        obj.color = "pause";
-      break;
-    }
-    if(obj.type) obj.typeReduce = obj.type.toString().substr(0,1);
-    return obj;
-  }
-  
 }
 
 window.customElements.define("aon-payroll-list", AonPayrollList);

@@ -3,6 +3,7 @@ import {getTaskHolders, getTimeControl, saveTimeControl} from '../../services/se
 import {getPosition} from '../../services/maps.js';
 import { timePaser, setDateTimestampDay } from '../../services/utils.js';
 import { AonSelect } from '../../components/aon-select.js';
+import { SIGNIN_VIEWS } from "./signinEnums.js";
 
 export class AonSign extends AonElement {
 
@@ -27,10 +28,11 @@ export class AonSign extends AonElement {
   }
 
   connectedCallback () {
-    this.AON_SIGN = 'aonSign';
+    this.AON_SIGN = SIGNIN_VIEWS.AON_SIGN;
     this.id = this.id || this.AON_SIGN;
     this.CONTENT = this.id + 'Content';
     this.TIME = this.id + 'Time';
+    this.applicationEl = this.getApplication();
     getTaskHolders().then(r => {
       if(r.length > 0) {
         this._taskHolders = r;
@@ -58,7 +60,7 @@ export class AonSign extends AonElement {
       company.style.width = '200px';
       this.appendChild(company);
       let select = new AonSelect();
-      select.id = 'aonSignSelect2';
+      select.id = this.AON_SIGN +'Select2';
       select.title = 'Empresa';
       select.options = JSON.stringify(this._taskHolders.map(c => {
         return {
@@ -157,7 +159,9 @@ export class AonSign extends AonElement {
         await saveTimeControl(signin).then(r => this.buildSignin(r));
       });
     } catch (error) {
-      if(error){ this.getToastEl(error); }
+      if(typeof error ==="string") error = JSON.parse(error);
+      const {message, type} = error;
+      this.applicationEl.getToast().start({ message, type});
     }
     this.disabledButton(false);
   }
@@ -226,14 +230,6 @@ export class AonSign extends AonElement {
 
   timeStop() {
     clearTimeout(this._timeAction);
-  }
-
-  getToastEl(error){
-    try {
-      const errors = typeof error === "object" ? error : JSON.parse(error);
-      const aonApp = document.querySelector('aon-application');
-      this.getElement(aonApp.TOAST).start({ message: errors.message, type: errors.type });
-    } catch (errs) {}
   }
 }
 window.customElements.define('aon-sign', AonSign);

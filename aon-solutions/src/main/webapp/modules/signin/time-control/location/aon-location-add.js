@@ -5,6 +5,7 @@ import { getPosition } from "../../../../services/maps.js";
 import { API_KEY_MAP } from "../../../../environments/constants.js";
 import { UserAction } from "../../../user/userEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
+import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-number.js";
@@ -43,11 +44,11 @@ export class AonLocationAdd extends AonElement {
 
   constructor() {
     super();
+    this.id = this.id || SIGNIN_VIEWS.AON_LOCATION_ADD;
     this.NAME = "Ubicación";
-    this.id = this.id || "aonLocationAdd";
     this.TOOLBAR = this.id + "Toolbar";
-    this.aonSigninEl = this.getApplication();
-    this.TOAST = this.getElement(`${this.aonSigninEl.TOAST}`);
+    this.applicationEl = this.getApplication();
+    this.TOAST = this.applicationEl.getToast();
   }
 
   connectedCallback() {
@@ -83,7 +84,7 @@ export class AonLocationAdd extends AonElement {
 
     this.innerHTML = aonToolbar + form;
 
-    this.aonSigninEl.removeToolbarOptions();
+    this.applicationEl.removeToolbarOptions();
 
     let aonCard = this.getElement(`${this.id}Card`);
     aonCard.setContentHTML(`
@@ -210,7 +211,7 @@ export class AonLocationAdd extends AonElement {
     const data = this.getFormValues();
     const count = Object.keys(data).length;
     if (count > 3) {
-      this.aonSigninEl.startLoading();
+      this.applicationEl.startLoading();
       try {
         const { id } = await saveLocation({
           ...data,
@@ -221,13 +222,13 @@ export class AonLocationAdd extends AonElement {
       } catch (error) {
         this.TOAST.start({ message: error, type: "error"});
       }
-      this.aonSigninEl.stopLoading();
+      this.applicationEl.stopLoading();
     }
   }
 
   async delete() {
-    this.aonSigninEl.confirmDialog("Eliminar", `Estas seguro de eliminar ${this.NAME}?`, async()=>{
-      this.aonSigninEl.startLoading();
+    this.applicationEl.confirmDialog("Eliminar", `Estas seguro de eliminar ${this.NAME}?`, async()=>{
+      this.applicationEl.startLoading();
       try {
         const data = this.getFormValues();
         await deleteLocation(data);
@@ -236,13 +237,12 @@ export class AonLocationAdd extends AonElement {
       } catch (error) {
         this.TOAST.start({ message: error, type: "error"});
       }
-      this.aonSigninEl.stopLoading();
+      this.applicationEl.stopLoading();
     });
   }
 
   back() {
-    // this.aonSigninEl.setContent(new AonLocationList());
-    this.aonSigninEl.back();
+    this.applicationEl.back();
   }
 }
 

@@ -30,7 +30,7 @@ export class AonCtaList extends AonElement {
     super();
     this.id = this.id || "aonCtaList";
     this.applicationEl = this.getApplication();
-    this.TABLE_ID = "aonCtaTable";
+    this.TABLE_ID = this.id + "Table";
   }
 
   connectedCallback() {

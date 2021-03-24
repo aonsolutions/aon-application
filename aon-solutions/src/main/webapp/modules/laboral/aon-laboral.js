@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { getCompanyCosts, getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
-import { addDays, addMonth, formatDateOrigin, setValueName } from "../../services/utils.js";
+import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
+import { addDays, formatDateOrigin, setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../documental/aon-mobile-documental-list.js";
@@ -12,6 +12,7 @@ import { AonMovements } from "./comunic@/aon-movements.js";
 import { AonCtaList } from "./comunic@/cta/aon-cta-list.js";
 import { AonMovementsList } from "./comunic@/aon-movements-list.js";
 import { AonAltaDirecta } from "./comunic@/aon-alta-directa.js";
+import { AonCompanyCostsList } from "./company/aon-company-costs-list.js";
 
 class AonLaboral extends AonElement {
 
@@ -34,7 +35,7 @@ class AonLaboral extends AonElement {
   }
 
   initialize(){
-    this.AON_LABORAL = "aonLaboral";
+    this.AON_LABORAL = PAYROLL_VIEWS.AON_LABORAL;
   }
 
   getDur() {
@@ -75,7 +76,7 @@ class AonLaboral extends AonElement {
       laboralOptions.push(contract);
 
       let companyCosts = PayrollOptions.COMPANY_COSTS;
-      companyCosts.fn = () =>  this.getCompanyCosts();
+      companyCosts.fn = () =>  this.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST);
       laboralOptions.push(companyCosts);
 
       let sepa = PayrollOptions.SEPA_FILES;
@@ -177,8 +178,10 @@ class AonLaboral extends AonElement {
     try {
       const { document: ipf, startDate: fecha } = data;
       await getContratoPdf({ ipf, fecha });
-    } catch ({message, type}) {
-			if(message && type) this.applicationEl.getToast().start({ message, type});
+    } catch (error) {
+      if(typeof error ==="string") error = JSON.parse(error);
+      const {message, type} = error;
+      this.applicationEl.getToast().start({ message, type});
 		}
     this.applicationEl.stopLoading();
   }
@@ -188,8 +191,10 @@ class AonLaboral extends AonElement {
 		try {
 			const { regime, ctaCti, nss, fra } = data;
 			await getTA({ regime, ctaCti, nss, fra }); // open pdf
-		} catch ({message, type}) {
-			if(message && type) this.applicationEl.getToast().start({ message, type});
+		} catch (error) {
+      if(typeof error ==="string") error = JSON.parse(error);
+      const {message, type} = error;
+      this.applicationEl.getToast().start({ message, type});
 		}
 		this.applicationEl.stopLoading();
 	}
@@ -206,8 +211,10 @@ class AonLaboral extends AonElement {
 		try {
 			const { regime, ctaCti, nss, fra } = data;
 			await getIDC({ regime, ctaCti, nss, fra }); // open pdf
-		} catch ({message, type}) {
-			if(message && type) this.applicationEl.getToast().start({ message, type});
+		} catch (error) {
+      if(typeof error ==="string") error = JSON.parse(error);
+      const {message, type} = error;
+      this.applicationEl.getToast().start({ message, type});
 		}
     this.applicationEl.stopLoading();
   }
@@ -219,7 +226,7 @@ class AonLaboral extends AonElement {
           await postDeleteMov(data);
           this.applicationEl.getToast().start({ message: `${data.situation == "AL" ? "Alta" : "Baja"} eliminada!` });
           if(this._movements)this._movements = this._movements.filter(({ctaCti,fra,ipf,nss,regime,situation}) => !(ctaCti.includes(data.ctaCti) && fra.includes(data.fra) && ipf.includes(data.ipf) && nss.includes(data.nss) && regime.includes(data.regime) && situation.includes(data.situation)))
-          this.showView("aonMovements");
+          this.showView(PAYROLL_VIEWS.AON_MOVEMENTS);
         } catch (error) {
           if(typeof error ==="string") error = JSON.parse(error);
           const {message, type} = error;
@@ -229,15 +236,27 @@ class AonLaboral extends AonElement {
     });
   }
 
-  async getCompanyCosts(){
-    this.applicationEl.development("Costes de empresa");
-    this.applicationEl.startLoading();
-		try {
-			await getCompanyCosts({ excelType:"COMPLETE", date: formatDateOrigin(addMonth(new Date(), -1)) }); 
-		} catch ({message, type}) {
-			if(message && type) this.applicationEl.getToast().start({ message, type});
-		}
-    this.applicationEl.stopLoading();
+  getTypeSalaryText(type){
+    let obj = {color:"",  type:"" ,typeReduce:""};
+    switch(type){
+      case "SALARY":
+        obj.type="NOMINA";
+      break;
+      case "EXTRA":
+        obj.type="EXTRA";
+        obj.color = "in";
+      break;
+      case "SETTLE":
+        obj.type="FINIQUITO";
+        obj.color = "fin";
+      break;
+      case "DELAY":
+        obj.type="ATRASOS";
+        obj.color = "pause";
+      break;
+    }
+    if(obj.type) obj.typeReduce = obj.type.toString().substr(0,1);
+    return obj;
   }
 
   showView(view, data, filter = undefined){
@@ -277,6 +296,9 @@ class AonLaboral extends AonElement {
             break;
           case PAYROLL_VIEWS.AON_ALTA_DIRECTA:
             aonView = new AonAltaDirecta();
+            break;
+          case PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST:
+          aonView = new AonCompanyCostsList();
             break;
         }
         if(aonView){

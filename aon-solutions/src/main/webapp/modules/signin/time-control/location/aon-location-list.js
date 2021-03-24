@@ -33,12 +33,12 @@ export class AonLocationList extends AonElement {
 
   constructor() {
     super();
-    this.aonSigninEl = this.getApplication();
-    this.aonSigninParentEl = this.aonSigninEl.getParent();
+    this.id = this.id || SIGNIN_VIEWS.AON_LOCATION_LIST;
+    this.applicationEl = this.getApplication();
+    this.applicationParentEl = this.getApplicationParent();
     this.aonSigninToolbar = this.getElement(
-      `${this.aonSigninEl.id}Toolbar`
+      `${this.applicationEl.id}Toolbar`
     );
-    this.id = this.id || "aonLocationList";
     this.TABLE_ID = this.id + "Table";
   }
 
@@ -47,7 +47,7 @@ export class AonLocationList extends AonElement {
   }
 
   disconnectedCallback() {
-    if (this.aonSigninEl) this.aonSigninEl.removeFloatOption();
+    if (this.applicationEl) this.applicationEl.removeFloatOption();
   }
 
   paintView() {
@@ -67,26 +67,26 @@ export class AonLocationList extends AonElement {
   }
 
   buildToolbar() {
-    this.aonSigninEl.removeToolbarOptions();
+    this.applicationEl.removeToolbarOptions();
 
     if (this.isMobile()) {
-        this.aonSigninEl.addFloatOption(SigninSidenav.ADD,
+        this.applicationEl.addFloatOption(SigninSidenav.ADD,
           () => this.add()
         );
     } else {
-      this.aonSigninEl.addToolbarOption2(SigninSidenav.ADD, () => this.add());
+      this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.add());
     }
   }
 
   async getTable() {
     this.aonSigninToolbar.setAttribute("option", "Ubicaciones");
-    this.aonSigninEl.startLoader();
+    this.applicationEl.startLoader();
     if (this.isMobile()) {
       await this.getTableMobile();
     } else {
       await this.getTableDesk();
     }
-    this.aonSigninEl.stopLoader();
+    this.applicationEl.stopLoader();
   }
 
   async getTableDesk() {
@@ -129,7 +129,7 @@ export class AonLocationList extends AonElement {
   }
 
   async getData() {
-    this.aonSigninEl.startLoader();
+    this.applicationEl.startLoader();
     let data = [];
     try {
       let resp = await getLocation(this.data);
@@ -146,14 +146,14 @@ export class AonLocationList extends AonElement {
     } catch (e) {
       console.log(e);
     }
-    this.aonSigninEl.stopLoader();
+    this.applicationEl.stopLoader();
     return data;
   }
 
   add(el, data) {
     let newData = data;
     if (!data) newData = {add:true};
-    this.aonSigninParentEl.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, newData);
+    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_LOCATION_ADD, newData);
   }
 }
 window.customElements.define("aon-location-list", AonLocationList);

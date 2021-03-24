@@ -27,7 +27,7 @@ export class AonMovementsList extends AonElement {
     this.id = this.id || "aonMovementsList";
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
-    this.parentEl = this.getParent();
+    this.applicationParentEl = this.getApplicationParent();
   }
 
   connectedCallback() {
@@ -85,7 +85,7 @@ export class AonMovementsList extends AonElement {
               aonIcon: "aon_seg_social",
               title: `${res.name}`,
               subtitle: `${res.status} ${res.fecha}`,
-              option: this.parentEl.getOptions(res),
+              option: this.applicationParentEl.getOptions(res),
             },
             idx,
             (el) => this.aonMovement(el, res)
@@ -123,7 +123,7 @@ export class AonMovementsList extends AonElement {
   async getData() {
     let data = [];
     try {
-      const movements = this.parentEl._movements;
+      const movements = this.applicationParentEl._movements;
       const resp = movements || await getMovements(this.getFilter());
       data = resp
         .sort((a, b) => new Date(b.fra) - new Date(a.fra))
@@ -138,7 +138,7 @@ export class AonMovementsList extends AonElement {
         if (prev) {
           color = "#488601";
           tipo_mov = `${tipo_mov} previa`;
-        } else if (this.parentEl.anularCondition(situation, fra)) {
+        } else if (this.applicationParentEl.anularCondition(situation, fra)) {
           color = "#CB8D00";
           tipo_mov = `${tipo_mov} Consolidada`;
         } else {
@@ -153,7 +153,7 @@ export class AonMovementsList extends AonElement {
           prev,
         };
       });
-      this.parentEl._movements = data;
+      this.applicationParentEl._movements = data;
     } catch (error) {
       if(typeof error ==="string") error = JSON.parse(error);
       const {message, type} = error;

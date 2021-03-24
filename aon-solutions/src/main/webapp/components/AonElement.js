@@ -87,7 +87,7 @@ export class AonElement extends HTMLElement{
     return document.querySelector(AON_TAG.AON_APPLICATION);
   }
   
-  getParent(){
-    return document.querySelector(AON_TAG.AON_APPLICATION).getParent();
+  getApplicationParent(){
+    return this.getApplication().getParent();
   }
 }

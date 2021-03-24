@@ -34,7 +34,7 @@ export class AonSignin extends AonElement {
   }
 
   initialize(){
-    this.AON_SIGNIN = "aonSignin";
+    this.AON_SIGNIN = SIGNIN_VIEWS.AON_SIGNIN;
     this.AUTHS=[];
   }
 
@@ -71,7 +71,7 @@ export class AonSignin extends AonElement {
     this.innerHTML = `
 			<aon-application id="${this.AON_SIGNIN}" title="Control Horario"></aon-application>
     `;
-    this.aonSigninEl = this.getApplication();
+    this.applicationEl = this.getApplication();
   }
   
   buildToolbar() {
@@ -90,7 +90,7 @@ export class AonSignin extends AonElement {
       delete options[1];
     } 
 
-    this.aonSigninEl.addSidenavOptions("Control horario", options);
+    this.applicationEl.addSidenavOptions("Control horario", options);
 
     const options2 = [
       {
@@ -111,12 +111,12 @@ export class AonSignin extends AonElement {
       }
     ];
     
-    this.aonSigninEl.addSidenavOptions("Período", options2);
+    this.applicationEl.addSidenavOptions("Período", options2);
 
   }
 
   periodSideNavDisplay(b){
-    let eleSideNav = this.getElement(`${this.aonSigninEl.SIDENAV}Período`);
+    let eleSideNav = this.getElement(`${this.applicationEl.SIDENAV}Período`);
     if(eleSideNav) eleSideNav.style.display = b ? "block": "none";
   }
 
@@ -126,7 +126,7 @@ export class AonSignin extends AonElement {
         data = {...data, ...await getPeriod(data.period)};
       } 
       this._filter = {...this._filter, ...data};
-      this.aonSigninEl.getChild().filter = true;
+      this.applicationEl.getChild().filter = true;
     } catch (error) {}
   }
 
@@ -195,7 +195,7 @@ export class AonSignin extends AonElement {
         }
         aonView.id = view;
         if(filter) aonView.filter = filter;
-        this.aonSigninEl.setContent(aonView);
+        this.applicationEl.setContent(aonView);
       }
       
       resolve(true);

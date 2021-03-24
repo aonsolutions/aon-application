@@ -92,22 +92,27 @@ export const requestBidoq = (method, url, sendData, fn) => {
 };
 
 export const requestFile = (method, url, sendData, fn) => {
-  const xhr = xmlHttpRequestAon(method, url, getToken(), sendData);
-  xhr.onreadystatechange = () =>  {
-     if(xhr.readyState == 2 && xhr.status == 200) {xhr.responseType = "blob";}
-  }
-  xhr.onload = () => {
-    let fileName = "document";
-    try {fileName = xhr.getResponseHeader('Content-Disposition').split('filename=')[1].split(';')[0].toString().replace(/"/g, '')} catch (e) {}
-    if(xhr.status != 200){
-      let response =  typeof  xhr.response === "string" ? JSON.parse(xhr.response) : xhr.response;
-      fn(undefined,  response)
-    } else {
-      fn({blob:xhr.response,fileName});
+  try {
+    const xhr = xmlHttpRequestAon(method, url, getToken(), sendData);
+    xhr.onreadystatechange = () =>  {
+       if(xhr.readyState == 2 && xhr.status == 200) {xhr.responseType = "blob";}
     }
-  };
-  xhr.send(JSON.stringify(sendData));
-  xhr.onerror = () => {console.log("error");};
+    xhr.onload = () => {
+      let fileName = "document";
+      try {fileName = xhr.getResponseHeader('Content-Disposition').split('filename=')[1].split(';')[0].toString().replace(/"/g, '')} catch (e) {}
+      if(xhr.status != 200){
+        let response =  typeof  xhr.response === "string" ? JSON.parse(xhr.response) : xhr.response;
+        fn(undefined,  response)
+      } else {
+        fn({blob:xhr.response,fileName});
+      }
+    };
+    xhr.send(JSON.stringify(sendData));
+    xhr.onerror = () => {console.log("error");};
+  } catch (error) {
+    fn(undefined, error);
+  }
+
 };
 
 export const get = (url, data) => {

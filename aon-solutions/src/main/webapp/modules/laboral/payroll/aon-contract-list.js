@@ -27,7 +27,7 @@ export class AonContractList extends AonElement {
     this.id = this.id || "aonContractList";
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
-    this.parentEl = this.getParent();
+    this.applicationParentEl = this.getApplicationParent();
     this.applicationToolbarEl = this.getElement(this.applicationEl.TOOLBAR);
   }
 
@@ -79,17 +79,17 @@ export class AonContractList extends AonElement {
       {
         name: "Contrato",
         aonIcon: "aon_cto",
-        fn: (el) => this.parentEl.getContratoPdf(res, el),
+        fn: (el) => this.applicationParentEl.getContratoPdf(res, el),
       },
       {
         name: "Obtener TA",
         aonIcon: "aon_ta",
-        fn: (el) => this.parentEl.getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
+        fn: (el) => this.applicationParentEl.getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
       },
 			{
 				name: 'Obtener IDC',
 				aonIcon: 'aon_idc',
-				fn: (el) => this.parentEl.getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
+				fn: (el) => this.applicationParentEl.getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
 			}
     ];
   }

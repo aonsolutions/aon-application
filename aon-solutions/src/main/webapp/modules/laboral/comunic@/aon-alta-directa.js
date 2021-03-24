@@ -43,7 +43,7 @@ export class AonAltaDirecta extends AonElement {
         this.id = this.id || 'aonAltaDirecta';
         this.TOOLBAR = this.id + 'Toolbar';
         this.applicationEl = this.getApplication();
-        this.parentEl = this.getParent();
+        this.applicationParentEl = this.getApplicationParent();
         this.applicationElToolbar = this.getElement(this.applicationEl.TOOLBAR);
         this.applicationElToolbar.setAttribute('option', 'Comunicar contrato');
         this.TOAST = this.applicationEl.getToast();
@@ -196,13 +196,13 @@ export class AonAltaDirecta extends AonElement {
             id: 'Idc',
             name: 'Obtener IDC',
             aonIcon: 'aon_idc',
-        }, () => this.parentEl.getIdc(this.data));
+        }, () => this.applicationParentEl.getIdc(this.data));
 
         toolbar.addButton2({
             id: 'Ta',
             name: 'Obtener TA',
             aonIcon: 'aon_ta',
-        }, () => this.parentEl.getTa(this.data));
+        }, () => this.applicationParentEl.getTa(this.data));
 
         toolbar.addButton2({
             id: 'Delete',
@@ -210,7 +210,7 @@ export class AonAltaDirecta extends AonElement {
             icon: 'delete_forever',
         }, async (el) => {
             try {
-                await this.parentEl.deleteMov(this.data, el);
+                await this.applicationParentEl.deleteMov(this.data, el);
             } catch (error) {
                 console.log(error);
             }
@@ -361,7 +361,7 @@ export class AonAltaDirecta extends AonElement {
 
         //hidden toolbar button
         let buttonToolbar = { "Idc": false, "Ta": false };
-        if (this.parentEl.anularCondition(obj.situation, obj.fecha)) buttonToolbar["Delete"] = false;
+        if (this.applicationParentEl.anularCondition(obj.situation, obj.fecha)) buttonToolbar["Delete"] = false;
         this.hiddenButtonToolbar(buttonToolbar);
         //end hidden toolbar
 
@@ -628,7 +628,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             await postAltaDirecta(this.getContrato());
             this.TOAST.start({ message: 'Alta procesada!', type: 'success', delay: 3000 });
-            this.parentEl._movements = undefined;
+            this.applicationParentEl._movements = undefined;
             this.back();
         } catch (error) {
             if(typeof error ==="string") error = JSON.parse(error);
@@ -650,7 +650,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             await postUpdateCto(cto_new);
             this.TOAST.start({ message: 'Contrato modificado!', type: 'primary', delay: 3000 });
-            this.parentEl._movements = undefined;
+            this.applicationParentEl._movements = undefined;
             this.back();
         } catch (error) {
             if(typeof error ==="string") error = JSON.parse(error);
@@ -661,7 +661,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     back() {
-        this.parentEl.showView("aonMovements");
+        this.applicationParentEl.showView("aonMovements");
     }
 
     async getNaf() {
