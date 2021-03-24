@@ -6,9 +6,6 @@ public interface AonSolutionsCSS extends CssResource {
 
 	/* ICONS */
 	
-	@ClassName("aon_icon_add_block")
-	String aonIconAddBlock();
-	
 	@ClassName("aon_icon_email")
 	String aonIconEmail();
 	
@@ -454,6 +451,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_text_line_through")
 	String aonTextLineThrough();
 	
+	@ClassName("aon_vertical_align_top")
+	String aonVerticalAlignTop();
+	
 	@ClassName("aon_text_left")
 	String aonTextLeft();
 
@@ -549,6 +549,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_border_top")
 	String aonBorderTop();
+
+	@ClassName("aon_border_left")
+	String aonBorderLeft();
 
 	@ClassName("aon_border_bottom")
 	String aonBorderBottom();
@@ -806,5 +809,19 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_navarra_background_color")
 	String aonNavarraBackgroundColor();
 	
+	@ClassName("aon_cards")
+	String aonCards();
+	
+	@ClassName("aon_card")
+	String aonCard();
+	
+	@ClassName("aon_card_title")
+	String aonCardTitle();
+	
+	@ClassName("aon_card_body")
+	String aonCardBody();
+	
+	@ClassName("aon_card_footer")
+	String aonCardFooter();
 }
 

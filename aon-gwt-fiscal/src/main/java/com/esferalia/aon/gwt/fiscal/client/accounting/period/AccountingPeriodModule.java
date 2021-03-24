@@ -8,11 +8,11 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCards;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCards.AonCard;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeHandler;
@@ -23,11 +23,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
@@ -40,14 +38,12 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -62,7 +58,6 @@ public class AccountingPeriodModule extends MainEntryPoint {
 		SafeHtml tab(String title, String icon);
 	}
 	
-	private static final int CHANGE_DISPLAY_MILLIS = 1000;
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 	private static AccountingPeriodServiceAsync SERVICE;
 	private static CommonServiceAsync COMMON_SERVICE;
@@ -70,9 +65,7 @@ public class AccountingPeriodModule extends MainEntryPoint {
 	
 	private DockLayoutPanel dockLayoutPanel;
 	private SimpleLayoutPanel centerLayoutPanel;
-	private ScrollPanel centerPanel;
-	private FlowPanel container;
-	private AonDisplayGrid tab;
+	private AonCards container;
 	private SplitLayoutPanel splitLayoutPanel;
 	private AonMinimizePanel footPanel;
 	private TabLayoutPanel tabLayout;
@@ -132,12 +125,8 @@ public class AccountingPeriodModule extends MainEntryPoint {
 		dockLayoutPanel.add(splitLayoutPanel);
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		centerLayoutPanel = new SimpleLayoutPanel();
-		centerPanel = new ScrollPanel();
-		centerPanel.setStyleName(AON.CSS.aonScrollArea());
-		centerPanel.addStyleName(AON.CSS.aonMarginBottom());
-		container = new FlowPanel();
-		centerPanel.setWidget(container);
-		centerLayoutPanel.setWidget(centerPanel);
+		container = new AonCards();;
+		centerLayoutPanel.setWidget(container );
 		splitLayoutPanel.add(centerLayoutPanel);
 		Scheduler.get().scheduleDeferred(new Command() {
 	        public void execute() {
@@ -146,76 +135,15 @@ public class AccountingPeriodModule extends MainEntryPoint {
 	    });		
 	}
 
-	private static enum COLS {
-		  CHK (AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
-		, NAME(AON.MSG.name()			, 100,AON.CSS.aonTextCenter())
-		, FROM(AON.MSG.initiationDate()	, 120,AON.CSS.aonTextCenter())
-		, TO  (AON.MSG.deadline()		, 120,AON.CSS.aonTextCenter())
-		, TYP (AON.MSG.status()			, 100,AON.CSS.aonTextCenter())
-	    , ACT (AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
-		;
-
-		String headerLabel;
-		int colWidth;
-		String cellStyleClass;
-
-		private COLS(String headerLabel,int colWidth) {
-			this(headerLabel, colWidth, null);
-		}
-
-		private COLS(String headerLabel,int colWidth,String cellStyleClass) {
-			this.headerLabel = headerLabel;
-			this.colWidth = colWidth;
-			this.cellStyleClass = cellStyleClass;
-		}
-		public int getColWidth() {
-			return colWidth;
-		}
-		public String getHeaderLabel() {
-			return headerLabel;
-		}
-		public String getCellStyleClass() {
-			return cellStyleClass;
-		}
-	}
-
-	protected AonDisplayGrid getTable() {
-		tab = new AonDisplayGrid();
-		tab.setStyleName(AON.CSS.aonGrid());
-		tab.addStyleName(AON.CSS.aonNoPadding());
-		tab.addStyleName(AON.CSS.aonBlockCenter());
-
-		AonDisplayGridHeaderRow headerRow = tab.addHeaderRow();
-		for ( COLS col : COLS.values()) {
-			Label label = new Label( col.getHeaderLabel() );
-			label.setWidth(col.getColWidth()  + "px");
-			headerRow.addCell(label,col.getCellStyleClass());
-		}
-		return tab;
-	}
-
 	private Widget getToolbarPanel(final AccountingPeriodModuleOptions opt) {
 		toolbar = new AonToolbar(AON.MSG.accountingPeriods());
-
-		FormPanel diskForm = new FormPanel("_blank");
-		diskForm.setMethod(FormPanel.METHOD_POST);
-		Hidden registryParamsHidden = new Hidden(IRequestParamsNames.REGISTRY_PARAMS);
-		Hidden domainIdHidden = new Hidden(IRequestParamsNames.DOMAIN_ID);
-		Hidden domainNameHidden= new Hidden(IRequestParamsNames.DOMAIN_NAME);
-		Hidden userHidden = new Hidden(IRequestParamsNames.USER);
-		FlowPanel formFlowPanel = new FlowPanel();
-		diskForm.add(formFlowPanel);
-		formFlowPanel.add(registryParamsHidden);
-		formFlowPanel.add(domainIdHidden);
-		formFlowPanel.add(domainNameHidden);
-		formFlowPanel.add(userHidden);
-		toolbar.add(diskForm);
 
 		addButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		addButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				paintRow(opt, new AccountPeriod().setDomain(opt.getDomain()));
+				AonCard card = addCard(opt, new AccountPeriod().setDomain(opt.getDomain()));
+				card.setFocus(true);
 			}
 		});
 		toolbar.add(addButton);
@@ -224,15 +152,18 @@ public class AccountingPeriodModule extends MainEntryPoint {
 		searchButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				container.clear();
-				tab = getTable();
-				container.add(tab);
 				search(opt);
 			}
 		});
 		toolbar.add(searchButton);
 
 		return toolbar;
+	}
+	
+	private AccountingPeriodCard addCard(final AccountingPeriodModuleOptions opt, AccountPeriod accotunPeriod) {
+		AccountingPeriodCard card = new AccountingPeriodCard(opt, accotunPeriod);
+		container.addCard( card );
+		return card;
 	}
 	
 	private AonMinimizePanel getMinimizePanel() {
@@ -277,18 +208,18 @@ public class AccountingPeriodModule extends MainEntryPoint {
 		return footPanel; 
 	}
 
-
 	protected void search(final AccountingPeriodModuleOptions opt) {
+		toolbar.hideMessages();
 		container.clear();
-		tab = getTable();
-		container.add(tab);
 		SERVICE.getPeriods(opt.getDomainName(),opt.getDomain(),opt.getUser()
 				, new AsyncCallback<LinkedList<AccountPeriod>>() {
 					
 					@Override
 					public void onSuccess(LinkedList<AccountPeriod> result) {
 						if (result != null && !result.isEmpty()) {
-							result.forEach( accountPeriod -> paintRow(opt,accountPeriod));
+							for ( AccountPeriod accountPeriod : result ) {
+								addCard(opt, accountPeriod );
+							}
 						} else {
 							Label label = new Label(AON.MSG.noData());
 							label.setStyleName(AON.CSS.aonBlockMessage());
@@ -341,146 +272,145 @@ public class AccountingPeriodModule extends MainEntryPoint {
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / effectiveHeigth);
 		splitLayoutPanel.animate(500);
 	}
+	
+	private class AccountingPeriodCard extends AonCard {
 
-	private void paintRow(final AccountingPeriodModuleOptions opt, AccountPeriod accountPeriod) {
-		Label msg = new Label("");
-		msg.setStyleName(AON.CSS.aonTabIcon());
+		private AonTextBox title = new AonTextBox();
 		
-		FlowPanel buttonContainer = new FlowPanel();
+		private AccountingPeriodCard(final AccountingPeriodModuleOptions opt, AccountPeriod accountPeriod) {
+			title.addStyleName(AON.CSS.aonBorderNone());
+			title.setValue(accountPeriod.getName());
+			title.addValueChangeHandler(new ValueChangeHandler<String>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					accountPeriod.setName(title.getValue());
+				}
+			});
+			
+			this.setTitle(title);
+			
+			FlowPanel body = new FlowPanel();
+			
+			FlowPanel initiationPanel = new FlowPanel();
+			InlineLabel initiationLabel = new InlineLabel(AON.MSG.initiationDate());
+			initiationLabel.setStyleName(AON.CSS.aonTableLabel());
+			AonDateBox initiationBox = new AonDateBox();
+			initiationBox.addStyleName(AON.CSS.aonBorderNone());
+			initiationBox.addStyleName(AON.CSS.aonMarginLeft());
+			initiationBox.setValue(accountPeriod.getInitiationDate());
+			initiationBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<Date> event) {
+					accountPeriod.setInitiationDate(initiationBox.getValue());
+				}
+			});
+			initiationPanel.add(initiationLabel);
+			initiationPanel.add(initiationBox);
+			
+			FlowPanel deadlinePanel = new FlowPanel();
+			InlineLabel deadlineLabel = new InlineLabel(AON.MSG.deadline());
+			deadlineLabel.setStyleName(AON.CSS.aonTableLabel());
+			AonDateBox deadlineBox = new AonDateBox();
+			deadlineBox.addStyleName(AON.CSS.aonBorderNone());
+			deadlineBox.addStyleName(AON.CSS.aonMarginLeft());
+			deadlineBox.setValue(accountPeriod.getDeadline());
+			deadlineBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<Date> event) {
+					accountPeriod.setDeadline(deadlineBox.getValue());
+				}
+			});
+			deadlinePanel.add(deadlineLabel);
+			deadlinePanel.add(deadlineBox);
+			
+			FlowPanel statusPanel = new FlowPanel();
+			InlineLabel statusLabel = new InlineLabel(AON.MSG.status());
+			statusLabel.setStyleName(AON.CSS.aonTableLabel());
+			InlineLabel statusValue = new InlineLabel(accountPeriod.getStatus()==null?"---":accountPeriod.getStatus().getDescription());
+			statusValue.addStyleName(AON.CSS.aonMarginLeft());
+			statusPanel.add(statusLabel);
+			statusPanel.add(statusValue);
+			
+			body.add(initiationPanel);
+			body.add(deadlinePanel);
+			body.add(statusPanel);
+			this.setBody(body);
+			
+			AonTableButton saveButton = new AonTableButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+			saveButton.setTabIndex(-2);
+			saveButton.addClickHandler( new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					saveButton.setEnabled(false);
+					toolbar.hideMessages();
+					SERVICE.save(opt.getDomainName(), opt.getDomain(), opt.getUser(), accountPeriod, new AsyncCallback<AccountPeriod>() {
+						
+						@Override
+						public void onSuccess(AccountPeriod accountPeriod) {
+							saveButton.setEnabled(true);
+							search(opt);
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							saveButton.setEnabled(true);
+							toolbar.showErrorMessage(caught.getMessage());
+						}
+					});
+				}
+			});
 
-		AonTextBox nameBox = new AonTextBox();
-		nameBox.setStyleName(AON.CSS.aonBorderNone());
-		nameBox.addStyleName(AON.CSS.aonWidthAll());
-		nameBox.setValue(accountPeriod.getName());
-		
-		AonDateBox initiationBox = new AonDateBox();
-		initiationBox.addStyleName(AON.CSS.aonBorderNone());
-		initiationBox.addStyleName(AON.CSS.aonWidthAll());
-		initiationBox.setValue(accountPeriod.getInitiationDate());
-		
-		AonDateBox deadlineBox = new AonDateBox();
-		deadlineBox.addStyleName(AON.CSS.aonBorderNone());
-		deadlineBox.addStyleName(AON.CSS.aonWidthAll());
-		deadlineBox.setValue(accountPeriod.getDeadline());
-		
-		Label statusLabel = new Label(accountPeriod.getStatus() == null ? "" :accountPeriod.getStatus().getDescription());
-		
-		Callback<AccountPeriod, Throwable> callback = new Callback<AccountPeriod, Throwable>() {
-
-			@Override
-			public void onFailure(Throwable reason) {
-				toolbar.showErrorMessage(reason.getMessage());
-			}
-
-			@Override
-			public void onSuccess(AccountPeriod result) {
-				nameBox.setValue(nameBox.getValue());
-				initiationBox.setValue(initiationBox.getValue());
-				deadlineBox.setValue(deadlineBox.getValue());
-				statusLabel.setText( accountPeriod.getStatus() == null ? "" :accountPeriod.getStatus().getDescription() );
-			}
-		};
-		
-		nameBox.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				accountPeriod.setName(nameBox.getValue());
-				accountPeriod.setInitiationDate(initiationBox.getValue());
-				accountPeriod.setDeadline(deadlineBox.getValue());
-				save(opt,accountPeriod,msg, callback);
-			}
-		});
-		initiationBox.addValueChangeHandler( new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				accountPeriod.setName(nameBox.getValue());
-				accountPeriod.setInitiationDate(initiationBox.getValue());
-				accountPeriod.setDeadline(deadlineBox.getValue());
-				save(opt,accountPeriod,msg, callback);
-			}
-		});
-		deadlineBox.addValueChangeHandler( new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				accountPeriod.setName(nameBox.getValue());
-				accountPeriod.setInitiationDate(initiationBox.getValue());
-				accountPeriod.setDeadline(deadlineBox.getValue());
-				save(opt,accountPeriod,msg, callback);
-			}
-		});
-		
-		AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
-		deleteButton.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				deleteButton.setEnabled(false);
-				AonConfirmDialog cd = new AonConfirmDialog();
-				cd.confirm(AON.MSG.confirmDeleteAction(), new AonConfirmDialogCallback() {
-					
-					@Override
-					public void onCancel() {
-						deleteButton.setEnabled(true);
-					}
-					
-					@Override
-					public void onAccept() {
-						SERVICE.delete(opt.getDomainName(), opt.getDomain(), opt.getUser(), accountPeriod, new AsyncCallback<Void>() {
+			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+			deleteButton.setTabIndex(-2);
+			deleteButton.addClickHandler( new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					if ( accountPeriod.getId() == null) {
+						search(opt);
+					} else {
+						deleteButton.setEnabled(false);
+						AonConfirmDialog cd = new AonConfirmDialog();
+						cd.confirm(AON.MSG.confirmDeleteAction(), new AonConfirmDialogCallback() {
 							
 							@Override
-							public void onSuccess(Void voidd) {
-								search(opt);
+							public void onCancel() {
+								deleteButton.setEnabled(true);
 							}
 							
 							@Override
-							public void onFailure(Throwable caught) {
-								toolbar.showErrorMessage(caught.getMessage());
+							public void onAccept() {
+								toolbar.hideMessages();
+								SERVICE.delete(opt.getDomainName(), opt.getDomain(), opt.getUser(), accountPeriod, new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void voidd) {
+										deleteButton.setEnabled(true);
+										search(opt);
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										deleteButton.setEnabled(true);
+										toolbar.showErrorMessage(caught.getMessage());
+									}
+								});
 							}
 						});
 					}
-				});
-				
-			}
-		});
-		buttonContainer.add(deleteButton);
+				}
+			});
+			getMenuPanel().add(saveButton);
+			getMenuPanel().add(deleteButton);
+		}
 		
-		tab.addRow().addCell(msg)
-			.addCell(nameBox)
-			.addCell(initiationBox)
-			.addCell(deadlineBox)
-			.addCell(statusLabel)
-			.addCell(buttonContainer);
+		@Override
+		public void setFocus(boolean focused) {
+			title.setFocus(focused);
+		}
 	}
-
-	private void save(AccountingPeriodModuleOptions opt, AccountPeriod accountPeriod, Label msg, Callback<AccountPeriod, Throwable> callback) {
-		SERVICE.save(opt.getDomainName(), opt.getDomain(), opt.getUser(), accountPeriod, new AsyncCallback<AccountPeriod>() {
-			
-			@Override
-			public void onSuccess(AccountPeriod result) {
-				accountPeriod.setId( result.getId());
-				accountPeriod.setName( result.getName());
-				accountPeriod.setInitiationDate( result.getInitiationDate());
-				accountPeriod.setDeadline(result.getDeadline());
-				accountPeriod.setStatus( result.getStatus());
-				msg.addStyleName(AON.CSS.aonIconValid());
-				new Timer() {
-					@Override
-					public void run() {
-						msg.removeStyleName(AON.CSS.aonIconValid());
-					}
-				}.schedule(CHANGE_DISPLAY_MILLIS);
-				callback.onSuccess(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				callback.onFailure(caught);
-			}
-		});
-	}
-	
-	
 }		

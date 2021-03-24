@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.test.faker;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,6 +29,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.github.javafaker.Faker;
 
@@ -72,6 +74,11 @@ public class AonRandom {
     	double r = faker.random().nextDouble();
     	return AonMathUtils.round(from + ((to - from) * r), precision);
     }
+    
+    public static Date getRandomYearDay( int year ) {
+    	return faker.date().between(AonDateUtils.getYearFirstDay(year),AonDateUtils.getYearLastDay(year));
+    }
+
 
     public static <T> T random(List<T> list){
     	if (list == null || list.isEmpty()) return null;

@@ -2,13 +2,21 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAccountPeriodStatusVisitor;
+
 public enum AccountPeriodStatus implements Serializable {
 
-	 ACTIVE		("Activo")
+	 ACTIVE		("Activo")		
+	 	{ @Override public void visit(IAccountPeriodStatusVisitor visitor) { visitor.visitActive();} }
 	,INACTIVE	("Inactivo")
+ 		{ @Override public void visit(IAccountPeriodStatusVisitor visitor) { visitor.visitInactive();} }
 	,OPENING	("Apertura")
+ 		{ @Override public void visit(IAccountPeriodStatusVisitor visitor) { visitor.visitOpening();} }
 	,OPERATING	("Explotaci\u00F3n")
-	,CLOSED		("Cerrado");
+ 		{ @Override public void visit(IAccountPeriodStatusVisitor visitor) { visitor.visitOperating();} }
+	,CLOSED		("Cerrado")
+ 		{ @Override public void visit(IAccountPeriodStatusVisitor visitor) { visitor.visitClosed();} }
+ 	;
 
 	private String description;
 	
@@ -26,6 +34,9 @@ public enum AccountPeriodStatus implements Serializable {
 
 	public byte getValue() {
 		return (byte) this.ordinal();
+	}
+
+	public void visit(IAccountPeriodStatusVisitor visitor) {
 	}
 
 	public static AccountPeriodStatus safeValueOf(Byte i) {

@@ -408,7 +408,9 @@
   text-overflow: ellipsis;
   
 }
-
+.aon_vertical_align_top {
+	vertical-align: top;
+}
 .aon_text_left {
 	text-align: left;
 }
@@ -547,6 +549,9 @@
 }
 .aon_border_top {
 	border-top: #c4c4c4 1px solid;
+}
+.aon_border_left {
+	border-left: #c4c4c4 1px solid;
 }
 .aon_border_bottom {
 	border-bottom: #c4c4c4 1px solid;
@@ -1346,3 +1351,45 @@
 .aon_gipuzkoa_background_color { background-color: #A1C031;}
 .aon_navarra_background_color { background-color: #da002a;}
 
+/* CONFIRM DIALOG  */
+.aon_cards {
+	padding-right: 15px;
+	padding-left: 15px;
+	margin-right: auto;
+	margin-left: auto;
+	width:100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	box-sizing: border-box;
+}
+
+.aon_card{
+	border-radius: 4px;
+	background: #fff;
+	box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);
+	transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);
+	padding: 4px 5px 5px 10px;
+	margin: 20px 10px 10px 10px;
+	cursor: pointer;
+	flex: 0 1 20%;
+	min-height: 120px;
+}
+
+.aon_card:hover{
+	transform: scale(1.05);
+	box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+
+.aon_card_title{
+	font-weight: 600;
+	font-size: 1.8em;
+}
+.aon_card_body{
+	width:100%;
+}
+.aon_card_footer {
+	width: 100%;
+	height: 100%;
+	margin-top: 10px;
+}

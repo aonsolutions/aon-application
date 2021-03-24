@@ -1154,7 +1154,7 @@ public class LoadTest extends AbstractOccamTest {
 		for (Account acc : ACCOUNTS) {
 			Account account = AccountDAO.get(ctx, acc.getCode());
 			if (account == null) {
-				account = acc.setDomain(ctx.getDomainId());
+				account = acc.setDomain(ctx.getDomainId()).setActive( true );
 				AccountDAO.save(ctx, account);
 			}
 		}
