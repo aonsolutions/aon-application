@@ -227,7 +227,7 @@ export class AonEventDetailList extends AonElement {
 
       const datos = await getTimeControlDetail(filter);
       if (datos) {
-        await sortBy(datos, "date", "desc").map(async (resp) => {
+        await sortBy(datos, "date", "asc").map(async (resp) => {
           removeEmpty(resp);
           const newStatus = resp.status.toLowerCase();
           const status = await getStatus(newStatus);

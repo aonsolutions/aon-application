@@ -102,42 +102,8 @@ export class AonCompanyCostsList extends AonElement {
     }
 
     this.innerHTML = innerHTML;
-    if(this.isMobile())this.paintChatTest();
   }
 
-  paintChatTest() {
-    let div = document.createElement('div')
-    div.style.display = "flex";
-    div.style.alignItems = "center";
-    div.style.justifyContent = "center";
-    div.style.flexDirection ="column";
-    let myCanvas = document.createElement('canvas');
-    let myLegend = document.createElement('legend');
-    myLegend.setAttribute("for","myCanvas");
-    myCanvas.id = "myCanvas";
-    myCanvas.width = 300;
-    myCanvas.height = 300;
-    myCanvas.style.background= "white";
-    myCanvas.style.position =  "relative";
-    myCanvas.style.top =  "10px";
-    div.appendChild(myCanvas);
-    div.appendChild(myLegend);
-    this.appendChild(div);
-    
-    pieChar({ 
-        canvas:myCanvas,
-        legend:myLegend,
-        data:{
-          "Test1": 10,
-          "Test2": 14,
-          "Test3": 2,
-          "Test4": 12
-        },
-        colors:["#fde23e","#f16e23", "#57d9ff","#937e88"],
-        doughnutHoleSize: 0
-      });
-
-  }
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
@@ -150,7 +116,6 @@ export class AonCompanyCostsList extends AonElement {
     );
   }
 
-  SUMMARY;
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
     aonFilter.setInputs([
@@ -192,12 +157,15 @@ export class AonCompanyCostsList extends AonElement {
       }
     });
     // ----------PERIOD END ------------
-
-    this.getElement("startDate").addEventListener(
+    let startDateEl = this.getElement("startDate");
+    startDateEl.value = this.filter.startDate;
+    startDateEl.addEventListener(
       "change",
       (ev) => (periodEl.value = "personalized")
     );
-    this.getElement("endDate").addEventListener(
+    let endDateEl =this.getElement("endDate");
+    endDateEl.value = this.filter.endDate;
+    endDateEl.addEventListener(
       "change",
       (ev) => (periodEl.value = "personalized")
     );
@@ -206,7 +174,7 @@ export class AonCompanyCostsList extends AonElement {
   async getTable() {
     this.applicationEl = await waitEl("#aonLaboral");
     this.applicationEl.startLoader();
-    if (this.isMobile()) await this.getTableMobile();
+    if(this.isMobile())await this.paintPieChar();
     else await this.getTableDesk();
     this.applicationEl.stopLoader();
   }
@@ -261,34 +229,58 @@ export class AonCompanyCostsList extends AonElement {
     }
   }
 
-  async getTableMobile() {
-    const aonTable = this.getElement(this.TABLE_ID);
-    if (aonTable) {
-      try {
-        const resp = await this.getData();
-        // aonTable.removeAllLi();
-
-        // let isEmployee = this.applicationParentEl.isEmployee();
-
-        // resp.map((res, idx) => {
-        //   let options = {};
-        //   let dateParse = firstLetters(geMonthYear(res.endDate));
-        //   if(isEmployee){
-        //     options.paddingTopTitle = "5px";
-        //     options.iconHtmlCustom = `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.totalLiquid}</span>`;
-        //     options.title = `${dateParse}`;
-        //   } else {
-        //     options.iconHtmlCustom = `${res.lettersHtml}`;
-        //     options.title = res.name;
-        //     options.subtitle = `${dateParse} <span style="float: right;">${res.totalLiquid}</span> `;
-        //   }
-        //   aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
-        // });
-      } catch (e) {
-        console.log(e);
+  async paintPieChar() {
+    let id = this.id+ "pieChar";
+    if(this.getElement(id)) this.getElement(id).remove();
+    let div = this.createElement('div');
+    div.style.width  = "100%";
+    div.style.height = "100%";
+    div.id = id;
+    this.appendChild(div);
+    const resp = await this.getData();
+    if(resp && resp.length > 0 ){
+      let sumRaw = resp.reduce((sum,key)=>sum + parseFloat(key.raw), 0);
+      let sumSS = resp.reduce((sum,key)=>sum + parseFloat(key.totalSS), 0); 
+      let data = [
+        ['Bruto',  sumRaw],
+        ['SS', sumSS]
+      ];
+      console.log(data);
+      let options = {
+        title: 'COSTES DE EMPRESA'
       }
+      pieChar(div, data, options);
     }
+
   }
+  // async getTableMobile() {
+  //   const aonTable = this.getElement(this.TABLE_ID);
+  //   if (aonTable) {
+  //     try {
+  //       const resp = await this.getData();
+  //       // aonTable.removeAllLi();
+
+  //       // let isEmployee = this.applicationParentEl.isEmployee();
+
+  //       // resp.map((res, idx) => {
+  //       //   let options = {};
+  //       //   let dateParse = firstLetters(geMonthYear(res.endDate));
+  //       //   if(isEmployee){
+  //       //     options.paddingTopTitle = "5px";
+  //       //     options.iconHtmlCustom = `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.totalLiquid}</span>`;
+  //       //     options.title = `${dateParse}`;
+  //       //   } else {
+  //       //     options.iconHtmlCustom = `${res.lettersHtml}`;
+  //       //     options.title = res.name;
+  //       //     options.subtitle = `${dateParse} <span style="float: right;">${res.totalLiquid}</span> `;
+  //       //   }
+  //       //   aonTable.addLi(options, idx, (el) => this.aonEvent(el, res));
+  //       // });
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   }
+  // }
 
   async getData() {
     this.applicationEl.startLoader();

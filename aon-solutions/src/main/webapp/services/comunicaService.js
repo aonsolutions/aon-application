@@ -11,11 +11,16 @@ export const getNafxipf = (data) => get(`${API_URL}/comunica/nafxipf`, data);
 
 export const getTA = (data) => openFile(`${API_URL}/comunica/pdf/get-ta`, data);
 
-export const getCertCorriente = (data) =>
-  openFile(`${API_URL}/comunica/pdf/cert-corriente`, data);
+export const getReportAffiliateInAlta = (data) => openFile(`${API_URL}/comunica/pdf/get-report-affiliate-in-alta`, data);
+
+export const getReportAffiliateInMovPrev = (data) => openFile(`${API_URL}/comunica/pdf/get-report-affiliate-in-mov-prev`, data);
 
 export const getIDC = (data) =>
   openFile(`${API_URL}/comunica/pdf/get-idc`, data);
+
+export const getCertCorriente = (data) =>
+  openFile(`${API_URL}/comunica/pdf/cert-corriente`, data);
+
 
 export const postAltaDirecta = (data) =>
   post(`${API_URL}/comunica/alta-directa`, data); //ALTA DIRECTA

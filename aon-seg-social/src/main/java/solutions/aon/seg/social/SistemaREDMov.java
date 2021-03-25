@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -55,6 +56,32 @@ public class SistemaREDMov {
 		catch (Exception e) {throw new SegSocialException(e);}
 		return null;
 	}
+
+	public static byte[] getReportAffiliateInMovPrev(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regime, String ccc) throws SegSocialException{
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		try {return getReportAffiliateInMovPrevImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc);}
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e);}
+		return null;
+	}
+	
+	public static byte[] getReportAffiliateInAlta(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regime, String ccc) throws SegSocialException{
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		try {return getReportAffiliateInAltaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc);}
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e);}
+		return null;
+	}
+	
+	
 	
 	//HANDLE THE EXCEPTIONS OF ALTA METHOD
 	public static Employee sendBaja(final InputStream certificateInputStream, final String certificatePassword,
@@ -550,4 +577,61 @@ public class SistemaREDMov {
 		return arr;
 	}
 	
+	private static byte[] getReportAffiliateInAltaImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			ArrayList<String> ccc_arr = 	Toolkit.splitString_m(ccc,2);
+
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR64&E=I&AP=AFIR");
+			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+			form.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regime);
+			form.getInputByName("txt_SDFTESO62").setValueAttribute(ccc_arr.get(0));
+			form.getInputByName("txt_SDFNUM62").setValueAttribute(ccc_arr.get(1));
+		     
+			((HtmlOption) form.querySelectorAll("select[name=cbo_ListaTipoImpresion]>option").get(1)).click();	
+	
+			HtmlSubmitInput continue_in = form.querySelector("input[value=Continuar]");
+	
+			Page page = continue_in.click();
+			if(page.isHtmlPage()) {
+				htmlPage = (HtmlPage) page;
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
+			} else {
+				try{
+					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
+					return pdf;
+				}
+				catch(Exception e){throw new InvalidDataException();}
+			}
+		}
+		return null;
+	}
+	
+	private static byte[] getReportAffiliateInMovPrevImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			ArrayList<String> ccc_arr = 	Toolkit.splitString_m(ccc,2);
+
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR74&E=I&AP=AFIR");
+			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+			form.getInputByName("txt_SDFREGENT_ayuda").setValueAttribute(regime);
+			form.getInputByName("txt_SDFTESCCCENT").setValueAttribute(ccc_arr.get(0));
+			form.getInputByName("txt_SDFCODCCCENT").setValueAttribute(ccc_arr.get(1));
+		     
+			((HtmlOption) form.querySelectorAll("select[name=cbo_ListaTipoImpresion]>option").get(1)).click();	
+	
+			HtmlSubmitInput continue_in = form.querySelector("input[value=Continuar]");
+	
+			Page page = continue_in.click();
+			if(page.isHtmlPage()) {
+				htmlPage = (HtmlPage) page;
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
+			} else {
+				try{
+					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
+					return pdf;
+				}
+				catch(Exception e){throw new InvalidDataException();}
+			}
+		}
+		return null;
+	}
 }

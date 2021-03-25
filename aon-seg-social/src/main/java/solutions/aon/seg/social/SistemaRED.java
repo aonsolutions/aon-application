@@ -133,7 +133,7 @@ public class SistemaRED {
 		return SistemaRED_I.getContributionInformation(certificateInputStream, certificatePassword, certificateType,
 				nss, regimen, ccc, date);
 	}
-
+	
 	public static byte[] getIDC(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
@@ -436,6 +436,16 @@ public class SistemaRED {
 		}
 	}
 	
+	public static byte[] getReportAffiliateInAlta(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regimen, String ccc) throws SegSocialException {
+		return SistemaREDMov.getReportAffiliateInAlta(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
+	}
+	
+	public static byte[] getReportAffiliateInMovPrev(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regimen, String ccc) throws SegSocialException {
+		return SistemaREDMov.getReportAffiliateInMovPrev(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
+	}
+
 	public static void main(String[] args)
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 

@@ -3,6 +3,8 @@ import {
   getCertCorriente,
   getWorkplaceCCCs,
   getTipoCtz,
+  getReportAffiliateInAlta,
+  getReportAffiliateInMovPrev,
 } from "../../../../services/service.js";
 import "../../../../components/aon-table.js";
 import "../../../../components/aon-mobile-list.js";
@@ -106,6 +108,16 @@ export class AonCtaList extends AonElement {
         icon: "print",
         fn: (el) => this.getCertCorriente(res, el),
       },
+      {
+        name: "Trabajadores en alta",
+        icon: "print",
+        fn: (el) => this.getReportAffiliateInAlta(res, el),
+      },
+      {
+        name: "Trabajadores con mov. previos",
+        icon: "print",
+        fn: (el) => this.getReportAffiliateInMovPrev(res, el),
+      },
     ];
   }
 
@@ -151,5 +163,28 @@ export class AonCtaList extends AonElement {
 		}
     this.applicationEl.stopLoading();
   }
+
+  async getReportAffiliateInAlta(data, el) {
+    this.applicationEl.startLoading();
+    try {
+      const { ccc, cccRegimeCode: regimen } = data;
+      await getReportAffiliateInAlta({ ccc, regimen }); // open pdf
+    } catch ({message, type}) {
+			if(message && type) this.applicationEl.getToast().start({ message, type});
+		}
+    this.applicationEl.stopLoading();
+  }
+
+  async getReportAffiliateInMovPrev(data, el) {
+    this.applicationEl.startLoading();
+    try {
+      const { ccc, cccRegimeCode: regimen } = data;
+      await getReportAffiliateInMovPrev({ ccc, regimen }); // open pdf
+    } catch ({message, type}) {
+			if(message && type) this.applicationEl.getToast().start({ message, type});
+		}
+    this.applicationEl.stopLoading();
+  }
+  
 }
 window.customElements.define("aon-cta-list", AonCtaList);

@@ -18,9 +18,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import solutions.aon.seg.social.toolkit.Toolkit;
 import solutions.aon.sepe.Sepe;
-import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.exceptions.SegSocialException;
 
 
 @SuppressWarnings("serial")
@@ -36,22 +34,45 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		super.doGet(req, resp);
 		try {
 
-			String[] pathInfo = req.getPathInfo() != null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-
 			byte[] PDF = null;
 
-			if(pathInfo != null) {
-				if( pathInfo.length == 3 && pathInfo[2].equalsIgnoreCase("sepe"))	{
-					PDF = this.routerSepe(pathInfo[1], getDomain(), getToken());
-				} else {
-					PDF = this.routerSegSocial(pathInfo[1], getDomain(), getToken());
-				}
-				File file = File.createTempFile("informe", "");
-				try(OutputStream os = new FileOutputStream(file)){
-		            os.write(PDF);
-					responseFile(req, resp, file, MimeType.PDF);
-				}
-
+			switch (getPath()) {
+				case "/cert-corriente":
+					LOGGER.info("CERT-CORRIENTE");
+					PDF = getCertCorriente();
+					break;
+				case "/get-ta":
+					LOGGER.info("GET-TA");
+					PDF =  getTA();
+					break;
+				case "/get-idc":
+					LOGGER.info("GET-IDC");
+					PDF = getIDC();
+					break;
+				case "/get-contrato":
+					LOGGER.info("GET-CONTRATO");
+					PDF =  getContratoPdf();
+					break;
+				case "/get-copy-basic":
+					LOGGER.info("GET-COPY-BASIC");
+					PDF = getCopyBasicPdf();
+					break;
+				case "/get-report-affiliate-in-alta":
+					LOGGER.info("GET-COPY-BASIC");
+					PDF = getReportAffiliateInAlta();
+					break;
+				case "/get-report-affiliate-in-mov-prev":
+					LOGGER.info("GET-COPY-BASIC");
+					PDF = getReportAffiliateInMovPrev();
+					break;
+				default:
+					throw new Exception("La ruta introducida es incorrecta.");
+			} 
+			
+			File file = File.createTempFile("informe", "");
+			try(OutputStream os = new FileOutputStream(file)){
+	            os.write(PDF);
+				responseFile(req, resp, file, MimeType.PDF);
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -64,102 +85,85 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		LOGGER.info("COMUNICAPDF SERVLET - POST METHOD");
 		doGet(req, resp);
 	}
-	
-	//router
-	private byte[] routerSegSocial(String route, Domain domain, String token) throws SegSocialException, Exception {
-		byte[] PDF = null;
-		User user = AON_SOLUTIONS.getUser(domain, token);
-		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
-		if(certificate.getCertificate()==null) throw new Exception("Certificate Null");
+
+	private byte[] getTA() throws Exception {
+		Certificate certificate = getCert("SEG_SOCIAL");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		switch (route) {
-			case "get-ta":
-				LOGGER.info("GET-TA");
-				PDF =  getTA(certificateInputStream, certificate.getPassword(), certificate.getType());
-				break;
-			case "get-idc":
-				LOGGER.info("GET-IDC");
-				PDF = getIDC(certificateInputStream, certificate.getPassword(), certificate.getType());
-				break;
-			case "cert-corriente":
-				LOGGER.info("CERT-CORRIENTE");
-				PDF = getCertCorriente(certificateInputStream, certificate.getPassword(), certificate.getType());
-				break;
-			default:
-				break;
-		}
-		return PDF;
-	}
-
-	//router sepe
-	private byte[] routerSepe(String route, Domain domain, String token)  throws SepeException, Exception {
-		byte[] PDF = null;
-		User user = AON_SOLUTIONS.getUser(domain, token);
-		Certificate certificate = AON.getCertificateSEPE(domain.getName(), domain.getId(),  user.getLogin());
-		if(certificate.getCertificate()==null) throw new Exception("Certificate Null");
-		final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
-		switch (route) {
-			case "get-contrato":
-				LOGGER.info("GET-CONTRATO");
-				PDF =  getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType());
-				break;
-			case "get-copy-basic":
-				LOGGER.info("GET-COPY-BASIC");
-				PDF = getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType());
-				break;
-			default:
-				break;
-		}
-		return PDF;
-	}
-
-	private byte[] getTA(final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws SegSocialException {
-		
 		String regimen = getParams().optString("regime");
 		String ccc = getParams().getString("ctaCti");
 		String nss = getParams().getString("nss");
 		Date fecha = Toolkit.parseDate(getParams().getString("fra"), "yyyy-MM-dd");
 		
-	    return SistemaRED.getTA(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss, fecha);		
+	    return SistemaRED.getTA(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, nss, fecha);		
 	}
 	
-	private byte[] getIDC(final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws SegSocialException {
-		
+	private byte[] getIDC() throws Exception {
+		Certificate certificate = getCert("SEG_SOCIAL");
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String regimen = getParams().getString("regime");
 		String ccc = getParams().getString("ctaCti");
 		String nss = getParams().getString("nss");
 		Date fecha = Toolkit.parseDate(getParams().getString("fra"), "yyyy-MM-dd");
 		
-	    return SistemaRED.getIDC(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss, fecha);	
+	    return SistemaRED.getIDC(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, nss, fecha);	
 	}
 	
-	private byte[] getCertCorriente(final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws SegSocialException {
+	private byte[] getCertCorriente() throws Exception {
+		Certificate certificate = getCert("SEG_SOCIAL");
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String regimen = getParams().getString("regimen");
 		String ccc = getParams().getString("ccc");
-	    return SistemaRED.getUp2DateSS(certificateInputStream, certificatePassword, certificateType, regimen, ccc);	
+	    return SistemaRED.getUp2DateSS(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc);	
 	}
 	
-	private byte[] getContratoPdf(final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws Exception {
-		
+	private byte[] getContratoPdf() throws Exception {
+		Certificate certificate = getCert("SEPE");
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String ipf = getParams().getString("ipf");
 		Date fecha = Toolkit.parseDate(getParams().getString("fecha"), "yyyy-MM-dd");
 		
-		return Sepe.getContratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fecha, fecha);
+		return Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, fecha, fecha);
 
 	}
 	
-	private byte[] getCopyBasicPdf(final InputStream certificateInputStream, final String certificatePassword,
-			  final String certificateType) throws Exception {
-		
+	private byte[] getCopyBasicPdf() throws Exception {
+		Certificate certificate = getCert("SEPE");
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String ipf = getParams().getString("ipf");
 		Date fecha = Toolkit.parseDate(getParams().getString("fecha"), "yyyy-MM-dd");
 		
-		return Sepe.getCopyBasicPdf(certificateInputStream, certificatePassword, certificateType, ipf, fecha, fecha);	
+		return Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, fecha, fecha);	
 	}
 	
+	private byte[] getReportAffiliateInAlta() throws Exception {
+		Certificate certificate = getCert("SEG_SOCIAL");
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+		String regimen = getParams().getString("regimen");
+		String ccc = getParams().getString("ccc");
+	
+	    return SistemaRED.getReportAffiliateInAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc);	
+	}
+	
+	private byte[] getReportAffiliateInMovPrev() throws Exception {
+		Certificate certificate = getCert("SEG_SOCIAL");
+		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+		String regimen = getParams().getString("regimen");
+		String ccc = getParams().getString("ccc");
+	    return SistemaRED.getReportAffiliateInMovPrev(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc);	
+	}
+
+	private Certificate getCert(String typeCert) throws Exception {
+		Domain domain = getDomain();
+		User user = AON_SOLUTIONS.getUser(domain, getToken());
+		Certificate certificate = null;
+		if("SEPE" == typeCert ) {
+			certificate = AON.getCertificateSEPE(domain.getName(), domain.getId(),  user.getLogin());
+		} else {
+			certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+		}
+		if(certificate.getCertificate()==null) throw new Exception("Certificate Null");
+
+		return certificate;
+	}
 	
 }
