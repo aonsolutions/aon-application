@@ -1,9 +1,33 @@
 package solutions.aon.seg.social;
 
+import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.manageStatusCode;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.Set;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.*;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
+import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
@@ -19,11 +43,6 @@ import solutions.aon.seg.social.objects.It.ItBuilder;
 import solutions.aon.seg.social.objects.ItPartId;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.util.*;
 
 public class SistemaRED_ITParts {
 		
@@ -611,7 +630,7 @@ public class SistemaRED_ITParts {
 	//report IT
 	public static byte[] pdfIt(InputStream certificateInputStream, String certificatePassword,String certificateType,String regime, String ccc, String naf, PartType partType, 
 			Date dateBj, Date dateProcess)
-		throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException, InterruptedException {
+		throws IOException, InterruptedException, SegSocialException {
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, dateBj});
 		try{ return pdfItImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);}
 		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
@@ -621,7 +640,7 @@ public class SistemaRED_ITParts {
 	//report IT
 	private static byte[] pdfItImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, 
 			PartType partType, Date dateBj, Date dateProcess)
-			throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InterruptedException, InvalidDataException {
+			throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 
 			HtmlPage htmlPage = webClient.getPage(URL_BASE);
@@ -657,11 +676,17 @@ public class SistemaRED_ITParts {
 			
 			htmlPage =  HtmlUnitToolkit.setUrlParse(htmlPage, firstColumn).click();
 			
-	        UnexpectedPage document =  HtmlUnitToolkit.setUrlParse(htmlPage, (HtmlAnchor) htmlPage.querySelector("#botones > p > a")).click();
-			InputStream inp = document.getWebResponse().getContentAsStream();
-			byte[] pdf = inp.readAllBytes();
-			inp.close();
-			return pdf;
+	        Page document =  HtmlUnitToolkit.setUrlParse(htmlPage, (HtmlAnchor) htmlPage.querySelector("#botones > p > a")).click();
+			
+	        if(document instanceof HtmlPage)  manageStatusCode((HtmlPage) document);
+	        else {
+	        	InputStream inp = document.getWebResponse().getContentAsStream();
+		 		byte[] pdf = inp.readAllBytes();
+		 		inp.close();
+		 		return pdf;
+	        }
+	        
+	        return null;
 		}
 	}
 	
