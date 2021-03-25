@@ -25,7 +25,7 @@
 	<g:DockLayoutPanel unit="PX">
 		<g:north size="72">
 
-			<g:FlowPanel>
+			<g:FlowPanel ui:field="mainPanel">
 
 				<g:MenuBar>
 					<g:MenuItem text="Archivo">

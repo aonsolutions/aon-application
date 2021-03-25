@@ -9,7 +9,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -41,33 +42,33 @@ public class EnterprisePayrollCSV {
 		
 		CsvSchema schema = CsvSchema.builder()
 		        .addColumn("Empleado", CsvSchema.ColumnType.STRING)
-		        .addColumn("Centro de trabajo", CsvSchema.ColumnType.STRING)
+		        .addColumn("Centro", CsvSchema.ColumnType.STRING)
 		        .addColumn("Tipo", CsvSchema.ColumnType.STRING)
 		        .addColumn("Bruto", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Seg. Social empresa", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("S.S.Empr.", CsvSchema.ColumnType.NUMBER)
 		        .addColumn("Coste total", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Seg. Social empleado", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("S.S.Empl.", CsvSchema.ColumnType.NUMBER)
 		        .addColumn("IRPF", CsvSchema.ColumnType.NUMBER)
 		        .addColumn("Líquido", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Seg. Social total", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Cont. com. empresa", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Cont. prof. empresa", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Desempleo empresa", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Form. prof. empresa", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("S.S.Total", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("C.C.Empr", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("C.Prof.Empr", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("Desemp.Emp.", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("F.P.Empr", CsvSchema.ColumnType.NUMBER)
 		        .addColumn("Fogasa", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Fuerza mayor empresa", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("No estructurales empresa", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Bonificaciones", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Contingencias comunes empleado", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Contingencias profesionales empleado", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("Fuerza mayor Empr.", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("No Estruc.Empr", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("Bonif.", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("C.C.Empl.", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("C.Prof.Empl.", CsvSchema.ColumnType.NUMBER)
 		        .addColumn("Desempleo", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Formación profesional empleado", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Fuerza mayor empleado", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("No estructurales empleado", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("F.P.Empl.", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("Fuerza Mayor Empl.", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("No Estruc.Empl", CsvSchema.ColumnType.NUMBER)
 		        .addColumn("Anticipos", CsvSchema.ColumnType.NUMBER)
 		        .addColumn("Embargos", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Otras deducciones empleado", CsvSchema.ColumnType.NUMBER)
-		        .addColumn("Base Cont. Comunes", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("Otr.Ded.Empl", CsvSchema.ColumnType.NUMBER)
+		        .addColumn("Base C.C.", CsvSchema.ColumnType.NUMBER)
 		        .addColumn("Base IRPF", CsvSchema.ColumnType.NUMBER)
 		        .setUseHeader(true)
 		        .build();
@@ -75,20 +76,13 @@ public class EnterprisePayrollCSV {
 		
 		CsvMapper mapper = new CsvMapper();
 		
+		mapper.configure(Feature.IGNORE_UNKNOWN, true);
 		mapper.writer(schema).writeValue(outputStream, payrolls);
 	}
 	
 	
 	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, final int month,
 			final int year, Integer enterpriseId, Integer workplaceId) throws IOException {
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, month - 1);
-		calendar.set(Calendar.DAY_OF_MONTH, 1);
-		java.sql.Date dayOne = new java.sql.Date(calendar.getTime().getTime());
-		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-		java.sql.Date lastDay = new java.sql.Date(calendar.getTime().getTime());
 
 		Condition condition = DSL.year(SALARY.ISSUE_DATE).eq(year).and(DSL.month(SALARY.ISSUE_DATE).eq(month))
 				.and(ENTERPRISE.REGISTRY.eq(enterpriseId));
@@ -112,6 +106,24 @@ public class EnterprisePayrollCSV {
 			enterprisePayroll.employee = s.getEmployeeName();
 			enterprisePayroll.workplace = workplaces.get(s.getId());
 			enterprisePayroll.salaryType = s.getSalaryType();
+			
+			switch (s.getSalaryType().ordinal()) {
+				case 0:
+					enterprisePayroll.salaryTypeStr = "NÓMINA";
+					break;
+				case 1:
+					enterprisePayroll.salaryTypeStr = "EXTRA";
+					break;
+				case 2:
+					enterprisePayroll.salaryTypeStr = "FINIQUITO";
+					break;
+				case 3:
+					enterprisePayroll.salaryTypeStr = "ATRASOS";
+					break;
+				default:
+					enterprisePayroll.salaryTypeStr = "NÓMINA";
+					
+			}
 
 			enterprisePayroll.irpf = s.getTotalIrpf();
 
@@ -206,7 +218,7 @@ public class EnterprisePayrollCSV {
 			return enterprisePayroll;
 		});
 	}
-	
+	@Deprecated
 	public static Stream<EnterprisePayroll> getEnterprisePayrolls(DSLContext ctx, Condition condition)
 			throws IOException {
 
@@ -223,11 +235,21 @@ public class EnterprisePayrollCSV {
 //		Map<Integer, Map<String, Double>> deductions = ctx.select().from(SALARY).innerJoin(SALARY_DEDUCTION).onKey()
 //				.where(condition).fetchStream().collect(Collectors.groupingBy(s -> s.get(SALARY.ID), 
 //						Collectors.toMap(s -> s.get(SALARY.ID), s -> Collectors.toMap(s -> s.get(SALARY_DEDUCTION.DESCRIPTION), s -> s.get(SALARY_DEDUCTION.AMOUNT)))));
-
+		
+		ArrayList<Double> dedBonuses = new ArrayList<Double>();
+		
 		Map<Integer, Map<String, Double>> deductions = new HashMap<Integer, Map<String, Double>>();
 		ctx.select().from(SALARY).innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT)).innerJoin(WORKPLACE)
 				.on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID)).innerJoin(SALARY_DEDUCTION)
 				.on(SALARY.ID.eq(SALARY_DEDUCTION.SALARY)).where(condition).fetchStream().forEach(s -> {
+					
+					
+					if (s.get(SALARY_DEDUCTION.TYPE) == null &&
+							s.get(SALARY_DEDUCTION.AMOUNT) != null &&
+							s.get(SALARY_DEDUCTION.AMOUNT) < 0
+						)
+						dedBonuses.add(s.get(SALARY_DEDUCTION.AMOUNT));
+					
 					if (deductions.get(s.get(SALARY.ID)) != null) {
 						deductions.get(s.get(SALARY.ID)).put(s.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT),
 								s.get(SALARY_DEDUCTION.AMOUNT));
@@ -252,7 +274,23 @@ public class EnterprisePayrollCSV {
 
 					enterprisePayroll.raw = record.get(SALARY.TOTAL_PAYMENT);
 					enterprisePayroll.liquid = record.get(SALARY.TOTAL_LIQUID);
-					enterprisePayroll.employeeSS = record.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
+					
+					Double employeeSS = record.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
+					if (!dedBonuses.isEmpty()) {
+						Double amount = dedBonuses.stream().mapToDouble(a -> a).sum();
+						
+						if (employeeSS != null && amount != null)
+							employeeSS += amount;
+						else if (amount != null)
+							employeeSS = amount;
+					}
+					
+					
+					enterprisePayroll.employeeSS = employeeSS;
+					
+					
+					
+					
 					enterprisePayroll.enterpriseSS = record.get(SALARY.TOTAL_ENTERPRISE);
 					enterprisePayroll.totalSS = enterprisePayroll.employeeSS + enterprisePayroll.enterpriseSS;
 					enterprisePayroll.totalCost = enterprisePayroll.totalSS + enterprisePayroll.irpf;
@@ -276,66 +314,66 @@ public class EnterprisePayrollCSV {
 		
 		@JsonProperty("Empleado")
 		private String employee;
-		@JsonProperty("Centro de trabajo")
+		@JsonProperty("Centro")
 		private String workplace;
-		@JsonProperty("Tipo")
 		private SalaryType salaryType;
-		
+		@JsonProperty("Tipo")
+		private String salaryTypeStr;
 		
 		@JsonProperty("Bruto")
 		private Double raw;
-		@JsonProperty("Seg. Social empleado")
+		@JsonProperty("S.S.Empl.")
 		private Double employeeSS;
 		@JsonProperty("IRPF")
 		private Double irpf;
 		@JsonProperty("Líquido")
 		private Double liquid;
-		@JsonProperty("Seg. Social empresa")
+		@JsonProperty("S.S.Empr.")
 		private Double enterpriseSS;
 		@JsonProperty("Coste total")
 		private Double totalCost;
-		@JsonProperty("Seg. Social total")
+		@JsonProperty("S.S.Total")
 		private Double totalSS;
-		@JsonProperty("Bonificaciones")
+		@JsonProperty("Bonif.")
 		private Double bonuses;
 		
-		@JsonProperty("Base Cont. Comunes")
+		@JsonProperty("Base C.C.")
 		private Double cgcBase;
 		@JsonProperty("Base IRPF")
 		private Double irpfBase;
 		
-		@JsonProperty("Contingencias comunes empleado")
+		@JsonProperty("C.C.Empl.")
 		private Double cgc;
-		@JsonProperty("Contingencias profesionales empleado")
+		@JsonProperty("C.Prof.Empl.")
 		private Double cgp;
 		@JsonProperty("Desempleo")
 		private Double unemployment;
-		@JsonProperty("Formación profesional empleado")
+		@JsonProperty("F.P.Empl.")
 		private Double jobTraining;
 		@JsonProperty("Anticipos")
 		private Double advancedPayment;
-		@JsonProperty("Otras deducciones empleado")
+		@JsonProperty("Otr.Ded.Empl")
 		private Double otherDeductions;
-		@JsonProperty("Fuerza mayor empleado")
+		@JsonProperty("Fuerza Mayor Empl.")
 		private Double estruc;
-		@JsonProperty("No estructurales empleado")
+		@JsonProperty("No Estruc.Empl")
 		private Double noEstruct;
 		@JsonProperty("Embargos")
 		private Double embargos;
 		
-		@JsonProperty("Cont. com. empresa")
+		@JsonProperty("C.C.Empr")
 		private Double cgcEnterprise;
-		@JsonProperty("Cont. prof. empresa")
+		@JsonProperty("C.Prof.Empr")
 		private Double cgpEnterprise;
-		@JsonProperty("Desempleo empresa")
+		@JsonProperty("Desemp.Emp.")
 		private Double unemploymentEnterprise;
-		@JsonProperty("Form. prof. empresa")
+		@JsonProperty("F.P.Empr")
 		private Double jobTrainingEnterprise;
 		@JsonProperty("Fogasa")
 		private Double fogasaEnterprise;
-		@JsonProperty("Fuerza mayor empresa")
+		@JsonProperty("Fuerza mayor Empr.")
 		private Double estrucEnterprise;
-		@JsonProperty("No estructurales empresa")
+		@JsonProperty("No Estruc.Empr")
 		private Double noEstructEnterprise;
 
 		
@@ -484,6 +522,12 @@ public class EnterprisePayrollCSV {
 		public Double getEmbargos() {
 			return embargos;
 		}
+
+		public String getSalaryTypeStr() {
+			return salaryTypeStr;
+		}
+		
+		
 		
 	}
 	

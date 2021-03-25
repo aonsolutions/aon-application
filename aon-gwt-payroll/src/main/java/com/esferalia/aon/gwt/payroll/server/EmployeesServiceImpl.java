@@ -835,7 +835,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Date endDate = calendar.getTime();
 			
-			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(oos, domain, startDate, endDate, cost.getEnterpriseId(), cost.getWorkplaceId());
+			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(oos, domain, startDate, endDate, cost.getEnterpriseId(), cost.getWorkplaceId(), types);
 			
 			byte bytes [] = oos.toByteArray();
 			InputStream data = new ByteArrayInputStream(bytes);

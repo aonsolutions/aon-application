@@ -145,10 +145,20 @@ public class JooqEnterpriseSalaryBuilder {
 				.innerJoin(SALARY_BONUS).on(SALARY.ID.eq(SALARY_BONUS.SALARY)).where(condition)
 				.fetchStreamInto(SALARY_BONUS)
 				.collect(Collectors.toMap(s -> s.getSalary(), s -> s.getAmount(), (a1, a2) -> a1 + a2));
+		
+		ArrayList<Double> dedBonuses = new ArrayList<Double>();
+		
 		Map<Integer, Map<Integer, Double>> deductions = new HashMap<Integer, Map<Integer, Double>>();
 		ctx.select().from(SALARY).innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT)).innerJoin(WORKPLACE)
 				.on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID)).innerJoin(ENTERPRISE).onKey().innerJoin(SALARY_DEDUCTION)
 				.on(SALARY.ID.eq(SALARY_DEDUCTION.SALARY)).where(condition).fetchStream().forEach(s -> {
+					
+					if (s.get(SALARY_DEDUCTION.TYPE) == null &&
+							s.get(SALARY_DEDUCTION.AMOUNT) != null &&
+							s.get(SALARY_DEDUCTION.AMOUNT) < 0
+						)
+						dedBonuses.add(s.get(SALARY_DEDUCTION.AMOUNT));
+					
 					if (deductions.get(s.get(SALARY.ID)) != null) {
 						deductions.get(s.get(SALARY.ID)).put(s.get(SALARY_DEDUCTION.TYPE).intValue(),
 								s.get(SALARY_DEDUCTION.AMOUNT));
@@ -203,23 +213,36 @@ public class JooqEnterpriseSalaryBuilder {
 					
 				}
 				
+				Double employeeSS = r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
+				if (!dedBonuses.isEmpty()) {
+					Double amount = dedBonuses.stream().mapToDouble(a -> a).sum();
+					
+					if (employeeSS != null && amount != null)
+						employeeSS += amount;
+					else if (amount != null)
+						employeeSS = amount;
+				}
+					
+				
 				entry.setEmpleado(Optional.ofNullable(r.get(SALARY.EMPLOYEE_NAME)));
 				entry.setTipo(Optional.ofNullable(st.getName(new Locale("es"))));
 				entry.setDevengado(Optional.ofNullable(r.get(SALARY.TOTAL_PAYMENT)));
-				entry.setSsTrab(Optional.ofNullable(r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS)));
+				entry.setSsTrab(Optional.ofNullable(employeeSS));
 				entry.setIrpf(Optional.ofNullable(r.get(SALARY.TOTAL_IRPF)));
 				entry.setDeducciones(Optional.ofNullable(otherDeductions));
 				entry.setLiquido(Optional.ofNullable(r.get(SALARY.TOTAL_LIQUID)));
 				entry.setSsEmpr(Optional.ofNullable(r.get(SALARY.TOTAL_ENTERPRISE)));
-				entry.setSsTotal(Optional.ofNullable(entry.getSsEmpr().orElse(0d) + entry.getSsTrab().orElse(0d) + (otherDeductions != null ? otherDeductions : 0d)));
+				entry.setSsTotal(Optional.ofNullable(entry.getSsEmpr().orElse(0d) + entry.getSsTrab().orElse(0d)));
 				entry.setCosteTotal(
 						Optional.ofNullable(entry.getDevengado().orElse(0d) + entry.getSsEmpr().orElse(0d)));
 				if (!map.containsKey(r.get(WORKPLACE.DESCRIPTION)))
-					map.put(r.get(WORKPLACE.DESCRIPTION), new HashMap<String, EnterprisePayrollEntry>());
+					map.put(r.get(WORKPLACE.DESCRIPTION), new LinkedHashMap<String, EnterprisePayrollEntry>());
 				map.get(r.get(WORKPLACE.DESCRIPTION)).put(String.valueOf(r.get(SALARY.ID)), entry);
 				
 			});
-
+			
+			
+			
 		return map;
 	}
 	

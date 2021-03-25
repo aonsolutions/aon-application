@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,7 +46,6 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.impl.DSL;
 
 import com.esferalia.aon.in.payroll.csv.IEnterprisePayroll;
 import com.esferalia.aon.jooq.tables.records.SalaryCostRecord;
@@ -79,7 +79,7 @@ public class EnterprisePayrollExcel {
 			
 			DEFAULT_HEADER.put("employeeSS", "SEG. SOCIAL");
 			DEFAULT_HEADER.put("irpf", "IRPF");
-			DEFAULT_HEADER.put("other", "OTRAS DEDUCCIONES");
+			DEFAULT_HEADER.put("other", "OTR. DEDUC.");
 			DEFAULT_HEADER.put("liquid", "LÍQUIDO");
 			
 			DEFAULT_HEADER.put("joint2", "");
@@ -90,11 +90,11 @@ public class EnterprisePayrollExcel {
 			
 			DEFAULT_HEADER.put("cgcEnterprise", "CONT. COM.");
 			DEFAULT_HEADER.put("cgpEnterprise", "CONT. PROF.");
-			DEFAULT_HEADER.put("unemploymentEnterprise", "DESEMPLEO");
+			DEFAULT_HEADER.put("unemploymentEnterprise", "DESEMPL.");
 			DEFAULT_HEADER.put("jobTrainingEnterprise", "FORM. PROF");
 			DEFAULT_HEADER.put("fogasaEnterprise", "FOGASA");
-			DEFAULT_HEADER.put("extraHEnterprise", "HORAS EXTRAS");
-			DEFAULT_HEADER.put("bonuses", "BONIFICACIONES");
+			DEFAULT_HEADER.put("extraHEnterprise", "H. EXTRAS");
+			DEFAULT_HEADER.put("bonuses", "BONIF.");
 			
 			DEFAULT_HEADER.put("joint4", "");
 			
@@ -102,11 +102,11 @@ public class EnterprisePayrollExcel {
 			DEFAULT_HEADER.put("cgp", "CONT. PROF.");
 			DEFAULT_HEADER.put("unemployment", "DESEMPLEO");
 			DEFAULT_HEADER.put("jobTraining", "FORM. PROF.");
-			DEFAULT_HEADER.put("extraH", "HORAS EXTRAS");
+			DEFAULT_HEADER.put("extraH", "H. EXTRAS");
 			
 			DEFAULT_HEADER.put("advancedPayments", "ANTICIPOS");
 			DEFAULT_HEADER.put("embargos", "EMBARGOS");
-			DEFAULT_HEADER.put("otherDeductions", "OTRAS DEDUCCIONES");
+			DEFAULT_HEADER.put("otherDeductions", "OTR. DEDUC.");
 			
 			DEFAULT_HEADER.put("joint5", "");
 			
@@ -215,6 +215,51 @@ public class EnterprisePayrollExcel {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void simpleEnterprisePayrollGenerator (String domainName, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date date, ExcelType excelType, Collection<Integer> types) {
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		Integer month = c.get(Calendar.MONTH)+1;
+		Integer year = c.get(Calendar.YEAR);
+		
+		AONContext aonContext = AONContext.getAONContext(domainName, "");
+		
+		Integer wId = null;
+		Integer eId = null;
+		if (workplaceId.isPresent())
+			wId = workplaceId.get();
+		if (enterpriseId.isPresent())
+			eId = enterpriseId.get();
+		
+		AtomicInteger atomicWorkplace = new AtomicInteger(wId != null ? wId : 0);
+		if (eId == null || eId == 0)
+			eId = AON.getWorkplace(aonContext.getDomainName()
+				, aonContext.getDomainId()
+				, aonContext.getUser()
+				, w -> w.getIdProperty().eq(atomicWorkplace.get()))
+				.getEnterprise();
+		
+		
+		try {
+			Collection<IEnterprisePayroll> payrolls =
+					getEnterprisePayrolls(aonContext, month, year, eId, wId)
+					.filter(p -> types.contains(p.getSalaryType().ordinal()))
+					.sorted(Comparator.comparing(IEnterprisePayroll::getEmployee))
+					.collect(Collectors.toList());
+			
+			String enterpriseName = getEnterpriseName(domainName, eId, wId);
+			write(outputStream
+					, payrolls
+					, Optional.empty()
+					, enterpriseName
+					, getDateString(month, year)
+					, excelType);	
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	
 	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls,
@@ -1555,8 +1600,20 @@ public class EnterprisePayrollExcel {
 
 			enterprisePayroll.raw = s.getTotalPayment();
 			enterprisePayroll.liquid = s.getTotalLiquid();
+			
+			Double dedBonus = s.getDeductions().stream()
+					.filter(d -> d.getDeductionType() == null && d.getAmount() < 0)
+					.mapToDouble(d -> d.getAmount()).sum();
+					
+			
 			enterprisePayroll.employeeSS = s.getTotalSSContributions();
-
+			
+			if (s.getTotalSSContributions() != null && dedBonus != null)
+				enterprisePayroll.employeeSS += dedBonus;
+			else if (dedBonus != null)
+				enterprisePayroll.employeeSS = dedBonus;
+			
+			
 			enterprisePayroll.enterpriseSS = s.getCosts().stream().mapToDouble(Cost::getAmount).sum();
 
 			enterprisePayroll.totalSS = enterprisePayroll.employeeSS + enterprisePayroll.enterpriseSS;
@@ -1626,6 +1683,7 @@ public class EnterprisePayrollExcel {
 			enterprisePayroll.jobTraining = jobTraining;
 			enterprisePayroll.advancedPayment = advancedPayment;
 			enterprisePayroll.otherDeductions = otherDeductions;
+			
 			enterprisePayroll.estruc = estruc;
 			enterprisePayroll.noEstruct = noEstruct;
 			// COSTS
@@ -1974,5 +2032,6 @@ public class EnterprisePayrollExcel {
 			}
 		}
 	}
+
 	
 }

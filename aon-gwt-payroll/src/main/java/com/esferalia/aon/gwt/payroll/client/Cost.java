@@ -20,6 +20,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -30,6 +31,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -118,7 +122,10 @@ public class Cost extends ResizeComposite {
 		}
 
 	}
-
+	
+	@UiField
+	FlowPanel mainPanel;
+	
 	@UiField
 	ScrollPanel scrollPanel;
 	@UiField
@@ -202,8 +209,9 @@ public class Cost extends ResizeComposite {
 		printButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				IDocument document = costDocuments.current();
-				document.print();
+				printPDF();
+//				IDocument document = costDocuments.current();
+//				document.print();
 			}
 		});
 		printMenuItem.setCommand(new Command() {
@@ -256,8 +264,12 @@ public class Cost extends ResizeComposite {
 		bidoqPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		
 		downloadPDFMenuItem.setScheduledCommand(() -> {
-			IDocument document = costDocuments.current();
-			document.print();
+			
+			printPDF();
+			
+			
+//			IDocument document = costDocuments.current();
+//			document.print();
 		});
 		
 		downloadExcelMenuItem.setScheduledCommand(() -> {
@@ -406,34 +418,155 @@ public class Cost extends ResizeComposite {
 	}
 	
 	private void printExcel (ExcelType excelType) {
-		String printURL = GWT.getModuleBaseURL()+ "/cost_excel/"
-				+ "?month=" + costDocuments.geCurrentCost().getMonth()
-	            + "&year=" + costDocuments.geCurrentCost().getYear()
-	            + "&enterpriseId=" + costDocuments.geCurrentCost().getEnterpriseId()
-	            + "&workplaceId=" + costDocuments.geCurrentCost().getWorkplaceId();
 		
-		printURL += salaryCheckBox.isChecked() ? "&salary=1" : "&salary=0";
-		printURL += extraCheckBox.isChecked() ? "&extra=1" : "&extra=0";
-		printURL += settleCheckBox.isChecked() ? "&settle=1" : "&settle=0";
-		printURL += delayCheckBox.isChecked() ? "&delay=1" : "&delay=0";
-		printURL += "&excelType=" + excelType.name().toLowerCase();
+		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
 		
-		Window.open(printURL, "_blank", null);
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_excel/"
+				+ costDocuments.geCurrentCost().getMonth() + "_" + costDocuments.geCurrentCost().getYear() + "_"
+				+ costDocuments.geCurrentCost().getEnterpriseId() + "_" + costDocuments.geCurrentCost().getWorkplaceId() + "."
+				+ "xsl");
+		
+		
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(printURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden("month", String.valueOf(cost.getMonth())));
+		flowPanel.add(new Hidden("year", String.valueOf(cost.getYear())));
+		flowPanel.add(new Hidden("enterpriseId", String.valueOf(cost.getEnterpriseId())));
+		flowPanel.add(new Hidden("workplaceId", String.valueOf(cost.getWorkplaceId())));
+		flowPanel.add(new Hidden("excelType", excelType.name()));
+		
+		if (salaryCheckBox.getValue())
+			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SALARY.ordinal())));
+		if (extraCheckBox.getValue())
+			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.EXTRA.ordinal())));
+		if (settleCheckBox.getValue())
+			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SETTLE.ordinal())));
+		if (delayCheckBox.getValue())
+			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.DELAY.ordinal())));
+		
+		
+		formPanel.add(flowPanel);
+		
+		
+		formPanel.addSubmitCompleteHandler(e1 -> {
+			mainPanel.remove(formPanel);
+		});
+		
+		mainPanel.add(formPanel);
+		
+		formPanel.submit();
+		
+		
+//		String printURL = GWT.getModuleBaseURL()+ "/cost_excel/"
+//				+ "?month=" + costDocuments.geCurrentCost().getMonth()
+//	            + "&year=" + costDocuments.geCurrentCost().getYear()
+//	            + "&enterpriseId=" + costDocuments.geCurrentCost().getEnterpriseId()
+//	            + "&workplaceId=" + costDocuments.geCurrentCost().getWorkplaceId();
+		
+//		printURL += salaryCheckBox.isChecked() ? "&salary=1" : "&salary=0";
+//		printURL += extraCheckBox.isChecked() ? "&extra=1" : "&extra=0";
+//		printURL += settleCheckBox.isChecked() ? "&settle=1" : "&settle=0";
+//		printURL += delayCheckBox.isChecked() ? "&delay=1" : "&delay=0";
+//		printURL += "&excelType=" + excelType.name().toLowerCase();
+//		
+//		Window.open(printURL, "_blank", null);
 	}
 	
 	private void printCSV () {
-		String printURL = GWT.getModuleBaseURL()+ "/cost_csv/"
-				+ "?month=" + costDocuments.geCurrentCost().getMonth()
-	            + "&year=" + costDocuments.geCurrentCost().getYear()
-	            + "&enterpriseId=" + costDocuments.geCurrentCost().getEnterpriseId()
-	            + "&workplaceId=" + costDocuments.geCurrentCost().getWorkplaceId();
 		
-		printURL += salaryCheckBox.isChecked() ? "&salary=1" : "&salary=0";
-		printURL += extraCheckBox.isChecked() ? "&extra=1" : "&extra=0";
-		printURL += settleCheckBox.isChecked() ? "&settle=1" : "&settle=0";
-		printURL += delayCheckBox.isChecked() ? "&delay=1" : "&delay=0";
+		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
 		
-		Window.open(printURL, "_blank", null);
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_csv/"
+				+ costDocuments.geCurrentCost().getMonth() + "_" + costDocuments.geCurrentCost().getYear() + "_"
+				+ costDocuments.geCurrentCost().getEnterpriseId() + "_" + costDocuments.geCurrentCost().getWorkplaceId() + "."
+				+ "csv");
+		
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(printURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden("month", String.valueOf(cost.getMonth())));
+		flowPanel.add(new Hidden("year", String.valueOf(cost.getYear())));
+		flowPanel.add(new Hidden("enterpriseId", String.valueOf(cost.getEnterpriseId())));
+		flowPanel.add(new Hidden("workplaceId", String.valueOf(cost.getWorkplaceId())));
+		
+		if (salaryCheckBox.getValue())
+			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SALARY.ordinal())));
+		if (extraCheckBox.getValue())
+			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.EXTRA.ordinal())));
+		if (settleCheckBox.getValue())
+			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SETTLE.ordinal())));
+		if (delayCheckBox.getValue())
+			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.DELAY.ordinal())));
+		
+		
+		formPanel.add(flowPanel);
+		
+		
+		formPanel.addSubmitCompleteHandler(e1 -> {
+			mainPanel.remove(formPanel);
+		});
+		
+		mainPanel.add(formPanel);
+		
+		formPanel.submit();
+		
+//		String printURL = GWT.getModuleBaseURL()+ "/cost_csv/"
+//				+ "?month=" + costDocuments.geCurrentCost().getMonth()
+//	            + "&year=" + costDocuments.geCurrentCost().getYear()
+//	            + "&enterpriseId=" + costDocuments.geCurrentCost().getEnterpriseId()
+//	            + "&workplaceId=" + costDocuments.geCurrentCost().getWorkplaceId();
+		
+//		printURL += salaryCheckBox.isChecked() ? "&salary=1" : "&salary=0";
+//		printURL += extraCheckBox.isChecked() ? "&extra=1" : "&extra=0";
+//		printURL += settleCheckBox.isChecked() ? "&settle=1" : "&settle=0";
+//		printURL += delayCheckBox.isChecked() ? "&delay=1" : "&delay=0";
+//		
+//		Window.open(printURL, "_blank", null);
+	}
+	
+	public void printPDF () {
+		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
+		
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost/"
+		+ costDocuments.geCurrentCost().getMonth() + "_" + costDocuments.geCurrentCost().getYear() + "_"
+		+ costDocuments.geCurrentCost().getEnterpriseId() + "_" + costDocuments.geCurrentCost().getWorkplaceId() + "."
+		+ "pdf");
+		
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(printURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden("month", String.valueOf(cost.getMonth())));
+		flowPanel.add(new Hidden("year", String.valueOf(cost.getYear())));
+		flowPanel.add(new Hidden("enterpriseId", String.valueOf(cost.getEnterpriseId())));
+		flowPanel.add(new Hidden("workplaceId", String.valueOf(cost.getWorkplaceId())));
+		
+		if (salaryCheckBox.getValue())
+			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SALARY.ordinal())));
+		if (extraCheckBox.getValue())
+			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.EXTRA.ordinal())));
+		if (settleCheckBox.getValue())
+			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.SETTLE.ordinal())));
+		if (delayCheckBox.getValue())
+			flowPanel.add(new Hidden("filter", String.valueOf(Salary.Type.DELAY.ordinal())));
+		
+		
+		formPanel.add(flowPanel);
+		
+		
+		formPanel.addSubmitCompleteHandler(e1 -> {
+			mainPanel.remove(formPanel);
+		});
+		
+		mainPanel.add(formPanel);
+		
+		formPanel.submit();
 	}
 
 }

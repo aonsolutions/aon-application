@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -82,6 +83,71 @@ public class CostPDFServlet extends HttpServlet {
 	}
 	
 	
+	
+	
+	
+	
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Integer enterpriseId;
+		Integer workplaceId;
+		Integer month;
+		Integer year;
+		Salary.Type[] types;
+		
+		//Picking up the parameters
+		{
+			if (req.getParameterValues("filter") != null)
+				types = Arrays.stream(req.getParameterValues("filter")).map(str -> {
+					Integer ordinal = Integer.parseInt(str);
+					Salary.Type type = Utilities.typeOf(ordinal.byteValue(), Salary.Type.class);
+					return type;
+				}).toArray(Salary.Type[]::new);
+			else
+				types = new Salary.Type[0];
+			
+			enterpriseId = req.getParameter("enterpriseId") != null ? Integer.parseInt(req.getParameter("enterpriseId")) : null;
+			workplaceId = req.getParameter("workplaceId") != null ? Integer.parseInt(req.getParameter("workplaceId")) : null;
+			month = Integer.parseInt(req.getParameter("month"));
+			year = Integer.parseInt(req.getParameter("year"));
+			
+		}
+		
+		
+		
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month);
+		calendar.set(Calendar.DAY_OF_MONTH, 1); // The first day of the month has value 1.
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		Date startDate = calendar.getTime();
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date endDate = calendar.getTime();
+		
+		JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(
+				resp.getOutputStream()
+				, req.getServerName()
+				, startDate
+				, endDate
+				, enterpriseId
+				, workplaceId
+				, types
+				);
+		
+		
+		
+	}
+
+
+
+
+
+
+
 	private static Date getMonth (String request) {
 		Calendar calendar = Calendar.getInstance();
 		Matcher matcher = MONTH_PATTERN.matcher(request);
