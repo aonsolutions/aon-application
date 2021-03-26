@@ -208,7 +208,7 @@ export class DomainUserRoles {
 	}
 
 	isFiscalManager() {
-		return this.hasApp(App.FISCAL) && (this.isAdmin() || this.hasRole(Role.FISCAL_MANAGER));
+		return this.hasFiscal() && (this.isAdmin() || this.hasRole(Role.FISCAL_MANAGER));
 	}
 
   hasPayroll() {
@@ -226,11 +226,11 @@ export class DomainUserRoles {
 	}
 
 	isPayrollPortal() {
-		return this.hasApp(App.PAYROLL) && (this.isAdmin() || this.hasRole(Role.PAYROLL_PORTAL));
+		return this.hasPayroll() && (this.isAdmin() || this.hasRole(Role.PAYROLL_PORTAL));
 	}
 
   isPayrollManager() {
-		return this.hasApp(App.PAYROLL) && (this.isAdmin() || this.hasRole(Role.PAYROLL_MANAGER));
+		return this.hasPayroll() && (this.isAdmin() || this.hasRole(Role.PAYROLL_MANAGER));
 	}
 
   hasDocumental() {
