@@ -12,7 +12,7 @@ public class SupplierAutoComplete {
 	
 	public static BiConsumer<AONContext,Supplier> COMPLETE_TRANSACTION = (ctx,supplier) -> {
 		if (supplier.getTransaction() == null) {
-			ctx.log().info("\t saving creditor: autocomplete transaction: " + InvoiceTransactionType.NATIONAL);
+			ctx.log().info("\t saving supplier: autocomplete transaction: " + InvoiceTransactionType.NATIONAL);
 			supplier.setTransaction(InvoiceTransactionType.NATIONAL);
 		}
 	};

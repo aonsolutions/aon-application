@@ -19,6 +19,8 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -116,6 +118,20 @@ public class AonFaker {
 			.setScope( scope == null ? null : scope.getId() )
 			.setPurchaseValuated(AonRandom.gt(50) )
 			.setAccount( account == null? null : account.getId() );
+	}
+	
+	public static TaskHolder getTaskHolder( AONContext ctx ) {
+		return getTaskHolder(ctx, getRegistry(ctx));
+	}
+	
+	public static TaskHolder getTaskHolder( AONContext ctx , Registry registry) {
+		return new TaskHolder()
+			.copy(registry)
+			.setType(TaskHolderType.INTERNAL)
+			.setActive(true)
+			.setUserId(null)
+			.setCostProfile(null);
+		
 	}
 	
 	public static RegistryAddress getRegistryAddress( AONContext ctx) {

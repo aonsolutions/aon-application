@@ -69,6 +69,7 @@ public interface ITask {
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter);
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth);
 	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter);
+	public TaskHolder save(AONContext ctx, TaskHolder taskHolder);
 	public TaskHolder updateTaskHolder(AONContext ctx, TaskHolder taskHolder); 
 	public TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder);
 	public TaskHolder deleteTaskHolder(AONContext ctx, Integer taskHolder);

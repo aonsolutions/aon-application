@@ -29,7 +29,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TimeControlPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO.TaskHolderFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class TimeControlDAO {	
@@ -313,7 +313,7 @@ public class TimeControlDAO {
 					.setDomain(new Domain().setId(record.getValue(TIMECONTROL.DOMAIN)))
 					.setDate(record.getValue(TIMECONTROL.DATE))
 					.setStatus(TimeControlStatus.safeValueOf(record.getValue(TIMECONTROL.STATUS)))
-					.setTaskHolder(TaskHolderFiller.buildTaskHolder(record))
+					.setTaskHolder(TaskHolderFiller.build(record, null))
 					.setLocation(location)
 					.setComments(record.getValue(TIMECONTROL.COMMENTS))
 					.setCoordinates(new Coordinates(record.getValue(TIMECONTROL.LATITUDE),record.getValue(TIMECONTROL.LONGITUDE)));

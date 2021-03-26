@@ -168,7 +168,7 @@ public class WorkServlet extends HttpServlet{
 		}			
 		TaskHolder taskHolder = new TaskHolder()
 				.setActive(true)
-				.setTaskHolderType(TaskHolderType.INTERNAL);
+				.setType(TaskHolderType.INTERNAL);
 		taskHolder.setId(registry.getId());
 		taskHolder.setDomain(domain);
 

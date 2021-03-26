@@ -5378,6 +5378,16 @@ public class AON {
 		}
 	}
 	
+	public static TaskHolder save(String domainName, Integer domainId, String login, TaskHolder taskHolder){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().save(ctx, taskHolder);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	
 	public static TaskHolder updateTaskHolder(String domainName, Integer domainId, String login, TaskHolder taskHolder){
 		AONContext ctx = null;
 		try {

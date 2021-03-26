@@ -1,0 +1,151 @@
+package com.esferalia.aon.occam.impl.jooq.dao;
+
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
+
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import org.jooq.Condition;
+import org.jooq.Record;
+import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
+
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
+import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskHolderType;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.validation.TaskHolderAutoComplete;
+import com.esferalia.aon.occam.impl.jooq.validation.TaskHolderValidation;
+
+public class TaskHolderDAO {
+	
+	private static final TaskHolderPropertiesDAO TASK_HOLDER_PROPERTIES = new TaskHolderPropertiesDAO();
+	public static class TaskHolderPropertiesDAO extends RegistryPropertiesDAO implements TaskHolderProperties {
+		
+		
+		protected Condition[] getConditions(TaskHolderFilter filter) {
+			if (filter == null) return new Condition[0];
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK_HOLDER.ACTIVE);}
+		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER.USER_ID);}
+		@Override public Property<Integer> getCostProfileProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER.COST_PROFILE);}
+	}
+
+	
+	public static class TaskHolderFiller implements Function<Record, TaskHolder> {
+
+		@Override
+		public TaskHolder apply(Record r) {
+			return build(r, REGISTRY);
+		}
+		
+		public static TaskHolder build(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
+			if(registry == null) registry = REGISTRY;
+			return new TaskHolder()
+					.copy(RegistryFiller.build(r, registry))
+					.setActive(r.getValue(TASK_HOLDER.ACTIVE) == (byte) 1)
+					.setCostProfile(r.getValue(TASK_HOLDER.COST_PROFILE))
+					.setType(TaskHolderType.safeValueOf(r.getValue(TASK_HOLDER.TYPE)))
+					.setUserId(r.getValue(TASK_HOLDER.USER_ID));
+		}
+	}
+	
+	private static SelectConditionStep<Record> select(AONContext ctx, TaskHolderFilter filter) {
+		return ctx.getDslContext().select()
+				.from(TASK_HOLDER)
+				.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.where(TASK_HOLDER_PROPERTIES.getConditions(filter));
+		
+	}
+
+	public static Stream<TaskHolder> getStream(AONContext ctx, TaskHolderFilter filter){
+		return select(ctx,filter)
+			.fetch()
+			.stream()
+			.map(new TaskHolderFiller());
+	}
+	
+	public static Stream<TaskHolder> getStream(AONContext ctx, TaskHolderFilter filter, int offset, int limit){
+		return select(ctx,filter)
+				.orderBy(REGISTRY.NAME)
+				.offset(offset)
+				.limit(limit)
+				.fetch()
+				.stream()
+				.map(new TaskHolderFiller());
+	}
+
+	public static TaskHolder get(AONContext ctx, Integer id){
+		return getStream(ctx, p -> p.getIdProperty().eq(id))
+			.findFirst()
+			.orElse(new TaskHolder());
+	}
+	
+	public static TaskHolder save(AONContext ctx, TaskHolder taskHolder) {
+		ctx.checkWrite();
+		TaskHolderAutoComplete.autoComplete(ctx, taskHolder);
+		TaskHolderValidation.validate(ctx, taskHolder);
+		boolean nullId = (taskHolder.getId() == null); 
+		taskHolder = RegistryDAO.save(ctx, taskHolder);
+		return nullId || get(ctx, taskHolder.getId()).isEmpty() 
+			? insert(ctx, taskHolder) : update(ctx, taskHolder);
+	}
+
+	private static TaskHolder insert(AONContext ctx, TaskHolder taskHolder){
+		ctx.getDslContext().insertInto(TASK_HOLDER)
+			.set(TASK_HOLDER.REGISTRY, taskHolder.getId())
+			.set(TASK_HOLDER.DOMAIN, taskHolder.getDomain().getId())
+			.set(TASK_HOLDER.TYPE, taskHolder.getType().value())
+			.set(TASK_HOLDER.USER_ID, taskHolder.getUserId())
+			.set(TASK_HOLDER.COST_PROFILE, taskHolder.getCostProfile())
+			.execute();
+		ctx.log().info("INSERT TASK HOLDER id: " + taskHolder.getId());		
+		return taskHolder;
+	}
+	
+	private static TaskHolder update(AONContext ctx, TaskHolder taskHolder){
+		ctx.checkWrite();
+		int count = ctx.getDslContext().update(TASK_HOLDER)
+			.set(TASK_HOLDER.DOMAIN, taskHolder.getDomain().getId())
+			.set(TASK_HOLDER.TYPE, taskHolder.getType().value())
+			.set(TASK_HOLDER.USER_ID, taskHolder.getUserId())
+			.set(TASK_HOLDER.COST_PROFILE, taskHolder.getCostProfile())
+			.where(TASK_HOLDER.REGISTRY.eq(taskHolder.getId()))
+			.execute();
+		ctx.log().info("UPDATE TASK HOLDER id: " + taskHolder.getId() + ". (" + count + " rows)");		
+		return taskHolder;
+	}
+
+	public static TaskHolder delete(AONContext ctx, TaskHolder taskHolder) {
+		ctx.checkWrite();
+		int count = ctx.getDslContext().delete(TASK_HOLDER)
+			.where(TASK_HOLDER.REGISTRY.eq(taskHolder.getId()))
+			.execute();
+		ctx.log().info("DELETE TASK HOLDER id:" + taskHolder.getId() + " ("+count+" rows)");
+		return taskHolder;
+	}
+
+	// *************************************************
+	// ********** TEST PURPOSE METHODS *****************
+	// *************************************************
+	
+	public static TaskHolder getRandom(AONContext ctx, TaskHolderFilter filter) {
+		return select(ctx, filter)
+			.orderBy( DSL.rand() )
+			.fetch()
+			.stream()
+			.map(new TaskHolderFiller())
+			.findFirst()
+			.orElse(null);
+	}
+	
+}
+

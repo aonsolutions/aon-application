@@ -332,15 +332,19 @@ public class UserServlet extends AonApiHttpServlet {
 										.setAlias(a.getName())
 										.setDomain(getDomain()));
 							}
-							th = new TaskHolder()
-									.setRegistryData(r)
+							Integer registryId = r.getId();
+							th = AON.getTaskHolder(getDomain().getName(), getDomain().getId(), "", f -> f.getDomainProperty().eq(getDomain().getId()).and(f.getIdProperty().eq(registryId)));
+							if(th != null && th.getId() != null) {
+								th.setActive(true);
+							} else {
+								th = new TaskHolder().copy(r)
 									.setActive(true)
 									.setUserId(user);
-							AON.insertTaskHolder(getDomain().getName(), getDomain().getId(), "", th);
+							}
 						} else if(!th.isActive()) {
 							th.setActive(true);
-							AON.updateTaskHolder(getDomain().getName(), getDomain().getId(), "", th);
 						}
+						AON.save(getDomain().getName(), getDomain().getId(), getUser().getLogin(), th);
 					} 
 				
 					if(AonRole.EMPLOYEE.equals(uar.getRole()) || AonRole.ENTERPRISE.equals(uar.getRole())) {

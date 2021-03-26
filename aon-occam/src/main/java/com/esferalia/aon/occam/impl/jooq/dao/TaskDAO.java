@@ -31,12 +31,10 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.jooq.tables.records.TaskCommentRecord;
 import com.esferalia.aon.jooq.tables.records.TaskEventRecord;
-import com.esferalia.aon.jooq.tables.records.TaskHolderRecord;
 import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
@@ -53,23 +51,18 @@ import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -757,6 +750,8 @@ public class TaskDAO {
 			.returning().fetch().stream().map(new FullWorkgroupFiller()).findFirst().orElse(new Workgroup());	
 	}
 
+	
+	@Deprecated
 	public static Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter){
 		return ctx.getDslContext().select()
 				.from(TASK_HOLDER).join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
@@ -765,6 +760,7 @@ public class TaskDAO {
 				.fetch().stream().map(new TaskHolderFiller());
 	}
 	
+	@Deprecated
 	public static Stream<TaskHolder> getTaskHolderStream(AONContext ctx, byte[] auth){
 		return ctx.getDslContext().select()
 				.from(TASK_HOLDER).join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
@@ -774,47 +770,52 @@ public class TaskDAO {
 				.fetch().stream().map(new TaskHolderFiller());
 	}
 
-	
+	@Deprecated
 	public static TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter){
 		return ctx.getDslContext()
 				.select().from(TASK_HOLDER).where(TASK_HOLDER_PROPERTIES.getConditions(filter))
-				.fetchInto(TASK_HOLDER).stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());
+				.fetchInto(TASK_HOLDER).stream().map(new TaskHolderFiller()).findFirst().orElse(new TaskHolder());
 	}
 	
+	@Deprecated
 	public static TaskHolder save(AONContext ctx, TaskHolder taskHolder) {
 		return taskHolder.getId() != null 
 			? update(ctx, taskHolder)
 			: insertTaskHolder(ctx, taskHolder);
 	}
 	
+	@Deprecated
 	public static TaskHolder update(AONContext ctx, TaskHolder taskHolder){
 		return ctx.getDslContext().update(TASK_HOLDER)
-				.set(TASK_HOLDER.TYPE, taskHolder.getTaskHolderType().value())
+				.set(TASK_HOLDER.TYPE, taskHolder.getType().value())
 				.set(TASK_HOLDER.USER_ID, taskHolder.getUserId())
 				.set(TASK_HOLDER.COST_PROFILE, taskHolder.getCostProfile())
 				.set(TASK_HOLDER.ACTIVE, taskHolder.getActiveValue())
 				.where(TASK_HOLDER.REGISTRY.eq(taskHolder.getId()))
-			.returning().fetch().stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());	
+			.returning().fetch().stream().map(new TaskHolderFiller()).findFirst().orElse(new TaskHolder());	
 	}
 	
+	@Deprecated
 	public static TaskHolder updateTaskHolder(AONContext ctx, TaskHolder taskHolder){
 		return ctx.getDslContext().update(TASK_HOLDER)
 				.set(TASK_HOLDER.ACTIVE, taskHolder.getActiveValue())
 				.where(TASK_HOLDER.REGISTRY.eq(taskHolder.getId()))
-			.returning().fetch().stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());	
+			.returning().fetch().stream().map(new TaskHolderFiller()).findFirst().orElse(new TaskHolder());	
 	}
 	
+	@Deprecated
 	public static TaskHolder insertTaskHolder(AONContext ctx, TaskHolder taskHolder){
 		return ctx.getDslContext().insertInto(TASK_HOLDER, TASK_HOLDER.ACTIVE, TASK_HOLDER.COST_PROFILE, TASK_HOLDER.DOMAIN, TASK_HOLDER.REGISTRY, TASK_HOLDER.TYPE, TASK_HOLDER.USER_ID)
 			.values(taskHolder.getActiveValue(), taskHolder.getCostProfile(), taskHolder.getDomain().getId(), taskHolder.getId(),
 					AonEnumUtils.getByte(taskHolder.isLegalPerson()), taskHolder.getUserId())
-			.returning().fetch().stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());
+			.returning().fetch().stream().map(new TaskHolderFiller()).findFirst().orElse(new TaskHolder());
 	}
 	
+	@Deprecated
 	public static TaskHolder deleteTaskHolder(AONContext ctx, Integer taskHolder){
 		return ctx.getDslContext().delete(TASK_HOLDER)
 				.where(TASK_HOLDER.REGISTRY.eq(taskHolder))
-			.returning().fetch().stream().map(new FullTaskHolderFiller()).findFirst().orElse(new TaskHolder());
+			.returning().fetch().stream().map(new TaskHolderFiller()).findFirst().orElse(new TaskHolder());
 	}
 
 	public static Stream<Workgroup> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderWorkgroupFilter filter){
@@ -839,50 +840,7 @@ public class TaskDAO {
 				.where(TASK_HOLDER_WORKGROUP_PROPERTIES.getConditions(filter))
 				.execute();
 	}
-	
-	private static class FullTaskHolderFiller implements Function<TaskHolderRecord, TaskHolder> {
-		@Override
-		public TaskHolder apply(TaskHolderRecord t) {
-			TaskHolder taskHolder = new TaskHolder();
-			taskHolder.setId(t.getRegistry());
-			taskHolder.setDomain(new Domain().setId(t.getDomain()));
-			return taskHolder
-					.setActive(t.getActive() == (byte) 1)
-					.setCostProfile(t.getCostProfile())
 
-					.setTaskHolderType(TaskHolderType.valueOf(t.getType()))
-					.setUserId(t.getUserId());
-		}
-	}
-	
-	protected static class TaskHolderFiller implements Function<Record, TaskHolder> {
-		@Override
-		public TaskHolder apply(Record r) {
-			return buildTaskHolder(r);
-		}
-		
-		public static TaskHolder buildTaskHolder(Record r) {
-			return new TaskHolder()
-					.setRegistryData( new Registry() 
-						.setId(r.getValue(REGISTRY.ID))
-						.setDomain(r.get(DOMAIN.ID) != null 
-							? DomainFiller.buildDomain(r) 
-							: new Domain().setId(r.getValue(REGISTRY.DOMAIN)))
-						.setDocument(r.getValue(REGISTRY.DOCUMENT))
-						.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
-						.setDocumentCountry(Country.safeValueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)) )
-						.setName(r.getValue(REGISTRY.NAME))
-						.setAlias(r.getValue(REGISTRY.ALIAS))
-						.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)))
-						.setNationality(Country.safeValueOf(r.getValue(REGISTRY.NATIONALITY)) )
-						.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL))))
-					.setActive(r.getValue(TASK_HOLDER.ACTIVE) == 1)
-					.setCostProfile(r.getValue(TASK_HOLDER.COST_PROFILE))
-					.setTaskHolderType(TaskHolderType.valueOf(r.getValue(TASK_HOLDER.TYPE)))
-					.setUserId(r.getValue(TASK_HOLDER.USER_ID));
-		}
-	}
-	
 	public static class FullTaskFiller implements Function<TaskRecord, Task> {
 		@Override
 		public Task apply(TaskRecord r) {

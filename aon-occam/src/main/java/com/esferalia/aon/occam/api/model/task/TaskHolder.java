@@ -7,33 +7,23 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 @SuppressWarnings("serial")
 public class TaskHolder extends Registry implements Serializable{
 	
-	private TaskHolderType taskHolderType;
+	private TaskHolderType type;
 	private Boolean active;
 	private Integer userId;
 	private Integer costProfile;
 	
 	public TaskHolder() {}
 	
-	public TaskHolder setRegistryData(Registry registry) {
-		this.setId(registry.getId());
-		this.setDomain(registry.getDomain());
-		this.setDocument(registry.getDocument());
-		this.setDocumentType(registry.getDocumentType());
-		this.setDocumentCountry(registry.getDocumentCountry());
-		this.setName(registry.getName());
-		this.setAlias(registry.getAlias());
-		this.setLegalPerson(registry.isLegalPerson());
-		this.setNationality(registry.getNationality());
-		this.setSecurityLevel(registry.getSecurityLevel());
-		return this;
+	public TaskHolder copy(Registry registry) {
+		return super.copy( registry, this);
 	}
 	
-	public TaskHolderType getTaskHolderType() {
-		return taskHolderType;
+	public TaskHolderType getType() {
+		return type;
 	}
 
-	public TaskHolder setTaskHolderType(TaskHolderType taskHolderType) {
-		this.taskHolderType = taskHolderType;
+	public TaskHolder setType(TaskHolderType type) {
+		this.type = type;
 		return this;
 	}
 
@@ -66,5 +56,11 @@ public class TaskHolder extends Registry implements Serializable{
 	public TaskHolder setCostProfile(Integer costProfile) {
 		this.costProfile = costProfile;
 		return this;
+	}
+	
+	public boolean isEmpty() {
+		return super.isEmpty() && getType() == null
+			&& isActive() == null && getUserId() == null 
+			&& getCostProfile() == null;
 	}
 }

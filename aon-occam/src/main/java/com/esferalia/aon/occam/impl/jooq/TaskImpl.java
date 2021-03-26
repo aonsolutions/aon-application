@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
 
 public class TaskImpl implements ITask {
 	
@@ -215,6 +216,12 @@ public class TaskImpl implements ITask {
 	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.getTaskHolder(ctx, filter));
+	}
+
+	@Override
+	public TaskHolder save(AONContext ctx, TaskHolder taskHolder) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskHolderDAO.save(ctx, taskHolder));
 	}
 	
 	@Override

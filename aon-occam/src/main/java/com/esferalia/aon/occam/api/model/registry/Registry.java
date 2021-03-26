@@ -208,4 +208,11 @@ public class Registry implements Serializable{
 		}
 		return child;
 	}
+	
+	public boolean isEmpty() {
+		return getId() == null && getDomain() == null
+			&& getDocument() == null && getDocumentType() == null
+			&& getDocumentCountry() == null && getName() == null
+			&& getAlias() == null;
+	}
 }

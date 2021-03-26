@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryFull;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 public class Asserts {
 	
@@ -124,6 +125,15 @@ public class Asserts {
 		assertEquals("Scope",expected.getScope(),actual.getScope());
 		assertEquals("PurchaseValuated",expected.isPurchaseValuated(),actual.isPurchaseValuated());
 		assertEquals("Account",expected.getAccount(),actual.getAccount());
+	}
+	
+	public static void assertEqualsTaskHolder(TaskHolder expected, TaskHolder actual) {
+		assertEqualsNulls( "TaskHolder", expected, actual);
+		assertEqualsRegistry(expected, actual);
+		assertEquals("Type",expected.getType(), actual.getType());
+		assertEquals("Active",expected.isActive(),actual.isActive());
+		assertEquals("UserId",expected.getUserId(),actual.getUserId());
+		assertEquals("CostProfile",expected.getCostProfile(),actual.getCostProfile());
 	}
 
 	public static void assertEqualsRegistryMedia (RegistryMedia expected, RegistryMedia actual) {
