@@ -185,6 +185,7 @@ import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryCostsFactory;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryDeductionsFactory;
+import com.esferalia.aon.payroll.SalaryEmbargo;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.SalaryPaymentsFactory;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
@@ -4134,6 +4135,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					@Override
 					public Collection<SalaryDeduction> getDeductionS() throws SalaryException {
 						return getSalaryDeductions();
+					}
+					
+					@Override
+					public Collection<SalaryEmbargo> getEmbargoS() throws SalaryException {
+						return getSalaryEmbargos();
 					}
 				};
 				// default ones
