@@ -104,18 +104,18 @@ export class AonCtaList extends AonElement {
   getOptions(res) {
     return [
       {
-        name: "Cert. Corriente",
-        icon: "print",
+        name: "Certificado TGSS",
+        aonIcon: "aon_seg_social",
         fn: (el) => this.getCertCorriente(res, el),
       },
       {
         name: "Trabajadores en alta",
-        icon: "print",
+        aonIcon: "aon_seg_social",
         fn: (el) => this.getReportAffiliateInAlta(res, el),
       },
       {
-        name: "Trabajadores con mov. previos",
-        icon: "print",
+        name: "Movimientos previos",
+        aonIcon: "aon_seg_social",
         fn: (el) => this.getReportAffiliateInMovPrev(res, el),
       },
     ];

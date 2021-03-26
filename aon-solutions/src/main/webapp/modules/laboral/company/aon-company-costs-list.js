@@ -88,7 +88,7 @@ export class AonCompanyCostsList extends AonElement {
         new Date(now.getFullYear(), now.getMonth() - 1, 1)
       ),
       endDate: formatDateOrigin(
-        new Date(now.getFullYear(), now.getMonth() - 1 + 1, 0)
+        new Date(now.getFullYear(), now.getMonth() + 1, 0)
       ),
     };
   }
@@ -237,19 +237,30 @@ export class AonCompanyCostsList extends AonElement {
     div.style.height = "100%";
     div.id = id;
     this.appendChild(div);
+    let title = null;
     const resp = await this.getData();
     if(resp && resp.length > 0 ){
+      const startDateText = geMonthYear(new Date(this.filter.startDate)) ;
+      const endDateText = geMonthYear(new Date(this.filter.endDate)) ;
+      if(startDateText === endDateText){
+        title = startDateText;
+      } else {
+        title = `${startDateText} - ${endDateText}`;
+      }
+  
       let sumRaw = resp.reduce((sum,key)=>sum + parseFloat(key.raw), 0);
       let sumSS = resp.reduce((sum,key)=>sum + parseFloat(key.totalSS), 0); 
       let data = [
-        ['Bruto',  sumRaw],
-        ['SS', sumSS]
+        ['Bruto', sumRaw],
+        ['Seg social', sumSS]
       ];
-      console.log(data);
+
       let options = {
-        title: 'COSTES DE EMPRESA'
+        title
       }
       pieChar(div, data, options);
+    } else {
+      // div.innerHTML = "SIN DATOS";
     }
 
   }
