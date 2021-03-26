@@ -35,6 +35,7 @@ import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
@@ -51,18 +52,23 @@ import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
-import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -841,6 +847,34 @@ public class TaskDAO {
 				.execute();
 	}
 
+	protected static class TaskHolderFiller implements Function<Record, TaskHolder> {
+		@Override
+		public TaskHolder apply(Record r) {
+			return buildTaskHolder(r);
+		}
+
+		public static TaskHolder buildTaskHolder(Record r) {
+			return new TaskHolder()
+					.copy( new Registry() 
+						.setId(r.getValue(REGISTRY.ID))
+						.setDomain(r.get(DOMAIN.ID) != null 
+							? DomainFiller.buildDomain(r) 
+							: new Domain().setId(r.getValue(REGISTRY.DOMAIN)))
+						.setDocument(r.getValue(REGISTRY.DOCUMENT))
+						.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
+						.setDocumentCountry(Country.safeValueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)) )
+						.setName(r.getValue(REGISTRY.NAME))
+						.setAlias(r.getValue(REGISTRY.ALIAS))
+						.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)))
+						.setNationality(Country.safeValueOf(r.getValue(REGISTRY.NATIONALITY)) )
+						.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL))))
+					.setActive(r.getValue(TASK_HOLDER.ACTIVE) == 1)
+					.setCostProfile(r.getValue(TASK_HOLDER.COST_PROFILE))
+					.setType(TaskHolderType.valueOf(r.getValue(TASK_HOLDER.TYPE)))
+					.setUserId(r.getValue(TASK_HOLDER.USER_ID));
+		}
+	}
+	
 	public static class FullTaskFiller implements Function<TaskRecord, Task> {
 		@Override
 		public Task apply(TaskRecord r) {
