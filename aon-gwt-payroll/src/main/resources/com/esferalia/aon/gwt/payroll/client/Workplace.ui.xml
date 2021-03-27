@@ -9,6 +9,8 @@
 			min-width: 600px;
 			max-width: 700px;
 			padding: 10px;
+			margin: auto;
+			margin-top: 60px;
 		}
 		
 		.widthAll{
@@ -71,6 +73,10 @@
 			font-weight: bold !important;
 		}
 		
+		.mt-20{
+			margin-top: 20px;
+		}
+		
 	</ui:style>
 	
 	<g:VerticalPanel styleName="{style.container}">
@@ -94,7 +100,7 @@
 		    </g:VerticalPanel>
 	   	</g:HTMLPanel>
 	   	
-	   	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexCenter}" debugId="activityHTMLPanel">
+	   	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexCenter} {style.mt-20}" debugId="activityHTMLPanel">
 	   		<g:VerticalPanel styleName="{style.styleBorder}">
 	    		<g:Label styleName='{style.tittle}'>Datos Laborables</g:Label>
 		    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">

@@ -8,6 +8,7 @@
 		.container{
 			min-width: 600px;
 			padding: 10px;
+			margin: auto;
 		}
 		
 		.widthAll{
@@ -87,6 +88,10 @@
 			min-width: 50px;
 		}
 		
+		.mt20{
+			margin-top: 20px;
+		}
+		
 	</ui:style>
 
 	<g:VerticalPanel styleName="{style.container}">
@@ -147,7 +152,7 @@
 		    </g:VerticalPanel>
 	   	</g:HTMLPanel>
 	   	
-	   	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexCenter}" debugId="otherDataHTMLPanel">
+	   	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.mt20} {style.flexCenter}" debugId="otherDataHTMLPanel">
 	   		<g:VerticalPanel styleName="{style.styleBorder}">
 	    		<g:Label styleName='{style.tittle}'>Otros datos</g:Label>
 		    	<g:HTMLPanel ui:field="otherDataDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
