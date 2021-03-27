@@ -407,37 +407,86 @@ public class JooqEnterprise {
 		
 		// --------- ENTERPRISE DATA TABLE
 		
-		dslContext.update(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getCostsModel())
-			.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getCostsModelId()))
-			.execute();
+		if(null != enterpriseInfo.getCostsModelId())
+			dslContext.update(ENTERPRISE_DATA)
+				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getCostsModel())
+				.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getCostsModelId()))
+				.execute();
+		else
+			dslContext.insertInto(ENTERPRISE_DATA)
+				.set(ENTERPRISE_DATA.DOMAIN, enterpriseInfo.getDomainId())
+				.set(ENTERPRISE_DATA.ENTERPRISE, enterpriseInfo.getEnterpriseId())
+				.set(ENTERPRISE_DATA.NAME, "PAY_REPORT_enterpriseSalary_PAY")
+				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getCostsModel())
+				.execute();
 		
-		dslContext.update(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetModel())
-			.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetModelId()))
-			.execute();
+		if(null != enterpriseInfo.getPaysheetModelId())
+			dslContext.update(ENTERPRISE_DATA)
+				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetModel())
+				.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetModelId()))
+				.execute();
+		else
+			dslContext.insertInto(ENTERPRISE_DATA)
+				.set(ENTERPRISE_DATA.DOMAIN, enterpriseInfo.getDomainId())
+				.set(ENTERPRISE_DATA.ENTERPRISE, enterpriseInfo.getEnterpriseId())
+				.set(ENTERPRISE_DATA.NAME, "PAY_REPORT_salary_PAY")
+				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetModel())
+				.execute();
 		
-		dslContext.update(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetModelDraft())
-			.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetModeDraftlId()))
-			.execute();
+		if(null != enterpriseInfo.getPaysheetModeDraftlId())
+			dslContext.update(ENTERPRISE_DATA)
+				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetModelDraft())
+				.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetModeDraftlId()))
+				.execute();
+		else
+			dslContext.insertInto(ENTERPRISE_DATA)
+				.set(ENTERPRISE_DATA.DOMAIN, enterpriseInfo.getDomainId())
+				.set(ENTERPRISE_DATA.ENTERPRISE, enterpriseInfo.getEnterpriseId())
+				.set(ENTERPRISE_DATA.NAME, "PAY_REPORT_salaryDraft_PAY")
+				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetModelDraft())
+				.execute();
 		
-		dslContext.update(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetSendType())
-			.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetSendTypeId()))
-			.execute();
+		if(null != enterpriseInfo.getPaysheetSendTypeId())
+			dslContext.update(ENTERPRISE_DATA)
+				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetSendType())
+				.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetSendTypeId()))
+				.execute();
+		else
+			dslContext.insertInto(ENTERPRISE_DATA)
+				.set(ENTERPRISE_DATA.DOMAIN, enterpriseInfo.getDomainId())
+				.set(ENTERPRISE_DATA.ENTERPRISE, enterpriseInfo.getEnterpriseId())
+				.set(ENTERPRISE_DATA.NAME, "PAY_salarySendingMethod_PAY")
+				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetSendType())
+				.execute();
 		
 		if(null != enterpriseInfo.getPaysheetSendType()) {
 			if("EMAIL" == enterpriseInfo.getPaysheetSendType() || enterpriseInfo.getPaysheetSendType().equals("EMAIL"))
-				dslContext.update(ENTERPRISE_DATA)
-					.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetEmail())
+				if(null != enterpriseInfo.getPaysheetEmailId())
+					dslContext.update(ENTERPRISE_DATA)
+						.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetEmail())
+						.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetEmailId()))
+						.execute();
+				else
+					dslContext.insertInto(ENTERPRISE_DATA)
+						.set(ENTERPRISE_DATA.DOMAIN, enterpriseInfo.getDomainId())
+						.set(ENTERPRISE_DATA.ENTERPRISE, enterpriseInfo.getEnterpriseId())
+						.set(ENTERPRISE_DATA.NAME, "PAY_salarySending_email_PAY")
+						.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetEmail())
+						.execute();
+				
+			else
+				if(null != enterpriseInfo.getPaysheetEmailId())
+					dslContext.update(ENTERPRISE_DATA)
+					.set(ENTERPRISE_DATA.EXPRESSION, (String) null)
 					.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetEmailId()))
 					.execute();
-			else
-				dslContext.update(ENTERPRISE_DATA)
-				.set(ENTERPRISE_DATA.EXPRESSION, (String) null)
-				.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetEmailId()))
-				.execute();
+				else
+					dslContext.insertInto(ENTERPRISE_DATA)
+						.set(ENTERPRISE_DATA.DOMAIN, enterpriseInfo.getDomainId())
+						.set(ENTERPRISE_DATA.ENTERPRISE, enterpriseInfo.getEnterpriseId())
+						.set(ENTERPRISE_DATA.NAME, "PAY_salarySending_email_PAY")
+						.set(ENTERPRISE_DATA.EXPRESSION, (String) null)
+						.execute();
 		}
 		
 		dslContext.delete(ENTERPRISE_DATA)
