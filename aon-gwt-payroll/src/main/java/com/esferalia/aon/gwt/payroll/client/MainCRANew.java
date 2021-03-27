@@ -660,7 +660,8 @@ public class MainCRANew extends MainEntryPoint {
 					initEnterpriseSB();
 					setInitialLBAndCBSelected();
 					peddingCCCsCB.setValue(true, true);
-					setTableHeights();			
+					setTableHeights();		
+					initCCCsTable();
 				}, 
 				f -> {}
 		);
