@@ -70,13 +70,34 @@
 			font-weight: bold;
 			color: #be0000;
 		}
+		
+		.footerToolbar{
+			display: flex;
+		    align-items: center;
+		    justify-content: space-between;
+		    padding: 5px;
+		    border-top: 1px solid;
+			padding-bottom: 0;
+		}
+		
+		.footerOptionsToolbar{
+			display: flex;
+		    align-items: center;
+		}
+		
+		.cmd_btn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
+		}
 	
 	</ui:style>
 
-	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexCenter}" debugId="activityHTMLPanel">
+	<g:HTMLPanel styleName="{style.widthAll} {style.flexCenter}" debugId="activityHTMLPanel">
    		<g:VerticalPanel styleName="{style.styleBorder}">
     	<g:Label styleName='{style.tittle}'>Cuentas de cotización</g:Label>
-	    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll}" debugId="paymetDialogHTMLPanel">
+	    	<g:HTMLPanel styleName="{style.widthAll}" debugId="paymetDialogHTMLPanel">
 	    		<g:VerticalPanel styleName="{style.container}">
 	    			<g:Grid ui:field="cccDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
 	    			<g:HTMLPanel>
@@ -85,6 +106,9 @@
 		    		<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollStyle}">
 		    			<g:Grid ui:field="cccDataTable"></g:Grid>
 		    		</g:ScrollPanel>
+		    		<g:HTMLPanel styleName="{style.footerToolbar}">
+		    			<g:HTMLPanel styleName="{style.footerOptionsToolbar}" ui:field="footerOptionsToolbar"></g:HTMLPanel>
+		    		</g:HTMLPanel>
 	    		</g:VerticalPanel>
 	    	</g:HTMLPanel>
 	    </g:VerticalPanel>

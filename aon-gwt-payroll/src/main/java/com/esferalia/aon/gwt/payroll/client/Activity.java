@@ -26,6 +26,11 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class Activity extends ResizeComposite {
 
 	private class CCCWidgetImpl extends CCC {
+		
+		@Override
+		protected void onInsertRow() {
+			Activity.this.onInsertRow();
+		}
 
 		@Override
 		protected void onInsertRows() {
@@ -143,6 +148,7 @@ public abstract class Activity extends ResizeComposite {
 	public abstract void onActivityEndDateChange();
 	public abstract void onActivityActiveChange();
 	
+	public abstract void onInsertRow();
 	public abstract void onInsertRows();
 	public abstract void onDeleteCCC(Integer cccId);
 	public abstract void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account, String province, String provinceCode);

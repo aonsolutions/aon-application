@@ -9,19 +9,22 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainCCC extends MainEntryPoint{
 	
 	private class CCCWidgetImpl extends CCC {
 
+		@Override
+		protected void onInsertRow() {}
+		
 		@Override
 		protected void onInsertRows() {
 			for(CCCInfo cccInfo : mainCCCObject.getCCCs()) {
@@ -64,21 +67,23 @@ public class MainCCC extends MainEntryPoint{
 
 	interface MyStyle extends CssResource {
 		String container();
+		String widthAll();
 	}
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	
+	@UiField
+	HTMLPanel centerContainer;
+	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
 	private MainCCCObject mainCCCObject;
-	private Integer newId;
 	
 	private CCC cccWidget;
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton accept;
-	private AonToolbarButton newCCC;
 	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
@@ -93,10 +98,11 @@ public class MainCCC extends MainEntryPoint{
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
-		dockLayoutPanel.add(cccWidget);
 		dockLayoutPanel.addStyleName(style.container());
 		
-		this.newId = -1;
+		centerContainer.add(cccWidget);
+		centerContainer.addStyleName(style.widthAll());
+		centerContainer.getElement().getStyle().setMarginTop(40, Unit.PX);
 	}
 	
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
@@ -114,23 +120,9 @@ public class MainCCC extends MainEntryPoint{
 		
 		AonToolbar toolbar = new AonToolbar("C" + String.valueOf("\u00F3") + "digo Cuentas Cotizaci" + String.valueOf("\u00F3") + "n");
 
-		newCCC = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
-		newCCC.setAccessKey('N');
-		newCCC.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onNewCCC(event);
-			}
-		});
-		toolbar.add(newCCC);
-		
 		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		accept.setAccessKey('G');
-		accept.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAccept(event);
-			}
+		accept.addClickHandler(e -> {
+			onAccept(e);
 		});
 		toolbar.add(accept);
 
@@ -143,16 +135,6 @@ public class MainCCC extends MainEntryPoint{
 			cccWidget.resetPreview();
 			cccWidget.onInsertRows();
 		}, f -> {});
-	}
-	
-	private void onNewCCC(ClickEvent event) {
-		if(0 != cccWidget.getRowCount()) {
-			Label firstGeozone = (Label) cccWidget.getWidget(0, 3);
-			if(null != firstGeozone && "" != firstGeozone.getText()) {
-				this.newId = cccWidget.insertNewRow(this.newId);
-			}
-		}else
-			this.newId = cccWidget.insertNewRow(this.newId);
 	}
 
 }

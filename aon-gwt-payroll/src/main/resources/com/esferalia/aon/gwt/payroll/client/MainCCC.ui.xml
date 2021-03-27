@@ -6,13 +6,20 @@
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainCCC.MyStyle">
-		<!-- UI STYLES -->	
 		.container{
 			margin: 0 10px;
 		}
+		
+		.widthAll{
+			width: 100%;
+		}
 	</ui:style>
 
-	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX" />
+	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
+		<g:center>
+			<g:HTMLPanel ui:field="centerContainer"></g:HTMLPanel>
+		</g:center>
+	</g:DockLayoutPanel>
 	
 </ui:UiBinder> 
 

@@ -13,9 +13,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -23,9 +24,9 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class ActivityDraft extends Composite{
 
@@ -54,6 +55,11 @@ public class ActivityDraft extends Composite{
 		@Override
 		public void onActivityActiveChange() {
 			activityDraftObject.setActivityActive(activityActive.getValue());
+		}
+		
+		@Override
+		public void onInsertRow() {
+			activity.hideActivityColumn();
 		}
 		
 		@Override
@@ -104,13 +110,12 @@ public class ActivityDraft extends Composite{
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
 	private ActivityDraftObject activityDraftObject;
-	private Integer newId;
 	
 	private Activity activity;
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton accept;
-	private AonToolbarButton newCCC;
+	private AonToolbarButton checkUpdateCert;
 	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
@@ -125,6 +130,7 @@ public class ActivityDraft extends Composite{
 		dockLayoutPanel.addStyleName(style.container());
 		
 		centerContainer.add(activity);
+		centerContainer.getElement().getStyle().setMarginTop(40, Unit.PX);
 		
 	}
 	
@@ -132,8 +138,6 @@ public class ActivityDraft extends Composite{
 
 	public void setActivityDraftObject(ActivityDraftObject activityDraftObject) {
 		this.activityDraftObject = activityDraftObject;
-		this.newId = -1;
-		
 		initializeActivity();
 	}
 	
@@ -172,30 +176,22 @@ public class ActivityDraft extends Composite{
 		
 		AonToolbar toolbar = new AonToolbar("Actividad");
 
-		newCCC = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
-		newCCC.setAccessKey('N');
-		newCCC.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onNewCCC(event);
-			}
-		});
-		toolbar.add(newCCC);
-		
 		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		accept.setAccessKey('G');
-		accept.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAccept(event);
-			}
+		accept.addClickHandler(e -> {
+			onAccept(e);
 		});
 		toolbar.add(accept);
+		
+		checkUpdateCert = new AonToolbarButton("Cert. de estar al corriente con TGSS", AON.CSS.aonIconTgss() );
+		checkUpdateCert.addClickHandler(e -> {
+			onCheckUpdateCert(e);
+		});
+		toolbar.add(checkUpdateCert);
 
 		return toolbar;
 
 	}
-	
+
 	private void onAccept(ClickEvent event) {
 		if(checkIfSaveIsPossible()){
 			Map<Integer, CCCInfo> deleteCCCs = activityDraftObject.getDeleteCCCs();
@@ -246,7 +242,6 @@ public class ActivityDraft extends Composite{
 								fillActivityInfo();
 								activity.cccWidget.resetPreview();
 								activity.onInsertRows();
-								
 							}, t -> {}
 						);
 				},
@@ -261,16 +256,28 @@ public class ActivityDraft extends Composite{
 			return false;
 	}
 	
-	private void onNewCCC(ClickEvent event) {
-		if(0 != activity.cccWidget.getRowCount()) {
-			Label firstGeozone = (Label) activity.cccWidget.getWidget(0, 3);
-			if(null != firstGeozone && "" != firstGeozone.getText()) {
-				this.newId = activity.cccWidget.insertNewRow(this.newId);
-			}
-		}else
-			this.newId = activity.cccWidget.insertNewRow(this.newId);
+	private void onCheckUpdateCert(ClickEvent e) {
+		submitForm(0);
+	}
+	
+	private void submitForm(int type) {
+		Pair<String, String> completeCCC = activityDraftObject.getPrincipalAccount();
 		
-		activity.hideActivityColumn();
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", GWT.getModuleBaseURL() + "sistema_red_ccc");
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+		StringBuffer requestDataBuffer = new StringBuffer();
+
+		requestDataBuffer
+		.append("domainName" + "=" + Wnd.getCurrentDomainNameURL())
+		.append("&userLogin" + "=" + Wnd.getCurrentUser())
+		.append("&type" + "=" + type)
+		.append("&regime" + "=" + completeCCC.getKey())
+		.append("&ccc" + "=" + completeCCC.getValue())
+		;
+		
+		xhr.send(requestDataBuffer.toString());
 	}
 
 }

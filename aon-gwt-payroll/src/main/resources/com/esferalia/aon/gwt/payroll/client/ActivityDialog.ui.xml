@@ -25,7 +25,6 @@
 	</ui:Style>
 
 	<g:VerticalPanel styleName="{style.widthAll} {style.heightAll} {style.container}"> 
-		<g:HTMLPanel ui:field="north" styleName="{style.widthAll} {style.heightAll}"></g:HTMLPanel>
 		<a:Activity ui:field="activity"/>
 		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
 	</g:VerticalPanel>

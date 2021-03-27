@@ -10,7 +10,9 @@ import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -28,10 +30,12 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public abstract class CCC extends ResizeComposite {
 
@@ -40,6 +44,55 @@ public abstract class CCC extends ResizeComposite {
 	private static CCCDraftUiBinder uiBinder = GWT.create(CCCDraftUiBinder.class);
 
 	interface CCCDraftUiBinder extends UiBinder<Widget, CCC> {}
+	
+	// ----------------------------------------------- ScheduledCommand ---------------------------------------------
+	
+	class EmployeesWorkingCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			submitForm(1);
+		}
+	}
+	
+	class EmployeePrevMovCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			submitForm(2);
+		}
+	}
+	
+	class IDCCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			submitForm(3);
+		}
+	}
+	
+	class AddTgssContextMenu extends ContextMenu {
+				
+		private MenuItem employeesWorking = null;
+		private MenuItem employeePrevMov = null;
+		private MenuItem idc = null;
+		
+		public AddTgssContextMenu() {
+			
+			employeesWorking = addItem("Trabajadores en situacion de alta", new EmployeesWorkingCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			employeesWorking.ensureDebugId("employeesWorking");
+			
+			employeePrevMov = addItem("Movimientos previos de trabajadores", new EmployeePrevMovCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			employeePrevMov.ensureDebugId("employeePrevMov");
+			
+			idc = addItem("IDC", new IDCCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			idc.ensureDebugId("idc");
+			
+		}
+	}
 
 	// -------------------------------------------------- UiFields --------------------------------------------------
 
@@ -51,6 +104,7 @@ public abstract class CCC extends ResizeComposite {
 		String headerStyle();
 		String warningColor();
 		String widthAll();
+		String cmd_btn();
 	}
 	
 	@UiField
@@ -62,13 +116,21 @@ public abstract class CCC extends ResizeComposite {
 	@UiField
 	Grid cccDataTable;
 	
+	@UiField
+	HTMLPanel footerOptionsToolbar;
+	
+	private AddTgssContextMenu contextMenu;
 	private Integer newId = -1;
+	private String regime;
+	private String ccc;
 	
 	// --------------------------------------------------	 CONSTRUCTOR	--------------------------------------------------------
 
 	public CCC() {
 		initWidget(uiBinder.createAndBindUi(this));
+		initFooterOptionsToolbar();
 		initPreview();
+		contextMenu = new AddTgssContextMenu();
 	}
 	
 	// --------------------------------------------------	   PREVIEW		--------------------------------------------------------
@@ -250,6 +312,9 @@ public abstract class CCC extends ResizeComposite {
 			}
 		});
 		
+		HTMLPanel buttonsPanel = new HTMLPanel("");
+		buttonsPanel.addStyleName(style.flexEvenly());
+		
 		AonTableButton delete = new AonTableButton("Eliminar CCC", AON.CSS.aonIconDelete());
 		delete.addClickHandler(new ClickHandler() {
 			@Override
@@ -265,12 +330,23 @@ public abstract class CCC extends ResizeComposite {
 				}
 			}
 		});
+		buttonsPanel.add(delete);
 	
+		AonTableButton tgssMenu = new AonTableButton("TGSS", AON.CSS.aonIconMoreVertical());
+		tgssMenu.addClickHandler(e -> {
+			this.regime = cccInfo.getCccRegimeCode();
+			this.ccc = cccInfo.getCcc();
+			NativeEvent nativeEvent = e.getNativeEvent();
+			contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+			contextMenu.show();
+		});
+		buttonsPanel.add(tgssMenu);
+		
 		cccDataTable.setWidget(row, 0, activitiesLB);
 		cccDataTable.setWidget(row, 1, cccRegimeLB);
 		cccDataTable.setWidget(row, 2, hPanel);
 		cccDataTable.setWidget(row, 3, geozone);
-		cccDataTable.setWidget(row, 4, delete);
+		cccDataTable.setWidget(row, 4, buttonsPanel);
 		
 	}
 	
@@ -401,6 +477,8 @@ public abstract class CCC extends ResizeComposite {
 		if(null != getActivities() && getActivities().size() == 1)
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), activitiesLB);
 		
+		onInsertRow();
+		
 		return newId;
 	}
 	
@@ -510,6 +588,8 @@ public abstract class CCC extends ResizeComposite {
 
 	// --------------------------------------------------	   ABSTRACT METHODS		--------------------------------------------------------
 	
+	protected abstract void onInsertRow();
+	
 	protected abstract void onInsertRows();
 
 	protected abstract void onDeleteCCC(Integer cccId);
@@ -518,4 +598,44 @@ public abstract class CCC extends ResizeComposite {
 
 	protected abstract Set<Entry<Integer, String>> getActivities();	
 
+	// --------------------------------------------------	   FOOTER PANEL		--------------------------------------------------------
+	
+	private void initFooterOptionsToolbar() {
+		footerOptionsToolbar.clear();
+		
+		AonTableButton newCCCBtn = new AonTableButton("Nuevo CCC",  AON.CSS.aonIconAdd());
+		newCCCBtn.addClickHandler(e -> {
+			onAddNewCCC(e);
+		});
+		
+		footerOptionsToolbar.add(newCCCBtn);
+	}
+
+	private void onAddNewCCC(ClickEvent e) {
+		if(0 != cccDataTable.getRowCount()) {
+			Label firstGeozone = (Label) cccDataTable.getWidget(0, 3);
+			if(null != firstGeozone && "" != firstGeozone.getText()) {
+				this.newId = insertNewRow(this.newId);
+			}
+		}else
+			this.newId = insertNewRow(this.newId);
+	}
+	
+	private void submitForm(int type) {
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", GWT.getModuleBaseURL() + "sistema_red_ccc");
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+		StringBuffer requestDataBuffer = new StringBuffer();
+
+		requestDataBuffer
+		.append("domainName" + "=" + Wnd.getCurrentDomainNameURL())
+		.append("&userLogin" + "=" + Wnd.getCurrentUser())
+		.append("&type" + "=" + type)
+		.append("&regime" + "=" + this.regime)
+		.append("&ccc" + "=" + this.ccc)
+		;
+		
+		xhr.send(requestDataBuffer.toString());
+	}
 }

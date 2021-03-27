@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ActivityDraftObject extends AbstractDraftObject {
@@ -149,6 +150,24 @@ public class ActivityDraftObject extends AbstractDraftObject {
 	
 	public void setActivityActive(Boolean active) {
 		this.activityInfo.setActive(active);
+	}
+
+	public Pair<String, String> getPrincipalAccount() {
+		Pair<String, String> completeCCC = null;
+		for(CCCInfo cccInfo : activityInfo.getCccs().values()) {
+			if(cccInfo.getType() == (byte)0) {
+				completeCCC = new Pair<String, String>(cccInfo.getCccRegimeCode(), cccInfo.getCcc());
+			}
+		}
+		
+		// If null, get first
+		if(null == completeCCC) {
+			ArrayList<CCCInfo> cccInfoList = new ArrayList<CCCInfo>(activityInfo.getCccs().values());
+			CCCInfo cccInfo = cccInfoList.get(0);
+			completeCCC = new Pair<String, String>(cccInfo.getCccRegimeCode(), cccInfo.getCcc());
+		}
+			
+		return completeCCC;
 	}
 
 }

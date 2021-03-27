@@ -7,8 +7,6 @@ import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -20,7 +18,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -54,6 +51,11 @@ public class ActivityDialog extends AonCustomDialog {
 		}
 		
 		@Override
+		public void onInsertRow() {
+			activity.hideActivityColumn();
+		}
+		
+		@Override
 		public void onInsertRows() {
 			for(CCCInfo cccInfo : activityDialogObject.getCCCs().values()) {
 				this.cccWidget.insertRow(cccInfo);
@@ -67,7 +69,7 @@ public class ActivityDialog extends AonCustomDialog {
 
 		@Override
 		public void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account, String province, String provinceCode) {
-			activityDialogObject.insertCCC(newId, account, cccRegimeCode, account, cccRegime, province, provinceCode, false, false);
+			activityDialogObject.insertCCC(cccId, account, cccRegimeCode, account, cccRegime, province, provinceCode, false, false);
 		}
 
 		@Override
@@ -88,9 +90,6 @@ public class ActivityDialog extends AonCustomDialog {
 
 	interface MyStyle extends CssResource {}
 	
-	@UiField
-	HTMLPanel north;
-	
 	@UiField (provided = true)
 	Activity activity;
 	
@@ -100,10 +99,6 @@ public class ActivityDialog extends AonCustomDialog {
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
 	private ActivityDialogObject activityDialogObject;
-	private Integer newId;
-	
-	private AonToolbar toolbar;
-	private AonToolbarButton newCCC;
 	
 	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
@@ -118,17 +113,12 @@ public class ActivityDialog extends AonCustomDialog {
 		setWidget(binder.createAndBindUi(this));
 		
 		getButtonsPanel();
-		
-		toolbar = getToolbarPanel();
-		north.add(toolbar);
-		north.getElement().getStyle().setHeight(50, Unit.PX);
 	}
 	
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 
 	public void setActivityDialogObject(ActivityDialogObject activityDialogObject) {
 		this.activityDialogObject = activityDialogObject;
-		this.newId = -1;
 		activityDialogObject.getCNAE2009(
 				s -> {
 					activity.activityRegime.setText(activityDialogObject.getActivityRegime());
@@ -147,37 +137,6 @@ public class ActivityDialog extends AonCustomDialog {
 		MultiWordSuggestOracle orclCNAE2009 = (MultiWordSuggestOracle) activity.activityCNAE2009.getSuggestOracle();
 		orclCNAE2009.addAll(cnae2009Suggest);
 		activity.activityCNAE2009.setAutoSelectEnabled(false);
-	}
-	
-	private AonToolbar getToolbarPanel() {
-		
-		AonToolbar toolbar = new AonToolbar("");
-
-		newCCC = new AonToolbarButton( "Nueva CCCC", AON.CSS.aonIconAdd() );
-		newCCC.setAccessKey('N');
-		newCCC.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onNewCCC(event);
-			}
-		});
-		toolbar.add(newCCC);
-
-		return toolbar;
-
-	}
-	
-	private void onNewCCC(ClickEvent event) {
-		if(0 != activity.cccWidget.getRowCount()) {
-			Label firstGeozone = (Label) activity.cccWidget.getWidget(0, 3);
-			if(null != firstGeozone && "" != firstGeozone.getText()) {
-				this.newId = activity.cccWidget.insertNewRow(this.newId);
-			}
-		}else
-			this.newId = activity.cccWidget.insertNewRow(this.newId);
-		
-		activity.hideActivityColumn();
-		
 	}
 	
 	private void getButtonsPanel() {
