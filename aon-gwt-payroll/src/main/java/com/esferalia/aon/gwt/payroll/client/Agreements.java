@@ -431,4 +431,8 @@ public class Agreements extends ResizeComposite implements
 		}
 	}
 
+	public void resetTypeView() {
+		getToolbar().resetTypeView();
+	}
+
 }

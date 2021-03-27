@@ -88,6 +88,12 @@ public class AonAgreementsTreeToolbar extends Composite {
 		return searchTextBox;
 	}
 	
+	public void resetTypeView() {
+		viewAgreementsButton.setTitle("Mostrar todos los convenios");
+		viewAgreementsButton.removeStyleName(AON.CSS.aonIconVisibilityOff());
+		viewAgreementsButton.addStyleName(AON.CSS.aonIconVisibility());
+	}
+	
 	public void addListener(Listener listener) {
 		listeners.add(listener);
 	}

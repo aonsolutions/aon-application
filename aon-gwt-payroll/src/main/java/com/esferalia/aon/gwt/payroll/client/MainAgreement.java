@@ -577,6 +577,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 										@Override
 										public void onSuccess(Void result) {
+											MainAgreement.this.agreements.resetTypeView();
 											MainAgreement.this.agreements.reloadAgreements();
 										}
 									});
@@ -602,6 +603,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 						@Override
 						public void onSuccess(Void result) {
+							MainAgreement.this.agreements.resetTypeView();
 							MainAgreement.this.agreements.reloadAgreements();
 						}
 					});

@@ -17,7 +17,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -413,9 +412,6 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 		String name = pair.getValue();
 		
 		AgreementPayment agreementPayment = AgreementPayment.safeValueOf(normalizeName(name));
-		
-		Window.alert(normalizeName(name) + " -> " + agreementPayment);
-		
 		String suggestName = null == agreementPayment ? "" : agreementPayment.getSuggestName();
 		
 		if(checkBox.getValue()) {
