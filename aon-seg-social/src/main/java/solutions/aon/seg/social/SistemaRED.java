@@ -436,9 +436,29 @@ public class SistemaRED {
 		}
 	}
 	
+	public static byte[] getReportAffiliateInAlta(final byte certificateData[], final String certificatePassword,
+			final String certificateType, String regimen, String ccc) throws SegSocialException {
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return SistemaRED.getReportAffiliateInAlta(certificateInputStream, certificatePassword,
+					certificateType, regimen, ccc);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
 	public static byte[] getReportAffiliateInAlta(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException {
 		return SistemaREDMov.getReportAffiliateInAlta(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
+	}
+	
+	public static byte[] getReportAffiliateInMovPrev(final byte certificateData[], final String certificatePassword,
+			final String certificateType, String regimen, String ccc) throws SegSocialException {
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return SistemaRED.getReportAffiliateInMovPrev(certificateInputStream, certificatePassword,
+					certificateType, regimen, ccc);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
 	}
 	
 	public static byte[] getReportAffiliateInMovPrev(final InputStream certificateInputStream, final String certificatePassword,

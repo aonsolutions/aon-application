@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.payroll.server;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Date;
@@ -64,26 +62,29 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
 			
 			byte[] dataURI = null;
 			
 			switch (requestType) {
 				case UPDATE_CERT:
-					dataURI = SistemaRED.getUp2DateSS(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc);
+					dataURI = SistemaRED.getUp2DateSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc);
 					break;
 				case WORKING_EMPLOYEE:
-					dataURI = SistemaRED.getReportAffiliateInAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc);
+					dataURI = SistemaRED.getReportAffiliateInAlta(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc);
 					break;
 				case PRE_MOV_EMPLOYEE:
-					dataURI = SistemaRED.getReportAffiliateInMovPrev(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc);
+					dataURI = SistemaRED.getReportAffiliateInMovPrev(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc);
 					break;
 				case IDC:
-					dataURI = SistemaRED.getIDCCCC(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc, new Date());
+					dataURI = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, new Date());
 					break;
 				default:
 					throw new Exception("El tipo introducido es incorrecto.");
 			}
+			
+			// Prepare response
+			response.setContentType("application/pdf");
+			response.setHeader("Content-Disposition", "attachment;filename=" + requestType.getFileName() + ".pdf");
 		
 			ServletOutputStream out = response.getOutputStream();
 			out.write(dataURI);
