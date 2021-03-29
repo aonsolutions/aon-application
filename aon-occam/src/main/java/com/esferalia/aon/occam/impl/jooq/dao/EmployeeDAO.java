@@ -620,7 +620,6 @@ public class EmployeeDAO {
 		dslContext
 		.select()
 		.from(CONTRACT_DEDUCTION)
-		.innerJoin(DEDUCTION_CONCEPT).onKey()
 		.where(CONTRACT_DEDUCTION.CONTRACT.eq(contractRecord.getId()))
 		.and(DSL.condition(endDate == null ).or(CONTRACT_DEDUCTION.START_DATE.le(endDate)))
 		.and(CONTRACT_DEDUCTION.END_DATE.isNull().or(CONTRACT_DEDUCTION.END_DATE.ge(startDate)))
@@ -673,6 +672,7 @@ public class EmployeeDAO {
 			.set(CONTRACT_DEDUCTION.END_DATE, toSql(deduction.getEndDate()))
 			.set(CONTRACT_DEDUCTION.DESCRIPTION, deduction.getDescription())
 			.set(CONTRACT_DEDUCTION.EXPRESSION, deduction.getExpression())
+			.set(CONTRACT_DEDUCTION.TYPE, valueOf(deduction.getType()))
 			.execute()
 			;
 		}
@@ -683,6 +683,12 @@ public class EmployeeDAO {
 		
 	}
 	
+	private static <T extends Enum<?>> Byte valueOf(T t) {
+		if ( t == null )
+			return null;
+		
+		return (byte) t.ordinal();
+	}
 
 	private static boolean filter( Record r ) {
 		try {
