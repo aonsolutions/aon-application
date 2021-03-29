@@ -1647,7 +1647,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
-			syncBonus(conn, domain, user, salaryDraft);
+			//syncBonus(conn, domain, user, salaryDraft);
 			calculateAndSave(conn, salaryDraft);
 			return salaryDraft;
 		} catch (SQLException e) {

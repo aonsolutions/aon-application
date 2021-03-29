@@ -3026,8 +3026,8 @@ public class SalaryDraft extends ResizeComposite
 			@Override
 			public void onCalculateSucces(SalaryDraftObject object) {
 				SalaryDraft.this.onCalculateSucces(object);
-				if ( isCostsVisible() )
-					SalaryDraft.this.salaryDraftObject.synchronize(SalaryDraft.this);
+//				if ( isCostsVisible() )
+//					SalaryDraft.this.salaryDraftObject.synchronize(SalaryDraft.this);
 			}
 			
 			@Override
@@ -3426,8 +3426,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiHandler("costsCheck")
 	void onCostsCheckChange(ValueChangeEvent<Boolean> event) {
 		showCosts();
-		if ( isCostsVisible()) 
-			salaryDraftObject.synchronize(this);
+//		if ( isCostsVisible()) 
+//			salaryDraftObject.synchronize(this);
 	}
 	
 	@UiHandler("saveButton")
