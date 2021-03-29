@@ -159,13 +159,46 @@ public class EmployeesServiceHelper {
 		
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		
-//		Date date = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf)
-//		.stream().map( idc -> idc.getFecha() ).sorted( (d1,d2) -> d2.compareTo(d1 )).findFirst().orElseThrow(DataDoesNotExist::new) ;		
+		byte data [] =  SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+		return Base64.getEncoder().encodeToString(data);
+	}
+
+	public static String getIDCNSS(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId, Date date) throws SQLException, IOException, SegSocialException{
+		
+		Contract contract = 
+		PAYROLL.
+		getContract(domainName, domainId, userLogin, p -> p.getIdProperty().eq(contractId))
+		.orElseThrow(() -> new IOException() );
+		String ccc = contract.getEnterpriseCCC();
+		String naf = contract.getPersonSsNumber();
+		String regime = contract.getSsRegime().getCode();	
+		
+		
+		
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+		
 		
 		byte data [] =  SistemaRED.getIDCNSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
 	}
 
+	public static List<Date> getIDCDates(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId, Date date) throws SQLException, IOException, SegSocialException{
+		
+		Contract contract = 
+		PAYROLL.
+		getContract(domainName, domainId, userLogin, p -> p.getIdProperty().eq(contractId))
+		.orElseThrow(() -> new IOException() );
+		String ccc = contract.getEnterpriseCCC();
+		String naf = contract.getPersonSsNumber();
+		String regime = contract.getSsRegime().getCode();	
+		
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+
+		List<Date> dates = new ArrayList<Date>();
+		Collection<Idc> idcs = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+		idcs.forEach( idc -> dates.add(idc.getFecha() ));
+		return dates;
+	}
 
 
 	public static EmployeeStatus getStatus(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId) throws IOException, SegSocialException{

@@ -257,7 +257,34 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			}
 		});
 	}
+
+	public void downloadIdcPlNss(Date date, Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeIdcPlNss(employee.getId(), date, new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
 	
+	public void getIdcDates(Consumer<List<Date>> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeIdcDates(employee.getId(), null, new AsyncCallback<List<Date>>() {
+			@Override
+			public void onSuccess(List<Date> result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+
+
 	// ------------------------------------------------- Auxiliar Methods (AFI Changes)
 	
 	public Integer getContractId(){

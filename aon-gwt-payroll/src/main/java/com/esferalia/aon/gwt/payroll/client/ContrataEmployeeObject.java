@@ -430,7 +430,7 @@ public class ContrataEmployeeObject {
 	}
 
 	public void downloadIdc(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeIdc(contractData.getContractId(), new Date(), new AsyncCallback<String>() {
+		employeesService.getEmployeeIdcPlNss(contractData.getContractId(), new Date(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);

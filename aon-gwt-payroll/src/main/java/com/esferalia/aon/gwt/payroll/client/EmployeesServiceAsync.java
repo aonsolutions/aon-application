@@ -240,7 +240,11 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getEmployeeTa(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback);
 
 	void getEmployeeIdc(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback);
+
+	void getEmployeeIdcPlNss(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback);
 	
+	void getEmployeeIdcDates(String domain,  String user, Integer contractId, Date date, AsyncCallback<List<Date>> callback);
+
 	void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback);
 
 	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl,

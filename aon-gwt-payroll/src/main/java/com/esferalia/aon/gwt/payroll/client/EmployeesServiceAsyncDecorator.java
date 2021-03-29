@@ -727,6 +727,20 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
+	public void getEmployeeIdcPlNss(String domain, String user, Integer contractId, Date date,
+			AsyncCallback<String> callback) {
+		AON.start();
+		employeesServiceAsync.getEmployeeIdcPlNss(domain, user, contractId, date, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void getEmployeeIdcDates(String domain, String user, Integer contractId, Date date,
+			AsyncCallback<List<Date>> callback) {
+		AON.start();
+		employeesServiceAsync.getEmployeeIdcDates(domain, user, contractId, date, new AsyncCallbackWrapper<List<Date>>(callback));
+	}
+
+	@Override
 	public void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback) {
 		AON.start();
 		employeesServiceAsync.getEmployeeStatus(domain, user, contractId, new AsyncCallbackWrapper<EmployeeStatus>(callback));

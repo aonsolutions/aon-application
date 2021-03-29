@@ -727,6 +727,20 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
+	public String getEmployeeIdcPlNss(String domain, String user,Integer contractId, Date date) {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
+		return null;
+	}
+
+	@Override
+	public List<Date> getEmployeeIdcDates(String domain, String user,Integer contractId, Date date) {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
+		return null;
+	}
+
+	@Override
 	public EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");

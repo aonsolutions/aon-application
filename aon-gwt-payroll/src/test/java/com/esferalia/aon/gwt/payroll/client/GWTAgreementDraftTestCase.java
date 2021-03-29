@@ -565,6 +565,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 						// TODO Auto-generated method stub
 						
 					}
+
+					@Override
+					public void getEmployeeIdcPlNss(String domain, String user, Integer contractId, Date date,
+							AsyncCallback<String> callback) {
+						// TODO Auto-generated method stub
+						
+					}
 					
 					@Override
 					public void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback) {

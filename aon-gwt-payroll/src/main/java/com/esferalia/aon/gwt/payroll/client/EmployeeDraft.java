@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DateListBox;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -340,12 +341,14 @@ public class EmployeeDraft extends Composite {
 	private AonToolbarButton undo;
 	private AonToolbarButton redo;
 	private AonToolbarButton ta;
-	private AonToolbarButton idc;
 	private AonToolbarButton afi;
 	private AonToolbarButton tgss;
+	private AonToolbarButton idc;
+	private AonToolbarButton idcPlNss;
 	private AonToolbarButton closePDF;
 	private AonToolbarButton downloadPDF;
 	private ListBox zoomListBox;
+	private DateListBox idcDateListBox;
 	private MonthListBox idcMonthListBox;
 	private int zoom;
 	
@@ -402,6 +405,24 @@ public class EmployeeDraft extends Composite {
 		idcMonthListBox.ensureDebugId("idcMonthListBox");
 	}
 	
+	private void initializeIdcDateListBox() {
+		idc.setEnabled(false);
+		idc.setVisible(false);
+		employeeDraftObject.getIdcDates(
+		(dates) -> {
+			int count = dates.size();
+			idcDateListBox.setRowCount(count, true);
+			idcDateListBox.setRowData(0, dates);
+			idcDateListBox.setVisibleRange(0, count+1);
+			idcDateListBox.setSelected(count-1, true);
+			idcDateListBox.onResizeDropDownPopup();
+			idc.setEnabled(true);
+			idc.setVisible(true);
+		}, 
+		(error) -> {
+		} );
+	}
+
 	private void initializeUndoRedo() {
 		employeeDraftObject.clearUndoMaganager();
 		undo.setEnabled(employeeDraftObject.canUndo());
@@ -691,14 +712,23 @@ public class EmployeeDraft extends Composite {
 		});
 		toolbar.add(ta);
 		
-		idc = new AonToolbarButton( "Informe de Cotizaci" + String.valueOf("\u00F3") + "n IDC", AON.CSS.aonIconTgssIdc() );
+		idc = new AonToolbarButton( "Informe de Cotizaci\u00F3n-Trab Cuenta Ajena", AON.CSS.aonIconTgssIdc() );
 		idc.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				onIDC(event);
+				onIdc(event);
 			}
 		});
 		toolbar.add(idc);
+
+		idcPlNss = new AonToolbarButton( "Informe de Cotizaci\u00F3n/Periodo iquidaci\u00F3n-NSS", AON.CSS.aonIconTgssIdc() );
+		idcPlNss.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onIdcPlNss(event);
+			}
+		});
+		toolbar.add(idcPlNss);
 		
 		afi = new AonToolbarButton( "Cambios AFI", AON.CSS.aonIconTgssAfi() );
 		afi.addClickHandler(new ClickHandler() {
@@ -740,10 +770,16 @@ public class EmployeeDraft extends Composite {
 		
 		idcMonthListBox = new MonthListBox();
 		idcMonthListBox.addChangeHandler(e -> {
-			showIdc(idcMonthListBox.getSelectedMonth());
+			showIdcPlNss(idcMonthListBox.getSelectedMonth());
 		});
 		toolbar.add(idcMonthListBox);
 		
+		idcDateListBox = new DateListBox();
+		idcDateListBox.addChangeHandler(e -> {
+			showIdc(idcDateListBox.getSelectedDate());
+		});
+		toolbar.add(idcDateListBox);
+
 		downloadPDF = new AonToolbarButton( AON.MSG.download(), AON.CSS.aonIconPdf() );
 		downloadPDF.setAccessKey('D');
 		downloadPDF.addClickHandler(new ClickHandler() {
@@ -787,8 +823,12 @@ public class EmployeeDraft extends Composite {
 		showTa();
 	}
 	
-	private void onIDC(ClickEvent event) {
+	private void onIdc(ClickEvent event) {
 		showIdc();
+	}
+
+	private void onIdcPlNss(ClickEvent event) {
+		showIdcPlNss();
 	}
 
 	private void onAFI(ClickEvent event) {
@@ -862,11 +902,28 @@ public class EmployeeDraft extends Composite {
 	}
 	
 	private void showIdc() {
-		showIdc(DateUtils.getFirstDayOfMonth());
+		showIdc(idcDateListBox.getSelected());
 	}
 
-	private void showIdc( Date month) {
+	private void showIdcPlNss() {
+		showIdcPlNss(DateUtils.getFirstDayOfMonth());
+	}
+
+	private void showIdc( Date date) {
 		employeeDraftObject.downloadIdc( 
+		date,
+		(dataURI) -> {
+				showPdf();
+				idcDateListBox.setVisible(true);
+				idcDateListBox.setSelected(date, true);
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+		}, 
+		(trowable) -> {}
+		);
+	}
+
+	private void showIdcPlNss( Date month) {
+		employeeDraftObject.downloadIdcPlNss( 
 		month,
 		(dataURI) -> {
 				showPdf();
@@ -883,6 +940,7 @@ public class EmployeeDraft extends Composite {
 		tgss.setVisible(false);
 		ta.setVisible(false);
 		idc.setVisible(false);
+		idcPlNss.setVisible(false);
 		undo.setVisible(false);
 		redo.setVisible(false);
 		undoAll.setVisible(false);
@@ -901,11 +959,13 @@ public class EmployeeDraft extends Composite {
 		redo.setVisible(true);
 		undoAll.setVisible(true);
 		ta.setVisible(true);
-		idc.setVisible(true);
+		idcPlNss.setVisible(true);
+		idc.setVisible(idc.isEnabled());
 		
 		zoomListBox.setVisible(false);
 		closePDF.setVisible(false);
 		downloadPDF.setVisible(false);
+		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
 		
 		showWidget(employee);
@@ -966,6 +1026,7 @@ public class EmployeeDraft extends Composite {
 	}
 
 	public void setIdcVisible(boolean visible ) {
-		idc.setVisible(visible);
+		initializeIdcDateListBox();
+		idcPlNss.setVisible(visible);
 	}
 }

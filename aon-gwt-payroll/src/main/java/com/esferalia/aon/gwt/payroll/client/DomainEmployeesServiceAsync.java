@@ -480,7 +480,17 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeIdc(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);;
 
 	}
+
+	public void getEmployeeIdcPlNss(Integer contractId, Date date, AsyncCallback<String> callback) {
+		employeesServiceAsync.getEmployeeIdcPlNss(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);;
+
+	}
 	
+	public void getEmployeeIdcDates(Integer contractId, Date date, AsyncCallback<List<Date>> callback) {
+		employeesServiceAsync.getEmployeeIdcDates(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);;
+
+	}
+
 	public void getEmployeeStatus(Integer contractId, AsyncCallback<EmployeeStatus> callback) {
 		employeesServiceAsync.getEmployeeStatus(getCurrentDomainName(), getCurrentUser(), contractId, callback);
 

@@ -459,7 +459,19 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 			AsyncCallback<String> callback) {
 		failure(callback);		
 	}
+
+	@Override
+	public void getEmployeeIdcPlNss(String domain, String user, Integer contractId, Date date,
+			AsyncCallback<String> callback) {
+		failure(callback);		
+	}
 	
+	@Override
+	public void getEmployeeIdcDates(String domain, String user, Integer contractId, Date date,
+			AsyncCallback<List<Date>> callback) {
+		failure(callback);		
+	}
+
 	@Override
 	public void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback) {
 		failure(callback);				

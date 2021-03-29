@@ -5393,7 +5393,47 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e);
 		}
 	}
+
+	@Override
+	public String getEmployeeIdcPlNss(String domainName, String userLogin, Integer contractId, Date date) {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
+			String base64Pdf =
+			EmployeesServiceHelper.getIDCNSS(connection, domainName, domainId, userLogin, userId, contractId, date)
+			;
+			
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+			
+			stringWriter.flush();		
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+			
+			return dataUri;
+		} catch (SQLException | IOException | SegSocialException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 	
+	@Override
+	public List<Date> getEmployeeIdcDates(String domainName, String userLogin, Integer contractId, Date date) {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
+			return EmployeesServiceHelper.getIDCDates(connection, domainName, domainId, userLogin, userId, contractId, date);
+			
+		} catch (SQLException | IOException | SegSocialException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
 	@Override
 	public EmployeeStatus getEmployeeStatus(String domainName, String userLogin, Integer contractId) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)){
