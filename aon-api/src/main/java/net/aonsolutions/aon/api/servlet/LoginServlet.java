@@ -1,13 +1,9 @@
 package net.aonsolutions.aon.api.servlet;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,17 +18,16 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "LoginServlet", urlPatterns = {"/ms/api/login/*"})
-public class LoginServlet extends HttpServlet{
+public class LoginServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(LoginServlet.class.getName());
 	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp)  {
 		LOGGER.info("Login Servlet - POST METHOD");
 		JSONObject json = Utils.getRequestJSON(req);
-		String username = json.getString("username");
-		String password = json.getString("password");
-
+		String username = json.optString("username");
+		String password = json.optString("password");
 	    Boolean ok = false;
 		Auth auth = new Auth();
 	    if(Utils.isEmail(username)) {
@@ -68,24 +63,21 @@ public class LoginServlet extends HttpServlet{
 	    		}
 	    	}
 		}
-    	JSONObject response = new JSONObject();
+    	JSONObject object = new JSONObject();
 	    if(auth.getUuid() == null) {
 	    	resp.setStatus(401);
-	    	response.put("message", "El Usuario No existe.");
-	    	response.put("type", "error");
+	    	object.put("message", "El Usuario No existe.");
+	    	object.put("type", "error");
     	} else if(!ok) {
 	    	resp.setStatus(401);
-	    	response.put("message", "La Contraseña no coincide.");
-	    	response.put("type", "error");
+	    	object.put("message", "La Contraseña no coincide.");
+	    	object.put("type", "error");
     	} else {
-	    	response.put("session_id", AonToken.build(auth, null));
+    		object.put("session_id", AonToken.build(auth, null));
 	    }
     	resp.setContentType("application/json;charset=UTF-8");
-	    Utils.addCorsHeader(resp);
-    	PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
-    	os.println(response.toString());
-    	os.flush();
-    	os.close();
+
+    	response(req, resp, object);
 	}
 	
 	public static Auth getAuth(String email) {
