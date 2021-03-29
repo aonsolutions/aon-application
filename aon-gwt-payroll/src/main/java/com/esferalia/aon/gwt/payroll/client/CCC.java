@@ -26,8 +26,11 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -35,7 +38,6 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public abstract class CCC extends ResizeComposite {
 
@@ -106,6 +108,9 @@ public abstract class CCC extends ResizeComposite {
 		String widthAll();
 		String cmd_btn();
 	}
+	
+	@UiField
+	HTMLPanel centerContainer;
 	
 	@UiField
 	Grid cccDataTableHeader;
@@ -620,22 +625,30 @@ public abstract class CCC extends ResizeComposite {
 		}else
 			this.newId = insertNewRow(this.newId);
 	}
-	
+
 	private void submitForm(int type) {
-		XMLHttpRequest xhr = XMLHttpRequest.create();
-		xhr.open("POST", GWT.getModuleBaseURL() + "sistema_red_ccc");
-		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-		StringBuffer requestDataBuffer = new StringBuffer();
-
-		requestDataBuffer
-		.append("domainName" + "=" + Wnd.getCurrentDomainNameURL())
-		.append("&userLogin" + "=" + Wnd.getCurrentUser())
-		.append("&type" + "=" + type)
-		.append("&regime" + "=" + this.regime)
-		.append("&ccc" + "=" + this.ccc)
-		;
+		String fileDownloadURL = GWT.getModuleBaseURL() + "sistema_red_ccc";
 		
-		xhr.send(requestDataBuffer.toString());
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(fileDownloadURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden("ccc", this.ccc));
+		flowPanel.add(new Hidden("regime", this.regime));
+		flowPanel.add(new Hidden("type", Integer.toString(type)));
+		flowPanel.add(new Hidden("userLogin", Wnd.getCurrentUser()));
+		flowPanel.add(new Hidden("domainName", Wnd.getCurrentDomainNameURL()));
+		
+		formPanel.add(flowPanel);
+		
+		formPanel.addSubmitCompleteHandler(e1 -> {
+			centerContainer.remove(formPanel);
+		});
+
+		centerContainer.add(formPanel);
+
+		formPanel.submit();
+		
 	}
 }

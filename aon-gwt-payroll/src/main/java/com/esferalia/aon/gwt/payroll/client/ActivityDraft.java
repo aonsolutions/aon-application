@@ -12,8 +12,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog.AonA
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
-import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
-import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
@@ -31,7 +29,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class ActivityDraft extends Composite{
 
@@ -265,26 +262,6 @@ public class ActivityDraft extends Composite{
 		submitForm(0);
 	}
 	
-	private void __submitForm(int type) {
-		Pair<String, String> completeCCC = activityDraftObject.getPrincipalAccount();
-		
-		XMLHttpRequest xhr = XMLHttpRequest.create();
-		xhr.open("POST", GWT.getModuleBaseURL() + "sistema_red_ccc");
-		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-		StringBuffer requestDataBuffer = new StringBuffer();
-
-		requestDataBuffer
-		.append("domainName" + "=" + Wnd.getCurrentDomainNameURL())
-		.append("&userLogin" + "=" + Wnd.getCurrentUser())
-		.append("&type" + "=" + type)
-		.append("&regime" + "=" + completeCCC.getKey())
-		.append("&ccc" + "=" + completeCCC.getValue())
-		;
-		
-		xhr.send(requestDataBuffer.toString());
-	}
-	
 	private void submitForm(int type) {
 		Pair<String, String> completeCCC = activityDraftObject.getPrincipalAccount();
 		
@@ -313,5 +290,4 @@ public class ActivityDraft extends Composite{
 		
 	}
 	
-
 }
