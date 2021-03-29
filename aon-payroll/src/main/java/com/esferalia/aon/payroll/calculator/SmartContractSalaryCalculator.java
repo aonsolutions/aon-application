@@ -2,7 +2,6 @@ package com.esferalia.aon.payroll.calculator;
 
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
@@ -62,6 +61,7 @@ import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -504,6 +504,21 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	// IContractSalaryCalculatorContext.IListener -----------------------------
 	
 	// ------------------------------------------------------------------------
+
+	@Override
+	protected void resolvePayment(IContractPayment contractPayment, Date start, Date end, Date issueDate,
+			ExpressionContext expressionContext, TaxCalculator taxCalculator, QuoteCalculator quoteCalculator,
+			List<Period> leavePeriods, List<Period> strikePeriods) throws AonException {
+		
+		if ( AonStringUtils.isBlank(contractPayment.getExpression()) ) {
+			onCompileError(contractPayment, "Concepto vac\u00edo");
+			return;
+		}
+		
+		super.resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator, quoteCalculator,
+				leavePeriods, strikePeriods);
+	}
+	
 
 	@Override
 	protected PaymentType getPaymentType(IContractPayment payment) {
