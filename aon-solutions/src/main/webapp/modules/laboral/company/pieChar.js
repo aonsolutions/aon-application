@@ -1,4 +1,4 @@
-import { formatNumber } from "../../../services/utils.js";
+import { formatNumber, isEmptyObject } from "../../../services/utils.js";
 
 export const getTotal = (dataArray) => {
   let total = 0;
@@ -19,12 +19,10 @@ const customTooltip = (data, total) =>  {
 }
 
 
-export const pieChar = (div, data, opts) => {
-  function drawChart() {
-    const total = getTotal(data);
-    customLenged(data, total);
-    // customTooltip(data, total);
-    //  
+export const pieChar = (div, data, opts, callBackClick) => {
+    return new Promise(resolve => {
+
+   const drawChart = () => {
     let table =  new google.visualization.DataTable({
       cols : [
         { id : 'name', label : 'Name', type : 'string' },
@@ -41,42 +39,98 @@ export const pieChar = (div, data, opts) => {
       groupingSymbol: '.'
     });
     formatter.format(table, 1);
-    // Setting role tooltip
-    // table.setColumnProperty(2, 'role', 'tooltip');
-    // table.setColumnProperty(2, 'html', true);
     let options = {
       theme:"material",
-      chartArea: {     
-        width: '80%', 
-        height: '75%',
-      },
-      vAxis: {maxValue: 10},
-      title: "",
-      legend: {
-          position: "bottom",
-          textStyle: {
-            fontSize: 10,
-            bold:true
-          },
-      },
+      width: 400,
+      height: 300,
+      legend: 'none',
 
     };
     if (opts) options = { ...options, ...opts };
     
     let chart = new google.visualization.PieChart(div);
-    google.visualization.events.addListener(chart, 'select', selectHadler(chart, table));
+    google.visualization.events.addListener(chart, 'select', (ev) => {
+      let item = chart.getSelection()[0];
+      if(item){
+        let name = table.getValue(item.row, 0);
+        let value = table.getValue(item.row, 1);
+        callBackClick({name, value})
+      }
+    });
     chart.draw(table, options);
+    resolve(chart);
   }
 
-  google.charts.load("current", { packages: ["corechart"] });
-  google.charts.setOnLoadCallback(drawChart);
+    google.charts.load("current", { packages: ["corechart"] });
+    google.charts.setOnLoadCallback(drawChart);
+  });
 };
 
-const selectHadler = (chart, table) => (ev) => {
-  let item = chart.getSelection()[0];
-  if(item){
-    let name = table.getValue(item.row, 0);
-    let value = table.getValue(item.row, 1);
-    console.log({name, value});
+export const addLegend = (div, data, colors, fn) => {
+  return new Promise(resolve=>{
+    let id = 'pieLegend';
+    let tableLegend = document.getElementById(id) || createElement('table');
+    tableLegend.innerHTML = "";
+    tableLegend.id = id;
+    tableLegend.style.textAlign = "right";
+    tableLegend.style.margin = "auto";
+    tableLegend.style.width = "50%";
+    tableLegend.style.color = "grey";
+    tableLegend.style.fontSize ="14px";
+    tableLegend.style.borderCollapse = "separate";
+    tableLegend.style.borderSpacing = "0 4px";
+    div.appendChild(tableLegend);
+    let tbody = createElement('tbody');
+    tableLegend.appendChild(tbody);
+  
+    for(let idx in data){
+      let color = undefined;
+      let name = data[idx][0];
+      let value = data[idx][1];
+      if(!isEmptyObject(colors) && colors[idx]){ 
+        color = colors[idx].color;
+      } else {
+        color = "grey";
+      }
+      let tr = addTrTableLegend({name,value, color}, tbody);
+      tr.addEventListener('click',(ev) => {
+        fn({name, value});
+      })
+    }
+    resolve(tableLegend);
+  })
+}
+
+
+const createElement = (el) => {
+  return document.createElement(el);
+}
+
+const createStylePoint  = (color) => {
+  let div = createElement("div");
+  div.style.height = "10px";
+  div.style.width = "10px";
+  div.style.backgroundColor = color || "#bbb";
+  div.style.borderRadius = "50%";
+  div.style.display = "inline-block";
+  return div;
+}
+
+export const addTrTableLegend = (data, tbody, el) => {
+  let tr = createElement('tr');
+  let th = createElement('th');
+  let td = createElement('td');
+  th.innerHTML = data.name;
+  td.innerHTML = data.value;
+  td.style.fontWeight = 600;
+  td.style.color = "black";
+  let tdColor = createElement('td');
+  if(data.color){
+    tdColor.appendChild(createStylePoint(data.color));
   }
+  tr.appendChild(tdColor);
+  tr.appendChild(th);
+  tr.appendChild(td);
+  tbody.appendChild(tr);
+  return tr;
 }

@@ -104,7 +104,7 @@ export class AonPayrollList extends AonElement {
   
     //------------------PERIOD---------
     let periodEl = this.getElement("period");
-    periodEl.options = JSON.stringify(await getPeriodLaboral());
+    periodEl.options = JSON.stringify(getPeriodLaboral());
     periodEl.addEventListener('change', ({detail}) => {
       if(detail){
         const {startDate, endDate} = detail;

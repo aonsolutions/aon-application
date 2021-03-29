@@ -103,64 +103,62 @@ export const getPeriod = (data) => {
   const now = weekDayObj.now;
   const dayWeekFirst = weekDayObj.dayWeekFirst;
   const dayWeekLast = weekDayObj.dayWeekLast;
-  return new Promise((resolve) => {
-    let jsonValues = [
-      {
-        name: "Hoy",
-        value: "today",
-        startDate: formatDateOrigin(now),
-        endDate: formatDateOrigin(now)
-      },
-      {
-        name: "Ayer",
-        value: "yesterday",
-        startDate: formatDateOrigin(addDays(now, -1)),
-        endDate: formatDateOrigin(addDays(now, -1))
-      },
-      {
-        name: "Semana actual",
-        value: "this_week",
-        startDate: formatDateOrigin( new Date().setDate(dayWeekFirst) ),
-        endDate: formatDateOrigin( new Date().setDate(dayWeekLast) )
-      },
-      {
-        name: "Semana anterior",
-        value: "last_week",
-        startDate: formatDateOrigin(  new Date().setDate(dayWeekFirst -7)  ),
-        endDate: formatDateOrigin( new Date().setDate(dayWeekLast -7) )
-      },
-      {
-        name: "Mes actual",
-        value: "this_month",
-        startDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth(), 1)),
-        endDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth() + 1, 0))
-      },
-      {
-        name: "Mes anterior",
-        value: "last_month",
-        startDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth() -1), 1)),
-        endDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth()-1) + 1, 0))
-      },
-      {
-        name: "Año actual",
-        value: "this_year",
-        startDate: formatDateOrigin(new Date(now.getFullYear(), 0, 1)),
-        endDate: formatDateOrigin(new Date(now.getFullYear(), 12, 0))
-      },
-      {
-        name: "Año anterior",
-        value: "last_year",
-        startDate: formatDateOrigin(new Date(now.getFullYear()-1, 0, 1)),
-        endDate:formatDateOrigin(new Date(now.getFullYear()-1, 12, 0))
-      },
-      {
-        name: "Personalizado",
-        value: "personalized",
-      },
-    ];
-    if (data) {
-      jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
-    }
-    resolve(jsonValues);
-  });
+  let jsonValues = [
+    {
+      name: "Hoy",
+      value: "today",
+      startDate: formatDateOrigin(now),
+      endDate: formatDateOrigin(now)
+    },
+    {
+      name: "Ayer",
+      value: "yesterday",
+      startDate: formatDateOrigin(addDays(now, -1)),
+      endDate: formatDateOrigin(addDays(now, -1))
+    },
+    {
+      name: "Semana actual",
+      value: "this_week",
+      startDate: formatDateOrigin( new Date().setDate(dayWeekFirst) ),
+      endDate: formatDateOrigin( new Date().setDate(dayWeekLast) )
+    },
+    {
+      name: "Semana anterior",
+      value: "last_week",
+      startDate: formatDateOrigin(  new Date().setDate(dayWeekFirst -7)  ),
+      endDate: formatDateOrigin( new Date().setDate(dayWeekLast -7) )
+    },
+    {
+      name: "Mes actual",
+      value: "this_month",
+      startDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth(), 1)),
+      endDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth() + 1, 0))
+    },
+    {
+      name: "Mes anterior",
+      value: "last_month",
+      startDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth() -1), 1)),
+      endDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth()-1) + 1, 0))
+    },
+    {
+      name: "Año actual",
+      value: "this_year",
+      startDate: formatDateOrigin(new Date(now.getFullYear(), 0, 1)),
+      endDate: formatDateOrigin(new Date(now.getFullYear(), 12, 0))
+    },
+    {
+      name: "Año anterior",
+      value: "last_year",
+      startDate: formatDateOrigin(new Date(now.getFullYear()-1, 0, 1)),
+      endDate:formatDateOrigin(new Date(now.getFullYear()-1, 12, 0))
+    },
+    {
+      name: "Personalizado",
+      value: "personalized",
+    },
+  ];
+  if (data) {
+    jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
+  }
+    return jsonValues
 }

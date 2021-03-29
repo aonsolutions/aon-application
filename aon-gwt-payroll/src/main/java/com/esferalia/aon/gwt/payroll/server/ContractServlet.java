@@ -2,13 +2,12 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -148,22 +147,69 @@ public class ContractServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
-	private Object getCompanyCosts(HttpServletRequest req) throws SQLException, IOException{
+	private Object getCompanyCosts(HttpServletRequest req) throws SQLException, IOException, JSONException{
 		LOGGER.info("[GET] COMPANY COSTS");
+
 		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		Company company = AON.getCompany(getDomain().getName(), getDomain().getId(), "", f->f.getDomainProperty().eq(getDomain().getId()));
 		AONContext ctx = AONContext.getAONContext(getDomain().getName(), getDomain().getId(), "");
-
-		Date startDate = Toolkit.parseDate(getParams().optString("startDate"), "yyyy-MM-dd");
-		Date endDate   = Toolkit.parseDate(getParams().optString("endDate"), "yyyy-MM-dd");
+		Date endDate = new Date();
+		Date startDate = new Date();
+	
+		if(getParams().optString("endDate").isEmpty()) {
+			endDate = getEndDateSalary(Optional.ofNullable(company.getId()));
+			startDate = endDate;
+		} else {
+		    startDate = Toolkit.parseDate(getParams().optString("startDate"), "yyyy-MM-dd");
+			endDate  = Toolkit.parseDate(getParams().optString("endDate"), "yyyy-MM-dd");
+		}
+		String [] startDateArray = Toolkit.dateString(startDate);
+		String startDateStr =  startDateArray[2]+"-"+startDateArray[1]+"-"+startDateArray[0];
+		String [] endDateArray = Toolkit.dateString(endDate);
+		String endDateStr =  endDateArray[2]+"-"+endDateArray[1]+"-"+endDateArray[0];
 		Integer workplaceId = 0;
 		if(!getParams().optString("workplace").isEmpty()) workplaceId = getParams().optInt("workplace");
 		
 		List<EnterprisePayroll> costs = EnterprisePayrollExcel.getEnterprisePayrolls(ctx, startDate, endDate, company.getId(), workplaceId).collect(Collectors.toList());
-		String jsonInString = gjson.toJson(costs);
+		List<Object> list = new ArrayList<>();
+
+		for(EnterprisePayroll cost: costs) {
+			JSONObject json = new JSONObject();
+			json.put("startDate", startDateStr);
+			json.put("endDate", endDateStr);
+			json.put("advancedPayment", cost.getAdvancedPayment());
+			json.put("bonuses", cost.getBonuses());
+			json.put("cgc", cost.getCgc());
+			json.put("cgcBase", cost.getCgcBase());
+			json.put("cgp", cost.getCgp());
+			json.put("cgpEnterprise", cost.getCgpEnterprise());
+			json.put("embargos", cost.getEmbargos());
+			json.put("employee", cost.getEmployee());
+			json.put("employeeSS", cost.getEmployeeSS());
+			json.put("enterpriseSS", cost.getEnterpriseSS());
+			json.put("estruc", cost.getEstruc());
+			json.put("estrucEnterprise", cost.getEstrucEnterprise());
+			json.put("fogasaEnterprise", cost.getFogasaEnterprise());
+			json.put("irpf", cost.getIrpf());
+			json.put("irpfBase", cost.getIrpfBase());
+			json.put("jobTraining", cost.getJobTraining());
+			json.put("jobTrainingEnterprise", cost.getJobTrainingEnterprise());
+			json.put("liquid", cost.getLiquid());
+			json.put("noEstruct", cost.getNoEstruct());
+			json.put("noEstructEnterprise", cost.getNoEstructEnterprise());
+			json.put("otherDeductions", cost.getOtherDeductions());
+			json.put("raw", cost.getRaw());
+			json.put("salaryType", cost.getSalaryType());
+			json.put("totalCost", cost.getTotalCost());
+			json.put("unemployment", cost.getUnemployment());
+			json.put("unemploymentEnterprise", cost.getUnemploymentEnterprise());
+			json.put("workplace", cost.getWorkplace());
+			list.add( new JsonParser().parse(json.toString()));
+		}
+	
+		String jsonInString = gjson.toJson(list);
 		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
-
 	}
 	
 	private List<SalaryInfo> getSalaries(Connection conn, Optional<Integer> companyId) {
@@ -177,7 +223,7 @@ public class ContractServlet extends AonApiHttpServlet {
 	private File getSalaryPdf(HttpServletRequest req) throws JSONException, IOException {
 		LOGGER.info("[GET] SALARY PDF");
 
-		Integer salaryId =  getParams().optInt("salaryId");
+		Integer salaryId = getParams().optInt("salaryId");
 	
 		File file = File.createTempFile("nomina", "");
 		JooqPayrollBuilder.generatePayroll(getDomain().getName(), new FileOutputStream(file), salaryId);
@@ -209,6 +255,16 @@ public class ContractServlet extends AonApiHttpServlet {
 		}
 	
 		return file;
+	}
+	
+	private Date getEndDateSalary(Optional<Integer> companyId) throws SQLException {
+		Connection conn = AonServletUtils.getConnection(getDomain().getName());
+		SalaryInfoFilter filter = getFilter();
+		if(!companyId.isEmpty()) filter.setEnterpriseId(companyId.get().intValue());
+		SalaryInfo salaryInfo = JooqPayrollSalaries.getSalariesDateEnd(conn, filter);
+		Date date = salaryInfo.getEndDate();
+		if(date == null) date = new Date();
+		return date;
 	}
 	
 	private SalaryInfoFilter getFilter() {

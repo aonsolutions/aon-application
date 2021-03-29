@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
-import { addDays, formatDateOrigin, setValueName } from "../../services/utils.js";
+import { getContratoPdf, getDomainUserRoles, getIDC, getPeriodLaboral, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
+import { addDays, formatDateOrigin, isEmptyObject, setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../documental/aon-mobile-documental-list.js";
@@ -43,17 +43,28 @@ class AonLaboral extends AonElement {
   }
 
   build() {
-    if(!this.isEmployee()){
-      let now = new Date();
-      this._filter = {
-        period: "personalized",
-        startDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth() -1), 1)),
-        endDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth() + 1, 0))
-      };
-    }
+    // if(!this.isEmployee() && isEmptyObject(this._filter)){
+    //   let now = new Date();
+    //   const valueDefault = getPeriodLaboral("last_year");
+    //   this._filter = {
+        // period:  valueDefault.value,
+        // startDate:  valueDefault.startDate,
+        // endDate:  valueDefault.endDate,
+      // };
+      // this._filter = {
+      //   period: "personalized",
+      //   startDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth() -1), 1)),
+      //   endDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth() + 1, 0))
+      // };
+    // } 
     this.paintView();
     this.buildToolbar();
-    this.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
+    if(this.isEmployee()){
+      this.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
+    } else {
+      this.showView(PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST);
+    }
+
   }
 
   paintView(){
@@ -65,10 +76,11 @@ class AonLaboral extends AonElement {
   buildToolbar(){
     let laboralOptions = [];
     let conf = [];
-    let paysheet = PayrollOptions.PAYSHEET;
-    paysheet.fn = () => this.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
-    laboralOptions.push(paysheet);
-
+    if(!this.isMobile()){
+      let paysheet = PayrollOptions.PAYSHEET;
+      paysheet.fn = () => this.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
+      laboralOptions.push(paysheet);
+    }
     if(!this.isEmployee()){
 
       let contract = PayrollOptions.AON_CONTRACT;
@@ -307,7 +319,7 @@ class AonLaboral extends AonElement {
           this.applicationEl.setContent(aonView);
         }
       }
-      resolve(true);
+      resolve(aonView);
     });
   }
 

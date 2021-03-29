@@ -67,13 +67,6 @@ export const PAYROLL_FILTER = [
     }
 ];
 
-export const PAYROLL_FILTER_EXCEL_TYPE = {
-  type: "select",
-  id: "excelType",
-  name: "excelType",
-  title: "Tipo",
-};
-
 export const CONTRACT_OPTIONS = {
   CONTRACT:{
     name: "Contrato",

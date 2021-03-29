@@ -123,7 +123,7 @@ export class AonSignin extends AonElement {
   async setDataFilter(data){
     try {
       if(data && data.period){
-        data = {...data, ...await getPeriod(data.period)};
+        data = {...data, ...getPeriod(data.period)};
       } 
       this._filter = {...this._filter, ...data};
       this.applicationEl.getChild().filter = true;

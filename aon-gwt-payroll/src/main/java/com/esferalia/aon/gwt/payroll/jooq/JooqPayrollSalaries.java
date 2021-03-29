@@ -51,6 +51,10 @@ public class JooqPayrollSalaries {
 		return getSalariesDB(DSL.using(connection, getDefaultSettings()), filter);
 	}
 	
+	public static SalaryInfo getSalariesDateEnd(Connection connection, SalaryInfoFilter filter) {
+		return getSalariesDateEnd(DSL.using(connection, getDefaultSettings()), filter);
+	}
+	
 	public static List<SalaryInfo> getSalariesByDocument(Connection connection, SalaryInfoFilter filter,  String document) {
 		return getSalariesByDocumentDB(DSL.using(connection, getDefaultSettings()), filter, document);
 	}
@@ -150,6 +154,42 @@ public class JooqPayrollSalaries {
 		}
 		
 		return salaries;
+	}
+	
+	
+	private static SalaryInfo getSalariesDateEnd(DSLContext dslContext, SalaryInfoFilter filter) {
+		
+		// SalaryType
+		Condition salaryTypeCondition = getSalaryTypeCondition(filter);
+		
+		// Contracts
+		Condition contractsCondition = getContractCondition(dslContext, filter);
+		
+		// Dates
+		Condition datesCondition = getDatesCondition(filter);
+		SalaryInfo salaryInfo = new SalaryInfo();
+		// Get end salary
+		 Record salaryRecord = dslContext.select().from(SALARY)
+				.where(contractsCondition)
+				.and(salaryTypeCondition)
+				.and(datesCondition)
+				.orderBy(SALARY.END_DATE.desc())
+				.limit(1)
+				.fetchOne(); 
+		if(salaryRecord!=null && salaryRecord.size() > 0) {
+			salaryInfo.setId(salaryRecord.get(SALARY.ID));
+			salaryInfo.setDomain(salaryRecord.get(SALARY.DOMAIN));
+			salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
+			salaryInfo.setStartDate(salaryRecord.get(SALARY.START_DATE));
+			salaryInfo.setEndDate(salaryRecord.get(SALARY.END_DATE));
+			salaryInfo.setType(Salary.Type.values()[salaryRecord.get(SALARY.TYPE)]);
+			salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
+			salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
+			salaryInfo.setTotalPayment(salaryRecord.get(SALARY.TOTAL_PAYMENT));
+			salaryInfo.setTotalDeduction(salaryRecord.get(SALARY.TOTAL_DEDUCTION));
+			salaryInfo.setTotalLiquid(salaryRecord.get(SALARY.TOTAL_LIQUID));
+		}
+		return salaryInfo;
 	}
 	
 	
