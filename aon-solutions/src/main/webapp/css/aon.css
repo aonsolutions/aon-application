@@ -348,7 +348,6 @@ button:disabled, button[disabled]{
   flex: 1 1 auto;
   align-items: center;
   min-width: 0;
-  z-index: 1;
 }
 
 .aonToolbarSectionEnd {
@@ -500,7 +499,6 @@ button:disabled, button[disabled]{
   flex-basis: 0px;
   flex-grow: 0;
   flex-shrink: 0;
-  z-index: 1;
   left: 0;
   background-color: #fff;
   border-right: 1px solid #ddd;

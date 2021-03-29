@@ -120,7 +120,7 @@ export class AonApplication extends AonElement {
 
       <div class="${this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex'}">
         <!-- AON APPLICATION MENU (SIDENAV) -->
-         <div id="${this.SIDENAV}" class="aonSidenav"></div>
+         <div id="${this.SIDENAV}" class="${this.isMobile() ? 'aonMobileSidenav' :'aonSidenav'}"></div>
 
 			   <!-- AON APPLICATION CONTENT -->
 			   <div id="${this.CONTENT}"></div>

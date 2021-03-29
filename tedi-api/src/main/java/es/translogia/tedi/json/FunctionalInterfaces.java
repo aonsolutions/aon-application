@@ -6,11 +6,11 @@ import es.translogia.tedi.ewok.TediAddress;
 import es.translogia.tedi.ewok.TediComments;
 import es.translogia.tedi.ewok.TediCompany;
 import es.translogia.tedi.ewok.TediEmailInfo;
+import es.translogia.tedi.ewok.TediFile;
 import es.translogia.tedi.ewok.TediFinance;
 import es.translogia.tedi.ewok.TediInsightInvoice;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceDetail;
-import es.translogia.tedi.ewok.TediInvoiceFile;
 import es.translogia.tedi.ewok.TediInvoiceTax;
 import es.translogia.tedi.ewok.TediNif;
 import es.translogia.tedi.ewok.TediPlan;
@@ -19,13 +19,13 @@ import es.translogia.tedi.ewok.TediRegistry;
 public class FunctionalInterfaces {
 
 	@FunctionalInterface
-	public static interface ITediInvoiceFileFromJSON {
-		TediInvoiceFile from(TediInvoiceFile t, JSONObject json);
+	public static interface ITediFileFromJSON {
+		TediFile from(TediFile t, JSONObject json);
 	}
 
 	@FunctionalInterface
-	public static interface ITediInvoiceFileToJSON {
-		JSONObject to(TediInvoiceFile t, JSONObject json);
+	public static interface ITediFileToJSON {
+		JSONObject to(TediFile t, JSONObject json);
 	}
 
 	@FunctionalInterface

@@ -7,6 +7,7 @@ public interface IConstants {
 	String ACTIVE = "active";
 	String ADDRESS = "address";
 	String ALIAS = "alias";
+	String ATTACH_TYPE = "attach_type";
 	String BASE = "base";
 	String BIC = "bic";
 	String CATEGORY = "category";

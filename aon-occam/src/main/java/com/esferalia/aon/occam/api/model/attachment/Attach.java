@@ -354,4 +354,8 @@ public class Attach implements Serializable {
 	        }
 	        return displaySize;
 	}
+	
+	public Boolean isEmpty() {
+		return getId() == null && getAttachType() == null && getData() == null;
+	}
 }

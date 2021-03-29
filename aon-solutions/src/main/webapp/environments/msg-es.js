@@ -165,3 +165,19 @@ export const AON_MSG_PAYSHEET = 'Nómina';
 export const AON_MSG_PAYSHEETS = 'Nóminas';
 export const AON_MSG_COMPANY_COSTS = 'Costes de Empresa';
 export const AON_MSG_SEPA_FILES = 'Ficheros SEPA';
+
+export const AON_MSG_CONTACT = 'Contacto';
+export const AON_MSG_CONTACTS = 'Contactos';
+export const AON_MSG_CUSTOMER = 'Cliente';
+export const AON_MSG_CUSTOMERS = 'Clientes';
+export const AON_MSG_SUPPLIER = 'Proveedor';
+export const AON_MSG_SUPPLIERS = 'Proveedores';
+export const AON_MSG_CREDITOR = 'Acreedor';
+export const AON_MSG_CREDITORS = 'Acreedores';
+
+// MODELOS FISCALES
+
+export const AON_MSG_MODEL_111 = 'Modelo 111';
+export const AON_MSG_MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
+export const AON_MSG_MODEL_190 = 'Modelo 190';
+export const AON_MSG_MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';

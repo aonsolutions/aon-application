@@ -13,6 +13,7 @@ import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";
 import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+import * as GWT from "../../gwt/gwt.js";
 
 export class AonAccounting extends AonElement {
 
@@ -36,10 +37,6 @@ export class AonAccounting extends AonElement {
 		this.AON_ACCOUNTING = CONSTANT.AON_ACCOUNTING;
 	}
 
-	getApplication(){
-		return this.getElement(this.AON_ACCOUNTING);
-	}
-
  	build() {
 		let application = this.getApplication();
 		application.addToolbarOption('Add', 'add', () => {alert('Add Example')});
@@ -47,7 +44,7 @@ export class AonAccounting extends AonElement {
 		let options = [{
 			name: 'Prueba',
 			icon: 'accessibility',
-			fn: () => alert('PRUEBA!!')
+			fn: () => GWT.load(GWT.ACCOUNTING_PERIOD, this.getApplication().CONTENT)
 		}];
 		application.addSidenavOptions('OPCIONES', options);
 	}

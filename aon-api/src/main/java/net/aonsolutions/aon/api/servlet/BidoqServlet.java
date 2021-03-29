@@ -74,6 +74,9 @@ public class BidoqServlet extends AonApiHttpServlet {
 
 				JSONObject json = new JSONObject();
 				json.put("url", url);
+				json.put("session_id", token);
+				json.put("domain_id", cp.getDomain().getId());
+				json.put("domain_name", cp.getDomain().getName());
 				response(req, resp, json);
 			} else {
 				LOGGER.info("TOKEN RECIBIDO: " + getToken());

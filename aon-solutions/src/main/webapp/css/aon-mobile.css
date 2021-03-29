@@ -25,6 +25,20 @@
   overflow-y: auto;
 }
 
+.aonMobileSidenav {
+  position: relative;
+  flex-basis: 0px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  z-index: 1;
+  left: 0;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  transition-duration: 500ms;
+  overflow-x: hidden;
+  height: calc(100vh - 102px);
+}
+
 .aonMobileToolbar {
   position: fixed;
   width: 100%;

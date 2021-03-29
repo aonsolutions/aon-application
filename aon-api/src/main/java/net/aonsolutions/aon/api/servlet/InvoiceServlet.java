@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,6 +22,7 @@ import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
@@ -48,7 +48,7 @@ import net.aonsolutions.aon.tedi.TediException;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
-public class InvoiceServlet extends HttpServlet{
+public class InvoiceServlet extends AonApiHttpServlet{
 		
 	private class InvoiceFilter {
 		String description;
@@ -110,84 +110,99 @@ public class InvoiceServlet extends HttpServlet{
 	}
 	
 	private static final Logger LOGGER  = Logger.getLogger(InvoiceServlet.class.getName());
-	
+
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API INVOICE SERVLET - GET METHOD");
-		String token = req.getHeader("session_id");
-		Integer domainId = AonNumberUtils.toInteger(req.getHeader("domain_id"));
-		String domainName = req.getHeader("domain_name");
-		Domain domain = AON.getDomain(domainName, domainId, "");
-		Object object = new JSONObject();
-
-		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-		if(pathInfo != null) {
-			if("accounts".equalsIgnoreCase(pathInfo[1])) {
-				JSONArray array = new JSONArray();
-				String type = req.getParameter(IConstants.TYPE);
-				ACCOUNTING.getAccounts(domain.getName(), domain.getId(), "", f -> accountFilter(f, domain, type)).forEach(acc -> {
-					if(acc.getCode().length() > 5) {
-						JSONObject json = new JSONObject();
-						json.put("code", acc.getCode());
-						json.put("name", acc.getDescription());
-						array.put(json);
-					}
-				});
-				object = array;
+		try {
+			super.doGet(req, resp);
+		
+			switch (getPath()) {
+			case "/":
+				response(req, resp, getInvoiceObject());
+				break;
+			case "/accounts":
+				response(req, resp, getAccountsObject());
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
 			}
-		} else {
-			if(req.getParameter(IConstants.ID) != null) {
-				Integer id = AonNumberUtils.toInteger(req.getParameter(IConstants.ID));
-				object = getInvoice(domain, "api", id);
-			} else {
-				InvoiceFilter filter = new InvoiceFilter()
-						.setDescription(req.getParameter("description"))
-						.setStatus(req.getParameter(IConstants.STATUS))
-						.setTypes(req.getParameter(IConstants.TYPE) != null ? req.getParameter(IConstants.TYPE).split(","): null)
-						.setPage(AonNumberUtils.toInteger(req.getParameter("page")))
-						.setPerPage(AonNumberUtils.toInteger(req.getParameter("per_page")));
-				object = getInvoices(domain, "api", filter);
-			}
+		} catch (Exception e) {
+			error(req, resp, e);
 		}
-
-		Utils.addCorsHeader(resp);
-		Utils.giveBack(req, resp, object, new JSONObject());	
 	}
-
+	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API INVOICE SERVLET - POST METHOD");
-		String token = req.getHeader("session_id");
-		Integer domainId = AonNumberUtils.toInteger(req.getHeader("domain_id"));
-		String domainName = req.getHeader("domain_name");	
-		Domain domain = AON.getDomain(domainName, domainId, "");
-		User user = AON_SOLUTIONS.getUser(domain, token);
-		JSONObject json = Utils.getRequestJSON(req);
-//		Company company = AON.getCompany(domainName, domainId, user.getLogin(), f -> f.getDomainProperty().eq(domainId));
-		
-		json = setInvoice(domain, user.getLogin(), json);
-		
-		Utils.addCorsHeader(resp);
-		Utils.giveBack(req, resp, json, new JSONObject());	
+		try {
+			super.doPost(req, resp);
+			switch (getPath()) {
+			case "/":
+				response(req, resp, setInvoice(getDomain(), getUser().getLogin(), getData()));
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
 	}
 	
 	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		LOGGER.info("AON API INVOICE SERVLET - DELETE METHOD");
-		String token = req.getHeader("session_id");
-		Integer domainId = AonNumberUtils.toInteger(req.getHeader("domain_id"));
-		String domainName = req.getHeader("domain_name");	
-		Domain domain = AON.getDomain(domainName, domainId, "");
-		JSONObject json = Utils.getRequestJSON(req);
-		LinkedList<Integer> invoiceIds = toList(json.optJSONArray(IConstants.ID));
-		if(invoiceIds != null) {
-			deleteInvoices(domain, "api", invoiceIds);
+	public void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("EXAMPLE SERVLET - DELETE METHOD");
+		try {
+			super.doDelete(req, resp);
+			switch (getPath()) {
+			case "/":
+				response(req, resp, deleteInvoiceObject());
+				break;
+			default:
+				throw new Exception("La ruta introducida es incorrecta.");
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
 		}
-		
-		Utils.addCorsHeader(resp);
-		Utils.giveBack(req, resp, new JSONObject(), new JSONObject());	
+	}
+
+	private Object getInvoiceObject() {
+		if(getParams().opt(IConstants.ID) != null) {
+			Integer id = getParams().optInt(IConstants.ID);
+			return getInvoice(getDomain(), getUser().getLogin(), id);
+		} else {
+			InvoiceFilter filter = new InvoiceFilter()
+					.setDescription(getParams().optString("description"))
+					.setStatus(getParams().optString(IConstants.STATUS))
+					.setTypes(getParams().opt(IConstants.TYPE) != null ? getParams().optString(IConstants.TYPE).split(","): null)
+					.setPage(getParams().optInt("page"))
+					.setPerPage(getParams().optInt("per_page"));
+			return getInvoices(getDomain(), getUser().getLogin(), filter);
+		}
 	}
 	
+	private JSONArray getAccountsObject() {
+		JSONArray array = new JSONArray();
+		String type = getParams().optString(IConstants.TYPE);
+		ACCOUNTING.getAccounts(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> accountFilter(f, getDomain(), type)).forEach(acc -> {
+			if(acc.getCode().length() > 5) {
+				JSONObject json = new JSONObject();
+				json.put("code", acc.getCode());
+				json.put("name", acc.getDescription());
+				array.put(json);
+			}
+		});
+		return array;
+	}
+
+	private JSONObject deleteInvoiceObject() {
+		LinkedList<Integer> invoiceIds = toList(getData().optJSONArray(IConstants.ID));
+		if(invoiceIds != null) {
+			deleteInvoices(getDomain(), getUser().getLogin(), invoiceIds);
+		}
+		return new JSONObject();
+	}
+
 	public static LinkedList<Integer> toList(JSONArray array) {
 	    if(array==null || array.isEmpty())
 	        return new LinkedList<>();
@@ -203,7 +218,7 @@ public class InvoiceServlet extends HttpServlet{
     	
     	InvoiceStatus st = getInvoiceStatus(invoiceFilter.getStatus());
     	if(st != null) {
-    		filter = filter.and(f.getStatusProperty().eq(st.value())); 
+    		//filter = filter.and(f.getStatusProperty().eq(st.value())); 
     	}
     	if(invoiceFilter.getDescription() != null) {
     		filter = filter.and(
@@ -273,18 +288,22 @@ public class InvoiceServlet extends HttpServlet{
 				json.put("id", r.getId());
 				json.put("status", getRawdocStatus(r.getStatus()));
 				if(r.getMimeType() != null){
+					JSONObject data = new JSONObject();
+					data.put("domain_name", domain.getName());
+					data.put("domain_id", domain.getId());
+					data.put("id", r.getId());
+					data.put("attach_type", AttachType.RAWDOC.getName());
+					String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+					String url =  "ms/api/file/" +  result;
+										
 					JSONObject f = new JSONObject();
-				    String str = "domain="+ domain.getId() + "&id=" + r.getId() + "&attach_type=data";
-				    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
-				    String url =  "ms/download_rawdoc/"  + domain.getName() + "/" + login + "/" +  result;
 				    f.put("url", url);
-				    f.put("type", r.getMimeType().getName());
+				    f.put("content_type", r.getMimeType().getName());
 				    json.put("file", f);
 				}
 				JSONArray log = new JSONArray(r.getLog() != null ? r.getLog() : "[]");
 				json.put("comments", log);
-
-				String reference = filter.getDescription() != null && json.opt("reference") != null ? json.getString("reference") : "";
+				String reference = filter.getDescription() != null && json.opt("reference") != null ? json.optString("reference") : "";
 				String registryName = RawdocType.OUTPUT.equals(r.getType()) 
 						? (filter.getDescription() != null && json.opt("receiver") != null ? json.getJSONObject("receiver").getString("name") : "")
 						: (filter.getDescription() != null && json.opt("sender") != null ? json.getJSONObject("sender").getString("name") : "");
@@ -320,8 +339,8 @@ public class InvoiceServlet extends HttpServlet{
 		JSONObject file = null;
 		
 		if(json.opt("file")!= null) { 
-			file = json.opt("invoice") != null ? json.optJSONObject("file") : null;
-			json = json.opt("invoice") != null ? json.optJSONObject("invoice"): json;
+			file = json.optJSONObject("file");
+			json = json.opt("invoice") != null ? json.optJSONObject("invoice") : initInvoice();
 		}
 		Integer id = json.opt("id") !=null ? json.optInt("id") : null;
 		RawdocStatus status = getRawdocStatus(json.optString("status")); 
@@ -415,5 +434,51 @@ public class InvoiceServlet extends HttpServlet{
 	private static Boolean isContabilizada(String status) {
 		return "accounting".equalsIgnoreCase(status);
 	}
+	
+	private static JSONObject initInvoice() {
+		JSONObject json = new JSONObject();
+		json.put("type", "recibida");
+		json.put("series", "");
+		json.put("number", 0);
+		json.put("reference", "");
+		json.put("date", new Date());
+		json.put("total", 0);
+		json.put("sender", initRegistry());
+		json.put("receiver", initRegistry());
+		json.put("category", "");
+		json.put("transaction", "NAC");
+		json.put("taxes", new JSONArray());
+		json.put("details", new JSONArray());
+		json.put("finances", new JSONArray());
+		json.put("suplidos", initSuplidos());
+		json.put("status", "inbox");
+		json.put("comments", new JSONArray());
+		return json;
+	}
+	
+	private static JSONObject initRegistry() {
+		JSONObject json = new JSONObject();
+		json.put("document", "");
+		json.put("name", "");
+		json.put("address", initAddress());			
+		return json;
+	}
+	
+	private static JSONObject initAddress() {
+		JSONObject json = new JSONObject();
+		json.put("country", "ES");
+		json.put("address", "");
+		json.put("zip", "");
+		json.put("city", "");
+		json.put("province", "");
+		return json;
+	}
 
+	private static JSONObject initSuplidos() {
+		JSONObject json = new JSONObject();
+		json.put("active", false);
+		json.put("description", "");
+		json.put("total", 0);
+		return json;
+	}
 }

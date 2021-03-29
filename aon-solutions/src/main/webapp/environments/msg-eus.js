@@ -164,3 +164,19 @@ export const AON_MSG_PAYSHEET = 'Nomina';
 export const AON_MSG_PAYSHEETS = 'Nominak';
 export const AON_MSG_COMPANY_COSTS = 'Enpresaren kostuak';
 export const AON_MSG_SEPA_FILES = 'SEPA Fitxategiak';
+
+export const AON_MSG_CONTACT = 'Kontaktua';
+export const AON_MSG_CONTACTS = 'Kontaktuak';
+export const AON_MSG_CUSTOMER = 'Bezero';
+export const AON_MSG_CUSTOMERS = 'Bezeroak';
+export const AON_MSG_SUPPLIER = 'Hornitzaile';
+export const AON_MSG_SUPPLIERS = 'Hornitzaileak';
+export const AON_MSG_CREDITOR = 'Hartzekodun';
+export const AON_MSG_CREDITORS = 'Hartzekodunak';
+
+// MODELOS FISCALES
+
+export const AON_MSG_MODEL_111 = '111 Eredua';
+export const AON_MSG_MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
+export const AON_MSG_MODEL_190 = '190 Eredua';
+export const AON_MSG_MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';

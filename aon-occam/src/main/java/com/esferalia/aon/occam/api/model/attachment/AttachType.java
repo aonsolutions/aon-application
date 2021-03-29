@@ -16,7 +16,8 @@ public enum AttachType  implements Serializable {
 	,MOD115("mod115")
 	,MOD123("mod123")
 	,PAYSHEET("paysheet")
-	,DATA("data");
+	,DATA("data")
+	,RAWDOC("rawdoc");
 	
 	private String name;
 	
@@ -33,30 +34,32 @@ public enum AttachType  implements Serializable {
 	}
 
 	public static AttachType getAttachType(String name){
-		if(name.equals(REGISTRY.getName()))
+		if(name.equalsIgnoreCase(REGISTRY.getName()))
 			return REGISTRY;
-		else if(name.equals(CONTRACT.getName()))
+		else if(name.equalsIgnoreCase(CONTRACT.getName()))
 			return CONTRACT;
-		else if(name.equals(ITEM.getName()))
+		else if(name.equalsIgnoreCase(ITEM.getName()))
 			return ITEM;
-		else if(name.equals(INVOICE.getName()))
+		else if(name.equalsIgnoreCase(INVOICE.getName()))
 			return INVOICE;
-		else if(name.equals(OFFER.getName()))
+		else if(name.equalsIgnoreCase(OFFER.getName()))
 			return OFFER;
-		else if(name.equals(PAYROLL.getName()))
+		else if(name.equalsIgnoreCase(PAYROLL.getName()))
 			return PAYROLL;
-		else if(name.equals(PROJECT.getName()))
+		else if(name.equalsIgnoreCase(PROJECT.getName()))
 			return PROJECT;
-		else if(name.equals(SEPE.getName()))
+		else if(name.equalsIgnoreCase(SEPE.getName()))
 			return SEPE;
-		else if(name.equals(MOD111.getName()))
+		else if(name.equalsIgnoreCase(MOD111.getName()))
 			return MOD111;
-		else if(name.equals(MOD115.getName()))
+		else if(name.equalsIgnoreCase(MOD115.getName()))
 			return MOD115;
-		else if(name.equals(MOD123.getName()))
+		else if(name.equalsIgnoreCase(MOD123.getName()))
 			return MOD123;
 		else if(DATA.getName().equalsIgnoreCase(name))
 			return DATA;
+		else if(RAWDOC.getName().equalsIgnoreCase(name))
+			return RAWDOC;
 		return null;
 	}
 	

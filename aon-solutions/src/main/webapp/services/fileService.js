@@ -1,8 +1,20 @@
 
-import { post, openFileMobile, openFileDesktop, webkitRequestMobile, actionRequestMobile, getToken } from "./request.js";
+import { post, openFileMobile, openFileDesktop, webkitRequestMobile, actionRequestMobile, getToken, requestFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 export const uploadFile = (data) => post(`${API_URL}/file`, data);
+
+export const getFileUrl = (data) =>{
+  return new Promise((resolve, reject) => {
+  requestFile("GET", '/ms/api/file', data, async(result, error) => {
+    if (error) reject(error);
+    else {
+      const {blob, fileName} = result;
+      resolve(URL.createObjectURL(blob));
+    }
+  });
+});
+}
 
 export const openFileUrl = async (url) => {
   if (webkitRequestMobile())

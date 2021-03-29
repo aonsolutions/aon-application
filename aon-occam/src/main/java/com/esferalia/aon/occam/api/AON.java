@@ -2561,6 +2561,11 @@ public class AON {
 				.findFirst().orElse(new Attach());
 	}
 	
+	public static Attach getRawdocAttach(String domainName, Integer domainId, String login, RawdocFilter filter, AttachType attachType) {
+		return getRawdocAttachStream(domainName, domainId, login, filter, attachType)
+				.findFirst().orElse(new Attach());
+	}
+	
 	public static Attach getAttach(String domainName, Integer domainId,
 			String login, AttachFilter filter, AttachType attachType, Boolean withData) {
 		return getAttachStream(domainName, domainId, login, filter, attachType, withData)
@@ -2620,6 +2625,20 @@ public class AON {
 				return getAttachment().getSepeAttachStream(ctx, filter, withData);
 			else if (attachType.equals(AttachType.DATA))
 				return getAttachment().getDataAttachStream(ctx, filter, withData);
+			return null;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<Attach> getRawdocAttachStream(String domainName,
+			Integer domainId, String login, RawdocFilter filter,	AttachType attachType) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			if (attachType.equals(AttachType.RAWDOC))
+				return getAttachment().getRawdocAttachStream(ctx, filter);
 			return null;
 		} finally {
 			if (ctx != null)

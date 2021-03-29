@@ -136,9 +136,9 @@ public enum TediInvoiceJSON {
 	FILE(
 		(invoice, json) -> {
 			JSONObject jsonFile = json.optJSONObject(IConstants.FILE);
-			return (jsonFile != null) ? invoice.setFile(TediInvoiceFileJSON.fromJSON(jsonFile)) : invoice;
+			return (jsonFile != null) ? invoice.setFile(TediFileJSON.fromJSON(jsonFile)) : invoice;
 		}, 
-		(invoice, json) -> (invoice.getFile() != null) ? json.put(IConstants.FILE, TediInvoiceFileJSON.toJSON(invoice.getFile())) : json
+		(invoice, json) -> (invoice.getFile() != null) ? json.put(IConstants.FILE, TediFileJSON.toJSON(invoice.getFile())) : json
 	),
 	STATUS(
 		(invoice, json) -> invoice.setStatus(json.optEnum(TediInvoiceStatus.class, IConstants.STATUS)),

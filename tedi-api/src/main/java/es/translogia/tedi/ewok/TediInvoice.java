@@ -23,7 +23,7 @@ public class TediInvoice implements Serializable{
 	private LinkedList<TediInvoiceDetail> details;
 	private LinkedList<TediInvoiceTax> taxes;
 	private LinkedList<TediFinance> finances;
-	private TediInvoiceFile file;
+	private TediFile file;
 	private TediInvoiceStatus status;
 	private TediInvoiceStatus oldStatus;
 	private String source;
@@ -167,11 +167,11 @@ public class TediInvoice implements Serializable{
 		return this;
 	}
 
-	public TediInvoiceFile getFile() {
+	public TediFile getFile() {
 		return file;
 	}
 
-	public TediInvoice setFile(TediInvoiceFile file) {
+	public TediInvoice setFile(TediFile file) {
 		this.file = file;
 		return this;
 	}

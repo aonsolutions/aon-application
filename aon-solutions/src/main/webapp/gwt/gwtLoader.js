@@ -53,7 +53,7 @@
 		}
 	}
 
-	export const loadGwt = (gwtOption, rootPanel) => {
+	export const load = (gwtOption, rootPanel) => {
 		startModule(gwtOption.module, gwtOption.entryPoint, rootPanel);
 	}
 

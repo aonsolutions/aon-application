@@ -164,3 +164,19 @@ export const AON_MSG_PAYSHEET = 'Nòmina';
 export const AON_MSG_PAYSHEETS = 'Nòminas';
 export const AON_MSG_COMPANY_COSTS = `Costos d'Empresa`;
 export const AON_MSG_SEPA_FILES = 'Fitxers SEPA';
+
+export const AON_MSG_CONTACT = 'Contacte';
+export const AON_MSG_CONTACTS = 'Contactes';
+export const AON_MSG_CUSTOMER = 'Client';
+export const AON_MSG_CUSTOMERS = 'Clients';
+export const AON_MSG_SUPPLIER = 'Proveïdor';
+export const AON_MSG_SUPPLIERS = 'Proveïdors';
+export const AON_MSG_CREDITOR = 'Creditor';
+export const AON_MSG_CREDITORS = 'Creditors';
+
+// MODELOS FISCALES
+
+export const AON_MSG_MODEL_111 = 'Model 111';
+export const AON_MSG_MODEL_111_DESCRIPTION = `Model 111. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de renda. Autoliquidació.`;
+export const AON_MSG_MODEL_190 = 'Model 190';
+export const AON_MSG_MODEL_190_DESCRIPTION = `Model 190. Declaració Informativa. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de rendes. Resum anual.`;

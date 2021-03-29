@@ -17,6 +17,8 @@ import org.jooq.AggregateFunction;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Select;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,6 +32,8 @@ import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocNotice;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
@@ -49,6 +53,11 @@ public class RawdocDAO {
 	private static final RawdocPropertiesDAO RAWDOC_PROPERTIES = new RawdocPropertiesDAO();
 	
 	private static class RawdocPropertiesDAO implements RawdocProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, RawdocFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
 		private Condition[] getConditions(RawdocFilter filter) {
 			if (filter == null) return new Condition[0];
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -96,6 +105,24 @@ public class RawdocDAO {
 				.setData(record.getValue(RAWDOC.DATA));
 		}
 	}
+	
+	private static class RawdocAttachFiller  implements Function<Record,Attach> {
+		@Override
+		public Attach apply(Record record) {
+			return new Attach()
+				.setId(record.getValue(RAWDOC.ID))
+				.setDomain(new com.esferalia.aon.occam.api.model.Domain().setId(record.getValue(RAWDOC.DOMAIN)))
+				.setAttachType(AttachType.RAWDOC)
+				.setData(record.getValue(RAWDOC.DATA))
+				.setDescription(RawdocNature.safeValueOf( record.getValue(RAWDOC.NATURE)).getDescription())
+				.setMimeType(MimeType.safeValueOf( record.getValue(RAWDOC.MIME_TYPE)))
+				.setCreationUser(record.getValue(RAWDOC.CREATION_USER))
+				.setCreationDate(record.getValue(RAWDOC.CREATION_DATE))
+				.setModificationUser(record.getValue(RAWDOC.MODIFICATION_USER))
+				.setModificationDate(record.getValue(RAWDOC.MODIFICATION_DATE))
+				;
+		}
+	}
 
 	private static Field<?>[] SELECT_FIELDS = new Field[]{
 		 RAWDOC.ID		,RAWDOC.DOMAIN	,RAWDOC.NATURE	,RAWDOC.TYPE
@@ -132,6 +159,11 @@ public class RawdocDAO {
 				.orElse(null);
 	}
 
+	public static Stream<Attach> getRawdocAttachStream(AONContext ctx, RawdocFilter filter){	
+		SelectJoinStep<Record> select = ctx.getDslContext().select().from(RAWDOC);
+		return RAWDOC_PROPERTIES.build(select, filter).fetchInto(RAWDOC).stream().map(new RawdocAttachFiller());
+	}
+	
 	public static Stream<Rawdoc> getFull(AONContext ctx, RawdocFilter filter, int offset, int limit) {
 		return ctx.getDslContext()
 				.select( RAWDOC.fields() )

@@ -113,6 +113,7 @@ export const AON_MOBILE_TOOLBAR = 'aonMobileToolbar';
 export const AON_MOBILE_APPLICATION_CONTENT = 'aonMobileApplicationContent';
 export const AON_MOBILE_CONTENT = 'aonMobileContent';
 export const AON_MOBILE_MENU = 'aonMobileMenu';
+export const AON_MOBILE_SIDENAV = 'aonMobileSidenav';
 
 // aon-loader.css
 

@@ -165,3 +165,19 @@ export const AON_MSG_PAYSHEET = 'Paysheet';
 export const AON_MSG_PAYSHEETS = 'Paysheets';
 export const AON_MSG_COMPANY_COSTS = 'Company Costs';
 export const AON_MSG_SEPA_FILES = 'SEPA Files';
+
+export const AON_MSG_CONTACT = 'Contact';
+export const AON_MSG_CONTACTS = 'Contacts';
+export const AON_MSG_CUSTOMER = 'Customer';
+export const AON_MSG_CUSTOMERS = 'Customers';
+export const AON_MSG_SUPPLIER = 'Supplier';
+export const AON_MSG_SUPPLIERS = 'Suppliers';
+export const AON_MSG_CREDITOR = 'Creditor';
+export const AON_MSG_CREDITORS = 'Creditors';
+
+// MODELOS FISCALES
+
+export const AON_MSG_MODEL_111 = 'Form 111';
+export const AON_MSG_MODEL_111_DESCRIPTION = 'Form 111. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Self-assessment.';
+export const AON_MSG_MODEL_190 = 'Form 190';
+export const AON_MSG_MODEL_190_DESCRIPTION = 'Form 190. Information Return. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Annual summary.';

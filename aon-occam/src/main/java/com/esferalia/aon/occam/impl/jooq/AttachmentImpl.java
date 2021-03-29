@@ -6,10 +6,12 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IAttachment;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
+import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 
 public class AttachmentImpl implements IAttachment{
 
@@ -62,6 +64,11 @@ public class AttachmentImpl implements IAttachment{
 	public Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> AttachmentDAO.getDataAttachStream(ctx, filter, withData));
+	}
+	@Override
+	public Stream<Attach> getRawdocAttachStream(AONContext ctx, RawdocFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RawdocDAO.getRawdocAttachStream(ctx, filter));
 	}
 	
 	@Override

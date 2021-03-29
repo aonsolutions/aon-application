@@ -12,11 +12,11 @@ import es.translogia.tedi.ewok.IConstants;
 import es.translogia.tedi.ewok.TediAddress;
 import es.translogia.tedi.ewok.TediCompany;
 import es.translogia.tedi.ewok.TediEmailInfo;
+import es.translogia.tedi.ewok.TediFile;
 import es.translogia.tedi.ewok.TediFinance;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceCategory;
 import es.translogia.tedi.ewok.TediInvoiceDetail;
-import es.translogia.tedi.ewok.TediInvoiceFile;
 import es.translogia.tedi.ewok.TediInvoiceStatus;
 import es.translogia.tedi.ewok.TediInvoiceTax;
 import es.translogia.tedi.ewok.TediInvoiceTransaction;
@@ -28,9 +28,9 @@ import es.translogia.tedi.ewok.TediTaxType;
 import es.translogia.tedi.json.TediAddressJSON;
 import es.translogia.tedi.json.TediCompanyJSON;
 import es.translogia.tedi.json.TediEmailInfoJSON;
+import es.translogia.tedi.json.TediFileJSON;
 import es.translogia.tedi.json.TediFinanceJSON;
 import es.translogia.tedi.json.TediInvoiceDetailJSON;
-import es.translogia.tedi.json.TediInvoiceFileJSON;
 import es.translogia.tedi.json.TediInvoiceJSON;
 import es.translogia.tedi.json.TediInvoiceTaxJSON;
 import es.translogia.tedi.json.TediJSONUtils;
@@ -282,18 +282,18 @@ public class TediEwokTest {
 		System.out.print( "\t-test TediInvoiceFile ");
 		for (int i = 0; i < TIMES; i++) {
 			JSONObject json = TediEwokFaker.getTediInvoiceFile();
-			TediInvoiceFile invoiceFile = TediInvoiceFileJSON.fromJSON(json);
-			tediInvoiceFileAssert(invoiceFile, json);
-			tediInvoiceFileAssert(invoiceFile, TediInvoiceFileJSON.toJSON(invoiceFile));
+			TediFile file = TediFileJSON.fromJSON(json);
+			TediFileAssert(file, json);
+			TediFileAssert(file, TediFileJSON.toJSON(file));
 			if (i % 10 == 0) System.out.print( ".");
 		}
 		System.out.print( " [OK]");
 	}
 	
-	private  void tediInvoiceFileAssert(TediInvoiceFile invoiceFile, JSONObject json ) {
-		assertEquals(invoiceFile.getUrl(), json.optString(IConstants.URL));
-		assertEquals(invoiceFile.getThumbUrl(), json.optString(IConstants.THUMB_URL));
-		assertEquals(invoiceFile.getContentType(), json.optString(IConstants.CONTENT_TYPE));
+	private  void TediFileAssert(TediFile file, JSONObject json ) {
+		assertEquals(file.getUrl(), json.optString(IConstants.URL));
+		assertEquals(file.getThumbUrl(), json.optString(IConstants.THUMB_URL));
+		assertEquals(file.getContentType(), json.optString(IConstants.CONTENT_TYPE));
 	}
 	
 	@Test
@@ -360,7 +360,7 @@ public class TediEwokTest {
 		if (invoice.getFile() == null && jsonFile == null) {
 			// OK
 		} else {
-			tediInvoiceFileAssert(invoice.getFile(), jsonFile);
+			TediFileAssert(invoice.getFile(), jsonFile);
 		}
 		assertEquals(invoice.getStatus(), json.getEnum(TediInvoiceStatus.class, IConstants.STATUS));
 		assertEquals(invoice.getOldStatus(), json.optEnum(TediInvoiceStatus.class, IConstants.OLD_STATUS));

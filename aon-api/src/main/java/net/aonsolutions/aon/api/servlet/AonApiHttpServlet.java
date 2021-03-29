@@ -1,8 +1,10 @@
 package net.aonsolutions.aon.api.servlet;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.logging.Level;
@@ -16,6 +18,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -63,16 +66,19 @@ public class AonApiHttpServlet extends HttpServlet{
 				|| IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.SESSION_ID))) 
 			? IConstants.EMPTY : req.getHeader(IConstants.SESSION_ID));
 		
-		String domainName = req.getHeader(IConstants.DOMAIN_NAME);
+		String domainName = AonStringUtils.isBlank(req.getHeader(IConstants.DOMAIN_NAME))
+				? req.getServerName() : req.getHeader(IConstants.DOMAIN_NAME);
 		Integer domainId = !IConstants.NULL.equalsIgnoreCase(req.getHeader(IConstants.DOMAIN_ID)) && AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) != null 
 				? AonNumberUtils.toInteger(req.getHeader(IConstants.DOMAIN_ID)) : 0;
 
-		Domain domain = AonStringUtils.isBlank(domainName)
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		try {
+			domain = AonStringUtils.isBlank(domainName)
 				? new Domain().setName(domainName).setId(domainId)
 				: AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
+		}catch (Exception e) {}
 		setDomain(domain);
 		
-
 		String domainLogin = req.getHeader(IConstants.DOMAIN_LOGIN);
 		User user = new User().setLogin("");
 		if(AonStringUtils.isBlank(domainLogin) && !AonStringUtils.isBlank(getToken()) && getDomain().getId() != null && getDomain().getId() != 0) {
@@ -164,15 +170,29 @@ public class AonApiHttpServlet extends HttpServlet{
 		giveBack(req, resp, object, meta);
 	}
 	
+	public void responseFile(HttpServletRequest req, HttpServletResponse resp, Attach attach) throws IOException {
+		ByteArrayInputStream is =  new ByteArrayInputStream(attach.getData());
+		responseFile(req, resp, attach.getDescription(), is, attach.getMimeType());
+	}
+	
 	public void responseFile(HttpServletRequest req, HttpServletResponse resp, File file, MimeType mimetype ) throws IOException {
+		FileInputStream is =  new FileInputStream(file);
+		responseFile(req, resp, file.getName(), is, mimetype);
+	}
+	
+	public void responseFile(HttpServletRequest req, HttpServletResponse resp, String filename, byte[] file, MimeType mimetype ) throws IOException {
+		ByteArrayInputStream is =  new ByteArrayInputStream(file);
+		responseFile(req, resp, filename, is, mimetype);
+	}
+	
+	public void responseFile(HttpServletRequest req, HttpServletResponse resp, String filename, InputStream is, MimeType mimetype ) throws IOException {
 		addCorsHeader(resp);
         resp.setContentType(mimetype.getName());
-		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "." + mimetype.getExtension() +"\";");
-		FileInputStream fileInpurOs =  new FileInputStream(file);
-		AonIOUtils.copy(fileInpurOs, resp.getOutputStream());
+		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "." + mimetype.getExtension() +"\";");
+		AonIOUtils.copy(is, resp.getOutputStream());
 		resp.flushBuffer();
-		fileInpurOs.close();
-	}	
+		is.close();
+	}
 	
     protected void addCorsHeader(HttpServletResponse response){
     	response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN, "*");

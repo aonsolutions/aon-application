@@ -218,7 +218,7 @@ export class AonInvoice extends AonElement {
 						let url = '/ms/api/download_invoice_pdf?json=' + json;
 						fileDiv.innerHTML = `<aon-viewer type="application/pdf" file="${url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
 					} else {
-						fileDiv.innerHTML = `<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
+						fileDiv.innerHTML = `<aon-viewer type="${this._invoice.file.content_type}" file="${this._invoice.file.url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
 					}
 				}
 			});

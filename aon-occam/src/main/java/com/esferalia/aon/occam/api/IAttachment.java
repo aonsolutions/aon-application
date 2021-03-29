@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
+import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -20,6 +21,7 @@ public interface IAttachment {
 	public Stream<Attach> getProjectAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
 	public Stream<Attach> getSepeAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
 	public Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
+	public Stream<Attach> getRawdocAttachStream(AONContext ctx, RawdocFilter filter);
 
 	
 	public Integer insertContractAttach(AONContext ctx, Attach attach);

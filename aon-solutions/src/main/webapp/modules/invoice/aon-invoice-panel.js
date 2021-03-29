@@ -5,6 +5,9 @@ import {Invoice} from './Invoice.js';
 import {InvoiceAction} from './invoiceEnums.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
+// import {AonNewInvoice} from './aon-new-invoice.js';
+import { startModule } from "../../services/gwtLoader.js";
+
 import './aon-invoice.js';
 import './aon-mobile-invoice.js';
 import './aon-invoice-list.js';
@@ -15,8 +18,12 @@ import '../../components/aon-application.js';
 import '../../components/aon-dialog-menu.js';
 
 import * as MSG from "../../environments/msg.js";
+import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+
+import * as GWT from "../../gwt/gwt.js";
 import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
+
 
 export class AonInvoicePanel extends AonElement {
 
@@ -145,6 +152,27 @@ export class AonInvoicePanel extends AonElement {
 				}
 			];
 			aonInvoice.addSidenavOptions(MSG.AON_MSG_INVOICES.toUpperCase(), invoiceOptions);
+
+			if(this.getDur().isAlpha()) {
+				let contactOptions = [
+					{
+						name: MSG.AON_MSG_CUSTOMERS,
+						icon: MATERIAL_ICONS.CONTACT_PAGE,
+						fn: () => GWT.load(GWT.CUSTOMER, this.getApplication().CONTENT)
+					},
+					{
+						name: MSG.AON_MSG_SUPPLIERS,
+						icon: MATERIAL_ICONS.CONTACT_PAGE,
+						fn: () => GWT.load(GWT.SUPPLIER, this.getApplication().CONTENT)
+					},
+					{
+						name: MSG.AON_MSG_CREDITORS,
+						icon: MATERIAL_ICONS.CONTACT_PAGE,
+						fn: () => GWT.load(GWT.ACCOUNTING_PERIOD, this.getApplication().CONTENT)
+					}
+				];
+				aonInvoice.addSidenavOptions(MSG.AON_MSG_CONTACTS.toUpperCase(), contactOptions);
+			}
 
 			let settingOptions = [
 				{
@@ -319,12 +347,18 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	aonInvoice(type, invoice) {
-		let aonInvoice = document.getElementById('aonInvoice');
+		let aonInvoice = this.getApplication();
 		if(this.isMobile()) {
 			aonInvoice.setContentHTML(invoice
 				? `<aon-mobile-invoice invoice='${JSON.stringify(invoice)}'> </aon-mobile-invoice>`
 				: `<aon-mobile-invoice type="${type}"> </aon-mobile-invoice>`);
-		} else {
+		}
+		//  else if(this.getDur().isAlpha()){
+		// 	let ni = new AonNewInvoice();
+		// 	ni.setInvoice(invoice);
+		// 	aonInvoice.setContent(ni);
+		// }
+		else {
 			aonInvoice.setContentHTML(invoice
 				? `<aon-invoice invoice='${JSON.stringify(invoice)}'> </aon-invoice>`
 				: `<aon-invoice type="${type}"> </aon-invoice>`);
