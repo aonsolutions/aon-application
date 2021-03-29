@@ -12,6 +12,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog.AonA
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
@@ -22,8 +24,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.XMLHttpRequest;
@@ -260,7 +265,7 @@ public class ActivityDraft extends Composite{
 		submitForm(0);
 	}
 	
-	private void submitForm(int type) {
+	private void __submitForm(int type) {
 		Pair<String, String> completeCCC = activityDraftObject.getPrincipalAccount();
 		
 		XMLHttpRequest xhr = XMLHttpRequest.create();
@@ -279,5 +284,34 @@ public class ActivityDraft extends Composite{
 		
 		xhr.send(requestDataBuffer.toString());
 	}
+	
+	private void submitForm(int type) {
+		Pair<String, String> completeCCC = activityDraftObject.getPrincipalAccount();
+		
+		String fileDownloadURL = GWT.getModuleBaseURL() + "sistema_red_ccc";
+
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(fileDownloadURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden("ccc", completeCCC.getValue()));
+		flowPanel.add(new Hidden("regime", completeCCC.getKey()));
+		flowPanel.add(new Hidden("type", Integer.toString(type)));
+		flowPanel.add(new Hidden("userLogin", Wnd.getCurrentUser()));
+		flowPanel.add(new Hidden("domainName", Wnd.getCurrentDomainNameURL()));
+		
+		formPanel.add(flowPanel);
+		
+		formPanel.addSubmitCompleteHandler(e1 -> {
+			centerContainer.remove(formPanel);
+		});
+
+		centerContainer.add(formPanel);
+
+		formPanel.submit();
+		
+	}
+	
 
 }
