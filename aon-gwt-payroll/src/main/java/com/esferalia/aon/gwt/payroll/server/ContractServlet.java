@@ -159,6 +159,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		if(getParams().optString("endDate").isEmpty()) {
 			endDate = getEndDateSalary(Optional.ofNullable(company.getId()));
 			startDate = endDate;
+			endDate = Toolkit.addDays(endDate, 6);
 		} else {
 		    startDate = Toolkit.parseDate(getParams().optString("startDate"), "yyyy-MM-dd");
 			endDate  = Toolkit.parseDate(getParams().optString("endDate"), "yyyy-MM-dd");
@@ -280,5 +281,4 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 		return filter;
 	}
-
 }

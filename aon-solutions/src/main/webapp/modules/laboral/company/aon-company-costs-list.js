@@ -205,87 +205,101 @@ export class AonCompanyCostsList extends AonElement {
   }
 
   async paintPieChar() {
-    const resp = await this.getData();
-    if(resp && resp.length > 0 ){
-      let filter = this.applicationParentEl._filter;
-      let title = "Resumen de costes";
-      let id = this.id+ "pieChar";
-      let idTitle = id + "Title";
-      let total = 0;
-      let div =   this.getElement(id) || this.createElement('div');
-      let divTitle = this.getElement(idTitle) || this.createElement('div');
-      div.innerHTML = "";
-      divTitle.style.color  = "grey";
-      divTitle.style.fontWeight ="500";
-      divTitle.style.margin = "20px";
-      divTitle.style.marginBottom = 0;
-      divTitle.id = idTitle;
-      div.id = id;
-      div.style.textAlign = "center";
-      divTitle.style.textAlign = "center";
-      this.appendChild(divTitle);
-      this.appendChild(div);
-      const startDateText = geMonthYear(new Date(filter.startDate)) ;
-      const endDateText = geMonthYear(new Date(filter.endDate)) ;
+    let filter = this.applicationParentEl._filter;
+    let startDateText = geMonthYear(new Date());
+    let endDateText = geMonthYear(new Date());
+    let title = "Resumen de costes";
+    let workplaceText = "";
+    let id = this.id+ "pieChar";
+    let idTitle = id + "Title";
+    let total = 0;
+    let div =   this.getElement(id) || this.createElement('div');
+    let divTitle = this.getElement(idTitle) || this.createElement('div');
+    div.innerHTML = "";
+    try {
+      
+      const resp = await this.getData();
+      if(resp && resp.length > 0 ){
+        startDateText = geMonthYear(new Date(resp[0].startDate));
+        endDateText = geMonthYear(new Date(resp[0].endDate));
+        divTitle.style.color  = "grey";
+        divTitle.style.fontWeight ="500";
+        divTitle.style.margin = "20px";
+        divTitle.style.marginBottom = 0;
+        divTitle.id = idTitle;
+        div.id = id;
+        div.style.textAlign = "center";
+        divTitle.style.textAlign = "center";
+        this.appendChild(divTitle);
+        this.appendChild(div);
+        let sumEnterpriseSs = resp.reduce((sum,key)=> sum + (parseFloat(key.enterpriseSS) - parseFloat(key.bonuses)),0); 
+        let sumEmployeeSs = resp.reduce((sum,key)=>sum + (parseFloat(key.employeeSS) + parseFloat(key.otherDeductions)), 0); 
+        let totalSS = sumEnterpriseSs + sumEmployeeSs;
+        let importIrpf = resp.reduce((sum,key)=>sum + parseFloat(key.irpf), 0); 
+        let totalLiquid = resp.reduce((sum,key)=>sum + parseFloat(key.liquid), 0); 
+        total = sumEnterpriseSs + sumEmployeeSs + importIrpf + totalLiquid;
+  
+        let data = [
+          ['SS Empresa', sumEnterpriseSs],
+          ['SS Empleado', sumEmployeeSs],
+          ['Total IRPF', importIrpf],
+          ['Total Nominas', totalLiquid]
+        ];
+
+        const colors = ['#0051C6','#db4437', '#B3B3B3', '#5e97f6'];
+        
+        let options = { 
+          slices: colors,
+        };
+        await pieChar(div, data, options, (evClick)=>{
+          console.log(evClick);
+        });
+        
+        data.splice(2, 0, ["Total SS", totalSS]);
+        colors.splice(2, 0, "none");
+        
+        let newColor = colors.map(color=> {
+          return {
+            divColor: color,
+            nameColor: 'grey',
+            valueColor: 'grey'
+          }
+        });
+        newColor[2].valueColor = newColor[3].valueColor =  newColor[4].valueColor = "black";
+        
+
+        let newData = data.map(el=> [el[0], formatNumber(el[1], 2, "EUR")]);
+        await addLegend(div, newData, newColor, (evClick)=>{
+          console.log(evClick);
+        });
+
+        let button = this.createElement('button');
+        button.className = "aonButton";
+        button.id = `${this.id}Nomina`;
+        button.innerHTML = "Ver nóminas";
+        button.style.marginTop = "10px";
+        div.appendChild(button);
+        button.addEventListener('click',()=>{
+          this.applicationParentEl.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
+        });
+
+        let workplaceEl = this.getElement('workplace').querySelector('LI');
+        if(workplaceEl && workplaceEl.textContent) workplaceText = workplaceEl.textContent+": ";
+  
+      }
+
       if(startDateText === endDateText){
         title = title + " "+ startDateText;
       } else {
         title = `${title} ${startDateText} - ${endDateText}`;
       }
-      let sumEnterpriseSs = resp.reduce((sum,key)=> sum + (parseFloat(key.enterpriseSS) - parseFloat(key.bonuses)),0); 
-      let sumEmployeeSs = resp.reduce((sum,key)=>sum + (parseFloat(key.employeeSS) + parseFloat(key.otherDeductions)), 0); 
-      let totalSS = sumEnterpriseSs + sumEmployeeSs;
-      let importIrpf = resp.reduce((sum,key)=>sum + parseFloat(key.irpf), 0); 
-      let totalLiquid = resp.reduce((sum,key)=>sum + parseFloat(key.liquid), 0); 
-      total = sumEnterpriseSs + sumEmployeeSs + importIrpf + totalLiquid;
-      let data = [
-        ['SS Empresa', sumEnterpriseSs],
-        ['SS Empleado', sumEmployeeSs],
-        ['Importe IRPF', importIrpf],
-        ['Importe Nominas', totalLiquid]
-      ];
-      let colors = {
-        0: { color: '#0051C6' },
-        1: { color: '#db4437' },
-        2: { color: '#B3B3B3' },
-        3: { color: '#5e97f6' }
-      };
-      let options = { 
-        slices: colors,
-      };
-      await pieChar(div, data, options, (evClick)=>{
-        console.log(evClick);
-      });
-      let newData = data.map(el=> [el[0], formatNumber(el[1], 2, "EUR")]);
-      let tableLegend = await addLegend(div, newData, colors, (evClick)=>{
-        console.log(evClick);
-      });
-      // let tbody = tableLegend.querySelector('tbody');
-      // let trButton = this.createElement('tr');
-      // tbody.appendChild(trButton);
-      // let tdButton =this.createElement('td');
-      // trButton.appendChild(tdButton);
-
-      let button = this.createElement('button');
-      button.className = "aonButton";
-      button.id = `${this.id}Nomina`;
-      button.innerHTML = "Ver nóminas";
-      button.style.marginTop = "10px";
-      div.appendChild(button);
-      button.addEventListener('click',()=>{
-        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_PAYROLL_LIST);
-      });
-      // addTrTableLegend
-      // tbody.appendChild();
-      let workplaceText = "";
-      let workplaceEl = this.getElement('workplace').querySelector('LI');
-      if(workplaceEl && workplaceEl.textContent) workplaceText = workplaceEl.textContent+": ";
-     
+          
       title = `${title}<br> ${workplaceText} <span style="color:black;font-weight:600;">${formatNumber(total, 2, "EUR")}<span>`;
-      divTitle.innerHTML = title;
-    }
 
- 
+      divTitle.innerHTML = title;
+    } catch (error) {
+        
+    }
   }
 
   async getData() {

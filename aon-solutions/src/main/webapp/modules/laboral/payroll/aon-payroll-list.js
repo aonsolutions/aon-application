@@ -183,6 +183,7 @@ export class AonPayrollList extends AonElement {
   }
 
   async getData() {
+    let isEmployee = this.applicationParentEl.isEmployee();
     this.applicationEl.startLoader();
     let data = [];
     try {
@@ -190,15 +191,18 @@ export class AonPayrollList extends AonElement {
       try {filter = {...this.applicationParentEl._filter};} catch (error) {}
 
       let datos = null;
-      if(this.applicationParentEl.isEmployee()){
+      if(isEmployee){
         datos = await getEmployeeSalaries(filter);
       } else {
         datos = await getEnterpriseSalaries(filter);
       }
       if (!isEmptyObject(datos)) {
-        sortBy(datos, 'employeeName', 'asc') 
-        .filter(({endDate})=> new Date(endDate) <= new Date())
-        .map(({
+        if(isEmployee){
+          datos = sortBy(datos, 'endDate', 'desc').filter(({endDate})=> new Date(endDate) <= new Date());
+        } else {
+          datos = sortBy(datos, 'employeeName', 'asc');
+        }
+        datos.map(({
             contract,
             employeeName,
             endDate,

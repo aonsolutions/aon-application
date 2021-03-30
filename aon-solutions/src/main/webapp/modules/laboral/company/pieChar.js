@@ -18,6 +18,11 @@ const customTooltip = (data, total) =>  {
   }
 }
 
+const changeSliceColor = (colors) =>{
+  let slices = {};
+  for (const key in colors) { slices[key] = { color: colors[key]}; }
+  return slices;
+} 
 
 export const pieChar = (div, data, opts, callBackClick) => {
     return new Promise(resolve => {
@@ -41,12 +46,13 @@ export const pieChar = (div, data, opts, callBackClick) => {
     formatter.format(table, 1);
     let options = {
       theme:"material",
-      width: 400,
       height: 300,
       legend: 'none',
-
     };
-    if (opts) options = { ...options, ...opts };
+    if (opts) {
+      if(opts.slices && opts.slices.length > 0){ opts.slices = changeSliceColor(opts.slices); }
+      options = { ...options, ...opts };
+    }
     
     let chart = new google.visualization.PieChart(div);
     google.visualization.events.addListener(chart, 'select', (ev) => {
@@ -84,14 +90,10 @@ export const addLegend = (div, data, colors, fn) => {
     tableLegend.appendChild(tbody);
   
     for(let idx in data){
-      let color = undefined;
+      let color = colors[idx];
       let name = data[idx][0];
       let value = data[idx][1];
-      if(!isEmptyObject(colors) && colors[idx]){ 
-        color = colors[idx].color;
-      } else {
-        color = "grey";
-      }
+
       let tr = addTrTableLegend({name,value, color}, tbody);
       tr.addEventListener('click',(ev) => {
         fn({name, value});
@@ -106,6 +108,29 @@ const createElement = (el) => {
   return document.createElement(el);
 }
 
+export const addTrTableLegend = (data, tbody, el) => {
+  let tr = createElement('tr');
+  let th = createElement('th');
+  let td = createElement('td');
+  th.innerHTML = data.name;
+  td.innerHTML = data.value;
+  td.style.fontWeight = 600;
+  td.style.color = "grey";
+  let tdColor = createElement('td');
+  if(!isEmptyObject(data.color)){
+    const {divColor, nameColor, valueColor} = data.color;
+    if(divColor)   tdColor.appendChild(createStylePoint(divColor));
+    if(nameColor)  th.style.color = nameColor;
+    if(valueColor) td.style.color = valueColor;
+  }
+
+  tr.appendChild(tdColor);
+  tr.appendChild(th);
+  tr.appendChild(td);
+  tbody.appendChild(tr);
+  return tr;
+}
+
 const createStylePoint  = (color) => {
   let div = createElement("div");
   div.style.height = "10px";
@@ -114,23 +139,4 @@ const createStylePoint  = (color) => {
   div.style.borderRadius = "50%";
   div.style.display = "inline-block";
   return div;
-}
-
-export const addTrTableLegend = (data, tbody, el) => {
-  let tr = createElement('tr');
-  let th = createElement('th');
-  let td = createElement('td');
-  th.innerHTML = data.name;
-  td.innerHTML = data.value;
-  td.style.fontWeight = 600;
-  td.style.color = "black";
-  let tdColor = createElement('td');
-  if(data.color){
-    tdColor.appendChild(createStylePoint(data.color));
-  }
-  tr.appendChild(tdColor);
-  tr.appendChild(th);
-  tr.appendChild(td);
-  tbody.appendChild(tr);
-  return tr;
 }
