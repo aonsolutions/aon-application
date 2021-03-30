@@ -562,47 +562,6 @@
 						</aon:panelGrid>
 					</aon:panelGroup>
 
-					
-					<!--
-						CONFIG 
-						 -->
-					<aon:if test="#{domainSwitcher.alphaUser}">
-						<aon:panelGroup>
-							<aon:panelGrid id="group_payroll_contrata_parameters"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-direct-access-panel aon-icon-config">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_configuration}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-	
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_main_system" action="gwt_main_system"
-											value="#{bundle.payroll_system}" target="gwt">
-										</aon:commandLink>
-									</aon:div>
-									<!-- 
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="payrollCodeTables-payroll"
-											action="payrollCodeTables_list-payroll"
-											actionListener="#{payrollCodeTables.onInit}"
-											value="#{bundle.payroll_predefined_tables}" />
-									</aon:div>
-									-->
-									<!--  aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="calendar-payroll" action="calendar_search"
-											actionListener="#{calendar.onEditSearch}"
-											value="#{bundle.calendar_menu_group}">
-											<aon:actionListener method="#{calendar.onInitialize}" />
-										</aon:commandLink>
-									</aon:div-->
-								</aon:div>
-							</aon:panelGrid>
-						</aon:panelGroup>
-					</aon:if>
-
-
-
 	
 					<!--
 						EMPTY 

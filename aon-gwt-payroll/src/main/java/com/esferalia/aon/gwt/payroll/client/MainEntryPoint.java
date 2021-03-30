@@ -83,10 +83,6 @@ public class MainEntryPoint implements EntryPoint {
 			EmployeeTree employeeTree = new EmployeeTree();
 			employeeTree.onModuleLoad();
 		} else if (entryPoint
-				.equalsIgnoreCase(Constants.MAIN_SYSTEM_ENTRY_POINT)) {
-			MainSystem mainSystem = new MainSystem();
-			mainSystem.onModuleLoad();
-		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CALCULATOR_ENTRY_POINT)) {
 			MainCalculator mainCalculator = new MainCalculator();
 			mainCalculator.onModuleLoad();

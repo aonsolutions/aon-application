@@ -44,14 +44,6 @@
 			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/enterprise/site.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
-	<!-- =================== Main System  ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_main_system</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/system.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
 
 	<!-- =================== Main Calculator  ========================== -->
 	<navigation-rule>
