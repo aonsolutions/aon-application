@@ -59,9 +59,15 @@ public class EnterprisePayrollTemplateAuto extends PdfFile {
 			t.new_page(HORIZONTAL);
 			PdfTable table = calculate_colums(t);
 			
-			InputStream logo = t.payroll.getLogo().orElse(null);
-			try {logo_b = logo.readAllBytes();} 
-			catch (IOException e) {e.printStackTrace();}
+			logo_b = t.payroll.getLogo()
+			.map(l -> { 
+				try {
+					return l.readAllBytes();
+				} catch ( Exception e) {
+					return null;
+				}
+			})
+			.orElse(null);
 			
 			draw_header(t);
 			draw_entries(t, table);	
