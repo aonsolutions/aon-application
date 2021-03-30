@@ -55,6 +55,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class OperationReport extends MainEntryPoint {
 
 	private static final String OPERATION_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/roms/OperationReportExcelPrint";
+	//private static final String OPERATION_EXCEL_REPORT_BOOK = "/aon_gwt_fiscal/roms/OperationReportExcelBook";
 	
 	private static CommonServiceAsync commonService;
 	private String currentDomainName;
@@ -227,8 +228,9 @@ public class OperationReport extends MainEntryPoint {
 		export.addClickHandler(new ClickHandler() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
+			public void onClick(ClickEvent event) {				
 				submitForm(OPERATION_EXCEL_REPORT_PRINT);
+				//submitForm(OPERATION_EXCEL_REPORT_BOOK);
 			}
 		});
 		buttonContainer.add(export);
@@ -253,7 +255,13 @@ public class OperationReport extends MainEntryPoint {
 	
 	private void submitForm(String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		operationParamsHidden.setValue(JsonParams.convert(getWidgetParams()));
+		
+		//operationParamsHidden.setValue(JsonParams.convert(getWidgetParams()));
+		// FALTA - ESTO SOLO ES PARA EL BOTON NUEVO AUNQUE SE PUEDE DEJAR PARA EL OTRO TAMBIEN CREO
+		OperationParams params = getWidgetParams();
+		params.setIrpf(tabLayout.getSelectedIndex() == 1);
+		operationParamsHidden.setValue(JsonParams.convert(params));				
+		
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());		
 		userHidden.setValue(getCurrentUser());
