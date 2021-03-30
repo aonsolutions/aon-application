@@ -305,8 +305,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				json.put("comments", log);
 				String reference = filter.getDescription() != null && json.opt("reference") != null ? json.optString("reference") : "";
 				String registryName = RawdocType.OUTPUT.equals(r.getType()) 
-						? (filter.getDescription() != null && json.opt("receiver") != null ? json.getJSONObject("receiver").getString("name") : "")
-						: (filter.getDescription() != null && json.opt("sender") != null ? json.getJSONObject("sender").getString("name") : "");
+						? (filter.getDescription() != null && json.opt("receiver") != null ? json.getJSONObject("receiver").optString("name") : "")
+						: (filter.getDescription() != null && json.opt("sender") != null ? json.getJSONObject("sender").optString("name") : "");
 						
 				if(filter.getDescription() == null || (filter.getDescription() != null && 
 						(AonStringUtils.containsIgnoreCase(reference, filter.getDescription()) 
