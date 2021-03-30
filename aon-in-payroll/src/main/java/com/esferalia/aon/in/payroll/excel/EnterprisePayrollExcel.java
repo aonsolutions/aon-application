@@ -86,7 +86,7 @@ public class EnterprisePayrollExcel {
 			
 			DEFAULT_HEADER.put("joint2", "");
 			
-			DEFAULT_HEADER.put("totalSS", "S.S. TOTAL");
+			DEFAULT_HEADER.put("totalSS", "TOTAL S.S.");
 			
 			DEFAULT_HEADER.put("joint3", "");
 			
@@ -100,10 +100,10 @@ public class EnterprisePayrollExcel {
 			
 			DEFAULT_HEADER.put("joint4", "");
 			
-			DEFAULT_HEADER.put("cgc", "CONT. COMUNES");
-			DEFAULT_HEADER.put("cgp", "CONT. PROF.");
-			DEFAULT_HEADER.put("unemployment", "DESEMPLEO");
-			DEFAULT_HEADER.put("jobTraining", "FORM. PROF.");
+			DEFAULT_HEADER.put("cgc", "C. COMUN");
+			DEFAULT_HEADER.put("cgp", "C. PROFES.");
+			DEFAULT_HEADER.put("unemployment", "DESEMP.");
+			DEFAULT_HEADER.put("jobTraining", "F.P.");
 			DEFAULT_HEADER.put("extraH", "H. EXTRAS");
 			
 			DEFAULT_HEADER.put("advancedPayments", "ANTICIPOS");
@@ -128,12 +128,12 @@ public class EnterprisePayrollExcel {
 			
 			DEFAULT_HEADER_SUMMARY.put("employeeSS", "SEG. SOCIAL");
 			DEFAULT_HEADER_SUMMARY.put("irpf", "IRPF");
-			DEFAULT_HEADER_SUMMARY.put("other", "OTRAS DEDUCCIONES");
+			DEFAULT_HEADER_SUMMARY.put("other", "OTR. DEDUC.");
 			DEFAULT_HEADER_SUMMARY.put("liquid", "LÍQUIDO");
 			
 			DEFAULT_HEADER_SUMMARY.put("joint2", "");
 			
-			DEFAULT_HEADER_SUMMARY.put("totalSS", "S.S. TOTAL");
+			DEFAULT_HEADER_SUMMARY.put("totalSS", "TOTAL S.S.");
 		}
 	}
 	
