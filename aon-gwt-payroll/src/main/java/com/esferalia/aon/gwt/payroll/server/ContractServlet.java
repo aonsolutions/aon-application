@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -158,8 +159,8 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 		if(getParams().optString("endDate").isEmpty()) {
 			endDate = getEndDateSalary(Optional.ofNullable(company.getId()));
-			startDate = endDate;
-			endDate = Toolkit.addDays(endDate, 6);
+			startDate = AonDateUtils.getMonthFirstDay(endDate);
+			endDate = AonDateUtils.getMonthLastDay(endDate);
 		} else {
 		    startDate = Toolkit.parseDate(getParams().optString("startDate"), "yyyy-MM-dd");
 			endDate  = Toolkit.parseDate(getParams().optString("endDate"), "yyyy-MM-dd");
