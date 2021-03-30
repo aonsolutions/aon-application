@@ -532,7 +532,7 @@ public class Cost extends ResizeComposite {
 	public void printPDF () {
 		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
 		
-		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost/"
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_pdf/"
 		+ costDocuments.geCurrentCost().getMonth() + "_" + costDocuments.geCurrentCost().getYear() + "_"
 		+ costDocuments.geCurrentCost().getEnterpriseId() + "_" + costDocuments.geCurrentCost().getWorkplaceId() + "."
 		+ "pdf");

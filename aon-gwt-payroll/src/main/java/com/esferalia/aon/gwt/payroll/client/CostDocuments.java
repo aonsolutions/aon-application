@@ -55,7 +55,7 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements
 	@Override
 	public void download(String format) {
 		Cost cost = costs.get(getCurrentIndex());
-		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost/"
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_pdf/"
 				+ cost.getMonth() + "_" + cost.getYear() + "_"
 				+ cost.getEnterpriseId() + "_" + cost.getWorkplaceId() + "."
 				+ format);
