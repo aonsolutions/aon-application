@@ -33,6 +33,8 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -287,6 +289,9 @@ public class EnterprisePayrollExcel {
 
 		Font okFont = wb.createFont();
 		okFont.setColor(IndexedColors.GREEN.getIndex());
+		
+		DataFormat format = wb.createDataFormat();
+		
 
 		CellStyle headerCellStyle = wb.createCellStyle();
 		headerCellStyle.setFont(headerFont);
@@ -310,6 +315,7 @@ public class EnterprisePayrollExcel {
 		doubleCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
 		doubleCellStyle.setBorderBottom(BorderStyle.THIN);
 		doubleCellStyle.setBorderTop(BorderStyle.THIN);
+		doubleCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
 
 		CellStyle importantCellStyle = wb.createCellStyle();
 		importantCellStyle.setFillForegroundColor(IndexedColors.WHITE.getIndex());
@@ -317,6 +323,7 @@ public class EnterprisePayrollExcel {
 		importantCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
 		importantCellStyle.setBorderBottom(BorderStyle.THIN);
 		importantCellStyle.setBorderTop(BorderStyle.THIN);
+		importantCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
 		
 		CellStyle importantTotalCellStyle = wb.createCellStyle();
 		importantTotalCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
@@ -324,6 +331,7 @@ public class EnterprisePayrollExcel {
 		importantTotalCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
 		importantTotalCellStyle.setBorderBottom(BorderStyle.THIN);
 		importantTotalCellStyle.setBorderTop(BorderStyle.THIN);
+		importantTotalCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
 
 		CellStyle boundCellStylePrev = wb.createCellStyle();
 		boundCellStylePrev.setFillForegroundColor(IndexedColors.WHITE.getIndex());
@@ -346,6 +354,7 @@ public class EnterprisePayrollExcel {
 		noDiffCellStyle.setBorderTop(BorderStyle.THIN);
 		noDiffCellStyle.setBorderLeft(BorderStyle.THIN);
 		noDiffCellStyle.setBorderRight(BorderStyle.THIN);
+		noDiffCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
 
 		CellStyle diffCellStyle = wb.createCellStyle();
 		diffCellStyle.setFont(wrongFont);
@@ -355,12 +364,14 @@ public class EnterprisePayrollExcel {
 		diffCellStyle.setBorderTop(BorderStyle.THIN);
 		diffCellStyle.setBorderLeft(BorderStyle.THIN);
 		diffCellStyle.setBorderRight(BorderStyle.THIN);
+		diffCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
 
 		CellStyle formulaCellStyle = wb.createCellStyle();
 		formulaCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
 		formulaCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
 		formulaCellStyle.setBorderBottom(BorderStyle.THIN);
 		formulaCellStyle.setBorderTop(BorderStyle.THIN);
+		formulaCellStyle.setDataFormat(format.getFormat("#,###,##0.#0"));
 
 		CellStyle formulaCellStyleBound = wb.createCellStyle();
 		formulaCellStyleBound.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
@@ -743,23 +754,23 @@ public class EnterprisePayrollExcel {
 					//SALARY TYPE
 					{
 						Cell cell = row.createCell(column++);
-						
-						switch (payroll.getSalaryType().ordinal()) {
-							case 0:
-								cell.setCellValue("NÓMINA");
-								break;
-							case 1:
-								cell.setCellValue("EXTRA");
-								break;
-							case 2:
-								cell.setCellValue("FINIQUITO");
-								break;
-							case 3:
-								cell.setCellValue("ATRASOS");
-								break;
-							default:
-								cell.setCellValue("NÓMINA");
-						}
+						if (payroll.getSalaryType() != null)
+							switch (payroll.getSalaryType().ordinal()) {
+								case 0:
+									cell.setCellValue("NÓMINA");
+									break;
+								case 1:
+									cell.setCellValue("EXTRA");
+									break;
+								case 2:
+									cell.setCellValue("FINIQUITO");
+									break;
+								case 3:
+									cell.setCellValue("ATRASOS");
+									break;
+								default:
+									cell.setCellValue("NÓMINA");
+							}
 						
 						cell.setCellStyle(doubleCellStyle);
 					}
@@ -1108,6 +1119,10 @@ public class EnterprisePayrollExcel {
 						
 						if(empQuoteFirstCell-2 > entQuoteFirstCell) {
 							sheet.addMergedRegion(new CellRangeAddress(1, 1, entQuoteFirstCell, empQuoteFirstCell-2));
+							Cell entQuoteCell = row.createCell(entQuoteFirstCell, CellType.STRING);
+							entQuoteCell.setCellStyle(headerCellStyle);
+							entQuoteCell.setCellValue("COTIZACIÓN EMPRESA");
+						} else if (empQuoteFirstCell-2 == entQuoteFirstCell) {
 							Cell entQuoteCell = row.createCell(entQuoteFirstCell, CellType.STRING);
 							entQuoteCell.setCellStyle(headerCellStyle);
 							entQuoteCell.setCellValue("COTIZACIÓN EMPRESA");
@@ -1710,7 +1725,7 @@ public class EnterprisePayrollExcel {
 		calendar.set(Calendar.YEAR, year);
 		Date startDate = calendar.getTime();
 		
-		calendar.set(Calendar.DAY_OF_MONTH, calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		Date endDate = calendar.getTime();
 
 		return getEnterprisePayrolls(aonContext, startDate, endDate, enterpriseId, workplaceId);
@@ -1792,7 +1807,7 @@ public class EnterprisePayrollExcel {
 		if (value != null)
 			cell.setCellValue(value);
 		cell.setCellStyle(doubleCellStyle);
-
+		cell.setCellType(CellType.NUMERIC);
 	}
 
 	private static void createDiffCell(Sheet sheet, Row row, int column, CellStyle ssCellStyle) {

@@ -223,7 +223,7 @@ public class EnterprisePayrollExcelTestCase {
 	}
 
 	@Test
-	@Ignore
+	//@Ignore
 	public void testWrite() {
 		Pokemon pokemon = Faker.instance().pokemon();
 		Number number = Faker.instance().number();
@@ -235,6 +235,7 @@ public class EnterprisePayrollExcelTestCase {
 				String employee = pokemon.name();
 				EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
 				enterprisePayroll.workplace = workplace;
+				enterprisePayroll.salaryType = typeOf(((Double)number.randomDouble(0, 0, 3)).byteValue() , SalaryType.class);
 				enterprisePayroll.employee = employee;
 				enterprisePayroll.raw = number.randomDouble(2, 0, 2000);
 				enterprisePayroll.employeeSS = number.randomDouble(2, 0, 2000);
@@ -402,6 +403,16 @@ public class EnterprisePayrollExcelTestCase {
 
 					return enterprisePayroll;
 				});
+	}
+	
+	private static <T extends Enum<?>> T typeOf(Byte ordinal, Class<T> type) {
+		if ( ordinal == null )
+			return null;
+		try {
+			return type.getEnumConstants()[ordinal];
+		} catch ( Exception e ) {
+			return null;
+		}
 	}
 
 }
