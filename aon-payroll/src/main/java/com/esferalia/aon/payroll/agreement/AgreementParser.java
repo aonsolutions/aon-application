@@ -81,6 +81,7 @@ public class AgreementParser {
 		put("ATRASOS_PLUS_CONVENIO_DIARIO", "A_P_CONVENIO_DIARIO");
 		put("ATRASOS_PLUS_CONVENIO_MENSUAL", "A_P_CONVENIO_MENSUAL");
 		put("ATRASOS_PLUS_EXTRA_CATEGORIA_MENSUAL", "A_P_E_CATEGORIA_MENSUAL");
+		put("ATRASOS_SALARIO_ANUAL", "A_SALARIO_ANUAL");
 		put("ATRASOS_SALARIO_DIARIO", "A_SALARIO_DIARIO");
 		put("ATRASOS_SALARIO_MENSUAL", "A_SALARIO_MENSUAL");
 		put("AYUDA_DISCAPACITADOS_ANUAL", "AYUDA_DISC_ANUAL");
@@ -222,7 +223,6 @@ public class AgreementParser {
 		put("PAGAS_EXTRA_VERANO_Y_NAVIDAD_ANUAL", "P_E_VERANO_Y_NAVIDAD_A");
 		put("PAGAS_EXTRA_VERANO_Y_NAVIDAD_MENSUAL", "P_E_VERANO_Y_NAVIDAD_M");
 		put("PAGA_EXTRA_MARZO_MENSUAL", "PAGA_EXTRA_MARZO");
-		put("PAGA_EXTRA_NAVIDAD_MENSUAL", "P_E_NAVIDAD_M");
 		put("PAGA_EXTRA_SIN_ANTIGUEDAD_MENSUAL", "P_EXTRA_SIN_ANTIGUEDAD_M");
 		put("PAGA_EXTRA_VERANO_MENSUAL", "P_E_VERANO_M");
 		put("PANTALLA_MENSUAL", "PANTALLA_MENSUAL");
@@ -308,11 +308,13 @@ public class AgreementParser {
 		put("PLUS_SALARIAL_FIJO_MENSUAL", "PLUS_FIJO");
 		put("PLUS_SALARIAL_LABORAL_DIARIO", "PLUS_LABORABLES");
 		put("PLUS_SEMANA_SANTA_MENSUAL", "P_SEMANA_SANTA_M");
+		put("PLUS_SUSTITUCION_MENSUAL", "P_SUSTIT_MENSUAL");
+		put("PLUS_SUSTITUCION_T_PARCIAL_MENSUAL", "P_SUSTIT_TP_MENSUAL");
 		put("PLUS_TOXICIDAD_DIARIO", "PLUS_TOXICIDAD");
 		put("PLUS_TOXICIDAD_HORAS", "PLUS_TOXICIDAD");
 		put("PLUS_TOXICIDAD_MENSUAL", "PLUS_TOXICIDAD");
 		put("PLUS_TRANSPORTE_ANUAL", "PLUS_TRANSPORTE_A");
-		put("PLUS_TRANSPORTE_DIARIO", "PLUS_TRANSPORTE_DIA");
+		put("PLUS_TRANSPORTE_DIARIO", "P_TRANSPORTE_D");
 		put("PLUS_TRANSPORTE_MENSUAL", "PLUS_TRANSPORTE_MEN");
 		put("PLUS_TURNICIDAD_2_TURNOS_DIARIO", "P_TURNICIDAD_2T_D");
 		put("PLUS_TURNICIDAD_2_TURNOS_MENSUAL", "P_TURNICIDAD_2T_M");
@@ -428,20 +430,20 @@ public class AgreementParser {
 		put("SALARIO_14_PAGAS_MENSUAL", "SALARIO_14P_M");
 		put("SALARIO_15_PAGAS_MENSUAL", "SALARIO_15P_M");
 		put("SALARIO_16_PAGAS_MENSUAL", "SALARIO_16P_M");
-		put("SALARIO_BASE_ANUAL", "SALARIO_BASE");
-		put("SALARIO_BASE_ANUAL_ANUAL", "SALARIO_BASE");
-		put("SALARIO_BASE_DIARIO", "SALARIO_BASE");
-		put("SALARIO_BASE_HORAS", "SALARIO_BASE");
-		put("SALARIO_BASE_MENSUAL", "SALARIO_BASE");
+		put("SALARIO_BASE_ANUAL", "SALARIO_ANUAL");
+		put("SALARIO_BASE_ANUAL_ANUAL", "SALARIO_ANUAL");
+		put("SALARIO_BASE_DIARIO", "SALARIO_DIARIO");
+		put("SALARIO_BASE_HORAS", "SALARIO_HORAS");
+		put("SALARIO_BASE_MENSUAL", "SALARIO_MENSUAL");
 		put("SALARIO_BASE_MINIMO_ANUAL", "SALARIO_BASE");
 		put("SALARIO_BASE_RVOG_ANUAL", "SALARIO_BASE_RVOG_A");
 		put("SALARIO_BASE_RVOG_MENSUAL", "S_BASE_RVOG_M");
-		put("SALARIO_CONVENIO_ANUAL", "SALARIO_BASE");
-		put("SALARIO_CONVENIO_ANUAL_ANUAL", "SALARIO_BASE");
-		put("SALARIO_CONVENIO_DIARIO", "SALARIO_BASE");
-		put("SALARIO_CONVENIO_HORAS", "SALARIO_BASE");
-		put("SALARIO_CONVENIO_MENSUAL", "SALARIO_BASE");
-		put("SALARIO_HORA_HORAS", "SALARIO_BASE");
+		put("SALARIO_CONVENIO_ANUAL", "SALARIO_ANUAL");
+		put("SALARIO_CONVENIO_ANUAL_ANUAL", "SALARIO_ANUAL");
+		put("SALARIO_CONVENIO_DIARIO", "SALARIO_DIARIO");
+		put("SALARIO_CONVENIO_HORAS", "SALARIO_HORAS");
+		put("SALARIO_CONVENIO_MENSUAL", "SALARIO_MENSUAL");
+		put("SALARIO_HORA_HORAS", "SALARIO_HORAS");
 		put("SALARIO_MINIMO_GARANTIZADO_ANUAL", "S_MIN_GARANT_A");
 		put("SEGURO_COMPLEMENTARIO_ANUAL", "SEGURO_COMPLEMENT_A");
 		put("SEGURO_CONVENIO_ANUAL", "SEG_CONVENIO_ANUAL");
@@ -480,6 +482,7 @@ public class AgreementParser {
 		put("VACACIONES_ANUAL", "VACACIONES_ANUAL");
 		put("VACACIONES_MENSUAL", "VACACIONES_MENSUAL");
 		put("VIVIENDA_VACACIONAL_MENSUAL", "VIVIENDA_VACAC_M");
+
 
 	}};
 	
@@ -700,6 +703,8 @@ public class AgreementParser {
 	    	            String realName = getParseName(name, type);
 	    	            
 	    	            agreement.addAgreementConcept(realName);
+	    	            
+//	    	            System.out.println(realName);
 	    	        }
 	            }   
 	        }
@@ -836,6 +841,8 @@ public class AgreementParser {
 						   	    	            	
 						   	    	            	String realName = getParseName(name, type);
 						   	    	            	
+//						   	    	            	System.out.println(realName + " -> " + value);
+						   	    	            	
 						   	    	            	agreementLevel.addLevelData(realName, value, startDate.getTime());
 				    	     	            	}
 				   	    	            	}
@@ -955,7 +962,6 @@ public class AgreementParser {
 			AgreementPayment agreementPayment = AgreementPayment.safeValueOf(agreementConceptName);
 			
 			if(null != agreementPayment) {
-//				System.out.println(agreementPayment.getConceptCode());
 				PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
 						.set(PAYMENT_CONCEPT.DOMAIN, DOMAIN_ID)
 						.set(PAYMENT_CONCEPT.CODE, agreementPayment.getConceptCode())
