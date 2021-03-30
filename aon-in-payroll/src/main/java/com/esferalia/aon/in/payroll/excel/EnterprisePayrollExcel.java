@@ -1583,10 +1583,11 @@ public class EnterprisePayrollExcel {
 
 	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) throws IOException {
 
-		Condition condition = SALARY.ISSUE_DATE.ge(new java.sql.Date(startDate.getTime())).and(SALARY.ISSUE_DATE.le(new java.sql.Date(endDate.getTime())))
+		Condition condition = SALARY.ISSUE_DATE.ge(new java.sql.Date(startDate.getTime()))
+				.and(SALARY.ISSUE_DATE.le(new java.sql.Date(endDate.getTime())))
 				.and(ENTERPRISE.REGISTRY.eq(enterpriseId));
-		if (workplaceId != null)
-			condition.and(WORKPLACE.ID.eq(workplaceId));
+		if (workplaceId != null && workplaceId > 0)
+			condition = condition.and(WORKPLACE.ID.eq(workplaceId));
 
 		Map<Integer, String> workplaces = aonContext.getDslContext().select(SALARY.ID, WORKPLACE.DESCRIPTION)
 				.from(SALARY).innerJoin(CONTRACT).onKey().innerJoin(WORKPLACE).onKey().innerJoin(ENTERPRISE).onKey()
