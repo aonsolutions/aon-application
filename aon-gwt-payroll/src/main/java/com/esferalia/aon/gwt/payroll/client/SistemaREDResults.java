@@ -1,11 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.shared.SistemaREDService.EMPLOYEE;
 import static com.esferalia.aon.gwt.payroll.shared.SistemaREDService.EMPLOYEES;
 import static com.esferalia.aon.gwt.payroll.shared.SistemaREDService.SISTEMA_RED_URL;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -26,13 +23,11 @@ import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResult
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safecss.shared.SafeStylesBuilder;
@@ -44,30 +39,25 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.xhr.client.ReadyStateChangeHandler;
-import com.google.gwt.xhr.client.XMLHttpRequest;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class SistemaREDResults extends Composite implements RequiresResize, EmployeeStatus.Visitor, EnterpriseStatus.Visitor {
 
@@ -99,6 +89,11 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		SafeHtml startDateMismatched(SafeStyles mainStyle, SafeStyles anchorStyle, String date);
 
 		@Template("<span style=\"{0}\">"
+				+ "Se ha producido un error."
+				+ " {1}.</span>")
+		SafeHtml unknownError(SafeStyles mainStyle, String message);
+
+		@Template("<span style=\"{0}\">"
 				+ "Acceso no autorizado. Certificado no aceptado por la Seguridad Social."
 				+ " Pulse <a style=\"{1}\" onclick='javascript:importCertificate();'  >aqu\u00ed</a> para importar un certificado.</span>")
 		SafeHtml forbiddenTreeItem(SafeStyles mainStyle, SafeStyles anchorStyle);
@@ -107,6 +102,11 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 				+ "Para acceder al SISTEMA RED se requiere un certificado aceptado por la Seguridad Social."
 				+ " Pulse <a style=\"{1}\" onclick='javascript:importCertificate();'  >aqu\u00ed</a> para importar un certificado.</span>")
 		SafeHtml noCertificateTreeItem(SafeStyles mainStyle, SafeStyles anchorStyle);
+
+		@Template("<span style=\"{0}\">"
+				+ "Cuenta de cotizaci\u00f3n ( C.C.C ) no autorizada."
+				+ " Pulse <a style=\"{1}\" onclick='javascript:importCertificate();'  >aqu\u00ed</a> para importar un nuevo certificado.</span>")
+		SafeHtml notAuthorizedCCC(SafeStyles mainStyle, SafeStyles anchorStyle);
 
 		@Template("<span style=\"{0}\">"
 				+ "Alta de trabajador en una Cuenta de cotizac\u00f3in diferente {2}."
@@ -311,6 +311,19 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	}
 	
 	@Override
+	public void unknownError(String message) {
+		addError(new SaltraEvent() {
+			
+			@Override
+			public void append(SafeHtmlBuilder builder) {
+				builder.append(TEMPLATE.unknownError(getMainStyle(), message));
+			}
+		});
+		
+		syncErrors();
+	}
+	
+	@Override
 	public void invalidData() {
 		// TODO Auto-generated method stub
 		
@@ -338,6 +351,19 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 			@Override
 			public void append(SafeHtmlBuilder builder) {
 				builder.append(TEMPLATE.noCertificateTreeItem(getMainStyle(), getAnchorStyle()));
+			}
+		});
+		
+		syncErrors();
+	}
+	
+	@Override
+	public void notAuthorizedCCC() {
+		addError(new SaltraEvent() {
+			
+			@Override
+			public void append(SafeHtmlBuilder builder) {
+				builder.append(TEMPLATE.notAuthorizedCCC(getMainStyle(), getAnchorStyle()));
 			}
 		});
 		

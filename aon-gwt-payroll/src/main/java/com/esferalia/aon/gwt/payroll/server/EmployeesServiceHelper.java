@@ -118,6 +118,7 @@ import com.esferalia.aon.watson.util.AonUtils;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
+import solutions.aon.seg.social.exceptions.invalidData.NotAllowedContributionAccount;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.objects.Idc;
@@ -359,9 +360,14 @@ public class EmployeesServiceHelper {
 		//catch ( InvalidArgumentException e ) {
 		//	return new EmployeeStatus.InvalidData();
 		//} 
+		catch ( NotAllowedContributionAccount e) {
+			return new EmployeeStatus.NotAuthorizedCCC();
+		} 
 		catch ( SaltraCredentialsNotFoundException | CertificateNotFoundException e ) {
 			return new EmployeeStatus.CredentialsNotFound();
-		}
+		} catch ( SegSocialException e  ) {
+			return new EmployeeStatus.UnknownError().setMessage(e.getMessage());
+		} 
 
 	}
 	

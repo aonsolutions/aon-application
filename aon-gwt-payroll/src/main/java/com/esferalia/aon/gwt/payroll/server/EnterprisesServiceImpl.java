@@ -130,7 +130,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.payroll.tgss.cra.Cra;
 import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import aon.sepe.objects.Contract;
@@ -143,6 +142,7 @@ import solutions.aon.seg.social.SistemaRED_ITParts.PartType;
 import solutions.aon.seg.social.SistemaRED_ITParts.SituationEmployee;
 import solutions.aon.seg.social.SistemaRED_Secondary_User;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.invalidData.NotAllowedContributionAccount;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.SecondaryUser;
 import solutions.aon.sepe.Contrato;
@@ -2334,9 +2334,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 		} catch ( ForbiddenException e) {
 			return new EnterpriseStatus.Forbidden();
+		} catch ( NotAllowedContributionAccount e) {
+			return new EnterpriseStatus.NotAuthorizedCCC();
 		} catch ( CertificateNotFoundException e) {
 			return new EnterpriseStatus.CredentialsNotFound();
-		} catch (  SQLException | SegSocialException e ) {
+		} catch ( SegSocialException e  ) {
+			return new EnterpriseStatus.UnknownError().setMessage(e.getMessage());
+		} catch (  SQLException e ) {
 			throw new RuntimeException(e);
 		} 
 	}

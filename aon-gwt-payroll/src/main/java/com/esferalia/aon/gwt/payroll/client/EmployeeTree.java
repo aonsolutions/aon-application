@@ -3672,6 +3672,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				@Override
 				public void occupationNotFound() {
 				}
+				
+				@Override
+				public void notAuthorizedCCC() {
+				}
+				
+				@Override
+				public void unknownError(String message) {
+				}
 
 				@Override
 				public void mismatchedStartDate(MismatchedStartDate status) {

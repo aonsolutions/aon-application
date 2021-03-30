@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.UnknownError;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.Visitor;
+
 
 public abstract class EmployeeStatus implements Serializable {
 	
@@ -14,7 +17,9 @@ public abstract class EmployeeStatus implements Serializable {
 		void invalidData();
 		void endDateNotFound();
 		void employeeNotFound();
+		void notAuthorizedCCC();
 		void occupationNotFound();
+		void unknownError(String message);
 		void saltraCredentialsNotFound();
 		void mismatchedCCC(MismatchedCCC status);
 		void mismatchedStartDate(MismatchedStartDate status);
@@ -53,6 +58,33 @@ public abstract class EmployeeStatus implements Serializable {
 		}
 	}	
 
+	public static class NotAuthorizedCCC extends EmployeeStatus{
+		@Override
+		public void visit(Visitor visitor) {
+			visitor.notAuthorizedCCC();
+		}
+	}	
+
+	public static class UnknownError extends EmployeeStatus{
+		
+		private String message;
+		
+		public String getMessage() {
+			return message;
+		}
+		
+		public UnknownError setMessage(String message) {
+			this.message = message;
+			return this;
+		}
+		
+
+		@Override
+		public void visit(Visitor visitor) {
+			visitor.unknownError(message);
+		}
+	}	
+
 	public static class AndEmployeeStatus extends EmployeeStatus {
 		
 		private AndEmployeeStatus next;
@@ -85,8 +117,8 @@ public abstract class EmployeeStatus implements Serializable {
 			visitor.up2Date();
 			super.visit(visitor);
 		}
-	}	
-	
+	}		
+
 	public static class EndDateNotFound extends AndEmployeeStatus{
 		@Override
 		public void visit(Visitor visitor) {
@@ -102,7 +134,7 @@ public abstract class EmployeeStatus implements Serializable {
 			super.visit(visitor);
 		}
 	}	
-	
+
 	public static class MismatchedStartDate extends AndEmployeeStatus {
 		
 		private Date ssStartDate;
@@ -368,7 +400,17 @@ public abstract class EmployeeStatus implements Serializable {
 			public void occupationNotFound() {
 				saltraEnable.run();
 			}
-	
+			
+			@Override
+			public void notAuthorizedCCC() {
+				saltraDisabled.run();
+			}
+			
+			@Override
+			public void unknownError(String message) {
+				saltraDisabled.run();
+			}
+			
 			@Override
 			public void saltraCredentialsNotFound() {
 				saltraDisabled.run();
@@ -441,6 +483,16 @@ public abstract class EmployeeStatus implements Serializable {
 				onError.run();
 			}
 	
+			@Override
+			public void notAuthorizedCCC() {
+				onError.run();
+			}
+			
+			@Override
+			public void unknownError(String message) {
+				onError.run();
+			}
+			
 			@Override
 			public void saltraCredentialsNotFound() {
 				onError.run();
@@ -533,7 +585,17 @@ public abstract class EmployeeStatus implements Serializable {
 			public void occupationNotFound() {
 				System.out.println("occupationNotFound");
 			}
-	
+			
+			@Override
+			public void notAuthorizedCCC() {
+				System.out.println("notAuthorizedCCC");
+			}
+			
+			@Override
+			public void unknownError(String message) {
+				System.out.println("unknownError " + message);
+			}
+			
 			@Override
 			public void mismatchedOccupation(MismatchedOccupation status) {
 				System.out.println("mismatchedOccupation");				
@@ -602,7 +664,17 @@ public abstract class EmployeeStatus implements Serializable {
 			public void occupationNotFound() {
 				throw new OutOfDateException();				
 			}
-	
+			
+			@Override
+			public void notAuthorizedCCC() {
+				throw new OutOfDateException();				
+			}
+			
+			@Override
+			public void unknownError(String message) {
+				throw new OutOfDateException();				
+			}
+			
 			@Override
 			public void mismatchedOccupation(MismatchedOccupation status) {
 				throw new OutOfDateException();

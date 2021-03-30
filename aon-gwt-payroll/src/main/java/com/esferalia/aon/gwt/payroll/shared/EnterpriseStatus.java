@@ -8,6 +8,8 @@ public abstract class EnterpriseStatus implements Serializable {
 	public static interface Visitor  {
 		void up2Date();
 		void forbidden();
+		void notAuthorizedCCC();
+		void unknownError(String message);
 		void saltraCredentialsNotFound();
 		void affiliatedAtTrash(AffiliatedAtTrash affiliatedAtTrash);
 		void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound);
@@ -20,6 +22,13 @@ public abstract class EnterpriseStatus implements Serializable {
 		}
 	}
 	
+	public static class NotAuthorizedCCC extends EnterpriseStatus{
+		@Override
+		public void visit(Visitor visitor) {
+			visitor.notAuthorizedCCC();
+		}
+	}	
+
 	public static class CredentialsNotFound extends EnterpriseStatus{
 		@Override
 		public void visit(Visitor visitor) {
@@ -154,6 +163,26 @@ public abstract class EnterpriseStatus implements Serializable {
 		
 	}
 
+	public static class UnknownError extends EnterpriseStatus{
+		
+		private String message;
+		
+		public String getMessage() {
+			return message;
+		}
+		
+		public UnknownError setMessage(String message) {
+			this.message = message;
+			return this;
+		}
+		
+
+		@Override
+		public void visit(Visitor visitor) {
+			visitor.unknownError(message);
+		}
+	}	
+
 	public abstract void visit(Visitor visitor);
 	
 	
@@ -170,12 +199,21 @@ public abstract class EnterpriseStatus implements Serializable {
 			public void forbidden() {
 				saltraDisabled.run();
 			}
-	
+			
+			@Override
+			public void notAuthorizedCCC() {
+				saltraDisabled.run();
+			}
+			
+			@Override
+			public void unknownError(String message) {
+				saltraDisabled.run();
+			}
+			
 			@Override
 			public void saltraCredentialsNotFound() {
 				saltraDisabled.run();
 			}
-	
 			
 			@Override
 			public void affiliatedAtTrash(AffiliatedAtTrash affiliatedAtTrash) {
@@ -204,12 +242,21 @@ public abstract class EnterpriseStatus implements Serializable {
 			public void forbidden() {
 				onError.run();
 			}
+			
+			@Override
+			public void notAuthorizedCCC() {
+				onError.run();
+			}
 	
+			@Override
+			public void unknownError(String message) {
+				onError.run();
+			}
+			
 			@Override
 			public void saltraCredentialsNotFound() {
 				onError.run();
 			}
-	
 			
 			@Override
 			public void affiliatedAtTrash(AffiliatedAtTrash affiliatedAtTrash) {
@@ -239,6 +286,16 @@ public abstract class EnterpriseStatus implements Serializable {
 			}
 			
 			@Override
+			public void notAuthorizedCCC() {
+				System.out.println("notAuthorized");
+			}
+
+			@Override
+			public void unknownError(String message) {
+				System.out.println("unknownError");
+			}			
+			
+			@Override
 			public void saltraCredentialsNotFound() {
 				System.out.println("saltraCredentialsNotFound");
 			}
@@ -266,6 +323,16 @@ public abstract class EnterpriseStatus implements Serializable {
 			
 			@Override
 			public void forbidden() {
+				throw new OutOfDateException();
+			}
+			
+			@Override
+			public void notAuthorizedCCC() {
+				throw new OutOfDateException();
+			}
+			
+			@Override
+			public void unknownError(String message) {
 				throw new OutOfDateException();
 			}
 			
