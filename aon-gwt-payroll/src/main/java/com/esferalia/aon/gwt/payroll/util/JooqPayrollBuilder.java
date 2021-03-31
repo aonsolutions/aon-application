@@ -325,7 +325,9 @@ public class JooqPayrollBuilder {
 					Double no_struct_ap_enterprise = 0d;
 					
 					for (Cost c : s.getCosts()) {
+						
 						totalEnterprise += (c.getAmount() != null ? c.getAmount() : 0d);
+						
 						if (c.getCostType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal())
 							common_cont_ap_enterprise += (c.getAmount() != null ? c.getAmount() : 0d);
 						else if (c.getCostType().ordinal() == DeductionType.IT.ordinal()
@@ -341,6 +343,7 @@ public class JooqPayrollBuilder {
 							force_majeure_ap_enterprise += (c.getAmount() != null ? c.getAmount() : 0d);
 						else if (c.getCostType().ordinal() == DeductionType.NON_STRUCTURAL_OVERTIME.ordinal())
 							no_struct_ap_enterprise += (c.getAmount() != null ? c.getAmount() : 0d);
+						
 					}
 					
 					cbb.setCommon_cont_ap_enterprise(Optional.ofNullable(common_cont_ap_enterprise));

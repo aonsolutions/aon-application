@@ -75,14 +75,15 @@ public class CostCSVServlet extends HttpServlet {
 							, aonContext.getUser()
 							, w -> w.getIdProperty().eq(workplaceId))
 							.getEnterprise();
+				
 				Stream<com.esferalia.aon.in.payroll.csv.EnterprisePayrollCSV.EnterprisePayroll> stream =
 						EnterprisePayrollCSV.getEnterprisePayrolls(aonContext, month+1, year, enterpriseId, workplaceId);
-
 				
 				List<IEnterprisePayroll> list = stream
 						.filter(p -> types.contains(p.getSalaryType().ordinal()))
 						.sorted(Comparator.comparing(IEnterprisePayroll::getEmployee))
 						.collect(Collectors.toList());
+				
 				EnterprisePayrollCSV.write(sos, list);
 
 				sos.flush();

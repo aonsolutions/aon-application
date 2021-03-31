@@ -31,13 +31,6 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 
 	public static final DSIPDFTemplate DSI_PDF_TEMPLATE = new DSIPDFTemplate();
 
-	/*
-	 * salaryBuilder.setContract( new PDFContract() .setCcc(ccc) .setNaf(naf)
-	 * .setNif(nif) .setCif(cif) .setEndDate(endDate) .setStartDate(startDate)
-	 * .setEmployeeCode(employeeCode) .setEnterpriseCode(enterpriseCode)
-	 * .setEmployeeName(employeeName) .setEnterpriseName(enterpriseName) );
-	 */
-
 	@Override
 	public SalaryPDFTemplate parse(String text, ISalaryBuilder<?> salaryBuilder)
 			throws IOException, UnknownPDFException {
@@ -170,9 +163,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 
 						salaryBuilder.addPayment(amount, amount, amount, concept, dFrom, dTo,
 								new Payment().setType(pt).setName(description), Collections.emptyMap());
-					} catch (NumberFormatException e) {
-						System.err.println("MAL");
-					}
+					} catch (NumberFormatException e) {}
 
 				}
 				line = reader.readLine();
@@ -185,9 +176,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 						.replaceAll(",", ".");
 				try {
 					salaryBuilder.setTotalPayment(Double.parseDouble(strTotalPayment));
-				} catch (NumberFormatException e) {
-					System.err.println("MAL");
-				}
+				} catch (NumberFormatException e) {}
 			}
 			matcher = find(reader, DEDUCTIONS_HEADER);
 			line = reader.readLine();
@@ -204,12 +193,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 					 * 
 					 * 
 					 */
-					System.err.println(matcher.group());
-					System.err.println("\t"+matcher.group("concept"));
-					System.err.println("\t"+matcher.group("base"));
-					
-					System.err.println("\tPERCENT: "+matcher.group("percent"));
-					System.err.println("\t"+matcher.group("deduction"));
+
 					Double amount = null;
 
 					String concept = AonStringUtils.trimToNull(matcher.group("concept")).toUpperCase();
@@ -359,14 +343,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 				salaryBuilder.setIssueDate(calendar.getTime());
 			} catch (NullPointerException | DateFormatException | NumberFormatException e) {
 			}
-
-//			matcher = find(reader, ADITIONAL_INFO);
-//			line = reader.readLine();
-//			matcher = ENTERPRISE_APPORT_HEADER_1.matcher(line);
-//			while (!matcher.matches()) {
-//				//ADD SOMEWHERE THE ADDITIONAL INFO OF THE PAYROLL
-//			}
-//			
+	
 			matcher = find(reader, ENTERPRISE_APPORT_HEADER_2);
 
 			matcher = find(reader, CC_MONTHLY);
@@ -402,22 +379,8 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 				}
 			}
 			matcher = find(reader, CC);
-//			String raw_cgc_base = AonStringUtils.trimToNull(matcher.group("amount1"));
-//			if(raw_cgc_base != null) {
-//				raw_cgc_base = raw_cgc_base.replaceAll("\\.", "").replaceAll(",", ".");
-//				try {
-//					salaryBuilder.setRawCgcBase(Double.parseDouble(raw_cgc_base));
-//				} catch (NumberFormatException e) {}
-//			}
-//			String cgcBase = AonStringUtils.trimToNull(matcher.group("amount2"));
-//			if(raw_cgc_base != null) {
-//				cgcBase = cgcBase.replaceAll("\\.", "").replaceAll(",", ".");
-//				try {
-//					salaryBuilder.setCgcBase(Double.parseDouble(cgcBase));
-//				} catch (NumberFormatException e) {}
-//			}
+
 			{
-				// String str_cc_percent = AonStringUtils.trimToNull(matcher.group("percent"));
 				String str_cc_cost = AonStringUtils.trimToNull(matcher.group("amount3"));
 				String str_cc_raw = AonStringUtils.trimToNull(matcher.group("amount1"));
 				String str_cc_base = AonStringUtils.trimToNull(matcher.group("amount2"));
@@ -459,8 +422,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 			}
 			matcher = find(reader, AT_EP);
 			{
-				// String str_at_ep_percent =
-				// AonStringUtils.trimToNull(matcher.group("percent"));
+
 				String str_at_ep_cost = AonStringUtils.trimToNull(matcher.group("cost"));
 				String str_cgp_percent = AonStringUtils.trimToNull(matcher.group("percent"));
 				if (str_at_ep_cost != null) {
@@ -487,16 +449,9 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 			matcher = find(reader, UNEMPLOYMENT_HEADER);
 			matcher = find(reader, PROF_CONT_BASES);
 			{
-				// String str_raw_prof_cont_base =
-				// AonStringUtils.trimToNull(matcher.group("raw"));
+
 				String str_prof_cont_base = AonStringUtils.trimToNull(matcher.group("normal"));
-				/*
-				 * if (str_raw_prof_cont_base != null) { str_raw_prof_cont_base =
-				 * str_prof_cont_base.replaceAll("\\.", "").replaceAll(",", "."); Double
-				 * raw_prof_cont_base = Double.parseDouble(str_raw_prof_cont_base);
-				 * salaryBuilder.addData(ContextVariable.CGP_BASE.getName(), new
-				 * TimedObject<Double> (raw_prof_cont_base, per)); }
-				 */
+
 				if (str_prof_cont_base != null) {
 					try {
 						str_prof_cont_base = str_prof_cont_base.replaceAll("\\.", "").replaceAll(",", ".");
@@ -707,7 +662,6 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 			}
 
 		} catch (Exception e) {
-			System.err.println(e.getClass());
 			return null;
 		}
 	}

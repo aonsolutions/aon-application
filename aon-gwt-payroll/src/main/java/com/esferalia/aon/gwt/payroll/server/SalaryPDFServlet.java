@@ -62,9 +62,6 @@ public class SalaryPDFServlet extends HttpServlet {
 		String extension = AonServletUtils.getExtn(requestURI);
 		String salaryRequestStr = AonServletUtils.getFileName(requestURI);
 		
-//		String paramsStr = decode(salaryRequestStr.getBytes());
-//		Map<String, String> params = createParams(paramsStr);
-		
 		try {
 			// TODO : SalaryType????
 			SalaryType salaryType = req.getParameter(PayrollPrintService.Parameter.TYPE.getName()).equals("settle") ? SalaryType.SETTLE : SalaryType.SALARY;
@@ -97,10 +94,6 @@ public class SalaryPDFServlet extends HttpServlet {
 			
 			MimeType mimeType = MimeType.getByExtension(extension);
 			resp.setContentType(mimeType.getName());
-			
-			// TODO: if want to download attachment instead open tab
-//			resp.setHeader("Content-disposition", "attachment; filename=\""
-//					+ params.get("name") + "\"");
 			
 			OutputStream os = resp.getOutputStream();
 			
@@ -135,22 +128,6 @@ public class SalaryPDFServlet extends HttpServlet {
 		
 		return condition;
 	}
-
-//	private Map<String, String> createParams(String paramsStr) {
-//		HashMap<String, String> paramsMap = new HashMap<String, String>();
-//		
-//		String params = paramsStr.substring(1);
-//		
-//		String[] paramsArr = params.split("&");
-//		for(int i=0; i < paramsArr.length; i++) {
-//			String key = paramsArr[i].split("=")[0];
-//			String value = paramsArr[i].split("=")[1];
-//			
-//			paramsMap.put(key, value);
-//		}
-//		
-//		return paramsMap;
-//	}
 
 	protected String getReportKey(String domain, final Integer enterpriseID,
 			SalaryType salaryType) throws SQLException {

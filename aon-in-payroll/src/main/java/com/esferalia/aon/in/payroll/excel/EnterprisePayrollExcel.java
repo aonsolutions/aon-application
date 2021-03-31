@@ -74,14 +74,14 @@ public class EnterprisePayrollExcel {
 			DEFAULT_HEADER.put("employee", "NOMBRE");
 			DEFAULT_HEADER.put("type", "TIPO");
 			DEFAULT_HEADER.put("raw", "BRUTO");
-			DEFAULT_HEADER.put("enterpriseSS", "SEG. SOCIAL");
+			DEFAULT_HEADER.put("enterpriseSS", "COTIZAC.");
 			DEFAULT_HEADER.put("totalCost", "COSTE TOTAL");
 			
 			DEFAULT_HEADER.put("joint1", "");
 			
-			DEFAULT_HEADER.put("employeeSS", "SEG. SOCIAL");
+			DEFAULT_HEADER.put("employeeSS", "COTIZAC.");
 			DEFAULT_HEADER.put("irpf", "IRPF");
-			DEFAULT_HEADER.put("other", "OTR. DEDUC.");
+			DEFAULT_HEADER.put("other", "DEDUC.");
 			DEFAULT_HEADER.put("liquid", "LÍQUIDO");
 			
 			DEFAULT_HEADER.put("joint2", "");
@@ -90,17 +90,17 @@ public class EnterprisePayrollExcel {
 			
 			DEFAULT_HEADER.put("joint3", "");
 			
-			DEFAULT_HEADER.put("cgcEnterprise", "CONT. COM.");
-			DEFAULT_HEADER.put("cgpEnterprise", "CONT. PROF.");
-			DEFAULT_HEADER.put("unemploymentEnterprise", "DESEMPL.");
-			DEFAULT_HEADER.put("jobTrainingEnterprise", "FORM. PROF");
+			DEFAULT_HEADER.put("cgcEnterprise", "C. COMUN.");
+			DEFAULT_HEADER.put("cgpEnterprise", "C. PROFES.");
+			DEFAULT_HEADER.put("unemploymentEnterprise", "DESEMP.");
+			DEFAULT_HEADER.put("jobTrainingEnterprise", "F.P.");
 			DEFAULT_HEADER.put("fogasaEnterprise", "FOGASA");
 			DEFAULT_HEADER.put("extraHEnterprise", "H. EXTRAS");
 			DEFAULT_HEADER.put("bonuses", "BONIF.");
 			
 			DEFAULT_HEADER.put("joint4", "");
 			
-			DEFAULT_HEADER.put("cgc", "C. COMUN");
+			DEFAULT_HEADER.put("cgc", "C. COMUN.");
 			DEFAULT_HEADER.put("cgp", "C. PROFES.");
 			DEFAULT_HEADER.put("unemployment", "DESEMP.");
 			DEFAULT_HEADER.put("jobTraining", "F.P.");
@@ -121,14 +121,14 @@ public class EnterprisePayrollExcel {
 			DEFAULT_HEADER_SUMMARY.put("employee", "NOMBRE");
 			DEFAULT_HEADER_SUMMARY.put("type", "TIPO");
 			DEFAULT_HEADER_SUMMARY.put("raw", "BRUTO");
-			DEFAULT_HEADER_SUMMARY.put("enterpriseSS", "SEG. SOCIAL");
+			DEFAULT_HEADER_SUMMARY.put("enterpriseSS", "COTIZAC.");
 			DEFAULT_HEADER_SUMMARY.put("totalCost", "COSTE TOTAL");
 			
 			DEFAULT_HEADER_SUMMARY.put("joint1", "");
 			
-			DEFAULT_HEADER_SUMMARY.put("employeeSS", "SEG. SOCIAL");
+			DEFAULT_HEADER_SUMMARY.put("employeeSS", "COTIZAC.");
 			DEFAULT_HEADER_SUMMARY.put("irpf", "IRPF");
-			DEFAULT_HEADER_SUMMARY.put("other", "OTR. DEDUC.");
+			DEFAULT_HEADER_SUMMARY.put("other", "DEDUC.");
 			DEFAULT_HEADER_SUMMARY.put("liquid", "LÍQUIDO");
 			
 			DEFAULT_HEADER_SUMMARY.put("joint2", "");
@@ -170,9 +170,7 @@ public class EnterprisePayrollExcel {
 					, startDate
 					, endDate
 					, excelType);	
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} catch (IOException e) {}
 		
 	}
 	
@@ -213,9 +211,7 @@ public class EnterprisePayrollExcel {
 					, enterpriseName
 					, getDateString(month, year)
 					, excelType);	
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} catch (IOException e) {}
 	}
 	
 	public static void simpleEnterprisePayrollGenerator (String domainName, OutputStream outputStream, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Date date, ExcelType excelType, Collection<Integer> types) {
@@ -257,9 +253,7 @@ public class EnterprisePayrollExcel {
 					, enterpriseName
 					, getDateString(month, year)
 					, excelType);	
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} catch (IOException e) {}
 	}
 	
 	
@@ -292,7 +286,7 @@ public class EnterprisePayrollExcel {
 		
 		DataFormat format = wb.createDataFormat();
 		
-
+		//Declaring different cell styles
 		CellStyle headerCellStyle = wb.createCellStyle();
 		headerCellStyle.setFont(headerFont);
 		headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -455,6 +449,7 @@ public class EnterprisePayrollExcel {
 				epCell = row.createCell(11, CellType.STRING);
 				epCell.setCellStyle(headerCellStyle);
 				epCell.setCellValue("TGSS");
+				
 				if (excelType == ExcelType.COMPLETE) {
 					jointCell = row.createCell(12, CellType.STRING);
 					jointCell.setCellStyle(jointCellStyle);
@@ -1558,9 +1553,7 @@ public class EnterprisePayrollExcel {
 					borderCell.getCellStyle().setBorderLeft(BorderStyle.THIN);
 				}
 				
-			} catch (java.lang.IllegalArgumentException e) {
-				System.err.println(e.getMessage());
-			}
+			} catch (java.lang.IllegalArgumentException e) {}
 		}
 
 		if (totals != null) {
@@ -1737,12 +1730,6 @@ public class EnterprisePayrollExcel {
 	public static Stream<EnterprisePayroll> getEnterprisePayrolls(DSLContext ctx, Condition condition)
 			throws IOException {
 
-//		EnterprisePayroll pruebaSegSocial = new EnterprisePayroll();
-//		pruebaSegSocial.workplace = "PRINCIPAL - SEG. SOCIAL";
-//		pruebaSegSocial.employee = "DAVID CASTAÑO, SANCHEZ";
-//		pruebaSegSocial.employeeSS = 3d;
-//		pruebaSegSocial.enterpriseSS = 0d;
-
 		Map<Integer, Double> bonusesMap = ctx.select().from(SALARY).innerJoin(CONTRACT)
 				.on(CONTRACT.ID.eq(SALARY.CONTRACT)).innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
 				.innerJoin(SALARY_BONUS).on(SALARY.ID.eq(SALARY_BONUS.SALARY)).where(condition)
@@ -1765,7 +1752,7 @@ public class EnterprisePayrollExcel {
 					}
 				});
 
-		/* Stream<EnterprisePayroll> ret = */return ctx.select().from(SALARY).innerJoin(CONTRACT).onKey()
+		return ctx.select().from(SALARY).innerJoin(CONTRACT).onKey()
 				.innerJoin(WORKPLACE).onKey().where(condition).fetchStream().map(record -> {
 					EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
 					enterprisePayroll.employee = record.get(SALARY.EMPLOYEE_NAME);
@@ -1779,7 +1766,6 @@ public class EnterprisePayrollExcel {
 					enterprisePayroll.raw = record.get(SALARY.TOTAL_PAYMENT);
 					enterprisePayroll.liquid = record.get(SALARY.TOTAL_LIQUID);
 					enterprisePayroll.employeeSS = record.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
-//					enterprisePayroll.enterpriseSS = record.get(SALARY.TOTAL_ENTERPRISE);
 
 					enterprisePayroll.enterpriseSS = ctx.select().from(SALARY_COST)
 							.where(SALARY_COST.SALARY.eq(record.get(SALARY.ID))).fetchStreamInto(SALARY_COST)
@@ -1800,7 +1786,6 @@ public class EnterprisePayrollExcel {
 
 					return enterprisePayroll;
 				});
-//		return Stream.concat(ret, Stream.of(pruebaSegSocial));
 	}
 
 	private static void createDoubleCell(Row row, int column, Double value, CellStyle doubleCellStyle) {

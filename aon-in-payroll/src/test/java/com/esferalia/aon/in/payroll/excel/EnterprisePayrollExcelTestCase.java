@@ -251,10 +251,6 @@ public class EnterprisePayrollExcelTestCase {
 			}
 		}
 
-//		DSLContext context = DSL.using(connection);
-//		
-//		context.select().from(SALARY).ex1
-
 		try {
 			EnterprisePayrollExcel.write(
 					new FileOutputStream("src/test/resources/com/esferalia/aon/in/payroll/excel/prueba1.xlsx"),
@@ -271,8 +267,8 @@ public class EnterprisePayrollExcelTestCase {
 		try (Connection cn = getConnection(); DSLContext context = DSL.using(cn);) {
 
 			ArrayList<IEnterprisePayroll> payrolls = new ArrayList<IEnterprisePayroll>();
-			context.select().from(SALARY.getName())/* .where(SALARY.ENTERPRISE_NAME.notLike("%JUANA%")) */.fetch()
-					.stream().forEach(record -> {
+			context.select().from(SALARY.getName()).fetch().stream()
+			.forEach(record -> {
 						EnterprisePayroll payroll = new EnterprisePayroll();
 						payroll.raw = record.getValue(SALARY.TOTAL_PAYMENT);
 						payroll.cgcBase = record.getValue(SALARY.CGC_BASE);
@@ -288,7 +284,6 @@ public class EnterprisePayrollExcelTestCase {
 						payroll.workplace = record.getValue(SALARY.ENTERPRISE_NAME);
 						Record1<BigDecimal> bonus = context.select(sum(SALARY_BONUS.AMOUNT)).from(SALARY_BONUS)
 								.where(SALARY_BONUS.SALARY.eq(record.getValue(SALARY.ID))).fetchAny();
-						System.out.println(bonus.get(0));
 						payroll.bonuses = 0d;
 						payrolls.add(payroll);
 					});
@@ -325,7 +320,6 @@ public class EnterprisePayrollExcelTestCase {
 		} catch (IOException e) {
 			fail(e.getMessage());
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
@@ -340,10 +334,6 @@ public class EnterprisePayrollExcelTestCase {
 		Map<Integer, Double> bonusesMap = ctx.select().from(SALARY).innerJoin(SALARY_BONUS).onKey().where(condition)
 				.fetchStreamInto(SALARY_BONUS)
 				.collect(Collectors.toMap(s -> s.getSalary(), s -> s.getAmount(), (a1, a2) -> a1 + a2));
-
-//		Map<Integer, Map<String, Double>> deductions = ctx.select().from(SALARY).innerJoin(SALARY_DEDUCTION).onKey()
-//				.where(condition).fetchStream().collect(Collectors.groupingBy(s -> s.get(SALARY.ID), 
-//						Collectors.toMap(s -> s.get(SALARY.ID), s -> Collectors.toMap(s -> s.get(SALARY_DEDUCTION.DESCRIPTION), s -> s.get(SALARY_DEDUCTION.AMOUNT)))));
 
 		Map<Integer, Map<String, Double>> deductions = new HashMap<Integer, Map<String, Double>>();
 		ctx.select().from(SALARY).innerJoin(SALARY_DEDUCTION).onKey().where(condition).fetchStream().forEach(s -> {

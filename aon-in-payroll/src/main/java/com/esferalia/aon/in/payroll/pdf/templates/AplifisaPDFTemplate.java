@@ -29,7 +29,7 @@ public class AplifisaPDFTemplate implements SalaryPDFTemplate {
 	private Date dateFrom;
 	private Date dateTo;
 	private Period period;
-	private static int cont = 1;
+//	private static int cont = 1;
 
 	public static final AplifisaPDFTemplate APLIFISA_PDF_TEMPLATE = new AplifisaPDFTemplate();
 
@@ -81,14 +81,7 @@ public class AplifisaPDFTemplate implements SalaryPDFTemplate {
 			Date seniority = PdfParsingTools.commonDateParser(AonStringUtils.trimToNull(matcher.group("seniority")));
 			salaryBuilder.setSeniorityDate(seniority);
 			matcher = find(reader, AplifisaRegex.LIQPERIOD_TIMEUNITS);
-//			System.out.println(matcher.group());
-//			System.out.println("\t" + matcher.group("liqperiod"));
-//			System.out.println("\t\t" + matcher.group("from"));
-//			System.out.println("\t\t" + matcher.group("to"));
-//			System.out.println("\t\t" + matcher.group("salarytype"));
-//			System.out.println("\t\t" + matcher.group("month"));
-//			System.out.println("\t\t" + matcher.group("year"));
-//			System.out.println("\t" + matcher.group("timeunits"));
+
 			if (matcher.group("liqperiod") != null) {
 
 				try {
@@ -120,7 +113,8 @@ public class AplifisaPDFTemplate implements SalaryPDFTemplate {
 								dateTo = calendar.getTime();
 								break;
 							}
-						} else if (AonStringUtils.containsIgnoreCase(strSalaryType, "LIQUIDACIÓN") || AonStringUtils.containsIgnoreCase(strSalaryType, "FIN CONTRATO")) {
+						} else if (AonStringUtils.containsIgnoreCase(strSalaryType, "LIQUIDACIÓN") ||
+								AonStringUtils.containsIgnoreCase(strSalaryType, "FIN CONTRATO")) {
 							salaryBuilder.setType(SalaryType.SETTLE);
 							dateFrom = seniority;
 							dateTo = issueDateFinder(text);
@@ -605,7 +599,7 @@ public class AplifisaPDFTemplate implements SalaryPDFTemplate {
 					Deduction costDeduction = new Deduction().setType(DeductionType.STRUCTURAL_OVERTIME)
 							.setName("EXTRAH_E");
 					salaryBuilder.addCost(cost, DeductionType.STRUCTURAL_OVERTIME.getName(new Locale("es", "ES")),
-							dateFrom, dateTo, costDeduction, Collections.EMPTY_MAP);
+							dateFrom, dateTo, costDeduction, Collections.emptyMap());
 					if (base != null) {
 						salaryBuilder.addData(ContextVariable.EXTRA_HOURS.getName(),
 								new TimedObject<Double>(base, period));
@@ -614,14 +608,7 @@ public class AplifisaPDFTemplate implements SalaryPDFTemplate {
 			}
 
 			matcher = find(reader, AplifisaRegex.IRPF_E);
-			// NO IDEA WHY THERE ARE TWO DIFFERENT IRPF BASES
-//			{
-//				Double base = aplifisaDoubleParser(AonStringUtils.trimToNull(matcher.group("base")));
-//				if (base != null) {
-//					salaryBuilder.addData(ContextVariable.IRPF_BASE.getName(),
-//							new TimedObject<Double>(base, period));
-//				}
-//			}
+
 
 			matcher = find(reader, AplifisaRegex.TOTAL_ENTERPRISE);
 			{
@@ -630,16 +617,14 @@ public class AplifisaPDFTemplate implements SalaryPDFTemplate {
 					Double total_enterprise = PdfParsingTools.payrollDoubleParser(matcher.group("total"));
 					if(total_enterprise != null)
 						salaryBuilder.setTotalEnterprise(total_enterprise);
-//					Double total_ss = total_apport + total_enterprise;
-//					total_ss = ((double) Math.round(total_ss * 100)) / 100;
-//					salaryBuilder.setTotalSS(total_ss);
+
 				} else
 					salaryBuilder.setTotalEnterprise(0d);
 			}
 			salaryBuilder.getSalary();
 		}
-		System.err.println(cont);
-		cont++;
+//		System.err.println(cont);
+//		cont++;
 		return this;
 	}
 

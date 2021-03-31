@@ -69,7 +69,6 @@ public class DraftPayrollBuilder {
 						List<String> address = null;
 						if (salary.getEnterpriseAddress()!=null)
 							address = Arrays.asList(Utilities.separateString(salary.getEnterpriseAddress(), 40));
-	//						address = get_lines(salary.getEnterpriseAddress(), 170, PdfFonts.HELVETICA, 9f);
 						if (address != null && address.size() > 1) {
 							dpb.setAddress(address.get(0) != null ? address.get(0).trim() : null);
 							dpb.setAddress_2(address.get(1));
@@ -220,7 +219,6 @@ public class DraftPayrollBuilder {
 					
 					Deduction deduction = new Deduction(d.getAmount(), desc, percent);
 					
-					System.out.println(deduction.getDescription()+" : "+deduction.getAmount());
 					
 					if (!deductionsMap.containsKey(type))
 						deductionsMap.put(type, new ArrayList<Deduction>());
@@ -328,7 +326,6 @@ public class DraftPayrollBuilder {
 					
 					Optional<Double> percent = Optional.ofNullable(percentD);
 					
-//					totalEnterprise += (c.getAmount() != null ? c.getAmount() : 0d);
 					if (c.getType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal()) {
 						common_cont_ap_enterprise += c.getAmount();
 						cbb.setCommon_cont_type(percent);
