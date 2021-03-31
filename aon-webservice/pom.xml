@@ -15,6 +15,12 @@
 	<dependencies>
 	
 		<!-- AON DEPENDENCIES -->
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.api</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
 		
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
