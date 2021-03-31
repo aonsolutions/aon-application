@@ -26,14 +26,12 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
@@ -340,7 +338,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		
 		if(json.opt("file")!= null) { 
 			file = json.optJSONObject("file");
-			json = json.opt("invoice") != null ? json.optJSONObject("invoice") : initInvoice();
+			json = json.opt("invoice") != null ? json.optJSONObject("invoice") : json;
+			if(json.opt("status") == null) {
+				json = initInvoice();
+			}
 		}
 		Integer id = json.opt("id") !=null ? json.optInt("id") : null;
 		RawdocStatus status = getRawdocStatus(json.optString("status")); 

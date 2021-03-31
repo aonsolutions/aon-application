@@ -33,7 +33,6 @@ export class AonMobileInvoiceList extends AonElement {
   }
 
   connectedCallback () {
-
     this.build();
   }
 
@@ -43,7 +42,7 @@ export class AonMobileInvoiceList extends AonElement {
   }
 
   init() {
-
+    this.getApplication().removeToolbarOptions();
     getInvoices(this.getFilter()).then(invoices => {
       setInvoices(invoices);
       this.innerHTML = '';
