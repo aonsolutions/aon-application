@@ -1,8 +1,10 @@
 package com.code.aon.webservice.documental;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -15,13 +17,18 @@ import org.json.JSONObject;
 
 import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.aon.api.notification.Notification;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "UploadDocumentalServlet", urlPatterns = { "/ms/api/attachment_upload/*",
@@ -92,8 +99,38 @@ public class UploadDocumentalServlet extends HttpServlet{
     	if(json.opt("tag") != null && !AonStringUtils.isEmpty(json.optString("tag"))) {
         	AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attachId, json.optInt("tag"));
     	}
-
     	
+    	LinkedList<AuthDevice> auths = new LinkedList<>();
+    	AON.getDomainUserStream(domain.getName(), domain.getId(), login, f -> f.getAuthProperty().isNotNull()).forEach(user -> {
+    		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, login, user.getId());
+    		if(RegistryAttachmentType.DOCUMENTAL_ASESOR.value() == attach.getType().byteValue()) {
+    			if(dur.isDocumentalManager()) {
+    				AuthDevice ad = SECURITY.getAuthDevice(domain, login, f-> f.getAuthProperty().eq(user.getAuth()));
+    				if(ad != null) auths.add(ad);
+    			}
+    		} else if(RegistryAttachmentType.CORPORATE_IDENTITY.value() == attach.getType().byteValue()) {
+    			if(dur.isDocumentalPortal()) {
+    				AuthDevice ad = SECURITY.getAuthDevice(domain, login, f-> f.getAuthProperty().eq(user.getAuth()));
+    				if(ad != null) auths.add(ad);
+    			}
+    		} else if(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value() == attach.getType().byteValue()) {
+    			if(dur.isDocumental()) {
+    				AuthDevice ad = SECURITY.getAuthDevice(domain, login, f-> f.getAuthProperty().eq(user.getAuth()));
+    				if(ad != null) auths.add(ad);
+    			}
+    		}
+    	});
+
+    	Notification notification= new Notification();
+    	notification.setTitle("Nuevo Documento");
+    	notification.setBody("Se ha subido un nuevo documento a la empresa " + domain.getDescription());
+	    String str = "domain="+ attach.getDomain().getId() + "&id=" + attach.getId() + "&attach_type=registry";
+    	String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+ 	    String url = "http://" + domain.getName() + "/ms/download_attachment/"  + attach.getDomain().getName() + "/" + attach.getCreationUser() + "/" +  result;
+    	notification.setUrl(url);
+    	notification.setDeviceTokens(auths.stream().map(ad -> ad.getDeviceToken()).toArray(String[]::new));
+    	notification.send();
+
 //    	attach.setId(attachId);
 //		                   	
 //    	DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
