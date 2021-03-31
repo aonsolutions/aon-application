@@ -75,12 +75,11 @@ export class AonCompanyCostsList extends AonElement {
 
   paintView() {
     let innerHTML = `<aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
-    if (this.isMobile()) {
-      innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
-    } else {
-      innerHTML = innerHTML + `<aon-table id='${this.TABLE_ID}' />`;
-    }
-
+    // if (this.isMobile()) {
+    //   innerHTML = innerHTML + ` <aon-mobile-list id='${this.TABLE_ID}' />`;
+    // } else {
+    //   innerHTML = innerHTML + `<aon-table id='${this.TABLE_ID}' />`;
+    // }
     this.innerHTML = innerHTML;
   }
 
@@ -98,7 +97,6 @@ export class AonCompanyCostsList extends AonElement {
 
   async buildFilter() {
     let aonFilter = this.getElement(`${this.id}Filter`);
-    let filter = this.applicationParentEl._filter;
     aonFilter.setInputs([
       PAYROLL_FILTER[0],
       ...PRESENCE_FILTER,
@@ -149,8 +147,9 @@ export class AonCompanyCostsList extends AonElement {
   async getTable() {
     this.applicationEl = await waitEl("#aonLaboral");
     this.applicationEl.startLoader();
-    if(this.isMobile())await this.paintPieChar();
-    else await this.getTableDesk();
+    // if(this.isMobile())await this.paintPieChar();
+    // else await this.getTableDesk();
+    await this.paintPieChar();
     this.applicationEl.stopLoader();
   }
 
@@ -159,11 +158,10 @@ export class AonCompanyCostsList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumn("Nombre", "string", "name", "30%");
-      aonTable.addColumn("C. Trabajo", "string", "workplaceName", "20%");
       aonTable.addColumn("Tipo", "string", "salaryType", "10%");
-      aonTable.addColumn("Bruto", "number", "raw", "10%");
-      aonTable.addColumn("Seg. Social", "number", "totalSS", "10%");
-      aonTable.addColumn("Coste total", "number", "totalCost", "10%");
+      aonTable.addColumn("Total bruto", "number", "raw", "10%");
+      aonTable.addColumn("Total SS", "number", "totalSS", "10%");
+      aonTable.addColumn("Total coste", "number", "totalCost", "10%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -173,20 +171,20 @@ export class AonCompanyCostsList extends AonElement {
           totalSS: 0,
         };
         resp.map((res) => {
+          const totalSS = (parseFloat(res.enterpriseSS) - parseFloat(res.bonuses)) + (parseFloat(res.employeeSS) + parseFloat(res.otherDeductions));
           sumTotal.raw += parseFloat(res.raw);
           sumTotal.totalCost += parseFloat(res.totalCost);
-          sumTotal.totalSS += parseFloat(res.totalSS);
+          sumTotal.totalSS += totalSS;
           aonTable.addRow(
             {
               ...res,
               raw: formatNumber(res.raw, 2, "EUR"),
-              totalSS: formatNumber(res.totalSS, 2, "EUR"),
+              totalSS: formatNumber(totalSS, 2, "EUR"),
               totalCost: formatNumber(res.totalCost, 2, "EUR"),
             },
             (el) => console.log(el)
           );
         });
-
         if (resp.length > 0) {
           aonTable.addRow(
             {
@@ -205,9 +203,8 @@ export class AonCompanyCostsList extends AonElement {
   }
 
   async paintPieChar() {
-    let filter = this.applicationParentEl._filter;
-    let startDateText = geMonthYear(new Date());
-    let endDateText = geMonthYear(new Date());
+    let startDate = new Date();
+    let endDate = new Date();
     let title = "Resumen de costes";
     let workplaceText = "";
     let id = this.id+ "pieChar";
@@ -217,11 +214,10 @@ export class AonCompanyCostsList extends AonElement {
     let divTitle = this.getElement(idTitle) || this.createElement('div');
     div.innerHTML = "";
     try {
-      
       const resp = await this.getData();
       if(resp && resp.length > 0 ){
-        startDateText = geMonthYear(new Date(resp[0].startDate));
-        endDateText = geMonthYear(new Date(resp[0].endDate));
+        startDate = new Date(resp[0].startDate);
+        endDate   = new Date(resp[0].endDate);
         divTitle.style.color  = "grey";
         divTitle.style.fontWeight ="500";
         divTitle.style.margin = "20px";
@@ -285,9 +281,10 @@ export class AonCompanyCostsList extends AonElement {
 
         let workplaceEl = this.getElement('workplace').querySelector('LI');
         if(workplaceEl && workplaceEl.textContent) workplaceText = workplaceEl.textContent+": ";
-  
       }
 
+      let startDateText = geMonthYear(startDate),
+      endDateText = geMonthYear(endDate);
       if(startDateText === endDateText){
         title = title + " "+ startDateText;
       } else {
@@ -311,7 +308,7 @@ export class AonCompanyCostsList extends AonElement {
       let datos = await getCompanyCosts(filter);
       if (!isEmptyObject(datos)) {
         if(datos[0] && datos[0].startDate){
-          this.applicationParentEl._filter = {startDate: datos[0].startDate,endDate: datos[0].endDate, period:"personalized"};
+          this.changeFilterTime({startDate: datos[0].startDate,endDate: datos[0].endDate, period:"personalized"});
         }
         sortBy(datos, "employee", "asc").map((resp) => {
           const lettersType = this.applicationParentEl.getTypeSalaryText(
@@ -328,7 +325,7 @@ export class AonCompanyCostsList extends AonElement {
           data.push(obj);
         });
       } else {
-        this.getFilterLastMonth();
+        this.changeFilterTime();
       }
     } catch (e) {
       console.log(e);
@@ -338,9 +335,9 @@ export class AonCompanyCostsList extends AonElement {
     return data;
   }
 
-  getFilterLastMonth(){
-    const valueDefault = getPeriodLaboral("last_month");
-    this.applicationParentEl._filter = {period:valueDefault.value, startDate:valueDefault.startDate,endDate: valueDefault.endDate};
+  changeFilterTime(obj = undefined){
+    const value = !obj ? getPeriodLaboral("last_month") : obj;
+    this.applicationParentEl._filter = {period:value.value, startDate:value.startDate,endDate: value.endDate};
   }
 
   async getCompanyCostsExcel() {

@@ -10,7 +10,7 @@ export const getLocation = (data) => get(`${API_URL}/location`, data);
 export const sendNotificationTest = () =>{
     const tokenFCM = window.tokenFCM;
     if(tokenFCM){
-        get(`${API_URL}/location/notification-test`, {tokenFCM});
+        return get(`${API_URL}/location/notification-test`, {tokenFCM});
     }
     console.log("tokenFCM", tokenFCM);
 }

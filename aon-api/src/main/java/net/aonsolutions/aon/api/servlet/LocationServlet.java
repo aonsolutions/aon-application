@@ -1,28 +1,15 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.logging.Logger;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.SECURITY;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
-import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
-import com.esferalia.aon.occam.api.model.security.AuthDevice;
+import net.aonsolutions.aon.api.notification.Notification;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonLocationServlet", urlPatterns = {"/ms/api/location/*"})
@@ -117,50 +104,14 @@ public class LocationServlet extends AonApiHttpServlet{
 	
 
 	public JSONObject notificationTest() {
-		final String urlFB = "https://fcm.googleapis.com/fcm/send";
-		final String keyFB = "AAAAQ_8KqDo:APA91bFXY2DUz7Ie9TM1qK9hO8RJ_8um9uKkIvT87QcyPobWunCFOvJpP4k961zzfJdGW0sUFWQUGGUMwsa9AOGsLtT0jTI_5sHl95MIgbBQBPDf6vbuOEQU16LQh84lVm1Jh2kNMl3G";
-		JSONObject responseJSON =  new JSONObject();
-		AonToken aonToken = SECURITY.getAonToken(getToken());
-		AuthDevice authDevice = SECURITY.getAuthDevice(getDomain(), getUser().getLogin(), f->f.getAuthProperty().eq(aonToken.getAuth()));
-		
-		if(authDevice!=null) {
-			CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-			try {
-				Notification nt = new Notification()
-				.setBody("BODYYYYYYYY")
-				.setTitle("TITLE")
-				.setDeviceToken(authDevice.getDeviceToken());
 
-			    HttpPost httpPost = new HttpPost(urlFB);
-				httpPost.addHeader("Authorization", "key="+keyFB);
-				httpPost.addHeader("Content-Type", "application/json");
-				httpPost.addHeader("Accept", "*/*");
-				
-			    JSONObject payload = new JSONObject();
-			    JSONObject notification = new JSONObject();
-			    notification.put("title", nt.getTitle());
-			    notification.put("body", nt.getBody());
-			    payload.put("to", nt.getDeviceToken());
-			    payload.put("notification", notification);
-			    payload.put("data", nt.getData());
-			    
-				StringEntity params = new StringEntity(payload.toString());
-			    httpPost.setEntity(params);
-		
-			    CloseableHttpResponse response = httpClient.execute(httpPost);
+		String tokenStr = "d-BiuEqZ1t4ChD9uVo40BC:APA91bHObTy-Jek8O8u7hbsw8JJ-ZSznyL990YtCZRlXCguTulSbQIe-08cDn8O6zOgdPLURR2cRlRw6hQKYYkf_8p0BgyYaUlQoYmDqpg6kOyKx3vckLPX5yANRgzkK5-YIr-zAlvjF";
+//		String tokenStr = "123123123-YIr123";
+		Boolean success = new Notification().setBody("BODYYYYYYYY").setTitle("TITLE")
+		.setDeviceTokens(new String[] {tokenStr}).send();
+		 System.out.println("SUCCESS:" + success);
+		 return new JSONObject();
 
-			    HttpEntity responseEntity = response.getEntity();
-			    if(responseEntity!=null) {
-			        String responseString = EntityUtils.toString(responseEntity);
-			        responseJSON = new JSONObject(responseString);
-			    }
-			    httpClient.close();
-			} catch (Exception e) {
-				 e.printStackTrace();
-			}
-		}
-	
-		return responseJSON;
 	}
 	
 }

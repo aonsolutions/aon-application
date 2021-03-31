@@ -80,11 +80,10 @@ export const addLegend = (div, data, colors, fn) => {
     tableLegend.id = id;
     tableLegend.style.textAlign = "right";
     tableLegend.style.margin = "auto";
-    tableLegend.style.width = "50%";
     tableLegend.style.color = "grey";
     tableLegend.style.fontSize ="14px";
     tableLegend.style.borderCollapse = "separate";
-    tableLegend.style.borderSpacing = "0 4px";
+    tableLegend.style.borderSpacing = "1em .5em";
     div.appendChild(tableLegend);
     let tbody = createElement('tbody');
     tableLegend.appendChild(tbody);
@@ -112,7 +111,7 @@ export const addTrTableLegend = (data, tbody, el) => {
   let tr = createElement('tr');
   let th = createElement('th');
   let td = createElement('td');
-  th.innerHTML = data.name;
+  th.innerHTML = data.name+":";
   td.innerHTML = data.value;
   td.style.fontWeight = 600;
   td.style.color = "grey";
@@ -138,5 +137,6 @@ const createStylePoint  = (color) => {
   div.style.backgroundColor = color || "#bbb";
   div.style.borderRadius = "50%";
   div.style.display = "inline-block";
+  // div.style.marginRight = "10px";
   return div;
 }
