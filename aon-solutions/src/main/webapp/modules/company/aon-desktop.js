@@ -88,10 +88,6 @@ export class AonDesktop extends AonElement {
 		let aonDesktop = document.getElementById('aonDesktopMain');
 
 		let taskOptions = [{
-				name: 'Documentos sin leer',
-				icon: 'snippet_folder',
-				fn: () => {}
-			},{
 				name: 'Notificaciones',
 				icon: 'notifications',
 				fn: () => {}

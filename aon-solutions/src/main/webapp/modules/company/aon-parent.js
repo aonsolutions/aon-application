@@ -57,10 +57,6 @@ export class AonParent extends AonElement {
 				icon: 'notifications',
 				fn: () => {}
 			},{
-				name: 'Documentos',
-				icon: 'snippet_folder',
-				fn: () => {}
-			},{
 				name: MSG.AON_MSG_PENDING_INVOICES,
 				count: inboxCount,
 				icon: 'inbox',

@@ -180,7 +180,6 @@ export class AonMobileDesktop extends AonElement {
 			rejectedCount = notice.invoice.rejected.count;
 		}
 
-		ul.appendChild(this.buildNotificationsLi('Documentos sin leer', 'snippet_folder', 0, () => {}));
 		ul.appendChild(this.buildNotificationsLi('Notificaciones', 'notifications', 0, () => {}));
 		ul.appendChild(this.buildNotificationsLi(MSG.AON_MSG_PENDING_INVOICES, 'inbox', inboxCount, () => {
 			if(inboxCount > 0) {
