@@ -2268,6 +2268,7 @@ public class CretaServlet extends HttpServlet
 			.or(DOMAIN.PARENT.eq(domainId))
 			.and(SALARY.START_DATE.le(lastDayOfMonth))
 			.and(SALARY.END_DATE.ge(firstDayOfMonth))
+			.and(SALARY.SOCIAL_SECURITY_NUMBER.isNotNull()) // Skip RETAs
 			;
 			
 			if ( cccs != null && !cccs.isEmpty())

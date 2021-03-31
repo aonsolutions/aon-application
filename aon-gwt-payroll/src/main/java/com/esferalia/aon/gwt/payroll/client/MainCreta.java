@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import javax.persistence.SynchronizationType;
 
 import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.Pos;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -75,7 +75,6 @@ import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -97,6 +96,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
@@ -105,6 +105,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	private static final int LIMIT = 100;
 
+	private static Logger LOGGER = Logger.getLogger("");
 
 	public static String getAuthorized() {
 		
@@ -132,6 +133,44 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	public interface ProgressCallback {
 		public void onProgress( JsProgress progress);
+	}
+	
+	private class MyEnterprises extends Enterprises {
+		
+		@Override
+		protected void onEnterprises(List<Enterprise> enterprises) {
+			super.onEnterprises(enterprises);
+			toolbar.setVisibleViewButton(false);
+		}
+		
+		@Override
+		protected void filterEnterprises() {
+		}
+		
+		@Override
+		protected void onEnterprise(Enterprise enterprise, TreeItem rootItem) {
+			filter(enterprise).ifPresent(e -> super.onEnterprise(e, rootItem));
+		}
+		
+		private Optional<Enterprise> filter(Enterprise enterprise) {
+			
+			Date endDate = DateUtils.addDays2Date(DateUtils.getFirstDayOfMonth(), -1);
+			Date startDate = DateUtils.addDays2Date(new Date(), -45);
+			
+			Optional<Enterprise> filtered =
+			enterprise.getActivities().stream()
+			.flatMap(a -> a.getCccs().stream())
+			.flatMap(ccc -> ccc.getEmployees().stream())
+			.filter( e -> e.getStartDate().compareTo(endDate) <= 0 )
+			.filter( e -> e.getEndDate().compareTo(startDate) >= 0 )
+			.findAny().map(e -> enterprise);
+			
+			if ( !filtered.isPresent() )
+				LOGGER.warning(enterprise.getName() + " without employees. [" + startDate + "..." + endDate + "]");
+			
+			return filtered;
+		}
+		
 	}
 
 	
@@ -277,7 +316,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	MinimizePanel footPanel;
 	@UiField
 	TabLayoutPanel footTabPanel;
-	@UiField
+	@UiField(provided=true)
 	Enterprises enterprises;
 	@UiField
 	DetailPanel detailPanel;
@@ -297,6 +336,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	@Override
 	public void onModuleLoad() {
+		
+		enterprises = new MyEnterprises();
 		
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();

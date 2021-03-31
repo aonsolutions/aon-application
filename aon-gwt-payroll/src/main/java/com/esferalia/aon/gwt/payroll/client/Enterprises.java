@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
@@ -16,10 +17,14 @@ import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.FontStyle;
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
@@ -27,6 +32,11 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safecss.shared.SafeStyles;
+import com.google.gwt.safecss.shared.SafeStylesBuilder;
+import com.google.gwt.safecss.shared.SafeStylesUtils;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -73,7 +83,18 @@ public class Enterprises extends ResizeComposite implements
 	interface Binder extends UiBinder<Widget, Enterprises> {
 	}
 
+	private static Logger LOGGER = Logger.getLogger("");
+
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	static interface Template extends SafeHtmlTemplates {
+
+		@Template("<span style=\"{0}\">{1}&nbsp;</span>{2}")
+		SafeHtml treeItem(SafeStyles styles, String preffix, String title);
+	
+	}
+	
+	private static final Template TEMPLATE = GWT.create(Template.class);
 
 	@UiField
 	Tree tree;
@@ -217,21 +238,16 @@ public class Enterprises extends ResizeComposite implements
 		
 		clearEnterprise(enterprise);
 		
-		final TreeItem enterpriseItem = addImageItem(rootItem,
-				enterprise.getName(), images.enterprise());
+		final TreeItem enterpriseItem = addItem(rootItem,
+				enterprise.getName(), "E");
 
 		enterpriseItem.setUserObject(enterprise);
 		
 		for (Activity activity: enterprise.getActivities()) {
 
-			TreeItem activityItem = addImageItem(enterpriseItem, 
-					activity.getDescription(),
-					images.ine());
-			activityItem.setUserObject(activity);
-			
 			for ( CCC ccc : activity.getCccs() ) {
-				TreeItem cccItem = addImageItem(activityItem, ccc.getCode(),getImage(ccc)
-						);
+				LOGGER.info(activity.getDescription() + ", " + ccc.getGeozone() + " " + ccc.getCode());
+				TreeItem cccItem = addImageItem(enterpriseItem, getDescription(activity, ccc),getImage(ccc));
 				cccItem.setUserObject(ccc);
 			}
 			
@@ -255,10 +271,14 @@ public class Enterprises extends ResizeComposite implements
 
 		onEnterpr1ses(enterprises);
 
-		filter();	
+		filterEnterprises();	
 		toolbar.setVisibleViewButton(true);
 		toolbar.setVisibleSearchTextBox(true);
 
+	}
+	
+	protected void filterEnterprises() {
+		filter(toolbar.getSearchTextBox().getValue());
 	}
 
 	public void clearEnterprise(Enterprise enterprise) {
@@ -464,6 +484,20 @@ public class Enterprises extends ResizeComposite implements
 		}
 	}
 
+	private TreeItem addItem(TreeItem root, String title, String preffix) {
+		
+		SafeStyles preffixStyles =
+		new SafeStylesBuilder()
+		.append(SafeStylesUtils.forFontSize(17, Unit.PX))
+		.append(SafeStylesUtils.forFontWeight(FontWeight.BOLD))
+		.toSafeStyles() ;
+		
+		TreeItem item = 
+		new TreeItem(TEMPLATE.treeItem(preffixStyles, preffix, title));
+		root.addItem(item);
+		return item;
+	}
+
 	/**
 	 * A helper method to simplify adding tree items that have attached images.
 	 * {@link #addImageItem(TreeItem, String, childs, ImageResource) code}
@@ -475,6 +509,7 @@ public class Enterprises extends ResizeComposite implements
 		root.addItem(item);
 		return item;
 	}
+
 
 	/**
 	 * Generates HTML for a tree item with an attached icon.
@@ -528,7 +563,7 @@ public class Enterprises extends ResizeComposite implements
 			filterEnterprise(enterpriseItem)
 			&& (AonStringUtils.isBlank(pattern) 
 			|| AonStringUtils.containsIgnoreCase(name, pattern)
-			|| filterActivities(pattern, enterpriseItem)
+			|| filterCCCs(pattern, enterpriseItem)
 			);	
 			
 			enterpriseItem.setVisible(visible);
@@ -539,58 +574,44 @@ public class Enterprises extends ResizeComposite implements
 	private boolean filterEnterprise(TreeItem enterpriseItem) {
 		boolean found = false;
 		for ( int i = 0; i < enterpriseItem.getChildCount(); i++ ) {
-			TreeItem activityItem = enterpriseItem.getChild(i);
-			boolean visible = filterActivity(activityItem);
-			activityItem.setVisible(visible);
-			activityItem.setState(visible);
-			found |= visible;
-		}
-		return found;
-		
-	}
-
-	private boolean filterActivity( TreeItem activityItem) {
-		
-		boolean found = false;
-		for ( int i = 0; i < activityItem.getChildCount(); i++ ) {
-			TreeItem cccItem = activityItem.getChild(i);
-			CCC ccc = ( CCC ) cccItem.getUserObject();
-			boolean checkCCC = checkCCC(ccc);
-			boolean hasEmployees = hasEmployees(ccc);
-			boolean visible = 
-					((checkCCC && isChecked(viewSuccessCCCsMenuItem))
-					|| ( !checkCCC && isChecked(viewErrorCCCsMenuItem)))
-					&& ((hasEmployees && isChecked(viewEmployeesCCCsMenuItem))
-					|| ( !hasEmployees && isChecked(viewNoEmployeesCCCsMenuItem)))
-					;	
+			TreeItem cccItem = enterpriseItem.getChild(i);
+			boolean visible = filterCCC(cccItem);
 			cccItem.setVisible(visible);
+			cccItem.setState(visible);
 			found |= visible;
 		}
-
 		return found;
-
+		
 	}
 
-	private boolean filterActivities(String pattern, TreeItem enterpriseItem) {
-		
-		if (!AonStringUtils.isNumeric(pattern)) 
-			return false;
-		
+	private boolean filterCCC( TreeItem cccItem) {
+	
 		boolean found = false;
-		for ( int i = 0; i < enterpriseItem.getChildCount(); i++ ) {
-			TreeItem activityItem = enterpriseItem.getChild(i);
-			
-			boolean visible = 
-			activityItem.isVisible() 
-			&& filterCCCs(pattern, activityItem);
-
-			activityItem.setVisible(visible);
-			activityItem.setState(visible);
-			found |= visible;
-		}
+		CCC ccc = ( CCC ) cccItem.getUserObject();
+		boolean checkCCC = checkCCC(ccc);
+		boolean hasEmployees = hasEmployees(ccc);
+		boolean visible = 
+				((checkCCC && isChecked(viewSuccessCCCsMenuItem))
+				|| ( !checkCCC && isChecked(viewErrorCCCsMenuItem)))
+				&& ((hasEmployees && isChecked(viewEmployeesCCCsMenuItem))
+				|| ( !hasEmployees && isChecked(viewNoEmployeesCCCsMenuItem)))
+				;	
+		cccItem.setVisible(visible);
+		found |= visible;
+	
 		return found;
+
 	}
 
+	private  ImageResource getImage(CCC ccc) {
+		if ( !checkCCC(ccc))
+			return images.warn();
+		else if ( !hasEmployees(ccc) )
+			return images.aon_icon_okwarning();
+		else 
+			return images.segsocial();
+	}
+	
 	private boolean filterCCCs(String pattern, TreeItem activityItem) {
 		
 		boolean found = false;
@@ -644,14 +665,9 @@ public class Enterprises extends ResizeComposite implements
 		console.log( message );
 	}-*/;
 	
-	private  ImageResource getImage(CCC ccc) {
-		if ( !checkCCC(ccc))
-			return images.warn();
-		else if ( !hasEmployees(ccc) )
-			return images.aon_icon_okwarning();
-		else 
-			return images.segsocial();
+	private static String getDescription(Activity activity, CCC ccc) {
+		return activity.getDescription() + ", " + Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
 	}
-	
+
 
 }
