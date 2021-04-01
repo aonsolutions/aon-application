@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -2055,118 +2056,58 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+	
+	// ---------------------------------------------- JooqMail.java
 
 	@Override
-	public List<MailAccount> getDomainMailAccounts(String currentDomainName, String currentUser) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			Integer domainId = AonServletUtils.getDomainID(currentDomainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(currentDomainName);
+	public List<MailAccount> getDomainMailAccounts(String domainName, String currentUser) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, currentUser, domainId, parentDomainId);
 			return JooqMail.getMailAccounts(connection, userId, domainId);
 		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
+			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public String getPayrollEmailSendTo(String currentDomainName, Integer enterpriseID) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqMail.getPayrollEmailSendTo(connection, enterpriseID);
+	public String getPayrollEmailSendTo(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, Integer enterpriseID) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqMail.getPayrollEmailSendTo(connection, type, enterpriseID);
 		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
+			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public String getPayrollEmailBody(String currentDomainName, String paramsBase64) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqMail.getPayrollEmailBody(connection, paramsBase64);
+	public String getPayrollEmailBody(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqMail.getPayrollEmailBody(connection, type, params);
 		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
+			throw new RuntimeException(e);
 		}
 	}
-
+	
 	@Override
-	public String sendPayrollEmail(String currentDomainName, String from, String to, String cc, String cco, String bodyHTML) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqMail.sendPayrollEmail(connection, from, to, cc, cco, bodyHTML);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-	}
-
-	@Override
-	public String checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
+	public String checkEmployeesEmails(String domainName, ArrayList<Integer> salaryIds) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqMail.checkEmployeesEmails(connection, salaryIds);
 		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
+			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public String sendPayrollEmailToEmployees(String currentDomainName, String from, String cc, String cco,
-			String bodyHTML, String completeURL) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqMail.sendPayrollEmailToEmployees(connection, from, cc, cco, bodyHTML, completeURL);
+	public String sendPayrollEmail(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqMail.sendPayrollEmail(connection, type, params, from, to, cc, cco, bodyHTML);
 		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
+			throw new RuntimeException(e);
 		}
 	}
+	
+	// ----------------------------------------------
 
 	@Override
 	public String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) {

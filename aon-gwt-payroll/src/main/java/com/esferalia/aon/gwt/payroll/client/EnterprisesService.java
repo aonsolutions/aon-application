@@ -2,9 +2,11 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
@@ -156,16 +158,14 @@ public interface EnterprisesService extends RemoteService {
 
 	List<MailAccount> getDomainMailAccounts(String currentDomainName, String currentUser);
 
-	String getPayrollEmailSendTo(String currentDomainName, Integer enterpriseID);
+	String getPayrollEmailSendTo(String currentDomainName, Type type, Integer enterpriseID);
 
-	String getPayrollEmailBody(String currentDomainName, String paramsBase64);
+	String getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params);
 
-	String sendPayrollEmail(String currentDomainName, String from, String to, String cc, String cco, String bodyHTML);
+	String sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, String from, String to,
+			String cc, String cco, String bodyHTML);
 
 	String checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds);
-
-	String sendPayrollEmailToEmployees(String currentDomainName, String from, String cc, String cco, String bodyHTML,
-			String completeURL);
 
 	String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList);
 

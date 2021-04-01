@@ -2,9 +2,11 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
@@ -273,24 +275,20 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getDomainMailAccounts(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 
-	public void getPayrollEmailSendTo(Integer enterpriseID, AsyncCallback<String> asyncCallback) {
-		enterprisesServiceAsync.getPayrollEmailSendTo(getCurrentDomainName(), enterpriseID, asyncCallback);
+	public void getPayrollEmailSendTo(Type type, Integer enterpriseID, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.getPayrollEmailSendTo(getCurrentDomainName(), type, enterpriseID, asyncCallback);
 	}
 	
-	public void getPayrollEmailBody(String paramsBase64, AsyncCallback<String> asyncCallback) {
-		enterprisesServiceAsync.getPayrollEmailBody(getCurrentDomainName(), paramsBase64, asyncCallback);
+	public void getPayrollEmailBody(Type type, HashMap<String, String> params, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.getPayrollEmailBody(getCurrentDomainName(), type, params, asyncCallback);
 	}
 	
-	public void sendPayrollEmail(String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> asyncCallback) {
-		enterprisesServiceAsync.sendPayrollEmail(getCurrentDomainName(), from, to, cc, cco, bodyHTML, asyncCallback);
+	public void sendPayrollEmail(Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.sendPayrollEmail(getCurrentDomainName(), type, params, from, to, cc, cco, bodyHTML, asyncCallback);
 	}
 	
 	public void checkEmployeesEmails(ArrayList<Integer> salaryIds, AsyncCallback<String> asyncCallback) {
 		enterprisesServiceAsync.checkEmployeesEmails(getCurrentDomainName(), salaryIds, asyncCallback);
-	}
-	
-	public void sendPayrollEmailToEmployees(String from, String cc, String cco, String bodyHTML, String completeURL, AsyncCallback<String> asyncCallback) {
-		enterprisesServiceAsync.sendPayrollEmailToEmployees(getCurrentDomainName(), from, cc, cco, bodyHTML, completeURL, asyncCallback);
 	}
 	
 	public void getEnterprisesCCCInfo(long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback) {

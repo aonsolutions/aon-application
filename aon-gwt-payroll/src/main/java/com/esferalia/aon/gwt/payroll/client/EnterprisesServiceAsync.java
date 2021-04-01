@@ -2,9 +2,11 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
@@ -101,14 +103,12 @@ public interface EnterprisesServiceAsync {
 			AsyncCallback<String> asyncCallback);
 	void getEmployeeAFIChanges(String currentDomainName, Integer contractId, AsyncCallback<AFIChanges> asyncCallback);
 	void getDomainMailAccounts(String currentDomainName, String currentUser, AsyncCallback<List<MailAccount>> asyncCallback);
-	void getPayrollEmailSendTo(String currentDomainName, Integer enterpriseID, AsyncCallback<String> asyncCallback);
-	void getPayrollEmailBody(String currentDomainName, String paramsBase64, AsyncCallback<String> asyncCallback);
-	void sendPayrollEmail(String currentDomainName, String from, String to, String cc, String cco, String bodyHTML,
+	void getPayrollEmailSendTo(String currentDomainName, Type type, Integer enterpriseID, AsyncCallback<String> asyncCallback);
+	void getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params, AsyncCallback<String> asyncCallback);
+	void sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML,
 			AsyncCallback<String> asyncCallback);
 	void checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds,
 			AsyncCallback<String> asyncCallback);
-	void sendPayrollEmailToEmployees(String currentDomainName, String from, String cc, String cco, String bodyHTML,
-			String completeURL, AsyncCallback<String> asyncCallback);
 	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList,
 			AsyncCallback<String> asyncCallback);
 	void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback);

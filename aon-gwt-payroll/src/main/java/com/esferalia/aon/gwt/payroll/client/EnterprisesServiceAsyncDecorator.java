@@ -5,10 +5,12 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
@@ -449,34 +451,27 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getPayrollEmailSendTo(String currentDomainName, Integer enterpriseID, AsyncCallback<String> callback) {
+	public void getPayrollEmailSendTo(String currentDomainName, Type type, Integer enterpriseID, AsyncCallback<String> callback) {
 		AON.start();
-		enterprisesServiceAsync.getPayrollEmailSendTo(currentDomainName, enterpriseID, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.getPayrollEmailSendTo(currentDomainName, type, enterpriseID, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
-	public void getPayrollEmailBody(String currentDomainName, String paramsBase64, AsyncCallback<String> callback) {
+	public void getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params, AsyncCallback<String> callback) {
 		AON.start();
-		enterprisesServiceAsync.getPayrollEmailBody(currentDomainName, paramsBase64, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.getPayrollEmailBody(currentDomainName, type, params, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
-	public void sendPayrollEmail(String currentDomainName, String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> callback) {
+	public void sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> callback) {
 		AON.start();
-		enterprisesServiceAsync.sendPayrollEmail(currentDomainName, from, to, cc, cco, bodyHTML, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.sendPayrollEmail(currentDomainName, type, params, from, to, cc, cco, bodyHTML, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
 	public void checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds, AsyncCallback<String> callback) {
 		AON.start();
 		enterprisesServiceAsync.checkEmployeesEmails(currentDomainName, salaryIds, new AsyncCallbackWrapper<String>(callback));
-	}
-
-	@Override
-	public void sendPayrollEmailToEmployees(String currentDomainName, String from, String cc, String cco,
-			String bodyHTML, String completeURL, AsyncCallback<String> callback) {
-		AON.start();
-		enterprisesServiceAsync.sendPayrollEmailToEmployees(currentDomainName, from, cc, cco, bodyHTML, completeURL, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
