@@ -11,9 +11,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAgreementsToolbar;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Listener;
@@ -560,7 +560,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	
 						@Override
 						public void onSuccess(String message) {
-							new AonAcceptDialog("BORRADO", new HTML(message), new AonAcceptDialogCallback() {
+							AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
+							dialog.confirm(new AonAcceptDialogCallback() {
 								
 								@Override
 								public void onCancel() {}
@@ -586,7 +587,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 						}});	
 		} else {
 			String message = "Este convenio ser" + String.valueOf("\u00E1") + " eliminado de forma permanente.<br>" + String.valueOf("\u00BF") + "Desea eliminar el convenio de <b>" + agreement.getDescription() + "</b>?";
-			new AonAcceptDialog("BORRADO", new HTML(message), new AonAcceptDialogCallback() {
+			AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
+			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
 				public void onCancel() {}

@@ -9,8 +9,8 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -1029,7 +1029,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void onDeleteContract(ClickEvent event) {
-		new AonAcceptDialog("BORRADO", getMessageWidget(), new AonAcceptDialogCallback() {
+		AonDialog dialog = new AonDialog("BORRADO", getMessageWidget());
+		dialog.confirm(new AonAcceptDialogCallback() {
 			
 			@Override
 			public void onCancel() {}

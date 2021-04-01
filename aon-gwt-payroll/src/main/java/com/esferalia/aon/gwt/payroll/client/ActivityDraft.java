@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonAcceptDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -202,7 +202,8 @@ public class ActivityDraft extends Composite{
 				if(hasContractsOrCras) {
 					activityDraftObject.getDeleteCCCMessage(deleteCCCs.keySet(),
 							message -> {
-								new AonAcceptDialog("BORRADO", new HTML(message), new AonAcceptDialogCallback() {
+								AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
+								dialog.confirm(new AonAcceptDialogCallback() {
 									
 									@Override
 									public void onCancel() {
