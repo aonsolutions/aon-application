@@ -12,11 +12,11 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AonAcceptDialog extends AonCustomDialog {
+public class AonDialog extends AonCustomDialog {
 
-	private static AonAcceptDialogUiBinder uiBinder = GWT.create(AonAcceptDialogUiBinder.class);
+	private static AonDialogUiBinder uiBinder = GWT.create(AonDialogUiBinder.class);
 
-	interface AonAcceptDialogUiBinder extends	UiBinder<Widget, AonAcceptDialog> {}
+	interface AonDialogUiBinder extends	UiBinder<Widget, AonDialog> {}
 	
 	@UiField
 	ScrollPanel scrollPanel;
@@ -35,12 +35,29 @@ public class AonAcceptDialog extends AonCustomDialog {
 		}
 	}
 	
-	public AonAcceptDialog(String caption, Widget widget, AonAcceptDialogCallback callback) {
+	public AonDialog(String caption, Widget widget) {
 		setCaption(caption);
 		setWidget(uiBinder.createAndBindUi(this));
 		scrollPanel.add(widget);
-		getButtonsPanel(callback);
 		
+	}
+	
+	public void info() {
+		getBtnPanel();
+		showDialog();
+	}
+	
+	public void warning() {
+		getBtnPanel();
+		showDialog();
+	}
+	
+	public void confirm(AonAcceptDialogCallback callback) {
+		getAcceptCancelBtnPanel(callback);
+		showDialog();
+	}
+	
+	private void showDialog() {
 		center();
     	show();
 		
@@ -51,8 +68,26 @@ public class AonAcceptDialog extends AonCustomDialog {
 	    });
 	}
 	
-	private void getButtonsPanel(AonAcceptDialogCallback callback) {
-		
+	private void getBtnPanel() {
+		okButton = new Button();
+    	okButton.setStyleName(AON.CSS.aonOkButton());
+    	okButton.setText( AON.MSG.closed() );
+    	
+    	okButton.addKeyUpHandler(e -> {
+    		if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+				hide();
+			}
+    	});
+    	
+    	okButton.addClickHandler(e -> {
+    		okButton.setEnabled(false);
+			hide();
+    	});
+    	
+    	buttonsPanel.add(okButton);
+	}
+
+	private void getAcceptCancelBtnPanel(AonAcceptDialogCallback callback) {
 		okButton = new Button();
     	okButton.setStyleName(AON.CSS.aonOkButton());
     	okButton.setText( AON.MSG.accept());
