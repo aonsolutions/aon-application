@@ -2,10 +2,12 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -28,6 +30,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
@@ -536,7 +539,6 @@ public class EmployeeSalary extends Composite {
 	}
 
 	private void onPDF(ClickEvent e) {
-		
 		onPDF("salary", "salaries");
 	}
 	
@@ -592,115 +594,47 @@ public class EmployeeSalary extends Composite {
 	}
 
 	private void onEmailEnterprise() {
-		Integer enterpriseID = ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
-		
-		// PARAMS TO DOWNLOAD PAYROLLS
-		String url = GWT.getModuleBaseURL()+ "salary_exporter/";
-		String query = "?type=salary&selectedSalaries=" + salaryTable.getSelectedSalaries().size()
-	            + "&enterprise=" + ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
-			
-		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++) {
-			query += "&salary"+i+"Id=" + ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId();
-		}
-		
-		query += "&name=salaries.pdf";
-		
-		String paramsBase64 = b64decode(query);
-		
-		//Complete URL
-		url += paramsBase64;
-		
-		// DIALOG TO SEND EMAIL
-		PayrollEmailToEnterpriseDialog dialog = new PayrollEmailToEnterpriseDialog(enterpriseID, url) {
-			
-			@Override
-			protected void onAccept() {
-				if(null == this.getFromMAilAccount()) {
-					WarningDialog warning = new WarningDialog("AVISO", "No existe cuenta de correo desde la que enviar este mensaje.");
-					warning.center();
-					warning.show();
-				} else {
-					String from = this.getFromMAilAccount().getId().toString();
-					String to = this.getSendTo();
-					String cc = this.getCC();
-					String cco = this.getCCO();
-					String bodyHTML = this.getBody();
-					
-					employeeSalaryObject.sendPayrollEmail(from, to, cc, cco, bodyHTML,
-						s -> {
-							WarningDialog warning = new WarningDialog("AVISO", employeeSalaryObject.getEmailStatus());
-							warning.center();
-							warning.show();
-							hide();
-						},f -> {}
-					);
-				}
-			}
-		};
-		
-		dialog.center();
-		dialog.show();
+		sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type.ENTERPRISE);
 	}
 
 	private void onEmailEmployees() {
+		sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type.EMPLOYEE);
+	}
+	
+	private void sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type) {
 		Integer enterpriseID = ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
 		
-		// PARAMS TO DOWNLOAD PAYROLLS
-		String query = "?type=salary&selectedSalaries=" + salaryTable.getSelectedSalaries().size()
-	            + "&enterprise=" + ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
-			
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("url", GWT.getModuleBaseURL()+ "salary_exporter/");
+		params.put("type", "salary");
+		params.put("name", "salaries.pdf");
+		params.put("enterprise", String.valueOf(enterpriseID));
+		params.put("domain", Wnd.getCurrentDomainNameURL());
+		params.put("user", Wnd.getCurrentUser());
+		
 		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++) {
-			query += "&salary"+i+"Id=" + ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId();
+			params.put("id" + i, ""+((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId());
 		}
 		
-		query += "&name=salaries.pdf";
-		
-		String paramsBase64 = b64decode(query);
-		
-		final String url = GWT.getModuleBaseURL()+ "salary_exporter/" + paramsBase64;
-		
-		// CHECK SELECTED EMPLOYEES EMAILS
-		employeeSalaryObject.checkEmployeesEmails(
-				salaryTable.getSelectedSalaries(), 
-				s -> {
-					if(employeeSalaryObject.getCheckEmailEmployeesStatus().length() != 0) {
-						WarningDialog warningDialog = new WarningDialog("REVISAR EMAILS", employeeSalaryObject.getCheckEmailEmployeesStatus());
-						warningDialog.center();
-						warningDialog.show();
-					} else {
-						PayrollEmailToEmployeesDialog dialog = new PayrollEmailToEmployeesDialog(enterpriseID, url) {
-							
-							@Override
-							protected void onAccept() {
-								
-								if(null == this.getFromMAilAccount()) {
-									WarningDialog warning = new WarningDialog("AVISO", "No existe cuenta de correo desde la que enviar este mensaje.");
-									warning.center();
-									warning.show();
-								} else {
-									String from = this.getFromMAilAccount().getId().toString();
-									String cc = this.getCC();
-									String cco = this.getCCO();
-									String bodyHTML = this.getBody();
-									
-									employeeSalaryObject.sendPayrollEmailToEmployees(from, cc, cco, bodyHTML, url,
-										s -> {
-											WarningDialog warning = new WarningDialog("AVISO", employeeSalaryObject.getEmailStatus());
-											warning.center();
-											warning.show();
-											hide();
-										},f -> {}
-									);
-								}
-							}
-						}; 
-						
-						dialog.center();
-						dialog.show();
-					}
-				}, 
-				f -> {}
-		);
+		new PayrollEmailDialog(type, params) {
+			
+			@Override
+			protected void onAccept() {
+				String from = this.getFromMAilAccount().getId().toString();
+				String to = this.getSendTo();
+				String cc = this.getCC();
+				String cco = this.getCCO();
+				String bodyHTML = this.getBody();
+				
+				employeeSalaryObject.sendPayrollEmail(type, params, from, to, cc, cco, bodyHTML,
+					s -> {
+						AonDialog dialog = new AonDialog("AVISO", new HTML(employeeSalaryObject.getEmailStatus()));
+						dialog.warning();
+						hide();
+					},f -> {}
+				);
+			}
+		};
 	}
 	
 }
