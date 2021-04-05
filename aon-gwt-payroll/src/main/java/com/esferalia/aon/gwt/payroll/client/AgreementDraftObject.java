@@ -1067,6 +1067,8 @@ public class AgreementDraftObject {
 				add("HOMBRE");
 				add("MUJER");
 				add("MAYOR_65");
+				add("TRUE");
+				add("FALSE");
 				
 				// BASES
 				add("BASE_CGC");
