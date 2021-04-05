@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayType;
 import com.esferalia.aon.gwt.payroll.client.EmployeeCalendarDraftObjectData.DayTypeVisitor;
@@ -27,6 +29,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -1130,20 +1133,21 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiHandler("resetButton")
 	void onResetButtonClick(ClickEvent event) {
-		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"Realmente desea resetear el calendario?") {
+		AonDialog dialog = new AonDialog("RESTAURAR", new HTML(String.valueOf("\u00BF")+"Realmente desea resetear el calendario?"));
+		dialog.confirm(new AonAcceptDialogCallback() {
 			
 			@Override
-			protected void onAccept() {
+			public void onCancel() {}
+			
+			@Override
+			public void onAccept() {
 				calendarEmployeeInfo.resetCalendar(r -> 
 				{
 					setEmployeeCalendarDraftObject(calendarEmployeeInfo);
 					calendarEmployeeInfo.undoManager.discardAll();
 				}, t -> {});
 			}
-		};
-		
-		dialog.center();
-		dialog.show();
+		});
 	}
 	
 // -------------------------------------------------------------- METODOS DE LA CLASE ----------------------------------------------------

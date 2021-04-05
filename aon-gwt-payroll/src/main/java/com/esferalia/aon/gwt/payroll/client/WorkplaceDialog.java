@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -11,6 +12,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -146,9 +148,8 @@ public class WorkplaceDialog extends AonCustomDialog {
 					f -> {}
 			);
 		}else {
-			WarningDialog warningDialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
-			warningDialog.center();
-			warningDialog.show();
+			AonDialog dialog = new AonDialog("CUIDADO", new HTML("Hay que rellenar los campos azules obligatoriamente."));
+			dialog.info();
 		}
 	}
 	

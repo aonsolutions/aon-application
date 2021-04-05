@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
@@ -31,6 +33,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -465,9 +468,14 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	}
 
 	private void initUndoAllDialog() {
-		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"RESTAURAR INCIDENCIAS con los valores de la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?") {
+		AonDialog dialog = new AonDialog("RESTAURAR", new HTML(String.valueOf("\u00BF")+"RESTAURAR INCIDENCIAS con los valores de la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?"));
+		dialog.confirm(new AonAcceptDialogCallback() {
+			
 			@Override
-			protected void onAccept() {
+			public void onCancel() {}
+			
+			@Override
+			public void onAccept() {
 				clearEventsGrid();
 				Integer actualYear = new Date().getYear();
 				employeeEventsDraft.initializeDBEventsVariables(
@@ -479,10 +487,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 						},
 						t -> {});
 			}
-		};
-		
-		dialog.center();
-		dialog.show();	
+		});
 	}
 	
 	private void openNewValueDialog(String variableName){

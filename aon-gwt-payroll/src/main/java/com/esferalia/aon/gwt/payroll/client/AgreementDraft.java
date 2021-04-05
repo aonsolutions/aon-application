@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateTimeFormatException;
@@ -34,9 +36,6 @@ import com.esferalia.aon.gwt.common.shared.EmptyStringException;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
-import com.esferalia.aon.gwt.payroll.client.EnterpriseDraft.NewActivityCommand;
-import com.esferalia.aon.gwt.payroll.client.EnterpriseDraft.NewContextMenu;
-import com.esferalia.aon.gwt.payroll.client.EnterpriseDraft.NewWorkplaceCommand;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -1671,18 +1670,17 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			@Override
 			public void onClick(ClickEvent event) {
 				moreOptionsPopUp.hide();
-				AcceptCancelDialog confirmDialog = new AcceptCancelDialog("AVISO",
-						String.valueOf("\u00BF")+"Eliminar tramo permanentemente? Se borraran todos los valores de este tramo.") {
+				AonDialog dialog = new AonDialog("BORRADO", new HTML(String.valueOf("\u00BF")+"Eliminar tramo permanentemente? Se borraran todos los valores de este tramo."));
+				dialog.confirm(new AonAcceptDialogCallback() {
 					
 					@Override
-					protected void onAccept() {
+					public void onCancel() {}
+					
+					@Override
+					public void onAccept() {
 						deletePeriod(dateButton, datesList);
 					}
-				};
-				
-				confirmDialog.center();
-				confirmDialog.show();
-				
+				});
 			}	
 		});
 		

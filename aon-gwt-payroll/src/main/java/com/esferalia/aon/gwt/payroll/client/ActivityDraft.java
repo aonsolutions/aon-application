@@ -223,9 +223,8 @@ public class ActivityDraft extends Composite{
 				updateActivity();
 			
 		}else{
-			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules obligatoriamente.");
-			dialog.center();
-			dialog.show();
+			AonDialog dialog = new AonDialog("CUIDADO", new HTML("Hay que rellenar los campos azules obligatoriamente."));
+			dialog.warning();
 		}
 	}
 	

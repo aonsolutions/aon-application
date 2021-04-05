@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
@@ -44,6 +45,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -646,13 +648,11 @@ public class EmployeeNewDraft extends CustomDialog implements ContextMenuHandler
 //		}
 
 		if (payMethod.getSelectedItemText() == "TRANSFERENCIA" && (account.getValue() == "" || bic.getValue() == "")) {
-			WarningDialog dialog = new WarningDialog("Aviso", "HAY QUE RELLENAR LA CUENTA Y EL BIC");
-			dialog.center();
-			dialog.show();
+			AonDialog dialog = new AonDialog("CUIDADO", new HTML("Hay que rellenar la cuenta y el BIC."));
+			dialog.warning();
 		} else if (!checkIfUpdateIsPossible()) {
-			WarningDialog dialog = new WarningDialog("Aviso", "LOS CAMPOS EN COLOR AZUL SON OBLIGATORIOS");
-			dialog.center();
-			dialog.show();
+			AonDialog dialog = new AonDialog("CUIDADO", new HTML("Hay que rellenar los campos azules obligatoriamente."));
+			dialog.warning();
 		} else {
 			Integer journeyTypeIndex = this.journeyType.getSelectedIndex();
 			Boolean journey_type = (journeyTypeIndex == 0) ? true : false;

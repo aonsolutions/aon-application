@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities.Peculiarity;
@@ -18,7 +20,6 @@ import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -29,6 +30,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -569,10 +571,14 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						AcceptCancelDialog confirm = new AcceptCancelDialog("Eliminar tramo", String.valueOf("\u00BF") + "Deasea eliminar este tramo?") {
+						AonDialog dialog = new AonDialog("BORRADO", new HTML(String.valueOf("\u00BF") + "Deasea eliminar este tramo?"));
+						dialog.confirm(new AonAcceptDialogCallback() {
 							
 							@Override
-							protected void onAccept() {
+							public void onCancel() {}
+							
+							@Override
+							public void onAccept() {
 								//Find clicked button
 								int selectedButton = 0;
 								for(int i=0; i<tabsPanel.getWidgetCount(); i++){
@@ -601,10 +607,7 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 								tabsPanel.clear();
 								initView();
 							}
-						};
-						
-						confirm.center();
-						confirm.show();
+						});
 					}
 				});
 				
@@ -800,10 +803,14 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					AcceptCancelDialog confirm = new AcceptCancelDialog("Eliminar tramo", String.valueOf("\u00BF") + "Deasea eliminar este tramo?") {
+					AonDialog dialog = new AonDialog("BORRADO", new HTML(String.valueOf("\u00BF") + "Deasea eliminar este tramo?"));
+					dialog.confirm(new AonAcceptDialogCallback() {
 						
 						@Override
-						protected void onAccept() {
+						public void onCancel() {}
+						
+						@Override
+						public void onAccept() {
 							//Find clicked button
 							int selectedButton = 0;
 							for(int i=0; i<tabsPanel.getWidgetCount(); i++){
@@ -832,10 +839,7 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 							tabsPanel.clear();
 							initView();
 						}
-					};
-					
-					confirm.center();
-					confirm.show();
+					});
 				}
 			});
 			

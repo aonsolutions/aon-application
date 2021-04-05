@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
@@ -25,6 +27,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -284,9 +287,14 @@ public class EventsDraft extends ResizeComposite {
 	}
 	
 	private void initUndoAllDialog() {
-		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"RESTAURAR INCIDENCIAS con los valores de la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?") {
+		AonDialog dialog = new AonDialog("RESTAURAR", new HTML(String.valueOf("\u00BF")+"RESTAURAR INCIDENCIAS con los valores de la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?"));
+		dialog.confirm(new AonAcceptDialogCallback() {
+			
 			@Override
-			protected void onAccept() {
+			public void onCancel() {}
+			
+			@Override
+			public void onAccept() {
 				Date currentDate = new Date();
 				actualMonth = currentDate.getMonth();
 				actualYear = currentDate.getYear();
@@ -302,10 +310,7 @@ public class EventsDraft extends ResizeComposite {
 						},
 						t -> {});
 			}
-		};
-		
-		dialog.center();
-		dialog.show();	
+		});	
 	}
 	
 	// -------------------------------------

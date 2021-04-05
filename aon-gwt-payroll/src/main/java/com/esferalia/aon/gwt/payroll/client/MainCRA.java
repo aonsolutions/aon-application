@@ -9,20 +9,21 @@ import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -33,6 +34,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -244,9 +246,8 @@ public class MainCRA extends MainEntryPoint {
 			this.cccs.setEnabled(false);
 			this.monthList.setEnabled(false);
 			this.yearList.setEnabled(false);
-			WarningDialog warning = new WarningDialog("Aviso", "No existe ninguna cuenta de cotizaci"+String.valueOf("\u00F3")+"n para esta empresa.");
-			warning.center();
-			warning.show();
+			AonDialog dialog = new AonDialog("CUIDADO", new HTML("No existe ninguna cuenta de cotizaci"+String.valueOf("\u00F3")+"n para esta empresa."));
+			dialog.warning();
 		}else{
 			for(Entry<String, List<CCC>> entry : this.enterpriseCCCs.entrySet()){
 				for(CCC ccc : entry.getValue()) {
@@ -468,34 +469,33 @@ public class MainCRA extends MainEntryPoint {
 					}
 				});
 			}else {
-				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", "Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?") {
+				AonDialog dialog = new AonDialog("AVISO", new HTML("Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?"));
+				dialog.confirm(new AonAcceptDialogCallback() {
 					
 					@Override
-					protected void onAccept() {
+					public void onCancel() {}
+					
+					@Override
+					public void onAccept() {
 						impl.createNewCRA(startDate.getTime(), cccList, null, cccId, "R", new AsyncCallback<String>() {
 							@Override
 							public void onFailure(Throwable caught) { }
 			
 							@Override
 							public void onSuccess(String result) {
-								WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
-										+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : <br><br> 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
-								warning.center();
-								warning.show();
+								AonDialog dialog = new AonDialog("INTRUCCIONES", new HTML("Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
+										+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : <br><br> 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos."));
+								dialog.info();
 								
 								resetTables();
 							}
 						});
 					}
-				};
-				
-				dialog.center();
-				dialog.show();
+				});
 			}
 		}else{
-			WarningDialog warning = new WarningDialog("Aviso", "No se puede generar el CRA para un mes posterior o igual al actual.");
-			warning.center();
-			warning.show();
+			AonDialog dialog = new AonDialog("CUIDADO", new HTML("No se puede generar el CRA para un mes posterior o igual al actual."));
+			dialog.warning();
 		}
 		
 	}

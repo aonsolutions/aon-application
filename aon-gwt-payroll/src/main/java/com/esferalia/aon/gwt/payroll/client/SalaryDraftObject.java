@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
@@ -44,6 +45,7 @@ import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class SalaryDraftObject implements IContextProvider , Payroll{
@@ -549,16 +551,14 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	
 						@Override
 						public void onFailure(Throwable caught) {
-							WarningDialog dialog = new WarningDialog("Error", caught.getMessage());
-							dialog.center();
-							dialog.show();
+							AonDialog dialog = new AonDialog("ERROR", new HTML(caught.getMessage()));
+							dialog.warning();
 						}
 	
 						@Override
 						public void onSuccess(String result) {
-							WarningDialog dialog = new WarningDialog("Certifi@2", result);
-							dialog.center();
-							dialog.show();
+							AonDialog dialog = new AonDialog("Certifi@2", new HTML(result));
+							dialog.info();
 							callback.onCalculateSucces(SalaryDraftObject.this);
 						}
 						
