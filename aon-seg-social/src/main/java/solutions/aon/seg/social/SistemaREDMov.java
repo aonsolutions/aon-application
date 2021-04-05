@@ -579,7 +579,7 @@ public class SistemaREDMov {
 	
 	private static byte[] getReportAffiliateInAltaImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			ArrayList<String> ccc_arr = 	Toolkit.splitString_m(ccc,2);
+			ArrayList<String> ccc_arr = 	Toolkit.splitStringMultiple(ccc,2);
 
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR64&E=I&AP=AFIR");
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
@@ -608,7 +608,7 @@ public class SistemaREDMov {
 	
 	private static byte[] getReportAffiliateInMovPrevImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			ArrayList<String> ccc_arr = 	Toolkit.splitString_m(ccc,2);
+			ArrayList<String> ccc_arr = 	Toolkit.splitStringMultiple(ccc,2);
 
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR74&E=I&AP=AFIR");
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();

@@ -1,5 +1,13 @@
 package solutions.aon.seg.social;
 
+import static java.lang.Long.parseLong;
+import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getTrimmedById;
+import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getWebClient;
+import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.manageStatusCode;
+import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.wait4;
+import static solutions.aon.seg.social.toolkit.Toolkit.parseDate;
+import static solutions.aon.seg.social.toolkit.Toolkit.verifyData;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -23,249 +31,259 @@ import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.SecondaryUser;
 import solutions.aon.seg.social.objects.SecondaryUser.SecondaryUserBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
-import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class SistemaRED_Secondary_User {
 
-	//HANDLE SECONDARYUSERS EXCEPTIONS
-	public static SecondaryUser getSecondaryUserByIpf(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType,final String ipf) throws SegSocialException {
-		Toolkit.verifyData(new Object[]{ipf});
+	// HANDLE SECONDARYUSERS EXCEPTIONS
+	public static SecondaryUser getSecondaryUserByIpf(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String ipf)
+			throws SegSocialException {
+		verifyData(new Object[] { ipf });
 		try {
-			return getSecondaryUserByIpfImpl(certificateInputStream, certificatePassword, certificateType,ipf);			
+			return getSecondaryUserByIpfImpl(certificateInputStream, certificatePassword, certificateType, ipf);
 		} catch (FailingHttpStatusCodeException e) {
 			switch (e.getStatusCode()) {
-				case 403:	throw new ForbiddenException();
-				default:	throw new SegSocialException(e);
+			case 403:
+				throw new ForbiddenException();
+			default:
+				throw new SegSocialException(e);
 			}
-		} catch (IOException e) {throw new SegSocialException(e);}
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
 	}
-	
-	//GET THE SECONDARY USER BY IPF
-	public static SecondaryUser getSecondaryUserByIpfImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String ipf) throws FailingHttpStatusCodeException, IOException, SegSocialException {
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW67&E=I&AP=AUT");
-		
+
+	// GET THE SECONDARY USER BY IPF
+	public static SecondaryUser getSecondaryUserByIpfImpl(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String ipf)
+			throws FailingHttpStatusCodeException, IOException, SegSocialException {
+		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW67&E=I&AP=AUT");
+
 			HtmlCheckBoxInput ch = htmlPage.querySelector("#chkgrupo1_2");
 			htmlPage = ch.click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage); 
-			
-			HtmlInput ipf_in = htmlPage.querySelector("#inputgrupo1_2_1");
-			ipf_in.setAttribute("value",ipf);
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
-			HtmlSubmitInput continue_btn = htmlPage.querySelector("#Sub2207101004_46");
-			htmlPage = continue_btn.click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
+			manageStatusCode(htmlPage);
+
+			HtmlInput ipfInput = htmlPage.querySelector("#inputgrupo1_2_1");
+			ipfInput.setAttribute("value", ipf);
+			manageStatusCode(htmlPage);
+
+			HtmlSubmitInput continueButton = htmlPage.querySelector("#Sub2207101004_46");
+			htmlPage = continueButton.click();
+			manageStatusCode(htmlPage);
+
 			return getSecondaryUserInfo(htmlPage);
 		}
 	}
-	
+
 	public static SecondaryUser getSecondaryUserInfo(HtmlPage htmlPage) {
-		
-		//OBJECT CREATE
-		String authoritation =  HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFAUTORIZ");
-		String authoritation_entity = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFRAZSOCIALAUT");
-		String main_user_name = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNOMBREAUT");
-		String main_user_ipf = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFIPFAUT");
-		String main_user_naf = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNAFAUT");
-		
-		String name = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNOMBRESEC");
-		String province = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPROVSEC");
-		String naf = getRealNAF(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNAFSEC"));
-		String situation = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFSITSEC");
-		Date situation_date = Toolkit.parseDate(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFFECSITSEC"),"dd/MM/yyyy");
-		String telephone = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTELEFONOSEC");
-		String fax = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFFAXSEC");
-		String mobile = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFMOVILSEC");
-		String mail = HtmlUnitToolkit.getTrimmedById(htmlPage, "txtconcat1_2");
+
+		// OBJECT CREATE
+		String authoritation = getTrimmedById(htmlPage, "SDFAUTORIZ");
+		String authoritationEntity = getTrimmedById(htmlPage, "SDFRAZSOCIALAUT");
+
+		String mainUserName = getTrimmedById(htmlPage, "SDFNOMBREAUT");
+		String mainUserIpf = getTrimmedById(htmlPage, "SDFIPFAUT");
+		String mainUserNaf = getTrimmedById(htmlPage, "SDFNAFAUT");
+
+		String name = getTrimmedById(htmlPage, "SDFNOMBRESEC");
+		String province = getTrimmedById(htmlPage, "SDFPROVSEC");
+		String naf = getRealNAF(getTrimmedById(htmlPage, "SDFNAFSEC"));
+		String situation = getTrimmedById(htmlPage, "SDFSITSEC");
+		Date situationDate = parseDate(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFFECSITSEC"), "dd/MM/yyyy");
+		String telephone = getTrimmedById(htmlPage, "SDFTELEFONOSEC");
+		String fax = getTrimmedById(htmlPage, "SDFFAXSEC");
+		String mobile = getTrimmedById(htmlPage, "SDFMOVILSEC");
+		String mail = getTrimmedById(htmlPage, "txtconcat1_2");
 
 		SecondaryUserBuilder builder = new SecondaryUserBuilder();
-		
-		builder.setAuthoritation(authoritation)
-		.setAuthoritation_entity(authoritation_entity)
-		.setMain_user_name(main_user_name)
-		.setMain_user_ipf(main_user_ipf)
-		.setMain_user_naf(main_user_naf)
-		.setName(name)
-		.setProvince(province)
-		.setNaf(naf)
-		.setSituation(situation)
-		.setSituation_date(situation_date)
-		.setTelephone(telephone)
-		.setFax(fax)
-		.setMobile(mobile)
-		.setMail(mail);
+
+		builder.setAuthoritation(authoritation).setAuthoritationEntity(authoritationEntity)
+				.setMainUserName(mainUserName).setMainUserIpf(mainUserIpf).setMainUserNaf(mainUserNaf).setName(name)
+				.setProvince(province).setNaf(naf).setSituation(situation).setSituationDate(situationDate)
+				.setTelephone(telephone).setFax(fax).setMobile(mobile).setMail(mail);
 
 		return builder.build();
 	}
-	
+
 	private static String getRealNAF(String naf) {
-		if(naf.length() == 9)
+		if (naf.length() == 9)
 			naf = "0" + naf;
-		
+
 		String province = naf.substring(0, 2);
 		String nafCenter = naf.substring(2, naf.length());
-		
+
 		String completeNAF = "";
-		
-		if(nafCenter.substring(0,1).equals("0")) {
-			Long nafD = Long.parseLong(province+nafCenter.substring(1, nafCenter.length()));
-			long mod = (nafD%97);
-			completeNAF = nafD + "" + (mod < 10 ? "0"+mod : mod);
+
+		if (nafCenter.substring(0, 1).equals("0")) {
+			Long nafD = parseLong(province + nafCenter.substring(1, nafCenter.length()));
+			long mod = (nafD % 97);
+			completeNAF = nafD + "" + (mod < 10 ? "0" + mod : mod);
 		} else {
-			Long nafD = Long.parseLong(province+nafCenter);
-			long mod = (nafD%97);
-			completeNAF = nafD + "" + (mod < 10 ? "0"+mod : mod);
+			Long nafD = parseLong(province + nafCenter);
+			long mod = (nafD % 97);
+			completeNAF = nafD + "" + (mod < 10 ? "0" + mod : mod);
 		}
-		
-		if(completeNAF.length() == 11)
+
+		if (completeNAF.length() == 11)
 			completeNAF = "0" + completeNAF;
-		
+
 		return completeNAF;
 	}
 
-	//HANDLE EXCEPTIONS OF 
-	public static Collection<SecondaryUser> getSecondaryUsers(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType) throws SegSocialException{
-		try {return getSecondaryUsersImpl(certificateInputStream, certificatePassword, certificateType);}
-		catch (FailingHttpStatusCodeException | IOException e) {throw new SegSocialException(e);}
+	// HANDLE EXCEPTIONS OF
+	public static Collection<SecondaryUser> getSecondaryUsers(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType) throws SegSocialException {
+		try {
+			return getSecondaryUsersImpl(certificateInputStream, certificatePassword, certificateType);
+		} catch (FailingHttpStatusCodeException | IOException e) {
+			throw new SegSocialException(e);
+		}
 	}
-	
-	//GET SECONDARY USERS 
-	public static Collection<SecondaryUser> getSecondaryUsersImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType) throws FailingHttpStatusCodeException, IOException, SegSocialException{
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW67&E=I&AP=AUT");
-		
+
+	// GET SECONDARY USERS
+	public static Collection<SecondaryUser> getSecondaryUsersImpl(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType)
+			throws FailingHttpStatusCodeException, IOException, SegSocialException {
+		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW67&E=I&AP=AUT");
+
 			HtmlCheckBoxInput ch = htmlPage.querySelector("#chkgrupo1_1");
 			htmlPage = ch.click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage); 
-			
+			manageStatusCode(htmlPage);
+
 			HtmlSubmitInput btn = htmlPage.querySelector("#Sub2207101004_46");
-			htmlPage = btn.click();			
-			
+			htmlPage = btn.click();
+
 			DomNodeList<DomNode> checkboxes = htmlPage.querySelectorAll("#Sub0800010080>tbody>tr input[type=checkbox]");
 			for (DomNode checkbox : checkboxes) {
 				HtmlCheckBoxInput check = (HtmlCheckBoxInput) checkbox;
 				htmlPage = check.click();
 			}
-			
-			HtmlSubmitInput query_btn = htmlPage.querySelector("#Sub2205301004_72");
-			htmlPage = query_btn.click();
-			HtmlSubmitInput continue_btn;
-			
+
+			HtmlSubmitInput queryButton = htmlPage.querySelector("#Sub2205301004_72");
+			htmlPage = queryButton.click();
+			HtmlSubmitInput continueButton;
+
 			ArrayList<SecondaryUser> users = new ArrayList<>();
-			
-			do{
-				continue_btn = htmlPage.querySelector("#Sub2207101004_92");
-				if(continue_btn == null) break;
-				
+
+			do {
+				continueButton = htmlPage.querySelector("#Sub2207101004_92");
+				if (continueButton == null)
+					break;
+
 				SecondaryUser user = getSecondaryUserInfo(htmlPage);
 				users.add(user);
-				htmlPage = continue_btn.click();
-			}while(true);
-			
+				htmlPage = continueButton.click();
+			} while (true);
+
 			return users;
-		}		
+		}
 	}
-	
-	//HANDLE EXCEPTIONS OF registerSecondaryUserImpl()
-	public static void registerSecondaryUserByNie(final InputStream certificateInputStream, final String certificatePassword,
-												  final String certificateType, final String typeIpf, final String nie, String naf) throws SegSocialException {
-			try {
-				registerSecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,typeIpf,nie,naf);
-			} catch (FailingHttpStatusCodeException | IOException e) {throw new SegSocialException(e);}
+
+	// HANDLE EXCEPTIONS OF registerSecondaryUserImpl()
+	public static void registerSecondaryUserByNie(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String typeIpf, final String nie,
+			String naf) throws SegSocialException {
+		try {
+			registerSecondaryUserImpl(certificateInputStream, certificatePassword, certificateType, typeIpf, nie, naf);
+		} catch (FailingHttpStatusCodeException | IOException e) {
+			throw new SegSocialException(e);
+		}
 	}
-	
-	//REGISTER SECONDARY USER 
-	public static void registerSecondaryUserImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String typeIpf, final String ipf, String naf) throws FailingHttpStatusCodeException, IOException, SegSocialException {
-		
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-		
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW68&E=I&AP=AUT");
-			
+
+	// REGISTER SECONDARY USER
+	public static void registerSecondaryUserImpl(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String typeIpf, final String ipf,
+			String naf) throws FailingHttpStatusCodeException, IOException, SegSocialException {
+
+		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW68&E=I&AP=AUT");
+
 			HtmlCheckBoxInput ch1 = htmlPage.querySelector("#chkgrupo1_1");
 			htmlPage = ch1.click();
-			
-			HtmlOption opt1 = htmlPage.querySelector("#inputgrupo1_1_1 option:nth-child("+typeIpf+")");
+
+			HtmlOption opt1 = htmlPage.querySelector("#inputgrupo1_1_1 option:nth-child(" + typeIpf + ")");
 			htmlPage = opt1.click();
-			
-			HtmlInput ipf_txt = htmlPage.querySelector("#inputgrupo1_1_2");
-			ipf_txt.setAttribute("value", ipf);
-			
-			HtmlInput naf_txt = htmlPage.querySelector("#inputgrupo1_1_3");
-			naf_txt.setAttribute("value", naf);
-			
-			HtmlSubmitInput submit_btn = htmlPage.querySelector("#Sub2207101004_52");
-			htmlPage = submit_btn.click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
-			HtmlSubmitInput next_submit_btn = htmlPage.querySelector("#Sub2207101004_99");
-			htmlPage = next_submit_btn.click();
-			
-			HtmlSubmitInput final_submit_btn = htmlPage.querySelector("#Sub2207101004_99");
-			final_submit_btn.click();
 
-		}		
-	}
-		
-	//HANDLE EXCEPTIONS OF deleteSecondaryUser
-	public static void deleteSecondaryUser(final InputStream certificateInputStream, final String certificatePassword,
-										   final String certificateType, final String ipfType, final String ipf) throws SegSocialException {
-		try {
-			deleteSecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,ipfType,ipf);
+			HtmlInput ipfTxt = htmlPage.querySelector("#inputgrupo1_1_2");
+			ipfTxt.setAttribute("value", ipf);
+
+			HtmlInput nafTxt = htmlPage.querySelector("#inputgrupo1_1_3");
+			nafTxt.setAttribute("value", naf);
+
+			HtmlSubmitInput submitButton = htmlPage.querySelector("#Sub2207101004_52");
+			htmlPage = submitButton.click();
+			manageStatusCode(htmlPage);
+
+			HtmlSubmitInput nextSubmitButton = htmlPage.querySelector("#Sub2207101004_99");
+			htmlPage = nextSubmitButton.click();
+
+			HtmlSubmitInput finalSubmitButton = htmlPage.querySelector("#Sub2207101004_99");
+			finalSubmitButton.click();
+
 		}
-		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}	
-		catch(RuntimeException e) {throw new NotRespondingException();} 
-		catch (Exception  e) {throw new SegSocialException(e);}
+	}
+
+	// HANDLE EXCEPTIONS OF deleteSecondaryUser
+	public static void deleteSecondaryUser(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, final String ipfType, final String ipf) throws SegSocialException {
+		try {
+			deleteSecondaryUserImpl(certificateInputStream, certificatePassword, certificateType, ipfType, ipf);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (RuntimeException e) {
+			throw new NotRespondingException();
+		} catch (Exception e) {
+			throw new SegSocialException(e);
+		}
 
 	}
-	
-	//DELETE SECONDARY USER
-	public static void deleteSecondaryUserImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String ipfType, final String ipf) throws IOException, SegSocialException, InterruptedException {
-		
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			
+
+	// DELETE SECONDARY USER
+	public static void deleteSecondaryUserImpl(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String ipfType, final String ipf)
+			throws IOException, SegSocialException, InterruptedException {
+
+		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+
 			webClient.getOptions().setTimeout(15000);
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW68&E=I&AP=AUT");
-			
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW68&E=I&AP=AUT");
+
 			HtmlCheckBoxInput ch1 = htmlPage.querySelector("#chkgrupo1_2");
 			htmlPage = ch1.click();
-			
-			HtmlOption opt1 = htmlPage.querySelector("#inputgrupo1_2_1 option:nth-child("+ipfType+")");
+
+			HtmlOption opt1 = htmlPage.querySelector("#inputgrupo1_2_1 option:nth-child(" + ipfType + ")");
 			htmlPage = opt1.click();
-			
-			HtmlInput ipf_txt = htmlPage.querySelector("#inputgrupo1_2_2");
-			ipf_txt.setAttribute("value", ipf);
-			
-			HtmlSubmitInput submit_btn = htmlPage.querySelector("#Sub2207101004_52");
-			htmlPage = submit_btn.click();
-						
-			System.out.println(htmlPage.asXml());
-			
-			HtmlUnitToolkit.wait4(htmlPage, p->p.querySelector("Sub2207101004_99")).orElseThrow();
-			
-			HtmlSubmitInput final_submit_btn = htmlPage.querySelector("#Sub2207101004_99");
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			
-			final_submit_btn.click();
+
+			HtmlInput ipfTxt = htmlPage.querySelector("#inputgrupo1_2_2");
+			ipfTxt.setAttribute("value", ipf);
+
+			HtmlSubmitInput submitButton = htmlPage.querySelector("#Sub2207101004_52");
+			htmlPage = submitButton.click();
+			wait4(htmlPage, p -> p.querySelector("Sub2207101004_99")).orElseThrow();
+
+			HtmlSubmitInput finalSubmitButton = htmlPage.querySelector("#Sub2207101004_99");
+			manageStatusCode(htmlPage);
+
+			finalSubmitButton.click();
 		}
 	}
-	
-	//HANDLE EXCEPTIONS OF
+
+	// HANDLE EXCEPTIONS OF
 	public void modifySecondaryUser(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String ipf) {
-		modifySecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,ipf);
+		modifySecondaryUserImpl(certificateInputStream, certificatePassword, certificateType, ipf);
 	}
-	
-	//MODIFY SECONDARY USERS 
+
+	// MODIFY SECONDARY USERS
 	public void modifySecondaryUserImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String ipf) {
-		
+
 	}
 }

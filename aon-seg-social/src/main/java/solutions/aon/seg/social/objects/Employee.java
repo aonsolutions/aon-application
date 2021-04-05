@@ -33,7 +33,7 @@ public class Employee {
 	private String profesCat;
 	private String reducingCoefic;
 	private Integer ident;
-	private String md_ctz;
+	private String mdCtz;
 	private Employee() {}
 	
 	public void accept(Visitor visitor) {
@@ -90,9 +90,8 @@ public class Employee {
 	public Integer getIdent() {return ident;}
 	public String getColec() {return colec;}
 	public String getOcup() {return ocup;}
-	public Optional<String> getMdctz(){return Optional.ofNullable(md_ctz);}
+	public Optional<String> getMdctz(){return Optional.ofNullable(mdCtz);}
 	
-	//TO_DO Generate getters y toString
 	@Override
 	public String toString() {
 		StringBuffer stringBuffer = new StringBuffer();
@@ -187,7 +186,7 @@ public class Employee {
 		private String profesCat;
 		private String reducingCoefic;
 		private Integer ident;
-		private String md_ctz;
+		private String mdCtz;
 		public EmployeeBuilder(){}		
 		
 	
@@ -371,8 +370,8 @@ public class Employee {
 			return this;
 		}
 		
-		public EmployeeBuilder setMdctz(String md_ctz) {
-			this.md_ctz = md_ctz;
+		public EmployeeBuilder setMdctz(String mdCtz) {
+			this.mdCtz = mdCtz;
 			return this;
 		}
 		
@@ -407,7 +406,7 @@ public class Employee {
 			employee.profesCat = this.profesCat;
 			employee.reducingCoefic = this.reducingCoefic;
 			employee.ident = this.ident;
-			employee.md_ctz = this.md_ctz;
+			employee.mdCtz = this.mdCtz;
 			return employee;
 		}
 

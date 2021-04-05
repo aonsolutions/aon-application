@@ -53,8 +53,7 @@ public class HtmlUnitToolkit {
 	}
 
 	// GET THE WEB CLIENT OF HTMLUNIT
-	public static WebClient getWebClient(final String user, final String password)
-			throws InvalidCertificateException {
+	public static WebClient getWebClient(final String user, final String password) throws InvalidCertificateException {
 		try {
 			WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 			webClient.getOptions().setCssEnabled(false);
@@ -63,7 +62,7 @@ public class HtmlUnitToolkit {
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 
 			DefaultCredentialsProvider creds = new DefaultCredentialsProvider();
-			creds.addCredentials(user,password);
+			creds.addCredentials(user, password);
 			webClient.setCredentialsProvider(creds);
 
 			return webClient;
@@ -119,7 +118,7 @@ public class HtmlUnitToolkit {
 		String msg = getSSmessage(htmlPage);
 		InvalidDataException.checkCode(code, msg);
 	}
-	
+
 	// MANAGES THE EXCEPTIONS OF NEW UI
 	public static void manageStatusMessage(HtmlPage document) throws SegSocialException {
 		DomNodeList<DomNode> errors = document.querySelectorAll(".mensajeError");
