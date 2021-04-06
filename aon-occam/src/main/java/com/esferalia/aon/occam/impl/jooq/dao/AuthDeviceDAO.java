@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AuthDevice.AUTH_DEVICE;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,9 +27,9 @@ public class AuthDeviceDAO {
 		ad.toJSON();
 		ctx.checkWrite();
 		String tokenFCM = ad.getDeviceToken();
-		AuthDevice a = getAuthDevice(ctx, f-> f.getDeviceTokenProperty().eq(tokenFCM));
-		if(a!=null){
-			ad = a;
+		AuthDevice authDeviceExist = getAuthDevice(ctx, f-> f.getDeviceTokenProperty().eq(tokenFCM));
+		if(authDeviceExist!=null){
+			ad = update(ctx, authDeviceExist);
 		} else {
 			Integer id = ctx.getDslContext()
 					.insertInto(
@@ -54,6 +56,7 @@ public class AuthDeviceDAO {
 			.update(AUTH_DEVICE)
 			.set(AUTH_DEVICE.DEVICE_TYPE, ad.getDeviceType().value())
 			.set(AUTH_DEVICE.DEVICE_TOKEN, ad.getDeviceToken())
+			.set(AUTH_DEVICE.LAST_DATE, Timestamp.from(Instant.now()))
 			.where(AUTH_DEVICE.ID.eq(ad.getId()))
 			.execute();		
 		return ad;
