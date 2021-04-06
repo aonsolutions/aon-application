@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.Date;
+import java.util.LinkedList;
 
 import org.json.JSONObject;
 
@@ -79,6 +80,12 @@ public class SECURITY {
 	public static AuthDevice getAuthDevice(Domain domain, String login, AuthDeviceFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getSecurity().getAuthDevice(ctx, filter);
+		}
+	}
+	
+	public static LinkedList<AuthDevice> getAuthDevices(Domain domain, String login, AuthDeviceFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getSecurity().getAuthDevices(ctx, filter);
 		}
 	}
 	

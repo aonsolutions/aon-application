@@ -107,6 +107,7 @@ public interface ISecurity {
 	public AuthDevice saveAuthDevice(AONContext ctx, AuthDevice ad);
 	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter ad);
 	public AuthDevice getAuthDevice(AONContext ctx, AuthDeviceFilter adf);
+	public LinkedList<AuthDevice> getAuthDevices(AONContext ctx, AuthDeviceFilter adf);
 	
 	@Deprecated
 	public void saveUserFinancePortal(AONContext ctx, Integer userId);

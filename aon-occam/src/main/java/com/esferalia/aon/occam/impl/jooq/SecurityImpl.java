@@ -346,7 +346,7 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter adf) {
 	    ctx.getDslContext().transaction(
-	            configuration -> AuthDeviceDAO.deleteAuthDevice(ctx, adf)
+	    		configuration -> AuthDeviceDAO.deleteAuthDevice(ctx, adf)
 	    );
 	}
 	
@@ -354,6 +354,12 @@ public class SecurityImpl implements ISecurity {
 	public AuthDevice getAuthDevice(AONContext ctx, AuthDeviceFilter adf) {
 	    return  ctx.getDslContext().transactionResult(
 	            configuration -> AuthDeviceDAO.getAuthDevice(ctx, adf));
+	}
+	
+	@Override
+	public LinkedList<AuthDevice> getAuthDevices(AONContext ctx, AuthDeviceFilter adf) {
+	    return  ctx.getDslContext().transactionResult(
+	            configuration -> AuthDeviceDAO.getAuthDevices(ctx, adf));
 	}
 
 	@Override @Deprecated

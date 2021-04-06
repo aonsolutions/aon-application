@@ -105,18 +105,18 @@ public class UploadDocumentalServlet extends HttpServlet{
     		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, login, user.getId());
     		if(RegistryAttachmentType.DOCUMENTAL_ASESOR.value() == attach.getType().byteValue()) {
     			if(dur.isDocumentalManager()) {
-    				AuthDevice ad = SECURITY.getAuthDevice(domain, login, f-> f.getAuthProperty().eq(user.getAuth()));
-    				if(ad != null) auths.add(ad);
+    				LinkedList<AuthDevice> ad = SECURITY.getAuthDevices(domain, login, f-> f.getAuthProperty().eq(user.getAuth()));
+    				if(ad != null) auths.addAll(ad);
     			}
     		} else if(RegistryAttachmentType.CORPORATE_IDENTITY.value() == attach.getType().byteValue()) {
     			if(dur.isDocumentalPortal()) {
-    				AuthDevice ad = SECURITY.getAuthDevice(domain, login, f-> f.getAuthProperty().eq(user.getAuth()));
-    				if(ad != null) auths.add(ad);
+    				LinkedList<AuthDevice> ad = SECURITY.getAuthDevices(domain, login, f-> f.getAuthProperty().eq(user.getAuth()));
+    				if(ad != null) auths.addAll(ad);
     			}
     		} else if(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value() == attach.getType().byteValue()) {
     			if(dur.isDocumental()) {
-    				AuthDevice ad = SECURITY.getAuthDevice(domain, login, f-> f.getAuthProperty().eq(user.getAuth()));
-    				if(ad != null) auths.add(ad);
+    				LinkedList<AuthDevice> ad = SECURITY.getAuthDevices(domain, login, f-> f.getAuthProperty().eq(user.getAuth()));
+    				if(ad != null) auths.addAll(ad);
     			}
     		}
     	});

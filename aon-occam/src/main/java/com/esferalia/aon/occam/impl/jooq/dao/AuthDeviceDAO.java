@@ -1,7 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AuthDevice.AUTH_DEVICE;
+
+import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.jooq.Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
@@ -71,6 +75,17 @@ public class AuthDeviceDAO {
 				.map( new AuthDeviceFiller() )
 				.findFirst()
 				.orElse(null);
+	}
+	
+	public static LinkedList<AuthDevice> getAuthDevices(AONContext ctx, AuthDeviceFilter filter) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+				.select()
+				.from(AUTH_DEVICE)
+				.where(AUTH_DEVICE_PROPERTIES.getConditions(filter))
+				.stream()
+				.map( new AuthDeviceFiller() )
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	
