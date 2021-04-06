@@ -38,7 +38,7 @@ public class AuthDeviceUpdate implements Update {
 			dslContext.alterTable(DSL.name("auth_device")).addColumnIfNotExists("last_date", SQLDataType.TIMESTAMP.defaultValue(DSL.currentTimestamp() ) ).execute();
 			System.out.println("[table 'auth_device' Update!]");
 		} catch (Throwable t) {
-			System.out.println("[table 'auth_device' NOT Update!]");
+			System.out.println("[table 'auth_device' NOT Update!] " + t.getMessage());
 		}
 		System.out.println("[END]");
 	}

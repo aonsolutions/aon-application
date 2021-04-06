@@ -19,15 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.AdditionalHoursUpdate;
-import net.aonsolutions.db.up2date.payroll.AlterAgreement4SSNumber;
-import net.aonsolutions.db.up2date.payroll.Holidays2021Insert;
-import net.aonsolutions.db.up2date.security.AuthDeviceCreation;
+import net.aonsolutions.db.up2date.payroll.IntegrityFix;
 import net.aonsolutions.db.up2date.security.AuthDeviceUpdate;
-import net.aonsolutions.db.up2date.tgss.Bases2021Update;
-import net.aonsolutions.db.up2date.tgss.IfDaysInsert;
-import net.aonsolutions.db.up2date.tgss.PermissionNotPaidDaysInsert;
-import net.aonsolutions.db.up2date.timecontrol.CoordinatesUpdate;
 
 public class Up2Date {
 
@@ -156,6 +149,7 @@ public class Up2Date {
     		//IfDaysInsert.IFDAYSINSERT
     		//Bases2021Update.BASES2021UPDATE
     		AuthDeviceUpdate.AUTH_DEVICE_UPDATE,
+    		IntegrityFix.INTEGRITYFIX
     };
 
 
