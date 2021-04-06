@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model.management;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 
@@ -21,7 +21,7 @@ public class PurchaseDetail implements Serializable {
 	private Integer project;
 	private String projectName;
 	private int item;
-	private Item item2; // TODO sustituir por el de arriba!
+	private OldItem item2; // TODO sustituir por el de arriba!
 	private Integer line;
 	private String description;
 	private double quantity;
@@ -244,10 +244,10 @@ public class PurchaseDetail implements Serializable {
 		return this;
 	}
 	
-	public Item getItem2() { // TODO SUSTITUIR POR getItem()
+	public OldItem getItem2() { // TODO SUSTITUIR POR getItem()
 		return item2;
 	}
-	public PurchaseDetail setItem2(Item item2) {// TODO SUSTITUIR POR setItem()
+	public PurchaseDetail setItem2(OldItem item2) {// TODO SUSTITUIR POR setItem()
 		this.item2 = item2;
 		return this;
 	}

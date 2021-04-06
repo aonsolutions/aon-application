@@ -31,7 +31,7 @@ import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -176,7 +176,7 @@ public class ConsumptionUtil {
         			(!onlyNegative || ci.getConsumption() < 0 ) &&
         			(!dif || ci.getConsumption() != 0 ) ){
         			Row row = hoja.createRow((j-num)+2);
-        			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
+        			OldItem item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
         			for(Integer k = 0; k< columns; k++){
         	    		Cell celda = row.createCell(k);
         	    		String type = aux.getColumns().get(k);
@@ -519,7 +519,7 @@ public class ConsumptionUtil {
         			(!onlyNegative || ci.getConsumption() < 0 ) &&
         			(!dif || ci.getConsumption() != 0 )){
         			Row row = hoja.createRow((j-num)+2);
-        			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
+        			OldItem item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
 
         			for(Integer k = 0; k< columns; k++){
         	    		Cell celda = row.createCell(k);
@@ -887,7 +887,7 @@ public class ConsumptionUtil {
         			(!onlyNegative || ci.getConsumption() < 0 ) &&
         			(!dif || ci.getConsumption() != 0 )){
         			Row row = hoja0.createRow((l-num0)+2);
-        			Item item = AON.getItem(domain, domainId, login, ci.getItemId());
+        			OldItem item = AON.getItem(domain, domainId, login, ci.getItemId());
         			for(Integer k = 0; k< columns; k++){
         	    		Cell celda = row.createCell(k);
         	    		String type = special1.getColumns().get(k);

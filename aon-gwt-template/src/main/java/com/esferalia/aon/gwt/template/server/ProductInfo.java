@@ -4,19 +4,19 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class ProductInfo implements IsSerializable{
-	Product product;
+	OldProduct product;
 	LinkedList<Tag> tagList;
-	LinkedList<Item> item;
+	LinkedList<OldItem> item;
 	Integer row;
 	Boolean isProduct;
 	Set<ProductTag> tags;
-	Item downloadItem;
+	OldItem downloadItem;
 
 	public Integer getRow() {
 		return row;
@@ -32,10 +32,10 @@ public class ProductInfo implements IsSerializable{
 		this.isProduct = isProduct;
 		return this;
 	}
-	public Product getProduct() {
+	public OldProduct getProduct() {
 		return product;
 	}
-	public ProductInfo setProduct(Product product) {
+	public ProductInfo setProduct(OldProduct product) {
 		this.product = product;
 		return this;
 	}
@@ -46,10 +46,10 @@ public class ProductInfo implements IsSerializable{
 		this.tagList = tagList;
 		return this;
 	}
-	public LinkedList<Item> getItem() {
+	public LinkedList<OldItem> getItem() {
 		return item;
 	}
-	public ProductInfo setItem(LinkedList<Item> item) {
+	public ProductInfo setItem(LinkedList<OldItem> item) {
 		this.item = item;
 		return this;
 	}
@@ -60,10 +60,10 @@ public class ProductInfo implements IsSerializable{
 		this.tags = tags;
 		return this;
 	}
-	public Item getDownloadItem() {
+	public OldItem getDownloadItem() {
 		return downloadItem;
 	}
-	public ProductInfo setDownloadItem(Item downloadItem) {
+	public ProductInfo setDownloadItem(OldItem downloadItem) {
 		this.downloadItem = downloadItem;
 		return this;
 	}

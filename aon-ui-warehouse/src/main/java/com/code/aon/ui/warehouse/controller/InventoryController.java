@@ -228,7 +228,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 			AON.getStockStream(domainName, domainId, user, f -> f.getItemProperty().isNotNull().and(f.getWarehouseProperty().eq(warehouse.getId()))).map(s -> {
 				return new WarehouseTransferDetail()
 					.setDomain(DomainManager.getCurrentDomain())
-					.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(s.getItem()))
+					.setItem(new com.esferalia.aon.occam.api.model.product.OldItem().setId(s.getItem()))
 					.setQuantity(s.getQuantity())
 					.setWarehouseTransfer(wt);
 			})
@@ -471,7 +471,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 				details.stream().map(detail -> {
 					return new WarehouseTransferDetail()
 						.setDomain(detail.getDomain())
-						.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(detail.getItem().getId()))
+						.setItem(new com.esferalia.aon.occam.api.model.product.OldItem().setId(detail.getItem().getId()))
 						.setQuantity( Math.abs(detail.getActualQuantity()-detail.getRealQuantity()))
 						.setWarehouseTransfer(new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer().setId(wt.getId()));
 				})

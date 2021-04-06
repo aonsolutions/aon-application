@@ -11,8 +11,8 @@ import org.junit.Ignore;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.mysql.jdbc.Driver;
@@ -38,14 +38,14 @@ public class ProductTest {
 	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyDomain() {
-		Product product = new Product();
+		OldProduct product = new OldProduct();
 		AON.insert(ctx, product);
 	}
 	
 	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyName() {
-		Product product = new Product();
+		OldProduct product = new OldProduct();
 		product.setDomain(ctx.getDomainId());
 		AON.insert(ctx, product);
 	}
@@ -53,7 +53,7 @@ public class ProductTest {
 	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyCode() {
-		Product product = new Product();
+		OldProduct product = new OldProduct();
 		product.setDomain(ctx.getDomainId());
 		product.setName("test");
 		AON.insert(ctx, product);
@@ -62,9 +62,9 @@ public class ProductTest {
 	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testDuplicateProduct(){
-		Product product = ProductDAO.getProduct(ctx, 1);
+		OldProduct product = ProductDAO.getProduct(ctx, 1);
 		if(product != null){
-			product = new Product();
+			product = new OldProduct();
 			product.setDomain(ctx.getDomainId());
 			product.setName("test");
 			product.setCode("C001234");
@@ -94,7 +94,7 @@ public class ProductTest {
 	// @Test
 	@Ignore
 	public void testDeleteProduct() {
-		Product product = ProductDAO.getProduct(ctx, 1);
+		OldProduct product = ProductDAO.getProduct(ctx, 1);
 		if(product != null){
 			AON.delete(ctx,product);
 		}
@@ -175,16 +175,16 @@ public class ProductTest {
 	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyDomainItem() {
-		Product product = new Product();
+		OldProduct product = new OldProduct();
 		AON.insert(ctx, product);
 	}
 	
 	// @Test(expected=AonCoreException.class)
 	@Ignore
 	public void testDuplicateItem(){
-		Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 1);
+		OldItem item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 1);
 		if(item != null){
-			item = new Item();
+			item = new OldItem();
 			item.setDomain(ctx.getDomainId());
 			item.setProductId(1);
 			item.setDetail("detail");
@@ -213,7 +213,7 @@ public class ProductTest {
 	// @Test
 	@Ignore
 	public void testDeleteItem() {
-		Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 1);
+		OldItem item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 1);
 		if(item != null){
 			AON.deleteItem(ctx,item);
 		}

@@ -21,8 +21,8 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -96,29 +96,29 @@ public class MarketplaceImpl extends AonStatelessRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Product> getProductList(Domain domain, String login, Integer category){
+	public List<OldProduct> getProductList(Domain domain, String login, Integer category){
 		return DBMarketplace.getProductList(domain, login, category);
 	}
 	
 	@Override	
-	public List<Product> getProductList(Domain domain, String login, Integer category, Boolean active){
+	public List<OldProduct> getProductList(Domain domain, String login, Integer category, Boolean active){
 		return DBMarketplace.getProductList(domain, login, category, active, null, null);
 	}
 
 	@Override
-	public List<Product> getSalesProductList(Domain domain, String login, Integer category, Boolean active, Boolean sales){
+	public List<OldProduct> getSalesProductList(Domain domain, String login, Integer category, Boolean active, Boolean sales){
 		return DBMarketplace.getProductList(domain, login, category, active, sales, null);
 	} 
 	
 	@Override
-	public List<Item> getMarketItemList(Domain domain, String login, Integer category, Boolean active, Boolean sales){
+	public List<OldItem> getMarketItemList(Domain domain, String login, Integer category, Boolean active, Boolean sales){
 		return DBMarketplace.getMarketItemList(domain, login, category, active, sales);
 	} 
 	
 	@Override
-	public Vector<Item> searchItemByProductName(String searchStr, Vector<Item> list){
-		Vector<Item> vector = new Vector<Item>();
-		for (Item i : list) {
+	public Vector<OldItem> searchItemByProductName(String searchStr, Vector<OldItem> list){
+		Vector<OldItem> vector = new Vector<OldItem>();
+		for (OldItem i : list) {
 			if(containsIgnoreCase2(i.getProduct().getName(), searchStr)){
 				vector.add(i);
 			}
@@ -144,12 +144,12 @@ public class MarketplaceImpl extends AonStatelessRemoteServiceServlet implements
 	}
 	
 	@Override
-	public Attach obtainEcommerceProductAttach(Domain domain, User user, Item item, String templateName){
+	public Attach obtainEcommerceProductAttach(Domain domain, User user, OldItem item, String templateName){
 		return DBMarketplace.getItemTemplateAttach(domain, user.getLogin(), templateName, item);
 	}
 
 	@Override
-	public EcommerceProduct obtainEcommerceProductValues(Domain domain, User user, Attach attach, Item item){
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, User user, Attach attach, OldItem item){
 		EcommerceProduct ecommerceProduct = null;
 
 		if(attach!=null){
@@ -173,7 +173,7 @@ public class MarketplaceImpl extends AonStatelessRemoteServiceServlet implements
 	}
 	
 	@Override
-	public EcommerceProduct obtainEcommerceProductValues(Domain domain, User user, Item item, String templateName){
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, User user, OldItem item, String templateName){
 		Attach attach = AON.getAttach(domain.getName()
 				, domain.getId()
 				, user.getLogin()
@@ -184,7 +184,7 @@ public class MarketplaceImpl extends AonStatelessRemoteServiceServlet implements
 		return obtainEcommerceProductValues(domain, user, attach, item);
 	}
 	
-	public Boolean acceptEcommerceProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
+	public Boolean acceptEcommerceProductValues(Domain domain, String login, OldItem item, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
 		return DBMarketplace.acceptProductValues(domain, login, item, templateName, ecommerceProduct, attach);
 	}
 	

@@ -26,8 +26,8 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -1293,11 +1293,11 @@ public class DeliveryImport {
 	private void importAlbvDet(Domain domain, User user, HashMap<Integer, Delivery> albv) {
 		di.getAlbvDetList().stream().forEach(r -> {
 			if(albv.containsKey(r.getAlbv())) {
-				Product product =  AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getCodeProperty().eq(r.getArticulo())));
+				OldProduct product =  AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getCodeProperty().eq(r.getArticulo())));
 
 				if(product.getId() == null) {
 					Tax vat = DBProduct.getIVAName(domain.getName(), domain.getId(), user.getLogin(), r.getIva() != null ? r.getIva() : 21.0);
-					product = new Product()
+					product = new OldProduct()
 						.setDomain(domain.getId())
 						.setName(r.getConcepto())
 						.setCode(r.getArticulo())
@@ -1313,7 +1313,7 @@ public class DeliveryImport {
 				}
 				Integer productId = product.getId();
 
-				Item item = AON.getItem(domain.getName(), domain.getId(), user.getLogin(), f -> f.getProductProperty().eq(productId)
+				OldItem item = AON.getItem(domain.getName(), domain.getId(), user.getLogin(), f -> f.getProductProperty().eq(productId)
 					.and(r.getDetalle() != null ? f.getDetailProperty().eq(r.getDetalle()) :
 						f.getDetailProperty().eq("").or(f.getDetailProperty().isNull()))
 					.and(r.getDetalle2() != null ? f.getDetail2Property().eq(r.getDetalle2()) :
@@ -1322,7 +1322,7 @@ public class DeliveryImport {
 						f.getDetail3Property().eq("").or(f.getDetail3Property().isNull())));
 
 				if(item.getId() == null) {
-					item = new Item()
+					item = new OldItem()
 						.setDomain(domain.getId())
 						.setActive(true)
 						.setProduct(product)

@@ -29,7 +29,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.ItemAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 
 @WebServlet(name = "DownloadAmazonProduct", urlPatterns = { "/aon_gwt_template/gwt_download_amazon_product/*"
 															,"/aon_gwt_aio/gwt_download_amazon_product/*"})
@@ -93,7 +93,7 @@ public class DownloadAmazonProductServlet extends HttpServlet{
 				}
 				Row row = sheet.createRow(i+3);
 
-				Item item = null;
+				OldItem item = null;
 				if(ecp.getProduct().getItem()!= null){
 					Integer itemId = Integer.parseInt(ecp.getProduct().getItem());
 					item = AON.getItem(domainName, domainId, login, f -> f.getIdProperty().eq(itemId));
@@ -142,7 +142,7 @@ public class DownloadAmazonProductServlet extends HttpServlet{
 	
 	
 	private String getValue(String domainName, Integer domainId, String login,
-			EcommerceProduct ecp, Integer column, Item item) {
+			EcommerceProduct ecp, Integer column, OldItem item) {
 		String val = ecp.getProductData().getEcommerce().get(column).getValue();
 		if(ecp.getProduct().getItem() == null) 
 			return val;

@@ -10,8 +10,8 @@ import com.esferalia.aon.gwt.template.shared.marketplace.Order;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -36,28 +36,28 @@ public interface IMarketplaceAsync {
 	
 	void getMarketplaceTagList(Domain domain, User user, AsyncCallback<LinkedList<Tag>> callback);
 	
-	void getProductList(Domain domain, String login, Integer category, AsyncCallback<List<Product>> callback);
+	void getProductList(Domain domain, String login, Integer category, AsyncCallback<List<OldProduct>> callback);
 	
-	void getProductList(Domain domain, String login, Integer category, Boolean active, AsyncCallback<List<Product>> callback);
+	void getProductList(Domain domain, String login, Integer category, Boolean active, AsyncCallback<List<OldProduct>> callback);
 	
 	void getSalesProductList(Domain domain, String login, Integer category,
-			Boolean active, Boolean sales, AsyncCallback<List<Product>> callback);
+			Boolean active, Boolean sales, AsyncCallback<List<OldProduct>> callback);
 	
 	void getMarketItemList(Domain domain, String login, Integer category,
-			Boolean active, Boolean sales, AsyncCallback<List<Item>> callback);
+			Boolean active, Boolean sales, AsyncCallback<List<OldItem>> callback);
 	
-	void searchItemByProductName(String searchStr, Vector<Item> list, AsyncCallback<Vector<Item>> callback);
+	void searchItemByProductName(String searchStr, Vector<OldItem> list, AsyncCallback<Vector<OldItem>> callback);
 	
 	void getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList, AsyncCallback<List<RegistryAttachTag>> callback);
 	
 	void obtainEcommerceProductTemplates(Domain domain, User user, String sellerId, AsyncCallback<List<Attach>> callback);
 	
-	void obtainEcommerceProductAttach(Domain domain, User user, Item item, String templateName, AsyncCallback<Attach> callback);
+	void obtainEcommerceProductAttach(Domain domain, User user, OldItem item, String templateName, AsyncCallback<Attach> callback);
 
-	void obtainEcommerceProductValues(Domain domain, User user, Attach attach, Item item, AsyncCallback<EcommerceProduct> callback);
+	void obtainEcommerceProductValues(Domain domain, User user, Attach attach, OldItem item, AsyncCallback<EcommerceProduct> callback);
 	
-	void obtainEcommerceProductValues(Domain domain, User user, Item item, String templateName, AsyncCallback<EcommerceProduct> callback);
+	void obtainEcommerceProductValues(Domain domain, User user, OldItem item, String templateName, AsyncCallback<EcommerceProduct> callback);
 	
-	void acceptEcommerceProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct eProduct, Attach iattach, AsyncCallback<Boolean> callback);
+	void acceptEcommerceProductValues(Domain domain, String login, OldItem item, String templateName, EcommerceProduct eProduct, Attach iattach, AsyncCallback<Boolean> callback);
 	
 }

@@ -32,7 +32,7 @@ import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -136,7 +136,7 @@ public class IncomeDAO {
 				.fetch().stream().map(new IncomeDetailFiller());
 	}
 	
-	public static IncomeDetail getLastIncomeDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId){
+	public static IncomeDetail getLastIncomeDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId){
 		Condition workplaceCondition = INCOME.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INCOME.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
@@ -151,7 +151,7 @@ public class IncomeDAO {
 				.findFirst().orElse(new IncomeDetail());
 	}
 	
-	public static IncomeDetail getLastIncomeDetailUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date){
+	public static IncomeDetail getLastIncomeDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date){
 		Condition workplaceCondition = INCOME.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INCOME.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
@@ -167,7 +167,7 @@ public class IncomeDAO {
 				.findFirst().orElse(new IncomeDetail());
 	}
 	
-	public static LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId){
+	public static LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId){
 		Condition workplaceCondition = INCOME.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INCOME.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
@@ -188,7 +188,7 @@ public class IncomeDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static LinkedList<IncomeDetail> getLastIncomeDetailListUntilDate(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId, Date date){
+	public static LinkedList<IncomeDetail> getLastIncomeDetailListUntilDate(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId, Date date){
 		Condition workplaceCondition = INCOME.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INCOME.WORKPLACE.eq(workplaceId);
 		LinkedList<Integer> list = ctx.getDslContext().select(INVOICE_DETAIL.SOURCE_ID)
@@ -226,7 +226,7 @@ public class IncomeDAO {
 		}
 	}
 	
-	public static LinkedList<IncomeDetail> getIncomeDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId){
+	public static LinkedList<IncomeDetail> getIncomeDetailList(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId){
 		Condition workplaceCondition = INCOME.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INCOME.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
@@ -246,7 +246,7 @@ public class IncomeDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
-	public static LinkedList<IncomeDetail> getIncomeDetailListUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date){
+	public static LinkedList<IncomeDetail> getIncomeDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date){
 		LinkedList<Integer> list = ctx.getDslContext().select(INVOICE_DETAIL.SOURCE_ID)
 		.from(INVOICE_DETAIL)															
 		.where(INVOICE_DETAIL.SOURCE.eq((byte)4))
@@ -401,7 +401,7 @@ public class IncomeDAO {
 				.setDiscountExpression(record.getValue(INCOME_DETAIL.DISCOUNT_EXPR))
 				.setItem((record.getValue(INCOME_DETAIL.ITEM) == null)
 					? null
-					: new Item()
+					: new OldItem()
 						.setId(record.getValue(INCOME_DETAIL.ITEM))
 						.setCategory( record.getValue( PCATEGORY.NAME ) )
 						.setProductId( record.getValue( PRODUCT.ID ) )
@@ -446,7 +446,7 @@ public class IncomeDAO {
 				.setDiscountExpression(record.getValue(INCOME_DETAIL.DISCOUNT_EXPR))
 				.setItem((record.getValue(INCOME_DETAIL.ITEM) == null)
 					? null
-					: new Item()
+					: new OldItem()
 						.setId(record.getValue(INCOME_DETAIL.ITEM))
 						.setCategory( record.getValue( PCATEGORY.NAME ) )
 						.setProductId( record.getValue( PRODUCT.ID ) )

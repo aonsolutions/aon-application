@@ -21,7 +21,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 
@@ -159,7 +159,7 @@ public class DBCatalogue {
 					Department d = getDepartment(domain, w, r.value4(), login);
 					c.setDepartment(d.getName());
 					c.setWorkplace(w.getDescription());
-					Product p = AON.getProduct(domain.getName(), domain.getId(), login,
+					OldProduct p = AON.getProduct(domain.getName(), domain.getId(), login,
 							f -> f.getIdProperty().eq(r.getValue(ITEM.PRODUCT))); 
 					c.setProductCode(p.getCode());
 					c.setProductName(p.getName());

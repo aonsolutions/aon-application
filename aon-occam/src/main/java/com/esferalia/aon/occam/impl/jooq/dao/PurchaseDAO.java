@@ -36,7 +36,7 @@ import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -151,7 +151,7 @@ public class PurchaseDAO {
 				.setDiscountExpression(record.getValue(PURCHASE_DETAIL.DISCOUNT_EXPR))
 				.setItem2((record.getValue(PURCHASE_DETAIL.ITEM) == null)
 					? null
-					: new Item()
+					: new OldItem()
 						.setId(record.getValue(PURCHASE_DETAIL.ITEM))
 						.setCategory( record.getValue( PCATEGORY.NAME ) )
 						.setProductId( record.getValue( PRODUCT.ID ) )

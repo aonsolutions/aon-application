@@ -26,7 +26,7 @@ import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
@@ -69,12 +69,12 @@ public interface IWarehouse {
 	Optional<IncomeDetail> updateIncomeDetail(AONContext ctx, IncomeDetail incomeDetail);
 	Optional<IncomeDetail> deleteIncomeDetail(AONContext ctx, Integer id);
 	
-	IncomeDetail getLastIncomeDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);
-	IncomeDetail getLastIncomeDetailUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date);
-	LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId);
-	LinkedList<IncomeDetail> getLastIncomeDetailListUntilDate(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId, Date date);
-	LinkedList<IncomeDetail> getIncomeDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);
-	LinkedList<IncomeDetail> getIncomeDetailListUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date);
+	IncomeDetail getLastIncomeDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
+	IncomeDetail getLastIncomeDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
+	LinkedList<IncomeDetail> getLastIncomeDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId);
+	LinkedList<IncomeDetail> getLastIncomeDetailListUntilDate(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId, Date date);
+	LinkedList<IncomeDetail> getIncomeDetailList(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
+	LinkedList<IncomeDetail> getIncomeDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
 
 	// 	***********************************************
 	// 	**************************** DELIVERY DETAIL***

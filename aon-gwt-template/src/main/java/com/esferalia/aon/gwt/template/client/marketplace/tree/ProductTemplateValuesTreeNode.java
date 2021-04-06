@@ -7,7 +7,7 @@ import com.esferalia.aon.gwt.template.client.JsTemplates;
 import com.esferalia.aon.gwt.template.client.marketplace.Marketplace;
 import com.esferalia.aon.gwt.template.client.marketplace.ProductList;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -21,9 +21,9 @@ public class ProductTemplateValuesTreeNode extends TreeNode<Integer>{
 		marketplace = _marketplace;
 		
 		marketplace.getImpl().getMarketItemList(getDomain(),
-				this.marketplace.getUser().getLogin(), null, true, true, new AsyncCallback<List<Item>>() {
+				this.marketplace.getUser().getLogin(), null, true, true, new AsyncCallback<List<OldItem>>() {
 					@Override
-					public void onSuccess(List<Item> result) {
+					public void onSuccess(List<OldItem> result) {
 						ProductList list = new ProductList(marketplace.getAonData(), result);
 						marketplace.setContent(list);
 					}

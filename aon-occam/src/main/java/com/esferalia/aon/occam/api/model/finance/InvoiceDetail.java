@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 
@@ -23,7 +23,7 @@ public class InvoiceDetail implements Serializable {
 	private String warehouseName;
 	private Integer workPlace;
 	private String workPlaceName;
-	private Item item;
+	private OldItem item;
 	private short line;
 	private String description;
 	private double quantity;
@@ -119,10 +119,10 @@ public class InvoiceDetail implements Serializable {
 		this.workPlaceName = workPlaceName;
 		return this;
 	}
-	public Item getItem() {
+	public OldItem getItem() {
 		return item;
 	}
-	public InvoiceDetail setItem(Item item) {
+	public InvoiceDetail setItem(OldItem item) {
 		this.item = item;
 		return this;
 	}

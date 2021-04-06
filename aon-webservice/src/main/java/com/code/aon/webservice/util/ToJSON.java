@@ -26,8 +26,8 @@ import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Category;
@@ -313,7 +313,7 @@ public class ToJSON {
 		return json;
 	}
 	
-	public static JSONObject productToJSON(Product product) {
+	public static JSONObject productToJSON(OldProduct product) {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, product.getId());
 		json.put(MSG.DOMAIN, product.getDomain());
@@ -322,7 +322,7 @@ public class ToJSON {
 		return json;
 	}
 
-	public static JSONObject itemToJSON(Item item) {
+	public static JSONObject itemToJSON(OldItem item) {
 		JSONObject json = new JSONObject();
 		json.put(MSG.ID, item.getId());
 		json.put(MSG.DOMAIN, item.getDomain());

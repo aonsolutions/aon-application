@@ -43,8 +43,8 @@ import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.stat.StatData;
@@ -874,14 +874,14 @@ public class WarehouseServlet extends HttpServlet{
     		StatData<Integer, String, Double> stat = getStockForecastStatData(domain, login, filterMap);
         	
     		Integer[] productIds = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
-        	Map<Integer, Product> productMap = new HashMap<>();
+        	Map<Integer, OldProduct> productMap = new HashMap<>();
         	AON.getProductStream(domain.getName(), domain.getId(), login, f->f.getIdProperty().in(productIds)).forEach(product -> {
         		productMap.put(product.getId(), product);
         	});
     		
         	for(Integer productId: productIds) {
     			if(stat.getMap().containsKey(productId)){
-    				Product product = productMap.get(productId);
+    				OldProduct product = productMap.get(productId);
     				Double outputs = new Double(stat.get(productId, StatDAO.PRODUCT_OUTPUTS));
     				Double dailyOutputs = outputs / daysCount;
     				Double accumulation = dailyOutputs * accumulationDays;
@@ -999,14 +999,14 @@ public class WarehouseServlet extends HttpServlet{
     		StatData<Integer, String, Double> stat = getProductMovementsStatData(domain, login, filterMap);
         	
     		Integer[] productIds = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
-        	Map<Integer, Product> productMap = new HashMap<>();
+        	Map<Integer, OldProduct> productMap = new HashMap<>();
         	AON.getProductStream(domain.getName(), domain.getId(), login, f->f.getIdProperty().in(productIds)).forEach(product -> {
         		productMap.put(product.getId(), product);
         	});
     		
         	for(Integer productId: productIds) {
     			if(stat.getMap().containsKey(productId)){
-    				Product product = productMap.get(productId);
+    				OldProduct product = productMap.get(productId);
     				Double inputs = (stat.get(productId, StatDAO.PRODUCT_INPUTS));
     				Double outputs = (stat.get(productId, StatDAO.PRODUCT_OUTPUTS));
     				inputs = inputs==null?0.0:inputs;
@@ -1042,14 +1042,14 @@ public class WarehouseServlet extends HttpServlet{
     		StatData<Integer, String, Double> stat = getItemMovementsStatData(domain, login, filterMap);
         	
     		Integer[] ids = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
-        	Map<Integer, Item> itemMap = new HashMap<>();
+        	Map<Integer, OldItem> itemMap = new HashMap<>();
         	AON.getFullItemList(domain.getName(), domain.getId(), login, f->f.getIdProperty().in(ids)).forEach(item -> {
         		itemMap.put(item.getId(), item);
         	});
     		
         	for(Integer itemId: ids) {
     			if(stat.getMap().containsKey(itemId)){
-    				Item item = itemMap.get(itemId);
+    				OldItem item = itemMap.get(itemId);
     				Double inputs = (stat.get(itemId, StatDAO.PRODUCT_INPUTS));
     				Double outputs = (stat.get(itemId, StatDAO.PRODUCT_OUTPUTS));
     				inputs = inputs==null?0.0:inputs;
@@ -1097,14 +1097,14 @@ public class WarehouseServlet extends HttpServlet{
     		StatData<Integer, String, Double> stat = getElaborationMovementsStatData(domain, login, filterMap);
         	
     		Integer[] ids = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
-        	Map<Integer, Item> itemMap = new HashMap<>();
+        	Map<Integer, OldItem> itemMap = new HashMap<>();
         	AON.getFullItemList(domain.getName(), domain.getId(), login, f->f.getIdProperty().in(ids)).forEach(item -> {
         		itemMap.put(item.getId(), item);
         	});
     		
         	for(Integer itemId: ids) {
     			if(stat.getMap().containsKey(itemId)){
-    				Item item = itemMap.get(itemId);
+    				OldItem item = itemMap.get(itemId);
     				Double inputs = (stat.get(itemId, StatDAO.PRODUCT_INPUTS));
     				Double outputs = (stat.get(itemId, StatDAO.PRODUCT_OUTPUTS));
     				inputs = inputs==null?0.0:inputs;

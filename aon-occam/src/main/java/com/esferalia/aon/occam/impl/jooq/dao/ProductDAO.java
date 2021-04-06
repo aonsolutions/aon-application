@@ -50,10 +50,10 @@ import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductTagProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -276,17 +276,17 @@ public class ProductDAO {
 	
 	// ------------------------------------- PRODUCT
 	
-	public static Product getProduct(AONContext ctx, Integer id){
+	public static OldProduct getProduct(AONContext ctx, Integer id){
 		return ctx.getDslContext().select().from(PRODUCT).where(PRODUCT.ID.eq(id)).limit(1).fetchInto(PRODUCT)
-			.stream().map(new FullProductFiller()).findFirst().orElse(new Product());
+			.stream().map(new FullProductFiller()).findFirst().orElse(new OldProduct());
 	}
 	
-	public static Product getProduct(AONContext ctx, String code){
+	public static OldProduct getProduct(AONContext ctx, String code){
 		return ctx.getDslContext().select().from(PRODUCT).where(PRODUCT.CODE.eq(code)).limit(1).fetchInto(PRODUCT)
-			.stream().map(new FullProductFiller()).findFirst().orElse(new Product());
+			.stream().map(new FullProductFiller()).findFirst().orElse(new OldProduct());
 	}
 	
-	public static Stream<Product> getProductStream(AONContext ctx, ProductFilter filter){
+	public static Stream<OldProduct> getProductStream(AONContext ctx, ProductFilter filter){
 		return PRODUCT_PROPERTIES.build(ctx.getDslContext().select().from(PRODUCT), filter)
 				.fetchInto(PRODUCT).stream().map(new FullProductFiller());
 	//	return ctx.getDslContext().select().from(PRODUCT).where(PRODUCT_PROPERTIES.getConditions(filter))
@@ -294,7 +294,7 @@ public class ProductDAO {
 	}
 	
 	@Deprecated
-	public static Product getProduct2(AONContext ctx, Integer id){
+	public static OldProduct getProduct2(AONContext ctx, Integer id){
 		ctx.checkRead();
 		Record21<Integer, String, String, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, String, Timestamp, String, Timestamp> record = ctx.getDslContext()
 				.select(PRODUCT.DOMAIN, PRODUCT.NAME, PRODUCT.CODE, PRODUCT.BRAND,
@@ -308,7 +308,7 @@ public class ProductDAO {
 			.where(PRODUCT.ID.eq(id))
 			.fetchOne();
 		if(record != null){
-			Product p = new Product();
+			OldProduct p = new OldProduct();
 			p.setId(id);
 			if(record.value1() != null) p.setDomain(record.value1());
 			if(record.value2() != null) p.setName(record.value2());
@@ -338,7 +338,7 @@ public class ProductDAO {
 		return null;
 	}
 	
-	public static void insert(AONContext ctx, Product p) {
+	public static void insert(AONContext ctx, OldProduct p) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			ProductValidation.validate(ctx, p);
@@ -358,7 +358,7 @@ public class ProductDAO {
 		});
 	}
 	
-	public static Product insertProduct(AONContext ctx, Product p) {
+	public static OldProduct insertProduct(AONContext ctx, OldProduct p) {
 		Timestamp now = new java.sql.Timestamp(new java.util.Date().getTime());
 
 		return ctx.getDslContext()
@@ -371,10 +371,10 @@ public class ProductDAO {
 				p.getLotable(), p.getStatus(), p.getVat(), p.getRetention(), p.getType(), p.getManufactured(),p.getComposition(),
 				p.getCompositionPrice(), p.getSalesAccount(), p.getPurchaseAccount(), ctx.getUser(), now,
 				ctx.getUser(), now, p.getKind() != null ? p.getKind() : 0, p.getPackaged() != null ? p.getPackagedValue() : 0)
-		.returning().fetch().stream().map(new FullProductFiller()).findFirst().orElse(new Product());
+		.returning().fetch().stream().map(new FullProductFiller()).findFirst().orElse(new OldProduct());
 	}
 	
-	public static void insertWithId(AONContext ctx, Product p) {
+	public static void insertWithId(AONContext ctx, OldProduct p) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			ProductValidation.validate(ctx, p);
@@ -398,7 +398,7 @@ public class ProductDAO {
 					.execute();
 		});
 	}
-	public static LinkedList<Product> insert(AONContext ctx, Stream<Product> ps) {
+	public static LinkedList<OldProduct> insert(AONContext ctx, Stream<OldProduct> ps) {
 		ctx.checkWrite();
 		AONContext sctx = ctx;
 		InsertValuesStepN<ProductRecord> insertQuery = ctx.getDslContext().insertInto(PRODUCT, PRODUCT.DOMAIN, PRODUCT.NAME,
@@ -423,7 +423,7 @@ public class ProductDAO {
 		return insertQuery.returning().fetch().stream().map(new ImportProductFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
-	public static void insertWithId(AONContext ctx, Stream<Product> ps) {
+	public static void insertWithId(AONContext ctx, Stream<OldProduct> ps) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			InsertValuesStepN<ProductRecord> productQuery = ctx.getDslContext().insertInto(PRODUCT,PRODUCT.ID, PRODUCT.DOMAIN,
@@ -450,7 +450,7 @@ public class ProductDAO {
 		});
 	}
 	
-	public static void update(AONContext ctx, Product p) {
+	public static void update(AONContext ctx, OldProduct p) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			ctx.getDslContext()
@@ -484,7 +484,7 @@ public class ProductDAO {
 		});
 	}
 	
-	public static void delete(AONContext ctx, Product p) {
+	public static void delete(AONContext ctx, OldProduct p) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			ctx.getDslContext()
@@ -493,7 +493,7 @@ public class ProductDAO {
 		});
 	}
 	
-	public static void delete(AONContext ctx, Stream<Product> ps) {
+	public static void delete(AONContext ctx, Stream<OldProduct> ps) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			Vector<Integer> ids = new Vector<Integer>();
@@ -586,7 +586,7 @@ public class ProductDAO {
 	}
 	
 	// ------------------------------------- ITEM
-	public static Stream<Item> getItemStream(AONContext ctx, ItemFilter filter){
+	public static Stream<OldItem> getItemStream(AONContext ctx, ItemFilter filter){
 		return ITEM_PROPERTIES.build(ctx.getDslContext()
 				.select()
 				.from(ITEM), filter)
@@ -594,7 +594,7 @@ public class ProductDAO {
 			//TODO aplicar BasicItemFiller ¿?
 	}
 	
-	public static Stream<Item> getFullItemStream(AONContext ctx, ItemFilter filter){
+	public static Stream<OldItem> getFullItemStream(AONContext ctx, ItemFilter filter){
 		return ctx.getDslContext().select(ITEM.fields())
 				.from ( ITEM )
 				.join( PRODUCT ).on(ITEM.PRODUCT.eq(PRODUCT.ID))
@@ -603,7 +603,7 @@ public class ProductDAO {
 	}
 
 	@Deprecated
-	public static Item getItemOld(AONContext ctx, Integer id){
+	public static OldItem getItemOld(AONContext ctx, Integer id){
 		ctx.checkRead();
 		
 		Record20<Integer, Integer, String, String, String, String, String, Date, Double, Byte, Double, Double, Double, Double, Byte, String, String, Timestamp, String, Timestamp> record = ctx.getDslContext()
@@ -617,7 +617,7 @@ public class ProductDAO {
 			.fetchOne();
 		
 		if(record != null){
-			Item i = new Item();
+			OldItem i = new OldItem();
 			i.setId(id);
 			if(record.value1() != null) i.setDomain(record.value1());
 			if(record.value2() != null) i.setProductId(record.value2());
@@ -645,7 +645,7 @@ public class ProductDAO {
 		return null;
 	}
 	
-	public static void insert(AONContext ctx, Item i) {
+	public static void insert(AONContext ctx, OldItem i) {
 		ProductValidation.validateItem(ctx, i);
 		ctx.checkWrite();
 		ctx.getDslContext()
@@ -669,7 +669,7 @@ public class ProductDAO {
 				.execute();
 	}
 	
-	public static Item insertItemResult(AONContext ctx, Item i) {
+	public static OldItem insertItemResult(AONContext ctx, OldItem i) {
 		ctx.checkWrite();
 		ProductValidation.validateItem(ctx, i);
 		return ctx.getDslContext()
@@ -693,7 +693,7 @@ public class ProductDAO {
 				.returning().fetch().stream().map(new BasicItemFiller()).findFirst().orElse(null);
 	}
 	
-	public static void insertItem(AONContext ctx, Item i) {
+	public static void insertItem(AONContext ctx, OldItem i) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			ProductValidation.validateItem(ctx, i);
@@ -719,7 +719,7 @@ public class ProductDAO {
 		});
 	}
 
-	public static void insertItem(AONContext ctx, Stream<Item> is) {
+	public static void insertItem(AONContext ctx, Stream<OldItem> is) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			InsertValuesStepN<ItemRecord> insertQuery = ctx.getDslContext().insertInto(ITEM, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL,
@@ -744,7 +744,7 @@ public class ProductDAO {
 		});		
 	}
 
-	public static void updateItem(AONContext ctx, Item i) {
+	public static void updateItem(AONContext ctx, OldItem i) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			ctx.getDslContext()
@@ -774,7 +774,7 @@ public class ProductDAO {
 		});	
 	}
 
-	public static void deleteItem(AONContext ctx, Item i) {
+	public static void deleteItem(AONContext ctx, OldItem i) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			ctx.getDslContext()
@@ -783,7 +783,7 @@ public class ProductDAO {
 		});	
 	}
 
-	public static void deleteItem(AONContext ctx, Stream<Item> is) {
+	public static void deleteItem(AONContext ctx, Stream<OldItem> is) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			Vector<Integer> ids = new Vector<Integer>();
@@ -796,7 +796,7 @@ public class ProductDAO {
 		});		
 	}
 
-	public static void insertItemWithId(AONContext ctx, Item i) {
+	public static void insertItemWithId(AONContext ctx, OldItem i) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			ProductValidation.validateItem(ctx, i);
@@ -807,7 +807,7 @@ public class ProductDAO {
 		});		
 	}
 
-	public static void insertItemWithId(AONContext ctx, Stream<Item> is) {
+	public static void insertItemWithId(AONContext ctx, Stream<OldItem> is) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
 			InsertValuesStep21<ItemRecord,Integer, Integer, Integer, String, String, String, String, String, Date, Double, Byte, Double, Double, Double, Double, Byte, String, String, Timestamp, String, Timestamp> insertQuery = ctx.getDslContext().insertInto(ITEM,ITEM.ID, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE);
@@ -819,10 +819,10 @@ public class ProductDAO {
 		});		
 	}
 
-	private static class ImportProductFiller implements Function<ProductRecord, Product> {
+	private static class ImportProductFiller implements Function<ProductRecord, OldProduct> {
 		@Override
-		public Product apply(ProductRecord r) {
-			return new Product().setId(r.getId())
+		public OldProduct apply(ProductRecord r) {
+			return new OldProduct().setId(r.getId())
 					.setCode(r.getCode())
 					.setDomain(r.getDomain());		
 		}
@@ -939,10 +939,10 @@ public class ProductDAO {
 		}
 	}
 	
-	private static class FullProductFiller implements Function<ProductRecord, Product> {
+	private static class FullProductFiller implements Function<ProductRecord, OldProduct> {
 		@Override
-		public Product apply(ProductRecord r) {
-			return new Product().setId(r.getId())
+		public OldProduct apply(ProductRecord r) {
+			return new OldProduct().setId(r.getId())
 					.setName(r.getName())
 					.setDomain(r.getDomain())
 					.setBrand(r.getBrand())
@@ -974,11 +974,11 @@ public class ProductDAO {
 		}
 	}
 	
-	private static class BasicItemFiller implements Function<Record, Item> {
+	private static class BasicItemFiller implements Function<Record, OldItem> {
 		
 		@Override
-		public Item apply(Record r) {
-			return new Item().setId(r.getValue(ITEM.ID))
+		public OldItem apply(Record r) {
+			return new OldItem().setId(r.getValue(ITEM.ID))
 					.setBarcode(r.getValue(ITEM.BARCODE))
 					.setCreationDate(r.getValue(ITEM.CREATION_DATE))
 					.setCreationUser(r.getValue(ITEM.CREATION_USER))
@@ -999,7 +999,7 @@ public class ProductDAO {
 					.setPackUnitsTag(new Tag().setId(r.getValue(ITEM.PACK_UNITS_TAG)))
 					.setStockUnitTag(new Tag().setId(r.getValue(ITEM.STOCK_UNIT_TAG)))
 					.setPrice(r.getValue(ITEM.PRICE))
-					.setProduct(new Product().setId(r.getValue(ITEM.PRODUCT)))
+					.setProduct(new OldProduct().setId(r.getValue(ITEM.PRODUCT)))
 					.setProductId(r.getValue(ITEM.PRODUCT))
 					.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
 					.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
@@ -1009,15 +1009,15 @@ public class ProductDAO {
 		}
 	}
 	
-	private static class FullItemFiller implements Function<Record, Item> {
+	private static class FullItemFiller implements Function<Record, OldItem> {
 		AONContext ctx;
 		public FullItemFiller(AONContext ctx) {
 			this.ctx = ctx;
 		}
 		
 		@Override
-		public Item apply(Record r) {
-			return new Item().setId(r.getValue(ITEM.ID))
+		public OldItem apply(Record r) {
+			return new OldItem().setId(r.getValue(ITEM.ID))
 					.setBarcode(r.getValue(ITEM.BARCODE))
 					.setCreationDate(r.getValue(ITEM.CREATION_DATE))
 					.setCreationUser(r.getValue(ITEM.CREATION_USER))
@@ -1074,15 +1074,15 @@ public class ProductDAO {
 		}
 	}
 	
-	protected static class ItemFiller implements Function<Record, Item> {
+	protected static class ItemFiller implements Function<Record, OldItem> {
 		
 		@Override
-		public Item apply(Record r) {
+		public OldItem apply(Record r) {
 			return buildItem(r);
 		}
 		
-		public static Item buildItem(Record r) {
-			return new Item()
+		public static OldItem buildItem(Record r) {
+			return new OldItem()
 				.setId(r.getValue(ITEM.ID))
 				.setBarcode(r.getValue(ITEM.BARCODE))
 				.setCreationDate(r.getValue(ITEM.CREATION_DATE))
@@ -1106,7 +1106,7 @@ public class ProductDAO {
 				.setPrice(r.getValue(ITEM.PRICE))
 				.setProduct(r.get(PRODUCT.ID) != null 
 						? ProductFiller.buildProduct(r) 
-						: new Product().setId(r.getValue(ITEM.PRODUCT)))
+						: new OldProduct().setId(r.getValue(ITEM.PRODUCT)))
 				.setProductId(r.getValue(ITEM.PRODUCT))
 				.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
 				.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
@@ -1116,14 +1116,14 @@ public class ProductDAO {
 		}	
 	}
 	
-	protected static class ProductFiller implements Function<Record, Product> {
+	protected static class ProductFiller implements Function<Record, OldProduct> {
 		@Override
-		public Product apply(Record r) {
+		public OldProduct apply(Record r) {
 			return buildProduct(r);			
 		}
 		
-		public static Product buildProduct(Record r) {
-			return new Product().setId(r.getValue(PRODUCT.ID))
+		public static OldProduct buildProduct(Record r) {
+			return new OldProduct().setId(r.getValue(PRODUCT.ID))
 					.setName(r.getValue(PRODUCT.NAME))
 					.setDomain(r.getValue(PRODUCT.DOMAIN))
 					.setBrand(r.getValue(PRODUCT.BRAND))

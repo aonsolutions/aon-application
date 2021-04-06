@@ -36,8 +36,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -45,8 +45,8 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 
 public class DBProduct {
 	
-	private static Item getItem(Domain domain, String login, Item item, Product product){
-		LinkedList<Item> itemList = new LinkedList<Item>();
+	private static OldItem getItem(Domain domain, String login, OldItem item, OldProduct product){
+		LinkedList<OldItem> itemList = new LinkedList<OldItem>();
 		if(item.getSerialNumber() != null)
 			itemList = AON.getItemList(domain.getName(), domain.getId(), login, 
 					f -> f.getProductProperty().eq(product.getId()).and(f.getSerialNumberProperty().eq(item.getSerialNumber())));
@@ -67,7 +67,7 @@ public class DBProduct {
 			if(item.getPackUnitsTag().getId() != null) pack2 = pack2 + item.getPackMeasurementTag().getId();
 		}
 		
-		for (Item item2 : itemList) {
+		for (OldItem item2 : itemList) {
 			String details = "";
 			String pack = "";
 			
@@ -89,11 +89,11 @@ public class DBProduct {
 				return item2;
 			}
 		}
-		return new Item();
+		return new OldItem();
 	}
 	
-	private static Product getProduct(Domain domain, String login, Product p, TemplateInfo ti){
-		Product product = AON.getProduct(domain.getName(), domain.getId(), login, 
+	private static OldProduct getProduct(Domain domain, String login, OldProduct p, TemplateInfo ti){
+		OldProduct product = AON.getProduct(domain.getName(), domain.getId(), login, 
 				f -> f.getCodeProperty().eq(p.getCode()).and(f.getDomainProperty().eq(domain.getId())));		
 		
 		if(product.getId() == null) return null;
@@ -144,13 +144,13 @@ public class DBProduct {
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
-			LinkedList<com.esferalia.aon.occam.api.model.product.Product> uproducts = new LinkedList<com.esferalia.aon.occam.api.model.product.Product>();
-			LinkedList<com.esferalia.aon.occam.api.model.product.Product> iproducts = new LinkedList<com.esferalia.aon.occam.api.model.product.Product>();
+			LinkedList<com.esferalia.aon.occam.api.model.product.OldProduct> uproducts = new LinkedList<com.esferalia.aon.occam.api.model.product.OldProduct>();
+			LinkedList<com.esferalia.aon.occam.api.model.product.OldProduct> iproducts = new LinkedList<com.esferalia.aon.occam.api.model.product.OldProduct>();
 			LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag> uproductsTag = new LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag>();
 			LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag> iproductsTag = new LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag>();
 			HashMap<String, LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag>> iNewProductsTag = new HashMap<String, LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag>>();
-			LinkedList<com.esferalia.aon.occam.api.model.product.Item> iitems = new LinkedList<com.esferalia.aon.occam.api.model.product.Item>();
-			LinkedList<com.esferalia.aon.occam.api.model.product.Item> uitems = new LinkedList<com.esferalia.aon.occam.api.model.product.Item>();
+			LinkedList<com.esferalia.aon.occam.api.model.product.OldItem> iitems = new LinkedList<com.esferalia.aon.occam.api.model.product.OldItem>();
+			LinkedList<com.esferalia.aon.occam.api.model.product.OldItem> uitems = new LinkedList<com.esferalia.aon.occam.api.model.product.OldItem>();
 
 			AONContext sctx = ctx;
 			
@@ -161,7 +161,7 @@ public class DBProduct {
 					verror.add("*Fila " + (r.getRow()+1)+": Para ser loteable tiene que ser serializable.");
 					error.setTextError(verror);
 				}
-				com.esferalia.aon.occam.api.model.product.Product product  = getProduct(domain, login, r.getProduct(), templateInfo);	
+				com.esferalia.aon.occam.api.model.product.OldProduct product  = getProduct(domain, login, r.getProduct(), templateInfo);	
 				if(product != null){
 					
 					if(hasProductParent(sctx, product.getCode(), domain.getId())){
@@ -190,7 +190,7 @@ public class DBProduct {
 						
 						if(r.getItem() != null){	
 							r.getItem().stream().forEach(i ->{
-								com.esferalia.aon.occam.api.model.product.Item item = getItem(domain, login, i, product);
+								com.esferalia.aon.occam.api.model.product.OldItem item = getItem(domain, login, i, product);
 								if(item != null && item.getId() != null){
 									if(item.getSerialNumber() != null &&  !product.isSerializable()){
 										error.setError(false);
@@ -234,7 +234,7 @@ public class DBProduct {
 						}
 					});
 					
-					com.esferalia.aon.occam.api.model.product.Product product2 = r.getProduct();
+					com.esferalia.aon.occam.api.model.product.OldProduct product2 = r.getProduct();
 					product2.setKind(Byte.parseByte(kind));
 					product2.setCreationUser(login);
 					product2.setModificationUser(login);
@@ -252,8 +252,8 @@ public class DBProduct {
 				if(iproductsTag.size() > 0) AON.insertProductTag(sctx, iproductsTag.stream());
 			
 				if(iproducts.size() > 0){ 
-					LinkedList<Product> list = AON.insert(ctx, iproducts.stream());
-					for (Product p : list) {
+					LinkedList<OldProduct> list = AON.insert(ctx, iproducts.stream());
+					for (OldProduct p : list) {
 						LinkedList<ProductTag> l = iNewProductsTag.get(p.getCode()) != null
 								? iNewProductsTag.get(p.getCode()) : new LinkedList<ProductTag>();
 						for (ProductTag pt : l) {
@@ -294,8 +294,8 @@ public class DBProduct {
 		return error;
 	}
 	
-	private static Boolean esta(com.esferalia.aon.occam.api.model.product.Item code, LinkedList<com.esferalia.aon.occam.api.model.product.Item> LinkedList) {
-		for (com.esferalia.aon.occam.api.model.product.Item item : LinkedList) {
+	private static Boolean esta(com.esferalia.aon.occam.api.model.product.OldItem code, LinkedList<com.esferalia.aon.occam.api.model.product.OldItem> LinkedList) {
+		for (com.esferalia.aon.occam.api.model.product.OldItem item : LinkedList) {
 			if(item.getId().equals(code.getId())) return true;
 		}
 		return false;
@@ -443,8 +443,8 @@ public class DBProduct {
 			
 			for(Record22<String, String, String, String, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Double, Double, String, String, String, String, String, Integer, String, Byte, Byte> r : data){
 				ProductInfo pi = new ProductInfo();
-				Item i = new Item();
-				Product p = new Product();
+				OldItem i = new OldItem();
+				OldProduct p = new OldProduct();
 				i.setCode(r.value1());p.setCode(r.getValue(PRODUCT.CODE));
 				i.setName(r.value2());p.setName(r.getValue(PRODUCT.NAME));
 				i.setCategory(r.getValue(PCATEGORY.NAME) != null ? r.getValue(PCATEGORY.NAME) : "");
@@ -545,7 +545,7 @@ public class DBProduct {
 		public ProductInfo apply(Record r) {
 			
 			ProductInfo pi = new ProductInfo();
-			Item i = new Item()
+			OldItem i = new OldItem()
 					.setCode(r.getValue(PRODUCT.CODE))
 					.setName(r.getValue(PRODUCT.NAME))
 					.setCategory(r.getValue(PCATEGORY.NAME) != null ? r.getValue(PCATEGORY.NAME) : "")
@@ -567,7 +567,7 @@ public class DBProduct {
 					.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER) != null ? r.getValue(ITEM.SERIAL_NUMBER) : "")
 					;
 					
-			Product p = new Product()
+			OldProduct p = new OldProduct()
 					.setCode(r.getValue(PRODUCT.CODE))
 					.setName(r.getValue(PRODUCT.NAME))
 					.setType(r.getValue(PRODUCT.TYPE) != null ?  ProductType.values()[r.getValue(PRODUCT.TYPE)].value() : null)
@@ -835,7 +835,7 @@ public class DBProduct {
 		return tax;
 	}
 	
-	public static Item compare(Item i,Item item){
+	public static OldItem compare(OldItem i,OldItem item){
 		item.setBarcode(i.getBarcode() != null ? i.getBarcode() : item.getBarcode());
 		item.setDescription(i.getDescription() != null ? i.getDescription() : item.getDescription());
 		item.setCategory(i.getCategory() != null ? i.getCategory() : item.getCategory());

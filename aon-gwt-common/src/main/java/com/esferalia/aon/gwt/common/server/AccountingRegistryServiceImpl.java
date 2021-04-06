@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.AccountingRegistryProperties;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
@@ -177,7 +177,7 @@ public class AccountingRegistryServiceImpl extends AonStatelessRemoteServiceServ
 	}
 
 	@Override
-	public LinkedList<Product> getInvoiceProducts(String domainName, int domain, String user, String query)
+	public LinkedList<OldProduct> getInvoiceProducts(String domainName, int domain, String user, String query)
 			throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)

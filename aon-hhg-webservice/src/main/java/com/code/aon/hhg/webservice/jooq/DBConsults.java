@@ -17,7 +17,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PMS;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectReservationRoom;
@@ -153,7 +153,7 @@ public class DBConsults {
 			Service service = bh.new Service();
 			service.setMealPlan(pr.getMealPlan());
 			service.setServiceCode(pr.getServiceCode());
-			Item item = AON.getItem(domainName, domainId, login, pr.getItem());
+			OldItem item = AON.getItem(domainName, domainId, login, pr.getItem());
 			
 			Tax tax = AON.getTax(domainName, domainId, login,item.getProduct().getVat());
 			service.setServicesDetail(getHHGReservationServicesDetail(domainName, domainId, login, pr.getId()).stream()

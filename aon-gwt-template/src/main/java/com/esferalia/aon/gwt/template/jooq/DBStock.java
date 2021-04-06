@@ -59,8 +59,8 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -156,10 +156,10 @@ public class DBStock {
 							.where(INVENTORY_DETAIL.ITEM.eq(itemId))
 							.and(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).fetch();
 					
-						Item item = new Item();
+						OldItem item = new OldItem();
 						item.setId(itemId);
 						item.setPurchasePrice(data.get(index).value3() != null ? data.get(index).value3() :0.0);
-						Product product = new Product().setId(data.get(index).getValue(PRODUCT.ID))
+						OldProduct product = new OldProduct().setId(data.get(index).getValue(PRODUCT.ID))
 							.setManufactured(data.get(index).getValue(PRODUCT.MANUFACTURED))
 							.setInventoriable(data.get(index).getValue(PRODUCT.INVENTORIABLE));
 						item.setProduct(product);
@@ -711,7 +711,7 @@ public class DBStock {
 				
 			LinkedList<StockInfo> v = new LinkedList<StockInfo>();
 			for (Record6<Integer, Integer, Integer, Double, Integer, String> d : data) {
-				Item i = getItem(domain, login, d.value2());
+				OldItem i = getItem(domain, login, d.value2());
 				if ( (d.value4() == 0) && ((i.getStatus() == ProductStatus.DISCONTINUED.value()) || (!i.getProduct().isInventoriable()) ) ) {
 					ctx.getDslContext().delete(STOCK).where(STOCK.ID.equal(d.value1()));
 				} else if ( !onlyNonCero || (d.value4() != 0) ) {
@@ -754,7 +754,7 @@ public class DBStock {
 			LinkedList<StockInfo> v = new LinkedList<StockInfo>();
 			for (Record9<Double, String, String, String, String, String, String, Integer, Integer> d : data) {
 				StockInfo si = new StockInfo();
-				Item i = getItem(domain, login, d.getValue(ITEM.ID));
+				OldItem i = getItem(domain, login, d.getValue(ITEM.ID));
 				si.setItem(i.setSerialNumber(d.getValue(ITEM.SERIAL_NUMBER)));
 				si.setProduct(d.getValue(PRODUCT.CODE));
 				si.setQuantity(d.getValue(INVENTORY_DETAIL.REAL_QUANTITY));
@@ -787,7 +787,7 @@ public class DBStock {
 		return AON.getTag(domain.getName(), domain.getId(), login, id);
 	}
 
-	public Item getItem(Domain domain, String login, Integer id ){
+	public OldItem getItem(Domain domain, String login, Integer id ){
 		return AON.getItem(domain.getName(), domain.getId(), login, id);
 	}
 
@@ -1029,12 +1029,12 @@ public class DBStock {
 				Department d = DBCatalogue.getDepartment(domain, wp, r.value2(), login);
 				Record5<Integer, String, String, String, String> rd = ctx.getDslContext().select(ITEM.PRODUCT,ITEM.DETAIL,ITEM.DETAIL2, ITEM.DETAIL3, ITEM.SERIAL_NUMBER).from(ITEM).where(ITEM.ID.eq(r.value6())).fetchOne();
 				Integer productId = rd.getValue(ITEM.PRODUCT);
-				com.esferalia.aon.occam.api.model.product.Product p = AON.getProduct(domain.getName(), domain.getId(), login,
+				com.esferalia.aon.occam.api.model.product.OldProduct p = AON.getProduct(domain.getName(), domain.getId(), login,
 						f -> f.getIdProperty().eq(productId));
 				si.setDepartmentStr(d.getName());
 				si.setWorkplaceStr(wp.getDescription());
 				si.setDomainId(domain.getId());
-				si.setItem(new Item().setId(r.getValue(PROPOSAL_DETAIL.ITEM))
+				si.setItem(new OldItem().setId(r.getValue(PROPOSAL_DETAIL.ITEM))
 						.setDetail(rd.getValue(ITEM.DETAIL))
 						.setDetail2(rd.getValue(ITEM.DETAIL2))
 						.setDetail3(rd.getValue(ITEM.DETAIL3))
@@ -1069,7 +1069,7 @@ public class DBStock {
 				StockInfo si  = new StockInfo();
 				si.setDomainId(domain.getId());
 				
-				si.setItem(new Item().setId(r.getValue(ITEM.ID))
+				si.setItem(new OldItem().setId(r.getValue(ITEM.ID))
 						.setDetail(r.getValue(ITEM.DETAIL))
 						.setDetail2(r.getValue(ITEM.DETAIL2))
 						.setDetail3(r.getValue(ITEM.DETAIL3))

@@ -86,7 +86,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -1212,7 +1212,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 	private StockInfo newStock(){
 		StockInfo stock = new StockInfo();
-		stock.setItem(new Item().setDetail("")
+		stock.setItem(new OldItem().setDetail("")
 				.setDetail2("")
 				.setDetail3(""));
 		stock.setQuantity(null);
@@ -1887,9 +1887,9 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 	public ProductInfo newProduct(Domain domain, User user) {
 		ProductInfo pi = new ProductInfo();
-		com.esferalia.aon.occam.api.model.product.Product p2 = new com.esferalia.aon.occam.api.model.product.Product();
+		com.esferalia.aon.occam.api.model.product.OldProduct p2 = new com.esferalia.aon.occam.api.model.product.OldProduct();
 		p2.setDomain(domain.getId());
-		com.esferalia.aon.occam.api.model.product.Item i2 = new com.esferalia.aon.occam.api.model.product.Item();
+		com.esferalia.aon.occam.api.model.product.OldItem i2 = new com.esferalia.aon.occam.api.model.product.OldItem();
 		i2.setDomain(domain.getId());
 
 		// Tipo (product)
@@ -1926,7 +1926,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		// detail3
 		i2.setDetail3("");
 		i2.setStatus((byte) 0);
-		LinkedList<com.esferalia.aon.occam.api.model.product.Item> is= new LinkedList<com.esferalia.aon.occam.api.model.product.Item>();
+		LinkedList<com.esferalia.aon.occam.api.model.product.OldItem> is= new LinkedList<com.esferalia.aon.occam.api.model.product.OldItem>();
 		is.add(0, i2);
 		pi.setProduct(p2);
 		pi.setItem(is);

@@ -246,7 +246,7 @@ public class IngenetSalesManager {
 	}
 
 	private void createProduct(AONContext ctx, int domainId, Product product) {
-		com.esferalia.aon.occam.api.model.product.Product newProduct = new com.esferalia.aon.occam.api.model.product.Product();
+		com.esferalia.aon.occam.api.model.product.OldProduct newProduct = new com.esferalia.aon.occam.api.model.product.OldProduct();
 		newProduct.setId(product.getId());
 		newProduct.setDomain(domainId);
 		newProduct.setName(product.getName());
@@ -267,7 +267,7 @@ public class IngenetSalesManager {
 	}
 
 	private void updateProduct(AONContext ctx, int domainId, Product product) {
-		com.esferalia.aon.occam.api.model.product.Product newProduct = new com.esferalia.aon.occam.api.model.product.Product();
+		com.esferalia.aon.occam.api.model.product.OldProduct newProduct = new com.esferalia.aon.occam.api.model.product.OldProduct();
 		newProduct.setId(product.getId());
 		newProduct.setDomain(domainId);
 		newProduct.setName(product.getName());
@@ -288,7 +288,7 @@ public class IngenetSalesManager {
 	}
 
 	private void createItem(AONContext ctx, int domainId, Integer productId, Item item) {
-		com.esferalia.aon.occam.api.model.product.Item newItem = new com.esferalia.aon.occam.api.model.product.Item();
+		com.esferalia.aon.occam.api.model.product.OldItem newItem = new com.esferalia.aon.occam.api.model.product.OldItem();
 		newItem.setDomain(domainId);
 		newItem.setProductId(productId);
 		newItem.setDetail(item.getDetail());
@@ -320,7 +320,7 @@ public class IngenetSalesManager {
 	}
 	
 	private void updateItem(AONContext ctx, int domainId, Integer productId, Item item, Integer itemId) {
-		com.esferalia.aon.occam.api.model.product.Item newItem = new com.esferalia.aon.occam.api.model.product.Item();
+		com.esferalia.aon.occam.api.model.product.OldItem newItem = new com.esferalia.aon.occam.api.model.product.OldItem();
 		newItem.setId(itemId);
 		newItem.setDomain(domainId);
 		newItem.setProductId(productId);
@@ -429,7 +429,7 @@ public class IngenetSalesManager {
 		newDetail.setDomain(domainId);
 		newDetail.setSales(new com.esferalia.aon.occam.api.model.management.Sales());
 		newDetail.getSales().setId(salesId);
-		newDetail.setItem(new com.esferalia.aon.occam.api.model.product.Item());
+		newDetail.setItem(new com.esferalia.aon.occam.api.model.product.OldItem());
 		newDetail.getItem().setId(itemId);
 		newDetail.setLine(detail.getLine().shortValue());
 		newDetail.setDescription(detail.getDescription());

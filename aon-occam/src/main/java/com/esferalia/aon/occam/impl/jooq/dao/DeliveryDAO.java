@@ -32,7 +32,7 @@ import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
@@ -374,7 +374,7 @@ public class DeliveryDAO {
 				.setDiscountExpression(record.getValue(DELIVERY_DETAIL.DISCOUNT_EXPR))
 				.setItem((record.getValue(DELIVERY_DETAIL.ITEM) == null)
 					? null
-					: new Item()
+					: new OldItem()
 						.setId(record.getValue(DELIVERY_DETAIL.ITEM))
 						.setCategory( record.getValue( PCATEGORY.NAME ) )
 						.setProductId( record.getValue( PRODUCT.ID ) )
@@ -403,9 +403,9 @@ public class DeliveryDAO {
 			customer.setName(record.getValue(REGISTRY.NAME));
 			customer.setId(record.getValue(REGISTRY.ID));
 			
-			Item item = (record.getValue(DELIVERY_DETAIL.ITEM) == null)
+			OldItem item = (record.getValue(DELIVERY_DETAIL.ITEM) == null)
 					? null
-					: new Item()
+					: new OldItem()
 						.setId(record.getValue(DELIVERY_DETAIL.ITEM))
 						.setCategory( record.getValue( PCATEGORY.NAME ) )
 						.setProductId( record.getValue( PRODUCT.ID ) )

@@ -37,7 +37,7 @@ import com.esferalia.aon.occam.api.model.Properties.SalesDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
@@ -502,7 +502,7 @@ public class SalesDAO {
 				.setDiscountExpression(record.getValue(SALES_DETAIL.DISCOUNT_EXPR))
 				.setItem((record.getValue(SALES_DETAIL.ITEM) == null)
 					? null
-					: new Item()
+					: new OldItem()
 						.setId(record.getValue(SALES_DETAIL.ITEM))
 						.setCategory(record.getValue(PCATEGORY.NAME))
 						.setProductId(record.getValue(PRODUCT.ID))
@@ -574,7 +574,7 @@ public class SalesDAO {
 			detail.setId(r.getValue(SALES_DETAIL.ID));
 			detail.setDomain(r.getValue(SALES_DETAIL.DOMAIN));
 			detail.setSales(new Sales().setId(r.getValue(SALES_DETAIL.SALES)));
-			detail.setItem(new Item().setId(r.getValue(SALES_DETAIL.ITEM)));
+			detail.setItem(new OldItem().setId(r.getValue(SALES_DETAIL.ITEM)));
 			detail.setLine(r.getValue(SALES_DETAIL.LINE));
 			detail.setDescription(r.getValue(SALES_DETAIL.DESCRIPTION));
 			detail.setQuantity(r.getValue(SALES_DETAIL.QUANTITY));

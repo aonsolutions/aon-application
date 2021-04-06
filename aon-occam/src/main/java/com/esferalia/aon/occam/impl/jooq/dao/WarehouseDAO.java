@@ -57,7 +57,7 @@ import com.esferalia.aon.occam.api.model.Properties.StockProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -774,7 +774,7 @@ public class WarehouseDAO {
 					.setCreationUser(r.getCreationUser())
 					.setDomain(r.getDomain())
 					.setId(r.getId())
-					.setItem(new Item().setId(r.getItem()))
+					.setItem(new OldItem().setId(r.getItem()))
 					.setModificationDate(r.getModificationDate())
 					.setModificationUser(r.getModificationUser())
 					.setQuantity(r.getQuantity())
@@ -790,7 +790,7 @@ public class WarehouseDAO {
 			return new WarehouseTransferDetail()
 					.setId(r.getValue(WAREHOUSE_TRANSFER_DETAIL.ID))
 					.setDomain(r.getValue(WAREHOUSE_TRANSFER_DETAIL.DOMAIN))
-					.setItem(new Item().setId(r.getValue(WAREHOUSE_TRANSFER_DETAIL.ITEM)))
+					.setItem(new OldItem().setId(r.getValue(WAREHOUSE_TRANSFER_DETAIL.ITEM)))
 					.setQuantity(r.getValue(WAREHOUSE_TRANSFER_DETAIL.QUANTITY))
 					.setWarehouseTransfer(new WarehouseTransfer()
 							.setId(r.getValue(WAREHOUSE_TRANSFER.ID))

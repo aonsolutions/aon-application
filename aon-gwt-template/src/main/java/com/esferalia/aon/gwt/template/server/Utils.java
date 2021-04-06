@@ -29,7 +29,7 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -384,7 +384,7 @@ public class Utils {
 		
 	}
 	
-	public static Double getValCost(String domainName, Double quantity, Item item, String login, Integer workplaceId, Integer warehouseId, Date inventoryDate, ApplicationParameter ap){
+	public static Double getValCost(String domainName, Double quantity, OldItem item, String login, Integer workplaceId, Integer warehouseId, Date inventoryDate, ApplicationParameter ap){
 		if(ap != null && ap.getValue() != null && !"0".equals(ap.getValue())) {
 			if("1".equals(ap.getValue())) return getLastPurchasePrice(domainName, item, quantity, login, workplaceId, warehouseId, inventoryDate);
 			else if("2".equals(ap.getValue())) return getAveragePurchasePrice(domainName, item, quantity, login, workplaceId, warehouseId, inventoryDate);
@@ -393,7 +393,7 @@ public class Utils {
 		return quantity != 0 ? item.getPurchasePrice() : 0.0;
 	}
 	
-	public static Double getLastPurchasePrice(String domainName, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
+	public static Double getLastPurchasePrice(String domainName, OldItem item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
 		if(quantity == 0) return 0.0;
 		if(item.getProduct().isInventoriable() && item.getProduct().isManufactured()) 
 			return item.getPurchasePrice();
@@ -425,7 +425,7 @@ public class Utils {
 		else return date1.compareTo(date2) < 0 ? price1 : price2;
 	}
 	
-	public static Double getAveragePurchasePrice(String domainName, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
+	public static Double getAveragePurchasePrice(String domainName, OldItem item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
 		if(quantity == 0) return 0.0;
 		if(item.getProduct().isInventoriable() && item.getProduct().isManufactured()) 
 			return item.getPurchasePrice();
@@ -446,7 +446,7 @@ public class Utils {
 		return  sum / totalQuantity;
 	}
 
-	public static Double getFifoPrice(String domainName, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
+	public static Double getFifoPrice(String domainName, OldItem item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
 		if(quantity == 0) return 0.0; 
 		if((item.getProduct().isInventoriable() && item.getProduct().isManufactured())) 
 			return item.getPurchasePrice();

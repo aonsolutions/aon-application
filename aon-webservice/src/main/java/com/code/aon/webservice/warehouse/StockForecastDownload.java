@@ -27,7 +27,7 @@ import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.SecurityUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -170,13 +170,13 @@ public class StockForecastDownload extends HttpServlet {
 		StatData<Integer, String, Double> stat = WarehouseServlet.getStockForecastStatData(domain, login, filterMap);
 		
         Integer[] productIds = stat.getMap().keySet().toArray(new Integer[stat.getMap().keySet().size()]);
-    	Map<Integer, Product> productMap = new HashMap<>();
+    	Map<Integer, OldProduct> productMap = new HashMap<>();
     	AON.getProductStream(domain.getName(), domain.getId(), login, f->f.getIdProperty().in(productIds)).forEach(product -> {
     		productMap.put(product.getId(), product);
     	});
         for(Integer productId: productIds) {
 			if(stat.getMap().containsKey(productId)){
-				Product product = productMap.get(productId);
+				OldProduct product = productMap.get(productId);
 				String productName = product.getCode()+" / "+product.getName();
 				Double quantity = new Double(stat.get(productId, StatDAO.PRODUCT_OUTPUTS));
 				Double dailyQuantity = quantity / daysCount;

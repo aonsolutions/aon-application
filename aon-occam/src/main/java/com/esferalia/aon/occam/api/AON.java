@@ -165,10 +165,10 @@ import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -343,6 +343,7 @@ public class AON {
 	public static AonConfiguration getConfiguration(String domainName, int domainId, String login) {
 		return getConfiguration(domainName, domainId, login, null);
 	}
+	
 	public static AonConfiguration getConfiguration(String domainName, int domainId, String login,Date atDate) {
 		AONContext ctx = null;
 		try {
@@ -353,9 +354,11 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
 	public static AonConfiguration getConfiguration(AONContext ctx) {
 		return getConfiguration(ctx, null);  
 	}
+	
 	public static AonConfiguration getConfiguration(AONContext ctx,Date atDate) {
 		return getCommon().getConfiguration(ctx, atDate);
 	}
@@ -1119,19 +1122,19 @@ public class AON {
 
 	// ------------------------------------ PRODUCT
 
-	public static Product getProduct(String domainName, Integer domainId, String login, Integer productId) {
+	public static OldProduct getProduct(String domainName, Integer domainId, String login, Integer productId) {
 		return getProduct(domainName, domainId, login, f -> f.getIdProperty().eq(productId));
 	}
 	
-	public static Product getProduct(String domainName, Integer domainId, String login, ProductFilter filter) {
-		return getProductStream(domainName, domainId, login, filter).findFirst().orElse(new Product());
+	public static OldProduct getProduct(String domainName, Integer domainId, String login, ProductFilter filter) {
+		return getProductStream(domainName, domainId, login, filter).findFirst().orElse(new OldProduct());
 	}
 
-	public static LinkedList<Product> getProductList(String domainName, Integer domainId, String login, ProductFilter filter){
+	public static LinkedList<OldProduct> getProductList(String domainName, Integer domainId, String login, ProductFilter filter){
 		return getProductStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static Stream<Product> getProductStream(String domainName, Integer domainId, String login, ProductFilter filter){
+	public static Stream<OldProduct> getProductStream(String domainName, Integer domainId, String login, ProductFilter filter){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1141,7 +1144,7 @@ public class AON {
 		}
 	}
 	
-	public static Product insertProduct(String domainName, Integer domainId, String login, Product p) {
+	public static OldProduct insertProduct(String domainName, Integer domainId, String login, OldProduct p) {
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1151,32 +1154,32 @@ public class AON {
 		}
 	}
 	
-	public static void insert(AONContext ctx, Product p) {
+	public static void insert(AONContext ctx, OldProduct p) {
 		getProduct().insert(ctx, p);
 	}
 
-	public static void insertWithId(AONContext ctx, Product p) {
+	public static void insertWithId(AONContext ctx, OldProduct p) {
 		getProduct().insertWithId(ctx, p);
 	}
 
-	public static LinkedList<Product> insert(AONContext ctx,
-			Stream<Product> ps) {
+	public static LinkedList<OldProduct> insert(AONContext ctx,
+			Stream<OldProduct> ps) {
 		return getProduct().insert(ctx, ps);
 	}
 
-	public static void insertWithId(AONContext ctx, Stream<Product> ps) {
+	public static void insertWithId(AONContext ctx, Stream<OldProduct> ps) {
 		getProduct().insertWithId(ctx, ps);
 	}
 
-	public static void update(AONContext ctx, Product p) {
+	public static void update(AONContext ctx, OldProduct p) {
 		getProduct().update(ctx, p);
 	}
 
-	public static void delete(AONContext ctx, Product p) {
+	public static void delete(AONContext ctx, OldProduct p) {
 		getProduct().delete(ctx, p);
 	}
 
-	public static void delete(AONContext ctx, Stream<Product> ps) {
+	public static void delete(AONContext ctx, Stream<OldProduct> ps) {
 		getProduct().delete(ctx, ps);
 	}
 
@@ -1244,7 +1247,7 @@ public class AON {
 
 	// ------------------------------------ ITEM
 	
-	public static LinkedList<Item> getItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
+	public static LinkedList<OldItem> getItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1256,7 +1259,7 @@ public class AON {
 		}
 	}
 	
-	public static LinkedList<Item> getFullItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
+	public static LinkedList<OldItem> getFullItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1268,31 +1271,31 @@ public class AON {
 		}
 	}
 	
-	public static Item getItem(String domainName, Integer domainId, String login, Integer itemId) {
+	public static OldItem getItem(String domainName, Integer domainId, String login, Integer itemId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProduct().getItemStream(ctx, f -> f.getIdProperty().eq(itemId)
-					.perPage(1)).findFirst().orElse(new Item());
+					.perPage(1)).findFirst().orElse(new OldItem());
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 	
-	public static Item getItem(String domainName, Integer domainId, String login, ItemFilter filter) {
+	public static OldItem getItem(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProduct().getItemStream(ctx, filter)
-					.findFirst().orElse(new Item());
+					.findFirst().orElse(new OldItem());
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 	
-	public static Optional<Item> getItemOptional(String domainName, Integer domainId, String login, ItemFilter filter) {
+	public static Optional<OldItem> getItemOptional(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1314,7 +1317,7 @@ public class AON {
 		}
 	}
 
-	public static Item insertItem(String domainName, Integer domainId, String login, Item i) {
+	public static OldItem insertItem(String domainName, Integer domainId, String login, OldItem i) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1325,7 +1328,7 @@ public class AON {
 		}
 	}
 	
-	public static void deleteItem(String domainName, Integer domainId, String login, Item item) {
+	public static void deleteItem(String domainName, Integer domainId, String login, OldItem item) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -1336,31 +1339,31 @@ public class AON {
 		}	}
 
 	
-	public static void insertItem(AONContext ctx, Item i) {
+	public static void insertItem(AONContext ctx, OldItem i) {
 		getProduct().insertItem(ctx, i);
 	}
 
-	public static void insertItemWithId(AONContext ctx, Item i) {
+	public static void insertItemWithId(AONContext ctx, OldItem i) {
 		getProduct().insertItemWithId(ctx, i);
 	}
 
-	public static void insertItem(AONContext ctx, Stream<Item> is) {
+	public static void insertItem(AONContext ctx, Stream<OldItem> is) {
 		getProduct().insertItem(ctx, is);
 	}
 
-	public static void insertItemWithId(AONContext ctx, Stream<Item> is) {
+	public static void insertItemWithId(AONContext ctx, Stream<OldItem> is) {
 		getProduct().insertItemWithId(ctx, is);
 	}
 
-	public static void updateItem(AONContext ctx, Item i) {
+	public static void updateItem(AONContext ctx, OldItem i) {
 		getProduct().updateItem(ctx, i);
 	}
 
-	public static void deleteItem(AONContext ctx, Item i) {
+	public static void deleteItem(AONContext ctx, OldItem i) {
 		getProduct().deleteItem(ctx, i);
 	}
 
-	public static void deleteItem(AONContext ctx, Stream<Item> is) {
+	public static void deleteItem(AONContext ctx, Stream<OldItem> is) {
 		getProduct().deleteItem(ctx, is);
 	}
 	
@@ -1624,7 +1627,7 @@ public class AON {
 	}
 
 	public static InvoiceDetail getLastInvoiceDetail(String domainName,
-			Integer domainId, String user, Item item, Integer workplaceId,
+			Integer domainId, String user, OldItem item, Integer workplaceId,
 			Integer warehouseId) {
 		AONContext ctx = null;
 		try {
@@ -1638,7 +1641,7 @@ public class AON {
 	}
 
 	public static InvoiceDetail getLastInvoiceDetailUntilDate(String domainName,
-			Integer domainId, String user, Item item, Integer workplaceId,
+			Integer domainId, String user, OldItem item, Integer workplaceId,
 			Integer warehouseId, Date date) {
 		AONContext ctx = null;
 		try {
@@ -1652,7 +1655,7 @@ public class AON {
 	}
 
 	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(
-			String domainName, Integer domainId, String user, Item item,
+			String domainName, Integer domainId, String user, OldItem item,
 			String months, Integer workplaceId, Integer warehouseId) {
 		Calendar calendar = Calendar.getInstance();
 		Integer m = Integer.parseInt(months);
@@ -1670,7 +1673,7 @@ public class AON {
 	}
 
 	public static LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(
-			String domainName, Integer domainId, String user, Item item,
+			String domainName, Integer domainId, String user, OldItem item,
 			String months, Integer workplaceId, Integer warehouseId,
 			Date date) {
 		Calendar calendar = Calendar.getInstance();
@@ -1690,7 +1693,7 @@ public class AON {
 	}
 
 	public static LinkedList<InvoiceDetail> getInvoiceDetailList(
-			String domainName, Integer domainId, String user, Item item,
+			String domainName, Integer domainId, String user, OldItem item,
 			Integer workplaceId, Integer warehouseId) {
 		AONContext ctx = null;
 		try {
@@ -1704,7 +1707,7 @@ public class AON {
 	}
 
 	public static LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(
-			String domainName, Integer domainId, String user, Item item,
+			String domainName, Integer domainId, String user, OldItem item,
 			Integer workplaceId, Integer warehouseId, Date date) {
 		AONContext ctx = null;
 		try {
@@ -3036,7 +3039,7 @@ public class AON {
 	}
 	
 	public static IncomeDetail getLastIncomeDetail(String domainName,
-			Integer domainId, String user, Item item, Integer workplaceId,
+			Integer domainId, String user, OldItem item, Integer workplaceId,
 			Integer warehouseId) {
 		AONContext ctx = null;
 		try {
@@ -3050,7 +3053,7 @@ public class AON {
 	}
 
 	public static IncomeDetail getLastIncomeDetailUntilDate(String domainName,
-			Integer domainId, String user, Item item, Integer workplaceId,
+			Integer domainId, String user, OldItem item, Integer workplaceId,
 			Integer warehouseId, Date date) {
 		AONContext ctx = null;
 		try {
@@ -3064,7 +3067,7 @@ public class AON {
 	}
 
 	public static LinkedList<IncomeDetail> getLastIncomeDetailList(
-			String domainName, Integer domainId, String user, Item item,
+			String domainName, Integer domainId, String user, OldItem item,
 			String months, Integer workplaceId, Integer warehouseId) {
 		Calendar calendar = Calendar.getInstance();
 		Integer m = Integer.parseInt(months);
@@ -3081,7 +3084,7 @@ public class AON {
 	}
 
 	public static LinkedList<IncomeDetail> getLastIncomeDetailListUntilDate(
-			String domainName, Integer domainId, String user, Item item,
+			String domainName, Integer domainId, String user, OldItem item,
 			String months, Integer workplaceId, Integer warehouseId,
 			Date date) {
 		Calendar calendar = Calendar.getInstance();
@@ -3100,7 +3103,7 @@ public class AON {
 	}
 
 	public static LinkedList<IncomeDetail> getIncomeDetailList(
-			String domainName, Integer domainId, String user, Item item,
+			String domainName, Integer domainId, String user, OldItem item,
 			Integer workplaceId, Integer warehouseId) {
 		AONContext ctx = null;
 		try {
@@ -3114,7 +3117,7 @@ public class AON {
 	}
 
 	public static LinkedList<IncomeDetail> getIncomeDetailListUntilDate(
-			String domainName, Integer domainId, String user, Item item,
+			String domainName, Integer domainId, String user, OldItem item,
 			Integer workplaceId, Integer warehouseId, Date date) {
 		AONContext ctx = null;
 		try {
@@ -5673,7 +5676,7 @@ public class AON {
 		}
 	}
 
-	public static Stream<Product> getInvoiceProducts(String domainName, int domain, String loggedUser, ProductFilter filter) {
+	public static Stream<OldProduct> getInvoiceProducts(String domainName, int domain, String loggedUser, ProductFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, loggedUser);

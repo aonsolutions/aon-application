@@ -31,8 +31,8 @@ import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.management.OfferProperties;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
@@ -302,10 +302,10 @@ public class OfferDAO {
 				.setDiscountExpression(od ? record.getValue(OFFER_DETAIL.DISCOUNT_EXPR) : null)
 				.setItem((!od || record.getValue(OFFER_DETAIL.ITEM) == null)
 					? null
-					: new Item()
+					: new OldItem()
 						.setId(record.getValue(OFFER_DETAIL.ITEM))
 						.setCategory( record.getValue( PCATEGORY.NAME ) )
-						.setProduct(new Product().setCategory(record.getValue(PRODUCT.CATEGORY)))
+						.setProduct(new OldProduct().setCategory(record.getValue(PRODUCT.CATEGORY)))
 						.setProductId( record.getValue( PRODUCT.ID ) )
 						.setName( record.getValue( PRODUCT.NAME ) )
 						.setCode(record.getValue( PRODUCT.CODE ) )

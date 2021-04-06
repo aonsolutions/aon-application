@@ -52,7 +52,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
@@ -169,7 +169,7 @@ public class AccountingInvoiceDAO {
 							.setPrice(AonNumberUtils.zeroIfNull( det.getValue(INVOICE_DETAIL.PRICE)))
 							.setDiscountExpression(AonStringUtils.defaultIfBlank(det.getValue(INVOICE_DETAIL.DISCOUNT_EXPR),"0.0"))
 							.setTaxableBase(det.getValue(INVOICE_DETAIL.TAXABLE_BASE))
-							.setItem(det.getValue(INVOICE_DETAIL.ITEM) == null? null : new Item().setId(det.getValue(INVOICE_DETAIL.ITEM)).setCode(det.getValue(PRODUCT.CODE)))
+							.setItem(det.getValue(INVOICE_DETAIL.ITEM) == null? null : new OldItem().setId(det.getValue(INVOICE_DETAIL.ITEM)).setCode(det.getValue(PRODUCT.CODE)))
 							.setPrepayment(det.getValue(INVOICE_DETAIL.PREPAYMENT).equals((byte) 1) )
 							;
 						ai.getInvoice().getDetails().add( invoiceDetail );

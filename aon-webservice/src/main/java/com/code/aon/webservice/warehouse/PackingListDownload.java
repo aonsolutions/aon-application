@@ -25,7 +25,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -104,7 +104,7 @@ public class PackingListDownload extends HttpServlet{
 						.and(f.getCarrierPackingProperty().eq(carrierPackingId)))
 				.forEach(detail -> {
 					JSONObject detailJSON = ToJSON.purchaseDetailToJSON(detail);		
-					Optional<Item> item = getItem(domain, login, detail.getItem(), detail.getProductId());
+					Optional<OldItem> item = getItem(domain, login, detail.getItem(), detail.getProductId());
 
 					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
 						f2.getRegistryProperty().eq(purchase.getSupplier())
@@ -155,7 +155,7 @@ public class PackingListDownload extends HttpServlet{
 				AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> f.getDelivery().eq(delivery.getId()))
 				.forEach(detail -> {
 					JSONObject detailJSON = ToJSON.deliveryDetailToJSON(detail);
-					Optional<Item> item = getItem(domain, login, detail.getItem().getId(), detail.getProductId());
+					Optional<OldItem> item = getItem(domain, login, detail.getItem().getId(), detail.getProductId());
 					
 					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
 						f2.getRegistryProperty().eq(delivery.getCustomer())
@@ -188,7 +188,7 @@ public class PackingListDownload extends HttpServlet{
 				AON.getIncomeDetailStream(domain.getName(), domain.getId(), login, f -> f.getIncomeProperty().eq(income.getId()))
 				.forEach(detail -> {
 					JSONObject detailJSON = DBIncome.incomeDetailToJSON(detail);
-					Optional<Item> item = getItem(domain, login, detail.getItem().getId(), detail.getItem().getProductId());
+					Optional<OldItem> item = getItem(domain, login, detail.getItem().getId(), detail.getItem().getProductId());
 					
 					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
 						f2.getRegistryProperty().eq(income.getSupplier())
@@ -227,8 +227,8 @@ public class PackingListDownload extends HttpServlet{
 	}
 	
 	
-	private Optional<Item> getItem(Domain domain, String login, Integer itemId, Integer productId) {
-		Optional<Item> optional = AON.getItemOptional(domain.getName(), domain.getId(), login, f -> 
+	private Optional<OldItem> getItem(Domain domain, String login, Integer itemId, Integer productId) {
+		Optional<OldItem> optional = AON.getItemOptional(domain.getName(), domain.getId(), login, f -> 
 			f.getIdProperty().eq(itemId)
 			.and(f.getPackFormatTagProperty().isNotNull())
 			.and(f.getPackMeasurementTagProperty().isNotNull())

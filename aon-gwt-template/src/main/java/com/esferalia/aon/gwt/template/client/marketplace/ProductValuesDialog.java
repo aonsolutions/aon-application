@@ -15,7 +15,7 @@ import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData.Ecomme
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -76,9 +76,9 @@ public class ProductValuesDialog extends CustomDialogB {
 	private Attach ecommerceProductAttach;
 	private EcommerceProduct ecommerceProduct;
 	private EcommerceProduct ecommerceTemplate;
-	private Item item;
+	private OldItem item;
 
-	public ProductValuesDialog(AonData aonData, Item item){
+	public ProductValuesDialog(AonData aonData, OldItem item){
 		this.aonData = aonData;
 		this.item = item;
 		

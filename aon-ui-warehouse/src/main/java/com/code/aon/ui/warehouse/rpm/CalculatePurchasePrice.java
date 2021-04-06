@@ -19,18 +19,19 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
-import net.aonsolutions.core.pool.AonConnectionException;
-import net.aonsolutions.core.pool.ConnectionInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import net.aonsolutions.core.pool.AonConnectionException;
+import net.aonsolutions.core.pool.ConnectionInfo;
 
 public class CalculatePurchasePrice {
 	
@@ -38,7 +39,7 @@ public class CalculatePurchasePrice {
 	//		.getLogger(CalculatePurchasePrice.class.getName());
 	
 	private static Double getCost(Domain domain, InventoryDetail inventoryDetail, Integer workplaceId, Integer warehouseId, Date inventoryDate){
-		Item item = AON.getItem(domain.getName(), domain.getId(), login, inventoryDetail.getItem().getId());
+		OldItem item = AON.getItem(domain.getName(), domain.getId(), login, inventoryDetail.getItem().getId());
 
 		switch (type) {
 			case "cost": return inventoryDetail.getRealQuantity() != 0 ? item.getPurchasePrice() : 0.0;
@@ -49,9 +50,9 @@ public class CalculatePurchasePrice {
 		}
 	}
 	
-	public static Double getAveragePurchasePrice(Domain domain, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
+	public static Double getAveragePurchasePrice(Domain domain, OldItem item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
 		if(quantity == 0) return 0.0;
-		Product product =  AON.getProduct(domain.getName(), domain.getId(), login, item.getProductId());
+		OldProduct product =  AON.getProduct(domain.getName(), domain.getId(), login, item.getProductId());
 		if(product.isInventoriable() && product.isManufactured()) 
 			return item.getPurchasePrice();
 							
@@ -69,10 +70,10 @@ public class CalculatePurchasePrice {
 		return  sum / totalQuantity;	
 	}
 	
-	public static Double getFifoPrice(Domain domain, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
+	public static Double getFifoPrice(Domain domain, OldItem item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
 		
 		if(quantity == 0) return 0.0; 
-		Product product =  AON.getProduct(domain.getName(), domain.getId(), login, item.getProductId());
+		OldProduct product =  AON.getProduct(domain.getName(), domain.getId(), login, item.getProductId());
 		if((product.isInventoriable() && product.isManufactured())) 
 			return item.getPurchasePrice();
 		LinkedList<InvoiceDetail> invoiceList = AON.getInvoiceDetailListUntilDate(domain.getName(), domain.getId(), user, item, workplaceId, warehouseId, inventoryDate);
@@ -155,9 +156,9 @@ public class CalculatePurchasePrice {
 		}
 	}
 
-	public static Double getLastPurchasePrice(Domain domain, Item item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
+	public static Double getLastPurchasePrice(Domain domain, OldItem item, Double quantity, String user, Integer workplaceId, Integer warehouseId, Date inventoryDate){
 		if(quantity == 0) return 0.0;
-		Product product =  AON.getProduct(domain.getName(), domain.getId(), login, item.getProductId());
+		OldProduct product =  AON.getProduct(domain.getName(), domain.getId(), login, item.getProductId());
 		if(product.isInventoriable() && product.isManufactured()) 
 			return item.getPurchasePrice();
 

@@ -37,7 +37,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.type.ElaborationSource;
@@ -435,7 +435,7 @@ public class ElaborationDownload extends HttpServlet {
 			table.addCell(label);
 		} else {
 			compositionList.forEach(composition -> {
-				Item compositionItem = AON.getItem(domainName, domainId, login, composition.getCompositionItemId());
+				OldItem compositionItem = AON.getItem(domainName, domainId, login, composition.getCompositionItemId());
 				
 				PdfPTable detail = new PdfPTable(6);
 				detail.getDefaultCell().setBorder(PdfPCell.NO_BORDER);

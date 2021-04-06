@@ -48,8 +48,8 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -481,7 +481,7 @@ public class DeliveryCreatorFactory implements Serializable {
 			lineasAlbaran.stream()
 			.forEach(
 					linea -> {
-						Item item;
+						OldItem item;
 						try {
 							item = obtainItem(ctx,
 									linea.getPRODUCTO(), test);
@@ -541,7 +541,7 @@ public class DeliveryCreatorFactory implements Serializable {
 							linea2.getLINEA())).collect(Collectors.toList());
 			Integer linesCount = detailList.size();
 			for(DATOSLINEAENVASETYPE linea: lineas){
-				Item item = null;
+				OldItem item = null;
 				try {
 					item = obtainItem(ctx,
 							linea.getPRODUCTO(), test);
@@ -618,7 +618,7 @@ public class DeliveryCreatorFactory implements Serializable {
 					.forEach(
 							lineaComposicion -> {
 								try {
-									Item compositionItem = createItem(ctx,
+									OldItem compositionItem = createItem(ctx,
 											lineaComposicion.getPRODUCTO(), test);
 									ElaborationDetailComposition elaborationDetailComposition = new ElaborationDetailComposition();
 									elaborationDetailComposition.setDomain(ctx
@@ -693,8 +693,8 @@ public class DeliveryCreatorFactory implements Serializable {
 	 * ITEMS
 	 * 
 	 */
-	private Item obtainItem(AONContext ctx, PRODUCTOTYPE productoelaborado, boolean test) throws AonException {
-		Product product = ProductDAO
+	private OldItem obtainItem(AONContext ctx, PRODUCTOTYPE productoelaborado, boolean test) throws AonException {
+		OldProduct product = ProductDAO
 				.getProductStream(
 						ctx,
 						f -> f.getDomainProperty()
@@ -702,21 +702,21 @@ public class DeliveryCreatorFactory implements Serializable {
 						.and(f.getCodeProperty().eq(
 								productoelaborado.getCODIGO())))
 				.findFirst().orElse(null);
-		List<Item> itemList = AON.getItemList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+		List<OldItem> itemList = AON.getItemList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 				f -> f.getDomainProperty().eq(ctx.getDomainId())
 						.and(f.getProductProperty().eq(product.getId())
 								.and(StringUtils.isNotBlank(productoelaborado.getNUMEROLOTESERIE())
 										? f.getSerialNumberProperty().eq(productoelaborado.getNUMEROLOTESERIE())
 										: f.getSerialNumberProperty().isNull())));
-		Item item = itemList == null || itemList.isEmpty() ? null : itemList.get(0);
+		OldItem item = itemList == null || itemList.isEmpty() ? null : itemList.get(0);
 		if (item == null || item.getId() == null) {
 			item = createItem(ctx, productoelaborado, test);
 		}
 		return item;
 	}
 	
-	private Item createItem(AONContext ctx, PRODUCTOTYPE producto, boolean test) throws AonException {
-		Product product = ProductDAO
+	private OldItem createItem(AONContext ctx, PRODUCTOTYPE producto, boolean test) throws AonException {
+		OldProduct product = ProductDAO
 				.getProductStream(
 						ctx,
 						f -> f.getDomainProperty()
@@ -724,7 +724,7 @@ public class DeliveryCreatorFactory implements Serializable {
 						.and(f.getCodeProperty().eq(
 								producto.getCODIGO())))
 				.findFirst().orElse(null);
-		Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+		OldItem item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 				f -> f.getDomainProperty().eq(ctx.getDomainId())
 						.and(f.getProductProperty().eq(product.getId())
 								.and(StringUtils.isNotBlank(producto.getNUMEROLOTESERIE())
@@ -742,8 +742,8 @@ public class DeliveryCreatorFactory implements Serializable {
 		return item;
 	}
 	
-	private void createItem(AONContext ctx, Product product, PRODUCTOTYPE producttype) throws AonException {
-		Item baseItem = AON
+	private void createItem(AONContext ctx, OldProduct product, PRODUCTOTYPE producttype) throws AonException {
+		OldItem baseItem = AON
 				.getItem(
 						ctx.getDomainName(),
 						ctx.getDomainId(),
@@ -755,7 +755,7 @@ public class DeliveryCreatorFactory implements Serializable {
 								.and(f.getSerialDateProperty().isNull())
 								.and(f.getSerialNumberProperty()
 										.isNull()));
-		Item item = new Item();
+		OldItem item = new OldItem();
 		item.setDomain(ctx.getDomainId());
 		item.setProductId(product.getId());
 		item.setActive(false);
@@ -792,7 +792,7 @@ public class DeliveryCreatorFactory implements Serializable {
 	}
 	
 	private RegistryItem obtainCustomerItem(Integer productId, Integer customerId) {
-		Item baseItem = AON.getItem(
+		OldItem baseItem = AON.getItem(
 				getDomain(),
 				getDomainId(),
 				getUser(),
@@ -826,8 +826,8 @@ public class DeliveryCreatorFactory implements Serializable {
 	 * PACKAGES
 	 * 
 	 */
-	private Item createPackage(AONContext ctx, PRODUCTOTYPE productotype, boolean test) throws AonException {
-		Product product = ProductDAO
+	private OldItem createPackage(AONContext ctx, PRODUCTOTYPE productotype, boolean test) throws AonException {
+		OldProduct product = ProductDAO
 				.getProductStream(
 						ctx,
 						f -> f.getDomainProperty()
@@ -836,7 +836,7 @@ public class DeliveryCreatorFactory implements Serializable {
 										productotype.getCODIGO())))
 				.findFirst().orElse(null);
 		if (product == null || product.getId() == null) {
-			product = new Product();
+			product = new OldProduct();
 			product.setDomain(ctx.getDomainId());
 			product.setStatus(ProductStatus.ACTIVE.value());
 			product.setLotable(Boolean.FALSE);
@@ -863,7 +863,7 @@ public class DeliveryCreatorFactory implements Serializable {
 		
 		createItem(ctx, product, productotype);
 		Integer productId = product.getId();
-		Item item = AON.getItemList(
+		OldItem item = AON.getItemList(
 				ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 				f -> f.getDomainProperty()
 				.eq(ctx.getDomainId())

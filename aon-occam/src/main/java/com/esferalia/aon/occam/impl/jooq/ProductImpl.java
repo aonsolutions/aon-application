@@ -11,10 +11,10 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Brand;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
@@ -24,27 +24,27 @@ public class ProductImpl implements IProduct{
 	// ------------------------------------- PRODUCT
 	
 	@Override
-	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter) {
+	public Stream<OldProduct> getProductStream(AONContext ctx, ProductFilter filter) {
 		return ctx.getDslContext().transactionResult( configuration -> 
 			ProductDAO.getProductStream(ctx, filter));
 	}
 	
 	
 	@Override
-	public void insert(AONContext ctx, Product p) {
+	public void insert(AONContext ctx, OldProduct p) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.insert(ctx, p);
 		} );
 	}
 
 	@Override
-	public Product insertProduct(AONContext ctx, Product p) {
+	public OldProduct insertProduct(AONContext ctx, OldProduct p) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			ProductDAO.insertProduct(ctx, p));
 	}
 
 	@Override
-	public void insertWithId(AONContext ctx, Product p) {
+	public void insertWithId(AONContext ctx, OldProduct p) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.insertWithId(ctx, p);
 		} );
@@ -52,34 +52,34 @@ public class ProductImpl implements IProduct{
 	}
 
 	@Override
-	public LinkedList<Product> insert(AONContext ctx, Stream<Product> ps) {
+	public LinkedList<OldProduct> insert(AONContext ctx, Stream<OldProduct> ps) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			ProductDAO.insert(ctx, ps));		
 	}
 
 	@Override
-	public void insertWithId(AONContext ctx, Stream<Product> ps) {
+	public void insertWithId(AONContext ctx, Stream<OldProduct> ps) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.insertWithId(ctx, ps);
 		} );		
 	}
 	
 	@Override
-	public void update(AONContext ctx, Product p) {
+	public void update(AONContext ctx, OldProduct p) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.update(ctx, p);
 		} );		
 	}
 
 	@Override
-	public void delete(AONContext ctx, Product p) {
+	public void delete(AONContext ctx, OldProduct p) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.delete(ctx, p);
 		} );
 	}
 
 	@Override
-	public void delete(AONContext ctx, Stream<Product> ps) {
+	public void delete(AONContext ctx, Stream<OldProduct> ps) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.delete(ctx, ps);
 		} );		
@@ -125,60 +125,60 @@ public class ProductImpl implements IProduct{
 	// ------------------------------------- ITEM
 	
 	@Override
-	public Stream<Item> getItemStream(AONContext ctx, ItemFilter filter){
+	public Stream<OldItem> getItemStream(AONContext ctx, ItemFilter filter){
 		return ctx.getDslContext().transactionResult(configuration -> 
 				ProductDAO.getItemStream(ctx, filter));			
 	}
 	
 	@Override
-	public Stream<Item> getFullItemStream(AONContext ctx, ItemFilter filter){
+	public Stream<OldItem> getFullItemStream(AONContext ctx, ItemFilter filter){
 		return ctx.getDslContext().transactionResult(configuration -> 
 				ProductDAO.getFullItemStream(ctx, filter));			
 	}
 	
 	@Override
-	public Item insertItem(AONContext ctx, Item i) {
+	public OldItem insertItem(AONContext ctx, OldItem i) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			ProductDAO.insertItemResult(ctx, i));
 	}
 
 	@Override
-	public void insertItem(AONContext ctx, Stream<Item> is) {
+	public void insertItem(AONContext ctx, Stream<OldItem> is) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.insertItem(ctx, is);
 		} );
 	}
 
 	@Override
-	public void updateItem(AONContext ctx, Item i) {
+	public void updateItem(AONContext ctx, OldItem i) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.updateItem(ctx, i);
 		} );
 	}
 
 	@Override
-	public void deleteItem(AONContext ctx, Item i) {
+	public void deleteItem(AONContext ctx, OldItem i) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.deleteItem(ctx, i);
 		} );
 	}
 
 	@Override
-	public void deleteItem(AONContext ctx, Stream<Item> is) {
+	public void deleteItem(AONContext ctx, Stream<OldItem> is) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.deleteItem(ctx, is);
 		} );
 	}
 
 	@Override
-	public void insertItemWithId(AONContext ctx, Item i) {
+	public void insertItemWithId(AONContext ctx, OldItem i) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.insertItemWithId(ctx, i);
 		} );
 	}
 
 	@Override
-	public void insertItemWithId(AONContext ctx, Stream<Item> is) {
+	public void insertItemWithId(AONContext ctx, Stream<OldItem> is) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.insertItemWithId(ctx, is);
 		} );

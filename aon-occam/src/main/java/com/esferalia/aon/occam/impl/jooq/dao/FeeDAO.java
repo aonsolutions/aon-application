@@ -30,7 +30,7 @@ import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -119,7 +119,7 @@ public class FeeDAO {
 						: new Customer().copy(new Registry().setId(r.getValue(CUSTOMER_FEE.CUSTOMER))))
 					.setItem(r.get(ITEM.ID) != null
 						? ItemFiller.buildItem(r)
-						: new Item().setId(r.getValue(CUSTOMER_FEE.ITEM)))			
+						: new OldItem().setId(r.getValue(CUSTOMER_FEE.ITEM)))			
 					.setDescription(r.getValue(CUSTOMER_FEE.DESCRIPTION))
 					.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(CUSTOMER_FEE.SECURITY_LEVEL)))
 					.setStartDate(r.getValue(CUSTOMER_FEE.INITIAL_DATE))

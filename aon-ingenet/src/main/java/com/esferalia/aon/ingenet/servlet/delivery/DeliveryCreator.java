@@ -19,7 +19,7 @@ import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -145,7 +145,7 @@ public class DeliveryCreator extends AbstractDeliveryCreator {
 					.forEach(
 							lineaComposicion -> {
 								try {
-									Item compositionItem = createItem(ctx,
+									OldItem compositionItem = createItem(ctx,
 											lineaComposicion.getPRODUCTO(), test);
 									ElaborationDetailComposition elaborationDetailComposition = new ElaborationDetailComposition();
 									elaborationDetailComposition.setDomain(ctx

@@ -28,7 +28,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -405,7 +405,7 @@ public class OfferPdfServlet extends HttpServlet {
         LinkedList<OfferDetail> details = AON.getOfferDetails(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(offer.getId())).collect(Collectors.toCollection(LinkedList::new));
         for (OfferDetail detail : details) {
         	//Item item = AON.getItem(domain.getName(), domain.getId(), "", f-> f.getIdProperty().eq(detail.getItem().getId()));
-        	Product product = AON.getProduct(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(detail.getItem().getProductId()));
+        	OldProduct product = AON.getProduct(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(detail.getItem().getProductId()));
         	Tax tax = AON.getTax(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(product.getVat()));
         	t1.addCell(new Paragraph(detail.getDescription(), getColorFont(9, DARK_BLUE)));
             t1.addCell(getRightCell(new Paragraph(Double.toString(AonMathUtils.round(detail.getQuantity())), getColorFont(9, DARK_BLUE))));

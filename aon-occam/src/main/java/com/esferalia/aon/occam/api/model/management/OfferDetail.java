@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.management;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.type.OfferDetailStatus;
 
 public class OfferDetail implements Serializable {
@@ -12,7 +12,7 @@ public class OfferDetail implements Serializable {
 	private Integer id;
 	private Integer domain;
 	private Offer offer;
-	private Item item;
+	private OldItem item;
 	private Short line;
 	private String description;
 	private Double quantity;
@@ -41,10 +41,10 @@ public class OfferDetail implements Serializable {
 		this.offer = offer;
 		return this;
 	}
-	public Item getItem() {
+	public OldItem getItem() {
 		return item;
 	}
-	public OfferDetail setItem(Item item) {
+	public OfferDetail setItem(OldItem item) {
 		this.item = item;
 		return this;
 	}

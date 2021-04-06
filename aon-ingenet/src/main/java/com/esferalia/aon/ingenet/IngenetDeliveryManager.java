@@ -15,8 +15,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -165,10 +165,10 @@ public class IngenetDeliveryManager {
 		for (int idx = 0; idx < detailList.size(); idx++) {
 			DeliveryDetail detail = detailList.get(idx);
 
-			Item ingenetItem = obtainIngenetItem(ctx.getDomainName(),
+			OldItem ingenetItem = obtainIngenetItem(ctx.getDomainName(),
 					ctx.getUser(), detail.getItem().getId());
 			SalesDetail aonSalesDetail = null;
-			Item item = null;
+			OldItem item = null;
 			if (isPackageItem(ingenetItem)) {
 				item = obtainAonItem(ctx.getDomainName(), ctx.getUser(),
 						ctx.getDomainId(), ingenetItem.getProduct().getCode());
@@ -215,15 +215,15 @@ public class IngenetDeliveryManager {
 
 	}
 	
-	private boolean isPackageItem(Item item) {
+	private boolean isPackageItem(OldItem item) {
 		return item != null && item.getSerialNumber() == null
 				&& item.getSerialDate() == null;
 	}
 
-	private Item createNewItem(AONContext ctx, int domainId, Integer itemId,
+	private OldItem createNewItem(AONContext ctx, int domainId, Integer itemId,
 			String serialNumber, Date serialDate) {
 		if (serialNumber != null && serialDate != null) {
-			Item newItem = AON.getItem(ctx.getDomainName(),ctx.getDomainId(), ctx.getUser(), itemId);
+			OldItem newItem = AON.getItem(ctx.getDomainName(),ctx.getDomainId(), ctx.getUser(), itemId);
 			newItem.setId(null);
 			newItem.setBarcode(null);
 			newItem.setSerialNumber(serialNumber);
@@ -273,7 +273,7 @@ public class IngenetDeliveryManager {
 		return SalesDAO.getSales(ctx, salesId);
 	}
 
-	private Item obtainIngenetItem(String domainName, String user,
+	private OldItem obtainIngenetItem(String domainName, String user,
 			Integer itemId) {
 		AONContext ctx = IngenetContext.getAONContext(domainName,
 				IngenetContext.getUdapaDomainId(), user);
@@ -281,11 +281,11 @@ public class IngenetDeliveryManager {
 				o -> o.getIdProperty().eq(itemId));
 	}
 
-	private Item obtainAonItem(String domainName, String user,
+	private OldItem obtainAonItem(String domainName, String user,
 			Integer currentDomainId, String productCode) {
 		AONContext ctx = AONContext.getAONContext(domainName, currentDomainId,
 				user);
-		Product product = ProductDAO
+		OldProduct product = ProductDAO
 				.getProductStream(
 						ctx,
 						o -> o.getCodeProperty().eq(productCode)

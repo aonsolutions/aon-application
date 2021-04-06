@@ -47,11 +47,10 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.GeoZone;
-import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Sales;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
@@ -60,7 +59,6 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
@@ -356,9 +354,9 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 		DETALLEPEDIDOTYPE detalle = new DETALLEPEDIDOTYPE();
 		AON.getSalesDetails(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 				f -> f.getIdProperty().eq(sales.getId())).forEach(detail -> {
-					Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+					OldItem item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 							detail.getItem().getId());
-					Product product = AON.getProduct(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+					OldProduct product = AON.getProduct(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 							item.getProductId());
 					
 					LINEADETALLETYPE linea = new LINEADETALLETYPE();
@@ -401,7 +399,7 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 		return detalle;
 	}
 
-	private RegistryItem obtainCustomerItem(AONContext ctx, Item item, Customer customer) {
+	private RegistryItem obtainCustomerItem(AONContext ctx, OldItem item, Customer customer) {
 		RegistryItem rItem = null;
 		if(item!=null && item.getId()!=null && customer!=null && customer.getId()!=null){
 			 rItem = RegistryOldDAO

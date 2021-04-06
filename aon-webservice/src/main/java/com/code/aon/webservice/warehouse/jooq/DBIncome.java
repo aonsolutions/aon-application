@@ -18,8 +18,8 @@ import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.IncomeStatus;
@@ -250,8 +250,8 @@ public class DBIncome {
 
 	
 	public static JSONObject insertIncomeDetail(Domain domain,String login, JSONObject json){
-		Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(json.getInt("item")));
-		Product product = AON.getProduct(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(item.getProductId()));
+		OldItem item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(json.getInt("item")));
+		OldProduct product = AON.getProduct(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(item.getProductId()));
 		Integer incomeId = json.getInt("income");
 		Integer purchaseDetailId = json.optInt("purchase_detail");
 		Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f ->
@@ -275,7 +275,7 @@ public class DBIncome {
 					.setDiscountExpression(pd.getDiscountExpression())
 					.setDomain(domain.getId())
 					.setIncome(new Income().setId(incomeId))
-					.setItem(new Item().setId(json.getInt("item")))
+					.setItem(new OldItem().setId(json.getInt("item")))
 					.setPurchaseDetail(purchaseDetailId)
 					.setQuantity(json.getDouble("quantity"))
 					.setWarehouse(warehouse.getId())
@@ -297,8 +297,8 @@ public class DBIncome {
 		if(incomeDetail.isPresent()){
 			incomeDetail = AON.updateIncomeDetail(domain.getName(), domain.getId(), login, incomeDetail.get().setQuantity(quantity));
 			Integer itemId = incomeDetail.get().getItem().getId();
-			Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(itemId));
-			Product product = AON.getProduct(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(item.getProductId()));
+			OldItem item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(itemId));
+			OldProduct product = AON.getProduct(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(item.getProductId()));
 			if(product.isInventoriable()){
 				Integer warehouse = incomeDetail.get().getWarehouse();
 				AON.addStock(domain, login, json.getInt("item"), quantity, warehouse);
@@ -312,8 +312,8 @@ public class DBIncome {
 		Integer id = json.getInt("id");
 		Optional<IncomeDetail> incomeDetail = AON.deleteIncomeDetail(domain.getName(), domain.getId(), login, id);
 		if(incomeDetail.isPresent()){
-			Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getItem().getId()));
-			Product product = AON.getProduct(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(item.getProductId()));
+			OldItem item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(incomeDetail.get().getItem().getId()));
+			OldProduct product = AON.getProduct(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(item.getProductId()));
 			if(product.isInventoriable()){
 				Double q = AON.substractStock(domain, login, incomeDetail.get().getItem().getId(), incomeDetail.get().getQuantity(), incomeDetail.get().getWarehouse());
 				if(product.isLotable() && q == 0.0){

@@ -46,8 +46,8 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
@@ -288,9 +288,9 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 		RESPUESTAELABORACIONES elaboraciones = new RESPUESTAELABORACIONES();
 		pendingList.forEach(elaboration -> {
 			try {
-				Item item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
+				OldItem item = AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(),
 						elaboration.getItem().getId());
-				Product product = ProductDAO.getProduct(ctx, item.getProduct().getId());
+				OldProduct product = ProductDAO.getProduct(ctx, item.getProduct().getId());
 				SalesDetail salesDetail = obtainSalesDetail(ctx, elaboration);
 				Customer customer = null;
 				if(salesDetail!=null && salesDetail.getId()!=null && salesDetail.getSales()!=null){
@@ -362,7 +362,7 @@ public class IngenetElaborationServlet extends AbstractIngenetServlet {
 	}
 
 	
-	private RegistryItem obtainCustomerItem(AONContext ctx, Item item, Customer customer) {
+	private RegistryItem obtainCustomerItem(AONContext ctx, OldItem item, Customer customer) {
 		RegistryItem rItem = null;
 		if(item!=null && item.getId()!=null && customer!=null && customer.getId()!=null){
 			 rItem = RegistryOldDAO

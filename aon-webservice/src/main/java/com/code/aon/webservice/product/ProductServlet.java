@@ -22,9 +22,9 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 
 @SuppressWarnings("serial")
@@ -158,7 +158,7 @@ public class ProductServlet extends HttpServlet{
     private JSONArray getPaturpatProductInfo(Domain domain, String login, Integer product){
     	JSONArray array = new JSONArray();
     	JSONObject json = new JSONObject();
-    	Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getProductProperty().eq(product)
+    	OldItem item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getProductProperty().eq(product)
     			.and(f.getSerialDateProperty().isNull()).and(f.getSerialNumberProperty().isNull()));
     	AON.getItemAddInfoStream(domain.getName(), domain.getId(), login, f -> f.getProductProperty().eq(product)
     			.and(f.getItemProperty().eq(item.getId())).and(f.getDomainProperty().eq(domain.getId()))
@@ -233,7 +233,7 @@ public class ProductServlet extends HttpServlet{
     	
     	Integer[] productIds = AON.getProductList(domain.getName(), domain.getId(), login,
     			f -> elaborableProductFilter(domain, map, f))
-    			.stream().mapToInt(Product::getId).boxed().toArray(Integer[]::new);
+    			.stream().mapToInt(OldProduct::getId).boxed().toArray(Integer[]::new);
     			
     	AON.getFullItemList(domain.getName(), domain.getId(), login,
     			f -> elaborableItemFilter(domain, map, f, productIds))
@@ -276,9 +276,9 @@ public class ProductServlet extends HttpServlet{
     public JSONObject insertItem(Domain domain, String login, JSONObject json) {
     	Integer itemId = json.getInt("item_id");
     	String lote = json.getString("lote");
-    	Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(itemId));
+    	OldItem item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(itemId));
     	Integer productId = item.getProductId();
-    	Item itemLote = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getProductProperty().eq(productId).and(f.getSerialNumberProperty().eq(lote)));
+    	OldItem itemLote = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getProductProperty().eq(productId).and(f.getSerialNumberProperty().eq(lote)));
     	if(itemLote.getId() == null) {
     		item.setBarcode(null);
     		item.setSerialNumber(lote);

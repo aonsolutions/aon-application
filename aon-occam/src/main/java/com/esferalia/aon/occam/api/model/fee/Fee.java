@@ -7,7 +7,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
@@ -23,7 +23,7 @@ public class Fee implements Serializable{
 	private Project project;
 	private Customer customer;
 	private Short line;
-	private Item item;
+	private OldItem item;
 	private String description;
 	private Double quantity;
 	private Double price;
@@ -202,14 +202,14 @@ public class Fee implements Serializable{
 		return this;
 	}
 	
-	public Item getItem() {
+	public OldItem getItem() {
 		if(item == null) {
-			item = new Item();
+			item = new OldItem();
 		}
 		return item;
 	}
 	
-	public Fee setItem(Item item) {
+	public Fee setItem(OldItem item) {
 		this.item = item;
 		return this;
 	}

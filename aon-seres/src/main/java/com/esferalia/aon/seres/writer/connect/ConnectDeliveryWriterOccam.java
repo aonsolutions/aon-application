@@ -42,8 +42,8 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -421,7 +421,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	 */
 	private SEH1L createSEH1LRecord(Integer lineNumber, Delivery delivery, DeliveryDetail detail, Double packageQuantity,
 			String companyEdiCode, String customerEdiCode, String customerPackage) {
-		Item item = getItem(detail.getItem().getId());
+		OldItem item = getItem(detail.getItem().getId());
 		Integer customerId = delivery.getCustomer();
 		String productCustomerCode = obtainProductCustomerCode(item, customerId);
 		
@@ -602,9 +602,9 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		}
 	}
 	
-	private Integer getBaseItemId(Product product){
+	private Integer getBaseItemId(OldProduct product){
 		try {
-			com.esferalia.aon.occam.api.model.product.Item item = AON.getItem(domainName, domainId, login, f -> f
+			OldItem item = AON.getItem(domainName, domainId, login, f -> f
 					.getProductProperty().eq(product.getId())
 					.and(f.getSerialNumberProperty().isNull()));
 			if(item!=null)
@@ -615,7 +615,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return null;
 	}
 
-	private Item getItem(Integer itemId){
+	private OldItem getItem(Integer itemId){
 		try {
 			return AON.getItem(domainName, domainId, login, itemId);
 		} catch (Throwable e) {
@@ -626,7 +626,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	
 	private String getItemBarcode(Integer itemId){
 		try {
-			Item item = getItem(itemId);
+			OldItem item = getItem(itemId);
 			if(item!=null)
 				return item.getBarcode();
 		} catch (Throwable e) {
@@ -648,7 +648,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return null;
 	}
 
-	private String obtainProductCustomerCode(Item item, Integer customerId) {
+	private String obtainProductCustomerCode(OldItem item, Integer customerId) {
 		try {
 			Integer baseItemId = getBaseItemId(item.getProduct());
 			com.esferalia.aon.occam.api.model.registry.RegistryItem rItem = 
@@ -668,7 +668,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	}
 
 	private boolean isPackageItem(Integer itemId) {
-		Item item = getItem(itemId);
+		OldItem item = getItem(itemId);
 		return item != null && item.getSerialNumber() == null
 				&& item.getSerialDate() == null;
 	}
@@ -676,7 +676,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	private Double obtainPackageQuantity(DeliveryDetail detail,
 			String customerPackingTag) {
 		if(detail!=null && customerPackingTag!=null){
-			Item item = getItem(detail.getItem().getId());
+			OldItem item = getItem(detail.getItem().getId());
 			Double quantity = detail.getQuantity();
 			Tag itemPackFormatTag = item.getPackFormatTag();
 			Tag itemPackMeasurementTag = item.getPackMeasurementTag();

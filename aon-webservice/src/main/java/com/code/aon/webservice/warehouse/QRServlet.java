@@ -21,7 +21,7 @@ import com.code.aon.webservice.warehouse.jooq.DBPurchase;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -96,7 +96,7 @@ public class QRServlet extends HttpServlet{
 						.and(f.getCarrierPackingProperty().eq(carrierPackingId)))
 				.forEach(detail -> {
 					JSONObject detailJSON = ToJSON.purchaseDetailToJSON(detail);		
-					Optional<Item> item = getItem(domain, login, detail.getItem(), detail.getProductId());
+					Optional<OldItem> item = getItem(domain, login, detail.getItem(), detail.getProductId());
 
 					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
 						f2.getRegistryProperty().eq(purchase.getSupplier())
@@ -147,7 +147,7 @@ public class QRServlet extends HttpServlet{
 				AON.getDeliveryDetailStream(domain.getName(), domain.getId(), login, f -> f.getDelivery().eq(delivery.getId()))
 				.forEach(detail -> {
 					JSONObject detailJSON = ToJSON.deliveryDetailToJSON(detail);
-					Optional<Item> item = getItem(domain, login, detail.getItem().getId(), detail.getProductId());
+					Optional<OldItem> item = getItem(domain, login, detail.getItem().getId(), detail.getProductId());
 					
 					String code = AON.getRItem(domain.getName(), domain.getId(), login, f2 -> 
 						f2.getRegistryProperty().eq(delivery.getCustomer())
@@ -302,8 +302,8 @@ public class QRServlet extends HttpServlet{
 		os.close();
 	}
 
-	private Optional<Item> getItem(Domain domain, String login, Integer itemId, Integer productId) {
-		Optional<Item> optional = AON.getItemOptional(domain.getName(), domain.getId(), login, f -> 
+	private Optional<OldItem> getItem(Domain domain, String login, Integer itemId, Integer productId) {
+		Optional<OldItem> optional = AON.getItemOptional(domain.getName(), domain.getId(), login, f -> 
 			f.getIdProperty().eq(itemId)
 			.and(f.getPackFormatTagProperty().isNotNull())
 			.and(f.getPackMeasurementTagProperty().isNotNull())

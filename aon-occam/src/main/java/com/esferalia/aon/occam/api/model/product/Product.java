@@ -3,262 +3,285 @@ package com.esferalia.aon.occam.api.model.product;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.type.ProductType;
+
 public class Product implements Serializable{
 
 	private static final long serialVersionUID = -4677724896967244753L;
 
 	Integer id;
-	Integer domain;
+	Domain domain;
 	String name;
 	String code;
-	Integer brand;
-	String brandName;
-	Integer category;
-	Byte inventoriable;
-	Byte serializable = 0;
-	Byte lotable = 0;
-	Byte status = 0;
-	Integer vat;
-	Integer retention;
-	Byte type;
-	Byte manufactured = 0;
-	Byte composition = 0;
-	Byte compositionPrice = 0;
+	Brand brand;
+	ProductCategory category;
+	ProductStatus status;
+	ProductType type;
+	ProductKind kind;
+	Tax vat;
+	Tax retention;
+	Boolean inventoriable;
+	Boolean serializable;
+	Boolean lotable;
+	Boolean manufactured;
+	Boolean composition;
+	Boolean compositionPrice;
 	Boolean packaged;
-	Integer salesAccount;
-	Integer purchaseAccount;
+	Account salesAccount;
+	Account purchaseAccount;
+
 	String creationUser;
 	Date creationDate;
 	String modificationUser;
 	Date modificationDate;
-	Byte kind;
 	
 	public Integer getId() {
 		return id;
 	}
+	
 	public Product setId(Integer id) {
 		this.id = id;
 		return this;
 	}
-	public Integer getDomain() {
+	
+	public Domain getDomain() {
 		return domain;
 	}
-	public Product setDomain(Integer domain) {
+	
+	public Product setDomain(Domain domain) {
 		this.domain = domain;
 		return this;
 	}
+	
 	public String getName() {
 		return name;
 	}
+	
 	public Product setName(String name) {
 		this.name = name;
 		return this;
 	}
+	
 	public String getCode() {
 		return code;
 	}
+	
 	public Product setCode(String code) {
 		this.code = code;
 		return this;
 	}
-	public Integer getBrand() {
+	
+	public Brand getBrand() {
 		return brand;
 	}
-	public Product setBrand(Integer brand) {
+	
+	public Product setBrand(Brand brand) {
 		this.brand = brand;
 		return this;
 	}
-	public Integer getCategory() {
+
+	public ProductCategory getCategory() {
 		return category;
 	}
-	public Product setCategory(Integer category) {
+
+	public Product setCategory(ProductCategory category) {
 		this.category = category;
 		return this;
 	}
-	public Byte getInventoriable() {
-		if(inventoriable == null) {
-			inventoriable = 0;
-		}
-		return inventoriable;
+	
+	public Boolean isActive() {
+		return ProductStatus.ACTIVE.equals(getStatus());
 	}
-	public Boolean isInventoriable(){
-		return inventoriable==1;
-	}
-	public Product setInventoriable(Byte inventoriable) {
-		this.inventoriable = inventoriable;
-		return this;
-	}
-	public Product setInventoriable(Boolean inventoriable){
-		this.inventoriable = inventoriable ? (byte) 1 : (byte) 0;
-		return this;
-	}
-	public Byte getSerializable() {
-		return serializable;
-	}
-	public Boolean isSerializable(){
-		return serializable == 1;
-	}
-	public Product setSerializable(Byte serializable) {
-		this.serializable = serializable;
-		return this;
-	}
-	public Product setSerializable(Boolean serializable){
-		this.serializable = serializable ? (byte) 1 : (byte) 0;
-		return this;
-	}
-	public Byte getLotable() {
-		return lotable;
-	}
-	public Boolean isLotable(){
-		return lotable == 1;
-	}
-	public Product setLotable(Byte lotable) {
-		this.lotable = lotable;
-		return this;
-	}
-	public Product setLotable(Boolean lotable){
-		this.lotable = lotable ? (byte) 1 : (byte) 0;
-		return this;
-	}
-	public Byte getStatus() {
+
+	public ProductStatus getStatus() {
 		return status;
 	}
-	public Product setStatus(Byte status) {
+
+	public Product setStatus(ProductStatus status) {
 		this.status = status;
 		return this;
 	}
-	public Integer getVat() {
-		return vat;
-	}
-	public Product setVat(Integer vat) {
-		this.vat = vat;
-		return this;
-	}
-	public Integer getRetention() {
-		return retention;
-	}
-	public Product setRetention(Integer retention) {
-		this.retention = retention;
-		return this;
-	}
-	public Byte getType() {
+
+	public ProductType getType() {
 		return type;
 	}
-	public Product setType(Byte type) {
+
+	public Product setType(ProductType type) {
 		this.type = type;
 		return this;
 	}
-	public Byte getManufactured() {
+
+	public ProductKind getKind() {
+		return kind;
+	}
+
+	public Product setKind(ProductKind kind) {
+		this.kind = kind;
+		return this;
+	}
+
+	public Tax getVat() {
+		return vat;
+	}
+
+	public Product setVat(Tax vat) {
+		this.vat = vat;
+		return this;
+	}
+
+	public Tax getRetention() {
+		return retention;
+	}
+
+	public Product setRetention(Tax retention) {
+		this.retention = retention;
+		return this;
+	}
+
+	public Boolean isInventoriable() {
+		return inventoriable;
+	}
+	
+	public Boolean getInventoriable() {
+		return inventoriable;
+	}
+
+	public Product setInventoriable(Boolean inventoriable) {
+		this.inventoriable = inventoriable;
+		return this;
+	}
+
+	public Boolean isSerializable() {
+		return inventoriable;
+	}
+	
+	public Boolean getSerializable() {
+		return serializable;
+	}
+
+	public Product setSerializable(Boolean serializable) {
+		this.serializable = serializable;
+		return this;
+	}
+
+	public Boolean isLotable() {
+		return lotable;
+	}
+	
+	public Boolean getLotable() {
+		return lotable;
+	}
+
+	public Product setLotable(Boolean lotable) {
+		this.lotable = lotable;
+		return this;
+	}
+
+	public Boolean isManufactured() {
 		return manufactured;
 	}
-	public Product setManufactured(Byte manufactured) {
+	
+	public Boolean getManufactured() {
+		return manufactured;
+	}
+
+	public Product setManufactured(Boolean manufactured) {
 		this.manufactured = manufactured;
 		return this;
 	}
-	public Boolean isManufactured(){
-		return manufactured == 1;
-	}
-	public Byte getComposition() {
+
+	public Boolean isComposition() {
 		return composition;
 	}
-	public Boolean isComposition(){
-		return composition == 1;
+	
+	public Boolean getComposition() {
+		return composition;
 	}
-	public Product setComposition(Byte composition) {
+
+	public Product setComposition(Boolean composition) {
 		this.composition = composition;
 		return this;
 	}
-	public Product setComposition(Boolean composition){
-		this.composition = composition ? (byte) 1 : (byte) 0;
-		return this;
-	}
-	public Byte getCompositionPrice() {
+
+	public Boolean isCompositionPrice() {
 		return compositionPrice;
 	}
-	public Boolean isCompositionPrice(){
-		return compositionPrice == 1;
+	
+	public Boolean getCompositionPrice() {
+		return compositionPrice;
 	}
-	public Product setCompositionPrice(Byte compositionPrice) {
+
+	public Product setCompositionPrice(Boolean compositionPrice) {
 		this.compositionPrice = compositionPrice;
 		return this;
 	}
-	public Product setCompositionPrice(Boolean compositionPrice){
-		this.compositionPrice = compositionPrice ? (byte) 1 : (byte) 0;
-		return this;
-	}
-	public Integer getSalesAccount() {
-		return salesAccount;
-	}
-	public Product setSalesAccount(Integer salesAccount) {
-		this.salesAccount = salesAccount;
-		return this;
-	}
-	public Integer getPurchaseAccount() {
-		return purchaseAccount;
-	}
-	public Product setPurchaseAccount(Integer purchaseAccount) {
-		this.purchaseAccount = purchaseAccount;
-		return this;
-	}
-	public String getCreationUser() {
-		return creationUser;
-	}
-	public Product setCreationUser(String creationUser) {
-		this.creationUser = creationUser;
-		return this;
-	}
-	public Date getCreationDate() {
-		return creationDate;
-	}
-	public Product setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-		return this;
-	}
-	public String getModificationUser() {
-		return modificationUser;
-	}
-	public Product setModificationUser(String modificationUser) {
-		this.modificationUser = modificationUser;
-		return this;
-	}
-	public Date getModificationDate() {
-		return modificationDate;
-	}
-	public Product setModificationDate(Date modificationDate) {
-		this.modificationDate = modificationDate;
-		return this;
-	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-	public Byte getKind() {
-		return kind;
-	}
-	public Product setKind(Byte kind) {
-		this.kind = kind;
-		return this;
+
+	public Boolean isPackaged() {
+		return packaged;
 	}
 	
 	public Boolean getPackaged() {
 		return packaged;
-	}
-	
-	public Byte getPackagedValue(){
-		return packaged ? (byte) 1 : 0;
 	}
 
 	public Product setPackaged(Boolean packaged) {
 		this.packaged = packaged;
 		return this;
 	}
-	
-	public String getBrandName(){
-		return brandName;
+
+	public Account getSalesAccount() {
+		return salesAccount;
 	}
-	
-	public Product setBrandName(String brandName){
-		this.brandName = brandName;
+
+	public Product setSalesAccount(Account salesAccount) {
+		this.salesAccount = salesAccount;
 		return this;
 	}
-	
+
+	public Account getPurchaseAccount() {
+		return purchaseAccount;
+	}
+
+	public Product setPurchaseAccount(Account purchaseAccount) {
+		this.purchaseAccount = purchaseAccount;
+		return this;
+	}
+
+	public String getCreationUser() {
+		return creationUser;
+	}
+
+	public Product setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public Product setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+
+	public String getModificationUser() {
+		return modificationUser;
+	}
+
+	public Product setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public Product setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}	
 }

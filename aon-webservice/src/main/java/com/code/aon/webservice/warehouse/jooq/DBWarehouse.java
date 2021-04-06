@@ -19,7 +19,7 @@ import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
@@ -148,7 +148,7 @@ public class DBWarehouse {
 		Elaboration elaboration = new Elaboration();
 		elaboration.setStatus(ElaborationStatus.PENDING.value());
 		elaboration.setDate(new Date());
-		elaboration.setItem(new Item());
+		elaboration.setItem(new OldItem());
 		return ToJSON.elaborationToJSON(elaboration);
 	}
 	
@@ -186,7 +186,7 @@ public class DBWarehouse {
 		Elaboration elaboration = AON.getFullElaboration(domain.getName(), domain.getId(), login, detail.getElaboration().getId());
 		
 		Integer baseItemId = elaboration.getItem().getId();
-		Item item = elaboration.getItem();
+		OldItem item = elaboration.getItem();
 		if (json.opt(MSG.NUMBER) != null
 				&& !MSG.EMPTY.equals(json.opt(MSG.NUMBER))) {
 			// create serialized item
@@ -205,7 +205,7 @@ public class DBWarehouse {
 		AON.getItemCompositionList(domain.getName(), domain.getId(), login, baseItemId).forEach(ic -> {
 			ElaborationDetailComposition composition = new ElaborationDetailComposition();
 			composition.setElaborationDetail(detail);
-			composition.setItem(new Item().setId(ic.getCompositionItemId()));
+			composition.setItem(new OldItem().setId(ic.getCompositionItemId()));
 			composition.setQuantity(detail.getQuantity()*ic.getQuantity());
 			composition.setWarehouse(detail.getWarehouse());
 			AON.insertElaborationDetailComposition(domain.getName(), domain.getId(), login, composition);
@@ -254,7 +254,7 @@ public class DBWarehouse {
 			elaboration.setDate(new Date(json.getLong(MSG.DATE)));
 		}
 		if (json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))) {
-			elaboration.setItem(new Item().setId(json.getInt(MSG.ITEM)));
+			elaboration.setItem(new OldItem().setId(json.getInt(MSG.ITEM)));
 		}
 		if (json.opt(MSG.DESCRIPTION) != null && !MSG.EMPTY.equals(json.opt(MSG.DESCRIPTION))) {
 			elaboration.setDescription(json.getString(MSG.DESCRIPTION));
@@ -292,7 +292,7 @@ public class DBWarehouse {
 			detail.setDate(new Date(json.getLong(MSG.DATE)));
 		}
 		if (json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))) {
-			detail.setItem(new Item().setId(json.getInt(MSG.ITEM)));
+			detail.setItem(new OldItem().setId(json.getInt(MSG.ITEM)));
 		}
 		if (json.opt(MSG.QUANTITY) != null
 				&& !MSG.EMPTY.equals(json.opt(MSG.QUANTITY))) {
@@ -316,7 +316,7 @@ public class DBWarehouse {
 			composition.setElaborationDetail(new ElaborationDetail().setId(json.getInt("elaboration_detail")));
 		}
 		if (json.opt(MSG.ITEM) != null && !MSG.EMPTY.equals(json.opt(MSG.ITEM))) {
-			composition.setItem(new Item().setId(json.getInt(MSG.ITEM)));
+			composition.setItem(new OldItem().setId(json.getInt(MSG.ITEM)));
 		}
 		if (json.opt(MSG.QUANTITY) != null
 				&& !MSG.EMPTY.equals(json.opt(MSG.QUANTITY))) {

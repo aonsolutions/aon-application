@@ -6,7 +6,7 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
@@ -53,20 +53,20 @@ public class ProductList extends ResizeComposite{
 		Style dataGridStyle();
 	}
 	
-	@UiField(provided = true) DataGrid<Item> dataGrid;
+	@UiField(provided = true) DataGrid<OldItem> dataGrid;
 	@UiField(provided = true) TextBox nameSearchBox;
 	
 	@UiField(provided = true) Button searchButton;
 	
 	private AonData aonData;
 	
-	private List<Item> list;
-	private ListDataProvider<Item> dataProvider = new ListDataProvider<Item>();
+	private List<OldItem> list;
+	private ListDataProvider<OldItem> dataProvider = new ListDataProvider<OldItem>();
 	
-	public ProductList(AonData aonData, List<Item> list) {
+	public ProductList(AonData aonData, List<OldItem> list) {
 		this.aonData = aonData;
 		setList(list);
-		dataGrid = new DataGrid<Item>(Integer.MAX_VALUE, resources); 
+		dataGrid = new DataGrid<OldItem>(Integer.MAX_VALUE, resources); 
 		nameSearchBox = new TextBox();
 		
 		searchButton = new Button("Buscar");
@@ -89,11 +89,11 @@ public class ProductList extends ResizeComposite{
 	public User getUser() {
 		return getAonData().getUser();
 	}
-	public List<Item> getList(){
+	public List<OldItem> getList(){
 		return list;
 	}
 	
-	public void setList(List<Item> list){
+	public void setList(List<OldItem> list){
 		this.list = list;
 	}
 	
@@ -117,13 +117,13 @@ public class ProductList extends ResizeComposite{
 	
 	private void searchByName() {
 		String searchStr = nameSearchBox.getText();
-		Vector<Item> vaux = new Vector<Item>();
+		Vector<OldItem> vaux = new Vector<OldItem>();
 		vaux.addAll(getList());
  		
-		impl.searchItemByProductName(searchStr, vaux, new AsyncCallback<Vector<Item>>() {
+		impl.searchItemByProductName(searchStr, vaux, new AsyncCallback<Vector<OldItem>>() {
 			@Override
-			public void onSuccess(Vector<Item> result) {
-				dataProvider = new ListDataProvider<Item>(result);
+			public void onSuccess(Vector<OldItem> result) {
+				dataProvider = new ListDataProvider<OldItem>(result);
 				dataProvider.addDataDisplay(dataGrid);
 				dataGrid.redraw();
 			}
@@ -134,12 +134,12 @@ public class ProductList extends ResizeComposite{
 	}
 	
 	private void loadDataGrid(){
-		final SingleSelectionModel<Item> selectionModel = new SingleSelectionModel<Item>();
+		final SingleSelectionModel<OldItem> selectionModel = new SingleSelectionModel<OldItem>();
 		dataGrid.setSelectionModel(selectionModel);
 		dataGrid.addDomHandler(new DoubleClickHandler() {
 			@Override
 			public void onDoubleClick(final DoubleClickEvent event) {
-				Item selected = selectionModel.getSelectedObject();
+				OldItem selected = selectionModel.getSelectedObject();
 				if (selected != null) {
 				    new ProductValuesDialog(getAonData(), selected).show();
 				}
@@ -148,23 +148,23 @@ public class ProductList extends ResizeComposite{
 		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		dataGrid.setAutoHeaderRefreshDisabled(true);
 		dataGrid.setEmptyTableWidget(new Label("No hay ning\u00fan archivo."));
-		dataProvider = new ListDataProvider<Item>(getList());
+		dataProvider = new ListDataProvider<OldItem>(getList());
 		dataProvider.addDataDisplay(dataGrid);
-		ListHandler<Item> sortHandler = getSortHandler();
+		ListHandler<OldItem> sortHandler = getSortHandler();
 		dataGrid.addColumnSortHandler(sortHandler);
 		
 		initTableColumns(selectionModel, sortHandler);
 	}
 	
 	
-	private ListHandler<Item> getSortHandler() {
-		return new ListHandler<Item>(dataProvider.getList()) {
+	private ListHandler<OldItem> getSortHandler() {
+		return new ListHandler<OldItem>(dataProvider.getList()) {
 			@Override
 			public void onColumnSort(ColumnSortEvent event) {
 				super.setList(dataProvider.getList());
 				super.onColumnSort(event);
-				List<Item> aux = super.getList();
-				List<Item> aux2 = new Vector<Item>();
+				List<OldItem> aux = super.getList();
+				List<OldItem> aux2 = new Vector<OldItem>();
 				for (Integer i = 0; i < aux.size() - 1; i++) {
 					aux2.set(i, aux.get(aux.size() - 1 - i));
 				}
@@ -174,20 +174,20 @@ public class ProductList extends ResizeComposite{
 	}
 
 	private void initTableColumns(
-			final SelectionModel<Item> selectionModel,
-			ListHandler<Item> sortHandler) {
+			final SelectionModel<OldItem> selectionModel,
+			ListHandler<OldItem> sortHandler) {
 		
 		/**
 		 * Code Column
 		 */
-		Column<Item, String> codeColumn = new Column<Item, String>(
+		Column<OldItem, String> codeColumn = new Column<OldItem, String>(
 				new TextCell()) {
 			@Override
-			public void render(Context context, Item object, SafeHtmlBuilder sb) {
+			public void render(Context context, OldItem object, SafeHtmlBuilder sb) {
 				sb.appendHtmlConstant("<span>" + object.getProduct().getCode() + "</span>");
 			}
 			@Override
-			public String getValue(Item object) {
+			public String getValue(OldItem object) {
 				return object.getProduct().getCode();
 			}
 		};
@@ -198,10 +198,10 @@ public class ProductList extends ResizeComposite{
 		/**
 		 * Detail Column
 		 */
-		Column<Item, String> detailColumn = new Column<Item, String>(
+		Column<OldItem, String> detailColumn = new Column<OldItem, String>(
 				new TextCell()) {
 			@Override
-			public void render(Context context, Item object, SafeHtmlBuilder sb) {
+			public void render(Context context, OldItem object, SafeHtmlBuilder sb) {
 				sb.appendHtmlConstant("<span>" 
 						+ (object.getDetail()!=null?object.getDetail():"")
 						+ (object.getDetail2()!=null?" / " + object.getDetail2():"")
@@ -209,7 +209,7 @@ public class ProductList extends ResizeComposite{
 						+ "</span>");
 			}
 			@Override
-			public String getValue(Item object) {
+			public String getValue(OldItem object) {
 				return (object.getDetail()!=null?object.getDetail():"")
 						+ (object.getDetail2()!=null?" / " + object.getDetail2():"")
 						+ (object.getDetail3()!=null?" / " + object.getDetail3():"");
@@ -222,19 +222,19 @@ public class ProductList extends ResizeComposite{
 		/** 
 		 * Name Column 
 		 */
-		Column<Item, String> nameColumn = new Column<Item, String>(
+		Column<OldItem, String> nameColumn = new Column<OldItem, String>(
 				new TextCell()) {
 			@Override
-			public String getValue(Item object) {
+			public String getValue(OldItem object) {
 				return object.getProduct().getName();
 			}
 		};
 		nameColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		nameColumn.setSortable(true);
 		sortHandler.setComparator(nameColumn,
-				new Comparator<Item>() {
+				new Comparator<OldItem>() {
 					@Override
-					public int compare(Item o1, Item o2) {
+					public int compare(OldItem o1, OldItem o2) {
 						return o1.getProduct().getName().compareTo(o2.getProduct().getName());
 					}
 				});

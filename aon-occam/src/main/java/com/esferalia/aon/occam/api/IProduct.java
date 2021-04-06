@@ -9,25 +9,25 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Brand;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 
 public interface IProduct {
 
 	// PRODUCT
-	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter);
-	public void insert(AONContext ctx,Product p);
-	public Product insertProduct(AONContext ctx,Product p);
-	public void insertWithId(AONContext ctx,Product p);
-	public LinkedList<Product> insert(AONContext ctx,Stream<Product> ps);
-	public void insertWithId(AONContext ctx,Stream<Product> ps);
-	public void update(AONContext ctx,Product p);
-	public void delete(AONContext ctx,Product p);
-	public void delete(AONContext ctx,Stream<Product> ps);
+	public Stream<OldProduct> getProductStream(AONContext ctx, ProductFilter filter);
+	public void insert(AONContext ctx,OldProduct p);
+	public OldProduct insertProduct(AONContext ctx,OldProduct p);
+	public void insertWithId(AONContext ctx,OldProduct p);
+	public LinkedList<OldProduct> insert(AONContext ctx,Stream<OldProduct> ps);
+	public void insertWithId(AONContext ctx,Stream<OldProduct> ps);
+	public void update(AONContext ctx,OldProduct p);
+	public void delete(AONContext ctx,OldProduct p);
+	public void delete(AONContext ctx,Stream<OldProduct> ps);
 	
 	// PRODUCT_TAG
 	public void insertProductTag(AONContext ctx,ProductTag pt);
@@ -37,15 +37,15 @@ public interface IProduct {
 	public void deleteProductTag(AONContext ctx,Stream<ProductTag> pts);	
 		
 	// ITEM
-	public Stream<Item> getItemStream(AONContext ctx, ItemFilter filter);
-	public Stream<Item> getFullItemStream(AONContext ctx, ItemFilter filter);
-	public Item insertItem(AONContext ctx, Item i);
-	public void insertItemWithId(AONContext ctx,Item i);
-	public void insertItem(AONContext ctx, Stream<Item> is);
-	public void insertItemWithId(AONContext ctx,Stream<Item> is);
-	public void updateItem(AONContext ctx, Item i);
-	public void deleteItem(AONContext ctx, Item i);
-	public void deleteItem(AONContext ctx, Stream<Item> is);
+	public Stream<OldItem> getItemStream(AONContext ctx, ItemFilter filter);
+	public Stream<OldItem> getFullItemStream(AONContext ctx, ItemFilter filter);
+	public OldItem insertItem(AONContext ctx, OldItem i);
+	public void insertItemWithId(AONContext ctx,OldItem i);
+	public void insertItem(AONContext ctx, Stream<OldItem> is);
+	public void insertItemWithId(AONContext ctx,Stream<OldItem> is);
+	public void updateItem(AONContext ctx, OldItem i);
+	public void deleteItem(AONContext ctx, OldItem i);
+	public void deleteItem(AONContext ctx, Stream<OldItem> is);
 	
 	// ITEM COMPOSITION
 	public LinkedList<ItemComposition> getItemComposition(AONContext ctx, Integer itemId);

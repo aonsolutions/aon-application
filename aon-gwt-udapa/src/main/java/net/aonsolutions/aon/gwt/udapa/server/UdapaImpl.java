@@ -16,8 +16,8 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -88,8 +88,8 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			map.put("warehouse", w.getName());
 			map.put("product_description", id.getDescription());
 			
-			Item item = AON.getItem(domainName, domainId, login, f -> f.getIdProperty().eq(id.getItem().getId()));
-			Product product = AON.getProduct(domainName, domainId, login, f -> f.getIdProperty().eq(item.getProductId()));
+			OldItem item = AON.getItem(domainName, domainId, login, f -> f.getIdProperty().eq(id.getItem().getId()));
+			OldProduct product = AON.getProduct(domainName, domainId, login, f -> f.getIdProperty().eq(item.getProductId()));
 			Optional<Supplier> supplier = AON.getSupplier(domainName, domainId, login, f -> f.getIdProperty().eq(i.getSupplier()));
 			map.put("product_name", product.getName());
 			map.put("product_supplier", i.getSupplierName());

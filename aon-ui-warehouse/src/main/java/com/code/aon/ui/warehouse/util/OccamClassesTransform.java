@@ -6,12 +6,12 @@ import com.code.aon.product.Product;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 
 public class OccamClassesTransform {
 
-	public static Item getItem(com.code.aon.product.Item item){
-		Item i = new Item();
+	public static OldItem getItem(com.code.aon.product.Item item){
+		OldItem i = new OldItem();
 		i.setId(item.getId());
 		i.setDomain(item.getDomain());
 		if(item.getProduct() != null) i.setProductId(item.getProduct().getId());
@@ -35,7 +35,7 @@ public class OccamClassesTransform {
 		return i;
 	}
 	
-	public static com.code.aon.product.Item getItem(Item item){
+	public static com.code.aon.product.Item getItem(OldItem item){
 		com.code.aon.product.Item i = new com.code.aon.product.Item();
 		i.setId(item.getId());
 		i.setDomain(item.getDomain());

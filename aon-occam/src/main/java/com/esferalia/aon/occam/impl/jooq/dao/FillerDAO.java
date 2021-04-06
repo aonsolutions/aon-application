@@ -79,9 +79,9 @@ import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -497,7 +497,7 @@ public class FillerDAO {
 			detail.setProductId(r.getValue(PRODUCT.ID));
 			detail.setProductCode(r.getValue(PRODUCT.CODE));
 			detail.setProductName(r.getValue(PRODUCT.NAME));
-			detail.setItem2(new Item().setId(r.getValue(ITEM.ID))
+			detail.setItem2(new OldItem().setId(r.getValue(ITEM.ID))
 				.setBarcode(r.getValue(ITEM.BARCODE))
 				.setCreationDate(r.getValue(ITEM.CREATION_DATE))
 				.setCreationUser(r.getValue(ITEM.CREATION_USER))
@@ -520,7 +520,7 @@ public class FillerDAO {
 				.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
 				.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
 				.setStatus(r.getValue(ITEM.STATUS))
-				.setProduct(new Product().setId(r.getValue(PRODUCT.ID))
+				.setProduct(new OldProduct().setId(r.getValue(PRODUCT.ID))
 					.setName(r.getValue(PRODUCT.NAME))
 					.setDomain(r.getValue(PRODUCT.DOMAIN))
 					.setCode(r.getValue(PRODUCT.CODE))
@@ -604,7 +604,7 @@ public class FillerDAO {
 					.setDomain(r.getValue(DELIVERY_DETAIL.DOMAIN))
 					.setDelivery(new Delivery().setId(r.getValue(DELIVERY_DETAIL.DELIVERY)))
 					.setLine(r.getValue(DELIVERY_DETAIL.LINE))
-					.setItem(new Item()
+					.setItem(new OldItem()
 							.setId(r.getValue(DELIVERY_DETAIL.ITEM)))
 					.setDescription(r.getValue(DELIVERY_DETAIL.DESCRIPTION))
 					.setWarehouse(r.getValue(DELIVERY_DETAIL.WAREHOUSE))
@@ -817,7 +817,7 @@ public class FillerDAO {
 					.setId(r.getValue(INCOME_DETAIL.ID))
 					.setIncome(new Income()
 							.setId(r.getValue(INCOME_DETAIL.INCOME)))
-					.setItem(new Item()
+					.setItem(new OldItem()
 							.setId(r.getValue(INCOME_DETAIL.ITEM)))
 					.setLine(r.getValue(INCOME_DETAIL.LINE))
 					.setPrice(r.getValue(INCOME_DETAIL.PRICE))
@@ -945,7 +945,7 @@ public class FillerDAO {
 					.setCreationUser(r.getValue(INVENTORY_DETAIL.CREATION_USER))
 					.setDomain(r.getValue(INVENTORY_DETAIL.DOMAIN))
 					.setItem(
-						new Item().setId(r.getValue(ITEM.ID))
+						new OldItem().setId(r.getValue(ITEM.ID))
 							.setBarcode(r.getValue(ITEM.BARCODE))
 							.setCreationDate(r.getValue(ITEM.CREATION_DATE))
 							.setCreationUser(r.getValue(ITEM.CREATION_USER))
@@ -963,7 +963,7 @@ public class FillerDAO {
 							.setPackUnits(r.getValue(ITEM.PACK_UNITS).doubleValue())
 							.setPrice(r.getValue(ITEM.PRICE))
 							.setProduct( 
-									new Product().setId(r.getValue(PRODUCT.ID))
+									new OldProduct().setId(r.getValue(PRODUCT.ID))
 									.setName(r.getValue(PRODUCT.NAME))
 									.setDomain(r.getValue(PRODUCT.DOMAIN))
 									.setCode(r.getValue(PRODUCT.CODE))
@@ -1024,7 +1024,7 @@ public class FillerDAO {
 					.setDiscountExpression(r.getValue(OFFER_DETAIL.DISCOUNT_EXPR))
 					.setDomain(r.getValue(OFFER_DETAIL.DOMAIN))
 					.setId(r.getValue(OFFER_DETAIL.ID))
-					.setItem(new Item().setId(r.getValue(OFFER_DETAIL.ITEM)))
+					.setItem(new OldItem().setId(r.getValue(OFFER_DETAIL.ITEM)))
 					.setOffer(o)
 					.setPrice(r.getValue(OFFER_DETAIL.PRICE))
 					.setQuantity(r.getValue(OFFER_DETAIL.QUANTITY))
@@ -1091,7 +1091,7 @@ public class FillerDAO {
 					.setDiscountExpression(r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
 					.setDomain(r.getValue(INVOICE_DETAIL.DOMAIN))
 					.setId(r.getValue(INVOICE_DETAIL.ID))
-					.setItem(new Item().setId(r.getValue(INVOICE_DETAIL.ITEM)))
+					.setItem(new OldItem().setId(r.getValue(INVOICE_DETAIL.ITEM)))
 					.setInvoice(i)
 					.setPrice(r.getValue(INVOICE_DETAIL.PRICE))
 					.setQuantity(r.getValue(INVOICE_DETAIL.QUANTITY));

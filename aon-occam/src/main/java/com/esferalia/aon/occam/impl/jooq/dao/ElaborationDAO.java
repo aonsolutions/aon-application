@@ -29,7 +29,7 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilt
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class ElaborationDAO {
@@ -517,7 +517,7 @@ public class ElaborationDAO {
 					.setSeries(r.getValue(ELABORATION.SERIES))
 					.setNumber(r.getValue(ELABORATION.NUMBER))
 					.setDate(r.getValue(ELABORATION.DATE))
-					.setItem(new Item().setId(r.getValue(ELABORATION.ITEM)))
+					.setItem(new OldItem().setId(r.getValue(ELABORATION.ITEM)))
 					.setDescription(r.getValue(ELABORATION.DESCRIPTION))
 					.setWarehouse(
 							new Warehouse().setId(r
@@ -547,7 +547,7 @@ public class ElaborationDAO {
 					.setSeries(r.getValue(ELABORATION.SERIES))
 					.setNumber(r.getValue(ELABORATION.NUMBER))
 					.setDate(r.getValue(ELABORATION.DATE))
-					.setItem(new Item().setId(r.getValue(ELABORATION.ITEM)))
+					.setItem(new OldItem().setId(r.getValue(ELABORATION.ITEM)))
 					.setDescription(r.getValue(ELABORATION.DESCRIPTION))
 					.setWarehouse(
 							new Warehouse().setId(
@@ -580,7 +580,7 @@ public class ElaborationDAO {
 									.getValue(ELABORATION_DETAIL.ELABORATION)))
 					.setDate(r.getValue(ELABORATION_DETAIL.DATE))
 					.setItem(
-							new Item().setId(r
+							new OldItem().setId(r
 									.getValue(ELABORATION_DETAIL.ITEM)))
 					.setQuantity(r.getValue(ELABORATION_DETAIL.QUANTITY))
 					.setWarehouse(
@@ -610,7 +610,7 @@ public class ElaborationDAO {
 							new ElaborationDetail().setId(r
 									.getValue(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL)))
 					.setItem(
-							new Item().setId(r
+							new OldItem().setId(r
 									.getValue(ELABORATION_DETAIL_COMPOSITION.ITEM)))
 					.setQuantity(
 							r.getValue(ELABORATION_DETAIL_COMPOSITION.QUANTITY))

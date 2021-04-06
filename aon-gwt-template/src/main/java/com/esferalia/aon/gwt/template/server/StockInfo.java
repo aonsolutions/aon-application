@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.template.server;
 
-import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class StockInfo implements IsSerializable{
@@ -16,12 +16,12 @@ public class StockInfo implements IsSerializable{
 	String workplaceStr;
 	String departmentStr;
 	
-	Item item;
+	OldItem item;
 	
-	public Item getItem() {
+	public OldItem getItem() {
 		return item;
 	}
-	public StockInfo setItem(Item item) {
+	public StockInfo setItem(OldItem item) {
 		this.item = item;
 		return this;
 	}

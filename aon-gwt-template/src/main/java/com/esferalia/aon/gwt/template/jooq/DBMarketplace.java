@@ -44,8 +44,8 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.ItemAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -217,11 +217,11 @@ public class DBMarketplace {
 		return AON.getMatketplaceTagList(domain.getName(), domain.getId(), user.getLogin());
 	}
 	
-	public static List<Product> getProductList(Domain domain, String login, Integer category){
+	public static List<OldProduct> getProductList(Domain domain, String login, Integer category){
 		return getProductList(domain, login, category, null, null, null);
 	}
 
-	public static List<Product> getProductList(Domain domain, String login, Integer category, Boolean active, Boolean sales, Boolean serializable){
+	public static List<OldProduct> getProductList(Domain domain, String login, Integer category, Boolean active, Boolean sales, Boolean serializable){
 		AONContext ctx = null;
 		try {			
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -235,9 +235,9 @@ public class DBMarketplace {
 					.and(active!=null?PRODUCT.STATUS.equal(active?ProductStatus.ACTIVE.value():ProductStatus.DISCONTINUED.value()):PRODUCT.STATUS.isNotNull())
 					.orderBy(PRODUCT.NAME)
 					.fetchInto(PRODUCT);
-			List<Product> list = new ArrayList<Product>();
+			List<OldProduct> list = new ArrayList<OldProduct>();
 			result.stream().forEachOrdered(record ->{
-				Product product = new Product();
+				OldProduct product = new OldProduct();
 				product.setId(record.getId());
 				product.setCode(record.getCode());
 				product.setName(record.getName());
@@ -251,19 +251,19 @@ public class DBMarketplace {
 		}
 	}
 	
-	public static List<Item> getMarketItemList(Domain domain, String login, Integer category, Boolean active, Boolean sales){
+	public static List<OldItem> getMarketItemList(Domain domain, String login, Integer category, Boolean active, Boolean sales){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			List<Item> list = new ArrayList<>();
+			List<OldItem> list = new ArrayList<>();
 			
-			List<Product> serialProducts = getProductList(domain, login, category, active, sales, true);
+			List<OldProduct> serialProducts = getProductList(domain, login, category, active, sales, true);
 			fillItemList(ctx, domain, list, serialProducts, true);
 			
-			List<Product> noSerialProducts = getProductList(domain, login, category, active, sales, false);
+			List<OldProduct> noSerialProducts = getProductList(domain, login, category, active, sales, false);
 			fillItemList(ctx, domain, list, noSerialProducts, null);
 			
-			Collections.sort(list, (Item o1, Item o2) -> o1.getProduct().getName().compareTo(o2.getProduct().getName()));
+			Collections.sort(list, (OldItem o1, OldItem o2) -> o1.getProduct().getName().compareTo(o2.getProduct().getName()));
 			
 			return list;
 			
@@ -273,8 +273,8 @@ public class DBMarketplace {
 		}
 	}
 	
-	private static void fillItemList(AONContext ctx, Domain domain, List<Item> list, List<Product> products, Boolean serial){
-		List<Integer> productIds = products.stream().map(Product::getId).collect(Collectors.toList());
+	private static void fillItemList(AONContext ctx, Domain domain, List<OldItem> list, List<OldProduct> products, Boolean serial){
+		List<Integer> productIds = products.stream().map(OldProduct::getId).collect(Collectors.toList());
 		Result<ItemRecord> result = ctx.getDslContext().select()
 				.from(ITEM)
 				.where(ITEM.DOMAIN.eq(domain.getId()))
@@ -282,7 +282,7 @@ public class DBMarketplace {
 				.and(ITEM.PRODUCT.in(productIds))
 				.fetchInto(ITEM);
 		result.stream().forEachOrdered(record ->{
-			Item item = new Item();
+			OldItem item = new OldItem();
 			item.setId(record.getId());
 			item.setDetail(record.getDetail());
 			item.setDetail2(record.getDetail2());
@@ -320,7 +320,7 @@ public class DBMarketplace {
 		}
 	}
 	
-	public static Attach getItemTemplateAttach(Domain domain, String login, String templateName, Item item) {
+	public static Attach getItemTemplateAttach(Domain domain, String login, String templateName, OldItem item) {
 		AONContext ctx = null;
 		try {			
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -390,7 +390,7 @@ public class DBMarketplace {
 		else return "";
 	}
 	
-	public static boolean acceptProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
+	public static boolean acceptProductValues(Domain domain, String login, OldItem item, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
 		/* TODO VARIABLE SISTEMA
 		ecommerceProduct.getProductData().getEcommerce().stream().forEach(r -> {
 			if(r.getValue().contains("{brand}"))

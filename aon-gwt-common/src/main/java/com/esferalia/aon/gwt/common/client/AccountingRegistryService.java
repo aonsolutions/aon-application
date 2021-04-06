@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.common.client;
 
 import java.util.LinkedList;
 
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryParams;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
@@ -19,7 +19,7 @@ public interface AccountingRegistryService extends RemoteService {
 	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain, String user,String query) throws AonCoreException;
 	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain, String user,AccountingRegistryParams params) throws AonCoreException;
 	LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName,int domain, String user,String query) throws AonCoreException;
-	LinkedList<Product> getInvoiceProducts(String domainName,int domain, String user,String query) throws AonCoreException;
+	LinkedList<OldProduct> getInvoiceProducts(String domainName,int domain, String user,String query) throws AonCoreException;
 	AccountingRegistry insert(String domainName,int domain, String user,AccountingRegistry reg) throws AonCoreException;
 	AccountingRegistry update(String domainName,int domain, String user,AccountingRegistry reg) throws AonCoreException;
 

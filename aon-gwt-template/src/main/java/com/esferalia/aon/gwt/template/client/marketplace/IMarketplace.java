@@ -10,8 +10,8 @@ import com.esferalia.aon.gwt.template.shared.marketplace.Order;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -37,25 +37,25 @@ public interface IMarketplace extends RemoteService{
 	
 	public LinkedList<Tag> getMarketplaceTagList(Domain domain, User user);
 	
-	List<Product> getProductList(Domain domain, String login, Integer category);
+	List<OldProduct> getProductList(Domain domain, String login, Integer category);
 
-	List<Product> getProductList(Domain domain, String login, Integer category, Boolean active);
+	List<OldProduct> getProductList(Domain domain, String login, Integer category, Boolean active);
 
-	List<Product> getSalesProductList(Domain domain, String login, Integer category, Boolean active, Boolean sales);
+	List<OldProduct> getSalesProductList(Domain domain, String login, Integer category, Boolean active, Boolean sales);
 	
-	public List<Item> getMarketItemList(Domain domain, String login, Integer category, Boolean active, Boolean sales);
+	public List<OldItem> getMarketItemList(Domain domain, String login, Integer category, Boolean active, Boolean sales);
 	
-	public Vector<Item> searchItemByProductName(String searchStr, Vector<Item> list);
+	public Vector<OldItem> searchItemByProductName(String searchStr, Vector<OldItem> list);
 	
 	List<RegistryAttachTag> getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList);
 	
 	public List<Attach> obtainEcommerceProductTemplates(Domain domain, User user, String sellerId);
 	
-	public Attach obtainEcommerceProductAttach(Domain domain, User user, Item item, String templateName);
+	public Attach obtainEcommerceProductAttach(Domain domain, User user, OldItem item, String templateName);
 
-	public EcommerceProduct obtainEcommerceProductValues(Domain domain, User user, Attach attach, Item item);
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, User user, Attach attach, OldItem item);
 	
-	public EcommerceProduct obtainEcommerceProductValues(Domain domain, User user, Item item, String templateName);
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, User user, OldItem item, String templateName);
 	
-	public Boolean acceptEcommerceProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct eProduct, Attach iattach);
+	public Boolean acceptEcommerceProductValues(Domain domain, String login, OldItem item, String templateName, EcommerceProduct eProduct, Attach iattach);
 }

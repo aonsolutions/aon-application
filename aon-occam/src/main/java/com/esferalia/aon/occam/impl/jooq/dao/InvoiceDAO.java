@@ -69,8 +69,8 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -477,7 +477,7 @@ public class InvoiceDAO {
 						.setRegistry(record.getValue(INVOICE.REGISTRY))
 						.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE)))
 					.setItem((record.getValue(INVOICE_DETAIL.ITEM) == null)? null
-						: new Item().setId(record.getValue(INVOICE_DETAIL.ITEM))
+						: new OldItem().setId(record.getValue(INVOICE_DETAIL.ITEM))
 							.setCode(record.getValue(PRODUCT.CODE ))
 							.setName(record.getValue(PRODUCT.NAME)))	
 					.setDescription(record.getValue( INVOICE_DETAIL.DESCRIPTION ))
@@ -657,11 +657,11 @@ public class InvoiceDAO {
 				.setTaxableBase(record.getValue(INVOICE_DETAIL.TAXABLE_BASE))
 				.setItem((record.getValue(INVOICE_DETAIL.ITEM) == null)
 					? null
-					: new Item()
+					: new OldItem()
 						.setId(record.getValue(INVOICE_DETAIL.ITEM))
 						.setCategory( record.getValue( PCATEGORY.NAME ) )
 						.setProductId( record.getValue( PRODUCT.ID ) )
-						.setProduct(new Product().setCategory(record.getValue(PRODUCT.CATEGORY)))
+						.setProduct(new OldProduct().setCategory(record.getValue(PRODUCT.CATEGORY)))
 						.setBrand(record.getValue(BRAND.NAME))
 						.setName( record.getValue( PRODUCT.NAME ) )
 						.setCode(record.getValue( PRODUCT.CODE ) )
@@ -684,7 +684,7 @@ public class InvoiceDAO {
 		
 	}
 	
-	public static InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId){
+	public static InvoiceDetail getLastInvoiceDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId){
 		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
@@ -699,7 +699,7 @@ public class InvoiceDAO {
 				.findFirst().orElse(new InvoiceDetail());
 	}
 	
-	public static InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date){
+	public static InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date){
 		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 
@@ -716,7 +716,7 @@ public class InvoiceDAO {
 				.findFirst().orElse(new InvoiceDetail());
 	}
 	
-	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId) {
+	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId) {
 		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
@@ -745,7 +745,7 @@ public class InvoiceDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId, Date date) {
+	public static LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId, Date date) {
 		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 		return ctx.getDslContext()
@@ -777,7 +777,7 @@ public class InvoiceDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId) {
+	public static LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId) {
 		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 
@@ -806,7 +806,7 @@ public class InvoiceDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
-	public static LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date) {
+	public static LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date) {
 		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
 		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
 
@@ -934,7 +934,7 @@ public class InvoiceDAO {
 					.setPrice(r.getValue(INVOICE_DETAIL.PRICE))
 					.setId(r.getValue(INVOICE_DETAIL.ID))
 					.setItem((r.getValue(INVOICE_DETAIL.ITEM) == null)? null
-							: new Item().setId(r.getValue(INVOICE_DETAIL.ITEM)))
+							: new OldItem().setId(r.getValue(INVOICE_DETAIL.ITEM)))
 					.setDiscountExpression(r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR) != null
 							? r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR) : "0.0")
 					.setQuantity(
@@ -1640,7 +1640,7 @@ public class InvoiceDAO {
 					);			
 	}
 	
-	public static Stream<Product> getInvoiceProducts(AONContext ctx, ProductFilter filter) {
+	public static Stream<OldProduct> getInvoiceProducts(AONContext ctx, ProductFilter filter) {
 		return 	ctx.getDslContext().select(PRODUCT.ID,PRODUCT.NAME,PRODUCT.CODE)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
@@ -1655,7 +1655,7 @@ public class InvoiceDAO {
 			.limit(30)
 			.fetch()
 			.stream()
-			.map(rec -> new Product()
+			.map(rec -> new OldProduct()
 					.setId( rec.getValue(PRODUCT.ID) )
 					.setCode( rec.getValue(PRODUCT.CODE) )
 					.setName(rec.getValue(PRODUCT.NAME))

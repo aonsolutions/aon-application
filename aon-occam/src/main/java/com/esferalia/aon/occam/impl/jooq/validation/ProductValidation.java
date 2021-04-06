@@ -9,8 +9,8 @@ import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -22,7 +22,7 @@ public class ProductValidation {
 	/**
 	 * El dominio del producto no puede estar vacio.
 	 */
-	public static BiConsumer<Product,AONContext> EMPTY_DOMAIN = (p,ctx) -> {
+	public static BiConsumer<OldProduct,AONContext> EMPTY_DOMAIN = (p,ctx) -> {
 		if (p.getDomain() == null) 
 			throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 	};
@@ -30,7 +30,7 @@ public class ProductValidation {
 	/**
 	 * El nombre del producto no puede estar vacio.
 	 */
-	public static BiConsumer<Product,AONContext> CHECK_PRODUCT = (p,ctx) -> {
+	public static BiConsumer<OldProduct,AONContext> CHECK_PRODUCT = (p,ctx) -> {
 		if(p.getName() == null)
 			throw new AonCoreException(AonError.EMPTY_PRODUCT_NAME.getMessage());
 		if(p.isSerializable() && !p.isInventoriable())
@@ -48,7 +48,7 @@ public class ProductValidation {
 	 *  &&
 	 * El código del producto no puede estar duplicado con un producto del dominio padre o hijo.
 	 */
-	public static BiConsumer<Product, AONContext> CHECK_VALID_CODE = (p, ctx) -> {
+	public static BiConsumer<OldProduct, AONContext> CHECK_VALID_CODE = (p, ctx) -> {
 		if(p.getCode() == null)
 			throw new AonCoreException(AonError.EMPTY_PRODUCT_CODE.getMessage());
 		
@@ -93,7 +93,7 @@ public class ProductValidation {
 
 	};
 	
-	public static void validate(AONContext ctx, Product p) throws AonCoreException {
+	public static void validate(AONContext ctx, OldProduct p) throws AonCoreException {
 		EMPTY_DOMAIN
 			.andThen(CHECK_PRODUCT)
 			.andThen(CHECK_VALID_CODE)
@@ -185,7 +185,7 @@ public class ProductValidation {
 	/**
 	 * El dominio de Item no puede estar vacio.
 	 */
-	public static BiConsumer<Item,AONContext> EMPTY_DOMAIN_ITEM = (i,ctx) -> {
+	public static BiConsumer<OldItem,AONContext> EMPTY_DOMAIN_ITEM = (i,ctx) -> {
 		if (i.getDomain() == null) 
 			throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 	};
@@ -193,7 +193,7 @@ public class ProductValidation {
 	/**
 	 * El id de Producto de Item no puede estar vacio.
 	 */
-	public static BiConsumer<Item,AONContext> EMPTY_PRODUCT_ITEM = (i,ctx) -> {
+	public static BiConsumer<OldItem,AONContext> EMPTY_PRODUCT_ITEM = (i,ctx) -> {
 		if (i.getProductId() == null) 
 			throw new AonCoreException(AonError.EMPTY_PRODUCT.getMessage());
 	};
@@ -201,7 +201,7 @@ public class ProductValidation {
 	/**
 	 * El dominio de Item no puede estar vacio.
 	 */
-	public static BiConsumer<Item,AONContext> EXIST_PRODUCT_ITEM = (i,ctx) -> {
+	public static BiConsumer<OldItem,AONContext> EXIST_PRODUCT_ITEM = (i,ctx) -> {
 		int count = ctx.getDslContext().selectCount()
 				.from(PRODUCT)
 				.where(PRODUCT.ID.eq(i.getProductId()))
@@ -216,7 +216,7 @@ public class ProductValidation {
 	 * 	&&
 	 * El Código de barras del producto no puede estar duplicado con el dominio padre o hijo.
 	 */
-	public static BiConsumer<Item, AONContext> CHECK_VALID_BARCODE = (i,ctx) -> {
+	public static BiConsumer<OldItem, AONContext> CHECK_VALID_BARCODE = (i,ctx) -> {
 		if(i.getBarcode() != null){
 			int count = ctx.getDslContext().selectCount()
 					.from(ITEM)
@@ -266,7 +266,7 @@ public class ProductValidation {
 	/**
 	 * El detalle de un producto no puede estar duplicado para un mismo dominio.
 	 */
-	public static BiConsumer<Item, AONContext> CHECK_VALID_DETAILS = (i,ctx) -> {
+	public static BiConsumer<OldItem, AONContext> CHECK_VALID_DETAILS = (i,ctx) -> {
 		int count;
 		if(i.getDetail() != null)
 			count = ctx.getDslContext().selectCount()
@@ -336,7 +336,7 @@ public class ProductValidation {
 	/**
 	 * EL número de serie del producto no puede estar duplicado.
 	 */
-	public static BiConsumer<Item, AONContext> CHECK_VALID_SERIAL_NUMBER = (i,ctx) -> {		
+	public static BiConsumer<OldItem, AONContext> CHECK_VALID_SERIAL_NUMBER = (i,ctx) -> {		
 		if(i.getSerialNumber() != null){
 			int count = ctx.getDslContext().selectCount()
 				.from(ITEM)
@@ -362,7 +362,7 @@ public class ProductValidation {
 			throw new AonCoreException("El producto no es inventariable");
 	};
 	
-	public static void validateItem(AONContext ctx, Item i) throws AonCoreException{
+	public static void validateItem(AONContext ctx, OldItem i) throws AonCoreException{
 		EMPTY_DOMAIN_ITEM
 			.andThen(EMPTY_PRODUCT_ITEM)
 			//.andThen(EXIST_PRODUCT_ITEM)

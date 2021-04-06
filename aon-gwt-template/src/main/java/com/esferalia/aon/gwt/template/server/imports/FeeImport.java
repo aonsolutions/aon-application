@@ -26,8 +26,8 @@ import com.esferalia.aon.occam.api.model.Properties.WorkplaceProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
-import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -278,11 +278,11 @@ public class FeeImport extends Import {
 			error.setTextError("Línea " + feeInfo.getLine() + ": El código de producto está vacío o es demasiado largo.");
 			return error;
 		}
-		Product product = AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> productFilter(domain, user, feeInfo.getFee().getItem(), f));			
+		OldProduct product = AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> productFilter(domain, user, feeInfo.getFee().getItem(), f));			
 		if(product.getId() == null) {
 			Tax tax = AON.getTax(domain.getName(), domain.getId(), user.getLogin(), f -> vatFilter(domain, user, f));
 			
-			product = AON.insertProduct(domain.getName(), domain.getId(), user.getLogin(), new Product()
+			product = AON.insertProduct(domain.getName(), domain.getId(), user.getLogin(), new OldProduct()
 					.setDomain(domain.getId())
 					.setName(AonStringUtils.isEmpty(fee.getDescription()) 
 							? fee.getItem().getProduct().getCode()
@@ -293,7 +293,7 @@ public class FeeImport extends Import {
 					.setType(ProductType.SERVICE.value())
 					.setStatus(ProductStatus.ACTIVE.value())
 					.setInventoriable(false));
-			AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), new Item()
+			AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), new OldItem()
 					.setDomain(domain.getId())
 					.setProduct(product)
 					.setProductId(product.getId())
@@ -302,9 +302,9 @@ public class FeeImport extends Import {
 			
 			error.setTextWarning("Línea " + feeInfo.getLine() + ": El producto introducido no existe. Se ha creado un nuevo producto con código " + product.getCode() + ".");
 		}
-		Product p = product;
+		OldProduct p = product;
 		// ITEM
-		Item item = AON.getItem(domain.getName(), domain.getId(), user.getLogin(), f -> itemFilter(domain, user, p, feeInfo.getFee().getItem(), f));
+		OldItem item = AON.getItem(domain.getName(), domain.getId(), user.getLogin(), f -> itemFilter(domain, user, p, feeInfo.getFee().getItem(), f));
 		if(item.getId() == null) {			
 			item = AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), fee.getItem()
 					.setDomain(domain.getId())
@@ -394,7 +394,7 @@ public class FeeImport extends Import {
 			.and(f.getDescriptionProperty().eq(workplace.getDescription()));
 	}
 	
-	private static Filter productFilter(Domain domain, User user, Item item, ProductProperties f) {
+	private static Filter productFilter(Domain domain, User user, OldItem item, ProductProperties f) {
 		return f.getDomainProperty().eq(domain.getId())
 				.and(f.getCodeProperty().eq(item.getProduct().getCode()));
 	}
@@ -411,7 +411,7 @@ public class FeeImport extends Import {
 					.or(f.getNameProperty().eq(fee.getProject().getAlias())));
 	}
 	
-	private static Filter itemFilter(Domain domain, User user, Product product, Item item, ItemProperties f) {
+	private static Filter itemFilter(Domain domain, User user, OldProduct product, OldItem item, ItemProperties f) {
     	Filter filter =  f.getDomainProperty().eq(domain.getId())
     			.and(f.getProductProperty().eq(product.getId()));
     	
