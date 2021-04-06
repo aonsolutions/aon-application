@@ -31,7 +31,7 @@ import com.esferalia.aon.occam.test.registry.task_holder.TaskHolderTestSuite;
 	TaskHolderTestSuite.class,
 	FinanceTestSuite.class,
 	AccountingTestSuite.class,
-	JsonTestSuite.class,
+//	JsonTestSuite.class,
 //	AnalyticalAccountingTestSuite.class,
 })
 public class OccamTestSuite {
