@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.calculator;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
@@ -588,6 +589,15 @@ public class ContractLeaveLoader {
 	}
 
 	protected double getAdjustDays(ExpressionContext ctx, Period p, long days) {
+		
+		try {
+			ITimedVariable<?> efectiveStart = ctx.getVariable(EFECTIVE_START, p.getStart(), p.getEnd());
+			Date start = efectiveStart.getPeriod().getStart();
+			Date value = ( Date ) efectiveStart.getValue(efectiveStart.getPeriod());
+			if ( value.after(start) )
+				return days;
+		} catch (Exception e) {
+		}
 
 //		try {
 //			if (!ctx.getVariable(FULL_TIME, p.getStart(), p.getEnd(), Boolean.class))

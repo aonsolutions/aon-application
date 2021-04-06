@@ -276,6 +276,8 @@ public enum ContextVariable implements IResourceable {
 	
 	TOTAL_WORKED_DAYS("DIAS_TRABAJADOS_TOTALES", VariableType.DOUBLE, false),
 	TOTAL_DAYS("DIAS_TOTALES", VariableType.DOUBLE, false),
+
+	EFECTIVE_START("INICIO_EFECTIVO", VariableType.DATE, false),
 	;
 
 	public static final String ALL = "_P";
