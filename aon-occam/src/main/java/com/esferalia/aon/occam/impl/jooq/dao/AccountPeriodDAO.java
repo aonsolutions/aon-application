@@ -13,12 +13,15 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.Record10;
 import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -26,6 +29,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountPeriodFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccountPeriodProperties;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -39,6 +43,7 @@ public class AccountPeriodDAO {
 	private static class AccountPeriodPropertiesDAO implements AccountPeriodProperties {
 
 		private Condition[] getConditions(AccountPeriodFilter filter) {
+			if (filter==null) return new Condition[0];
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null)
 				return new Condition[0];
@@ -51,16 +56,19 @@ public class AccountPeriodDAO {
 		@Override public Property<Date> getDeadlineProperty() {return new FilterDAO.DatePropertyDAO(ACCOUNT_PERIOD.DEADLINE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_PERIOD.STATUS);}
 	}
-
-	public static Stream<AccountPeriod> getPeriods(AONContext ctx, AccountPeriodFilter filter) {
-		ctx.checkRead();
-		ApplicationParameter ap = AppParamDAO.fetchOne(ctx, AppParam.ACC_DEFAULT_PERIOD);
+	public static SelectConditionStep<Record10<Integer,Integer,String,java.sql.Date,java.sql.Date,Byte,String,Timestamp,String,Timestamp>> select(AONContext ctx, AccountPeriodFilter filter) {
 		return ctx.getDslContext()
 			.select(ACCOUNT_PERIOD.ID,ACCOUNT_PERIOD.DOMAIN,ACCOUNT_PERIOD.NAME,ACCOUNT_PERIOD.INITIATION_DATE
 					,ACCOUNT_PERIOD.DEADLINE,ACCOUNT_PERIOD.STATUS,ACCOUNT_PERIOD.CREATION_USER
 					,ACCOUNT_PERIOD.CREATION_DATE,ACCOUNT_PERIOD.MODIFICATION_USER,ACCOUNT_PERIOD.MODIFICATION_DATE)
 			.from(ACCOUNT_PERIOD)
-			.where(ACCOUNT_PERIOD_PROPERTIES.getConditions(filter))
+			.where(ACCOUNT_PERIOD_PROPERTIES.getConditions(filter));
+	}
+
+	public static Stream<AccountPeriod> getPeriods(AONContext ctx, AccountPeriodFilter filter) {
+		ctx.checkRead();
+		ApplicationParameter ap = AppParamDAO.fetchOne(ctx, AppParam.ACC_DEFAULT_PERIOD);
+		return select( ctx, filter)
 			.orderBy(ACCOUNT_PERIOD.INITIATION_DATE.desc())
 			.fetch()
 			.stream()
@@ -357,4 +365,16 @@ public class AccountPeriodDAO {
 
 	}
 	
+	// *************************************************
+	// ********** TEST PURPOSE METHODS *****************
+	// *************************************************
+	public static AccountPeriod getRandom(AONContext ctx, AccountPeriodFilter filter) {
+		return select(ctx,filter)
+			.orderBy( DSL.rand() )
+			.fetch()
+			.stream()
+			.map(new FullAccountPeriodFiller())
+			.findFirst()
+			.orElse(null);
+	}
 }

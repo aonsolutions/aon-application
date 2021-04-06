@@ -60,11 +60,21 @@ public class AonNumberUtils {
 		return 0;
 	}
 
+	public static Integer toInteger(Number number) {
+		if (number == null) return null; 
+		return Integer.valueOf( number.intValue() );
+	}
+
 	public static Integer toInteger(String value) {
 		if (!AonStringUtils.isBlank(value)) {
 			return Integer.parseInt(value);
 		}
 		return null;
+	}
+
+	public static Double toDouble(Number number) {
+		if (number == null) return null; 
+		return Double.valueOf( number.doubleValue());
 	}
 
 	public static Double toDouble(String value) {

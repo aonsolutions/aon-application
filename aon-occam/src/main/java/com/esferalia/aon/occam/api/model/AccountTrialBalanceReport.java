@@ -238,5 +238,10 @@ public class AccountTrialBalanceReport implements Serializable{
 	public AccountTrialBalance getTotalBalance() {
 		return totalBalance;
 	}
+	public AccountTrialBalanceReport setTotalBalance(AccountTrialBalance totalBalance) {
+		this.totalBalance = totalBalance;
+		return this;
+	}
+	
 	
 }

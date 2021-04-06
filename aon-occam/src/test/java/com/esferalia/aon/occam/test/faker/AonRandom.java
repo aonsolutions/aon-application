@@ -1,10 +1,15 @@
 package com.esferalia.aon.occam.test.faker;
 
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
@@ -20,6 +25,8 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
@@ -43,7 +50,16 @@ public class AonRandom {
     public static boolean gt( int threshold) {
 		return faker.random().nextInt(0,100) > threshold;
 	}
-    
+    public static String string( int nullThreshold,  int maxLength ) {
+    	return ( gt(nullThreshold) )
+        		?faker.lorem().characters(0, 20)
+        		:null;
+    }
+    public static Integer integer( int nullThreshold,  int maxLength ) {
+    	return ( gt(nullThreshold) )
+        		?Integer.valueOf( getInt(0, 20) )
+        		:null;
+    }
     public static String lorem( int nullThreshold, int maxLength ) {
     	return ( gt(nullThreshold) )
         		?faker.lorem().characters(0, maxLength)
@@ -76,9 +92,25 @@ public class AonRandom {
     }
     
     public static Date getRandomYearDay( int year ) {
-    	return faker.date().between(AonDateUtils.getYearFirstDay(year),AonDateUtils.getYearLastDay(year));
+    	return truncate( faker.date().between(AonDateUtils.getYearFirstDay(year),AonDateUtils.getYearLastDay(year)));
     }
-
+    
+    public static Date getPastDate( int threshold ) {
+    	return ( gt(threshold) )
+        		?truncate( faker.date().past(100, TimeUnit.DAYS, new Date()))
+        		:null;
+    }
+    
+    private static Date truncate( Date date) {
+    	return date == null 
+			? null 
+			: Date.from(
+			date.toInstant()
+				.atZone(ZoneId.of("Europe/Madrid"))
+				.truncatedTo(ChronoUnit.DAYS)
+				.toInstant()		
+			);
+    }
 
     public static <T> T random(List<T> list){
     	if (list == null || list.isEmpty()) return null;
@@ -148,6 +180,22 @@ public class AonRandom {
 		return SupplierDAO.getRandom(ctx, filter);
 	}
 	
+	public static Account getAccount(AONContext ctx) {
+		return getAccount(ctx, 0);
+	}
+	public static Account getAccount(AONContext ctx, int nullThreshold){
+		return gt(nullThreshold)
+			?AccountDAO.getRandom(ctx, null )
+			:null;
+	}
+	public static AccountPeriod getAccountPeriod(AONContext ctx) {
+		return getAccountPeriod(ctx, 0);
+	}
+	public static AccountPeriod getAccountPeriod(AONContext ctx, int nullThreshold){
+		return gt(nullThreshold)
+			?AccountPeriodDAO.getRandom(ctx, null )
+			:null;
+	}
 	
 	public static EnterpriseActivity getRandomActivity(AONContext ctx) {
 		boolean mainActivity = gt(85);

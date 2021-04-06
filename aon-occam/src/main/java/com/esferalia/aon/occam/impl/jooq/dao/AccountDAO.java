@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectSeekStep1;
 import org.jooq.impl.DSL;
 
@@ -26,6 +27,7 @@ public class AccountDAO {
 	private static final AccountPropertiesDAO ACCOUNT_PROPERTIES = new AccountPropertiesDAO();
 	private static class AccountPropertiesDAO implements AccountProperties {
 		private Condition[] getConditions(AccountFilter filter) {
+			if (filter==null) return new Condition[0];
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
@@ -56,12 +58,15 @@ public class AccountDAO {
 			.setCostCenter(record.getValue(ACCOUNT.COST_CENTER));
 		}
 	}
-	private static SelectSeekStep1<AccountRecord,String> getAccountSelect(AONContext ctx, AccountFilter filter) {
+	private static SelectConditionStep<AccountRecord> select(AONContext ctx, AccountFilter filter) {
 		return ctx.getDslContext()
 				.selectFrom(ACCOUNT)
 				.where(ACCOUNT_PROPERTIES.getConditions(filter))
-				.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-				.orderBy(ACCOUNT.CODE);
+				.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)));
+	}
+	private static SelectSeekStep1<AccountRecord,String> getAccountSelect(AONContext ctx, AccountFilter filter) {
+		return select(ctx,filter)
+			.orderBy(ACCOUNT.CODE);
 	}
 
 	private static Stream<AccountRecord> getAccountStream(AONContext ctx, AccountFilter filter) {
@@ -274,6 +279,18 @@ public class AccountDAO {
 		return c!=null?c:DSL.trueCondition();
 	}
 
+	// *************************************************
+	// ********** TEST PURPOSE METHODS *****************
+	// *************************************************
+	public static Account getRandom(AONContext ctx, AccountFilter filter) {
+		return select(ctx,filter)
+			.orderBy( DSL.rand() )
+			.fetch()
+			.stream()
+			.map(new FullAccountFiller())
+			.findFirst()
+			.orElse(null);
+	}
 }
 
 

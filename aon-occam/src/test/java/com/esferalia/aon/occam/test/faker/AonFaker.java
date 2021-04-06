@@ -4,14 +4,20 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.TreeMap;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
+import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -28,7 +34,9 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.MediaType.IMediaTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -232,6 +240,99 @@ public class AonFaker {
 			.setInitiationDate(AonDateUtils.getYearFirstDay(date))
 			.setDeadline(AonDateUtils.getYearLastDay(date))
 			.setStatus(status);
+	}
+
+	public static AccountingReportParams getAccountingReportParams(AONContext ctx) {
+		return new AccountingReportParams()
+			.setDomainName(faker.internet().domainName())
+			.setDomain( AonRandom.getInt(0, 10000000) )
+			.setUser( AonRandom.string(5, 15 ))
+			.setPeriod( AonRandom.integer(15, 1000) )
+			.setFromDate( AonRandom.getPastDate(10) )
+			.setToDate( AonRandom.getPastDate(10) )
+			.setAccount( AonRandom.getAccount(ctx,80))
+			.setLevel( AonRandom.getInt(0, 9) )
+			.setActivity( AonRandom.integer(75, 1000) )
+			.setSecurityLevel( AonRandom.randomEnum(SecurityLevel.class))
+			.setDocumentNumber( AonRandom.string(5, 15 ))
+			.setPreviousPeriods( AonRandom.getInt(0, 9) )
+			.setLowLevelAccountVisible(AonRandom.gt( 50 ))
+			.setNoActivityAccountVisible(AonRandom.gt( 50 ))
+			.setPercentsEnabled(AonRandom.gt( 50 ))
+			.setByMonth(AonRandom.gt( 50 ))
+			.setOpeningEntriesExcluded(AonRandom.gt( 50 ))
+			.setOperatingEntriesExcluded(AonRandom.gt( 50 ))
+			.setClosingEntriesExcluded(AonRandom.gt( 50 ))
+			.setReverseOrder(AonRandom.gt( 50 ))
+			.setBalanceType(AonRandom.randomEnum(BalanceType.class))
+			.setSelectedPeriod(AonRandom.getAccountPeriod(ctx, 85))
+			.setSelectedActivity(AonRandom.getRandomActivity(ctx))
+			.setSelectedAccount( AonRandom.getAccount(ctx,80))
+			.setBreakdownEnabled(AonRandom.gt( 50 ))
+			.setLedgerAccount( AonRandom.integer(75, 1000) )
+			.setLedgerDebitBalance( AonRandom.getDouble(0, 1000, 2))
+			.setLedgerUnpaidBalance( AonRandom.getDouble(0, 1000, 2))
+			.setConsolidation(AonRandom.gt( 50 ))
+			.setRegistry( AonRandom.integer(75, 1000) )
+			.setOutput(AonRandom.gt( 50 ))
+			.setVatSummaryType(AonRandom.randomEnum(VatSummaryType.class))
+			.setPercent( AonRandom.getDouble(0, 100, 2))
+			.setRectificationType(AonRandom.randomEnum(RectificationType.class))
+			.setSurcharge(AonRandom.gt( 50 ))
+			.setFarmerRegime(AonRandom.gt( 50 ))
+			.setAccrualRegime(AonRandom.gt( 50 ))
+			.setInvestment(AonRandom.gt( 50 ))
+			.setService(AonRandom.gt( 50 ))
+			.setTitle( AonRandom.string(50, 100 ))
+			.setSubject( AonRandom.string(50, 100 ))
+			.setShowCover(AonRandom.gt( 50 ))
+			.setPageOffset( AonRandom.getInt(0, 50 ))
+			.setPageOffsetText(AonRandom.string(50, 100 ))
+			.setHideFilter(AonRandom.gt( 50 ))
+			.setHeaderText(AonRandom.string(50, 100 ))
+			.setHideDateTimeOnFooter(AonRandom.gt( 50 ))
+			.setFooterText(AonRandom.string(50, 100 ))
+		;
+//		private Integer[] invoices;
+//		private LinkedList<Domain> domains;
+//		private HashSet<String> costCenters;
+	}
+
+	public static AccountTrialBalance getAccountTrialBalance(AONContext ctx) {
+		return new AccountTrialBalance()
+			.setId( AonRandom.integer(5, 1000000 ))
+			.setCode(AonRandom.string( 5, 9 ))
+			.setDescription(AonRandom.string( 5, 39 ))
+			.setBeforePeriodDebit(AonRandom.getDouble(0, 150000))
+			.setBeforePeriodCredit(AonRandom.getDouble(0, 150000))
+			.setInPeriodOpeningDebit(AonRandom.getDouble(0, 150000))
+			.setInPeriodOpeningCredit(AonRandom.getDouble(0, 150000))
+			.setInPeriodBeforeDebit(AonRandom.getDouble(0, 150000))
+			.setInPeriodBeforeCredit(AonRandom.getDouble(0, 150000))
+			.setInPeriodDebit(AonRandom.getDouble(0, 150000))
+			.setInPeriodCredit(AonRandom.getDouble(0, 150000))
+			;
+	}
+
+	public static AccountTrialBalanceReport getAccountTrialBalanceReport(AONContext ctx) {
+		AccountTrialBalanceReport report = new AccountTrialBalanceReport()
+				.setParams(getAccountingReportParams(ctx))
+				.setHasBeforePeriodAmounts(AonRandom.gt( 50 ))
+				.setHasOpeningAmounts(AonRandom.gt( 50 ))
+				.setHasInPeriodPreviousAmounts(AonRandom.gt( 50 ))
+				.setTotalBalance(getAccountTrialBalance(ctx));
+		Integer times = AonRandom.integer(10, 50);
+		if (times != null) {
+			AccountTrialBalance bal = getAccountTrialBalance(ctx);
+			if (AonStringUtils.isNotBlank( bal.getCode())){
+				if (report.getBalances() == null) {
+					report.setBalances(new TreeMap<String, AccountTrialBalance>());
+				}
+				report.getBalances().put(bal.getCode(), bal);
+			}
+		}
+		return report;
+		
 	}
 }
 
