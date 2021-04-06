@@ -106,7 +106,7 @@ public class Notification {
 			    if(responseEntity!=null) {
 			        String responseString = EntityUtils.toString(responseEntity);
 			        JSONObject responseJSON = new JSONObject(responseString);
-			        success = responseJSON.optString("success").equalsIgnoreCase("1");
+			        success = responseJSON.optInt("success") > 0;
 			    }
 		    } else {
 		    	throw new Exception(response.getReasonPhrase());

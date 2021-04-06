@@ -24,14 +24,14 @@ public class LocationServlet extends AonApiHttpServlet{
 		try {
 			super.doGet(req, resp);
 			switch (getPath()) {
-			case "/":
-				response(req, resp, getLocationList());
-				break;
-			case "/notification-test":
-				response(req, resp, notificationTest());
-				break;
-			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				case "/":
+					response(req, resp, getLocationList());
+					break;
+				case "/notification-test":
+					response(req, resp, notificationTest());
+					break;
+				default:
+					throw new Exception("La ruta introducida es incorrecta.");
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -44,11 +44,11 @@ public class LocationServlet extends AonApiHttpServlet{
 		try {
 			super.doPost(req, resp);
 			switch (getPath()) {
-			case "/":
-				response(req, resp, saveLocation());
-				break;
-			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				case "/":
+					response(req, resp, saveLocation());
+					break;
+				default:
+					throw new Exception("La ruta introducida es incorrecta.");
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -61,11 +61,11 @@ public class LocationServlet extends AonApiHttpServlet{
 		try {
 			super.doDelete(req, resp);
 			switch (getPath()) {
-			case "/":
-				response(req, resp, deleteLocation());
-				break;
-			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				case "/":
+					response(req, resp, deleteLocation());
+					break;
+				default:
+					throw new Exception("La ruta introducida es incorrecta.");
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -103,15 +103,12 @@ public class LocationServlet extends AonApiHttpServlet{
 	}
 	
 
-	public JSONObject notificationTest() {
-
-		String tokenStr = "d-BiuEqZ1t4ChD9uVo40BC:APA91bHObTy-Jek8O8u7hbsw8JJ-ZSznyL990YtCZRlXCguTulSbQIe-08cDn8O6zOgdPLURR2cRlRw6hQKYYkf_8p0BgyYaUlQoYmDqpg6kOyKx3vckLPX5yANRgzkK5-YIr-zAlvjF";
-//		String tokenStr = "123123123-YIr123";
-		Boolean success = new Notification().setBody("BODYYYYYYYY").setTitle("TITLE")
-		.setDeviceTokens(new String[] {tokenStr}).send();
-		 System.out.println("SUCCESS:" + success);
-		 return new JSONObject();
-
+	private JSONObject notificationTest() {
+		Boolean success = new Notification().setTitle("TITULO DE PRUEBA").setBody("CUERPO DE PRUEBA")
+		.setDeviceTokens(new String[] {getParams().optString("tokenFCM")}).send();
+		 JSONObject json = new JSONObject();
+		 json.put("success", success);
+		 return json;
 	}
 	
 }

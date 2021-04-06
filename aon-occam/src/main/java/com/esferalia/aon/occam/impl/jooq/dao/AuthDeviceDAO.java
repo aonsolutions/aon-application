@@ -24,7 +24,6 @@ public class AuthDeviceDAO {
 			: insert(ctx, ad);
 	}
 	private static AuthDevice insert(AONContext ctx, AuthDevice ad) {
-		ad.toJSON();
 		ctx.checkWrite();
 		String tokenFCM = ad.getDeviceToken();
 		AuthDevice authDeviceExist = getAuthDevice(ctx, f-> f.getDeviceTokenProperty().eq(tokenFCM));
