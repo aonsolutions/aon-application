@@ -20,6 +20,7 @@ public class AuthDeviceCreation implements Update {
 //	  `auth` BINARY(16) NOT NULL COMMENT 'Identificador unico de Auth',
 //	  `device_type` tinyint(2) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Tipo del dispositivo',
 //	  `device_token` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Token del dispositivo',
+//	  `last_date` timestamp NULL DEFAULT current_timestamp(),
 //	  PRIMARY KEY (`id`)
 //	) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dispositivos vinculados a auth';
 
@@ -43,6 +44,7 @@ public class AuthDeviceCreation implements Update {
 				"	  `auth` BINARY(16) NOT NULL COMMENT 'Identificador unico de Auth',\n" + 
 				"	  `device_type` tinyint(2) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Tipo del dispositivo',\n" + 
 				"	  `device_token` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Token del dispositivo',\n" + 
+				"	  `last_date` timestamp NULL DEFAULT current_timestamp() COMMENT 'Ultima conexion',\n" + 
 				"	  PRIMARY KEY (`id`)\n" + 
 				"	) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dispositivos vinculados a auth';";
 		

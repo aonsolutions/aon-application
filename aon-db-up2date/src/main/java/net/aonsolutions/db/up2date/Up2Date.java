@@ -152,10 +152,10 @@ public class Up2Date {
 			//Holidays2021Insert.HOLIDAYS2021INSERT,
 			//AdditionalHoursUpdate.ADDITIONALHOURSUPDATE,
 			//AuthDeviceCreation.AUTH_DEVICE_CREATION,
-    		//AuthDeviceUpdate.AUTH_DEVICE_UPDATE,
     		//PermissionNotPaidDaysInsert.PERMISSIONNOTPAIDDAYSINSERT,
     		//IfDaysInsert.IFDAYSINSERT
     		//Bases2021Update.BASES2021UPDATE
+    		AuthDeviceUpdate.AUTH_DEVICE_UPDATE,
     };
 
 
