@@ -11,35 +11,40 @@ export class AonElement extends HTMLElement{
   }
 
   isMobile() {
-    return this.iOS() || this.android() || this.blackBerry() || this.windowsPhone()  || this.isAppMobile() || (window.innerWidth <= 850 && window.innerHeight <= 912);
+    const reg = new RegExp(/mobile/i);
+    return this.navigatorPlatform().match(reg) || this.navigatorUserAgent().match(reg) || this.isAppMobile();
   }
 
   iOS() {
-    return navigator.platform.toLowerCase().includes('ipad')
-      || navigator.userAgent.toLowerCase().includes('ipad')
-      || navigator.platform.toLowerCase().includes('iphone')
-      || navigator.userAgent.toLowerCase().includes('iphone')
-      || navigator.platform.toLowerCase().includes('ipod')
-      || navigator.userAgent.toLowerCase().includes('ipod');
+    const reg = new RegExp(/iphone|ipad|ipod/i);
+    return this.navigatorPlatform().match(reg) || this.navigatorUserAgent().match(reg);
+  }
+
+  android() {
+    const reg =  new RegExp(/android/i);
+    return this.navigatorPlatform().match(reg) || this.navigatorUserAgent().match(reg);
+  }
+
+  blackBerry() {
+    const reg =  new RegExp(/blackberry/i);
+    return this.navigatorPlatform().match(reg) || this.navigatorUserAgent().match(reg);
+  }
+
+  windowsPhone() {
+    const reg =  new RegExp(/windows phone/i);
+    return this.navigatorPlatform().match(reg) || this.navigatorUserAgent().match(reg);
   }
 
   isAppMobile(){
     return webkitRequestMobile();
   }
 
-  android() {
-    return navigator.platform.toLowerCase().includes('android')
-      || navigator.userAgent.toLowerCase().includes('android');
+  navigatorPlatform(){
+    return navigator.platform.toLowerCase();
   }
 
-  blackBerry() {
-    return navigator.platform.toLowerCase().includes('blackberry')
-      || navigator.userAgent.toLowerCase().includes('blackberry');
-  }
-
-  windowsPhone() {
-    return navigator.platform.toLowerCase().includes('windows phone')
-      || navigator.userAgent.toLowerCase().includes('windows phone');
+  navigatorUserAgent(){
+    return navigator.userAgent.toLowerCase();
   }
 
   getElement(id) {
@@ -90,4 +95,5 @@ export class AonElement extends HTMLElement{
   getApplicationParent(){
     return this.getApplication().getParent();
   }
+
 }

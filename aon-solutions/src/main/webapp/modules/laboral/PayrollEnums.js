@@ -1,6 +1,4 @@
-// import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";
-// import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 
 export const PAYSHEET = {
   id: 'Paysheet',

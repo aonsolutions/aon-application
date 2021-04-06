@@ -86,7 +86,7 @@ export class AonSuggestion extends AonElement {
 
   connectedCallback() {
     this.innerHTML = `
-      <aon-input id="${this.INPUT}"  description="${this.title}" name="${this.name}"></aon-input>
+      <aon-input id="${this.INPUT}" description="${this.title}" name="${this.name}" autocomplete="off"></aon-input>
 		`;
     this.build();
   }

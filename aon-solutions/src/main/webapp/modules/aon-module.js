@@ -81,10 +81,24 @@ export class AonModule extends AonElement {
 	setWindowApp(){
 		window.setPosition = (pos) => setPosition(pos);
 
-		window.setTokenFCM =  (tk) =>  window.tokenFCM = tk;
+		window.setTokenFCM =  (token) => {
+			window.tokenFCM = token;	
+			this.saveTokenFcm(token);	
+		} 
 
 		window.setNotificationAction = (data) =>  {
 			console.log("data Notification1>", typeof data, data);
+			let dialog =  document.querySelector('aon-dialog');
+			if(dialog){
+				dialog.clear();
+				dialog.setContentHTML(data.body);
+				if (!this.isMobile()) dialog.width = '400px';
+				dialog.setTitle(data.title);
+				dialog.open();
+				dialog.addAcceptAction(() => {
+					console.log("aceptar");
+				});
+			}
 		}
 	}
 
@@ -92,7 +106,7 @@ export class AonModule extends AonElement {
 		try{
 			let token = undefined;
 			if(!this.isMobile()) { // initialize observer message firebase desk
-				const firebaseSrv = new FirebaseService;
+				const firebaseSrv = new FirebaseService();
 				token = await firebaseSrv.getTokenFB();
 				if (token) {
 					window.tokenFCM = token;
@@ -101,15 +115,16 @@ export class AonModule extends AonElement {
 						(payload) => firebaseSrv.pushNotification(payload),
 						(err) => console.log(err)
 					);
+					this.saveTokenFcm(token);
 				}
-			} else if(window.tokenFCM) {
-				token = window.tokenFCM;
-			}
-
-			if(token) await saveAuthDevice({tokenFCM:token});
-			console.log("TOKEN FCM", token);
+			} 
 		} catch(e){}
   	}
+
+	saveTokenFcm(tokenFCM){
+		console.log("TOKEN FCM", tokenFCM);
+		saveAuthDevice({tokenFCM});
+	}
 
 }
 window.customElements.define('aon-module',  AonModule);

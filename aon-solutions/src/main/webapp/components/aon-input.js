@@ -26,7 +26,8 @@ export class AonInput extends AonElement {
       CONSTANT.READONLY,
       CONSTANT.VISIBLE,
       CONSTANT.OPTIONS,
-      CONSTANT.DESCRIPTION
+      CONSTANT.DESCRIPTION,
+      CONSTANT.AUTOCOMPLETE
     ];
   }
 
@@ -68,6 +69,14 @@ export class AonInput extends AonElement {
 
   set description(description) {
     this.setAttribute(CONSTANT.DESCRIPTION, description);
+  }
+
+  get autocomplete() {
+    return this.getAttribute(CONSTANT.AUTOCOMPLETE);
+  }
+
+  set autocomplete(autocomplete) {
+    this.setAttribute(CONSTANT.AUTOCOMPLETE, autocomplete);
   }
 
   get visible() {
@@ -216,6 +225,7 @@ export class AonInput extends AonElement {
     label.style.width = "100%";
 
     let input = this.createElement(AON_TAG.INPUT);
+    if(this.autocomplete) input.autocomplete =this.autocomplete;
     input.required = true;
     input.id = this.INPUT;
     input.name = this.getAttribute(CONSTANT.NAME);

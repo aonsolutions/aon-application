@@ -29,6 +29,7 @@ export const READONLY = 'readonly';
 export const VISIBLE = 'visible';
 export const OPTIONS = 'options';
 export const DESCRIPTION = 'description';
+export const AUTOCOMPLETE = 'autocomplete';
 export const NAME = 'name';
 export const FILLED = 'filled';
 export const PATTERN = 'pattern';
