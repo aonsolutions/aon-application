@@ -16,13 +16,7 @@
 				<ui:param name="controller" value="#{scope}" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:if  test="#{domainSwitcher.parentDomain and (scope.ayudaT or domainSwitcher.betaUser)}">
-						<aon:commandButton id="send"
-							value="Generar por Empresa"
-							styleClass="aon-icon-accept aon-finding-toolbar-item"
-							actionListener="#{scope.generateCompanyScopes}">
-						</aon:commandButton>
-					</aon:if>		
+		
 				</ui:define>
 			</ui:decorate>
 		</aon:div>				

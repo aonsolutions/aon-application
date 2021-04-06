@@ -60,14 +60,7 @@
 											value="#{bundle.admin_global_configuration}" />
 									</aon:div>
 								</aon:if>
-								<aon:if  test="#{domainSwitcher.parentDomain and (scope.ayudaT or domainSwitcher.betaUser)}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="scope-configuration"
-												action="gwt_scope" title="Gestión de Seguridad">
-											<aon:outputText value="Gestión de Seguridad" />
-										</aon:commandLink>
-									</aon:div>
-								</aon:if>								
+								
 								<aon:if test="#{aonRole.admin or aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<h:outputLink value="https://www.aonsolutions.es/solicitud-copia-de-seguridad-datos-empresa/" target="_blank">
