@@ -1,403 +1,403 @@
 package solutions.aon.seg.social.objects;
 
 public class Liquidation {
-	private Float cc_base;
-	private Float cc_businessFee;
-	private Float cc_workerFee;
-	private Float cc_totalFee;
+	private Float ccBase;
+	private Float ccBusinessFee;
+	private Float ccWorkerFee;
+	private Float ccTotalFee;
 	
-	private Float ccLiquid_base;
-	private Float ccLiquid_businessFee;
-	private Float ccLiquid_workerFee;
-	private Float ccLiquid_totalFee;
+	private Float ccLiquidBase;
+	private Float ccLiquidBusinessFee;
+	private Float ccLiquidWorkerFee;
+	private Float ccLiquidTotalFee;
 	
-	private Float itWorkAccident_base;
-	private Float itWorkAccident_businessFee;
-	private Float itWorkAccident_workerFee;
-	private Float itWorkAccident_totalFee;
+	private Float itWorkAccidentBase;
+	private Float itWorkAccidentBusinessFee;
+	private Float itWorkAccidentWorkerFee;
+	private Float itWorkAccidentTotalFee;
 	
-	private Float imsWorkAccident_base;
-	private Float imsWorkAccident_businessFee;
-	private Float imsWorkAccident_workerFee;
-	private Float imsWorkAccident_totalFee;
+	private Float imsWorkAccidentBase;
+	private Float imsWorkAccidentBusinessFee;
+	private Float imsWorkAccidentWorkerFee;
+	private Float imsWorkAccidentTotalFee;
 	
-	private Float workAccidentLiquid_base;
-	private Float workAccidentLiquid_businessFee;
-	private Float workAccidentLiquid_workerFee;
-	private Float workAccidentLiquid_totalFee;
+	private Float workAccidentLiquidBase;
+	private Float workAccidentLiquidBusinessFee;
+	private Float workAccidentLiquidWorkerFee;
+	private Float workAccidentLiquidTotalFee;
 	
-	private Float grantsAndBonuses_base;
-	private Float grantsAndBonuses_businessFee;
-	private Float grantsAndBonuses_workerFee;
-	private Float grantsAndBonuses_totalFee;
+	private Float grantsAndBonusesBase;
+	private Float grantsAndBonusesBusinessFee;
+	private Float grantsAndBonusesWorkerFee;
+	private Float grantsAndBonusesTotalFee;
 	
-	private Float otherContributions_base;
-	private Float otherContributions_businessFee;
-	private Float otherContributions_workerFee;
-	private Float otherContributions_totalFee;
+	private Float otherContributionsBase;
+	private Float otherContributionsBusinessFee;
+	private Float otherContributionsWorkerFee;
+	private Float otherContributionsTotalFee;
 
-	private Float otherContributionsLiquid_base;
-	private Float otherContributionsLiquid_businessFee;
-	private Float otherContributionsLiquid_workerFee;
-	private Float otherContributionsLiquid_totalFee;
+	private Float otherContributionsLiquidBase;
+	private Float otherContributionsLiquidBusinessFee;
+	private Float otherContributionsLiquidWorkerFee;
+	private Float otherContributionsLiquidTotalFee;
 	
-	private Float totalLiquid_base;
-	private Float totalLiquid_businessFee;
-	private Float totalLiquid_workerFee;
-	private Float totalLiquid_totalFee;
-	
-	
+	private Float totalLiquidBase;
+	private Float totalLiquidBusinessFee;
+	private Float totalLiquidWorkerFee;
+	private Float totalLiquidTotalFee;
 	
 	
-	public Float getCc_base() {
-		return cc_base;
+	
+	
+	public Float getCcBase() {
+		return ccBase;
 	}
-	public void setCc_base(Float cc_base) {
-		this.cc_base = cc_base;
+	public void setCcBase(Float ccBase) {
+		this.ccBase = ccBase;
 	}
-	public Float getCc_businessFee() {
-		return cc_businessFee;
+	public Float getCcBusinessFee() {
+		return ccBusinessFee;
 	}
-	public void setCc_businessFee(Float cc_businessFee) {
-		this.cc_businessFee = cc_businessFee;
+	public void setCcBusinessFee(Float ccBusinessFee) {
+		this.ccBusinessFee = ccBusinessFee;
 	}
-	public Float getCc_workerFee() {
-		return cc_workerFee;
+	public Float getCcWorkerFee() {
+		return ccWorkerFee;
 	}
-	public void setCc_workerFee(Float cc_workerFee) {
-		this.cc_workerFee = cc_workerFee;
+	public void setCcWorkerFee(Float ccWorkerFee) {
+		this.ccWorkerFee = ccWorkerFee;
 	}
-	public Float getCc_totalFee() {
-		return cc_totalFee;
+	public Float getCcTotalFee() {
+		return ccTotalFee;
 	}
-	public void setCc_totalFee(Float cc_totalFee) {
-		this.cc_totalFee = cc_totalFee;
+	public void setCcTotalFee(Float ccTotalFee) {
+		this.ccTotalFee = ccTotalFee;
 	}
-	public Float getCcLiquid_base() {
-		return ccLiquid_base;
+	public Float getCcLiquidBase() {
+		return ccLiquidBase;
 	}
-	public void setCcLiquid_base(Float ccLiquid_base) {
-		this.ccLiquid_base = ccLiquid_base;
+	public void setCcLiquidBase(Float ccLiquidBase) {
+		this.ccLiquidBase = ccLiquidBase;
 	}
-	public Float getCcLiquid_businessFee() {
-		return ccLiquid_businessFee;
+	public Float getCcLiquidBusinessFee() {
+		return ccLiquidBusinessFee;
 	}
-	public void setCcLiquid_businessFee(Float ccLiquid_businessFee) {
-		this.ccLiquid_businessFee = ccLiquid_businessFee;
+	public void setCcLiquidBusinessFee(Float ccLiquidBusinessFee) {
+		this.ccLiquidBusinessFee = ccLiquidBusinessFee;
 	}
-	public Float getCcLiquid_workerFee() {
-		return ccLiquid_workerFee;
+	public Float getCcLiquidWorkerFee() {
+		return ccLiquidWorkerFee;
 	}
-	public void setCcLiquid_workerFee(Float ccLiquid_workerFee) {
-		this.ccLiquid_workerFee = ccLiquid_workerFee;
+	public void setCcLiquidWorkerFee(Float ccLiquidWorkerFee) {
+		this.ccLiquidWorkerFee = ccLiquidWorkerFee;
 	}
-	public Float getCcLiquid_totalFee() {
-		return ccLiquid_totalFee;
+	public Float getCcLiquidTotalFee() {
+		return ccLiquidTotalFee;
 	}
-	public void setCcLiquid_totalFee(Float ccLiquid_totalFee) {
-		this.ccLiquid_totalFee = ccLiquid_totalFee;
+	public void setCcLiquidTotalFee(Float ccLiquidTotalFee) {
+		this.ccLiquidTotalFee = ccLiquidTotalFee;
 	}
-	public Float getItWorkAccident_base() {
-		return itWorkAccident_base;
+	public Float getItWorkAccidentBase() {
+		return itWorkAccidentBase;
 	}
-	public void setItWorkAccident_base(Float itWorkAccident_base) {
-		this.itWorkAccident_base = itWorkAccident_base;
+	public void setItWorkAccidentBase(Float itWorkAccidentBase) {
+		this.itWorkAccidentBase = itWorkAccidentBase;
 	}
-	public Float getItWorkAccident_businessFee() {
-		return itWorkAccident_businessFee;
+	public Float getItWorkAccidentBusinessFee() {
+		return itWorkAccidentBusinessFee;
 	}
-	public void setItWorkAccident_businessFee(Float itWorkAccident_businessFee) {
-		this.itWorkAccident_businessFee = itWorkAccident_businessFee;
+	public void setItWorkAccidentBusinessFee(Float itWorkAccidentBusinessFee) {
+		this.itWorkAccidentBusinessFee = itWorkAccidentBusinessFee;
 	}
-	public Float getItWorkAccident_workerFee() {
-		return itWorkAccident_workerFee;
+	public Float getItWorkAccidentWorkerFee() {
+		return itWorkAccidentWorkerFee;
 	}
-	public void setItWorkAccident_workerFee(Float itWorkAccident_workerFee) {
-		this.itWorkAccident_workerFee = itWorkAccident_workerFee;
+	public void setItWorkAccidentWorkerFee(Float itWorkAccidentWorkerFee) {
+		this.itWorkAccidentWorkerFee = itWorkAccidentWorkerFee;
 	}
-	public Float getItWorkAccident_totalFee() {
-		return itWorkAccident_totalFee;
+	public Float getItWorkAccidentTotalFee() {
+		return itWorkAccidentTotalFee;
 	}
-	public void setItWorkAccident_totalFee(Float itWorkAccident_totalFee) {
-		this.itWorkAccident_totalFee = itWorkAccident_totalFee;
+	public void setItWorkAccidentTotalFee(Float itWorkAccidentTotalFee) {
+		this.itWorkAccidentTotalFee = itWorkAccidentTotalFee;
 	}
-	public Float getImsWorkAccident_base() {
-		return imsWorkAccident_base;
+	public Float getImsWorkAccidentBase() {
+		return imsWorkAccidentBase;
 	}
-	public void setImsWorkAccident_base(Float imsWorkAccident_base) {
-		this.imsWorkAccident_base = imsWorkAccident_base;
+	public void setImsWorkAccidentBase(Float imsWorkAccidentBase) {
+		this.imsWorkAccidentBase = imsWorkAccidentBase;
 	}
-	public Float getImsWorkAccident_businessFee() {
-		return imsWorkAccident_businessFee;
+	public Float getImsWorkAccidentBusinessFee() {
+		return imsWorkAccidentBusinessFee;
 	}
-	public void setImsWorkAccident_businessFee(Float imsWorkAccident_businessFee) {
-		this.imsWorkAccident_businessFee = imsWorkAccident_businessFee;
+	public void setImsWorkAccidentBusinessFee(Float imsWorkAccidentBusinessFee) {
+		this.imsWorkAccidentBusinessFee = imsWorkAccidentBusinessFee;
 	}
-	public Float getImsWorkAccident_workerFee() {
-		return imsWorkAccident_workerFee;
+	public Float getImsWorkAccidentWorkerFee() {
+		return imsWorkAccidentWorkerFee;
 	}
-	public void setImsWorkAccident_workerFee(Float imsWorkAccident_workerFee) {
-		this.imsWorkAccident_workerFee = imsWorkAccident_workerFee;
+	public void setImsWorkAccidentWorkerFee(Float imsWorkAccidentWorkerFee) {
+		this.imsWorkAccidentWorkerFee = imsWorkAccidentWorkerFee;
 	}
-	public Float getImsWorkAccident_totalFee() {
-		return imsWorkAccident_totalFee;
+	public Float getImsWorkAccidentTotalFee() {
+		return imsWorkAccidentTotalFee;
 	}
-	public void setImsWorkAccident_totalFee(Float imsWorkAccident_totalFee) {
-		this.imsWorkAccident_totalFee = imsWorkAccident_totalFee;
+	public void setImsWorkAccidentTotalFee(Float imsWorkAccidentTotalFee) {
+		this.imsWorkAccidentTotalFee = imsWorkAccidentTotalFee;
 	}
-	public Float getWorkAccidentLiquid_base() {
-		return workAccidentLiquid_base;
+	public Float getWorkAccidentLiquidBase() {
+		return workAccidentLiquidBase;
 	}
-	public void setWorkAccidentLiquid_base(Float workAccidentLiquid_base) {
-		this.workAccidentLiquid_base = workAccidentLiquid_base;
+	public void setWorkAccidentLiquidBase(Float workAccidentLiquidBase) {
+		this.workAccidentLiquidBase = workAccidentLiquidBase;
 	}
-	public Float getWorkAccidentLiquid_businessFee() {
-		return workAccidentLiquid_businessFee;
+	public Float getWorkAccidentLiquidBusinessFee() {
+		return workAccidentLiquidBusinessFee;
 	}
-	public void setWorkAccidentLiquid_businessFee(Float workAccidentLiquid_businessFee) {
-		this.workAccidentLiquid_businessFee = workAccidentLiquid_businessFee;
+	public void setWorkAccidentLiquidBusinessFee(Float workAccidentLiquidBusinessFee) {
+		this.workAccidentLiquidBusinessFee = workAccidentLiquidBusinessFee;
 	}
-	public Float getWorkAccidentLiquid_workerFee() {
-		return workAccidentLiquid_workerFee;
+	public Float getWorkAccidentLiquidWorkerFee() {
+		return workAccidentLiquidWorkerFee;
 	}
-	public void setWorkAccidentLiquid_workerFee(Float workAccidentLiquid_workerFee) {
-		this.workAccidentLiquid_workerFee = workAccidentLiquid_workerFee;
+	public void setWorkAccidentLiquidWorkerFee(Float workAccidentLiquidWorkerFee) {
+		this.workAccidentLiquidWorkerFee = workAccidentLiquidWorkerFee;
 	}
-	public Float getWorkAccidentLiquid_totalFee() {
-		return workAccidentLiquid_totalFee;
+	public Float getWorkAccidentLiquidTotalFee() {
+		return workAccidentLiquidTotalFee;
 	}
-	public void setWorkAccidentLiquid_totalFee(Float workAccidentLiquid_totalFee) {
-		this.workAccidentLiquid_totalFee = workAccidentLiquid_totalFee;
+	public void setWorkAccidentLiquidTotalFee(Float workAccidentLiquidTotalFee) {
+		this.workAccidentLiquidTotalFee = workAccidentLiquidTotalFee;
 	}
 	
-	public Float getGrantsAndBonuses_base() {
-		return grantsAndBonuses_base;
+	public Float getGrantsAndBonusesBase() {
+		return grantsAndBonusesBase;
 	}
-	public void setGrantsAndBonuses_base(Float grantsAndBonuses_base) {
-		this.grantsAndBonuses_base = grantsAndBonuses_base;
+	public void setGrantsAndBonusesBase(Float grantsAndBonusesBase) {
+		this.grantsAndBonusesBase = grantsAndBonusesBase;
 	}
-	public Float getGrantsAndBonuses_businessFee() {
-		return grantsAndBonuses_businessFee;
+	public Float getGrantsAndBonusesBusinessFee() {
+		return grantsAndBonusesBusinessFee;
 	}
-	public void setGrantsAndBonuses_businessFee(Float grantsAndBonuses_businessFee) {
-		this.grantsAndBonuses_businessFee = grantsAndBonuses_businessFee;
+	public void setGrantsAndBonusesBusinessFee(Float grantsAndBonusesBusinessFee) {
+		this.grantsAndBonusesBusinessFee = grantsAndBonusesBusinessFee;
 	}
-	public Float getGrantsAndBonuses_workerFee() {
-		return grantsAndBonuses_workerFee;
+	public Float getGrantsAndBonusesWorkerFee() {
+		return grantsAndBonusesWorkerFee;
 	}
-	public void setGrantsAndBonuses_workerFee(Float grantsAndBonuses_workerFee) {
-		this.grantsAndBonuses_workerFee = grantsAndBonuses_workerFee;
+	public void setGrantsAndBonusesWorkerFee(Float grantsAndBonusesWorkerFee) {
+		this.grantsAndBonusesWorkerFee = grantsAndBonusesWorkerFee;
 	}
-	public Float getGrantsAndBonuses_totalFee() {
-		return grantsAndBonuses_totalFee;
+	public Float getGrantsAndBonusesTotalFee() {
+		return grantsAndBonusesTotalFee;
 	}
-	public void setGrantsAndBonuses_totalFee(Float grantsAndBonuses_totalFee) {
-		this.grantsAndBonuses_totalFee = grantsAndBonuses_totalFee;
+	public void setGrantsAndBonusesTotalFee(Float grantsAndBonusesTotalFee) {
+		this.grantsAndBonusesTotalFee = grantsAndBonusesTotalFee;
 	}
-	public Float getOtherContributions_base() {
-		return otherContributions_base;
+	public Float getOtherContributionsBase() {
+		return otherContributionsBase;
 	}
-	public void setOtherContributions_base(Float otherContributions_base) {
-		this.otherContributions_base = otherContributions_base;
+	public void setOtherContributionsBase(Float otherContributionsBase) {
+		this.otherContributionsBase = otherContributionsBase;
 	}
-	public Float getOtherContributions_businessFee() {
-		return otherContributions_businessFee;
+	public Float getOtherContributionsBusinessFee() {
+		return otherContributionsBusinessFee;
 	}
-	public void setOtherContributions_businessFee(Float otherContributions_businessFee) {
-		this.otherContributions_businessFee = otherContributions_businessFee;
+	public void setOtherContributionsBusinessFee(Float otherContributionsBusinessFee) {
+		this.otherContributionsBusinessFee = otherContributionsBusinessFee;
 	}
-	public Float getOtherContributions_workerFee() {
-		return otherContributions_workerFee;
+	public Float getOtherContributionsWorkerFee() {
+		return otherContributionsWorkerFee;
 	}
-	public void setOtherContributions_workerFee(Float otherContributions_workerFee) {
-		this.otherContributions_workerFee = otherContributions_workerFee;
+	public void setOtherContributionsWorkerFee(Float otherContributionsWorkerFee) {
+		this.otherContributionsWorkerFee = otherContributionsWorkerFee;
 	}
-	public Float getOtherContributions_totalFee() {
-		return otherContributions_totalFee;
+	public Float getOtherContributionsTotalFee() {
+		return otherContributionsTotalFee;
 	}
-	public void setOtherContributions_totalFee(Float otherContributions_totalFee) {
-		this.otherContributions_totalFee = otherContributions_totalFee;
+	public void setOtherContributionsTotalFee(Float otherContributionsTotalFee) {
+		this.otherContributionsTotalFee = otherContributionsTotalFee;
 	}
-	public Float getOtherContributionsLiquid_base() {
-		return otherContributionsLiquid_base;
+	public Float getOtherContributionsLiquidBase() {
+		return otherContributionsLiquidBase;
 	}
-	public void setOtherContributionsLiquid_base(Float otherContributionsLiquid_base) {
-		this.otherContributionsLiquid_base = otherContributionsLiquid_base;
+	public void setOtherContributionsLiquidBase(Float otherContributionsLiquidBase) {
+		this.otherContributionsLiquidBase = otherContributionsLiquidBase;
 	}
-	public Float getOtherContributionsLiquid_businessFee() {
-		return otherContributionsLiquid_businessFee;
+	public Float getOtherContributionsLiquidBusinessFee() {
+		return otherContributionsLiquidBusinessFee;
 	}
-	public void setOtherContributionsLiquid_businessFee(Float otherContributionsLiquid_businessFee) {
-		this.otherContributionsLiquid_businessFee = otherContributionsLiquid_businessFee;
+	public void setOtherContributionsLiquidBusinessFee(Float otherContributionsLiquidBusinessFee) {
+		this.otherContributionsLiquidBusinessFee = otherContributionsLiquidBusinessFee;
 	}
-	public Float getOtherContributionsLiquid_workerFee() {
-		return otherContributionsLiquid_workerFee;
+	public Float getOtherContributionsLiquidWorkerFee() {
+		return otherContributionsLiquidWorkerFee;
 	}
-	public void setOtherContributionsLiquid_workerFee(Float otherContributionsLiquid_workerFee) {
-		this.otherContributionsLiquid_workerFee = otherContributionsLiquid_workerFee;
+	public void setOtherContributionsLiquidWorkerFee(Float otherContributionsLiquidWorkerFee) {
+		this.otherContributionsLiquidWorkerFee = otherContributionsLiquidWorkerFee;
 	}
-	public Float getOtherContributionsLiquid_totalFee() {
-		return otherContributionsLiquid_totalFee;
+	public Float getOtherContributionsLiquidTotalFee() {
+		return otherContributionsLiquidTotalFee;
 	}
-	public void setOtherContributionsLiquid_totalFee(Float otherContributionsLiquid_totalFee) {
-		this.otherContributionsLiquid_totalFee = otherContributionsLiquid_totalFee;
+	public void setOtherContributionsLiquidTotalFee(Float otherContributionsLiquidTotalFee) {
+		this.otherContributionsLiquidTotalFee = otherContributionsLiquidTotalFee;
 	}
-	public Float getTotalLiquid_base() {
-		return totalLiquid_base;
+	public Float getTotalLiquidBase() {
+		return totalLiquidBase;
 	}
-	public void setTotalLiquid_base(Float totalLiquid_base) {
-		this.totalLiquid_base = totalLiquid_base;
+	public void setTotalLiquidBase(Float totalLiquidBase) {
+		this.totalLiquidBase = totalLiquidBase;
 	}
-	public Float getTotalLiquid_businessFee() {
-		return totalLiquid_businessFee;
+	public Float getTotalLiquidBusinessFee() {
+		return totalLiquidBusinessFee;
 	}
-	public void setTotalLiquid_businessFee(Float totalLiquid_businessFee) {
-		this.totalLiquid_businessFee = totalLiquid_businessFee;
+	public void setTotalLiquidBusinessFee(Float totalLiquidBusinessFee) {
+		this.totalLiquidBusinessFee = totalLiquidBusinessFee;
 	}
-	public Float getTotalLiquid_workerFee() {
-		return totalLiquid_workerFee;
+	public Float getTotalLiquidWorkerFee() {
+		return totalLiquidWorkerFee;
 	}
-	public void setTotalLiquid_workerFee(Float totalLiquid_workerFee) {
-		this.totalLiquid_workerFee = totalLiquid_workerFee;
+	public void setTotalLiquidWorkerFee(Float totalLiquidWorkerFee) {
+		this.totalLiquidWorkerFee = totalLiquidWorkerFee;
 	}
-	public Float getTotalLiquid_totalFee() {
-		return totalLiquid_totalFee;
+	public Float getTotalLiquidTotalFee() {
+		return totalLiquidTotalFee;
 	}
-	public void setTotalLiquid_totalFee(Float totalLiquid_totalFee) {
-		this.totalLiquid_totalFee = totalLiquid_totalFee;
+	public void setTotalLiquidTotalFee(Float totalLiquidTotalFee) {
+		this.totalLiquidTotalFee = totalLiquidTotalFee;
 	}
 	
 	
 	
 	
 	public static interface Visitor {
-		public void visit_cc_base(Float cc_base);
-		public void visit_cc_businessFee(Float cc_businessFee);
-		public void visit_cc_workerFee(Float cc_workerFee);
-		public void visit_cc_totalFee(Float cc_totalFee);
+		public void visitCcBase(Float ccBase);
+		public void visitCcBusinessFee(Float ccBusinessFee);
+		public void visitCcWorkerFee(Float ccWorkerFee);
+		public void visitCcTotalFee(Float ccTotalFee);
 		
-		public void visit_ccLiquid_base(Float ccLiquid_base);
-		public void visit_ccLiquid_businessFee(Float ccLiquid_businessFee);
-		public void visit_ccLiquid_workerFee(Float ccLiquid_workerFee);
-		public void visit_ccLiquid_totalFee(Float ccLiquid_totalFee);
+		public void visitCcLiquidBase(Float ccLiquidBase);
+		public void visitCcLiquidBusinessFee(Float ccLiquidBusinessFee);
+		public void visitCcLiquidWorkerFee(Float ccLiquidWorkerFee);
+		public void visitCcLiquidTotalFee(Float ccLiquidTotalFee);
 		
-		public void visit_itWorkAccident_base(Float itWorkAccident_base);
-		public void visit_itWorkAccident_businessFee(Float itWorkAccident_businessFee);
-		public void visit_itWorkAccident_workerFee(Float itWorkAccident_workerFee);
-		public void visit_itWorkAccident_totalFee(Float itWorkAccident_totalFee);
+		public void visitItWorkAccidentBase(Float itWorkAccidentBase);
+		public void visitItWorkAccidentBusinessFee(Float itWorkAccidentBusinessFee);
+		public void visitItWorkAccidentWorkerFee(Float itWorkAccidentWorkerFee);
+		public void visitItWorkAccidentTotalFee(Float itWorkAccidentTotalFee);
 		
-		public void visit_imsWorkAccident_base(Float imsWorkAccident_base);
-		public void visit_imsWorkAccident_businessFee(Float imsWorkAccident_businessFee);
-		public void visit_imsWorkAccident_workerFee(Float imsWorkAccident_workerFee);
-		public void visit_imsWorkAccident_totalFee(Float imsWorkAccident_totalFee);
+		public void visitImsWorkAccidentBase(Float imsWorkAccidentBase);
+		public void visitImsWorkAccidentBusinessFee(Float imsWorkAccidentBusinessFee);
+		public void visitImsWorkAccidentWorkerFee(Float imsWorkAccidentWorkerFee);
+		public void visitImsWorkAccidentTotalFee(Float imsWorkAccidentTotalFee);
 		
-		public void visit_workAccidentLiquid_base(Float workAccidentLiquid_base);
-		public void visit_workAccidentLiquid_businessFee(Float workAccidentLiquid_businessFee);
-		public void visit_workAccidentLiquid_workerFee(Float workAccidentLiquid_workerFee);
-		public void visit_workAccidentLiquid_totalFee(Float workAccidentLiquid_totalFee);
+		public void visitWorkAccidentLiquidBase(Float workAccidentLiquidBase);
+		public void visitWorkAccidentLiquidBusinessFee(Float workAccidentLiquidBusinessFee);
+		public void visitWorkAccidentLiquidWorkerFee(Float workAccidentLiquidWorkerFee);
+		public void visitWorkAccidentLiquidTotalFee(Float workAccidentLiquidTotalFee);
 		
-		public void visit_grantsAndBonuses_base(Float grantsAndBonuses_base);
-		public void visit_grantsAndBonuses_businessFee(Float grantsAndBonuses_businessFee);
-		public void visit_grantsAndBonuses_workerFee(Float grantsAndBonuses_workerFee);
-		public void visit_grantsAndBonuses_totalFee(Float grantsAndBonuses_totalFee);
+		public void visitGrantsAndBonusesBase(Float grantsAndBonusesBase);
+		public void visitGrantsAndBonusesBusinessFee(Float grantsAndBonusesBusinessFee);
+		public void visitGrantsAndBonusesWorkerFee(Float grantsAndBonusesWorkerFee);
+		public void visitGrantsAndBonusesTotalFee(Float grantsAndBonusesTotalFee);
 		
-		public void visit_otherContributions_base(Float otherContributions_base);
-		public void visit_otherContributions_businessFee(Float otherContributions_businessFee);
-		public void visit_otherContributions_workerFee(Float otherContributions_workerFee);
-		public void visit_otherContributions_totalFee(Float otherContributions_totalFee);
+		public void visitOtherContributionsBase(Float otherContributionsBase);
+		public void visitOtherContributionsBusinessFee(Float otherContributionsBusinessFee);
+		public void visitOtherContributionsWorkerFee(Float otherContributionsWorkerFee);
+		public void visitOtherContributionsTotalFee(Float otherContributionsTotalFee);
 
-		public void visit_otherContributionsLiquid_base(Float otherContributionsLiquid_base);
-		public void visit_otherContributionsLiquid_businessFee(Float otherContributionsLiquid_businessFee);
-		public void visit_otherContributionsLiquid_workerFee(Float otherContributionsLiquid_workerFee);
-		public void visit_otherContributionsLiquid_totalFee(Float otherContributionsLiquid_totalFee);
+		public void visitOtherContributionsLiquidBase(Float otherContributionsLiquidBase);
+		public void visitOtherContributionsLiquidBusinessFee(Float otherContributionsLiquidBusinessFee);
+		public void visitOtherContributionsLiquidWorkerFee(Float otherContributionsLiquidWorkerFee);
+		public void visitOtherContributionsLiquidTotalFee(Float otherContributionsLiquidTotalFee);
 		
-		public void visit_totalLiquid_base(Float totalLiquid_base);
-		public void visit_totalLiquid_businessFee(Float totalLiquid_businessFee);
-		public void visit_totalLiquid_workerFee(Float totalLiquid_workerFee);
-		public void visit_totalLiquid_totalFee(Float totalLiquid_totalFee);
+		public void visitTotalLiquidBase(Float totalLiquidBase);
+		public void visitTotalLiquidBusinessFee(Float totalLiquidBusinessFee);
+		public void visitTotalLiquidWorkerFee(Float totalLiquidWorkerFee);
+		public void visitTotalLiquidTotalFee(Float totalLiquidTotalFee);
 	}
 	
 	public void accept(Visitor visitor) {
-		if(cc_base!=null)
-			visitor.visit_cc_base(this.cc_base);
-		if(cc_businessFee!=null)
-			visitor.visit_cc_businessFee(this.cc_businessFee);
-		if(cc_workerFee!=null)
-			visitor.visit_cc_workerFee(this.cc_workerFee);
-		if(cc_totalFee!=null)
-			visitor.visit_cc_totalFee(this.cc_totalFee);
+		if(ccBase!=null)
+			visitor.visitCcBase(this.ccBase);
+		if(ccBusinessFee!=null)
+			visitor.visitCcBusinessFee(this.ccBusinessFee);
+		if(ccWorkerFee!=null)
+			visitor.visitCcWorkerFee(this.ccWorkerFee);
+		if(ccTotalFee!=null)
+			visitor.visitCcTotalFee(this.ccTotalFee);
 		
-		if(ccLiquid_base!=null)
-			visitor.visit_ccLiquid_base(this.ccLiquid_base);
-		if(ccLiquid_businessFee!=null)
-			visitor.visit_ccLiquid_businessFee(this.ccLiquid_businessFee);
-		if(ccLiquid_workerFee!=null)
-			visitor.visit_ccLiquid_totalFee(this.ccLiquid_totalFee);
-		if(ccLiquid_totalFee!=null)
-			visitor.visit_ccLiquid_totalFee(this.ccLiquid_totalFee);
+		if(ccLiquidBase!=null)
+			visitor.visitCcLiquidBase(this.ccLiquidBase);
+		if(ccLiquidBusinessFee!=null)
+			visitor.visitCcLiquidBusinessFee(this.ccLiquidBusinessFee);
+		if(ccLiquidWorkerFee!=null)
+			visitor.visitCcLiquidTotalFee(this.ccLiquidTotalFee);
+		if(ccLiquidTotalFee!=null)
+			visitor.visitCcLiquidTotalFee(this.ccLiquidTotalFee);
 		
-		if(itWorkAccident_base!=null)
-			visitor.visit_itWorkAccident_base(this.itWorkAccident_base);
-		if(itWorkAccident_businessFee!=null)
-			visitor.visit_itWorkAccident_businessFee(this.itWorkAccident_businessFee);
-		if(itWorkAccident_workerFee!=null)
-			visitor.visit_itWorkAccident_workerFee(this.itWorkAccident_workerFee);
-		if(itWorkAccident_totalFee!=null)
-			visitor.visit_itWorkAccident_totalFee(this.itWorkAccident_totalFee);
+		if(itWorkAccidentBase!=null)
+			visitor.visitItWorkAccidentBase(this.itWorkAccidentBase);
+		if(itWorkAccidentBusinessFee!=null)
+			visitor.visitItWorkAccidentBusinessFee(this.itWorkAccidentBusinessFee);
+		if(itWorkAccidentWorkerFee!=null)
+			visitor.visitItWorkAccidentWorkerFee(this.itWorkAccidentWorkerFee);
+		if(itWorkAccidentTotalFee!=null)
+			visitor.visitItWorkAccidentTotalFee(this.itWorkAccidentTotalFee);
 		
-		if(imsWorkAccident_base!=null)
-			visitor.visit_imsWorkAccident_base(this.imsWorkAccident_base);
-		if(imsWorkAccident_businessFee!=null)
-			visitor.visit_imsWorkAccident_businessFee(this.imsWorkAccident_businessFee);
-		if(imsWorkAccident_workerFee!=null)
-			visitor.visit_imsWorkAccident_workerFee(this.imsWorkAccident_workerFee);
-		if(imsWorkAccident_totalFee!=null)
-			visitor.visit_imsWorkAccident_totalFee(this.imsWorkAccident_totalFee);
+		if(imsWorkAccidentBase!=null)
+			visitor.visitImsWorkAccidentBase(this.imsWorkAccidentBase);
+		if(imsWorkAccidentBusinessFee!=null)
+			visitor.visitImsWorkAccidentBusinessFee(this.imsWorkAccidentBusinessFee);
+		if(imsWorkAccidentWorkerFee!=null)
+			visitor.visitImsWorkAccidentWorkerFee(this.imsWorkAccidentWorkerFee);
+		if(imsWorkAccidentTotalFee!=null)
+			visitor.visitImsWorkAccidentTotalFee(this.imsWorkAccidentTotalFee);
 		
-		if(workAccidentLiquid_base!=null)
-			visitor.visit_workAccidentLiquid_base(this.workAccidentLiquid_base);
-		if(workAccidentLiquid_businessFee!=null)
-			visitor.visit_workAccidentLiquid_businessFee(this.workAccidentLiquid_businessFee);
-		if(workAccidentLiquid_workerFee!=null)
-			visitor.visit_workAccidentLiquid_workerFee(this.workAccidentLiquid_workerFee);
-		if(workAccidentLiquid_totalFee!=null)
-			visitor.visit_workAccidentLiquid_totalFee(this.workAccidentLiquid_totalFee);
+		if(workAccidentLiquidBase!=null)
+			visitor.visitWorkAccidentLiquidBase(this.workAccidentLiquidBase);
+		if(workAccidentLiquidBusinessFee!=null)
+			visitor.visitWorkAccidentLiquidBusinessFee(this.workAccidentLiquidBusinessFee);
+		if(workAccidentLiquidWorkerFee!=null)
+			visitor.visitWorkAccidentLiquidWorkerFee(this.workAccidentLiquidWorkerFee);
+		if(workAccidentLiquidTotalFee!=null)
+			visitor.visitWorkAccidentLiquidTotalFee(this.workAccidentLiquidTotalFee);
 		
-		if(grantsAndBonuses_base!=null)
-			visitor.visit_grantsAndBonuses_base(this.grantsAndBonuses_base);
-		if(grantsAndBonuses_businessFee!=null)
-			visitor.visit_grantsAndBonuses_businessFee(this.grantsAndBonuses_businessFee);
-		if(grantsAndBonuses_workerFee!=null)
-			visitor.visit_grantsAndBonuses_workerFee(this.grantsAndBonuses_workerFee);
-		if(grantsAndBonuses_totalFee!=null)
-			visitor.visit_grantsAndBonuses_totalFee(this.grantsAndBonuses_totalFee);
+		if(grantsAndBonusesBase!=null)
+			visitor.visitGrantsAndBonusesBase(this.grantsAndBonusesBase);
+		if(grantsAndBonusesBusinessFee!=null)
+			visitor.visitGrantsAndBonusesBusinessFee(this.grantsAndBonusesBusinessFee);
+		if(grantsAndBonusesWorkerFee!=null)
+			visitor.visitGrantsAndBonusesWorkerFee(this.grantsAndBonusesWorkerFee);
+		if(grantsAndBonusesTotalFee!=null)
+			visitor.visitGrantsAndBonusesTotalFee(this.grantsAndBonusesTotalFee);
 		
-		if(otherContributions_base!=null)
-			visitor.visit_otherContributions_base(this.otherContributions_base);
-		if(otherContributions_businessFee!=null)
-			visitor.visit_otherContributions_businessFee(this.otherContributions_businessFee);
-		if(otherContributions_workerFee!=null)
-			visitor.visit_otherContributions_workerFee(this.otherContributions_workerFee);
-		if(otherContributions_totalFee!=null)
-			visitor.visit_otherContributions_totalFee(this.otherContributions_totalFee);
+		if(otherContributionsBase!=null)
+			visitor.visitOtherContributionsBase(this.otherContributionsBase);
+		if(otherContributionsBusinessFee!=null)
+			visitor.visitOtherContributionsBusinessFee(this.otherContributionsBusinessFee);
+		if(otherContributionsWorkerFee!=null)
+			visitor.visitOtherContributionsWorkerFee(this.otherContributionsWorkerFee);
+		if(otherContributionsTotalFee!=null)
+			visitor.visitOtherContributionsTotalFee(this.otherContributionsTotalFee);
 
-		if(otherContributionsLiquid_base!=null)
-			visitor.visit_otherContributionsLiquid_base(this.otherContributionsLiquid_base);
-		if(otherContributionsLiquid_businessFee!=null)
-			visitor.visit_otherContributionsLiquid_businessFee(this.otherContributionsLiquid_businessFee);
-		if(otherContributionsLiquid_workerFee!=null)
-			visitor.visit_otherContributionsLiquid_workerFee(this.otherContributionsLiquid_workerFee);
-		if(otherContributionsLiquid_totalFee!=null)
-			visitor.visit_otherContributionsLiquid_totalFee(this.otherContributionsLiquid_totalFee);
+		if(otherContributionsLiquidBase!=null)
+			visitor.visitOtherContributionsLiquidBase(this.otherContributionsLiquidBase);
+		if(otherContributionsLiquidBusinessFee!=null)
+			visitor.visitOtherContributionsLiquidBusinessFee(this.otherContributionsLiquidBusinessFee);
+		if(otherContributionsLiquidWorkerFee!=null)
+			visitor.visitOtherContributionsLiquidWorkerFee(this.otherContributionsLiquidWorkerFee);
+		if(otherContributionsLiquidTotalFee!=null)
+			visitor.visitOtherContributionsLiquidTotalFee(this.otherContributionsLiquidTotalFee);
 		
-		if(totalLiquid_base!=null)
-			visitor.visit_totalLiquid_base(this.totalLiquid_base);
-		if(totalLiquid_businessFee!=null)
-			visitor.visit_totalLiquid_businessFee(this.totalLiquid_businessFee);
-		if(totalLiquid_workerFee!=null)
-			visitor.visit_totalLiquid_workerFee(this.totalLiquid_workerFee);
-		if(totalLiquid_totalFee!=null)
-			visitor.visit_totalLiquid_totalFee(this.totalLiquid_totalFee);
+		if(totalLiquidBase!=null)
+			visitor.visitTotalLiquidBase(this.totalLiquidBase);
+		if(totalLiquidBusinessFee!=null)
+			visitor.visitTotalLiquidBusinessFee(this.totalLiquidBusinessFee);
+		if(totalLiquidWorkerFee!=null)
+			visitor.visitTotalLiquidWorkerFee(this.totalLiquidWorkerFee);
+		if(totalLiquidTotalFee!=null)
+			visitor.visitTotalLiquidTotalFee(this.totalLiquidTotalFee);
 		
 	}
 	
@@ -408,218 +408,218 @@ public class Liquidation {
 		stringBuffer.append("Liquidation: \n");
 		accept(new Visitor() {
 			@Override
-			public void visit_workAccidentLiquid_workerFee(Float workAccidentLiquid_workerFee) {
-				stringBuffer.append(String.format("\tWork accident liquid - worker fee:\"%S\"\n", workAccidentLiquid_workerFee));
+			public void visitWorkAccidentLiquidWorkerFee(Float workAccidentLiquidWorkerFee) {
+				stringBuffer.append(String.format("\tWork accident liquid - worker fee:\"%S\"\n", workAccidentLiquidWorkerFee));
 				
 			}
 			
 			@Override
-			public void visit_workAccidentLiquid_totalFee(Float workAccidentLiquid_totalFee) {
-				stringBuffer.append(String.format("\tWork accident liquid - total fee:\"%S\"\n", workAccidentLiquid_totalFee));
+			public void visitWorkAccidentLiquidTotalFee(Float workAccidentLiquidTotalFee) {
+				stringBuffer.append(String.format("\tWork accident liquid - total fee:\"%S\"\n", workAccidentLiquidTotalFee));
 				
 			}
 			
 			@Override
-			public void visit_workAccidentLiquid_businessFee(Float workAccidentLiquid_businessFee) {
-				stringBuffer.append(String.format("\tWork accident liquid - business fee:\"%S\"\n", workAccidentLiquid_businessFee));
+			public void visitWorkAccidentLiquidBusinessFee(Float workAccidentLiquidBusinessFee) {
+				stringBuffer.append(String.format("\tWork accident liquid - business fee:\"%S\"\n", workAccidentLiquidBusinessFee));
 				
 			}
 			
 			@Override
-			public void visit_workAccidentLiquid_base(Float workAccidentLiquid_base) {
-				stringBuffer.append(String.format("\tWork accident liquid - base:\"%S\"\n", workAccidentLiquid_base));
+			public void visitWorkAccidentLiquidBase(Float workAccidentLiquidBase) {
+				stringBuffer.append(String.format("\tWork accident liquid - base:\"%S\"\n", workAccidentLiquidBase));
 				
 			}
 			
 			@Override
-			public void visit_totalLiquid_workerFee(Float totalLiquid_workerFee) {
-				stringBuffer.append(String.format("\tTotal liquid - worker fee:\"%S\"\n", totalLiquid_workerFee));
+			public void visitTotalLiquidWorkerFee(Float totalLiquidWorkerFee) {
+				stringBuffer.append(String.format("\tTotal liquid - worker fee:\"%S\"\n", totalLiquidWorkerFee));
 				
 			}
 			
 			@Override
-			public void visit_totalLiquid_totalFee(Float totalLiquid_totalFee) {
-				stringBuffer.append(String.format("\tTotal liquid - total fee:\"%S\"\n", totalLiquid_totalFee));
+			public void visitTotalLiquidTotalFee(Float totalLiquidTotalFee) {
+				stringBuffer.append(String.format("\tTotal liquid - total fee:\"%S\"\n", totalLiquidTotalFee));
 				
 			}
 			
 			@Override
-			public void visit_totalLiquid_businessFee(Float totalLiquid_businessFee) {
-				stringBuffer.append(String.format("\tTotal liquid - business fee:\"%S\"\n", totalLiquid_businessFee));
+			public void visitTotalLiquidBusinessFee(Float totalLiquidBusinessFee) {
+				stringBuffer.append(String.format("\tTotal liquid - business fee:\"%S\"\n", totalLiquidBusinessFee));
 				
 			}
 			
 			@Override
-			public void visit_totalLiquid_base(Float totalLiquid_base) {
-				stringBuffer.append(String.format("\tTotal liquid - base:\"%S\"\n", totalLiquid_base));
+			public void visitTotalLiquidBase(Float totalLiquidBase) {
+				stringBuffer.append(String.format("\tTotal liquid - base:\"%S\"\n", totalLiquidBase));
 				
 			}
 			
 			@Override
-			public void visit_otherContributions_workerFee(Float otherContributions_workerFee) {
-				stringBuffer.append(String.format("\tOther contributions - worker fee:\"%S\"\n", otherContributions_workerFee));
+			public void visitOtherContributionsWorkerFee(Float otherContributionsWorkerFee) {
+				stringBuffer.append(String.format("\tOther contributions - worker fee:\"%S\"\n", otherContributionsWorkerFee));
 				
 			}
 			
 			@Override
-			public void visit_otherContributions_totalFee(Float otherContributions_totalFee) {
-				stringBuffer.append(String.format("\tOther contributions - total fee:\"%S\"\n", otherContributions_totalFee));
+			public void visitOtherContributionsTotalFee(Float otherContributionsTotalFee) {
+				stringBuffer.append(String.format("\tOther contributions - total fee:\"%S\"\n", otherContributionsTotalFee));
 				
 			}
 			
 			@Override
-			public void visit_otherContributions_businessFee(Float otherContributions_businessFee) {
-				stringBuffer.append(String.format("\tOther contributions - business fee:\"%S\"\n", otherContributions_businessFee));
+			public void visitOtherContributionsBusinessFee(Float otherContributionsBusinessFee) {
+				stringBuffer.append(String.format("\tOther contributions - business fee:\"%S\"\n", otherContributionsBusinessFee));
 				
 			}
 			
 			@Override
-			public void visit_otherContributions_base(Float otherContributions_base) {
-				stringBuffer.append(String.format("\tOther contributions - base:\"%S\"\n", otherContributions_base));
+			public void visitOtherContributionsBase(Float otherContributionsBase) {
+				stringBuffer.append(String.format("\tOther contributions - base:\"%S\"\n", otherContributionsBase));
 				
 			}
 			
 			@Override
-			public void visit_otherContributionsLiquid_workerFee(Float otherContributionsLiquid_workerFee) {
-				stringBuffer.append(String.format("\tOther contributions liquid - worker fee:\"%S\"\n", otherContributionsLiquid_workerFee));
+			public void visitOtherContributionsLiquidWorkerFee(Float otherContributionsLiquidWorkerFee) {
+				stringBuffer.append(String.format("\tOther contributions liquid - worker fee:\"%S\"\n", otherContributionsLiquidWorkerFee));
 				
 			}
 			
 			@Override
-			public void visit_otherContributionsLiquid_totalFee(Float otherContributionsLiquid_totalFee) {
-				stringBuffer.append(String.format("\tOther contributions liquid - total fee:\"%S\"\n", otherContributionsLiquid_totalFee));
+			public void visitOtherContributionsLiquidTotalFee(Float otherContributionsLiquidTotalFee) {
+				stringBuffer.append(String.format("\tOther contributions liquid - total fee:\"%S\"\n", otherContributionsLiquidTotalFee));
 				
 			}
 			
 			@Override
-			public void visit_otherContributionsLiquid_businessFee(Float otherContributionsLiquid_businessFee) {
-				stringBuffer.append(String.format("\tOther contributions liquid - business fee:\"%S\"\n", otherContributionsLiquid_businessFee));
+			public void visitOtherContributionsLiquidBusinessFee(Float otherContributionsLiquidBusinessFee) {
+				stringBuffer.append(String.format("\tOther contributions liquid - business fee:\"%S\"\n", otherContributionsLiquidBusinessFee));
 				
 			}
 			
 			@Override
-			public void visit_otherContributionsLiquid_base(Float otherContributionsLiquid_base) {
-				stringBuffer.append(String.format("\tOther contributions liquid - base:\"%S\"\n", otherContributionsLiquid_base));
+			public void visitOtherContributionsLiquidBase(Float otherContributionsLiquidBase) {
+				stringBuffer.append(String.format("\tOther contributions liquid - base:\"%S\"\n", otherContributionsLiquidBase));
 				
 			}
 			
 			@Override
-			public void visit_itWorkAccident_workerFee(Float itWorkAccident_workerFee) {
-				stringBuffer.append(String.format("\tIT Work accident - worker fee:\"%S\"\n", itWorkAccident_workerFee));
+			public void visitItWorkAccidentWorkerFee(Float itWorkAccidentWorkerFee) {
+				stringBuffer.append(String.format("\tIT Work accident - worker fee:\"%S\"\n", itWorkAccidentWorkerFee));
 				
 			}
 			
 			@Override
-			public void visit_itWorkAccident_totalFee(Float itWorkAccident_totalFee) {
-				stringBuffer.append(String.format("\tIT Work accident - total fee:\"%S\"\n", itWorkAccident_totalFee));
+			public void visitItWorkAccidentTotalFee(Float itWorkAccidentTotalFee) {
+				stringBuffer.append(String.format("\tIT Work accident - total fee:\"%S\"\n", itWorkAccidentTotalFee));
 				
 			}
 			
 			@Override
-			public void visit_itWorkAccident_businessFee(Float itWorkAccident_businessFee) {
-				stringBuffer.append(String.format("\tIT Work accident - business fee:\"%S\"\n", itWorkAccident_businessFee));
+			public void visitItWorkAccidentBusinessFee(Float itWorkAccidentBusinessFee) {
+				stringBuffer.append(String.format("\tIT Work accident - business fee:\"%S\"\n", itWorkAccidentBusinessFee));
 				
 			}
 			
 			@Override
-			public void visit_itWorkAccident_base(Float itWorkAccident_base) {
-				stringBuffer.append(String.format("\tIT Work accident - base:\"%S\"\n", itWorkAccident_base));
+			public void visitItWorkAccidentBase(Float itWorkAccidentBase) {
+				stringBuffer.append(String.format("\tIT Work accident - base:\"%S\"\n", itWorkAccidentBase));
 				
 			}
 			
 			@Override
-			public void visit_imsWorkAccident_workerFee(Float imsWorkAccident_workerFee) {
-				stringBuffer.append(String.format("\tIMS Work accident - worker fee:\"%S\"\n", imsWorkAccident_workerFee));
+			public void visitImsWorkAccidentWorkerFee(Float imsWorkAccidentWorkerFee) {
+				stringBuffer.append(String.format("\tIMS Work accident - worker fee:\"%S\"\n", imsWorkAccidentWorkerFee));
 				
 			}
 			
 			@Override
-			public void visit_imsWorkAccident_totalFee(Float imsWorkAccident_totalFee) {
-				stringBuffer.append(String.format("\tIMS Work accident - total fee:\"%S\"\n", imsWorkAccident_totalFee));
+			public void visitImsWorkAccidentTotalFee(Float imsWorkAccidentTotalFee) {
+				stringBuffer.append(String.format("\tIMS Work accident - total fee:\"%S\"\n", imsWorkAccidentTotalFee));
 				
 			}
 			
 			@Override
-			public void visit_imsWorkAccident_businessFee(Float imsWorkAccident_businessFee) {
-				stringBuffer.append(String.format("\tIMS Work accident - business fee:\"%S\"\n", imsWorkAccident_businessFee));
+			public void visitImsWorkAccidentBusinessFee(Float imsWorkAccidentBusinessFee) {
+				stringBuffer.append(String.format("\tIMS Work accident - business fee:\"%S\"\n", imsWorkAccidentBusinessFee));
 				
 			}
 			
 			@Override
-			public void visit_imsWorkAccident_base(Float imsWorkAccident_base) {
-				stringBuffer.append(String.format("\tIMS Work accident - accident fee:\"%S\"\n", imsWorkAccident_base));
+			public void visitImsWorkAccidentBase(Float imsWorkAccidentBase) {
+				stringBuffer.append(String.format("\tIMS Work accident - accident fee:\"%S\"\n", imsWorkAccidentBase));
 				
 			}
 			
 			@Override
-			public void visit_cc_workerFee(Float cc_workerFee) {
-				stringBuffer.append(String.format("\tCC - worker fee:\"%S\"\n", cc_workerFee));
+			public void visitCcWorkerFee(Float ccWorkerFee) {
+				stringBuffer.append(String.format("\tCC - worker fee:\"%S\"\n", ccWorkerFee));
 				
 			}
 			
 			@Override
-			public void visit_cc_totalFee(Float cc_totalFee) {
-				stringBuffer.append(String.format("\tCC - total fee:\"%S\"\n", cc_totalFee));
+			public void visitCcTotalFee(Float ccTotalFee) {
+				stringBuffer.append(String.format("\tCC - total fee:\"%S\"\n", ccTotalFee));
 				
 			}
 			
 			@Override
-			public void visit_cc_businessFee(Float cc_businessFee) {
-				stringBuffer.append(String.format("\tCC - business fee:\"%S\"\n", cc_businessFee));
+			public void visitCcBusinessFee(Float ccBusinessFee) {
+				stringBuffer.append(String.format("\tCC - business fee:\"%S\"\n", ccBusinessFee));
 				
 			}
 			
 			@Override
-			public void visit_cc_base(Float cc_base) {
-				stringBuffer.append(String.format("\tCC - base:\"%S\"\n", cc_base));
+			public void visitCcBase(Float ccBase) {
+				stringBuffer.append(String.format("\tCC - base:\"%S\"\n", ccBase));
 				
 			}
 			
 			@Override
-			public void visit_ccLiquid_workerFee(Float ccLiquid_workerFee) {
-				stringBuffer.append(String.format("\tCC Liquid - worker fee:\"%S\"\n", ccLiquid_workerFee));
+			public void visitCcLiquidWorkerFee(Float ccLiquidWorkerFee) {
+				stringBuffer.append(String.format("\tCC Liquid - worker fee:\"%S\"\n", ccLiquidWorkerFee));
 				
 			}
 			
 			@Override
-			public void visit_ccLiquid_totalFee(Float ccLiquid_totalFee) {
-				stringBuffer.append(String.format("\tCC Liquid - total fee:\"%S\"\n", ccLiquid_totalFee));
+			public void visitCcLiquidTotalFee(Float ccLiquidTotalFee) {
+				stringBuffer.append(String.format("\tCC Liquid - total fee:\"%S\"\n", ccLiquidTotalFee));
 				
 			}
 			
 			@Override
-			public void visit_ccLiquid_businessFee(Float ccLiquid_businessFee) {
-				stringBuffer.append(String.format("\tCC Liquid - business fee:\"%S\"\n", ccLiquid_businessFee));
+			public void visitCcLiquidBusinessFee(Float ccLiquidBusinessFee) {
+				stringBuffer.append(String.format("\tCC Liquid - business fee:\"%S\"\n", ccLiquidBusinessFee));
 				
 			}
 			
 			@Override
-			public void visit_ccLiquid_base(Float ccLiquid_base) {
-				stringBuffer.append(String.format("\tCC Liquid - liquid base:\"%S\"\n", ccLiquid_base));
+			public void visitCcLiquidBase(Float ccLiquidBase) {
+				stringBuffer.append(String.format("\tCC Liquid - liquid base:\"%S\"\n", ccLiquidBase));
 				
 			}
 
 			@Override
-			public void visit_grantsAndBonuses_base(Float grantsAndBonuses_base) {
-				stringBuffer.append(String.format("\tGrants and bonuses - liquid base:\"%S\"\n", grantsAndBonuses_base));
+			public void visitGrantsAndBonusesBase(Float grantsAndBonusesBase) {
+				stringBuffer.append(String.format("\tGrants and bonuses - liquid base:\"%S\"\n", grantsAndBonusesBase));
 				
 			}
 			
 			@Override
-			public void visit_grantsAndBonuses_businessFee(Float grantsAndBonuses_businessFee) {
-				stringBuffer.append(String.format("\tGrants and bonuses - business fee:\"%S\"\n", grantsAndBonuses_businessFee));
+			public void visitGrantsAndBonusesBusinessFee(Float grantsAndBonusesBusinessFee) {
+				stringBuffer.append(String.format("\tGrants and bonuses - business fee:\"%S\"\n", grantsAndBonusesBusinessFee));
 				
 			}
 			
 			@Override
-			public void visit_grantsAndBonuses_workerFee(Float grantsAndBonuses_workerFee) {
-				stringBuffer.append(String.format("\tGrants and bonuses - worker fee:\"%S\"\n", grantsAndBonuses_workerFee));
+			public void visitGrantsAndBonusesWorkerFee(Float grantsAndBonusesWorkerFee) {
+				stringBuffer.append(String.format("\tGrants and bonuses - worker fee:\"%S\"\n", grantsAndBonusesWorkerFee));
 				
 			}
 			
 			@Override
-			public void visit_grantsAndBonuses_totalFee(Float grantsAndBonuses_totalFee) {
-				stringBuffer.append(String.format("\tGrants and bonuses - total fee:\"%S\"\n", grantsAndBonuses_totalFee));
+			public void visitGrantsAndBonusesTotalFee(Float grantsAndBonusesTotalFee) {
+				stringBuffer.append(String.format("\tGrants and bonuses - total fee:\"%S\"\n", grantsAndBonusesTotalFee));
 				
 			}
 			
@@ -632,219 +632,219 @@ public class Liquidation {
 
 
 	public static class LiquidationBuilder{
-		private Float cc_base;
-		private Float cc_businessFee;
-		private Float cc_workerFee;
-		private Float cc_totalFee;
+		private Float ccBase;
+		private Float ccBusinessFee;
+		private Float ccWorkerFee;
+		private Float ccTotalFee;
 		
-		private Float ccLiquid_base;
-		private Float ccLiquid_businessFee;
-		private Float ccLiquid_workerFee;
-		private Float ccLiquid_totalFee;
+		private Float ccLiquidBase;
+		private Float ccLiquidBusinessFee;
+		private Float ccLiquidWorkerFee;
+		private Float ccLiquidTotalFee;
 		
-		private Float itWorkAccident_base;
-		private Float itWorkAccident_businessFee;
-		private Float itWorkAccident_workerFee;
-		private Float itWorkAccident_totalFee;
+		private Float itWorkAccidentBase;
+		private Float itWorkAccidentBusinessFee;
+		private Float itWorkAccidentWorkerFee;
+		private Float itWorkAccidentTotalFee;
 		
-		private Float imsWorkAccident_base;
-		private Float imsWorkAccident_businessFee;
-		private Float imsWorkAccident_workerFee;
-		private Float imsWorkAccident_totalFee;
+		private Float imsWorkAccidentBase;
+		private Float imsWorkAccidentBusinessFee;
+		private Float imsWorkAccidentWorkerFee;
+		private Float imsWorkAccidentTotalFee;
 		
-		private Float workAccidentLiquid_base;
-		private Float workAccidentLiquid_businessFee;
-		private Float workAccidentLiquid_workerFee;
-		private Float workAccidentLiquid_totalFee;
+		private Float workAccidentLiquidBase;
+		private Float workAccidentLiquidBusinessFee;
+		private Float workAccidentLiquidWorkerFee;
+		private Float workAccidentLiquidTotalFee;
 		
-		private Float grantsAndBonuses_base;
-		private Float grantsAndBonuses_businessFee;
-		private Float grantsAndBonuses_workerFee;
-		private Float grantsAndBonuses_totalFee;
+		private Float grantsAndBonusesBase;
+		private Float grantsAndBonusesBusinessFee;
+		private Float grantsAndBonusesWorkerFee;
+		private Float grantsAndBonusesTotalFee;
 		
-		private Float otherContributions_base;
-		private Float otherContributions_businessFee;
-		private Float otherContributions_workerFee;
-		private Float otherContributions_totalFee;
+		private Float otherContributionsBase;
+		private Float otherContributionsBusinessFee;
+		private Float otherContributionsWorkerFee;
+		private Float otherContributionsTotalFee;
 
-		private Float otherContributionsLiquid_base;
-		private Float otherContributionsLiquid_businessFee;
-		private Float otherContributionsLiquid_workerFee;
-		private Float otherContributionsLiquid_totalFee;
+		private Float otherContributionsLiquidBase;
+		private Float otherContributionsLiquidBusinessFee;
+		private Float otherContributionsLiquidWorkerFee;
+		private Float otherContributionsLiquidTotalFee;
 		
-		private Float totalLiquid_base;
-		private Float totalLiquid_businessFee;
-		private Float totalLiquid_workerFee;
-		private Float totalLiquid_totalFee;
-		
-		
-		public LiquidationBuilder setCc_base(Float cc_base) {
-			this.cc_base=cc_base;
-			return this;
-		}
-		public LiquidationBuilder setCc_businessFee(Float cc_businessFee) {
-			this.cc_businessFee=cc_businessFee;
-			return this;
-		}
-		public LiquidationBuilder setCc_workerFee(Float cc_workerFee) {
-			this.cc_workerFee=cc_workerFee;
-			return this;
-		}
-		public LiquidationBuilder setCc_totalFee(Float cc_totalFee) {
-			this.cc_totalFee=cc_totalFee;
-			return this;
-		}
+		private Float totalLiquidBase;
+		private Float totalLiquidBusinessFee;
+		private Float totalLiquidWorkerFee;
+		private Float totalLiquidTotalFee;
 		
 		
-		
-		public LiquidationBuilder setCcLiquid_base(Float ccLiquid_base) {
-			this.ccLiquid_base=ccLiquid_base;
+		public LiquidationBuilder setCcBase(Float ccBase) {
+			this.ccBase=ccBase;
 			return this;
 		}
-		public LiquidationBuilder setCcLiquid_businessFee(Float ccLiquid_businessFee) {
-			this.ccLiquid_businessFee=ccLiquid_businessFee;
+		public LiquidationBuilder setCcBusinessFee(Float ccBusinessFee) {
+			this.ccBusinessFee=ccBusinessFee;
 			return this;
 		}
-		public LiquidationBuilder setCcLiquid_workerFee(Float ccLiquid_workerFee) {
-			this.ccLiquid_workerFee=ccLiquid_workerFee;
+		public LiquidationBuilder setCcWorkerFee(Float ccWorkerFee) {
+			this.ccWorkerFee=ccWorkerFee;
 			return this;
 		}
-		public LiquidationBuilder setCcLiquid_totalFee(Float ccLiquid_totalFee) {
-			this.ccLiquid_totalFee=ccLiquid_totalFee;
+		public LiquidationBuilder setCcTotalFee(Float ccTotalFee) {
+			this.ccTotalFee=ccTotalFee;
 			return this;
 		}
 		
 		
 		
-		public LiquidationBuilder setItWorkAccident_base(Float itWorkAccident_base) {
-			this.itWorkAccident_base=itWorkAccident_base;
+		public LiquidationBuilder setCcLiquidBase(Float ccLiquidBase) {
+			this.ccLiquidBase=ccLiquidBase;
 			return this;
 		}
-		public LiquidationBuilder setItWorkAccident_businessFee(Float itWorkAccident_businessFee) {
-			this.itWorkAccident_businessFee=itWorkAccident_businessFee;
+		public LiquidationBuilder setCcLiquidBusinessFee(Float ccLiquidBusinessFee) {
+			this.ccLiquidBusinessFee=ccLiquidBusinessFee;
 			return this;
 		}
-		public LiquidationBuilder setItWorkAccident_workerFee(Float itWorkAccident_workerFee) {
-			this.itWorkAccident_workerFee=itWorkAccident_workerFee;
+		public LiquidationBuilder setCcLiquidWorkerFee(Float ccLiquidworkerFee) {
+			this.ccLiquidWorkerFee=ccLiquidworkerFee;
 			return this;
 		}
-		public LiquidationBuilder setItWorkAccident_totalFee(Float itWorkAccident_totalFee) {
-			this.itWorkAccident_totalFee=itWorkAccident_totalFee;
-			return this;
-		}
-		
-		
-		
-		public LiquidationBuilder setImsWorkAccident_base(Float imsWorkAccident_base) {
-			this.imsWorkAccident_base=imsWorkAccident_base;
-			return this;
-		}
-		public LiquidationBuilder setImsWorkAccident_businessFee(Float imsWorkAccident_businessFee) {
-			this.imsWorkAccident_businessFee=imsWorkAccident_businessFee;
-			return this;
-		}
-		public LiquidationBuilder setImsWorkAccident_workerFee(Float imsWorkAccident_workerFee) {
-			this.imsWorkAccident_workerFee=imsWorkAccident_workerFee;
-			return this;
-		}
-		public LiquidationBuilder setImsWorkAccident_totalFee(Float imsWorkAccident_totalFee) {
-			this.imsWorkAccident_totalFee=imsWorkAccident_totalFee;
+		public LiquidationBuilder setCcLiquidTotalFee(Float ccLiquidTotalFee) {
+			this.ccLiquidTotalFee=ccLiquidTotalFee;
 			return this;
 		}
 		
 		
 		
-		
-		public LiquidationBuilder setWorkAccidentLiquid_base(Float workAccidentLiquid_base) {
-			this.workAccidentLiquid_base=workAccidentLiquid_base;
+		public LiquidationBuilder setItWorkAccidentBase(Float itWorkAccidentBase) {
+			this.itWorkAccidentBase=itWorkAccidentBase;
 			return this;
 		}
-		public LiquidationBuilder setWorkAccidentLiquid_businessFee(Float workAccidentLiquid_businessFee) {
-			this.workAccidentLiquid_businessFee=workAccidentLiquid_businessFee;
+		public LiquidationBuilder setItWorkAccidentBusinessFee(Float itWorkAccidentBusinessFee) {
+			this.itWorkAccidentBusinessFee=itWorkAccidentBusinessFee;
 			return this;
 		}
-		public LiquidationBuilder setWorkAccidentLiquid_workerFee(Float workAccidentLiquid_workerFee) {
-			this.workAccidentLiquid_workerFee=workAccidentLiquid_workerFee;
+		public LiquidationBuilder setItWorkAccidentWorkerFee(Float itWorkAccidentWorkerFee) {
+			this.itWorkAccidentWorkerFee=itWorkAccidentWorkerFee;
 			return this;
 		}
-		public LiquidationBuilder setWorkAccidentLiquid_totalFee(Float workAccidentLiquid_totalFee) {
-			this.workAccidentLiquid_totalFee=workAccidentLiquid_totalFee;
-			return this;
-		}
-		
-		
-		
-		public LiquidationBuilder setGrantsAndBonuses_base(Float grantsAndBonuses_base) {
-			this.grantsAndBonuses_base = grantsAndBonuses_base;
-			return this;
-		}
-		public LiquidationBuilder setGrantsAndBonuses_businessFee(Float grantsAndBonuses_businessFee) {
-			this.grantsAndBonuses_businessFee = grantsAndBonuses_businessFee;
-			return this;
-		}
-		public LiquidationBuilder setGrantsAndBonuses_workerFee(Float grantsAndBonuses_workerFee) {
-			this.grantsAndBonuses_workerFee = grantsAndBonuses_workerFee;
-			return this;
-		}
-		public LiquidationBuilder setGrantsAndBonuses_totalFee(Float grantsAndBonuses_totalFee) {
-			this.grantsAndBonuses_totalFee = grantsAndBonuses_totalFee;
+		public LiquidationBuilder setItWorkAccidentTotalFee(Float itWorkAccidentTotalFee) {
+			this.itWorkAccidentTotalFee=itWorkAccidentTotalFee;
 			return this;
 		}
 		
 		
 		
-		public LiquidationBuilder setOtherContributions_base(Float otherContributions_base) {
-			this.otherContributions_base=otherContributions_base;
+		public LiquidationBuilder setImsWorkAccidentBase(Float imsWorkAccidentBase) {
+			this.imsWorkAccidentBase=imsWorkAccidentBase;
 			return this;
 		}
-		public LiquidationBuilder setOtherContributions_businessFee(Float otherContributions_businessFee) {
-			this.otherContributions_businessFee=otherContributions_businessFee;
+		public LiquidationBuilder setImsWorkAccidentBusinessFee(Float imsWorkAccidentBusinessFee) {
+			this.imsWorkAccidentBusinessFee=imsWorkAccidentBusinessFee;
 			return this;
 		}
-		public LiquidationBuilder setOtherContributions_workerFee(Float otherContributions_workerFee) {
-			this.otherContributions_workerFee=otherContributions_workerFee;
+		public LiquidationBuilder setImsWorkAccidentWorkerFee(Float imsWorkAccidentWorkerFee) {
+			this.imsWorkAccidentWorkerFee=imsWorkAccidentWorkerFee;
 			return this;
 		}
-		public LiquidationBuilder setOtherContributions_totalFee(Float otherContributions_totalFee) {
-			this.otherContributions_totalFee=otherContributions_totalFee;
-			return this;
-		}
-		
-		
-		
-		public LiquidationBuilder setOtherContributionsLiquid_base(Float otherContributionsLiquid_base) {
-			this.otherContributionsLiquid_base=otherContributionsLiquid_base;
-			return this;
-		}
-		public LiquidationBuilder setOtherContributionsLiquid_businessFee(Float otherContributionsLiquid_businessFee) {
-			this.otherContributionsLiquid_businessFee=otherContributionsLiquid_businessFee;
-			return this;
-		}
-		public LiquidationBuilder setOtherContributionsLiquid_workerFee(Float otherContributionsLiquid_workerFee) {
-			this.otherContributionsLiquid_workerFee=otherContributionsLiquid_workerFee;
-			return this;
-		}
-		public LiquidationBuilder setOtherContributionsLiquid_totalFee(Float otherContributionsLiquid_totalFee) {
-			this.otherContributionsLiquid_totalFee=otherContributionsLiquid_totalFee;
+		public LiquidationBuilder setImsWorkAccidentTotalFee(Float imsWorkAccidentTotalFee) {
+			this.imsWorkAccidentTotalFee=imsWorkAccidentTotalFee;
 			return this;
 		}
 		
 		
 		
-		public LiquidationBuilder setTotalLiquid_base(Float totalLiquid_base) {
-			this.totalLiquid_base=totalLiquid_base;
+		
+		public LiquidationBuilder setWorkAccidentLiquidBase(Float workAccidentLiquidBase) {
+			this.workAccidentLiquidBase=workAccidentLiquidBase;
 			return this;
 		}
-		public LiquidationBuilder setTotalLiquid_businessFee(Float totalLiquid_businessFee) {
-			this.totalLiquid_businessFee=totalLiquid_businessFee;
+		public LiquidationBuilder setWorkAccidentLiquidBusinessFee(Float workAccidentLiquidBusinessFee) {
+			this.workAccidentLiquidBusinessFee=workAccidentLiquidBusinessFee;
 			return this;
 		}
-		public LiquidationBuilder setTotalLiquid_workerFee(Float totalLiquid_workerFee) {
-			this.totalLiquid_workerFee=totalLiquid_workerFee;
+		public LiquidationBuilder setWorkAccidentLiquidWorkerFee(Float workAccidentLiquidWorkerFee) {
+			this.workAccidentLiquidWorkerFee=workAccidentLiquidWorkerFee;
 			return this;
 		}
-		public LiquidationBuilder setTotalLiquid_totalFee(Float totalLiquid_totalFee) {
-			this.totalLiquid_totalFee=totalLiquid_totalFee;
+		public LiquidationBuilder setWorkAccidentLiquidTotalFee(Float workAccidentLiquidTotalFee) {
+			this.workAccidentLiquidTotalFee=workAccidentLiquidTotalFee;
+			return this;
+		}
+		
+		
+		
+		public LiquidationBuilder setGrantsAndBonusesBase(Float grantsAndBonusesBase) {
+			this.grantsAndBonusesBase = grantsAndBonusesBase;
+			return this;
+		}
+		public LiquidationBuilder setGrantsAndBonusesBusinessFee(Float grantsAndBonusesBusinessFee) {
+			this.grantsAndBonusesBusinessFee = grantsAndBonusesBusinessFee;
+			return this;
+		}
+		public LiquidationBuilder setGrantsAndBonusesWorkerFee(Float grantsAndBonusesWorkerFee) {
+			this.grantsAndBonusesWorkerFee = grantsAndBonusesWorkerFee;
+			return this;
+		}
+		public LiquidationBuilder setGrantsAndBonusesTotalFee(Float grantsAndBonusesTotalFee) {
+			this.grantsAndBonusesTotalFee = grantsAndBonusesTotalFee;
+			return this;
+		}
+		
+		
+		
+		public LiquidationBuilder setOtherContributionsBase(Float otherContributionsBase) {
+			this.otherContributionsBase=otherContributionsBase;
+			return this;
+		}
+		public LiquidationBuilder setOtherContributionsBusinessFee(Float otherContributionsBusinessFee) {
+			this.otherContributionsBusinessFee=otherContributionsBusinessFee;
+			return this;
+		}
+		public LiquidationBuilder setOtherContributionsWorkerFee(Float otherContributionsWorkerFee) {
+			this.otherContributionsWorkerFee=otherContributionsWorkerFee;
+			return this;
+		}
+		public LiquidationBuilder setOtherContributionsTotalFee(Float otherContributionsTotalFee) {
+			this.otherContributionsTotalFee=otherContributionsTotalFee;
+			return this;
+		}
+		
+		
+		
+		public LiquidationBuilder setOtherContributionsLiquidBase(Float otherContributionsLiquidBase) {
+			this.otherContributionsLiquidBase=otherContributionsLiquidBase;
+			return this;
+		}
+		public LiquidationBuilder setOtherContributionsLiquidBusinessFee(Float otherContributionsLiquidBusinessFee) {
+			this.otherContributionsLiquidBusinessFee=otherContributionsLiquidBusinessFee;
+			return this;
+		}
+		public LiquidationBuilder setOtherContributionsLiquidWorkerFee(Float otherContributionsLiquidWorkerFee) {
+			this.otherContributionsLiquidWorkerFee=otherContributionsLiquidWorkerFee;
+			return this;
+		}
+		public LiquidationBuilder setOtherContributionsLiquidTotalFee(Float otherContributionsLiquidTotalFee) {
+			this.otherContributionsLiquidTotalFee=otherContributionsLiquidTotalFee;
+			return this;
+		}
+		
+		
+		
+		public LiquidationBuilder setTotalLiquidBase(Float totalLiquidBase) {
+			this.totalLiquidBase=totalLiquidBase;
+			return this;
+		}
+		public LiquidationBuilder setTotalLiquidBusinessFee(Float totalLiquidBusinessFee) {
+			this.totalLiquidBusinessFee=totalLiquidBusinessFee;
+			return this;
+		}
+		public LiquidationBuilder setTotalLiquidWorkerFee(Float totalLiquidWorkerFee) {
+			this.totalLiquidWorkerFee=totalLiquidWorkerFee;
+			return this;
+		}
+		public LiquidationBuilder setTotalLiquidTotalFee(Float totalLiquidTotalFee) {
+			this.totalLiquidTotalFee=totalLiquidTotalFee;
 			return this;
 		}
 
@@ -855,50 +855,50 @@ public class Liquidation {
 			Liquidation liq=new Liquidation();
 			
 			
-			liq.cc_base=this.cc_base;
-			liq.cc_businessFee=this.cc_businessFee;
-			liq.cc_workerFee=this.cc_workerFee;
-			liq.cc_totalFee=this.cc_totalFee;
+			liq.ccBase=this.ccBase;
+			liq.ccBusinessFee=this.ccBusinessFee;
+			liq.ccWorkerFee=this.ccWorkerFee;
+			liq.ccTotalFee=this.ccTotalFee;
 			
-			liq.ccLiquid_base=this.ccLiquid_base;
-			liq.ccLiquid_businessFee=this.ccLiquid_businessFee;
-			liq.ccLiquid_workerFee=this.ccLiquid_workerFee;
-			liq.ccLiquid_totalFee=this.ccLiquid_totalFee;
+			liq.ccLiquidBase=this.ccLiquidBase;
+			liq.ccLiquidBusinessFee=this.ccLiquidBusinessFee;
+			liq.ccLiquidWorkerFee=this.ccLiquidWorkerFee;
+			liq.ccLiquidTotalFee=this.ccLiquidTotalFee;
 			
-			liq.itWorkAccident_base=this.itWorkAccident_base;
-			liq.itWorkAccident_businessFee=this.itWorkAccident_businessFee;
-			liq.itWorkAccident_workerFee=this.itWorkAccident_workerFee;
-			liq.itWorkAccident_totalFee=this.itWorkAccident_totalFee;
+			liq.itWorkAccidentBase=this.itWorkAccidentBase;
+			liq.itWorkAccidentBusinessFee=this.itWorkAccidentBusinessFee;
+			liq.itWorkAccidentWorkerFee=this.itWorkAccidentWorkerFee;
+			liq.itWorkAccidentTotalFee=this.itWorkAccidentTotalFee;
 			
-			liq.imsWorkAccident_base=this.imsWorkAccident_base;
-			liq.imsWorkAccident_businessFee=this.imsWorkAccident_businessFee;
-			liq.imsWorkAccident_workerFee=this.imsWorkAccident_workerFee;
-			liq.imsWorkAccident_totalFee=this.imsWorkAccident_totalFee;
+			liq.imsWorkAccidentBase=this.imsWorkAccidentBase;
+			liq.imsWorkAccidentBusinessFee=this.imsWorkAccidentBusinessFee;
+			liq.imsWorkAccidentWorkerFee=this.imsWorkAccidentWorkerFee;
+			liq.imsWorkAccidentTotalFee=this.imsWorkAccidentTotalFee;
 			
-			liq.workAccidentLiquid_base=this.workAccidentLiquid_base;
-			liq.workAccidentLiquid_businessFee=this.workAccidentLiquid_businessFee;
-			liq.workAccidentLiquid_workerFee=this.workAccidentLiquid_workerFee;
-			liq.workAccidentLiquid_totalFee=this.workAccidentLiquid_totalFee;
+			liq.workAccidentLiquidBase=this.workAccidentLiquidBase;
+			liq.workAccidentLiquidBusinessFee=this.workAccidentLiquidBusinessFee;
+			liq.workAccidentLiquidWorkerFee=this.workAccidentLiquidWorkerFee;
+			liq.workAccidentLiquidTotalFee=this.workAccidentLiquidTotalFee;
 			
-			liq.grantsAndBonuses_base=this.grantsAndBonuses_base;
-			liq.grantsAndBonuses_businessFee=this.grantsAndBonuses_businessFee;
-			liq.grantsAndBonuses_workerFee=this.grantsAndBonuses_workerFee;
-			liq.grantsAndBonuses_totalFee=this.grantsAndBonuses_totalFee;
+			liq.grantsAndBonusesBase=this.grantsAndBonusesBase;
+			liq.grantsAndBonusesBusinessFee=this.grantsAndBonusesBusinessFee;
+			liq.grantsAndBonusesWorkerFee=this.grantsAndBonusesWorkerFee;
+			liq.grantsAndBonusesTotalFee=this.grantsAndBonusesTotalFee;
 			
-			liq.otherContributions_base=this.otherContributions_base;
-			liq.otherContributions_businessFee=this.otherContributions_businessFee;
-			liq.otherContributions_workerFee=this.otherContributions_workerFee;
-			liq.otherContributions_totalFee=this.otherContributions_totalFee;
+			liq.otherContributionsBase=this.otherContributionsBase;
+			liq.otherContributionsBusinessFee=this.otherContributionsBusinessFee;
+			liq.otherContributionsWorkerFee=this.otherContributionsWorkerFee;
+			liq.otherContributionsTotalFee=this.otherContributionsTotalFee;
 
-			liq.otherContributionsLiquid_base=this.otherContributionsLiquid_base;
-			liq.otherContributionsLiquid_businessFee=this.otherContributionsLiquid_businessFee;
-			liq.otherContributionsLiquid_workerFee=this.otherContributionsLiquid_workerFee;
-			liq.otherContributionsLiquid_totalFee=this.otherContributionsLiquid_totalFee;
+			liq.otherContributionsLiquidBase=this.otherContributionsLiquidBase;
+			liq.otherContributionsLiquidBusinessFee=this.otherContributionsLiquidBusinessFee;
+			liq.otherContributionsLiquidWorkerFee=this.otherContributionsLiquidWorkerFee;
+			liq.otherContributionsLiquidTotalFee=this.otherContributionsLiquidTotalFee;
 			
-			liq.totalLiquid_base=this.totalLiquid_base;
-			liq.totalLiquid_businessFee=this.totalLiquid_businessFee;
-			liq.totalLiquid_workerFee=this.totalLiquid_workerFee;
-			liq.totalLiquid_totalFee=this.totalLiquid_totalFee;
+			liq.totalLiquidBase=this.totalLiquidBase;
+			liq.totalLiquidBusinessFee=this.totalLiquidBusinessFee;
+			liq.totalLiquidWorkerFee=this.totalLiquidWorkerFee;
+			liq.totalLiquidTotalFee=this.totalLiquidTotalFee;
 			return liq;
 		}
 	}

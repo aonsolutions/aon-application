@@ -37,11 +37,11 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
-public class TestSisetemaRED_I {
+public class TestSistemaRED_I {
 
 	@Test
 	public void testSituacionEmpresaOk() {
-		try (final InputStream certificateInputStream =TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12"))
+		try (final InputStream certificateInputStream =TestSistemaRED_I.class.getResourceAsStream("FNMT.p12"))
 		  { SituacionEmpresa se=SistemaRED_I.getSituacionEmpresa(certificateInputStream, "jg@FNMT",
 		  "pkcs12", "0111", "01105360062");
 		  	if(se.getCcc()!=null) {
@@ -63,7 +63,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testSituacionEmpresaWrongRegime() {
-		try (final InputStream certificateInputStream =TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12"))
+		try (final InputStream certificateInputStream =TestSistemaRED_I.class.getResourceAsStream("FNMT.p12"))
 		  { SituacionEmpresa se=SistemaRED_I.getSituacionEmpresa(certificateInputStream, "jg@FNMT",
 		  "pkcs12", "0161", "01105360062");
 		  	fail("Shouldn't finish");
@@ -85,7 +85,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testSituacionEmpresaUnfilledCCC() {
-		try (final InputStream certificateInputStream =TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12"))
+		try (final InputStream certificateInputStream =TestSistemaRED_I.class.getResourceAsStream("FNMT.p12"))
 		  { SituacionEmpresa se=SistemaRED_I.getSituacionEmpresa(certificateInputStream, "jg@FNMT",
 		  "pkcs12", "0111", "");
 		  	fail("Shouldn't finish");
@@ -110,7 +110,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testSituacionEmpresaWrongCert() {
-		try (final InputStream certificateInputStream =TestSisetemaRED_I.class.getResourceAsStream("FNM2"))
+		try (final InputStream certificateInputStream =TestSistemaRED_I.class.getResourceAsStream("FNM2"))
 		  { SituacionEmpresa se=SistemaRED_I.getSituacionEmpresa(certificateInputStream, "jg@FNMT",
 		  "pkcs12", "0111", "01105360062");
 		  	fail("Shouldn't finish");
@@ -134,7 +134,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testSituacionEmpresaWrongCertKey() {
-		try (final InputStream certificateInputStream =TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12"))
+		try (final InputStream certificateInputStream =TestSistemaRED_I.class.getResourceAsStream("FNMT.p12"))
 		  { SituacionEmpresa se=SistemaRED_I.getSituacionEmpresa(certificateInputStream, "jgfFNMT",
 		  "pkcs12", "0111", "01105360062");
 		  	fail("Shouldn't finish");
@@ -158,7 +158,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testSituacionEmpresaWrongCertType() {
-		try (final InputStream certificateInputStream =TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12"))
+		try (final InputStream certificateInputStream =TestSistemaRED_I.class.getResourceAsStream("FNMT.p12"))
 		  { SituacionEmpresa se=SistemaRED_I.getSituacionEmpresa(certificateInputStream, "jg@FNMT",
 		  "pkcs15", "0111", "01105360062");
 		  	fail("Shouldn't finish");
@@ -184,7 +184,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetTADuplicateOk() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  byte[] pdf=SistemaRED_I.getTADuplicate(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  if(!(pdf.length>0))
@@ -202,7 +202,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetTADuplicateOk2() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("09-09-2020");
 		  byte[] pdf=SistemaRED_I.getTADuplicate(certificateInputStream, "jg@FNMT", "pkcs12","291136796369", "0111", "01105360062", d);
 		  if(!(pdf.length>0))
@@ -220,7 +220,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetTADuplicateWrongDate() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 			Calendar c=Calendar.getInstance();
 			c.add(Calendar.YEAR, 1);
 		  Date d=c.getTime();
@@ -239,7 +239,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetTADuplicateWrongCCC() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  byte[] pdf=SistemaRED_I.getTADuplicate(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105760562", d);
 		} catch(invalidCccException e) {
@@ -258,7 +258,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetTADuplicateWrongCert() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMp12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMp12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  byte[] pdf=SistemaRED_I.getTADuplicate(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  fail("Should have failed");
@@ -278,7 +278,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetTADuplicateWrongCertKey() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  byte[] pdf=SistemaRED_I.getTADuplicate(certificateInputStream, "jg@NMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  fail("Should have failed");
@@ -297,7 +297,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetTADuplicateWrongCertType() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  byte[] pdf=SistemaRED_I.getTADuplicate(certificateInputStream, "jg@FNMT", "pk5s12","011005185924", "0111", "01105360062", d);
 		  fail("Should have failed");
@@ -322,7 +322,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionInfoCCCDuplicateOk() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new Date();
 		  byte[] pdf=SistemaRED_I.getContributionInformationCCC(certificateInputStream, "jg@FNMT", "pkcs12","0111", "01105360062", d);
 		  if(!(pdf.length>0))
@@ -339,7 +339,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionInfoDuplicateOk() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  byte[] pdf=SistemaRED_I.getContributionInformation(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  if(!(pdf.length>0))
@@ -357,7 +357,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetContributionInfoWrongDate() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 			Calendar c=Calendar.getInstance();
 			c.add(Calendar.YEAR, 1);
 		  Date d=c.getTime();
@@ -376,7 +376,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetContributionInfoWrongCCC() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  byte[] pdf=SistemaRED_I.getContributionInformation(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105760562", d);
 		} catch(invalidCccException e) {
@@ -395,7 +395,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetContributionInfoWrongCert() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMp12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMp12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  byte[] pdf=SistemaRED_I.getContributionInformation(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  fail("Should have failed");
@@ -415,7 +415,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetContributionInfoWrongCertKey() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  byte[] pdf=SistemaRED_I.getContributionInformation(certificateInputStream, "jg@NMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  fail("Should have failed");
@@ -434,7 +434,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetContributionInfoWrongCertType() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  byte[] pdf=SistemaRED_I.getContributionInformation(certificateInputStream, "jg@FNMT", "pk5s12","011005185924", "0111", "01105360062", d);
 		  fail("Should have failed");
@@ -457,7 +457,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testTACertificatePdfsOk() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  for(byte[] pdf:pdfs){
@@ -480,7 +480,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testTACertificatePdfsWrongCCC() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105368062", d);
 			fail("Should have returned a pdf");  
@@ -501,7 +501,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testTACertificatePdfsNullCCC() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "", d);
 			fail("Should have returned a pdf");  
@@ -524,7 +524,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testTACertificatePdfsNullRegime() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "", "01105360062", d);
 			fail("Should have returned a pdf");  
@@ -547,7 +547,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testTACertificatePdfsWrongRegime() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0181", "01105360062", d);
 			fail("Should have returned a pdf");  
@@ -569,7 +569,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testTACertificatePdfsWrongDate() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Calendar c=Calendar.getInstance();
 		  c.add(Calendar.YEAR, 1);
 			Date d=c.getTime();
@@ -591,7 +591,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testTACertificatePdfsWrongCert() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMp12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMp12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  	fail("Should have returned failed");  
@@ -614,7 +614,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testTACertificatePdfsWrongCertKey() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getTACertificatePDFs(certificateInputStream, "jg@NMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  	fail("Should have returned failed");  
@@ -636,7 +636,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testTACertificatePdfsWrongCertType() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pk6s12","011005185924", "0111", "01105360062", d);
 		  	fail("Should have returned failed");  
@@ -665,7 +665,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionPdfsOk() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getContributionPDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  for(byte[] pdf:pdfs){
@@ -688,7 +688,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionPdfsWrongCCC() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getContributionPDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105368062", d);
 			fail("Should have returned a pdf");  
@@ -709,7 +709,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionPdfsNullCCC() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getContributionPDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "", d);
 			fail("Should have returned a pdf");  
@@ -731,7 +731,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionPdfsNullRegime() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getContributionPDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "", "01105360062", d);
 			fail("Should have returned a pdf");  
@@ -753,7 +753,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionPdfsWrongRegime() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getContributionPDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0181", "01105360062", d);
 			fail("Should have returned a pdf");  
@@ -775,7 +775,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionPdfsWrongDate() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Calendar c=Calendar.getInstance();
 		  c.add(Calendar.YEAR, 1);
 			Date d=c.getTime();
@@ -797,7 +797,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionPdfsWrongCert() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMp12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMp12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getContributionPDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  	fail("Should have returned failed");  
@@ -820,7 +820,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionPdfsWrongCertKey() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getContributionPDFs(certificateInputStream, "jg@NMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  	fail("Should have returned failed");  
@@ -842,7 +842,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionPdfsWrongCertType() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getContributionPDFs(certificateInputStream, "jg@FNMT", "pk6s12","011005185924", "0111", "01105360062", d);
 		  	fail("Should have returned failed");  
@@ -866,7 +866,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testObligationAwarenessOk() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
 		  byte[] pdf=SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
 		  if(!(pdf.length>0))
 			  fail("Should have returned a pdf");
@@ -882,7 +882,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testObligationAwarenessWrongCCC() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
 		  byte[] pdf=SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105367062");
 			  fail("Shouldn't have returned a pdf");
 		} catch (WrongIdentifierException e) {
@@ -900,7 +900,7 @@ public class TestSisetemaRED_I {
 
 	@Test
 	public void testObligationAwarenessNullRegime() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
 		  byte[] pdf=SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12", "", "01105360062");
 			  fail("Shouldn't have returned a pdf");
 		} catch (UnfilledMandatory e) {
@@ -917,7 +917,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testObligationAwarenessInvalidRegime() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
 		  byte[] pdf=SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12", "sdsa", "01105360062");
 			  fail("Shouldn't have returned a pdf");
 		} catch (SegSocialException e) {
@@ -933,7 +933,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testObligationAwarenessWrongCert() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT2")){		  
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT2")){		  
 		  byte[] pdf=SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
 		  fail("Shouldn't have returned a pdf");
 		} catch(CertificateNotFoundException e) {
@@ -950,7 +950,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testObligationAwarenessWrongCertKey() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
 		  byte[] pdf=SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, "jg@FNoT", "pkcs12", "0111", "01105360062");
 		  fail("Shouldn't have returned a pdf");
 		} catch(InvalidCertificateException e) {
@@ -968,7 +968,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testObligationAwarenessWrongCertType() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
 		  byte[] pdf=SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pk4s12", "0111", "01105360062");
 		  fail("Shouldn't have returned a pdf");
 		} catch(InvalidCertificateException e) {
@@ -986,7 +986,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testgetIdcsOk() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
 		  Collection<Idc> idcs=SistemaRED_I.getIDCDates(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924", "0111", "01105360062");
 		  for (Idc idc : idcs) {
 			if(idc.getFecha()==null) {
@@ -1005,7 +1005,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testgetIDCNSS() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
 		  byte data [] = SistemaRED_I.getContributionInformationNSS(
 				  certificateInputStream, 
 				  "jg@FNMT", 
@@ -1028,7 +1028,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetIdcsWrongCCC() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Collection<Idc> pdfs=SistemaRED_I.getIDCDates(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105368062");
 			fail("Should have returned a pdf");  
 		} catch (invalidCccException e) {
@@ -1044,7 +1044,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetIdcsNullCCC() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Collection<Idc> pdfs=SistemaRED_I.getIDCDates(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "");
 			fail("Should have returned a pdf");  
 		} catch (UnfilledMandatory e) {
@@ -1061,7 +1061,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetIdcsNullRegime() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Collection<Idc> pdfs=SistemaRED_I.getIDCDates(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "", "01105360062");
 			fail("Should have returned a pdf");  
 		} catch (UnfilledMandatory e) {
@@ -1079,7 +1079,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetIdcsWrongRegime() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Collection<Idc> pdfs=SistemaRED_I.getIDCDates(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0181", "01105360062");
 			fail("Should have returned a pdf");  
 		} catch (NotAllowedContributionAccount e) {
@@ -1097,7 +1097,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetIdcsWrongCert() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMp12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMp12")){
 		  Collection<Idc> pdfs=SistemaRED_I.getIDCDates(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062");
 		  	fail("Should have returned failed");  
 		} catch(CertificateNotFoundException e) {
@@ -1115,7 +1115,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetIdcsWrongCertKey() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 			Collection<Idc> pdfs=SistemaRED_I.getIDCDates(certificateInputStream, "jg@NMT", "pkcs12","011005185924", "0111", "01105360062");
 		  	fail("Should have returned failed");  
 		} catch(InvalidCertificateException e) {
@@ -1132,7 +1132,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetIdcsWrongCertType() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 			Collection<Idc> pdfs=SistemaRED_I.getIDCDates(certificateInputStream, "jg@FNMT", "pk6s12","011005185924", "0111", "01105360062");
 		  	fail("Should have returned failed");  
 		} catch(InvalidCertificateException e) {
@@ -1171,7 +1171,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetDischargeDatesOk() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 			Collection<Date> dates=SistemaRED_I.getDischargeDates(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062");
 		  for (Date date : dates) {
 			if(date==null) {
@@ -1191,7 +1191,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetDischargeDatesWrongCCC() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 			Collection<Date> dates=SistemaRED_I.getDischargeDates(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105760562");
 		} catch(invalidCccException e) {
 			assertTrue(true);
@@ -1207,7 +1207,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetDischargeDatesWrongCert() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMp12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMp12")){
 			Collection<Date> dates=SistemaRED_I.getDischargeDates(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062");
 		  fail("Should have failed");
 		} catch (CertificateNotFoundException e) {
@@ -1224,7 +1224,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetDischargeDatesWrongCertKey() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 			Collection<Date> dates=SistemaRED_I.getDischargeDates(certificateInputStream, "jg@NMT", "pkcs12","011005185924", "0111", "01105360062");
 		  fail("Should have failed");
 		} catch (InvalidCertificateException e) {
@@ -1240,7 +1240,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testGetDischargeDatesWrongCertType() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")){
 			Collection<Date> dates=SistemaRED_I.getDischargeDates(certificateInputStream, "jg@FNMT", "pk5s12","011005185924", "0111", "01105360062");
 		  fail("Should have failed");
 		} catch (InvalidCertificateException e) {
@@ -1256,7 +1256,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionSettlementReportOk() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")) {
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")) {
 			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-11-2020");
 			  Optional<Date> opDate=Optional.of(d);
 			  byte[] pdf=SistemaRED_I.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", opDate);
@@ -1274,7 +1274,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionSettlementReportOkNoDate() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")) {
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")) {
 			  //Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-11-2020");
 			  Optional<Date> opDate=Optional.empty();
 			  byte[] pdf=SistemaRED_I.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", opDate);
@@ -1290,7 +1290,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionSettlementReportWrongCCC() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")) {
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")) {
 			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-11-2020");
 			  Optional<Date> opDate=Optional.of(d);
 			  byte[] pdf=SistemaRED_I.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01100477910", opDate);
@@ -1308,7 +1308,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionSettlementReportWrongDate() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")) {
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")) {
 			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-11-2001");
 			  Optional<Date> opDate=Optional.of(d);
 			  byte[] pdf=SistemaRED_I.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", opDate);
@@ -1327,7 +1327,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionSettlementReportNoNAF() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")) {
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")) {
 			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-11-2020");
 			  Optional<Date> opDate=Optional.of(d);
 			  byte[] pdf=SistemaRED_I.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "pkcs12", "", "0111", "01105577910", opDate);
@@ -1345,7 +1345,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionSettlementReportNoCCC() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")) {
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")) {
 			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-11-2020");
 			  Optional<Date> opDate=Optional.of(d);
 			  byte[] pdf=SistemaRED_I.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "", opDate);
@@ -1363,7 +1363,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionSettlementReportWrongCert() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FN12")) {
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FN12")) {
 			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-11-2020");
 			  Optional<Date> opDate=Optional.of(d);
 			  byte[] pdf=SistemaRED_I.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", opDate);
@@ -1381,7 +1381,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionSettlementReportWrongCertKey() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")) {
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")) {
 			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-11-2020");
 			  Optional<Date> opDate=Optional.of(d);
 			  byte[] pdf=SistemaRED_I.getContributionSettlementReport(certificateInputStream, "jg@FNT", "pkcs12", "011017250195", "0111", "01105577910", opDate);
@@ -1399,7 +1399,7 @@ public class TestSisetemaRED_I {
 	
 	@Test
 	public void testContributionSettlementReportWrongCertType() {
-		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")) {
+		try (final InputStream certificateInputStream = TestSistemaRED_I.class.getResourceAsStream("FNMT.p12")) {
 			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-11-2020");
 			  Optional<Date> opDate=Optional.of(d);
 			  byte[] pdf=SistemaRED_I.getContributionSettlementReport(certificateInputStream, "jg@FNMT", "kcs12", "011017250195", "0111", "01105577910", opDate);

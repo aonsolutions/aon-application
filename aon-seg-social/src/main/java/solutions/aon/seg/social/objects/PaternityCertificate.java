@@ -172,80 +172,80 @@ public class PaternityCertificate {
 	}
 	
 	public static interface Visitor{
-		public void visit_ccc(String ccc);
-		public void visit_postCode(String postCode);
-		public void visit_address(String address);
-		public void visit_province(String province);
-		public void visit_municipality(String municipality);
+		public void visitCcc(String ccc);
+		public void visitPostCode(String postCode);
+		public void visitAddress(String address);
+		public void visitProvince(String province);
+		public void visitMunicipality(String municipality);
 		//BENEFIT DATA
-		public void visit_reason(String reason);
-		public void visit_receptionDate(Date receptionDate);
-		public void visit_periodNumber(Integer periodNumber);
-		public void visit_startDate(Date startDate);
-		public void visit_endDate(Date endDate);
-		public void visit_parciality(String parciality);
+		public void visitReason(String reason);
+		public void visitReceptionDate(Date receptionDate);
+		public void visitPeriodNumber(Integer periodNumber);
+		public void visitStartDate(Date startDate);
+		public void visitEndDate(Date endDate);
+		public void visitParciality(String parciality);
 		//WORKER DATA
-		public void visit_workerName(String workerName);
-		public void visit_workerNif(String workerNif);
-		public void visit_workerNaf(String workerNaf);
-		public void visit_workerGroup(String workerGroup);
-		public void visit_workerDischargeDate(Date workerDischargeDate);
-		public void visit_workerWithdrawalDate(Date workerWithdrawalDate);
-		public void visit_workerContractCode(String workerContractCode);
-		public void visit_workerPartialTimeCoef(Float workerPartialTimeCoef);
-		public void visit_workerContractType(String workerContractType);
-		public void visit_isPublicEmployee(Boolean isPublicEmployee);
-		public void visit_registry(Collection<String[]> registry);
-		public void visit_pdf(byte[] pdf);
+		public void visitWorkerName(String workerName);
+		public void visitWorkerNif(String workerNif);
+		public void visitWorkerNaf(String workerNaf);
+		public void visitWorkerGroup(String workerGroup);
+		public void visitWorkerDischargeDate(Date workerDischargeDate);
+		public void visitWorkerWithdrawalDate(Date workerWithdrawalDate);
+		public void visitWorkerContractCode(String workerContractCode);
+		public void visitWorkerPartialTimeCoef(Float workerPartialTimeCoef);
+		public void visitWorkerContractType(String workerContractType);
+		public void visitIsPublicEmployee(Boolean isPublicEmployee);
+		public void visitRegistry(Collection<String[]> registry);
+		public void visitPdf(byte[] pdf);
 	}
 	
 	public void accept(Visitor visitor) {
 		if(ccc!=null)
-			visitor.visit_ccc(this.ccc);
+			visitor.visitCcc(this.ccc);
 		if(postCode!=null)
-			visitor.visit_postCode(this.postCode);
+			visitor.visitPostCode(this.postCode);
 		if(address!=null)
-			visitor.visit_address(this.address);
+			visitor.visitAddress(this.address);
 		if(province!=null)
-			visitor.visit_province(this.province);
+			visitor.visitProvince(this.province);
 		if(municipality!=null)
-			visitor.visit_municipality(this.municipality);
+			visitor.visitMunicipality(this.municipality);
 		if(reason!=null)
-			visitor.visit_reason(this.reason);
+			visitor.visitReason(this.reason);
 		if(receptionDate!=null)
-			visitor.visit_receptionDate(this.receptionDate);
+			visitor.visitReceptionDate(this.receptionDate);
 		if(periodNumber!=null)
-			visitor.visit_periodNumber(this.periodNumber);
+			visitor.visitPeriodNumber(this.periodNumber);
 		if(startDate!=null)
-			visitor.visit_startDate(this.startDate);
+			visitor.visitStartDate(this.startDate);
 		if(endDate!=null)
-			visitor.visit_endDate(this.endDate);
+			visitor.visitEndDate(this.endDate);
 		if(parciality!=null)
-			visitor.visit_parciality(this.parciality);
+			visitor.visitParciality(this.parciality);
 		if(workerName!=null)
-			visitor.visit_workerName(this.workerName);
+			visitor.visitWorkerName(this.workerName);
 		if(workerNif!=null)
-			visitor.visit_workerNif(this.workerNif);
+			visitor.visitWorkerNif(this.workerNif);
 		if(workerNaf!=null)
-			visitor.visit_workerNaf(this.workerNaf);
+			visitor.visitWorkerNaf(this.workerNaf);
 		if(workerGroup!=null)
-			visitor.visit_workerGroup(this.workerGroup);
+			visitor.visitWorkerGroup(this.workerGroup);
 		if(workerDischargeDate!=null)
-			visitor.visit_workerDischargeDate(this.workerDischargeDate);
+			visitor.visitWorkerDischargeDate(this.workerDischargeDate);
 		if(workerWithdrawalDate!=null)
-			visitor.visit_workerWithdrawalDate(this.workerWithdrawalDate);
+			visitor.visitWorkerWithdrawalDate(this.workerWithdrawalDate);
 		if(workerContractCode!=null)
-			visitor.visit_workerContractCode(this.workerContractCode);
+			visitor.visitWorkerContractCode(this.workerContractCode);
 		if(workerPartialTimeCoef!=null)
-			visitor.visit_workerPartialTimeCoef(this.workerPartialTimeCoef);
+			visitor.visitWorkerPartialTimeCoef(this.workerPartialTimeCoef);
 		if(workerContractType!=null)
-			visitor.visit_workerContractType(this.workerContractType);
+			visitor.visitWorkerContractType(this.workerContractType);
 		if(isPublicEmployee!=null)
-			visitor.visit_isPublicEmployee(this.isPublicEmployee);
+			visitor.visitIsPublicEmployee(this.isPublicEmployee);
 		if(registry!=null)
-			visitor.visit_registry(this.registry);
+			visitor.visitRegistry(this.registry);
 		if(pdf!=null)
-			visitor.visit_pdf(this.pdf);
+			visitor.visitPdf(this.pdf);
 	}
 	@Override
 	public String toString() {
@@ -255,133 +255,133 @@ public class PaternityCertificate {
 		accept(new Visitor() {
 
 			@Override
-			public void visit_ccc(String ccc) {
+			public void visitCcc(String ccc) {
 				stringBuffer.append(String.format("\tCCC: \"%S\"\n", ccc));
 				
 			}
 
 			@Override
-			public void visit_postCode(String postCode) {
+			public void visitPostCode(String postCode) {
 				stringBuffer.append(String.format("\tCP: \"%S\"\n", postCode));
 				
 			}
 
 			@Override
-			public void visit_address(String address) {
+			public void visitAddress(String address) {
 				stringBuffer.append(String.format("\tAddress: \"%S\"\n", address));
 				
 			}
 
 			@Override
-			public void visit_province(String province) {
+			public void visitProvince(String province) {
 				stringBuffer.append(String.format("\tProvince: \"%S\"\n", province));
 				
 			}
 
 			@Override
-			public void visit_municipality(String municipality) {
+			public void visitMunicipality(String municipality) {
 				stringBuffer.append(String.format("\tMunicipality: \"%S\"\n", municipality));
 				
 			}
 
 			@Override
-			public void visit_reason(String reason) {
+			public void visitReason(String reason) {
 				stringBuffer.append(String.format("\tReason: \"%S\"\n", reason));
 				
 			}
 
 			@Override
-			public void visit_receptionDate(Date receptionDate) {
+			public void visitReceptionDate(Date receptionDate) {
 				stringBuffer.append(String.format("\tReception date: \"%S\"\n", receptionDate));
 				
 			}
 
 			@Override
-			public void visit_periodNumber(Integer periodNumber) {
+			public void visitPeriodNumber(Integer periodNumber) {
 				stringBuffer.append(String.format("\tPeriod number: \"%S\"\n", periodNumber));
 				
 			}
 
 			@Override
-			public void visit_startDate(Date startDate) {
+			public void visitStartDate(Date startDate) {
 				stringBuffer.append(String.format("\tStart date: \"%S\"\n", startDate));
 				
 			}
 
 			@Override
-			public void visit_endDate(Date endDate) {
+			public void visitEndDate(Date endDate) {
 				stringBuffer.append(String.format("\tEnd date: \"%S\"\n", endDate));
 				
 			}
 
 			@Override
-			public void visit_parciality(String parciality) {
+			public void visitParciality(String parciality) {
 				stringBuffer.append(String.format("\tPartiality: \"%S\"\n", parciality));
 				
 			}
 
 			@Override
-			public void visit_workerName(String workerName) {
+			public void visitWorkerName(String workerName) {
 				stringBuffer.append(String.format("\tWorker name: \"%S\"\n", workerName));
 				
 			}
 
 			@Override
-			public void visit_workerNif(String workerNif) {
+			public void visitWorkerNif(String workerNif) {
 				stringBuffer.append(String.format("\tWorker NIF: \"%S\"\n", workerNif));
 				
 			}
 
 			@Override
-			public void visit_workerNaf(String workerNaf) {
+			public void visitWorkerNaf(String workerNaf) {
 				stringBuffer.append(String.format("\tWorker NAF: \"%S\"\n", workerNaf));
 				
 			}
 
 			@Override
-			public void visit_workerGroup(String workerGroup) {
+			public void visitWorkerGroup(String workerGroup) {
 				stringBuffer.append(String.format("\tWorker group: \"%S\"\n", workerGroup));
 				
 			}
 
 			@Override
-			public void visit_workerDischargeDate(Date workerDischargeDate) {
+			public void visitWorkerDischargeDate(Date workerDischargeDate) {
 				stringBuffer.append(String.format("\tWorker's discharge date: \"%S\"\n", workerDischargeDate));
 				
 			}
 
 			@Override
-			public void visit_workerWithdrawalDate(Date workerWithdrawalDate) {
+			public void visitWorkerWithdrawalDate(Date workerWithdrawalDate) {
 				stringBuffer.append(String.format("\tWorker's withdrawal date: \"%S\"\n", workerWithdrawalDate));
 				
 			}
 
 			@Override
-			public void visit_workerContractCode(String workerContractCode) {
+			public void visitWorkerContractCode(String workerContractCode) {
 				stringBuffer.append(String.format("\tWorker's contract code: \"%S\"\n", workerContractCode));
 				
 			}
 
 			@Override
-			public void visit_workerPartialTimeCoef(Float workerPartialTimeCoef) {
+			public void visitWorkerPartialTimeCoef(Float workerPartialTimeCoef) {
 				stringBuffer.append(String.format("\tWorker's partial time coef.: \"%S\"\n", workerPartialTimeCoef));
 				
 			}
 
 			@Override
-			public void visit_workerContractType(String workerContractType) {
+			public void visitWorkerContractType(String workerContractType) {
 				stringBuffer.append(String.format("\tWorker's contract type: \"%S\"\n", workerContractType));
 				
 			}
 
 			@Override
-			public void visit_isPublicEmployee(Boolean isPublicEmployee) {
+			public void visitIsPublicEmployee(Boolean isPublicEmployee) {
 				stringBuffer.append(String.format("\tIs public employee?: \"%S\"\n", isPublicEmployee));
 				
 			}
 
 			@Override
-			public void visit_registry(Collection<String[]> registry) {
+			public void visitRegistry(Collection<String[]> registry) {
 				stringBuffer.append(String.format("\tREGISTROS:\n"));
 				stringBuffer.append(String.format("\tNúmero\tAño/mes\t\tBase CC\t\tBase CP\t\tDías\n"));
 				for (String[] strings : registry) {
@@ -394,7 +394,7 @@ public class PaternityCertificate {
 			}
 
 			@Override
-			public void visit_pdf(byte[] pdf) {
+			public void visitPdf(byte[] pdf) {
 				if(pdf!=null) {
 					if(pdf.length>0) {
 						stringBuffer.append(String.format("\tPDF DOWNLOADED"));

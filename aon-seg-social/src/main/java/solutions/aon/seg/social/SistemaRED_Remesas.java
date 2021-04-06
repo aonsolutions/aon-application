@@ -233,8 +233,7 @@ public class SistemaRED_Remesas {
 				HtmlDivision divIban=(HtmlDivision) divs.get(0);
 				HtmlSpan spanIban=(HtmlSpan) divIban.getElementsByTagName("span").get(0);
 				spanIban.removeAllChildren();
-				
-				System.out.println(spanIban.asXml());
+
 			}
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
@@ -269,6 +268,9 @@ public class SistemaRED_Remesas {
 			}
 			else if(error.toUpperCase().contains("EXISTEN PROCESOS PENDIENTES SOBRE ESTA LIQUIDACIÓN")) {
 				throw new PendingProcessesException(error);
+			}
+			else if (error.toUpperCase().contains("NO VIABLE")) {
+				throw new LiquidationDoesNotExist(error);
 			}
 			else {
 				throw new InvalidDataException(error);

@@ -2505,14 +2505,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				totalEnterprise.setName("TOTAL_ENTERPRISE");
 				totalEnterprise.setExpression(Double.toString(Math.round(salary.getTotalEnterprise()*100.00)/100.00));
 				salary.getSalaryDatas().add( totalEnterprise );
-				salary.setTotalEnterprise(Optional.ofNullable(liquidation.getTotalLiquid_businessFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+				salary.setTotalEnterprise(Optional.ofNullable(liquidation.getTotalLiquidBusinessFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
 
 				com.esferalia.aon.payroll.SalaryData socialSecurityContributions = 
 				new com.esferalia.aon.payroll.SalaryData();
 				socialSecurityContributions.setName("SOCIAL_SECURITY_CONTRIBUTIONS");
 				socialSecurityContributions.setExpression(Double.toString(Math.round(salary.getSocialSecurityContributions()*100.00)/100.00));
 				salary.getSalaryDatas().add( socialSecurityContributions );
-				salary.setSocialSecurityContributions(Optional.ofNullable(liquidation.getTotalLiquid_workerFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+				salary.setSocialSecurityContributions(Optional.ofNullable(liquidation.getTotalLiquidWorkerFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
 					
 				sldSalaries.add(salary);
 				
@@ -5580,14 +5580,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		salary.setSocialSecurityNumber(liquidation.getNss());
 		salary.setEmployeeName(person.map(p->p.getName()).orElse(liquidation.getCaf()));
 		
-		salary.setRemuneration(Optional.ofNullable(liquidation.getCc_base()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
-		salary.setTotalPayment(Optional.ofNullable(liquidation.getCc_base()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+		salary.setRemuneration(Optional.ofNullable(liquidation.getCcBase()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+		salary.setTotalPayment(Optional.ofNullable(liquidation.getCcBase()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
 
-		salary.setTotalEnterprise(Optional.ofNullable(liquidation.getTotalLiquid_businessFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
-		salary.setSocialSecurityContributions(Optional.ofNullable(liquidation.getTotalLiquid_workerFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+		salary.setTotalEnterprise(Optional.ofNullable(liquidation.getTotalLiquidBusinessFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+		salary.setSocialSecurityContributions(Optional.ofNullable(liquidation.getTotalLiquidWorkerFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
 		
-		salary.setTotalDeduction(Optional.ofNullable(liquidation.getCc_totalFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
-		salary.setTotalLiquid(Optional.ofNullable(liquidation.getTotalLiquid_totalFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+		salary.setTotalDeduction(Optional.ofNullable(liquidation.getCcTotalFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
+		salary.setTotalLiquid(Optional.ofNullable(liquidation.getTotalLiquidTotalFee()).map(d -> Double.parseDouble(d.toString())).orElse(0.00));
 		
 		// Buff !!!!.
 		Payments payments = new Payments();

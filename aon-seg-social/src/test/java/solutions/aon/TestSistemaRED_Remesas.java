@@ -16,6 +16,7 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import solutions.aon.seg.social.SistemaRED_I;
 import solutions.aon.seg.social.SistemaRED_Remesas;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
 import solutions.aon.seg.social.exceptions.invalidData.LiquidationDoesNotExist;
 import solutions.aon.seg.social.exceptions.invalidData.NotExistingYetException;
 import solutions.aon.seg.social.exceptions.invalidData.PendingProcessesException;
@@ -36,6 +37,8 @@ public class TestSistemaRED_Remesas {
 			fail("Shouldn't succeed");
 		} catch (NotExistingYetException e) {
 			
+		} catch (LiquidationDoesNotExist e) {
+			
 		} catch (IOException e) {
 			fail("Wrong certificate on test");
 		} catch (SegSocialException e) {
@@ -52,6 +55,8 @@ public class TestSistemaRED_Remesas {
 			SistemaRED_Remesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED_I.Regime.GENERAL, d, d, SistemaRED_I.LiquidationType.L00_NORMAL, false, true);
 			fail("Shouldn't succeed");
 		} catch (outOfTimeException e) {
+			
+		} catch (LiquidationDoesNotExist e) {
 			
 		} catch (IOException e) {
 			fail("Wrong certificate on test");

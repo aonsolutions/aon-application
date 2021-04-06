@@ -38,28 +38,28 @@ public class BankData {
 	}
 	
 	public interface Visitor{
-		public void visit_dataType(String dataType);
-		public void visit_IBAN(String iban);
-		public void visit_accountHolderType(String accountHolderType);
-		public void visit_holderID(String holderID);
-		public void visit_holderName(String holderName);
+		public void visitDataType(String dataType);
+		public void visitIBAN(String iban);
+		public void visitAccountHolderType(String accountHolderType);
+		public void visitHolderID(String holderID);
+		public void visitHolderName(String holderName);
 	}
 	
 	public void accept(Visitor visitor) {
 		if(this.dataType!=null) {
-			visitor.visit_dataType(this.dataType);
+			visitor.visitDataType(this.dataType);
 		}
 		if(this.iban!=null) {
-			visitor.visit_IBAN(this.iban);
+			visitor.visitIBAN(this.iban);
 		}
 		if(this.accountHolderType!=null) {
-			visitor.visit_accountHolderType(this.accountHolderType);
+			visitor.visitAccountHolderType(this.accountHolderType);
 		}
 		if(this.holderID!=null) {
-			visitor.visit_holderID(this.holderID);
+			visitor.visitHolderID(this.holderID);
 		}
 		if(this.holderName!=null) {
-			visitor.visit_holderName(this.holderName);
+			visitor.visitHolderName(this.holderName);
 		}
 	}
 	
@@ -70,30 +70,30 @@ public class BankData {
 		accept(new Visitor() {
 			
 			@Override
-			public void visit_dataType(String dataType) {
+			public void visitDataType(String dataType) {
 				stringBuffer.append(String.format("\tData type: \"%S\"\n", dataType));
 				
 			}
 			
 			@Override
-			public void visit_holderName(String holderName) {
+			public void visitHolderName(String holderName) {
 				stringBuffer.append(String.format("\t\tAccount holder name: \"%S\"\n", holderName));
 			}
 			
 			@Override
-			public void visit_holderID(String holderID) {
+			public void visitHolderID(String holderID) {
 				stringBuffer.append(String.format("\t\tAccount holder ID: \"%S\"\n", holderID));
 				
 			}
 			
 			@Override
-			public void visit_accountHolderType(String accountHolderType) {
+			public void visitAccountHolderType(String accountHolderType) {
 				stringBuffer.append(String.format("\t\tAccount holder ID: \"%S\"\n", accountHolderType));
 				
 			}
 			
 			@Override
-			public void visit_IBAN(String iban) {
+			public void visitIBAN(String iban) {
 				stringBuffer.append(String.format("\t\tIBAN ID: \"%S\"\n", iban));
 				
 			}

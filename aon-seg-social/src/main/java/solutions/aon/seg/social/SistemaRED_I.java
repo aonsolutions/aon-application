@@ -138,7 +138,7 @@ public class SistemaRED_I {
 			// DATOS IDENTIFICATIVOS
 			seb1.setCcc(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPROVINCIA3")
 					+ HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNISS3"))
-					.setIdEmpresario(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTIPO3")).setNif_empresa(nif)
+					.setIdEmpresario(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTIPO3")).setNifempresa(nif)
 					.setRegimen(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFREGIMEN3"))
 					.setNss(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPRONAF3")
 							+ HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNUMNAF30"))
@@ -166,15 +166,15 @@ public class SistemaRED_I {
 					.setUltBajaEfCot(Toolkit.parseDate(fechaBaja93, "dd/MM/yyyy"))
 					.setTrl(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTIPCON")
 							+ HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFDESTIPCON"))
-					.setcEsp_num(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFCOLECTIVO3"))
-					.setcEsp_cad(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFDESCOL3"))
-					.setCnae09_num(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFACTIV093"))
-					.setCnae93_num(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFACTIV933"))
-					.setCnae09_cad(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTACTIV093"))
-					.setCnae93_cad(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTACTIV933")).setTa2Alta(trabajador2Alta)
+					.setcEspNum(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFCOLECTIVO3"))
+					.setcEspCad(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFDESCOL3"))
+					.setCnae09Num(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFACTIV093"))
+					.setCnae93Num(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFACTIV933"))
+					.setCnae09Cad(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTACTIV093"))
+					.setCnae93Cad(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTACTIV933")).setTa2Alta(trabajador2Alta)
 					.setTa2Baja(ta2baja).setTiposATyEPIT(tiposATyEpit).setIms(ims).setTotal(total)
-					.setCoeJub_num(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFCOREJU"))
-					.setCoeJub_cad(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFDSCOREJU"))
+					.setCoeJubNum(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFCOREJU"))
+					.setCoeJubCad(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFDSCOREJU"))
 					.setAconExtra(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFACTMEXTR")
 							+ HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFDSACONT"))
 					.setEscTaller(booltaller)
@@ -196,35 +196,35 @@ public class SistemaRED_I {
 					.setTlfMovil(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTELMOVIL3"))
 					.setTlfFijo(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTELFIJO3"))
 					.setEmail(HtmlUnitToolkit.getTrimmedById(htmlPage, "txtconcat1_1"))
-					.setNotif_dom_empresa(Toolkit.toBoolean(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNOTIF3")))
-					.setTipo_via_dir_empresa(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFVIA3"))
-					.setDir_emp_calle(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFDOMICILIO3"))
-					.setDir_emp_num(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNUMERO3"))
-					.setDir_emp_bis(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFBIS3"))
-					.setDir_emp_bloq(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFBLOQUE3"))
-					.setDir_emp_es(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFESCALERA3"))
-					.setDir_emp_piso(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPISO3"))
-					.setDir_emp_p(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPUERTA3"))
-					.setDir_emp_CP(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPOSTAL3"))
-					.setDir_emp_num_muni(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFLOCALIDAD13"))
-					.setDir_emp_nom_muni(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFLOCALIDAD23"))
-					.setDir_emp_tlf(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNUM9TELEFONO3"))
-					.setNotif_dom_actividad(Toolkit.toBoolean(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNOTIF4")))
-					.setAct_ugtgss(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTESORERIA3")
+					.setNotifDomEmpresa(Toolkit.toBoolean(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNOTIF3")))
+					.setTipoViaDirEmpresa(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFVIA3"))
+					.setDirEmpCalle(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFDOMICILIO3"))
+					.setDirEmpNum(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNUMERO3"))
+					.setDirEmpBis(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFBIS3"))
+					.setDirEmpBloq(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFBLOQUE3"))
+					.setDirEmpEs(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFESCALERA3"))
+					.setDirEmpPiso(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPISO3"))
+					.setDirEmpP(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPUERTA3"))
+					.setDirEmpCP(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPOSTAL3"))
+					.setDirEmpNumMuni(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFLOCALIDAD13"))
+					.setDirEmpNomMuni(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFLOCALIDAD23"))
+					.setDirEmpTlf(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNUM9TELEFONO3"))
+					.setNotifDomActividad(Toolkit.toBoolean(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNOTIF4")))
+					.setActUgtgss(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTESORERIA3")
 							+ HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFADMON3")
 							+ HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFURE3"))
-					.setTipo_via_dir_actividad(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFVIA4"))
-					.setDir_act_calle(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFDOMICILIO4"))
-					.setDir_act_num(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNUMERO3"))
-					.setDir_act_bis(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFBIS4"))
-					.setDir_act_bloq(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFBLOQUE4"))
-					.setDir_act_es(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFESCALERA4"))
-					.setDir_act_piso(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPISO4"))
-					.setDir_act_p(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPUERTA4"))
-					.setDir_act_CP(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPOSTAL4"))
-					.setDir_act_num_muni(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFMUNICIPIO4"))
-					.setDir_act_nom_muni(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFLOCALIDAD4"))
-					.setDir_act_tlf(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNUM9TELEFONO4"));
+					.setTipoViaDirActividad(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFVIA4"))
+					.setDirActCalle(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFDOMICILIO4"))
+					.setDirActNum(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNUMERO3"))
+					.setDirActBis(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFBIS4"))
+					.setDirActBloq(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFBLOQUE4"))
+					.setDirActEs(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFESCALERA4"))
+					.setDirActPiso(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPISO4"))
+					.setDirActP(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPUERTA4"))
+					.setDirActCP(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPOSTAL4"))
+					.setDirActNumMuni(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFMUNICIPIO4"))
+					.setDirActNomMuni(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFLOCALIDAD4"))
+					.setDirActTlf(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNUM9TELEFONO4"));
 
 			return seb1.build();
 		} catch (FailingHttpStatusCodeException fhsce) {
@@ -344,7 +344,6 @@ public class SistemaRED_I {
 			htmlPage = (HtmlPage) page;
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
-			// REVISAR SPLIT
 			// Obtaining the first table registry's label to double-click on it so that it
 			// loads the pdf
 			List<HtmlLabel> labels = htmlPage.getByXPath("//label[@name='_1_0']");
@@ -367,8 +366,8 @@ public class SistemaRED_I {
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String ccc, final Date fecha)
 			throws SegSocialException, InterruptedException{
-		Object[] arr_fields= {affiliationNumber, regime, ccc, fecha};
-		Toolkit.verifyData(arr_fields);
+		Object[] arrFields= {affiliationNumber, regime, ccc, fecha};
+		Toolkit.verifyData(arrFields);
 		return getPdfsInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, ccc, fecha);
 	}
 	
@@ -376,8 +375,8 @@ public class SistemaRED_I {
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String ccc, final Date fecha)
 			throws SegSocialException, InterruptedException{
-		Object[] arr_fields= {affiliationNumber, regime, ccc, fecha};
-		Toolkit.verifyData(arr_fields);
+		Object[] arrfields= {affiliationNumber, regime, ccc, fecha};
+		Toolkit.verifyData(arrfields);
 		return getPdfsInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, ccc, fecha);
 	}
 	
@@ -385,8 +384,8 @@ public class SistemaRED_I {
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String ccc, final Date fecha)
 			throws SegSocialException, InterruptedException {
-		Object[] arr_fields= {affiliationNumber, regime, ccc, fecha};
-		Toolkit.verifyData(arr_fields);
+		Object[] arrfields= {affiliationNumber, regime, ccc, fecha};
+		Toolkit.verifyData(arrfields);
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -554,8 +553,8 @@ public class SistemaRED_I {
 	public static byte[] getObligationAwarenessCertificate(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regime, String ccc)
 			throws SegSocialException {
-		Object[] arr_fields= {regime, ccc};
-		Toolkit.verifyData(arr_fields);
+		Object[] arrFields= {regime, ccc};
+		Toolkit.verifyData(arrFields);
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -600,8 +599,8 @@ public class SistemaRED_I {
 	public static Collection<Idc> getIDCDates(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String ccc) throws SegSocialException {
-		Object[] arr_fields= {affiliationNumber, regime, ccc};
-		Toolkit.verifyData(arr_fields);
+		Object[] arrFields= {affiliationNumber, regime, ccc};
+		Toolkit.verifyData(arrFields);
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
@@ -664,12 +663,6 @@ public class SistemaRED_I {
 
 			// Obtaining the first table registry's label to double-click on it so that it
 			// loads the pdf
-			/*
-			 * List<HtmlLabel> labels = htmlPage.getByXPath("//label[@name='_1_0']");
-			 * InputStream
-			 * is=labels.get(0).dblClick().getWebResponse().getContentAsStream(); byte[]
-			 * ret=is.readAllBytes();
-			 */
 		} catch (FailingHttpStatusCodeException e) {
 			StatusCodeException.HandleStatusCodeException(e);
 		} catch (ElementNotFoundException e) {
@@ -755,8 +748,8 @@ public class SistemaRED_I {
 	public static byte[] getContributionSettlementReport(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String ccc, final Optional<Date> settlementPeriod) throws SegSocialException {
-		Object[] arr_fields= {affiliationNumber, regime, ccc, settlementPeriod};
-		Toolkit.verifyData(arr_fields);
+		Object[] arrFields= {affiliationNumber, regime, ccc, settlementPeriod};
+		Toolkit.verifyData(arrFields);
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
@@ -949,38 +942,6 @@ public class SistemaRED_I {
 				htmlPage = htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
 			}
 
-//		HtmlForm formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
-//		formDatos.getInputByName("CCC").setValueAttribute(ccc);
-//		HtmlSelect selectRegime=formDatos.getSelectByName("REGIMEN");
-//		selectRegime.setSelectedIndex(selectRegime.getOptionByValue(regime.getValue()).getIndex());
-//		Calendar cFrom=Calendar.getInstance();
-//		cFrom.setTime(dateFrom);
-//		Calendar cTo=Calendar.getInstance();
-//		cTo.setTime(dateTo);
-//		String sFrom;
-//		String sTo;
-//		if(cFrom.get(Calendar.MONTH)+1<10) {
-//			sFrom="0"+(cFrom.get(Calendar.MONTH)+1);
-//		}
-//		else
-//			sFrom=""+(cFrom.get(Calendar.MONTH)+1);
-//		if(cTo.get(Calendar.MONTH)+1<10) {
-//			sTo="0"+(cTo.get(Calendar.MONTH)+1);
-//		}
-//		else
-//			sTo=""+(cTo.get(Calendar.MONTH)+1);
-//		HtmlSelect selectMFrom=formDatos.getSelectByName("MES_DESDE");
-//		selectMFrom.setSelectedIndex(selectMFrom.getOptionByValue(sFrom).getIndex());
-//		HtmlSelect selectYFrom=formDatos.getSelectByName("ANNIO_DESDE");
-//		selectYFrom.setSelectedIndex(selectYFrom.getOptionByValue(""+cFrom.get(Calendar.YEAR)).getIndex());
-//		HtmlSelect selectMTo=formDatos.getSelectByName("MES_HASTA");
-//		selectMTo.setSelectedIndex(selectMTo.getOptionByValue(sTo).getIndex());
-//		HtmlSelect selectYTo=formDatos.getSelectByName("ANNIO_HASTA");
-//		selectYTo.setSelectedIndex(selectYTo.getOptionByValue(""+cTo.get(Calendar.YEAR)).getIndex());
-//		HtmlSelect selectLiqType=formDatos.getSelectByName("TIPO_LIQUIDACION");
-//		selectLiqType.setSelectedIndex(selectLiqType.getOptionByValue(liqType.getValue()).getIndex());
-//		formDatos.getInputByValue(liqOrigin.getValue()).setChecked(true);
-//		htmlPage=formDatos.getInputByValue("Aceptar").click();
 		return htmlPage;
 	}
 	
@@ -990,8 +951,8 @@ public class SistemaRED_I {
 		final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
 		final LiquidationOrigin liqOrigin) throws SegSocialException{
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		Object[] arr_fields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
-		Toolkit.verifyData(arr_fields);
+		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
+		Toolkit.verifyData(arrFields);
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
@@ -1037,8 +998,8 @@ public class SistemaRED_I {
 			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
 			final LiquidationOrigin liqOrigin) throws SegSocialException{
 			InvalidCertificateException.checkCertificate(certificateInputStream);
-			Object[] arr_fields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
-			Toolkit.verifyData(arr_fields);
+			Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
+			Toolkit.verifyData(arrFields);
 			try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 				webClient.getOptions().setJavaScriptEnabled(false);
 				HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
@@ -1102,13 +1063,12 @@ public class SistemaRED_I {
 					list.add(matcher.group("mensaje"));
 				}
 				
-				for(String match : list) {
-					System.out.println(match);
-				}
+//				for(String match : list) {
+//					System.out.println(match);
+//				}
 				if(list.get(0).equalsIgnoreCase("Aplicación Cerrada temporalmente.")) {
 					throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
 				} else {
-					System.out.println(e.getStatusMessage());
 					StatusCodeException.HandleStatusCodeException(e);
 				}
 			} catch (MalformedURLException e) {
@@ -1214,22 +1174,16 @@ public class SistemaRED_I {
 				list.add(matcher.group("mensaje"));
 			}
 			
-			for(String match : list) {
-				System.out.println(match);
-			}
+//			for(String match : list) {
+//				System.out.println(match);
+//			}
 			if(list.get(0).equalsIgnoreCase("Aplicación Cerrada temporalmente.")) {
 				throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
 			} else {
-				System.out.println(e.getStatusMessage());
 				StatusCodeException.HandleStatusCodeException(e);
 			}
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (IOException e) {}
 		return null;
 		
 	}
@@ -1254,8 +1208,8 @@ public class SistemaRED_I {
 			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
 			final LiquidationOrigin liqOrigin) throws SegSocialException{
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		Object[] arr_fields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
-		Toolkit.verifyData(arr_fields);
+		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
+		Toolkit.verifyData(arrFields);
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
@@ -1304,13 +1258,13 @@ public class SistemaRED_I {
 				list.add(matcher.group("mensaje"));
 			}
 			
-			for(String match : list) {
-				System.out.println(match);
-			}
+//			for(String match : list) {
+//				System.out.println(match);
+//			}
 			if(list.get(0).equalsIgnoreCase("Aplicación Cerrada temporalmente.")) {
 				throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
 			} else {
-				System.out.println(e.getStatusMessage());
+//				System.out.println(e.getStatusMessage());
 				StatusCodeException.HandleStatusCodeException(e);
 			}
 		} catch (MalformedURLException e) {
@@ -1326,8 +1280,8 @@ public class SistemaRED_I {
 			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
 			final LiquidationOrigin liqOrigin) throws SegSocialException{
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		Object[] arr_fields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
-		Toolkit.verifyData(arr_fields);
+		Object[] arrFields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
+		Toolkit.verifyData(arrFields);
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
@@ -1399,13 +1353,13 @@ public class SistemaRED_I {
 				list.add(matcher.group("mensaje"));
 			}
 			
-			for(String match : list) {
-				System.out.println(match);
-			}
+//			for(String match : list) {
+//				System.out.println(match);
+//			}
 			if(list.get(0).equalsIgnoreCase("Aplicación Cerrada temporalmente.")) {
 				throw new OutOfServiceException(list.get(0), new OutOfServiceMotivation(list.get(1)));
 			} else {
-				System.out.println(e.getStatusMessage());
+//				System.out.println(e.getStatusMessage());
 				StatusCodeException.HandleStatusCodeException(e);
 			}
 		} catch (MalformedURLException e) {
@@ -1415,67 +1369,7 @@ public class SistemaRED_I {
 		}
 		return null;
 	}	
-	
-	
-//	//RETURNS A COLLECTION OF ALL LIQUIDATIONS AVAILABLE FOR AN ENTERPRISE WITHIN THE DATE SPECIFIED
-//		public static Collection<Liquidation> CalculationQueryByLiqNumber(final InputStream certificateInputStream,
-//			final String certificatePassword, final String certificateType, final String liqNumber) throws SegSocialException{
-//			InvalidCertificateException.checkCertificate(certificateInputStream);
-//			Object[] arr_fields= {liqNumber};
-//			Toolkit.verifyData(arr_fields);
-//			try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
-//				webClient.getOptions().setJavaScriptEnabled(false);
-//				HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
-//				htmlPage=htmlPage.getElementById("idOpcion2").click();
-//				htmlPage.getElementById("idNumeroLiquidacion").setAttribute("value", liqNumber);
-//				htmlPage=htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
-//				System.out.println(htmlPage.asXml());
-//				try {
-//					checkLiquidationExceptions(htmlPage);
-//				}catch(NullPointerException | ElementNotFoundException e) {
-//					Collection<Liquidation> ret= new ArrayList<Liquidation>();
-//					HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
-//					DomNodeList<DomNode> liqList=formDatos.querySelectorAll("input[type='radio']");
-//					for (int i=0;i<liqList.size();i++) {
-//						HtmlRadioButtonInput radio=(HtmlRadioButtonInput)liqList.get(i);
-//						radio.click();
-//						formDatos.getInputByValue("Continuar").setChecked(true);
-//						htmlPage=formDatos.getInputByValue("Continuar").click();
-//						LiquidationBuilder lb=new LiquidationBuilder();
-//						for (DomNode domNode : htmlPage.querySelectorAll("table>tbody>tr")) {
-//							HtmlTableRow tr=(HtmlTableRow)domNode;
-//							liquidationDataType(tr, lb);
-//						}
-//						ret.add(lb.build());
-//						htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
-//						formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
-//						liqList=formDatos.querySelectorAll("input[type='radio']");
-//					}
-//					
-//					return ret;
-//				}
-//				
-//			} catch (FailingHttpStatusCodeException e) {
-//				StatusCodeException.HandleStatusCodeException(e);
-//			} catch (MalformedURLException e) {
-//				throw new SegSocialException(e);
-//			} catch (IOException e) {
-//				throw new CertificateNotFoundException();
-//			}
-//			return null;	
-//		}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 
 	private static void checkLiquidationExceptions(HtmlPage htmlPage) throws LiquidationDoesNotExist, DataDoesNotExist,
@@ -1515,93 +1409,93 @@ public class SistemaRED_I {
 		String innerText=Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
 		if(innerText.equalsIgnoreCase("CONTINGENCIAS COMUNES")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setCc_base(nmbr1);
+			lb.setCcBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setCc_businessFee(nmbr2);
+			lb.setCcBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setCc_workerFee(nmbr3);
+			lb.setCcWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setCc_totalFee(nmbr4);
+			lb.setCcTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("LIQUIDO CONTINGENCIAS COMUNES")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setCcLiquid_base(nmbr1);
+			lb.setCcLiquidBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setCcLiquid_businessFee(nmbr2);
+			lb.setCcLiquidBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setCcLiquid_workerFee(nmbr3);
+			lb.setCcLiquidWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setCcLiquid_totalFee(nmbr4);
+			lb.setCcLiquidTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("IT DE ACCIDENTES DE TRABAJO")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setItWorkAccident_base(nmbr1);
+			lb.setItWorkAccidentBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setItWorkAccident_businessFee(nmbr2);
+			lb.setItWorkAccidentBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setItWorkAccident_workerFee(nmbr3);
+			lb.setItWorkAccidentWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setItWorkAccident_totalFee(nmbr4);
+			lb.setItWorkAccidentTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("IMS DE ACCIDENTES DE TRABAJO")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setImsWorkAccident_base(nmbr1);
+			lb.setImsWorkAccidentBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setImsWorkAccident_businessFee(nmbr2);
+			lb.setImsWorkAccidentBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setImsWorkAccident_workerFee(nmbr3);
+			lb.setImsWorkAccidentWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setImsWorkAccident_totalFee(nmbr4);
+			lb.setImsWorkAccidentTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("LIQUIDO DE ACCIDENTES DE TRABAJO")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setWorkAccidentLiquid_base(nmbr1);
+			lb.setWorkAccidentLiquidBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setWorkAccidentLiquid_businessFee(nmbr2);
+			lb.setWorkAccidentLiquidBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setWorkAccidentLiquid_workerFee(nmbr3);
+			lb.setWorkAccidentLiquidWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setWorkAccidentLiquid_totalFee(nmbr4);
+			lb.setWorkAccidentLiquidTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("OTRAS COTIZACIONES")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setOtherContributions_base(nmbr1);
+			lb.setOtherContributionsBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setOtherContributions_businessFee(nmbr2);
+			lb.setOtherContributionsBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setOtherContributions_workerFee(nmbr3);
+			lb.setOtherContributionsWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setOtherContributions_totalFee(nmbr4);
+			lb.setOtherContributionsTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("LIQUIDO DE OTRAS COTIZACIONES")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setOtherContributionsLiquid_base(nmbr1);
+			lb.setOtherContributionsLiquidBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setOtherContributionsLiquid_businessFee(nmbr2);
+			lb.setOtherContributionsLiquidBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setOtherContributionsLiquid_workerFee(nmbr3);
+			lb.setOtherContributionsLiquidWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setOtherContributionsLiquid_totalFee(nmbr4);
+			lb.setOtherContributionsLiquidTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("LIQUIDO DE TOTALES")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setTotalLiquid_base(nmbr1);
+			lb.setTotalLiquidBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setTotalLiquid_businessFee(nmbr2);
+			lb.setTotalLiquidBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setTotalLiquid_workerFee(nmbr3);
+			lb.setTotalLiquidWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setTotalLiquid_totalFee(nmbr4);
+			lb.setTotalLiquidTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("BONIF.Y SUBVENC.CON CARGO AL INEM")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setGrantsAndBonuses_base(nmbr1);
+			lb.setGrantsAndBonusesBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setGrantsAndBonuses_businessFee(nmbr2);
+			lb.setGrantsAndBonusesBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setGrantsAndBonuses_workerFee(nmbr3);
+			lb.setGrantsAndBonusesWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setGrantsAndBonuses_totalFee(nmbr4);
+			lb.setGrantsAndBonusesTotalFee(nmbr4);
 		}
 		
 		
@@ -1612,113 +1506,113 @@ public class SistemaRED_I {
 		String innerText=Toolkit.removeWeirdCharacters(tr.getCell(0).getVisibleText());
 		if(innerText.equalsIgnoreCase("CONTINGENCIAS COMUNES")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setCc_base(nmbr1);
+			lb.setCcBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setCc_businessFee(nmbr2);
+			lb.setCcBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setCc_workerFee(nmbr3);
+			lb.setCcWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setCc_totalFee(nmbr4);
+			lb.setCcTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("LIQUIDO CONTINGENCIAS COMUNES")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setCcLiquid_base(nmbr1);
+			lb.setCcLiquidBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setCcLiquid_businessFee(nmbr2);
+			lb.setCcLiquidBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setCcLiquid_workerFee(nmbr3);
+			lb.setCcLiquidWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setCcLiquid_totalFee(nmbr4);
+			lb.setCcLiquidTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("IT DE ACCIDENTES DE TRABAJO")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setItWorkAccident_base(nmbr1);
+			lb.setItWorkAccidentBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setItWorkAccident_businessFee(nmbr2);
+			lb.setItWorkAccidentusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setItWorkAccident_workerFee(nmbr3);
+			lb.setItWorkAccidentWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setItWorkAccident_totalFee(nmbr4);
+			lb.setItWorkAccidentTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("IMS DE ACCIDENTES DE TRABAJO")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setImsWorkAccident_base(nmbr1);
+			lb.setImsWorkAccidentBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setImsWorkAccident_businessFee(nmbr2);
+			lb.setImsWorkAccidentBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setImsWorkAccident_workerFee(nmbr3);
+			lb.setImsWorkAccidentWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setImsWorkAccident_totalFee(nmbr4);
+			lb.setImsWorkAccidentTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("LIQUIDO DE ACCIDENTES DE TRABAJO")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setWorkAccidentLiquid_base(nmbr1);
+			lb.setWorkAccidentLiquidBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setWorkAccidentLiquid_businessFee(nmbr2);
+			lb.setWorkAccidentLiquidBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setWorkAccidentLiquid_workerFee(nmbr3);
+			lb.setWorkAccidentLiquidWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setWorkAccidentLiquid_totalFee(nmbr4);
+			lb.setWorkAccidentLiquidTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("DESEMPLEO")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setUnemployment_base(nmbr1);
+			lb.setUnemploymentBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setUnemployment_businessFee(nmbr2);
+			lb.setUnemploymentBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setUnemployment_workerFee(nmbr3);
+			lb.setUnemploymentWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setUnemployment_totalFee(nmbr4);
+			lb.setUnemploymentTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("FOGASA")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setFogasa_base(nmbr1);
+			lb.setFogasaBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setFogasa_businessFee(nmbr2);
+			lb.setFogasaBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setFogasa_workerFee(nmbr3);
+			lb.setFogasaWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setFogasa_totalFee(nmbr4);
+			lb.setFogasaTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("FORMACIÓN PROFESIONAL")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setJobTraining_base(nmbr1);
+			lb.setJobTrainingBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setJobTraining_businessFee(nmbr2);
+			lb.setJobTrainingBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setJobTraining_workerFee(nmbr3);
+			lb.setJobTrainingWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setJobTraining_totalFee(nmbr4);
+			lb.setJobTrainingTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("LIQUIDO DE OTRAS COTIZACIONES")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setOtherContributionsLiquid_base(nmbr1);
+			lb.setOtherContributionsLiquidBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setOtherContributionsLiquid_businessFee(nmbr2);
+			lb.setOtherContributionsLiquidBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setOtherContributionsLiquid_workerFee(nmbr3);
+			lb.setOtherContributionsLiquidWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setOtherContributionsLiquid_totalFee(nmbr4);
+			lb.setOtherContributionsLiquidTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("LIQUIDO DE TOTALES")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setTotalLiquid_base(nmbr1);
+			lb.setTotalLiquidBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setTotalLiquid_businessFee(nmbr2);
+			lb.setTotalLiquidBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setTotalLiquid_workerFee(nmbr3);
+			lb.setTotalLiquidWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setTotalLiquid_totalFee(nmbr4);
+			lb.setTotalLiquidTotalFee(nmbr4);
 		}
 		else if(innerText.equalsIgnoreCase("BONIF.Y SUBVENC.CON CARGO AL INEM")) {
 			Float nmbr1=cellToFloat(tr.getCell(1));
-			lb.setGrantsAndBonuses_base(nmbr1);
+			lb.setGrantsAndBonusesBase(nmbr1);
 			Float nmbr2=cellToFloat(tr.getCell(2));
-			lb.setGrantsAndBonuses_businessFee(nmbr2);
+			lb.setGrantsAndBonusesBusinessFee(nmbr2);
 			Float nmbr3=cellToFloat(tr.getCell(3));
-			lb.setGrantsAndBonuses_workerFee(nmbr3);
+			lb.setGrantsAndBonusesWorkerFee(nmbr3);
 			Float nmbr4=cellToFloat(tr.getCell(4));
-			lb.setGrantsAndBonuses_totalFee(nmbr4);
+			lb.setGrantsAndBonusesTotalFee(nmbr4);
 		}
 		
 	}

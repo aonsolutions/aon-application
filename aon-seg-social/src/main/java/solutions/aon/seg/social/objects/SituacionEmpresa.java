@@ -7,7 +7,7 @@ public class SituacionEmpresa {
 	private String ccc;
 	private String regimen;
 	private String idEmpresario;
-	private String nif_empresa;
+	private String nifEmpresa;
 	private String nss;
 	private String cccp;
 	private String ugtgss;
@@ -23,21 +23,21 @@ public class SituacionEmpresa {
 	private Date altaPrTrab;
 	private Date ultBajaEfCot;
 	private String trl;
-	private String cEsp_num;
-	private String cEsp_cad;
-	private String cnae93_num;
-	private String cnae93_cad;
+	private String cEspNum;
+	private String cEspCad;
+	private String cnae93Num;
+	private String cnae93Cad;
 	private Integer ta2Alta;
 	private Integer ta2Baja;
 
 
-	private String cnae09_num;
-	private String cnae09_cad;
+	private String cnae09Num;
+	private String cnae09Cad;
 	private Float tiposATyEPIT;
 	private Float ims;
 	private Float total;
-	private String coeJub_num;
-	private String coeJub_cad;
+	private String coeJubNum;
+	private String coeJubCad;
 	private String aconExtra;
 	private Boolean escTaller;
 	private String autorizacionRed;
@@ -50,114 +50,114 @@ public class SituacionEmpresa {
 	private String tlfMovil;
 	private String tlfFijo;
 	private String email;
-	private Boolean notif_dom_empresa;
-	private String tipo_via_dir_empresa;
+	private Boolean notifDomEmpresa;
+	private String tipoViaDirEmpresa;
 	
-	private String tipo_via_dir_actividad;
+	private String tipoViaDirActividad;
 	
-	private String dir_emp_calle;
-	private String dir_emp_num;
-	private String dir_emp_bis;
-	private String dir_emp_bloq;
-	private String dir_emp_es;
-	private String dir_emp_piso;
-	private String dir_emp_p;
-	private String dir_emp_CP;
-	private String dir_emp_num_muni;
-	private String  dir_emp_nom_muni;
-	private String dir_emp_tlf;
-	private Boolean notif_dom_actividad;
-	private String act_ugtgss;
-	private String dir_act_calle;
-	private String dir_act_num;
+	private String dirEmpCalle;
+	private String dirEmpNum;
+	private String dirEmpBis;
+	private String dirEmpBloq;
+	private String dirEmpEs;
+	private String dirEmpPiso;
+	private String dirEmpP;
+	private String dirEmpCP;
+	private String dirEmpNumMuni;
+	private String  dirEmpNomMuni;
+	private String dirEmpTlf;
+	private Boolean notifDomActividad;
+	private String actUgtgss;
+	private String dirActCalle;
+	private String dirActNum;
 
-	private String dir_act_bis;
-	private String dir_act_bloq;
-	private String dir_act_es;
-	private String dir_act_piso;
-	private String dir_act_p;
-	private String dir_act_CP;
-	private String dir_act_num_muni;
-	private String  dir_act_nom_muni;
-	private String dir_act_tlf;
+	private String dirActBis;
+	private String dirActBloq;
+	private String dirActEs;
+	private String dirActPiso;
+	private String dirActP;
+	private String dirActCP;
+	private String dirActNumMuni;
+	private String  dirActNomMuni;
+	private String dirActTlf;
 	
 	
 	
 	public static interface Visitor{
-	public void  visit_ccc(String ccc);
-	public void visit_regimen(String regimen);
-	public void visit_idEmpresario(String idemp);
-	public void visit_nif_empresa(String nif);
-	public void visit_nss(String nss);
-	public void visit_cccp(String cccp);
-	public void visit_ugtgss(String ugtgss);
-	public void visit_ugtgsscccp(String ugtgsscccp);
-	public void visit_ugcentral(String ugcentral);
-	public void visit_ogism(String ogism);
-	public void visit_cccAnt(String cccAnt);
-	public void visit_cccSuc(String cccSuc);
-	public void visit_sit(String sit);
-	public void visit_fSit(Date fSit);
-	public void visit_fAltaInicial(Date fAltaInicial);
-	public void visit_trabajadorAlta(Integer trabajadorAlta);
-	public void visit_altaPrTrab(Date altaPrTrab);
-	public void visit_ultBajaEfCot(Date ultBajaEfCot);
-	public void visit_trl(String trl);
-	public void visit_cEsp_num(String cEsp_num);
-	public void visit_cEsp_cad(String cEsp_cad);
-	public void visit_cnae93_num(String cnae93_num);
-	public void visit_cnae93_cad(String cnae93_cad);
-	public void visit_ta2Alta(Integer ta2Alta);
-	public void visit_ta2Baja(Integer ta2Baja);
-	public void visit_cnae09_num(String cnae09_num);
-	public void visit_cnae09_cad(String cnae09_cad);
-	public void visit_tiposATyEPIT(Float tiposATyEPIT);
-	public void visit_ims(Float ims);
-	public void visit_total(Float total);
-	public void visit_coeJub_num(String coeJub_num);
-	public void visit_coeJub_cad(String coeJub_cad);
-	public void visit_aconExtra(String aconExtra);
-	public void visit_escTaller(Boolean escTaller);
-	public void visit_autorizacionRed(String autorizacionRed);
-	public void visit_plazoIncorpRed(Date plazoIncorpRed);
-	public void visit_fechaAutCan(Date fechaAutCan);
+	public void  visitCcc(String ccc);
+	public void visitRegimen(String regimen);
+	public void visitIdEmpresario(String idemp);
+	public void visitNifEmpresa(String nif);
+	public void visitNss(String nss);
+	public void visitCccp(String cccp);
+	public void visitUgtgss(String ugtgss);
+	public void visitUgtgsscccp(String ugtgsscccp);
+	public void visitUgcentral(String ugcentral);
+	public void visitOgism(String ogism);
+	public void visitCccAnt(String cccAnt);
+	public void visitCccSuc(String cccSuc);
+	public void visitSit(String sit);
+	public void visitFSit(Date fSit);
+	public void visitFAltaInicial(Date fAltaInicial);
+	public void visitTrabajadorAlta(Integer trabajadorAlta);
+	public void visitAltaPrTrab(Date altaPrTrab);
+	public void visitUltBajaEfCot(Date ultBajaEfCot);
+	public void visitTrl(String trl);
+	public void visitCEspNum(String cEspNum);
+	public void visitCEspCad(String cEspCad);
+	public void visitCnae93Num(String cnae93Num);
+	public void visitCnae93Cad(String cnae93Cad);
+	public void visitTa2Alta(Integer ta2Alta);
+	public void visitTa2Baja(Integer ta2Baja);
+	public void visitCnae09Num(String cnae09Num);
+	public void visitCnae09Cad(String cnae09Cad);
+	public void visitTiposATyEPIT(Float tiposATyEPIT);
+	public void visitIms(Float ims);
+	public void visitTotal(Float total);
+	public void visitCoeJubNum(String coeJubNum);
+	public void visitCoeJubCad(String coeJubCad);
+	public void visitAconExtra(String aconExtra);
+	public void visitEscTaller(Boolean escTaller);
+	public void visitAutorizacionRed(String autorizacionRed);
+	public void visitPlazoIncorpRed(Date plazoIncorpRed);
+	public void visitFechaAutCan(Date fechaAutCan);
 	
 	//DATOS DE GESTIÓN (no repetidos)
-	public void visit_anagrama(String anagrama);
-	public void visit_embarcacion(String embarcacion);
-	public void visit_tlfMovil(String tlfMovil);
-	public void visit_tlfFijo(String tlfFijo);
-	public void visit_email(String email);
-	public void visit_notif_dom_empresa(Boolean notif_dom_empresa);
-	public void visit_tipo_via_dir_empresa(String tipo_via_dir_empresa);
+	public void visitAnagrama(String anagrama);
+	public void visitEmbarcacion(String embarcacion);
+	public void visitTlfMovil(String tlfMovil);
+	public void visitTlfFijo(String tlfFijo);
+	public void visitEmail(String email);
+	public void visitNotifDomEmpresa(Boolean notifDomEmpresa);
+	public void visitTipoViaDirEmpresa(String tipoViaDirEmpresa);
 	
-	public void visit_tipo_via_dir_actividad(String tipo_via_dir_actividad);
+	public void visitTipoViaDirActividad(String tipoViaDirActividad);
 	
-	public void visit_dir_emp_calle(String dir_emp_calle);
-	public void visit_dir_emp_num(String dir_emp_num);
-	public void visit_dir_emp_bis(String dir_emp_bis);
-	public void visit_dir_emp_bloq(String dir_emp_bloq);
-	public void visit_dir_emp_es(String dir_emp_es);
-	public void visit_dir_emp_piso(String dir_emp_piso);
-	public void visit_dir_emp_p(String dir_emp_p);
-	public void visit_dir_emp_CP(String dir_emp_CP);
-	public void visit_dir_emp_num_muni(String dir_emp_num_muni);
-	public void visit_dir_emp_nom_muni(String  dir_emp_nom_muni);
-	public void visit_dir_emp_tlf(String dir_emp_tlf);
-	public void visit_notif_dom_actividad(Boolean notif_dom_actividad);
-	public void visit_act_ugtgss(String act_ugtgss);
-	public void visit_dir_act_calle(String dir_act_calle);
-	public void visit_dir_act_num(String dir_act_num);
+	public void visitDirEmpCalle(String dirEmpCalle);
+	public void visitDirEmpNum(String dirEmpNum);
+	public void visitDirEmpBis(String dirEmpBis);
+	public void visitDirEmpBloq(String dirEmpBloq);
+	public void visitDirEmpEs(String dirEmpEs);
+	public void visitDirEmpPiso(String dirEmpPiso);
+	public void visitDirEmpP(String dirEmpP);
+	public void visitDirEmpCP(String dirEmpCP);
+	public void visitDirEmpNumMuni(String dirEmpNumMuni);
+	public void visitDirEmpNomMuni(String  dirEmpNomMuni);
+	public void visitDirEmpTlf(String dirEmpTlf);
+	public void visitNotifDomActividad(Boolean notifDomActividad);
+	public void visitActUgtgss(String actUgtgss);
+	public void visitDirActCalle(String dirActCalle);
+	public void visitDirActNum(String dirActNum);
 
-	public void visit_dir_act_bis(String dir_act_bis);
-	public void visit_dir_act_bloq(String dir_act_bloq);
-	public void visit_dir_act_es(String dir_act_es);
-	public void visit_dir_act_piso(String dir_act_piso);
-	public void visit_dir_act_p(String dir_act_p);
-	public void visit_dir_act_CP(String dir_act_CP);
-	public void visit_dir_act_num_muni(String dir_act_num_muni);
-	public void visit_dir_act_nom_muni(String  dir_act_nom_muni);
-	public void visit_dir_act_tlf(String dir_act_tlf);
+	public void visitDirActBis(String dirActBis);
+	public void visitDirActBloq(String dirActBloq);
+	public void visitDirActEs(String dirActEs);
+	public void visitDirActPiso(String dirActPiso);
+	public void visitDirActP(String dirActP);
+	public void visitDirActCP(String dirActCP);
+	public void visitDirActNumMuni(String dirActNumMuni);
+	public void visitDirActNomMuni(String  dirActNomMuni);
+	public void visitDirActTlf(String dirActTlf);
 		
 		
 		//public String visit
@@ -165,152 +165,152 @@ public class SituacionEmpresa {
 	
 	public void accept(Visitor visitor) {
 		if(ccc!=null)
-			visitor.visit_ccc(ccc);
+			visitor.visitCcc(ccc);
 		if(idEmpresario!=null)
-			visitor.visit_idEmpresario(idEmpresario);
-		if(nif_empresa!=null)
-			visitor.visit_nif_empresa(this.nif_empresa);
+			visitor.visitIdEmpresario(idEmpresario);
+		if(nifEmpresa!=null)
+			visitor.visitNifEmpresa(this.nifEmpresa);
 		if(nss!=null)
-			visitor.visit_nss(this.nss);
+			visitor.visitNss(this.nss);
 		if(cccp!=null)
-			visitor.visit_cccp(this.cccp);
+			visitor.visitCccp(this.cccp);
 		if(ugtgss!=null)
-			visitor.visit_ugtgss(this.ugtgss);
+			visitor.visitUgtgss(this.ugtgss);
 		if(ugtgsscccp!=null)
-			visitor.visit_ugtgsscccp(this.ugtgsscccp);
+			visitor.visitUgtgsscccp(this.ugtgsscccp);
 		if(ugcentral!=null)
-			visitor.visit_ugcentral(this.ugcentral);
+			visitor.visitUgcentral(this.ugcentral);
 		if(ogism!=null)
-			visitor.visit_ogism(this.ogism);
+			visitor.visitOgism(this.ogism);
 		if(cccAnt!=null)
-			visitor.visit_cccAnt(this.cccAnt);
+			visitor.visitCccAnt(this.cccAnt);
 		if(cccSuc!=null)
-			visitor.visit_cccSuc(this.cccSuc);
+			visitor.visitCccSuc(this.cccSuc);
 		if(sit!=null)
-			visitor.visit_sit(this.sit);
+			visitor.visitSit(this.sit);
 		if(fSit!=null)
-			visitor.visit_fSit(this.fSit);
+			visitor.visitFSit(this.fSit);
 		if(fAltaInicial!=null)
-			visitor.visit_fAltaInicial(this.fAltaInicial);
+			visitor.visitFAltaInicial(this.fAltaInicial);
 		if(trabajadorAlta!=null)
-			visitor.visit_trabajadorAlta(this.trabajadorAlta);
+			visitor.visitTrabajadorAlta(this.trabajadorAlta);
 		if(altaPrTrab!=null)
-			visitor.visit_altaPrTrab(this.altaPrTrab);
+			visitor.visitAltaPrTrab(this.altaPrTrab);
 		if(ultBajaEfCot!=null)
-			visitor.visit_ultBajaEfCot(this.ultBajaEfCot);
+			visitor.visitUltBajaEfCot(this.ultBajaEfCot);
 		if(trl!=null)
-			visitor.visit_trl(this.trl);
-		if(cEsp_num!=null)
-			visitor.visit_cEsp_num(this.cEsp_num);
-		if(cEsp_cad!=null)
-			visitor.visit_cEsp_cad(this.cEsp_cad);
-		if(cnae93_num!=null)
-			visitor.visit_cnae93_num(this.cnae93_num);
-		if(cnae93_cad!=null)
-			visitor.visit_cnae93_cad(this.cnae93_cad);
+			visitor.visitTrl(this.trl);
+		if(cEspNum!=null)
+			visitor.visitCEspNum(this.cEspNum);
+		if(cEspCad!=null)
+			visitor.visitCEspCad(this.cEspCad);
+		if(cnae93Num!=null)
+			visitor.visitCnae93Num(this.cnae93Num);
+		if(cnae93Cad!=null)
+			visitor.visitCnae93Cad(this.cnae93Cad);
 		if(ta2Alta!=null)
-			visitor.visit_ta2Alta(this.ta2Alta);
+			visitor.visitTa2Alta(this.ta2Alta);
 		if(ta2Baja!=null)
-			visitor.visit_ta2Baja(this.ta2Baja);
-		if(cnae09_num!=null)
-			visitor.visit_cnae09_num(this.cnae09_num);
+			visitor.visitTa2Baja(this.ta2Baja);
+		if(cnae09Num!=null)
+			visitor.visitCnae09Num(this.cnae09Num);
 
-		if(cnae09_cad!=null)
-			visitor.visit_cnae09_cad(this.cnae09_cad);
+		if(cnae09Cad!=null)
+			visitor.visitCnae09Cad(this.cnae09Cad);
 
 		if(tiposATyEPIT!=null)
-			visitor.visit_tiposATyEPIT(this.tiposATyEPIT);
+			visitor.visitTiposATyEPIT(this.tiposATyEPIT);
 
 		if(ims!=null)
-			visitor.visit_ims(this.ims);
+			visitor.visitIms(this.ims);
 
 		if(total!=null)
-			visitor.visit_total(this.total);
+			visitor.visitTotal(this.total);
 
-		if(coeJub_num!=null)
-			visitor.visit_coeJub_num(this.coeJub_num);
+		if(coeJubNum!=null)
+			visitor.visitCoeJubNum(this.coeJubNum);
 
-		if(coeJub_cad!=null)
-			visitor.visit_coeJub_cad(this.coeJub_cad);
+		if(coeJubCad!=null)
+			visitor.visitCoeJubCad(this.coeJubCad);
 
 		if(aconExtra!=null)
-			visitor.visit_aconExtra(this.aconExtra);
+			visitor.visitAconExtra(this.aconExtra);
 
 		if(escTaller!=null)
-			visitor.visit_escTaller(this.escTaller);
+			visitor.visitEscTaller(this.escTaller);
 
 		if(autorizacionRed!=null)
-			visitor.visit_autorizacionRed(this.autorizacionRed);
+			visitor.visitAutorizacionRed(this.autorizacionRed);
 
 		if(plazoIncorpRed!=null)
-			visitor.visit_plazoIncorpRed(this.plazoIncorpRed);
+			visitor.visitPlazoIncorpRed(this.plazoIncorpRed);
 
 		if(fechaAutCan!=null)
-			visitor.visit_fechaAutCan(this.fechaAutCan);
+			visitor.visitFechaAutCan(this.fechaAutCan);
 		if(anagrama!=null)
-			visitor.visit_anagrama(this.anagrama);
+			visitor.visitAnagrama(this.anagrama);
 		if(embarcacion!=null)
-			visitor.visit_embarcacion(this.embarcacion);
+			visitor.visitEmbarcacion(this.embarcacion);
 		if(tlfMovil!=null)
-			visitor.visit_tlfMovil(this.tlfMovil);
+			visitor.visitTlfMovil(this.tlfMovil);
 		if(tlfFijo!=null)
-			visitor.visit_tlfFijo(this.tlfFijo);
+			visitor.visitTlfFijo(this.tlfFijo);
 		if(email!=null)
-			visitor.visit_email(this.email);
-		if(notif_dom_empresa!=null)
-			visitor.visit_notif_dom_empresa(this.notif_dom_empresa);
-		if(tipo_via_dir_empresa!=null)
-			visitor.visit_tipo_via_dir_empresa(this.tipo_via_dir_empresa);
-		if(tipo_via_dir_actividad!=null)
-			visitor.visit_tipo_via_dir_actividad(this.tipo_via_dir_actividad);
-		if(dir_emp_calle!=null)
-			visitor.visit_dir_emp_calle(this.dir_emp_calle);
-		if(dir_emp_num!=null)
-			visitor.visit_dir_emp_num(this.dir_emp_num);
-		if(dir_emp_bis!=null)
-			visitor.visit_dir_emp_bis(this.dir_emp_bis);
-		if(dir_emp_bloq!=null)
-			visitor.visit_dir_emp_bloq(this.dir_emp_bloq);
-		if(dir_emp_es!=null)
-			visitor.visit_dir_emp_es(this.dir_emp_es);
-		if(dir_emp_piso!=null)
-			visitor.visit_dir_emp_piso(this.dir_emp_piso);
-		if(dir_emp_p!=null)
-			visitor.visit_dir_emp_p(this.dir_emp_p);
-		if(dir_emp_CP!=null)
-			visitor.visit_dir_emp_CP(this.dir_emp_CP);
-		if(dir_emp_num_muni!=null)
-			visitor.visit_dir_emp_num_muni(this.dir_emp_num_muni);
-		if(dir_emp_nom_muni!=null)
-			visitor.visit_dir_emp_nom_muni(this.dir_emp_nom_muni);
-		if(dir_emp_tlf!=null)
-			visitor.visit_dir_emp_tlf(this.dir_emp_tlf);
-		if(notif_dom_actividad!=null)
-			visitor.visit_notif_dom_actividad(this.notif_dom_actividad);
-		if(act_ugtgss!=null)
-			visitor.visit_act_ugtgss(this.act_ugtgss);
-		if(dir_act_calle!=null)
-			visitor.visit_dir_act_calle(this.dir_act_calle);
-		if(dir_act_calle!=null)
-			visitor.visit_dir_act_calle(this.dir_act_calle);
-		if(dir_act_bis!=null)
-			visitor.visit_dir_act_bis(this.dir_act_bis);
-		if(dir_act_bloq!=null)
-			visitor.visit_dir_act_bloq(this.dir_act_bloq);
-		if(dir_act_es!=null)
-			visitor.visit_dir_act_es(this.dir_act_es);
-		if(dir_act_piso!=null)
-			visitor.visit_dir_act_piso(this.dir_act_piso);
-		if(dir_act_p!=null)
-			visitor.visit_dir_act_p(this.dir_act_p);
-		if(dir_act_CP!=null)
-			visitor.visit_dir_act_CP(this.dir_act_CP);
-		if(dir_act_num_muni!=null)
-			visitor.visit_dir_act_num_muni(this.dir_act_num_muni);
-		if(dir_act_nom_muni!=null)
-			visitor.visit_dir_act_nom_muni(this.dir_act_nom_muni);
-		if(dir_act_tlf!=null)
-			visitor.visit_dir_act_tlf(this.dir_act_tlf);
+			visitor.visitEmail(this.email);
+		if(notifDomEmpresa!=null)
+			visitor.visitNotifDomEmpresa(this.notifDomEmpresa);
+		if(tipoViaDirEmpresa!=null)
+			visitor.visitTipoViaDirEmpresa(this.tipoViaDirEmpresa);
+		if(tipoViaDirActividad!=null)
+			visitor.visitTipoViaDirActividad(this.tipoViaDirActividad);
+		if(dirEmpCalle!=null)
+			visitor.visitDirEmpCalle(this.dirEmpCalle);
+		if(dirEmpNum!=null)
+			visitor.visitDirEmpNum(this.dirEmpNum);
+		if(dirEmpBis!=null)
+			visitor.visitDirEmpBis(this.dirEmpBis);
+		if(dirEmpBloq!=null)
+			visitor.visitDirEmpBloq(this.dirEmpBloq);
+		if(dirEmpEs!=null)
+			visitor.visitDirEmpEs(this.dirEmpEs);
+		if(dirEmpPiso!=null)
+			visitor.visitDirEmpPiso(this.dirEmpPiso);
+		if(dirEmpP!=null)
+			visitor.visitDirEmpP(this.dirEmpP);
+		if(dirEmpCP!=null)
+			visitor.visitDirEmpCP(this.dirEmpCP);
+		if(dirEmpNumMuni!=null)
+			visitor.visitDirEmpNumMuni(this.dirEmpNumMuni);
+		if(dirEmpNomMuni!=null)
+			visitor.visitDirEmpNomMuni(this.dirEmpNomMuni);
+		if(dirEmpTlf!=null)
+			visitor.visitDirEmpTlf(this.dirEmpTlf);
+		if(notifDomActividad!=null)
+			visitor.visitNotifDomActividad(this.notifDomActividad);
+		if(actUgtgss!=null)
+			visitor.visitActUgtgss(this.actUgtgss);
+		if(dirActCalle!=null)
+			visitor.visitDirActCalle(this.dirActCalle);
+		if(dirActCalle!=null)
+			visitor.visitDirActCalle(this.dirActCalle);
+		if(dirActBis!=null)
+			visitor.visitDirActBis(this.dirActBis);
+		if(dirActBloq!=null)
+			visitor.visitDirActBloq(this.dirActBloq);
+		if(dirActEs!=null)
+			visitor.visitDirActEs(this.dirActEs);
+		if(dirActPiso!=null)
+			visitor.visitDirActPiso(this.dirActPiso);
+		if(dirActP!=null)
+			visitor.visitDirActP(this.dirActP);
+		if(dirActCP!=null)
+			visitor.visitDirActCP(this.dirActCP);
+		if(dirActNumMuni!=null)
+			visitor.visitDirActNumMuni(this.dirActNumMuni);
+		if(dirActNomMuni!=null)
+			visitor.visitDirActNomMuni(this.dirActNomMuni);
+		if(dirActTlf!=null)
+			visitor.visitDirActTlf(this.dirActTlf);
 
 	}
 	
@@ -321,389 +321,389 @@ public class SituacionEmpresa {
 		accept(new Visitor() {
 			
 			@Override
-			public void visit_regimen(String regimen) {
+			public void visitRegimen(String regimen) {
 				stringBuffer.append(String.format("\tRégimen: \"%S\"\n", regimen));
 			}
 			
 			@Override
-			public void visit_nss(String nss) {
+			public void visitNss(String nss) {
 				stringBuffer.append(String.format("\tNSS: \"%S\"\n", nss));
 			}
 			
 			@Override
-			public void visit_nif_empresa(String nif) {
+			public void visitNifEmpresa(String nif) {
 				stringBuffer.append(String.format("\tNIF: \"%S\"\n", nif));
 			}
 			
 			@Override
-			public void visit_idEmpresario(String idemp) {
+			public void visitIdEmpresario(String idemp) {
 				stringBuffer.append(String.format("\tID Empresario: \"%S\"\n", idemp));
 			}
 			
 			@Override
-			public void visit_ccc(String ccc) {
+			public void visitCcc(String ccc) {
 				stringBuffer.append(String.format("\tCCC: \"%S\"\n", ccc));
 			}
 
 			@Override
-			public void visit_cccp(String cccp) {
+			public void visitCccp(String cccp) {
 				stringBuffer.append(String.format("\tCCCP: \"%S\"\n", cccp));
 				
 			}
 
 			@Override
-			public void visit_ugtgss(String ugtgss) {
+			public void visitUgtgss(String ugtgss) {
 				stringBuffer.append(String.format("\tUGTGSS: \"%S\"\n", ugtgss));
 				
 			}
 
 			@Override
-			public void visit_ugtgsscccp(String ugtgsscccp) {
+			public void visitUgtgsscccp(String ugtgsscccp) {
 				stringBuffer.append(String.format("\tUGTGSSCCCP: \"%S\"\n", ugtgsscccp));
 				
 			}
 
 			@Override
-			public void visit_ugcentral(String ugcentral) {
+			public void visitUgcentral(String ugcentral) {
 				stringBuffer.append(String.format("\tUGCENTRAL: \"%S\"\n", ugcentral));
 				
 			}
 
 			@Override
-			public void visit_ogism(String ogism) {
+			public void visitOgism(String ogism) {
 				stringBuffer.append(String.format("\tOGISM: \"%S\"\n", ogism));
 				
 			}
 
 			@Override
-			public void visit_cccAnt(String cccAnt) {
+			public void visitCccAnt(String cccAnt) {
 				stringBuffer.append(String.format("\tCCCANT: \"%S\"\n", cccAnt));
 				
 			}
 
 			@Override
-			public void visit_cccSuc(String cccSuc) {
+			public void visitCccSuc(String cccSuc) {
 				stringBuffer.append(String.format("\tCCCSUC: \"%S\"\n", cccSuc));
 				
 			}
 
 			@Override
-			public void visit_sit(String sit) {
+			public void visitSit(String sit) {
 				stringBuffer.append(String.format("\tSIT: \"%S\"\n", sit));
 				
 			}
 
 			@Override
-			public void visit_fSit(Date fSit) {
+			public void visitFSit(Date fSit) {
 				stringBuffer.append(String.format("\tFSit: \"%S\"\n", fSit));
 				
 			}
 
 			@Override
-			public void visit_fAltaInicial(Date fAltaInicial) {
+			public void visitFAltaInicial(Date fAltaInicial) {
 				stringBuffer.append(String.format("\tFecha alta inicial: \"%S\"\n", fAltaInicial));
 				
 			}
 
 			@Override
-			public void visit_trabajadorAlta(Integer trabajadorAlta) {
+			public void visitTrabajadorAlta(Integer trabajadorAlta) {
 				stringBuffer.append(String.format("\tTrabajadores de alta: \"%S\"\n", trabajadorAlta));
 				
 			}
 
 			@Override
-			public void visit_altaPrTrab(Date altaPrTrab) {
+			public void visitAltaPrTrab(Date altaPrTrab) {
 				stringBuffer.append(String.format("\tAlta primer trabaajdor: \"%S\"\n", altaPrTrab));
 				
 			}
 
 			@Override
-			public void visit_ultBajaEfCot(Date ultBajaEfCot) {
+			public void visitUltBajaEfCot(Date ultBajaEfCot) {
 				stringBuffer.append(String.format("\tUltima baja ef. cot.: \"%S\"\n", ultBajaEfCot));
 				
 			}
 
 			@Override
-			public void visit_trl(String trl) {
+			public void visitTrl(String trl) {
 				stringBuffer.append(String.format("\tTRL: \"%S\"\n", trl));
 				
 			}
 			
 			@Override
-			public void visit_cEsp_num(String cEsp_num) {
-				stringBuffer.append(String.format("\tC.Esp num.: \"%S\"\n", cEsp_num));
+			public void visitCEspNum(String cEspNum) {
+				stringBuffer.append(String.format("\tC.Esp num.: \"%S\"\n", cEspNum));
 				
 			}
 
 			@Override
-			public void visit_cEsp_cad(String cEsp_cad) {
-				stringBuffer.append(String.format("\tC.Esp cad.: \"%S\"\n", cEsp_cad));
+			public void visitCEspCad(String cEspCad) {
+				stringBuffer.append(String.format("\tC.Esp cad.: \"%S\"\n", cEspCad));
 				
 			}
 
 			@Override
-			public void visit_cnae93_num(String cnae93_num) {
-				stringBuffer.append(String.format("\tC.CNAE93 NUMvisit_ims.: \"%S\"\n", cnae93_num));
+			public void visitCnae93Num(String cnae93Num) {
+				stringBuffer.append(String.format("\tC.CNAE93 NUMvisitIms.: \"%S\"\n", cnae93Num));
 				
 			}
 
 			@Override
-			public void visit_cnae93_cad(String cnae93_cad) {
-				stringBuffer.append(String.format("\tC.CNAE93 CAD..: \"%S\"\n", cEsp_cad));
+			public void visitCnae93Cad(String cnae93Cad) {
+				stringBuffer.append(String.format("\tC.CNAE93 CAD..: \"%S\"\n", cEspCad));
 				
 			}
 
 			@Override
-			public void visit_ta2Alta(Integer ta2Alta) {
+			public void visitTa2Alta(Integer ta2Alta) {
 				stringBuffer.append(String.format("\tC.TA2ALTA: \"%S\"\n", ta2Alta));
 				
 			}
 
 			@Override
-			public void visit_ta2Baja(Integer ta2Baja) {
+			public void visitTa2Baja(Integer ta2Baja) {
 				stringBuffer.append(String.format("\tTA2BAJA: \"%S\"\n", ta2Baja));
 				
 			}
 
 			@Override
-			public void visit_cnae09_num(String cnae09_num) {
-				stringBuffer.append(String.format("\tCNAE09 num.: \"%S\"\n", cnae09_num));
+			public void visitCnae09Num(String cnae09Num) {
+				stringBuffer.append(String.format("\tCNAE09 num.: \"%S\"\n", cnae09Num));
 				
 			}
 
 			@Override
-			public void visit_cnae09_cad(String cnae09_cad) {
-				stringBuffer.append(String.format("\tCNAE09 cad.: \"%S\"\n", cnae09_cad));
+			public void visitCnae09Cad(String cnae09Cad) {
+				stringBuffer.append(String.format("\tCNAE09 cad.: \"%S\"\n", cnae09Cad));
 				
 			}
 
 			@Override
-			public void visit_tiposATyEPIT(Float tiposATyEPIT) {
+			public void visitTiposATyEPIT(Float tiposATyEPIT) {
 				stringBuffer.append(String.format("\tTipos ATyEPIT.: \"%S\"\n", tiposATyEPIT));
 				
 			}
 
 			@Override
-			public void visit_ims(Float ims) {
+			public void visitIms(Float ims) {
 				stringBuffer.append(String.format("\tIMS: \"%S\"\n", ims));
 				
 			}
 
 			@Override
-			public void visit_total(Float total) {
+			public void visitTotal(Float total) {
 				stringBuffer.append(String.format("\tTotal: \"%S\"\n", total));
 				
 			}
 
 			@Override
-			public void visit_coeJub_num(String coeJub_num) {
-				stringBuffer.append(String.format("\t Coeficiente jubilación:\"%S\"\n", coeJub_num));
+			public void visitCoeJubNum(String coeJubNum) {
+				stringBuffer.append(String.format("\t Coeficiente jubilación:\"%S\"\n", coeJubNum));
 				
 			}
 
 			@Override
-			public void visit_coeJub_cad(String coeJub_cad) {
-				stringBuffer.append(String.format("\tCad. coef. jubilación: \"%S\"\n", coeJub_cad));
+			public void visitCoeJubCad(String coeJubCad) {
+				stringBuffer.append(String.format("\tCad. coef. jubilación: \"%S\"\n", coeJubCad));
 				
 			}
 
 			@Override
-			public void visit_aconExtra(String aconExtra) {
+			public void visitAconExtra(String aconExtra) {
 				stringBuffer.append(String.format("\tAcon. extra: \"%S\"\n", aconExtra));
 				
 			}
 
 			@Override
-			public void visit_escTaller(Boolean escTaller) {
+			public void visitEscTaller(Boolean escTaller) {
 				stringBuffer.append(String.format("\tEsc taller: \"%S\"\n", escTaller));
 				
 			}
 
 			@Override
-			public void visit_autorizacionRed(String autorizacionRed) {
+			public void visitAutorizacionRed(String autorizacionRed) {
 				stringBuffer.append(String.format("\tAutorización red: \"%S\"\n", autorizacionRed));
 				
 			}
 
 			@Override
-			public void visit_plazoIncorpRed(Date plazoIncorpRed) {
+			public void visitPlazoIncorpRed(Date plazoIncorpRed) {
 				stringBuffer.append(String.format("\tPlazo incorp. red: \"%S\"\n", plazoIncorpRed));
 				
 			}
 
 			@Override
-			public void visit_fechaAutCan(Date fechaAutCan) {
+			public void visitFechaAutCan(Date fechaAutCan) {
 				stringBuffer.append(String.format("\tFecha aut. can: \"%S\"\n", fechaAutCan));
 				
 			}
 
 			@Override
-			public void visit_anagrama(String anagrama) {
+			public void visitAnagrama(String anagrama) {
 				stringBuffer.append(String.format("\tAnagrama: \"%S\"\n", anagrama));
 				
 			}
 
 			@Override
-			public void visit_embarcacion(String embarcacion) {
+			public void visitEmbarcacion(String embarcacion) {
 				stringBuffer.append(String.format("\tEmbarcación: \"%S\"\n", embarcacion));				
 			}
 
 			@Override
-			public void visit_tlfMovil(String tlfMovil) {
+			public void visitTlfMovil(String tlfMovil) {
 				stringBuffer.append(String.format("\tMóvil: \"%S\"\n", tlfMovil));				
 			}
 
 			@Override
-			public void visit_tlfFijo(String tlfFijo) {
+			public void visitTlfFijo(String tlfFijo) {
 				stringBuffer.append(String.format("\tTlf. fijo: \"%S\"\n", tlfFijo));				
 			}
 
 			@Override
-			public void visit_email(String email) {
+			public void visitEmail(String email) {
 				stringBuffer.append(String.format("\tEmail: \"%S\"\n", email));				
 			}
 
 			@Override
-			public void visit_notif_dom_empresa(Boolean notif_dom_empresa) {
-				stringBuffer.append(String.format("\tFNotif. domicilio empresa: \"%S\"\n", notif_dom_empresa));				
+			public void visitNotifDomEmpresa(Boolean notifDomEmpresa) {
+				stringBuffer.append(String.format("\tFNotif. domicilio empresa: \"%S\"\n", notifDomEmpresa));				
 			}
 
 			@Override
-			public void visit_tipo_via_dir_empresa(String tipo_via_dir_empresa) {
-				stringBuffer.append(String.format("\tTipo vía domicilio empresa: \"%S\"\n", tipo_via_dir_empresa));				
+			public void visitTipoViaDirEmpresa(String tipoViaDirEmpresa) {
+				stringBuffer.append(String.format("\tTipo vía domicilio empresa: \"%S\"\n", tipoViaDirEmpresa));				
 			}
 
 			@Override
-			public void visit_dir_emp_calle(String dir_emp_calle) {
-				stringBuffer.append(String.format("\tDir. empresa calle: \"%S\"\n", dir_emp_calle));				
+			public void visitDirEmpCalle(String dirEmpCalle) {
+				stringBuffer.append(String.format("\tDir. empresa calle: \"%S\"\n", dirEmpCalle));				
 			}
 
 			@Override
-			public void visit_dir_emp_num(String dir_emp_num) {
-				stringBuffer.append(String.format("\tNum. dir. empresa: \"%S\"\n", dir_emp_num));				
+			public void visitDirEmpNum(String dirEmpNum) {
+				stringBuffer.append(String.format("\tNum. dir. empresa: \"%S\"\n", dirEmpNum));				
 			}
 
 			@Override
-			public void visit_dir_emp_bis(String dir_emp_bis) {
-				stringBuffer.append(String.format("\tDir. emp. bis: \"%S\"\n", dir_emp_bis));				
+			public void visitDirEmpBis(String dirEmpBis) {
+				stringBuffer.append(String.format("\tDir. emp. bis: \"%S\"\n", dirEmpBis));				
 			}
 
 			@Override
-			public void visit_dir_emp_bloq(String dir_emp_bloq) {
-				stringBuffer.append(String.format("\tDir. emp. bloque: \"%S\"\n", dir_emp_bloq));				
+			public void visitDirEmpBloq(String dirEmpBloq) {
+				stringBuffer.append(String.format("\tDir. emp. bloque: \"%S\"\n", dirEmpBloq));				
 			}
 
 			@Override
-			public void visit_dir_emp_es(String dir_emp_es) {
-				stringBuffer.append(String.format("\tDir. emp. escalera: \"%S\"\n", dir_emp_es));				
+			public void visitDirEmpEs(String dirEmpEs) {
+				stringBuffer.append(String.format("\tDir. emp. escalera: \"%S\"\n", dirEmpEs));				
 			}
 
 			@Override
-			public void visit_dir_emp_piso(String dir_emp_piso) {
-				stringBuffer.append(String.format("\tDir. emp. piso: \"%S\"\n", dir_emp_piso));				
+			public void visitDirEmpPiso(String dirEmpPiso) {
+				stringBuffer.append(String.format("\tDir. emp. piso: \"%S\"\n", dirEmpPiso));				
 			}
 
 			@Override
-			public void visit_dir_emp_p(String dir_emp_p) {
-				stringBuffer.append(String.format("\tDir. emp. puerta: \"%S\"\n", dir_emp_p));				
+			public void visitDirEmpP(String dirEmpP) {
+				stringBuffer.append(String.format("\tDir. emp. puerta: \"%S\"\n", dirEmpP));				
 			}
 
 			@Override
-			public void visit_dir_emp_CP(String dir_emp_CP) {
-				stringBuffer.append(String.format("\tCP empresa: \"%S\"\n", dir_emp_CP));				
+			public void visitDirEmpCP(String dirEmpCP) {
+				stringBuffer.append(String.format("\tCP empresa: \"%S\"\n", dirEmpCP));				
 			}
 
 			@Override
-			public void visit_dir_emp_num_muni(String dir_emp_num_muni) {
-				stringBuffer.append(String.format("\tNum municipio empresa: \"%S\"\n", dir_emp_num_muni));				
+			public void visitDirEmpNumMuni(String dirEmpNumMuni) {
+				stringBuffer.append(String.format("\tNum municipio empresa: \"%S\"\n", dirEmpNumMuni));				
 			}
 
 			@Override
-			public void visit_dir_emp_nom_muni(String dir_emp_nom_muni) {
-				stringBuffer.append(String.format("\tMunicipio empresa: \"%S\"\n", dir_emp_nom_muni));				
+			public void visitDirEmpNomMuni(String dirEmpNomMuni) {
+				stringBuffer.append(String.format("\tMunicipio empresa: \"%S\"\n", dirEmpNomMuni));				
 			}
 
 			@Override
-			public void visit_dir_emp_tlf(String dir_emp_tlf) {
-				stringBuffer.append(String.format("\tTlf. empresa: \"%S\"\n", dir_emp_tlf));				
+			public void visitDirEmpTlf(String dirEmpTlf) {
+				stringBuffer.append(String.format("\tTlf. empresa: \"%S\"\n", dirEmpTlf));				
 			}
 
 			@Override
-			public void visit_notif_dom_actividad(Boolean notif_dom_actividad) {
-				stringBuffer.append(String.format("\tNotif. domicilio actividad: \"%S\"\n", notif_dom_actividad));				
+			public void visitNotifDomActividad(Boolean notifDomActividad) {
+				stringBuffer.append(String.format("\tNotif. domicilio actividad: \"%S\"\n", notifDomActividad));				
 			}
 
 			@Override
-			public void visit_act_ugtgss(String act_ugtgss) {
-				stringBuffer.append(String.format("\tAct UGTGSS: \"%S\"\n", act_ugtgss));				
+			public void visitActUgtgss(String actUgtgss) {
+				stringBuffer.append(String.format("\tAct UGTGSS: \"%S\"\n", actUgtgss));				
 			}
 			
 			@Override
-			public void visit_tipo_via_dir_actividad(String tipo_via_dir_actividad) {
-				stringBuffer.append(String.format("\tTipo vía dirección actividad: \"%S\"\n", tipo_via_dir_actividad));				
+			public void visitTipoViaDirActividad(String tipoViaDirActividad) {
+				stringBuffer.append(String.format("\tTipo vía dirección actividad: \"%S\"\n", tipoViaDirActividad));				
 			}
 
 			@Override
-			public void visit_dir_act_calle(String dir_act_calle) {
-				stringBuffer.append(String.format("\tDir. actividad calle: \"%S\"\n", dir_act_calle));				
+			public void visitDirActCalle(String dirActCalle) {
+				stringBuffer.append(String.format("\tDir. actividad calle: \"%S\"\n", dirActCalle));				
 			}
 
 			@Override
-			public void visit_dir_act_num(String dir_act_num) {
-				stringBuffer.append(String.format("\tDir. actividad número: \"%S\"\n", dir_act_num));				
+			public void visitDirActNum(String dirActNum) {
+				stringBuffer.append(String.format("\tDir. actividad número: \"%S\"\n", dirActNum));				
 			}
 
 			@Override
-			public void visit_dir_act_bis(String dir_act_bis) {
-				stringBuffer.append(String.format("\tDir. actividad bis.: \"%S\"\n", dir_act_bis));
+			public void visitDirActBis(String dirActBis) {
+				stringBuffer.append(String.format("\tDir. actividad bis.: \"%S\"\n", dirActBis));
 				
 			}
 
 			@Override
-			public void visit_dir_act_bloq(String dir_act_bloq) {
-				stringBuffer.append(String.format("\tDir. act. bloque: \"%S\"\n", dir_act_bloq));
+			public void visitDirActBloq(String dirActBloq) {
+				stringBuffer.append(String.format("\tDir. act. bloque: \"%S\"\n", dirActBloq));
 				
 			}
 
 			@Override
-			public void visit_dir_act_es(String dir_act_es) {
-				stringBuffer.append(String.format("\tDir. act. escalera: \"%S\"\n", dir_act_es));
+			public void visitDirActEs(String dirActEs) {
+				stringBuffer.append(String.format("\tDir. act. escalera: \"%S\"\n", dirActEs));
 				
 			}
 
 			@Override
-			public void visit_dir_act_piso(String dir_act_piso) {
-				stringBuffer.append(String.format("\tDir. act. piso: \"%S\"\n", dir_act_piso));
+			public void visitDirActPiso(String dirActPiso) {
+				stringBuffer.append(String.format("\tDir. act. piso: \"%S\"\n", dirActPiso));
 				
 			}
 
 			@Override
-			public void visit_dir_act_p(String dir_act_p) {
-				stringBuffer.append(String.format("\tDir. act. puerta: \"%S\"\n", dir_act_p));
+			public void visitDirActP(String dirActP) {
+				stringBuffer.append(String.format("\tDir. act. puerta: \"%S\"\n", dirActP));
 				
 			}
 
 			@Override
-			public void visit_dir_act_CP(String dir_act_CP) {
-				stringBuffer.append(String.format("\tCP actividad: \"%S\"\n", dir_act_CP));
+			public void visitDirActCP(String dirActCP) {
+				stringBuffer.append(String.format("\tCP actividad: \"%S\"\n", dirActCP));
 				
 			}
 
 			@Override
-			public void visit_dir_act_num_muni(String dir_act_num_muni) {
-				stringBuffer.append(String.format("\tDir. act. num. municipio: \"%S\"\n", dir_act_num_muni));
+			public void visitDirActNumMuni(String dirActNumMuni) {
+				stringBuffer.append(String.format("\tDir. act. num. municipio: \"%S\"\n", dirActNumMuni));
 				
 			}
 
 			@Override
-			public void visit_dir_act_nom_muni(String dir_act_nom_muni) {
-				stringBuffer.append(String.format("\tDir. act. nom. muni.: \"%S\"\n", dir_act_nom_muni));
+			public void visitDirActNomMuni(String dirActNomMuni) {
+				stringBuffer.append(String.format("\tDir. act. nom. muni.: \"%S\"\n", dirActNomMuni));
 				
 			}
 
 			@Override
-			public void visit_dir_act_tlf(String dir_act_tlf) {
-				stringBuffer.append(String.format("\tDir. act. tlf: \"%S\"\n", dir_act_tlf));
+			public void visitDirActTlf(String dirActTlf) {
+				stringBuffer.append(String.format("\tDir. act. tlf: \"%S\"\n", dirActTlf));
 				
 			}
 			
@@ -731,12 +731,12 @@ public class SituacionEmpresa {
 	
 	
 	
-	public String getTipo_via_dir_actividad() {
-		return tipo_via_dir_actividad;
+	public String getTipoViaDirActividad() {
+		return tipoViaDirActividad;
 	}
 
-	public void setTipo_via_dir_actividad(String tipo_via_dir_actividad) {
-		this.tipo_via_dir_actividad = tipo_via_dir_actividad;
+	public void setTipoViaDirActividad(String tipoViaDirActividad) {
+		this.tipoViaDirActividad = tipoViaDirActividad;
 	}
 
 	public String getCcc() {
@@ -763,12 +763,12 @@ public class SituacionEmpresa {
 		this.idEmpresario = idEmpresario;
 	}
 
-	public String getNif_empresa() {
-		return nif_empresa;
+	public String getNifEmpresa() {
+		return nifEmpresa;
 	}
 
-	public void setNif_empresa(String nif_empresa) {
-		this.nif_empresa = nif_empresa;
+	public void setNifEmpresa(String nifEmpresa) {
+		this.nifEmpresa = nifEmpresa;
 	}
 
 	public String getNss() {
@@ -891,36 +891,36 @@ public class SituacionEmpresa {
 		this.trl = trl;
 	}
 
-	public String getcEsp_num() {
-		return cEsp_num;
+	public String getcEspNum() {
+		return cEspNum;
 	}
 
-	public void setcEsp_num(String cEsp_num) {
-		this.cEsp_num = cEsp_num;
+	public void setcEspNum(String cEspNum) {
+		this.cEspNum = cEspNum;
 	}
 
-	public String getcEsp_cad() {
-		return cEsp_cad;
+	public String getcEspCad() {
+		return cEspCad;
 	}
 
-	public void setcEsp_cad(String cEsp_cad) {
-		this.cEsp_cad = cEsp_cad;
+	public void setcEspCad(String cEspCad) {
+		this.cEspCad = cEspCad;
 	}
 
-	public String getCnae93_num() {
-		return cnae93_num;
+	public String getCnae93Num() {
+		return cnae93Num;
 	}
 
-	public void setCnae93_num(String cnae93_num) {
-		this.cnae93_num = cnae93_num;
+	public void setCnae93Num(String cnae93Num) {
+		this.cnae93Num = cnae93Num;
 	}
 
-	public String getCnae93_cad() {
-		return cnae93_cad;
+	public String getCnae93Cad() {
+		return cnae93Cad;
 	}
 
-	public void setCnae93_cad(String cnae93_cad) {
-		this.cnae93_cad = cnae93_cad;
+	public void setCnae93Cad(String cnae93Cad) {
+		this.cnae93Cad = cnae93Cad;
 	}
 
 	public Integer getTa2Alta() {
@@ -939,20 +939,20 @@ public class SituacionEmpresa {
 		this.ta2Baja = ta2Baja;
 	}
 
-	public String getCnae09_num() {
-		return cnae09_num;
+	public String getCnae09Num() {
+		return cnae09Num;
 	}
 
-	public void setCnae09_num(String cnae09_num) {
-		this.cnae09_num = cnae09_num;
+	public void setCnae09Num(String cnae09Num) {
+		this.cnae09Num = cnae09Num;
 	}
 
-	public String getCnae09_cad() {
-		return cnae09_cad;
+	public String getCnae09Cad() {
+		return cnae09Cad;
 	}
 
-	public void setCnae09_cad(String cnae09_cad) {
-		this.cnae09_cad = cnae09_cad;
+	public void setCnae09Cad(String cnae09Cad) {
+		this.cnae09Cad = cnae09Cad;
 	}
 
 	public Float getTiposATyEPIT() {
@@ -979,20 +979,20 @@ public class SituacionEmpresa {
 		this.total = total;
 	}
 
-	public String getCoeJub_num() {
-		return coeJub_num;
+	public String getCoeJubNum() {
+		return coeJubNum;
 	}
 
-	public void setCoeJub_num(String coeJub_num) {
-		this.coeJub_num = coeJub_num;
+	public void setCoeJubNum(String coeJubNum) {
+		this.coeJubNum = coeJubNum;
 	}
 
-	public String getCoeJub_cad() {
-		return coeJub_cad;
+	public String getCoeJubCad() {
+		return coeJubCad;
 	}
 
-	public void setCoeJub_cad(String coeJub_cad) {
-		this.coeJub_cad = coeJub_cad;
+	public void setCoeJubCad(String coeJubCad) {
+		this.coeJubCad = coeJubCad;
 	}
 
 	public String getAconExtra() {
@@ -1075,220 +1075,220 @@ public class SituacionEmpresa {
 		this.email = email;
 	}
 
-	public Boolean isNotif_dom_empresa() {
-		return notif_dom_empresa;
+	public Boolean isNotifDomEmpresa() {
+		return notifDomEmpresa;
 	}
 
-	public void setNotif_dom_empresa(Boolean notif_dom_empresa) {
-		this.notif_dom_empresa = notif_dom_empresa;
+	public void setNotifDomEmpresa(Boolean notifDomEmpresa) {
+		this.notifDomEmpresa = notifDomEmpresa;
 	}
 
-	public String getDir_emp_calle() {
-		return dir_emp_calle;
+	public String getDirEmpCalle() {
+		return dirEmpCalle;
 	}
 
-	public String getTipo_via_dir_empresa() {
-		return tipo_via_dir_empresa;
+	public String getTipoViaDirEmpresa() {
+		return tipoViaDirEmpresa;
 	}
 
-	public void setTipo_via_dir_empresa(String tipo_via_dir_empresa) {
-		this.tipo_via_dir_empresa = tipo_via_dir_empresa;
+	public void setTipoViaDirEmpresa(String tipoViaDirEmpresa) {
+		this.tipoViaDirEmpresa = tipoViaDirEmpresa;
 	}
 
-	public Boolean getNotif_dom_empresa() {
-		return notif_dom_empresa;
+	public Boolean getNotifDomEmpresa() {
+		return notifDomEmpresa;
 	}
 
-	public Boolean getNotif_dom_actividad() {
-		return notif_dom_actividad;
+	public Boolean getNotifDomActividad() {
+		return notifDomActividad;
 	}
 
-	public void setDir_emp_calle(String dir_emp_calle) {
-		this.dir_emp_calle = dir_emp_calle;
+	public void setDirEmpCalle(String dirEmpCalle) {
+		this.dirEmpCalle = dirEmpCalle;
 	}
 
-	public String getDir_emp_num() {
-		return dir_emp_num;
+	public String getDirEmpNum() {
+		return dirEmpNum;
 	}
 
-	public void setDir_emp_num(String dir_emp_num) {
-		this.dir_emp_num = dir_emp_num;
+	public void setDirEmpNum(String dirEmpNum) {
+		this.dirEmpNum = dirEmpNum;
 	}
 
-	public String getDir_emp_bis() {
-		return dir_emp_bis;
+	public String getDirEmpBis() {
+		return dirEmpBis;
 	}
 
-	public void setDir_emp_bis(String dir_emp_bis) {
-		this.dir_emp_bis = dir_emp_bis;
+	public void setDirEmpBis(String dirEmpBis) {
+		this.dirEmpBis = dirEmpBis;
 	}
 
-	public String getDir_emp_bloq() {
-		return dir_emp_bloq;
+	public String getDirEmpBloq() {
+		return dirEmpBloq;
 	}
 
-	public void setDir_emp_bloq(String dir_emp_bloq) {
-		this.dir_emp_bloq = dir_emp_bloq;
+	public void setDirEmpBloq(String dirEmpBloq) {
+		this.dirEmpBloq = dirEmpBloq;
 	}
 
-	public String getDir_emp_es() {
-		return dir_emp_es;
+	public String getDirEmpEs() {
+		return dirEmpEs;
 	}
 
-	public void setDir_emp_es(String dir_emp_es) {
-		this.dir_emp_es = dir_emp_es;
+	public void setDirEmpEs(String dirEmpEs) {
+		this.dirEmpEs = dirEmpEs;
 	}
 
-	public String getDir_emp_piso() {
-		return dir_emp_piso;
+	public String getDirEmpPiso() {
+		return dirEmpPiso;
 	}
 
-	public void setDir_emp_piso(String dir_emp_piso) {
-		this.dir_emp_piso = dir_emp_piso;
+	public void setDirEmpPiso(String dirEmpPiso) {
+		this.dirEmpPiso = dirEmpPiso;
 	}
 
-	public String getDir_emp_p() {
-		return dir_emp_p;
+	public String getDirEmpP() {
+		return dirEmpP;
 	}
 
-	public void setDir_emp_p(String dir_emp_p) {
-		this.dir_emp_p = dir_emp_p;
+	public void setDirEmpP(String dirEmpP) {
+		this.dirEmpP = dirEmpP;
 	}
 
-	public String getDir_emp_CP() {
-		return dir_emp_CP;
+	public String getDirEmpCP() {
+		return dirEmpCP;
 	}
 
-	public void setDir_emp_CP(String dir_emp_CP) {
-		this.dir_emp_CP = dir_emp_CP;
+	public void setDirEmpCP(String dirEmpCP) {
+		this.dirEmpCP = dirEmpCP;
 	}
 
-	public String getDir_emp_num_muni() {
-		return dir_emp_num_muni;
+	public String getDirEmpNumMuni() {
+		return dirEmpNumMuni;
 	}
 
-	public void setDir_emp_num_muni(String dir_emp_num_muni) {
-		this.dir_emp_num_muni = dir_emp_num_muni;
+	public void setDirEmpNumMuni(String dirEmpNumMuni) {
+		this.dirEmpNumMuni = dirEmpNumMuni;
 	}
 
-	public String getDir_emp_nom_muni() {
-		return dir_emp_nom_muni;
+	public String getDirEmpNomMuni() {
+		return dirEmpNomMuni;
 	}
 
-	public void setDir_emp_nom_muni(String dir_emp_nom_muni) {
-		this.dir_emp_nom_muni = dir_emp_nom_muni;
+	public void setDirEmpNomMuni(String dirEmpNomMuni) {
+		this.dirEmpNomMuni = dirEmpNomMuni;
 	}
 
-	public String getDir_emp_tlf() {
-		return dir_emp_tlf;
+	public String getDirEmpTlf() {
+		return dirEmpTlf;
 	}
 
-	public void setDir_emp_tlf(String dir_emp_tlf) {
-		this.dir_emp_tlf = dir_emp_tlf;
+	public void setDirEmpTlf(String dirEmpTlf) {
+		this.dirEmpTlf = dirEmpTlf;
 	}
 
-	public Boolean isNotif_dom_actividad() {
-		return notif_dom_actividad;
+	public Boolean isNotifDomActividad() {
+		return notifDomActividad;
 	}
 
-	public void setNotif_dom_actividad(Boolean notif_dom_actividad) {
-		this.notif_dom_actividad = notif_dom_actividad;
+	public void setNotifDomActividad(Boolean notifDomActividad) {
+		this.notifDomActividad = notifDomActividad;
 	}
 
-	public String getAct_ugtgss() {
-		return act_ugtgss;
+	public String getActUgtgss() {
+		return actUgtgss;
 	}
 
-	public void setAct_ugtgss(String act_ugtgss) {
-		this.act_ugtgss = act_ugtgss;
+	public void setActUgtgss(String actUgtgss) {
+		this.actUgtgss = actUgtgss;
 	}
 
-	public String getDir_act_calle() {
-		return dir_act_calle;
+	public String getDirActCalle() {
+		return dirActCalle;
 	}
 
-	public void setDir_act_calle(String dir_act_calle) {
-		this.dir_act_calle = dir_act_calle;
+	public void setDirActCalle(String dirActCalle) {
+		this.dirActCalle = dirActCalle;
 	}
 
-	public String getDir_act_num() {
-		return dir_act_num;
+	public String getDirActNum() {
+		return dirActNum;
 	}
 
-	public void setDir_act_num(String dir_act_num) {
-		this.dir_act_num = dir_act_num;
+	public void setDirActNum(String dirActNum) {
+		this.dirActNum = dirActNum;
 	}
 
-	public String getDir_act_bis() {
-		return dir_act_bis;
+	public String getDirActBis() {
+		return dirActBis;
 	}
 
-	public void setDir_act_bis(String dir_act_bis) {
-		this.dir_act_bis = dir_act_bis;
+	public void setDirActBis(String dirActBis) {
+		this.dirActBis = dirActBis;
 	}
 
-	public String getDir_act_bloq() {
-		return dir_act_bloq;
+	public String getDirActBloq() {
+		return dirActBloq;
 	}
 
-	public void setDir_act_bloq(String dir_act_bloq) {
-		this.dir_act_bloq = dir_act_bloq;
+	public void setDirActBloq(String dirActBloq) {
+		this.dirActBloq = dirActBloq;
 	}
 
-	public String getDir_act_es() {
-		return dir_act_es;
+	public String getDirActEs() {
+		return dirActEs;
 	}
 
-	public void setDir_act_es(String dir_act_es) {
-		this.dir_act_es = dir_act_es;
+	public void setDirActEs(String dirActEs) {
+		this.dirActEs = dirActEs;
 	}
 
-	public String getDir_act_piso() {
-		return dir_act_piso;
+	public String getDirActPiso() {
+		return dirActPiso;
 	}
 
-	public void setDir_act_piso(String dir_act_piso) {
-		this.dir_act_piso = dir_act_piso;
+	public void setDirActPiso(String dirActPiso) {
+		this.dirActPiso = dirActPiso;
 	}
 
-	public String getDir_act_p() {
-		return dir_act_p;
+	public String getDirActP() {
+		return dirActP;
 	}
 
-	public void setDir_act_p(String dir_act_p) {
-		this.dir_act_p = dir_act_p;
+	public void setDirActP(String dirActP) {
+		this.dirActP = dirActP;
 	}
 
-	public String getDir_act_CP() {
-		return dir_act_CP;
+	public String getDirActCP() {
+		return dirActCP;
 	}
 
-	public void setDir_act_CP(String dir_act_CP) {
-		this.dir_act_CP = dir_act_CP;
+	public void setDirActCP(String dirActCP) {
+		this.dirActCP = dirActCP;
 	}
 
-	public String getDir_act_num_muni() {
-		return dir_act_num_muni;
+	public String getDirActNumMuni() {
+		return dirActNumMuni;
 	}
 
-	public void setDir_act_num_muni(String dir_act_num_muni) {
-		this.dir_act_num_muni = dir_act_num_muni;
+	public void setDirActNumMuni(String dirActNumMuni) {
+		this.dirActNumMuni = dirActNumMuni;
 	}
 
-	public String getDir_act_nom_muni() {
-		return dir_act_nom_muni;
+	public String getDirActNomMuni() {
+		return dirActNomMuni;
 	}
 
-	public void setDir_act_nom_muni(String dir_act_nom_muni) {
-		this.dir_act_nom_muni = dir_act_nom_muni;
+	public void setDirActNomMuni(String dirActNomMuni) {
+		this.dirActNomMuni = dirActNomMuni;
 	}
 
-	public String getDir_act_tlf() {
-		return dir_act_tlf;
+	public String getDirActTlf() {
+		return dirActTlf;
 	}
 
-	public void setDir_act_tlf(String dir_act_tlf) {
-		this.dir_act_tlf = dir_act_tlf;
+	public void setDirActTlf(String dirActTlf) {
+		this.dirActTlf = dirActTlf;
 	}
 
 	
@@ -1302,7 +1302,7 @@ public class SituacionEmpresa {
 		private String ccc;
 		private String regimen;
 		private String idEmpresario;
-		private String nif_empresa;
+		private String nifEmpresa;
 		private String nss;
 		private String cccp;
 		private String ugtgss;
@@ -1318,21 +1318,21 @@ public class SituacionEmpresa {
 		private Date altaPrTrab;
 		private Date ultBajaEfCot;
 		private String trl;
-		private String cEsp_num;
-		private String cEsp_cad;
-		private String cnae93_num;
-		private String cnae93_cad;
+		private String cEspNum;
+		private String cEspCad;
+		private String cnae93Num;
+		private String cnae93Cad;
 		private Integer ta2Alta;
 		private Integer ta2Baja;
 
 
-		private String cnae09_num;
-		private String cnae09_cad;
+		private String cnae09Num;
+		private String cnae09Cad;
 		private Float tiposATyEPIT;
 		private Float ims;
 		private Float total;
-		private String coeJub_num;
-		private String coeJub_cad;
+		private String coeJubNum;
+		private String coeJubCad;
 		private String aconExtra;
 		private Boolean escTaller;
 		private String autorizacionRed;
@@ -1345,36 +1345,36 @@ public class SituacionEmpresa {
 		private String tlfMovil;
 		private String tlfFijo;
 		private String email;
-		private Boolean notif_dom_empresa;
-		private String tipo_via_dir_empresa;
-		private String tipo_via_dir_actividad;
+		private Boolean notifDomEmpresa;
+		private String tipoViaDirEmpresa;
+		private String tipoViaDirActividad;
 
 		
-		private String dir_emp_calle;
-		private String dir_emp_num;
-		private String dir_emp_bis;
-		private String dir_emp_bloq;
-		private String dir_emp_es;
-		private String dir_emp_piso;
-		private String dir_emp_p;
-		private String dir_emp_CP;
-		private String dir_emp_num_muni;
-		private String  dir_emp_nom_muni;
-		private String dir_emp_tlf;
-		private Boolean notif_dom_actividad;
-		private String act_ugtgss;
-		private String dir_act_calle;
-		private String dir_act_num;
+		private String dirEmpCalle;
+		private String dirEmpNum;
+		private String dirEmpBis;
+		private String dirEmpbloq;
+		private String dirEmpEs;
+		private String dirEmpPiso;
+		private String dirEmpP;
+		private String dirEmpCP;
+		private String dirEmpNumMuni;
+		private String  dirEmpNomMuni;
+		private String dirEmpTlf;
+		private Boolean notifDomActividad;
+		private String actUgtgss;
+		private String dirActCalle;
+		private String dirActNum;
 
-		private String dir_act_bis;
-		private String dir_act_bloq;
-		private String dir_act_es;
-		private String dir_act_piso;
-		private String dir_act_p;
-		private String dir_act_CP;
-		private String dir_act_num_muni;
-		private String  dir_act_nom_muni;
-		private String dir_act_tlf;
+		private String dirActBis;
+		private String dirActBloq;
+		private String dirActEs;
+		private String dirActPiso;
+		private String dirActP;
+		private String dirActCP;
+		private String dirActNumMuni;
+		private String  dirActNomMuni;
+		private String dirActTlf;
 		
 		
 		
@@ -1399,11 +1399,11 @@ public class SituacionEmpresa {
 				this.idEmpresario=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setNif_empresa(String nif_empresa) {
-			if(!((nif_empresa.equals(""))||(nif_empresa==null)))
-				this.nif_empresa = nif_empresa;
+		public SituacionEmpresaBuilder setNifempresa(String nifempresa) {
+			if(!((nifempresa.equals(""))||(nifempresa==null)))
+				this.nifEmpresa = nifempresa;
 			else
-				this.nif_empresa=null;
+				this.nifEmpresa=null;
 			return this;
 		}
 		public SituacionEmpresaBuilder setNss(String nss) {
@@ -1496,32 +1496,32 @@ public class SituacionEmpresa {
 				this.trl=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setcEsp_num(String cEsp_num) {
-			if(!((cEsp_num.equals(""))||(cEsp_num==null)))
-				this.cEsp_num = cEsp_num;
+		public SituacionEmpresaBuilder setcEspNum(String cEspNum) {
+			if(!((cEspNum.equals(""))||(cEspNum==null)))
+				this.cEspNum = cEspNum;
 			else
-				this.cEsp_num=null;
+				this.cEspNum=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setcEsp_cad(String cEsp_cad) {
-			if(!((cEsp_cad.equals(""))||(cEsp_cad==null)))
-				this.cEsp_cad = cEsp_cad;
+		public SituacionEmpresaBuilder setcEspCad(String cEspCad) {
+			if(!((cEspCad.equals(""))||(cEspCad==null)))
+				this.cEspCad = cEspCad;
 			else
-				this.cEsp_cad=null;
+				this.cEspCad=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setCnae93_num(String cnae93_num) {
-			if(!((cnae93_num.equals(""))||(cnae93_num==null)))
-				this.cnae93_num = cnae93_num;
+		public SituacionEmpresaBuilder setCnae93Num(String cnae93Num) {
+			if(!((cnae93Num.equals(""))||(cnae93Num==null)))
+				this.cnae93Num = cnae93Num;
 			else
-				this.cnae93_num=null;
+				this.cnae93Num=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setCnae93_cad(String cnae93_cad) {
-			if(!((cnae93_cad.equals(""))||(cnae93_cad==null)))
-				this.cnae93_cad = cnae93_cad;
+		public SituacionEmpresaBuilder setCnae93Cad(String cnae93Cad) {
+			if(!((cnae93Cad.equals(""))||(cnae93Cad==null)))
+				this.cnae93Cad = cnae93Cad;
 			else
-				this.cnae93_cad=null;
+				this.cnae93Cad=null;
 			return this;
 		}
 		public SituacionEmpresaBuilder setTa2Alta(Integer ta2Alta) {
@@ -1533,18 +1533,18 @@ public class SituacionEmpresa {
 			this.ta2Baja = ta2Baja;
 			return this;
 		}
-		public SituacionEmpresaBuilder setCnae09_num(String cnae09_num) {
-			if(!((cnae09_num.equals(""))||(cnae09_num==null)))
-				this.cnae09_num = cnae09_num;
+		public SituacionEmpresaBuilder setCnae09Num(String cnae09Num) {
+			if(!((cnae09Num.equals(""))||(cnae09Num==null)))
+				this.cnae09Num = cnae09Num;
 			else
-				this.cnae09_num=null;
+				this.cnae09Num=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setCnae09_cad(String cnae09_cad) {
-			if(!((cnae09_cad.equals(""))||(cnae09_cad==null)))
-				this.cnae09_cad = cnae09_cad;
+		public SituacionEmpresaBuilder setCnae09Cad(String cnae09Cad) {
+			if(!((cnae09Cad.equals(""))||(cnae09Cad==null)))
+				this.cnae09Cad = cnae09Cad;
 			else
-				this.cnae09_cad=null;
+				this.cnae09Cad=null;
 			return this;
 		}
 		public SituacionEmpresaBuilder setTiposATyEPIT(Float tiposATyEPIT) {
@@ -1559,18 +1559,18 @@ public class SituacionEmpresa {
 			this.total = total;
 			return this;
 		}
-		public SituacionEmpresaBuilder setCoeJub_num(String coeJub_num) {
-			if(!((coeJub_num.equals(""))||(coeJub_num==null)))
-				this.coeJub_num = coeJub_num;
+		public SituacionEmpresaBuilder setCoeJubNum(String coeJubNum) {
+			if(!((coeJubNum.equals(""))||(coeJubNum==null)))
+				this.coeJubNum = coeJubNum;
 			else
-				this.coeJub_num=null;
+				this.coeJubNum=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setCoeJub_cad(String coeJub_cad) {
-			if(!((coeJub_cad.equals(""))||(coeJub_cad==null)))
-				this.coeJub_cad = coeJub_cad;
+		public SituacionEmpresaBuilder setCoeJubCad(String coeJubCad) {
+			if(!((coeJubCad.equals(""))||(coeJubCad==null)))
+				this.coeJubCad = coeJubCad;
 			else
-				this.coeJub_cad=null;
+				this.coeJubCad=null;
 			return this;
 		}
 		public SituacionEmpresaBuilder setAconExtra(String aconExtra) {
@@ -1636,198 +1636,198 @@ public class SituacionEmpresa {
 				this.email=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setNotif_dom_empresa(Boolean notif_dom_empresa) {
-			this.notif_dom_empresa = notif_dom_empresa;
+		public SituacionEmpresaBuilder setNotifDomEmpresa(Boolean notifDomEmpresa) {
+			this.notifDomEmpresa = notifDomEmpresa;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_emp_calle(String dir_emp_calle) {
-			if(!((dir_emp_calle.equals(""))||(dir_emp_calle==null)))
-				this.dir_emp_calle = dir_emp_calle;
+		public SituacionEmpresaBuilder setDirEmpCalle(String dirEmpCalle) {
+			if(!((dirEmpCalle.equals(""))||(dirEmpCalle==null)))
+				this.dirEmpCalle = dirEmpCalle;
 			else
-				this.dir_emp_calle=null;
+				this.dirEmpCalle=null;
 			return this;
 		}
 		
-		public SituacionEmpresaBuilder setTipo_via_dir_empresa(String tipo_via_dir_empresa) {
-			if(!((tipo_via_dir_empresa.equals(""))||(tipo_via_dir_empresa==null)))
-				this.tipo_via_dir_empresa = tipo_via_dir_empresa;
+		public SituacionEmpresaBuilder setTipoViaDirEmpresa(String tipoViaDirEmpresa) {
+			if(!((tipoViaDirEmpresa.equals(""))||(tipoViaDirEmpresa==null)))
+				this.tipoViaDirEmpresa = tipoViaDirEmpresa;
 			else
-				this.tipo_via_dir_empresa=null;
+				this.tipoViaDirEmpresa=null;
 			return this;
 		}
 		
-		public SituacionEmpresaBuilder setTipo_via_dir_actividad(String tipo_via_dir_actividad) {
-			if(!((tipo_via_dir_actividad.equals(""))||(tipo_via_dir_actividad==null)))
-				this.tipo_via_dir_actividad = tipo_via_dir_actividad;
+		public SituacionEmpresaBuilder setTipoViaDirActividad(String tipoViaDirActividad) {
+			if(!((tipoViaDirActividad.equals(""))||(tipoViaDirActividad==null)))
+				this.tipoViaDirActividad = tipoViaDirActividad;
 			else
-				this.tipo_via_dir_actividad=null;
+				this.tipoViaDirActividad=null;
 			return this;
 		}
 		
 		
-		public SituacionEmpresaBuilder setDir_emp_num(String dir_emp_num) {
-			if(!((dir_emp_num.equals(""))||(dir_emp_num==null)))
-				this.dir_emp_num = dir_emp_num;
+		public SituacionEmpresaBuilder setDirEmpNum(String dirEmpNum) {
+			if(!((dirEmpNum.equals(""))||(dirEmpNum==null)))
+				this.dirEmpNum = dirEmpNum;
 			else
-				this.dir_emp_num=null;
+				this.dirEmpNum=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_emp_bis(String dir_emp_bis) {
-			if(!((dir_emp_bis.equals(""))||(dir_emp_bis==null)))
-				this.dir_emp_bis = dir_emp_bis;
+		public SituacionEmpresaBuilder setDirEmpBis(String dirEmpBis) {
+			if(!((dirEmpBis.equals(""))||(dirEmpBis==null)))
+				this.dirEmpBis = dirEmpBis;
 			else
-				this.dir_emp_bis=null;
+				this.dirEmpBis=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_emp_bloq(String dir_emp_bloq) {
-			if(!((dir_emp_bloq.equals(""))||(dir_emp_bloq==null)))
-				this.dir_emp_bloq = dir_emp_bloq;
+		public SituacionEmpresaBuilder setDirEmpBloq(String dirEmpBloq) {
+			if(!((dirEmpBloq.equals(""))||(dirEmpBloq==null)))
+				this.dirEmpbloq = dirEmpBloq;
 			else
-				this.dir_emp_bloq=null;
+				this.dirEmpbloq=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_emp_es(String dir_emp_es) {
-			if(!((dir_emp_es.equals(""))||(dir_emp_es==null)))
-				this.dir_emp_es = dir_emp_es;
+		public SituacionEmpresaBuilder setDirEmpEs(String dirEmpEs) {
+			if(!((dirEmpEs.equals(""))||(dirEmpEs==null)))
+				this.dirEmpEs = dirEmpEs;
 			else
-				this.dir_emp_es=null;
+				this.dirEmpEs=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_emp_piso(String dir_emp_piso) {
-			if(!((dir_emp_piso.equals(""))||(dir_emp_piso==null)))
-				this.dir_emp_piso = dir_emp_piso;
+		public SituacionEmpresaBuilder setDirEmpPiso(String dirEmpPiso) {
+			if(!((dirEmpPiso.equals(""))||(dirEmpPiso==null)))
+				this.dirEmpPiso = dirEmpPiso;
 			else
-				this.dir_emp_piso=null;
+				this.dirEmpPiso=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_emp_p(String dir_emp_p) {
-			if(!((dir_emp_p.equals(""))||(dir_emp_p==null)))
-				this.dir_emp_p = dir_emp_p;
+		public SituacionEmpresaBuilder setDirEmpP(String dirEmpP) {
+			if(!((dirEmpP.equals(""))||(dirEmpP==null)))
+				this.dirEmpP = dirEmpP;
 			else
-				this.dir_emp_p=null;
+				this.dirEmpP=null;
 			return this;
 		}
 		
-		public SituacionEmpresaBuilder setDir_emp_CP(String dir_emp_CP) {
-			if(!((dir_emp_CP.equals(""))||(dir_emp_CP==null)))
-				this.dir_emp_CP = dir_emp_CP;
+		public SituacionEmpresaBuilder setDirEmpCP(String dirEmpCP) {
+			if(!((dirEmpCP.equals(""))||(dirEmpCP==null)))
+				this.dirEmpCP = dirEmpCP;
 			else
-				this.dir_emp_CP=null;
+				this.dirEmpCP=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_emp_num_muni(String dir_emp_num_muni) {
-			if(!((dir_emp_num_muni.equals(""))||(dir_emp_num_muni==null)))
-				this.dir_emp_num_muni = dir_emp_num_muni;
+		public SituacionEmpresaBuilder setDirEmpNumMuni(String dirEmpNumMuni) {
+			if(!((dirEmpNumMuni.equals(""))||(dirEmpNumMuni==null)))
+				this.dirEmpNumMuni = dirEmpNumMuni;
 			else
-				this.dir_emp_num_muni=null;
+				this.dirEmpNumMuni=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_emp_nom_muni(String dir_emp_nom_muni) {
-			if(!((dir_emp_nom_muni.equals(""))||(dir_emp_nom_muni==null)))
-				this.dir_emp_nom_muni = dir_emp_nom_muni;
+		public SituacionEmpresaBuilder setDirEmpNomMuni(String dirEmpNomMuni) {
+			if(!((dirEmpNomMuni.equals(""))||(dirEmpNomMuni==null)))
+				this.dirEmpNomMuni = dirEmpNomMuni;
 			else
-				this.dir_emp_nom_muni=null;
+				this.dirEmpNomMuni=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_emp_tlf(String dir_emp_tlf) {
-			if(!((dir_emp_tlf.equals(""))||(dir_emp_tlf==null)))
-				this.dir_emp_tlf = dir_emp_tlf;
+		public SituacionEmpresaBuilder setDirEmpTlf(String dirEmpTlf) {
+			if(!((dirEmpTlf.equals(""))||(dirEmpTlf==null)))
+				this.dirEmpTlf = dirEmpTlf;
 			else
-				this.dir_emp_tlf=null;
+				this.dirEmpTlf=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setNotif_dom_actividad(Boolean notif_dom_actividad) {
-			this.notif_dom_actividad = notif_dom_actividad;
+		public SituacionEmpresaBuilder setNotifDomActividad(Boolean notifDomActividad) {
+			this.notifDomActividad = notifDomActividad;
 			return this;
 		}
-		public SituacionEmpresaBuilder setAct_ugtgss(String act_ugtgss) {
-			if(!((act_ugtgss.equals(""))||(act_ugtgss==null)))
-				this.act_ugtgss = act_ugtgss;
+		public SituacionEmpresaBuilder setActUgtgss(String actUgtgss) {
+			if(!((actUgtgss.equals(""))||(actUgtgss==null)))
+				this.actUgtgss = actUgtgss;
 			else
-				this.act_ugtgss=null;
+				this.actUgtgss=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_act_calle(String dir_act_calle) {
-			if(!((dir_act_calle.equals(""))||(dir_act_calle==null)))
-				this.dir_act_calle = dir_act_calle;
+		public SituacionEmpresaBuilder setDirActCalle(String dirActCalle) {
+			if(!((dirActCalle.equals(""))||(dirActCalle==null)))
+				this.dirActCalle = dirActCalle;
 			else
-				this.dir_act_calle=null;
+				this.dirActCalle=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_act_num(String dir_act_num) {
-			if(!((dir_act_num.equals(""))||(dir_act_num==null)))
-				this.dir_act_num = dir_act_num;
+		public SituacionEmpresaBuilder setDirActNum(String dirActNum) {
+			if(!((dirActNum.equals(""))||(dirActNum==null)))
+				this.dirActNum = dirActNum;
 			else
-				this.dir_act_num=null;
+				this.dirActNum=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_act_bis(String dir_act_bis) {
-			if(!((dir_act_bis.equals(""))||(dir_act_bis==null)))
-				this.dir_act_bis = dir_act_bis;
+		public SituacionEmpresaBuilder setDirActBis(String dirActBis) {
+			if(!((dirActBis.equals(""))||(dirActBis==null)))
+				this.dirActBis = dirActBis;
 			else
-				this.dir_act_bis=null;
+				this.dirActBis=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_act_bloq(String dir_act_bloq) {
-			if(!((dir_act_bloq.equals(""))||(dir_act_bloq==null)))
-				this.dir_act_bloq = dir_act_bloq;
+		public SituacionEmpresaBuilder setDirActBloq(String dirActBloq) {
+			if(!((dirActBloq.equals(""))||(dirActBloq==null)))
+				this.dirActBloq = dirActBloq;
 			else
-				this.dir_act_bloq=null;
+				this.dirActBloq=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_act_es(String dir_act_es) {
-			if(!((dir_act_es.equals(""))||(dir_act_es==null)))
-				this.dir_act_es = dir_act_es;
+		public SituacionEmpresaBuilder setDirActEs(String dirActEs) {
+			if(!((dirActEs.equals(""))||(dirActEs==null)))
+				this.dirActEs = dirActEs;
 			else
-				this.dir_act_es=null;
+				this.dirActEs=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_act_piso(String dir_act_piso) {
-			if(!((dir_act_piso.equals(""))||(dir_act_piso==null)))
-				this.dir_act_piso = dir_act_piso;
+		public SituacionEmpresaBuilder setDirActPiso(String dirActPiso) {
+			if(!((dirActPiso.equals(""))||(dirActPiso==null)))
+				this.dirActPiso = dirActPiso;
 			else
-				this.dir_act_piso=null;
+				this.dirActPiso=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_act_p(String dir_act_p) {
-			if(!((dir_act_p.equals(""))||(dir_act_p==null)))
-				this.dir_act_p = dir_act_p;
+		public SituacionEmpresaBuilder setDirActP(String dirActP) {
+			if(!((dirActP.equals(""))||(dirActP==null)))
+				this.dirActP = dirActP;
 			else
-				this.dir_act_p=null;
+				this.dirActP=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_act_CP(String dir_act_CP) {
-			if(!((dir_act_CP.equals(""))||(dir_act_CP==null)))
-				this.dir_act_CP = dir_act_CP;
+		public SituacionEmpresaBuilder setDirActCP(String dirActCP) {
+			if(!((dirActCP.equals(""))||(dirActCP==null)))
+				this.dirActCP = dirActCP;
 			else
-				this.dir_act_CP=null;
+				this.dirActCP=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_act_num_muni(String dir_act_num_muni) {
-			if(!((dir_act_num_muni.equals(""))||(dir_act_num_muni==null)))
-				this.dir_act_num_muni = dir_act_num_muni;
+		public SituacionEmpresaBuilder setDirActNumMuni(String dirActNumMuni) {
+			if(!((dirActNumMuni.equals(""))||(dirActNumMuni==null)))
+				this.dirActNumMuni = dirActNumMuni;
 			else
-				this.dir_act_num_muni=null;
+				this.dirActNumMuni=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_act_nom_muni(String dir_act_nom_muni) {
-			if(!((dir_act_nom_muni.equals(""))||(dir_act_nom_muni==null)))
-				this.dir_act_nom_muni = dir_act_nom_muni;
+		public SituacionEmpresaBuilder setDirActNomMuni(String dirActNomMuni) {
+			if(!((dirActNomMuni.equals(""))||(dirActNomMuni==null)))
+				this.dirActNomMuni = dirActNomMuni;
 			else
-				this.dir_act_nom_muni=null;
+				this.dirActNomMuni=null;
 			return this;
 		}
-		public SituacionEmpresaBuilder setDir_act_tlf(String dir_act_tlf) {
-			if(!((dir_act_tlf.equals(""))||(dir_act_tlf==null)))
-				this.dir_act_tlf = dir_act_tlf;
+		public SituacionEmpresaBuilder setDirActTlf(String dirActTlf) {
+			if(!((dirActTlf.equals(""))||(dirActTlf==null)))
+				this.dirActTlf = dirActTlf;
 			else
-				this.dir_act_tlf=null;
+				this.dirActTlf=null;
 			return this;
 		}
 		public SituacionEmpresa build() {
 			SituacionEmpresa r=new SituacionEmpresa();
 			r.setAconExtra(this.aconExtra);
-			r.setAct_ugtgss(this.act_ugtgss);
+			r.setActUgtgss(this.actUgtgss);
 			r.setAltaPrTrab(this.altaPrTrab);
 			r.setAnagrama(this.anagrama);
 			r.setAutorizacionRed(this.autorizacionRed);
@@ -1835,34 +1835,34 @@ public class SituacionEmpresa {
 			r.setCccAnt(this.cccAnt);
 			r.setCccp(this.cccp);
 			r.setCccSuc(this.cccSuc);
-			r.setcEsp_cad(this.cEsp_cad);
-			r.setcEsp_num(this.cEsp_num);
-			r.setCnae09_cad(this.cnae09_cad);
-			r.setCnae09_num(this.cnae09_num);
-			r.setCnae93_cad(this.cnae93_cad);
-			r.setCnae93_num(this.cnae93_num);
-			r.setCoeJub_cad(this.coeJub_cad);
-			r.setCoeJub_num(this.coeJub_num);
-			r.setDir_act_bis(this.dir_act_bis);
-			r.setDir_act_bloq(this.dir_act_bloq);
-			r.setDir_act_calle(this.dir_act_calle);
-			r.setDir_act_CP(this.dir_act_CP);
-			r.setDir_act_es(this.dir_act_es);
-			r.setDir_act_nom_muni(this.dir_act_nom_muni);
-			r.setDir_act_p(this.dir_act_p);
-			r.setDir_act_piso(this.dir_act_piso);
-			r.setDir_act_tlf(this.dir_act_tlf);
-			r.setDir_emp_bis(this.dir_emp_bis);
-			r.setDir_emp_bloq(this.dir_emp_bloq);
-			r.setDir_emp_calle(this.dir_emp_calle);
-			r.setDir_emp_CP(this.dir_emp_CP);
-			r.setDir_emp_es(this.dir_emp_es);
-			r.setDir_emp_nom_muni(this.dir_emp_nom_muni);
-			r.setDir_emp_num(this.dir_emp_num);
-			r.setDir_emp_num_muni(this.dir_emp_num_muni);
-			r.setDir_emp_p(this.dir_emp_p);
-			r.setDir_emp_piso(this.dir_emp_piso);
-			r.setDir_emp_tlf(this.dir_emp_tlf);
+			r.setcEspCad(this.cEspCad);
+			r.setcEspNum(this.cEspNum);
+			r.setCnae09Cad(this.cnae09Cad);
+			r.setCnae09Num(this.cnae09Num);
+			r.setCnae93Cad(this.cnae93Cad);
+			r.setCnae93Num(this.cnae93Num);
+			r.setCoeJubCad(this.coeJubCad);
+			r.setCoeJubNum(this.coeJubNum);
+			r.setDirActBis(this.dirActBis);
+			r.setDirActBloq(this.dirActBloq);
+			r.setDirActCalle(this.dirActCalle);
+			r.setDirActCP(this.dirActCP);
+			r.setDirActEs(this.dirActEs);
+			r.setDirActNomMuni(this.dirActNomMuni);
+			r.setDirActP(this.dirActP);
+			r.setDirActPiso(this.dirActPiso);
+			r.setDirActTlf(this.dirActTlf);
+			r.setDirEmpBis(this.dirEmpBis);
+			r.setDirEmpBloq(this.dirEmpbloq);
+			r.setDirEmpCalle(this.dirEmpCalle);
+			r.setDirEmpCP(this.dirEmpCP);
+			r.setDirEmpEs(this.dirEmpEs);
+			r.setDirEmpNomMuni(this.dirEmpNomMuni);
+			r.setDirEmpNum(this.dirEmpNum);
+			r.setDirEmpNumMuni(this.dirEmpNumMuni);
+			r.setDirEmpP(this.dirEmpP);
+			r.setDirEmpPiso(this.dirEmpPiso);
+			r.setDirEmpTlf(this.dirEmpTlf);
 			r.setEmail(this.email);
 			r.setEmbarcacion(this.embarcacion);
 			r.setEscTaller(this.escTaller);
@@ -1871,9 +1871,9 @@ public class SituacionEmpresa {
 			r.setfSit(this.fSit);
 			r.setIdEmpresario(this.idEmpresario);
 			r.setIms(this.ims);
-			r.setNif_empresa(this.nif_empresa);
-			r.setNotif_dom_actividad(this.notif_dom_actividad);
-			r.setNotif_dom_empresa(this.notif_dom_empresa);
+			r.setNifEmpresa(this.nifEmpresa);
+			r.setNotifDomActividad(this.notifDomActividad);
+			r.setNotifDomEmpresa(this.notifDomEmpresa);
 			r.setNss(this.nss);
 			r.setOgism(this.ogism);
 			r.setPlazoIncorpRed(this.plazoIncorpRed);
@@ -1891,10 +1891,10 @@ public class SituacionEmpresa {
 			r.setUgtgss(this.ugtgss);
 			r.setUgtgsscccp(this.ugtgsscccp);
 			r.setUltBajaEfCot(this.ultBajaEfCot);
-			r.setTipo_via_dir_empresa(this.tipo_via_dir_empresa);
-			r.setTipo_via_dir_actividad(this.tipo_via_dir_actividad);
-			r.setDir_act_num(this.dir_act_num);
-			r.setDir_act_num_muni(this.dir_act_num_muni);
+			r.setTipoViaDirEmpresa(this.tipoViaDirEmpresa);
+			r.setTipoViaDirActividad(this.tipoViaDirActividad);
+			r.setDirActNum(this.dirActNum);
+			r.setDirActNumMuni(this.dirActNumMuni);
 			return r;
 		}
 		

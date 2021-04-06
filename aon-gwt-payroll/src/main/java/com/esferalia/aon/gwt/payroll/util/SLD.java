@@ -147,150 +147,150 @@ public class SLD {
 					salaryBuilder.setIrpfBase(0d);
 					salaryBuilder.setChargeDate(dateTo);
 
-					if (liquidation.getCc_base() != null) {
-						salaryBuilder.setCgcBase(liquidation.getCc_base().doubleValue());
-						salaryBuilder.setRawCgcBase(liquidation.getCc_base().doubleValue());
+					if (liquidation.getCcBase() != null) {
+						salaryBuilder.setCgcBase(liquidation.getCcBase().doubleValue());
+						salaryBuilder.setRawCgcBase(liquidation.getCcBase().doubleValue());
 					} else {
 						salaryBuilder.setCgcBase(0d);
 						salaryBuilder.setRawCgcBase(0d);
 					}
 					
-					if (liquidation.getCc_base() != null)
+					if (liquidation.getCcBase() != null)
 						salaryBuilder.addData(ContextVariable.CGC_BASE.getName(),
-								new TimedObject<Double>(roundNumber(liquidation.getCc_base().doubleValue(), 2), period));
+								new TimedObject<Double>(roundNumber(liquidation.getCcBase().doubleValue(), 2), period));
 
-					if (liquidation.getCc_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getCc_businessFee().doubleValue(),
+					if (liquidation.getCcBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getCcBusinessFee().doubleValue(),
 								DeductionType.COMMON_CONTINGENCY.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.COMMON_CONTINGENCY).setName("CGC_E"),
 								Collections.emptyMap());
-						total_enterprise += liquidation.getCc_businessFee().doubleValue();
+						total_enterprise += liquidation.getCcBusinessFee().doubleValue();
 					}
 
-					if (liquidation.getCc_workerFee() != null) {
-						salaryBuilder.addDeduction(liquidation.getCc_workerFee().doubleValue(),
+					if (liquidation.getCcWorkerFee() != null) {
+						salaryBuilder.addDeduction(liquidation.getCcWorkerFee().doubleValue(),
 								DeductionType.COMMON_CONTINGENCY.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.COMMON_CONTINGENCY).setName("CGC"),
 								Collections.emptyMap());
-						total_deduction += liquidation.getCc_workerFee().doubleValue();
+						total_deduction += liquidation.getCcWorkerFee().doubleValue();
 					}
 
 					// I DON'T KNOW WHAT IS ccLiquid_base
-					if (liquidation.getItWorkAccident_base() != null)
-						salaryBuilder.setCgpBase(liquidation.getItWorkAccident_base().doubleValue());
+					if (liquidation.getItWorkAccidentBase() != null)
+						salaryBuilder.setCgpBase(liquidation.getItWorkAccidentBase().doubleValue());
 					else
 						salaryBuilder.setCgpBase(0d);
-					if (liquidation.getItWorkAccident_base() != null)
+					if (liquidation.getItWorkAccidentBase() != null)
 						salaryBuilder.addData(ContextVariable.CGP_BASE.getName(),
-								new TimedObject<Double>(roundNumber(liquidation.getItWorkAccident_base().doubleValue(), 2), period));
-					if (liquidation.getItWorkAccident_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getItWorkAccident_businessFee().doubleValue(),
+								new TimedObject<Double>(roundNumber(liquidation.getItWorkAccidentBase().doubleValue(), 2), period));
+					if (liquidation.getItWorkAccidentBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getItWorkAccidentBusinessFee().doubleValue(),
 								DeductionType.PROFESSIONAL_CONTINGENCY.getName(new Locale("es", "ES")), dateFrom,
 								dateTo,
 								new Deduction().setType(DeductionType.PROFESSIONAL_CONTINGENCY).setName("CGP_E"),
 								Collections.emptyMap());
-						total_enterprise += liquidation.getItWorkAccident_businessFee().doubleValue();
+						total_enterprise += liquidation.getItWorkAccidentBusinessFee().doubleValue();
 					}
 
-					if (liquidation.getItWorkAccident_workerFee() != null) {
-						salaryBuilder.addDeduction(liquidation.getItWorkAccident_workerFee().doubleValue(),
+					if (liquidation.getItWorkAccidentWorkerFee() != null) {
+						salaryBuilder.addDeduction(liquidation.getItWorkAccidentWorkerFee().doubleValue(),
 								DeductionType.PROFESSIONAL_CONTINGENCY.getName(new Locale("es", "ES")), dateFrom,
 								dateTo, new Deduction().setType(DeductionType.PROFESSIONAL_CONTINGENCY).setName("CGP"),
 								Collections.emptyMap());
-						total_deduction += liquidation.getItWorkAccident_workerFee().doubleValue();
+						total_deduction += liquidation.getItWorkAccidentWorkerFee().doubleValue();
 					}
 
-					if (liquidation.getImsWorkAccident_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getImsWorkAccident_businessFee().doubleValue(), "IMS_E",
+					if (liquidation.getImsWorkAccidentBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getImsWorkAccidentBusinessFee().doubleValue(), "IMS_E",
 								dateFrom, dateTo,
 								new Deduction().setType(DeductionType.PROFESSIONAL_CONTINGENCY).setName("IMS_E"),
 								Collections.emptyMap());
-						total_enterprise += liquidation.getImsWorkAccident_businessFee().doubleValue();
+						total_enterprise += liquidation.getImsWorkAccidentBusinessFee().doubleValue();
 					}
 
-					if (liquidation.getUnemployment_base() != null)
+					if (liquidation.getUnemploymentBase() != null)
 						salaryBuilder.addData(ContextVariable.UNEMPLOY_EMPLOYEE.getName(),
-								new TimedObject<Double>(roundNumber(liquidation.getUnemployment_base().doubleValue(), 2), period));
-					if (liquidation.getUnemployment_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getUnemployment_businessFee().doubleValue(),
+								new TimedObject<Double>(roundNumber(liquidation.getUnemploymentBase().doubleValue(), 2), period));
+					if (liquidation.getUnemploymentBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getUnemploymentBusinessFee().doubleValue(),
 								DeductionType.UNEMPLOYMENT.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.UNEMPLOYMENT).setName("DESMPL_E"),
 								Collections.emptyMap());
-						total_enterprise += liquidation.getUnemployment_businessFee().doubleValue();
+						total_enterprise += liquidation.getUnemploymentBusinessFee().doubleValue();
 					}
 
-					if (liquidation.getUnemployment_workerFee() != null) {
-						salaryBuilder.addDeduction(liquidation.getUnemployment_workerFee().doubleValue(),
+					if (liquidation.getUnemploymentWorkerFee() != null) {
+						salaryBuilder.addDeduction(liquidation.getUnemploymentWorkerFee().doubleValue(),
 								DeductionType.UNEMPLOYMENT.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.UNEMPLOYMENT).setName("DESMPL"),
 								Collections.emptyMap());
-						total_deduction += liquidation.getUnemployment_workerFee().doubleValue();
+						total_deduction += liquidation.getUnemploymentWorkerFee().doubleValue();
 					}
 
-					if (liquidation.getFogasa_base() != null)
+					if (liquidation.getFogasaBase() != null)
 						salaryBuilder.addData(ContextVariable.FOGASA_ENTERPRISE.getName(),
-								new TimedObject<Double>(roundNumber(liquidation.getFogasa_base().doubleValue(), 2), period));
-					if (liquidation.getFogasa_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getFogasa_businessFee().doubleValue(),
+								new TimedObject<Double>(roundNumber(liquidation.getFogasaBase().doubleValue(), 2), period));
+					if (liquidation.getFogasaBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getFogasaBusinessFee().doubleValue(),
 								DeductionType.FOGASA.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.FOGASA).setName("FOGASA_E"),
 								Collections.emptyMap());
-						total_enterprise += liquidation.getFogasa_businessFee().doubleValue();
+						total_enterprise += liquidation.getFogasaBusinessFee().doubleValue();
 					}
 
-					if (liquidation.getFogasa_workerFee() != null) {
-						salaryBuilder.addDeduction(liquidation.getFogasa_workerFee().doubleValue(), "FOGASA", dateFrom,
+					if (liquidation.getFogasaWorkerFee() != null) {
+						salaryBuilder.addDeduction(liquidation.getFogasaWorkerFee().doubleValue(), "FOGASA", dateFrom,
 								dateTo, new Deduction().setType(DeductionType.FOGASA).setName("FOGASA"),
 								Collections.emptyMap());
-						total_deduction += liquidation.getFogasa_workerFee().doubleValue();
+						total_deduction += liquidation.getFogasaWorkerFee().doubleValue();
 					}
 
-					if (liquidation.getJobTraining_base() != null)
+					if (liquidation.getJobTrainingBase() != null)
 						salaryBuilder.addData(ContextVariable.FP_EMPLOYEE.getName(),
-								new TimedObject<Double>(roundNumber(liquidation.getJobTraining_base().doubleValue(), 2), period));
-					if (liquidation.getJobTraining_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getJobTraining_businessFee().doubleValue(),
+								new TimedObject<Double>(roundNumber(liquidation.getJobTrainingBase().doubleValue(), 2), period));
+					if (liquidation.getJobTrainingBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getJobTrainingBusinessFee().doubleValue(),
 								DeductionType.JOB_TRAINING.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.JOB_TRAINING).setName("FP_E"),
 								Collections.emptyMap());
-						total_enterprise += liquidation.getJobTraining_businessFee().doubleValue();
+						total_enterprise += liquidation.getJobTrainingBusinessFee().doubleValue();
 					}
 
-					if (liquidation.getJobTraining_workerFee() != null) {
-						salaryBuilder.addDeduction(liquidation.getJobTraining_workerFee().doubleValue(),
+					if (liquidation.getJobTrainingWorkerFee() != null) {
+						salaryBuilder.addDeduction(liquidation.getJobTrainingWorkerFee().doubleValue(),
 								DeductionType.JOB_TRAINING.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.JOB_TRAINING).setName("FP"),
 								Collections.emptyMap());
-						total_deduction += liquidation.getJobTraining_workerFee().doubleValue();
+						total_deduction += liquidation.getJobTrainingWorkerFee().doubleValue();
 					}
 
 
-					if (liquidation.getGrantsAndBonuses_businessFee() != null)
-						salaryBuilder.addBonus(liquidation.getGrantsAndBonuses_businessFee().doubleValue(), "BONIF_E",
+					if (liquidation.getGrantsAndBonusesBusinessFee() != null)
+						salaryBuilder.addBonus(liquidation.getGrantsAndBonusesBusinessFee().doubleValue(), "BONIF_E",
 								dateFrom, dateTo, new Bonus().setName("BONIF_E"), Collections.emptyMap());
-					if (liquidation.getGrantsAndBonuses_workerFee() != null)
-						salaryBuilder.addBonus(liquidation.getGrantsAndBonuses_workerFee().doubleValue(), "BONIF",
+					if (liquidation.getGrantsAndBonusesWorkerFee() != null)
+						salaryBuilder.addBonus(liquidation.getGrantsAndBonusesWorkerFee().doubleValue(), "BONIF",
 								dateFrom, dateTo, new Bonus().setName("BONIF"), Collections.emptyMap());
 
-					if (liquidation.getOtherContributionsLiquid_base() != null)
+					if (liquidation.getOtherContributionsLiquidBase() != null)
 						salaryBuilder.addData("OTHER_BASE", new TimedObject<Double>(
-								roundNumber(liquidation.getOtherContributionsLiquid_base().doubleValue(), 2), period));
-					if (liquidation.getOtherContributionsLiquid_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getOtherContributionsLiquid_businessFee().doubleValue(),
+								roundNumber(liquidation.getOtherContributionsLiquidBase().doubleValue(), 2), period));
+					if (liquidation.getOtherContributionsLiquidBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getOtherContributionsLiquidBusinessFee().doubleValue(),
 								DeductionType.OTHER.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.OTHER).setName("OTHER_E"), Collections.emptyMap());
-						total_enterprise += liquidation.getOtherContributionsLiquid_businessFee().doubleValue();
+						total_enterprise += liquidation.getOtherContributionsLiquidBusinessFee().doubleValue();
 					}
 
-					if (liquidation.getOtherContributionsLiquid_workerFee() != null) {
-						salaryBuilder.addDeduction(liquidation.getOtherContributionsLiquid_workerFee().doubleValue(),
+					if (liquidation.getOtherContributionsLiquidWorkerFee() != null) {
+						salaryBuilder.addDeduction(liquidation.getOtherContributionsLiquidWorkerFee().doubleValue(),
 								DeductionType.OTHER.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.OTHER).setName("OTHER"), Collections.emptyMap());
-						total_deduction += liquidation.getOtherContributionsLiquid_workerFee().doubleValue();
+						total_deduction += liquidation.getOtherContributionsLiquidWorkerFee().doubleValue();
 					}
 
-					if (liquidation.getTotalLiquid_totalFee() != null)
-						salaryBuilder.setTotalLiquid(liquidation.getTotalLiquid_totalFee().doubleValue());
+					if (liquidation.getTotalLiquidTotalFee() != null)
+						salaryBuilder.setTotalLiquid(liquidation.getTotalLiquidTotalFee().doubleValue());
 					else
 						salaryBuilder.setTotalLiquid(0d);
 
@@ -399,133 +399,133 @@ public class SLD {
 					salaryBuilder.setIrpfBase(0d);
 					salaryBuilder.setChargeDate(dateTo);
 
-					if (liquidation.getCc_base() != null) {
-						salaryBuilder.setCgcBase(liquidation.getCc_base().doubleValue());
-						salaryBuilder.setRawCgcBase(liquidation.getCc_base().doubleValue());
+					if (liquidation.getCcBase() != null) {
+						salaryBuilder.setCgcBase(liquidation.getCcBase().doubleValue());
+						salaryBuilder.setRawCgcBase(liquidation.getCcBase().doubleValue());
 					} else {
 						salaryBuilder.setCgcBase(0d);
 						salaryBuilder.setRawCgcBase(0d);
 					}
 
-					if (liquidation.getCc_base() != null)
+					if (liquidation.getCcBase() != null)
 						salaryBuilder.addData(ContextVariable.CGC_BASE.getName(),
-								new TimedObject<Double>(roundNumber(liquidation.getCc_base().doubleValue(), 2), period));
+								new TimedObject<Double>(roundNumber(liquidation.getCcBase().doubleValue(), 2), period));
 
-					if (liquidation.getCc_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getCc_businessFee().doubleValue(),
+					if (liquidation.getCcBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getCcBusinessFee().doubleValue(),
 								DeductionType.COMMON_CONTINGENCY.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.COMMON_CONTINGENCY).setName("CGC_E"),
 								Collections.emptyMap());
 					}
 
-					if (liquidation.getCc_workerFee() != null) {
-						salaryBuilder.addDeduction(liquidation.getCc_workerFee().doubleValue(),
+					if (liquidation.getCcWorkerFee() != null) {
+						salaryBuilder.addDeduction(liquidation.getCcWorkerFee().doubleValue(),
 								DeductionType.COMMON_CONTINGENCY.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.COMMON_CONTINGENCY).setName("CGC"),
 								Collections.emptyMap());
 					}
 
 					// I DON'T KNOW WHAT IS ccLiquid_base
-					if (liquidation.getItWorkAccident_base() != null)
-						salaryBuilder.setCgpBase(liquidation.getItWorkAccident_base().doubleValue());
+					if (liquidation.getItWorkAccidentBase() != null)
+						salaryBuilder.setCgpBase(liquidation.getItWorkAccidentBase().doubleValue());
 					else
 						salaryBuilder.setCgpBase(0d);
-					if (liquidation.getItWorkAccident_base() != null)
+					if (liquidation.getItWorkAccidentBase() != null)
 						salaryBuilder.addData(ContextVariable.CGP_BASE.getName(),
-								new TimedObject<Double>(roundNumber(liquidation.getItWorkAccident_base().doubleValue(), 2), period));
-					if (liquidation.getItWorkAccident_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getItWorkAccident_businessFee().doubleValue(),
+								new TimedObject<Double>(roundNumber(liquidation.getItWorkAccidentBase().doubleValue(), 2), period));
+					if (liquidation.getItWorkAccidentBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getItWorkAccidentBusinessFee().doubleValue(),
 								DeductionType.PROFESSIONAL_CONTINGENCY.getName(new Locale("es", "ES")), dateFrom,
 								dateTo,
 								new Deduction().setType(DeductionType.PROFESSIONAL_CONTINGENCY).setName("CGP_E"),
 								Collections.emptyMap());
 					}
 
-					if (liquidation.getItWorkAccident_workerFee() != null) {
-						salaryBuilder.addDeduction(liquidation.getItWorkAccident_workerFee().doubleValue(),
+					if (liquidation.getItWorkAccidentWorkerFee() != null) {
+						salaryBuilder.addDeduction(liquidation.getItWorkAccidentWorkerFee().doubleValue(),
 								DeductionType.PROFESSIONAL_CONTINGENCY.getName(new Locale("es", "ES")), dateFrom,
 								dateTo, new Deduction().setType(DeductionType.PROFESSIONAL_CONTINGENCY).setName("CGP"),
 								Collections.emptyMap());
 					}
 
-					if (liquidation.getImsWorkAccident_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getImsWorkAccident_businessFee().doubleValue(), "IMS_E",
+					if (liquidation.getImsWorkAccidentBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getImsWorkAccidentBusinessFee().doubleValue(), "IMS_E",
 								dateFrom, dateTo,
 								new Deduction().setType(DeductionType.PROFESSIONAL_CONTINGENCY).setName("IMS_E"),
 								Collections.emptyMap());
 					}
 
-					if (liquidation.getUnemployment_base() != null)
+					if (liquidation.getUnemploymentBase() != null)
 						salaryBuilder.addData(ContextVariable.UNEMPLOY_EMPLOYEE.getName(),
-								new TimedObject<Double>(roundNumber(liquidation.getUnemployment_base().doubleValue(), 2), period));
-					if (liquidation.getUnemployment_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getUnemployment_businessFee().doubleValue(),
+								new TimedObject<Double>(roundNumber(liquidation.getUnemploymentBase().doubleValue(), 2), period));
+					if (liquidation.getUnemploymentBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getUnemploymentBusinessFee().doubleValue(),
 								DeductionType.UNEMPLOYMENT.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.UNEMPLOYMENT).setName("DESMPL_E"),
 								Collections.emptyMap());
 					}
 
-					if (liquidation.getUnemployment_workerFee() != null) {
-						salaryBuilder.addDeduction(liquidation.getUnemployment_workerFee().doubleValue(),
+					if (liquidation.getUnemploymentWorkerFee() != null) {
+						salaryBuilder.addDeduction(liquidation.getUnemploymentWorkerFee().doubleValue(),
 								DeductionType.UNEMPLOYMENT.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.UNEMPLOYMENT).setName("DESMPL"),
 								Collections.emptyMap());
 					}
 
-					if (liquidation.getFogasa_base() != null)
+					if (liquidation.getFogasaBase() != null)
 						salaryBuilder.addData(ContextVariable.FOGASA_ENTERPRISE.getName(),
-								new TimedObject<Double>(roundNumber(liquidation.getFogasa_base().doubleValue(), 2), period));
-					if (liquidation.getFogasa_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getFogasa_businessFee().doubleValue(),
+								new TimedObject<Double>(roundNumber(liquidation.getFogasaBase().doubleValue(), 2), period));
+					if (liquidation.getFogasaBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getFogasaBusinessFee().doubleValue(),
 								DeductionType.FOGASA.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.FOGASA).setName("FOGASA_E"),
 								Collections.emptyMap());
 					}
 
-					if (liquidation.getFogasa_workerFee() != null) {
-						salaryBuilder.addDeduction(liquidation.getFogasa_workerFee().doubleValue(), "FOGASA", dateFrom,
+					if (liquidation.getFogasaWorkerFee() != null) {
+						salaryBuilder.addDeduction(liquidation.getFogasaWorkerFee().doubleValue(), "FOGASA", dateFrom,
 								dateTo, new Deduction().setType(DeductionType.FOGASA).setName("FOGASA"),
 								Collections.emptyMap());
 					}
 
-					if (liquidation.getJobTraining_base() != null)
+					if (liquidation.getJobTrainingBase() != null)
 						salaryBuilder.addData(ContextVariable.FP_EMPLOYEE.getName(),
-								new TimedObject<Double>(roundNumber(liquidation.getJobTraining_base().doubleValue(), 2), period));
-					if (liquidation.getJobTraining_businessFee() != null) {
-						salaryBuilder.addCost(liquidation.getJobTraining_businessFee().doubleValue(),
+								new TimedObject<Double>(roundNumber(liquidation.getJobTrainingBase().doubleValue(), 2), period));
+					if (liquidation.getJobTrainingBusinessFee() != null) {
+						salaryBuilder.addCost(liquidation.getJobTrainingBusinessFee().doubleValue(),
 								DeductionType.JOB_TRAINING.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.JOB_TRAINING).setName("FP_E"),
 								Collections.emptyMap());
 					}
 
-					if (liquidation.getJobTraining_workerFee() != null) {
-						salaryBuilder.addDeduction(liquidation.getJobTraining_workerFee().doubleValue(),
+					if (liquidation.getJobTrainingWorkerFee() != null) {
+						salaryBuilder.addDeduction(liquidation.getJobTrainingWorkerFee().doubleValue(),
 								DeductionType.JOB_TRAINING.getName(new Locale("es", "ES")), dateFrom, dateTo,
 								new Deduction().setType(DeductionType.JOB_TRAINING).setName("FP"),
 								Collections.emptyMap());
 					}
 
 
-					if (liquidation.getGrantsAndBonuses_businessFee() != null)
-						salaryBuilder.addBonus(liquidation.getGrantsAndBonuses_businessFee().doubleValue(), "BONIF_E",
+					if (liquidation.getGrantsAndBonusesBusinessFee() != null)
+						salaryBuilder.addBonus(liquidation.getGrantsAndBonusesBusinessFee().doubleValue(), "BONIF_E",
 								dateFrom, dateTo, new Bonus().setName("BONIF_E"), Collections.emptyMap());
 
-					if (liquidation.getGrantsAndBonuses_workerFee() != null)
-						salaryBuilder.addBonus(liquidation.getGrantsAndBonuses_workerFee().doubleValue(), "BONIF",
+					if (liquidation.getGrantsAndBonusesWorkerFee() != null)
+						salaryBuilder.addBonus(liquidation.getGrantsAndBonusesWorkerFee().doubleValue(), "BONIF",
 								dateFrom, dateTo, new Bonus().setName("BONIF"), Collections.emptyMap());
 					
-					if (liquidation.getTotalLiquid_businessFee() != null)
-						salaryBuilder.setTotalEnterprise(liquidation.getTotalLiquid_businessFee().doubleValue());
+					if (liquidation.getTotalLiquidBusinessFee() != null)
+						salaryBuilder.setTotalEnterprise(liquidation.getTotalLiquidBusinessFee().doubleValue());
 					else
 						salaryBuilder.setTotalEnterprise(0d);
 					
-					if (liquidation.getTotalLiquid_workerFee() != null)
-						salaryBuilder.setTotalDeduction(liquidation.getTotalLiquid_workerFee().doubleValue());
+					if (liquidation.getTotalLiquidWorkerFee() != null)
+						salaryBuilder.setTotalDeduction(liquidation.getTotalLiquidWorkerFee().doubleValue());
 					else
 						salaryBuilder.setTotalDeduction(0d);
 					
-					if (liquidation.getTotalLiquid_totalFee() != null)
-						salaryBuilder.setTotalSS(liquidation.getTotalLiquid_totalFee().doubleValue());
+					if (liquidation.getTotalLiquidTotalFee() != null)
+						salaryBuilder.setTotalSS(liquidation.getTotalLiquidTotalFee().doubleValue());
 					else
 						salaryBuilder.setTotalSS(0d);
 					
