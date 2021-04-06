@@ -274,6 +274,7 @@ class AonLaboral extends AonElement {
   showView(view, data, filter = undefined){
     return new Promise(async(resolve)=>{
       let aonView = undefined;
+      console.log(this.getElement(view));
       if(!this.getElement(view)){
         switch(view){
           case PAYROLL_VIEWS.AON_PAYROLL_LIST:

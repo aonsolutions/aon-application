@@ -110,44 +110,49 @@ export class AonSign extends AonElement {
 
   vuelta() {
     let content = this.getElement(this.CONTENT);
-    this.clearElement(content);
-		let button = this.createElement('button');
-    button.className = 'aonButton';
-		button.style.backgroundColor = '#86D364';
-    button.style.width = '120px';
-    button.style.padding = '1rem 1rem';
-		button.innerHTML = 'VUELTA';
-    if(this.isMobile()){
-      button.style.width = "60%";
-      button.style.borderRadius = "12px";
+    if(content){
+      this.clearElement(content);
+      let button = this.createElement('button');
+      button.className = 'aonButton';
+      button.style.backgroundColor = '#86D364';
+      button.style.width = '120px';
+      button.style.padding = '1rem 1rem';
+      button.innerHTML = 'VUELTA';
+      if(this.isMobile()){
+        button.style.width = "60%";
+        button.style.borderRadius = "12px";
+      }
+      button.addEventListener('click', () => this.saveTimeCtrl('in'));
+      content.appendChild(button);
     }
-    button.addEventListener('click', () => this.saveTimeCtrl('in'));
-		content.appendChild(button);
 	}
 
 	salida() {
     let content = this.getElement(this.CONTENT);
-    this.clearElement(content);
+    if(content){
+      this.clearElement(content);
 
-		let button = this.createElement('button');
-    button.className = 'aonButton';
-		button.style.backgroundColor = '#DC4D30';
-		button.style.marginRight = '10px';
-    button.style.width = '100px';
-    button.style.padding = '1rem 1rem';
-		button.innerHTML = 'SALIDA';
-    button.addEventListener('click', () => this.saveTimeCtrl('out'));
-		content.appendChild(button);
-
-		let button2 = this.createElement('button');
-    button2.className = 'aonButton';
-		button2.style.backgroundColor = '#F39F1D';
-		button2.style.marginRight = '10px';
-    button2.style.width = '100px';
-    button2.style.padding = '1rem 1rem';
-		button2.innerHTML = 'PAUSA';
-		button2.addEventListener('click', () => this.saveTimeCtrl('pause'));
-		content.appendChild(button2);
+      let button = this.createElement('button');
+      button.className = 'aonButton';
+      button.style.backgroundColor = '#DC4D30';
+      button.style.marginRight = '10px';
+      button.style.width = '100px';
+      button.style.padding = '1rem 1rem';
+      button.innerHTML = 'SALIDA';
+      button.addEventListener('click', () => this.saveTimeCtrl('out'));
+      content.appendChild(button);
+  
+      let button2 = this.createElement('button');
+      button2.className = 'aonButton';
+      button2.style.backgroundColor = '#F39F1D';
+      button2.style.marginRight = '10px';
+      button2.style.width = '100px';
+      button2.style.padding = '1rem 1rem';
+      button2.innerHTML = 'PAUSA';
+      button2.addEventListener('click', () => this.saveTimeCtrl('pause'));
+      content.appendChild(button2);
+    }
+ 
 	}
 
   async saveTimeCtrl(status){
@@ -195,9 +200,8 @@ export class AonSign extends AonElement {
   }
 
   timeAction(time) {
-
     let timeDiv = this.getElement(this.TIME);
-    if(timeDiv){
+    if(timeDiv && time>0){
       timeDiv.innerHTML = timePaser(time);
       timeDiv.style.cursor = "default";
     } else this.timeStop();

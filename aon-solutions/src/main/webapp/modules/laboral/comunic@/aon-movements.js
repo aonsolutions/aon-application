@@ -1,4 +1,5 @@
 import { AonElement } from '../../../components/AonElement.js';
+import { PAYROLL_VIEWS } from '../PayrollEnums.js';
 
 export class AonMovements extends AonElement {
 
@@ -12,7 +13,7 @@ export class AonMovements extends AonElement {
 
     constructor() {
         super();
-        this.id = this.id || 'aonMovements';
+        this.id = this.id || PAYROLL_VIEWS.AON_MOVEMENTS;
         this.applicationEl = this.getApplication();
         this.applicationParentEl = this.getApplicationParent();
     }
@@ -37,11 +38,11 @@ export class AonMovements extends AonElement {
             this.applicationEl.addToolbarOption('Add', 'add', () => this.aonAltaDirecta());
         }
         this.getElement(this.applicationEl.TOOLBAR).setAttribute('option', 'Movimientos');
-        this.applicationParentEl.showView("aonMovementsList");
+        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
     }
 
     aonAltaDirecta() {
-        this.applicationParentEl.showView("aonAltaDirecta");
+        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA);
     }
 
 }
