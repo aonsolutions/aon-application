@@ -28,7 +28,7 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaREDMov;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ComunicaServlet", urlPatterns = {"/ms/api/comunica/*"})
