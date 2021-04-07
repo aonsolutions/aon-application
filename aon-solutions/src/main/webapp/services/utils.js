@@ -152,11 +152,14 @@ export const setDateTpDay = (d)=>{
   const now = new Date();
   let day = days[date.getDay()];
 
-  if(date.getDay() === now.getDay()){
-    day = "hoy";
-  } else if(date.getDay() === addDays(now, -1).getDay()){
-    day = "ayer";
-  }
+  // if( (date.getFullYear() === now.getFullYear()) && (date.getMonth() === now.getMonth()) ){
+    if(date.getDay() === now.getDay()){
+      day = "hoy";
+    } else if(date.getDay() === addDays(now, -1).getDay()){
+      day = "ayer";
+    }
+  // }
+
   return day+", "+formatDate(date);
 }
 

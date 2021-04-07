@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { getAuth, getDomainUserRoles, getCompanyOne, getCompanyMedia } from "../../services/service.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-
+import { AonNotification } from "./aon-notification.js";
 import "../../components/aon-application.js";
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
@@ -12,9 +12,10 @@ import "../user/aon-user.js";
 import "../company/aon-company-list.js";
 import "../company/aon-company.js";
 
-import * as CONSTANT from "../../environments/constants.js";
+// import * as CONSTANT from "../../environments/constants.js";
 import * as MSG from "../../environments/msg.js";
-import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+// import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -22,7 +23,7 @@ export class AonConfiguration extends AonElement {
   COMPANY_LIST;
   selected;
 
-  _roles;
+  dur;
 
   static get observedAttributes() {
     return ["company", "user"];
@@ -79,7 +80,7 @@ export class AonConfiguration extends AonElement {
 		`;
 
     getDomainUserRoles({}).then(r => {
-      this._roles = new DomainUserRoles(r);
+      this.dur = new DomainUserRoles(r);
       this.build();
     }).catch(() => this.build());
   }
@@ -101,7 +102,7 @@ export class AonConfiguration extends AonElement {
 
     if (
       localStorage.getItem("aon_domain_id") &&
-      localStorage.getItem("company") && this._roles.isAdmin()
+      localStorage.getItem("company") && this.dur.isAdmin()
     ) {
       let company = JSON.parse(localStorage.getItem("company"));
       let companyOptions = [];
@@ -129,6 +130,11 @@ export class AonConfiguration extends AonElement {
           fn: () => this.buildStore(),
         });
       }
+      companyOptions.push({
+        name: "Notificación manual",
+        icon: "notifications",
+        fn: () => this.buildNotification(),
+      });
 
       aonConfiguration.addSidenavOptions("EMPRESA", companyOptions);
     }
@@ -230,6 +236,12 @@ export class AonConfiguration extends AonElement {
       );
       this.getElement(this.COMPANY).company = event.company;
     });
+  }
+
+  buildNotification() {
+    let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+    aonConfiguration.removeToolbarOptions();
+    aonConfiguration.setContent(new AonNotification());
   }
 
   buildCreateUser(share) {

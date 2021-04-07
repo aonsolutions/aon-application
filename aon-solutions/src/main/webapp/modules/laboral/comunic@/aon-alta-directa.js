@@ -74,28 +74,32 @@ export class AonAltaDirecta extends AonElement {
 
 
     paintView() {
-        const toolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="Alta directa"> </aon-toolbar>`;
-        const form = `
-        <form id="${this.id}Form" action="#" onsubmit="return false;">
-            <div id="${this.id}Div">
-                <div class="aonCol-sm-12">
-                    <aon-card id="${this.id}EmpresaCard" title="Datos de la empresa" flex="true"></aon-card>
+        const toolbar = /*html*/`<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="Alta directa"> </aon-toolbar>`;
+        const form = 
+        /*html*/`
+        <div>
+            <form id="${this.id}Form" action="#" onsubmit="return false;">
+                <div id="${this.id}Div">
+                    <div class="aonCol-sm-12">
+                        <aon-card id="${this.id}EmpresaCard" title="Datos de la empresa" flex="true"></aon-card>
+                    </div>
+                    <div class="aonCol-sm-12 aonCol-md-6">
+                        <aon-card id="${this.id}TrabajadorCard" title="Datos del trabajador" flex="true"></aon-card>
+                    </div>
+                    <div class="aonCol-sm-12 aonCol-md-6">
+                        <aon-card id="${this.id}ContratoCard" title="Datos del contrato" flex="true"></aon-card>
+                    </div>
                 </div>
-                <div class="aonCol-sm-12 aonCol-md-6">
-                    <aon-card id="${this.id}TrabajadorCard" title="Datos del trabajador" flex="true"></aon-card>
-                </div>
-                <div class="aonCol-sm-12 aonCol-md-6">
-                    <aon-card id="${this.id}ContratoCard" title="Datos del contrato" flex="true"></aon-card>
-                </div>
-            </div>
-        </form>`;
+            </form>
+        `;
 
         this.innerHTML = toolbar + form;
 
         this.applicationEl.removeToolbarOptions();
 
         let aonEmpresaCard = this.getElement(`${this.id}EmpresaCard`);
-        aonEmpresaCard.setContentHTML(`
+        aonEmpresaCard.setContentHTML(
+            /*html*/`
             <div class="aonCol-sm-12 aonCol-md-4">
                 <aon-select name="centro_trabajo" id="centro_trabajo" title="Centro de trabajo"></aon-select>
             </div>
@@ -106,10 +110,12 @@ export class AonAltaDirecta extends AonElement {
                 <aon-select name="convenio" id="convenio" title="Convenio" type="list"></aon-select>
             </div>
             <aon-input name="regimen" id="regimen" description="regimen" visible="false"></aon-input>
-        `);
+            `
+        );
 
         let aonTrabajadorCard = this.getElement(`${this.id}TrabajadorCard`);
-        aonTrabajadorCard.setContentHTML(`
+        aonTrabajadorCard.setContentHTML(
+            /*html*/`
             <div class="aonCol-sm-12 aonCol-md-4">
                 <aon-switch id="switchDni" title="Buscar por DNI"></aon-switch>
                 <div id="${this.id}Reiniciar" hidden>
@@ -136,52 +142,53 @@ export class AonAltaDirecta extends AonElement {
             <div class="aonCol-sm-12 aonCol-md-12 aonCol-xs-12">
                 <aon-input name="nombre" id="nombre" description="Nombre" type="text" disabled="true"></aon-input>
             </div>
-        `);
-        const buttonSubmit = this.isMobile() ? `<div class="aonCol-sm-12 aonCol-md-12"><br/> <div class="offset-4" id="${this.id}DivSubmit">
-        </div>` : '';
+        `
+        );
+        const buttonSubmit = this.isMobile() ? /*html*/`<div class="aonCol-sm-12 aonCol-md-12"><br/> <div class="offset-4" id="${this.id}DivSubmit"></div></div>` : '';
         let aonContratoCard = this.getElement(`${this.id}ContratoCard`);
-        aonContratoCard.setContentHTML(`
-            <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-select name="type_cto" id="type_cto" title="Tipo de contrato"></aon-select>
-            </div>
-            <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-date name="fecha" id="fecha" title="Fecha inicio"></aon-date>
-            </div>
-            <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-select name="grup_ctz" id="grup_ctz" title="Grupo de cotización"></aon-select>
-            </div>
-            <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-select name="ocupacion" id="ocupacion" title="Ocupación" ></aon-select>
-            </div>
-            <div class="aonCol-sm-12 aonCol-md-12" id="div_parcial" hidden>
-                <div class="aonCol-sm-3">
-                    <aon-select id="tipo_jornada" name="tipo_jornada" title="Tipo de jornada"></aon-select>
+        aonContratoCard.setContentHTML(
+           /*html*/`
+                <div class="aonCol-sm-12 aonCol-md-6">
+                    <aon-select name="type_cto" id="type_cto" title="Tipo de contrato"></aon-select>
                 </div>
-                <div class="aonCol-sm-3">
-                    <aon-number id="horas_convenio" name="horas_convenio"  description="Horas convenio" format="true" decimals="2"></aon-number>
+                <div class="aonCol-sm-12 aonCol-md-6">
+                    <aon-date name="fecha" id="fecha" title="Fecha inicio"></aon-date>
                 </div>
-                <div class="aonCol-sm-3">
-                    <aon-number id="horas" description="Horas" format="true" decimals="2"></aon-number>
+                <div class="aonCol-sm-12 aonCol-md-6">
+                    <aon-select name="grup_ctz" id="grup_ctz" title="Grupo de cotización"></aon-select>
                 </div>
-                <div class="aonCol-sm-3">
-                    <aon-number name="coefparcial" id="coefparcial" description="Coef. Parcial"></aon-number>
+                <div class="aonCol-sm-12 aonCol-md-6">
+                    <aon-select name="ocupacion" id="ocupacion" title="Ocupación" ></aon-select>
                 </div>
-            </div>
-            <aon-input name="situation" id="situation" description="situation" value="AL" visible="false"></aon-input>
-            ${buttonSubmit}
-        </div>
-        `);
+                <div class="aonCol-sm-12 aonCol-md-12" id="div_parcial" hidden>
+                    <div class="aonCol-sm-3">
+                        <aon-select id="tipo_jornada" name="tipo_jornada" title="Tipo de jornada"></aon-select>
+                    </div>
+                    <div class="aonCol-sm-3">
+                        <aon-number id="horas_convenio" name="horas_convenio"  description="Horas convenio" format="true" decimals="2"></aon-number>
+                    </div>
+                    <div class="aonCol-sm-3">
+                        <aon-number id="horas" description="Horas" format="true" decimals="2"></aon-number>
+                    </div>
+                    <div class="aonCol-sm-3">
+                        <aon-number name="coefparcial" id="coefparcial" description="Coef. Parcial"></aon-number>
+                    </div>
+                </div>
+                <aon-input name="situation" id="situation" description="situation" value="AL" visible="false"></aon-input>
+                ${buttonSubmit}
+            `
+        );
 
         let aonAltaDirectaDni = this.getElement(`${this.id}DniDiv`);
-        aonAltaDirectaDni.innerHTML = `<aon-suggestion id="${this.id}Dni" title="DNI/NIE" name="ipf"></aon-suggestion>`;
+        aonAltaDirectaDni.innerHTML = /*html*/`<aon-suggestion id="${this.id}Dni" title="DNI/NIE" name="ipf"></aon-suggestion>`;
         aonAltaDirectaDni.setAttribute('disabled', true);
 
         let aonAltaDirectaNss = this.getElement(`${this.id}NssDiv`);
-        aonAltaDirectaNss.innerHTML = `<aon-suggestion id="${this.id}Nss" title="NSS/NAF" name="nss"></aon-suggestion>`;
+        aonAltaDirectaNss.innerHTML = /*html*/`<aon-suggestion id="${this.id}Nss" title="NSS/NAF" name="nss"></aon-suggestion>`;
 
         if (this.isMobile()){
             this.getElement(`${this.id}DivSubmit`)
-                .innerHTML = `<button class="aonButton" type="button" id="${this.id}Submit">Comunicar</button>`;
+                .innerHTML = /*html*/`<button class="aonButton" type="button" id="${this.id}Submit">Comunicar</button>`;
         }
         this.addSpanDecimal();
         this.getElement(`${this.id}Dni`).disabled = true;

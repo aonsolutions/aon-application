@@ -35,6 +35,8 @@ export * from './request.js';
 
 export * from './laboralService.js';
 
+export * from './notificationService.js';
+
 export const clear = () => {
   clearCompanyService();
   clearRegistryService();

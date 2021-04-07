@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
-import net.aonsolutions.aon.api.notification.Notification;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonLocationServlet", urlPatterns = {"/ms/api/location/*"})
@@ -26,9 +25,6 @@ public class LocationServlet extends AonApiHttpServlet{
 			switch (getPath()) {
 				case "/":
 					response(req, resp, getLocationList());
-					break;
-				case "/notification-test":
-					response(req, resp, notificationTest());
 					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
@@ -100,15 +96,6 @@ public class LocationServlet extends AonApiHttpServlet{
 		Location location = new Location().setId(getData().optInt("id"));
 		AON_SOLUTIONS.deleteLocation(getDomain(), "", location);
 		return new JSONObject();
-	}
-	
-
-	private JSONObject notificationTest() {
-		Boolean success = new Notification().setTitle("TITULO DE PRUEBA").setBody("CUERPO DE PRUEBA")
-		.setDeviceTokens(new String[] {getParams().optString("tokenFCM")}).send();
-		 JSONObject json = new JSONObject();
-		 json.put("success", success);
-		 return json;
 	}
 	
 }

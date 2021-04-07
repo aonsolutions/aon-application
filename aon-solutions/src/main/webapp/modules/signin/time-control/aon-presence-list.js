@@ -86,7 +86,7 @@ export class AonPresenceList extends AonElement {
     });
 
     let periodEl = this.getElement("period");
-    periodEl.options = JSON.stringify(await getPeriod());
+    periodEl.options = JSON.stringify(getPeriod());
 
     periodEl.addEventListener('change', ({detail}) => {
       if(detail){

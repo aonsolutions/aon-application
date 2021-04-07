@@ -670,7 +670,6 @@ export class AonUser extends AonElement {
 	}
 
 	isAdmin() {
-		console.log(JSON.stringify(this._user.roles));
 		return this._user.roles && this._user.roles.includes('ADMIN');
 	}
 
