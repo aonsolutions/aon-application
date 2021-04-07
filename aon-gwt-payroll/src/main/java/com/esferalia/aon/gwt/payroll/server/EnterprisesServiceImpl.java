@@ -144,7 +144,7 @@ import solutions.aon.seg.social.SistemaRED_ITParts.SituationEmployee;
 import solutions.aon.seg.social.SistemaRED_Secondary_User;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.invalidData.NotAllowedContributionAccount;
-import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
+import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.objects.SecondaryUser;
 import solutions.aon.sepe.Contrato;
 import solutions.aon.sepe.exceptions.SepeException;
