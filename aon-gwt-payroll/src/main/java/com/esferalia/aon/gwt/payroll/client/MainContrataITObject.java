@@ -26,21 +26,17 @@ public class MainContrataITObject {
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
-	private List<ITEmployee> allEmployeesList;
 	private List<ITEmployee> employeesList;
 	private List<IT> allITsList;
 	private List<IT> itsList;
 	
-	private Map<String, Integer> employeesFilterMap;
 	private Map<String, Integer> itsFilterMap;
 	
 	private DomainUserRoles userRoles;
 	
 	public MainContrataITObject() {
 		super();
-		this.allEmployeesList = new ArrayList<ITEmployee>();
 		this.employeesList = new ArrayList<ITEmployee>();
-		this.employeesFilterMap = new HashMap<String, Integer>();
 		this.allITsList = new ArrayList<IT>();
 		this.itsList = new ArrayList<IT>();
 		this.itsFilterMap = new HashMap<String, Integer>();
@@ -55,6 +51,7 @@ public class MainContrataITObject {
 			public void onSuccess(List<ITEmployee> employeesInfoList) {
 				initEmployeeList(employeesInfoList);
 				initITList(employeesInfoList);
+				
 				impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
 					
 					@Override
@@ -432,20 +429,8 @@ public class MainContrataITObject {
 	}
 	
 	private void initEmployeeList(List<ITEmployee> employeesInfoList) {
-		allEmployeesList.clear();
 		employeesList.clear();
-		allEmployeesList.addAll(employeesInfoList);
 		employeesList.addAll(employeesInfoList);
-		
-		employeesFilterMap.clear();
-		// Init map
-		for(ITEmployee employee : allEmployeesList) {
-			String fullName = employee.getEmployeeInfo().getFullName();
-			String document = employee.getEmployeeInfo().getDocument();
-			String ssNumber = employee.getEmployeeInfo().getSsNumber();
-			Integer contractId = employee.getContractInfo().getContractId();
-			employeesFilterMap.put(fullName + ", Documento : " + document + ", SS : " + ssNumber, contractId);
-		}
 	}
 	
 	private void initITList(List<ITEmployee> employeesInfoList) {
@@ -456,7 +441,7 @@ public class MainContrataITObject {
 		
 		itsFilterMap.clear();
 		// Init map
-		for(ITEmployee employee : allEmployeesList) {
+		for(ITEmployee employee : employeesList) {
 			String fullName = employee.getEmployeeInfo().getFullName();
 			for(IT it : employee.getIts()) {
 				it.setFullName(fullName);
@@ -476,15 +461,6 @@ public class MainContrataITObject {
 		return employeesList;
 	}
 	
-	public Map<String, Integer> getEmployeesMap(){
-		return employeesFilterMap;
-	}
-
-	public void resetEmployeesList() {
-		this.employeesList.clear();
-		this.employeesList.addAll(allEmployeesList);
-	}
-	
 	public List<IT> getITsList(){
 		return itsList;
 	}
@@ -499,31 +475,6 @@ public class MainContrataITObject {
 		// Init map
 		for(IT it : this.allITsList) {
 			this.itsList.add(it);
-		}
-	}
-
-	public List<Integer> getEmployeesContractIds(String value) {
-		List<Integer> contractIds = new ArrayList<Integer>();
-		
-		for(Entry<String, Integer> entry : employeesFilterMap.entrySet()) {
-			if(AonStringUtils.containsIgnoreCase(entry.getKey(), value) ||
-					AonStringUtils.contains(entry.getKey(), value) ||
-					AonStringUtils.equals(entry.getKey(), value) ||
-					AonStringUtils.equalsIgnoreCase(entry.getKey(), value)) {
-				
-				contractIds.add(entry.getValue());
-			}
-		}
-		
-		return contractIds;
-	}
-
-	public void filterEmployeesList(List<Integer> employeesContractIds) {
-		employeesList.clear();
-		
-		for(ITEmployee employee : allEmployeesList) {
-			if(employeesContractIds.contains(employee.getContractInfo().getContractId()))
-				employeesList.add(employee);
 		}
 	}
 	
@@ -567,7 +518,7 @@ public class MainContrataITObject {
 		
 		if(allITs) {
 			// Init map
-			for(ITEmployee employee : allEmployeesList) {
+			for(ITEmployee employee : employeesList) {
 				for(IT it : employee.getIts()) {
 					itsList.add(it);
 					allITsList.add(it);
@@ -577,7 +528,7 @@ public class MainContrataITObject {
 			Date currentDate = new Date();
 			
 			// Init map
-			for(ITEmployee employee : allEmployeesList) {
+			for(ITEmployee employee : employeesList) {
 				for(IT it : employee.getIts()) {
 					if(it.getEndDate() == null || it.getEndDate().after(currentDate)) {
 						itsList.add(it);

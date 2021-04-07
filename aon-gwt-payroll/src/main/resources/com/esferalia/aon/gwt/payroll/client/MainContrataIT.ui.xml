@@ -159,7 +159,7 @@
 			margin: 0 0 10px;
 		}
 		
-		.deckPanel{
+		.mt-50{
 			margin-top: 50px;
 		}
 		
@@ -167,34 +167,19 @@
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
-			<g:DeckPanel ui:field="deckPanel" styleName="{style.deckPanel}">
-				<g:HTMLPanel ui:field="mainContainer" styleName="{style.widthAll}">
-					<g:ScrollPanel height="100%" styleName="{style.p5}">
-						<g:VerticalPanel styleName="{style.tableStylePanel}">
-						
-							<g:HTMLPanel ui:field="filterEmployeePanel"></g:HTMLPanel>
-						
-						 	<g:HTMLPanel ui:field="mainTablePanel" styleName="{style.mt10}">
-						 		<c:DataGrid ui:field="employeeDataGrid" styleName="{style.pointer}"></c:DataGrid>
-						 	</g:HTMLPanel>
-					 		
-						</g:VerticalPanel>
-					</g:ScrollPanel>
-				</g:HTMLPanel>
-				<g:HTMLPanel ui:field="mainITContainer" styleName="{style.widthAll}">
-					<g:ScrollPanel height="100%" styleName="{style.p5}">
-						<g:VerticalPanel styleName="{style.tableStylePanel}">
-						
-							<g:HTMLPanel ui:field="filterITListPanel"></g:HTMLPanel>
-						
-						 	<g:HTMLPanel ui:field="mainITTablePanel" styleName="{style.mt10}">
-						 		<c:DataGrid ui:field="itDataGrid" styleName="{style.pointer}"></c:DataGrid>
-						 	</g:HTMLPanel>
-					 		
-						</g:VerticalPanel>
-					</g:ScrollPanel>
-				</g:HTMLPanel>
-			</g:DeckPanel>
+			<g:HTMLPanel ui:field="mainITContainer" styleName="{style.widthAll} {style.mt-50}">
+				<g:ScrollPanel height="100%" styleName="{style.p5}">
+					<g:VerticalPanel styleName="{style.tableStylePanel}">
+					
+						<g:HTMLPanel ui:field="filterITListPanel"></g:HTMLPanel>
+					
+					 	<g:HTMLPanel ui:field="mainITTablePanel" styleName="{style.mt10}">
+					 		<c:DataGrid ui:field="itDataGrid" styleName="{style.pointer}"></c:DataGrid>
+					 	</g:HTMLPanel>
+				 		
+					</g:VerticalPanel>
+				</g:ScrollPanel>
+			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 

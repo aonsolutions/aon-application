@@ -17,7 +17,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.IT;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -46,7 +49,9 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -78,6 +83,9 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	@UiField
 	DeckPanel deckPanel;
+	
+	@UiField
+	HTMLPanel employeePanel;
 	
 	@UiField
 	VerticalPanel itDataTable;
@@ -166,6 +174,11 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private List<IT> itList = Collections.emptyList();
 	private IT it;
+	private ITEmployee itEmployee;
+	
+	private List<ITEmployee> itEmployeeList = Collections.emptyList();
+	
+	private SuggestBox employeeSB;
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton deleteIT;
@@ -180,15 +193,20 @@ public abstract class ITDialog extends AonCustomDialog {
 	// --------------------------------------------------------------------------------------------
 	// 											CONSTRUCTOR
 	// --------------------------------------------------------------------------------------------
-
-	public ITDialog(String caption) {	
-		onModuleLoad(caption);
-		createITToolbar();
-		createFooterButtons();
-	}
 	
-	public ITDialog(String caption, Boolean advanced) {	
+	public ITDialog(String suggestionStr, Boolean advanced) {	
+		String caption = "Parte IT";
 		onModuleLoad(caption);
+		
+		if(AonStringUtils.isNotBlank(suggestionStr)) {
+			// Caption
+			String name = AonStringUtils.split(suggestionStr, '(')[0];
+			caption += caption + " : " + name;
+			
+			// Init employeePanel
+			createEmployeePanel(name);
+		}
+		
 		createITToolbar();
 		createFooterButtons();
 		
@@ -198,17 +216,26 @@ public abstract class ITDialog extends AonCustomDialog {
 			hideListOption();	
 	}
 	
+	private void createEmployeePanel(String name) {
+		employeePanel.clear();
+		Label nameLB = new Label(name);
+		employeePanel.add(nameLB);
+	}
+
 	private void onModuleLoad(String caption){
 		// ITDataGrid
 		provideITDataGrid();
 		addStyleToHeader();
 	    
-		setCaption("Parte IT : " + caption);
+		setCaption(caption);
 		setWidget(binder.createAndBindUi(this));
 		
 		initListBox();
+		
 		deckPanel.showWidget(0);
 		deckPanel.setWidth("620px");
+		confirmationsDataTable.getElement().getStyle().setDisplay(Display.NONE);
+		maternityDataTable.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void createITToolbar() {
@@ -221,6 +248,52 @@ public abstract class ITDialog extends AonCustomDialog {
 	// 									SET IT DIALOG OBJECT
 	// --------------------------------------------------------------------------------------------
 	
+	public void setEmployeesList(List<ITEmployee> itEmployeeListIn) {
+		itEmployeeList  = Collections.emptyList();
+		itEmployeeList = itEmployeeListIn;
+		
+		employeeSB = new SuggestBox();
+		employeeSB.setStyleName("aon-inputText");
+		employeeSB.getElement().getStyle().setWidth(99, Unit.PCT);
+		
+		List<String> employees = new ArrayList<>();
+		for(ITEmployee itEmployee : this.itEmployeeList) {
+			String suggestStr = itEmployee.getEmployeeInfo().getFullName() + " (" + itEmployee.getContractInfo().getContractId() + ")";
+			employees.add(suggestStr);
+		}
+		
+		List<String> employeesSuggest = new ArrayList<String>();
+		for(String employee : employees)
+			employeesSuggest.add(employee+"");
+		
+		MultiWordSuggestOracle orclEmployees = (MultiWordSuggestOracle) employeeSB.getSuggestOracle();
+		orclEmployees.addAll(employeesSuggest);
+		employeeSB.setAutoSelectEnabled(false);
+		
+		employeeSB.addSelectionHandler(e -> {
+			//TODO : onSelection()
+			String selectionStr = employeeSB.getValue();
+			String contractIdStr = AonStringUtils.split(AonStringUtils.split(selectionStr, '(')[1], ')')[0];
+			Integer contractId = Integer.parseInt(contractIdStr);
+			if(itDialogObject == null) {
+				ITEmployee itEmployeeAux = getITEmployee(contractId);
+				itEmployee = itEmployeeAux;
+				ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
+				setITDialogObject(itDialogObject);
+			}
+		});
+		
+		employeePanel.clear();
+		employeePanel.add(employeeSB);
+	}
+	
+	private ITEmployee getITEmployee(Integer contractId) {
+		for(ITEmployee itEmployee : itEmployeeList)
+			if(AonNumberUtils.equals(itEmployee.getContractInfo().getContractId(), contractId)) 
+				return itEmployee;
+		return null;
+	}
+
 	public void setITDialogObject(ITDialogObject itDialogObject) {
 		setITDialogObject(itDialogObject, null);
 	}
@@ -1575,6 +1648,10 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private boolean isNotEmptyIT() {
 		return this.it != null;
+	}
+	
+	public ITEmployee getITEmployee() {
+		return itEmployee;
 	}
 
 	// --------------------------------------------------------------------------------------------

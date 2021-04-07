@@ -192,6 +192,10 @@
 			justify-content: flex-end;
 			margin: 5px 10px;
 		}
+		
+		.w-99{
+			width: 99%;
+		}
 	</ui:Style>
 
 
@@ -216,6 +220,14 @@
 														        <td></td>
 														        <td></td>
 														        <td></td>
+														    </tr>
+														    <tr>
+														    	<td  style="background-color: #eaeaea; width: 100px;">
+														    		<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Trabajador</g:Label>
+														    	</td>
+														    	<td colspan="3">
+														    		<g:HTMLPanel ui:field="employeePanel" styleName="{style.maxWidth}"></g:HTMLPanel>
+														    	</td>
 														    </tr>
 														    <tr>
 														    	<td  style="background-color: #eaeaea; width: 100px;">

@@ -28,7 +28,6 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -43,7 +42,6 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -78,22 +76,7 @@ public class MainContrataIT extends MainEntryPoint {
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
-	DeckPanel deckPanel;
-	
-	@UiField
-	HTMLPanel filterEmployeePanel;
-	
-	@UiField
 	HTMLPanel filterITListPanel;
-	
-	@UiField
-	HTMLPanel mainTablePanel;
-	
-	@UiField
-	HTMLPanel mainContainer;
-	
-	@UiField(provided = true)
-	DataGrid<ITEmployee> employeeDataGrid;
 	
 	@UiField
 	HTMLPanel mainITTablePanel;
@@ -118,8 +101,7 @@ public class MainContrataIT extends MainEntryPoint {
 	private ListDataProvider<ITEmployee> dataProvider ;
 	
 	private AonToolbar toolbar;
-	private AonToolbarButton backContract;
-	private AonToolbarButton listITs;
+	private AonToolbarButton addIT;
 	
 	private AonToolbarButton msjFIE;
 	private FormPanel msjFIEFormPanel;
@@ -127,22 +109,16 @@ public class MainContrataIT extends MainEntryPoint {
 	private Hidden domainNameHidden;
 	private MultiFileUpload msjFIEFileUpload;
 	
-	private SuggestBox employeeSB;
-	private CheckBox inactiveContractsCB;
-	
 	private SuggestBox itSB;
 	private CheckBox inactiveITsCB;
 	
-	public MainContrataIT() {
-		
+	public MainContrataIT() {		
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 
-		provideEmployeesDataGrid();
 		provideITsDataGrid();
 
 		// Add style to table header
-	    addStyleToHeader();
 	    addStyleToITHeader();
 	
 		Widget ui = binder.createAndBindUi(this);
@@ -151,310 +127,11 @@ public class MainContrataIT extends MainEntryPoint {
 		toolbar = getToolbarPanel();
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		
-		getFilterEmployeePanel();
 		getFilterITListPanel();
 		
-		deckPanel.showWidget(0);
-		inactiveITsCB.setValue(true);
-		backContract.getElement().getStyle().setDisplay(Display.NONE);
-				
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// 								PROVIDE EMPLOYEE IT DATA GRID
-	// --------------------------------------------------------------------------------------------
-
-	private void provideEmployeesDataGrid() {
-		employeesList  = Collections.emptyList();
-		
-		// Resource Style CellTable
-		employeeDataGrid = new CustomDataGrid<ITEmployee>(Integer.MAX_VALUE, ITEmployee.KEY_PROVIDER);
-		
-		employeeDataGrid.setWidth("100%");
-		
-		//Do not refresh the headers every time the dataGrid is updated.
-		employeeDataGrid.setAutoHeaderRefreshDisabled(true);
-		
-		// Set the message to display when the table is empty.
-		employeeDataGrid.setEmptyTableWidget(new Label("No existen contratos".toUpperCase()));
-		
-		// Add a selection model so we can select cells.
-	    this.selectionCCCInfoModel = new NoSelectionModel<ITEmployee>(ITEmployee.KEY_PROVIDER);
-	    employeeDataGrid.setSelectionModel(this.selectionCCCInfoModel);
-		
-	    // Initialize the columns.
-	    addEmployeeInfoColumns(this.selectionCCCInfoModel);
-	    
-		// Create a data provider.
-	    dataProvider = new ListDataProvider<ITEmployee>();
-	    // Connect the table to the data provider.
-	    dataProvider.addDataDisplay(employeeDataGrid);
-	    // Add style to table header
-	    addStyleToHeader();
-
-	    // new ListDataProvider<ITEmployee>(Collections.emptyList()).addDataDisplay(employeeDataGrid);
-
+		inactiveITsCB.setValue(true);		
 	}
 	
-	private void addEmployeeInfoColumns(NoSelectionModel<ITEmployee> selectionCCCInfoModel) {
-		selectionCCCInfoModel.addSelectionChangeHandler(new Handler() {
-	        
-	        @Override
-	        public void onSelectionChange(SelectionChangeEvent event) {
-	        	ITEmployee employeeITInfo = selectionCCCInfoModel.getLastSelectedObject();
-	        	String fullName = employeeITInfo.getEmployeeInfo().getFullName();
-	        	
-	        	ITDialog itDialog = new ITDialog(fullName, true) {
-
-	        		@Override
-					protected void onAccept() {
-						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
-								s -> {
-									AonConfirmDialog dialog = new AonConfirmDialog();
-									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
-									
-									refreshContractITTable();
-								},
-								f -> {});
-					}
-
-					@Override
-					protected void onAcceptIT(IT it) {
-						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
-								s -> {
-									AonConfirmDialog dialog = new AonConfirmDialog();
-									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
-									
-									if(mainContrataITObject.isUserComunica()) {
-										AonConfirmDialog comunicateDialog = new AonConfirmDialog();
-										comunicateDialog.confirm(
-												"COMUNIC" + String.valueOf("\u0040"), 
-												String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
-												new AonConfirmDialogCallback() {
-							
-													@Override
-													public void onAccept() {
-														mainContrataITObject.comunicateITBaja(employeeITInfo, it, t -> {
-															AonConfirmDialog dialog = new AonConfirmDialog();
-															dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-															
-															getITCertificatePDF(employeeITInfo, it);
-															
-															refreshContractITTable();
-															
-														}, d -> {});
-													}
-	
-													@Override
-													public void onCancel() {
-														refreshContractITTable();
-													}});
-									} else {
-										refreshContractITTable();
-									}},
-									f -> {});
-									
-					}
-	        		
-	        		@Override
-					protected void onAcceptPaternityIT(IT it) {
-						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
-								s -> {
-									AonConfirmDialog dialog = new AonConfirmDialog();
-									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
-									
-									if(mainContrataITObject.isUserComunica()) {
-										AonConfirmDialog comunicateDialog = new AonConfirmDialog();
-										comunicateDialog.confirm(
-												"COMUNIC" + String.valueOf("\u0040"), 
-												String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
-												new AonConfirmDialogCallback() {
-							
-													@Override
-													public void onAccept() {
-														mainContrataITObject.comunicatePaternityIT(employeeITInfo, it, t -> {
-															AonConfirmDialog dialog = new AonConfirmDialog();
-															dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-															
-															getITCertificatePDF(employeeITInfo, it);
-															
-															refreshContractITTable();
-														}, d -> {});
-													}
-							
-													@Override
-													public void onCancel() {
-														refreshContractITTable();
-													}});
-									} else {
-										refreshContractITTable();
-									}},
-								f -> {});
-					}
-	        		
-	        		@Override
-					protected void onDelete(IT it) {
-						mainContrataITObject.removeIT(employeeITInfo, it,
-								s -> {
-									AonConfirmDialog dialog = new AonConfirmDialog();
-									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
-									
-									if(it.isComunicate() && mainContrataITObject.isUserComunica())
-										mainContrataITObject.deleteComunicateIT(employeeITInfo, it, t -> {
-											refreshContractITTable();
-										}, d -> {});
-									else
-										refreshContractITTable();
-								},
-								f -> {});
-					}
-	        		
-					@Override
-					protected void onDeletePaternity(IT it) {
-						mainContrataITObject.deleteIT(it,
-								s -> {
-									AonConfirmDialog dialog = new AonConfirmDialog();
-									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
-									
-									if(it.isComunicate() && mainContrataITObject.isUserComunica())
-										mainContrataITObject.deleteComunicateIT(employeeITInfo, it, t -> {
-											refreshContractITTable();
-										}, d -> {});
-									else
-										refreshContractITTable();
-								},
-								f -> {});
-					}
-					
-					@Override
-					protected void onShowCertitificateIT(IT it) {
-						getITCertificatePDF(employeeITInfo, it);
-					}
-	        		
-	        	};
-	        	
-	        	ITDialogObject itDialogObject = new ITDialogObject(employeeITInfo);
-	        	itDialog.setITDialogObject(itDialogObject);
-	        	
-	        	itDialog.setModal(true);
-	        	itDialog.setAnimationEnabled(true);
-	        	itDialog.show();
-	        	itDialog.center();
-	        }
-	    });
-	    
-	    // Add Selection Column to table
-	    employeeDataGrid.setSelectionModel(selectionCCCInfoModel);
-		
-		//----------------------------------------------------------------------
-	    //							CREATE COLUMNS
-	    //----------------------------------------------------------------------
-		
-		TextColumn<ITEmployee> employeeNameColumn = new TextColumn<ITEmployee>() {
-	      @Override
-	      public String getValue(ITEmployee employeeContractInfo) {
-	        return employeeContractInfo.getEmployeeInfo().getFullName();
-	      }
-	    };
-
-	    employeeNameColumn.setSortable(true);
-	    
-	    TextColumn<ITEmployee> statusColumn = new TextColumn<ITEmployee>() {
-
-			@Override
-			public String getValue(ITEmployee itEmployee) {
-				IT it = checkIfIsOpenIt(itEmployee);
-		        return null != it ? parseShortLowCauseByte(it.getTypeLowPart()) + " (" + formatFullDate.format(it.getStartDate()) + ")" : "ALTA";
-			}
-			
-			@Override
-			public void render(Context context, ITEmployee itEmployee, SafeHtmlBuilder sb) {
-				if(null != itEmployee) {
-					IT it = checkIfIsOpenIt(itEmployee);
-			        String description = null != it ? parseShortLowCauseByte(it.getTypeLowPart()) + " (" + formatFullDate.format(it.getStartDate()) + ")" : "ALTA";
-					sb.appendHtmlConstant("<span title=\"" + (null != it ? parseLowCauseByte(it.getTypeLowPart()) : "") + "\">" + description + "</span>");
-				}
-			}
-		};
-
-	    statusColumn.setSortable(true);
-	    statusColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    employeeDataGrid.setColumnWidth(statusColumn, 15, Unit.PCT);
-	     
-	    TextColumn<ITEmployee> documentColumn = new TextColumn<ITEmployee>() {
-	      @Override
-	      public String getValue(ITEmployee employeeContractInfo) {
-	        return employeeContractInfo.getEmployeeInfo().getDocument();
-	      }
-	    };
-
-	    documentColumn.setSortable(true);
-	    documentColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    employeeDataGrid.setColumnWidth(documentColumn, 10, Unit.PCT);
-	    
-	    TextColumn<ITEmployee> ssNumberColumn = new TextColumn<ITEmployee>() {
-	      @Override
-	      public String getValue(ITEmployee employeeContractInfo) {
-	        return employeeContractInfo.getEmployeeInfo().getSsNumber();
-	      }
-	    };
-
-	    ssNumberColumn.setSortable(true);
-	    ssNumberColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    employeeDataGrid.setColumnWidth(ssNumberColumn, 10, Unit.PCT);
-	    
-	    TextColumn<ITEmployee> contractTypeColumn = new TextColumn<ITEmployee>() {
-	      @Override
-	      public String getValue(ITEmployee employeeContractInfo) {
-	    	  if((byte)3 == employeeContractInfo.getContractInfo().getSsRegimen())
-	    		  return "RETA";
-	    	  if("000" == employeeContractInfo.getContractInfo().getContractType())
-	    		  return "BECARIO";
-	    	  return employeeContractInfo.getContractInfo().getContractType();
-	      }
-
-	    };
-
-	    contractTypeColumn.setSortable(true);
-	    contractTypeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    employeeDataGrid.setColumnWidth(contractTypeColumn, 10, Unit.PCT);
-	    
-	    TextColumn<ITEmployee> startDateColumn = new TextColumn<ITEmployee>() {
-	      @Override
-	      public String getValue(ITEmployee employeeContractInfo) {
-	    	  return formatFullDate.format(employeeContractInfo.getContractInfo().getStartDate());
-	      }
-	    };
-
-	    startDateColumn.setSortable(true);
-	    startDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    employeeDataGrid.setColumnWidth(startDateColumn, 10, Unit.PCT);
-	    
-	    TextColumn<ITEmployee> endDateColumn = new TextColumn<ITEmployee>() {
-		      @Override
-		      public String getValue(ITEmployee employeeContractInfo) {
-		    	  if(null != employeeContractInfo.getContractInfo().getEndDate())
-		    		  return formatFullDate.format(employeeContractInfo.getContractInfo().getEndDate());
-		    	  
-		    	  return "";
-		      }
-		    };
-
-		endDateColumn.setSortable(true);
-		endDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		employeeDataGrid.setColumnWidth(endDateColumn, 10, Unit.PCT);
-	    
-	    // Add the columns.
-	    employeeDataGrid.addColumn(employeeNameColumn, "Trabajador");
-	    employeeDataGrid.addColumn(statusColumn, "Estado SS");
-	    employeeDataGrid.addColumn(documentColumn, "Documento");
-	    employeeDataGrid.addColumn(ssNumberColumn, "N" + String.valueOf("\u00B0") + " SS");
-	    employeeDataGrid.addColumn(contractTypeColumn, "Tipo Contrato");
-	    employeeDataGrid.addColumn(startDateColumn, "Fecha Inicio");
-	    employeeDataGrid.addColumn(endDateColumn, "Fecha Fin");
-	      
-	}
-
 	// --------------------------------------------------------------------------------------------
 	// 									PROVIDE IT DATA GRID
 	// --------------------------------------------------------------------------------------------
@@ -489,11 +166,11 @@ public class MainContrataIT extends MainEntryPoint {
 	        @Override
 	        public void onSelectionChange(SelectionChangeEvent event) {
 	        	IT itInfo = selectionITModel.getLastSelectedObject();
-	        	String fullName = itInfo.getFullName();
-	        	
 	        	ITEmployee itEmployee = mainContrataITObject.getEmployeeITInfo(itInfo.getId());
+	  
+	        	String suggestionStr = itEmployee.getEmployeeInfo().getFullName() + " (" + itEmployee.getContractInfo().getContractId() + ")";
 	        	
-	        	ITDialog itDialog = new ITDialog(fullName, false) {
+	        	ITDialog itDialog = new ITDialog(suggestionStr, false) {
 	        		
 	        		@Override
 					protected void onAccept() {
@@ -657,16 +334,6 @@ public class MainContrataIT extends MainEntryPoint {
 	// 									HEADER STYLES
 	// --------------------------------------------------------------------------------------------
 	
-	public void addStyleToHeader() {
-		employeeDataGrid.getHeader(0).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-		employeeDataGrid.getHeader(1).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-		employeeDataGrid.getHeader(2).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-		employeeDataGrid.getHeader(3).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-		employeeDataGrid.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-		employeeDataGrid.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-		employeeDataGrid.getHeader(6).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
-	}
-	
 	public void addStyleToITHeader() {
 		itDataGrid.getHeader(0).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		itDataGrid.getHeader(1).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
@@ -677,9 +344,6 @@ public class MainContrataIT extends MainEntryPoint {
 	}
 	
 	private void setTableHeights() {
-		employeeDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-		mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
-		
 		itDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
 		mainITTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
 	}
@@ -693,48 +357,12 @@ public class MainContrataIT extends MainEntryPoint {
 		
 		this.mainContrataITObject.getEmployeesInfo(false,
 				s -> {
-					initEnterpriseSB();
 					initITSB();
-					initContractTable();
+					initITTable();
 					setTableHeights();
 				},
 				f -> {}
 		);
-	}
-	
-	private void initEnterpriseSB() {
-		// Enteprise List
-		
-		List<String> enterprises = new ArrayList<>(mainContrataITObject.getEmployeesMap().keySet());
-		
-		List<String> enterprisesSuggest = new ArrayList<String>();
-		for(String enterprise : enterprises)
-			enterprisesSuggest.add(enterprise+"");
-		
-		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) employeeSB.getSuggestOracle();
-		orclEnterprise.addAll(enterprisesSuggest);
-		employeeSB.setAutoSelectEnabled(false);
-		
-		employeeSB.addKeyUpHandler(e-> {
-			String value = employeeSB.getValue();
-			if(AonStringUtils.isBlank(value) || value.length() < 3) {
-				mainContrataITObject.resetEmployeesList();
-			} else {
-				List<Integer> employeesContractIds = mainContrataITObject.getEmployeesContractIds(value);
-				mainContrataITObject.filterEmployeesList(employeesContractIds);
-			}
-			
-			initContractTable();
-		});
-		
-		employeeSB.addSelectionHandler(e -> {
-			String value = employeeSB.getValue();
-			List<Integer> employeesContractIds = mainContrataITObject.getEmployeesContractIds(value);
-			mainContrataITObject.filterEmployeesList(employeesContractIds);
-			
-			initContractTable();
-			employeeDataGrid.redraw();
-		});
 	}
 	
 	private void initITSB() {
@@ -757,156 +385,18 @@ public class MainContrataIT extends MainEntryPoint {
 				mainContrataITObject.filterITsList(itIds);
 			}
 			
+			mainContrataITObject.setITsList(!inactiveITsCB.getValue());
 			initITTable();
 		});
 		
 		itSB.addSelectionHandler(e -> {
 			String value = itSB.getValue();
 			List<Integer> itIds = mainContrataITObject.getITsContractIds(value);
-			mainContrataITObject.filterEmployeesList(itIds);
+			mainContrataITObject.filterITsList(itIds);
 			
 			initITTable();
 			itDataGrid.redraw();
 		});
-	}
-
-	// --------------------------------------------------------------------------------------------
-	// 										INIT CONTRACTs TABLE
-	// --------------------------------------------------------------------------------------------
-
-	private void initContractTable() {		
-	    
-	    // Add the data to the data provider, which automatically pushes it to the
-	    // widget.
-	    List<ITEmployee> employeeContractInfoList = dataProvider.getList();
-	    employeeContractInfoList.clear();
-	    
-	    this.employeesList = mainContrataITObject.getEmployeesList();
-	    
-	    for (ITEmployee employeeContractInfo : this.employeesList) {
-	    	employeeContractInfoList.add(employeeContractInfo);
-	    } 
-	    
-	    addSortColums(employeeContractInfoList); 
-
-	    // Set page size
-	    employeeDataGrid.setPageSize(employeesList.size());
-	    employeeDataGrid.setVisibleRange(0, employeesList.size());
-	    
-		
-	    dataProvider.refresh();
-	    employeeDataGrid.redraw();
-	    
-	}
-	
-	private void addSortColums(List<ITEmployee> employeeContractInfoList) {
-		ListHandler<ITEmployee> columnSortHandler = new ListHandler<ITEmployee>(employeeContractInfoList);
-		
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(0), new Comparator<ITEmployee>() {
-	          public int compare(ITEmployee o1, ITEmployee o2) {
-		            if (o1 == o2) {
-		              return 0;
-		            }
-	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getEmployeeInfo().getFullName().compareTo(o2.getEmployeeInfo().getFullName()) : 1;
-		            }
-		            
-		            return -1;
-	          }
-	    });
-	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(1), new Comparator<ITEmployee>() {
-	          public int compare(ITEmployee o1, ITEmployee o2) {
-		            if (o1 == o2) {
-		              return 0;
-		            }
-	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getStatus().compareTo(o2.getStatus()) : 1;
-		            }
-		            
-		            return -1;
-	          }
-	    });
-	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(2), new Comparator<ITEmployee>() {
-	          public int compare(ITEmployee o1, ITEmployee o2) {
-		            if (o1 == o2) {
-		              return 0;
-		            }
-	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getEmployeeInfo().getDocument().compareTo(o2.getEmployeeInfo().getDocument()) : 1;
-		            }
-		            
-		            return -1;
-	          }
-	    });
-	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(3), new Comparator<ITEmployee>() {
-	          public int compare(ITEmployee o1, ITEmployee o2) {
-		            if (o1 == o2) {
-		              return 0;
-		            }
-	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getEmployeeInfo().getSsNumber().compareTo(o2.getEmployeeInfo().getSsNumber()) : 1;
-		            }
-		            
-		            return -1;
-	          }
-	    });
-	    
-	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(4), new Comparator<ITEmployee>() {
-	          public int compare(ITEmployee o1, ITEmployee o2) {
-		            if (o1 == o2) {
-		              return 0;
-		            }
-	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getContractInfo().getContractType().compareTo(o2.getContractInfo().getContractType()) : 1;
-		            }
-		            
-		            return -1;
-	          }
-	    });
-	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(5), new Comparator<ITEmployee>() {
-	          public int compare(ITEmployee o1, ITEmployee o2) {
-		            if (o1 == o2) {
-		              return 0;
-		            }
-	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getContractInfo().getStartDate().compareTo(o2.getContractInfo().getStartDate()) : 1;
-		            }
-		            
-		            return -1;
-	         }
-	    });
-	    
-	    columnSortHandler.setComparator(employeeDataGrid.getColumn(6), new Comparator<ITEmployee>() {
-	          public int compare(ITEmployee o1, ITEmployee o2) {
-		            if (o1.getContractInfo().getEndDate() == o2.getContractInfo().getEndDate()) {
-		              return 0;
-		            }
-	
-		            if (o1.getContractInfo().getEndDate() != null) {
-		              return (o2.getContractInfo().getEndDate() != null) ? o1.getContractInfo().getEndDate().compareTo(o2.getContractInfo().getEndDate()) : 1;
-		            }
-		            
-		            return -1;
-	         }
-	   });
-	    
-	    
-	    employeeDataGrid.addColumnSortHandler(columnSortHandler);
-
-	    // We know that the data is sorted alphabetically by default.
-	    employeeDataGrid.getColumn(0).setDefaultSortAscending(false);
-	    employeeDataGrid.getColumnSortList().push(employeeDataGrid.getColumn(0));   
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -932,13 +422,12 @@ public class MainContrataIT extends MainEntryPoint {
 	    } 
 	    
 	    // Set page size
-	    employeeDataGrid.setPageSize(employeesList.size());
+	    itDataGrid.setPageSize(itsList.size());
 	    
 	    // Add style to table header
-	    addStyleToHeader();
+	    addStyleToITHeader();
 	    
 	    addSortITColums(itInfoList); 
-		
 	}
 	
 	private void addSortITColums(List<IT> itInfoList) {
@@ -1153,16 +642,6 @@ public class MainContrataIT extends MainEntryPoint {
 		return itEmployee;
 	}
 	
-	private void refreshContractITTable() {
-		mainContrataITObject.getEmployeesInfo(false,
-				t -> {
-					initContractTable();
-					setTableHeights();
-				},
-				d -> {}
-		);
-	}
-	
 	private void refreshITTable() {
 		boolean intactivesIT = this.inactiveITsCB.getValue();
 		mainContrataITObject.getEmployeesInfo(false,
@@ -1296,7 +775,7 @@ public class MainContrataIT extends MainEntryPoint {
 	}-*/;
 
 	private AonToolbar getToolbarPanel() {
-		AonToolbar toolbar = new AonToolbar("Partes IT (Contratos)");
+		AonToolbar toolbar = new AonToolbar("Partes IT");
 		
 		// FORM
 		msjFIEFormPanel = new FormPanel();
@@ -1329,9 +808,8 @@ public class MainContrataIT extends MainEntryPoint {
 					
 			mainContrataITObject.setEmployeesInfo(itEmployees,
 				s -> {
-					initEnterpriseSB();
 					initITSB();
-					initContractTable();
+					initITTable();
 					setTableHeights();
 				},
 				f -> {}
@@ -1346,25 +824,14 @@ public class MainContrataIT extends MainEntryPoint {
 		msjFIEFormPanel.add(formFlowPanel);
 		toolbar.add(msjFIEFormPanel);
 		
-		backContract = new AonToolbarButton( "Volver a contratos", AON.CSS.aonIconBack() );
-		backContract.setAccessKey('B');
-		backContract.addClickHandler(new ClickHandler() {
+		addIT = new AonToolbarButton( "Nueva IT", AON.CSS.aonIconAdd() );
+		addIT.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				onBackContract(event);
+				onAddIT(event);
 			}
 		});
-		toolbar.add(backContract);
-		
-		listITs = new AonToolbarButton( "Listado ITs", AON.CSS.aonIconList() );
-		listITs.setAccessKey('L');
-		listITs.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onListIT(event);
-			}
-		});
-		toolbar.add(listITs);
+		toolbar.add(addIT);
 		
 		msjFIE = new AonToolbarButton( "Mensaje del INSS Empresa (FIE)", AON.CSS.aonIconTgssFie() );
 		msjFIE.setAccessKey('F');
@@ -1380,76 +847,155 @@ public class MainContrataIT extends MainEntryPoint {
 
 	}
 	
-	private void onBackContract(ClickEvent event) {
-		toolbar.setTitle("Partes IT (Contratos)");
-		deckPanel.showWidget(0);
-		backContract.getElement().getStyle().setDisplay(Display.NONE);
-		listITs.getElement().getStyle().clearDisplay();
-		initContractTable();
+	private void onAddIT(ClickEvent event) {
+		ITDialog itDialog = new ITDialog(null, true) {
+
+    		@Override
+			protected void onAccept() {
+				mainContrataITObject.createUpdateITEmployee(getITEmployee(),
+						s -> {
+							AonConfirmDialog dialog = new AonConfirmDialog();
+							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
+							
+							refreshContractITTable();
+						},
+						f -> {});
+			}
+
+			@Override
+			protected void onAcceptIT(IT it) {
+				mainContrataITObject.createUpdateITEmployee(getITEmployee(),
+						s -> {
+							AonConfirmDialog dialog = new AonConfirmDialog();
+							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
+							
+							if(mainContrataITObject.isUserComunica()) {
+								AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+								comunicateDialog.confirm(
+										"COMUNIC" + String.valueOf("\u0040"), 
+										String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+										new AonConfirmDialogCallback() {
+					
+											@Override
+											public void onAccept() {
+												mainContrataITObject.comunicateITBaja(getITEmployee(), it, t -> {
+													AonConfirmDialog dialog = new AonConfirmDialog();
+													dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+													
+													getITCertificatePDF(getITEmployee(), it);
+													
+													refreshContractITTable();
+													
+												}, d -> {});
+											}
+
+											@Override
+											public void onCancel() {
+												refreshContractITTable();
+											}});
+							} else {
+								refreshContractITTable();
+							}},
+							f -> {});
+							
+			}
+    		
+    		@Override
+			protected void onAcceptPaternityIT(IT it) {
+				mainContrataITObject.createUpdateITEmployee(getITEmployee(),
+						s -> {
+							AonConfirmDialog dialog = new AonConfirmDialog();
+							dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
+							
+							if(mainContrataITObject.isUserComunica()) {
+								AonConfirmDialog comunicateDialog = new AonConfirmDialog();
+								comunicateDialog.confirm(
+										"COMUNIC" + String.valueOf("\u0040"), 
+										String.valueOf("\u00BF") + "Desea comunicar el parte IT?",
+										new AonConfirmDialogCallback() {
+					
+											@Override
+											public void onAccept() {
+												mainContrataITObject.comunicatePaternityIT(getITEmployee(), it, t -> {
+													AonConfirmDialog dialog = new AonConfirmDialog();
+													dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+													
+													getITCertificatePDF(getITEmployee(), it);
+													
+													refreshContractITTable();
+												}, d -> {});
+											}
+					
+											@Override
+											public void onCancel() {
+												refreshContractITTable();
+											}});
+							} else {
+								refreshContractITTable();
+							}},
+						f -> {});
+			}
+    		
+    		@Override
+			protected void onDelete(IT it) {
+				mainContrataITObject.removeIT(getITEmployee(), it,
+						s -> {
+							AonConfirmDialog dialog = new AonConfirmDialog();
+							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+							
+							if(it.isComunicate() && mainContrataITObject.isUserComunica())
+								mainContrataITObject.deleteComunicateIT(getITEmployee(), it, t -> {
+									refreshContractITTable();
+								}, d -> {});
+							else
+								refreshContractITTable();
+						},
+						f -> {});
+			}
+    		
+			@Override
+			protected void onDeletePaternity(IT it) {
+				mainContrataITObject.deleteIT(it,
+						s -> {
+							AonConfirmDialog dialog = new AonConfirmDialog();
+							dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
+							
+							if(it.isComunicate() && mainContrataITObject.isUserComunica())
+								mainContrataITObject.deleteComunicateIT(getITEmployee(), it, t -> {
+									refreshContractITTable();
+								}, d -> {});
+							else
+								refreshContractITTable();
+						},
+						f -> {});
+			}
+			
+			@Override
+			protected void onShowCertitificateIT(IT it) {
+				getITCertificatePDF(getITEmployee(), it);
+			}
+    		
+    	};
+    	
+    	itDialog.setEmployeesList(mainContrataITObject.getEmployeesList());
+		itDialog.setModal(true);
+    	itDialog.setAnimationEnabled(true);
+		itDialog.center();
+		itDialog.show();
 	}
 	
-	private void onListIT(ClickEvent event) {
-		toolbar.setTitle("Partes IT");
-		deckPanel.showWidget(1);
-		inactiveITsCB.setValue(true);
-		listITs.getElement().getStyle().setDisplay(Display.NONE);
-		backContract.getElement().getStyle().clearDisplay();
-		initITTable();
+	private void refreshContractITTable() {
+		mainContrataITObject.getEmployeesInfo(false,
+				t -> {
+					initITTable();
+					setTableHeights();
+				},
+				d -> {}
+		);
 	}
 	
 	private void onFIE(ClickEvent event) {
 		msjFIEFileUpload.click();
-	}
-	
-	private void getFilterEmployeePanel() {
-		filterEmployeePanel.setStyleName(AON.CSS.aonSearchPanel());
-		filterEmployeePanel.addStyleName(AON.CSS.aonScrollArea());
-		filterEmployeePanel.addStyleName(AON.CSS.aonMarginBottom());
-		filterEmployeePanel.addStyleName(AON.CSS.aonMarginLeft());
-		filterEmployeePanel.addStyleName(AON.CSS.aonMarginRight());
-		filterEmployeePanel.addStyleName(AON.CSS.aonBlockCenter());
-		
-		HTMLPanel filterPanel = new HTMLPanel("");
-		filterPanel.addStyleName(style.filterPanel());
-		
-		HTMLPanel employeePanel = new HTMLPanel("");
-		employeePanel.addStyleName(style.flexPanel());
-		Label employeeL = new Label("Persona : ");
-		employeeL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		employeeL.getElement().getStyle().setMarginRight(10, Unit.PX);
-		employeeSB = new SuggestBox();
-		employeeSB.getElement().getStyle().setWidth(300, Unit.PX);
-		employeePanel.add(employeeL);
-		employeePanel.add(employeeSB);
-		
-		HTMLPanel showPanel = new HTMLPanel("");
-		showPanel.addStyleName(style.flexPanel());
-		Label showL = new Label("Mostrar Empleados : ");
-		showL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		showL.getElement().getStyle().setMarginRight(5, Unit.PX);
-		inactiveContractsCB = new CheckBox();
-		inactiveContractsCB.addValueChangeHandler(e -> {
-			this.mainContrataITObject.getEmployeesInfo(e.getValue(),
-					s -> {
-						initEnterpriseSB();
-						initITSB();
-						initContractTable();
-						setTableHeights();
-					},
-					f -> {}
-			);
-		});
-		Label inactiveL = new Label("Inactivos");
-		inactiveL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		inactiveL.getElement().getStyle().setMarginLeft(5, Unit.PX);
-		showPanel.add(showL);
-		showPanel.add(inactiveContractsCB);
-		showPanel.add(inactiveL);
-		
-		filterPanel.add(employeePanel);
-		filterPanel.add(showPanel);
-		
-		filterEmployeePanel.add(filterPanel);
 	}
 	
 	private void getFilterITListPanel() {
@@ -1481,7 +1027,6 @@ public class MainContrataIT extends MainEntryPoint {
 		inactiveITsCB = new CheckBox();
 		inactiveITsCB.addValueChangeHandler(e -> {
 			mainContrataITObject.setITsList(!e.getValue());
-			initEnterpriseSB();
 			initITSB();
 			initITTable();
 			setTableHeights();
