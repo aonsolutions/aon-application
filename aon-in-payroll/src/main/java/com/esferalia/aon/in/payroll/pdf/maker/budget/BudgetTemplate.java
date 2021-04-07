@@ -44,7 +44,7 @@ public class BudgetTemplate extends PdfFile{
 	public static void print(OutputStream out,Budget bg,Optional<Locale> language) throws CanNotCreatePdfException {
 		BudgetTemplate template = null;
 		try{
-			ResourceBundle words = ResourceBundle.getBundle("com.esferalia.aon.in.payroll.pdf.creators.budget.bundles.BudgetBundle",language.orElse(new Locale("Es")));
+			ResourceBundle words = ResourceBundle.getBundle("com.esferalia.aon.in.payroll.pdf.maker.budget.bundles.BudgetBundle",language.orElse(new Locale("Es")));
 			template = new BudgetTemplate(10, 810, new PDDocument(), words, out, bg,30);
 			template.setDefaults(HELVETICA, 10f, BLACK, PdfColors.GRAY);
 			

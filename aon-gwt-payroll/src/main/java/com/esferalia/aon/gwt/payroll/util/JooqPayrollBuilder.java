@@ -23,7 +23,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Accrual;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Deduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.PayrollTypes;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Contingency_bases.Contingency_bases_builder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.ContingencyBases.ContingencyBasesBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -287,32 +287,32 @@ public class JooqPayrollBuilder {
 			//COSTS
 			Double totalEnterprise = 0d;
 			{
-				Contingency_bases_builder cbb = new Contingency_bases_builder();
+				ContingencyBasesBuilder cbb = new ContingencyBasesBuilder();
 				//INITIALIZING CONTINGENCIES, JUST IN CASE
 				{
-					cbb.setAt_ep_ap_enterprise(Optional.empty());
-					cbb.setAt_ep_type(Optional.empty());
-					cbb.setCommon_cont_ap_enterprise(Optional.empty());
-					cbb.setCommon_cont_base(Optional.empty());
-					cbb.setCommon_cont_type(Optional.empty());
-					cbb.setExtra_proration_amount(Optional.empty());
-					cbb.setFogasa_ap_enterprise(Optional.empty());
-					cbb.setFogasa_type(Optional.empty());
-					cbb.setForce_majeure_ap_enterprise(Optional.empty());
-					cbb.setForce_majeure_base(Optional.empty());
-					cbb.setForce_majeure_type(Optional.empty());
+					cbb.setAtEpApEnterprise(Optional.empty());
+					cbb.setAtEpType(Optional.empty());
+					cbb.setCommonContApEnterprise(Optional.empty());
+					cbb.setCommonContBase(Optional.empty());
+					cbb.setCommonContType(Optional.empty());
+					cbb.setExtraProrationAmount(Optional.empty());
+					cbb.setFogasaApEnterprise(Optional.empty());
+					cbb.setFogasaType(Optional.empty());
+					cbb.setForceMajeureApEnterprise(Optional.empty());
+					cbb.setForceMajeureBase(Optional.empty());
+					cbb.setForceMajeureType(Optional.empty());
 					cbb.setIrpf_esp(Optional.empty());
 					cbb.setIrpf_retrib_diner(Optional.empty());
-					cbb.setMonthly_amount(Optional.empty());
+					cbb.setMonthlyAmount(Optional.empty());
 					cbb.setNo_struct_ap_enterprise(Optional.empty());
-					cbb.setNo_struct_base(Optional.empty());
-					cbb.setNo_struct_type(Optional.empty());
-					cbb.setProfes_form_ap_enterprise(Optional.empty());
-					cbb.setProfes_form_type(Optional.empty());
-					cbb.setProfessional_cont_base(Optional.empty());
+					cbb.setNoStructBase(Optional.empty());
+					cbb.setNoStructType(Optional.empty());
+					cbb.setProfesFormApEnterprise(Optional.empty());
+					cbb.setProfesFormType(Optional.empty());
+					cbb.setProfessionalContBase(Optional.empty());
 					cbb.setTotal(Optional.empty());
-					cbb.setUnemployment_ap_enterprise(Optional.empty());
-					cbb.setUnemployment_type(Optional.empty());
+					cbb.setUnemploymentApEnterprise(Optional.empty());
+					cbb.setUnemploymentType(Optional.empty());
 				}
 				//SETTING AMOUNTS
 				{
@@ -346,18 +346,18 @@ public class JooqPayrollBuilder {
 						
 					}
 					
-					cbb.setCommon_cont_ap_enterprise(Optional.ofNullable(common_cont_ap_enterprise));
-					cbb.setAt_ep_ap_enterprise(Optional.ofNullable(at_ep_ap_enterprise));
-					cbb.setUnemployment_ap_enterprise(Optional.ofNullable(unemployment_ap_enterprise));
-					cbb.setProfes_form_ap_enterprise(Optional.ofNullable(profes_form_ap_enterprise));
-					cbb.setFogasa_ap_enterprise(Optional.ofNullable(fogasa_ap_enterprise));
-					cbb.setForce_majeure_ap_enterprise(Optional.ofNullable(force_majeure_ap_enterprise));
+					cbb.setCommonContApEnterprise(Optional.ofNullable(common_cont_ap_enterprise));
+					cbb.setAtEpApEnterprise(Optional.ofNullable(at_ep_ap_enterprise));
+					cbb.setUnemploymentApEnterprise(Optional.ofNullable(unemployment_ap_enterprise));
+					cbb.setProfesFormApEnterprise(Optional.ofNullable(profes_form_ap_enterprise));
+					cbb.setFogasaApEnterprise(Optional.ofNullable(fogasa_ap_enterprise));
+					cbb.setForceMajeureApEnterprise(Optional.ofNullable(force_majeure_ap_enterprise));
 					cbb.setNo_struct_ap_enterprise(Optional.ofNullable(no_struct_ap_enterprise));
 					
 					//REMUNERATION AND PRO. EXT. BASE
 					{						
-						cbb.setExtra_proration_amount(Optional.ofNullable(s.getExtraProrationBase()));
-						cbb.setMonthly_amount(Optional.ofNullable(s.getRemuneration()));
+						cbb.setExtraProrationAmount(Optional.ofNullable(s.getExtraProrationBase()));
+						cbb.setMonthlyAmount(Optional.ofNullable(s.getRemuneration()));
 					}
 				}
 				
@@ -368,30 +368,30 @@ public class JooqPayrollBuilder {
 						if (data.get(k) != null) {
 							if (AonStringUtils.containsIgnoreCase(k, "PORCENTAJE_CGC")) {
 								if (cd.getExpression() != null)
-									cbb.setCommon_cont_type(Optional.ofNullable(Double.parseDouble(cd.getExpression())));
+									cbb.setCommonContType(Optional.ofNullable(Double.parseDouble(cd.getExpression())));
 								else
-									cbb.setCommon_cont_type(Optional.of(-1.00));
+									cbb.setCommonContType(Optional.of(-1.00));
 							} else if (AonStringUtils.containsIgnoreCase(k, "PORCENTAJE_CGP")
 									|| AonStringUtils.containsIgnoreCase(k, "PORCENTAJE_IT")) {
 								if (cd.getExpression() != null)
-									cbb.setAt_ep_type(Optional.ofNullable(Double.parseDouble(cd.getExpression())));
+									cbb.setAtEpType(Optional.ofNullable(Double.parseDouble(cd.getExpression())));
 								else
-									cbb.setAt_ep_type(Optional.of(-1.00));
+									cbb.setAtEpType(Optional.of(-1.00));
 							} else if (AonStringUtils.containsIgnoreCase(k, "PORCENTAJE_DESMPL")) {
 								if (cd.getExpression() != null)
-									cbb.setUnemployment_type(Optional.ofNullable(Double.parseDouble(cd.getExpression())));
+									cbb.setUnemploymentType(Optional.ofNullable(Double.parseDouble(cd.getExpression())));
 								else
-									cbb.setUnemployment_type(Optional.of(-1.00));
+									cbb.setUnemploymentType(Optional.of(-1.00));
 							} else if (AonStringUtils.containsIgnoreCase(k, "PORCENTAJE_FP")) {
 								if (cd.getExpression() != null)
-									cbb.setProfes_form_type(Optional.ofNullable(Double.parseDouble(cd.getExpression())));
+									cbb.setProfesFormType(Optional.ofNullable(Double.parseDouble(cd.getExpression())));
 								else
-									cbb.setProfes_form_type(Optional.of(-1.00));
+									cbb.setProfesFormType(Optional.of(-1.00));
 							} else if (AonStringUtils.containsIgnoreCase(k, "PORCENTAJE_FOGASA")) {
 								if (cd.getExpression() != null)
-									cbb.setFogasa_type(Optional.ofNullable(Double.parseDouble(cd.getExpression())));
+									cbb.setFogasaType(Optional.ofNullable(Double.parseDouble(cd.getExpression())));
 								else
-									cbb.setFogasa_type(Optional.of(-1.00));
+									cbb.setFogasaType(Optional.of(-1.00));
 							}
 						}
 					});
@@ -399,8 +399,8 @@ public class JooqPayrollBuilder {
 				//SETTING BASES
 				{
 					
-					cbb.setCommon_cont_base(Optional.ofNullable(s.getCommonContingenciesBase()));
-					cbb.setProfessional_cont_base(Optional.ofNullable(s.getProfessionalContingenciesBase()));
+					cbb.setCommonContBase(Optional.ofNullable(s.getCommonContingenciesBase()));
+					cbb.setProfessionalContBase(Optional.ofNullable(s.getProfessionalContingenciesBase()));
 					cbb.setIrpf_retrib_diner(Optional.ofNullable(s.getIrpfBase()));
 					cbb.setIrpf_esp(Optional.ofNullable(s.getInkindIrpfBase()));
 					cbb.setTotal(Optional.ofNullable(s.getTotalEnterprise()));

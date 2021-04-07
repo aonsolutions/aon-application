@@ -17,7 +17,7 @@ import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeV
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawBox;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawText;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextRight;
-import static com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.CraTypes.get_type;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.CraTypes.getType;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -67,7 +67,7 @@ public class SettlementTemplate extends PdfFile {
 		SettlementTemplate template = null;
 		try {
 			ResourceBundle words = ResourceBundle.getBundle(
-					"com.esferalia.aon.in.payroll.pdf.creators.settlement.bundles.SettlementBundle",
+					"com.esferalia.aon.in.payroll.pdf.maker.settlement.bundles.SettlementBundle",
 					(Locale) safeValue(locale, new Locale("Es")));
 
 			template = new SettlementTemplate(settlement, 0, 810, new PDDocument(), words, out);
@@ -238,7 +238,7 @@ public class SettlementTemplate extends PdfFile {
 						.sum();
 				if (local_total != 0) {
 
-					String accrual_txt = m.getKey() + ". " + get_type(m.getKey(), lang);
+					String accrual_txt = m.getKey() + ". " + getType(m.getKey(), lang);
 					String accrual_total_txt = toLatinNumber(local_total) + " " + text("CURRENCY");
 
 					drawText(contents, accrual_txt, x(), y(), BLACK, HELVETICA_BOLD, fontsize);

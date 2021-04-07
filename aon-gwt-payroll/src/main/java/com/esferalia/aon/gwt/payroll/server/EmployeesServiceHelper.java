@@ -61,7 +61,6 @@ import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
-import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -118,12 +117,9 @@ import com.esferalia.aon.watson.util.AonUtils;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invaliddata.DataDoesNotExist;
 import solutions.aon.seg.social.exceptions.invaliddata.NotAllowedContributionAccount;
-import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.objects.Idc;
-import solutions.aon.seg.social.objects.WorkerLiquidation;
 
 public class EmployeesServiceHelper {
 

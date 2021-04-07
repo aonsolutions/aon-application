@@ -2,7 +2,7 @@ package com.esferalia.aon.in.payroll.pdf.maker.payroll.bundles;
 
 import java.util.ListResourceBundle;
 
-public class PayrollBundle_eus  extends ListResourceBundle{
+public class PayrollBundleEus  extends ListResourceBundle{
 
 	 public Object[][] getContents() {
 	        return contents;

@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 
 public class CraTypes {	
 
-	public static String get_type(int type, Locale language) throws UnknownCraException {
+	public static String getType(int type, Locale language) throws UnknownCraException {
 		ResourceBundle words = ResourceBundle.getBundle("com.esferalia.aon.in.payroll.pdf.maker.payroll.bundles.CraTypesBundle",language);
 		
 		switch (type) {

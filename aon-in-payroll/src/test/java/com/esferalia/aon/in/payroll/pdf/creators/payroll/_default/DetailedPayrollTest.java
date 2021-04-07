@@ -18,7 +18,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfExceptio
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Accrual;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Deduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.PayrollTypes;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Contingency_bases.Contingency_bases_builder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.ContingencyBases.ContingencyBasesBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll.DefaultPayrollBuilder;
 
 public class DetailedPayrollTest {
@@ -71,27 +71,27 @@ public class DetailedPayrollTest {
 		System.out.println(" Preparing deductions.....");
 		
 		//CREATE CONTIGENCIES
-		Contingency_bases_builder con_builder = new Contingency_bases_builder();
+		ContingencyBasesBuilder con_builder = new ContingencyBasesBuilder();
 		
-		con_builder.setMonthly_amount(Optional.of(9999.99))
-		.setExtra_proration_amount(Optional.of(9999.99))
-		.setCommon_cont_base(Optional.of(9999.99))
-		.setCommon_cont_type(Optional.of(99.99))
-		.setCommon_cont_ap_enterprise(Optional.of(9999.99))
-		.setProfessional_cont_base(Optional.of(9999.99))
-		.setAt_ep_type(Optional.of(99.99))
-		.setAt_ep_ap_enterprise(Optional.of(9999.99))
-		.setUnemployment_type(Optional.of(99.99))
-		.setUnemployment_ap_enterprise(Optional.of(9999.99))
-		.setProfes_form_type(Optional.of(99.99))
-		.setProfes_form_ap_enterprise(Optional.of(9999.99))
-		.setFogasa_type(Optional.of(99.99))
-		.setFogasa_ap_enterprise(Optional.of(9999.99))
-		.setForce_majeure_base(Optional.of(9999.99))
-		.setForce_majeure_type(Optional.of(99.99))
-		.setForce_majeure_ap_enterprise(Optional.of(9999.99))
-		.setNo_struct_base(Optional.of(9999.99))
-		.setNo_struct_type(Optional.of(99.99))
+		con_builder.setMonthlyAmount(Optional.of(9999.99))
+		.setExtraProrationAmount(Optional.of(9999.99))
+		.setCommonContBase(Optional.of(9999.99))
+		.setCommonContType(Optional.of(99.99))
+		.setCommonContApEnterprise(Optional.of(9999.99))
+		.setProfessionalContBase(Optional.of(9999.99))
+		.setAtEpType(Optional.of(99.99))
+		.setAtEpApEnterprise(Optional.of(9999.99))
+		.setUnemploymentType(Optional.of(99.99))
+		.setUnemploymentApEnterprise(Optional.of(9999.99))
+		.setProfesFormType(Optional.of(99.99))
+		.setProfesFormApEnterprise(Optional.of(9999.99))
+		.setFogasaType(Optional.of(99.99))
+		.setFogasaApEnterprise(Optional.of(9999.99))
+		.setForceMajeureBase(Optional.of(9999.99))
+		.setForceMajeureType(Optional.of(99.99))
+		.setForceMajeureApEnterprise(Optional.of(9999.99))
+		.setNoStructBase(Optional.of(9999.99))
+		.setNoStructType(Optional.of(99.99))
 		.setNo_struct_ap_enterprise(Optional.of(9999.99))
 		.setIrpf_esp(Optional.of(99999.99))
 		.setIrpf_retrib_diner(Optional.of(99999.99))
