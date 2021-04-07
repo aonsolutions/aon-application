@@ -27,7 +27,7 @@ import solutions.aon.seg.social.exceptions.PaternityNotFoundException;
 import solutions.aon.seg.social.exceptions.PaternityWrongDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.StatusCodeException;
-import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
+import solutions.aon.seg.social.exceptions.invaliddata.UnfilledMandatory;
 import solutions.aon.seg.social.objects.PaternityCertificate;
 import solutions.aon.seg.social.toolkit.Toolkit;
 import solutions.aon.seg.social.*;

@@ -32,9 +32,9 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.ibm.icu.util.Calendar;
 
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.SistemaRED_I.LiquidationOrigin;
-import solutions.aon.seg.social.SistemaRED_I.LiquidationType;
-import solutions.aon.seg.social.SistemaRED_I.Regime;
+import solutions.aon.seg.social.SistemaREDI.LiquidationOrigin;
+import solutions.aon.seg.social.SistemaREDI.LiquidationType;
+import solutions.aon.seg.social.SistemaREDI.Regime;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.objects.WorkerLiquidation;
 

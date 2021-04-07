@@ -12,15 +12,15 @@ import java.util.Optional;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
-import solutions.aon.seg.social.SistemaRED_I.LiquidationOrigin;
-import solutions.aon.seg.social.SistemaRED_I.LiquidationType;
-import solutions.aon.seg.social.SistemaRED_I.Regime;
-import solutions.aon.seg.social.SistemaRED_ITParts.AccidentType;
-import solutions.aon.seg.social.SistemaRED_ITParts.CauseType;
-import solutions.aon.seg.social.SistemaRED_ITParts.Contingencies;
-import solutions.aon.seg.social.SistemaRED_ITParts.ContractType;
-import solutions.aon.seg.social.SistemaRED_ITParts.PartType;
-import solutions.aon.seg.social.SistemaRED_ITParts.SituationEmployee;
+import solutions.aon.seg.social.SistemaREDI.LiquidationOrigin;
+import solutions.aon.seg.social.SistemaREDI.LiquidationType;
+import solutions.aon.seg.social.SistemaREDI.Regime;
+import solutions.aon.seg.social.SistemaREDITParts.AccidentType;
+import solutions.aon.seg.social.SistemaREDITParts.CauseType;
+import solutions.aon.seg.social.SistemaREDITParts.Contingencies;
+import solutions.aon.seg.social.SistemaREDITParts.ContractType;
+import solutions.aon.seg.social.SistemaREDITParts.PartType;
+import solutions.aon.seg.social.SistemaREDITParts.SituationEmployee;
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
@@ -36,14 +36,14 @@ public class SistemaRED {
 	public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regimen, String ccc)
 			throws SegSocialException {
-		return SistemaRED_Employee.getTotalEmployees(certificateInputStream, certificatePassword, certificateType,
+		return SistemaREDEmployee.getTotalEmployees(certificateInputStream, certificatePassword, certificateType,
 				regimen, ccc);
 	}
 
 	public static Collection<Employee> getEmployees(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED_Employee.getEmployees(certificateInputStream, certificatePassword, certificateType,
+			return SistemaREDEmployee.getEmployees(certificateInputStream, certificatePassword, certificateType,
 					regimen, ccc);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
@@ -53,7 +53,7 @@ public class SistemaRED {
 	public static byte[] getCccLaboralLife(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, Date from, Date to) throws SegSocialException {
 		try {
-			return SistemaRED_Employee.getCccLaboralLife(certificateInputStream, certificatePassword, certificateType,
+			return SistemaREDEmployee.getCccLaboralLife(certificateInputStream, certificatePassword, certificateType,
 					regime, ccc, from, to);
 		} catch (IOException e) {
 			throw new InvalidCertificateException();
@@ -63,7 +63,7 @@ public class SistemaRED {
 	public static Collection<Employee> getPrevEmployees(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED_Employee.getPrevEmployees(certificateInputStream, certificatePassword, certificateType,
+			return SistemaREDEmployee.getPrevEmployees(certificateInputStream, certificatePassword, certificateType,
 					regimen, ccc);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
@@ -73,14 +73,14 @@ public class SistemaRED {
 	public static Collection<Employee> getEmployees(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regimen, String ccc)
 			throws SegSocialException {
-		return SistemaRED_Employee.getEmployees(certificateInputStream, certificatePassword, certificateType, regimen,
+		return SistemaREDEmployee.getEmployees(certificateInputStream, certificatePassword, certificateType, regimen,
 				ccc);
 	}
 
 	public static Employee getEmployee(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED_Employee.getEmployee(certificateInputStream, certificatePassword, certificateType,
+			return SistemaREDEmployee.getEmployee(certificateInputStream, certificatePassword, certificateType,
 					regimen, ccc, nss);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
@@ -90,7 +90,7 @@ public class SistemaRED {
 	public static Employee getEmployee(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 
-		return SistemaRED_Employee.getEmployee(certificateInputStream, certificatePassword, certificateType, regimen,
+		return SistemaREDEmployee.getEmployee(certificateInputStream, certificatePassword, certificateType, regimen,
 				ccc, nss);
 	}
 
@@ -108,20 +108,20 @@ public class SistemaRED {
 	public static Map<String, Map<String, WorkerLiquidation>> getCosts(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regimen, String ccc, Date startDate,
 			Date endDate) throws SegSocialException {
-		return SistemaRED_I.workersCalculationQueryByCCC(certificateInputStream, certificatePassword, certificateType,
+		return SistemaREDI.workersCalculationQueryByCCC(certificateInputStream, certificatePassword, certificateType,
 				ccc, Regime.fromValue(regimen), startDate, endDate, LiquidationType.TODAS, LiquidationOrigin.TODAS);
 	}
 
 	public static byte[] getTA(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
-		return SistemaRED_I.getTADuplicate(certificateInputStream, certificatePassword, certificateType, nss, regimen,
+		return SistemaREDI.getTADuplicate(certificateInputStream, certificatePassword, certificateType, nss, regimen,
 				ccc, date);
 	}
 
 	public static byte[] getTA(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED_I.getTADuplicate(certificateInputStream, certificatePassword, certificateType, nss,
+			return SistemaREDI.getTADuplicate(certificateInputStream, certificatePassword, certificateType, nss,
 					regimen, ccc, date);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
@@ -130,14 +130,14 @@ public class SistemaRED {
 
 	public static byte[] getIDC(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
-		return SistemaRED_I.getContributionInformation(certificateInputStream, certificatePassword, certificateType,
+		return SistemaREDI.getContributionInformation(certificateInputStream, certificatePassword, certificateType,
 				nss, regimen, ccc, date);
 	}
 	
 	public static byte[] getIDC(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED_I.getContributionInformation(certificateInputStream, certificatePassword, certificateType,
+			return SistemaREDI.getContributionInformation(certificateInputStream, certificatePassword, certificateType,
 					nss, regimen, ccc, date);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
@@ -146,14 +146,14 @@ public class SistemaRED {
 
 	public static Collection<Idc> getIDC(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
-		return SistemaRED_I.getIDCDates(certificateInputStream, certificatePassword, certificateType,
+		return SistemaREDI.getIDCDates(certificateInputStream, certificatePassword, certificateType,
 				nss, regimen, ccc);
 	}
 
 	public static Collection<Idc> getIDCDates(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED_I.getIDCDates(certificateInputStream, certificatePassword, certificateType,
+			return SistemaREDI.getIDCDates(certificateInputStream, certificatePassword, certificateType,
 					nss, regimen, ccc);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
@@ -162,14 +162,14 @@ public class SistemaRED {
 
 	public static byte[] getIDCCCC(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, Date date) throws SegSocialException {
-		return SistemaRED_I.getContributionInformationCCC(certificateInputStream, certificatePassword, certificateType,
+		return SistemaREDI.getContributionInformationCCC(certificateInputStream, certificatePassword, certificateType,
 				regimen, ccc, date);
 	}
 
 	public static byte[] getIDCCCC(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, Date date) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED_I.getContributionInformationCCC(certificateInputStream, certificatePassword,
+			return SistemaREDI.getContributionInformationCCC(certificateInputStream, certificatePassword,
 					certificateType, regimen, ccc, date);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
@@ -178,14 +178,14 @@ public class SistemaRED {
 
 	public static byte[] getIDCNSSfinal ( InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
-		return SistemaRED_I.getContributionInformationNSS(certificateInputStream, certificatePassword, certificateType,
+		return SistemaREDI.getContributionInformationNSS(certificateInputStream, certificatePassword, certificateType,
 				regimen, ccc, nss, date);
 	}
 
 	public static byte[] getIDCNSS(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss, Date date) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED_I.getContributionInformationNSS(certificateInputStream, certificatePassword,
+			return SistemaREDI.getContributionInformationNSS(certificateInputStream, certificatePassword,
 					certificateType, regimen, ccc, nss, date);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
@@ -194,14 +194,14 @@ public class SistemaRED {
 
 	public static byte[] getUp2DateSS(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException {
-		return SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, certificatePassword,
+		return SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, certificatePassword,
 				certificateType, regimen, ccc);
 	}
 
 	public static byte[] getUp2DateSS(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, certificatePassword,
+			return SistemaREDI.getObligationAwarenessCertificate(certificateInputStream, certificatePassword,
 					certificateType, regimen, ccc);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
@@ -221,7 +221,7 @@ public class SistemaRED {
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType,
 			final String ccc, final Regime regime, final Date dateFrom, final Date dateTo,
 			final LiquidationType liqType, final LiquidationOrigin liqOrigin) throws SegSocialException {
-		return SistemaRED_I.workersCalculationQueryByCCC(certificateInputStream, certificatePassword, certificateType,
+		return SistemaREDI.workersCalculationQueryByCCC(certificateInputStream, certificatePassword, certificateType,
 				ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
 	}
 
@@ -230,7 +230,7 @@ public class SistemaRED {
 			final Date dateFrom, final Date dateTo, final LiquidationType liqType, final LiquidationOrigin liqOrigin)
 			throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED_I.workersCalculationQueryByCCC(certificateInputStream, certificatePassword,
+			return SistemaREDI.workersCalculationQueryByCCC(certificateInputStream, certificatePassword,
 					certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
@@ -241,7 +241,7 @@ public class SistemaRED {
 			final String certificatePassword, final String certificateType, final String ccc,
 			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
 			final LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
-		return SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, nafs);
+		return SistemaREDI.workersCalculationQueryByCCCandNAFS(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, nafs);
 	}
 	
 	public static Map<String,Map<String, WorkerLiquidation>> getWorkersLiquidationsByCCCandNAFs(final byte[] certificateData,
@@ -249,7 +249,7 @@ public class SistemaRED {
 			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
 			final LiquidationOrigin liqOrigin, String... nafs) throws SegSocialException{
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED_I.workersCalculationQueryByCCCandNAFS(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, nafs);
+			return SistemaREDI.workersCalculationQueryByCCCandNAFS(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, nafs);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
@@ -387,7 +387,7 @@ public class SistemaRED {
 			final ContractType contractType, final float baseCot , final int cotDays, final Optional<Date> fATEP, final Optional<AccidentType> accidentType) throws SegSocialException {
 		
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaRED_ITParts.registerItBaja(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, occupation, startdate, contractType, baseCot, cotDays, fATEP, accidentType);
+			SistemaREDITParts.registerItBaja(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, occupation, startdate, contractType, baseCot, cotDays, fATEP, accidentType);
 		} catch (IOException | SegSocialException e) {
 			throw new SegSocialException(e);
 		}
@@ -398,7 +398,7 @@ public class SistemaRED {
 			final Optional<String> licenseNumber, final Optional<String> cias, final Date fbaja, final Date fconfirmation, final Optional<String> npartConfimation) throws SegSocialException {
 		
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaRED_ITParts.registerItConfirmation(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, fconfirmation, npartConfimation);
+			SistemaREDITParts.registerItConfirmation(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, fconfirmation, npartConfimation);
 		} catch (IOException | SegSocialException e) {
 			throw new SegSocialException(e);
 		}
@@ -410,7 +410,7 @@ public class SistemaRED {
 			final Optional<AccidentType> accidentType, final CauseType causeType) throws SegSocialException {
 		
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaRED_ITParts.registerItAlta(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, falta, fATEP, accidentType, causeType);
+			SistemaREDITParts.registerItAlta(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, falta, fATEP, accidentType, causeType);
 		} catch (IOException | SegSocialException e) {
 			throw new SegSocialException(e);
 		}
@@ -420,7 +420,7 @@ public class SistemaRED {
 			final String regime, final String ccc, final String naf, final PartType partType, final Date dateBj, final Date dateProcess) throws SegSocialException {
 		
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaRED_ITParts.removeIt(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);
+			SistemaREDITParts.removeIt(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);
 		} catch (IOException | SegSocialException | InterruptedException e) {
 			throw new SegSocialException(e);
 		}
@@ -430,7 +430,7 @@ public class SistemaRED {
 			final String regime, final String ccc, final String naf, final PartType partType, final Date dateBj, final Date dateProcess) throws SegSocialException {
 		
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaRED_ITParts.pdfIt(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);
+			return SistemaREDITParts.pdfIt(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);
 		} catch (IOException | SegSocialException | InterruptedException e) {
 			throw new SegSocialException(e);
 		}

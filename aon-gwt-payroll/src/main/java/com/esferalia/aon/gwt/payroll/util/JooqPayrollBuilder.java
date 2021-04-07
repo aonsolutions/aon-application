@@ -15,16 +15,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
-import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.DefaultPayrollTemplate;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases.Contingency_bases_builder;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll.DefaultPayrollBuilder;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Accrual;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Deduction;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
+import com.esferalia.aon.in.payroll.pdf.api.settings.PdfFonts;
+import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
+import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Accrual;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Deduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.PayrollTypes;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Contingency_bases.Contingency_bases_builder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
@@ -53,7 +53,7 @@ public class JooqPayrollBuilder {
 	 * @param salaryIds The IDs of the salaries in database
 	 */
 	public static void generatePayroll(Integer enterpriseId, String domainName, String user, OutputStream outputStream, Integer... salaryIds) {
-		DefaultPayrollTemplate dpt = new DefaultPayrollTemplate();
+		PayrollTemplate dpt = new PayrollTemplate();
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
 		try (AONContext aonContext = AONContext.getAONContext(domainName, user)) {
 			fillPayroll(outputStream, dpt, dpb, aonContext, salaryIds);
@@ -79,7 +79,7 @@ public class JooqPayrollBuilder {
 		generatePayroll(null, domainName, "", outputStream, salaryIds);
 	}
 
-	private static void fillPayroll(OutputStream outputStream, DefaultPayrollTemplate dpt, DefaultPayrollBuilder dpb,
+	private static void fillPayroll(OutputStream outputStream, PayrollTemplate dpt, DefaultPayrollBuilder dpb,
 			AONContext aonContext, Integer[] salaryIds) {
 		//PICK UP THE SALARIES
 		Stream<Salary> salaries = AON.getSalaries(aonContext,
@@ -187,7 +187,7 @@ public class JooqPayrollBuilder {
 					String description = p.getDescription().replaceAll("\\[\\d*\\]", "");
 					if (description.length() > 50) {
 						try {
-							description = PDFToolkit.cropped_string(description, 260, PdfFonts.HELVETICA, 9f);
+							description = PDFToolkit.croppedString(description, 260, PdfFonts.HELVETICA, 9f);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}	

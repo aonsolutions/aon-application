@@ -17,8 +17,8 @@ import java.util.Optional;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
 
-import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
-import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
+import solutions.aon.seg.social.exceptions.invaliddata.InvalidDataException;
+import solutions.aon.seg.social.exceptions.invaliddata.UnfilledMandatory;
 
 public class Toolkit {
 

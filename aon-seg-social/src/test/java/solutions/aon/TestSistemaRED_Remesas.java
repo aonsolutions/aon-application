@@ -13,16 +13,16 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
-import solutions.aon.seg.social.SistemaRED_I;
-import solutions.aon.seg.social.SistemaRED_Remesas;
+import solutions.aon.seg.social.SistemaREDI;
+import solutions.aon.seg.social.SistemaREDRemesas;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
-import solutions.aon.seg.social.exceptions.invalidData.LiquidationDoesNotExist;
-import solutions.aon.seg.social.exceptions.invalidData.NotExistingYetException;
-import solutions.aon.seg.social.exceptions.invalidData.PendingProcessesException;
-import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
-import solutions.aon.seg.social.exceptions.invalidData.invalidCccException;
-import solutions.aon.seg.social.exceptions.invalidData.outOfTimeException;
+import solutions.aon.seg.social.exceptions.invaliddata.DataDoesNotExist;
+import solutions.aon.seg.social.exceptions.invaliddata.LiquidationDoesNotExist;
+import solutions.aon.seg.social.exceptions.invaliddata.NotExistingYetException;
+import solutions.aon.seg.social.exceptions.invaliddata.PendingProcessesException;
+import solutions.aon.seg.social.exceptions.invaliddata.UnfilledMandatory;
+import solutions.aon.seg.social.exceptions.invaliddata.invalidCccException;
+import solutions.aon.seg.social.exceptions.invaliddata.outOfTimeException;
 
 public class TestSistemaRED_Remesas {
 
@@ -33,7 +33,7 @@ public class TestSistemaRED_Remesas {
 			Calendar c=Calendar.getInstance();
 			c.add(Calendar.MONTH, 1);
 			Date d=c.getTime();
-			SistemaRED_Remesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED_I.Regime.GENERAL, d, d, SistemaRED_I.LiquidationType.L00_NORMAL, false, true);
+			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, false, true);
 			fail("Shouldn't succeed");
 		} catch (NotExistingYetException e) {
 			
@@ -52,7 +52,7 @@ public class TestSistemaRED_Remesas {
 	public void testDraftRequestOutOfTime() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-09-2020");
-			SistemaRED_Remesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED_I.Regime.GENERAL, d, d, SistemaRED_I.LiquidationType.L00_NORMAL, false, true);
+			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, false, true);
 			fail("Shouldn't succeed");
 		} catch (outOfTimeException e) {
 			
@@ -73,7 +73,7 @@ public class TestSistemaRED_Remesas {
 	public void testDraftRequestInvalidCCC() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2020");
-			SistemaRED_Remesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01115320062", SistemaRED_I.Regime.GENERAL, d, d, SistemaRED_I.LiquidationType.L00_NORMAL, false, true);
+			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01115320062", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, false, true);
 			fail("Shouldn't succeed");
 		} catch (invalidCccException e) {
 			
@@ -92,7 +92,7 @@ public class TestSistemaRED_Remesas {
 	public void testDraftRequestUnfilledCCC() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2020");
-			SistemaRED_Remesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "", SistemaRED_I.Regime.GENERAL, d, d, SistemaRED_I.LiquidationType.L00_NORMAL, false, true);
+			SistemaREDRemesas.draftRequest(certificateInputStream, "jg@FNMT", "pkcs12", "", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, false, true);
 			fail("Shouldn't succeed");
 		} catch (UnfilledMandatory e) {
 			
@@ -119,7 +119,7 @@ public class TestSistemaRED_Remesas {
 			Calendar c=Calendar.getInstance();
 			c.add(Calendar.MONTH, 1);
 			Date d=c.getTime();
-			SistemaRED_Remesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaRED_I.Regime.GENERAL, d, d, SistemaRED_I.LiquidationType.L00_NORMAL, true);
+			SistemaREDRemesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, true);
 			fail("Shouldn't succeed");
 		} catch (LiquidationDoesNotExist e) {
 			
@@ -136,7 +136,7 @@ public class TestSistemaRED_Remesas {
 	public void testConfirmationRequestInvalidCCC() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2020");
-			SistemaRED_Remesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01115320062", SistemaRED_I.Regime.GENERAL, d, d, SistemaRED_I.LiquidationType.L00_NORMAL, true);
+			SistemaREDRemesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "01115320062", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, true);
 			fail("Shouldn't succeed");
 		} catch (invalidCccException e) {
 			
@@ -155,7 +155,7 @@ public class TestSistemaRED_Remesas {
 	public void testConfirmationRequestUnfilledCCC() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2020");
-			SistemaRED_Remesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "", SistemaRED_I.Regime.GENERAL, d, d, SistemaRED_I.LiquidationType.L00_NORMAL, true);
+			SistemaREDRemesas.confirmationRequest(certificateInputStream, "jg@FNMT", "pkcs12", "", SistemaREDI.Regime.GENERAL, d, d, SistemaREDI.LiquidationType.L00_NORMAL, true);
 			fail("Shouldn't succeed");
 		} catch (UnfilledMandatory e) {
 			

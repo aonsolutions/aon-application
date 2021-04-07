@@ -10,14 +10,14 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
-import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.creators.exceptions.JsonParseException;
-import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.Invoice;
-import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceEntry;
-import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceFinance;
-import com.esferalia.aon.in.payroll.pdf.creators.invoice.beans.InvoiceTax;
-import com.esferalia.aon.in.payroll.pdf.creators.invoice.templates.InvoiceTemplate;
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.exceptions.JsonParseException;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.beans.Invoice;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.beans.InvoiceEntry;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.beans.InvoiceFinance;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.beans.InvoiceTax;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.templates.InvoiceTemplate;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 
 public class InvoiceTest {
@@ -87,7 +87,7 @@ public class InvoiceTest {
 		try {
 			System.out.println(" Parsing json file.....");
 			System.out.println(" Printing PDF file.....");
-			PdfMaker.print_invoice(new ByteArrayOutputStream(),InvoiceTest.class.getResourceAsStream("factura.json"), config, InvoiceTest.class.getResourceAsStream("qrcode.png"));
+			PdfMaker.printInvoice(new ByteArrayOutputStream(),InvoiceTest.class.getResourceAsStream("factura.json"), config, InvoiceTest.class.getResourceAsStream("qrcode.png"));
 			System.out.println(" >> DONE.");
 		}
 		catch (CanNotCreatePdfException e) {fail("Can not create pdf");}
@@ -109,7 +109,7 @@ public class InvoiceTest {
 				.setHeader(105)
 				.setFooter(75);
 
-		try {PdfMaker.print_demo_invoice(new ByteArrayOutputStream(),config, InvoiceTest.class.getResourceAsStream("qrcode.png"));}
+		try {PdfMaker.printDemoInvoice(new ByteArrayOutputStream(),config, InvoiceTest.class.getResourceAsStream("qrcode.png"));}
 		catch (CanNotCreatePdfException e) {
 			System.out.println(" Printing PDF file.....");
 			fail("Can not create pdf" );

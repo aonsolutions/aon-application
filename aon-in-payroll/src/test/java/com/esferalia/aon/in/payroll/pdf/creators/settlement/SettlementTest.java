@@ -10,10 +10,10 @@ import java.util.Locale;
 
 import org.junit.Test;
 
-import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
-import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.creators.settlement.beans.Settlement;
-import com.esferalia.aon.in.payroll.pdf.creators.settlement.beans.Settlement.SettlementBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement;
+import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement.SettlementBuilder;
 import com.github.javafaker.Faker;
 
 public class SettlementTest {
@@ -60,7 +60,7 @@ public class SettlementTest {
 		;
 		
 		Settlement settlement = builder.build();
-		PdfMaker.print_settlement(new FileOutputStream("./Settlement.pdf"), settlement, Locale.forLanguageTag("Es"));
+		PdfMaker.printSettlement(new FileOutputStream("./Settlement.pdf"), settlement, Locale.forLanguageTag("Es"));
 		}catch(FileNotFoundException | CanNotCreatePdfException e) {
 			e.printStackTrace();
 			fail("Unexpected exception");

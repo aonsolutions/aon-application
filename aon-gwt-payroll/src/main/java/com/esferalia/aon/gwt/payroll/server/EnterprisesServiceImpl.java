@@ -135,15 +135,16 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import aon.sepe.objects.Contract;
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.SistemaRED_ITParts.AccidentType;
-import solutions.aon.seg.social.SistemaRED_ITParts.CauseType;
-import solutions.aon.seg.social.SistemaRED_ITParts.Contingencies;
-import solutions.aon.seg.social.SistemaRED_ITParts.ContractType;
-import solutions.aon.seg.social.SistemaRED_ITParts.PartType;
-import solutions.aon.seg.social.SistemaRED_ITParts.SituationEmployee;
-import solutions.aon.seg.social.SistemaRED_Secondary_User;
+import solutions.aon.seg.social.SistemaREDITParts.AccidentType;
+import solutions.aon.seg.social.SistemaREDITParts.CauseType;
+import solutions.aon.seg.social.SistemaREDITParts.Contingencies;
+import solutions.aon.seg.social.SistemaREDITParts.ContractType;
+import solutions.aon.seg.social.SistemaREDITParts.PartType;
+import solutions.aon.seg.social.SistemaREDITParts.SituationEmployee;
+import solutions.aon.seg.social.SistemaREDSecondaryUser;
+import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invalidData.NotAllowedContributionAccount;
+import solutions.aon.seg.social.exceptions.invaliddata.NotAllowedContributionAccount;
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.objects.SecondaryUser;
 import solutions.aon.sepe.Contrato;
@@ -2550,7 +2551,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
-			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED_Secondary_User.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
+			Collection<SecondaryUser> secondaryUsersCollection = SistemaREDSecondaryUser.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
 			
 			List<SecondaryUser> secondaryUsers = new ArrayList<SecondaryUser>(secondaryUsersCollection);
 			List<SecondaryUserCertificate> secondaryUsersCertificate = new ArrayList<SecondaryUserCertificate>();
@@ -2592,7 +2593,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
-			SistemaRED_Secondary_User.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
+			SistemaREDSecondaryUser.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
@@ -2609,7 +2610,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
-			SistemaRED_Secondary_User.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
+			SistemaREDSecondaryUser.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
 			
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);

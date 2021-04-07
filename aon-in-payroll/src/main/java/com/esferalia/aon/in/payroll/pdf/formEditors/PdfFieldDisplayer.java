@@ -20,9 +20,9 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDFieldTree;
 import org.apache.pdfbox.pdmodel.interactive.form.PDRadioButton;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfColors;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
+import com.esferalia.aon.in.payroll.pdf.api.settings.PdfColors;
+import com.esferalia.aon.in.payroll.pdf.api.settings.PdfFonts;
+import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 
 public class PdfFieldDisplayer {
 
@@ -57,8 +57,8 @@ public class PdfFieldDisplayer {
 
 				//FOR EACH WIDGET
 				for (int i = 0; i < field.getWidgets().size(); i++) {
-					Optional<PDPage> page = PDFToolkit.get_field_page(Optional.of(field), i);
-					Optional<PDRectangle> rectangle = PDFToolkit.get_field_rectangle(Optional.of(field), i);
+					Optional<PDPage> page = PDFToolkit.getFieldPage(Optional.of(field), i);
+					Optional<PDRectangle> rectangle = PDFToolkit.getFieldRectangle(Optional.of(field), i);
 
 					Optional<Integer> page_index = PdfFormEditor.page_index(Optional.of(new_doc), page);
 					if (page_index.isEmpty()) System.err.println("WARNING: Page not found");
@@ -75,7 +75,7 @@ public class PdfFieldDisplayer {
 						if (w > 200) w = 200;
 
 						PDPage current_page = new_doc.getPage(page_index.get());
-						PDPageContentStream contents = PDFToolkit.open_in_append_mode(doc, current_page);
+						PDPageContentStream contents = PDFToolkit.openInAppendMode(doc, current_page);
 
 						PDFToolkit.drawBox(contents, x, y, w, h, PdfColors.WHITE);
 						PDFToolkit.drawText(contents, name, x + 3, y + h / 2 - 1.5f, PdfColors.BLUE, PdfFonts.HELVETICA_BOLD, 4f);

@@ -16,7 +16,7 @@ import solutions.aon.seg.social.exceptions.CSSParseException;
 import solutions.aon.seg.social.exceptions.InternalException;
 import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
+import solutions.aon.seg.social.exceptions.invaliddata.InvalidDataException;
 
 public class HtmlUnitToolkit {
 

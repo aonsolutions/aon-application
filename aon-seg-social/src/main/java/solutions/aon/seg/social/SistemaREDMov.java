@@ -27,7 +27,7 @@ import solutions.aon.seg.social.exceptions.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.StatusCodeException;
-import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
+import solutions.aon.seg.social.exceptions.invaliddata.InvalidDataException;
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;

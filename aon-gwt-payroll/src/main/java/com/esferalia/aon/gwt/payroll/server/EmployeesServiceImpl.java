@@ -166,12 +166,13 @@ import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.gwt.payroll.util.JooqEnterpriseSalaryBuilder;
-import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayroll;
-import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
+import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Settle;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -235,6 +236,7 @@ import com.esferalia.aon.salary.bonus.Bonuses;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.cost.Costs;
 import com.esferalia.aon.salary.deduction.Deductions;
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -252,6 +254,7 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.ReportUtils;
@@ -267,7 +270,7 @@ import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaREDMov;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
+import solutions.aon.seg.social.exceptions.invaliddata.DataDoesNotExist;
 import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.objects.WorkerLiquidation;
 import solutions.aon.sepe.Contrato;
@@ -1726,6 +1729,47 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	public String getSettleDraftReceipt(String domain, final SalaryDraft draft, String mime)
+			throws IllegalArgumentException {
+
+		try {
+
+			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
+			
+			ISalary salary = getSalary(domain, draft);
+			
+			
+			try {
+				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
+			} catch (SalaryException | CanNotCreatePdfException e) {
+				e.printStackTrace();
+			}
+			
+
+			byte reportByteArray[] = reportOut.toByteArray();
+
+			ByteArrayInputStream reportInput = new ByteArrayInputStream(
+					reportByteArray);
+
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent(mime, reportInput, stringWriter);
+
+			reportOut.close();
+			reportInput.close();
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	
+	
 //	@SuppressWarnings("unchecked")
 //	@Override
 //	public String getSalaryDraftReceipt(String domain, final SalaryDraft draft, String mime)
@@ -4184,7 +4228,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			salary.setContract(contract);
 			
-			// TODO: Calendar ???
 			salary.setIssueYear(ctx.getIssueDate().getYear());
 			salary.setIssueMonth(ctx.getIssueDate().getMonth());
 
@@ -4207,6 +4250,47 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	
+	/**
+	 * Just transpile Isalary to Settle
+	 * @param domain - The domain to search in
+	 * @param draft - The salaryDraft
+	 * @return [Settle] The settle.
+	 */
+	private static Settle getSettle(String domain, SalaryDraft draft) {
+		
+		ISalary salary = getSalary(domain, draft);
+		Settle settle = new Settle();
+		
+		settle.setEmployeeName(salary.getEmployeeName())
+		.setEmployeeCategory(salary.getCategory())
+		.setEmployeeDocument(salary.getEmployeeDocument())
+		.setEmployeeQuoteGroup(salary.getQuoteGroup())
+		.setEmployeeSeniorityDate(salary.getSeniorityDate())
+		.setEnterpriseAddress(salary.getEnterpriseAddress())
+		.setEnterpriseCCC(salary.getCcc())
+		.setEnterpriseDocument(salary.getEnterpriseDocument())
+		.setEnterpriseName(salary.getEnterpriseName())
+		.setEndDate(salary.getEndDate())
+		.setIssueDate(salary.getIssueDate())
+		.setTotalDeduction(salary.getTotalDeduction())
+		.setTotalPayment(salary.getTotalPayment())
+		.setTotalEnterprise(salary.getTotalEnterprise())
+		.setTotalIrpf(salary.getTotalIrpf())
+		.setTotalLiquid(salary.getTotalLiquid());
+		
+		try {
+		    for (IDeduction deduction : salary.getDeductionS()) 
+			    settle.addDeduction((byte) deduction.getType().ordinal(), deduction.getDescription(), deduction.getAmount(), (byte) deduction.getType().ordinal());
+		} catch (SalaryException e) {}
+		
+		try {
+		    for (IPayment payment : salary.getPaymentS()) 
+			settle.addPayment(payment.getName(), payment.getExpression(), payment.getDescription(), payment.getAmount(), 0.00, (byte) payment.getType().ordinal());
+		} catch (SalaryException e) {}
+		
+		return settle;
+	}
 
 	private static com.esferalia.aon.payroll.Salary getSalary( String domain,
 			AgreementDraft draft, int levelId) {
@@ -5916,7 +6000,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			EnterprisePayroll enterprisePayroll = EmployeesServiceHelper.geteEnterprisePayroll("N\u00D3MINA DE EMPRESA", null, getDate(cost).getTime(), salariesProvider);
 			
-			PdfMaker.print_enterprise_payroll(enterprisePayroll, os,Optional.of(new Locale("Es")));
+			PdfMaker.printEnterprisePayroll(enterprisePayroll, os,Optional.of(new Locale("Es")));
 
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);

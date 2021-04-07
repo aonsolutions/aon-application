@@ -30,10 +30,10 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 
 import com.code.aon.common.enumeration.MimeType;
-import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayroll;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayrollEntry;
-import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
+import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
+import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
 import com.esferalia.aon.jooq.tables.Salary;
 import com.esferalia.aon.jooq.tables.Workplace;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
@@ -96,7 +96,7 @@ public class JooqEnterpriseSalaryBuilder {
 			}
 			
 			EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, month, null, subheader, payrolls, map);
-			PdfMaker.print_enterprise_payroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")));
+			PdfMaker.printEnterprisePayroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")));
 		} catch (CanNotCreatePdfException e) {			
 		} catch (IOException e) {}
 	}

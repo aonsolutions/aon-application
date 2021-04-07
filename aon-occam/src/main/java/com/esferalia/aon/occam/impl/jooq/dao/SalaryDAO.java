@@ -8,6 +8,9 @@ import static com.esferalia.aon.jooq.Keys.FK_SALARY_PAYMENT_SALARY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
 import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
@@ -35,6 +38,10 @@ import org.jooq.Record;
 import org.jooq.TableField;
 import org.jooq.lambda.Seq;
 
+import com.esferalia.aon.jooq.tables.Raddress;
+import com.esferalia.aon.jooq.tables.RdirStaff;
+import com.esferalia.aon.jooq.tables.Registry;
+import com.esferalia.aon.jooq.tables.SalaryData;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -44,6 +51,8 @@ import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.SalaryProperties;
+import com.esferalia.aon.occam.api.model.Settle;
+import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -387,6 +396,176 @@ public class SalaryDAO {
 
 	}
 
+	/**
+	 * Get Settles from database
+	 * @param ctx		- Context 
+	 * @param filter	- The filter to apply
+	 * @param supplier	- Supplier
+	 * @return [Stream of Settles] The settles that fit the filter
+	 */
+	public static Stream<Settle> getSettles(AONContext ctx,
+			SalaryFilter filter, Supplier<Settle> supplier) {
+
+		Condition conditions[] = SALARY_PROPERTIES.getConditions(filter);
+
+		if (ctx == null) {
+			List<Settle> emptyList = Collections.emptyList();
+			return emptyList.stream();
+		}
+
+		//@formatter:off
+		Cursor<Record> rootCursor = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.leftJoin(RDIR_STAFF)
+		.on(SALARY.DOMAIN.eq(RDIR_STAFF.DOMAIN))
+		.leftJoin(SALARY_DATA)
+		.on(SALARY_DATA.SALARY.eq(SALARY.ID).and(SALARY_DATA.NAME.eq("CAUSA_INDEMNIZACION")))
+		.leftJoin(REGISTRY)
+		.on(REGISTRY.DOCUMENT.eq(SALARY.ENTERPRISE_DOCUMENT))
+		.leftJoin(RADDRESS)
+		.on(RADDRESS.REGISTRY.eq(REGISTRY.ID))
+		.where(conditions)
+		.orderBy(SALARY.ID)
+		.fetchLazy();
+		//@formatter:on
+
+		//@formatter:off
+		Cursor<Record> deductionCursor = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.join(SALARY_DEDUCTION)
+		.onKey(FK_SALARY_DEDUCTION_SALARY)
+		.where(conditions)
+		.orderBy(SALARY_DEDUCTION.SALARY)
+		.fetchLazy();
+		//@formatter:on
+
+		//@formatter:off
+		Cursor<Record> paymentCursor = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.join(SALARY_PAYMENT)
+		.onKey(FK_SALARY_PAYMENT_SALARY)
+		.where(conditions)
+		.orderBy(SALARY_PAYMENT.SALARY)
+		.fetchLazy();
+		//@formatter:on
+		
+		Cursor<Record> embargoCursor = 
+				ctx.getDslContext()
+				.select()
+				.from(SALARY)
+				.join(SALARY_EMBARGO)
+				.onKey()
+				.where(conditions)
+				.orderBy(SALARY_EMBARGO.SALARY)
+				.fetchLazy();
+
+		BackIterator<Record> paymentIter = new BackIterator<>(paymentCursor.iterator());
+		BackIterator<Record> deductionIter = new BackIterator<>(deductionCursor.iterator());
+		BackIterator<Record> embargoIter = new BackIterator<>(embargoCursor.iterator());
+
+		//@formatter:off
+		return Seq.seq(rootCursor)
+				.map(rootRecord-> {
+				Salary salary = supplier.get()
+				.setId(rootRecord.get(SALARY.ID))		
+				.setStartDate(rootRecord.get(SALARY.START_DATE))
+				.setEndDate(rootRecord.get(SALARY.END_DATE))
+				.setIssueDate(rootRecord.get(SALARY.ISSUE_DATE))
+				.setSalaryDays(rootRecord.get(SALARY.TIME_UNITS))
+				.setEmployeeName(rootRecord.get(SALARY.EMPLOYEE_NAME))
+				.setEnterpriseCCC(rootRecord.get(SALARY.CCC))
+				.setEnterpriseName(rootRecord.get(SALARY.ENTERPRISE_NAME))
+				.setEnterpriseDocument(rootRecord.get(SALARY.ENTERPRISE_DOCUMENT))
+				.setIrpfBase(rootRecord.get(SALARY.IRPF_BASE))
+				.setEmployeeDocument(rootRecord.get(SALARY.EMPLOYEE_DOCUMENT))
+				.setTotalLiquid(rootRecord.get(SALARY.TOTAL_LIQUID))
+				.setTotalPayment(rootRecord.get(SALARY.TOTAL_PAYMENT))
+				.setTotalIrpf(rootRecord.get(SALARY.TOTAL_IRPF))
+				.setTotalDeduction(rootRecord.get(SALARY.TOTAL_DEDUCTION))
+				.setCommonContingenciesBase(rootRecord.get(SALARY.CGC_BASE))
+				.setProfessionalContingenciesBase(rootRecord.get(SALARY.CGP_BASE))
+				.setIrpfBase(rootRecord.get(SALARY.IRPF_BASE))
+				.setMoneyIrpfBase(rootRecord.get(SALARY.MONEY_IRPF_BASE))
+				.setInkindIrpfBase(rootRecord.get(SALARY.INKIND_IRPF_BASE))
+				.setTotalEnterprise(rootRecord.get(SALARY.TOTAL_ENTERPRISE))
+				.setTotalSSContributions(rootRecord.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS))
+				.setEmployeeSeniorityDate(rootRecord.get(SALARY.SENIORITY_DATE))
+				.setEnterpriseAddress(rootRecord.get(SALARY.ENTERPRISE_ADDRESS))
+				.setEmployeeSSNumber(rootRecord.get(SALARY.SOCIAL_SECURITY_NUMBER))
+				.setEmployeeCategory(rootRecord.get(SALARY.CATEGORY))
+				.setSalaryType(rootRecord.get(SALARY.TYPE))
+				.setEmployeeQuoteGroup(rootRecord.get(SALARY.QUOTE_GROUP))
+				.setRemuneration(rootRecord.get(SALARY.REMUNERATION))
+				.setExtraProrationBase(rootRecord.get(SALARY.PRO_EXT_BASE))
+				;
+				
+				int salaryId = rootRecord.get(SALARY.ID);
+		
+				Seq.limitWhile(
+				Seq.skipUntil(Seq.seq(paymentIter), 
+				r -> r.get(SALARY_PAYMENT.SALARY) >= salaryId ),
+				r -> r.get(SALARY_PAYMENT.SALARY) == salaryId )
+				.forEachOrdered(paymentRecord->{
+					salary.addPayment(
+							paymentRecord.get(SALARY_PAYMENT.PAYMENT_CONCEPT), 
+							paymentRecord.get(SALARY_PAYMENT.EXPRESSION), 
+							paymentRecord.get(SALARY_PAYMENT.DESCRIPTION), 
+							paymentRecord.get(SALARY_PAYMENT.AMOUNT),
+							paymentRecord.get(SALARY_PAYMENT.QUOTE),
+							paymentRecord.get(SALARY_PAYMENT.TYPE)
+							);
+				}
+				);
+				paymentIter.back();
+
+				Seq.limitWhile(
+				Seq.skipUntil(Seq.seq(deductionIter), 
+				r -> r.get(SALARY_DEDUCTION.SALARY) >= salaryId ),
+				r -> r.get(SALARY_DEDUCTION.SALARY) == salaryId )
+				.forEachOrdered(deductionRecord->{
+					salary.addDeduction(
+							deductionRecord.get(SALARY_DEDUCTION.TYPE), 
+							deductionRecord.get(SALARY_DEDUCTION.DESCRIPTION), 
+							deductionRecord.get(SALARY_DEDUCTION.AMOUNT),
+							deductionRecord.get(SALARY_DEDUCTION.TYPE)
+							);
+				}
+				);
+				deductionIter.back();
+				
+				Seq.limitWhile(
+				Seq.skipUntil(Seq.seq(embargoIter), 
+				r -> r.get(SALARY_EMBARGO.SALARY) >= salaryId ),
+				r -> r.get(SALARY_EMBARGO.SALARY) == salaryId )
+				.forEachOrdered(embargoRecord ->
+					salary.addEmbargo(
+							embargoRecord.get(SALARY_EMBARGO.DESCRIPTION),
+							embargoRecord.get(SALARY_EMBARGO.AMOUNT)
+							)
+				);
+				embargoIter.back();
+
+				Settle settle = new Settle();
+				settle.fillWithSalary(salary);
+				
+				settle.setRepresentativeName(rootRecord.get(RDIR_STAFF.NAME));
+				settle.setRepresentativeDocument(rootRecord.get(RDIR_STAFF.DOCUMENT));
+				settle.setCause(rootRecord.get(SALARY_DATA.EXPRESSION));
+				settle.setLocation(rootRecord.get(RADDRESS.CITY));
+				
+				return settle;
+				}
+		);
+		//@formatter:on
+
+	}
+	
 	public static Stream<Salary> getContractData(AONContext ctx, SalaryFilter filter, Supplier<Salary> supplier){
 		Condition conditions[] = SALARY_PROPERTIES.getConditions(filter);
 		

@@ -9,11 +9,11 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import solutions.aon.seg.social.SistemaRED_Secondary_User;
+import solutions.aon.seg.social.SistemaREDSecondaryUser;
 import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.StatusCodeException;
-import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
+import solutions.aon.seg.social.exceptions.invaliddata.InvalidDataException;
 import solutions.aon.seg.social.objects.SecondaryUser;
 
 public class TestSecondaryUsers {
@@ -22,7 +22,7 @@ public class TestSecondaryUsers {
 	public void getSecondaryUserCertificateTest() {
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			SistemaRED_Secondary_User.getSecondaryUserByIpf(certificateInputStream, "jg@FNMTT", "pkcs12", "x");
+			SistemaREDSecondaryUser.getSecondaryUserByIpf(certificateInputStream, "jg@FNMTT", "pkcs12", "x");
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidCertificateException e) {}
@@ -36,7 +36,7 @@ public class TestSecondaryUsers {
 	public void getSecondaryUserIpfTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			SistemaRED_Secondary_User.getSecondaryUserByIpf(certificateInputStream, "jg@FNMT", "pkcs12", "X");
+			SistemaREDSecondaryUser.getSecondaryUserByIpf(certificateInputStream, "jg@FNMT", "pkcs12", "X");
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidDataException e) {}
@@ -50,7 +50,7 @@ public class TestSecondaryUsers {
 	public void getSecondaryUserIpfEmptyTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			SistemaRED_Secondary_User.getSecondaryUserByIpf(certificateInputStream, "jg@FNMT", "pkcs12", null);
+			SistemaREDSecondaryUser.getSecondaryUserByIpf(certificateInputStream, "jg@FNMT", "pkcs12", null);
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidDataException e) {}
@@ -64,7 +64,7 @@ public class TestSecondaryUsers {
 	public void getSecondaryUserContentTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			assertTrue(SistemaRED_Secondary_User.getSecondaryUserByIpf(certificateInputStream, "jg@FNMT", "pkcs12", "0Y7514970X") instanceof SecondaryUser);
+			assertTrue(SistemaREDSecondaryUser.getSecondaryUserByIpf(certificateInputStream, "jg@FNMT", "pkcs12", "0Y7514970X") instanceof SecondaryUser);
 		}
 		catch (StatusCodeException e) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
@@ -78,7 +78,7 @@ public class TestSecondaryUsers {
 	public void getSecondaryUsersCertificateTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			SistemaRED_Secondary_User.getSecondaryUsers(certificateInputStream, "jg@FNMT", "pkcs12_");
+			SistemaREDSecondaryUser.getSecondaryUsers(certificateInputStream, "jg@FNMT", "pkcs12_");
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidCertificateException e) {}
@@ -92,7 +92,7 @@ public class TestSecondaryUsers {
 	public void getSecondaryUsersContentTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			assertTrue(SistemaRED_Secondary_User.getSecondaryUsers(certificateInputStream, "jg@FNMT", "pkcs12").size() != 0);
+			assertTrue(SistemaREDSecondaryUser.getSecondaryUsers(certificateInputStream, "jg@FNMT", "pkcs12").size() != 0);
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidCertificateException e) {}
@@ -107,7 +107,7 @@ public class TestSecondaryUsers {
 	public void registerSecondaryUsersCertificateTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			SistemaRED_Secondary_User.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT_", "pkcs12","1","x","x");
+			SistemaREDSecondaryUser.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT_", "pkcs12","1","x","x");
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidCertificateException e) {}
@@ -121,7 +121,7 @@ public class TestSecondaryUsers {
 	public void registerSecondaryUsersNieTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			SistemaRED_Secondary_User.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","1","x","x");
+			SistemaREDSecondaryUser.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","1","x","x");
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidDataException e) {}
@@ -135,7 +135,7 @@ public class TestSecondaryUsers {
 	public void registerSecondaryUsersNieEmptyTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			SistemaRED_Secondary_User.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","1","","x");
+			SistemaREDSecondaryUser.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","1","","x");
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidDataException e) {}
@@ -149,7 +149,7 @@ public class TestSecondaryUsers {
 	public void registerSecondaryUsersNafEmptyTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
-			SistemaRED_Secondary_User.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","1","x","");
+			SistemaREDSecondaryUser.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","1","x","");
 		}
 		catch (StatusCodeException e) {}
 		catch (InvalidDataException e) {}

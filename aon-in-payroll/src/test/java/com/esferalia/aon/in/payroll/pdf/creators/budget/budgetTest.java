@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
-import com.esferalia.aon.in.payroll.pdf.creators.budget.beans.Budget;
-import com.esferalia.aon.in.payroll.pdf.creators.budget.beans.Budget_item;
-import com.esferalia.aon.in.payroll.pdf.creators.budget.beans.Client_data;
-import com.esferalia.aon.in.payroll.pdf.creators.budget.beans.Term;
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.in.payroll.pdf.maker.budget.beans.Budget;
+import com.esferalia.aon.in.payroll.pdf.maker.budget.beans.Budget_item;
+import com.esferalia.aon.in.payroll.pdf.maker.budget.beans.Client_data;
+import com.esferalia.aon.in.payroll.pdf.maker.budget.beans.Term;
 
 public class budgetTest {
 
@@ -39,7 +39,7 @@ public class budgetTest {
 
 		Budget budget = new Budget("2018/000012/0", client, products, terms, 99.99, 99.99, 99.99, 99.99, 99.99);
 
-		try {PdfMaker.print_budget(new FileOutputStream("./budget.pdf"), budget);}
+		try {PdfMaker.printBudget(new FileOutputStream("./budget.pdf"), budget);}
 		catch (Exception e) {
 			e.printStackTrace();
 			fail("Unexpected exception " + e);

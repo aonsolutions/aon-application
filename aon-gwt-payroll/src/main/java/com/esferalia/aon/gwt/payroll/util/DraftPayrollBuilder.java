@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.util;
 
+import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionPDFType;
+import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionTypeDescription;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,15 +17,15 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.settings.PdfFonts;
-import com.esferalia.aon.in.payroll.pdf.Pdf_API.toolkit.PDFToolkit;
-import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.DefaultPayrollTemplate;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases.Contingency_bases_builder;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll.DefaultPayrollBuilder;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Accrual;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Deduction;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
+import com.esferalia.aon.in.payroll.pdf.api.settings.PdfFonts;
+import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
+import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Accrual;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Deduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.PayrollTypes;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Contingency_bases.Contingency_bases_builder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -43,7 +46,7 @@ public class DraftPayrollBuilder {
 	 * @throws SalaryException
 	 */
 	public static void generatePayroll (OutputStream outputStream, String domainName, ISalary salary) throws CanNotCreatePdfException, SalaryException {
-		DefaultPayrollTemplate dpt = new DefaultPayrollTemplate();
+		PayrollTemplate dpt = new PayrollTemplate();
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
 		
 		
@@ -124,7 +127,7 @@ public class DraftPayrollBuilder {
 					String description = p.getDescription().replaceAll("\\[\\d*\\]", "");
 					if (description.length() > 50) {
 						try {
-							description = PDFToolkit.cropped_string(description, 260, PdfFonts.HELVETICA, 9f);
+							description = PDFToolkit.croppedString(description, 260, PdfFonts.HELVETICA, 9f);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}	
@@ -157,65 +160,11 @@ public class DraftPayrollBuilder {
 						percent = Double.parseDouble(d.getDescription().replaceAll("\\s", "").replaceAll("%", ""));
 					} catch (NumberFormatException e) {}
 					
-					int type = 0;
-					switch (d.getType().ordinal()) {
-					case 0:
-					case 1:
-					case 2:
-					case 3:
-					case 4:
-					case 5:
-						type = 1;
-						break;
-					case 6:
-						type = 2;
-						break;
-					case 7:
-						type = 3;
-						break;
-					case 8:
-						type = 4;
-						break;
-					default:
-						type = 5;
-					}
+					int type = getDeductionPDFType(d.getType().ordinal());
+					String desc = d.getType().getName(new Locale("es"));
 					
-					String desc =d.getType().getName(new Locale("es"));
-					
-					if(desc == null || desc.isEmpty()) {
-						switch (d.getType().ordinal()) {
-						case 0:
-							desc = "Contingencias comunes";
-							break;
-						case 2:
-							desc = "Desempleo";
-							break;
-						case 3:
-							desc = "Formación profesional";
-							break;
-						case 4:
-							desc = "Horas extraordinarias (Estruc.)";
-							break;
-						case 5:
-							desc = "Horas extraordinarias (No Estruc.)";
-							break;
-						case 6:
-							desc = "Retribuciones dinerarias";
-							break;
-						case 7:
-							desc = "Anticipo";
-							break;
-						case 8:
-							desc = "En especie";
-							break;
-						case 10:
-							desc = "Embargo";
-							break;
-						default:
-							desc = "Otras deducciones";
-					}
-					}
-					
+					if(desc == null || desc.isEmpty()) 
+						desc = getDeductionTypeDescription(d.getType().ordinal());
 					
 					Deduction deduction = new Deduction(d.getAmount(), desc, percent);
 					

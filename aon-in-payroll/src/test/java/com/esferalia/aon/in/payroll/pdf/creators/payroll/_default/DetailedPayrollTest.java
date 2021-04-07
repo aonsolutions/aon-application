@@ -13,13 +13,13 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
-import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.Contingency_bases.Contingency_bases_builder;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll._default.beans.DefaultPayroll.DefaultPayrollBuilder;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Accrual;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.Deduction;
-import com.esferalia.aon.in.payroll.pdf.creators.payroll.commons.PayrollTypes;
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Accrual;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Deduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.PayrollTypes;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Contingency_bases.Contingency_bases_builder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll.DefaultPayrollBuilder;
 
 public class DetailedPayrollTest {
 	
@@ -124,7 +124,7 @@ public class DetailedPayrollTest {
 		
 		try { 
 			System.out.println(" Printing PDF file..... \n");
-			PdfMaker.print_default_payroll(new ByteArrayOutputStream(), builder.build(), DetailedPayrollTest.class.getResourceAsStream("logo.png"),new Locale("Es"));
+			PdfMaker.printDefaultPayroll(new ByteArrayOutputStream(), builder.build(), DetailedPayrollTest.class.getResourceAsStream("logo.png"),new Locale("Es"));
 			System.out.println(" >> DONE.");
 		} 
 		catch (CanNotCreatePdfException e) {

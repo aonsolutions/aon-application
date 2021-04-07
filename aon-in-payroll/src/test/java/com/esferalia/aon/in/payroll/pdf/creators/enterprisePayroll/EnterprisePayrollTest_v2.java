@@ -12,11 +12,11 @@ import java.util.Optional;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.esferalia.aon.in.payroll.pdf.creators.PdfMaker;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayroll;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayrollEntry;
-import com.esferalia.aon.in.payroll.pdf.creators.enterprise_payroll.beans.EnterprisePayrollEntry.EnterpriseEntryType;
-import com.esferalia.aon.in.payroll.pdf.creators.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
+import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
+import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry.EnterpriseEntryType;
+import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
 import com.github.javafaker.Faker;
 
 public class EnterprisePayrollTest_v2 {
@@ -119,7 +119,7 @@ public class EnterprisePayrollTest_v2 {
 			ss_entries.put(f.pokemon().location(),categoria6);
 
 			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", f.zelda().game() + " S.L",	entries, ss_entries);
-			PdfMaker.print_enterprise_payroll(payroll,new FileOutputStream("ListadoCostesPDF.pdf"),Optional.of(new Locale("Es")));
+			PdfMaker.printEnterprisePayroll(payroll,new FileOutputStream("ListadoCostesPDF.pdf"),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {
 			e.printStackTrace();
@@ -181,7 +181,7 @@ public class EnterprisePayrollTest_v2 {
 			ss_entries.put("Bilbao",categoria6);
 
 			EnterprisePayroll payroll = new EnterprisePayroll(null, new Date(), "NÓMINA EMPRESA", "AON SOLUTIONS S.L",	entries, ss_entries);
-			PdfMaker.print_enterprise_payroll(payroll,new ByteArrayOutputStream(),Optional.of(new Locale("Es")));
+			PdfMaker.printEnterprisePayroll(payroll,new ByteArrayOutputStream(),Optional.of(new Locale("Es")));
 			
 		} catch (IOException | CanNotCreatePdfException e) {
 			e.printStackTrace();

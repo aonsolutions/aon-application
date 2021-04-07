@@ -21,7 +21,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.SistemaRED_ITParts.PartType;
+import solutions.aon.seg.social.SistemaREDITParts.PartType;
 import solutions.aon.seg.social.exceptions.SegSocialException; 
 
 @MultipartConfig
