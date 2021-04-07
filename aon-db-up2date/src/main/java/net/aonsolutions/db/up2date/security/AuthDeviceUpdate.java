@@ -29,13 +29,13 @@ public class AuthDeviceUpdate implements Update {
 		Settings settings = new Settings();
 		settings.setRenderSchema(false);
 		settings.setParamType(ParamType.INLINED);
-		DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
+		DSLContext dslContext = DSL.using(connection, SQLDialect.MYSQL_5_7, settings);
 
 		System.out.println("[START]");
 		System.out.println( "Update table `auth_device`" );
 		try {
 			dslContext.alterTable(DSL.name("auth_device")).alterColumn(DSL.name("device_token")).set(SQLDataType.VARCHAR(255).nullable(true)).execute();
-			dslContext.alterTable(DSL.name("auth_device")).addColumnIfNotExists("last_date", SQLDataType.TIMESTAMP.defaultValue(DSL.currentTimestamp() ) ).execute();
+			dslContext.alterTable(DSL.name("auth_device")).addColumn("last_date", SQLDataType.TIMESTAMP.defaultValue(DSL.currentTimestamp() ) ).execute();
 			System.out.println("[table 'auth_device' Update!]");
 		} catch (Throwable t) {
 			System.out.println("[table 'auth_device' NOT Update!] " + t.getMessage());
