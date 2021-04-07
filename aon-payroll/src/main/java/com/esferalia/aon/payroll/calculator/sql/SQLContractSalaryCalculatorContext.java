@@ -24,6 +24,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.DELAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BACK;
@@ -159,7 +160,6 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.EnterpriseData;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
@@ -4078,6 +4078,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		this.implicitExpressionContext.setVariable(EFECTIVE_START,
 				contractStartDate, startDate, getEnd());
+		this.implicitExpressionContext.setVariable(EFECTIVE_END,
+				contractEndDate, startDate, getEnd());
 
 		if (!this.implicitExpressionContext.containsVariable(SENIORITY, startDate, getEnd()))
 			this.implicitExpressionContext.putVariable(SENIORITY, new ActiveTimedVariable<Integer>() {

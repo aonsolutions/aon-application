@@ -2,13 +2,12 @@ package com.esferalia.aon.payroll.calculator;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
-import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DAY_OF_MONTH;
@@ -599,7 +598,16 @@ public class ContractLeaveLoader {
 		} catch (Exception e) {
 		}
 
-//		try {
+		try {
+			ITimedVariable<?> efectiveEnd = ctx.getVariable(EFECTIVE_END, p.getStart(), p.getEnd());
+			Date end = efectiveEnd.getPeriod().getEnd();
+			Date value = ( Date ) efectiveEnd.getValue(efectiveEnd.getPeriod());
+			if ( value.before(end) )
+				return days;
+		} catch (Exception e) {
+		}
+
+		//		try {
 //			if (!ctx.getVariable(FULL_TIME, p.getStart(), p.getEnd(), Boolean.class))
 //				return days;
 //		} catch (Exception e) {
