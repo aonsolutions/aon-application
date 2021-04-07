@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
@@ -16,6 +17,7 @@ import com.esferalia.aon.occam.api.model.IIbanContainer;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
@@ -50,7 +52,7 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 	protected IFiscalModelCallback<T> callback;
 	protected int row = 0;
 	
-	public FinishDeclarationPopup(final IFiscalModelCallback<T> callback) {
+	public FinishDeclarationPopup(final IFiscalModelCallback<T> callback, final AonData aonData) {
 		this.callback = callback;
 		setCaption(AON.MSG.finish());
 		setGlassEnabled(true);
@@ -58,7 +60,7 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 		initializeTable();
 		paintResul();
 		paintDeclarationType();
-		paintButtons();
+		paintButtons(aonData);
 		add(tab);
 	}
 
@@ -176,7 +178,7 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 		
 	}
 	
-	private void paintButtons() {
+	private void paintButtons(final AonData aonData) {
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		FlowPanel flowPanel = new FlowPanel();
@@ -194,8 +196,25 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 				callback.onAccept();
 			}
 		});
-		
 		flowPanel.add(acceptButton);
+		
+		if (aonData != null && aonData.isCustomerCheckEnabled() && callback.getFiscalModel().getStatus() != FiscalStatus.CUSTOMER_CHECK)  {
+			Button customerCheckButton = new Button();
+			customerCheckButton.setStyleName(AON.AON_CSS.aonConfirmDialogCustomerCheckButton());
+			customerCheckButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+			customerCheckButton.setText( AON.MSG.customerCheckAction());
+			customerCheckButton.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					hide();
+					callback.onCustomerCheck();;
+				}
+				
+			});
+			flowPanel.add(customerCheckButton);
+		}
+		
 		Button cancelButton = new Button();
 		cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
 		cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());

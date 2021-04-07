@@ -20,6 +20,7 @@ public interface Mod130ServiceAsync {
 	void markAsFinished(String domainName, String user, Mod130 mod130,AsyncCallback<Mod130> asyncCallback);
 	void markAsSent(String domainName, String user, Mod130 mod130,AsyncCallback<Mod130> asyncCallback);
 	void markAsPending(String domainName, String user, Mod130 mod130,AsyncCallback<Mod130> asyncCallback);
+	void markAsCustomerCheck(String domainName, String user, Mod130 mod130,AsyncCallback<Mod130> asyncCallback);
 	void initialize(String domainName, String user, int domain, Mod130 mod130,AsyncCallback<Mod130> asyncCallback);
 	void create(String domainName, String user, int domain, Mod130 mod130, AsyncCallback<Mod130> callback);
 	void getInfo(String domainName, String user, int domain, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);

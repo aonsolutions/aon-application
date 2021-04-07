@@ -64,7 +64,10 @@ public class AppParamDAO {
 		,FS_CONCTACT_MAIL("FS_CONCTACT_MAIL", 
 			(params, value) -> params.setContactMail(value))
 		,FS_MOD303_BY_DIFFERENCE_DISABLED("FS_MOD303_BY_DIFFERENCE_DISABLED", 
-			(params, value) -> params.setMod303ByDifferenceDisabled(Boolean.parseBoolean(value) || AonStringUtils.equals(value, AonStringUtils.ONE)));
+			(params, value) -> params.setMod303ByDifferenceDisabled(Boolean.parseBoolean(value) || AonStringUtils.equals(value, AonStringUtils.ONE)))
+		,FS_CUSTOMER_CHECK_ENABLED("FS_CUSTOMER_CHECK_ENABLED", 
+				(params, value) -> params.setCustomerCheckEnabled(Boolean.parseBoolean(value) || AonStringUtils.equals(value, AonStringUtils.ONE)));
+		;
 
 		private String name;
 		private IFiscalParamsFiller filler;

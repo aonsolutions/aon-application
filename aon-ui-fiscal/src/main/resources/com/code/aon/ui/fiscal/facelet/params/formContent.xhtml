@@ -68,6 +68,9 @@
 				<f:selectItem itemValue="2021" itemLabel="2021" />
 				<f:selectItem itemValue="2022" itemLabel="2022" />
 				<f:selectItem itemValue="2023" itemLabel="2023" />
+				<f:selectItem itemValue="2024" itemLabel="2024" />
+				<f:selectItem itemValue="2025" itemLabel="2025" />
+				<f:selectItem itemValue="2026" itemLabel="2026" />
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="default_administration"
@@ -124,6 +127,15 @@
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="default_perm_addr_changes"
 					value="#{bundle.fiscal_perm_addr_changes}" />
+			</aon:div>
+
+			<aon:outputText value="&#160;" />
+			<aon:div>
+				<aon:selectBooleanCheckbox id="default_customer_check_enabled"
+					value="#{fiscalParams.fiscalCustomerCheckEnabled}">
+				</aon:selectBooleanCheckbox>
+				<aon:outputLabel for="default_customer_check_enabled"
+					value="#{bundle.fiscal_customer_check_enabled}" />
 			</aon:div>
 		</aon:panelGrid>
 

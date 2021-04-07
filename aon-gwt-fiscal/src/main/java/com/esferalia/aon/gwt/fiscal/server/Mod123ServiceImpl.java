@@ -71,6 +71,10 @@ public class Mod123ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public Mod123 markAsSent(String domainName, String userLogin, Mod123 mod123) {
 		return FISCAL.markAsSent(domainName, userLogin, mod123);
 	}
+	@Override
+	public Mod123 markAsCustomerCheck(String domainName, String userLogin, Mod123 mod123) throws AonCoreException {
+		return FISCAL.markAsCustomerCheck(domainName, userLogin, mod123);
+	}
 
 	@Override
 	public Mod123 markAsPending(String domainName, String userLogin, Mod123 mod123) {

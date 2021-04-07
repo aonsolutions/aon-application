@@ -71,7 +71,12 @@ public class Mod115ServiceAsyncDecorator implements Mod115ServiceAsync {
 		AON.start();
 		fsa.markAsSent(domainName, user, mod115, new AsyncCallbackWrapper<Mod115>(callback));
 	}
-
+	@Override
+	public void markAsCustomerCheck(String domainName, String user, Mod115 mod115, AsyncCallback<Mod115> callback) {
+		AON.start();
+		fsa.markAsCustomerCheck(domainName, user, mod115, new AsyncCallbackWrapper<Mod115>(callback));
+	}
+	
 	@Override
 	public void initialize(String domainName, String user, int currentDomain, Mod115 mod115, AsyncCallback<Mod115> callback) {
 		AON.start();

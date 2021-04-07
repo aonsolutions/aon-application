@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.CreditorBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
@@ -17,6 +18,7 @@ import com.esferalia.aon.occam.api.model.IIbanContainer;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -53,17 +55,18 @@ public class FinishDeclarationPopup extends CustomDialog {
 	public static interface FinishDeclarationPopupCallback {
 		public void onAccept();
 		public void onCancel();
+		public void onCustomerCheck();
 	}
 
 	final protected FlexTable tab = new FlexTable();
 	protected int row = 0;
 	
-	public FinishDeclarationPopup(final Mod303 mod303 ,final IModel303Callback callback,FinishDeclarationPopupCallback popupCallback) {
+	public FinishDeclarationPopup(final Mod303 mod303 ,final AonData aonData, final IModel303Callback callback,FinishDeclarationPopupCallback popupCallback) {
 		setCaption(AON.MSG.finish());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		initializeTable();
-
+		
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.fiscalDebt()));
 		tab.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
@@ -184,8 +187,25 @@ public class FinishDeclarationPopup extends CustomDialog {
 				popupCallback.onAccept();
 			}
 		});
-		
 		flowPanel.add(acceptButton);
+		
+		if (aonData != null && aonData.isCustomerCheckEnabled() && mod303.getStatus() != FiscalStatus.CUSTOMER_CHECK)  {
+			Button customerCheckButton = new Button();
+			customerCheckButton.setStyleName(AON.AON_CSS.aonConfirmDialogCustomerCheckButton());
+			customerCheckButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+			customerCheckButton.setText( AON.MSG.customerCheckAction());
+			customerCheckButton.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					hide();
+					popupCallback.onCustomerCheck();;
+				}
+				
+			});
+			flowPanel.add(customerCheckButton);
+		}
+
 		Button cancelButton = new Button();
 		cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
 		cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());

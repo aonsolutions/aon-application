@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.model;
 
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 
 public interface IFiscalModelCallback<T extends FiscalModel> {
@@ -15,6 +16,7 @@ public interface IFiscalModelCallback<T extends FiscalModel> {
 
 	void onAccept();
 	void onCancel();
+	void onCustomerCheck();
 	
 	void showErrorMsg(String msg);
 	void showVisorAEAT();

@@ -20,11 +20,13 @@ public interface Mod111ServiceAsync {
 	void markAsFinished(String domainName, String userLogin, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
 	void markAsPending(String domainName, String userLogin, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
 	void markAsSent(String domainName, String userLogin, Mod111 mod111, AsyncCallback<Mod111> asyncCallback);
+	void markAsCustomerCheck(String currentDomainName, String currentUser, Mod111 currentMod, AsyncCallback<Mod111> asyncCallback);
 	void initialize(String domainName, String userLogin, int domain, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
 	void create(String domainName, String userLogin, int domain, Mod111 mod111, AsyncCallback<Mod111> callback);
 	void getInfo(String domainName, String userLogin, int domain, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 	void mathExpression(String expression, AsyncCallback<Double> callback );
 	void validationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback);
 	void presentationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback);
+	
 	
 }

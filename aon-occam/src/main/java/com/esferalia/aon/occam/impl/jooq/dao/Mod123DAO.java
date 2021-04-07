@@ -544,6 +544,12 @@ public class Mod123DAO extends FiscalModelDAO {
 		return mod123;
 	}
 
+	public static Mod123 markAsCustomerCheck(AONContext ctx,Mod123 mod123) {
+		mod123.setStatus(FiscalStatus.CUSTOMER_CHECK);
+		mod123 = saveMod123(ctx, mod123);
+		return mod123;
+	}
+
 	private static Stream<FiscalModel> getMod123EffectivePreviousModels(AONContext ctx,FiscalModel fiscalModel) {
 		if (fiscalModel.isBizkaia()) {
 			LinkedList<FiscalModel> previousModels = getPreviousModels(ctx, fiscalModel) .collect(Collectors.toCollection(LinkedList::new));

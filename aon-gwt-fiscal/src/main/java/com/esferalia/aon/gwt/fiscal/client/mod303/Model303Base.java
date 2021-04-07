@@ -116,12 +116,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		public int getDomain() {
 			return this.callback.getDomain();
 		}
-
-//		@Override
-//		public void onTransfer() {
-//			this.callback.onTransfer();
-//		}
-
 	};
 
 	protected static final String DOWNLOAD_FILE_ACTION = "/aon_gwt_fiscal/ms/Model303File";
@@ -445,9 +439,11 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				(mod303.getStatus() == FiscalStatus.FINISHED 
 				|| mod303.getStatus() == FiscalStatus.BATCHED
 				|| mod303.getStatus() == FiscalStatus.SENT
+				|| mod303.getStatus() == FiscalStatus.CUSTOMER_CHECK
 				|| mod303.getStatus() == FiscalStatus.BLOCKED));
 		markAsFinishedButton.setVisible(!mod303.isNew() &&
-				(mod303.getStatus() == FiscalStatus.PENDING 
+				(mod303.getStatus() == FiscalStatus.PENDING
+				|| mod303.getStatus() == FiscalStatus.CUSTOMER_CHECK
 				|| mod303.getStatus() == FiscalStatus.MISSING));
 		markAsSentButton.setVisible(!mod303.isNew() &&
 				(mod303.getStatus() == FiscalStatus.FINISHED));
@@ -1042,7 +1038,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
-						showFinalizePopup();
+						showFinalizePopup( getAonData() );
 						markAsFinishedButton.setEnabled(true);
 					}
 	
@@ -1054,8 +1050,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				});
 	}
 	
-	private void showFinalizePopup() {
-		FinishDeclarationPopup finalizeDialog = new FinishDeclarationPopup(this.mod303, getCallback(), new FinishDeclarationPopupCallback() {
+	private void showFinalizePopup(final AonData aonData) {
+		FinishDeclarationPopup finalizeDialog = new FinishDeclarationPopup(this.mod303, aonData, getCallback(), new FinishDeclarationPopupCallback() {
 			@Override
 			public void onCancel() {}
 			
@@ -1063,11 +1059,43 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			public void onAccept() {
 				finish();
 			}
+			@Override
+			public void onCustomerCheck() {
+				markAsCustomerCheck();
+			}
 		});
 		finalizeDialog.center();
 		finalizeDialog.show();
 	}
 	
+	private void markAsCustomerCheck() {
+		markAsFinishedButton.setEnabled(false);
+		callback.cleanErrorPanel();
+		final PopupPanel popup = new PopupPanel(false, true);
+		Label label = new Label(AON.MSG.processing());
+		label.addStyleName(AON.AON_CSS.aonTimer());
+		popup.add(label);
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		Model303.SERVICE.markAsCustomerCheck(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
+					@Override
+					public void onSuccess(Mod303 result) {
+						selectAndPopulate(result);
+						popup.hide();
+						markAsFinishedButton.setEnabled(true);
+						FiscalModelUtils.paintPaymentInfo(paymentInfo,mod303);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						popup.hide();
+						callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						markAsFinishedButton.setEnabled(true);
+					}
+				});
+	}
+
 	private void finish() {
 		markAsFinishedButton.setEnabled(false);
 		callback.cleanErrorPanel();

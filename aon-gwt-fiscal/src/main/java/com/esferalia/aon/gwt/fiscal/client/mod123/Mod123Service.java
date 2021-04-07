@@ -23,6 +23,7 @@ public interface Mod123Service extends RemoteService {
 	Mod123 markAsFinished(String domainName, String userLogin, Mod123 mod123) throws AonCoreException;
 	Mod123 markAsPending(String domainName, String userLogin, Mod123 mod123) throws AonCoreException;
 	Mod123 markAsSent(String domainName, String userLogin, Mod123 mod123) throws AonCoreException;
+	Mod123 markAsCustomerCheck(String domainName, String userLogin, Mod123 mod123) throws AonCoreException;
 	Mod123 initialize(String domainName, String userLogin, int domain, Mod123 mod123);
 	Mod123 create(String domainName, String userLogin, int domain, Mod123 mod123) throws AonCoreException;
 	String getInfo(String domainName, String userLogin, int domain, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;

@@ -103,6 +103,11 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 
 	@Override
+	public Mod303 markAsCustomerCheck(String domainName, String user, Mod303 mod303) {
+		return FISCAL.markAsCustomerCheck(domainName, mod303, user);
+	}
+
+	@Override
 	public Double mathExpression(String expression) throws AonCoreException {
 		try {
 			return AONMVELUtils.mathExpression(expression);

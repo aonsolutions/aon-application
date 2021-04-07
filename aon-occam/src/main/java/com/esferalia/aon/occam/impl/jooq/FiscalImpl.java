@@ -507,7 +507,12 @@ public class FiscalImpl implements IFiscal {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod303DAO.markAsSent(ctx, mod303));		
 	}
-	
+	@Override
+	public Mod303 markAsCustomerCheckMod303(AONContext ctx, Mod303 mod303) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod303DAO.markAsCustomerCheckMod303(ctx, mod303));		
+	}
+
 	@Override
 	public void deleteMod303(AONContext ctx, Mod303 mod303) {
 		ctx.getDslContext().transaction(
@@ -657,6 +662,12 @@ public class FiscalImpl implements IFiscal {
 	}
 
 	@Override
+	public Mod111 markAsCustomerCheck(AONContext ctx, Mod111 mod111) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod111DAO.markAsCustomerCheck(ctx, mod111));		
+	}
+
+	@Override
 	public void delete(AONContext ctx, Mod111 mod111) {
 		ctx.getDslContext().transaction(
 				configuration -> Mod111DAO.delete(ctx, mod111));
@@ -716,6 +727,13 @@ public class FiscalImpl implements IFiscal {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod115DAO.markAsSent(ctx, mod115));		
 	}
+	
+	@Override
+	public Mod115 markAsCustomerCheck(AONContext ctx, Mod115 mod115) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod115DAO.markAsCustomerCheck(ctx, mod115));		
+	}
+
 	@Override
 	public Mod115 markAsPending(AONContext ctx, Mod115 mod115){
 		return ctx.getDslContext().transactionResult(
@@ -783,6 +801,11 @@ public class FiscalImpl implements IFiscal {
 				configuration -> Mod123DAO.markAsSent(ctx, mod123));		
 	}
 	@Override
+	public Mod123 markAsCustomerCheck(AONContext ctx, Mod123 mod123) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod123DAO.markAsCustomerCheck(ctx, mod123));		
+	}
+	@Override
 	public Mod123 markAsPending(AONContext ctx, Mod123 mod123){
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod123DAO.markAsPending(ctx, mod123));		
@@ -847,6 +870,11 @@ public class FiscalImpl implements IFiscal {
 	public Mod130 markAsSent(AONContext ctx, Mod130 mod130){
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod130DAO.markAsSent(ctx, mod130));		
+	}
+	@Override
+	public Mod130 markAsCustomerCheck(AONContext ctx, Mod130 mod130) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod130DAO.markAsCustomerCheck(ctx, mod130));		
 	}
 	@Override
 	public Mod130 markAsPending(AONContext ctx, Mod130 mod130){
@@ -918,6 +946,11 @@ public class FiscalImpl implements IFiscal {
 	public Mod131 markAsSent(AONContext ctx, Mod131 mod131){
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod131DAO.markAsSent(ctx, mod131));		
+	}
+	@Override
+	public Mod131 markAsCustomerCheck(AONContext ctx, Mod131 mod131){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod131DAO.markAsCustomerCheck(ctx, mod131));		
 	}
 	@Override
 	public Mod131 markAsPending(AONContext ctx, Mod131 mod131){
@@ -995,6 +1028,11 @@ public class FiscalImpl implements IFiscal {
 	public Mod202 markAsSent(AONContext ctx, Mod202 mod202){
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod202DAO.markAsSent(ctx, mod202));		
+	}
+	@Override
+	public Mod202 markAsCustomerCheck(AONContext ctx, Mod202 mod202){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod202DAO.markAsCustomerCheck(ctx, mod202));		
 	}
 	@Override
 	public Mod202 markAsPending(AONContext ctx, Mod202 mod202){

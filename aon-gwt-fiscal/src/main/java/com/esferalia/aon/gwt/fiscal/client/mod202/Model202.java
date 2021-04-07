@@ -12,7 +12,10 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelIdentificationData;
@@ -73,11 +76,13 @@ public class Model202 extends MainEntryPoint {
 	final static int INFORMATION_TAB = 1;
 
 	static Mod202ServiceAsync SERVICE;
+	final FiscalServiceAsync impl = GWT.create(FiscalService.class);	
 	
 	interface Model202Binder extends UiBinder<Widget, Model202> {
 	}
 	private static final Model202Binder MODEL_202_BINDER = GWT
 			.create(Model202Binder.class);
+
 	
 	private static final String MODEL202_PRINT = "/aon_gwt_fiscal/ms/Model202Print";
 	private static final String MODEL202_FILE = "/aon_gwt_fiscal/ms/Model202File";
@@ -89,6 +94,7 @@ public class Model202 extends MainEntryPoint {
 	}
 	
 	private Mod202 currentMod;
+	private AonData aonData;
 	private boolean dirty;
 
 	@UiField
@@ -196,7 +202,10 @@ public class Model202 extends MainEntryPoint {
 		public void showVisorAEAT() {
 			
 		}
-		
+		@Override
+		public void onCustomerCheck() {
+			
+		}
 		@Override
 		public boolean isFinished() {
 			return (currentMod.getStatus() == FiscalStatus.FINISHED);
@@ -245,7 +254,21 @@ public class Model202 extends MainEntryPoint {
 
 	@Override
 	public void onModuleLoad() {
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+
+			@Override public void onFailure(Throwable caught) {}
+			
+			@Override
+			public void onSuccess(AonData aonData) {
+				onModuleLoad(aonData);
+			}
+			
+		});
+	}
+	
+	public void onModuleLoad(AonData aonData) {
 		AON.ensureInjected();
+		this.aonData = aonData;
 
 		Mod202ServiceAsync serviceRaw = GWT.create(Mod202Service.class);
 		SERVICE = new Mod202ServiceAsyncDecorator(serviceRaw);
@@ -321,6 +344,10 @@ public class Model202 extends MainEntryPoint {
 		styleDirtyLabel();
 	}
 	
+	public AonData getAonData() {
+		return this.aonData;
+	}
+
 	private void refreshToolbarState() {
 		
 		boolean updatable = (currentMod.getYear()>= 2017);
@@ -334,11 +361,13 @@ public class Model202 extends MainEntryPoint {
 				(currentMod.getStatus() == FiscalStatus.FINISHED 
 				|| currentMod.getStatus() == FiscalStatus.BATCHED
 				|| currentMod.getStatus() == FiscalStatus.SENT
+				|| currentMod.getStatus() == FiscalStatus.CUSTOMER_CHECK
 				|| currentMod.getStatus() == FiscalStatus.BLOCKED));
 		markAsSentButton.setVisible(updatable && !currentMod.isNew() &&
 				(currentMod.getStatus() == FiscalStatus.FINISHED));
 		markAsFinishedButton.setVisible(updatable && !currentMod.isNew() &&
 				(currentMod.getStatus() == FiscalStatus.PENDING 
+				|| currentMod.getStatus() == FiscalStatus.CUSTOMER_CHECK
 				|| currentMod.getStatus() == FiscalStatus.MISSING));
 		auditButton.setVisible(!currentMod.isNew());
 
@@ -629,6 +658,33 @@ public class Model202 extends MainEntryPoint {
 				});
 	}
 
+	private void markAsCustomerCheck() {
+		markAsFinishedButton.setEnabled(false);
+		cleanErrorMessage();
+		final PopupPanel popup = new PopupPanel(false, true);
+		Label label = new Label(AON.MSG.processing());
+		label.addStyleName(AON.AON_CSS.aonTimer());
+		popup.add(label);
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		SERVICE.markAsCustomerCheck(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod202>() {
+					@Override
+					public void onSuccess(Mod202 result) {
+						select(result);
+						popup.hide();
+						markAsFinishedButton.setEnabled(true);
+						FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						popup.hide();
+						showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						markAsFinishedButton.setEnabled(true);
+					}
+				});
+	}
 
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
@@ -944,11 +1000,15 @@ public class Model202 extends MainEntryPoint {
 				finish();
 			}
 			@Override
+			public void onCustomerCheck() {
+				markAsCustomerCheck();
+			}
+			@Override
 			public void onCancel() {
 				
 			}
 			
-		});
+		},getAonData());
 		finalizeDialog.center();
 		finalizeDialog.show();
 	}

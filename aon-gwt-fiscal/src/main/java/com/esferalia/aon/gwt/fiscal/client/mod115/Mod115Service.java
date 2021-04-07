@@ -22,6 +22,7 @@ public interface Mod115Service extends RemoteService {
 	Mod115 markAsFinished(String domainName, String user, Mod115 mod115) throws AonCoreException;
 	Mod115 markAsPending(String domainName, String user, Mod115 mod115) throws AonCoreException;
 	Mod115 markAsSent(String domainName, String user, Mod115 mod115) throws AonCoreException;
+	Mod115 markAsCustomerCheck(String domainName, String user, Mod115 mod115) throws AonCoreException;
 	void delete(String domainName, String user, Mod115 mod115) throws AonCoreException;
 	Mod115 initialize(String domainName, String user, int domain, Mod115 mod115);
 	Mod115 create(String domainName, String user, int domain, Mod115 mod115) throws AonCoreException;

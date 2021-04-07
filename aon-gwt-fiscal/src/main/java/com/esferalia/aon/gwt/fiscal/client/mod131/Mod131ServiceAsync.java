@@ -22,6 +22,7 @@ public interface Mod131ServiceAsync {
 	void markAsFinished(String domainName, String user, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
 	void markAsSent(String domainName, String user, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
 	void markAsPending(String domainName, String user, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
+	void markAsCustomerCheck(String domainName, String user, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
 	void initialize(String domainName, String user, int domain, Mod131 mod131,AsyncCallback<Mod131> asyncCallback);
 	void create(String domainName, String user, int domain, Mod131 mod131, AsyncCallback<Mod131> callback);
 	void getInfo(String domainName, String user, int domain, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);

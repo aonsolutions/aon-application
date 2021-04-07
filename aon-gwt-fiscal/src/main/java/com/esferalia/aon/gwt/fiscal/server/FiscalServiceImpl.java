@@ -130,6 +130,10 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
 		ApplicationParameter beta = AON.getApplicationParameter(domainName, domainId, login, AppParam.AON_BETA_ENABLED);
 		ApplicationParameter alpha = AON.getApplicationParameter(domainName, domainId, login, AppParam.AON_ALPHA_ENABLED);
+		ApplicationParameter customerCheckEnabled  = AON.getApplicationParameter(domainName, domainId, login, AppParam.FS_CUSTOMER_CHECK_ENABLED);
+		if ( (customerCheckEnabled == null || customerCheckEnabled.getId() == null) && domain!=null && domain.getParentId() != null) {
+			customerCheckEnabled  = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FS_CUSTOMER_CHECK_ENABLED);			
+		}
 		Company company = AON.getCompany(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId));
 		return new AonData().setUser(user)
 				.setMd5(getMd5(user.getLogin()+domain.getName()))
@@ -137,6 +141,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 				.setUserOperator(operator)
 				.setBetaEnabled((beta!=null && Boolean.valueOf(beta.getValue())))
 				.setAlphaEnabled((alpha!=null && Boolean.valueOf(alpha.getValue())))
+				.setCustomerCheckEnabled(customerCheckEnabled!=null && ("1".equals(customerCheckEnabled.getValue()) || Boolean.valueOf(customerCheckEnabled.getValue())))
 				.setCompany(company);
 				
 	}

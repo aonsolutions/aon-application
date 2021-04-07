@@ -21,6 +21,7 @@ public interface Mod202ServiceAsync {
 	void markAsFinished(String domainName,String user, Mod202 mod202, AsyncCallback<Mod202> callback);
 	void markAsSent(String domainName,String user, Mod202 mod202, AsyncCallback<Mod202> callback);
 	void markAsPending(String domainName,String user, Mod202 mod202, AsyncCallback<Mod202> callback);
+	void markAsCustomerCheck(String domainName,String user, Mod202 mod202, AsyncCallback<Mod202> callback);
 	void create(String domainName,String user, int domain, Mod202 mod202, AsyncCallback<Mod202> callback);
 	void getInfo(String domainName,String user, int domain, Mod202 mod202, IModelScript<Mod202Key> script,FiscalModelKeyInfo infoKey, AsyncCallback<String> callback);
 	void mathExpression(String expression, AsyncCallback<Double> callback);

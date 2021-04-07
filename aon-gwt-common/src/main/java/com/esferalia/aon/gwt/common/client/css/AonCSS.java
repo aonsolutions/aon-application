@@ -1129,7 +1129,10 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-confirm-dialog-ok-button")
 	String aonConfirmDialogOkButton();
-
+	
+	@ClassName("aon-confirm-dialog-customer-check-button")
+	String aonConfirmDialogCustomerCheckButton();
+	
 	@ClassName("aon-confirm-dialog-cancel-button")
 	String aonConfirmDialogCancelButton();
 

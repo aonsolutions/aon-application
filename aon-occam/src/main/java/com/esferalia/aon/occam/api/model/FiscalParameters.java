@@ -25,6 +25,7 @@ public class FiscalParameters implements Serializable {
 	private String contactCellular;
 	private String contactMail;
 	private boolean mod303ByDifferenceDisabled;
+	private boolean customerCheckEnabled;
 
 	public Integer getCompany() {
 		return company;
@@ -159,5 +160,14 @@ public class FiscalParameters implements Serializable {
 	public void setMod303ByDifferenceDisabled(boolean mod303ByDifferenceDisabled) {
 		this.mod303ByDifferenceDisabled = mod303ByDifferenceDisabled;
 	}
+
+	public boolean isCustomerCheckEnabled() {
+		return customerCheckEnabled;
+	}
+
+	public void setCustomerCheckEnabled(boolean customerCheckEnabled) {
+		this.customerCheckEnabled = customerCheckEnabled;
+	}
+	
 
 }

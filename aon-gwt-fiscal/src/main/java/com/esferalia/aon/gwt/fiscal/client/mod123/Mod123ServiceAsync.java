@@ -19,6 +19,7 @@ public interface Mod123ServiceAsync {
 	void initializeForFinish(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
 	void markAsFinished(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
 	void markAsSent(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
+	void markAsCustomerCheck(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
 	void markAsPending(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
 	void initialize(String domainName, String userLogin, int domain, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
 	void create(String domainName, String userLogin, int domain, Mod123 mod123, AsyncCallback<Mod123> callback);

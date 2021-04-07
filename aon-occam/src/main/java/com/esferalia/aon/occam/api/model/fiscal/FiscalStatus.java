@@ -2,8 +2,6 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.type.Period;
-
 public enum FiscalStatus implements Serializable {
 	 
 	 PENDING("Pendiente")
@@ -12,6 +10,7 @@ public enum FiscalStatus implements Serializable {
 	,BLOCKED("Bloqueado")
 	,SENT("Presentado")
 	,MISSING("Desconocido")
+	,CUSTOMER_CHECK("Envio a cliente")
 	;
 	
 	private String name;

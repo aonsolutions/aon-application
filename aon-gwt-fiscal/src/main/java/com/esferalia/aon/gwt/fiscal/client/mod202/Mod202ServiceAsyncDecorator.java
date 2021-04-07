@@ -76,6 +76,12 @@ public class Mod202ServiceAsyncDecorator implements Mod202ServiceAsync {
 		AON.start();
 		fsa.markAsSent(domainName, user, mod202, new AsyncCallbackWrapper<Mod202>(callback));
 	}
+	
+	@Override
+	public void markAsCustomerCheck(String domainName, String user, Mod202 mod202, AsyncCallback<Mod202> callback) {
+		AON.start();
+		fsa.markAsCustomerCheck(domainName, user, mod202, new AsyncCallbackWrapper<Mod202>(callback));
+	}
 
 	@Override
 	public void markAsPending(String domainName,String user, Mod202 mod202, AsyncCallback<Mod202> callback) {

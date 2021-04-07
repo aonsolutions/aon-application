@@ -276,6 +276,7 @@ public class FiscalModelUtils {
 		if (status == FiscalStatus.BATCHED) return AON.AON_RESOURCES.aonIconPointLightGreen();
 		if (status == FiscalStatus.SENT) return AON.AON_RESOURCES.aonIconPointGreen();
 		if (status == FiscalStatus.BLOCKED) return AON.AON_RESOURCES.aonIconPointRed();
+		if (status  == FiscalStatus.CUSTOMER_CHECK) return AON.AON_RESOURCES.aonIconPointYellow();
 		if (status  == FiscalStatus.MISSING)	return AON.AON_RESOURCES.aonIconQuestion();
 		return AON.AON_RESOURCES.aonIconPointOrange();
 	}
@@ -285,6 +286,7 @@ public class FiscalModelUtils {
 		if (status == FiscalStatus.BATCHED)		return AON.AON_CSS.aonIconPointLightGreen();
 		if (status  == FiscalStatus.BLOCKED )	return AON.AON_CSS.aonIconPointRed();
 		if (status  == FiscalStatus.SENT )		return AON.AON_CSS.aonIconPointGreen();
+		if (status  == FiscalStatus.CUSTOMER_CHECK) return AON.AON_CSS.aonIconPointYellow();
 		if (status  == FiscalStatus.MISSING)	return AON.AON_CSS.aonIconQuestion();
 		return AON.AON_CSS.aonIconPointOrange();
 	}

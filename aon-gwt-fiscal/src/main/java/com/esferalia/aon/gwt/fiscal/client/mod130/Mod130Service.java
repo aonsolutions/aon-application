@@ -22,6 +22,7 @@ public interface Mod130Service extends RemoteService {
 	Mod130 markAsFinished(String domainName, String user, Mod130 mod130) throws AonCoreException;
 	Mod130 markAsSent(String domainName, String user, Mod130 mod130) throws AonCoreException;
 	Mod130 markAsPending(String domainName, String user, Mod130 mod130) throws AonCoreException;
+	Mod130 markAsCustomerCheck(String domainName, String user, Mod130 mod130) throws AonCoreException;
 	void delete(String domainName, String user, Mod130 mod130) throws AonCoreException;
 	Mod130 initialize(String domainName, String user, int domain, Mod130 mod130);
 	Mod130 create(String domainName, String user, int domain, Mod130 mod130) throws AonCoreException;

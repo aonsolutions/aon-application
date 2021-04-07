@@ -2827,6 +2827,30 @@ input:disabled+label {
 	background-color: #FBEDB6;
 }
 
+@sprite .aon-confirm-dialog-customer-check-button {
+	gwt-image: "aonIconGoto";
+	background-attachment: scroll;
+	background-clip: border-box;
+	background-color: inherit;
+	background-position: 3px 2px;
+	background-repeat: no-repeat;
+	background-size: auto auto;
+	border: 1px solid #aaa;
+	cursor: pointer;
+	font-weight: bold;
+	height: auto;
+	overflow: visible;
+	padding-left: 20px;
+	text-align: left;
+	text-transform: uppercase;
+	width: auto;
+}
+
+.aon-confirm-dialog-customer-check-button:hover, .aon-confirm-dialog-customer-check-button:focus
+	{
+	background-color: #FBEDB6;
+}
+
 @sprite .aon-confirm-dialog-cancel-button {
 	gwt-image: "aonIconCancel";
 	background-attachment: scroll;

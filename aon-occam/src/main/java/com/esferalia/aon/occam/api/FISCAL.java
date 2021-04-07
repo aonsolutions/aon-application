@@ -180,7 +180,18 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
-
+	public static Mod303 markAsCustomerCheck(String domainName, Mod303 mod303, String user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod303.getDomain(),user);
+			return getFiscal().markAsCustomerCheckMod303(ctx, mod303);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	
 	public static void deleteMod303(String domainName, String user, Mod303 mod303) {
 		AONContext ctx = null;
 		try {
@@ -494,6 +505,17 @@ public class FISCAL {
 		}
 	}
 
+	public static Mod111 markAsCustomerCheck(String domainName, String user, Mod111 mod111) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod111.getDomain(),user);
+			return getFiscal().markAsCustomerCheck(ctx, mod111);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static void deleteMod111(String domainName, String user, Mod111 mod111) {
 		AONContext ctx = null;
 		try {
@@ -622,6 +644,17 @@ public class FISCAL {
 		try {
 			ctx = AONContext.getAONContext(domainName, mod115.getDomain(),userLogin);
 			return getFiscal().markAsSent(ctx, mod115);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod115 markAsCustomerCheck(String domainName, String userLogin, Mod115 mod115) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod115.getDomain(),userLogin);
+			return getFiscal().markAsCustomerCheck(ctx, mod115);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -767,6 +800,17 @@ public class FISCAL {
 		try {
 			ctx = AONContext.getAONContext(domainName, mod123.getDomain(),user);
 			return getFiscal().markAsSent(ctx, mod123);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod123 markAsCustomerCheck(String domainName, String user, Mod123 mod123) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod123.getDomain(),user);
+			return getFiscal().markAsCustomerCheck(ctx, mod123);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -928,6 +972,17 @@ public class FISCAL {
 		}
 	}
 
+	public static Mod131 markAsCustomerCheck(String domainName, String userLogin, Mod131 mod131) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod131.getDomain(),userLogin);
+			return getFiscal().markAsCustomerCheck(ctx, mod131);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static Mod131 reopen(String domainName, String user, Mod131 mod131) {
 		AONContext ctx = null;
 		try {
@@ -1073,6 +1128,17 @@ public class FISCAL {
 		}
 	}
 
+	public static Mod130 markAsCustomerCheck(String domainName, String userLogin, Mod130 mod130) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod130.getDomain(),userLogin);
+			return getFiscal().markAsCustomerCheck(ctx, mod130);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Mod130 markAsPending(String domainName, String user, Mod130 mod130) {
 		AONContext ctx = null;
 		try {
@@ -1631,6 +1697,17 @@ public class FISCAL {
 		try {
 			ctx = AONContext.getAONContext(domainName, mod202.getDomain(),userLogin);
 			return getFiscal().markAsSent(ctx, mod202);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod202 markAsCustomerCheck(String domainName, String userLogin, Mod202 mod202) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, mod202.getDomain(),userLogin);
+			return getFiscal().markAsCustomerCheck(ctx, mod202);
 		} finally {
 			if (ctx != null)
 				ctx.close();

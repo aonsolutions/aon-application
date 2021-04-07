@@ -23,6 +23,7 @@ public interface Mod202Service extends RemoteService {
 	Mod202 initializeForFinish(String domainName,String user, Mod202 mod202) throws AonCoreException;
 	Mod202 markAsFinished(String domainName,String user, Mod202 mod202) throws AonCoreException;
 	Mod202 markAsSent(String domainName,String user, Mod202 mod202) throws AonCoreException;
+	Mod202 markAsCustomerCheck(String domainName, String user, Mod202 mod202) throws AonCoreException;
 	Mod202 markAsPending(String domainName,String user, Mod202 mod202) throws AonCoreException;
 	Mod202 create(String domainName,String user, int domain, Mod202 mod202) throws AonCoreException;
 	String getInfo(String domainName,String user, int domain, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;

@@ -593,6 +593,12 @@ public class Mod130DAO extends FiscalModelDAO {
 		mod130= saveMod130(ctx, mod130);
 		return mod130;
 	}
+	
+	public static Mod130 markAsCustomerCheck(AONContext ctx,Mod130 mod130) {
+		mod130.setStatus(FiscalStatus.CUSTOMER_CHECK);
+		mod130 = saveMod130(ctx, mod130);
+		return mod130;
+	}
 
 	// --------------------------------------------------- KEY INTITIALIZATION
 	private static Stream<AccountingBreakdown> getInitialBaseC01(AONContext ctx, final Mod130 mod) {

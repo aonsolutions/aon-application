@@ -435,6 +435,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cancelar")
 	String cancelAction();
 	
+	@DefaultMessage("Envio a cliente")
+	String customerCheckAction();
+
 	@DefaultMessage("Continuar")
 	String continueAction();
 	

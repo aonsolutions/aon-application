@@ -26,6 +26,7 @@ public interface Mod303ServiceAsync {
 	void markAsFinished(String domainName,String user, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void markAsPending(String domainName,String user, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void markAsSent(String domainName,String user, Mod303 mod303, AsyncCallback<Mod303> asyncCallback);
+	void markAsCustomerCheck(String domainName,String user, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void mathExpression(String expression, AsyncCallback<Double> callback );
 	void validationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback);
 	void presentationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback);

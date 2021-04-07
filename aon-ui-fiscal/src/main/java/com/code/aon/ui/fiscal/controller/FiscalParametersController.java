@@ -49,6 +49,7 @@ public class FiscalParametersController implements Serializable {
 	private static final String FS_CONCTACT_CELLULAR = "FS_CONCTACT_CELLULAR";
 	private static final String FS_CONCTACT_MAIL = "FS_CONCTACT_MAIL";
 	private static final String FS_MOD303_BY_DIFFERENCE_DISABLED = "FS_MOD303_BY_DIFFERENCE_DISABLED";
+	private static final String FS_CUSTOMER_CHECK_ENABLED = "FS_CUSTOMER_CHECK_ENABLED";
 	
 	private static final String FS_MODEL_CFG_M111 = "FS_MODEL_CFG_M111";
 	private static final String FS_MODEL_CFG_M115 = "FS_MODEL_CFG_M115";
@@ -127,7 +128,7 @@ public class FiscalParametersController implements Serializable {
 						,FS_CONCTACT_CELLULAR
 						,FS_CONCTACT_MAIL
 						,FS_MOD303_BY_DIFFERENCE_DISABLED
-						,FS_MOD303_BY_DIFFERENCE_DISABLED
+						,FS_CUSTOMER_CHECK_ENABLED
 						,FS_MODEL_CFG_M111
 						,FS_MODEL_CFG_M115
 						,FS_MODEL_CFG_M123
@@ -198,6 +199,14 @@ public class FiscalParametersController implements Serializable {
 	}
 	public void setMod303AvailableByDifferenceDisabled(boolean mod303ByDifferenceDisabled) {
 		getParameters().get(FS_MOD303_BY_DIFFERENCE_DISABLED).setValue(mod303ByDifferenceDisabled?"1":"0");
+	}
+	
+	public boolean isFiscalCustomerCheckEnabled() {
+		String value = getParameters().get(FS_CUSTOMER_CHECK_ENABLED).getValue();
+		return (value!=null && ("1".equals(value) || Boolean.valueOf(value))); 
+	}
+	public void setFiscalCustomerCheckEnabled(boolean customerCheckEnabled) {
+		getParameters().get(FS_CUSTOMER_CHECK_ENABLED).setValue(customerCheckEnabled?"1":"0");
 	}
 
 	public boolean isPermanentAddressChanges() {

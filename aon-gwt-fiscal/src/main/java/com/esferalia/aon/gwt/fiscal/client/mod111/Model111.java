@@ -202,7 +202,9 @@ public class Model111 extends MainEntryPoint {
 		public Mod111 getFiscalModel() {
 			return currentMod;
 		}
-
+		@Override
+		public void onCustomerCheck() {
+		}
 		@Override
 		public boolean isDirty() {
 			return Model111.this.isDirty();
@@ -333,11 +335,13 @@ public class Model111 extends MainEntryPoint {
 				(currentMod.getStatus() == FiscalStatus.FINISHED 
 				|| currentMod.getStatus() == FiscalStatus.BATCHED
 				|| currentMod.getStatus() == FiscalStatus.SENT
+				|| currentMod.getStatus() == FiscalStatus.CUSTOMER_CHECK
 				|| currentMod.getStatus() == FiscalStatus.BLOCKED));
 		markAsSentButton.setVisible(!currentMod.isNew() &&
 				(currentMod.getStatus() == FiscalStatus.FINISHED));
 		markAsFinishedButton.setVisible(!currentMod.isNew() &&
-				(currentMod.getStatus() == FiscalStatus.PENDING 
+				(currentMod.getStatus() == FiscalStatus.PENDING
+				|| currentMod.getStatus() == FiscalStatus.CUSTOMER_CHECK
 				|| currentMod.getStatus() == FiscalStatus.MISSING));
 		auditButton.setVisible(!currentMod.isNew());
 	}
@@ -623,6 +627,34 @@ public class Model111 extends MainEntryPoint {
 				});
 	}
 
+	private void markAsCustomerCheck() {
+		markAsFinishedButton.setEnabled(false);
+		cleanErrorMessage();
+		final PopupPanel popup = new PopupPanel(false, true);
+		Label label = new Label(AON.MSG.processing());
+		label.addStyleName(AON.AON_CSS.aonTimer());
+		popup.add(label);
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		SERVICE.markAsCustomerCheck(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod111>() {
+					@Override
+					public void onSuccess(Mod111 result) {
+						select(result);
+						popup.hide();
+						markAsFinishedButton.setEnabled(true);
+						FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						popup.hide();
+						showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						markAsFinishedButton.setEnabled(true);
+					}
+				});
+	}
+	
 
 	@UiHandler("deleteButton")
 	void onDeleteButtonClick(ClickEvent event) {
@@ -895,11 +927,15 @@ public class Model111 extends MainEntryPoint {
 				markAsFinished();
 			}
 			@Override
+			public void onCustomerCheck() {
+				markAsCustomerCheck();
+			}
+			@Override
 			public void onCancel() {
 				
 			}
 			
-		});
+		},getAonData());
 		finalizeDialog.center();
 		finalizeDialog.show();
 	}

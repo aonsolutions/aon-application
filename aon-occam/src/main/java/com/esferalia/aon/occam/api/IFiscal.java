@@ -157,6 +157,7 @@ public interface IFiscal {
 	public Mod303 markAsFinishedMod303(AONContext ctx, Mod303 mod303);
 	public Mod303 markAsPendingMod303(AONContext ctx, Mod303 mod303);
 	public Mod303 markAsSentMod303(AONContext ctx, Mod303 mod303);
+	public Mod303 markAsCustomerCheckMod303(AONContext ctx, Mod303 mod303);
 	public Mod303 initializeMod303(AONContext ctx, Mod303 mod303);
 	public Mod303 createMod303(AONContext ctx, Mod303 mod303);
 	public Mod303 declarationChanged(AONContext ctx, Mod303 mod303);
@@ -190,6 +191,7 @@ public interface IFiscal {
 	public Mod111 markAsFinished(AONContext ctx, Mod111 mod111);
 	public Mod111 markAsPending(AONContext ctx, Mod111 mod111);
 	public Mod111 markAsSent(AONContext ctx, Mod111 mod111);
+	public Mod111 markAsCustomerCheck(AONContext ctx, Mod111 mod111);
 	public Mod111 initialize(AONContext ctx, Mod111 mod111);
 	public Mod111 create(AONContext ctx, Mod111 mod111);
 	public void delete(AONContext ctx, Mod111 mod111);
@@ -205,6 +207,7 @@ public interface IFiscal {
 	public Mod115 markAsFinished(AONContext ctx, Mod115 mod115);
 	public Mod115 markAsPending(AONContext ctx, Mod115 mod115);
 	public Mod115 markAsSent(AONContext ctx, Mod115 mod115);
+	public Mod115 markAsCustomerCheck(AONContext ctx, Mod115 mod115);
 	public Mod115 initialize(AONContext ctx, Mod115 mod115);
 	public Mod115 create(AONContext ctx, Mod115 mod115);
 	public void delete(AONContext ctx, Mod115 mod115);
@@ -220,6 +223,7 @@ public interface IFiscal {
 	public Mod123 markAsFinished(AONContext ctx, Mod123 mod123);
 	public Mod123 markAsSent(AONContext ctx, Mod123 mod123);
 	public Mod123 markAsPending(AONContext ctx, Mod123 mod123);
+	public Mod123 markAsCustomerCheck(AONContext ctx, Mod123 mod123);
 	public Mod123 initialize(AONContext ctx, Mod123 mod123);
 	public Mod123 create(AONContext ctx, Mod123 mod123);
 	public void delete(AONContext ctx, Mod123 mod123);
@@ -235,6 +239,7 @@ public interface IFiscal {
 	public Mod130 markAsFinished(AONContext ctx, Mod130 mod130);
 	public Mod130 markAsSent(AONContext ctx, Mod130 mod130);
 	public Mod130 markAsPending(AONContext ctx, Mod130 mod130);
+	public Mod130 markAsCustomerCheck(AONContext ctx, Mod130 mod130);
 	public Mod130 initialize(AONContext ctx, Mod130 mod130);
 	public Mod130 create(AONContext ctx, Mod130 mod130);
 	public void delete(AONContext ctx, Mod130 mod130);
@@ -251,6 +256,7 @@ public interface IFiscal {
 	public Mod131 markAsFinished(AONContext ctx, Mod131 mod131);
 	public Mod131 markAsSent(AONContext ctx, Mod131 mod131);
 	public Mod131 markAsPending(AONContext ctx, Mod131 mod131);
+	public Mod131 markAsCustomerCheck(AONContext ctx, Mod131 mod131);
 	public Mod131 initialize(AONContext ctx, Mod131 mod131);
 	public Mod131 create(AONContext ctx, Mod131 mod131);
 	public void delete(AONContext ctx, Mod131 mod131);
@@ -268,6 +274,7 @@ public interface IFiscal {
 	public Mod202 markAsFinished(AONContext ctx, Mod202 mod202);
 	public Mod202 markAsSent(AONContext ctx, Mod202 mod202);
 	public Mod202 markAsPending(AONContext ctx, Mod202 mod202);
+	public Mod202 markAsCustomerCheck(AONContext ctx, Mod202 mod202);
 	public Mod202 create(AONContext ctx, Mod202 mod202);
 	public String getInfo(AONContext ctx, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey);
 	

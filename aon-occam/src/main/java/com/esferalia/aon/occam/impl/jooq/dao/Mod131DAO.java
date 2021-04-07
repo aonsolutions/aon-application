@@ -2013,6 +2013,11 @@ public class Mod131DAO extends FiscalModelDAO {
 		mod131 = saveMod131(ctx, mod131);
 		return mod131;
 	}
+	public static Mod131 markAsCustomerCheck(AONContext ctx,Mod131 mod131) {
+		mod131.setStatus(FiscalStatus.CUSTOMER_CHECK);
+		mod131 = saveMod131(ctx, mod131);
+		return mod131;
+	}
 	
 	public static Mod131 markAsPending(AONContext ctx,Mod131 mod) {
 		mod.setDeclarationType((String) null);
