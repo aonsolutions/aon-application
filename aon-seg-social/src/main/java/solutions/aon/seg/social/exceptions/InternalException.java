@@ -1,6 +1,4 @@
-package solutions.aon.seg.social.exceptions.internal;
-
-import solutions.aon.seg.social.exceptions.SegSocialException;
+package solutions.aon.seg.social.exceptions;
 
 public class InternalException extends SegSocialException {
 

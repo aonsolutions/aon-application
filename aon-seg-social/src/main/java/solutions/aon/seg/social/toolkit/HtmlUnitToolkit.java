@@ -11,10 +11,11 @@ import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
+
+import solutions.aon.seg.social.exceptions.CSSParseException;
+import solutions.aon.seg.social.exceptions.InternalException;
+import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.internal.CSSParseException;
-import solutions.aon.seg.social.exceptions.internal.InternalException;
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
 
 public class HtmlUnitToolkit {

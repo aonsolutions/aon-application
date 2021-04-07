@@ -1,8 +1,6 @@
-package solutions.aon.seg.social.exceptions.certificate;
+package solutions.aon.seg.social.exceptions;
 
 import java.io.InputStream;
-
-import solutions.aon.seg.social.exceptions.SegSocialException;
 
 public class InvalidCertificateException extends SegSocialException{
 	public static void checkCertificate(InputStream is) throws CertificateNotFoundException {

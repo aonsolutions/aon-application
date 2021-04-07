@@ -1,4 +1,4 @@
-package solutions.aon.seg.social.exceptions.statusCode;
+package solutions.aon.seg.social.exceptions;
 
 public class ForbiddenException extends StatusCodeException{
 

@@ -10,11 +10,11 @@ import java.util.Date;
 import org.junit.Test;
 
 import solutions.aon.seg.social.SistemaRED_ITParts;
+import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.StatusCodeException;
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDateException;
-import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class TestItParts {

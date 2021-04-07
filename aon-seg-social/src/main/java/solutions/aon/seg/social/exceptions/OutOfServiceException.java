@@ -1,6 +1,4 @@
-package solutions.aon.seg.social.exceptions.app_issues;
-
-import solutions.aon.seg.social.exceptions.SegSocialException;
+package solutions.aon.seg.social.exceptions;
 
 public class OutOfServiceException extends SegSocialException{
 

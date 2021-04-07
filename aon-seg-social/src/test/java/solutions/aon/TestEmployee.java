@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import junit.framework.Assert;
 import solutions.aon.seg.social.SistemaRED_Employee;
+import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.StatusCodeException;
 import solutions.aon.seg.social.exceptions.invalidData.*;
-import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.toolkit.Toolkit;
 

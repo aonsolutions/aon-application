@@ -1,4 +1,4 @@
-package solutions.aon.seg.social.exceptions.app_issues;
+package solutions.aon.seg.social.exceptions;
 
 public class OutOfServiceMotivation extends OutOfServiceException{
 

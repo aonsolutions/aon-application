@@ -1,4 +1,4 @@
-package solutions.aon.seg.social.exceptions.paternity;
+package solutions.aon.seg.social.exceptions;
 
 public class PaternityNotFoundException extends PaternityException {
 

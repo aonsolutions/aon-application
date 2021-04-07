@@ -1,41 +1,36 @@
 package solutions.aon;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
-import solutions.aon.seg.social.*;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
-import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
-import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
-import solutions.aon.seg.social.exceptions.invalidData.InvalidDateException;
-import solutions.aon.seg.social.exceptions.invalidData.NotAllowedContributionAccount;
-import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
-import solutions.aon.seg.social.exceptions.invalidData.WrongIdentifierException;
-import solutions.aon.seg.social.exceptions.invalidData.WrongRegimeException;
-import solutions.aon.seg.social.exceptions.invalidData.WrongValueException;
-import solutions.aon.seg.social.exceptions.invalidData.invalidCccException;
-import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
-import solutions.aon.seg.social.objects.Idc;
-import solutions.aon.seg.social.objects.SituacionEmpresa;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+
+import solutions.aon.seg.social.SistemaRED_I;
+import solutions.aon.seg.social.exceptions.CertificateNotFoundException;
+import solutions.aon.seg.social.exceptions.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
+import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
+import solutions.aon.seg.social.exceptions.invalidData.NotAllowedContributionAccount;
+import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
+import solutions.aon.seg.social.exceptions.invalidData.WrongIdentifierException;
+import solutions.aon.seg.social.exceptions.invalidData.WrongRegimeException;
+import solutions.aon.seg.social.exceptions.invalidData.invalidCccException;
+import solutions.aon.seg.social.objects.Idc;
+import solutions.aon.seg.social.objects.SituacionEmpresa;
 
 public class TestSistemaRED_I {
 
