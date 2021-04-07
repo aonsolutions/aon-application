@@ -12,7 +12,7 @@ public class BasesBuilder {
 	private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory(); 
 	
 
-	private int autorizado;
+	private long autorizado;
 	
 	private List<Liquidacion> liquidaciones;
 
@@ -51,8 +51,13 @@ public class BasesBuilder {
 		return this;
 	}
 
+	public BasesBuilder setAutorizado(long autorizado) {
+		this.autorizado = autorizado;
+		return this;
+	}
+
 	public BasesBuilder setAutorizado(String autorizado) {
-		this.autorizado = Integer.parseInt(autorizado);
+		this.autorizado = Long.parseLong(autorizado);
 		return this;
 	}
 	
