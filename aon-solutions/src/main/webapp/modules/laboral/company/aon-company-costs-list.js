@@ -147,59 +147,8 @@ export class AonCompanyCostsList extends AonElement {
   async getTable() {
     this.applicationEl = await waitEl("#aonLaboral");
     this.applicationEl.startLoader();
-    // if(this.isMobile())await this.paintPieChar();
-    // else await this.getTableDesk();
     await this.paintPieChar();
     this.applicationEl.stopLoader();
-  }
-
-  async getTableDesk() {
-    const aonTable = this.getElement(this.TABLE_ID);
-    if (aonTable) {
-      aonTable.removeColumns();
-      aonTable.addColumn("Nombre", "string", "name", "30%");
-      aonTable.addColumn("Tipo", "string", "salaryType", "10%");
-      aonTable.addColumn("Total bruto", "number", "raw", "10%");
-      aonTable.addColumn("Total SS", "number", "totalSS", "10%");
-      aonTable.addColumn("Total coste", "number", "totalCost", "10%");
-      try {
-        const resp = await this.getData();
-        aonTable.removeRows();
-        let sumTotal = {
-          raw: 0,
-          totalCost: 0,
-          totalSS: 0,
-        };
-        resp.map((res) => {
-          const totalSS = (parseFloat(res.enterpriseSS) - parseFloat(res.bonuses)) + (parseFloat(res.employeeSS) + parseFloat(res.otherDeductions));
-          sumTotal.raw += parseFloat(res.raw);
-          sumTotal.totalCost += parseFloat(res.totalCost);
-          sumTotal.totalSS += totalSS;
-          aonTable.addRow(
-            {
-              ...res,
-              raw: formatNumber(res.raw, 2, "EUR"),
-              totalSS: formatNumber(totalSS, 2, "EUR"),
-              totalCost: formatNumber(res.totalCost, 2, "EUR"),
-            },
-            (el) => console.log(el)
-          );
-        });
-        if (resp.length > 0) {
-          aonTable.addRow(
-            {
-              salaryType: `<span style="font-weight:800;">TOTALES</span`,
-              raw: formatNumber(sumTotal.raw, 2, "EUR"),
-              totalSS: formatNumber(sumTotal.totalSS, 2, "EUR"),
-              totalCost: formatNumber(sumTotal.totalCost, 2, "EUR"),
-            },
-            (el) => console.log(el)
-          );
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    }
   }
 
   async paintPieChar() {
@@ -308,7 +257,7 @@ export class AonCompanyCostsList extends AonElement {
       let datos = await getCompanyCosts(filter);
       if (!isEmptyObject(datos)) {
         if(datos[0] && datos[0].startDate){
-          this.changeFilterTime({startDate: datos[0].startDate,endDate: datos[0].endDate, period:"personalized"});
+          this.changeFilterTime({startDate: datos[0].startDate,endDate: datos[0].endDate, value:"personalized"});
         }
         sortBy(datos, "employee", "asc").map((resp) => {
           const lettersType = this.applicationParentEl.getTypeSalaryText(

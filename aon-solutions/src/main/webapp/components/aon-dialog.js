@@ -70,9 +70,10 @@ export class AonDialog extends AonElement {
 		this.CANCEL = this.ACTION + 'Cancel';
 		this.ACCEPT = this.ACTION + 'Accept';
 
-		this.innerHTML = `
+		this.innerHTML = /*html*/`
 		<div id="${this.DIALOG}" class="aonDialog">
 			<div id="${this.MAIN}" class="aonDialogContent">
+				<label class="btn-close" id="${this.DIALOG}Click">×</label>
 				<h4 id="${this.TITLE}"></h4>
 				<div id="${this.CONTENT}"></div>
 				<div id="${this.ACTION}"></div>
@@ -81,6 +82,10 @@ export class AonDialog extends AonElement {
 		</div>
 		`;
 		this.build();
+
+		this.getElement(`${this.DIALOG}Click`).addEventListener('click', (ev)=>{
+			this.close()
+		})
 	}
 
 	clear() {
@@ -196,6 +201,8 @@ export class AonDialog extends AonElement {
 		let cancel = this.createElement('button');
 		cancel.id = this.CANCEL;
 		cancel.className = 'aonButton';
+		cancel.style.backgroundColor="grey";
+		cancel.style.marginRight = "10px";
 		cancel.innerHTML = MSG.AON_MSG_CANCEL;
 		cancel.addEventListener('click', () => {
 			fn();

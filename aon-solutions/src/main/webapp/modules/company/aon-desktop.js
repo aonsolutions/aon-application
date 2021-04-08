@@ -13,13 +13,14 @@ import '../marketplace/aon-marketplace.js';
 import '../invoice/aon-invoice-panel.js';
 import '../documental/aon-documental.js';
 import '../laboral/aon-laboral.js';
+import '../fiscal/aon-fiscal.js';
 import '../signin/aon-signin.js';
 import './aon-stat.js';
 
 export class AonDesktop extends AonElement {
 
 	dur;
-
+	AON_DESKTOP;
 	static get observedAttributes() {
 		return [];
 	}
@@ -53,7 +54,7 @@ export class AonDesktop extends AonElement {
 	}
 
 	initialize(){
-		this.id = 'aonDesktop';
+		this.AON_DESKTOP = 'aonDesktopMain';
 	}
 
 	getDur() {
@@ -71,9 +72,7 @@ export class AonDesktop extends AonElement {
   }
 
 	build(notice) {
-		this.innerHTML = `
-			<aon-application id="aonDesktopMain" title="Desktop" main="true"></aon-application>
-		`;
+		this.innerHTML = /*html*/`<aon-application id="${this.AON_DESKTOP}" title="Desktop" main="true"></aon-application>`;
 
 		let inboxCount = 0;
 		if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
@@ -85,7 +84,7 @@ export class AonDesktop extends AonElement {
 			rejectedCount = notice.invoice.rejected.count;
 		}
 
-		let aonDesktop = document.getElementById('aonDesktopMain');
+		let aonDesktop = this.getElement(this.AON_DESKTOP);
 
 		let taskOptions = [{
 				name: 'Notificaciones',
@@ -306,8 +305,7 @@ export class AonDesktop extends AonElement {
 				//rootPanel('<aon-contable></aon-contable>');
 				break;
 			case Apps.FISCAL.app:
-				this.development('Panel Fiscal');
-				//rootPanel('<aon-fiscal></aon-fiscal>');
+				rootPanel('<aon-fiscal></aon-fiscal>');
 				break;
 			case Apps.PAYROLL.app:
 				rootPanel('<aon-laboral></aon-laboral>');
@@ -339,8 +337,8 @@ export class AonDesktop extends AonElement {
 			return this.getDur().isFiscal();
 		else if(Apps.PAYROLL.app === app.app)
 			return this.getDur().isPayroll();
-		else if(Apps.COMUNICA.app === app.app)
-			return this.getDur().isComunica();
+		// else if(Apps.COMUNICA.app === app.app)
+		// 	return this.getDur().isComunica();
 		else if(Apps.DOCUMENTAL.app === app.app)
 			return this.getDur().isDocumental();
 		else if(Apps.TIMECONTROL.app === app.app)

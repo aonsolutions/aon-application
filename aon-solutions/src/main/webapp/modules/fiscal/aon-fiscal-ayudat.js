@@ -1,8 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
 import '../../components/aon-application.js';
 
-class AonFiscal extends AonElement {
-
+class AonFiscalAyudat extends AonElement {
+	AON_FISCAL_AYUDAT;
 	year = 2020;
 	quarter = 3;
 
@@ -11,14 +11,15 @@ class AonFiscal extends AonElement {
 	}
 
 	connectedCallback () {
+		this.AON_FISCAL_AYUDAT = "aonFiscalAyudat";
 		this.innerHTML = `
-			<aon-application id="aonFiscal" title="FISCAL"></aon-application>
+			<aon-application id="${this.id}" title="FISCAL"></aon-application>
 		`;
     this.build();
  	}
 
  	build() {
-		let aonFiscal = document.getElementById('aonFiscal');
+		let aonFiscal = this.getElement(this.AON_FISCAL_AYUDAT);
 
 		let yearOptions = [
 			{
@@ -58,8 +59,8 @@ class AonFiscal extends AonElement {
 		this.year = year;
 		this.quarter = quarter;
 
-		let aonFiscal = document.getElementById('aonFiscal');
+		let aonFiscal = this.getElement(this.AON_FISCAL_AYUDAT);
 		aonFiscal.setContentHTML('<iframe src="../../aon-suite/public/fiscal/index.html?year=' + this.year + '&quarter=' + this.quarter + '" style="width:100%;height:100%;border:none;"></iframe>');
 	}
 }
-window.customElements.define('aon-fiscal', AonFiscal);
+window.customElements.define('aon-fiscal-ayudat', AonFiscalAyudat);

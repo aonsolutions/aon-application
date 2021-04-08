@@ -13,10 +13,6 @@ ul {
   margin: 0;
 }
 
-.aonAppLi {
-
-}
-
 .aonAppLi:hover {
   background-color: #f1f1f1;
 }
@@ -975,10 +971,12 @@ button:disabled, button[disabled]{
   margin-right: 10px;
 }
 
-/* .profile-letters.out{
-  border: 2px solid #FF2D00;
-  color: #FF2D00;
-} */
+.profile-letters.size{
+  height: 35px;
+  line-height: 32px;
+  width: 35px;
+}
+
 
 .profile-letters.font{
   font-size: 12px;
@@ -1045,4 +1043,15 @@ button:disabled, button[disabled]{
 
 .aonFlex {
   display: flex;
+}
+
+
+.aonDialog>.aonDialogContent>.btn-close{
+  color: grey;
+  font-size: 30px;
+  text-decoration: none;
+  float: right;
+  margin-top: -25px;
+  margin-right: -13px;
+  cursor: pointer;
 }

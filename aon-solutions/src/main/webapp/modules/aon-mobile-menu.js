@@ -10,12 +10,14 @@ import {
 } from "../services/service.js";
 
 import {MobileMenuApps, DOCUMENTAL, TIMECONTROL, INVOICE, COMUNICA, MESSENGER,
-   PAYROLL} from "../services/app.js"
+   PAYROLL,
+   FISCAL} from "../services/app.js"
 
 import "./documental/aon-documental.js";
 import "./signin/aon-signin.js";
 import "./invoice/aon-invoice-panel.js";
 import "./laboral/aon-laboral.js";
+import "./fiscal/aon-fiscal.js";
 
 export class AonMobileMenu extends AonElement {
 
@@ -223,6 +225,9 @@ export class AonMobileMenu extends AonElement {
         case MESSENGER.app:
           permission = dur.isMessenger();
           break;
+        case FISCAL.app:
+          permission = dur.isFiscal();
+          break;
       }
     }
     return permission;
@@ -258,6 +263,12 @@ export class AonMobileMenu extends AonElement {
         name: "Solicitudes",
         icon: "message",
         fn: () => alert('en desarrollo')
+      };
+    else if(FISCAL.app === app.app)
+      return {
+        name: "Fiscal",
+        icon: "receipt",
+        fn: () =>  rootPanel('<aon-fiscal></aon-fiscal>')
       };
     return undefined;
   }

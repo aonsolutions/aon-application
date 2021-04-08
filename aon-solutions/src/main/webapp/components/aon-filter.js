@@ -65,6 +65,7 @@ export class AonFilter extends AonElement {
 
     d.setContentHTML(htmlContent);
     d.addAcceptAction(() => this.applyFilter());
+ 
   }
 
   dialogClear() {

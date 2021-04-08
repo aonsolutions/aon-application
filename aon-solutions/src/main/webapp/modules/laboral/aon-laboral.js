@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { getContratoPdf, getDomainUserRoles, getIDC, getPeriodLaboral, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
-import { addDays, formatDateOrigin, isEmptyObject, setValueName } from "../../services/utils.js";
+import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, postDeleteMov } from "../../services/service.js";
+import { addDays, setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../documental/aon-mobile-documental-list.js";
@@ -43,20 +43,6 @@ class AonLaboral extends AonElement {
   }
 
   build() {
-    // if(!this.isEmployee() && isEmptyObject(this._filter)){
-    //   let now = new Date();
-    //   const valueDefault = getPeriodLaboral("last_year");
-    //   this._filter = {
-        // period:  valueDefault.value,
-        // startDate:  valueDefault.startDate,
-        // endDate:  valueDefault.endDate,
-      // };
-      // this._filter = {
-      //   period: "personalized",
-      //   startDate: formatDateOrigin(new Date(now.getFullYear(), (now.getMonth() -1), 1)),
-      //   endDate: formatDateOrigin(new Date(now.getFullYear(), now.getMonth() + 1, 0))
-      // };
-    // } 
     this.paintView();
     this.buildToolbar();
     if(this.isEmployee()){
@@ -68,8 +54,7 @@ class AonLaboral extends AonElement {
   }
 
   paintView(){
-    this.innerHTML = `
-      <aon-application id="${this.AON_LABORAL}" title="LABORAL"></aon-application>`;
+    this.innerHTML = /*html*/`<aon-application id="${this.AON_LABORAL}" title="LABORAL"></aon-application>`;
     this.applicationEl = this.getApplication();
   }
 

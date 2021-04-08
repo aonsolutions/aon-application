@@ -156,9 +156,9 @@ public class SistemaREDMov {
 	
 	public static void cambioGrupCtz(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, 
-			String ipf, String regimen, String ctaCti, String nss, String grup_ctz, Date fecha) throws SegSocialException{
+			String ipf, String regimen, String ctaCti, String nss, String grupCtz, Date fecha) throws SegSocialException{
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		try {cambioGrupCtzImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, grup_ctz, fecha);} 
+		try {cambioGrupCtzImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, grupCtz, fecha);} 
 		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
@@ -203,7 +203,7 @@ public class SistemaREDMov {
 			String dni =  Toolkit.fillStringLeft(employee.getIpf(), "0", 10);
  			String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
  			WebClient webclient = getWebClient(certificateInputStream,certificatePassword, certificateType);
-	    	HtmlPage htmlPage = first_page_alta_baja(
+	    	HtmlPage htmlPage = firstPageAltaBaja(
 					webclient, mov, employee.getNss(), employee.getCtaCti().get(),
 					employee.getRegime(),  dni, ident, employee.getFra()
 	    	);
@@ -257,7 +257,7 @@ public class SistemaREDMov {
 		
 		String[] fra = formatDate(employee.getFra()); //fecha [dia,mes,año]
 		WebClient webClient = getWebClient(certificateInputStream,certificatePassword, certificateType);
-    	HtmlPage htmlPage = first_page_alta_baja(
+    	HtmlPage htmlPage = firstPageAltaBaja(
     			webClient,
 				mov, employee.getNss(), employee.getCtaCti().get(),
 				employee.getRegime(),  dni, ident, employee.getFra()
@@ -421,12 +421,12 @@ public class SistemaREDMov {
 	
 	private static void cambioGrupCtzImpl(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, 
-			String ipf, String regimen, String ctaCti, String nss, String grup_ctz, Date fecha) throws Exception  {
+			String ipf, String regimen, String ctaCti, String nss, String grupCtz, Date fecha) throws Exception  {
 		
 		  String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00B";
 		  String fieldValue = "codNuevoGrupo";
 		  String fieldDate = "fechaSituacion";
-		  page_cambio_cat_ocup_gc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fecha, grup_ctz, fieldValue, fieldDate, url);
+		  pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fecha, grupCtz, fieldValue, fieldDate, url);
 	}
 	
 	private static void cambioOcupacionImpl(final InputStream certificateInputStream, 
@@ -436,7 +436,7 @@ public class SistemaREDMov {
 		  String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00G";
 		  String fieldValue = "NueOcu";
 		  String fieldDate = "fecSit";
-		  page_cambio_cat_ocup_gc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fecha, ocup, fieldValue, fieldDate, url);
+		  pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fecha, ocup, fieldValue, fieldDate, url);
 	}
 	
 	private static void cambioCatProfImpl(final InputStream certificateInputStream, 
@@ -446,10 +446,10 @@ public class SistemaREDMov {
 		  String url = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00I";
 		  String fieldValue = "NueCat";
 		  String fieldDate = "fecSit";
-		  page_cambio_cat_ocup_gc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fecha, cat, fieldValue, fieldDate, url);
+		  pageCambioCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss, fecha, cat, fieldValue, fieldDate, url);
 	}
 	
-	private static void page_cambio_cat_ocup_gc(final InputStream certificateInputStream, 
+	private static void pageCambioCatOcupGc(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, 
 			String ipf, String regimen, String ctaCti, String nss, Date fecha, String newValue, String fieldValue, String fieldDate, String url) throws Exception  {
 		
@@ -535,7 +535,7 @@ public class SistemaREDMov {
 	}
 	
 	
-	private static HtmlPage first_page_alta_baja(WebClient webClient,
+	private static HtmlPage firstPageAltaBaja(WebClient webClient,
 			Integer mov, String nss, String ctaCti, String regimen, String dni, String ident, Date fecha) throws Exception {
 		HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR01&E=I&AP=AFIR");
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
@@ -551,8 +551,8 @@ public class SistemaREDMov {
 		form.getInputByName("txt_SDFNUMPFI").setValueAttribute(dni);
 		form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.substring(0,2));
 		form.getInputByName("txt_SDFCTACOT").setValueAttribute(ctaCti.substring(2));
-		HtmlSubmitInput continue_in = form.querySelector("input[value=Continuar]");
-		htmlPage = continue_in.click();
+		HtmlSubmitInput continueIn = form.querySelector("input[value=Continuar]");
+		htmlPage = continueIn.click();
 		HtmlUnitToolkit.manageStatusCode(htmlPage);
 		return htmlPage;
 	}
@@ -580,19 +580,19 @@ public class SistemaREDMov {
 	
 	private static byte[] getReportAffiliateInAltaImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			ArrayList<String> ccc_arr = 	Toolkit.splitStringMultiple(ccc,2);
+			ArrayList<String> cccArr = 	Toolkit.splitStringMultiple(ccc,2);
 
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR64&E=I&AP=AFIR");
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			form.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regime);
-			form.getInputByName("txt_SDFTESO62").setValueAttribute(ccc_arr.get(0));
-			form.getInputByName("txt_SDFNUM62").setValueAttribute(ccc_arr.get(1));
+			form.getInputByName("txt_SDFTESO62").setValueAttribute(cccArr.get(0));
+			form.getInputByName("txt_SDFNUM62").setValueAttribute(cccArr.get(1));
 		     
 			((HtmlOption) form.querySelectorAll("select[name=cbo_ListaTipoImpresion]>option").get(1)).click();	
 	
-			HtmlSubmitInput continue_in = form.querySelector("input[value=Continuar]");
+			HtmlSubmitInput continueIn = form.querySelector("input[value=Continuar]");
 	
-			Page page = continue_in.click();
+			Page page = continueIn.click();
 			if(page.isHtmlPage()) {
 				htmlPage = (HtmlPage) page;
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
@@ -609,19 +609,19 @@ public class SistemaREDMov {
 	
 	private static byte[] getReportAffiliateInMovPrevImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-			ArrayList<String> ccc_arr = 	Toolkit.splitStringMultiple(ccc,2);
+			ArrayList<String> cccArr = 	Toolkit.splitStringMultiple(ccc,2);
 
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR74&E=I&AP=AFIR");
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			form.getInputByName("txt_SDFREGENT_ayuda").setValueAttribute(regime);
-			form.getInputByName("txt_SDFTESCCCENT").setValueAttribute(ccc_arr.get(0));
-			form.getInputByName("txt_SDFCODCCCENT").setValueAttribute(ccc_arr.get(1));
+			form.getInputByName("txt_SDFTESCCCENT").setValueAttribute(cccArr.get(0));
+			form.getInputByName("txt_SDFCODCCCENT").setValueAttribute(cccArr.get(1));
 		     
 			((HtmlOption) form.querySelectorAll("select[name=cbo_ListaTipoImpresion]>option").get(1)).click();	
 	
-			HtmlSubmitInput continue_in = form.querySelector("input[value=Continuar]");
+			HtmlSubmitInput continueIn = form.querySelector("input[value=Continuar]");
 	
-			Page page = continue_in.click();
+			Page page = continueIn.click();
 			if(page.isHtmlPage()) {
 				htmlPage = (HtmlPage) page;
 				HtmlUnitToolkit.manageStatusCode(htmlPage);

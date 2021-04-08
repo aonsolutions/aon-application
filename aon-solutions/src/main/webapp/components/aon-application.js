@@ -222,7 +222,6 @@ export class AonApplication extends AonElement {
       this.closeSidenav();
     } else {
       let sidenav = this.getElement(this.SIDENAV);
-      let content = this.getElement(this.CONTENT);
       if (sidenav.style.flexBasis === "250px") {
         sidenav.style.flexBasis = "0px";
       } else {
@@ -233,7 +232,6 @@ export class AonApplication extends AonElement {
 
   closeSidenav() {
     let sidenav = this.getElement(this.SIDENAV);
-    let content = this.getElement(this.CONTENT);
     sidenav.style.flexBasis = "0px";
   }
 
@@ -551,7 +549,7 @@ export class AonApplication extends AonElement {
     );
   }
 
-  development(title, subtitle='Esta opción está en desarrollo...') {
+  development(title='Información', subtitle='Esta opción está en desarrollo...') {
 		this.confirmDialog(title, subtitle, () => {});
 	}
 
