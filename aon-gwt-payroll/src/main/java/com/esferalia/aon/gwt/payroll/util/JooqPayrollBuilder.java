@@ -15,16 +15,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.esferalia.aon.in.payroll.pdf.api.settings.PdfFonts;
+import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
-import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Accrual;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Deduction;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.PayrollTypes;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.ContingencyBases.ContingencyBasesBuilder;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll.DefaultPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Accrual;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Deduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases.ContingencyBasesBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
@@ -89,9 +89,9 @@ public class JooqPayrollBuilder {
 			
 			//PAYROLL RELATED DATA
 			{
-				dpb.setLiquid_period_start(s.getStartDate());
-				dpb.setLiquid_period_end(s.getEndDate());
-				dpb.setTotal_days(s.getSalaryDays());
+				dpb.setLiquidPeriodStart(s.getStartDate());
+				dpb.setLiquidPeriodEnd(s.getEndDate());
+				dpb.setTotalDays(s.getSalaryDays());
 				if (s.getSalaryType().ordinal() == SalaryType.SALARY.ordinal())
 					dpb.setPayrollType(PayrollTypes.Type.SALARY);
 				else if (s.getSalaryType().ordinal() == SalaryType.EXTRA.ordinal())
@@ -140,7 +140,7 @@ public class JooqPayrollBuilder {
 					
 					if (firstLine.length() < 45 && sekandoRain.length() < 45) {
 						dpb.setAddress(firstLine);
-						dpb.setAddress_2(sekandoRain);
+						dpb.setAddress2(sekandoRain);
 					} else {
 						String[] address = null;
 						//address = get_lines(add, 170, PdfFonts.HELVETICA, 9f);
@@ -153,7 +153,7 @@ public class JooqPayrollBuilder {
 							}
 							if (secline.length() > 46)
 								secline = secline.substring(0, 45).concat("...");
-							dpb.setAddress_2(secline);
+							dpb.setAddress2(secline);
 						} else {
 							dpb.setAddress(s.getEnterpriseAddress());
 						}
@@ -173,12 +173,12 @@ public class JooqPayrollBuilder {
 				dpb.setEmployee(employeeName);
 				dpb.setNif(s.getEmployeeDocument());
 				dpb.setNss(s.getEmployeeSSNumber());
-				dpb.setProfessional_group(s.getEmployeeCategory());
-				dpb.setQuotation_group(s.getEmployeeQuoteGroup());
+				dpb.setProfessionalGroup(s.getEmployeeCategory());
+				dpb.setQuotationGroup(s.getEmployeeQuoteGroup());
 			}
 			//PAYMENTS
 			{
-				dpb.setAccrual_total(s.getTotalPayment());
+				dpb.setAccrualTotal(s.getTotalPayment());
 				HashMap<Integer, ArrayList<Accrual>> paymentMap = new HashMap<Integer, ArrayList<Accrual>>();
 				s.getPayments().stream().filter(JooqPayrollBuilder::filter).sorted(Comparator.comparing(p -> {
 					return !(p.getDescription() == null || p.getDescription().isEmpty()) ? p.getDescription() : "zzzzzz"; //Nulls or empties down
@@ -209,7 +209,7 @@ public class JooqPayrollBuilder {
 			Map<String, List<ContextData>> data = s.getContextData();
 			//DEDUCTIONS
 			{
-				dpb.setDeduction_total(s.getTotalDeduction());
+				dpb.setDeductionTotal(s.getTotalDeduction());
 				
 				ArrayList<String> inserted = new ArrayList<String>();
 				
@@ -301,10 +301,10 @@ public class JooqPayrollBuilder {
 					cbb.setForceMajeureApEnterprise(Optional.empty());
 					cbb.setForceMajeureBase(Optional.empty());
 					cbb.setForceMajeureType(Optional.empty());
-					cbb.setIrpf_esp(Optional.empty());
-					cbb.setIrpf_retrib_diner(Optional.empty());
+					cbb.setIrpfEsp(Optional.empty());
+					cbb.setIrpfRetribDiner(Optional.empty());
 					cbb.setMonthlyAmount(Optional.empty());
-					cbb.setNo_struct_ap_enterprise(Optional.empty());
+					cbb.setNoStructApEnterprise(Optional.empty());
 					cbb.setNoStructBase(Optional.empty());
 					cbb.setNoStructType(Optional.empty());
 					cbb.setProfesFormApEnterprise(Optional.empty());
@@ -352,7 +352,7 @@ public class JooqPayrollBuilder {
 					cbb.setProfesFormApEnterprise(Optional.ofNullable(profes_form_ap_enterprise));
 					cbb.setFogasaApEnterprise(Optional.ofNullable(fogasa_ap_enterprise));
 					cbb.setForceMajeureApEnterprise(Optional.ofNullable(force_majeure_ap_enterprise));
-					cbb.setNo_struct_ap_enterprise(Optional.ofNullable(no_struct_ap_enterprise));
+					cbb.setNoStructApEnterprise(Optional.ofNullable(no_struct_ap_enterprise));
 					
 					//REMUNERATION AND PRO. EXT. BASE
 					{						
@@ -401,13 +401,13 @@ public class JooqPayrollBuilder {
 					
 					cbb.setCommonContBase(Optional.ofNullable(s.getCommonContingenciesBase()));
 					cbb.setProfessionalContBase(Optional.ofNullable(s.getProfessionalContingenciesBase()));
-					cbb.setIrpf_retrib_diner(Optional.ofNullable(s.getIrpfBase()));
-					cbb.setIrpf_esp(Optional.ofNullable(s.getInkindIrpfBase()));
+					cbb.setIrpfRetribDiner(Optional.ofNullable(s.getIrpfBase()));
+					cbb.setIrpfEsp(Optional.ofNullable(s.getInkindIrpfBase()));
 					cbb.setTotal(Optional.ofNullable(s.getTotalEnterprise()));
 				}
 				dpb.setContingencies(cbb.build());
 			}
-			dpb.setPayroll_total(s.getTotalLiquid());
+			dpb.setPayrollTotal(s.getTotalLiquid());
 			
 			return dpb.build();
 		}).collect(Collectors.toList());

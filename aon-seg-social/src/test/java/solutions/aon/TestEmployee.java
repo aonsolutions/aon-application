@@ -4,11 +4,11 @@ import org.junit.Test;
 
 import junit.framework.Assert;
 import solutions.aon.seg.social.SistemaREDEmployee;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.StatusCodeException;
-import solutions.aon.seg.social.exceptions.invaliddata.*;
-import solutions.aon.seg.social.objects.Employee;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.exception.invalid.*;
+import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 import java.io.FileNotFoundException;

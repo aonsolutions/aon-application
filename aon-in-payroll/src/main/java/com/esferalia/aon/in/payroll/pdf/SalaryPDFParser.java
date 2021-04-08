@@ -8,10 +8,10 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 //import org.apache.pdfbox.text.PDFTextStripper;
 
-import com.esferalia.aon.in.payroll.pdf.templates.A3PDFTemplate;
-import com.esferalia.aon.in.payroll.pdf.templates.AltaiPDFTemplate;
-import com.esferalia.aon.in.payroll.pdf.templates.AplifisaPDFTemplate;
-import com.esferalia.aon.in.payroll.pdf.templates.DSIPDFTemplate;
+import com.esferalia.aon.in.payroll.pdf.template.A3PDFTemplate;
+import com.esferalia.aon.in.payroll.pdf.template.AltaiPDFTemplate;
+import com.esferalia.aon.in.payroll.pdf.template.AplifisaPDFTemplate;
+import com.esferalia.aon.in.payroll.pdf.template.DSIPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.util.PDFTextStripper;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;

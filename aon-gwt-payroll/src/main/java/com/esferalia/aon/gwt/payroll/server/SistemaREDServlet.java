@@ -53,7 +53,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exception.SegSocialException;
 
 
 @MultipartConfig
@@ -280,7 +280,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 	private Employee addEmployee(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String naf) throws SegSocialException {
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-		solutions.aon.seg.social.objects.Employee ssEmployee = SistemaRED.getEmployee(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+		solutions.aon.seg.social.object.Employee ssEmployee = SistemaRED.getEmployee(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
 		
 		String nss = ssEmployee.getNss();			
 		Date startDate = ssEmployee.getFra();

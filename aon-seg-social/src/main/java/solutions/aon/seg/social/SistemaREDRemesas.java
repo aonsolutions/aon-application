@@ -22,21 +22,21 @@ import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import solutions.aon.seg.social.SistemaREDI;
 import solutions.aon.seg.social.SistemaREDI.LiquidationType;
 import solutions.aon.seg.social.SistemaREDI.Regime;
-import solutions.aon.seg.social.exceptions.CertificateNotFoundException;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.StatusCodeException;
-import solutions.aon.seg.social.exceptions.invaliddata.InvalidDataException;
-import solutions.aon.seg.social.exceptions.invaliddata.LiquidationDoesNotExist;
-import solutions.aon.seg.social.exceptions.invaliddata.NotExistingYetException;
-import solutions.aon.seg.social.exceptions.invaliddata.PendingProcessesException;
-import solutions.aon.seg.social.exceptions.invaliddata.UnfilledMandatory;
-import solutions.aon.seg.social.exceptions.invaliddata.invalidCccException;
-import solutions.aon.seg.social.exceptions.invaliddata.outOfTimeException;
+import solutions.aon.seg.social.exception.CertificateNotFoundException;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.exception.invalid.InvalidDataException;
+import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
+import solutions.aon.seg.social.exception.invalid.NotExistingYetException;
+import solutions.aon.seg.social.exception.invalid.PendingProcessesException;
+import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
+import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.exception.invalid.outOfTimeException;
+import solutions.aon.seg.social.object.*;
+import solutions.aon.seg.social.object.BankData.BankDataBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
-import solutions.aon.seg.social.objects.*;
-import solutions.aon.seg.social.objects.BankData.BankDataBuilder;
 public class SistemaREDRemesas {
 
 	public static void draftRequest(final InputStream certificateInputStream,

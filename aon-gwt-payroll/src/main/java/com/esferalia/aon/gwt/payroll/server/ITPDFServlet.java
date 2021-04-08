@@ -22,7 +22,7 @@ import com.esferalia.aon.occam.api.model.security.Certificate;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaREDITParts.PartType;
-import solutions.aon.seg.social.exceptions.SegSocialException; 
+import solutions.aon.seg.social.exception.SegSocialException; 
 
 @MultipartConfig
 @SuppressWarnings("serial")

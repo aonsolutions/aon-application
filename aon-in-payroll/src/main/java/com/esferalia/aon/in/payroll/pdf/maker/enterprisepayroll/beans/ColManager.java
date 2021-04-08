@@ -7,24 +7,24 @@ import java.util.HashMap;
 public class ColManager {
 
 	private HashMap<String, Integer> indexes;
-	private int[] entries_per_column;
+	private int[] entriesPerColumn;
 	private boolean[] enabled;
 	
-	private double[] subtotal_ss; 
-	private double[] subtotal_aon; 
-	private double[] total_ss;
-	private double[] total_aon;
+	private double[] subtotalSs; 
+	private double[] subtotalAon; 
+	private double[] totalSs;
+	private double[] totalAon;
 	
 	public ColManager() {
 
-		entries_per_column = new int[11];
+		entriesPerColumn = new int[11];
 		enabled = new boolean[11];
 		indexes = new HashMap<String, Integer>();
 		
-		subtotal_aon = new double[11];
-		subtotal_ss = new double[11];
-		total_aon = new double[11];
-		total_ss = new double[11];
+		subtotalAon = new double[11];
+		subtotalSs = new double[11];
+		totalAon = new double[11];
+		totalSs = new double[11];
 		
 		indexes.put("trabajador", 0);
 		indexes.put("tipo", 1);
@@ -40,9 +40,9 @@ public class ColManager {
 
 	}
 	
-	public Integer entries_for_col(String col) {
+	public Integer entriesForCol(String col) {
 		if(indexes.get(col) != null) 
-			return entries_per_column[indexes.get(col)];
+			return entriesPerColumn[indexes.get(col)];
 		return null;
 	}
 	
@@ -57,110 +57,110 @@ public class ColManager {
 	}
 	
 	public void add(EnterprisePayrollEntry e) {
-		if(e.empleado.isPresent() || e.empleadoSS.isPresent()) 					entries_per_column[0]++;
-		if(e.tipo.isPresent() || e.tipoSS.isPresent()) 							entries_per_column[1]++;
-		if(e.devengado.isPresent() || e.devengadoSS.isPresent()) 				entries_per_column[2]++;
-		if(e.ssTrab.isPresent() || e.ssTrabSS.isPresent()) 						entries_per_column[3]++;
-		if(e.irpf.isPresent() || e.irpfSS.isPresent()) 							entries_per_column[4]++;
-		if(e.deducciones.isPresent() || e.deduccionesSS.isPresent()) 			entries_per_column[5]++;
-		if(e.liquido.isPresent() || e.liquidoSS.isPresent()) 					entries_per_column[6]++;
-		if(e.ssEmpr.isPresent() || e.ssEmprSS.isPresent() ) 					entries_per_column[7]++;
-		if(e.bonificaciones.isPresent() || e.bonificacionesSS.isPresent() ) 	entries_per_column[8]++;
-		if(e.ssTotal.isPresent() || e.ssTotalSS.isPresent() ) 					entries_per_column[9]++;
-		if(e.costeTotal.isPresent() || e.costeTotalSS.isPresent() ) 			entries_per_column[10]++;
+		if(e.empleado.isPresent() || e.empleadoSS.isPresent()) 					entriesPerColumn[0]++;
+		if(e.tipo.isPresent() || e.tipoSS.isPresent()) 							entriesPerColumn[1]++;
+		if(e.devengado.isPresent() || e.devengadoSS.isPresent()) 				entriesPerColumn[2]++;
+		if(e.ssTrab.isPresent() || e.ssTrabSS.isPresent()) 						entriesPerColumn[3]++;
+		if(e.irpf.isPresent() || e.irpfSS.isPresent()) 							entriesPerColumn[4]++;
+		if(e.deducciones.isPresent() || e.deduccionesSS.isPresent()) 			entriesPerColumn[5]++;
+		if(e.liquido.isPresent() || e.liquidoSS.isPresent()) 					entriesPerColumn[6]++;
+		if(e.ssEmpr.isPresent() || e.ssEmprSS.isPresent() ) 					entriesPerColumn[7]++;
+		if(e.bonificaciones.isPresent() || e.bonificacionesSS.isPresent() ) 	entriesPerColumn[8]++;
+		if(e.ssTotal.isPresent() || e.ssTotalSS.isPresent() ) 					entriesPerColumn[9]++;
+		if(e.costeTotal.isPresent() || e.costeTotalSS.isPresent() ) 			entriesPerColumn[10]++;
 	}
 	
-	public void show_enabled() {
-		System.out.println(Arrays.toString(enabled));
+	public void showEnabled() {
+		//	System.out.println(Arrays.toString(enabled));
 	}
 	
-	public int count_enabled() {
+	public int countEnabled() {
 		int c = 0;
 		for (int i = 0; i < enabled.length; i++) if(enabled[i]) c++;
 		return c;
 	}
 	
-	public void add_to_subtotal(EnterprisePayrollEntry e) {
+	public void addToSubtotal(EnterprisePayrollEntry e) {
 		
-		subtotal_aon[2]  += e.devengado.orElse(0.00);
-		subtotal_aon[3]  += e.ssTrab.orElse(0.00);
-		subtotal_aon[4]  += e.irpf.orElse(0.00);
-		subtotal_aon[5]  += e.deducciones.orElse(0.00);
-		subtotal_aon[6]  += e.liquido.orElse(0.00);
-		subtotal_aon[7]  += e.ssEmpr.orElse(0.00);
-		subtotal_aon[8]  += e.bonificaciones.orElse(0.00);
-		subtotal_aon[9]  += e.ssTotal.orElse(0.00);
-		subtotal_aon[10] += e.costeTotal.orElse(0.00);
+		subtotalAon[2]  += e.devengado.orElse(0.00);
+		subtotalAon[3]  += e.ssTrab.orElse(0.00);
+		subtotalAon[4]  += e.irpf.orElse(0.00);
+		subtotalAon[5]  += e.deducciones.orElse(0.00);
+		subtotalAon[6]  += e.liquido.orElse(0.00);
+		subtotalAon[7]  += e.ssEmpr.orElse(0.00);
+		subtotalAon[8]  += e.bonificaciones.orElse(0.00);
+		subtotalAon[9]  += e.ssTotal.orElse(0.00);
+		subtotalAon[10] += e.costeTotal.orElse(0.00);
 		
-		subtotal_ss[2]  += 	e.devengadoSS.orElse(0.00);
-		subtotal_ss[3]  += 	e.ssTrabSS.orElse(0.00);
-		subtotal_ss[4]  += 	e.irpfSS.orElse(0.00);
-		subtotal_ss[5]  += 	e.deduccionesSS.orElse(0.00);
-		subtotal_ss[6]  += 	e.liquidoSS.orElse(0.00);
-		subtotal_ss[7]  += 	e.ssEmprSS.orElse(0.00);
-		subtotal_ss[8]  += 	e.bonificacionesSS.orElse(0.00);
-		subtotal_ss[9]  += 	e.ssTotalSS.orElse(0.00);
-		subtotal_ss[10] += 	e.costeTotalSS.orElse(0.00);
+		subtotalSs[2]  += 	e.devengadoSS.orElse(0.00);
+		subtotalSs[3]  += 	e.ssTrabSS.orElse(0.00);
+		subtotalSs[4]  += 	e.irpfSS.orElse(0.00);
+		subtotalSs[5]  += 	e.deduccionesSS.orElse(0.00);
+		subtotalSs[6]  += 	e.liquidoSS.orElse(0.00);
+		subtotalSs[7]  += 	e.ssEmprSS.orElse(0.00);
+		subtotalSs[8]  += 	e.bonificacionesSS.orElse(0.00);
+		subtotalSs[9]  += 	e.ssTotalSS.orElse(0.00);
+		subtotalSs[10] += 	e.costeTotalSS.orElse(0.00);
 				
 	}
-	public void add_to_total() {
+	public void addToTotal() {
 		
-		total_aon[2]  +=  subtotal_aon[2];
-		total_aon[3]  +=  subtotal_aon[3];
-		total_aon[4]  +=  subtotal_aon[4];
-		total_aon[5]  +=  subtotal_aon[5];
-		total_aon[6]  +=  subtotal_aon[6];
-		total_aon[7]  +=  subtotal_aon[7];
-		total_aon[8]  +=  subtotal_aon[8];
-		total_aon[9]  +=  subtotal_aon[9];
-		total_aon[10] +=  subtotal_aon[10];
+		totalAon[2]  +=  subtotalAon[2];
+		totalAon[3]  +=  subtotalAon[3];
+		totalAon[4]  +=  subtotalAon[4];
+		totalAon[5]  +=  subtotalAon[5];
+		totalAon[6]  +=  subtotalAon[6];
+		totalAon[7]  +=  subtotalAon[7];
+		totalAon[8]  +=  subtotalAon[8];
+		totalAon[9]  +=  subtotalAon[9];
+		totalAon[10] +=  subtotalAon[10];
 		
-		total_ss[2]  +=  subtotal_ss[2];
-		total_ss[3]  +=  subtotal_ss[3];
-		total_ss[4]  +=  subtotal_ss[4];
-		total_ss[5]  +=  subtotal_ss[5];
-		total_ss[6]  +=  subtotal_ss[6];
-		total_ss[7]  +=  subtotal_ss[7];
-		total_ss[8]  +=  subtotal_ss[8];
-		total_ss[9]  +=  subtotal_ss[9];
-		total_ss[10] +=  subtotal_ss[10];
+		totalSs[2]  +=  subtotalSs[2];
+		totalSs[3]  +=  subtotalSs[3];
+		totalSs[4]  +=  subtotalSs[4];
+		totalSs[5]  +=  subtotalSs[5];
+		totalSs[6]  +=  subtotalSs[6];
+		totalSs[7]  +=  subtotalSs[7];
+		totalSs[8]  +=  subtotalSs[8];
+		totalSs[9]  +=  subtotalSs[9];
+		totalSs[10] +=  subtotalSs[10];
 				
-		subtotal_aon = new double[11];
-		subtotal_ss = new double[11];
+		subtotalAon = new double[11];
+		subtotalSs = new double[11];
 	}
 
-	public ArrayList<Double> get_ss_subtotal() {
+	public ArrayList<Double> getSsSubtotal() {
 		ArrayList<Double> arr =  new ArrayList<>();
 		
-		for (int i = 0; i < subtotal_ss.length; i++) 
-			if(enabled[i]) arr.add(subtotal_ss[i]);
+		for (int i = 0; i < subtotalSs.length; i++) 
+			if(enabled[i]) arr.add(subtotalSs[i]);
 			
 		return arr;
 	}
 	
-	public ArrayList<Double> get_aon_subtotal() {
+	public ArrayList<Double> getAonSubtotal() {
 		ArrayList<Double> arr = new ArrayList<>();
 		
-		for (int i = 0; i < subtotal_aon.length; i++) 
-			if(enabled[i]) arr.add(subtotal_aon[i]);
+		for (int i = 0; i < subtotalAon.length; i++) 
+			if(enabled[i]) arr.add(subtotalAon[i]);
 		
 		return arr;
 	}
 	
-	public ArrayList<Double> get_ss_total() {
+	public ArrayList<Double> getSsTotal() {
 		ArrayList<Double> arr = new ArrayList<>();
 		
-		for (int i = 0; i < total_ss.length; i++) 
-			if(enabled[i]) arr.add(total_ss[i]);
+		for (int i = 0; i < totalSs.length; i++) 
+			if(enabled[i]) arr.add(totalSs[i]);
 			
 		return arr;
 	}
 	
-	public ArrayList<Double> get_aon_total() {
+	public ArrayList<Double> getAonTotal() {
 		ArrayList<Double> arr = new ArrayList<>();
 	
-		for (int i = 0; i < total_aon.length; i++) 
-			if(enabled[i]) arr.add(total_aon[i]);
+		for (int i = 0; i < totalAon.length; i++) 
+			if(enabled[i]) arr.add(totalAon[i]);
 			
 		return arr;
 	}

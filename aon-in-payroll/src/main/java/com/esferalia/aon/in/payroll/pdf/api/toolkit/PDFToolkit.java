@@ -1,6 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.api.toolkit;
 
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfFormats.toLatinNumber;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.toLatinNumber;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeDouble;
 
 import java.awt.Color;
@@ -23,10 +23,10 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfBox;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfImage;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfPage;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfText;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfPage;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
 
 /**
  * <p>

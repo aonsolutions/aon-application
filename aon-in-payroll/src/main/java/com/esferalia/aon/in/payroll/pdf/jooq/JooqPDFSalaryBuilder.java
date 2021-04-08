@@ -38,7 +38,7 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFBuilder;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFException;
-import com.esferalia.aon.in.payroll.pdf.templates.AltaiPDFTemplate.PDFContract;
+import com.esferalia.aon.in.payroll.pdf.template.AltaiPDFTemplate.PDFContract;
 import com.esferalia.aon.in.payroll.utils.Utils;
 import com.esferalia.aon.jooq.tables.SalaryBonus;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;

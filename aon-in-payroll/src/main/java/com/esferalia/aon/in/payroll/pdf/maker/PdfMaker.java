@@ -7,15 +7,15 @@ import java.util.Locale;
 import java.util.Optional;
 
 import com.esferalia.aon.in.payroll.pdf.maker.budget.BudgetTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.budget.beans.Budget;
-import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.EnterprisePayrollTemplateAuto;
+import com.esferalia.aon.in.payroll.pdf.maker.budget.bean.Budget;
+import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.EnterprisePayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
-import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.maker.exceptions.JsonParseException;
+import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.exception.JsonParseException;
 import com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceMaker;
-import com.esferalia.aon.in.payroll.pdf.maker.invoice.beans.Invoice;
+import com.esferalia.aon.in.payroll.pdf.maker.invoice.bean.Invoice;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlementTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
@@ -76,7 +76,7 @@ public class PdfMaker {
 	 */
 	public static void printEnterprisePayroll(EnterprisePayroll payroll, OutputStream out, Optional<Locale> locale)
 			throws IOException, CanNotCreatePdfException {
-		EnterprisePayrollTemplateAuto.print(payroll, out, locale);
+		EnterprisePayrollTemplate.print(payroll, out, locale);
 	}
 
 	/**

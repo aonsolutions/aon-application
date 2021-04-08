@@ -51,7 +51,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gson.GsonBuilder;
 
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exception.SegSocialException;
 
 
 @MultipartConfig

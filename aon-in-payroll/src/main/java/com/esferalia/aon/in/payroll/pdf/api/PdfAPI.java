@@ -8,13 +8,13 @@ import static com.esferalia.aon.in.payroll.pdf.api.toolkit.ConsoleToolkit.startS
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.ConsoleToolkit.tab;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.ConsoleToolkit.title;
 
-import com.esferalia.aon.in.payroll.pdf.api.components.advanced.PdfTable;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfBox;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfComponent;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfFile;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfImage;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfPage;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfText;
+import com.esferalia.aon.in.payroll.pdf.api.component.advanced.PdfTable;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfComponent;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfFile;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfPage;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
 
 /**
  * 

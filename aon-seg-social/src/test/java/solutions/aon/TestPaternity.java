@@ -19,18 +19,18 @@ import java.util.Optional;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import solutions.aon.seg.social.exceptions.CertificateNotFoundException;
-import solutions.aon.seg.social.exceptions.ForbiddenException;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.PaternityException;
-import solutions.aon.seg.social.exceptions.PaternityNotFoundException;
-import solutions.aon.seg.social.exceptions.PaternityWrongDataException;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.StatusCodeException;
-import solutions.aon.seg.social.exceptions.invaliddata.UnfilledMandatory;
-import solutions.aon.seg.social.objects.PaternityCertificate;
 import solutions.aon.seg.social.toolkit.Toolkit;
 import solutions.aon.seg.social.*;
+import solutions.aon.seg.social.exception.CertificateNotFoundException;
+import solutions.aon.seg.social.exception.ForbiddenException;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.PaternityException;
+import solutions.aon.seg.social.exception.PaternityNotFoundException;
+import solutions.aon.seg.social.exception.PaternityWrongDataException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
+import solutions.aon.seg.social.object.PaternityCertificate;
 
 public class TestPaternity {
 	final static String[] ID_TYPE={"NIF", "NIE"};

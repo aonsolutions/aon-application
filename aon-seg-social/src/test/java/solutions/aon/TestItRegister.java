@@ -14,7 +14,7 @@ import solutions.aon.seg.social.SistemaREDITParts.Contingencies;
 import solutions.aon.seg.social.SistemaREDITParts.ContractType;
 import solutions.aon.seg.social.SistemaREDITParts.PartType;
 import solutions.aon.seg.social.SistemaREDITParts.SituationEmployee;
-import solutions.aon.seg.social.objects.ITPart;
+import solutions.aon.seg.social.object.ITPart;
 
 public class TestItRegister {
 	@Test

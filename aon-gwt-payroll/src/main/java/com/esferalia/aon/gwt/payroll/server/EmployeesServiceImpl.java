@@ -166,9 +166,10 @@ import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.gwt.payroll.util.JooqEnterpriseSalaryBuilder;
+import com.esferalia.aon.gwt.payroll.util.JooqSettleBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
-import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -269,10 +270,10 @@ import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaREDMov;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invaliddata.DataDoesNotExist;
-import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
-import solutions.aon.seg.social.objects.WorkerLiquidation;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
+import solutions.aon.seg.social.object.WorkerLiquidation;
+import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.sepe.Contrato;
 import solutions.aon.sepe.Contrato.FirmType;
 import solutions.aon.sepe.Sepe;
@@ -1730,19 +1731,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	/**
+	 * Settle draft
+	 * @param domain 
+	 * @param draft
+	 * @param mime
+	 * @return [String] datauri
+	 * @throws IllegalArgumentException
+	 */
 	public String getSettleDraftReceipt(String domain, final SalaryDraft draft, String mime)
 			throws IllegalArgumentException {
 
 		try {
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
+			Settle settle = getSettle(domain, draft);
 			
-			ISalary salary = getSalary(domain, draft);
 			
 			
 			try {
-				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
-			} catch (SalaryException | CanNotCreatePdfException e) {
+				JooqSettleBuilder.printSettle(settle, reportOut, new Locale("Es"));
+			} catch (CanNotCreatePdfException e) {
 				e.printStackTrace();
 			}
 			
@@ -5758,10 +5767,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			ArrayList<String> nssList = new ArrayList<String>();
 			nssList.add(employeeContractInfo.getEmployeeInfo().getSsNumber());
-			Collection<solutions.aon.seg.social.objects.Employee> employeesAux = SistemaREDMov.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
-			solutions.aon.seg.social.objects.Employee eemployeeAux = (solutions.aon.seg.social.objects.Employee) employeesAux.toArray()[0];
+			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaREDMov.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
+			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux.toArray()[0];
 			
-			solutions.aon.seg.social.objects.Employee employee  = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
+			solutions.aon.seg.social.object.Employee employee  = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
 			
 			SistemaREDMov.sendAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
 			
@@ -5783,10 +5792,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			ArrayList<String> nssList = new ArrayList<String>();
 			nssList.add(employeeContractInfo.getEmployeeInfo().getSsNumber());
-			Collection<solutions.aon.seg.social.objects.Employee> employeesAux = SistemaREDMov.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
-			solutions.aon.seg.social.objects.Employee eemployeeAux = (solutions.aon.seg.social.objects.Employee) employeesAux.toArray()[0];
+			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaREDMov.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
+			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux.toArray()[0];
 			
-			solutions.aon.seg.social.objects.Employee employee  = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
+			solutions.aon.seg.social.object.Employee employee  = createEmployee(employeeContractInfo, eemployeeAux.getIpf());
 			
 			SistemaREDMov.sendBaja(certificateInputStream, certificate.getPassword(), certificate.getType(), employee);
 			
@@ -5928,7 +5937,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}	
 	}
 	
-	private solutions.aon.seg.social.objects.Employee createEmployee(EmployeeContractInfo employeeContractInfo, String ipf) {
+	private solutions.aon.seg.social.object.Employee createEmployee(EmployeeContractInfo employeeContractInfo, String ipf) {
 		
 		EmployeeBuilder builder = new EmployeeBuilder();
 		

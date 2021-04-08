@@ -16,14 +16,14 @@ import java.util.stream.Stream;
 
 import javax.servlet.ServletOutputStream;
 
-import com.esferalia.aon.in.payroll.pdf.api.settings.PdfFonts;
+import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
-import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Accrual;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Deduction;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll.DefaultPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Accrual;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Deduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement.SettlementBuilder;
 import com.esferalia.aon.occam.api.AONContext;
@@ -58,20 +58,20 @@ public class JooqSettleBuilder {
 		SettlementBuilder builder = new SettlementBuilder();
 		
 		builder
-		.setEmployee_name(settle.getEmployeeName())
-		.setEmployee_category(settle.getEmployeeCategory())
-		.setEmployee_antiquity(settle.getStartDate())
-		.setEmployee_NIF(settle.getEmployeeDocument())
-		.setEnterprise_address(settle.getEnterpriseAddress())
-		.setEnterprise_name(settle.getEnterpriseName())
-		.setEnterprise_NIF(settle.getEnterpriseDocument())
+		.setEmployeeName(settle.getEmployeeName())
+		.setEmployeeCategory(settle.getEmployeeCategory())
+		.setEmployeeAntiquity(settle.getStartDate())
+		.setEmployeeNIF(settle.getEmployeeDocument())
+		.setEnterpriseAddress(settle.getEnterpriseAddress())
+		.setEnterpriseName(settle.getEnterpriseName())
+		.setEnterpriseNIF(settle.getEnterpriseDocument())
 		.setTotal(settle.getTotalLiquid())
-		.setAccrual_total(settle.getTotalPayment())
-		.setDeduction_total(settle.getTotalDeduction())
+		.setAccrualTotal(settle.getTotalPayment())
+		.setDeductionTotal(settle.getTotalDeduction())
 		.setDate(settle.getEndDate())
 		.setLocation(settle.getLocation())
-		.setEnd_cause(settle.getCause())
-		.setExist_representative(settle.getRepresentativeDocument() != null);
+		.setEndCause(settle.getCause())
+		.setExistRepresentative(settle.getRepresentativeDocument() != null);
 		
 		//PAYMENTS
 		HashMap<Integer, ArrayList<Accrual>> paymentMap = new HashMap<Integer, ArrayList<Accrual>>();

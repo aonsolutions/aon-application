@@ -1,23 +1,23 @@
 package com.esferalia.aon.in.payroll.pdf.maker.settlement;
 
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfColors.BLACK;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfColors.GRAY;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfColors.LIGHT_GRAY;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfFonts.HELVETICA;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfFonts.HELVETICA_BOLD;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfFormats.formatDate;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfFormats.toLatinNumber;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfSettings.ALIGNMENT.JUSTIFY;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfSettings.ALIGNMENT.LEFT;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfSettings.ALIGNMENT.RIGHT;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfSettings.PAGE_TYPE.VERTICAL;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.BLACK;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.GRAY;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.LIGHT_GRAY;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA_BOLD;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.formatDate;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.toLatinNumber;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.JUSTIFY;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.LEFT;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.RIGHT;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.PAGE_TYPE.VERTICAL;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeDouble;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeString;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeValue;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawBox;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawText;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextRight;
-import static com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.CraTypes.getType;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.CraTypes.getType;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,18 +30,18 @@ import java.util.ResourceBundle;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfBox;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfFile;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfText;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfText.PdfTextBuilder;
-import com.esferalia.aon.in.payroll.pdf.api.settings.PdfColors;
-import com.esferalia.aon.in.payroll.pdf.api.settings.PdfSettings.ALIGNMENT;
-import com.esferalia.aon.in.payroll.pdf.api.settings.PdfSettings.VERTICAL_ALIGNMENT;
-import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Accrual;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Deduction;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DeductionTypes;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.UnknownCraException;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfFile;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText.PdfTextBuilder;
+import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
+import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT;
+import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.VERTICAL_ALIGNMENT;
+import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Accrual;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Deduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DeductionTypes;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement;
 
 public class SettlementTemplate extends PdfFile {
@@ -129,8 +129,8 @@ public class SettlementTemplate extends PdfFile {
 	private void drawEnterprise() {
 
 		String[] variables = { "enterprise_name", "enterprise_nif", "enterprise_address" };
-		String[] values = { safeString(settlement.enterpriseName()), safeString(settlement.enterpriseNif()),
-				safeString(settlement.enterpriseAddress()), };
+		String[] values = { safeString(settlement.getEnterpriseName()), safeString(settlement.getEnterpriseNif()),
+				safeString(settlement.getEnterpriseAddress()), };
 		
 		final String enterpiseTxt = replaceVariables(variables, values, text("ENTERPRISE"));
 
@@ -151,9 +151,9 @@ public class SettlementTemplate extends PdfFile {
 
 		String[] variables = new String[] { "employee_name", "employee_nif", "employee_category",
 				"employee_antiquity" };
-		String[] values = new String[] { safeString(settlement.employeeName()), safeString(settlement.employeeNif()),
+		String[] values = new String[] { safeString(settlement.getEmployeeName()), safeString(settlement.employeeNIF()),
 				safeString(settlement.employeeCategory()),
-				safeString(formatDate(settlement.employeeAntiquity(), dateFormat)) };
+				safeString(formatDate(settlement.getEmployeeAntiquity(), dateFormat)) };
 
 		final String employee_txt = replaceVariables(variables, values, text("EMPLOYEE"));
 
@@ -186,7 +186,7 @@ public class SettlementTemplate extends PdfFile {
 		final String dateFormat = text("DATE FORMAT");
 
 		String[] variables = new String[] { "end_date", "end_cause", "text_total", "total_amount" };
-		String[] values = new String[] { safeString(formatDate(settlement.endDate(), dateFormat)),
+		String[] values = new String[] { safeString(formatDate(settlement.getEndDate(), dateFormat)),
 				safeString(settlement.endCause()), "UNOS CUANTOS", toLatinNumber(settlement.total().orElse(null)) };
 
 		final String declarationTxt = replaceVariables(variables, values, text("DECLARATION"));
@@ -392,7 +392,7 @@ public class SettlementTemplate extends PdfFile {
 		float margin = 100;
 		float width = 470 / 2 - margin / 2;
 
-		if (settlement.exist_representative().orElse(false)) {
+		if (settlement.existRepresentative().orElse(false)) {
 			margin = 12;
 			width = 470 / 3 - margin / 2;
 		}

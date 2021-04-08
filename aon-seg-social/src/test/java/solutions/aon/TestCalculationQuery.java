@@ -16,17 +16,17 @@ import solutions.aon.seg.social.SistemaREDI;
 import solutions.aon.seg.social.SistemaREDI.LiquidationOrigin;
 import solutions.aon.seg.social.SistemaREDI.LiquidationType;
 import solutions.aon.seg.social.SistemaREDI.Regime;
-import solutions.aon.seg.social.exceptions.CertificateNotFoundException;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.OutOfServiceException;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invaliddata.DataDoesNotExist;
-import solutions.aon.seg.social.exceptions.invaliddata.LiquidationDoesNotExist;
-import solutions.aon.seg.social.exceptions.invaliddata.UnfilledMandatory;
-import solutions.aon.seg.social.exceptions.invaliddata.WrongRegimeException;
-import solutions.aon.seg.social.exceptions.invaliddata.invalidCccException;
-import solutions.aon.seg.social.objects.Liquidation;
-import solutions.aon.seg.social.objects.WorkerLiquidation;
+import solutions.aon.seg.social.exception.CertificateNotFoundException;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.OutOfServiceException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
+import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
+import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
+import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
+import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.object.Liquidation;
+import solutions.aon.seg.social.object.WorkerLiquidation;
 
 import org.junit.Test;
 

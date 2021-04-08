@@ -17,15 +17,15 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.esferalia.aon.in.payroll.pdf.api.settings.PdfFonts;
+import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
-import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Accrual;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Deduction;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.PayrollTypes;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.ContingencyBases.ContingencyBasesBuilder;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll.DefaultPayrollBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Accrual;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Deduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases.ContingencyBasesBuilder;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -67,14 +67,14 @@ public class DraftPayrollBuilder {
 						String line2 = matcher.group("zip") + " " + matcher.group("city");
 						if (line2 != null)
 							line2 = line2.replaceAll("\\(", "").replaceAll("\\)", "");
-						dpb.setAddress_2(line2);
+						dpb.setAddress2(line2);
 					} else {
 						List<String> address = null;
 						if (salary.getEnterpriseAddress()!=null)
 							address = Arrays.asList(Utilities.separateString(salary.getEnterpriseAddress(), 40));
 						if (address != null && address.size() > 1) {
 							dpb.setAddress(address.get(0) != null ? address.get(0).trim() : null);
-							dpb.setAddress_2(address.get(1));
+							dpb.setAddress2(address.get(1));
 						} else {
 							dpb.setAddress(salary.getEnterpriseAddress());
 						}
@@ -95,14 +95,14 @@ public class DraftPayrollBuilder {
 				if (employeeName != null && employeeName.length() > 1 && employeeName.charAt(0) == ',')
 					employeeName = employeeName.substring(1).trim();
 				dpb.setEmployee(employeeName);
-				dpb.setQuotation_group(salary.getQuoteGroup());
-				dpb.setProfessional_group(salary.getCategory());
+				dpb.setQuotationGroup(salary.getQuoteGroup());
+				dpb.setProfessionalGroup(salary.getCategory());
 			}
 			//PAYROLL RELATED DATA
 			{
-				dpb.setLiquid_period_start(salary.getStartDate());
-				dpb.setLiquid_period_end(salary.getEndDate());
-				dpb.setTotal_days(salary.getTimeUnits());
+				dpb.setLiquidPeriodStart(salary.getStartDate());
+				dpb.setLiquidPeriodEnd(salary.getEndDate());
+				dpb.setTotalDays(salary.getTimeUnits());
 				if (salary.getType().ordinal() == SalaryType.SALARY.ordinal())
 					dpb.setPayrollType(PayrollTypes.Type.SALARY);
 				else if (salary.getType().ordinal() == SalaryType.EXTRA.ordinal())
@@ -117,7 +117,7 @@ public class DraftPayrollBuilder {
 			//PAYMENTS
 			{
 				
-				dpb.setAccrual_total(salary.getTotalPayment());
+				dpb.setAccrualTotal(salary.getTotalPayment());
 				HashMap<Integer, ArrayList<Accrual>> paymentMap = new HashMap<Integer, ArrayList<Accrual>>();
 				Collection<IPayment> payments = salary.getPaymentS();
 				payments.stream().filter(DraftPayrollBuilder::filter).sorted(Comparator.comparing(p -> {
@@ -147,7 +147,7 @@ public class DraftPayrollBuilder {
 			}
 			//DEDUCTIONS
 			{
-				dpb.setDeduction_total(salary.getTotalDeduction());
+				dpb.setDeductionTotal(salary.getTotalDeduction());
 				
 				ArrayList<String> inserted = new ArrayList<String>();
 				
@@ -231,10 +231,10 @@ public class DraftPayrollBuilder {
 					cbb.setForceMajeureApEnterprise(Optional.empty());
 					cbb.setForceMajeureBase(Optional.empty());
 					cbb.setForceMajeureType(Optional.empty());
-					cbb.setIrpf_esp(Optional.empty());
-					cbb.setIrpf_retrib_diner(Optional.empty());
+					cbb.setIrpfEsp(Optional.empty());
+					cbb.setIrpfRetribDiner(Optional.empty());
 					cbb.setMonthlyAmount(Optional.empty());
-					cbb.setNo_struct_ap_enterprise(Optional.empty());
+					cbb.setNoStructApEnterprise(Optional.empty());
 					cbb.setNoStructBase(Optional.empty());
 					cbb.setNoStructType(Optional.empty());
 					cbb.setProfesFormApEnterprise(Optional.empty());
@@ -251,8 +251,8 @@ public class DraftPayrollBuilder {
 				cbb.setExtraProrationAmount(Optional.ofNullable(salary.getExtraPayProration()));
 				cbb.setCommonContBase(Optional.ofNullable(salary.getCommonBase()));
 				cbb.setProfessionalContBase(Optional.ofNullable(salary.getProfessionalBase()));
-				cbb.setIrpf_retrib_diner(Optional.ofNullable(salary.getIrpfBase()));
-				cbb.setIrpf_esp(Optional.ofNullable(salary.getInKindIrpfBase()));
+				cbb.setIrpfRetribDiner(Optional.ofNullable(salary.getIrpfBase()));
+				cbb.setIrpfEsp(Optional.ofNullable(salary.getInKindIrpfBase()));
 				cbb.setTotal(Optional.ofNullable(salary.getTotalEnterprise()));
 				
 				
@@ -312,13 +312,13 @@ public class DraftPayrollBuilder {
 				cbb.setProfesFormApEnterprise(Optional.ofNullable(profes_form_ap_enterprise));
 				cbb.setFogasaApEnterprise(Optional.ofNullable(fogasa_ap_enterprise));
 				cbb.setForceMajeureApEnterprise(Optional.ofNullable(force_majeure_ap_enterprise));
-				cbb.setNo_struct_ap_enterprise(Optional.ofNullable(no_struct_ap_enterprise));
+				cbb.setNoStructApEnterprise(Optional.ofNullable(no_struct_ap_enterprise));
 				
 				
 				
 				dpb.setContingencies(cbb.build());		
 			}	
-			dpb.setPayroll_total(salary.getTotalLiquid());
+			dpb.setPayrollTotal(salary.getTotalLiquid());
 			
 			Optional<InputStream> optLogo = Utilities.getSignature(domainName);
 			

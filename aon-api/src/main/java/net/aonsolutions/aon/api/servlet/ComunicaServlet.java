@@ -22,13 +22,14 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
-import solutions.aon.seg.social.objects.Employee;
-import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
+
 import solutions.aon.seg.social.toolkit.Toolkit;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaREDMov;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ComunicaServlet", urlPatterns = {"/ms/api/comunica/*"})

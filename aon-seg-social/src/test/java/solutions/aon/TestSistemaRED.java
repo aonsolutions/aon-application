@@ -5,8 +5,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invaliddata.SyntaxException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.SyntaxException;
 
 public class TestSistemaRED {
 

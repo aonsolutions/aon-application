@@ -1,6 +1,6 @@
 package solutions.aon.seg.social;
 
-import static solutions.aon.seg.social.exceptions.InvalidCertificateException.checkCertificate;
+import static solutions.aon.seg.social.exception.InvalidCertificateException.checkCertificate;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getSSCode;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getWebClient;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.manageStatusCode;
@@ -31,15 +31,15 @@ import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 
-import solutions.aon.seg.social.exceptions.CertificateNotFoundException;
-import solutions.aon.seg.social.exceptions.ForbiddenException;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.StatusCodeException;
-import solutions.aon.seg.social.exceptions.invaliddata.InvalidDataException;
-import solutions.aon.seg.social.exceptions.invaliddata.NoQueryData;
-import solutions.aon.seg.social.objects.Employee;
-import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
+import solutions.aon.seg.social.exception.CertificateNotFoundException;
+import solutions.aon.seg.social.exception.ForbiddenException;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.exception.invalid.InvalidDataException;
+import solutions.aon.seg.social.exception.invalid.NoQueryData;
+import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 

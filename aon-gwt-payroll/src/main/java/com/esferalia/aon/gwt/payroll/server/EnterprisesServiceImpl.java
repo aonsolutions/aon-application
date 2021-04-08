@@ -141,12 +141,11 @@ import solutions.aon.seg.social.SistemaREDITParts.Contingencies;
 import solutions.aon.seg.social.SistemaREDITParts.ContractType;
 import solutions.aon.seg.social.SistemaREDITParts.PartType;
 import solutions.aon.seg.social.SistemaREDITParts.SituationEmployee;
+import solutions.aon.seg.social.exception.ForbiddenException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
+import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.seg.social.SistemaREDSecondaryUser;
-import solutions.aon.seg.social.exceptions.ForbiddenException;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invaliddata.NotAllowedContributionAccount;
-import solutions.aon.seg.social.exceptions.ForbiddenException;
-import solutions.aon.seg.social.objects.SecondaryUser;
 import solutions.aon.sepe.Contrato;
 import solutions.aon.sepe.exceptions.SepeException;
 
@@ -2221,10 +2220,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Map<String, CCC> cccsMap = cccs.stream().collect(Collectors.toMap(ccc -> ccc.getRegime()+ccc.getCode(), ccc -> ccc, (ccc1, ccc2) -> ccc1));
 			
 			for ( CCC ccc: cccsMap.values() ) {
-				Collection<solutions.aon.seg.social.objects.Employee> ssEmployees = 
+				Collection<solutions.aon.seg.social.object.Employee> ssEmployees = 
 				SistemaRED.getEmployees(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
 				
-				for ( solutions.aon.seg.social.objects.Employee ssEmployee :  ssEmployees) {
+				for ( solutions.aon.seg.social.object.Employee ssEmployee :  ssEmployees) {
 					
 					
 					String dni = ssEmployee.getIpf();
@@ -2628,8 +2627,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			
-			Collection<solutions.aon.seg.social.objects.Employee> employeeCollection = SistemaRED.ipfxnaf(is, certificate.getPassword(), certificate.getType(), nssList);
-			solutions.aon.seg.social.objects.Employee employee = (solutions.aon.seg.social.objects.Employee) employeeCollection.toArray()[0];
+			Collection<solutions.aon.seg.social.object.Employee> employeeCollection = SistemaRED.ipfxnaf(is, certificate.getPassword(), certificate.getType(), nssList);
+			solutions.aon.seg.social.object.Employee employee = (solutions.aon.seg.social.object.Employee) employeeCollection.toArray()[0];
 			
 			EmployeeSegSocial employeeSegSocial = new EmployeeSegSocial(
 					employee.getNss(), 
@@ -2654,7 +2653,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			
-			solutions.aon.seg.social.objects.Employee employee = SistemaRED.nafxipf(is, certificate.getPassword(), certificate.getType(), ipf, apellido1, apellido2);
+			solutions.aon.seg.social.object.Employee employee = SistemaRED.nafxipf(is, certificate.getPassword(), certificate.getType(), ipf, apellido1, apellido2);
 			
 			EmployeeSegSocial employeeSegSocial = new EmployeeSegSocial(
 					employee.getNss(), 

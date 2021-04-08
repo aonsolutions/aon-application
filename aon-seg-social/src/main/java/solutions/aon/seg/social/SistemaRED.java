@@ -21,12 +21,12 @@ import solutions.aon.seg.social.SistemaREDITParts.Contingencies;
 import solutions.aon.seg.social.SistemaREDITParts.ContractType;
 import solutions.aon.seg.social.SistemaREDITParts.PartType;
 import solutions.aon.seg.social.SistemaREDITParts.SituationEmployee;
-import solutions.aon.seg.social.exceptions.ForbiddenException;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.objects.Employee;
-import solutions.aon.seg.social.objects.Idc;
-import solutions.aon.seg.social.objects.WorkerLiquidation;
+import solutions.aon.seg.social.exception.ForbiddenException;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.object.Idc;
+import solutions.aon.seg.social.object.WorkerLiquidation;
 
 public class SistemaRED {
 

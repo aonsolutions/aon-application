@@ -9,10 +9,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import solutions.aon.seg.social.SistemaREDMov;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invaliddata.NotExistingYetException;
-import solutions.aon.seg.social.objects.Employee;
-import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.NotExistingYetException;
+import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 
 public class TestSistemaREDMov {
 

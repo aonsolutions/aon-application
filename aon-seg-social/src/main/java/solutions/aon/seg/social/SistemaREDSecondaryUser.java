@@ -24,12 +24,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 
-import solutions.aon.seg.social.exceptions.ForbiddenException;
-import solutions.aon.seg.social.exceptions.NotRespondingException;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.StatusCodeException;
-import solutions.aon.seg.social.objects.SecondaryUser;
-import solutions.aon.seg.social.objects.SecondaryUser.SecondaryUserBuilder;
+import solutions.aon.seg.social.exception.ForbiddenException;
+import solutions.aon.seg.social.exception.NotRespondingException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.object.SecondaryUser;
+import solutions.aon.seg.social.object.SecondaryUser.SecondaryUserBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 
 public class SistemaREDSecondaryUser {

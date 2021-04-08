@@ -1,14 +1,14 @@
 package com.esferalia.aon.in.payroll.pdf.maker.payroll;
 
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfColors.BLACK;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfColors.LIGHT_GRAY;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfFonts.HELVETICA;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfFonts.HELVETICA_BOLD;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfFormats.formatDate;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfFormats.toLatinNumber;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfSettings.ALIGNMENT.CENTER;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfSettings.ALIGNMENT.LEFT;
-import static com.esferalia.aon.in.payroll.pdf.api.settings.PdfSettings.ALIGNMENT.RIGHT;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.BLACK;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.LIGHT_GRAY;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA_BOLD;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.formatDate;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.toLatinNumber;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.CENTER;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.LEFT;
+import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.RIGHT;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeDouble;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeInteger;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeString;
@@ -20,8 +20,8 @@ import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawCostPe
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawText;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextCenter;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextRight;
-import static com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.CraTypes.getType;
-import static com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DeductionTypes.getType;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.CraTypes.getType;
+import static com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DeductionTypes.getType;
 import static java.util.ResourceBundle.getBundle;
 
 import java.io.ByteArrayInputStream;
@@ -41,19 +41,20 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfBox;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfImage;
-import com.esferalia.aon.in.payroll.pdf.api.components.basic.PdfText;
-import com.esferalia.aon.in.payroll.pdf.api.settings.PdfColors;
-import com.esferalia.aon.in.payroll.pdf.api.settings.PdfSettings.ALIGNMENT;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
+import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
+import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
-import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Accrual;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.ContingencyBases;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.Deduction;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.DefaultPayroll;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.PayrollTypes;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.beans.UnknownCraException;
+import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Accrual;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.CraTypes;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Deduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
 
 public class PayrollTemplate {
 
@@ -107,7 +108,7 @@ public class PayrollTemplate {
 		PayrollTemplate	template = new PayrollTemplate();
 
 		template.lang  = language.orElse(new Locale("Es"));
-		template.words = getBundle("com.esferalia.aon.in.payroll.pdf.maker.payroll.bundles.PayrollBundle",
+		template.words = getBundle("com.esferalia.aon.in.payroll.pdf.maker.payroll.bundle.PayrollBundle",
 				template.lang);
 		template.limit = 800;
 
@@ -170,7 +171,7 @@ public class PayrollTemplate {
 		PayrollTemplate	template = new PayrollTemplate();
 
 		template.lang  = language.orElse(new Locale("Es"));
-		template.words = getBundle("com.esferalia.aon.in.payroll.pdf.maker.payroll.bundles.PayrollBundle",
+		template.words = getBundle("com.esferalia.aon.in.payroll.pdf.maker.payroll.bundle.PayrollBundle",
 				template.lang);
 
 		template.limit = 800;
@@ -272,7 +273,7 @@ public class PayrollTemplate {
 		drawText(contents, nss, x + 380, y, BLACK, HELVETICA, headerFontSize);
 
 		y -= 13.5;
-		drawText(contents, safeString(p.getAddress_2()), x, y, BLACK, HELVETICA, headerFontSize);
+		drawText(contents, safeString(p.getAddress2()), x, y, BLACK, HELVETICA, headerFontSize);
 		drawText(contents, profesGroup, x + 280, y, BLACK, HELVETICA, headerFontSize);
 
 		y -= 13.5;
@@ -358,10 +359,7 @@ public class PayrollTemplate {
 						y -= 10.5f;
 					});
 				}
-			} catch (IOException | UnknownCraException e)
-			{
-				e.printStackTrace();
-			}
+			} catch (IOException | UnknownCraException ignore){}
 			y -= 5;
 		});
 		y -= 5;

@@ -75,7 +75,7 @@ import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import solutions.aon.seg.social.objects.WorkerLiquidation;
+import solutions.aon.seg.social.object.WorkerLiquidation;
 
 public class PayrollServletUtils extends AonServletUtils {
 

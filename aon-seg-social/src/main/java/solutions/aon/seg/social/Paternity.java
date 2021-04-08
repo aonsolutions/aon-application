@@ -28,17 +28,17 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
-import solutions.aon.seg.social.exceptions.CertificateNotFoundException;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.PaternityException;
-import solutions.aon.seg.social.exceptions.PaternityNotFoundException;
-import solutions.aon.seg.social.exceptions.PaternityWrongDataException;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.StatusCodeException;
-import solutions.aon.seg.social.exceptions.invaliddata.InvalidDataException;
-import solutions.aon.seg.social.exceptions.invaliddata.UnfilledMandatory;
-import solutions.aon.seg.social.objects.PaternityCertificate;
-import solutions.aon.seg.social.objects.PaternityCertificate.PaternityCertificateBuilder;
+import solutions.aon.seg.social.exception.CertificateNotFoundException;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.PaternityException;
+import solutions.aon.seg.social.exception.PaternityNotFoundException;
+import solutions.aon.seg.social.exception.PaternityWrongDataException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.exception.invalid.InvalidDataException;
+import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
+import solutions.aon.seg.social.object.PaternityCertificate;
+import solutions.aon.seg.social.object.PaternityCertificate.PaternityCertificateBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 

@@ -10,11 +10,11 @@ import java.io.InputStream;
 import org.junit.Test;
 
 import solutions.aon.seg.social.SistemaREDSecondaryUser;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.StatusCodeException;
-import solutions.aon.seg.social.exceptions.invaliddata.InvalidDataException;
-import solutions.aon.seg.social.objects.SecondaryUser;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.exception.invalid.InvalidDataException;
+import solutions.aon.seg.social.object.SecondaryUser;
 
 public class TestSecondaryUsers {
 

@@ -12,11 +12,11 @@ import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 
-import solutions.aon.seg.social.exceptions.CSSParseException;
-import solutions.aon.seg.social.exceptions.InternalException;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invaliddata.InvalidDataException;
+import solutions.aon.seg.social.exception.CSSParseException;
+import solutions.aon.seg.social.exception.InternalException;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 
 public class HtmlUnitToolkit {
 

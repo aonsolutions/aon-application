@@ -115,11 +115,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.exceptions.ForbiddenException;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.invaliddata.NotAllowedContributionAccount;
-import solutions.aon.seg.social.objects.Employee;
-import solutions.aon.seg.social.objects.Idc;
+import solutions.aon.seg.social.exception.ForbiddenException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
+import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.object.Idc;
 
 public class EmployeesServiceHelper {
 

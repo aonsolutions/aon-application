@@ -16,7 +16,7 @@ import com.esferalia.aon.in.payroll.pdf.jooq.JooqPDFSalaryBuilder;
 import com.esferalia.aon.occam.api.AONContext;
 
 import solutions.aon.seg.social.SistemaREDI.Regime;
-import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exception.SegSocialException;
 @Ignore
 public class SLDTest {
 

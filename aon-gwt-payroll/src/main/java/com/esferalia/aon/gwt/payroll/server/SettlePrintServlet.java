@@ -15,7 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
 import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
 import com.esferalia.aon.gwt.payroll.util.JooqSettleBuilder;
 import com.esferalia.aon.gwt.payroll.util.PdfPrintResponses;
-import com.esferalia.aon.in.payroll.pdf.maker.exceptions.CanNotCreatePdfException;
+import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 
 import sun.security.action.GetLongAction;
 

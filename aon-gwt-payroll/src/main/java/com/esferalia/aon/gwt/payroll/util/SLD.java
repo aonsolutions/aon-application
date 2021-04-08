@@ -16,8 +16,8 @@ import java.util.Map;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 
-import com.esferalia.aon.in.payroll.pdf.templates.AltaiPDFTemplate.PDFContract;
-import com.esferalia.aon.in.payroll.pdf.templates.common_classes.Deduction;
+import com.esferalia.aon.in.payroll.pdf.template.AltaiPDFTemplate.PDFContract;
+import com.esferalia.aon.in.payroll.pdf.template.commons.Deduction;
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -35,8 +35,8 @@ import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaREDI.LiquidationOrigin;
 import solutions.aon.seg.social.SistemaREDI.LiquidationType;
 import solutions.aon.seg.social.SistemaREDI.Regime;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.objects.WorkerLiquidation;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.object.WorkerLiquidation;
 
 public class SLD {
 	/**

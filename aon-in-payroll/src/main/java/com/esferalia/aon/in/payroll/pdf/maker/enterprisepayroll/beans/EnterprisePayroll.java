@@ -8,46 +8,60 @@ import java.util.Optional;
 import java.util.Set;
 
 public class EnterprisePayroll {
-	
-	private Optional<InputStream> logo;
-	private Optional<Date> month;
-	private Optional<String> header;
-	private Optional<String> subheader;
-	private Optional<Map<String,Map<String,EnterprisePayrollEntry>>> entries;
 
-	public EnterprisePayroll(InputStream logo, Date month, String header, String subheader,Map<String, Map<String, EnterprisePayrollEntry>> entries,Map<String, Map<String, EnterprisePayrollEntry>> ss_entries) {
-		this.logo = Optional.ofNullable(logo);
-		this.month = Optional.ofNullable(month);
-		this.header = Optional.ofNullable(header);
+	private Optional<InputStream>									   logo;
+	private Optional<Date>											   month;
+	private Optional<String>										   header;
+	private Optional<String>										   subheader;
+	private Optional<Map<String, Map<String, EnterprisePayrollEntry>>> entries;
+
+	public EnterprisePayroll(
+			InputStream logo, Date month, String header, String subheader,
+			Map<String, Map<String, EnterprisePayrollEntry>> entries,
+			Map<String, Map<String, EnterprisePayrollEntry>> ssEntries
+	) {
+		this.logo	   = Optional.ofNullable(logo);
+		this.month	   = Optional.ofNullable(month);
+		this.header	   = Optional.ofNullable(header);
 		this.subheader = Optional.ofNullable(subheader);
-		this.entries = Optional.ofNullable(merge(entries,ss_entries));
+		this.entries   = Optional.ofNullable(merge(entries, ssEntries));
 	}
 
-	public Map<String,Map<String,EnterprisePayrollEntry>> merge(Map<String, Map<String, EnterprisePayrollEntry>> aon_category_entries, Map<String, Map<String, EnterprisePayrollEntry>> ss_category_entries){
-		if(ss_category_entries == null) ss_category_entries = new HashMap<>();
-		if(aon_category_entries == null) aon_category_entries = new HashMap<>();
-		Set<String> ss_categories = ss_category_entries.keySet();
+	public Map<String, Map<String, EnterprisePayrollEntry>> merge(
+			Map<String, Map<String, EnterprisePayrollEntry>> aonCategoryEntries,
+			Map<String, Map<String, EnterprisePayrollEntry>> ssCategoryEntries
+	) {
+		if (ssCategoryEntries == null)
+			ssCategoryEntries = new HashMap<>();
+		if (aonCategoryEntries == null)
+			aonCategoryEntries = new HashMap<>();
+		Set<String> ssCategories = ssCategoryEntries.keySet();
 
-		for (String category : ss_categories){
-			if(aon_category_entries.containsKey(category)){
-				Map<String, EnterprisePayrollEntry> aon_entries = aon_category_entries.get(category);
-				Map<String, EnterprisePayrollEntry> ss_entries = ss_category_entries.get(category);
-				Set<String> entry_keys = ss_entries.keySet();
+		for (String category : ssCategories)
+		{
+			if (aonCategoryEntries.containsKey(category))
+			{
+				Map<String, EnterprisePayrollEntry>	aonEntries = aonCategoryEntries.get(category);
+				Map<String, EnterprisePayrollEntry>	ssEntries  = ssCategoryEntries.get(category);
+				Set<String>							entryKeys  = ssEntries.keySet();
 
-				for (String key : entry_keys){
-					EnterprisePayrollEntry ss_en = ss_entries.get(key);
-					if(aon_entries.containsKey(key)){
-						EnterprisePayrollEntry aon_en = aon_entries.get(key);
+				for (String key : entryKeys)
+				{
+					EnterprisePayrollEntry ssEn = ssEntries.get(key);
+					if (aonEntries.containsKey(key))
+					{
+						EnterprisePayrollEntry aonEn = aonEntries.get(key);
 
-						aon_en.merge_ss_entry(ss_en);
-						aon_entries.put(key,aon_en);
-					}else aon_entries.put(key,ss_en);
+						aonEn.mergeSsEntry(ssEn);
+						aonEntries.put(key, aonEn);
+					} else
+						aonEntries.put(key, ssEn);
 				}
-			}else	aon_category_entries.put(category,ss_category_entries.get(category));
+			} else
+				aonCategoryEntries.put(category, ssCategoryEntries.get(category));
 		}
-		return aon_category_entries;
+		return aonCategoryEntries;
 	}
-
 
 	public Optional<InputStream> getLogo() {
 		return logo;
@@ -67,16 +81,5 @@ public class EnterprisePayroll {
 
 	public Optional<Map<String, Map<String, EnterprisePayrollEntry>>> getEntries() {
 		return entries;
-	}
-
-	@Override
-	public String toString() {
-		return "EnterprisePayroll{" +
-				"logo='" + logo + '\'' +
-				", month=" + month +
-				", header='" + header + '\'' +
-				", subheader='" + subheader + '\'' +
-				", entries=" + entries +
-				'}';
 	}
 }
