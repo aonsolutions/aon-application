@@ -34,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -614,26 +615,31 @@ public class AgreementDraftObject {
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), agreementDraft);
 		// TODO: Clean Database data.
 		
-		agreementsServiceAsync.saveAgreementDraft(draftDomainName, agreementDraft,
-				new AsyncCallback<AgreementDraft>() {
-
-					@Override
-					public void onSuccess(AgreementDraft savedAgreementDraft) {
-						oldAgreementDraft = agreementDraft;
-						agreementDraft = savedAgreementDraft;
-						undoManager.discardAll();
-						agreementDraft.clearDrafts();
-
-						calculate(callback);
-
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						callback.onCalculateFailure(caught);
-					}
-				});
-
+		agreementDraft.setDatesWithChanges(getDatesWithChanges());
+		
+		String message = checkIfExistLevelAndCategory();
+		if(AonStringUtils.isNotBlank(message))
+			callback.onCalculateFailure(new Exception(message));
+		else
+			agreementsServiceAsync.saveAgreementDraft(draftDomainName, agreementDraft,
+					new AsyncCallback<AgreementDraft>() {
+	
+						@Override
+						public void onSuccess(AgreementDraft savedAgreementDraft) {
+							oldAgreementDraft = agreementDraft;
+							agreementDraft = savedAgreementDraft;
+							undoManager.discardAll();
+							agreementDraft.clearDrafts();
+	
+							calculate(callback);
+	
+						}
+	
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onCalculateFailure(caught);
+						}
+					});
 	}
 
 	public void calculate(final CalculateCallback callback) {
@@ -1069,6 +1075,7 @@ public class AgreementDraftObject {
 				add("MAYOR_65");
 				add("TRUE");
 				add("FALSE");
+				add("TODO");
 				
 				// BASES
 				add("BASE_CGC");
@@ -1100,7 +1107,6 @@ public class AgreementDraftObject {
 				
 				//ANTIGUEDAD
 				add("AÑOS_ANTIGUEDAD");
-				
 				
 				// FINIQUITO ?
 				add("DIAS_INDEMNIZACION");
@@ -1161,6 +1167,7 @@ public class AgreementDraftObject {
 			}
 		}.contains(var) 
 		|| var.startsWith("DIAS")
+		|| var.startsWith("D_")
 		;
 	}
 
@@ -1179,5 +1186,45 @@ public class AgreementDraftObject {
 		agreementDraft.getDraftSalaryTable().clear();
 	}
 	
+	private String checkIfExistLevelAndCategory() {
+		String message = null;
+		
+		Set<Level> levels = agreementDraft.getLevels();
+		Set<Level> draftLevels = agreementDraft.getDraftLevels();
+		levels.removeAll(draftLevels);
+		Map<Integer, Set<String>> categories = agreementDraft.getCategoriesMap();
+		Map<Integer, Set<String>> draftCategories = agreementDraft.getDraftCategories();
+		
+		if(	(null != levels && levels.isEmpty()) && 
+			(null != draftLevels && draftLevels.isEmpty())) {
+			message = "Debe existir al menos un nivel";
+		} else if(categories.isEmpty() &&  draftCategories.isEmpty()){
+			message = "Debe existir al menos una categor\u00EDa para el nivel existente";
+		} else {
+			for(Level level : levels) {
+				Integer levelId = level.getId();
+				Set<String> levelCategories = null != categories.get(levelId) ? categories.get(levelId) : draftCategories.get(levelId);
+				if((null == levelCategories || levelCategories.isEmpty()) && AonStringUtils.isNotBlank(level.getDescription())) {
+					if(AonStringUtils.isBlank(message))
+						message = "El nivel <b>" + level.getDescription() + "</b> no tiene ninguna categor\u00EDa asociada. Este debe tener al menos una.<br>";
+					else
+						message += "El nivel <b>" + level.getDescription() + "</b> no tiene ninguna categor\u00EDa asociada. Este debe tener al menos una.<br>";
+				}
+			}
+			
+			for(Level level : draftLevels) {
+				Integer levelId = level.getId();
+				Set<String> levelCategories = null != draftCategories.get(levelId) ? draftCategories.get(levelId) : categories.get(levelId);
+				if((null == levelCategories || levelCategories.isEmpty()) && AonStringUtils.isNotBlank(level.getDescription())) {
+					if(AonStringUtils.isBlank(message))
+						message = "El nivel <b>" + level.getDescription() + "</b> no tiene ninguna categor\u00EDa asociada. Este debe tener al menos una.<br>";
+					else
+						message += "El nivel <b>" + level.getDescription() + "</b> no tiene ninguna categor\u00EDa asociada. Este debe tener al menos una.<br>";
+				}
+			}
+		}
+		
+		return message;
+	}
 
 }

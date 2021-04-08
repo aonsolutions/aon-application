@@ -1945,8 +1945,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				agreementDraftObject.setStartDate(newDate);
 				agreementDraftObject.setEndDate(endDate);
 				
-//				calculate();
-				
 				calculate(new CalculateCallback() {
 
 					@Override
@@ -2037,8 +2035,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	@Override
 	public void onCalculateFailure(Throwable throwable) {
-		// TODO Auto-generated method stub
-		Window.alert(throwable.getMessage());
+		AonDialog warnDialog = new AonDialog("ERROR", new HTML(throwable.getMessage()));
+		warnDialog.warning();
 	}
 
 	@Override
