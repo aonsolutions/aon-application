@@ -849,16 +849,16 @@ public class SQLAgreementDraft {
 				
 				DSLContext dslContext = DSL.using(conn, getDefaultSettings());
 				
-				Integer agreementDataId = null;
-				agreementDataId = dslContext.select(AGREEMENT_DATA.ID).from(AGREEMENT_DATA)
+				Integer agreementDataId = dslContext.select(AGREEMENT_DATA.ID).from(AGREEMENT_DATA)
 					.where(AGREEMENT_DATA.NAME.eq("SERVIAGREEMENT"))
 					.and(AGREEMENT_DATA.AGREEMENT.eq(draft.getId()))
 					.fetchOne(AGREEMENT_DATA.ID);
 				
-				dslContext.update(AGREEMENT_DATA)
-					.set(AGREEMENT_DATA.START_DATE, new java.sql.Date(draft.getDatesWithChanges().first().getTime()))
-					.where(AGREEMENT_DATA.ID.eq(agreementDataId))
-					.execute();
+				if(null != agreementDataId)
+					dslContext.update(AGREEMENT_DATA)
+						.set(AGREEMENT_DATA.START_DATE, new java.sql.Date(draft.getDatesWithChanges().first().getTime()))
+						.where(AGREEMENT_DATA.ID.eq(agreementDataId))
+						.execute();
 			}
 
 		} finally {
