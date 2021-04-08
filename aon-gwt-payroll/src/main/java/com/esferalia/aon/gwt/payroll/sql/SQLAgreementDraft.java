@@ -544,13 +544,15 @@ public class SQLAgreementDraft {
 					+ AgreementDataColumns.START_DATE + " FROM "
 					+ SQLConstants.AGREEMENT_DATA + " WHERE "
 					+ AgreementDataColumns.AGREEMENT + " = ? " + " AND "
+					+ AgreementDataColumns.NAME + " != ? " + " AND "
 					+ AgreementDataColumns.DOMAIN + " IN ( " + in + " )"
 					+ " GROUP BY 1");
 			// @formatter:on
 			stmt.setInt(1, agreementId);
+			stmt.setString(2, "SERVIAGREEMENT");
 			for (int i = 0; i < domainIds.length; i++) {
 				if(null != domainIds[i]) //TODO: Needed? Save nullPointerException...
-					stmt.setInt(2 + i, domainIds[i]);
+					stmt.setInt(3 + i, domainIds[i]);
 			}
 			rs = stmt.executeQuery();
 			while (rs.next())
@@ -828,7 +830,8 @@ public class SQLAgreementDraft {
 	}
 
 	private static void updateAgreement(Connection conn, Integer domainId,
-			Agreement draft) throws SQLException {
+			AgreementDraft draft) throws SQLException {
+		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
 
@@ -841,6 +844,22 @@ public class SQLAgreementDraft {
 			stmt.setInt(2, draft.getId());
 			stmt.executeUpdate();
 			stmt.close();
+			
+			if(!draft.getDatesWithChanges().isEmpty()) {
+				
+				DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+				
+				Integer agreementDataId = null;
+				agreementDataId = dslContext.select(AGREEMENT_DATA.ID).from(AGREEMENT_DATA)
+					.where(AGREEMENT_DATA.NAME.eq("SERVIAGREEMENT"))
+					.and(AGREEMENT_DATA.AGREEMENT.eq(draft.getId()))
+					.fetchOne(AGREEMENT_DATA.ID);
+				
+				dslContext.update(AGREEMENT_DATA)
+					.set(AGREEMENT_DATA.START_DATE, new java.sql.Date(draft.getDatesWithChanges().first().getTime()))
+					.where(AGREEMENT_DATA.ID.eq(agreementDataId))
+					.execute();
+			}
 
 		} finally {
 			if (stmt != null)
