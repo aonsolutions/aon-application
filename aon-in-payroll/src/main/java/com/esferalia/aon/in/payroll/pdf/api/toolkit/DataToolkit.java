@@ -159,6 +159,7 @@ public class DataToolkit {
 	
 	
 	public static <T,R> Object safeEquals(T obj, R Object2) {
+		return Object2;
 		
 	}
 
