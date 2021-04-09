@@ -6,6 +6,8 @@ package com.esferalia.aon.in.payroll.pdf.api.toolkit;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.toDecimal;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.StringToolkit.trimToEmpty;
 
+import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
+
 public class Number2Text {
 	private int	  flag;
 	public int	  numero;
@@ -40,8 +42,8 @@ public class Number2Text {
 	 */
 	public static String convertDouble(Double number) {
 		String	 result	  = "";
-		String	 toString = toDecimal(number);
-		String[] parts	  = toString.split(",");
+		String	 toString = PdfFormats.toDecimal(number).replace(",", ".");
+		String[] parts	  = toString.split("\\.");
 
 		int	units	 = Integer.parseInt(parts[0]);
 		int	decimals = Integer.parseInt(parts[1]);
