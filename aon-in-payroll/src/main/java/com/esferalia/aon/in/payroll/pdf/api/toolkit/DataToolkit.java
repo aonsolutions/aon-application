@@ -10,7 +10,7 @@ import java.util.Optional;
  * 
  * @author akrck02
  */
-public class OptionalToolkit {
+public class DataToolkit {
 
 	/**
 	 * <p>
@@ -155,6 +155,11 @@ public class OptionalToolkit {
 	public static <T> Object safeValue(T obj, T def) {
 		Optional<T> opt = Optional.ofNullable(obj);
 		return opt.orElse(def);
+	}
+	
+	
+	public static <T,R> Object safeEquals(T obj, R Object2) {
+		
 	}
 
 }

@@ -7,7 +7,7 @@ public class NumberToolkit {
 	/**
 	 * Random number between 0 and max
 	 * 
-	 * @param max - the number
+	 * @param max - the maximum number
 	 * @return [double] The random number
 	 */
 	public static double random(double max) {
@@ -15,6 +15,19 @@ public class NumberToolkit {
 		return random;
 	}
 
+	/**
+	 * Random number between min and max
+	 * 
+	 * @param min - the minimum number
+	 * @param max - the maximum number
+	 * @return [double] The random number
+	 */
+	public static double random(double min, double max) {
+		Double random = min + Math.random() * (max - 1);
+		return random;
+	}
+
+	
 	/**
 	 * Parse an Integer without exceptions
 	 * @param parseable - The String to parse

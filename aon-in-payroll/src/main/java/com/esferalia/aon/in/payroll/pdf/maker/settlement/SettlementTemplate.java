@@ -12,9 +12,9 @@ import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.RIGHT;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.PAGE_TYPE.VERTICAL;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.Number2Text.convertDouble;
-import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeDouble;
-import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeString;
-import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeValue;
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit.safeDouble;
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit.safeString;
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit.safeValue;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawBox;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawText;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawTextRight;

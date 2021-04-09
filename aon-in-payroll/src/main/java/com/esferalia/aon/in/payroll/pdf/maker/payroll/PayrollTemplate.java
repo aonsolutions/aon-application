@@ -9,9 +9,9 @@ import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.toLatinNum
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.CENTER;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.LEFT;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT.RIGHT;
-import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeDouble;
-import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeInteger;
-import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeString;
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit.safeDouble;
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit.safeInteger;
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit.safeString;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.createVerticalPage;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.drawBorderedBox;

@@ -1,7 +1,7 @@
 package com.esferalia.aon.in.payroll.pdf.api.toolkit;
 
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.toLatinNumber;
-import static com.esferalia.aon.in.payroll.pdf.api.toolkit.OptionalToolkit.safeDouble;
+import static com.esferalia.aon.in.payroll.pdf.api.toolkit.DataToolkit.safeDouble;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
