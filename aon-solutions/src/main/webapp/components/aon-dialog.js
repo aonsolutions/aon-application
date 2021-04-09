@@ -212,15 +212,44 @@ export class AonDialog extends AonElement {
 	}
 
 	addAcceptAction(fn) {
+		let accept = this.buttonAccept();
+		accept.addEventListener('click', (ev) => {
+			fn(ev);
+			this.close();
+		});
+	}
+	
+	buttonAccept(){
 		let accept = this.getElement(this.ACCEPT) || this.createElement('button');
 		accept.id = this.ACCEPT;
 		accept.className = 'aonButton';
 		accept.innerHTML = MSG.AON_MSG_ACCEPT;
-		accept.addEventListener('click', () => {
-			fn();
-			this.close();
-		});
 		this.getElement(this.ACTION).appendChild(accept);
+		return accept;
+	}
+
+	addSendAction(fn) {
+		let accept = this.buttonAccept();
+		accept.classList.add('buttonload')
+		// accept.innerHTML =  `<span class="button__text">${MSG.AON_MSG_ACCEPT}</span>`;
+		accept.addEventListener('click', (ev) => {
+			ev.stopPropagation();
+			ev.preventDefault();
+			fn(ev);
+		});
+	}
+
+	loadingButton(loading){
+		let accept = this.getElement(this.ACCEPT);
+		// if(loading) accept.classList.add("button--loading"); 
+		// else accept.classList.remove("button--loading");
+		if(accept){
+			let id = "iconDialogSend";
+			let icon = this.createElement('i');
+			icon.id = id;
+			icon.classList.add("fa fa-refresh fa-spin");
+			accept.appendChild(icon);
+		}
 	}
 }
 if(!window.customElements.get('aon-dialog')){

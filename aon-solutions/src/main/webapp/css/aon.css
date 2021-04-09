@@ -1054,4 +1054,20 @@ button:disabled, button[disabled]{
   margin-top: -25px;
   margin-right: -13px;
   cursor: pointer;
+  padding: 10px;
 }
+
+.colorGrey{
+  color:grey;
+}
+
+.aonFlexBetween{
+  display: flex;
+  justify-content:space-between;
+  width: 100%;
+}
+
+.aonFontWeight-500{font-weight: 500;}
+.aonFontWeight-600{font-weight: 600;}
+.aonFontWeight-700{font-weight: 700;}
+.aonFontWeight-800{font-weight: 800;}

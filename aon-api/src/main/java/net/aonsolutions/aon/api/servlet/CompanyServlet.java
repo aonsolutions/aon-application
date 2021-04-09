@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonDomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 
 import net.aonsolutions.aon.api.json.AonAddressJSON;
 import net.aonsolutions.aon.api.json.AonRegistryJSON;
@@ -59,6 +60,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 				break;
 			case "/address":
 				response(req, resp, getMainAddress());
+				break;	
+			case "/banks":
+				response(req, resp, getBanks());
 				break;	
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -221,6 +225,30 @@ public class CompanyServlet extends AonApiHttpServlet{
 		}
 
 		return new JSONObject();
+	}
+	
+	private JSONArray getBanks() {
+		JSONArray array = new JSONArray();
+		Domain domain = getDomain();
+		String login = getUser().getLogin();
+		Company company = AON.getCompany(domain.getName(),domain.getId(), login, f-> f.getDomainProperty().eq(getDomain().getId()));
+		
+		LinkedList<RegistryBank> registryBanks = AON.getRegistryBanks(domain.getName(), domain.getId(), login, company.getId());
+		
+		registryBanks.stream().forEach(rb->{
+			JSONObject json = new JSONObject();
+			json.put("id", rb.getId());
+			json.put("bankAccount", rb.getBankAccount());
+			json.put("bic", rb.getBic());
+			json.put("suffix", rb.getSuffix());
+			json.put("alias", rb.getAlias());
+			json.put("account", rb.getAccount());
+			json.put("accountCode", rb.getAccountCode());
+			json.put("accountDescription", rb.getAccountDescription());
+			array.put(json);
+		});
+		
+		return array;
 	}
 	
 }

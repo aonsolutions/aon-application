@@ -64,6 +64,8 @@ export const getCompanyOne = (data) => get(`${API_URL}/company/one`, data);
 export const getCompanyMedia = (data) => get(`${API_URL}/company/media`, data);
 export const getCompanyAddress = (data) => get(`${API_URL}/company/address`, data);
 
+export const getCompanyBanks = (data) => get(`${API_URL}/company/banks`, data);
+
 // export const getDomainUserRoles = (data) => get(`${API_URL}/company/approles`, data);
 
 export const getDomainUserRoles = (data) => {

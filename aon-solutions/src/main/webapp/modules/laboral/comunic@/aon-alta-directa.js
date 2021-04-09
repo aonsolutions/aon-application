@@ -116,7 +116,7 @@ export class AonAltaDirecta extends AonElement {
         let aonTrabajadorCard = this.getElement(`${this.id}TrabajadorCard`);
         aonTrabajadorCard.setContentHTML(
             /*html*/`
-            <div class="aonCol-sm-12 aonCol-md-4">
+            <div class="aonCol-sm-12 aonCol-md-4" style="padding-top: 18px;">
                 <aon-switch id="switchDni" title="Buscar por DNI"></aon-switch>
                 <div id="${this.id}Reiniciar" hidden>
                     Reiniciar <aon-icon-button id="${this.id}IconReset" icon="cached"> </aon-icon-button>

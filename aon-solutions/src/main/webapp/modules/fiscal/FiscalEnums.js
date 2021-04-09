@@ -30,9 +30,10 @@ export const DATA_TEST =[
     document:"777777777",
     name:"DECLARANTE_NAME",
     surname:"DECLARANTE_SURNAME",
-    type:"NEGATIVE",
+    type:"DEPOSIT",
     result: 1231.23,
-    iban: "12312389893774766883"
+    iban: "12312389893774766883",
+    nrc: ""
   },
   {
     id:"302",
@@ -47,20 +48,49 @@ export const DATA_TEST =[
     document:"888888",
     name:"DECLARANTE_NAME",
     surname:"DECLARANTE_SURNAME",
-    type:"NEGATIVE",
+    type:"BANK",
     result: 6551.84,
-    iban: "12312389893774766883"
+    iban: "9999123",
+    nrc: ""
+  },
+  {
+    id:"303",
+    domain:"3305",
+    administration: "GIPUZKOA",
+    model: "130",
+    year:"2020",
+    period: "T2",
+    status:"SENT",
+    complementary: false,
+    replacement: false,
+    document:"77777",
+    name:"DECLARANTE_NAME",
+    surname:"DECLARANTE_SURNAME",
+    type:"NEGATIVE",
+    result: 2523.84,
+    iban: "9999123",
+    nrc: ""
   }
 ];
 
-const TAX_MODEL  = {
+const TAX_MODEL_NUMBER  = {
   "IVA":"303",
   "111":"111",
   "115":"115",
   "123":"123",
   "130":"130",
-  "131":"131",
-  "202":"202",
+  "131":"131", 
+  "202":"202"
+};
+
+const TAX_MODEL_TEXT = {
+  "303":"IVA",
+  "111":"IRPF Trabajo y Profesionales",
+  "115":"IRPF Alquileres", 
+  "123":"Rend. Capital Mobiliario", 
+  "130":"IRPF Pago Fraccionado (ED)", 
+  "131":"IRPF Pago Fraccionado (EO)",
+  "202":"Imp. Sociedades. Pago Fraccionado",
 };
 
 const TAX_PERIOD  = {
@@ -84,35 +114,35 @@ const TAX_PERIOD  = {
 };
 
 const TAX_ADMIN = {
-  "ALAVA":"Araba/Alava",
-  "BIZKAIA":"Bizkaia",
-  "GIPUZKOA":"Gipuzkoa",
-  "NAVARRA":"Navarra",
-  "COMMON_TERRITORY":"Territorio Común",
-  "UNKNOWN":"Otro"
+  ALAVA:"Araba/Alava",
+  BIZKAIA:"Bizkaia",
+  GIPUZKOA:"Gipuzkoa",
+  NAVARRA:"Navarra",
+  COMMON_TERRITORY:"Territorio Común",
+  UNKNOWN:"Otro"
 }
 
 const TAX_STATUS = {
-  "PENDING":"Pendiente",
-  "FINISHED":"Finalizado",
-  "BATCHED":"En Lote",
-  "BLOCKED":"Bloqueado",
-  "SENT":"Presentado",
-  "MISSING":"Desconocido",
-  "CUSTOMER_CHECK":"Envio a cliente",
+  PENDING:"Pendiente",
+  FINISHED:"Finalizado",
+  BATCHED:"En Lote",
+  BLOCKED:"Bloqueado",
+  SENT:"Presentado",
+  MISSING:"Desconocido",
+  CUSTOMER_CHECK:"Envio a cliente",
 }
 
 const TAX_TYPE = {
-  "NEGATIVE":"Negativa, cero ó sin. act.",
-  "DEPOSIT":"Ingreso",
-  "BANK":"Domiciliación",
-  "DEPOSIT_CCT":"Ingreso a anotar en CCT",
-  "TO_DEDUCE":"A deducir",
-  "COMPENSATE":"A compensar",
-  "PAYBACK":"A devolver",
-  "PAYBACK_CCT":"Devolución a anotar en CCT"
+  NEGATIVE:"Negativa, cero ó sin. act.",//  Nada
+  DEPOSIT:"Ingreso",    // BANCO NRC
+  BANK:"Domiciliación", // BANCO 
+  DEPOSIT_CCT:"Ingreso a anotar en CCT", // Nada
+  TO_DEDUCE:"A deducir",  //  Nada
+  COMPENSATE:"A compensar", //  Nada
+  PAYBACK:"A devolver", // Banco
+  PAYBACK_CCT:"Devolución a anotar en CCT"  // Nada
 }
 
 export const TAX_ENUMS = {
-  TAX_MODEL, TAX_PERIOD, TAX_ADMIN, TAX_STATUS, TAX_TYPE
+  TAX_MODEL_NUMBER, TAX_MODEL_TEXT, TAX_PERIOD, TAX_ADMIN, TAX_STATUS, TAX_TYPE
 }

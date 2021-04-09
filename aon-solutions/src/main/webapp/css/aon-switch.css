@@ -49,6 +49,7 @@
     background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.38);
     vertical-align: top;
     transition: background-color 0.2s, opacity 0.2s;
+    margin-bottom: -22%;
 }
 
 /* Thumb */
