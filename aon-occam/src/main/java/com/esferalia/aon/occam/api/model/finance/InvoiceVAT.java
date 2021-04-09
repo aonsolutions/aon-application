@@ -42,6 +42,7 @@ public class InvoiceVAT implements Serializable {
 	private String expAccountCode;
 	private String expAccountDescription;
 
+	private InvoiceDetail invoiceDetail;
 	
 	public Integer getId() {
 		return id;
@@ -289,6 +290,15 @@ public class InvoiceVAT implements Serializable {
 
 	public InvoiceVAT setAdjAccountDescription(String adjAccountDescription) {
 		this.adjAccountDescription = adjAccountDescription;
+		return this;
+	}
+	
+	public InvoiceDetail getInvoiceDetail() {
+		return invoiceDetail;
+	}
+	
+	public InvoiceVAT setInvoiceDetail(InvoiceDetail invoiceDetail) {
+		this.invoiceDetail = invoiceDetail;
 		return this;
 	}
 	

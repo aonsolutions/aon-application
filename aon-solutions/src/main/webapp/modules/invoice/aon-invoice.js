@@ -3,7 +3,7 @@ import {Transactions} from '../../services/transaction.js';
 import {Paymethods} from '../../services/paymethod.js';
 import {TaxType, TaxIVAPercentage, TaxIRPFPercentage, InvoiceAction} from './invoiceEnums.js';
 import {getInvoiceCategories} from '../../services/invoiceCategory.js';
-import {insertInvoice, deleteInvoices, getUserAppRole, getRegistries, getGlobalRegistries, getInvoiceAccounts, sendInvoiceMail} from '../../services/service.js';
+import {insertInvoice, deleteInvoices, getUserAppRole, getRegistries, getGlobalRegistries, getInvoiceAccounts, sendInvoiceMail, recordSelfconta} from '../../services/service.js';
 import {isNumber, round} from '../../services/utils.js';
 import {Invoice} from './Invoice.js';
 import {getNextInvoice, getPreviousInvoice} from './InvoiceCache.js';
@@ -449,14 +449,24 @@ export class AonInvoice extends AonElement {
 	}
 
 	recordInvoice() {
-		let aonInvoice = this.getElement('aonInvoice');
-		let d = document.getElementById(aonInvoice.DIALOG);
-		d.clear();
-		if(!this.isMobile())d.width = '400px';
-		d.setTitle(MSG.AON_MSG_RECORD_INVOICE);
-		d.setContentHTML('Esta opción está en desarrollo...');
-		d.addAcceptAction(() => {});
-		d.open();
+		if(this._invoice.isSelfconta()){
+			recordSelfconta(this.getInvoice()).then(r => {
+				this.back();
+			}).catch(e => {
+				let aonApplication = document.querySelector('aon-application');
+				let toast = this.getElement(aonApplication.TOAST);
+				toast.start(JSON.parse(e));
+			});;
+		}	else {
+				let aonInvoice = this.getElement('aonInvoice');
+				let d = document.getElementById(aonInvoice.DIALOG);
+				d.clear();
+				if(!this.isMobile())d.width = '400px';
+				d.setTitle(MSG.AON_MSG_RECORD_INVOICE);
+				d.setContentHTML('Esta opción está en desarrollo...');
+				d.addAcceptAction(() => {});
+				d.open();
+		}
 	}
 
 	buildComments(){

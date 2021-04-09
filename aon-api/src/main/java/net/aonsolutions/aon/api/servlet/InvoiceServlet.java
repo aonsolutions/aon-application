@@ -13,12 +13,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.AccountProperties;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -39,10 +43,12 @@ import com.google.api.services.drive.model.File;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.api.ewok.IConstants;
+import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.tedi.AonParser;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
+import net.aonsolutions.aon.tedi.TediParser;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
@@ -103,8 +109,6 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			this.perPage = perPage;
 			return this;
 		}
-		
-		
 	}
 	
 	private static final Logger LOGGER  = Logger.getLogger(InvoiceServlet.class.getName());
@@ -138,6 +142,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			switch (getPath()) {
 			case "/":
 				response(req, resp, setInvoice(getDomain(), getUser().getLogin(), getData()));
+				break;
+			case "/selfconta":
+				response(req, resp, setSelfcontaInvoice());
+				break;
+			case "/selfconta_import":
+				response(req, resp, selfconta());
+				break;
+			case "/selfconta_record":
+				response(req, resp, selfcontaRecord());
 				break;
 			default:
 				throw new Exception("La ruta introducida es incorrecta.");
@@ -333,7 +346,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.and(f.getIdProperty().in(idsArray)));
 	}
 	
-	private static JSONObject setInvoice(Domain domain, String login, JSONObject json) {
+	public static JSONObject setInvoice(Domain domain, String login, JSONObject json) {
 		JSONObject file = null;
 		
 		if(json.opt("file")!= null) { 
@@ -378,10 +391,30 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
     	rawdoc.setJson(json.toString());
     	rawdoc.setLog(json.opt("comments") != null? json.optJSONArray("comments").toString(): "[]");
-		
+
 		rawdoc = AON.rawdocSave(domain.getName(), domain.getId(), login, rawdoc);
-		json.put("id", rawdoc.getId());
+		json.put("id", rawdoc.getId()); 
 		return json;
+	}
+	
+	private JSONObject setSelfcontaInvoice() {
+		TediInvoice ti = TediInvoiceJSON.fromJSON(getData());
+		AonConfiguration aonCtx = AON.getConfiguration(getDomain().getName(), getDomain().getId(), getUser().getLogin());
+		try(AONContext ctx = AONContext.getAONContext(getDomain(), getUser().getLogin())){
+			TediResult tr = TediParser.toFullInvoice(ctx, aonCtx, ti);
+		}
+		return new JSONObject();
+	}
+	
+	private JSONObject selfconta() throws JSONException, Exception {
+		Company company = AON.getCompany(getDomain().getName(), getDomain().getId(), getUser().getLogin(), f -> f.getDomainProperty().eq(getDomain().getId()));
+		BidoqRequest.selfconta(getDomain(), getUser(), company.getDocument());
+		return new JSONObject();
+	}
+	
+	private JSONObject selfcontaRecord() throws Exception {
+		BidoqRequest.selfcontaRecord(getDomain(), getUser(), getData());
+		return new JSONObject();
 	}
 	
 	public static File getFile(Drive drive, String id){
@@ -393,7 +426,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 		return file;
 	}
-	
+
 	private static InvoiceStatus getInvoiceStatus(String status) {
 		InvoiceStatus st = InvoiceStatus.safeValueOf(status);
 		if(st == null) {

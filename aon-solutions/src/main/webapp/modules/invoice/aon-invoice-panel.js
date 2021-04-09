@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {AonApplication} from '../../components/aon-application.js';
-import {insertInvoice, deleteInvoices, actionMobile, getDomainUserRoles} from '../../services/service.js';
+import {insertInvoice, deleteInvoices, actionMobile, getDomainUserRoles, selfconta} from '../../services/service.js';
 import {Invoice} from './Invoice.js';
 import {InvoiceAction} from './invoiceEnums.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -278,6 +278,37 @@ export class AonInvoicePanel extends AonElement {
 				}];
 		}
 
+		if(localStorage.getItem('aon_domain_name').includes('ayudat')) {
+			options = [{
+					name: 'Emitidas',
+					icon: 'unarchive',
+					fn: () => this.aonInvoice('emitida')
+				}, {
+					name: 'Recibidas',
+					icon: 'archive',
+					fn: () => this.aonInvoice('recibida')
+				}, {
+					name: 'Tickets/Justificantes',
+					icon: 'receipt',
+					fn: () => this.aonInvoice('ticket')
+				}, {
+					name: 'Importación Selfconta',
+					icon: '',
+					fn: () => selfconta().then(r => {
+						let aonApplication = document.querySelector('aon-application');
+						let toast = this.getElement(aonApplication.TOAST);
+						toast.start({
+							type: 'success',
+							message: 'Datos Importados. Revisa las facturas rechazadas.'
+						});
+					}).catch(e => {
+						let aonApplication = document.querySelector('aon-application');
+						let toast = this.getElement(aonApplication.TOAST);
+						toast.start(JSON.parse(e));
+					})
+				}];
+		}
+
 		if(this.isMobile()) {
 			options.push({
 				name: 'Camara',
@@ -360,7 +391,7 @@ export class AonInvoicePanel extends AonElement {
 		// }
 		else {
 			aonInvoice.setContentHTML(invoice
-				? `<aon-invoice invoice='${JSON.stringify(invoice)}'> </aon-invoice>`
+				? `<aon-invoice invoice='${JSON.stringify(invoice).replaceAll("'", "")}'> </aon-invoice>`
 				: `<aon-invoice type="${type}"> </aon-invoice>`);
 		}
 	}

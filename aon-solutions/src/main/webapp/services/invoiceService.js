@@ -19,3 +19,6 @@ export const downloadInvoices = (data) => openFileUrl(`${API_URL}/multiple_downl
 export const deleteInvoices = (invoiceIds) => remove(`${API_URL}/invoice`, { id: invoiceIds });
 
 export const getInvoiceAccounts = (data) => get(`${API_URL}/invoice/accounts`, data);
+
+export const selfconta = () => post(`${API_URL}/invoice/selfconta_import`, {});
+export const recordSelfconta = (data) => post(`${API_URL}/invoice/selfconta_record`, data);

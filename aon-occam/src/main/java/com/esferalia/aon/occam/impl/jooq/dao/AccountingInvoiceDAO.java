@@ -1157,7 +1157,9 @@ public class AccountingInvoiceDAO {
 		short line = 1;
 		LinkedList<InvoiceDetail> details = new LinkedList<InvoiceDetail>();
 		for (InvoiceVAT vat :  accInvoice.getVats()) {
-			InvoiceDetail detail = new InvoiceDetail()
+			
+			InvoiceDetail detail = vat.getInvoiceDetail() != null
+				? vat.getInvoiceDetail() : new InvoiceDetail()
 				.setDomain(accInvoice.getInvoice().getDomain())
 				.setInvoice(accInvoice.getInvoice())
 				.setInvestAsset(vat.getInvestAsset())

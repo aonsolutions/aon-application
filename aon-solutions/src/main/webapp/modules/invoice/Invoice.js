@@ -19,6 +19,7 @@ export class Invoice {
   irpf;
   suplidos;
   comments;
+  selfconta;
 
   constructor(type) {
     this.type = type || 'emitida';
@@ -61,6 +62,7 @@ export class Invoice {
     };
     this.status = 'inbox';
     this.comments = [];
+    this.selfconta = false;
   }
 
   createInvoice(invoice) {
@@ -110,11 +112,16 @@ export class Invoice {
       };
       this.file = invoice.file || undefined;
       this.comments = invoice.comments || [];
+      this.selfconta = invoice.selfconta || false;
     }
   }
 
   isEmitida() {
     return this.type.toLowerCase() === 'emitida';
+  }
+
+  isSelfconta() {
+    return this.selfconta;
   }
 
   isRecibida() {
