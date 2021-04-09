@@ -15,8 +15,8 @@ import org.junit.Test;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Accrual;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Deduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases.ContingencyBasesBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
@@ -34,33 +34,33 @@ public class DetailedPayrollTest {
 		DefaultPayrollBuilder builder = new DefaultPayrollBuilder();
 		
 		//CREATE ACCRUALS
-		Map<Integer,ArrayList<Accrual>> ac = new HashMap<Integer,ArrayList<Accrual>>();
+		Map<Integer,ArrayList<PDFPayment>> ac = new HashMap<Integer,ArrayList<PDFPayment>>();
 		
-		for(int i = 0; i < random(5)-1; i++) ac.put((int) i+1,new ArrayList<Accrual>());
+		for(int i = 0; i < random(5)-1; i++) ac.put((int) i+1,new ArrayList<PDFPayment>());
 		Set<Integer> keys = ac.keySet();
 		
 		for(Integer key : keys) {
 			for (int i = 0; i < random(10)-1; i++) {
-				Accrual accrual = new Accrual(random(999),"Descripcion por defecto.");
+				PDFPayment accrual = new PDFPayment(random(999),"Descripcion por defecto.");
 				ac.get(key).add(accrual);
 			}
 		}
 		System.out.println(" Preparing accruals.....");
 		
 		///CREATE DEDUCTIONS
-		Map<Integer,ArrayList<Deduction>> de = new HashMap<Integer,ArrayList<Deduction>>();
+		Map<Integer,ArrayList<PDFDeduction>> de = new HashMap<Integer,ArrayList<PDFDeduction>>();
 		
-		de.put(1,new ArrayList<Deduction>());
-		de.put(2,new ArrayList<Deduction>());
-		de.put(3,new ArrayList<Deduction>());
-		de.put(4,new ArrayList<Deduction>());
-		de.put(5,new ArrayList<Deduction>());
+		de.put(1,new ArrayList<PDFDeduction>());
+		de.put(2,new ArrayList<PDFDeduction>());
+		de.put(3,new ArrayList<PDFDeduction>());
+		de.put(4,new ArrayList<PDFDeduction>());
+		de.put(5,new ArrayList<PDFDeduction>());
 		
 		keys = de.keySet();
 		for(Integer key : keys) {
 			for (int i = 0; i < random(3); i++) {
-				Deduction deduction =
-						new Deduction(
+				PDFDeduction deduction =
+						new PDFDeduction(
 								random(100000),
 								"Descripcion por defecto",
 								random(100)

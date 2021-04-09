@@ -348,7 +348,7 @@ public class PdfText extends PdfComponent {
 	    return this;
 	}
 
-	public PdfTextBuilder margin_x(float margin_x) {
+	public PdfTextBuilder marginX(float margin_x) {
 	    this.margin_x = margin_x;
 	    return this;
 	}

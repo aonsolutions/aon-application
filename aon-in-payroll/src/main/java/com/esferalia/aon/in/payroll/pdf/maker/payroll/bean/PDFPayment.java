@@ -2,12 +2,12 @@ package com.esferalia.aon.in.payroll.pdf.maker.payroll.bean;
 
 import java.util.Optional;
 
-public class Accrual {
+public class PDFPayment {
 	
 	private Optional<Double> amount;
 	private Optional<String> description;
 	
-	public Accrual(Double amount, String description) {
+	public PDFPayment(Double amount, String description) {
 		super();
 		this.amount = Optional.ofNullable(amount);
 		this.description = Optional.ofNullable(description);

@@ -2,11 +2,12 @@ package com.esferalia.aon.in.payroll.pdf.maker.settlement.beans;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Accrual;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Deduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 
 public class Settlement {
 
@@ -23,8 +24,8 @@ public class Settlement {
 	private String	endCause;
 	private Boolean	existRepresentative;
 
-	private Map<Integer, ArrayList<Accrual>>   accruals;
-	private Map<Integer, ArrayList<Deduction>> deductions;
+	private Map<Integer, ArrayList<PDFPayment>>   accruals;
+	private Map<Integer, ArrayList<PDFDeduction>> deductions;
 
 	private Double accrualTotal;
 	private Double deductionTotal;
@@ -130,20 +131,20 @@ public class Settlement {
 		return this;
 	}
 
-	public Map<Integer, ArrayList<Accrual>> getAccruals() {
+	public Map<Integer, ArrayList<PDFPayment>> getAccruals() {
 		return accruals;
 	}
 
-	public Settlement setAccruals(Map<Integer, ArrayList<Accrual>> accruals) {
+	public Settlement setAccruals(Map<Integer, ArrayList<PDFPayment>> accruals) {
 		this.accruals = accruals;
 		return this;
 	}
 
-	public Map<Integer, ArrayList<Deduction>> getDeductions() {
+	public Map<Integer, ArrayList<PDFDeduction>> getDeductions() {
 		return deductions;
 	}
 
-	public Settlement setDeductions(Map<Integer, ArrayList<Deduction>> deductions) {
+	public Settlement setDeductions(Map<Integer, ArrayList<PDFDeduction>> deductions) {
 		this.deductions = deductions;
 		return this;
 	}
@@ -157,7 +158,7 @@ public class Settlement {
 		return this;
 	}
 
-	public Optional<Double> deduction_total() {
+	public Optional<Double> deductionTotal() {
 		return Optional.ofNullable(deductionTotal);
 	}
 
@@ -208,14 +209,22 @@ public class Settlement {
 		private String	endCause;
 		private boolean	existRepresentative;
 
-		private Map<Integer, ArrayList<Accrual>>   accruals;
-		private Map<Integer, ArrayList<Deduction>> deductions;
+		private Map<Integer, ArrayList<PDFPayment>>   accruals;
+		private Map<Integer, ArrayList<PDFDeduction>> deductions;
 
 		private double accrualTotal;
 		private double deductionTotal;
 		private double total;
 		private Date   date;
 		private String location;
+		
+		/**
+		 * 
+		 */
+		public SettlementBuilder() {
+			this.accruals = new HashMap<>();
+			this.deductions = new HashMap<>();
+		}
 
 		public SettlementBuilder setEnterpriseName(String enterpriseName) {
 			this.enterpriseName = enterpriseName;
@@ -267,12 +276,12 @@ public class Settlement {
 			return this;
 		}
 
-		public SettlementBuilder setAccruals(Map<Integer, ArrayList<Accrual>> accruals) {
+		public SettlementBuilder setPayments(Map<Integer, ArrayList<PDFPayment>> accruals) {
 			this.accruals = accruals;
 			return this;
 		}
 
-		public SettlementBuilder setDeductions(Map<Integer, ArrayList<Deduction>> deductions) {
+		public SettlementBuilder setDeductions(Map<Integer, ArrayList<PDFDeduction>> deductions) {
 			this.deductions = deductions;
 			return this;
 		}

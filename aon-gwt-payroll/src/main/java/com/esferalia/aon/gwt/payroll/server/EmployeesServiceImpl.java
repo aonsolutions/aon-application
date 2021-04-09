@@ -1745,21 +1745,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			Settle settle = getSettle(domain, draft);
-			
-			
+			Settle settle = getSettle(domain, draft);			
 			
 			try {
 				JooqSettleBuilder.printSettle(settle, reportOut, new Locale("Es"));
-			} catch (CanNotCreatePdfException e) {
-				e.printStackTrace();
-			}
+			} catch (CanNotCreatePdfException ignored) {}
 			
 
 			byte reportByteArray[] = reportOut.toByteArray();
-
-			ByteArrayInputStream reportInput = new ByteArrayInputStream(
-					reportByteArray);
+			ByteArrayInputStream reportInput = new ByteArrayInputStream(reportByteArray);
 
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent(mime, reportInput, stringWriter);

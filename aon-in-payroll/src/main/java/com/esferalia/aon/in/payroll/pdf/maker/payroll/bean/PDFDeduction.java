@@ -2,13 +2,13 @@ package com.esferalia.aon.in.payroll.pdf.maker.payroll.bean;
 
 import java.util.Optional;
 
-public class Deduction {
+public class PDFDeduction {
 	
 	private Optional<Double> amount;
 	private Optional<String> description;
 	private Optional<Double> percent;
 	
-	public Deduction(Double amount, String description, Double percent) {
+	public PDFDeduction(Double amount, String description, Double percent) {
 		super();
 		this.amount = Optional.ofNullable(amount);
 		this.description = Optional.ofNullable(description);

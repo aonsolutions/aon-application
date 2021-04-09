@@ -22,8 +22,8 @@ public class DefaultPayroll {
 	private Optional<Date>								 liquidPeriodStart;
 	private Optional<Date>								 liquidPeriodEnd;
 	private Optional<Integer>							 totalDays;
-	private Optional<Map<Integer, ArrayList<Accrual>>>	 accruals;
-	private Optional<Map<Integer, ArrayList<Deduction>>> deductions;
+	private Optional<Map<Integer, ArrayList<PDFPayment>>>	 accruals;
+	private Optional<Map<Integer, ArrayList<PDFDeduction>>> deductions;
 	private Optional<Double>							 accrualTotal;
 	private Optional<Double>							 deductionTotal;
 	private Optional<Double>							 payrollTotal;
@@ -89,11 +89,11 @@ public class DefaultPayroll {
 		return totalDays;
 	}
 
-	public Optional<Map<Integer, ArrayList<Accrual>>> getAccruals() {
+	public Optional<Map<Integer, ArrayList<PDFPayment>>> getAccruals() {
 		return accruals;
 	}
 
-	public Optional<Map<Integer, ArrayList<Deduction>>> getDeductions() {
+	public Optional<Map<Integer, ArrayList<PDFDeduction>>> getDeductions() {
 		return deductions;
 	}
 
@@ -134,8 +134,8 @@ public class DefaultPayroll {
 		private Optional<Date>								 liquidPeriodStart;
 		private Optional<Date>								 liquidPeriodEnd;
 		private Optional<Integer>							 totalDays;
-		private Optional<Map<Integer, ArrayList<Accrual>>>	 accruals;
-		private Optional<Map<Integer, ArrayList<Deduction>>> deductions;
+		private Optional<Map<Integer, ArrayList<PDFPayment>>>	 accruals;
+		private Optional<Map<Integer, ArrayList<PDFDeduction>>> deductions;
 		private Optional<Double>							 accrualTotal;
 		private Optional<Double>							 deductionTotal;
 		private Optional<Double>							 payrollTotal;
@@ -237,12 +237,12 @@ public class DefaultPayroll {
 			return this;
 		}
 
-		public DefaultPayrollBuilder setAccruals(Map<Integer, ArrayList<Accrual>> accruals) {
+		public DefaultPayrollBuilder setAccruals(Map<Integer, ArrayList<PDFPayment>> accruals) {
 			this.accruals = Optional.ofNullable(accruals);
 			return this;
 		}
 
-		public DefaultPayrollBuilder setDeductions(Map<Integer, ArrayList<Deduction>> deductions) {
+		public DefaultPayrollBuilder setDeductions(Map<Integer, ArrayList<PDFDeduction>> deductions) {
 			this.deductions = Optional.ofNullable(deductions);
 			return this;
 		}
@@ -342,12 +342,12 @@ public class DefaultPayroll {
 			return this;
 		}
 
-		public DefaultPayrollBuilder setAccruals(Optional<Map<Integer, ArrayList<Accrual>>> accruals) {
+		public DefaultPayrollBuilder setAccruals(Optional<Map<Integer, ArrayList<PDFPayment>>> accruals) {
 			this.accruals = accruals;
 			return this;
 		}
 
-		public DefaultPayrollBuilder setDeductions(Optional<Map<Integer, ArrayList<Deduction>>> deductions) {
+		public DefaultPayrollBuilder setDeductions(Optional<Map<Integer, ArrayList<PDFDeduction>>> deductions) {
 			this.deductions = deductions;
 			return this;
 		}

@@ -21,6 +21,21 @@ public class PdfFormats {
 		DecimalFormat formater = new DecimalFormat("###,##0.00");
 		return formater.format(number);
 	}
+	
+	/**
+	 * <p>
+	 * <b>Description:</b> <i>Convert double to Decimal number. </i>
+	 * </p>
+	 * 
+	 * @return the latin number String [Format: ###,##0.00]
+	 */
+	public static String toDecimal(Double number) {
+		if (number == null)
+			return "";
+		DecimalFormat formater = new DecimalFormat("0.00");
+		return formater.format(number);
+	}
+	
 
 	/**
 	 * <p>

@@ -48,10 +48,10 @@ import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Accrual;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.CraTypes;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Deduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
@@ -294,8 +294,8 @@ public class PayrollTemplate {
 	// CHECK IF JUMPS
 	private boolean calculate() throws IOException {
 
-		Optional<Map<Integer, ArrayList<Accrual>>>	 accruals	= p.getAccruals();
-		Optional<Map<Integer, ArrayList<Deduction>>> deductions	= p.getDeductions();
+		Optional<Map<Integer, ArrayList<PDFPayment>>>	 accruals	= p.getAccruals();
+		Optional<Map<Integer, ArrayList<PDFDeduction>>> deductions	= p.getDeductions();
 
 		double sum = 0;
 
@@ -326,8 +326,8 @@ public class PayrollTemplate {
 
 		y -= 20;
 
-		Optional<Map<Integer, ArrayList<Accrual>>> accruals = p.getAccruals();
-		accruals.get().entrySet().stream().sorted(Map.Entry.<Integer, ArrayList<Accrual>>comparingByKey()).forEach(m ->
+		Optional<Map<Integer, ArrayList<PDFPayment>>> accruals = p.getAccruals();
+		accruals.get().entrySet().stream().sorted(Map.Entry.<Integer, ArrayList<PDFPayment>>comparingByKey()).forEach(m ->
 		{
 			try
 			{
@@ -384,12 +384,12 @@ public class PayrollTemplate {
 		x = 23.5f;
 
 		// BUILD DEDUCTIONS
-		Optional<Map<Integer, ArrayList<Deduction>>> deductions = p.getDeductions();
+		Optional<Map<Integer, ArrayList<PDFDeduction>>> deductions = p.getDeductions();
 		drawText(contents, title, x, y - 20, BLACK, HELVETICA_BOLD, fontSize + 3);
 		y -= 40;
 
 		// FOR EACH DEDUCTION
-		deductions.get().entrySet().stream().sorted(Map.Entry.<Integer, ArrayList<Deduction>>comparingByKey())
+		deductions.get().entrySet().stream().sorted(Map.Entry.<Integer, ArrayList<PDFDeduction>>comparingByKey())
 				.forEach(m ->
 				{
 					try

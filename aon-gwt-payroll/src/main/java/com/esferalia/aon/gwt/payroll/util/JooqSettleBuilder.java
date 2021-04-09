@@ -21,8 +21,8 @@ import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Accrual;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.Deduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.DefaultPayrollBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement.SettlementBuilder;
@@ -74,7 +74,7 @@ public class JooqSettleBuilder {
 		.setExistRepresentative(settle.getRepresentativeDocument() != null);
 		
 		//PAYMENTS
-		HashMap<Integer, ArrayList<Accrual>> paymentMap = new HashMap<Integer, ArrayList<Accrual>>();
+		HashMap<Integer, ArrayList<PDFPayment>> paymentMap = new HashMap<Integer, ArrayList<PDFPayment>>();
 		Collection<Payment> payments = settle.getPayments();
 		payments.stream()
 			.filter(JooqSettleBuilder::filter)
@@ -91,23 +91,23 @@ public class JooqSettleBuilder {
 					} catch (IOException e) {}	
 				}
 				
-				Accrual accrual = new Accrual(p.getAmount(), description);
+				PDFPayment accrual = new PDFPayment(p.getAmount(), description);
 				if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
-					paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<Accrual>());
+					paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<PDFPayment>());
 				 
 				if (paymentMap.get(p.getPaymentType().ordinal()).stream().anyMatch(acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().get()))) {
-					Accrual repAcc = paymentMap.get(p.getPaymentType().ordinal()).stream().findFirst().get();
+					PDFPayment repAcc = paymentMap.get(p.getPaymentType().ordinal()).stream().findFirst().get();
 					repAcc.setAmount(repAcc.getAmount().orElse(0d)+p.getAmount());
 				} else
 					paymentMap.get(p.getPaymentType().ordinal()).add(accrual);
 			});
-			builder.setAccruals(paymentMap);
+			builder.setPayments(paymentMap);
 		
 		//DEDUCTIONS
 		ArrayList<String> inserted = new ArrayList<String>();
 			
 		Collection<com.esferalia.aon.occam.api.model.Salary.Deduction> deductions = settle.getDeductions();
-		HashMap<Integer, ArrayList<Deduction>> deductionsMap = new HashMap<Integer, ArrayList<Deduction>>();
+		HashMap<Integer, ArrayList<PDFDeduction>> deductionsMap = new HashMap<Integer, ArrayList<PDFDeduction>>();
 		
 		deductions.stream().forEach(d -> {
 		Double percent = null;
@@ -122,17 +122,17 @@ public class JooqSettleBuilder {
 			if(desc == null || desc.isEmpty()) 
 				desc = getDeductionTypeDescription(d.getDeductionType().ordinal());
 					
-			Deduction deduction = new Deduction(d.getAmount(), desc, percent);
+			PDFDeduction deduction = new PDFDeduction(d.getAmount(), desc, percent);
 					
 					
 			if (!deductionsMap.containsKey(type))
-				deductionsMap.put(type, new ArrayList<Deduction>());
+				deductionsMap.put(type, new ArrayList<PDFDeduction>());
 					
 			if (deductionsMap.get(type)
 					.stream()
 					.anyMatch(p -> AonStringUtils.equalsIgnoreCase(p.getDescription().get(), deduction.getDescription().get()))
 			){
-				Deduction ded = deductionsMap.get(type)
+				PDFDeduction ded = deductionsMap.get(type)
 								.stream()
 								.filter(p -> AonStringUtils.equalsIgnoreCase(deduction.getDescription().get(),p.getDescription().get())).findFirst().get();
 				ded.setAmount(ded.getAmount().get()+deduction.getAmount().get());
@@ -143,18 +143,18 @@ public class JooqSettleBuilder {
 			
 
 		if (deductionsMap.get(1)==null)
-			deductionsMap.put(1, new ArrayList<Deduction>());
+			deductionsMap.put(1, new ArrayList<PDFDeduction>());
 		if (deductionsMap.get(2)==null)
-				deductionsMap.put(2, new ArrayList<Deduction>());
+				deductionsMap.put(2, new ArrayList<PDFDeduction>());
 			
 		if (!inserted.contains("CGC"))
-			deductionsMap.get(1).add(new Deduction(0d, "Contingencias comunes", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "Contingencias comunes", 0d));
 		if (!inserted.contains("DESMPL"))
-			deductionsMap.get(1).add(new Deduction(0d, "Desempleo", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "Desempleo", 0d));
 		if (!inserted.contains("FP"))
-			deductionsMap.get(1).add(new Deduction(0d, "Formación profesional", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "Formación profesional", 0d));
 		if (!inserted.contains("IRPF"))
-			deductionsMap.get(2).add(new Deduction(0d, "Retribuciones dinerarias", 0d));
+			deductionsMap.get(2).add(new PDFDeduction(0d, "Retribuciones dinerarias", 0d));
 
 			builder.setDeductions(deductionsMap);
 		return builder.build();
