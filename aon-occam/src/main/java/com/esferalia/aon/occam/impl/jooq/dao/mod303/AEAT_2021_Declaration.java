@@ -604,7 +604,7 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 				mod -> ensureActivity(mod, 0).setDev(mod.getAmount(Mod303Key.CT_S117)), false)
 		// (1) Actividades en régimen simplificado. D Reducciones
 		,
-		CT_S118(Mod303Key.CT_S118, null, null, null, "calculateReduccion(0,CT_S117,CT_S1X4,CT_S1X5)", null,
+		CT_S118(Mod303Key.CT_S118, null, null, null, "calculateReduccion2021(0,CT_S117,CT_S1X4,CT_S1X5)", null,
 				mod -> mod.putAmount(Mod303Key.CT_S118, ensureActivity(mod, 0).getRed()),
 				mod -> ensureActivity(mod, 0).setRed(mod.getAmount(Mod303Key.CT_S118)), false)
 		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de
@@ -616,7 +616,8 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 				false)
 		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
 		,
-		CT_S120(Mod303Key.CT_S120, null, null, null, null, null,
+		CT_S120(Mod303Key.CT_S120, null, null, null, 
+				"calculatePorcentajeIngresoCuenta2021(0,CT_S1X5)", null,
 				mod -> mod.putAmount(Mod303Key.CT_S120, ensureActivity(mod, 0).getPor()),
 				mod -> ensureActivity(mod, 0).setPor(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S120)),
 				false)
@@ -624,7 +625,7 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 		// [E])
 		,
 		CT_S121(Mod303Key.CT_S121, null, null, null,
-				"calculateIngresoCuenta(1, CT_S1X1, CT_S1X2, CT_S117, CT_S118, CT_S119, CT_S120)", null,
+				"calculateIngresoCuenta2021(0, CT_S1X1, CT_S1X2, CT_S117, CT_S118, CT_S119, CT_S120,CT_S1X5)", null,
 				mod -> mod.putAmount(Mod303Key.CT_S121, ensureActivity(mod, 0).getIng()),
 				mod -> ensureActivity(mod, 0).setIng(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S121)),
 				false)
@@ -849,7 +850,7 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 				mod -> ensureActivity(mod, 1).setDev(mod.getAmount(Mod303Key.CT_S217)), false)
 		// (1) Actividades en régimen simplificado. D Reducciones
 		,
-		CT_S218(Mod303Key.CT_S218, null, null, null, "calculateReduccion(1,CT_S217,CT_S2X4,CT_S2X5)", null,
+		CT_S218(Mod303Key.CT_S218, null, null, null, "calculateReduccion2021(1,CT_S217,CT_S2X4,CT_S2X5)", null,
 				mod -> mod.putAmount(Mod303Key.CT_S218, ensureActivity(mod, 1).getRed()),
 				mod -> ensureActivity(mod, 1).setRed(mod.getAmount(Mod303Key.CT_S218)), false)
 		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de
@@ -861,7 +862,8 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 				false)
 		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
 		,
-		CT_S220(Mod303Key.CT_S220, null, null, null, null, null,
+		CT_S220(Mod303Key.CT_S220, null, null, null, 
+				"calculatePorcentajeIngresoCuenta2021(1,CT_S2X5)", null,
 				mod -> mod.putAmount(Mod303Key.CT_S220, ensureActivity(mod, 1).getPor()),
 				mod -> ensureActivity(mod, 1).setPor(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S220)),
 				false)
@@ -869,7 +871,7 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 		// [E])
 		,
 		CT_S221(Mod303Key.CT_S221, null, null, null,
-				"calculateIngresoCuenta(2, CT_S2X1, CT_S2X2, CT_S217, CT_S218, CT_S219, CT_S220)", null,
+				"calculateIngresoCuenta2021(1, CT_S2X1, CT_S2X2, CT_S217, CT_S218, CT_S219, CT_S220,CT_S2X5)", null,
 				mod -> mod.putAmount(Mod303Key.CT_S221, ensureActivity(mod, 1).getIng()),
 				mod -> ensureActivity(mod, 1).setIng(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S221)),
 				false)
@@ -1095,7 +1097,7 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 				mod -> ensureActivity(mod, 2).setDev(mod.getAmount(Mod303Key.CT_S317)), false)
 		// (1) Actividades en régimen simplificado. D Reducciones
 		,
-		CT_S318(Mod303Key.CT_S318, null, null, null, "calculateReduccion(2,CT_S317,CT_S3X4,CT_S3X5)", null,
+		CT_S318(Mod303Key.CT_S318, null, null, null, "calculateReduccion2021(2,CT_S317,CT_S3X4,CT_S3X5)", null,
 				mod -> mod.putAmount(Mod303Key.CT_S318, ensureActivity(mod, 2).getRed()),
 				mod -> ensureActivity(mod, 2).setRed(mod.getAmount(Mod303Key.CT_S318)), false)
 		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de
@@ -1106,14 +1108,15 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 				mod -> ensureActivity(mod, 2).setInd(mod.getAmount(Mod303Key.CT_S319)), false)
 		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
 		,
-		CT_S320(Mod303Key.CT_S320, null, null, null, null, null,
+		CT_S320(Mod303Key.CT_S320, null, null, null, 
+				"calculatePorcentajeIngresoCuenta2021(2,CT_S3X5)", null,
 				mod -> mod.putAmount(Mod303Key.CT_S320, ensureActivity(mod, 2).getPor()),
 				mod -> ensureActivity(mod, 2).setPor(mod.getAmount(Mod303Key.CT_S320)), false)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x
 		// [E])
 		,
 		CT_S321(Mod303Key.CT_S321, null, null, null,
-				"calculateIngresoCuenta(3, CT_S3X1, CT_S3X2, CT_S317, CT_S318, CT_S319, CT_S320)", null,
+				"calculateIngresoCuenta2021(2, CT_S3X1, CT_S3X2, CT_S317, CT_S318, CT_S319, CT_S320,CT_S3X5)", null,
 				mod -> mod.putAmount(Mod303Key.CT_S321, ensureActivity(mod, 2).getIng()),
 				mod -> ensureActivity(mod, 2).setIng(mod.getAmount(Mod303Key.CT_S321)), false)
 		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por
@@ -1338,7 +1341,7 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 				mod -> ensureActivity(mod, 3).setDev(mod.getAmount(Mod303Key.CT_S417)), false)
 		// (1) Actividades en régimen simplificado. D Reducciones
 		,
-		CT_S418(Mod303Key.CT_S418, null, null, null, "calculateReduccion(3,CT_S417,CT_S4X4,CT_S4X5)", null,
+		CT_S418(Mod303Key.CT_S418, null, null, null, "calculateReduccion2021(3,CT_S417,CT_S4X4,CT_S4X5)", null,
 				mod -> mod.putAmount(Mod303Key.CT_S418, ensureActivity(mod, 3).getRed()),
 				mod -> ensureActivity(mod, 3).setRed(mod.getAmount(Mod303Key.CT_S418)), false)
 		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de
@@ -1349,14 +1352,15 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 				mod -> ensureActivity(mod, 3).setInd(mod.getAmount(Mod303Key.CT_S419)), false)
 		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
 		,
-		CT_S420(Mod303Key.CT_S420, null, null, null, null, null,
+		CT_S420(Mod303Key.CT_S420, null, null, null, 
+				"calculatePorcentajeIngresoCuenta2021(3,CT_S4X5)", null,
 				mod -> mod.putAmount(Mod303Key.CT_S420, ensureActivity(mod, 3).getPor()),
 				mod -> ensureActivity(mod, 3).setPor(mod.getAmount(Mod303Key.CT_S420)), false)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x
 		// [E])
 		,
 		CT_S421(Mod303Key.CT_S421, null, null, null,
-				"calculateIngresoCuenta(4, CT_S4X1, CT_S4X2, CT_S417, CT_S418, CT_S419, CT_S420)", null,
+				"calculateIngresoCuenta2021(3, CT_S4X1, CT_S4X2, CT_S417, CT_S418, CT_S419, CT_S420,CT_S4X5)", null,
 				mod -> mod.putAmount(Mod303Key.CT_S421, ensureActivity(mod, 3).getIng()),
 				mod -> ensureActivity(mod, 3).setIng(mod.getAmount(Mod303Key.CT_S421)), false)
 		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por
@@ -1903,7 +1907,7 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 
 	private static Mod303Activity ensureActivity(Mod303 mod, int idx) {
 		if (idx < 0 || idx > 3)
-			throw new IllegalArgumentException("0, 1, 3, ó 3");
+			throw new IllegalArgumentException("0, 1, 2, ó 3");
 
 		if (mod.getActivityList() == null) {
 			mod.setActivityList(new LinkedList<Mod303Activity>());
