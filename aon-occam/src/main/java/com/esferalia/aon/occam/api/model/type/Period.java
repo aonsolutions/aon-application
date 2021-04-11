@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum Period implements Serializable {
 
 	M01(0,0,"01","Enero"),
@@ -120,4 +122,11 @@ public enum Period implements Serializable {
 		return Period.values()[i];
 	}
 
+	public static Period safeValueOf(String name) {
+		if (name == null) return null;
+		for (Period t : Period.values()) {
+			if (AonStringUtils.equals(name, t.getName())) return t;
+		}
+		return null;
+	}
 }

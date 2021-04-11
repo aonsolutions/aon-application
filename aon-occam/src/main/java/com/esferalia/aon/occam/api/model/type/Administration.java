@@ -24,7 +24,10 @@ public enum Administration implements Serializable {
 	public byte getValue() {
 		return (byte) ordinal();
 	}
-	
+	public static Administration safeValueOf( String i ) {
+		if (i == null) return null;
+		return Administration.valueOf( i );
+	}
 	public static Administration safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 

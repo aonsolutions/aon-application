@@ -21,6 +21,7 @@ public interface IJsonNames {
 	String ACTIVITY = "activity";
 	String ACTIVITY_DESCRIPTION = "activityDescription";
 	String ADDRESS = "address";
+	String ADMINISTRATION = "administration";
 	String ALIAS = "alias"; 
 	String AMOUNT = "amount";
 	// ---------------------------------------------------------------------------------------------	[B] 
@@ -48,6 +49,7 @@ public interface IJsonNames {
 	String COMMENT = "comment";
 	String COMMENTS = "comments";
 	String COMPANY = "company";
+	String COMPLEMENTARY = "complementary";
 	String CONCEPT = "concept";
 	String CONFIDENTIAL = "confidential";
 	String CONSOLIDATION = "consolidation";
@@ -138,8 +140,9 @@ public interface IJsonNames {
 	String LIMIT = "limit";
 	String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
 	// ---------------------------------------------------------------------------------------------	[M] 
-	String MESSAGE = "message";
 	String MAX_DEFINED_USERS = "maxDefinedUsers";
+	String MESSAGE = "message";
+	String MODEL = "model";
 	// ---------------------------------------------------------------------------------------------	[N] 
 	String NAME = "name";
 	String NEARBY_NUMBERS = "nearbyNumbers";
@@ -199,6 +202,8 @@ public interface IJsonNames {
 	String REGISTRY_ID = "registryId";
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";
+	String REPLACEMENT = "replacement";
+	String RESULT = "result";
 	String RETENTION = "retention";
 	String RETURNED = "returned";
 	String REVERSE_ORDER = "reverseOrder";
@@ -221,6 +226,7 @@ public interface IJsonNames {
 	String SUBJECT = "subject";
 	String SURCHARGE_QUOTA = "surcharge_quota";
 	String SURCHARGE = "surcharge";
+	String SURNAME = "surname";
 	// ---------------------------------------------------------------------------------------------	[T] 
 	String TAXES = "taxes";
 	String TAX = "tax";
@@ -243,6 +249,8 @@ public interface IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[W] 
 	String WITHHOLDING = "withholding";
 	String WORKPLACE_IDS = "workplaceIds";
+	// ---------------------------------------------------------------------------------------------	[Y]
+	String YEAR = "year";
 	// ---------------------------------------------------------------------------------------------	[Z] 
 	String ZIP = "zip";
 }

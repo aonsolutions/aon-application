@@ -95,6 +95,11 @@ public class AonNumberUtils {
 		return 0;		
 	}
 
+	public static int toint(Number number) {
+		if (number == null) return 0; 
+		return number.intValue();
+	}
+	
 	public static int toint(String value) {
 		if (!AonStringUtils.isBlank(value)) {
 			try {

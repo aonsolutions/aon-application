@@ -23,6 +23,10 @@ public enum FiscalStatus implements Serializable {
 		return name;
 	}
 	
+	public static FiscalStatus safeValueOf( String i ) {
+		if (i == null) return null;
+		return FiscalStatus.valueOf( i );
+	}
 	public static FiscalStatus safeValueOf( Byte i ) {
 		if (i == null) return null;
 		if (i < 0 || i >= FiscalStatus.values().length) return null;
