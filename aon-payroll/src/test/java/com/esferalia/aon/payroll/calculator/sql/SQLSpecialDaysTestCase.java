@@ -24,12 +24,14 @@ import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.lang.String.format;
+import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -38,15 +40,14 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
-import com.esferalia.aon.payroll.calculator.AonConstants;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.OffType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
@@ -62,6 +63,57 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 			C452, // partial & temp fulltime
 	};
 	
+	@Test
+	public void testTotalWorkedDaysI() throws ExpressionException, SQLException,
+			SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+					{
+						put("DIAS_MES", "30");
+						put("GRUPO_COTIZACION","'04'");
+						put("COEFICIENTE_PARCIALIDAD","1");
+					}
+				}
+				, new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {}, 
+				null);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		// Add InactivityDays Period -> 14/12/2019 - 24/12/2019
+		Calendar startDateIDay = Calendar.getInstance();
+		startDateIDay.set(Calendar.DAY_OF_MONTH, 13);
+		
+		Calendar endDateIDay = Calendar.getInstance();
+		endDateIDay.set(Calendar.DAY_OF_MONTH, 23);
+
+		addInactivityContractData(aonContext, contract, startDateIDay.getTime(), endDateIDay.getTime());
+		
+		// Calculate Salary for all month with inactivities
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(
+				connection, 
+				new java.sql.Date(startDate.getTime()), 
+				new java.sql.Date(endDate.getTime()), 
+				new java.sql.Date(endDate.getTime()),
+				contract);
+		
+		List<ITimedResult<Number>> days = ctx.getExpressionContext().eval("DIAS_TRABAJADOS_TOTALES", startDate, endDate, Number.class);
+		
+		assertEquals(1, days.size());
+		assertEquals(get(endDate, Calendar.DAY_OF_MONTH)-11, days.get(0).getValue().intValue());
+		
+	}
+	
+
 	@Test
 	public void testInactivityDaysI() throws ExpressionException, SQLException,
 			SalaryException {

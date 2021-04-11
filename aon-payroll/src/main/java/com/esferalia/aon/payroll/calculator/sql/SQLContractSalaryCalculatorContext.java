@@ -3911,23 +3911,23 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	private double getAverageVariable(String name, Date start, Date end) {
-		List<ITimedVariable<Double>> vars = this.contractExpressionContext.getVariables(name);
+		List<ITimedVariable<Number>> vars = this.contractExpressionContext.getVariables(name);
 		
 		int days = 0;
 		double sum = 0.00;
 		
 		Period p = new Period(start, end);
-		for (ITimedVariable<Double> var : vars) {
+		for (ITimedVariable<Number> var : vars) {
 			Period period = var.getPeriod();
 			Period intersect = period.intersect(p);
 			if (intersect == null)
 				continue;
 
-			Double value = var.getValue(period);
+			Number value = var.getValue(period);
 			if (value == null)
 				continue;
 			days += days(intersect);
-			sum += value * days(intersect);
+			sum += value.doubleValue() * days(intersect);
 		}
 
 		return sum / days;
