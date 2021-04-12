@@ -3,6 +3,9 @@ package com.esferalia.aon.in.payroll.pdf.maker.payroll;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -123,20 +126,26 @@ public class DetailedPayrollTest {
 		.setContingencies(Optional.of(conBuilder.build()));
 		
 		try { 
+			OutputStream out = new FileOutputStream("./PayrollRandom.pdf");
+			//OutputStream out = new ByteArrayOutputStream();
+			
 			System.out.println(" Printing PDF file..... \n");
-			PdfMaker.printDefaultPayroll(new ByteArrayOutputStream(), builder.build(), DetailedPayrollTest.class.getResourceAsStream("logo.png"),new Locale("Es"));
+			PdfMaker.printDefaultPayroll(out, builder.build(), DetailedPayrollTest.class.getResourceAsStream("logo.png"),new Locale("Es"));
 			System.out.println(" >> DONE.");
 		} 
 		catch (CanNotCreatePdfException e) {
 			e.printStackTrace(); 
 			fail("Can not create the payroll");
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+			fail("IOException");
 		} 
 	}
 	
 
 	//RANDOM BETWEEN 0 AND Y
 	public double random(double y){
-		//return 3d;
 		Double r = 1 + Math.random()*(y-1);
 		return r;
 	}

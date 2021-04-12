@@ -10,12 +10,10 @@ public class PayrollBundleEus  extends ListResourceBundle{
 
 	    private Object[][] contents = {
 	    	{ "MONEDA", "\u20ac"},
+	    	{ "FORMATO FECHA", "dd/MM/yyyy"},
 	        { "TITULO","* ordainketa justifikazioaren bakarkako ordainagiria" },
-	        { "EMPRESA", "Konpainia" },
-	        { "DOMICILIO", "Helbidea" },
 	        { "CIF", "IFZ" },
 	        { "CCC", "KKK" },
-	        { "TRABAJADOR", "Langilea" },
 	        { "NIF", "IFZ" },
 	        { "NSS", "GSZ" },
 	        { "FECHA ANTIGUEDAD", "Fecha de antiguedad" },

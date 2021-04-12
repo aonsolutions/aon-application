@@ -1,5 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.maker.settlement.beans;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class Settlement {
 
 	private Date   date;
 	private String location;
+	private InputStream logo;
 
 	private Settlement() {
 	}
@@ -194,6 +196,17 @@ public class Settlement {
 		return this;
 	}
 
+	public InputStream getLogo() {
+		return logo;
+	}
+
+	public Settlement setLogo(InputStream logo) {
+		this.logo = logo;
+		return this;
+	}
+
+
+
 	public static class SettlementBuilder {
 
 		private String enterpriseName;
@@ -217,10 +230,9 @@ public class Settlement {
 		private double total;
 		private Date   date;
 		private String location;
+		private InputStream logo;
 		
-		/**
-		 * 
-		 */
+
 		public SettlementBuilder() {
 			this.accruals = new HashMap<>();
 			this.deductions = new HashMap<>();
@@ -310,6 +322,11 @@ public class Settlement {
 			this.location = location;
 			return this;
 		}
+		
+		public SettlementBuilder setLogo(InputStream logo) {
+			this.logo = logo;
+			return this;
+		}
 
 		public Settlement build() {
 			return instance().setEnterpriseName(this.enterpriseName).setEnterpriseNIF(this.enterpriseNIF)
@@ -319,7 +336,7 @@ public class Settlement {
 					.setExistRepresentative(this.existRepresentative).setAccruals(this.accruals)
 					.setDeductions(this.deductions).setAccrualTotal(this.accrualTotal)
 					.setDeductionTotal(this.deductionTotal).setLocation(this.location).setDate(this.date)
-					.setTotal(this.total);
+					.setTotal(this.total).setLogo(this.logo);
 		};
 
 	}

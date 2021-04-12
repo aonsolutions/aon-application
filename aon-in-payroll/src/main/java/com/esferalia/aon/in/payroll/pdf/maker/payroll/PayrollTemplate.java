@@ -48,14 +48,19 @@ import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.ContingencyBases;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.CraTypes;
-import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
+import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
 
+/**
+ * Class to print Payroll PDF file with PDFbox
+ * 
+ * @author akrck02
+ * @version 0.40-AK
+ */
 public class PayrollTemplate {
 
 	static float fontSize = 9f;
@@ -73,11 +78,22 @@ public class PayrollTemplate {
 	float		   y;
 	ResourceBundle words;
 
-	// PRINT THE PDF
+	/**
+	 * Print the PDF file
+	 * 
+	 * @param os
+	 * @param payroll
+	 * @param logo
+	 * @param language
+	 * @throws CanNotCreatePdfException
+	 */
 	public static void print(
 			OutputStream os, DefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language
 	) throws CanNotCreatePdfException {
-		try (PDDocument doc = print(payroll, logo, language))
+		ArrayList<DefaultPayroll> payrolls = new ArrayList<>();
+		payrolls.add(payroll);
+
+		try (PDDocument doc = print(payrolls, logo, language))
 		{
 			doc.save(os);
 		} catch (Exception e)
@@ -86,7 +102,16 @@ public class PayrollTemplate {
 		}
 	}
 
-	// PRINT THE PDF FROM COLLECTION
+	/**
+	 * Print the PDF file from a collection
+	 * 
+	 * @param os
+	 * @param payrolld
+	 * @param logo
+	 * @param language
+	 * @throws CanNotCreatePdfException
+	 * @throws IOException
+	 */
 	public static void print(
 			OutputStream os, Collection<DefaultPayroll> payrolls, Optional<InputStream> logo, Optional<Locale> language
 	) throws CanNotCreatePdfException, IOException {
@@ -99,7 +124,6 @@ public class PayrollTemplate {
 		}
 	}
 
-	// PRINT THE PDF FROM COLLECTION
 	private static PDDocument print(
 			Collection<DefaultPayroll> payrolls, Optional<InputStream> logo, Optional<Locale> language
 	) throws CanNotCreatePdfException, IOException {
@@ -125,7 +149,7 @@ public class PayrollTemplate {
 			if (payroll == null)
 				throw new CanNotCreatePdfException("No payroll found.");
 
-			PDPage page = PDFToolkit.createVerticalPage();
+			PDPage page = createVerticalPage();
 			doc.addPage(page);
 
 			template.contents = new PDPageContentStream(doc, page);
@@ -147,14 +171,14 @@ public class PayrollTemplate {
 				template.contents = new PDPageContentStream(doc, page);
 
 				template.drawHeader();
-				drawBorderedBox(template.contents, 10, 175, 575, 532, LIGHT_GRAY);
+				drawBorderedBox(template.contents, 10, 185, 575, 520, LIGHT_GRAY);
 				template.y -= 15;
 
 				template.drawDeductions();
 				template.drawFooter();
 			} else
 			{
-				drawBorderedBox(template.contents, 10, 175, 575, 532, LIGHT_GRAY);
+				drawBorderedBox(template.contents, 10, 185, 575, 520, LIGHT_GRAY);
 				template.drawAccruals();
 				template.drawDeductions();
 				template.drawFooter();
@@ -164,62 +188,6 @@ public class PayrollTemplate {
 		return doc;
 	}
 
-	private static PDDocument print(DefaultPayroll payroll, Optional<InputStream> logo, Optional<Locale> language)
-			throws CanNotCreatePdfException, IOException {
-
-		PDDocument		doc		 = new PDDocument();
-		PayrollTemplate	template = new PayrollTemplate();
-
-		template.lang  = language.orElse(new Locale("Es"));
-		template.words = getBundle("com.esferalia.aon.in.payroll.pdf.maker.payroll.bundle.PayrollBundle",
-				template.lang);
-
-		template.limit = 800;
-		template.p	   = payroll;
-
-		if (payroll == null)
-			throw new CanNotCreatePdfException("No payroll found.");
-
-		PDPage page = createVerticalPage();
-		doc.addPage(page);
-		template.contents = new PDPageContentStream(doc, page);
-
-		template.drawHeader();
-		boolean jump = template.calculate();
-
-		template.doc  = doc;
-		template.logo = logo;
-
-		if (jump)
-		{
-			template.drawAccruals();
-			drawBorderedBox(template.contents, 10, 10, 575, 695, PdfColors.LIGHT_GRAY);
-			template.contents.close();
-
-			page = createVerticalPage();
-			doc.addPage(page);
-			template.contents = new PDPageContentStream(doc, page);
-
-			template.drawHeader();
-			drawBorderedBox(template.contents, 10, 175, 575, 532, PdfColors.LIGHT_GRAY);
-			template.y -= 15;
-
-			template.drawDeductions();
-			template.drawFooter();
-
-		} else
-		{
-			drawBorderedBox(template.contents, 10, 175, 575, 532, PdfColors.LIGHT_GRAY);
-			template.drawAccruals();
-			template.drawDeductions();
-			template.drawFooter();
-		}
-
-		template.contents.close();
-		return doc;
-	}
-
-	// DRAW THE HEADER
 	private void drawHeader() throws IOException {
 
 		x = 20;
@@ -294,8 +262,8 @@ public class PayrollTemplate {
 	// CHECK IF JUMPS
 	private boolean calculate() throws IOException {
 
-		Optional<Map<Integer, ArrayList<PDFPayment>>>	 accruals	= p.getAccruals();
-		Optional<Map<Integer, ArrayList<PDFDeduction>>> deductions	= p.getDeductions();
+		Optional<Map<Integer, ArrayList<PDFPayment>>>	accruals   = p.getAccruals();
+		Optional<Map<Integer, ArrayList<PDFDeduction>>>	deductions = p.getDeductions();
 
 		double sum = 0;
 
@@ -318,7 +286,7 @@ public class PayrollTemplate {
 		String title			 = text("DEVENGOS").toUpperCase();
 		String totals			 = text("TOTALES").toUpperCase();
 		String accrualTotalTitle = "A." + text("TOTAL DEVENGADO").toUpperCase() + ":";
-		String accrualTotal		 = toLatinNumber(p.getAccrualTotal().orElse(0.00)) + " " + text("MONEDA");
+		String accrualTotal		 = toLatinNumber(p.getPaymentsTotal().orElse(0.00)) + " " + text("MONEDA");
 
 		drawText(contents, title, x, y, BLACK, HELVETICA_BOLD, fontSize + 3);
 		drawBox(contents, x + 470, y - 7, 80, 20, LIGHT_GRAY);
@@ -327,41 +295,45 @@ public class PayrollTemplate {
 		y -= 20;
 
 		Optional<Map<Integer, ArrayList<PDFPayment>>> accruals = p.getAccruals();
-		accruals.get().entrySet().stream().sorted(Map.Entry.<Integer, ArrayList<PDFPayment>>comparingByKey()).forEach(m ->
-		{
-			try
-			{
-				double localTotal = m.getValue().stream().mapToDouble(accrual -> safeDouble(accrual.getAmount())).sum();
-				if (localTotal != 0)
+		accruals.get().entrySet().stream().sorted(Map.Entry.<Integer, ArrayList<PDFPayment>>comparingByKey())
+				.forEach(m ->
 				{
-					String accrualTxt	   = m.getKey() + ". " + getType(m.getKey(), lang);
-					String accrualTotalTxt = toLatinNumber(localTotal) + " " + text("MONEDA");
-
-					drawText(contents, accrualTxt, x, y, BLACK, HELVETICA_BOLD, fontSize);
-					drawTextRight(contents, new PDRectangle(x + 355, y - 5, 100, 10), accrualTotalTxt, BLACK, HELVETICA,
-							fontSize, 5, 5);
-					drawBox(contents, x, y - 2, 455, .2f, BLACK);
-					y -= 15;
-
-					m.getValue().stream().forEach(n ->
+					try
 					{
-						String entryValue = toLatinNumber(n.getAmount().orElse(null)) + " " + text("MONEDA");
-						String entryTxt	  = " por " + safeString(n.getDescription());
+						double localTotal = m.getValue().stream()
+								.mapToDouble(accrual -> safeDouble(accrual.getAmount())).sum();
+						if (localTotal != 0)
+						{
+							String accrualTxt = m.getKey() + ". " + getType(m.getKey(), lang);
+							String accrualTotalTxt = toLatinNumber(localTotal) + " " + text("MONEDA");
 
-						PdfText text = new PdfText(x, y, 60, 15, contents, entryValue, BLACK, HELVETICA, fontSize,
-								RIGHT);
-						text.draw();
+							drawText(contents, accrualTxt, x, y, BLACK, HELVETICA_BOLD, fontSize);
+							drawTextRight(contents, new PDRectangle(x + 355, y - 5, 100, 10), accrualTotalTxt, BLACK,
+									HELVETICA, fontSize, 5, 5);
+							drawBox(contents, x, y - 2, 455, .2f, BLACK);
+							y -= 15;
 
-						PdfText t2 = new PdfText(x + 64, y, 300, 15, contents, entryTxt, BLACK, HELVETICA, fontSize,
-								LEFT);
-						t2.draw();
+							m.getValue().stream().forEach(n ->
+							{
+								String entryValue = toLatinNumber(n.getAmount().orElse(null)) + " " + text("MONEDA");
+								String entryTxt = " por " + safeString(n.getDescription());
 
-						y -= 10.5f;
-					});
-				}
-			} catch (IOException | UnknownCraException ignore){}
-			y -= 5;
-		});
+								PdfText text = new PdfText(x, y, 60, 15, contents, entryValue, BLACK, HELVETICA,
+										fontSize, RIGHT);
+								text.draw();
+
+								PdfText t2 = new PdfText(x + 64, y, 300, 15, contents, entryTxt, BLACK, HELVETICA,
+										fontSize, LEFT);
+								t2.draw();
+
+								y -= 10.5f;
+							});
+						}
+					} catch (IOException | UnknownCraException ignore)
+					{
+					}
+					y -= 5;
+				});
 		y -= 5;
 
 		drawTextRight(contents, new PDRectangle(x + 350, y, 200, 25), accrualTotal, BLACK, HELVETICA, fontSize, 7, 5);
@@ -469,13 +441,12 @@ public class PayrollTemplate {
 				5);
 	}
 
-	// DRAW FOOTER
 	public void drawFooter() throws IOException {
 
 		Optional<ContingencyBases> contigencies = p.getContingencies();
 		if (contigencies.isPresent())
 		{
-			y = 155;
+			y = 165;
 			x = 25;
 
 			final String title	= text("TITULO PIE");
@@ -502,6 +473,9 @@ public class PayrollTemplate {
 			final String		   totalContingenciesTitle = text("TOTAL APORTACIONES");
 			final ContingencyBases conts				   = contigencies.get();
 
+			final String totalCostsTitle  = text("TOTAL COSTES");
+			final String totalCostsAmount = "" + toLatinNumber(p.getPaymentsTotal().orElse(0d) + conts.getTotal().orElse(0d)) +  " " + text("MONEDA");
+
 			final String monthlyAmmount	= toLatinNumber(safeDouble(conts.getMonthlyAmount())) + " " + text("MONEDA");
 			final String commContBase	= toLatinNumber(safeDouble(conts.getCommonContBase())) + " " + text("MONEDA");
 			String		 commContType	= drawCostPercentage(conts.getCommonContType());
@@ -509,55 +483,65 @@ public class PayrollTemplate {
 			if (commContType.contains("-1"))
 				commContType = "";
 
-			final String commContApEnt		   = toLatinNumber(safeDouble(conts.getCommonContApEnterprise())) + " "	+ text("MONEDA");
-			final String extraProrrationAmount = toLatinNumber(safeDouble(conts.getExtraProrationAmount())) + " " + text("MONEDA");
-			final String profContingenciesBase = toLatinNumber(safeDouble(conts.getProfessionalContBase())) + " " + text("MONEDA");
+			final String commContApEnt		   = toLatinNumber(safeDouble(conts.getCommonContApEnterprise())) + " "
+					+ text("MONEDA");
+			final String extraProrrationAmount = toLatinNumber(safeDouble(conts.getExtraProrationAmount())) + " "
+					+ text("MONEDA");
+			final String profContingenciesBase = toLatinNumber(safeDouble(conts.getProfessionalContBase())) + " "
+					+ text("MONEDA");
 			String		 atEpType			   = drawCostPercentage(conts.getAtEpType());
 
 			if (atEpType.contains("-1"))
 				atEpType = "";
 
-			final String atEpApEnt		  = toLatinNumber(safeDouble(conts.getAtEpApEnterprise())) + " " + text("MONEDA");
+			final String atEpApEnt		  = toLatinNumber(safeDouble(conts.getAtEpApEnterprise())) + " "
+					+ text("MONEDA");
 			String		 unemploymentType = drawCostPercentage(conts.getUnemploymentType());
 
 			if (unemploymentType.contains("-1"))
 				unemploymentType = "";
 
-			final String unemploymentApEnt = toLatinNumber(safeDouble(conts.getUnemploymentApEnterprise())) + " " + text("MONEDA");
+			final String unemploymentApEnt = toLatinNumber(safeDouble(conts.getUnemploymentApEnterprise())) + " "
+					+ text("MONEDA");
 			final String profesFormType	   = toLatinNumber(safeDouble(conts.getProfesFormType())) + " %";
-			final String profesFormApEnt   = toLatinNumber(safeDouble(conts.getProfesFormApEnterprise())) + " " + text("MONEDA");
+			final String profesFormApEnt   = toLatinNumber(safeDouble(conts.getProfesFormApEnterprise())) + " "
+					+ text("MONEDA");
 
 			String fogasaType = drawCostPercentage(conts.getFogasaType());
 			if (fogasaType.contains("-1"))
 				fogasaType = "";
 
-			String fogasaApEnt		  = toLatinNumber(safeDouble(conts.getFogasaApEnterprise())) + " " + text("MONEDA");
-			String forceMajeureBase   = toLatinNumber(safeDouble(conts.getForceMajeureBase())) + " " + text("MONEDA");
-			
+			String fogasaApEnt		= toLatinNumber(safeDouble(conts.getFogasaApEnterprise())) + " " + text("MONEDA");
+			String forceMajeureBase	= toLatinNumber(safeDouble(conts.getForceMajeureBase())) + " " + text("MONEDA");
+
 			String forceMajeureType = drawCostPercentage(conts.getForceMajeureType());
 			if (forceMajeureType.contains("-1"))
 				forceMajeureType = "";
 
-			String forceMajeureApEnt	= toLatinNumber(safeDouble(conts.getForceMajeureApEnterprise())) + " "	+ text("MONEDA");
-			String noStructBase			= toLatinNumber(safeDouble(conts.getNoStructBase())) + " " + text("MONEDA");
-			
-			String noStructType			= drawCostPercentage(conts.getNoStructType());
+			String forceMajeureApEnt = toLatinNumber(safeDouble(conts.getForceMajeureApEnterprise())) + " "
+					+ text("MONEDA");
+			String noStructBase		 = toLatinNumber(safeDouble(conts.getNoStructBase())) + " " + text("MONEDA");
+
+			String noStructType = drawCostPercentage(conts.getNoStructType());
 			if (noStructType.contains("-1"))
 				noStructType = "";
 
-			String noStructApEnt			  = toLatinNumber(safeDouble(conts.getNoStructApEnterprise())) + " " + text("MONEDA");
-			String totalIrpf				  = toLatinNumber(safeDouble(conts.getIrpfEsp()) + conts.getIrpfRetribDiner().orElse(0.00)) + " " + text("MONEDA");
-			String totalContingenciesAmount   = toLatinNumber(safeDouble(conts.getTotal())) + " " + text("MONEDA");
+			String noStructApEnt			= toLatinNumber(safeDouble(conts.getNoStructApEnterprise())) + " "
+					+ text("MONEDA");
+			String totalIrpf				= toLatinNumber(
+					safeDouble(conts.getIrpfEsp()) + conts.getIrpfRetribDiner().orElse(0.00)) + " " + text("MONEDA");
+			String totalContingenciesAmount	= toLatinNumber(safeDouble(conts.getTotal())) + " " + text("MONEDA");
 
-			Double irpfEsp		= safeDouble(conts.getIrpfEsp());
-			Double irpfRetDin	= safeDouble(conts.getIrpfRetribDiner());
+			Double irpfEsp	  = safeDouble(conts.getIrpfEsp());
+			Double irpfRetDin = safeDouble(conts.getIrpfRetribDiner());
 
 			if (irpfEsp != 0)
 				irpfTitle += toLatinNumber(irpfEsp) + " " + text("MONEDA") + " " + text("EN ESPECIE") + " ";
 			if (irpfRetDin != 0)
-				irpfTitle += toLatinNumber(irpfRetDin) + " " + text("MONEDA") + " "	+ text("EN RETRIBUCIONES DINERARIAS");
+				irpfTitle += toLatinNumber(irpfRetDin) + " " + text("MONEDA") + " "
+						+ text("EN RETRIBUCIONES DINERARIAS");
 
-			drawBorderedBox(contents, 10, 10, 575, 160, LIGHT_GRAY);
+			drawBorderedBox(contents, 10, 10, 575, 170, LIGHT_GRAY);
 			drawText(contents, title, x, y, BLACK, HELVETICA_BOLD, fontSize - 1);
 
 			y -= 10;
@@ -578,67 +562,90 @@ public class PayrollTemplate {
 			y -= 9;
 			x += 15;
 			drawText(contents, monthlyAmmountTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), monthlyAmmount, BLACK, HELVETICA, fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), monthlyAmmount, BLACK, HELVETICA, fontSize - 3,
+					5, 1);
 
-			drawTextRight(contents, new PDRectangle(x + 322, y - 5, 70, 70), commContBase, BLACK, HELVETICA,  fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), commContType, BLACK, HELVETICA,  fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), commContApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 322, y - 5, 70, 70), commContBase, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), commContType, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), commContApEnt, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
 
 			y -= 8;
 			drawText(contents, extraHourProrrationTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), extraProrrationAmount, BLACK, HELVETICA,fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), extraProrrationAmount, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
 
 			y -= 12;
 			drawText(contents, profContingenciesTitle, x - 15, y, BLACK, HELVETICA_BOLD, 7);
 
 			y -= 10;
 			drawText(contents, atEpTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), atEpType, BLACK, HELVETICA, fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), atEpApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), atEpType, BLACK, HELVETICA, fontSize - 3,
+					5, 1);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), atEpApEnt, BLACK, HELVETICA, fontSize - 3,
+					5, 1);
 
 			y -= 8;
 			drawText(contents, unemploymentTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), unemploymentType, BLACK, HELVETICA, fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), unemploymentApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), unemploymentType, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), unemploymentApEnt, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
 
 			y -= 8;
-			drawTextRight(contents, new PDRectangle(x + 322, y, 70, 70), profContingenciesBase, BLACK, HELVETICA, fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 322, y, 70, 70), profContingenciesBase, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
 			drawText(contents, profesFormTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), profesFormType, BLACK, HELVETICA, fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), profesFormApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), profesFormType, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), profesFormApEnt, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
 
 			y -= 8;
 			drawText(contents, fogasaTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), fogasaType, BLACK, HELVETICA, fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), fogasaApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 5, 70, 70), fogasaType, BLACK, HELVETICA, fontSize - 3,
+					5, 1);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 5, 70, 70), fogasaApEnt, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
 
 			y -= 12;
 			drawText(contents, extraHoursTitle, x - 15, y, BLACK, HELVETICA_BOLD, fontSize - 2);
 
 			y -= 10;
 			drawText(contents, forceMajeureTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), forceMajeureBase, BLACK, HELVETICA, fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), forceMajeureType, BLACK, HELVETICA, fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), forceMajeureApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), forceMajeureBase, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), forceMajeureType, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), forceMajeureApEnt, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
 
 			y -= 8;
 			drawText(contents, noStructTitle, x, y, BLACK, HELVETICA, fontSize - 3);
-			drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), noStructBase, BLACK, HELVETICA, fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), noStructType, BLACK, HELVETICA, fontSize - 3, 5, 1);
-			drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), noStructApEnt, BLACK, HELVETICA, fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 322, y - 2, 70, 70), noStructBase, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y - 2, 70, 70), noStructType, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 465, y - 2, 70, 70), noStructApEnt, BLACK, HELVETICA,
+					fontSize - 3, 5, 1);
 
 			y -= 12;
 			x -= 15;
 			drawText(contents, irpfTitle, x, y, BLACK, HELVETICA_BOLD, fontSize - 3);
 			drawBox(contents, x, y - 2, 405, .2f, BLACK);
-			drawTextRight(contents, new PDRectangle(x + 308, y - 5, 100, 10), totalIrpf, BLACK, HELVETICA, fontSize - 3, 5, 5);
-			drawTextRight(contents, new PDRectangle(x + 451, y - 5, 30, 10), totalContingenciesTitle, BLACK, HELVETICA_BOLD, 6.5f, 5, 5);
-			drawTextRight(contents, new PDRectangle(x + 518, y - 5, 30, 10), totalContingenciesAmount, BLACK, HELVETICA_BOLD, 6.5f, 3, 5);
+			drawTextRight(contents, new PDRectangle(x + 308, y - 5, 100, 10), totalIrpf, BLACK, HELVETICA, fontSize - 3,
+					5, 5);
+			drawTextRight(contents, new PDRectangle(x + 451, y - 5, 30, 10), totalContingenciesTitle, BLACK,
+					HELVETICA_BOLD, 6.5f, 5, 5);
+			drawTextRight(contents, new PDRectangle(x + 518, y - 5, 30, 10), totalContingenciesAmount, BLACK,
+					HELVETICA_BOLD, 6.5f, 3, 5);
 
-			String vs = "v0.39-AK";
-
-			PdfText version = new PdfText(5f, 1f, 200f, 10f, contents, vs, BLACK, HELVETICA, 5f, LEFT);
-			version.draw();
+			drawTextRight(contents, new PDRectangle(x + 451, y - 14, 30, 10), totalCostsTitle, BLACK, HELVETICA_BOLD,
+					6.5f, 5, 5);
+			drawTextRight(contents, new PDRectangle(x + 518, y - 14, 30, 10), totalCostsAmount, BLACK, HELVETICA_BOLD,
+					6.5f, 3, 5);
 
 		}
 

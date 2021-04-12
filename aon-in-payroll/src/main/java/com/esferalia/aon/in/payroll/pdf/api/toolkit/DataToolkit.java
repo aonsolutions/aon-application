@@ -156,11 +156,25 @@ public class DataToolkit {
 		Optional<T> opt = Optional.ofNullable(obj);
 		return opt.orElse(def);
 	}
-	
-	
-	public static <T,R> Object safeEquals(T obj, R Object2) {
-		return Object2;
-		
+
+	/**
+	 * Equals method without exceptions
+	 * @param <T> any Class instance
+	 * @param <R> any Class instance
+	 * @param object  - First object
+	 * @param object2 - Second object
+	 * @return [boolean] result of the compare operation
+	 */
+	public static <T, R> boolean safeEquals(T object, R object2) {
+
+		if (object == object2)
+			return true;
+
+		if (object != null)
+			if (object.equals(object2))
+				return true;
+
+		return false;
 	}
 
 }

@@ -12,7 +12,6 @@ public class PayrollBundle  extends ListResourceBundle{
 	    	{ "MONEDA", "\u20ac"},
 	    	{ "FORMATO FECHA", "dd/MM/yyyy"},
 	        { "TITULO","Recibo individual justificativo del pago de *" },
-	        { "DOMICILIO", "Domicilio" },
 	        { "CIF", "NIF" },
 	        { "CCC", "CCC" },
 	        { "NIF", "NIF" },
@@ -30,8 +29,8 @@ public class PayrollBundle  extends ListResourceBundle{
 	        { "TOTAL PERCIBIR", "Líquido total a percibir" },
 	        { "FIRMA EMPRESA", "Sello y firma de la empresa" },
 	        { "FIRMA TRABAJADOR", "'Recibí, el trabajador'" },
-	        { "TITULO PIE", "Determinación de las bases de cotización a la Seguridad Social y conceptos de recaudación conjunta" },
-	        { "TITULO PIE 2", "y de la base sujeta a retención del IRPF y aportación de la empresa" },
+	        { "TITULO PIE", "Determinación de las bases de cotización a la S.S. y del IRPF, conceptos de recaudación conjunta y aportación de la empresa" },
+	        { "TITULO PIE 2", "" },
 	        { "BASE", "Base" },
 	        { "TIPO", "Tipo" },
 	        { "AP EMPRESA", "AP.Empresa" },
@@ -44,11 +43,12 @@ public class PayrollBundle  extends ListResourceBundle{
 	        { "FORMACION PROFESIONAL", "Formación profesional" },
 	        { "FONDO DE GARANTIA SALARIAL", "Fondo de garantía salarial" },
 	        { "COTIZACION ADICIONAL POR HORAS EXTRAS", "Cotización adicional por horas extraordinarias" },
-	        { "FUERZA MAYOR O", "Fuerza mayor o" },
+	        { "FUERZA MAYOR O", "Fuerza mayor" },
 	        { "NO ESTRUCTURALES", "No estructurales" },
 	        { "BASE SUJETA A RETENCION IRPF", "Base sujeta a retención del IRPF" },
 	        { "EN ESPECIE", "en especie" },
 	        { "EN RETRIBUCIONES DINERARIAS", "en retribuciones dinerarias" },
-	        { "TOTAL APORTACIONES", "Total aportaciones" }
+	        { "TOTAL APORTACIONES", "Total aportaciones" },
+	        { "TOTAL COSTES", "Importe acumulado" }
 	    };
 }

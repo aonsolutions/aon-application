@@ -6,6 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Payroll class for PDF print
+ * @author akrck02
+ *
+ */
 public class DefaultPayroll {
 
 	private Optional<String>							 enterprise;
@@ -29,7 +34,7 @@ public class DefaultPayroll {
 	private Optional<Double>							 payrollTotal;
 	private Optional<ContingencyBases>					 contingencies;
 	private Optional<PayrollTypes.Type>					 payrollType;
-
+	
 	private DefaultPayroll() {
 	}
 
@@ -97,7 +102,7 @@ public class DefaultPayroll {
 		return deductions;
 	}
 
-	public Optional<Double> getAccrualTotal() {
+	public Optional<Double> getPaymentsTotal() {
 		return accrualTotal;
 	}
 

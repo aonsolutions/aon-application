@@ -50,11 +50,12 @@ import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement.Settle
 public class SettlementTemplate extends PdfFile {
 
 	private Settlement settlement;
+	private Byte[] logo;
 
 	public SettlementTemplate(
-			Settlement settlement, float x, float y, PDDocument doc, ResourceBundle words, OutputStream out
+			Settlement settlement, float x, float y, PDDocument doc, ResourceBundle words, OutputStream out, float limitY, float startPointY
 	) {
-		super(x, y, doc, words, out);
+		super(x, y, doc, words, out,limitY,startPointY);
 		this.settlement = settlement;
 	}
 
@@ -80,11 +81,11 @@ public class SettlementTemplate extends PdfFile {
 					"com.esferalia.aon.in.payroll.pdf.maker.settlement.bundles.SettlementBundle",
 					(Locale) safeValue(locale, new Locale("Es")));
 
-			template = new SettlementTemplate(settlement, 0, 810, new PDDocument(), words, out);
+			template = new SettlementTemplate(settlement, 0, 810, new PDDocument(), words, out,0,800);
 			template.setDefaults(HELVETICA, 10f, BLACK, PdfColors.GRAY);
 
 			template.lang	= locale;
-			template.limitY	= 50;
+			template.limitY	= 200;
 
 			template.newPage(VERTICAL);
 
@@ -143,20 +144,20 @@ public class SettlementTemplate extends PdfFile {
 	/** Draw the enterprise text */
 	private void drawEnterprise() {
 
-		String[] variables = { "enterprise_name", "enterprise_nif", "enterprise_address" };
+		String[] variables = { "enterpriseName", "enterpriseNif", "enterpriseAddress" };
 		String[] values	   = { safeString(settlement.getEnterpriseName()), safeString(settlement.getEnterpriseNif()),
 				safeString(settlement.getEnterpriseAddress()), };
 
 		final String enterpiseTxt = replaceVariables(variables, values, text("ENTERPRISE"));
 
 		PdfTextBuilder builder = new PdfTextBuilder();
-		builder.stream(contents).width(480).height(0).x(x()).y(y()).lineSpacing(6f).color(primary).font(HELVETICA)
+		builder.stream(contents).width(480).height(0).x(x()).y(y()).lineSpacing(3f).color(primary).font(HELVETICA)
 				.fontSize(9f).content(enterpiseTxt).verticalAlignment(VERTICAL_ALIGNMENT.CENTER)
 				.horizontalAlignment(JUSTIFY);
 
 		PdfText text = builder.build();
-		text.drawMultiple(limitY);
-		down(text.height());
+		drawTextLines(text);
+		down(15);
 	}
 
 	/** Draw the employee text */
@@ -164,8 +165,8 @@ public class SettlementTemplate extends PdfFile {
 
 		final String dateFormat = text("DATE FORMAT");
 
-		String[] variables = new String[] { "employee_name", "employee_nif", "employee_category",
-				"employee_antiquity" };
+		String[] variables = new String[] { "employeeName", "employeeNif", "employeeCategory",
+				"employeeAntiquity" };
 		String[] values	   = new String[] { safeString(settlement.getEmployeeName()),
 				safeString(settlement.employeeNIF()), safeString(settlement.employeeCategory()),
 				safeString(formatDate(settlement.getEmployeeAntiquity(), dateFormat)) };
@@ -174,12 +175,12 @@ public class SettlementTemplate extends PdfFile {
 
 		PdfTextBuilder builder = new PdfTextBuilder();
 		builder.stream(contents).width(480).height(0).x(x()).y(y()).color(primary).font(HELVETICA).fontSize(9f)
-				.lineSpacing(6f).content(employeeTxt).verticalAlignment(VERTICAL_ALIGNMENT.CENTER)
+				.lineSpacing(3f).content(employeeTxt).verticalAlignment(VERTICAL_ALIGNMENT.CENTER)
 				.horizontalAlignment(JUSTIFY);
 
 		PdfText text = builder.build();
-		text.drawMultiple(limitY);
-		down(text.height());
+		drawTextLines(text);
+		down(15);
 	}
 
 	/** Draw declare text */
@@ -188,11 +189,11 @@ public class SettlementTemplate extends PdfFile {
 
 		PdfTextBuilder builder = new PdfTextBuilder();
 		builder.stream(contents).width(480).height(0).x(x()).y(y()).color(primary).font(HELVETICA).fontSize(9f)
-				.lineSpacing(6f).content(declareTxt).horizontalAlignment(LEFT);
+				.lineSpacing(3f).content(declareTxt).horizontalAlignment(LEFT);
 
 		PdfText text = builder.build();
-		text.drawMultiple(limitY);
-		down(text.height());
+		drawTextLines(text);
+		down(20);
 	}
 
 	/** Draw the declaration text */
@@ -200,7 +201,7 @@ public class SettlementTemplate extends PdfFile {
 
 		final String dateFormat = text("DATE FORMAT");
 
-		String[] variables = new String[] { "end_date", "end_cause", "text_total", "total_amount" };
+		String[] variables = new String[] { "endDate", "endCause", "textTotal", "totalAmount" };
 		String[] values	   = new String[] { safeString(formatDate(settlement.getEndDate(), dateFormat)),
 				safeString(settlement.endCause()), convertDouble(settlement.total().orElse(0d)).toUpperCase(),
 				toLatinNumber(settlement.total().orElse(null)) };
@@ -212,9 +213,10 @@ public class SettlementTemplate extends PdfFile {
 				.lineSpacing(6f).content(declarationTxt).verticalAlignment(VERTICAL_ALIGNMENT.CENTER)
 				.horizontalAlignment(JUSTIFY);
 
-		PdfText text = builder.build();
-		text.drawMultiple(limitY);
-		down(text.height() + 0);
+		
+		PdfText text = builder.build();		
+		drawTextLines(text);
+		down(10);
 	}
 
 	/**
@@ -244,7 +246,7 @@ public class SettlementTemplate extends PdfFile {
 
 		PdfText totals = builder.build();
 		totals.draw();
-		down(20);
+		down(25);
 
 		Map<Integer, ArrayList<PDFPayment>> payments = settlement.getAccruals();
 		if (payments == null)
@@ -416,21 +418,18 @@ public class SettlementTemplate extends PdfFile {
 		builder.stream(contents).x(x()).width(480).y(y()).font(HELVETICA).fontSize(9f).content(legalTxt).lineSpacing(6f)
 				.horizontalAlignment(ALIGNMENT.JUSTIFY);
 
-		PdfText legalText = builder.build();
-		legalText.drawMultiple(limitY);
-		down(legalText.height());
+		PdfText legalText = builder.horizontalAlignment(ALIGNMENT.LEFT).build();
+		drawTextLines(legalText);
+		down(15);
 
-		builder.stream(contents).y(y()).content(legalAdviceTxt);
+		builder.stream(contents).y(y()).horizontalAlignment(ALIGNMENT.LEFT).content(legalAdviceTxt);
 		PdfText legalAdviceText = builder.build();
-		legalAdviceText.drawMultiple(limitY);
-		down(legalAdviceText.height());
-
-		builder.stream(contents).y(100).content(dateTxt);
+		drawTextLines(legalAdviceText);
+		down(15);
+		
+		builder.stream(contents).y(200).content(dateTxt);
 		PdfText dateText = builder.build();
-		dateText.drawMultiple(limitY);
-
-		checkJump();
-		down(100);
+		drawTextLinesFree(dateText);
 
 		float margin = 100;
 		float width	 = 470 / 2 - margin / 2;
@@ -441,23 +440,23 @@ public class SettlementTemplate extends PdfFile {
 			width  = 470 / 3 - margin / 2;
 		}
 
-		builder.stream(contents).width(width).height(40).y(10).content(employeeSignTxt).color(GRAY)
+		builder.stream(contents).width(width).height(40).y(40).content(employeeSignTxt).color(GRAY)
 				.horizontalAlignment(ALIGNMENT.CENTER);
 
 		PdfText employeeSign = builder.build();
-		employeeSign.draw();
-
+		drawTextLinesFree(employeeSign);
+		
 		right(width + margin);
 		builder.stream(contents).width(width).x(x()).content(enterpriseSignTxt);
 
 		PdfText enterpriseSign = builder.build();
-		enterpriseSign.draw();
+		drawTextLinesFree(enterpriseSign);
 
 		right(width + margin);
 		builder.stream(contents).width(width).x(x()).content(representativeSignTxt);
 
 		PdfText representativeSign = builder.build();
-		representativeSign.draw();
+		drawTextLinesFree(representativeSign);
 
 	}
 
@@ -473,14 +472,6 @@ public class SettlementTemplate extends PdfFile {
 		for (int i = 0; i < words.length; i++)
 			text = text.replace("$" + words[i], values[i]);
 		return text;
-	}
-
-	public void checkJump() throws IOException {
-		if (jump())
-		{
-			newPage(VERTICAL);
-			y(800);
-		}
 	}
 
 }
