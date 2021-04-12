@@ -21,7 +21,6 @@ import "../../../../components/aon-filter.js";
 
 export class AonEventDetailList extends AonElement {
   TABLE_ID;
-  DATE_TASK;
   static get observedAttributes() {
     return ["filter", "data"];
   }
@@ -53,7 +52,6 @@ export class AonEventDetailList extends AonElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if ("filter" === name) {
       this.initialize();
-      this.DATE_TASK = null;
       this.getTable();
     }
   }
@@ -222,7 +220,7 @@ export class AonEventDetailList extends AonElement {
     try {
       let filter = null;
       try {
-        filter = { ...this.applicationParentEl._filter, ...this.DATE_TASK };
+        filter = { ...this.applicationParentEl._filter, ...this.applicationParentEl.DATE_TMP };
       } catch (error) {}
 
       const datos = await getTimeControlDetail(filter);

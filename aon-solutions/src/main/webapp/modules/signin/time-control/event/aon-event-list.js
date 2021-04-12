@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { setFullDate, setValueName, sortBy, setDateTpDay } from "../../../../services/utils.js";
+import { setFullDate, setValueName, sortBy, setDateTpDay, formatDateOrigin } from "../../../../services/utils.js";
 import {
   getGroups,
   getPeriod,
@@ -288,7 +288,11 @@ export class AonEventList extends AonElement {
   }
 
   aonEvent({target}, data) {
-    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
+    let newData = data;
+    if(newData.start_date){newData['startDate'] = formatDateOrigin(newData.start_date);}
+    if(newData.end_date){newData['endDate'] = formatDateOrigin(newData.end_date);}
+    this.applicationParentEl.DATE_TMP = {startDate: newData['startDate'], endDate: newData['endDate']};
+    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, newData);
   }
 
   back(){

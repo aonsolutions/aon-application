@@ -224,19 +224,24 @@ export class AonDialog extends AonElement {
 		accept.id = this.ACCEPT;
 		accept.className = 'aonButton';
 		accept.innerHTML = MSG.AON_MSG_ACCEPT;
-		this.getElement(this.ACTION).appendChild(accept);
+		accept.style.marginLeft= "auto";
+		let divAction = this.getElement(this.ACTION);
+		divAction.style.display = "flex";
+		divAction.style.justifyContent= "space-between";
+		divAction.appendChild(accept);
 		return accept;
 	}
 
 	addSendAction(fn) {
-		let accept = this.buttonAccept();
-		accept.classList.add('buttonload')
+		let button = this.buttonAccept();
+		button.classList.add('buttonload')
 		// accept.innerHTML =  `<span class="button__text">${MSG.AON_MSG_ACCEPT}</span>`;
-		accept.addEventListener('click', (ev) => {
+		button.addEventListener('click', (ev) => {
 			ev.stopPropagation();
 			ev.preventDefault();
 			fn(ev);
 		});
+		return button;
 	}
 
 	loadingButton(loading){

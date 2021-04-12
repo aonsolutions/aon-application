@@ -278,8 +278,10 @@ export class AonEventAdd extends AonElement {
 
   back() {
     let data = undefined;
-    if(this.data) data = {...this.data, start_date:this.data.date};
-    if(this.START_DATE) data.start_date = this.START_DATE;
+    let startDate = formatDateOrigin(this.data.date);
+    if(this.data) data = {...this.data, start_date:startDate};
+    if(this.START_DATE) startDate = formatDateOrigin(this.START_DATE);
+    this.applicationParentEl.DATE_TMP = {...this.applicationParentEl.DATE_TMP, startDate};
     this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
   }
 }

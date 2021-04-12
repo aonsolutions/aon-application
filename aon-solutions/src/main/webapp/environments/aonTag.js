@@ -1,11 +1,13 @@
 // HTML
 
 export const DIV = 'div';
+export const IMG = 'img';
 export const I = 'i';
 export const INPUT = 'input';
 export const LABEL = 'label'
 export const LI = 'li';
 export const SPAN = 'span';
+export const FORM = 'form';
 export const UL = 'ul';
 
 // COMPONENTS

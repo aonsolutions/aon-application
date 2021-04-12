@@ -16,6 +16,7 @@ import "../../components/aon-application.js";
 export class AonSignin extends AonElement {
   AON_SIGNIN;
   TASK_HOLDER;
+  DATE_TMP;
   AUTHS;
   _filter;
   dur;
@@ -34,6 +35,7 @@ export class AonSignin extends AonElement {
   }
 
   initialize(){
+    this.DATE_TMP = null;
     this.AON_SIGNIN = SIGNIN_VIEWS.AON_SIGNIN;
     this.AUTHS=[];
   }
@@ -122,6 +124,7 @@ export class AonSignin extends AonElement {
 
   async setDataFilter(data){
     try {
+      this.DATE_TMP =  null;
       if(data && data.period){
         data = {...data, ...getPeriod(data.period)};
       } 
@@ -167,8 +170,9 @@ export class AonSignin extends AonElement {
           case SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST:
               aonView = new AonEventDetailList();
               if(data){
-                const startDate = formatDateOrigin(data.start_date);
-                aonView.DATE_TASK = {startDate, endDate:startDate};
+                // const startDate = data.startDate;
+                // let endDate = data.endDate || startDate;
+                // aonView.DATE_TASK = {startDate, endDate};
               }
             break;
           case SIGNIN_VIEWS.AON_EVENT_ADD:

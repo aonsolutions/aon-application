@@ -2,18 +2,21 @@ import { AonElement } from "../../../components/AonElement.js";
 import { PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { getPeriodLaboral } from "../../../services/laboralService.js";
 import { formatNumber, isEmptyObject, serializeForm, setValueName, waitEl } from "../../../services/utils.js";
-import { DATA_TEST, TAX_ENUMS } from "../FiscalEnums.js";
+import { getCompanyBanks, getModelsFiscal, setModelStatus } from "../../../services/service.js";
+import { TAX_ENUMS } from "../FiscalEnums.js";
+import * as AON_TAG from "../../../environments/aonTag.js";
+import { AonCheckbox } from "../../../components/aon-checkbox.js";
+import { AonSelect } from "../../../components/aon-select.js";
+import { AonInput } from "../../../components/aon-input.js";
+import { AonSwitch } from "../../../components/aon-switch.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
-import '../../../components/aon-switch.js';
-import '../../../components/aon-input.js';
-import "../../../components/aon-select.js";
-import { getCompanyBanks } from "../../../services/companyService.js";
 
 export class AonTax extends AonElement {
   TABLE_ID;
   BANKS;
+  DIALOG_CHECKBOX;
   static get observedAttributes() {
     return ["filter"];
   }
@@ -50,6 +53,7 @@ export class AonTax extends AonElement {
   initialize() {
     this.id = this.id || FISCAL_VIEWS.AON_TAX;
     this.TABLE_ID = this.id + "Table";
+    this.DIALOG_CHECKBOX = this.id+"CheckBox";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.applicationEl.addToolbarTitle("Impuestos");
@@ -72,7 +76,6 @@ export class AonTax extends AonElement {
     }
 
     this.innerHTML = innerHTML;
-    this.applicationEl.development(undefined, "Esta opción está en desarrollo y los datos son de prueba.");
   }
 
   buildToolbar() {
@@ -128,7 +131,7 @@ export class AonTax extends AonElement {
       aonTable.addColumn("Ejercicio", "", "year", "10%");
       aonTable.addColumn("Periodo", "", "periodText", "10%");
       aonTable.addColumn("Estado", "", "statusText", "10%");
-      aonTable.addColumn("Importe", "number", "result", "10%");
+      aonTable.addColumn("Importe", "number", "resultFormat", "10%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -161,10 +164,135 @@ export class AonTax extends AonElement {
     }
   }
 
+  openDialog(resp) {
+    const dialog = this.applicationEl.getDialog();
+    dialog.clear();
+    if (!this.isMobile()) dialog.width = "500px";
+
+    dialog.setContent(this.getDialogHtml(resp));
+
+    if("CUSTOMER_CHECK"===resp.status){
+      this.createFooterDialog(resp, dialog);
+    } 
+    dialog.open();
+    this.visibleFields(resp);
+    this.eventData(resp);
+  }
+
+  getDialogHtml(resp){
+    const div = this.createElement(AON_TAG.DIV);
+    const divImg = this.createElement(AON_TAG.DIV);
+    divImg.style.fontSize= 18;
+    const imgAeat = this.createElement(AON_TAG.IMG);
+    imgAeat.id = "imgAeat";
+    imgAeat.src = this.getPathImg(resp.administration);
+    divImg.appendChild(imgAeat);
+
+    const spanTextImg =  this.createElement(AON_TAG.SPAN);
+    spanTextImg.style.marginLeft = 3;
+    spanTextImg.textContent = `Modelo ${resp.newModel} (${resp.modelText})`;
+    divImg.appendChild(spanTextImg);
+    div.appendChild(divImg);
+
+    const divOne = this.createElement(AON_TAG.DIV);
+    divOne.className = "aonFlexBetween colorGrey aonFontWeight-700";
+    divOne.style.margin= "10px 0";
+
+    const divTextOne =  this.createElement(AON_TAG.DIV);
+    divTextOne.textContent = `${resp.periodText} - ${resp.year}`;
+    divOne.appendChild(divTextOne);
+
+    const divTextTwo =  this.createElement(AON_TAG.DIV);
+    divTextTwo.style.textAlign="end";
+    divTextTwo.style.color="black";
+    divTextTwo.textContent = resp.resultFormat;
+    divOne.appendChild(divTextTwo);
+    div.appendChild(divOne);
+
+    if(resp.typeText){
+      const divK =  this.createElement(AON_TAG.DIV);
+      divK.className = "aonFlexBetween colorGrey aonFontWeight-700";
+      divK.style.margin = "20px 0";
+      const divT =  this.createElement(AON_TAG.DIV);
+      divT.innerHTML = `Tipo: <span style="color:black;"> ${resp.typeText}</span>`;
+      divK.appendChild(divT);
+      div.appendChild(divK);
+    }
+
+    //---FORM------
+    const form =  this.createElement(AON_TAG.FORM);
+    form.id = `${this.id}Form`;
+    div.appendChild(form);
+
+    const aonSelect = new AonSelect();
+    aonSelect.name = "rbank";
+    aonSelect.id = "iban";
+    aonSelect.title = "IBAN";
+    aonSelect.hidden = true;
+    form.appendChild(aonSelect);
+
+    const aonInputId = new AonInput();
+    aonInputId.name = "id";
+    aonInputId.id = "id";
+    aonInputId.description = "id";
+    aonInputId.value = resp.id;
+    aonInputId.visible = false;
+    form.appendChild(aonInputId);
+
+    const divNrc =  this.createElement(AON_TAG.DIV);
+    divNrc.hidden = true;
+    divNrc.className= "aon-margin-0";
+    divNrc.id= "divNrc";
+    form.appendChild(divNrc);
+
+    const aonSwitch = new AonSwitch();
+    aonSwitch.className = "aonWidth25";
+    aonSwitch.style.width= "26%";
+    aonSwitch.id = "switchDni";
+    aonSwitch.title = "NRC";
+    divNrc.appendChild(aonSwitch);
+
+    const aonInputNrc = new AonInput();
+    aonInputNrc.className = "aonWidth75";
+    aonInputNrc.style.width= "72%";
+    aonInputNrc.id = "nrc";
+    aonInputNrc.description = "Nº Referencia Completo";
+    aonInputNrc.name = "nrc";
+    aonInputNrc.type = "text";
+    aonInputNrc.disabled = true;
+    aonInputNrc.value = resp.nrc;
+    divNrc.appendChild(aonInputNrc);
+
+    //---END FORM---
+
+    return div;
+  }
+
+  createFooterDialog(resp, dialog){
+    let buttonAccept = dialog.addSendAction(() => this.save(resp,dialog));
+    let divAction = this.getElement(dialog.ACTION);
+    let div = this.createElement("div");
+    let checkBox = new AonCheckbox();
+    let span = this.createElement('span');
+    span.style.color = "grey";
+    span.style.fontSize= "12px";
+    span.style.fontWeight= 500;
+    span.textContent = "Acepto los datos reflejados";
+    checkBox.id = this.DIALOG_CHECKBOX;
+    checkBox.description = span.outerHTML;
+    checkBox.addEventListener('change', ({target})=>{
+      if(target.checked) buttonAccept.disabled = false;
+      else buttonAccept.disabled = true;
+    })
+    div.appendChild(checkBox);
+    divAction.insertBefore(div, buttonAccept);
+    buttonAccept.disabled = true;
+  }
+
   async getData() {
     let data = [];
     try {
-      const datos = DATA_TEST;
+      const datos = await getModelsFiscal();
       if (datos) {
         datos.map((resp) => {
           let newModel = TAX_ENUMS.TAX_MODEL_NUMBER[resp.model];
@@ -184,6 +312,7 @@ export class AonTax extends AonElement {
             periodText: TAX_ENUMS.TAX_PERIOD[resp.period],
             statusText: TAX_ENUMS.TAX_STATUS[resp.status],
             modelText: TAX_ENUMS.TAX_MODEL_TEXT[newModel],
+            typeText:  TAX_ENUMS.TAX_TYPE[resp.type],
             newModel
           };
           data.push(obj);
@@ -195,36 +324,6 @@ export class AonTax extends AonElement {
     return data;
   }
 
-  openDialog(resp) {
-    const dialog = this.applicationEl.getDialog();
-    dialog.clear();
-    if (!this.isMobile()) dialog.width = "500px";
-    dialog.open();
-    dialog.setContentHTML(
-      /*html*/`
-      <div style="font-size: 18;"><img id ="imgAeat"></img> Modelo ${resp.newModel} (${resp.modelText})</div>
-      
-      <div class="aonFlexBetween colorGrey aonFontWeight-700" style="margin: 10px 0;">
-        <div>${resp.periodText} - ${resp.year}</div>
-        <div style="text-align: end;color:black;">${resp.resultFormat}</div>
-      </div>
-      <div class="aonFlexBetween colorGrey aonFontWeight-700" style="margin: 20px 0;">
-        <div>Tipo: <span style="color:black;"> ${TAX_ENUMS.TAX_TYPE[resp.type]}</span></div>
-      </div>
-      <form id="${this.id}Form">
-        <aon-select name="rbank" id="iban" title="IBAN" hidden></aon-select>
-        <div class="aon-margin-0" id="divNrc" hidden>
-          <aon-switch class="aonWidth25" style="width: 26%;" id="switchDni" title="NRC"></aon-switch>
-          <aon-input class="aonWidth75"  style="width: 72%;"  name="nrc" id="nrc" description="Nº Referencia Completo" type="text" disabled="true" value="${resp.nrc}"></aon-input>
-        <div>
-        <aon-input name="id" id="id" description="id" value="${resp.id}" visible="false"></aon-input>
-      </form>`
-    );
-    dialog.addSendAction(() => this.save(resp,dialog));
-    this.setImg(resp);
-    this.visibleFields(resp);
-    this.eventData(resp);
-  }
 
   eventData(resp){
     this.getElement('switchDni').addEventListener('change', ({ target }) => {
@@ -259,9 +358,7 @@ export class AonTax extends AonElement {
     return this.BANKS;
   }
 
-  setImg({administration}){
-    let img = this.getElement('imgAeat');
-    if(img && administration){
+  getPathImg(administration){
       const path = "assets/img/";
       let src = "aeat.png";
       switch(administration){
@@ -278,8 +375,7 @@ export class AonTax extends AonElement {
           src = "aeat_navarra.png";
           break;
       }
-      img.src=path+src;
-    }
+      return path+src;
   }
 
   visibleFields({type}){
@@ -303,15 +399,20 @@ export class AonTax extends AonElement {
   }
 
 
-  save(resp, dialog){
+  async save(resp, dialog){
     this.applicationEl.startLoading();
-    let form = {...resp,...this.getFormValues()};
-    console.log(form);
-    setTimeout(()=>{
-      this.applicationEl.stopLoading();
+    try {
+      let form = {...resp,...this.getFormValues()};
+      await setModelStatus(form);
+      await this.getTable(); //reload
       this.applicationEl.getToast().start({message: "Datos guardados!", type:"success"});
       dialog.close();
-    },2000)
+    } catch (error) {
+      if(typeof error ==="string") error = JSON.parse(error);
+      const {message, type} = error;
+      this.applicationEl.getToast().start({ message, type});
+    }
+    this.applicationEl.stopLoading();
   }
 
 }
