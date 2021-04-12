@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 public class TimeControl {
 	
 	private Date startDate;
+	private Date endDate;
 	private TimeControlGroup group;
 	
 	private Long time;
@@ -106,6 +107,14 @@ public class TimeControl {
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
+	}
+	
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 
 	public TimeControlGroup getGroup() {
