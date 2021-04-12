@@ -194,6 +194,13 @@ public class AonApiHttpServlet extends HttpServlet{
 		is.close();
 	}
 	
+	public void responseFile(HttpServletRequest req, HttpServletResponse resp, String filename, MimeType mimetype ) throws IOException {
+		addCorsHeader(resp);
+        resp.setContentType(mimetype.getName());
+		resp.setHeader(IConstants.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "." + mimetype.getExtension() +"\";");
+		resp.flushBuffer();
+	}
+	
     protected void addCorsHeader(HttpServletResponse response){
     	response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, OPTIONS, PUT, DELETE, HEAD");

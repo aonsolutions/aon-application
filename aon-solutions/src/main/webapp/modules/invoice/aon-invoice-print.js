@@ -56,7 +56,10 @@ export class AonInvoicePrint extends AonElement {
     let fileDiv = this.getElement(this.FILE);
     fileDiv.style.display = 'block';
     fileDiv.style.width = '50%';
-		//fileDiv.innerHTML = `<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
+
+    let json = btoa(JSON.stringify({}));
+    let url = '/ms/api/download_invoice_pdf_ak?json=' + json;
+    fileDiv.innerHTML = `<aon-viewer type="application/pdf" file="${url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
 
     let dataDiv = this.getElement(this.DATA);
     dataDiv.style.width = '50%';
@@ -72,6 +75,20 @@ export class AonInvoicePrint extends AonElement {
     this.buildData();
   }
 
+  reloadFile() {
+    let config =  {
+      header: this.getElement('aonInvoicePrintConfigurationHeader').value,
+      footer: this.getElement('aonInvoicePrintConfigurationFooter').value,
+      detailed: this.getElement('aonInvoicePrintConfigurationDetailed').checked,
+      adjust: this.getElement('aonInvoicePrintConfigurationAdjust').checked
+    }
+    let fileDiv = this.getElement(this.FILE);
+    let json = btoa(JSON.stringify(config));
+    let url = '/ms/api/download_invoice_pdf_ak?json=' + json;
+    fileDiv.innerHTML = `<aon-viewer type="application/pdf" file="${url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
+
+  }
+
   buildData() {
     let card = this.getElement(this.DATA_CARD);
     card.setContentHTML('');
@@ -84,42 +101,46 @@ export class AonInvoicePrint extends AonElement {
 
     let tdHeader= document.createElement('td');
     tdHeader.setAttribute('colspan', '2');
-		tdHeader.innerHTML = `<aon-slider id="header" title="${MSG.AON_MSG_HEADER}" min="0" max="200"></aon-slider>`;
+		tdHeader.innerHTML = `<aon-slider id="aonInvoicePrintConfigurationHeader" title="${MSG.AON_MSG_HEADER}" min="0" max="200"></aon-slider>`;
 		tr.appendChild(tdHeader);
-		let header = document.getElementById('header');
+		let header = document.getElementById('aonInvoicePrintConfigurationHeader');
+    header.addEventListener('change', () => this.reloadFile());
 
     let tr2 = document.createElement('tr');
     table.appendChild(tr2);
 
     let tdFooter = document.createElement('td');
     tdFooter.setAttribute('colspan', '2');
-    tdFooter.innerHTML = `<aon-slider id="footer" title="${MSG.AON_MSG_FOOTER}" min="0" max="200"></aon-slider>`;
+    tdFooter.innerHTML = `<aon-slider id="aonInvoicePrintConfigurationFooter" title="${MSG.AON_MSG_FOOTER}" min="0" max="200"></aon-slider>`;
     tr2.appendChild(tdFooter);
-    let footer = document.getElementById('footer');
+    let footer = document.getElementById('aonInvoicePrintConfigurationFooter');
+    footer.addEventListener('change', () => this.reloadFile());
 
     let tr3 = document.createElement('tr');
     table.appendChild(tr3);
 
     let tdAdjust= document.createElement('td');
     tdAdjust.setAttribute('colspan', '1');
-    tdAdjust.innerHTML = `<aon-switch id="adjust" title="${MSG.AON_MSG_BACKGROUND_ADJUST}"></aon-switch>`;
+    tdAdjust.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationAdjust" title="${MSG.AON_MSG_BACKGROUND_ADJUST}"></aon-switch>`;
     tr3.appendChild(tdAdjust);
-    let adjust = document.getElementById('adjust');
+    let adjust = document.getElementById('aonInvoicePrintConfigurationAdjust');
+    adjust.addEventListener('change', () => this.reloadFile());
 
     let tdBackground= document.createElement('td');
     tdBackground.setAttribute('colspan', '1');
-    tdBackground.innerHTML = `<aon-icon-button id="background" icon="add_photo_alternate"></aon-icon-button>`;
+    tdBackground.innerHTML = `<aon-icon-button id="aonInvoicePrintConfigurationBackground" icon="add_photo_alternate"></aon-icon-button>`;
     tr3.appendChild(tdBackground);
-    let background = document.getElementById('background');
+    let background = document.getElementById('aonInvoicePrintConfigurationBackground');
 
     let tr4 = document.createElement('tr');
     table.appendChild(tr4);
 
     let tdDetailed= document.createElement('td');
     tdDetailed.setAttribute('colspan', '2');
-    tdDetailed.innerHTML = `<aon-switch id="detailed" title="${MSG.AON_MSG_DETAILED}"></aon-switch>`;
+    tdDetailed.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationDetailed" title="${MSG.AON_MSG_DETAILED}"></aon-switch>`;
     tr4.appendChild(tdDetailed);
-    let detailed = document.getElementById('detailed');
+    let detailed = document.getElementById('aonInvoicePrintConfigurationDetailed');
+    detailed.addEventListener('change', () => this.reloadFile());
   }
 
 }

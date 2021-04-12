@@ -398,11 +398,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject setSelfcontaInvoice() {
-		TediInvoice ti = TediInvoiceJSON.fromJSON(getData());
-		AonConfiguration aonCtx = AON.getConfiguration(getDomain().getName(), getDomain().getId(), getUser().getLogin());
-		try(AONContext ctx = AONContext.getAONContext(getDomain(), getUser().getLogin())){
-			TediResult tr = TediParser.toFullInvoice(ctx, aonCtx, ti);
-		}
+		BidoqRequest.selfconta2Aon(getDomain(), getUser(), getData());
 		return new JSONObject();
 	}
 	

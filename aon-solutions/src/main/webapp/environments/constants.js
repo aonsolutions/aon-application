@@ -38,6 +38,8 @@ export const TEXT = 'text';
 export const TRUE = 'true';
 export const FALSE = 'false';
 
+export const MIN = 'min';
+export const MAX = 'max';
 
 export const CONSTANT_SUCCESS = "success";
 export const CONSTANT_PRIMARY = "primary";

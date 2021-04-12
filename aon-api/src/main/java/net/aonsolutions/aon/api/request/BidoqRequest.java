@@ -318,7 +318,6 @@ public class BidoqRequest {
 			
 			JSONObject finances = selfInvoice.optJSONObject("finances");
 			ai.getInvoice().setFinances(new LinkedList<Finance>());
-			LinkedList<Finance> fl = new LinkedList<Finance>();
 			for (String  key : finances.keySet()) {
 				if(!"contabilizado".equalsIgnoreCase(key)) {
 					JSONObject finance = finances.getJSONObject(key);
@@ -359,16 +358,11 @@ public class BidoqRequest {
 							.setSecurityLevel(ai.getInvoice().getSecurityLevel())
 							.setConcept(ai.getInvoice().getDocumentNumber())
 							.setFinanceStatus(FinanceStatus.PENDING);
-						fl.add(f);
-
+						ai.getInvoice().addFinance(f);
 					}
 				}
 			}
 			ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
-			
-			fl.stream().forEach(f -> {
-				AON.insertFinance(domain.getName(), domain.getId(), user.getLogin(), f);
-			});
 		} catch (Exception e) {
 			e.printStackTrace();
 			rawdoc(domain, user, selfInvoice, e.getMessage());
@@ -1397,7 +1391,6 @@ public class BidoqRequest {
 
 		JSONArray finances = ti.optJSONArray("finances");
 		ai.getInvoice().setFinances(new LinkedList<Finance>());
-		LinkedList<Finance> fl = new LinkedList<Finance>();
 		for (int i = 0; i < finances.length(); i++) {
 			JSONObject finance = finances.optJSONObject(i);
 			System.out.println(finance.toString());
@@ -1428,17 +1421,11 @@ public class BidoqRequest {
 						.setRegistryName(ai.getInvoice().getRegistryName()).setScope(ai.getInvoice().getScope())
 						.setSecurityLevel(ai.getInvoice().getSecurityLevel())
 						.setConcept(ai.getInvoice().getDocumentNumber()).setFinanceStatus(FinanceStatus.PENDING);
-				fl.add(f);
-
+				ai.getInvoice().addFinance(f);
 			}
 		}
 
 		ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
-
-		fl.stream().forEach(f -> {
-			AON.insertFinance(domain.getName(), domain.getId(), user.getLogin(), f);
-		});
-
 		Integer tiId = ti.getInt("id");
 		AON.rawdocDelete(domain.getName(), domain.getId(), user.getLogin(), tiId);
 		return ai;
