@@ -1,7 +1,9 @@
 import { AonElement } from '../../../components/AonElement.js';
-import { INPUTS_ALL } from '../../../environments/constants.js';
+import { CONSTANT_SUCCESS, INPUTS_ALL } from '../../../environments/constants.js';
 import { setValueName, serializeForm, formatDateOrigin } from '../../../services/utils.js';
 import { getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, postUpdateCto } from '../../../services/service.js'
+import { AON_MSG_PROCESSED_MOVEMENT, AON_MSG_UPDATED_CONTRACT } from '../../../environments/msg.js';
+import { CONSTANT_PRIMARY } from '../../../environments/constants.js';
 import { ToolbarType } from '../../../models/enums.js';
 import '../../../components/aon-card.js';
 import '../../../components/aon-input.js';
@@ -634,7 +636,7 @@ export class AonAltaDirecta extends AonElement {
         this.applicationEl.startLoading();
         try {
             await postAltaDirecta(this.getContrato());
-            this.TOAST.start({ message: 'Alta procesada!', type: 'success', delay: 3000 });
+            this.TOAST.start({ message: AON_MSG_PROCESSED_MOVEMENT, type: CONSTANT_SUCCESS, delay: 3000 });
             this.applicationParentEl._movements = undefined;
             this.back();
         } catch (error) {
@@ -656,7 +658,7 @@ export class AonAltaDirecta extends AonElement {
         }
         try {
             await postUpdateCto(cto_new);
-            this.TOAST.start({ message: 'Contrato modificado!', type: 'primary', delay: 3000 });
+            this.TOAST.start({ message: AON_MSG_UPDATED_CONTRACT, type: CONSTANT_PRIMARY, delay: 3000 });
             this.applicationParentEl._movements = undefined;
             this.back();
         } catch (error) {
@@ -686,7 +688,9 @@ export class AonAltaDirecta extends AonElement {
                     this.disabledCardTrabajor(true);
                 }
             } catch (error) {
-                this.TOAST.start({ message: error, type: 'error' });
+                if(typeof error ==="string") error = JSON.parse(error);
+                const {message, type} = error;
+                this.TOAST.getToast().start({ message, type});
             }
             nss_sugges.loading(false);
         }

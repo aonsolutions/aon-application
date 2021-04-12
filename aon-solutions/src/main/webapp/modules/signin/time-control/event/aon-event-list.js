@@ -289,10 +289,10 @@ export class AonEventList extends AonElement {
 
   aonEvent({target}, data) {
     let newData = data;
-    if(newData.start_date){newData['startDate'] = formatDateOrigin(newData.start_date);}
-    if(newData.end_date){newData['endDate'] = formatDateOrigin(newData.end_date);}
-    this.applicationParentEl.DATE_TMP = {startDate: newData['startDate'], endDate: newData['endDate']};
-    this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, newData);
+    const parent = this.applicationParentEl;
+    if(newData.start_date) parent.DATE_TMP = {...parent.DATE_TMP, startDate:formatDateOrigin(newData.start_date)};
+    if(newData.end_date) parent.DATE_TMP = {...parent.DATE_TMP, endDate:formatDateOrigin(newData.end_date)};
+    parent.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, newData);
   }
 
   back(){

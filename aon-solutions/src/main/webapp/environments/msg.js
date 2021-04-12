@@ -209,3 +209,9 @@ export const AON_MSG_MODEL_111 = MSG.AON_MSG_MODEL_111;
 export const AON_MSG_MODEL_111_DESCRIPTION = MSG.AON_MSG_MODEL_111_DESCRIPTION;
 export const AON_MSG_MODEL_190 = MSG.AON_MSG_MODEL_190;
 export const AON_MSG_MODEL_190_DESCRIPTION = MSG.AON_MSG_MODEL_190_DESCRIPTION;
+
+
+export const AON_MSG_DELETED_DATA= "Datos eliminados!";
+export const AON_MSG_SAVED_DATA  = "Datos guardados!";
+export const AON_MSG_PROCESSED_MOVEMENT = "Alta procesada!";
+export const AON_MSG_UPDATED_CONTRACT = "Contrato modificado!";

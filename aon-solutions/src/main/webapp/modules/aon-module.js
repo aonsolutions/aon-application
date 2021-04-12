@@ -8,6 +8,7 @@ import './aon-home.js';
 import './company/aon-parent.js';
 import './company/aon-mobile-desktop.js';
 import { saveAuthDevice } from '../services/service.js';
+import { AonDialog } from '../components/aon-dialog.js';
 
 export class AonModule extends AonElement {
 	AON_LOGIN;
@@ -88,17 +89,18 @@ export class AonModule extends AonElement {
 
 		window.setNotificationAction = (data) =>  {
 			console.log("data Notification1>", typeof data, data);
-			let dialog =  document.querySelector('aon-dialog');
-			if(dialog){
-				dialog.clear();
-				dialog.setContentHTML(data.body);
-				if (!this.isMobile()) dialog.width = '400px';
-				dialog.setTitle(data.title);
-				dialog.open();
-				dialog.addAcceptAction(() => {
-					console.log("aceptar");
-				});
-			}
+			const id = 'aonDialogNotify';
+			const dialog = this.getElement(id) || new AonDialog();
+			dialog.id = id;
+			if(dialog){ this.appendChild(dialog);}
+			dialog.clear();
+			dialog.setContentHTML(data.body);
+			if (!this.isMobile()) dialog.width = '400px';
+			dialog.setTitle(data.title);
+			dialog.open();
+			dialog.addAcceptAction(() => {
+				console.log("aceptar");
+			});
 		}
 	}
 

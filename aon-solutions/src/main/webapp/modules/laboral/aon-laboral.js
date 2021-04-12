@@ -111,7 +111,9 @@ class AonLaboral extends AonElement {
     try {
       await getSalaryPdf(data);
     } catch (error) {
-      this.applicationEl.getToast().start({ message: error, type: 'error' });
+      if(typeof error ==="string") error = JSON.parse(error);
+      const {message, type} = error;
+      this.applicationEl.start({ message, type});
     }
 
 		this.applicationEl.stopLoading();

@@ -4,14 +4,16 @@ import { getPeriodLaboral } from "../../../services/laboralService.js";
 import { formatNumber, isEmptyObject, serializeForm, setValueName, waitEl } from "../../../services/utils.js";
 import { getCompanyBanks, getModelsFiscal, setModelStatus } from "../../../services/service.js";
 import { TAX_ENUMS } from "../FiscalEnums.js";
-import * as AON_TAG from "../../../environments/aonTag.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
+import * as AON_TAG from "../../../environments/aonTag.js";
 import "../../../components/aon-table.js";
 import "../../../components/aon-mobile-list.js";
 import "../../../components/aon-filter.js";
+import { AON_MSG_SAVED_DATA } from "../../../environments/msg.js";
+import { CONSTANT_SUCCESS } from "../../../environments/constants.js";
 
 export class AonTax extends AonElement {
   TABLE_ID;
@@ -260,9 +262,8 @@ export class AonTax extends AonElement {
     aonInputNrc.name = "nrc";
     aonInputNrc.type = "text";
     aonInputNrc.disabled = true;
-    aonInputNrc.value = resp.nrc;
+    if(resp.nrc) aonInputNrc.value = resp.nrc;
     divNrc.appendChild(aonInputNrc);
-
     //---END FORM---
 
     return div;
@@ -324,7 +325,6 @@ export class AonTax extends AonElement {
     return data;
   }
 
-
   eventData(resp){
     this.getElement('switchDni').addEventListener('change', ({ target }) => {
         let nrc = this.getElement("nrc");
@@ -343,7 +343,6 @@ export class AonTax extends AonElement {
       }
     })
   }
-
 
   getFormValues() {
       const form = this.getElement(`${this.id}Form`);
@@ -398,14 +397,13 @@ export class AonTax extends AonElement {
     }
   }
 
-
   async save(resp, dialog){
     this.applicationEl.startLoading();
     try {
-      let form = {...resp,...this.getFormValues()};
+      const form = {...resp,...this.getFormValues()};
       await setModelStatus(form);
       await this.getTable(); //reload
-      this.applicationEl.getToast().start({message: "Datos guardados!", type:"success"});
+      this.applicationEl.getToast().start({message: AON_MSG_SAVED_DATA, type: CONSTANT_SUCCESS});
       dialog.close();
     } catch (error) {
       if(typeof error ==="string") error = JSON.parse(error);

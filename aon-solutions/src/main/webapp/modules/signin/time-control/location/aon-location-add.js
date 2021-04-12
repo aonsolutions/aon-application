@@ -9,6 +9,7 @@ import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import "../../../../components/aon-card.js";
 import "../../../../components/aon-input.js";
 import "../../../../components/aon-number.js";
+import { AON_MSG_DELETED_DATA, AON_MSG_SAVED_DATA } from "../../../../environments/msg.js";
 
 export class AonLocationAdd extends AonElement {
   TOAST;
@@ -217,7 +218,7 @@ export class AonLocationAdd extends AonElement {
           ...data,
           coordinates: `${data.latitude},${data.longitude}`,
         });
-        this.TOAST.start({ message: `Datos guardados!`, type: "success" });
+        this.TOAST.start({ message: AON_MSG_SAVED_DATA, type: "success" });
         if (id) { setValueName("id", id); }
       } catch (error) {
         this.TOAST.start({ message: error, type: "error"});
@@ -232,7 +233,7 @@ export class AonLocationAdd extends AonElement {
       try {
         const data = this.getFormValues();
         await deleteLocation(data);
-        this.TOAST.start({ message: `Datos eliminados!` });
+        this.TOAST.start({ message: AON_MSG_DELETED_DATA });
         this.back();
       } catch (error) {
         this.TOAST.start({ message: error, type: "error"});

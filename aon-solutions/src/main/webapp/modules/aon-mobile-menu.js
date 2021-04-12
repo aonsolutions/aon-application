@@ -21,9 +21,7 @@ import "./fiscal/aon-fiscal.js";
 
 export class AonMobileMenu extends AonElement {
 
-  // CAMERA_INPUT;
   TYPE_IMG;
-
   dur;
 
   get id() {
@@ -67,7 +65,6 @@ export class AonMobileMenu extends AonElement {
 
   connectedCallback() {
     this.id = this.id || 'aonMobileMenu';
-    // this.CAMERA_INPUT = this.id + "CameraInput";
   }
 
 
@@ -113,7 +110,7 @@ export class AonMobileMenu extends AonElement {
     MobileMenuApps.forEach((app, i) => {
       if(this.isApp(app) && this.getAppInfo(app)) {
         apps.push(this.getAppInfo(app));
-      };
+      }
     });
 
     apps.forEach((app, i) => {

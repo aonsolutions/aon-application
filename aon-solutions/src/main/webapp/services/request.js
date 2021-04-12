@@ -200,7 +200,11 @@ export const openFile = async (url, data) => new Promise(async (resolve, reject)
   });
 });
 
-export const openFileDesktop = (url) => open(url);
+export const openFileDesktop = (url) => {
+  const openWindow =  window.open('', '_blank');
+  openWindow.document.write = "Loading...";
+  openWindow.location.href  =  url;
+}
 
 //if true is mobile APP
 export const webkitRequestMobile = () => {

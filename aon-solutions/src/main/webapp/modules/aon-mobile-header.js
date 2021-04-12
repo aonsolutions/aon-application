@@ -59,7 +59,7 @@ export class AonMobileHeader extends AonElement {
 			<aon-dialog-menu id="aonHeaderDialogUserOption" > </aon-dialog-menu>
 			`;
 
-		let aonHeaderWeb = document.getElementById('aonHeaderWeb');
+		// let aonHeaderWeb = document.getElementById('aonHeaderWeb');
 		this.buildLogo();
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => {

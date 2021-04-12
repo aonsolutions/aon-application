@@ -128,6 +128,7 @@ public class TimeControl {
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("start_date", getStartDate() != null ? getStartDate().getTime() : null);
+		json.put("end_date", getEndDate() != null ? getEndDate().getTime() : null);
 		json.put("group", getGroup() != null ? getGroup().name() : null);
 		
 		json.put("time", getTime());

@@ -21,6 +21,7 @@ import "../../../../components/aon-input.js";
 import "../../../../components/aon-date.js";
 import "../../../../components/aon-select.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
+import { AON_MSG_DELETED_DATA, AON_MSG_SAVED_DATA } from "../../../../environments/msg.js";
 
 
 export class AonEventAdd extends AonElement {
@@ -245,7 +246,7 @@ export class AonEventAdd extends AonElement {
         this.START_DATE =  formatDateOrigin(new Date(start_date));
       }
       this.applicationEl.getToast().start({
-        message: "Datos guardados!",
+        message: AON_MSG_SAVED_DATA,
         type: "success",
         delay: 3000,
       });
@@ -261,7 +262,7 @@ export class AonEventAdd extends AonElement {
       this.applicationEl.startLoader();
       try {
         await deleteTimeControl(data);
-        this.applicationEl.getToast().start({ message: `Datos eliminados!` });
+        this.applicationEl.getToast().start({ message: AON_MSG_DELETED_DATA });
         this.back();
       } catch (error) {
         this.applicationEl.getToast().start({ message: error, type: "error" });

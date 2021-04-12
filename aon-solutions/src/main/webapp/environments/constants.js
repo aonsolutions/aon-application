@@ -37,3 +37,7 @@ export const TEXT = 'text';
 
 export const TRUE = 'true';
 export const FALSE = 'false';
+
+
+export const CONSTANT_SUCCESS = "success";
+export const CONSTANT_PRIMARY = "primary";
