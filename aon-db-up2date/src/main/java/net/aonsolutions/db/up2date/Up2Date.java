@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.IntegrityFix;
+import net.aonsolutions.db.up2date.payroll.RetirementInsert;
 import net.aonsolutions.db.up2date.security.AuthDeviceUpdate;
 
 public class Up2Date {
@@ -148,8 +149,9 @@ public class Up2Date {
     		//PermissionNotPaidDaysInsert.PERMISSIONNOTPAIDDAYSINSERT,
     		//IfDaysInsert.IFDAYSINSERT
     		//Bases2021Update.BASES2021UPDATE
-    		AuthDeviceUpdate.AUTH_DEVICE_UPDATE,
-    		IntegrityFix.INTEGRITYFIX
+    		//AuthDeviceUpdate.AUTH_DEVICE_UPDATE,
+    		IntegrityFix.INTEGRITYFIX,
+    		RetirementInsert.RETIREMENTINSERT
     };
 
 

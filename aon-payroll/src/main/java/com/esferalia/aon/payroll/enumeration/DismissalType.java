@@ -28,6 +28,12 @@ public enum DismissalType {
 			return visitor.visitTempEnd(this);
 		}
 	 },
+	 RETIREMENT{
+		 @Override
+		 public<T> T accept(Visitor<T> visitor) {
+			return visitor.visitRetirement(this);
+		}
+	 },
 	 DEFINITE_END{
 		 @Override
 		 public<T> T accept(Visitor<T> visitor) {
@@ -48,6 +54,7 @@ public enum DismissalType {
 		T visitObjective(DismissalType type);
 		T visitWorkEnd(DismissalType type);
 		T visitTempEnd(DismissalType type);
+		T visitRetirement(DismissalType type);
 		T visitDefiniteEnd(DismissalType type);
 		T visitVoluntaryEnd(DismissalType type);
 	}

@@ -3228,6 +3228,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	protected double getDaySalary() throws ExpressionException, SQLException, SalaryException {
 
+		return getQuoteBase() * 12 / 365;
+
+	}
+
+	protected double getQuoteBase() throws ExpressionException, SQLException, SalaryException {
+
 		Calendar contractEnd = Calendar.getInstance();
 		contractEnd.setTime(contractEndDate);
 		contractEnd.set(Calendar.DATE, 1);
@@ -3305,10 +3311,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		double totalPayment = salary.getTotalPayment();
 		double extraPayProration = salary.getExtraPayProration();
 
-		return (totalPayment + extraPayProration) * monthDays / quoteDys * 12 / 365;
+		return (totalPayment + extraPayProration) * monthDays / quoteDys ;
 
 	}
-
+	
 	public static long getAvailableDays(Date start, Date end) {
 		long workedDays = CommonUtil.getDaysBetweenDates(start, end);
 		workedDays += 1;
@@ -4210,7 +4216,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				});
 
 		// TODO: Sure ???
-		if (getSalaryType() == SalaryType.SETTLE)
+		if (getSalaryType() == SalaryType.SETTLE) {
 			this.implicitExpressionContext.putVariable("SALARIO_DIA",
 					new LazyTimedExpressionConstant<Double>("SALARIO_DIA", ExpressionScope.CONTRACT) {
 						@Override
@@ -4222,6 +4228,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							}
 						}
 					});
+			this.implicitExpressionContext.putVariable("SALARIO_MES",
+					new LazyTimedExpressionConstant<Double>("SALARIO_MES", ExpressionScope.CONTRACT) {
+						@Override
+						public Double create() {
+							try {
+								return getQuoteBase();
+							} catch (Exception e) {
+								throw new ExpressionExceptionWrapper(new InvalidVariables(e.getMessage(), getName()));
+							}
+						}
+					});
+		}
 
 		this.implicitExpressionContext.putVariable(ContextVariable.MONTHLY_SALARY, new LazyTimedConstant<Boolean>() {
 			@Override

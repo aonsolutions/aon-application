@@ -42,6 +42,7 @@ public class Employee implements Serializable, HasId<Integer> {
 		 OBJECTIVE("Despido por Causas Objetivas"),
 		 WORK_END("Fin Contrato Fijo de Obra"),
 		 TEMP_END("Fin Contrato Temporal"),
+		 RETIREMENT("Jubilaci\u00F3n del Empresario"),
 		 DEFINITE_END("Fin Contrato Duraci\u00F3n Determinada"),
 		 CONDITIONS_CHANGE("Baja Voluntaria Modificaci\u00F3n Condiciones"),
 		;

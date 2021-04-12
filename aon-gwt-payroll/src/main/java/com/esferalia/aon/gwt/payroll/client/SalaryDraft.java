@@ -981,6 +981,8 @@ public class SalaryDraft extends ResizeComposite
 						return "PROCEDENTE";
 					case CONDITIONS_CHANGE:
 						return "CAMBIO_CONDICIONES";
+					case RETIREMENT:
+						return "JUBILACION";
 					}
 					return null;
 				}

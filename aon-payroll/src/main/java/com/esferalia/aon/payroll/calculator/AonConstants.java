@@ -21,6 +21,8 @@ public class AonConstants {
 	public static DismissalType UNFAIR = DismissalType.UNFAIR;
 	@Variable(ContextVariable.OBJECTIVE)
 	public static DismissalType OBJECTIVE = DismissalType.OBJECTIVE;
+	@Variable(ContextVariable.RETIREMENT)
+	public static DismissalType RETIREMENT = DismissalType.RETIREMENT;
 	@Variable(ContextVariable.WORK_COMPLETE)
 	public static DismissalType WORK_END = DismissalType.WORK_END;
 	@Variable(ContextVariable.TEMP_COMPLETE)
