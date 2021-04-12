@@ -69,8 +69,8 @@ public class BidoqRequest {
 	private static final String BIDOQ_INVOICE_API_KEY = "qmd3Ho*mpbhduav3w5mJ9fkt5%hkxN7aWn@Lfrxw9B6poRRyM8"; 
 	
 	private static JSONObject getSelfcontaInvoices(String document) throws Exception {
-		String sendData = "cif=46230043C" ;
-		//String sendData = "cif=" + document ;
+		//String sendData = "cif=46230043C" ;
+		String sendData = "cif=" + document ;
 		return post(BIDOQ_INVOICE_URL, sendData);
 	
 	}
