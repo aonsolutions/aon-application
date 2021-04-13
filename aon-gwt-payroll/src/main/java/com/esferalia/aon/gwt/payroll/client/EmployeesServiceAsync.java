@@ -124,6 +124,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getSalaryDraftReceipt(String domain, SalaryDraft salaryDraft, String mime,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
+	void getSettleDraftReceipt(String domain, SalaryDraft salaryDraft, String mime,
+			AsyncCallback<String> callback) throws IllegalArgumentException;
+	
 	void getSalaryDraftReceiptHTML(String domain, SalaryDraft salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 

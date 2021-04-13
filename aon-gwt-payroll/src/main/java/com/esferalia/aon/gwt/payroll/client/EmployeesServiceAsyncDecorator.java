@@ -356,6 +356,14 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.getSalaryDraftReceipt(domain, salaryDraft, mime,
 				new AsyncCallbackWrapper<String>(callback));
 	}
+	
+	@Override
+	public void getSettleDraftReceipt(String domain, SalaryDraft salaryDraft, String mime,
+			AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getSettleDraftReceipt(domain, salaryDraft, mime,
+				new AsyncCallbackWrapper<String>(callback));
+	}
 
 	@Override
 	public void getIrpfDraftReceipt(String domain, SalaryDraft salaryDraft, String mime,

@@ -287,6 +287,12 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getSalaryDraftReceipt(getCurrentDomainName(),  salaryDraft, mime, callback);
 	}
 
+
+	public void getSettleDraftReceipt(SalaryDraft salaryDraft, String mime, AsyncCallback<String> callback)
+			throws IllegalArgumentException {
+		employeesServiceAsync.getSettleDraftReceipt(getCurrentDomainName(),  salaryDraft, mime, callback);
+	}
+	
 	public void getSalaryDraftReceiptHTML(SalaryDraft salaryPreview, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException {
 		employeesServiceAsync.getSalaryDraftReceiptHTML(getCurrentDomainName(),  salaryPreview, zoom, callback);

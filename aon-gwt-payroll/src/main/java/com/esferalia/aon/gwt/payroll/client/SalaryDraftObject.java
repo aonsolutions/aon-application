@@ -639,6 +639,11 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		employeesServiceAsync.getSalaryDraftReceipt(salaryDraft, mime,
 				callback);
 	}
+	
+	public void downloadLetter(String mime, AsyncCallback<String> callback) {
+		employeesServiceAsync.getSettleDraftReceipt(salaryDraft, mime,
+				callback);
+	}
 
 	public void downloadIrpf(String mime, AsyncCallback<String> callback) {
 		employeesServiceAsync.getIrpfDraftReceipt(salaryDraft, mime, callback);

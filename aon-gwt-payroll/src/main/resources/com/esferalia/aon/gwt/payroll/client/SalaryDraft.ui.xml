@@ -355,7 +355,6 @@
 								
 								<g:ListBox debugId="settlePreviewListBox" ui:field="settlePreviewListBox" visible="false" >
 									<g:item value="{JASPER}">EST&Aacute;NDAR</g:item>
-									<g:item value="{A3}">TABULADA (&Beta;)</g:item>
 									<g:item value="{LETTER}">CARTA (&Beta;)</g:item>
 								</g:ListBox>
 								

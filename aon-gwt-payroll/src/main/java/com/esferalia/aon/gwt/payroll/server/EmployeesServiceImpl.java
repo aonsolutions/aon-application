@@ -1739,6 +1739,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	 * @return [String] datauri
 	 * @throws IllegalArgumentException
 	 */
+	@Override
 	public String getSettleDraftReceipt(String domain, final SalaryDraft draft, String mime)
 			throws IllegalArgumentException {
 

@@ -4643,22 +4643,30 @@ public class SalaryDraft extends ResizeComposite
 
 		});
 	}
+	
+	private void printLetter() {
+		salaryDraftObject.downloadLetter("application/pdf", new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onSuccess(String dataURI) {
+				showPreview();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+			}
+
+		});
+	}
 
 	private void printSettle() {
 		
 		SettleType type = SettleType.valueOf(settlePreviewListBox.getSelectedValue());
 		switch (type) {
-		case A3:
-			Reports.a3Letter(salaryDraftObject,  dataURI -> {
-				SalaryDraft.this.showPreview();
-				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
-			});
-			break;
 		case LETTER:
-			Reports.defLetter(salaryDraftObject,  dataURI -> {
-				SalaryDraft.this.showPreview();
-				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
-			});
+			printLetter();
 			break;
 		default:
 			print();

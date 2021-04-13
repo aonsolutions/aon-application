@@ -112,6 +112,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String getSalaryDraftReceipt(String domain, SalaryDraft salaryDraft, String mime)
 			throws IllegalArgumentException;
+	
+	String getSettleDraftReceipt(String domain, SalaryDraft salaryDraft, String mime)
+			throws IllegalArgumentException;
 
 	String getSalaryDraftReceiptHTML(String domain, SalaryDraft salaryDraft, int zoom)
 			throws IllegalArgumentException;
